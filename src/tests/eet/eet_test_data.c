@@ -279,7 +279,7 @@ _eet_st3_cmp(Eet_St3 *st3,
    fail_if(st3->boby != EET_TEST_INT + i);
 } /* _eet_st3_cmp */
 
-START_TEST(eet_test_data_basic_type_encoding_decoding)
+EFL_START_TEST(eet_test_data_basic_type_encoding_decoding)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Basic_Type *result;
@@ -287,8 +287,6 @@ START_TEST(eet_test_data_basic_type_encoding_decoding)
    Eet_Test_Basic_Type etbt;
    void *transfert;
    int size;
-
-   eet_init();
 
    eet_test_basic_set(&etbt, 0);
 
@@ -313,12 +311,10 @@ START_TEST(eet_test_data_basic_type_encoding_decoding)
    free(result);
 
    eet_data_descriptor_free(edd);
-
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_encoding_decoding)
+EFL_START_TEST(eet_test_data_type_encoding_decoding)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -327,8 +323,6 @@ START_TEST(eet_test_data_type_encoding_decoding)
    Eet_Test_Ex_Type etbt;
    int size;
    int test;
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -379,12 +373,10 @@ START_TEST(eet_test_data_type_encoding_decoding)
      eina_hash_foreach(result->ihash, func7, &test);
 
    fail_if(test != 0);
-
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_dump_undump)
+EFL_START_TEST(eet_test_data_type_dump_undump)
 {
    Eet_Data_Descriptor *edd;
    Eet_Test_Ex_Type *result;
@@ -397,8 +389,6 @@ START_TEST(eet_test_data_type_dump_undump)
    int size1;
    int size2;
    int test;
-
-   eet_init();
 
    eet_test_ex_set(&etbt, 0);
    etbt.list = eina_list_prepend(etbt.list, eet_test_ex_set(NULL, 1));
@@ -470,11 +460,10 @@ START_TEST(eet_test_data_type_dump_undump)
 
    fail_if(test != 0);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_type_escape_dump_undump)
+EFL_START_TEST(eet_test_data_type_escape_dump_undump)
 {
    void *blob;
    int blob_len;
@@ -487,8 +476,6 @@ START_TEST(eet_test_data_type_escape_dump_undump)
      "    value \"\\\\My\\\\DoubleQuote\\\\\" string: \"\\\"\";\n"
      "    value \"\\\\My\\\\NewLine\\\\\" string: \"\\n\";\n"
      "}\n";
-
-   eet_init();
 
    blob = eet_data_text_undump(inputstr, strlen(inputstr), &blob_len);
    fail_if(!blob);
@@ -504,11 +491,10 @@ START_TEST(eet_test_data_type_escape_dump_undump)
    eina_strbuf_free(strbuf);
    free(blob);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_fp)
+EFL_START_TEST(eet_test_data_fp)
 {
    Eet_Data_Descriptor_Class eddc;
    Eet_Data_Descriptor *edd_5FP;
@@ -518,8 +504,6 @@ START_TEST(eet_test_data_fp)
    Eet_5FP *build;
    void *blob;
    int size;
-
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_5FP);
    edd_5FP = eet_data_descriptor_stream_new(&eddc);
@@ -566,11 +550,10 @@ START_TEST(eet_test_data_fp)
    fail_if(convert->f1 != 1);
    fail_if(convert->f0 != 0);
 
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_union)
+EFL_START_TEST(eet_test_data_union)
 {
    Eet_Union_Test *eut;
    Eet_List *l;
@@ -581,9 +564,6 @@ START_TEST(eet_test_data_union)
    void *blob;
    int size;
    int i;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Union_Test);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -642,13 +622,10 @@ START_TEST(eet_test_data_union)
         EUT_CMP(2);
         EUT_CMP(3);
      }
-
-   eet_shutdown();
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eet_test_data_variant)
+EFL_START_TEST(eet_test_data_variant)
 {
    Eet_Variant_Test *evt;
    Eet_List *l;
@@ -662,9 +639,6 @@ START_TEST(eet_test_data_variant)
    void *blob;
    int size;
    int i;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Variant_Test);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -753,12 +727,10 @@ START_TEST(eet_test_data_variant)
         EVT_CMP(3);
      }
 
-   eet_shutdown();
-   eina_shutdown();
-} /* START_TEST */
-END_TEST
+} /* EFL_START_TEST */
+EFL_END_TEST
 
-START_TEST(eet_test_data_hash_value)
+EFL_START_TEST(eet_test_data_hash_value)
 {
    Eet_Hash *h;
    Eina_Value *val;
@@ -769,9 +741,6 @@ START_TEST(eet_test_data_hash_value)
    int i;
    double d;
    char *s;
-
-   eina_init();
-   eet_init();
 
    EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Eet_Hash);
    edd = eet_data_descriptor_stream_new(&eddc);
@@ -810,11 +779,8 @@ START_TEST(eet_test_data_hash_value)
    val = (Eina_Value *)eina_hash_find(h->hash, "val/string");
    eina_value_get(val, &s);
    fail_if((!val) || strcmp(s, EET_TEST_STRING));
-
-   eet_shutdown();
-   eina_shutdown();
-} /* START_TEST */
-END_TEST
+} /* EFL_START_TEST */
+EFL_END_TEST
 
 void eet_test_data(TCase *tc)
 {

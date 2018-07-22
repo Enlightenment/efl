@@ -34,7 +34,7 @@
  * To use these functions, you have to call eina_init()
  * first, and eina_shutdown() when eina is not used anymore.
  *
- * @section Eina_Convert_From_Integer_To_Sring Conversion from integer to string
+ * @section Eina_Convert_From_Integer_To_String Conversion from integer to string
  *
  * To convert an integer to a string in the decimal base,
  * eina_convert_itoa() should be used. If the hexadecimal base is
@@ -95,7 +95,7 @@
  * has the following mantissas and exponent:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *
@@ -165,8 +165,8 @@ EAPI extern Eina_Error EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH; /**< Not used, p
 /**
  * @brief Converts an integer number to a string in decimal base.
  *
- * @param n The integer to convert.
- * @param s The buffer to store the converted integer.
+ * @param[in] n The integer to convert.
+ * @param[out] s The buffer to store the converted integer.
  * @return The length of the string, including the null terminated
  * character.
  *
@@ -182,8 +182,8 @@ EAPI int       eina_convert_itoa(int n, char *s)  EINA_ARG_NONNULL(2);
 /**
  * @brief Converts an integer number to a string in hexadecimal base.
  *
- * @param n The integer to convert.
- * @param s The buffer to store the converted integer.
+ * @param[in] n The integer to convert.
+ * @param[out] s The buffer to store the converted integer.
  * @return The length of the string, including the null terminated
  * character.
  *
@@ -201,8 +201,8 @@ EAPI int       eina_convert_xtoa(unsigned int n, char *s) EINA_ARG_NONNULL(2);
 /**
  * @brief Converts a double to a string.
  *
- * @param d The double to convert.
- * @param des The destination buffer to store the converted double.
+ * @param[in] d The double to convert.
+ * @param[out] des The destination buffer to store the converted double.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function converts the double @p d to a string. The string is
@@ -225,10 +225,10 @@ EAPI int       eina_convert_dtoa(double d, char *des) EINA_ARG_NONNULL(2);
 /**
  * @brief Converts a string to a double.
  *
- * @param src The string to convert.
- * @param length The length of the string.
- * @param m The mantissa.
- * @param e The exponent.
+ * @param[in] src The string to convert.
+ * @param[in] length The length of the string.
+ * @param[out] m The mantissa.
+ * @param[out] e The exponent.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function converts the string @p s of length @p length that
@@ -247,7 +247,7 @@ EAPI int       eina_convert_dtoa(double d, char *des) EINA_ARG_NONNULL(2);
  * point, the returned mantissas and exponents are:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *
@@ -262,12 +262,11 @@ EAPI Eina_Bool eina_convert_atod(const char *src,
                                  long long  *m,
                                  long       *e) EINA_ARG_NONNULL(1, 3, 4);
 
-
 /**
  * @brief Converts a 32.32 fixed point number to a string.
  *
- * @param fp The fixed point number to convert.
- * @param des The destination buffer to store the converted fixed point number.
+ * @param[in] fp The fixed point number to convert.
+ * @param[out] des The destination buffer to store the converted fixed point number.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function converts the 32.32 fixed point number @p fp to a
@@ -288,7 +287,7 @@ EAPI Eina_Bool eina_convert_atod(const char *src,
  *
  * @note The code is the same than eina_convert_dtoa() except that it
  * implements the frexp() function for fixed point numbers and does
- * some optimisations.
+ * some optimization.
  */
 EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
                                   char       *des) EINA_ARG_NONNULL(2);
@@ -296,9 +295,9 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
 /**
  * @brief Converts a string to a 32.32 fixed point number.
  *
- * @param src The string to convert.
- * @param length The length of the string.
- * @param fp The fixed point number.
+ * @param[in] src The string to convert.
+ * @param[in] length The length of the string.
+ * @param[out] fp The fixed point number.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function converts the string @p src of length @p length that
@@ -317,7 +316,7 @@ EAPI int       eina_convert_fptoa(Eina_F32p32 fp,
  * point, the returned mantissas and exponents are:
  *
  * @code
- * mantiss  : [-]hhhhhh
+ * mantissa  : [-]hhhhhh
  * exponent : 2^([+-]e - 4 * n)
  * @endcode
  *

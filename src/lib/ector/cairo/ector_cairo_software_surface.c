@@ -51,7 +51,7 @@ struct _Ector_Cairo_Software_Surface_Data
 
 EOLIAN static Eina_Bool
 _ector_cairo_software_surface_ector_buffer_pixels_set(Eo *obj, Ector_Cairo_Software_Surface_Data *pd,
-                                                      void *pixels, int width, int height,
+                                                      void *pixels, int width, int height, int stride,
                                                       Efl_Gfx_Colorspace cspace, Eina_Bool writable)
 {
    cairo_t *ctx = NULL;
@@ -72,7 +72,7 @@ _ector_cairo_software_surface_ector_buffer_pixels_set(Eo *obj, Ector_Cairo_Softw
      cairo_surface_destroy(pd->surface);
    pd->surface = NULL;
 
-   ok = ector_buffer_pixels_set(efl_super(obj, MY_CLASS), pixels, width, height, cspace, writable);
+   ok = ector_buffer_pixels_set(efl_super(obj, MY_CLASS), pixels, width, height, stride, cspace, writable);
 
    if (ok && pixels)
      {

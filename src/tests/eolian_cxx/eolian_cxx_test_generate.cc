@@ -10,7 +10,7 @@
 
 #include <grammar/header.hpp>
 
-START_TEST(eolian_cxx_test_generate_complex_types)
+EFL_START_TEST(eolian_cxx_test_generate_complex_types)
 {
    using efl::eolian::grammar::class_header;
    using efl::eolian::grammar::attributes::unused_type;
@@ -66,7 +66,7 @@ START_TEST(eolian_cxx_test_generate_complex_types)
    // ck_assert(buffer.size() == (sizeof(result) - 1));
    // ck_assert(std::equal(buffer.begin(), buffer.end(), result));
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_generate(TCase* tc)

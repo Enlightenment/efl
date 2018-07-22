@@ -27,12 +27,21 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Elm_Calendar_Mark *mark;
    struct tm selected_time;
    time_t current_time;
-   struct tm sunday = { 0, 0, 12, 7, 0, 0, 0, 0, -1, 0, NULL };
-   /* tm {sec, min, hour, mday, mon, year, wday, yday, isdst } */
-   /* weekdays since Sunday, range 0 to 6 */
+   struct tm sunday;
    struct tm christmas;
+
+   /*
+    * At least on Windows, tm has 9 fields.
+    * As a workaround, set sunday to 0 and set
+    * th needed fields to correct value
+    */
+   memset(&sunday, 0, sizeof(struct tm));
+   sunday.tm_hour = 12;
+   sunday.tm_mday = 7;
+   sunday.tm_isdst = -1;
+
+   memset(&christmas, 0, sizeof(struct tm));
    christmas.tm_mday = 25;
-   /* months since Jan, in the range 0 to 11 */
    christmas.tm_mon = 11;
 
    win = elm_win_util_standard_add("calendar", "Calendar Marks Example");

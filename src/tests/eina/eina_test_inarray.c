@@ -26,7 +26,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_inarray_test_simple)
+EFL_START_TEST(eina_inarray_test_simple)
 {
    const int test_members = 5;
    Eina_Inarray *array;
@@ -39,8 +39,6 @@ START_TEST(eina_inarray_test_simple)
      {0, 0xbeef},
      {-1, -1}
    };
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(int), 2);
    fail_unless(array != NULL);
@@ -84,18 +82,15 @@ START_TEST(eina_inarray_test_simple)
      }
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_inarray_test_alloc_at)
+EFL_START_TEST(eina_inarray_test_alloc_at)
 {
    Eina_Inarray *array;
    int *member;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(int), 2);
    fail_unless(array != NULL);
@@ -124,9 +119,8 @@ START_TEST(eina_inarray_test_alloc_at)
      fail_unless(member[i] == i);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static const short rand_numbers[] = {
   9, 0, 2, 3, 6, 5, 4, 7, 8, 1, 10
@@ -169,12 +163,10 @@ short_cmp(const void *pa, const void *pb)
    return *a - *b;
 }
 
-START_TEST(eina_inarray_test_insert_sort)
+EFL_START_TEST(eina_inarray_test_insert_sort)
 {
    Eina_Inarray *array;
    int i, pos;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -235,16 +227,13 @@ START_TEST(eina_inarray_test_insert_sort)
    eina_inarray_flush(array);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_inarray_test_sort)
+EFL_START_TEST(eina_inarray_test_sort)
 {
    Eina_Inarray *array;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -257,16 +246,13 @@ START_TEST(eina_inarray_test_sort)
    eina_inarray_sort(array, short_cmp);
    fail_unless(check_short_sorted(array));
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_inarray_test_reverse)
+EFL_START_TEST(eina_inarray_test_reverse)
 {
    Eina_Inarray *array;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -285,9 +271,8 @@ START_TEST(eina_inarray_test_reverse)
      }
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 array_foreach(const void *array EINA_UNUSED, void *p, void *user_data EINA_UNUSED)
@@ -311,15 +296,13 @@ array_foreach_stop_2nd(const void *array EINA_UNUSED, void *p, void *user_data E
    return EINA_TRUE;
 }
 
-START_TEST(eina_inarray_test_itr)
+EFL_START_TEST(eina_inarray_test_itr)
 {
    Eina_Inarray *array;
    Eina_Iterator *it;
    Eina_Accessor *ac;
    short *member;
    int i;
-
-   eina_init();
 
    array = eina_inarray_new(sizeof(short), 1);
    fail_unless(array != NULL);
@@ -386,9 +369,8 @@ START_TEST(eina_inarray_test_itr)
    eina_accessor_free(ac);
 
    eina_inarray_free(array);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 int
 cmp(const void *a, const void *b)
@@ -414,7 +396,7 @@ match_cb(const void *array EINA_UNUSED, void *p, void *user_data)
      return EINA_FALSE;
 }
 
-START_TEST(eina_inarray_test_search)
+EFL_START_TEST(eina_inarray_test_search)
 {
    Eina_Inarray *iarr;
    int i, ret, temp=92, ret1;
@@ -422,8 +404,6 @@ START_TEST(eina_inarray_test_search)
    int arr_size = sizeof(arr)/sizeof(arr[0]);
    unsigned int curr_len;
    Eina_Bool rval;
-
-   eina_init();
 
    iarr = eina_inarray_new(sizeof(int), 0);
 
@@ -490,9 +470,8 @@ START_TEST(eina_inarray_test_search)
    fail_if(iarr->len != curr_len-3);
 
    eina_inarray_free(iarr);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_inarray(TCase *tc)

@@ -5,9 +5,10 @@
 #include "grammar/klass_def.hpp"
 #include "grammar/case.hpp"
 #include "helpers.hh"
-#include "namespace.hh"
+#include "name_helpers.hh"
 #include "type_impl.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -89,6 +90,12 @@ struct marshall_type_visitor_generate
                 else
                    return replace_base_type(r, " System.String");
               }}
+           , {"strbuf", nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                return replace_base_type(r, " eina.Strbuf");
+              }}
            , {"Binbuf", true, [&]
               {
                 regular_type_def r = regular;
@@ -149,10 +156,12 @@ struct marshall_type_visitor_generate
                }}
         };
 
-        if (!is_ptr && regular.is_struct() && !is_struct_blacklisted(regular))
+        if (regular.is_struct() && !blacklist::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
           {
-             return as_generator(*(lower_case[string] << ".") << string << "_StructInternal")
-                    .generate(sink, std::make_tuple(eolian_mono::escape_namespace(regular.namespaces), regular.base_type), *context);
+             if ((is_out || is_return) && is_ptr)
+                 return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
+             return as_generator(string << "_StructInternal")
+                    .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
         else if (eina::optional<bool> b = call_match
          (match_table
@@ -169,7 +178,7 @@ struct marshall_type_visitor_generate
         {
            return *b;
         }
-      else if (is_ptr && need_pointer_conversion(&regular))
+      else if (is_ptr && helpers::need_pointer_conversion(&regular))
         {
            regular_type_def r = regular;
            r.base_type = " System.IntPtr";
@@ -224,6 +233,11 @@ struct marshall_type_visitor_generate
            }
         }
         ,{"iterator", nullptr, nullptr, [&]
+           {
+              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+           }
+        }
+        ,{"accessor", nullptr, nullptr, [&]
            {
               return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
            }

@@ -24,12 +24,10 @@
 
 #include "ector_suite.h"
 
-START_TEST(ector_init_simple)
+EFL_START_TEST(ector_init_simple)
 {
-   fail_if(ector_init() != 1);
-   fail_if(ector_shutdown() != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void
 ector_test_init(TCase *tc)

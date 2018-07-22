@@ -40,7 +40,6 @@ struct _Ecore_Evas_Engine_Wl_Data
    Ecore_Wl2_Window *parent, *win;
    Ecore_Event_Handler *sync_handler;
    int fx, fy, fw, fh;
-   Eina_Rectangle content;
    Ecore_Wl2_Frame_Cb_Handle *frame;
    int x_rel;
    int y_rel;
@@ -96,6 +95,6 @@ struct _Ecore_Evas_Engine_Wl_Data
  * @see ecore_evas_wayland_shm_new()
  * @see ecore_evas_wayland_egl_new()
  */
-Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);
+Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);
 
 #endif /* _ECORE_EVAS_WAYLAND_PRIVATE_H_ */

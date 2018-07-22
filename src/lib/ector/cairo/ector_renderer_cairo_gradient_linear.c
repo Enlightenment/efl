@@ -91,7 +91,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_draw(Eo *obj,
 }
 
 static Eina_Bool
-_ector_renderer_cairo_gradient_linear_ector_renderer_cairo_fill(Eo *obj,
+_ector_renderer_cairo_gradient_linear_ector_renderer_cairo_op_fill(Eo *obj,
                                                                      Ector_Renderer_Cairo_Gradient_Linear_Data *pd,
                                                                      unsigned int mul_col)
 {
@@ -113,7 +113,7 @@ _ector_renderer_cairo_gradient_linear_ector_renderer_cairo_fill(Eo *obj,
 }
 
 static void
-_ector_renderer_cairo_gradient_linear_ector_renderer_bounds_get(Eo *obj,
+_ector_renderer_cairo_gradient_linear_efl_gfx_path_bounds_get(const Eo *obj,
                                                                 Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED,
                                                                 Eina_Rect *r)
 {
@@ -174,7 +174,7 @@ _ector_renderer_cairo_gradient_linear_efl_gfx_gradient_stop_set(Eo *obj,
 }
 
 static unsigned int
-_ector_renderer_cairo_gradient_linear_ector_renderer_crc_get(Eo *obj, Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED)
+_ector_renderer_cairo_gradient_linear_ector_renderer_crc_get(const Eo *obj, Ector_Renderer_Cairo_Gradient_Linear_Data *pd EINA_UNUSED)
 {
    Ector_Renderer_Gradient_Linear_Data *gld;
    Ector_Renderer_Gradient_Data *gd;

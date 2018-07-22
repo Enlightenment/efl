@@ -1,0 +1,56 @@
+import efl_types;
+
+class Efl.App (Efl.Loop)
+{
+   [[ ]]
+   methods {
+      @property loop_main @class {
+         [[ Points to the main loop instance of the application. ]]
+         get {}
+         values {
+            main_loop: Efl.Loop; [[Application main loop]]
+         }
+      }
+      @property build_efl_version {
+         [[ Indicates the version of EFL with which this application was
+            compiled against/for.
+
+           This might differ from @.efl_version.
+         ]]
+         get {}
+         values {
+            @cref version: Efl.Version; [[Efl version]]
+         }
+      }
+      @property efl_version {
+         [[ Indicates the currently running version of EFL.
+
+           This might differ from @.build_efl_version.
+         ]]
+         get {}
+         values {
+            @cref version: Efl.Version; [[Efl version]]
+         }
+      }
+   }
+   events {
+      pause: void; [[Called when the application is not going be displayed or otherwise used by a user for some time]]
+      resume: void; [[Called before a window is rendered after a pause event]]
+      terminate: void; [[Called before starting the shutdown of the application]]
+      signal,usr1: void; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
+      signal,usr2: void; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]
+      signal,hup: void; [[System specific, but on unix maps to SIGHUP signal to the process - only called on main loop object]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Io.Closer.close;
+      Efl.Io.Closer.closed { get; }
+      Efl.Io.Reader.read;
+      Efl.Io.Reader.can_read { get; set; }
+      Efl.Io.Reader.eos { get; set; }
+      Efl.Io.Writer.write;
+      Efl.Io.Writer.can_write { get; set; }
+      Efl.Task.priority { get; set; }
+   }
+}

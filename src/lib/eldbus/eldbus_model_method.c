@@ -26,17 +26,33 @@ _eldbus_model_method_efl_object_constructor(Eo *obj, Eldbus_Model_Method_Data *p
    return obj;
 }
 
-static void
-_eldbus_model_method_constructor(Eo *obj EINA_UNUSED,
-                                 Eldbus_Model_Method_Data *pd,
-                                 Eldbus_Proxy *proxy,
-                                 const Eldbus_Introspection_Method *method)
+static Efl_Object*
+_eldbus_model_method_efl_object_finalize(Eo *obj, Eldbus_Model_Method_Data *pd)
 {
-   EINA_SAFETY_ON_NULL_RETURN(proxy);
-   EINA_SAFETY_ON_NULL_RETURN(method);
+   if (!pd->proxy ||
+       !pd->method)
+     return NULL;
 
-   eldbus_model_arguments_constructor(efl_super(obj, MY_CLASS), proxy, method->name, method->arguments);
+   eldbus_model_arguments_custom_constructor(obj,
+                                             pd->proxy,
+                                             pd->method->name, pd->method->arguments);
 
+   return obj;
+}
+
+static void
+_eldbus_model_method_proxy_set(Eo *obj EINA_UNUSED,
+                               Eldbus_Model_Method_Data *pd,
+                               Eldbus_Proxy *proxy)
+{
+   pd->proxy = proxy;
+}
+
+static void
+_eldbus_model_method_method_set(Eo *obj EINA_UNUSED,
+                                Eldbus_Model_Method_Data *pd,
+                                const Eldbus_Introspection_Method *method)
+{
    pd->method = method;
 }
 

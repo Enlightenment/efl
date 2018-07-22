@@ -3,7 +3,8 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -141,7 +142,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
+_elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -153,7 +154,7 @@ _elm_notify_elm_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
    if (sd->block_events) _block_events_theme_apply(obj);
 
    edje_object_scale_set
-     (sd->notify, efl_gfx_scale_get(obj) * elm_config_scale_get());
+     (sd->notify, efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _sizing_eval(obj);
 
@@ -201,7 +202,7 @@ _changed_size_hints_cb(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_elm_widget_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
+_elm_notify_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Notify_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
    int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -228,29 +229,29 @@ _block_area_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_size_set(Eo *obj, Elm_Notify_Data *sd, Eina_Size2D sz)
+_elm_notify_efl_gfx_entity_size_set(Eo *obj, Elm_Notify_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    if (!sd->parent && sd->content)
      {
         Eina_Position2D pos;
 
-        pos = efl_gfx_position_get(obj);
+        pos = efl_gfx_entity_position_get(obj);
         _notify_move_to_orientation(obj, pos.x, pos.y, sz.w, sz.h);
      }
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_position_set(Eo *obj, Elm_Notify_Data *sd, Eina_Position2D pos)
+_elm_notify_efl_gfx_entity_position_set(Eo *obj, Elm_Notify_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    if (!sd->parent && sd->content)
      {
@@ -295,7 +296,7 @@ _elm_notify_show(Eo *obj, Elm_Notify_Data *sd)
 {
    sd->had_hidden = EINA_FALSE;
    sd->in_timeout = EINA_FALSE;
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    evas_object_show(sd->notify);
    if (!sd->allow_events) evas_object_show(sd->block_events);
@@ -322,7 +323,7 @@ _elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
      }
    else //for backport supporting: edc without emitting hide finished signal
      {
-        efl_gfx_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
+        efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
         evas_object_hide(sd->notify);
         if (sd->allow_events) evas_object_hide(sd->block_events);
      }
@@ -330,7 +331,7 @@ _elm_notify_hide(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 }
 
 EOLIAN static void
-_elm_notify_efl_gfx_visible_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool vis)
+_elm_notify_efl_gfx_entity_visible_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
@@ -382,7 +383,7 @@ _elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Obj
 }
 
 static Evas_Object*
-_elm_notify_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
+_elm_notify_content_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
 
@@ -407,19 +408,19 @@ _elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
 EOLIAN static Eina_Bool
 _elm_notify_efl_content_content_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *content)
 {
-   return _elm_notify_content_set(obj, sd, NULL, content);
+   return _elm_notify_content_set(obj, sd, "default", content);
 }
 
 EOLIAN static Evas_Object*
-_elm_notify_efl_content_content_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+_elm_notify_efl_content_content_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
-   return _elm_notify_content_get(obj, sd, NULL);
+   return _elm_notify_content_get(obj, sd, "default");
 }
 
 EOLIAN static Evas_Object*
 _elm_notify_efl_content_content_unset(Eo *obj, Elm_Notify_Data *sd)
 {
-   return _elm_notify_content_unset(obj, sd, NULL);
+   return _elm_notify_content_unset(obj, sd, "default");
 }
 
 static void
@@ -432,7 +433,7 @@ _hide_finished_cb(void *data,
    sd->had_hidden = EINA_TRUE;
    evas_object_hide(sd->notify);
    if (!sd->allow_events) evas_object_hide(sd->block_events);
-   efl_gfx_visible_set(efl_super(data, MY_CLASS), EINA_FALSE);
+   efl_gfx_entity_visible_set(efl_super(data, MY_CLASS), EINA_FALSE);
    efl_event_callback_legacy_call(data, ELM_NOTIFY_EVENT_DISMISSED, NULL);
 }
 
@@ -460,7 +461,6 @@ _elm_notify_efl_canvas_group_group_del(Eo *obj, Elm_Notify_Data *sd)
    edje_object_signal_callback_del_full
       (sd->notify, "elm,action,hide,finished", "elm", _hide_finished_cb, obj);
    elm_notify_parent_set(obj, NULL);
-   elm_notify_allow_events_set(obj, EINA_FALSE);
    ecore_timer_del(sd->timer);
 
    ELM_SAFE_FREE(sd->notify, evas_object_del);
@@ -479,7 +479,7 @@ _elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
 
    return obj;
 }
@@ -493,7 +493,7 @@ elm_notify_parent_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_notify_elm_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
+_elm_notify_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
 {
    if (sd->parent)
      {
@@ -540,7 +540,7 @@ elm_notify_parent_get(const Evas_Object *obj)
 }
 
 EOLIAN static Evas_Object*
-_elm_notify_elm_widget_widget_parent_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+_elm_notify_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
    return sd->parent;
 }
@@ -635,7 +635,7 @@ _elm_notify_timeout_set(Eo *obj, Elm_Notify_Data *sd, double timeout)
 }
 
 EOLIAN static double
-_elm_notify_timeout_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+_elm_notify_timeout_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
    return sd->timeout;
 }
@@ -663,7 +663,7 @@ _elm_notify_allow_events_set(Eo *obj, Elm_Notify_Data *sd, Eina_Bool allow)
 }
 
 EOLIAN static Eina_Bool
-_elm_notify_allow_events_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
+_elm_notify_allow_events_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 {
    return sd->allow_events;
 }
@@ -687,7 +687,7 @@ _elm_notify_dismiss(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
 
 
 EOLIAN static void
-_elm_notify_align_get(Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, double *horizontal, double *vertical)
+_elm_notify_align_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd, double *horizontal, double *vertical)
 {
    if (horizontal)
      *horizontal = sd->horizontal_align;
@@ -712,7 +712,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_CONTENT_DEFAULT_GET(elm_notify, "default")
 
 EOLIAN static const char *
-_elm_notify_part_efl_ui_translatable_translatable_text_get(Eo *obj, void *_pd EINA_UNUSED, const char **domain)
+_elm_notify_part_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);

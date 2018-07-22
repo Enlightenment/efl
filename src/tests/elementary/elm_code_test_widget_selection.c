@@ -9,19 +9,20 @@
 #include "elm_code_widget_private.h"
 #include "elm_code_widget_selection.h"
 
-START_TEST (elm_code_test_widget_selection_set)
+EFL_START_TEST (elm_code_test_widget_selection_set)
 {
    Elm_Code *code;
    Elm_Code_File *file;
    Elm_Code_Widget *widget;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 2);
@@ -31,9 +32,9 @@ START_TEST (elm_code_test_widget_selection_set)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_normalized_get)
+EFL_START_TEST (elm_code_test_widget_selection_normalized_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -41,12 +42,13 @@ START_TEST (elm_code_test_widget_selection_normalized_get)
    Elm_Code_Widget_Selection_Data *selection;
    Evas_Object *win;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -73,9 +75,9 @@ START_TEST (elm_code_test_widget_selection_normalized_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get)
+EFL_START_TEST (elm_code_test_widget_selection_text_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -83,12 +85,13 @@ START_TEST (elm_code_test_widget_selection_text_get)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
@@ -106,9 +109,9 @@ START_TEST (elm_code_test_widget_selection_text_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -116,12 +119,13 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    ck_assert_str_eq("", elm_code_widget_selection_text_get(widget));
@@ -139,9 +143,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_text_get_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -149,13 +153,14 @@ START_TEST (elm_code_test_widget_selection_text_get_twoline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -168,9 +173,9 @@ START_TEST (elm_code_test_widget_selection_text_get_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -178,13 +183,14 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 2, 2);
@@ -197,9 +203,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_text_get_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_text_get_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -207,14 +213,15 @@ START_TEST (elm_code_test_widget_selection_text_get_multiline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 1, 3);
@@ -227,9 +234,9 @@ START_TEST (elm_code_test_widget_selection_text_get_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -237,14 +244,15 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
    elm_code_file_line_append(file, "test", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_start(widget, 3, 2);
@@ -257,9 +265,9 @@ START_TEST (elm_code_test_widget_selection_reverse_text_get_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete)
+EFL_START_TEST (elm_code_test_widget_selection_delete)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -269,12 +277,13 @@ START_TEST (elm_code_test_widget_selection_delete)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
@@ -293,9 +302,9 @@ START_TEST (elm_code_test_widget_selection_delete)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -305,12 +314,13 @@ START_TEST (elm_code_test_widget_selection_reverse_delete)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, &length);
@@ -329,9 +339,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_delete_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -341,14 +351,15 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
    elm_code_file_line_append(file, "TEXT", 4, NULL);
    elm_code_file_line_append(file, "remove", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -376,9 +387,9 @@ START_TEST (elm_code_test_widget_selection_delete_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -388,14 +399,15 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
    elm_code_file_line_append(file, "TEXT", 4, NULL);
    elm_code_file_line_append(file, "remove", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -423,9 +435,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_twoline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_delete_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_delete_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -435,7 +447,8 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -444,7 +457,7 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_file_line_append(file, "delete", 6, NULL);
    elm_code_file_line_append(file, "REMOVE", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -472,9 +485,9 @@ START_TEST (elm_code_test_widget_selection_delete_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
+EFL_START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -484,7 +497,8 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    const char *text;
    unsigned int length;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "text", 4, NULL);
@@ -493,7 +507,7 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_code_file_line_append(file, "delete", 6, NULL);
    elm_code_file_line_append(file, "REMOVE", 6, NULL);
 
-   win = elm_win_add(NULL, "code", ELM_WIN_BASIC);
+   win = win_add(NULL, "code", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
    line = elm_code_file_line_get(file, 1);
    text = elm_code_line_text_get(line, NULL);
@@ -521,9 +535,9 @@ START_TEST (elm_code_test_widget_selection_reverse_delete_multiline)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_line)
+EFL_START_TEST (elm_code_test_widget_selection_select_line)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -531,13 +545,15 @@ START_TEST (elm_code_test_widget_selection_select_line)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "line selection", 14, NULL);
    elm_code_file_line_append(file, "line2", 5, NULL);
+   elm_code_file_line_append(file, "\ttab", 4, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_line(widget, 1);
@@ -549,11 +565,17 @@ START_TEST (elm_code_test_widget_selection_select_line)
    selection = elm_code_widget_selection_text_get(widget);
    ck_assert_str_eq("line2", selection);
    free(selection);
+
+   elm_code_widget_selection_select_line(widget, 3);
+   selection = elm_code_widget_selection_text_get(widget);
+   ck_assert_str_eq("\ttab", selection);
+   free(selection);
+
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word)
+EFL_START_TEST (elm_code_test_widget_selection_select_word)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -561,14 +583,15 @@ START_TEST (elm_code_test_widget_selection_select_word)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "word selection test", 19, NULL);
    elm_code_file_line_append(file, "more stuff\tto test", 18, NULL);
    elm_code_file_line_append(file, "word \"symbols\" test", 19, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);
@@ -592,9 +615,9 @@ START_TEST (elm_code_test_widget_selection_select_word)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word_punctuation)
+EFL_START_TEST (elm_code_test_widget_selection_select_word_punctuation)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -602,12 +625,13 @@ START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "comma, stop. question? mark!", 38, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);
@@ -631,9 +655,9 @@ START_TEST (elm_code_test_widget_selection_select_word_punctuation)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_code_test_widget_selection_select_word_symbols)
+EFL_START_TEST (elm_code_test_widget_selection_select_word_symbols)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -641,12 +665,13 @@ START_TEST (elm_code_test_widget_selection_select_word_symbols)
    Evas_Object *win;
    char *selection;
 
-   elm_init(1, NULL);
+   char *args[] = { "exe" };
+   elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
    elm_code_file_line_append(file, "colon: [array] (brackets) {braces}", 38, NULL);
 
-   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
    widget = elm_code_widget_add(win, code);
 
    elm_code_widget_selection_select_word(widget, 1, 3);
@@ -670,7 +695,7 @@ START_TEST (elm_code_test_widget_selection_select_word_symbols)
    free(selection);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_code_test_widget_selection(TCase *tc)
 {

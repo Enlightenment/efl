@@ -4,6 +4,6 @@ class Efl.Ui.Table_Static (Efl.Ui.Table)
    data: null;
    implements {
       Efl.Object.constructor;
-      Efl.Pack.Layout.layout_update;
+      Efl.Pack_Layout.layout_update;
    }
 }

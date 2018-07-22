@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -364,7 +364,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_icon_elm_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
+_elm_icon_efl_ui_widget_theme_apply(Eo *obj, Elm_Icon_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -615,7 +615,7 @@ _elm_icon_efl_object_constructor(Eo *obj, Elm_Icon_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ICON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ICON);
 
    return obj;
 }

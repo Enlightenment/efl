@@ -2,10 +2,11 @@
 # include "elementary_config.h"
 #endif
 
-#include <Emotion.h>
-
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_PART_PROTECTED
+
+#include <Emotion.h>
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -185,7 +186,7 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_player_elm_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
+_elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -667,7 +668,7 @@ _elm_player_efl_object_constructor(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
 
    return obj;
 }
@@ -679,7 +680,7 @@ _elm_player_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_player_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
+_elm_player_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},

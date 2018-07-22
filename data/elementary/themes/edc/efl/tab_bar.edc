@@ -1,0 +1,596 @@
+group { "efl/tab_bar";
+   images.image: "vgrad_med_lighter.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "shine.png" COMP;
+   images.image: "shadow_square_tiny.png" COMP;
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+      }
+      image { "shadow";
+         nomouse;
+         desc { "default";
+            rel.to: "base";
+            rel1.offset: -3 -2;
+            rel2.offset: 2 3;
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+         }
+      }
+      image { "bg";
+         desc { "default";
+            rel.to: "base";
+            image.normal: "vgrad_med_lighter.png";
+            rel1.offset: 0 0;
+            rel2.offset: -1 -1;
+            fill.smooth: 0;
+         }
+      }
+      swallow { "efl.content";
+         scale;
+         desc { "default";
+            rel.to: "base";
+         }
+      }
+      image { "bevel";
+         nomouse;
+         desc { "default";
+            rel.to: "base";
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      image { "shine";
+         nomouse;
+         desc { "default";
+            image.normal: "shine.png";
+            rel.to: "base";
+            rel1.offset: 0 -2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            FIXED_SIZE(69, 5)
+         }
+      }
+   }
+}
+
+group { "efl/tab_bar/tab";
+   images.image: "shadow_inset_bevels.png" COMP;
+   images.image: "shadow_angled_in_sides.png" COMP;
+   images.image: "horizontal_separated_bar_small_glow.png" COMP;
+   data.item: "transition_animation_on" "1";
+   images.image: "bevel_dark_in.png" COMP;
+
+#define ICON    1
+#define LABEL   2
+#define MASK    3
+#define DISABLE 4
+   script {   
+      public btmode;
+      public eval_mode(m) {
+         new m1 = m & MASK;
+         new d = m & DISABLE;
+         if (m1 == (ICON | LABEL)) {
+            if (!d) {
+               set_state(PART:"efl.icon", "default", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
+               set_state(PART:"label2", "default", 0.0);
+            } else {
+               set_state(PART:"efl.icon", "default", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"efl.text", "disabled", 0.0);
+               set_state(PART:"label2", "default", 0.0);
+            }
+         } else if (m1 == (ICON)) {
+            if (!d) {
+               set_state(PART:"efl.icon", "icononly", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"efl.text", "icononly", 0.0);
+               set_state(PART:"label2", "icononly", 0.0);
+            } else {
+               set_state(PART:"efl.icon", "icononly", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"efl.text", "icononly", 0.0);
+               set_state(PART:"label2", "icononly", 0.0);
+            }
+         } else if (m1 == (LABEL)) {
+            if (!d) {
+               set_state(PART:"efl.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"efl.text", "noicon", 0.0);
+               set_state(PART:"label2", "noicon", 0.0);
+            } else {
+               set_state(PART:"efl.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"efl.text", "noicon_disabled", 0.0);
+               set_state(PART:"label2", "noicon_disabled", 0.0);
+            }
+         } else {
+            if (!d) {
+               set_state(PART:"efl.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "default", 0.0);
+               set_state(PART:"efl.text", "noicon", 0.0);
+               set_state(PART:"label2", "noicon", 0.0);
+            } else {
+               set_state(PART:"efl.icon", "noicon", 0.0);
+               set_state(PART:"icon_clip", "disabled", 0.0);
+               set_state(PART:"efl.text", "noicon_disabled", 0.0);
+               set_state(PART:"label2", "noicon_disabled", 0.0);
+            }
+         }
+      }
+   }
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+         desc { "vert";
+            rel1.offset: -1 0;
+            rel2.offset: 0 -1;
+         }
+      }
+      image { "shadow1";
+         nomouse;
+         desc { "default";
+            rel.to: "base";
+            image.normal: "shadow_inset_bevels.png";
+            image.border: 2 2 0 1;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "shadow2";
+         nomouse;
+         desc { "default";
+            rel.to: "shadow1";
+            rel1.offset: 1 0;
+            rel2.offset: -2 -1;
+            image.normal: "shadow_angled_in_sides.png";
+            image.border: 8 8 0 1;
+            image.middle: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "bend_clip";
+         desc { "default";
+            hid;
+         }
+         desc { "vert";
+            vis;
+         }
+      }
+      image { "bend";
+         clip_to: "bend_clip";
+         desc { "default";
+            min: 2 2;
+            max: 99999 2;
+            rel2.offset: -1 1;
+            rel2.relative: 1.0 0.0;
+            image.normal: "bevel_dark_in.png";
+            image.border: 2 2 2 2;
+            fill.smooth: 0;
+            hid;
+            fixed: 1 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "icon_clip";
+         desc { "default";
+         }
+         desc { "disabled";
+            inherit: "default";
+            color: 255 255 255 64;
+         }
+      }
+      rect { "icon_clip1";
+         clip_to: "icon_clip";
+         desc { "default";
+            color: 255 255 255 255;
+            vis;
+         }
+         desc { "animation";
+            inherit: "default";
+            color: 255 255 255 0;
+            hid;
+         }
+      }
+      swallow { "efl.icon";
+         clip_to: "icon_clip1";
+         desc { "default";
+            align: 0.5 0.5;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 2 2;
+            rel2.to_y: "efl.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -1;
+         }
+         desc { "noicon";
+            inherit: "default" 0.0;
+            hid;
+            rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -4;
+         }
+         desc { "icononly";
+            inherit: "default" 0.0;
+            vis;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      rect { "icon_clip2";
+         clip_to: "icon_clip";
+         desc { "default";
+            color: 255 255 255 0;
+            hid;
+         }
+         desc { "animation";
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+            vis;
+         }
+      }
+      swallow { "efl.icon_new";
+         clip_to: "icon_clip2";
+         desc { "default";
+            align: 0.5 0.5;
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 2 2;
+            rel2.to_y: "efl.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -1;
+         }
+         desc { "noicon";
+            inherit: "default";
+            hid;
+            rel1.offset: 2 0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -4;
+         }
+         desc { "icononly";
+            inherit: "default" 0.0;
+            vis;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -3 -3;
+            rel2.to_y: "icon_clip";
+         }
+      }
+      rect { "text_clip1";
+         desc { "default";
+            color: 255 255 255 255;
+            vis;
+         }
+         desc { "animation";
+            inherit: "default";
+            color: 255 255 255 0;
+            hid;
+         }
+      }
+      text { "efl.text";
+         nomouse;
+         effect: SHADOW BOTTOM;
+         scale;
+         clip_to: "text_clip1";
+         desc { "default";
+            rel1.offset: 4 -3;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: -5 -3;
+            align: 0.5 1.0;
+            color: FN_COL_DEFAULT;
+            color_class: "toolbar_item";
+            text { font: FN; size: 10;
+               min: 1 1;
+               ellipsis: -1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            fixed: 0 1;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+            color_class: "toolbar_item_selected";
+         }
+         desc { "disabled";
+            inherit: "default";
+            color: FN_COL_DISABLE;
+            color_class: "toolbar_item_disabled";
+         }
+         desc { "noicon";
+            inherit: "default";
+            rel1.offset: 4 2;
+            rel1.relative: 0.0 0.0;
+         }
+         desc { "noicon_disabled";
+            inherit: "noicon";
+            color: FN_COL_DISABLE;
+            color_class: "toolbar_item_disabled";
+         }
+         desc { "icononly";
+            inherit: "default";
+            text.min: 0 0;
+            hid;
+            fixed: 1 1;
+         }
+      }
+      text { "label2";
+         nomouse;
+         effect: GLOW;
+         scale;
+         clip_to: "text_clip1";
+         desc { "default";
+            rel1.offset: -3 -3;
+            rel1.to: "efl.text";
+            rel2.offset: 2 1;
+            rel2.to: "efl.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "toolbar_item_active";
+            text { font: FN; size: 10;
+               text_source: "efl.text";
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "noicon";
+            inherit: "default";
+         }
+         desc { "noicon_disabled";
+            inherit: "noicon";
+         }
+         desc { "icononly";
+            inherit: "default";
+            text.min: 0 0;
+            hid;
+            fixed: 1 1;
+         }
+      }
+      rect { "text_clip2";
+         desc { "default";
+            color: 255 255 255 0;
+            hid;
+         }
+         desc { "animation";
+            inherit: "default";
+            color: 255 255 255 255;
+            vis;
+         }
+      }
+      image { "bar";
+         nomouse;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: -3 -7;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "shadow2";
+            rel2.offset: 2 2;
+            rel2.to: "shadow2";
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "highlight";
+         nomouse;
+         desc { "default";
+            fixed: 0 1;
+            rel1.offset: -3 -7;
+            rel1.relative: 0.0 1.0;
+            rel1.to: "shadow2";
+            rel2.offset: 2 2;
+            rel2.to: "shadow2";
+            image.normal: "horizontal_separated_bar_small_glow.png";
+            image.border: 4 4 4 4;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "event";
+         ignore_flags: ON_HOLD;
+         desc { "default";
+            color: 0 0 0 0;
+         }
+      }
+   programs {
+      program {
+         signal: "efl,orient,horizontal"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+         target: "bend_clip";
+      }
+      program {
+         signal: "efl,orient,vertical"; source: "efl";
+         action: STATE_SET "vert" 0.0;
+         target: "base";
+         target: "bend_clip";
+      }
+      program { name: "st0";
+         signal: "load"; source: "";
+         script {
+            set_int(btmode, LABEL | ICON);
+         }
+      }
+      program {
+         signal: "efl,state,selected"; source: "efl";
+         action: STATE_SET "selected" 0.0;
+         target: "efl.text";
+         target: "label2";
+         target: "shadow1";
+         target: "shadow2";
+         target: "bar";
+         target: "bend";
+      }
+      program {
+         signal: "efl,state,unselected"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "efl.text";
+         target: "label2";
+         target: "shadow1";
+         target: "shadow2";
+         target: "bar";
+         target: "bend";
+      }
+      program {
+         signal: "mouse,up,1"; source: "event";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
+      }
+      program {
+         signal: "efl,highlight,on"; source: "efl";
+         action: STATE_SET "selected" 0.0;
+         target: "highlight";
+      }
+      program {
+         signal: "efl,highlight,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "highlight";
+      }
+      program {
+         signal:  "mouse,in"; source:  "event";
+         action:  SIGNAL_EMIT "efl,mouse,in" "efl";
+      }
+      program { name: "mouse,out";
+         signal:  "mouse,out"; source:  "event";
+         action:  SIGNAL_EMIT "efl,mouse,out" "efl";
+      }
+      program { name: "st1";
+         signal: "efl,text,hidden"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st2";
+         signal: "efl,text,visible"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st3";
+         signal: "efl,icon,hidden"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st4";
+         signal: "efl,icon,visible"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st5";
+         signal: "efl,state,disabled"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program { name: "st6";
+         signal: "efl,state,enabled"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,moving"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "shadow1";
+         target: "shadow2";
+      }
+      program {
+         signal: "efl,state,icon_set,forward"; source: "efl";
+         after: "icon_set,animation";
+      }
+      program {
+         signal: "efl,state,icon_set,backward"; source: "efl";
+         after: "icon_set,animation";
+      }
+      program { name: "icon_set,animation";
+         signal: "efl,state,icon_set"; source: "efl";
+         action: STATE_SET "animation" 0.0;
+         target: "icon_clip1";
+         target: "icon_clip2";
+         transition: LINEAR 0.2;
+         after: "icon_set,animation,done";
+      }
+      program { name: "icon_set,animation,done";
+         action: SIGNAL_EMIT "efl,state,icon_set,done" "efl";
+      }
+      program {
+         signal: "efl,state,icon,reset"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "icon_clip1";
+         target: "icon_clip2";
+      }
+      program {
+         signal: "efl,state,label_set,forward"; source: "efl";
+         after: "label_set,animation";
+      }
+      program {
+         signal: "efl,state,label_set,backward"; source: "efl";
+         after: "label_set,animation";
+      }
+      program { name: "label_set,animation";
+         signal: "efl,state,label_set"; source: "efl";
+         action: STATE_SET "animation" 0.0;
+         target: "text_clip1";
+         target: "text_clip2";
+         transition: LINEAR 0.2;
+         after: "label_set,animation,done";
+      }
+      program { name: "label_set,animation,done";
+         action: SIGNAL_EMIT "efl,state,label_set,done" "efl";
+      }
+      program {
+         signal: "efl,state,label,reset"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "text_clip1";
+         target: "text_clip2";
+      }
+   }
+#undef ICON
+#undef LABEL
+#undef MASK
+#undef DISABLE
+   }
+}

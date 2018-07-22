@@ -1,4 +1,4 @@
-class Efl.Ui.Layout.Part.Table (Efl.Object, Efl.Pack.Table)
+class Efl.Ui.Layout.Part_Table (Efl.Object, Efl.Pack_Table)
 {
    [[Represents a Table created as part of a layout.
 
@@ -9,7 +9,7 @@ class Efl.Ui.Layout.Part.Table (Efl.Object, Efl.Pack.Table)
    methods {
       /* FIXME: Remove this. */
       @property real_part @protected {
-      	 [[Real part property]]
+          [[Real part property]]
          set {}
          values {
             layout: Efl.Object; [[Real part object]]
@@ -25,12 +25,12 @@ class Efl.Ui.Layout.Part.Table (Efl.Object, Efl.Pack.Table)
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
-      Efl.Pack.Table.pack_table;
-      Efl.Pack.Table.table_content_get;
-      Efl.Pack.Table.table_contents_get;
-      Efl.Pack.Table.table_position { get; }
-      Efl.Pack.Table.table_size { get; }
-      Efl.Pack.Table.table_columns { get; }
-      Efl.Pack.Table.table_rows { get; }
+      Efl.Pack_Table.pack_table;
+      Efl.Pack_Table.table_content_get;
+      Efl.Pack_Table.table_contents_get;
+      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_size { get; }
+      Efl.Pack_Table.table_columns { get; }
+      Efl.Pack_Table.table_rows { get; }
    }
 }

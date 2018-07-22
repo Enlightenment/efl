@@ -1,0 +1,11 @@
+class Efl.Canvas.Animation_Group_Sequential (Efl.Canvas.Animation_Group)
+{
+   [[Efl group sequential animation class]]
+   data: null;
+   methods {
+   }
+   implements {
+      Efl.Canvas.Animation.duration { get; }
+      Efl.Canvas.Animation.animation_apply;
+   }
+}

@@ -626,6 +626,9 @@ _standard_genlist_populate(Evas_Object *gl)
    IC("flag-vn")
    IC("flag-za")
 
+   CONTEXT("Mimetypes")
+   IC("inode-directory")
+
 #undef CONTEXT
 #undef IC
 

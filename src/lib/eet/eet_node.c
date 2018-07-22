@@ -275,6 +275,7 @@ eet_node_list_append(Eet_Node   *parent,
             }
 
           child->next = NULL;
+          child->parent = parent;
 
           eina_stringshare_del(tmp);
 
@@ -287,6 +288,7 @@ eet_node_list_append(Eet_Node   *parent,
    /* And add it to the parent. */
    nn->next = parent->values;
    parent->values = nn;
+   child->parent = parent;
 
    eina_stringshare_del(tmp);
 }
@@ -336,6 +338,7 @@ eet_node_struct_append(Eet_Node   *parent,
         child->next = NULL;
         parent->values = child;
      }
+   child->parent = parent;
 
    eina_stringshare_del(tmp);
 }
@@ -356,6 +359,7 @@ eet_node_hash_add(Eet_Node   *parent,
    /* And add it to the parent. */
    nn->next = parent->values;
    parent->values = nn;
+   child->parent = parent;
 }
 
 int

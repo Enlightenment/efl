@@ -9,15 +9,14 @@
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
 
-START_TEST(eo_value)
+EFL_START_TEST(eo_value)
 {
-   efl_object_init();
    char *str, *str2;
 
    Eina_Value val2, eo_val;
    void *tmpp = NULL;
    Efl_Dbg_Info *eo_dbg_info;
-   Eo *obj = efl_add(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
 
    eo_dbg_info = EFL_DBG_INFO_LIST_APPEND(NULL, "Root");
    efl_dbg_info_get(obj, eo_dbg_info);
@@ -45,9 +44,8 @@ START_TEST(eo_value)
    efl_dbg_info_free(eo_dbg_info);
    efl_unref(obj);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_value(TCase *tc)
 {

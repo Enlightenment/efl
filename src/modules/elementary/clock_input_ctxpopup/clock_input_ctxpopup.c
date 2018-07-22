@@ -314,10 +314,7 @@ field_create(Efl_Ui_Clock_Module_Data *module_data, Efl_Ui_Clock_Type  field_typ
 
    if (field_type == EFL_UI_CLOCK_TYPE_AMPM)
      {
-        field_obj = efl_add(EFL_UI_BUTTON_CLASS, ctx_mod->mod_data.base,
-                            elm_widget_element_update(ctx_mod->mod_data.base,
-                                                            efl_added,
-                                                            PART_NAME_ARRAY[field_type]));
+        field_obj = elm_button_add(ctx_mod->mod_data.base);
         efl_event_callback_add
            (field_obj, EFL_UI_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
      }

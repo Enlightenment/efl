@@ -1,4 +1,4 @@
-class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
+class Efl.Net.Server_Unix (Efl.Net.Server_Fd) {
     [[An AF_UNIX server.
 
       The @Efl.Net.Server.serve method will call bind(2) directly.
@@ -40,8 +40,8 @@ class Efl.Net.Server.Unix (Efl.Net.Server.Fd) {
     implements {
         Efl.Object.destructor;
         Efl.Net.Server.serve;
-        Efl.Net.Server.Fd.client_add;
-        Efl.Net.Server.Fd.client_reject;
-        Efl.Net.Server.Fd.socket_activate;
+        Efl.Net.Server_Fd.client_add;
+        Efl.Net.Server_Fd.client_reject;
+        Efl.Net.Server_Fd.socket_activate;
     }
 }

@@ -58,12 +58,6 @@ struct _Elm_Genlist_Data
    Ecore_Job                            *calc_job;
    int                                   walking;
    int                                   minw, minh;
-   Eina_Bool                             scr_minw : 1; /* a flag for determining
-                                                        * minimum width to limit
-                                                        * as their content size */
-   Eina_Bool                             scr_minh : 1; /* a flag for determining
-                                                        * minimum height to limit
-                                                        * as their content size */
    unsigned int                          item_count;
    Evas_Coord                            pan_x, pan_y;
    Elm_Object_Select_Mode                select_mode;
@@ -151,8 +145,15 @@ struct _Elm_Genlist_Data
 
    Eina_Hash                            *content_item_map;
    Eo                                   *provider;
+   Elm_Gen_Item                         *focus_on_realization;
 
-   Eina_Bool                             filter;
+   Eina_Bool                             scr_minw : 1; /* a flag for determining
+                                                        * minimum width to limit
+                                                        * as their content size */
+   Eina_Bool                             scr_minh : 1; /* a flag for determining
+                                                        * minimum height to limit
+                                                        * as their content size */
+   Eina_Bool                             filter : 1;
    Eina_Bool                             focus_on_selection_enabled : 1;
    Eina_Bool                             tree_effect_enabled : 1;
    Eina_Bool                             auto_scroll_enabled : 1;
@@ -338,7 +339,7 @@ struct _Elm_Genlist_Filter
   ELM_GENLIST_DATA_GET(o, ptr);                      \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -347,7 +348,7 @@ struct _Elm_Genlist_Filter
   ELM_GENLIST_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
-       CRI("No widget data for object %p (%s)",         \
+       ERR("No widget data for object %p (%s)",         \
            o, evas_object_type_get(o));                 \
        return val;                                      \
     }

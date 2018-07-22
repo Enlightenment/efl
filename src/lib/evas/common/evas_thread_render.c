@@ -11,7 +11,8 @@ static Eina_Inarray evas_thread_queue;
 static Evas_Thread_Command *evas_thread_queue_cache = NULL;
 static unsigned int evas_thread_queue_cache_max = 0;
 
-static volatile int evas_thread_exited = 0;
+static Eina_Lock evas_thread_exited_lock;
+static int evas_thread_exited = 0;
 static Eina_Bool exit_thread = EINA_FALSE;
 static int init_count = 0;
 
@@ -132,7 +133,7 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
                   eina_lock_release(&evas_thread_queue_lock);
                   goto out;
                }
-             eina_condition_wait(&evas_thread_queue_condition);
+             eina_condition_timedwait(&evas_thread_queue_condition, SHUTDOWN_TIMEOUT * 0.75);
           }
 
         if (!eina_inarray_count(&evas_thread_queue))
@@ -176,14 +177,20 @@ evas_thread_worker_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
      }
 
 out:
-   /* WRN: add a memory barrier or use a lock if we add more code here */
+   eina_lock_take(&evas_thread_exited_lock);
    evas_thread_exited = 1;
+   eina_lock_release(&evas_thread_exited_lock);
    return NULL;
 }
 
 static void
 evas_thread_fork_reset(void *data EINA_UNUSED)
 {
+   if (!eina_lock_new(&evas_thread_exited_lock))
+     {
+        CRI("Could not create exit thread lock (%m)");
+        goto on_error;
+     }
    if (!eina_lock_new(&evas_thread_queue_lock))
      {
         CRI("Could not create draw thread lock (%m)");
@@ -205,6 +212,7 @@ evas_thread_fork_reset(void *data EINA_UNUSED)
    return ;
 
  on_error:
+   eina_lock_free(&evas_thread_exited_lock);
    eina_lock_free(&evas_thread_queue_lock);
    eina_condition_free(&evas_thread_queue_condition);
 
@@ -227,8 +235,6 @@ evas_thread_init(void)
    exit_thread = EINA_FALSE;
    evas_thread_exited = 0;
 
-   ecore_init();
-
    if(!eina_threads_init())
      {
         CRI("Could not init eina threads");
@@ -236,6 +242,12 @@ evas_thread_init(void)
      }
 
    eina_inarray_step_set(&evas_thread_queue, sizeof (Eina_Inarray), sizeof (Evas_Thread_Command), 128);
+
+   if (!eina_lock_new(&evas_thread_exited_lock))
+     {
+        CRI("Could not create exit thread lock (%m)");
+        goto fail_on_lock_creation;
+     }
 
    if (!eina_lock_new(&evas_thread_queue_lock))
      {
@@ -263,13 +275,13 @@ fail_on_thread_creation:
    evas_thread_worker = 0;
    eina_condition_free(&evas_thread_queue_condition);
 fail_on_cond_creation:
+   eina_lock_free(&evas_thread_exited_lock);
    eina_lock_free(&evas_thread_queue_lock);
 fail_on_lock_creation:
    eina_threads_shutdown();
 fail_on_eina_thread_init:
    exit_thread = EINA_TRUE;
    evas_thread_exited = 1;
-   ecore_shutdown();
    return --init_count;
 }
 
@@ -300,8 +312,13 @@ evas_thread_shutdown(void)
    eina_lock_release(&evas_thread_queue_lock);
 
    _shutdown_timeout(&to, SHUTDOWN_TIMEOUT_RESET, SHUTDOWN_TIMEOUT);
-   while (!evas_thread_exited && (evas_async_events_process() != -1))
+   while (1)
      {
+        int exited;
+        eina_lock_take(&evas_thread_exited_lock);
+        exited = evas_thread_exited;
+        eina_lock_release(&evas_thread_exited_lock);
+        if (exited || (evas_async_events_process() == -1)) break;
         if(_shutdown_timeout(&to, SHUTDOWN_TIMEOUT_CHECK, SHUTDOWN_TIMEOUT))
           {
              CRI("Timeout shutdown thread. Skipping thread_join. Some resources could be leaked");
@@ -311,6 +328,7 @@ evas_thread_shutdown(void)
 
    eina_thread_join(evas_thread_worker);
 timeout_shutdown:
+   eina_lock_free(&evas_thread_exited_lock);
    eina_lock_free(&evas_thread_queue_lock);
    eina_condition_free(&evas_thread_queue_condition);
 
@@ -322,8 +340,6 @@ timeout_shutdown:
    eina_inarray_flush(&evas_thread_queue);
 
    eina_threads_shutdown();
-
-   ecore_shutdown();
 
    return 0;
 }

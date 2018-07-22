@@ -81,10 +81,14 @@ EAPI const char *evil_last_error_get(void);
  *
  * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
  * Windows XP.
+
+ * @deprecated
+ * This function is deprecated and returns @c NULL.
+ * Use eina_environment_tmp_get() instead.
  *
  * @ingroup Evil
  */
-__attribute__ ((__deprecated__)) EAPI const char *evil_tmpdir_get(void);
+EAPI const char *evil_tmpdir_get(void);
 
 /**
  * @brief Return a dir to store personal files.
@@ -103,10 +107,14 @@ __attribute__ ((__deprecated__)) EAPI const char *evil_tmpdir_get(void);
  *
  * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
  * Windows XP.
+
+ * @deprecated
+ * This function is deprecated and returns @c NULL.
+ * Use eina_environment_home_get() instead.
  *
  * @ingroup Evil
  */
-__attribute__ ((__deprecated__)) EAPI const char *evil_homedir_get(void);
+EAPI const char *evil_homedir_get(void);
 
 /**
  * @brief check if the given path is absolute.

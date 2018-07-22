@@ -1,18 +1,18 @@
-enum Efl.Text.Style.Backing_Type
+enum Efl.Text_Style_Backing_Type
 {
    [[Whether to apply backing style to the displayed text or not]]
    disabled = 0, [[Do not use backing]]
    enabled,      [[Use backing style]]
 }
 
-enum Efl.Text.Style.Strikethrough_Type
+enum Efl.Text_Style_Strikethrough_Type
 {
    [[Whether to apply strikethrough style to the displayed text or not]]
    disabled = 0, [[Do not use strikethrough]]
    enabled,      [[Use strikethrough style]]
 }
 
-enum Efl.Text.Style.Effect_Type
+enum Efl.Text_Style_Effect_Type
 {
    [[Effect to apply to the displayed text]]
    none = 0, [[No effect]]
@@ -32,7 +32,7 @@ enum Efl.Text.Style.Effect_Type
    outline_soft_shadow, [[Outline soft shadow effect]]
 }
 
-enum Efl.Text.Style.Shadow_Direction
+enum Efl.Text_Style_Shadow_Direction
 {
    [[Direction of the shadow style, if used]]
    bottom_right = 0, [[Shadow towards bottom right]]
@@ -45,7 +45,7 @@ enum Efl.Text.Style.Shadow_Direction
    right, [[Shadow towards right]]
 }
 
-enum Efl.Text.Style.Underline_Type
+enum Efl.Text_Style_Underline_Type
 {
    [[Underline type of the displayed text]]
    off = 0, [[Text without underline]]
@@ -55,7 +55,7 @@ enum Efl.Text.Style.Underline_Type
    dashed, [[Underlined with a dashed line]]
 }
 
-interface Efl.Text.Style {
+interface Efl.Text_Style {
    [[Style to apply to the text
 
      A style can be coloring, effects, underline, strikethrough etc.
@@ -76,15 +76,15 @@ interface Efl.Text.Style {
       }
 
       @property backing_type {
-      	 [[Enable or disable backing type]]
+          [[Enable or disable backing type]]
          values
          {
-            type: Efl.Text.Style.Backing_Type; [[Backing type]]
+            type: Efl.Text_Style_Backing_Type; [[Backing type]]
          }
       }
 
       @property backing_color {
-      	 [[Backing color]]
+          [[Backing color]]
          values
          {
             r: ubyte; [[Red component]]
@@ -98,7 +98,7 @@ interface Efl.Text.Style {
          [[Sets an underline style on the text]]
          values
          {
-            type: Efl.Text.Style.Underline_Type; [[Underline type]]
+            type: Efl.Text_Style_Underline_Type; [[Underline type]]
          }
       }
 
@@ -158,7 +158,7 @@ interface Efl.Text.Style {
          [[Type of underline2 style]]
          values
          {
-            type: Efl.Text.Style.Underline_Type; [[Underline type]]
+            type: Efl.Text_Style_Underline_Type; [[Underline type]]
          }
       }
 
@@ -178,7 +178,7 @@ interface Efl.Text.Style {
          [[Type of strikethrough style]]
          values
          {
-            type: Efl.Text.Style.Strikethrough_Type; [[Strikethrough type]]
+            type: Efl.Text_Style_Strikethrough_Type; [[Strikethrough type]]
          }
       }
 
@@ -197,7 +197,7 @@ interface Efl.Text.Style {
       @property effect_type {
          [[Type of effect used for the displayed text]]
          values {
-            type: Efl.Text.Style.Effect_Type; [[Effect type]]
+            type: Efl.Text_Style_Effect_Type; [[Effect type]]
          }
       }
       @property outline_color
@@ -217,7 +217,7 @@ interface Efl.Text.Style {
          [[Direction of shadow effect]]
          values
          {
-            type: Efl.Text.Style.Shadow_Direction; [[Shadow direction]]
+            type: Efl.Text_Style_Shadow_Direction; [[Shadow direction]]
          }
       }
 

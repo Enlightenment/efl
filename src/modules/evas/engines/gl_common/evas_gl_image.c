@@ -745,7 +745,8 @@ evas_gl_common_image_free(Evas_GL_Image *im)
 
    if (im->fglyph)
      {
-        im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
+        if (im->gc)
+          im->gc->font_glyph_images = eina_list_remove(im->gc->font_glyph_images, im);
         im->fglyph->ext_dat = NULL;
         im->fglyph->ext_dat_free = NULL;
      }
@@ -857,7 +858,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
    Image_Entry *ie;
    if (!im->im) return;
 
-   // alloc ensure can change im->im, so only get the local variable later.
    ie = &im->im->cache_entry;
    if (!im->tex)
      {
@@ -866,6 +866,8 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
         im->h = ie->h;
      }
    evas_gl_common_image_alloc_ensure(im);
+   // alloc ensure can change im->im, so only get the local variable later.
+   ie = &im->im->cache_entry;
 /*
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))

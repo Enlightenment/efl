@@ -1,0 +1,9 @@
+class Efl.Ui.Win_Legacy (Efl.Ui.Win, Efl.Ui.Legacy)
+{
+   [[Efl UI window class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.finalize;
+   }
+}

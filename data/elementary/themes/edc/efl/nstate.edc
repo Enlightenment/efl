@@ -3,7 +3,7 @@ group { "efl/nstate";
    programs {
       program {
          signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "elm,action,state,changed" "elm";
+         action: SIGNAL_EMIT "efl,action,state,changed" "efl";
       }
    }
 }

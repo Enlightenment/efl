@@ -17,7 +17,7 @@ elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
 {
    Efl_Ui_Focus_Object *ret;
 
-   ret = efl_add(FOCUS_TEST_CLASS, NULL,
+   ret = efl_add_ref(FOCUS_TEST_CLASS, NULL,
     efl_name_set(efl_added, name)
    );
    Q(ret, x, y, w, h);
@@ -48,7 +48,7 @@ elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
    Efl_Ui_Focus_Manager *m;
 
    root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
-   m = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
+   m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
      efl_ui_focus_manager_root_set(efl_added, root)
    );
    if (middle)
@@ -80,34 +80,35 @@ _focus_test_efl_ui_focus_object_focus_set(Eo *obj, Focus_Test_Data *pd, Eina_Boo
 {
    pd->focus = focus;
    printf("Object %p now focused\n", obj);
+   efl_ui_focus_object_focus_set(efl_super(obj, FOCUS_TEST_CLASS), focus);
 }
 
 EOLIAN static Eina_Rect
-_focus_test_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
 
 EOLIAN static void
-_focus_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
+_focus_test_test_size(Eo *obj EINA_UNUSED, Focus_Test_Data *pd, Eina_Rect rect)
 {
    pd->rect = rect;
 }
 
 EOLIAN static Eina_Rect
-_focus_test_efl_gfx_geometry_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->rect;
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_focus_test_efl_ui_focus_user_focus_manager_get(Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
+_focus_test_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Focus_Test_Data *pd)
 {
    return pd->manager;
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_focus_test_efl_ui_focus_user_focus_parent_get(Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
+_focus_test_efl_ui_focus_object_focus_parent_get(const Eo *obj, Focus_Test_Data *pd EINA_UNUSED)
 {
    return efl_parent_get(obj);
 }

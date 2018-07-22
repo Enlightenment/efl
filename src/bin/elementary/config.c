@@ -1944,6 +1944,25 @@ _status_config_focus(Evas_Object *win,
 }
 
 static void
+_web_entry_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *info EINA_UNUSED)
+{
+   if (interactive)
+     {
+        const char *web_backend_set = elm_config_web_backend_get();
+
+        web_backend = elm_object_text_get(obj);
+        if ((web_backend_set != web_backend) ||
+            (web_backend && web_backend_set &&
+             (!!strcmp(web_backend, web_backend_set))))
+          {
+             elm_config_web_backend_set(web_backend);
+             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
+             elm_config_all_flush();
+          }
+     }
+}
+
+static void
 _status_config_etc(Evas_Object *win,
                    Evas_Object *naviframe)
 {
@@ -2015,6 +2034,7 @@ _status_config_etc(Evas_Object *win,
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);
    elm_box_pack_end(bx3, en);
+   evas_object_event_callback_add(en, EVAS_CALLBACK_DEL, _web_entry_del, NULL);
 
    web_backend_entry = en;
 
@@ -4203,16 +4223,18 @@ _status_config_full(Evas_Object *win,
 
    tb_it = elm_toolbar_item_append(tb, "preferences-desktop-display",
                                    "Sizing", _cf_sizing, win);
-   elm_toolbar_item_append(tb, "preferences-desktop-theme",
-                           "Theme", _cf_themes, win);
+   if (!eina_streq(getenv("DESKTOP"), "Enlightenment"))
+     elm_toolbar_item_append(tb, "preferences-desktop-theme",
+                             "Theme", _cf_themes, win);
    elm_toolbar_item_append(tb, "preferences-color",
                            "Icons", _cf_icons, win);
    elm_toolbar_item_append(tb, "preferences-desktop-font",
                            "Fonts", _cf_fonts, win);
    elm_toolbar_item_append(tb, "preferences-desktop-multimedia",
                            "Audio", _cf_audio, win);
-   elm_toolbar_item_append(tb, "preferences-profile",
-                           "Profiles", _cf_profiles, win);
+   if (!eina_streq(getenv("DESKTOP"), "Enlightenment"))
+     elm_toolbar_item_append(tb, "preferences-profile",
+                             "Profiles", _cf_profiles, win);
    elm_toolbar_item_append(tb, NULL, "Scrolling", _cf_scrolling, win);
    elm_toolbar_item_append(tb, NULL, "Rendering", _cf_rendering, win);
    elm_toolbar_item_append(tb, NULL, "Caches", _cf_caches, win);
@@ -4284,19 +4306,6 @@ efl_terminate(void *data EINA_UNUSED,
               const Efl_Event *ev EINA_UNUSED)
 {
    fprintf(stderr, "Terminating.\n");
-   if (interactive)
-     {
-        const char *web_backend_set = elm_config_web_backend_get();
-
-        web_backend = elm_object_text_get(web_backend_entry);
-        if (web_backend_set != web_backend ||
-            (web_backend && web_backend_set && !!strcmp(web_backend, web_backend_set)))
-          {
-             elm_config_web_backend_set(web_backend);
-             fprintf(stderr, "web backend set to : [%s]\n", elm_config_web_backend_get());
-             elm_config_all_flush();
-          }
-     }
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY

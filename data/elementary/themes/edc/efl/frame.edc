@@ -1,3 +1,166 @@
-group { "efl/frame";
-   inherit: "elm/frame/base/default";
+group { name: "efl/frame";
+   images.image: "shadow_square_tiny.png" COMP;
+   images.image: "vgrad_med_curved.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "holes_tiny_vert.png" COMP;
+   parts {
+      part { name: "shadow"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: -1 0;
+            rel2.offset: 0 1;
+            image.normal: "shadow_square_tiny.png";
+            image.border: 6 6 6 6;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 2 0;
+            rel1.to_y: "top";
+            rel2.offset: -3 -3;
+            color: 64 64 64 255;
+         }
+      }
+      part { name: "top";
+         description { state: "default" 0.0;
+            image.normal: "vgrad_med_curved.png";
+            rel1.offset: 2 2;
+            rel2.to_y: "efl.text";
+            rel2.offset: -3 -1;
+            fill.smooth: 0;
+            TILED_HORIZ(120)
+         }
+      }
+      part { name: "edge1";
+         description { state: "default" 0.0;
+            image.normal: "holes_tiny_vert.png";
+            rel1.offset: 4 0;
+            rel1.to_y: "efl.text";
+            rel2.offset: 4 -1;
+            rel2.relative: 0.0 1.0;
+            rel2.to_y: "efl.text";
+            align: 0.0 0.5;
+            FIXED_SIZE(3, 11)
+         }
+      }
+      part { name: "edge2";
+         description { state: "default" 0.0;
+            image.normal: "holes_tiny_vert.png";
+            rel1.offset: -5 0;
+            rel1.to_y: "efl.text";
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -5 -1;
+            rel2.relative: 1.0 1.0;
+            rel2.to_y: "efl.text";
+            align: 1.0 0.5;
+            FIXED_SIZE(3, 11)
+         }
+      }
+      part { name: "efl.text"; type: TEXT;
+         scale: 1;
+         effect: SHADOW BOTTOM;
+         description { state: "default" 0.0;
+            color_class: "frame";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 2;
+            rel1.to_x: "edge1";
+            rel2.relative: 0.0 0.0;
+            rel2.offset: -3 1;
+            rel2.to_x: "edge2";
+            align: 0.0 0.0;
+            color: FN_COL_DISABLE;
+            text { font: FNBD; size: 10;
+               text_class: "frame";
+               align: 0.0 0.0;
+               min: 0 1;
+            }
+            fixed: 0 1;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 5 0;
+            rel1.to_y: "efl.text";
+            rel2.offset: -7 -7;
+         }
+      }
+      part { name: "efl.content"; type: SWALLOW;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            align: 0.0 1.0;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 5 0;
+            rel1.to_y: "efl.text";
+            rel2.offset: -7 -7;
+         }
+         description { state: "collapsed" 0.0;
+            inherit: "default" 0.0;
+            minmul: 1.0 0.0;
+         }
+      }
+      part { name: "bevel"; mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            image.normal: "bevel_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "event"; type: RECT; ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.to_y: "efl.text";
+            rel2.to_y: "efl.text";
+         }
+      }
+   }
+   programs {
+      program { name: "collapse";
+         action:  STATE_SET "collapsed" 0.0;
+         target: "efl.content";
+         transition: ACCELERATE 0.3;
+         after: "signal";
+      }
+      program { name: "expand";
+         action:  STATE_SET "default" 0.0;
+         target: "efl.content";
+         transition: DECELERATE 0.3;
+         after: "signal";
+      }
+      program {
+         signal:  "mouse,up,1"; source:  "event";
+         action:  SIGNAL_EMIT "efl,action,click" "efl";
+      }
+      program {
+         signal:  "efl,action,toggle"; source: "efl";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"efl.content", st, 30, vl);
+            if (!strcmp(st, "default"))
+              run_program(PROGRAM:"collapse");
+            else
+              run_program(PROGRAM:"expand");
+         }
+      }
+      program {
+         signal:  "efl,action,switch"; source: "efl";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"efl.content", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"efl.content", "collapsed", 0.0);
+            else
+              set_state(PART:"efl.content", "default", 0.0);
+         }
+      }
+      program { name: "signal";
+         action: SIGNAL_EMIT "efl,anim,done" "efl";
+      }
+   }
 }

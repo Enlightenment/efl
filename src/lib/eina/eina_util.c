@@ -48,10 +48,6 @@
  *                                   API                                      *
  *============================================================================*/
 
-#ifdef _WIN32
-static char home_storage[8];
-#endif
-
 EAPI const char *
 eina_environment_home_get(void)
 {
@@ -64,13 +60,14 @@ eina_environment_home_get(void)
    if (!home &&
        (getenv("HOMEDRIVE") && getenv("HOMEPATH")))
      {
-        memcpy(home_storage, getenv("HOMEDRIVE"), strlen(getenv("HOMEDRIVE")));
-        memcpy(home_storage + strlen(getenv("HOMEDRIVE")),
-               getenv("HOMEPATH"), strlen(getenv("HOMEPATH")) + 1);
-        home = home_storage;
+        char buf[PATH_MAX];
+
+        snprintf(buf, sizeof(buf), "%s%s",
+                 getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+        home = strdup(buf);
+        return home;
      }
    if (!home) home = "C:\\";
-
 #else
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid()) home = getenv("HOME");

@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Access.Text.Granularity
+enum Efl.Access.Text_Granularity
 {
    [[Text accessibility granularity]]
    char, [[Character granularity]]
@@ -10,7 +10,7 @@ enum Efl.Access.Text.Granularity
    paragraph [[Paragraph granularity]]
 }
 
-enum Efl.Access.Text.Clip_Type
+enum Efl.Access.Text_Clip_Type
 {
    [[Text clip type]]
    legacy: elm_atspi_text_clip;
@@ -20,14 +20,14 @@ enum Efl.Access.Text.Clip_Type
    both [[Both clip types]]
 }
 
-struct Efl.Access.Text.Attribute
+struct Efl.Access.Text_Attribute
 {
    [[Text attribute]]
    name:  string; [[Text attribute name]]
    value: string; [[Text attribute value]]
 }
 
-struct Efl.Access.Text.Range
+struct Efl.Access.Text_Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]
@@ -35,7 +35,7 @@ struct Efl.Access.Text.Range
    content: ptr(char); [[Range content]]
 }
 
-struct Efl.Access.Text.Change_Info
+struct Efl.Access.Text_Change_Info
 {
    [[Text change information]]
    content: string; [[Change content]]
@@ -64,7 +64,7 @@ interface Efl.Access.Text ()
             [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
-            granularity: Efl.Access.Text.Granularity; [[Text granularity]]
+            granularity: Efl.Access.Text_Granularity; [[Text granularity]]
             start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
@@ -72,7 +72,7 @@ interface Efl.Access.Text ()
             string: mstring @owned; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
          }
       }
-      @property text @protected @beta {
+      @property access_text @protected @beta {
          get {
             [[Gets text of accessible widget.]]
          }
@@ -85,7 +85,7 @@ interface Efl.Access.Text ()
          }
       }
       @property caret_offset @protected @beta {
-      	 [[Caret offset property]]
+          [[Caret offset property]]
          get {
             [[Gets offset position of caret (cursor)]]
          }
@@ -110,7 +110,7 @@ interface Efl.Access.Text ()
             value: mstring @owned; [[Value of text attribute. Should be free()]]
          }
       }
-      @property attributes @protected @beta {
+      @property text_attributes @protected @beta {
          get {
             [[Gets list of all text attributes.]]
          }
@@ -119,19 +119,19 @@ interface Efl.Access.Text ()
             end_offset: ptr(int); [[End offset]]
          }
          values {
-            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of text attributes]]
+            attributes: list<ptr(Efl.Access.Text_Attribute) @owned> @owned; [[List of text attributes]]
          }
       }
       @property default_attributes @protected @beta {
-      	 [[Default attributes]]
+          [[Default attributes]]
          get {
          }
          values {
-            attributes: list<ptr(Efl.Access.Text.Attribute) @owned> @owned; [[List of default attributes]]
+            attributes: list<ptr(Efl.Access.Text_Attribute) @owned> @owned; [[List of default attributes]]
          }
       }
       @property character_extents @protected @beta {
-      	 [[Character extents]]
+          [[Character extents]]
          get {
             return: bool; [[$true if character extents, $false otherwise]]
          }
@@ -144,7 +144,7 @@ interface Efl.Access.Text ()
          }
       }
       @property character_count @protected @beta {
-      	 [[Character count]]
+          [[Character count]]
          get {
          }
          values {
@@ -152,7 +152,7 @@ interface Efl.Access.Text ()
          }
       }
       @property offset_at_point @protected @beta {
-      	 [[Offset at given point]]
+          [[Offset at given point]]
          get {
          }
          keys {
@@ -165,21 +165,21 @@ interface Efl.Access.Text ()
          }
       }
       @property bounded_ranges @protected @beta {
-      	 [[Bounded ranges]]
+          [[Bounded ranges]]
          get {
          }
          keys {
             screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
             rect: Eina.Rect; [[Bounding box]]
-            xclip: Efl.Access.Text.Clip_Type; [[xclip]]
-            yclip: Efl.Access.Text.Clip_Type; [[yclip]]
+            xclip: Efl.Access.Text_Clip_Type; [[xclip]]
+            yclip: Efl.Access.Text_Clip_Type; [[yclip]]
          }
          values {
-            ranges: list<ptr(Efl.Access.Text.Range) @owned> @owned; [[List of ranges]]
+            ranges: list<ptr(Efl.Access.Text_Range) @owned> @owned; [[List of ranges]]
          }
       }
       @property range_extents @protected @beta {
-      	 [[Range extents]]
+          [[Range extents]]
          get {
             return: bool; [[$true if range extents, $false otherwise]]
          }
@@ -200,7 +200,7 @@ interface Efl.Access.Text ()
             count: int; [[Selection counter]]
          }
       }
-      @property selection @protected @beta {
+      @property access_selection @protected @beta {
          [[Selection property]]
          get {
          }
@@ -232,11 +232,13 @@ interface Efl.Access.Text ()
       }
    }
    events {
-      access,text,bounds,changed; [[Text bounds have changed]]
-      access,text,attributes,changed; [[Text attributes have changed]]
-      access,text,caret,moved; [[Caret moved]]
-      access,text,inserted; [[Text was inserted]]
-      access,text,removed; [[Text was removed]]
-      access,text,selection,changed; [[Text selection has changed]]
+      /* FIXME: Nobody emits these
+      access,text,bounds,changed: void; [[Text bounds have changed]]
+      access,text,attributes,changed: void; [[Text attributes have changed]]
+      */
+      access,text,caret,moved: void; [[Caret moved]]
+      access,text,inserted: Efl.Access.Text_Change_Info; [[Text was inserted]]
+      access,text,removed: Efl.Access.Text_Change_Info; [[Text was removed]]
+      access,text,selection,changed: void; [[Text selection has changed]]
    }
 }

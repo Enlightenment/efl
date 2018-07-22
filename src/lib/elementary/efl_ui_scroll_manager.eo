@@ -1,6 +1,6 @@
 class Efl.Ui.Scroll.Manager (Efl.Object,
                              Efl.Ui.Base,
-                             Efl.Ui.Scrollable.Interactive,
+                             Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar)
 {
    [[Efl ui scroll manager class]]
@@ -8,16 +8,16 @@ class Efl.Ui.Scroll.Manager (Efl.Object,
    eo_prefix: efl_ui_scroll_manager;
    methods {
       @property pan @protected {
-	 [[This is the internal canvas object managed by scroll manager.
-		 
-	   This property is protected as it is meant for scrollable object
-	   implementations only, to set and access the internal canvas object.
-	   If pan is set to NULL, scrolling does not work.
-	 ]]
+    [[This is the internal pan object managed by scroll manager.
+       
+      This property is protected as it is meant for scrollable object
+      implementations only, to set and access the internal pan object.
+      If pan is set to NULL, scrolling does not work.
+    ]]
          set {
          }
          values {
-            pan: Efl.Canvas.Object @nullable; [[Pan object]]
+            pan: Efl.Ui.Pan @nullable; [[Pan object]]
          }
       }
    }
@@ -25,20 +25,20 @@ class Efl.Ui.Scroll.Manager (Efl.Object,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Base.mirrored { set; }
-      Efl.Ui.Scrollable.Interactive.content_pos { set; get; }
-      Efl.Ui.Scrollable.Interactive.content_size{ get; }
-      Efl.Ui.Scrollable.Interactive.viewport_geometry{ get; }
-      Efl.Ui.Scrollable.Interactive.bounce_enabled { set; get; }
-      Efl.Ui.Scrollable.Interactive.scroll_freeze { get; set; }
-      Efl.Ui.Scrollable.Interactive.scroll_hold { get; set; }
-      Efl.Ui.Scrollable.Interactive.looping { get; set; }
-      Efl.Ui.Scrollable.Interactive.movement_block { get; set; }
-      Efl.Ui.Scrollable.Interactive.gravity { get; set; }
-      Efl.Ui.Scrollable.Interactive.match_content { set; }
+      Efl.Ui.Scrollable_Interactive.content_pos { set; get; }
+      Efl.Ui.Scrollable_Interactive.content_size{ get; }
+      Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }
+      Efl.Ui.Scrollable_Interactive.bounce_enabled { set; get; }
+      Efl.Ui.Scrollable_Interactive.scroll_freeze { get; set; }
+      Efl.Ui.Scrollable_Interactive.scroll_hold { get; set; }
+      Efl.Ui.Scrollable_Interactive.looping { get; set; }
+      Efl.Ui.Scrollable_Interactive.movement_block { get; set; }
+      Efl.Ui.Scrollable_Interactive.gravity { get; set; }
+      Efl.Ui.Scrollable_Interactive.match_content { set; }
       Efl.Ui.Scrollbar.bar_mode { get; set; }
       Efl.Ui.Scrollbar.bar_size { get; }
       Efl.Ui.Scrollbar.bar_position { get; set; }
       Efl.Ui.Scrollbar.bar_visibility_update;
-      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Ui.Scrollable_Interactive.scroll;
    }
 }

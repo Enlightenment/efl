@@ -18,7 +18,6 @@
 
 extern "C" {
 #include "Elementary.h"
-#include "elm_widget.h"
 }
 
 #include <Edje.hh>

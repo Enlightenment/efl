@@ -32,3 +32,4 @@ mem_strdup(const char *s)
    exit(-1);
    return NULL;
 }
+

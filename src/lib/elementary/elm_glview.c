@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -27,12 +27,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EOLIAN static Eina_Bool
-_elm_glview_elm_widget_on_focus_update(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_glview_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Glview_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (efl_ui_focus_object_focus_get(obj))
@@ -86,12 +86,12 @@ _glview_update_surface(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_glview_efl_gfx_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
+_elm_glview_efl_gfx_entity_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 
    sd->resized = EINA_TRUE;
 
@@ -118,7 +118,7 @@ _render_cb(void *obj, const Efl_Event *event EINA_UNUSED)
    // Do a make current
    if (!evas_gl_make_current(sd->evasgl, sd->surface, sd->context))
      {
-        ERR("Failed doing make current.\n");
+        ERR("Failed doing make current.");
         goto on_error;
      }
 
@@ -158,7 +158,7 @@ _render_cb(void *obj, const Efl_Event *event EINA_UNUSED)
      }
    else
      {
-        ERR("Invalid Render Policy.\n");
+        ERR("Invalid Render Policy.");
         goto on_error;
      }
 
@@ -214,7 +214,7 @@ _set_render_policy_callback(Evas_Object *obj)
         break;
 
       default:
-        ERR("Invalid Render Policy.\n");
+        ERR("Invalid Render Policy.");
         return;
      }
 }
@@ -241,8 +241,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
    priv->evasgl = evas_gl_new(evas_object_evas_get(obj));
    if (!priv->evasgl)
      {
-        ERR("Failed Creating an Evas GL Object.\n");
-
+        ERR("Failed Creating an Evas GL Object.");
         return;
      }
 
@@ -250,8 +249,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
    priv->config = evas_gl_config_new();
    if (!priv->config)
      {
-        ERR("Failed Creating a Config Object.\n");
-
+        ERR("Failed Creating a Config Object.");
         evas_gl_free(priv->evasgl);
         priv->evasgl = NULL;
         return;
@@ -278,8 +276,7 @@ _elm_glview_constructor(Eo *obj, Elm_Glview_Data *priv)
      priv->context = evas_gl_context_version_create(priv->evasgl, NULL, priv->gles_version);
    if (!priv->context)
      {
-        ERR("Error Creating an Evas_GL Context.\n");
-
+        ERR("Error Creating an Evas_GL Context.");
         ELM_SAFE_FREE(priv->config, evas_gl_config_free);
         ELM_SAFE_FREE(priv->evasgl, evas_gl_free);
         return;
@@ -361,7 +358,7 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
 }
 
@@ -378,7 +375,7 @@ _elm_glview_efl_object_finalize(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL_API*
-_elm_glview_gl_api_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_gl_api_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_context_api_get(sd->evasgl, sd->context);
 }
@@ -479,7 +476,7 @@ _elm_glview_resize_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Resize_Po
         return EINA_TRUE;
 
       default:
-        ERR("Invalid Scale Policy.\n");
+        ERR("Invalid Scale Policy.");
         return EINA_FALSE;
      }
 
@@ -492,7 +489,7 @@ _elm_glview_render_policy_set(Eo *obj, Elm_Glview_Data *sd, Elm_GLView_Render_Po
    if ((policy != ELM_GLVIEW_RENDER_POLICY_ON_DEMAND) &&
        (policy != ELM_GLVIEW_RENDER_POLICY_ALWAYS))
      {
-        ERR("Invalid Render Policy.\n");
+        ERR("Invalid Render Policy.");
         return EINA_FALSE;
      }
 
@@ -518,7 +515,7 @@ _elm_glview_efl_gfx_view_view_size_set(Eo *obj, Elm_Glview_Data *sd, Eina_Size2D
 }
 
 EOLIAN static Eina_Size2D
-_elm_glview_efl_gfx_view_view_size_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return EINA_SIZE2D(sd->w, sd->h);
 }
@@ -539,13 +536,13 @@ _elm_glview_draw_request(Eo *obj, Elm_Glview_Data *sd)
 }
 
 EOLIAN static Evas_GL *
-_elm_glview_evas_gl_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_evas_gl_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return sd->evasgl;
 }
 
 EOLIAN static int
-_elm_glview_rotation_get(Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
+_elm_glview_rotation_get(const Eo *obj EINA_UNUSED, Elm_Glview_Data *sd)
 {
    return evas_gl_rotation_get(sd->evasgl);
 }

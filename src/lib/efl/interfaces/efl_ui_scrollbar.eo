@@ -59,12 +59,12 @@ interface Efl.Ui.Scrollbar ()
       }
    }
    events {
-      bar,press; [[Called when bar is pressed]]
-      bar,unpress; [[Called when bar is unpressed]]
-      bar,drag; [[Called when bar is dragged]]
-      bar,size,changed; [[Called when bar size is changed]]
-      bar,pos,changed; [[Called when bar position is changed]]
-      bar,show; [[Callend when bar is shown]]
-      bar,hide; [[Called when bar is hidden]]
+      bar,press: Efl.Ui.Scrollbar_Direction; [[Called when bar is pressed]]
+      bar,unpress: Efl.Ui.Scrollbar_Direction; [[Called when bar is unpressed]]
+      bar,drag: Efl.Ui.Scrollbar_Direction; [[Called when bar is dragged]]
+      bar,size,changed: void; [[Called when bar size is changed]]
+      bar,pos,changed: void; [[Called when bar position is changed]]
+      bar,show: Efl.Ui.Scrollbar_Direction; [[Callend when bar is shown]]
+      bar,hide: Efl.Ui.Scrollbar_Direction; [[Called when bar is hidden]]
    }
 }

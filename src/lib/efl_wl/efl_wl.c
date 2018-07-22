@@ -26,7 +26,7 @@
  * the opaque struct client side.
  */
 #include <wayland-server.h>
-#include "xdg-shell-unstable-v6-server-protocol.h"
+#include "xdg-shell-server-protocol.h"
 #include "efl-hints-server-protocol.h"
 #include "dmabuf.h"
 
@@ -193,6 +193,7 @@ typedef struct Comp_Seat
    struct
    {
       struct wl_array keys;
+      struct wl_array *keys_external;
       struct
       {
          xkb_mod_mask_t depressed;
@@ -211,6 +212,7 @@ typedef struct Comp_Seat
       int repeat_delay;
       Eina_Hash *resources;
       Comp_Surface *enter;
+      Eina_Bool external : 1;
    } kbd;
 
    struct
@@ -249,6 +251,7 @@ typedef struct Comp_Seat
    Eina_Bool focused : 1;
    Eina_Bool selection_changed : 1;
    Eina_Bool selection_exists : 1;
+   Eina_Bool event_propagate : 1;
 } Comp_Seat;
 
 typedef struct Comp_Buffer_State
@@ -281,9 +284,9 @@ typedef struct Shell_Positioner
    struct wl_resource *res;
    Evas_Coord_Size size;
    Eina_Rectangle anchor_rect;
-   enum zxdg_positioner_v6_anchor anchor;
-   enum zxdg_positioner_v6_gravity gravity;
-   enum zxdg_positioner_v6_constraint_adjustment constrain;
+   enum xdg_positioner_anchor anchor;
+   enum xdg_positioner_gravity gravity;
+   enum xdg_positioner_constraint_adjustment constrain;
    Evas_Coord_Point offset;
 } Shell_Positioner;
 
@@ -631,6 +634,7 @@ static void
 comp_surface_proxy_win_del(Ecore_Evas *ee)
 {
    Comp_Seat *s = ecore_evas_data_get(ee, "comp_seat");
+   if (!s) return;
 
    s->drag.proxy_win = NULL;
    //fprintf(stderr, "PROXY WIN DEL\n");
@@ -734,19 +738,19 @@ resource_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resou
 static int
 _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
 {
-   enum zxdg_positioner_v6_anchor an = ZXDG_POSITIONER_V6_ANCHOR_NONE;
-   enum zxdg_positioner_v6_gravity grav = ZXDG_POSITIONER_V6_GRAVITY_NONE;
+   enum xdg_positioner_anchor an = XDG_POSITIONER_ANCHOR_NONE;
+   enum xdg_positioner_gravity grav = XDG_POSITIONER_GRAVITY_NONE;
 
    if (invert)
      {
-        if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_LEFT)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_RIGHT;
-        else if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_LEFT;
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_RIGHT;
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_LEFT;
+        if (sp->anchor == XDG_POSITIONER_ANCHOR_LEFT)
+          an = XDG_POSITIONER_ANCHOR_RIGHT;
+        else if (sp->anchor == XDG_POSITIONER_ANCHOR_RIGHT)
+          an = XDG_POSITIONER_ANCHOR_LEFT;
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_LEFT)
+          grav |= XDG_POSITIONER_GRAVITY_RIGHT;
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_RIGHT)
+          grav |= XDG_POSITIONER_GRAVITY_LEFT;
      }
    else
      {
@@ -755,20 +759,20 @@ _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
      }
 
    /* left edge */
-   if (an & ZXDG_POSITIONER_V6_ANCHOR_LEFT)
+   if (an == XDG_POSITIONER_ANCHOR_LEFT)
      x += sp->anchor_rect.x;
    /* right edge */
-   else if (an & ZXDG_POSITIONER_V6_ANCHOR_RIGHT)
+   else if (an == XDG_POSITIONER_ANCHOR_RIGHT)
      x += sp->anchor_rect.x + sp->anchor_rect.w;
    /* center */
    else
      x += sp->anchor_rect.x + (sp->anchor_rect.w / 2);
 
    /* flip left over anchor */
-   if (grav & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+   if (grav & XDG_POSITIONER_GRAVITY_LEFT)
      x -= sp->size.w;
    /* center on anchor */
-   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
+   else if (!(grav & XDG_POSITIONER_GRAVITY_RIGHT))
      x -= sp->size.w / 2;
    return x;
 }
@@ -776,19 +780,19 @@ _apply_positioner_x(int x, Shell_Positioner *sp, Eina_Bool invert)
 static int
 _apply_positioner_y(int y, Shell_Positioner *sp, Eina_Bool invert)
 {
-   enum zxdg_positioner_v6_anchor an = ZXDG_POSITIONER_V6_ANCHOR_NONE;
-   enum zxdg_positioner_v6_gravity grav = ZXDG_POSITIONER_V6_GRAVITY_NONE;
+   enum xdg_positioner_anchor an = XDG_POSITIONER_ANCHOR_NONE;
+   enum xdg_positioner_gravity grav = XDG_POSITIONER_GRAVITY_NONE;
 
    if (invert)
      {
-        if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_TOP)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_BOTTOM;
-        else if (sp->anchor & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)
-          an |= ZXDG_POSITIONER_V6_ANCHOR_TOP;
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_BOTTOM;
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
-          grav |= ZXDG_POSITIONER_V6_GRAVITY_TOP;
+        if (sp->anchor == XDG_POSITIONER_ANCHOR_TOP)
+          an = XDG_POSITIONER_ANCHOR_BOTTOM;
+        else if (sp->anchor == XDG_POSITIONER_ANCHOR_BOTTOM)
+          an = XDG_POSITIONER_ANCHOR_TOP;
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_TOP)
+          grav |= XDG_POSITIONER_GRAVITY_BOTTOM;
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_BOTTOM)
+          grav |= XDG_POSITIONER_GRAVITY_TOP;
      }
    else
      {
@@ -797,20 +801,20 @@ _apply_positioner_y(int y, Shell_Positioner *sp, Eina_Bool invert)
      }
 
    /* up edge */
-   if (an & ZXDG_POSITIONER_V6_ANCHOR_TOP)
+   if (an == XDG_POSITIONER_ANCHOR_TOP)
      y += sp->anchor_rect.y;
    /* bottom edge */
-   else if (an & ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)
+   else if (an == XDG_POSITIONER_ANCHOR_BOTTOM)
      y += sp->anchor_rect.y + sp->anchor_rect.h;
    /* center */
    else
      y += sp->anchor_rect.y + (sp->anchor_rect.h / 2);
 
    /* flip up over anchor */
-   if (grav & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+   if (grav & XDG_POSITIONER_GRAVITY_TOP)
      y -= sp->size.h;
    /* center on anchor */
-   else if (!(grav & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
+   else if (!(grav & XDG_POSITIONER_GRAVITY_BOTTOM))
      y -= sp->size.h / 2;
    return y;
 }
@@ -823,19 +827,19 @@ _apply_positioner_slide(Comp_Surface *cs, Shell_Positioner *sp, int *x, int *y, 
    evas_object_geometry_get(cs->parent->obj, &px, &py, NULL, NULL);
    evas_object_geometry_get(cs->c->obj, &cx, &cy, NULL, NULL);
    px -= cx, py -= cy;
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_X) &&
        (!CONTAINS(zx, zy, zw, zh, *x, zy, *w, 1)))
      {
         int sx = *x;
 
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_LEFT)
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_LEFT)
           {
              if (*x + *w > zx + zw)
                sx = MAX(zx + zw - *w, px + sp->anchor_rect.x - *w);
              else if (*x < zx)
                sx = MIN(zx, px + sp->anchor_rect.x + sp->anchor_rect.w);
           }
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_RIGHT)
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_RIGHT)
           {
              if (*x < zx)
                sx = MIN(zx, *x + sp->anchor_rect.x + sp->anchor_rect.w);
@@ -846,19 +850,19 @@ _apply_positioner_slide(Comp_Surface *cs, Shell_Positioner *sp, int *x, int *y, 
           *x = sx;
      }
    if (!CONSTRAINED(*w, *h, *x, *y)) return EINA_TRUE;
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_SLIDE_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, *y, 1, *h)))
      {
         int sy = *y;
 
-        if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_TOP)
+        if (sp->gravity & XDG_POSITIONER_GRAVITY_TOP)
           {
              if (*y + *h > zy + zh)
                sy = MAX(zy + zh - *h, py + sp->anchor_rect.y - *h);
              else if (*y < zy)
                sy = MIN(zy, py + sp->anchor_rect.y + sp->anchor_rect.h);
           }
-        else if (sp->gravity & ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)
+        else if (sp->gravity & XDG_POSITIONER_GRAVITY_BOTTOM)
           {
              if (*y < zy)
                sy = MIN(zy, py + sp->anchor_rect.y + sp->anchor_rect.h);
@@ -913,7 +917,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
     - slide
     - resize
     */
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_X) &&
        (!CONTAINS(zx, zy, zw, zh, x, zy, w, 1)))
      {
         int fx;
@@ -928,7 +932,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
         if (w > 0) evas_object_resize(cs->obj, w, h);
         return;
      }
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_FLIP_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_FLIP_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, y, 1, h)))
      {
         int fy;
@@ -957,7 +961,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
         return;
      }
 
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_X) &&
        (!CONTAINS(zx, zy, zw, zh, x, zy, w, 1)))
      {
         w = zx + zw - x;
@@ -968,7 +972,7 @@ _apply_positioner(Comp_Surface *cs, Shell_Positioner *sp)
              return;
           }
      }
-   if ((sp->constrain & ZXDG_POSITIONER_V6_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
+   if ((sp->constrain & XDG_POSITIONER_CONSTRAINT_ADJUSTMENT_RESIZE_Y) &&
        (!CONTAINS(zx, zy, zw, zh, zx, y, 1, h)))
      {
         h = zy + zh - y;
@@ -1030,7 +1034,7 @@ comp_seat_send_modifiers(Comp_Seat *s, struct wl_resource *res, uint32_t serial)
                               s->kbd.mods.latched,
                               s->kbd.mods.locked,
                               s->kbd.mods.group);
-   s->kbd.mods.changed = 1;
+   s->kbd.mods.changed = 0;
 }
 
 static Eina_Bool
@@ -1104,11 +1108,13 @@ comp_seats_redo_enter(Comp *c, Comp_Surface *cs)
      {
         Eina_List *l, *ll;
         struct wl_resource *res;
-        if (c->active_surface && (cs != c->active_surface))
+        Eina_Bool same = s->kbd.enter == cs;
+
+        if (c->active_surface && s->kbd.enter && (!same))
           {
              l = seat_kbd_active_resources_get(s);
              EINA_LIST_FOREACH(l, ll, res)
-               wl_keyboard_send_leave(res, serial, c->active_surface->res);
+               wl_keyboard_send_leave(res, serial, s->kbd.enter->res);
           }
         s->active_client = client;
         if (cs)
@@ -1116,12 +1122,13 @@ comp_seats_redo_enter(Comp *c, Comp_Surface *cs)
              l = seat_kbd_active_resources_get(s);
              EINA_LIST_FOREACH(l, ll, res)
                {
-                  wl_keyboard_send_enter(res, serial, cs->res, &s->kbd.keys);
+                  if (!same)
+                    wl_keyboard_send_enter(res, serial, cs->res, &s->kbd.keys);
                   comp_seat_send_modifiers(s, res, serial);
                }
           }
         s->kbd.enter = cs;
-        if (s->kbd.enter && s->selection_source)
+        if (s->kbd.enter && s->selection_source && (!same))
           comp_seat_kbd_data_device_enter(s);
      }
    c->active_surface = cs;
@@ -1146,12 +1153,12 @@ static void
 shell_surface_activate_recurse(Comp_Surface *cs)
 {
    Comp_Surface *lcs, *parent = cs->parent;
-   Eina_List *l, *parents = NULL;
+   Eina_List *parents = NULL;
    Eina_Inlist *i;
 
    if (parent)
      {
-        /* apply focus to toplevel in case where focus is reverted */
+        /* remove focus from parents */
         while (parent)
           {
              parents = eina_list_append(parents, parent);
@@ -1169,14 +1176,6 @@ shell_surface_activate_recurse(Comp_Surface *cs)
                cs->c->surfaces = eina_inlist_promote(cs->c->surfaces, EINA_INLIST_GET(lcs));
             }
        }
-   /* last item is the toplevel */
-   EINA_LIST_REVERSE_FOREACH(parents, l, lcs)
-     {
-        if (lcs->shell.activated) continue;
-        lcs->shell.activated = 1;
-        if (!lcs->shell.popup)
-          shell_surface_send_configure(lcs);
-     }
    eina_list_free(parents);
 }
 
@@ -1225,17 +1224,17 @@ shell_surface_send_configure(Comp_Surface *cs)
         evas_object_geometry_get(cs->obj, &x, &y, &w, &h);
         evas_object_geometry_get(cs->parent->obj, &px, &py, NULL, NULL);
         serial = wl_display_next_serial(cs->c->display);
-        zxdg_popup_v6_send_configure(cs->role, x - px, y - py, w, h);
-        zxdg_surface_v6_send_configure(cs->shell.surface, serial);
+        xdg_popup_send_configure(cs->role, x - px, y - py, w, h);
+        xdg_surface_send_configure(cs->shell.surface, serial);
         return;
      }
    wl_array_init(&states);
    s = wl_array_add(&states, sizeof(uint32_t));
-   *s = ZXDG_TOPLEVEL_V6_STATE_FULLSCREEN;
+   *s = XDG_TOPLEVEL_STATE_FULLSCREEN;
    if (cs->shell.activated)
      {
         s = wl_array_add(&states, sizeof(uint32_t));
-        *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+        *s = XDG_TOPLEVEL_STATE_ACTIVATED;
         if (!cs->extracted)
           evas_object_raise(cs->obj);
         if (cs->parent)
@@ -1249,19 +1248,23 @@ shell_surface_send_configure(Comp_Surface *cs)
      evas_object_geometry_get(cs->obj, NULL, NULL, &w, &h);
    else
      evas_object_geometry_get(cs->c->clip, NULL, NULL, &w, &h);
-   zxdg_toplevel_v6_send_configure(cs->role, w, h, &states);
-   zxdg_surface_v6_send_configure(cs->shell.surface, serial);
+   xdg_toplevel_send_configure(cs->role, w, h, &states);
+   xdg_surface_send_configure(cs->shell.surface, serial);
    wl_array_release(&states);
    if (cs->shell.activated)
      {
         Comp_Surface *ccs;
 
-        comp_seats_redo_enter(cs->c, cs);
+        /* apply activation to already-mapped surface */
+        if (cs->mapped)
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
         EINA_INLIST_FOREACH(cs->children, ccs)
           if (ccs->shell.surface && ccs->role && ccs->shell.popup)
             ccs->shell.activated = cs->shell.activated;
-        shell_surface_aspect_update(cs);
-        shell_surface_minmax_update(cs);
      }
    else
      shell_surface_deactivate_recurse(cs);
@@ -1282,6 +1285,17 @@ shell_surface_init(Comp_Surface *cs)
 
    cs->shell.activated = 1;
    shell_surface_send_configure(cs);
+}
+
+static void
+comp_surface_output_leave(Comp_Surface *cs)
+{
+   Eina_List *l;
+   struct wl_resource *res;
+
+   EINA_LIST_FOREACH(cs->c->output_resources, l, res)
+     if (wl_resource_get_client(res) == wl_resource_get_client(cs->res))
+       wl_surface_send_leave(cs->res, res);
 }
 
 static void
@@ -1369,6 +1383,8 @@ comp_surface_commit_image_state(Comp_Surface *cs, Comp_Buffer *buffer, Evas_Obje
 
              ns.data.wl_dmabuf.attr = &buffer->dmabuf_buffer->attributes;
              ns.data.wl_dmabuf.resource = buffer->res;
+             ns.data.wl_dmabuf.scanout.handler = NULL;
+             ns.data.wl_dmabuf.scanout.data = NULL;
           }
         else
           {
@@ -1381,12 +1397,22 @@ comp_surface_commit_image_state(Comp_Surface *cs, Comp_Buffer *buffer, Evas_Obje
 }
 
 static void
+shell_surface_reset(Comp_Surface *cs)
+{
+   EINA_RECTANGLE_SET(&cs->shell.geom, 0, 0, 0, 0);
+   eina_stringshare_replace(&cs->shell.title, NULL);
+   eina_stringshare_replace(&cs->shell.app_id, NULL);
+   cs->shell.activated = 0;
+}
+
+static void
 comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
 {
    int x, y;
    Eina_List *l;
    Evas_Object *o;
    Comp_Buffer *buffer = NULL;
+   Eina_Bool newly_new = EINA_FALSE;
 
    if (state->attach)
      {
@@ -1403,17 +1429,31 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
           }
         else
           {
-             evas_object_hide(cs->obj);
+             if (!cs->extracted)
+               evas_object_hide(cs->obj);
              EINA_LIST_FOREACH(cs->proxies, l, o)
                evas_object_hide(o);
+             if (cs->shell.surface)
+               {
+                  cs->shell.new = 1;
+                  newly_new = EINA_TRUE;
+                  shell_surface_reset(cs);
+               }
           }
      }
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
 
    if (buffer && (!cs->mapped))
      {
-        if (cs->role)
+        if (cs->role && (!cs->extracted))
           evas_object_show(cs->obj);
+        /* apply activation to activated surface on map */
+        if (cs->role && cs->shell.surface && cs->shell.activated && (!cs->shell.popup))
+          {
+             comp_seats_redo_enter(cs->c, cs);
+             shell_surface_aspect_update(cs);
+             shell_surface_minmax_update(cs);
+          }
      }
 
    if (state->attach && state->buffer)
@@ -1421,7 +1461,7 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
         evas_object_move(cs->img, x + buffer->x, y + buffer->y);
         evas_object_resize(cs->obj, buffer->w, buffer->h);
      }
-   else if (cs->shell.new)
+   else if (cs->shell.new && (!newly_new))
      shell_surface_init(cs);
 
    state->attach = 0;
@@ -1468,13 +1508,8 @@ comp_surface_commit_state(Comp_Surface *cs, Comp_Buffer_State *state)
    if (state->set_opaque && (!eina_tiler_equal(cs->opaque, state->opaque)))
      {
         array_clear(&cs->opaque_rects);
-        if (eina_tiler_empty(state->opaque))
-          {
-             evas_object_image_border_set(cs->img, 0, 0, 0, 0);
-             EINA_LIST_FOREACH(cs->proxies, l, o)
-               evas_object_image_border_set(o, 0, 0, 0, 0);
-          }
-        else /* FIXME: proxied opaque regions */
+        if (!eina_tiler_empty(state->opaque))
+          /* FIXME: proxied opaque regions */
           {
              Eina_Iterator *it;
              Eina_Rectangle *rect;
@@ -1605,6 +1640,13 @@ comp_surface_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *re
    Comp_Buffer *buffer;
    struct wl_shm_buffer *shmbuff;
    struct linux_dmabuf_buffer *dmabuf;
+
+   if (cs->shell.new)
+     {
+        wl_resource_post_error(cs->shell.surface, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
+                               "buffer attached/committed before configure");
+        return;
+     }
 
    comp_surface_buffer_detach(&cs->pending.buffer);
    cs->pending.attach = 1;
@@ -1752,6 +1794,13 @@ comp_surface_commit(struct wl_client *client, struct wl_resource *resource)
    Eina_List *l;
    Comp_Buffer_State *cbs = &cs->pending;
 
+   if (cs->shell.popup && (!cs->parent))
+     {
+        wl_resource_post_error(cs->shell.surface, XDG_WM_BASE_ERROR_INVALID_POPUP_PARENT,
+                               "popup surface has no parent");
+        return;
+     }
+
    cs->commit = 1;
    if (cs->subsurface)
      {
@@ -1826,7 +1875,19 @@ comp_surface_impl_destroy(struct wl_resource *resource)
      {
         if (s->kbd.enter == cs) s->kbd.enter = NULL;
         if (s->ptr.enter == cs) s->ptr.enter = NULL;
-        if (s->ptr.cursor.surface == cs) s->ptr.cursor.surface = NULL;
+        if (s->ptr.cursor.surface == cs)
+          {
+             if (s->ptr.in)
+               {
+                  const Eina_List *l;
+                  Eo *dev;
+                  Ecore_Evas *ee = ecore_evas_ecore_evas_get(s->c->evas);
+                  EINA_LIST_FOREACH(evas_device_list(s->c->evas, s->dev), l, dev)
+                    if (evas_device_class_get(dev) == EVAS_DEVICE_CLASS_MOUSE)
+                      ecore_evas_cursor_device_unset(ee, dev);
+               }
+             s->ptr.cursor.surface = NULL;
+          }
         if (s->drag.surface == cs) s->drag.surface = NULL;
      }
    eina_hash_list_remove(cs->c->client_surfaces, &client, cs);
@@ -1927,7 +1988,7 @@ comp_surface_send_data_device_enter(Comp_Surface *cs, Comp_Seat *s)
        wl_fixed_from_int(cx - x), wl_fixed_from_int(cy - y), offer);
 }
 
-static void
+static Eina_Bool
 comp_surface_send_pointer_enter(Comp_Surface *cs, Comp_Seat *s, int cx, int cy)
 {
    Eina_List *l, *ll;
@@ -1935,32 +1996,39 @@ comp_surface_send_pointer_enter(Comp_Surface *cs, Comp_Seat *s, int cx, int cy)
    uint32_t serial;
    int x, y;
 
-   if (s->ptr.enter && (cs != s->grab)) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter && (cs != s->grab)) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    s->ptr.enter = cs;
-   if (cs->dead) return;
+   if (cs->dead) return EINA_FALSE;
    if (s->drag.res && (!s->drag.tch))
      {
         comp_surface_send_data_device_enter(cs, s);
-        return;
+        return EINA_TRUE;
      }
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    s->ptr.enter_serial = serial = wl_display_next_serial(cs->c->display);
    //fprintf(stderr, "ENTER %s\n", cs->shell.popup ? "POPUP" : "TOPLEVEL");
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_enter(res, serial, cs->res,
        wl_fixed_from_int(cx - x), wl_fixed_from_int(cy - y));
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_In *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_send_pointer_enter(data, seat_find(data, ev->dev), ev->canvas.x, ev->canvas.y);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_send_pointer_enter(data, s, ev->canvas.x, ev->canvas.y))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
@@ -1977,40 +2045,47 @@ comp_surface_send_data_device_leave(Comp_Surface *cs, Comp_Seat *s)
    wl_data_device_send_leave(res);
 }
 
-static void
+static Eina_Bool
 comp_surface_send_pointer_leave(Comp_Surface *cs, Comp_Seat *s)
 {
    Eina_List *l, *ll;
    struct wl_resource *res;
    uint32_t serial;
 
-   if (s->ptr.enter != cs) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter != cs) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    s->ptr.enter = NULL;
-   if (cs->dead) return;
+   if (cs->dead) return EINA_FALSE;
    if (s->drag.res)
      {
         comp_surface_send_data_device_leave(cs, s);
-        return;
+        return EINA_TRUE;
      }
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    serial = wl_display_next_serial(cs->c->display);
    //fprintf(stderr, "LEAVE %s\n", cs->shell.popup ? "POPUP" : "TOPLEVEL");
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_leave(res, serial, cs->res);
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Out *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_send_pointer_leave(data, seat_find(data, ev->dev));
+   s = seat_find(data, ev->dev);
+   if (comp_surface_send_pointer_leave(data, s))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
-static void
+static Eina_Bool
 comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, uint32_t button_id, uint32_t state)
 {
    uint32_t serial, btn;
@@ -2029,22 +2104,28 @@ comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, ui
         btn = BTN_RIGHT;
         break;
       case 4:
+        btn = BTN_SIDE;
+        break;
       case 5:
+        btn = BTN_EXTRA;
+        break;
       case 6:
+        btn = BTN_FORWARD;
+        break;
       case 7:
-        /* these are supposedly axis events */
-        return;
+        btn = BTN_BACK;
+        break;
       default:
         btn = button_id + BTN_SIDE - 8;
         break;
      }
-   if (s->ptr.enter != cs) return;
-   if (!comp_surface_check_grab(cs, s)) return;
+   if (s->ptr.enter != cs) return EINA_FALSE;
+   if (!comp_surface_check_grab(cs, s)) return EINA_FALSE;
    if (state == WL_POINTER_BUTTON_STATE_PRESSED)
      s->ptr.button_mask |= 1 << button_id;
    else
      {
-        if (!(s->ptr.button_mask & (1 << button_id))) return;
+        if (!(s->ptr.button_mask & (1 << button_id))) return EINA_FALSE;
         s->ptr.button_mask &= ~(1 << button_id);
         if (s->drag.res && (!s->drag.tch))
           {
@@ -2052,41 +2133,54 @@ comp_surface_mouse_button(Comp_Surface *cs, Comp_Seat *s, uint32_t timestamp, ui
              comp_surface_input_event(&s->ptr.events, button_id, 0, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
              s->ptr.enter = NULL;
              comp_surface_send_pointer_enter(cs, s, s->ptr.pos.x, s->ptr.pos.y);
-             return;
+             return EINA_TRUE;
           }
      }
 
    if (cs->dead)
      {
         comp_surface_input_event(&s->ptr.events, button_id, 0, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
-        return;
+        return EINA_TRUE;
      }
 
    l = seat_ptr_resources_get(s, wl_resource_get_client(cs->res));
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    serial = wl_display_next_serial(s->c->display);
    comp_surface_input_event(&s->ptr.events, button_id, serial, timestamp, state == WL_POINTER_BUTTON_STATE_RELEASED);
 
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_button(res, serial, timestamp, btn, state);
+   return EINA_TRUE;
 }
 
 static void
 comp_surface_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_mouse_button(data, seat_find(data, ev->dev), ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_PRESSED);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_mouse_button(data, s, ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_PRESSED))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
 comp_surface_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
+   Comp_Seat *s;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-   comp_surface_mouse_button(data, seat_find(data, ev->dev), ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_RELEASED);
+   s = seat_find(data, ev->dev);
+   if (comp_surface_mouse_button(data, s, ev->timestamp, ev->button, WL_POINTER_BUTTON_STATE_RELEASED))
+     {
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+     }
 }
 
 static void
@@ -2130,6 +2224,8 @@ comp_surface_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
                wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
           }
      }
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   s->event_propagate = 1;
 }
 
 static void
@@ -2149,9 +2245,9 @@ comp_surface_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
      axis = WL_POINTER_AXIS_HORIZONTAL_SCROLL;
 
    if (ev->z < 0)
-     dir = -wl_fixed_from_int(abs(ev->z));
+     dir = -wl_fixed_from_int(abs(10 * ev->z));
    else
-     dir = wl_fixed_from_int(ev->z);
+     dir = wl_fixed_from_int(10 * ev->z);
 
    if (cs->dead) return;
    s = seat_find(data, ev->dev);
@@ -2161,6 +2257,8 @@ comp_surface_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
    if (!l) return;
    EINA_LIST_FOREACH(l, ll, res)
      wl_pointer_send_axis(res, ev->timestamp, axis, dir);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   s->event_propagate = 1;
 }
 
 static void
@@ -2183,6 +2281,8 @@ comp_surface_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    if (!l)
      {
         comp_surface_input_event(&s->tch.events, ev->device, 0, ev->timestamp, 0);
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return;
      }
    evas_object_geometry_get(cs->obj, &x, &y, NULL, NULL);
@@ -2191,6 +2291,8 @@ comp_surface_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
    EINA_LIST_FOREACH(l, ll, res)
      wl_touch_send_down(res, serial, ev->timestamp, cs->res, ev->device,
        wl_fixed_from_int(ev->canvas.x - x), wl_fixed_from_int(ev->canvas.y - y));
+   s->event_propagate = 1;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -2213,14 +2315,23 @@ comp_surface_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    if ((!l) || (s->drag.tch && ((uint32_t)ev->device == s->drag.id)))
      {
         if (s->drag.tch)
-          wl_data_device_send_drop(data_device_find(s, cs->res));
+          {
+             res = data_device_find(s, cs->res);
+             if (!res) return;
+
+             wl_data_device_send_drop(res);
+          }
         comp_surface_input_event(&s->tch.events, ev->device, 0, ev->timestamp, 1);
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return;
      }
    serial = wl_display_next_serial(cs->c->display);
    comp_surface_input_event(&s->tch.events, ev->device, serial, ev->timestamp, 1);
    EINA_LIST_FOREACH(l, ll, res)
      wl_touch_send_up(res, serial, ev->timestamp, ev->device);
+   s->event_propagate = 1;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 }
 
 static void
@@ -2242,8 +2353,12 @@ comp_surface_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         if (s->drag.enter != cs) return;
         res = data_device_find(s, cs->res);
         if (res)
-          wl_data_device_send_motion(res, ev->timestamp,
-            wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+          {
+             wl_data_device_send_motion(res, ev->timestamp,
+               wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+             s->event_propagate = 1;
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
         return;
      }
    else
@@ -2255,6 +2370,8 @@ comp_surface_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         EINA_LIST_FOREACH(l, ll, res)
           wl_touch_send_motion(res, ev->timestamp, ev->device,
             wl_fixed_from_int(ev->cur.canvas.x - x), wl_fixed_from_int(ev->cur.canvas.y - y));
+        s->event_propagate = 1;
+        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 }
 
@@ -2360,7 +2477,7 @@ comp_surface_smart_show(Evas_Object *obj)
 static void
 comp_surface_smart_hide(Evas_Object *obj)
 {
-   Comp_Surface *lcs, *cs = evas_object_smart_data_get(obj);
+   Comp_Surface *pcs = NULL, *lcs, *cs = evas_object_smart_data_get(obj);
 
    evas_object_hide(cs->clip);
    cs->mapped = 0;
@@ -2368,7 +2485,7 @@ comp_surface_smart_hide(Evas_Object *obj)
    if (!cs->shell.activated) return;
    cs->shell.activated = 0;
    if (cs->shell.popup && cs->role)
-     zxdg_popup_v6_send_popup_done(cs->role);
+     xdg_popup_send_popup_done(cs->role);
    if (cs->parent && cs->shell.popup) return;
    /* attempt to revert focus based on stacking order */
    if (cs->parent)
@@ -2379,15 +2496,23 @@ comp_surface_smart_hide(Evas_Object *obj)
              if (!evas_object_visible_get(lcs->obj)) continue;
              if ((!lcs->shell.surface) || (!lcs->role)) continue;
              lcs->shell.activated = 1;
-             if (lcs->shell.popup && (!lcs->extracted))
-               evas_object_raise(lcs->obj);
+             if (lcs->shell.popup)
+               {
+                  if (!lcs->extracted)
+                    evas_object_raise(lcs->obj);
+               }
              else
                shell_surface_send_configure(lcs);
              return;
           }
+        if (!cs->parent->shell.popup)
+          {
+             pcs = cs->parent;
+             if (!pcs->mapped) pcs = NULL;
+          }
      }
    if (cs->c->seats)
-     comp_seats_redo_enter(cs->c, NULL);
+     comp_seats_redo_enter(cs->c, pcs);
 }
 
 static void
@@ -2471,7 +2596,10 @@ comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint
    c->surfaces = eina_inlist_prepend(c->surfaces, EINA_INLIST_GET(cs));
    c->surfaces_count++;
    eina_hash_list_append(c->client_surfaces, &client, cs);
-   comp_surface_output_enter(cs);
+   if (evas_object_visible_get(cs->c->clip))
+     comp_surface_output_enter(cs);
+   else
+     comp_surface_output_leave(cs);
 
    cs->opaque = tiler_new();
    cs->input = tiler_new();
@@ -3080,7 +3208,12 @@ output_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    output_resize(c, res);
    EINA_INLIST_FOREACH(c->surfaces, cs)
      if (wl_resource_get_client(cs->res) == client)
-       comp_surface_output_enter(cs);
+       {
+          if (evas_object_visible_get(c->clip))
+            comp_surface_output_enter(cs);
+          else
+            comp_surface_output_leave(cs);
+       }
 }
 
 /////////////////////////////////////////////////////////////////
@@ -3092,6 +3225,7 @@ shell_surface_toplevel_impl_destroy(struct wl_resource *resource)
 
    cs->role = NULL;
    evas_object_hide(cs->obj);
+   shell_surface_reset(cs);
    if (!cs->parent) return;
    comp_surface_reparent(cs, NULL);
 }
@@ -3160,7 +3294,7 @@ shell_surface_toplevel_unset_fullscreen(){}
 static void
 shell_surface_toplevel_set_minimized(){}
 
-static const struct zxdg_toplevel_v6_interface shell_surface_toplevel_interface =
+static const struct xdg_toplevel_interface shell_surface_toplevel_interface =
 {
    resource_destroy,
    shell_surface_toplevel_set_parent,
@@ -3185,18 +3319,18 @@ shell_surface_toplevel_create(struct wl_client *client EINA_UNUSED, struct wl_re
 
    if (cs->buffer[0] || cs->pending.buffer)
      {
-        wl_resource_post_error(resource, ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+        wl_resource_post_error(resource, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
                                "buffer attached/committed before configure");
         return;
      }
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_ROLE,
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_ROLE,
                                "surface already has assigned role");
         return;
      }
 
-   cs->role = wl_resource_create(client, &zxdg_toplevel_v6_interface, 1, id);
+   cs->role = wl_resource_create(client, &xdg_toplevel_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_toplevel_interface, cs, shell_surface_toplevel_impl_destroy);
    cs->shell.new = 1;
 }
@@ -3214,14 +3348,14 @@ shell_surface_popup_grab(struct wl_client *client EINA_UNUSED, struct wl_resourc
      }
    if (cs->mapped)
      {
-        wl_resource_post_error(resource, ZXDG_POPUP_V6_ERROR_INVALID_GRAB,
+        wl_resource_post_error(resource, XDG_POPUP_ERROR_INVALID_GRAB,
                                 "grab requested on mapped popup");
         return;
      }
 
    if (cs->parent->shell.popup && (s->grab != cs->parent))
      {
-        wl_resource_post_error(resource, ZXDG_POPUP_V6_ERROR_INVALID_GRAB,
+        wl_resource_post_error(resource, XDG_POPUP_ERROR_INVALID_GRAB,
                                 "grab requested on ungrabbed nested popup");
         return;
      }
@@ -3229,7 +3363,7 @@ shell_surface_popup_grab(struct wl_client *client EINA_UNUSED, struct wl_resourc
    cs->shell.grabs = eina_list_append(cs->shell.grabs, s);
 }
 
-static const struct zxdg_popup_v6_interface shell_surface_popup_interface =
+static const struct xdg_popup_interface shell_surface_popup_interface =
 {
    resource_destroy,
    shell_surface_popup_grab,
@@ -3244,6 +3378,7 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
    cs->role = NULL;
    evas_object_hide(cs->obj);
    cs->shell.popup = 0;
+   shell_surface_reset(cs);
    EINA_LIST_FREE(cs->shell.grabs, s)
      if (s->grab == cs)
        {
@@ -3254,7 +3389,7 @@ shell_surface_popup_impl_destroy(struct wl_resource *resource)
             s->grab = NULL;
        }
    if (cs->children)
-     wl_resource_post_error(cs->shell.surface, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES,
+     wl_resource_post_error(cs->shell.surface, XDG_WM_BASE_ERROR_DEFUNCT_SURFACES,
                             "popups dismissed out of order");
    if (cs->parent)
      comp_surface_reparent(cs, NULL);
@@ -3267,28 +3402,23 @@ shell_surface_popup_create(struct wl_client *client, struct wl_resource *resourc
 
    if (cs->buffer[0] || cs->pending.buffer)
      {
-        wl_resource_post_error(resource, ZXDG_SURFACE_V6_ERROR_UNCONFIGURED_BUFFER,
+        wl_resource_post_error(resource, XDG_SURFACE_ERROR_UNCONFIGURED_BUFFER,
                                "buffer attached/committed before configure");
         return;
      }
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_ROLE,
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_ROLE,
                                "surface already has assigned role");
         return;
      }
-   if (!parent_resource)
-     {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_INVALID_POPUP_PARENT,
-                               "popup surface has no parent");
-        return;
-     }
 
-   cs->role = wl_resource_create(client, &zxdg_popup_v6_interface, 1, id);
+   cs->role = wl_resource_create(client, &xdg_popup_interface, 1, id);
    wl_resource_set_implementation(cs->role, &shell_surface_popup_interface, cs, shell_surface_popup_impl_destroy);
    cs->shell.new = 1;
    cs->shell.popup = 1;
-   comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
+   if(parent_resource)
+     comp_surface_reparent(cs, wl_resource_get_user_data(parent_resource));
    cs->shell.positioner = wl_resource_get_user_data(positioner_resource);
    _apply_positioner(cs, cs->shell.positioner);
    evas_object_smart_callback_call(cs->c->obj, "popup_added", cs->obj);
@@ -3298,7 +3428,14 @@ static void
 _validate_size(struct wl_resource *resource, int32_t value)
 {
    if (value <= 0)
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid size passed");
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size passed");
+}
+
+static void
+_validate_size_negative(struct wl_resource *resource, int32_t value)
+{
+   if (value < 0)
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid size passed");
 }
 
 static void
@@ -3318,44 +3455,37 @@ shell_positioner_set_anchor_rect(struct wl_client *wl_client EINA_UNUSED, struct
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   _validate_size(resource, w);
-   _validate_size(resource, h);
+   _validate_size_negative(resource, w);
+   _validate_size_negative(resource, h);
 
    EINA_RECTANGLE_SET(&p->anchor_rect, x, y, w, h);
 }
 
 static void
-shell_positioner_set_anchor(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_anchor anchor)
+shell_positioner_set_anchor(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_anchor anchor)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   if ((anchor & (ZXDG_POSITIONER_V6_ANCHOR_TOP | ZXDG_POSITIONER_V6_ANCHOR_BOTTOM)) ==
-       (ZXDG_POSITIONER_V6_ANCHOR_TOP | ZXDG_POSITIONER_V6_ANCHOR_BOTTOM))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid anchor values passed");
-   else if ((anchor & (ZXDG_POSITIONER_V6_ANCHOR_LEFT | ZXDG_POSITIONER_V6_ANCHOR_RIGHT)) ==
-       (ZXDG_POSITIONER_V6_ANCHOR_LEFT | ZXDG_POSITIONER_V6_ANCHOR_RIGHT))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid anchor values passed");
-   else
-     p->anchor = anchor;
+   p->anchor = anchor;
 }
 
 static void
-shell_positioner_set_gravity(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_gravity gravity)
+shell_positioner_set_gravity(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_gravity gravity)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
-   if ((gravity & (ZXDG_POSITIONER_V6_GRAVITY_TOP | ZXDG_POSITIONER_V6_GRAVITY_BOTTOM)) ==
-       (ZXDG_POSITIONER_V6_GRAVITY_TOP | ZXDG_POSITIONER_V6_GRAVITY_BOTTOM))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid gravity values passed");
-   else if ((gravity & (ZXDG_POSITIONER_V6_GRAVITY_LEFT | ZXDG_POSITIONER_V6_GRAVITY_RIGHT)) ==
-       (ZXDG_POSITIONER_V6_GRAVITY_LEFT | ZXDG_POSITIONER_V6_GRAVITY_RIGHT))
-     wl_resource_post_error(resource, ZXDG_POSITIONER_V6_ERROR_INVALID_INPUT, "Invalid gravity values passed");
+   if ((gravity & (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM)) ==
+       (XDG_POSITIONER_GRAVITY_TOP | XDG_POSITIONER_GRAVITY_BOTTOM))
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
+   else if ((gravity & (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT)) ==
+       (XDG_POSITIONER_GRAVITY_LEFT | XDG_POSITIONER_GRAVITY_RIGHT))
+     wl_resource_post_error(resource, XDG_POSITIONER_ERROR_INVALID_INPUT, "Invalid gravity values passed");
    else
      p->gravity = gravity;
 }
 
 static void
-shell_positioner_set_constraint_adjustment(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum zxdg_positioner_v6_constraint_adjustment constraint_adjustment)
+shell_positioner_set_constraint_adjustment(struct wl_client *wl_client EINA_UNUSED, struct wl_resource *resource, enum xdg_positioner_constraint_adjustment constraint_adjustment)
 {
    Shell_Positioner *p = wl_resource_get_user_data(resource);
 
@@ -3371,7 +3501,7 @@ shell_positioner_set_offset(struct wl_client *client EINA_UNUSED, struct wl_reso
    p->offset.y = y;
 }
 
-static const struct zxdg_positioner_v6_interface shell_positioner_interface =
+static const struct xdg_positioner_interface shell_positioner_interface =
 {
    resource_destroy,
    shell_positioner_set_size,
@@ -3401,8 +3531,9 @@ shell_positioner_create(struct wl_client *client, struct wl_resource *resource, 
    Shell_Positioner *sp;
 
    sd = wl_resource_get_user_data(resource);
-   res = wl_resource_create(client, &zxdg_positioner_v6_interface, 1, id);
+   res = wl_resource_create(client, &xdg_positioner_interface, 1, id);
    sp = calloc(1, sizeof(Shell_Positioner));
+   sp->anchor_rect.w = sp->anchor_rect.h = -1;
    sp->sd = sd;
    sp->res = res;
    sd->positioners = eina_inlist_append(sd->positioners, EINA_INLIST_GET(sp));
@@ -3422,7 +3553,7 @@ shell_surface_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_reso
 {
 }
 
-static const struct zxdg_surface_v6_interface shell_surface_interface =
+static const struct xdg_surface_interface shell_surface_interface =
 {
    resource_destroy,
    shell_surface_toplevel_create,
@@ -3438,12 +3569,13 @@ shell_surface_impl_destroy(struct wl_resource *resource)
 
    if (cs->role)
      {
-        wl_resource_post_error(resource, ZXDG_SHELL_V6_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
+        wl_resource_post_error(resource, XDG_WM_BASE_ERROR_DEFUNCT_SURFACES, "shell surface destroyed before role surfaces");
         wl_resource_destroy(cs->role);
      }
    cs->shell.surface = NULL;
    cs->shell.data->surfaces = eina_list_remove(cs->shell.data->surfaces, cs);
    cs->shell.data = NULL;
+   shell_surface_reset(cs);
    while (cs->children)
      {
         ccs = EINA_INLIST_CONTAINER_GET(cs->children, Comp_Surface);
@@ -3464,7 +3596,7 @@ shell_surface_create(struct wl_client *client, struct wl_resource *resource, uin
         return;
      }
 
-   cs->shell.surface = wl_resource_create(client, &zxdg_surface_v6_interface, 1, id);
+   cs->shell.surface = wl_resource_create(client, &xdg_surface_interface, 1, id);
    cs->shell.data = sd;
    wl_resource_set_implementation(cs->shell.surface, &shell_surface_interface, cs, shell_surface_impl_destroy);
    sd->surfaces = eina_list_append(sd->surfaces, cs);
@@ -3478,7 +3610,7 @@ shell_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, u
    sd->ping = 0;
 }
 
-static const struct zxdg_shell_v6_interface shell_interface =
+static const struct xdg_wm_base_interface shell_interface =
 {
    resource_destroy,
    shell_positioner_create,
@@ -3517,7 +3649,7 @@ shell_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
    sd->c = c;
    c->shells = eina_inlist_append(c->shells, EINA_INLIST_GET(sd));
 
-   res = wl_resource_create(client, &zxdg_shell_v6_interface, version, id);
+   res = wl_resource_create(client, &xdg_wm_base_interface, version, id);
    sd->res = res;
    wl_resource_set_implementation(res, &shell_interface, sd, shell_unbind);
 }
@@ -3546,34 +3678,91 @@ seat_update_caps(Comp_Seat *s, struct wl_resource *res)
 }
 
 static void
+seat_keymap_send(Comp_Seat *s)
+{
+   Eina_List *l;
+   Eina_Iterator *it;
+   it = eina_hash_iterator_data_new(s->kbd.resources);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        Eina_List *ll;
+        struct wl_resource *res;
+        EINA_LIST_FOREACH(l, ll, res)
+          wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
+     }
+   eina_iterator_free(it);
+}
+
+static Eina_Bool
+seat_kbd_mods_update(Comp_Seat *s)
+{
+   xkb_mod_mask_t mod;
+   xkb_layout_index_t grp;
+
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_DEPRESSED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.depressed;
+   s->kbd.mods.depressed = mod;
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.latched;
+   s->kbd.mods.latched = mod;
+   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
+   s->kbd.mods.changed |= mod != s->kbd.mods.locked;
+   s->kbd.mods.locked = mod;
+   grp = xkb_state_serialize_layout(s->kbd.state, XKB_STATE_LAYOUT_EFFECTIVE);
+   s->kbd.mods.changed |= grp != s->kbd.mods.group;
+   s->kbd.mods.group = grp;
+   return s->kbd.mods.changed;
+}
+
+static void
+seat_kbd_external_init(Comp_Seat *s)
+{
+   Eina_List *l, *ll;
+   uint32_t serial;
+   struct wl_resource *res;
+
+   seat_keymap_send(s);
+   if (!seat_kbd_mods_update(s)) return;
+   l = seat_kbd_active_resources_get(s);
+   if (!l) return;
+   serial = wl_display_next_serial(s->c->display);
+   EINA_LIST_FOREACH(l, ll, res)
+     comp_seat_send_modifiers(s, res, serial);
+}
+
+static void
 seat_keymap_update(Comp_Seat *s)
 {
    char *str;
    Eina_Tmpstr *file;
-   Eina_List *l;
-   Eina_Iterator *it;
    xkb_mod_mask_t latched = 0, locked = 0;
 
    if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
    if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
 
-   if (s->kbd.state)
+#ifdef HAVE_ECORE_X
+   if (!x11_kbd_keymap)
      {
-        latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
-        locked = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
-        xkb_state_unref(s->kbd.state);
-     }
-   if (!s->kbd.keymap)
-     {
-        s->kbd.state = NULL;
-        s->kbd.keymap_fd = -1;
-        s->kbd.keymap_mem = NULL;
-        return;
-     }
+#endif
+        if (s->kbd.state)
+          {
+             latched = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
+             locked = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
+             xkb_state_unref(s->kbd.state);
+          }
+        if (!s->kbd.keymap)
+          {
+             s->kbd.state = NULL;
+             s->kbd.keymap_fd = -1;
+             s->kbd.keymap_mem = NULL;
+             return;
+          }
 
-   s->kbd.state = xkb_state_new(s->kbd.keymap);
-   xkb_state_update_mask(s->kbd.state, 0, latched, locked, 0, 0, 0);
-
+        s->kbd.state = xkb_state_new(s->kbd.keymap);
+        xkb_state_update_mask(s->kbd.state, 0, latched, locked, 0, 0, 0);
+#ifdef HAVE_ECORE_X
+     }
+#endif
    str = xkb_map_get_as_string(s->kbd.keymap);
    s->kbd.keymap_mem_size = strlen(str) + 1;
    s->kbd.keymap_fd = eina_file_mkstemp("comp-keymapXXXXXX", &file);
@@ -3605,15 +3794,7 @@ seat_keymap_update(Comp_Seat *s)
    s->kbd.keymap_mem[s->kbd.keymap_mem_size] = 0;
    free(str);
 
-   it = eina_hash_iterator_data_new(s->kbd.resources);
-   EINA_ITERATOR_FOREACH(it, l)
-     {
-        Eina_List *ll;
-        struct wl_resource *res;
-        EINA_LIST_FOREACH(l, ll, res)
-          wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, s->kbd.keymap_fd, s->kbd.keymap_mem_size);
-     }
-   eina_iterator_free(it);
+   seat_keymap_send(s);
 }
 
 static inline void
@@ -3649,27 +3830,6 @@ seat_keymap_create(Comp_Seat *s)
    names.layout = "us";
    s->kbd.context = xkb_context_new(0);
    s->kbd.keymap = xkb_map_new_from_names(s->kbd.context, &names, 0);
-}
-
-static Eina_Bool
-seat_mods_update(Comp_Seat *s)
-{
-   xkb_mod_mask_t mod;
-   xkb_layout_index_t grp;
-
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_DEPRESSED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.depressed;
-   s->kbd.mods.depressed = mod;
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LATCHED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.latched;
-   s->kbd.mods.latched = mod;
-   mod = xkb_state_serialize_mods(s->kbd.state, XKB_STATE_MODS_LOCKED);
-   s->kbd.mods.changed |= mod != s->kbd.mods.locked;
-   s->kbd.mods.locked = mod;
-   grp = xkb_state_serialize_layout(s->kbd.state, XKB_STATE_LAYOUT_EFFECTIVE);
-   s->kbd.mods.changed |= grp != s->kbd.mods.group;
-   s->kbd.mods.group = grp;
-   return s->kbd.mods.changed;
 }
 
 static const struct wl_keyboard_interface seat_kbd_interface =
@@ -3759,7 +3919,11 @@ seat_ptr_set_cursor(struct wl_client *client, struct wl_resource *resource, uint
         eina_tiler_clear(cs->pending.input);
         evas_object_pass_events_set(cs->obj, 1);
      }
-   if (s->ptr.cursor.surface) s->ptr.cursor.surface->cursor = 0;
+   if (s->ptr.cursor.surface)
+     {
+        s->ptr.cursor.surface->cursor = 0;
+        s->ptr.cursor.surface->role = NULL;
+     }
 
    if (s->ptr.in)
      {
@@ -3842,7 +4006,7 @@ seat_tch_create(struct wl_client *client, struct wl_resource *resource, uint32_t
    Comp_Seat *s = wl_resource_get_user_data(resource);
    struct wl_resource *res;
 
-   res = wl_resource_create(client, &wl_pointer_interface, wl_resource_get_version(resource), id);
+   res = wl_resource_create(client, &wl_touch_interface, wl_resource_get_version(resource), id);
    wl_resource_set_implementation(res, &seat_tch_interface, s, seat_tch_unbind);
    if (!s->tch.resources) s->tch.resources = eina_hash_pointer_new(NULL);
    eina_hash_list_append(s->tch.resources, &client, res);
@@ -3909,6 +4073,25 @@ seat_resource_hash_free(Eina_Hash *h)
 }
 
 static void
+seat_kbd_destroy(Comp_Seat *s)
+{
+   if (s->kbd.external) return;
+#ifdef HAVE_ECORE_X
+   if (!x11_kbd_keymap)
+     {
+#endif
+        if (s->kbd.state) xkb_state_unref(s->kbd.state);
+        if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
+        if (s->kbd.context) xkb_context_unref(s->kbd.context);
+#ifdef HAVE_ECORE_X
+     }
+#endif
+   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
+   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
+   wl_array_release(&s->kbd.keys);
+}
+
+static void
 seat_destroy(Comp_Seat *s)
 {
    Eina_Stringshare *type;
@@ -3918,12 +4101,7 @@ seat_destroy(Comp_Seat *s)
    while (s->resources)
      wl_resource_destroy(eina_list_data_get(s->resources));
    eina_stringshare_del(s->name);
-   if (s->kbd.state) xkb_state_unref(s->kbd.state);
-   if (s->kbd.keymap) xkb_keymap_unref(s->kbd.keymap);
-   if (s->kbd.context) xkb_context_unref(s->kbd.context);
-   if (s->kbd.keymap_mem) munmap(s->kbd.keymap_mem, s->kbd.keymap_mem_size);
-   if (s->kbd.keymap_fd > -1) close(s->kbd.keymap_fd);
-   wl_array_release(&s->kbd.keys);
+   seat_kbd_destroy(s);
    efl_unref(s->dev);
    s->c->seats = eina_inlist_remove(s->c->seats, EINA_INLIST_GET(s));
    eina_hash_free(s->data_devices);
@@ -3950,10 +4128,12 @@ seat_destroy(Comp_Seat *s)
 static void
 comp_gl_shutdown(Comp *c)
 {
-   if (c->glapi->evasglUnbindWaylandDisplay)
+   if (c->glapi && c->glapi->evasglUnbindWaylandDisplay)
      c->glapi->evasglUnbindWaylandDisplay(c->gl, c->display);
-   evas_gl_surface_destroy(c->gl, c->glsfc);
-   evas_gl_context_destroy(c->gl, c->glctx);
+   if (c->glsfc)
+     evas_gl_surface_destroy(c->gl, c->glsfc);
+   if (c->glctx)
+     evas_gl_context_destroy(c->gl, c->glctx);
    evas_gl_free(c->gl);
    evas_gl_config_free(c->glcfg);
    c->glsfc = NULL;
@@ -3966,13 +4146,18 @@ static void
 comp_gl_init(Comp *c)
 {
    c->glctx = evas_gl_context_create(c->gl, NULL);
+   if (!c->glctx) goto end;
    c->glcfg = evas_gl_config_new();
+   if (!c->glcfg) goto end;
    c->glsfc = evas_gl_surface_create(c->gl, c->glcfg, 1, 1);
-   evas_gl_make_current(c->gl, c->glsfc, c->glctx);
+   if (!c->glsfc) goto end;
+   if (!evas_gl_make_current(c->gl, c->glsfc, c->glctx)) goto end;
    c->glapi = evas_gl_context_api_get(c->gl, c->glctx);
-   if ((!c->glapi->evasglBindWaylandDisplay) ||
-       (!c->glapi->evasglBindWaylandDisplay(c->gl, c->display)))
-     comp_gl_shutdown(c);
+   if (c->glapi->evasglBindWaylandDisplay &&
+       c->glapi->evasglBindWaylandDisplay(c->gl, c->display))
+     return;
+end:
+   comp_gl_shutdown(c);
 }
 
 static void
@@ -4002,6 +4187,21 @@ comp_render_pre(Comp *c, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
         //if (cs->proxies) fprintf(stderr, "RENDER %d\n", wl_resource_get_id(buffer->res));
         cs->post_render_queue = 1;
 
+        if (cs->opaque_rects && (eina_array_count(cs->opaque_rects) == 1))
+          {
+             Evas_Object *r = eina_array_data_get(cs->opaque_rects, 0);
+             int x, y, w, h, ox, oy, ow, oh;
+
+             evas_object_geometry_get(cs->img, &x, &y, &w, &h);
+             evas_object_geometry_get(r, &ox, &oy, &ow, &oh);
+             evas_object_image_border_set(cs->img, ox - x, ox + ow, oy - y, oy + oh);
+             evas_object_image_border_center_fill_set(cs->img, EVAS_BORDER_FILL_SOLID);
+          }
+        else
+          {
+             evas_object_image_border_set(cs->img, 0, 0, 0, 0);
+             evas_object_image_border_center_fill_set(cs->img, EVAS_BORDER_FILL_DEFAULT);
+          }
         evas_object_image_alpha_set(cs->img, comp_surface_is_alpha(cs, buffer));
         evas_object_resize(cs->img, buffer->w, buffer->h);
         evas_object_image_size_set(cs->img, buffer->w, buffer->h);
@@ -4229,18 +4429,28 @@ comp_device_caps_update(Comp_Seat *s)
      }
    if (s->keyboard != kbd)
      {
-        if (s->keyboard)
-          {
-             seat_keymap_create(s);
-             seat_kbd_repeat_rate_update(s);
-          }
+        if (s->kbd.external)
+          seat_kbd_external_init(s);
         else
           {
-             xkb_keymap_unref(s->kbd.keymap);
-             s->kbd.keymap = NULL;
+             if (s->keyboard)
+               {
+#ifdef HAVE_ECORE_X
+                  if ((!s->c->parent_disp) && ecore_x_display_get())
+                    x11_kbd_apply(s);
+                  else
+#endif
+                  seat_keymap_create(s);
+                  seat_kbd_repeat_rate_update(s);
+               }
+             else
+               {
+                  xkb_keymap_unref(s->kbd.keymap);
+                  s->kbd.keymap = NULL;
+               }
+             seat_keymap_update(s);
+             s->keyboard = !!s->kbd.state;
           }
-        seat_keymap_update(s);
-        s->keyboard = !!s->kbd.state;
      }
    seat_update_caps(s, NULL);
 }
@@ -4287,22 +4497,35 @@ comp_seats_proxy(Comp *c)
              s->touch = !!(caps & ECORE_WL2_SEAT_CAPABILITIES_TOUCH);
              if (s->keyboard)
                {
-                  if (s->seat)
-                    {
-                       s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
-                       if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
-                    }
+                  if (s->kbd.external)
+                    seat_kbd_external_init(s);
                   else
-                    seat_keymap_create(s);
-                  seat_kbd_repeat_rate_update(s);
-                  seat_keymap_update(s);
-                  s->keyboard = !!s->kbd.state;
+                    {
+                       if (s->seat)
+                         {
+                            s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
+                            if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
+                         }
+                       else
+                         {
+#ifdef HAVE_ECORE_X
+                            if ((!s->c->parent_disp) && ecore_x_display_get())
+                              x11_kbd_apply(s);
+                            else
+#endif
+                            seat_keymap_create(s);
+                         }
+                       seat_keymap_update(s);
+                       seat_kbd_repeat_rate_update(s);
+                       s->keyboard = !!s->kbd.state;
+                    }
                }
 
           }
         else if (!c->parent_disp)
           comp_device_caps_update(s);
         s->global = wl_global_create(c->display, &wl_seat_interface, 4, s, seat_bind);
+        evas_object_smart_callback_call(s->c->obj, "seat_added", dev);
         if (ecore_wl2_display_sync_is_done(c->client_disp))
           seat_proxy_update(s);
      }
@@ -4392,18 +4615,23 @@ comp_seat_caps_handler(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event_S
             s->pointer = ev->pointer_enabled;
             if (s->keyboard != ev->keyboard_enabled)
               {
-                 if (ev->keyboard_enabled)
-                   {
-                      s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
-                      if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
-                      seat_kbd_repeat_rate_update(s);
-                   }
+                 if (s->kbd.external)
+                   seat_kbd_external_init(s);
                  else
                    {
-                      xkb_keymap_unref(s->kbd.keymap);
-                      s->kbd.keymap = NULL;
+                      if (ev->keyboard_enabled)
+                        {
+                           s->kbd.keymap = ecore_wl2_input_keymap_get(s->seat);
+                           if (s->kbd.keymap) xkb_keymap_ref(s->kbd.keymap);
+                           seat_kbd_repeat_rate_update(s);
+                        }
+                      else
+                        {
+                           xkb_keymap_unref(s->kbd.keymap);
+                           s->kbd.keymap = NULL;
+                        }
+                      seat_keymap_update(s);
                    }
-                 seat_keymap_update(s);
               }
             s->keyboard = !!ev->keyboard_enabled && !!s->kbd.state;
             s->touch = ev->touch_enabled;
@@ -4453,6 +4681,7 @@ comp_seat_keymap_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event
          {
             struct xkb_keymap *keymap;
 
+            if (s->kbd.external) continue;
             if (ecore_wl2_input_seat_id_get(s->seat) != ev->id) continue;
 
             if (s->kbd.keymap) xkb_map_unref(s->kbd.keymap);
@@ -4469,6 +4698,21 @@ comp_seat_keymap_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event
    return ECORE_CALLBACK_RENEW;
 }
 
+static void
+seat_kbd_repeat_rate_send(Comp_Seat *s)
+{
+   Eina_List *ll, *lll;
+   struct wl_resource *res;
+   Eina_Iterator *it;
+
+   it = eina_hash_iterator_data_new(s->kbd.resources);
+   EINA_ITERATOR_FOREACH(it, ll)
+     EINA_LIST_FOREACH(ll, lll, res)
+       if (wl_resource_get_version(res) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
+         wl_keyboard_send_repeat_info(res, s->kbd.repeat_rate, s->kbd.repeat_delay);
+   eina_iterator_free(it);
+}
+
 static Eina_Bool
 comp_seat_keyboard_repeat_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Wl2_Event_Seat_Keyboard_Repeat_Changed *ev)
 {
@@ -4480,36 +4724,23 @@ comp_seat_keyboard_repeat_changed(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_
      if (c->parent_disp == ev->display)
        EINA_INLIST_FOREACH(c->seats, s)
          {
-            Eina_List *ll, *lll;
-            struct wl_resource *res;
-            Eina_Iterator *it;
-
             if (ecore_wl2_input_seat_id_get(s->seat) != ev->id) continue;
+            if (s->kbd.external) continue;
 
             seat_kbd_repeat_rate_update(s);
-            it = eina_hash_iterator_data_new(s->kbd.resources);
-            EINA_ITERATOR_FOREACH(it, ll)
-              EINA_LIST_FOREACH(ll, lll, res)
-                if (wl_resource_get_version(res) >= WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
-                  wl_keyboard_send_repeat_info(res, s->kbd.repeat_rate, s->kbd.repeat_delay);
-            eina_iterator_free(it);
+            seat_kbd_repeat_rate_send(s);
          }
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
-comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp)
+comp_seat_key_send(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp, Eina_Bool mods)
 {
    Eina_List *l, *ll;
    struct wl_resource *res;
    uint32_t serial = wl_display_next_serial(s->c->display);
-   uint32_t xkb[] = { XKB_KEY_DOWN, XKB_KEY_UP };
    uint32_t wl[] = { WL_KEYBOARD_KEY_STATE_PRESSED, WL_KEYBOARD_KEY_STATE_RELEASED };
-   Eina_Bool mods = EINA_FALSE;
 
-   if (xkb_state_update_key(s->kbd.state, key + 8, xkb[dir]))
-     mods = seat_mods_update(s);
-   if (!s->focused) return;
    l = seat_kbd_active_resources_get(s);
 
    EINA_LIST_FOREACH(l, ll, res)
@@ -4517,6 +4748,18 @@ comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int time
         wl_keyboard_send_key(res, serial, timestamp, key, wl[dir]);
         if (mods) comp_seat_send_modifiers(s, res, serial);
      }
+}
+
+static void
+comp_seat_key_update(Comp_Seat *s, xkb_keycode_t key, int dir, unsigned int timestamp)
+{
+   uint32_t xkb[] = { XKB_KEY_DOWN, XKB_KEY_UP };
+   Eina_Bool mods = EINA_FALSE;
+
+   if (s->kbd.external || xkb_state_update_key(s->kbd.state, key + 8, xkb[dir]))
+     mods = seat_kbd_mods_update(s);
+   if (s->focused)
+     comp_seat_key_send(s, key, dir, timestamp, mods);
 }
 
 static Eina_Bool
@@ -4532,17 +4775,25 @@ comp_key_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
    EINA_LIST_FOREACH(comps, l, c)
      EINA_INLIST_FOREACH(c->seats, s)
        {
-          uint32_t *end, *k;
-
           if (c->parent_disp && (dev != s->dev)) continue;
-          end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
 
-          for (k = s->kbd.keys.data; k < end; k++)
-            if (*k == keycode) return ECORE_CALLBACK_RENEW;
+          if (s->kbd.external)
+            {
+               /* only doing passthrough in external mode */
+               if (!s->focused) return ECORE_CALLBACK_RENEW;
+            }
+          else
+            {
+               uint32_t *end, *k;
 
-          s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data;
-          k = wl_array_add(&s->kbd.keys, sizeof(uint32_t));
-          *k = keycode;
+               end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
+               for (k = s->kbd.keys.data; k < end; k++)
+                 if (*k == keycode) return ECORE_CALLBACK_RENEW;
+
+               s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data;
+               k = wl_array_add(&s->kbd.keys, sizeof(uint32_t));
+               *k = keycode;
+            }
           comp_seat_key_update(s, keycode, 0, ev->timestamp);
        }
    return ECORE_CALLBACK_RENEW;
@@ -4561,19 +4812,27 @@ comp_key_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Key *ev)
    EINA_LIST_FOREACH(comps, l, c)
      EINA_INLIST_FOREACH(c->seats, s)
        {
-          uint32_t *end, *k;
-
           if (c->parent_disp && (dev != s->dev)) continue;
-          end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
 
-          for (k = s->kbd.keys.data; k < end; k++)
-            if (*k == keycode)
-              {
-                 *k = end[-1];
-                 s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data - 1;
-                 break;
-              }
+          if (s->kbd.external)
+            {
+               /* only doing passthrough in external mode */
+               if (!s->focused) return ECORE_CALLBACK_RENEW;
+            }
+          else
+            {
+               uint32_t *end, *k;
 
+               end = (uint32_t*)s->kbd.keys.data + (s->kbd.keys.size / sizeof(uint32_t));
+
+               for (k = s->kbd.keys.data; k < end; k++)
+                 if (*k == keycode)
+                   {
+                      *k = end[-1];
+                      s->kbd.keys.size = (char*)end - (char*)s->kbd.keys.data - 1;
+                      break;
+                   }
+            }
           comp_seat_key_update(s, keycode, 1, ev->timestamp);
        }
    return ECORE_CALLBACK_RENEW;
@@ -4823,8 +5082,27 @@ comp_focus_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
         s->focused = 1;
         if (s->selection_changed)
           comp_seat_selection_update(s);
-        if (!s->kbd.keymap) continue;
-        if (!seat_mods_update(s)) continue;
+        if ((!s->kbd.keymap) && (!s->kbd.state)) continue;
+        if (s->kbd.external)
+          {
+             Eina_Bool mods = seat_kbd_mods_update(s);
+             if (!s->focused) return;
+             l = seat_kbd_active_resources_get(s);
+
+             EINA_LIST_FOREACH(l, ll, res)
+               {
+                  uint32_t *end, *k;
+                  serial = wl_display_next_serial(s->c->display);
+
+                  end = (uint32_t*)s->kbd.keys_external->data + (s->kbd.keys_external->size / sizeof(uint32_t));
+                  if (mods) comp_seat_send_modifiers(s, res, serial);
+
+                  for (k = s->kbd.keys_external->data; k < end; k++)
+                    comp_seat_key_send(s, *k, 0, 0, mods);
+               }
+             return;
+          }
+        if (!seat_kbd_mods_update(s)) continue;
         l = seat_kbd_active_resources_get(s);
         if (!l) continue;
         serial = wl_display_next_serial(s->c->display);
@@ -4854,9 +5132,13 @@ comp_mouse_in(void *data, Evas *e, Evas_Object *obj, void *event_info)
    Comp *c = data;
    Evas_Event_Mouse_In *ev = event_info;
    Comp_Seat *s;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    if (s->drag.proxy_win)
      {
         ecore_evas_free(s->drag.proxy_win);
@@ -4890,8 +5172,12 @@ comp_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Comp_Seat *s;
    int w, h;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    s->tch.pos.x = ev->cur.canvas.x;
    s->tch.pos.y = ev->cur.canvas.y;
    if ((!s->drag.tch) || (!s->drag.surface)) return;
@@ -4907,8 +5193,12 @@ comp_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    Comp_Seat *s;
    int w, h;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
    s->ptr.pos.x = ev->cur.canvas.x;
    s->ptr.pos.y = ev->cur.canvas.y;
    if (s->drag.tch || (!s->drag.surface)) return;
@@ -4926,8 +5216,13 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
    const char **types, *type;
    unsigned int i = 0;
 
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    s = comp_seat_find(c, ev->dev);
+   if (!s->event_propagate)
+     {
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+     }
+   s->event_propagate = 0;
+   if (!s->ptr.in) return;
    s->ptr.in = 0;
    ecore_evas_cursor_device_unset(ecore_evas_ecore_evas_get(e), ev->dev);
    if (s->ptr.efl.obj)
@@ -4990,8 +5285,8 @@ comp_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_in
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(comp_device_cbs,
-  { EFL_CANVAS_EVENT_DEVICE_ADDED, comp_device_add },
-  { EFL_CANVAS_EVENT_DEVICE_REMOVED, comp_device_del });
+  { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, comp_device_add },
+  { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, comp_device_del });
 
 static void
 hints_set_aspect(struct wl_client *client, struct wl_resource *resource, struct wl_resource *surface, uint32_t width, uint32_t height, uint32_t aspect)
@@ -5074,7 +5369,7 @@ comp_smart_add(Evas_Object *obj)
    wl_global_create(c->display, &wl_compositor_interface, 4, c, comp_bind);
    wl_global_create(c->display, &wl_subcompositor_interface, 1, c, subcomp_bind);
    wl_global_create(c->display, &wl_output_interface, 2, c, output_bind);
-   wl_global_create(c->display, &zxdg_shell_v6_interface, 1, c, shell_bind);
+   wl_global_create(c->display, &xdg_wm_base_interface, 1, c, shell_bind);
    wl_global_create(c->display, &wl_data_device_manager_interface, 3, c, data_device_manager_bind);
    wl_global_create(c->display, &efl_hints_interface, 1, c, efl_hints_bind);
    wl_display_init_shm(c->display);
@@ -5096,6 +5391,7 @@ comp_smart_add(Evas_Object *obj)
 #ifdef HAVE_ECORE_X
         if (ecore_x_display_get())
           {
+             ecore_x_xkb_track_state();
              // if proxiedallowed
              ecore_x_dnd_aware_set(ecore_evas_window_get(ecore_evas_ecore_evas_get(c->evas)), EINA_TRUE);
              if (!comps) x11_init();
@@ -5206,14 +5502,22 @@ static void
 comp_smart_show(Evas_Object *obj)
 {
    Comp *c = evas_object_smart_data_get(obj);
+   Comp_Surface *cs;
+
    evas_object_show(c->clip);
+   EINA_INLIST_FOREACH(c->surfaces, cs)
+     comp_surface_output_leave(cs);
 }
 
 static void
 comp_smart_hide(Evas_Object *obj)
 {
    Comp *c = evas_object_smart_data_get(obj);
+   Comp_Surface *cs;
+
    evas_object_hide(c->clip);
+   EINA_INLIST_FOREACH(c->surfaces, cs)
+     comp_surface_output_leave(cs);
 }
 
 static void
@@ -5288,8 +5592,6 @@ exe_event_del(void *data, int t EINA_UNUSED, Ecore_Exe_Event_Del *ev)
    Comp *c = data;
    int32_t pid = ev->pid;
 
-   if (!eina_streq(ecore_exe_tag_get(ev->exe), "__efl_wl")) return ECORE_CALLBACK_RENEW;
-
    eina_hash_del_by_key(c->exes, &pid);
    return ECORE_CALLBACK_RENEW;
 }
@@ -5315,6 +5617,8 @@ comp_dmabuf_test(struct linux_dmabuf_buffer *dmabuf)
         ns.version = EVAS_NATIVE_SURFACE_VERSION;
         ns.data.wl_dmabuf.attr = &dmabuf->attributes;
         ns.data.wl_dmabuf.resource = NULL;
+        ns.data.wl_dmabuf.scanout.handler = NULL;
+        ns.data.wl_dmabuf.scanout.data = NULL;
         test = evas_object_image_add(c->evas);
         evas_object_image_native_surface_set(test, &ns);
         ret = evas_object_image_load_error_get(test) == EVAS_LOAD_ERROR_NONE;
@@ -5358,7 +5662,7 @@ efl_wl_add(Evas *e)
 }
 
 Ecore_Exe *
-efl_wl_run(Evas_Object *obj, const char *cmd)
+comp_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags)
 {
    char *env, *disp, *gl = NULL;
    Comp *c;
@@ -5383,7 +5687,7 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
         if (gl) gl = strdup(gl);
         setenv("ELM_ACCEL", "gl", 1);
      }
-   exe = ecore_exe_pipe_run(cmd, ECORE_EXE_TERM_WITH_PARENT, c);
+   exe = ecore_exe_pipe_run(cmd, flags, c);
    if (disp) setenv("DISPLAY", disp, 1);
    if (env) setenv("WAYLAND_DISPLAY", env, 1);
    else unsetenv("WAYLAND_DISPLAY");
@@ -5398,10 +5702,44 @@ efl_wl_run(Evas_Object *obj, const char *cmd)
    if (exe)
      {
         int32_t pid = ecore_exe_pid_get(exe);
-        ecore_exe_tag_set(exe, "__efl_wl");
-        eina_hash_add(c->exes, &pid, exe);
+        eina_hash_add(c->exes, &pid, (void*)1);
      }
    return exe;
+}
+
+Ecore_Exe *
+efl_wl_run(Evas_Object *obj, const char *cmd)
+{
+   return comp_run(obj, cmd, ECORE_EXE_TERM_WITH_PARENT);
+}
+
+Ecore_Exe *
+efl_wl_flags_run(Evas_Object *obj, const char *cmd, Ecore_Exe_Flags flags)
+{
+   return comp_run(obj, cmd, flags);
+}
+
+void
+efl_wl_pid_add(Evas_Object *obj, int32_t pid)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (!c->exes)
+     c->exes = eina_hash_int32_new(NULL);
+   eina_hash_add(c->exes, &pid, (void*)1);
+}
+
+void
+efl_wl_pid_del(Evas_Object *obj, int32_t pid)
+{
+   Comp *c;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   if (!c->exes) return;
+   eina_hash_del_by_key(c->exes, &pid);
 }
 
 Eina_Bool
@@ -5600,8 +5938,56 @@ efl_wl_extracted_surface_extracted_parent_get(Evas_Object *surface)
 
    if (cs->parent)
      {
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!cs->parent->extracted, NULL);
+        if (!cs->parent->extracted) return NULL;
         return cs->parent->obj;
      }
    return NULL;
+}
+
+void
+efl_wl_seat_keymap_set(Evas_Object *obj, Eo *seat, void *state, int fd, size_t size, void *key_array)
+{
+   Comp *c;
+   Comp_Seat *s;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   EINA_INLIST_FOREACH(c->seats, s)
+     {
+        if (!seat) efl_wl_seat_keymap_set(obj, s->dev, state, fd, size, key_array);
+        else if (s->dev == seat) break;
+     }
+   if (!seat) return;
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   seat_kbd_destroy(s);
+   s->kbd.external = 1;
+   s->kbd.keys_external = key_array;
+   s->kbd.state = state;
+   s->kbd.keymap_fd = fd;
+   s->kbd.keymap_mem_size = size;
+   s->kbd.context = NULL;
+   s->kbd.keymap = NULL;
+   s->kbd.keymap_mem = NULL;
+   if (s->keyboard)
+     seat_kbd_external_init(s);
+}
+
+void
+efl_wl_seat_key_repeat_set(Evas_Object *obj, Eo *seat, int repeat_rate, int repeat_delay)
+{
+   Comp *c;
+   Comp_Seat *s;
+
+   if (!eina_streq(evas_object_type_get(obj), "comp")) abort();
+   c = evas_object_smart_data_get(obj);
+   EINA_INLIST_FOREACH(c->seats, s)
+     {
+        if (!seat) efl_wl_seat_key_repeat_set(obj, s->dev, repeat_rate, repeat_delay);
+        else if (s->dev == seat) break;
+     }
+   if (!seat) return;
+   EINA_SAFETY_ON_NULL_RETURN(s);
+   s->kbd.repeat_rate = repeat_rate;
+   s->kbd.repeat_delay = repeat_delay;
+   seat_kbd_repeat_rate_send(s);
 }

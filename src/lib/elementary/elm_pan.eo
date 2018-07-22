@@ -7,7 +7,7 @@ class Elm.Pan (Efl.Canvas.Group)
    data: Elm_Pan_Smart_Data;
    methods {
       @property pos {
-      	 [[Position]]
+          [[Position]]
          set {
          }
          get {
@@ -18,7 +18,7 @@ class Elm.Pan (Efl.Canvas.Group)
          }
       }
       @property content_size {
-      	 [[Content size]]
+          [[Content size]]
          get {
          }
          values {
@@ -27,7 +27,7 @@ class Elm.Pan (Efl.Canvas.Group)
          }
       }
       @property pos_min {
-      	 [[Minimal position]]
+          [[Minimal position]]
          get {
          }
          values {
@@ -36,7 +36,7 @@ class Elm.Pan (Efl.Canvas.Group)
          }
       }
       @property pos_max {
-      	 [[Maximal position]]
+          [[Maximal position]]
          get {
          }
          values {
@@ -48,11 +48,11 @@ class Elm.Pan (Efl.Canvas.Group)
    implements {
       Efl.Object.constructor;
       class.constructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
    }
    events {
-      changed; [[Called when pan object changed]]
+      changed: void; [[Called when pan object changed]]
    }
 }

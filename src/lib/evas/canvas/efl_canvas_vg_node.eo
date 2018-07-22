@@ -1,0 +1,84 @@
+import eina_types;
+
+abstract Efl.Canvas.Vg.Node (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path)
+{
+   [[Efl vector graphics abstract class]]
+   eo_prefix: efl_canvas_vg_node;
+   legacy_prefix: evas_vg_node;
+   methods {
+      @property transformation {
+         set {
+            [[Sets the transformation matrix to be used for this node object.
+
+              Note: Pass $null to cancel the applied transformation.
+
+              @since 1.14]]
+         }
+         get {
+            [[Gets the transformation matrix used for this node object.
+
+              @since 1.14]]
+         }
+         values {
+            @cref m: Eina.Matrix3; [[Transformation matrix.]]
+         }
+      }
+      @property origin {
+         set {
+            [[Sets the origin position of the node object.
+
+              This origin position affects node transformation.
+
+              @since 1.14]]
+         }
+         get {
+            [[Gets the origin position of the node object.
+
+              @since 1.14]]
+         }
+         values {
+            x: double; [[$origin x position.]]
+            y: double; [[$origin y position.]]
+         }
+      }
+      @property mask {
+         [[Vector graphics object mask]]
+         set {
+         }
+         get {
+         }
+         values {
+            m: Efl.Canvas.Vg.Node; [[Object mask]]
+         }
+      }
+/*      quality {
+         set {
+         }
+         get {
+         }
+         values {
+            Evas_VG_Quality q;
+         }
+      } */
+   }
+   implements {
+      Efl.Object.name { set; }
+      Efl.Object.parent { set; }
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Object.destructor;
+      Efl.Gfx.Entity.visible { get; set; }
+      Efl.Gfx.Color.color { get; set; }
+      Efl.Gfx.Entity.size { get; }
+      Efl.Gfx.Entity.position { get; set; }
+      Efl.Gfx.Entity.geometry { get; }
+      Efl.Gfx.Stack.below { get; }
+      Efl.Gfx.Stack.above { get; }
+      Efl.Gfx.Stack.stack_below;
+      Efl.Gfx.Stack.stack_above;
+      Efl.Gfx.Stack.raise;
+      Efl.Gfx.Stack.lower;
+      Efl.Gfx.Path.interpolate;
+      Efl.Duplicate.duplicate;
+   }
+}

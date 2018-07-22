@@ -68,7 +68,7 @@ EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSE
  * @param n The maximum size of the text to duplicate.
  * @return The duplicated string.
  *
- * This function duplicates @p text. The resuting string is cut on @p
+ * This function duplicates @p text. The resulting string is cut on @p
  * n. @p n is assumed to be lesser  (<) than the length of @p
  * text. When not needed anymore, the returned string must be freed.
  *

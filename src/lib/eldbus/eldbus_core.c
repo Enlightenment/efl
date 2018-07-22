@@ -85,6 +85,45 @@ static void _eldbus_connection_context_event_cb_del(Eldbus_Connection_Context_Ev
 static void eldbus_dispatch_name_owner_change(Eldbus_Connection_Name *cn, const char *old_id);
 static void _eldbus_connection_free(Eldbus_Connection *conn);
 
+static void
+eldbus_fd_handler_del(Eldbus_Handler_Data *hd)
+{
+   if (!hd->fd_handler) return;
+
+   DBG("free Eldbus_Handler_Data %d", hd->fd);
+   hd->conn->fd_handlers = eina_inlist_remove(hd->conn->fd_handlers,
+                                              EINA_INLIST_GET(hd));
+   if (hd->fd_handler)
+     {
+        ecore_main_fd_handler_del(hd->fd_handler);
+        hd->fd_handler = NULL;
+     }
+
+   free(hd);
+}
+
+static void
+_eldbus_fork_reset()
+{
+   int i;
+
+   for (i =0; i < ELDBUS_CONNECTION_TYPE_LAST - 1; i++)
+     {
+        Eldbus_Connection *conn = shared_connections[i];
+        if (conn)
+          {
+             Eina_Inlist *list;
+             Eldbus_Handler_Data *fd_handler;
+
+             EINA_INLIST_FOREACH_SAFE(conn->fd_handlers, list, fd_handler)
+               dbus_watch_set_data(fd_handler->watch, NULL, NULL);
+          }
+        shared_connections[i] = NULL;
+     }
+   if (address_connections) eina_hash_free(address_connections);
+   address_connections = NULL;
+}
+
 EAPI int
 eldbus_init(void)
 {
@@ -97,10 +136,18 @@ eldbus_init(void)
         return 0;
      }
 
+   if (!ecore_init())
+     {
+        fputs("Eldbus: Unable to initialize ecore\n", stderr);
+        eina_shutdown();
+        return 0;
+     }
+
    _eldbus_log_dom = eina_log_domain_register("eldbus", EINA_COLOR_BLUE);
    if (_eldbus_log_dom < 0)
      {
         EINA_LOG_ERR("Unable to create an 'eldbus' log domain");
+        ecore_shutdown();
         eina_shutdown();
         return 0;
      }
@@ -111,6 +158,7 @@ eldbus_init(void)
         EINA_LOG_ERR("Unable to create an 'eldbus_model' log domain");
         eina_log_domain_unregister(_eldbus_log_dom);
         _eldbus_log_dom = -1;
+        ecore_shutdown();
         eina_shutdown();
         return 0;
      }
@@ -131,7 +179,7 @@ eldbus_init(void)
    if (!eldbus_object_init()) goto object_failed;
    if (!eldbus_proxy_init()) goto proxy_failed;
    if (!eldbus_service_init()) goto service_failed;
-
+   ecore_fork_reset_callback_add(_eldbus_fork_reset, NULL);
    return _eldbus_init_count;
 
 service_failed:
@@ -149,6 +197,7 @@ message_failed:
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
+   ecore_shutdown();
    eina_shutdown();
 
    return 0;
@@ -205,6 +254,7 @@ eldbus_shutdown(void)
    if (--_eldbus_init_count)
      return _eldbus_init_count;
 
+   ecore_fork_reset_callback_del(_eldbus_fork_reset, NULL);
    if (shared_connections[ELDBUS_CONNECTION_TYPE_SESSION - 1])
      {
         CRI("Alive TYPE_SESSION connection");
@@ -247,10 +297,13 @@ eldbus_shutdown(void)
    eldbus_signal_handler_shutdown();
    eldbus_message_shutdown();
 
+   ecore_shutdown();
+
    eina_log_domain_unregister(eldbus_model_log_dom);
    eldbus_model_log_dom = -1;
    eina_log_domain_unregister(_eldbus_log_dom);
    _eldbus_log_dom = -1;
+
    eina_shutdown();
 
    return 0;
@@ -546,24 +599,6 @@ eldbus_connection_name_object_get(Eldbus_Connection *conn, const char *name, con
    if (!cn) return NULL;
    if (!cn->objects) return NULL;
    return eina_hash_find(cn->objects, path);
-}
-
-
-static void
-eldbus_fd_handler_del(Eldbus_Handler_Data *hd)
-{
-   if (!hd->fd_handler) return;
-
-   DBG("free Eldbus_Handler_Data %d", hd->fd);
-   hd->conn->fd_handlers = eina_inlist_remove(hd->conn->fd_handlers,
-                                              EINA_INLIST_GET(hd));
-   if (hd->fd_handler)
-     {
-        ecore_main_fd_handler_del(hd->fd_handler);
-        hd->fd_handler = NULL;
-     }
-
-   free(hd);
 }
 
 static Eina_Bool
@@ -1256,7 +1291,10 @@ _eldbus_connection_free(Eldbus_Connection *conn)
    if (conn->type && conn->shared)
      {
         if (conn->type == ELDBUS_CONNECTION_TYPE_ADDRESS)
-           eina_hash_del_by_data(address_connections, conn);
+           {
+              if (address_connections)
+                eina_hash_del_by_data(address_connections, conn);
+           }
         else if (shared_connections[conn->type - 1] == (void *) conn)
            shared_connections[conn->type - 1] = NULL;
      }

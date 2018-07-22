@@ -266,21 +266,16 @@ _evas_outbuf_rotation_get(Outbuf *ob)
 void 
 _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, Eina_Bool alpha, Eina_Bool resize)
 {
-   Eina_Bool dirty;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((depth == OUTBUF_DEPTH_NONE) || 
        (depth == OUTBUF_DEPTH_INHERIT))
      depth = ob->depth;
 
-   if (!ob->dirty && (ob->w == w) && (ob->h == h) &&
+   if ((ob->w == w) && (ob->h == h) &&
        (ob->rotation == rot) && (ob->depth == depth) && 
        (ob->priv.destination_alpha == alpha))
      return;
-
-   dirty = ob->dirty;
-   ob->dirty = EINA_FALSE;
 
    ob->w = w;
    ob->h = h;
@@ -290,11 +285,11 @@ _evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth, 
 
    if ((ob->rotation == 0) || (ob->rotation == 180))
      {
-        ecore_wl2_surface_reconfigure(ob->surface, w, h, resize, dirty);
+        ecore_wl2_surface_reconfigure(ob->surface, w, h, resize, alpha);
      }
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      {
-        ecore_wl2_surface_reconfigure(ob->surface, h, w, resize, dirty);
+        ecore_wl2_surface_reconfigure(ob->surface, h, w, resize, alpha);
      }
 
    _evas_outbuf_idle_flush(ob);

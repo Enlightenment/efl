@@ -2,10 +2,10 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define EFL_CANVAS_BETA
+#define EFL_CANVAS_SCENE_BETA
 
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_X
@@ -36,22 +36,22 @@ _timer_delete_request_cb(void *data)
 {
    Eo *win = (Eo*) data;
    _do_delete_request(win);
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 _timer_hide_window_cb(void *data)
 {
    Eo *win = (Eo*) data;
-   efl_gfx_visible_set(win, EINA_FALSE);
-   return ECORE_CALLBACK_PASS_ON;
+   efl_gfx_entity_visible_set(win, EINA_FALSE);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 _timer_exit_cb(void *data EINA_UNUSED)
 {
    elm_exit();
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -60,36 +60,68 @@ _timer_fail_flag_cb(void *data)
    Eina_Bool *fail_flag = (Eina_Bool*) data;
    *fail_flag = EINA_TRUE;
    elm_exit();
-   return ECORE_CALLBACK_PASS_ON;
+   return EINA_FALSE;
 }
 
+EFL_START_TEST (elm_win_legacy_type_check)
+{
+   Evas_Object *win, *win_socket, *win_inlined;
+   const char *type;
 
-START_TEST (elm_atspi_role_get)
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
+
+   type = elm_object_widget_type_get(win);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Win"));
+
+   type = evas_object_type_get(win);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_win"));
+
+   win_socket = win_add(NULL, "win", ELM_WIN_SOCKET_IMAGE);
+
+   type = elm_object_widget_type_get(win_socket);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Win"));
+
+   type = evas_object_type_get(win_socket);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_win"));
+
+   win_inlined = win_add(win, "win", ELM_WIN_INLINED_IMAGE);
+
+   type = elm_object_widget_type_get(win_inlined);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Win"));
+
+   type = evas_object_type_get(win_inlined);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_win"));
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
 
-   role = efl_access_role_get(win);
+   role = efl_access_object_role_get(win);
 
    ck_assert(role == EFL_ACCESS_ROLE_WINDOW);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_component_position)
+EFL_START_TEST (elm_atspi_component_screen_position)
 {
    Eina_Bool ret;
    int x, y;
 
-   elm_init(0, NULL);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-
-   ret = efl_access_component_position_set(win, EINA_TRUE, 45, 45);
+   ret = efl_access_component_screen_position_set(win, 45, 45);
    ck_assert(ret == EINA_TRUE);
 
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
@@ -98,60 +130,36 @@ START_TEST (elm_atspi_component_position)
 
    ck_assert((x == 45) && (y == 45));
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_component_size)
+EFL_START_TEST (elm_win_autohide)
 {
-   Eina_Bool ret;
-   int w, h;
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
+   if (elm_win_xwindow_get(win))
+     {
+        elm_win_autohide_set(win, EINA_TRUE);
+        efl_gfx_entity_visible_set(win, EINA_TRUE);
 
-   elm_init(0, NULL);
+        Eina_Bool fail_flag = EINA_FALSE;
+        ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
+        ecore_timer_add(_timeout2, _timer_exit_cb, &fail_flag);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   evas_object_resize(win, 50, 50);
+        elm_run();
 
-   ret = efl_access_component_size_set(win, 100, 100);
-   ck_assert(ret == EINA_TRUE);
-
-   evas_object_geometry_get(win, NULL, NULL, &w, &h);
-   ck_assert((w == 100) && (h == 100));
-
-   elm_shutdown();
+        Eina_Bool visible;
+        visible = efl_gfx_entity_visible_get(win);
+        ck_assert(visible == EINA_FALSE);
+     }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_win_autohide)
+EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
 {
-   elm_init(0, NULL);
-
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
-
-   Eina_Bool fail_flag = EINA_FALSE;
-   ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
-   ecore_timer_add(_timeout2, _timer_exit_cb, &fail_flag);
-
-   elm_run();
-
-   Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
-   ck_assert(visible == EINA_FALSE);
-
-   elm_shutdown();
-}
-END_TEST
-
-START_TEST (elm_win_policy_quit_last_window_hidden)
-{
-   elm_init(0, NULL);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   efl_gfx_visible_set(win, EINA_TRUE);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
    ecore_timer_add(_timeout1, _timer_hide_window_cb, win);
@@ -160,42 +168,40 @@ START_TEST (elm_win_policy_quit_last_window_hidden)
    elm_run();
 
    Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
+   visible = efl_gfx_entity_visible_get(win);
 
    ck_assert(fail_flag == EINA_FALSE);
    ck_assert(efl_ref_count(win) >= 1);
    ck_assert(visible == EINA_FALSE);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
+EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
 {
-   elm_init(0, NULL);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
-   Eo *win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
-   elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
+   if (elm_win_xwindow_get(win))
+     {
+        elm_win_autohide_set(win, EINA_TRUE);
+        efl_gfx_entity_visible_set(win, EINA_TRUE);
 
-   Eina_Bool fail_flag = EINA_FALSE;
-   ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
-   ecore_timer_add(_timeout_fail, _timer_fail_flag_cb, &fail_flag);
+        Eina_Bool fail_flag = EINA_FALSE;
+        ecore_timer_add(_timeout1, _timer_delete_request_cb, win);
+        ecore_timer_add(_timeout_fail, _timer_fail_flag_cb, &fail_flag);
 
-   elm_run();
+        elm_run();
 
-   Eina_Bool visible;
-   visible = efl_gfx_visible_get(win);
+        Eina_Bool visible;
+        visible = efl_gfx_entity_visible_get(win);
 
-   ck_assert(fail_flag == EINA_FALSE);
-   ck_assert(efl_ref_count(win) >= 1);
-   ck_assert(visible == EINA_FALSE);
-
-   elm_shutdown();
+        ck_assert(fail_flag == EINA_FALSE);
+        ck_assert(efl_ref_count(win) >= 1);
+        ck_assert(visible == EINA_FALSE);
+     }
 }
-END_TEST
+EFL_END_TEST
 
 /* a very lax definition of == for doubles */
 #define VALEQ(a, b) ((fabs((a) - (b))) <= 0.001)
@@ -259,7 +265,7 @@ _inputs_timer2_cb(void *data)
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_canvas_pointer_iterate(win, 0);
+   it = efl_canvas_scene_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         double x, y;
@@ -322,7 +328,7 @@ _inputs_timer3_cb(void *data)
    size_t cnt = 0;
    int i = 0;
 
-   it = efl_canvas_pointer_iterate(win, 0);
+   it = efl_canvas_scene_pointer_iterate(win, 0);
    EINA_ITERATOR_FOREACH(it, ptr)
      {
         int tool, ok = 0;
@@ -353,7 +359,7 @@ _inputs_timer3_cb(void *data)
    fail_if(cnt != 2); // 2 moves (in the list), 2 ups (gone)
 
    fail_if(!efl_canvas_pointer_inside_get(win, NULL));
-   pos = efl_canvas_pointer_position_get(win);
+   pos = efl_canvas_scene_pointer_position_get(win);
    ck_assert_int_eq(pos.x, points[1][0].x);
    ck_assert_int_eq(pos.y, points[1][0].y);
 
@@ -362,7 +368,7 @@ _inputs_timer3_cb(void *data)
    return ECORE_CALLBACK_DONE;
 }
 
-START_TEST (efl_ui_win_multi_touch_inputs)
+EFL_START_TEST (efl_ui_win_multi_touch_inputs)
 {
    Eina_Bool fail_flag = EINA_FALSE;
    Eo *win;
@@ -374,14 +380,12 @@ START_TEST (efl_ui_win_multi_touch_inputs)
     * pointer x: down, move, move, ...
     */
 
-   elm_init(0, NULL);
-
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
-   win = elm_win_add(NULL, "win", ELM_WIN_BASIC);
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
    elm_win_autohide_set(win, EINA_TRUE);
-   efl_gfx_visible_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, EINA_SIZE2D(100,  100));
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(100,  100));
 
    ecore_timer_add(_timeout1, _inputs_timer1_cb, win);
    ecore_timer_add(_timeout2, _inputs_timer2_cb, win);
@@ -392,15 +396,14 @@ START_TEST (efl_ui_win_multi_touch_inputs)
 
    fail_if(fail_flag != EINA_FALSE);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_win(TCase *tc)
 {
+   tcase_add_test(tc, elm_win_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, elm_atspi_component_position);
-   tcase_add_test(tc, elm_atspi_component_size);
+   tcase_add_test(tc, elm_atspi_component_screen_position);
    tcase_add_test(tc, elm_win_policy_quit_last_window_hidden);
    tcase_add_test(tc, efl_ui_win_multi_touch_inputs);
 #ifdef HAVE_ELEMENTARY_X

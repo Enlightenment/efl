@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
@@ -22,6 +22,22 @@
 #define ELM_CALENDAR_BUTTON_RIGHT "elm,calendar,button,right"
 #define ELM_CALENDAR_BUTTON_YEAR_LEFT "elm,calendar,button_year,left"
 #define ELM_CALENDAR_BUTTON_YEAR_RIGHT "elm,calendar,button_year,right"
+
+#define ELM_CALENDAR_CH_TEXT_PART_STR "elm.ch_%d.text"
+#define ELM_CALENDAR_CIT_TEXT_PART_STR "elm.cit_%d.text"
+#define ELM_CALENDAR_CIT_ACCESS_PART_STR "elm.cit_%d.access"
+
+static void _part_name_snprintf(char *buffer, int buffer_size,
+   const Evas_Object *obj, const char *template, int n)
+{
+   snprintf(buffer, buffer_size, template, n);
+   if (!edje_object_part_exists (obj, buffer))
+     {
+        // Skip the namespace prefix "elm." which was not present
+        // in previous versions
+        snprintf(buffer, buffer_size, template + 4, n);
+     }
+}
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DISPLAY_CHANGED[] = "display,changed";
@@ -345,7 +361,7 @@ static void
 _access_calendar_item_register(Evas_Object *obj)
 {
    unsigned int maxdays, i;
-   char day_s[13], pname[14];
+   char day_s[13], pname[18];
    unsigned day = 0;
    Evas_Object *ao;
 
@@ -357,7 +373,8 @@ _access_calendar_item_register(Evas_Object *obj)
         if ((!day) && (i == sd->first_day_it)) day = 1;
         if ((day) && (day <= maxdays))
           {
-             snprintf(pname, sizeof(pname), "cit_%i.access", i);
+             _part_name_snprintf(pname, sizeof(pname),
+                elm_layout_edje_get(obj), ELM_CALENDAR_CIT_ACCESS_PART_STR, i);
 
              ao = _elm_access_edje_object_part_object_register
                         (obj, elm_layout_edje_get(obj), pname);
@@ -371,7 +388,8 @@ _access_calendar_item_register(Evas_Object *obj)
           }
         else
           {
-             snprintf(pname, sizeof(pname), "cit_%i.access", i);
+             _part_name_snprintf(pname, sizeof(pname),
+                elm_layout_edje_get(obj), ELM_CALENDAR_CIT_ACCESS_PART_STR, i);
              _elm_access_edje_object_part_object_unregister
                      (obj, elm_layout_edje_get(obj), pname);
           }
@@ -381,7 +399,7 @@ _access_calendar_item_register(Evas_Object *obj)
 static void
 _access_calendar_spinner_register(Evas_Object *obj)
 {
-   Evas_Object *po;
+   Evas_Object *po, *o;
    Elm_Access_Info *ai;
    ELM_CALENDAR_DATA_GET(obj, sd);
 
@@ -419,13 +437,14 @@ _access_calendar_spinner_register(Evas_Object *obj)
    ai = _elm_access_info_get(sd->year_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar year"));
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(obj), "month_text");
+   o = elm_layout_edje_get(obj);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, "month_text");
    evas_object_pass_events_set(po, EINA_FALSE);
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(obj), "year_text");
+   po = (Evas_Object *)edje_object_part_object_get(o, "year_text");
    evas_object_pass_events_set(po, EINA_FALSE);
+   edje_object_thaw(o);
 }
 
 static void
@@ -464,7 +483,7 @@ _populate(Evas_Object *obj)
 {
    int maxdays, adjusted_wday, prev_month_maxdays, day, mon, yr, i;
    Elm_Calendar_Mark *mark;
-   char part[12], day_s[3];
+   char part[16], day_s[3];
    struct tm first_day;
    Eina_List *l;
    Eina_Bool last_row = EINA_TRUE;
@@ -586,7 +605,7 @@ _populate(Evas_Object *obj)
                snprintf(day_s, sizeof(day_s), "%i", i - sd->first_day_it - maxdays + 1);
           }
 
-        snprintf(part, sizeof(part), "cit_%i.text", i);
+        _part_name_snprintf(part, sizeof(part), obj, ELM_CALENDAR_CIT_TEXT_PART_STR, i);
         elm_layout_text_set(obj, part, day_s);
 
         /* Clear previous marks */
@@ -689,7 +708,7 @@ _populate(Evas_Object *obj)
 static void
 _set_headers(Evas_Object *obj)
 {
-   static char part[] = "ch_0.text";
+   static char part[64];
    int i;
    struct tm *t;
    time_t temp = 259200; // the first sunday since epoch
@@ -725,7 +744,7 @@ _set_headers(Evas_Object *obj)
 
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
-        part[3] = i + '0';
+        _part_name_snprintf(part, sizeof(part), obj, ELM_CALENDAR_CH_TEXT_PART_STR, i);
         elm_layout_text_set(obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
      }
 
@@ -859,7 +878,7 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_calendar_elm_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
+_elm_calendar_efl_ui_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -1386,11 +1405,11 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_calendar_elm_widget_on_focus_update(Eo *obj, Elm_Calendar_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Calendar_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (efl_ui_focus_object_focus_get(obj))
@@ -1550,8 +1569,9 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
              if ((!day) && (i == sd->first_day_it)) day = 1;
              if ((day) && (day <= maxdays))
                {
-                  char pname[14];
-                  snprintf(pname, sizeof(pname), "cit_%i.access", i);
+                  char pname[18];
+                  _part_name_snprintf(pname, sizeof(pname),
+                     obj, ELM_CALENDAR_CIT_ACCESS_PART_STR, i);
 
                   _elm_access_edje_object_part_object_unregister
                           (obj, elm_layout_edje_get(obj), pname);
@@ -1593,7 +1613,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 }
 
 EOLIAN static void
-_elm_calendar_elm_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Calendar_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_calendar_efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Calendar_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_calendar_smart_focus_next_enable = acs;
    _access_obj_process(obj, _elm_calendar_smart_focus_next_enable);
@@ -1614,7 +1634,7 @@ _elm_calendar_efl_object_constructor(Eo *obj, Elm_Calendar_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_CALENDAR);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_CALENDAR);
 
    return obj;
 }
@@ -1636,7 +1656,7 @@ _elm_calendar_weekdays_names_set(Eo *obj, Elm_Calendar_Data *sd, const char **we
 }
 
 EOLIAN static const char**
-_elm_calendar_weekdays_names_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_weekdays_names_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->weekdays;
 }
@@ -1648,7 +1668,7 @@ _elm_calendar_interval_set(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, double in
 }
 
 EOLIAN static double
-_elm_calendar_interval_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_interval_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->first_interval;
 }
@@ -1754,7 +1774,7 @@ _elm_calendar_date_min_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *min)
 }
 
 EOLIAN static const struct tm *
-_elm_calendar_date_min_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_date_min_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return &(sd->date_min);
 }
@@ -1807,7 +1827,7 @@ _elm_calendar_date_max_set(Eo *obj, Elm_Calendar_Data *sd, const struct tm *max)
 }
 
 EOLIAN static const struct tm *
-_elm_calendar_date_max_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_date_max_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return &(sd->date_max);
 }
@@ -1928,7 +1948,7 @@ _elm_calendar_marks_clear(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 }
 
 EOLIAN static const Eina_List*
-_elm_calendar_marks_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_marks_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->marks;
 }
@@ -1951,7 +1971,7 @@ _elm_calendar_first_day_of_week_set(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar
 }
 
 EOLIAN static Elm_Calendar_Weekday
-_elm_calendar_first_day_of_week_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_first_day_of_week_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->first_week_day;
 }
@@ -1975,7 +1995,7 @@ _elm_calendar_select_mode_set(Eo *obj, Elm_Calendar_Data *sd, Elm_Calendar_Selec
 }
 
 EOLIAN static Elm_Calendar_Select_Mode
-_elm_calendar_select_mode_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_select_mode_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->select_mode;
 }
@@ -1987,7 +2007,7 @@ _elm_calendar_selectable_set(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd, Elm_Cal
 }
 
 EOLIAN static Elm_Calendar_Selectable
-_elm_calendar_selectable_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
+_elm_calendar_selectable_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd)
 {
    return sd->selectable;
 }
@@ -2010,7 +2030,7 @@ _elm_calendar_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_calendar_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
+_elm_calendar_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate},
@@ -2039,14 +2059,16 @@ typedef struct {
 EOLIAN static void
 _elm_calendar_item_day_number_set(Eo *obj, Elm_Calendar_Item_Data *pd, int i)
 {
-   char pname[14];
-   Evas_Object *po;
+   char pname[18];
+   Evas_Object *po, *o;
 
    pd->v = i;
-   snprintf(pname, sizeof(pname), "cit_%i.access", i);
 
-   po = (Evas_Object *)edje_object_part_object_get
-          (elm_layout_edje_get(efl_parent_get(obj)), pname);
+   o = elm_layout_edje_get(efl_parent_get(obj));
+   _part_name_snprintf(pname, sizeof(pname), o, ELM_CALENDAR_CIT_ACCESS_PART_STR, i);
+   edje_object_freeze(o);
+   po = (Evas_Object *)edje_object_part_object_get(o, pname);
+   edje_object_thaw(o);
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_ON)
      pd->part = po;
@@ -2057,7 +2079,7 @@ _elm_calendar_item_day_number_set(Eo *obj, Elm_Calendar_Item_Data *pd, int i)
 }
 
 EOLIAN static int
-_elm_calendar_item_day_number_get(Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
+_elm_calendar_item_day_number_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
 {
    return pd->v;
 }
@@ -2072,9 +2094,9 @@ _elm_calendar_item_efl_ui_focus_object_focus_set(Eo *obj, Elm_Calendar_Item_Data
 }
 
 EOLIAN static Eina_Rect
-_elm_calendar_item_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
+_elm_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Calendar_Item_Data *pd)
 {
-   return efl_gfx_geometry_get(pd->part);
+   return efl_gfx_entity_geometry_get(pd->part);
 }
 
 #include "elm_calendar_item.eo.c"

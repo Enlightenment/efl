@@ -32,14 +32,14 @@ typedef struct
       unsigned char radios_offline; /* 0xff = not requested */
       Eldbus_Pending *radios_offline_pending;
    } request;
-} Efl_Net_Control_Data;
+} Efl_Net_Control_Manager_Data;
 
-#define MY_CLASS EFL_NET_CONTROL_CLASS
+#define MY_CLASS EFL_NET_CONTROL_MANAGER_CLASS
 
-static void _efl_net_control_agent_enabled_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool agent_enabled);
+static void _efl_net_control_manager_agent_enabled_set(Eo *o, Efl_Net_Control_Manager_Data *pd, Eina_Bool agent_enabled);
 
 static Eo *
-_efl_net_control_technology_find(const Efl_Net_Control_Data *pd, const char *path)
+_efl_net_control_technology_find(const Efl_Net_Control_Manager_Data *pd, const char *path)
 {
    const Eina_List *n;
    Eo *child;
@@ -56,7 +56,7 @@ _efl_net_control_technology_find(const Efl_Net_Control_Data *pd, const char *pat
 }
 
 static Eo *
-_efl_net_control_access_point_find(const Efl_Net_Control_Data *pd, const char *path)
+_efl_net_control_access_point_find(const Efl_Net_Control_Manager_Data *pd, const char *path)
 {
    const Eina_List *n;
    Eo *child;
@@ -76,14 +76,14 @@ static Eldbus_Message *
 _efl_net_control_agent_release(const Eldbus_Service_Interface *service, const Eldbus_Message *msg)
 {
    Eo *o = eldbus_service_object_data_get(service, "efl_net");
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
    DBG("Agent %p is released %s", o, eldbus_message_path_get(msg));
    EINA_SAFETY_ON_NULL_GOTO(o, end);
    EINA_SAFETY_ON_NULL_GOTO(pd, end);
 
    pd->agent_enabled = EINA_FALSE;
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_AGENT_RELEASED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_RELEASED, NULL);
 
  end:
    return eldbus_message_method_return_new(msg);
@@ -93,7 +93,7 @@ static Eldbus_Message *
 _efl_net_control_agent_cancel(const Eldbus_Service_Interface *service, const Eldbus_Message *msg)
 {
    Eo *o = eldbus_service_object_data_get(service, "efl_net");
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message *reply;
 
    DBG("Agent %p request canceled %s", o, eldbus_message_path_get(msg));
@@ -208,7 +208,7 @@ static Eldbus_Message *
 _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, const Eldbus_Message *msg)
 {
    Eo *o = eldbus_service_object_data_get(service, "efl_net");
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Efl_Net_Control_Agent_Request_Input event = { };
    Efl_Net_Control_Agent_Request_Input_Information *info;
    Eldbus_Message_Iter *array, *entry;
@@ -268,7 +268,7 @@ _efl_net_control_agent_request_input(const Eldbus_Service_Interface *service, co
      }
 
    pd->agent_request_input.msg = eldbus_message_ref((Eldbus_Message *)msg);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_AGENT_REQUEST_INPUT, &event);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_REQUEST_INPUT, &event);
 
    EINA_LIST_FREE(event.informational, info) free(info);
 
@@ -282,7 +282,7 @@ static Eldbus_Message *
 _efl_net_control_agent_report_error(const Eldbus_Service_Interface *service, const Eldbus_Message *msg)
 {
    Eo *o = eldbus_service_object_data_get(service, "efl_net");
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *path, *err_msg;
    Efl_Net_Control_Agent_Error event = { };
 
@@ -300,7 +300,7 @@ _efl_net_control_agent_report_error(const Eldbus_Service_Interface *service, con
    event.access_point = _efl_net_control_access_point_find(pd, path);
    event.message = err_msg;
 
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_AGENT_ERROR, &event);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_ERROR, &event);
 
  end:
    return eldbus_message_method_return_new(msg);
@@ -310,7 +310,7 @@ static Eldbus_Message *
 _efl_net_control_agent_request_browser(const Eldbus_Service_Interface *service, const Eldbus_Message *msg)
 {
    Eo *o = eldbus_service_object_data_get(service, "efl_net");
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *path, *url;
    Efl_Net_Control_Agent_Browser_Url event = { };
 
@@ -328,7 +328,7 @@ _efl_net_control_agent_request_browser(const Eldbus_Service_Interface *service, 
    event.access_point = _efl_net_control_access_point_find(pd, path);
    event.url = url;
 
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_AGENT_BROWSER_URL, &event);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_BROWSER_URL, &event);
 
  end:
    return eldbus_message_method_return_new(msg);
@@ -402,7 +402,7 @@ static const Eldbus_Service_Interface_Desc _efl_net_control_agent_desc = {
 };
 
 static void
-_efl_net_control_technology_added_internal(Eo *o, Efl_Net_Control_Data *pd, Eldbus_Message_Iter *itr)
+_efl_net_control_technology_added_internal(Eo *o, Efl_Net_Control_Manager_Data *pd, Eldbus_Message_Iter *itr)
 {
    const char *path;
    Eldbus_Message_Iter *array;
@@ -423,14 +423,14 @@ _efl_net_control_technology_added_internal(Eo *o, Efl_Net_Control_Data *pd, Eldb
 
    pd->technologies = eina_list_append(pd->technologies, child);
    DBG("Technology Added Path=%s", path);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_TECHNOLOGY_ADD, child);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_TECHNOLOGY_ADD, child);
 }
 
 static void
 _efl_net_control_technology_added(void *data, const Eldbus_Message *msg)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *itr = eldbus_message_iter_get(msg);
    _efl_net_control_technology_added_internal(o, pd, itr);
 }
@@ -439,7 +439,7 @@ static void
 _efl_net_control_technology_removed(void *data, const Eldbus_Message *msg)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eo *child;
    const char *path;
 
@@ -458,12 +458,12 @@ _efl_net_control_technology_removed(void *data, const Eldbus_Message *msg)
 
    pd->technologies = eina_list_remove(pd->technologies, child);
    DBG("Technology Removed Path=%s", path);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_TECHNOLOGY_DEL, child);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_TECHNOLOGY_DEL, child);
    efl_del(child);
 }
 
 static void
-_efl_net_control_access_point_added(Eo *o, Efl_Net_Control_Data *pd, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
+_efl_net_control_access_point_added(Eo *o, Efl_Net_Control_Manager_Data *pd, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
 {
    Eo *child;
 
@@ -476,11 +476,11 @@ _efl_net_control_access_point_added(Eo *o, Efl_Net_Control_Data *pd, const char 
 
    pd->access_points = eina_list_append(pd->access_points, child);
    DBG("Access Point Added Path=%s", path);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINT_ADD, child);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINT_ADD, child);
 }
 
 static void
-_efl_net_control_access_point_updated(Eo *o, Efl_Net_Control_Data *pd, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
+_efl_net_control_access_point_updated(Eo *o, Efl_Net_Control_Manager_Data *pd, const char *path, Eldbus_Message_Iter *properties, unsigned int priority)
 {
    Eo *child = _efl_net_control_access_point_find(pd, path);
    if (!child)
@@ -493,7 +493,7 @@ _efl_net_control_access_point_updated(Eo *o, Efl_Net_Control_Data *pd, const cha
 }
 
 static void
-_efl_net_control_access_point_removed(Eo *o, Efl_Net_Control_Data *pd, const char *path)
+_efl_net_control_access_point_removed(Eo *o, Efl_Net_Control_Manager_Data *pd, const char *path)
 {
    Eo *child = _efl_net_control_access_point_find(pd, path);
    if (!child)
@@ -504,7 +504,7 @@ _efl_net_control_access_point_removed(Eo *o, Efl_Net_Control_Data *pd, const cha
 
    pd->access_points = eina_list_remove(pd->access_points, child);
    DBG("Access Point Removed Path=%s", path);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINT_DEL, child);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINT_DEL, child);
    efl_del(child);
 }
 
@@ -524,7 +524,7 @@ static void
 _efl_net_control_services_changed(void *data, const Eldbus_Message *msg)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *changed, *invalidated, *sub;
    const char *path;
    unsigned int priority;
@@ -554,7 +554,7 @@ _efl_net_control_services_changed(void *data, const Eldbus_Message *msg)
 
    pd->access_points = eina_list_sort(pd->access_points, 0, _efl_net_control_access_point_sort_cb);
 
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINTS_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINTS_CHANGED, NULL);
    efl_unref(o);
 }
 
@@ -579,7 +579,7 @@ _efl_net_control_state_from_str(const char *str)
 }
 
 static void
-_efl_net_control_property_state_changed(Eo *o, Efl_Net_Control_Data *pd, Eldbus_Message_Iter *value)
+_efl_net_control_property_state_changed(Eo *o, Efl_Net_Control_Manager_Data *pd, Eldbus_Message_Iter *value)
 {
    const char *str;
    Efl_Net_Control_State state;
@@ -594,11 +594,11 @@ _efl_net_control_property_state_changed(Eo *o, Efl_Net_Control_Data *pd, Eldbus_
    if (pd->state == state) return;
    pd->state = state;
    DBG("state=%d (%s)", state, str);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_STATE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_STATE_CHANGED, NULL);
 }
 
 static void
-_efl_net_control_property_radios_offline_changed(Eo *o, Efl_Net_Control_Data *pd, Eldbus_Message_Iter *value)
+_efl_net_control_property_radios_offline_changed(Eo *o, Efl_Net_Control_Manager_Data *pd, Eldbus_Message_Iter *value)
 {
    Eina_Bool offline;
 
@@ -611,11 +611,11 @@ _efl_net_control_property_radios_offline_changed(Eo *o, Efl_Net_Control_Data *pd
    if (pd->radios_offline == offline) return;
    pd->radios_offline = offline;
    DBG("radios offline=%hhu", offline);
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_RADIOS_OFFLINE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_RADIOS_OFFLINE_CHANGED, NULL);
 }
 
 static void
-_efl_net_control_property_changed_internal(Eo *o, Efl_Net_Control_Data *pd, Eldbus_Message_Iter *itr)
+_efl_net_control_property_changed_internal(Eo *o, Efl_Net_Control_Manager_Data *pd, Eldbus_Message_Iter *itr)
 {
    Eldbus_Message_Iter *value;
    const char *name;
@@ -640,7 +640,7 @@ static void
 _efl_net_control_property_changed(void *data, const Eldbus_Message *msg)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *itr;
 
    itr = eldbus_message_iter_get(msg);
@@ -651,7 +651,7 @@ static void
 _efl_net_control_properties_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *array, *entry;
    const char *err_name, *err_msg;
 
@@ -683,7 +683,7 @@ static void
 _efl_net_control_technologies_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *array, *entry;
    const char *err_name, *err_msg;
 
@@ -712,7 +712,7 @@ static void
 _efl_net_control_services_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Message_Iter *array, *sub;
    const char *err_name, *err_msg, *path;
    unsigned int priority = 0;
@@ -745,7 +745,7 @@ _efl_net_control_services_get_cb(void *data, const Eldbus_Message *msg, Eldbus_P
 
    pd->access_points = eina_list_sort(pd->access_points, 0, _efl_net_control_access_point_sort_cb);
 
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINTS_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINTS_CHANGED, NULL);
    efl_unref(o);
 }
 
@@ -753,7 +753,7 @@ static void
 _efl_net_control_radios_offline_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *err_name, *err_msg;
    Eina_Bool radios_offline = pd->request.radios_offline;
 
@@ -774,7 +774,7 @@ _efl_net_control_radios_offline_cb(void *data, const Eldbus_Message *msg, Eldbus
 }
 
 static void
-_efl_net_control_radios_offline_apply(Eo *o, Efl_Net_Control_Data *pd)
+_efl_net_control_radios_offline_apply(Eo *o, Efl_Net_Control_Manager_Data *pd)
 {
    Eldbus_Proxy *mgr = efl_net_connman_manager_get();
    Eldbus_Message *msg = eldbus_proxy_method_call_new(mgr, "SetProperty");
@@ -811,34 +811,34 @@ _efl_net_control_radios_offline_apply(Eo *o, Efl_Net_Control_Data *pd)
 }
 
 static void
-_efl_net_control_clear(Eo *o, Efl_Net_Control_Data *pd)
+_efl_net_control_clear(Eo *o, Efl_Net_Control_Manager_Data *pd)
 {
    Eo *child;
 
    EINA_LIST_FREE(pd->access_points, child)
      {
-        efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINT_DEL, child);
+        efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINT_DEL, child);
         efl_del(child);
      }
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_ACCESS_POINTS_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_ACCESS_POINTS_CHANGED, NULL);
 
    EINA_LIST_FREE(pd->technologies, child)
      {
-        efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_TECHNOLOGY_DEL, child);
+        efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_TECHNOLOGY_DEL, child);
         efl_del(child);
      }
 
    pd->state = EFL_NET_CONTROL_STATE_OFFLINE;
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_STATE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_STATE_CHANGED, NULL);
    pd->radios_offline = EINA_TRUE;
-   efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_RADIOS_OFFLINE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_RADIOS_OFFLINE_CHANGED, NULL);
 }
 
 static void
 _efl_net_control_connman_name_owner_changed(void *data, const char *bus, const char *old_id, const char *new_id)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Proxy *mgr;
 
    DBG("Name Owner Changed %s: %s->%s", bus, old_id, new_id);
@@ -849,7 +849,7 @@ _efl_net_control_connman_name_owner_changed(void *data, const char *bus, const c
         if (pd->agent_enabled)
           {
              pd->agent_enabled = EINA_FALSE;
-             efl_event_callback_call(o, EFL_NET_CONTROL_EVENT_AGENT_RELEASED, NULL);
+             efl_event_callback_call(o, EFL_NET_CONTROL_MANAGER_EVENT_AGENT_RELEASED, NULL);
           }
         return;
      }
@@ -894,14 +894,14 @@ _efl_net_control_connman_name_owner_changed(void *data, const char *bus, const c
    if (pd->agent_enabled)
      {
         pd->agent_enabled = EINA_FALSE;
-        _efl_net_control_agent_enabled_set(o, pd, EINA_TRUE);
+        _efl_net_control_manager_agent_enabled_set(o, pd, EINA_TRUE);
      }
 }
 
 void
 efl_net_connman_control_access_points_reload(Eo *o)
 {
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eldbus_Proxy *mgr;
    Eldbus_Pending *p;
 
@@ -915,7 +915,7 @@ efl_net_connman_control_access_points_reload(Eo *o)
 }
 
 EOLIAN static Eo *
-_efl_net_control_efl_object_constructor(Eo *o, Efl_Net_Control_Data *pd EINA_UNUSED)
+_efl_net_control_manager_efl_object_constructor(Eo *o, Efl_Net_Control_Manager_Data *pd EINA_UNUSED)
 {
    pd->radios_offline = EINA_TRUE;
    pd->request.radios_offline = 0xff;
@@ -930,7 +930,7 @@ _efl_net_control_efl_object_constructor(Eo *o, Efl_Net_Control_Data *pd EINA_UNU
 }
 
 EOLIAN static Eo *
-_efl_net_control_efl_object_finalize(Eo *o, Efl_Net_Control_Data *pd EINA_UNUSED)
+_efl_net_control_manager_efl_object_finalize(Eo *o, Efl_Net_Control_Manager_Data *pd EINA_UNUSED)
 {
    Eldbus_Connection *conn;
    char path[128];
@@ -953,7 +953,7 @@ _efl_net_control_efl_object_finalize(Eo *o, Efl_Net_Control_Data *pd EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_net_control_efl_object_destructor(Eo *o, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_efl_object_destructor(Eo *o, Efl_Net_Control_Manager_Data *pd)
 {
    Eldbus_Pending *p;
    Eldbus_Signal_Handler *sh;
@@ -1003,40 +1003,40 @@ _efl_net_control_efl_object_destructor(Eo *o, Efl_Net_Control_Data *pd)
 }
 
 EOLIAN static void
-_efl_net_control_radios_offline_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool radios_offline)
+_efl_net_control_manager_radios_offline_set(Eo *o, Efl_Net_Control_Manager_Data *pd, Eina_Bool radios_offline)
 {
    pd->request.radios_offline = radios_offline;
    if (pd->operating) _efl_net_control_radios_offline_apply(o, pd);
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_radios_offline_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_radios_offline_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd)
 {
    return pd->radios_offline;
 }
 
 EOLIAN static Efl_Net_Control_State
-_efl_net_control_state_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_state_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd)
 {
    return pd->state;
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_access_points_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_access_points_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd)
 {
    return eina_list_iterator_new(pd->access_points);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_net_control_technologies_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_technologies_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd)
 {
    return eina_list_iterator_new(pd->technologies);
 }
 
 Efl_Net_Control_Technology *
-efl_net_connman_control_find_technology_by_type(Efl_Net_Control *o, const char *tech_type)
+efl_net_connman_control_find_technology_by_type(Efl_Net_Control_Manager *o, const char *tech_type)
 {
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Efl_Net_Control_Technology_Type desired = efl_net_connman_technology_type_from_str(tech_type);
    const Eina_List *n;
    Eo *child;
@@ -1058,7 +1058,7 @@ static void
 _efl_net_control_agent_register_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *err_name, *err_msg;
 
    pd->pending = eina_list_remove(pd->pending, pending);
@@ -1078,7 +1078,7 @@ static void
 _efl_net_control_agent_unregister_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eo *o = data;
-   Efl_Net_Control_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Manager_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *err_name, *err_msg;
 
    pd->pending = eina_list_remove(pd->pending, pending);
@@ -1094,7 +1094,7 @@ _efl_net_control_agent_unregister_cb(void *data, const Eldbus_Message *msg, Eldb
 }
 
 EOLIAN static void
-_efl_net_control_agent_enabled_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool agent_enabled)
+_efl_net_control_manager_agent_enabled_set(Eo *o, Efl_Net_Control_Manager_Data *pd, Eina_Bool agent_enabled)
 {
    Eldbus_Pending *p;
    Eldbus_Proxy *mgr;
@@ -1142,7 +1142,7 @@ _efl_net_control_agent_enabled_set(Eo *o, Efl_Net_Control_Data *pd, Eina_Bool ag
 }
 
 EOLIAN static Eina_Bool
-_efl_net_control_agent_enabled_get(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd)
+_efl_net_control_manager_agent_enabled_get(const Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd)
 {
    return pd->agent_enabled;
 }
@@ -1193,7 +1193,7 @@ _append_dict_entry_byte_array(Eldbus_Message_Iter *array, const char *name, cons
 }
 
 EOLIAN static void
-_efl_net_control_agent_reply(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd, const char *name, const Eina_Slice *ssid, const char *username, const char *passphrase, const char *wps)
+_efl_net_control_manager_agent_reply(Eo *o EINA_UNUSED, Efl_Net_Control_Manager_Data *pd, const char *name, const Eina_Slice *ssid, const char *username, const char *passphrase, const char *wps)
 {
    Eldbus_Message *reply;
    Eldbus_Message_Iter *msg_itr, *array;
@@ -1230,4 +1230,4 @@ _efl_net_control_agent_reply(Eo *o EINA_UNUSED, Efl_Net_Control_Data *pd, const 
    eldbus_connection_send(efl_net_connman_connection_get(), reply, NULL, NULL, -1.0);
 }
 
-#include "efl_net_control.eo.c"
+#include "efl_net_control_manager.eo.c"

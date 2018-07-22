@@ -21,7 +21,7 @@ _efl_io_positioner_fd_positioner_fd_set(Eo *o EINA_UNUSED, Efl_Io_Positioner_Fd_
 }
 
 EOLIAN static int
-_efl_io_positioner_fd_positioner_fd_get(Eo *o EINA_UNUSED, Efl_Io_Positioner_Fd_Data *pd)
+_efl_io_positioner_fd_positioner_fd_get(const Eo *o EINA_UNUSED, Efl_Io_Positioner_Fd_Data *pd)
 {
    return pd->fd;
 }
@@ -49,7 +49,7 @@ _efl_io_positioner_fd_efl_io_positioner_seek(Eo *o, Efl_Io_Positioner_Fd_Data *p
 }
 
 EOLIAN static uint64_t
-_efl_io_positioner_fd_efl_io_positioner_position_get(Eo *o, Efl_Io_Positioner_Fd_Data *pd EINA_UNUSED)
+_efl_io_positioner_fd_efl_io_positioner_position_get(const Eo *o, Efl_Io_Positioner_Fd_Data *pd EINA_UNUSED)
 {
    int fd = efl_io_positioner_fd_get(o);
    off_t offset;

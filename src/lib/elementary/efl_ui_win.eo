@@ -1,4 +1,4 @@
-enum Efl.Ui.Win.Type
+enum Efl.Ui.Win_Type
 {
    [[Defines the types of window that can be created
 
@@ -19,7 +19,7 @@ enum Efl.Ui.Win.Type
    dock, [[The window is used as a dock or panel. Usually would be kept on top
            of any other window by the Window Manager.]]
    toolbar, [[The window is used to hold a floating toolbar, or similar.]]
-   menu, [[Similar to #ELM_WIN_TOOLBAR.]]
+   menu, [[Similar to @.toolbar.]]
    utility, [[A persistent utility window, like a toolbox or palette.]]
    splash, [[Splash window for a starting up application.]]
    dropdown_menu, [[The window is a dropdown menu, as when an  entry in a
@@ -27,7 +27,7 @@ enum Efl.Ui.Win.Type
                     This hint exists for completion only, as the EFL way of
                     implementing a menu would not normally use a separate
                     window for its contents.]]
-   popup_menu, [[Like #ELM_WIN_DROPDOWN_MENU, but for the menu triggered by
+   popup_menu, [[Like @.dropdown_menu, but for the menu triggered by
                  right-clicking an object.]]
    tooltip, [[The window is a tooltip. A short piece of explanatory text that
               typically appear after the mouse cursor hovers over an object
@@ -36,9 +36,6 @@ enum Efl.Ui.Win.Type
                    a new E-Mail received.]]
    combo, [[A window holding the contents of a combo box. Not usually used in
             the EFL.]]
-   dnd, [[Used to indicate the window is a representation of an object being
-          dragged across different windows, or even applications. Typically
-          used with elm_win_override_set().]]
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
@@ -46,7 +43,7 @@ enum Efl.Ui.Win.Type
                         ]]
 }
 
-enum Efl.Ui.Win.Keyboard_Mode
+enum Efl.Ui.Win_Keyboard_Mode
 {
    [[The different layouts that can be requested for the virtual keyboard.
 
@@ -73,7 +70,7 @@ enum Efl.Ui.Win.Keyboard_Mode
    j2me [[J2ME keyboard layout]]
 }
 
-enum Efl.Ui.Win.Indicator_Mode
+enum Efl.Ui.Win_Indicator_Mode
 {
    [[Defines the type indicator that can be shown]]
    legacy: efl_ui_win_indicator;
@@ -89,7 +86,7 @@ enum Efl.Ui.Win.Indicator_Mode
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
-enum Efl.Ui.Win.Keygrab_Mode
+enum Efl.Ui.Win_Keygrab_Mode
 {
    [[Define the keygrab modes of window. A window may send commands to the
      Keyrouter according this mode, and perform different actions.]]
@@ -108,7 +105,7 @@ enum Efl.Ui.Win.Keygrab_Mode
                                     window]]
 }
 
-enum Efl.Ui.Win.Modal_Mode
+enum Efl.Ui.Win_Modal_Mode
 {
    [[Defines the mode of a modal window]]
    legacy: efl_ui_win_modal;
@@ -117,7 +114,7 @@ enum Efl.Ui.Win.Modal_Mode
    modal [[The window is modal window.]]
 }
 
-enum Efl.Ui.Win.Urgent_Mode
+enum Efl.Ui.Win_Urgent_Mode
 {
    [[Defines the mode of a urgent window.]]
    legacy: efl_ui_win_urgent;
@@ -126,7 +123,7 @@ enum Efl.Ui.Win.Urgent_Mode
    urgent [[The window is a urgent window.]]
 }
 
-enum Efl.Ui.Win.Move_Resize_Mode
+enum Efl.Ui.Win_Move_Resize_Mode
 {
    [[Define the move or resize mode of window.
 
@@ -157,16 +154,14 @@ enum Efl.Ui.Win.Move_Resize_Mode
    right = (1 << 4)    [[Start resizing window to the right]]
 }
 
-class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
-               Efl.Access.Component, Efl.Access.Widget.Action,
-               Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-               Efl.Gfx.Size.Hint, Efl.Text, Efl.Config.Global, Efl.Part,
-               Efl.Ui.Focus.Manager )
+class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Access.Window,
+                  Efl.Access.Component, Efl.Access.Widget.Action,
+                  Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
+                  Efl.Gfx.Size_Hint, Efl.Text, Efl.Config_Global, Efl.Part,
+                  Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root)
 {
    [[Efl UI window class]]
    legacy_prefix: elm_win;
-   eo_prefix: efl_ui_win;
-   event_prefix: efl_ui_win;
    methods {
       @property indicator_mode {
            [[In some environments you may have an indicator that
@@ -187,7 +182,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             legacy: null;
          }
          values {
-            type: Efl.Ui.Win.Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
+            type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
          }
       }
       @property keyboard_mode {
@@ -198,7 +193,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             [[Get the keyboard mode of the window.]]
          }
          values {
-            mode: Efl.Ui.Win.Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
+            mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
          }
       }
       @property wm_available_rotations {
@@ -393,7 +388,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             legacy: null;
          }
          values {
-            urgent: Efl.Ui.Win.Urgent_Mode;
+            urgent: Efl.Ui.Win_Urgent_Mode;
                 [[The mode of a urgent window, one of #Efl_Ui_Win_Urgent_Mode.]]
          }
       }
@@ -407,7 +402,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             legacy: null;
          }
          values {
-            modal: Efl.Ui.Win.Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
+            modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
          }
       }
       @property noblank {
@@ -485,7 +480,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
            Note: Once set, it cannot be modified afterwards.
          ]]
          set {
-            [[Name can on be set before finalize.]]
+            [[Name can only be set before finalize.]]
             legacy: null;
          }
          get {
@@ -515,7 +510,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             legacy: elm_win_type_get;
          }
          values {
-            type: Efl.Ui.Win.Type(Efl.Ui.Win.Type.unknown); [[Window type]]
+            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
          }
       }
       @property accel_preference {
@@ -703,7 +698,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
             @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
                  keys that must not be present to trigger the event. Not supported yet.]]
             @in priority: int; [[Not supported yet.]]
-            @in grab_mode: Efl.Ui.Win.Keygrab_Mode; [[Describes how the key should
+            @in grab_mode: Efl.Ui.Win_Keygrab_Mode; [[Describes how the key should
                  be grabbed, wrt. focus and stacking.]]
          }
          legacy: null;
@@ -727,7 +722,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
          [[Start moving or resizing the window.
 
            The user can request the display server to start moving or resizing
-           the window by combining modes from @Efl.Ui.Win.Move_Resize_Mode.
+           the window by combining modes from @Efl.Ui.Win_Move_Resize_Mode.
            This API can only be called if none of the following conditions is
            true:
 
@@ -746,15 +741,15 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
 
            Currently, only the following 9 combinations are allowed, and
            possibly more combinations may be added in the future:
-           1. @Efl.Ui.Win.Move_Resize_Mode.move
-           2. @Efl.Ui.Win.Move_Resize_Mode.top
-           3. @Efl.Ui.Win.Move_Resize_Mode.bottom
-           4. @Efl.Ui.Win.Move_Resize_Mode.left
-           5. @Efl.Ui.Win.Move_Resize_Mode.right
-           6. @Efl.Ui.Win.Move_Resize_Mode.top | @Efl.Ui.Win.Move_Resize_Mode.left
-           7. @Efl.Ui.Win.Move_Resize_Mode.top | @Efl.Ui.Win.Move_Resize_Mode.right
-           8. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.left
-           9. @Efl.Ui.Win.Move_Resize_Mode.bottom | @Efl.Ui.Win.Move_Resize_Mode.right
+           1. @Efl.Ui.Win_Move_Resize_Mode.move
+           2. @Efl.Ui.Win_Move_Resize_Mode.top
+           3. @Efl.Ui.Win_Move_Resize_Mode.bottom
+           4. @Efl.Ui.Win_Move_Resize_Mode.left
+           5. @Efl.Ui.Win_Move_Resize_Mode.right
+           6. @Efl.Ui.Win_Move_Resize_Mode.top | @Efl.Ui.Win_Move_Resize_Mode.left
+           7. @Efl.Ui.Win_Move_Resize_Mode.top | @Efl.Ui.Win_Move_Resize_Mode.right
+           8. @Efl.Ui.Win_Move_Resize_Mode.bottom | @Efl.Ui.Win_Move_Resize_Mode.left
+           9. @Efl.Ui.Win_Move_Resize_Mode.bottom | @Efl.Ui.Win_Move_Resize_Mode.right
 
            In particular move and resize cannot happen simultaneously.
 
@@ -767,7 +762,7 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
          return: bool; [[$true if the request was successfully sent to the
                          display server, $false in case of error.]]
          params {
-            @in mode: Efl.Ui.Win.Move_Resize_Mode; [[The requested move or
+            @in mode: Efl.Ui.Win_Move_Resize_Mode; [[The requested move or
                                                      resize mode.]]
          }
       }
@@ -776,25 +771,25 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.provider_find;
       Efl.Object.finalize;
       Efl.Object.debug_name_override;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Gfx.Stack.raise; [[Places the window at the top of the stack, so
                              that it's not covered by any other window.]]
       Efl.Gfx.Stack.lower; [[This action is ignored by the Window.]]
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.focus { get; }
-      Elm.Widget.focus_highlight_style { get; set; }
-      Elm.Widget.focus_highlight_enabled { get; set; }
-      Elm.Widget.focus_highlight_animate { get; set; }
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_event;
-      Elm.Widget.focus_manager_create;
-      Efl.Access.parent { get; }
-      Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
+      Efl.Ui.Widget.focus_highlight_style { get; set; }
+      Efl.Ui.Widget.focus_highlight_enabled { get; set; }
+      Efl.Ui.Widget.focus_highlight_animate { get; set; }
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }
@@ -802,28 +797,27 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
       Efl.Screen.screen_size { get; }
-      Efl.Gfx.Size.Hint.hint_base { get; set; }
-      Efl.Gfx.Size.Hint.hint_step { get; set; }
-      Efl.Gfx.Size.Hint.hint_aspect { set; }
-      Efl.Gfx.Size.Hint.hint_weight { set; }
-      Efl.Gfx.Size.Hint.hint_max { set; }
+      Efl.Gfx.Size_Hint.hint_base { get; set; }
+      Efl.Gfx.Size_Hint.hint_step { get; set; }
+      Efl.Gfx.Size_Hint.hint_aspect { set; }
+      Efl.Gfx.Size_Hint.hint_weight { set; }
+      Efl.Gfx.Size_Hint.hint_max { set; }
       Efl.Text.text { get; set; }
-      Efl.Canvas.pointer_position { get; }
+      Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
-      Efl.Canvas.pointer_iterate;
-      Efl.Canvas.image_max_size { get; }
-      Efl.Canvas.smart_objects_calculate;
-      Efl.Canvas.objects_at_xy_get;
-      Efl.Canvas.object_top_at_xy_get;
-      Efl.Canvas.objects_in_rectangle_get;
-      Efl.Canvas.object_top_in_rectangle_get;
+      Efl.Canvas.Scene.pointer_iterate;
+      Efl.Canvas.Scene.image_max_size { get; }
+      Efl.Canvas.Scene.smart_objects_calculate;
+      Efl.Canvas.Scene.objects_at_xy_get;
+      Efl.Canvas.Scene.object_top_at_xy_get;
+      Efl.Canvas.Scene.objects_in_rectangle_get;
+      Efl.Canvas.Scene.object_top_in_rectangle_get;
       //Efl.Canvas.seats;
-      Efl.Canvas.device { get; }
-      Efl.Canvas.seat { get; }
+      Efl.Canvas.Scene.device { get; }
+      Efl.Canvas.Scene.seat { get; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
-      Efl.Object.provider_find;
+      Efl.Part.part_get;
    }
    constructors {
       .win_name;
@@ -831,24 +825,23 @@ class Efl.Ui.Win (Elm.Widget, Efl.Canvas, Efl.Canvas.Pointer, Efl.Access.Window,
       .accel_preference;
    }
    events {
-      delete,request; [[Called when the window receives a delete request]]
-      withdrawn; [[Called when window is withdrawn]]
-      iconified; [[Called when window is iconified]]
-      normal; [[Called when window is set to normal state]]
-      stick; [[Called when window is set as sticky]]
-      unstick; [[Called when window is no  longer set as sticky]]
-      fullscreen; [[Called when window is set to fullscreen]]
-      unfullscreen; [[Called when window is no longer set to fullscreen]]
-      maximized; [[Called when window is set to maximized]]
-      unmaximized; [[Called when window is no longer set to maximized]]
-      ioerr; [[Called on input output error]] /*FIXME Better explanation needed */
-      indicator,prop,changed; [[Called when indicator is property changed]]
-      rotation,changed; [[Called when window rotation is changed]]
-      profile,changed; [[Called when profile is changed]]
-      wm,rotation,changed; [[Called when window manager rotation is changed]]
-      theme,changed; [[Called when theme is changed]]
-      elm,action,block_menu; [[Called when elementary block menu action occurs]]
-      pause; [[Called when the window is not going be displayed for some time]]
-      resume; [[Called before a window is rendered after a pause event]]
+      delete,request: void; [[Called when the window receives a delete request]]
+      withdrawn: void; [[Called when window is withdrawn]]
+      iconified: void; [[Called when window is iconified]]
+      normal: void; [[Called when window is set to normal state]]
+      stick: void; [[Called when window is set as sticky]]
+      unstick: void; [[Called when window is no  longer set as sticky]]
+      fullscreen: void; [[Called when window is set to fullscreen]]
+      unfullscreen: void; [[Called when window is no longer set to fullscreen]]
+      maximized: void; [[Called when window is set to maximized]]
+      unmaximized: void; [[Called when window is no longer set to maximized]]
+      indicator,prop,changed: void; [[Called when indicator is property changed]]
+      rotation,changed: void; [[Called when window rotation is changed]]
+      profile,changed: void; [[Called when profile is changed]]
+      wm,rotation,changed: void; [[Called when window manager rotation is changed]]
+      theme,changed: void; [[Called when theme is changed]]
+      elm,action,block_menu: void; [[Called when elementary block menu action occurs]]
+      pause: void; [[Called when the window is not going be displayed for some time]]
+      resume: void; [[Called before a window is rendered after a pause event]]
    }
 }

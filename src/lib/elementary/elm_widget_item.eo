@@ -4,7 +4,7 @@ import efl_ui;
 type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 
-class Elm.Widget.Item(Efl.Object, Efl.Access,
+class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
                       Efl.Access.Component)
 {
       [[Elementary widget item class]]
@@ -147,13 +147,15 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
                      label: string; [[Label name]]
                 }
            }
-           @property focus {
+           @property item_focus {
                 [[Control the object item focused
 
                   @since 1.10]]
                 get {
+                   legacy: elm_object_item_focus_get;
                 }
                 set {
+                   legacy: elm_object_item_focus_set;
                 }
                 values {
                      focused: bool; [[The focused state]]
@@ -210,9 +212,6 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
                   Note: This returns the widget object itself that an item belongs to.
                   Note: Every elm_object_item supports this API]]
                   return: Efl.Canvas.Object; [[The widget object]]
-           }
-           del {
-                [[Delete the given item.]]
            }
            pre_notify_del @protected {
                 [[notify deletion of widget item]]
@@ -492,13 +491,12 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
                   @since 1.8]]
            }
            disable @protected {
-           	[[Disable widget item]]
+              [[Disable widget item]]
                 legacy: null;
            }
            del_pre @protected {
-           	[[Delete pre widget item]]
+              [[Delete pre widget item]]
                 legacy: null;
-                return: bool; [[$true on success, $false otherwise]]
            }
            focus_next_object_get @const {
                 [[Get the next object with specific focus direction.
@@ -540,11 +538,10 @@ class Elm.Widget.Item(Efl.Object, Efl.Access,
       implements {
            Efl.Object.constructor;
            Efl.Object.destructor;
-           Efl.Access.state_set { get; }
-           Efl.Access.attributes { get; }
+           Efl.Object.invalidate;
+           Efl.Access.Object.state_set { get; }
+           Efl.Access.Object.attributes { get; }
            Efl.Access.Component.extents { get; set; }
-           Efl.Access.Component.alpha { get; }
-           Efl.Access.Component.layer { get; }
            Efl.Access.Component.focus_grab;
       }
 }

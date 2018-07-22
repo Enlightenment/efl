@@ -12,9 +12,8 @@
 
 static struct log_ctx ctx;
 
-START_TEST(eo_inherit_errors)
+EFL_START_TEST(eo_inherit_errors)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -72,13 +71,11 @@ START_TEST(eo_inherit_errors)
    (void) klass;
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eo_inconsistent_mro)
+EFL_START_TEST(eo_inconsistent_mro)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -148,15 +145,13 @@ START_TEST(eo_inconsistent_mro)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void _stub_class_constructor(Efl_Class *klass EINA_UNUSED) {}
 
-START_TEST(eo_bad_interface)
+EFL_START_TEST(eo_bad_interface)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_safety_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -195,9 +190,8 @@ START_TEST(eo_bad_interface)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void _null_fct(Eo *eo_obj EINA_UNUSED, void *d EINA_UNUSED) { }
 void null_fct (void) {}
@@ -212,9 +206,8 @@ _null_class_initializer(Efl_Class *klass)
    return efl_class_functions_set(klass, &ops, NULL);
 }
 
-START_TEST(eo_null_api)
+EFL_START_TEST(eo_null_api)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -236,9 +229,8 @@ START_TEST(eo_null_api)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _redefined_class_initializer(Efl_Class *klass)
@@ -251,9 +243,8 @@ _redefined_class_initializer(Efl_Class *klass)
    return efl_class_functions_set(klass, &ops, NULL);
 }
 
-START_TEST(eo_api_redefined)
+EFL_START_TEST(eo_api_redefined)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -275,9 +266,8 @@ START_TEST(eo_api_redefined)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _dich_func_class_initializer(Efl_Class *klass)
@@ -290,9 +280,8 @@ _dich_func_class_initializer(Efl_Class *klass)
    return efl_class_functions_set(klass, &ops, NULL);
 }
 
-START_TEST(eo_dich_func_override)
+EFL_START_TEST(eo_dich_func_override)
 {
-   efl_object_init();
    eina_log_print_cb_set(eo_test_print_cb, &ctx);
 
    const Efl_Class *klass;
@@ -314,9 +303,8 @@ START_TEST(eo_dich_func_override)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   efl_object_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eo_test_class_errors(TCase *tc)
 {

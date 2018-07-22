@@ -2,7 +2,7 @@ class Eldbus.Model.Signal (Eldbus.Model.Arguments) {
     [[Eldbus model signal class]]
 
     methods {
-        constructor {
+        signal_constructor {
               [[Custom Eldbus_Model_Signal constructor.
 
                 @since 1.16]]
@@ -17,6 +17,6 @@ class Eldbus.Model.Signal (Eldbus.Model.Arguments) {
         Efl.Object.destructor;
     }
     constructors {
-        .constructor;
+        .signal_constructor;
     }
 }

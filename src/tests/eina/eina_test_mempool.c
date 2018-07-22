@@ -24,37 +24,6 @@
 
 #include "eina_suite.h"
 
-static Eina_Array *_modules;
-
-static void
-_mempool_init(void)
-{
-   eina_init();
-   /* force modules to be loaded in case they are not installed */
-   _modules = eina_module_list_get(NULL,
-                                   PACKAGE_BUILD_DIR "/src/modules",
-                                   EINA_TRUE,
-                                   NULL,
-                                   NULL);
-   eina_module_list_load(_modules);
-}
-
-static void
-_mempool_shutdown(void)
-{
-   unsigned int i;
-   Eina_Array_Iterator it;
-   Eina_Module *module;
-   eina_module_list_free(_modules);
-   if (_modules)
-     {
-        EINA_ARRAY_ITER_NEXT(_modules, i, module, it)
-          free(module);
-        eina_array_free(_modules);
-     }
-   eina_shutdown();
-}
-
 static void
 _eina_mempool_test(Eina_Mempool *mp,
                    Eina_Bool with_realloc, Eina_Bool with_gc, Eina_Bool accurate_from)
@@ -98,33 +67,25 @@ _eina_mempool_test(Eina_Mempool *mp,
 }
 
 #ifdef EINA_BUILD_CHAINED_POOL
-START_TEST(eina_mempool_chained_mempool)
+EFL_START_TEST(eina_mempool_chained_mempool)
 {
    Eina_Mempool *mp;
-
-   _mempool_init();
 
    mp = eina_mempool_add("chained_mempool", "test", NULL, sizeof (int), 256);
    _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE, EINA_TRUE);
-
-   _mempool_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 #ifdef EINA_BUILD_PASS_THROUGH
-START_TEST(eina_mempool_pass_through)
+EFL_START_TEST(eina_mempool_pass_through)
 {
    Eina_Mempool *mp;
 
-   _mempool_init();
-
    mp = eina_mempool_add("pass_through", "test", NULL, sizeof (int), 8, 0);
    _eina_mempool_test(mp, EINA_TRUE, EINA_FALSE, EINA_FALSE);
-
-   _mempool_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

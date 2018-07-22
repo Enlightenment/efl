@@ -2733,6 +2733,35 @@ EAPI Eina_Bool edje_object_part_text_input_panel_show_on_demand_get(const Evas_O
 EAPI void edje_object_part_text_prediction_hint_set(Evas_Object *obj, const char *part, const char *prediction_hint);
 
 /**
+ * @brief Sets the prediction hint data at the specified key.
+ *
+ * @param[in] part The part name
+ * @param[in] key The key of the prediction hint
+ * @param[in] value The data to replace
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.21.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_set(Evas_Object *obj, const char *part, const char *key, const char *value);
+
+/**
+ * @brief Removes the prediction hint data identified by a key
+ *
+ * @param[in] part The part name
+ * @param[in] key The key of the prediction hint
+ *
+ * @return @c true on success, @c false otherwise
+ *
+ * @since 1.21.0
+ *
+ * @ingroup Edje_Object
+ */
+EAPI Eina_Bool edje_object_part_text_prediction_hint_hash_del(Evas_Object *obj, const char *part, const char *key);
+
+/**
  * @brief Starts selecting at current cursor position
  *
  * @param[in] part The part name
@@ -3084,6 +3113,22 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  * @}
  */
 
+
+/**
+ * @brief Sets the function that provides item objects for named items in an
+ * edje entry text
+ *
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ *
+ * @param[in] obj The object.
+ * @param[in] func The function to call (or @c null to disable) to get item
+ * objects
+ * @param[in] data The data pointer to pass to the func callback
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
 typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
 #define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE

@@ -1,5 +1,3 @@
-import eina_types;
-
 struct Eio.Sentry.Event
 {
   [[Wraps the data about a monitor event on a file.]]
@@ -19,23 +17,33 @@ class Eio.Sentry (Efl.Object)
       }
       return : bool; [[$true on success, $false otherwise]]
     }
-    del {
+    remove {
       [[Removes the given path from the monitored list.]]
       params {
         @in path: string; [[Path to remove from monitoring]]
       }
+    }
+    fallback_check @const @beta {
+      [[Return if the sentry is using the fallback monitoring method
+
+        The fallback method of monitoring cannot provide certain events.
+      ]]
+      params {
+        @in path: string; [[Path to check for fallback monitoring]]
+      }
+      return : bool; [[$true only if the sentry is using the fallback mechanism]]
     }
   }
  events {
     file,created: Eio.Sentry.Event; [[Called when a file was created]]
     file,deleted: Eio.Sentry.Event; [[Called when a file was deleted]]
     file,modified: Eio.Sentry.Event; [[Called when a file was modified]]
-    file,closed: Eio.Sentry.Event; [[Called when a file was closed]]
+    file,closed: Eio.Sentry.Event; [[Called for non-fallback sentries when a file was closed]]
     directory,created: Eio.Sentry.Event; [[Called when a directory was created]]
     directory,deleted: Eio.Sentry.Event; [[Called when a directory was deleted]]
     directory,modified: Eio.Sentry.Event; [[called when a directory was modified]]
-    directory,closed: Eio.Sentry.Event; [[Called when a directory was closed]]
-    self,rename: Eio.Sentry.Event; [[Called when the object was renamed]]
+    directory,closed: Eio.Sentry.Event; [[Called for non-fallback sentries when a directory was closed]]
+    self,rename: Eio.Sentry.Event; [[Called for non-fallback sentries when the object was renamed]]
     self,deleted: Eio.Sentry.Event; [[Called when the object was deleted]]
     error: Eio.Sentry.Event; [[Called in case of an error]]
  }

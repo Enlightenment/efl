@@ -1,7 +1,7 @@
-class Efl.Model.Composite.Selection.Children (Efl.Object, Efl.Model)
+class Efl.Model_Composite_Selection_Children (Efl.Model_Composite_Boolean_Children)
 {
    [[Efl model composite selection children class]]
    implements {
-      Efl.Model.property_set;
+      Efl.Model.property { set; }
    }
 }

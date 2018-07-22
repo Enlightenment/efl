@@ -1,13 +1,13 @@
-class Ector.Renderer.Cairo.Gradient.Linear (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear)
+class Ector.Renderer.Cairo.Gradient.Linear (Ector.Renderer.Cairo, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear, Efl.Gfx.Path)
 {
    [[Ector cairo renderer gradient linear]]
    eo_prefix: ector_renderer_cairo_gradient_linear;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.bounds_get;
+      Efl.Gfx.Path.bounds_get;
       Ector.Renderer.crc { get; }
-      Ector.Renderer.Cairo.fill;
+      Ector.Renderer.Cairo.op_fill;
       Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Gfx.Gradient.stop { set; }

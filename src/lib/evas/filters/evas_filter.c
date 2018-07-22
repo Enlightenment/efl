@@ -116,7 +116,7 @@ static void
 _filter_buffer_backing_free(Evas_Filter_Buffer *fb)
 {
    if (!fb || !fb->buffer) return;
-   efl_del(fb->buffer);
+   efl_unref(fb->buffer);
    fb->buffer = NULL;
 }
 

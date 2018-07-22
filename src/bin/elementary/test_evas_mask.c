@@ -108,7 +108,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Elm_Genlist_Item_Class *itc;
    char buf[PATH_MAX];
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Evas masking demo"),
                  efl_ui_win_autodel_set(efl_added, 1));
 
@@ -122,7 +122,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    // FIXME: layout EO API
    snprintf(buf, sizeof(buf), "%s/objects/test_masking.edj", elm_app_data_dir_get());
-   ly = efl_add(EFL_UI_LAYOUT_CLASS, win,
+   ly = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win,
                 efl_file_set(efl_added, buf, "masking"));
    efl_pack(box, ly);
 
@@ -176,5 +176,5 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(500, 600));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 600));
 }

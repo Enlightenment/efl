@@ -29,7 +29,6 @@
  */
 
 static Eina_Hash *_eio_monitors = NULL;
-static pid_t _monitor_pid = -1;
 
 static void
 _eio_monitor_free(Eio_Monitor *monitor)
@@ -158,8 +157,6 @@ eio_monitor_init(void)
    _eio_monitors = eina_hash_stringshared_new(NULL);
    /* FIXME: this check is optional, but if it is kept then failure should be handled more gracefully */
    if (!_eio_monitors) abort();
-
-   _monitor_pid = getpid();
 }
 
 void
@@ -192,11 +189,10 @@ eio_monitor_shutdown(void)
      }
    eina_iterator_free(it);
    eina_hash_free(_eio_monitors);
+   _eio_monitors = NULL;
 
    eio_monitor_backend_shutdown();
    eio_monitor_fallback_shutdown();
-
-   _monitor_pid = -1;
 }
 
 static const char *
@@ -338,13 +334,7 @@ eio_monitor_stringshared_add(const char *path)
    struct stat st;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
-   if (_monitor_pid == -1) return NULL;
-
-   if (_monitor_pid != getpid())
-     {
-       eio_monitor_shutdown();
-       eio_monitor_init();
-     }
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_eio_monitors, NULL);
 
    if (stat(path, &st) != 0)
      {

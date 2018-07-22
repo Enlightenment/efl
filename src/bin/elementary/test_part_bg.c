@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 
-#define MAX_NUM_OF_CONTENT 19
+#define MAX_NUM_OF_CONTENT 18
 
 const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
 
@@ -39,7 +39,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Evas_Object *radio = data;
    Evas_Object *target;
-   Efl_Image_Scale_Type type;
+   Efl_Gfx_Image_Scale_Type type;
    char buf[PATH_MAX];
 
    radio = efl_ui_radio_selected_object_get(radio);
@@ -47,9 +47,9 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_set(efl_part(target, "background"), buf, NULL);
-   type = efl_image_scale_type_get(efl_part(target, "background"));
+   type = efl_gfx_image_scale_type_get(efl_part(target, "background"));
    type = (type + 1) % 5;
-   efl_image_scale_type_set(efl_part(target, "background"), type);
+   efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
 }
 
 static Evas_Object *
@@ -77,7 +77,7 @@ _create_box_contents(Evas_Object *box)
 
    content = efl_add(EFL_UI_TEXT_CLASS, content,
                      efl_text_set(efl_added, "box"),
-                     efl_ui_text_interactive_editable_set(efl_added, EINA_FALSE),
+                     efl_text_interactive_editable_set(efl_added, EINA_FALSE),
                      efl_pack_end(content, efl_added));
 
    for (i = 0; i < MAX_NUM_OF_CONTENT; i++)
@@ -126,24 +126,23 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    content_class[0] = EFL_UI_CALENDAR_CLASS;
    content_class[1] = EFL_UI_SLIDER_CLASS;
    content_class[2] = EFL_UI_SLIDER_INTERVAL_CLASS;
-   content_class[3] = EFL_UI_MULTIBUTTONENTRY_CLASS;
-   content_class[4] = EFL_UI_PROGRESSBAR_CLASS;
-   content_class[5] = EFL_UI_CLOCK_CLASS;
-   content_class[6] = EFL_UI_BUTTON_CLASS;
-   content_class[7] = EFL_UI_CHECK_CLASS;
-   content_class[8] = EFL_UI_RADIO_CLASS;
-   content_class[9] = EFL_UI_TEXT_CLASS;
-   content_class[10] = EFL_UI_FLIP_CLASS;
-   content_class[11] = EFL_UI_PANES_CLASS;
-   content_class[12] = EFL_UI_VIDEO_CLASS;
-   content_class[13] = EFL_UI_BG_WIDGET_CLASS;
-   content_class[14] = EFL_UI_IMAGE_CLASS;
-   content_class[15] = EFL_UI_IMAGE_ZOOMABLE_CLASS;
-   content_class[16] = EFL_UI_NSTATE_CLASS;
-   content_class[17] = EFL_UI_SPIN_CLASS;
-   content_class[18] = EFL_UI_SPIN_BUTTON_CLASS;
+   content_class[3] = EFL_UI_PROGRESSBAR_CLASS;
+   content_class[4] = EFL_UI_CLOCK_CLASS;
+   content_class[5] = EFL_UI_BUTTON_CLASS;
+   content_class[6] = EFL_UI_CHECK_CLASS;
+   content_class[7] = EFL_UI_RADIO_CLASS;
+   content_class[8] = EFL_UI_TEXT_CLASS;
+   content_class[9] = EFL_UI_FLIP_CLASS;
+   content_class[10] = EFL_UI_PANES_CLASS;
+   content_class[11] = EFL_UI_VIDEO_CLASS;
+   content_class[12] = EFL_UI_BG_WIDGET_CLASS;
+   content_class[13] = EFL_UI_IMAGE_CLASS;
+   content_class[14] = EFL_UI_IMAGE_ZOOMABLE_CLASS;
+   content_class[15] = EFL_UI_NSTATE_CLASS;
+   content_class[16] = EFL_UI_SPIN_CLASS;
+   content_class[17] = EFL_UI_SPIN_BUTTON_CLASS;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Widget Part Background"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -182,5 +181,5 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_event_callback_add(color_btn, EFL_UI_EVENT_CLICKED, _color_cb, radio_group);
    efl_event_callback_add(scale_btn, EFL_UI_EVENT_CLICKED, _scale_type_cb, radio_group);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 200));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }

@@ -36,15 +36,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EINA_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EINA_BUILD */
+# endif
 # define EAPI_WEAK
 #else
 # ifdef __GNUC__
@@ -182,6 +182,14 @@
 # else
 #  define EINA_MALLOC
 #  define EINA_PURE
+# endif
+
+# if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)
+#  define EINA_HOT __attribute__ ((hot))
+#  define EINA_COLD __attribute__ ((cold))
+# else
+#  define EINA_HOT
+#  define EINA_COLD
 # endif
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)

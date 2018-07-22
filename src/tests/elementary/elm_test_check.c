@@ -2,16 +2,35 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
-START_TEST (elm_check_onoff_text)
+EFL_START_TEST (elm_check_legacy_type_check)
+{
+   Evas_Object *win, *check;
+   const char *type;
+
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
+
+   check = elm_check_add(win);
+
+   type = elm_object_widget_type_get(check);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Check"));
+
+   type = evas_object_type_get(check);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_check"));
+
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_check_onoff_text)
 {
    Evas_Object *win, *check;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
    elm_object_style_set(check, "toggle");
@@ -25,17 +44,15 @@ START_TEST (elm_check_onoff_text)
    ck_assert(elm_object_part_text_get(check, "on") == NULL);
    ck_assert(elm_object_part_text_get(check, "off") == NULL);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_check_state)
+EFL_START_TEST (elm_check_state)
 {
    Evas_Object *win, *check;
    Eina_Bool state = EINA_TRUE;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
    elm_check_state_pointer_set(check, &state);
@@ -46,29 +63,27 @@ START_TEST (elm_check_state)
    ck_assert(elm_check_state_get(check) == EINA_FALSE);
    ck_assert(state == EINA_FALSE);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *check;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
 
    check = elm_check_add(win);
-   role = efl_access_role_get(check);
+   role = efl_access_object_role_get(check);
 
    ck_assert(role == EFL_ACCESS_ROLE_CHECK_BOX);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_check(TCase *tc)
 {
+   tcase_add_test(tc, elm_check_legacy_type_check);
    tcase_add_test(tc, elm_check_onoff_text);
    tcase_add_test(tc, elm_check_state);
    tcase_add_test(tc, elm_atspi_role_get);

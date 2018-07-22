@@ -97,7 +97,7 @@ evas_object_line_add(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return efl_add(EVAS_LINE_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(EVAS_LINE_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static void
@@ -179,7 +179,7 @@ _evas_line_xy_set(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord x1, Evas_Coord y1,
 }
 
 EOLIAN static void
-_evas_line_xy_get(Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
+_evas_line_xy_get(const Eo *eo_obj, Evas_Line_Data *_pd, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
 {
    const Evas_Line_Data *o = _pd;
 

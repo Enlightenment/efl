@@ -5,11 +5,14 @@ includedir=@includedir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 
+assemblies_dir=@eflmonodlldir@
+Libraries=${assemblies_dir}/libefl_mono.dll
+
 #variable to be used with meson
-mono_libs=-r:@prefix@/bin/libefl_mono.dll
+mono_libs=-r:${assemblies_dir}/libefl_mono.dll
 
 Name: EFL-Mono
 Description: EFL's C-Sharp bindings
 Version: @PACKAGE_VERSION@
-Libs: -r:${prefix}/bin/libefl_mono.dll
+Libs: -r:${assemblies_dir}/libefl_mono.dll
 

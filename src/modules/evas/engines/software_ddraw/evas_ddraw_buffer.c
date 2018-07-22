@@ -5,8 +5,7 @@
 
 
 DD_Output_Buffer *
-evas_software_ddraw_output_buffer_new(int   depth,
-                                      int   width,
+evas_software_ddraw_output_buffer_new(int   width,
                                       int   height,
                                       void *data)
 {
@@ -16,10 +15,9 @@ evas_software_ddraw_output_buffer_new(int   depth,
    if (!ddob) return NULL;
 
    ddob->data = data;
-   ddob->depth = depth;
    ddob->width = width;
    ddob->height = height;
-   ddob->pitch = width * depth / 8;
+   ddob->pitch = width * 4;
    ddob->psize = ddob->pitch * height;
 
    if (!ddob->data)
@@ -48,7 +46,6 @@ evas_software_ddraw_output_buffer_paste(DD_Output_Buffer *ddob,
                                         int               ddraw_width,
                                         int               ddraw_height,
                                         int               ddraw_pitch,
-                                        int               ddraw_depth,
                                         int               x,
                                         int               y)
 {
@@ -69,9 +66,9 @@ evas_software_ddraw_output_buffer_paste(DD_Output_Buffer *ddob,
    height = ((y + ddob->height) > ddraw_height)
      ? ddraw_height - y
      : ddob->height;
-   pitch = width * ddob->depth / 8;
+   pitch = width * 4;
 
-   dd_data = (DATA8 *)ddraw_data + y * ddraw_pitch + x * ddraw_depth;
+   dd_data = (DATA8 *)ddraw_data + y * ddraw_pitch + x * 32;
    evas_data = (unsigned char *)ddob->data;
    for (j = 0; j < height; j++, evas_data += ddob->pitch, dd_data += ddraw_pitch)
      memcpy(dd_data, evas_data, pitch);
@@ -83,10 +80,4 @@ evas_software_ddraw_output_buffer_data(DD_Output_Buffer *ddob,
 {
    if (bytes_per_line_ret) *bytes_per_line_ret = ddob->pitch;
    return ddob->data;
-}
-
-int
-evas_software_ddraw_output_buffer_depth(DD_Output_Buffer *ddob)
-{
-   return ddob->depth;
 }

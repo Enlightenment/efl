@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
+
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -39,20 +41,20 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
   if ((max_size.w == -1) && (max_size.h == -1))
     {
        elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-       efl_gfx_size_set(obj, size);
+       efl_gfx_entity_size_set(obj, size);
     }
   else if ((max_size.w == -1) && (max_size.h != -1))
     {
        if (max_size.h < text_min.h)
          {
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
          }
        else
          {
             new_min.h = text_min.h;
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(size.w, text_min.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, text_min.h));
          }
     }
   else if ((max_size.w != -1) && (max_size.h == -1))
@@ -60,13 +62,13 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
        if (max_size.w < text_min.w)
          {
             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
          }
        else
          {
             new_min.w = text_min.w;
             elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-            efl_gfx_size_set(obj, EINA_SIZE2D(text_min.w, size.h));
+            efl_gfx_entity_size_set(obj, EINA_SIZE2D(text_min.w, size.h));
          }
     }
   else if ((max_size.w != -1) && (max_size.h != -1))
@@ -98,7 +100,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, Eina_Size2D obj
          }
 
         elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
-        efl_gfx_size_set(obj, new_size);
+        efl_gfx_entity_size_set(obj, new_size);
     }
 
     efl_gfx_size_hint_min_set(obj, new_min);
@@ -109,7 +111,7 @@ _efl_ui_popup_alert_text_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Alert
 {
    pd->size = size;
 
-   efl_gfx_size_set(obj, size);
+   efl_gfx_entity_size_set(obj, size);
 
    elm_layout_sizing_eval(obj);
 }
@@ -189,7 +191,7 @@ _efl_ui_popup_alert_text_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd
 static Eina_Bool
 _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part, const char *label)
 {
-   if (part && !strcmp(part, "elm.text"))
+   if (part && !strcmp(part, "efl.text"))
      {
         if (!pd->message)
           {
@@ -198,7 +200,7 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
              //elm_widget_element_update(obj, pd->message, PART_NAME_TEXT);
              efl_gfx_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
                                           EVAS_HINT_EXPAND);
-             efl_content_set(efl_part(pd->scroller, "default"), pd->message);
+             efl_content_set(pd->scroller, pd->message);
           }
         elm_object_text_set(pd->message, label);
         elm_layout_sizing_eval(obj);
@@ -210,9 +212,9 @@ _efl_ui_popup_alert_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, con
 }
 
 const char *
-_efl_ui_popup_alert_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part)
+_efl_ui_popup_alert_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_Data *pd, const char *part)
 {
-   if (part && !strcmp(part, "elm.text"))
+   if (part && !strcmp(part, "efl.text"))
      {
         if (pd->message)
           return elm_object_text_get(pd->message);
@@ -226,13 +228,13 @@ _efl_ui_popup_alert_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Text_D
 EOLIAN static void
 _efl_ui_popup_alert_text_efl_text_text_set(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd, const char *label)
 {
-   _efl_ui_popup_alert_text_text_set(obj, pd, "elm.text", label);
+   _efl_ui_popup_alert_text_text_set(obj, pd, "efl.text", label);
 }
 
 EOLIAN static const char*
-_efl_ui_popup_alert_text_efl_text_text_get(Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
+_efl_ui_popup_alert_text_efl_text_text_get(const Eo *obj, Efl_Ui_Popup_Alert_Text_Data *pd)
 {
-   return _efl_ui_popup_alert_text_text_get(obj, pd, "elm.text");
+   return _efl_ui_popup_alert_text_text_get(obj, pd, "efl.text");
 }
 
 static void
@@ -279,7 +281,7 @@ _efl_ui_popup_alert_text_efl_object_constructor(Eo *obj,
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_OFF,
                            ELM_SCROLLER_POLICY_AUTO);
 
-   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"),
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
 
    pd->size = EINA_SIZE2D(0, 0);

@@ -12,6 +12,12 @@ EOLIAN_FLAGS = \
 include $(top_srcdir)/src/Makefile_Eolian_Helper.am
 include $(top_srcdir)/src/Makefile_Eolian_Cxx_Helper.am
 
+# Eolian_*_Helper.am has this variable as a relative path to src
+# Thus we need to override it here in order to make its pattern
+# rules work properly.
+_EOLIAN_GEN_DEP = ../../bin/eolian/eolian_gen${EXEEXT}
+_EOLIAN_CXX_DEP = ../../bin/eolian_cxx/eolian_cxx${EXEEXT}
+
 AM_CXXFLAGS = \
 	-I$(srcdir) \
 	-I$(builddir) \
@@ -124,18 +130,6 @@ DATA_FILES = Makefile.examples $(ECXX_EXAMPLE_EOS)
 EXTRA_DIST = $(DATA_FILES) \
 ns_colourable.eo \
 ns_colourablesquare.eo
-
-%.eo.hh: %.eo
-	$(AM_V_EOLCXX)$(EOLIAN_CXX) $(EOLIAN_FLAGS) -I${abs_srcdir} -o $@ $<
-
-%.eo.impl.hh: %.eo.hh
-	true $<
-
-%.eo.c: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gc -o c:$@ $<
-
-%.eo.h: %.eo
-	$(AM_V_EOL)$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gh -o h:$@ $<
 
 examples: $(ECXX_EXAMPLE_EOS) $(GENERATED) $(EXTRA_PROGRAMS)
 

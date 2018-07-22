@@ -1,0 +1,131 @@
+struct Efl.Ui.Stack_Event_Loaded {
+   [[Information of loaded event.]]
+   content: Efl.Canvas.Object; [[Loaded content.]]
+}
+
+struct Efl.Ui.Stack_Event_Unloaded {
+   [[Information of unloaded event.]]
+   content: Efl.Canvas.Object; [[Unloaded content.]]
+}
+
+struct Efl.Ui.Stack_Event_Activated {
+   [[Information of activated event.]]
+   content: Efl.Canvas.Object; [[Activated content.]]
+}
+
+struct Efl.Ui.Stack_Event_Deactivated {
+   [[Information of deactivated event.]]
+   content: Efl.Canvas.Object; [[Deactivated content.]]
+}
+
+class Efl.Ui.Stack (Efl.Ui.Layout.Object)
+{
+   [[Stack widget.
+   	   
+     Stack widget arranges objects in stack structure by pushing and poping them.
+   ]]
+   methods {
+      push {
+         [[Pushes a new object to the top of the stack and shows it.
+         ]]
+         params {
+            @in content: Efl.Canvas.Object;
+               [[The pushed object which becomes the top content of the stack.]]
+         }
+      }
+      pop {
+         [[Pops the top content from the stack and deletes it.
+         ]]
+         return: Efl.Canvas.Object;
+            [[The top content which is removed from the stack.]]
+      }
+      insert_before {
+         [[Inserts an object before the given base content in the stack.
+         ]]
+         params {
+            @in base_content: Efl.Canvas.Object;
+               [[$content is inserted before this $base_content.]]
+            @in content: Efl.Canvas.Object;
+               [[The inserted object in the stack.]]
+         }
+      }
+      insert_after {
+         [[Inserts an object after the given base content in the stack.
+         ]]
+         params {
+            @in base_content: Efl.Canvas.Object;
+               [[$content is inserted after this $base_content.]]
+            @in content: Efl.Canvas.Object;
+               [[The inserted object in the stack.]]
+         }
+      }
+      insert_at {
+         [[Inserts an object at the given place in the stack.
+         ]]
+         params {
+            @in index: int;
+               [[The index of the inserted object in the stack.
+                 $index begins from bottom to top of the stack.
+                 $index of the bottom content is 0.
+               ]]
+            @in content: Efl.Canvas.Object;
+               [[The inserted object in the stack.]]
+         }
+      }
+      remove {
+         [[Removes the given content in the stack.
+         ]]
+         params {
+            @in content: Efl.Canvas.Object;
+               [[The removed content from the stack.]]
+         }
+      }
+      remove_at {
+         [[Removes a content matched to the given index in the stack.
+         ]]
+         params {
+            @in index: int;
+               [[The index of the removed object in the stack.
+                 $index begins from bottom to top of the stack.
+                 $index of the bottom content is 0.
+               ]]
+         }
+      }
+      index_get {
+         [[Gets the index of the given content in the stack.
+           The index begins from bottom to top of the stack.
+           The index of the bottom content is 0.
+         ]]
+         return: int;
+            [[The index of $content in the stack.]]
+         params {
+            @in content: Efl.Canvas.Object;
+               [[The content matched to the index to be returned in the stack.]]
+         }
+      }
+      content_get {
+         [[Gets the content matched to the given index in the stack.
+         ]]
+         return: Efl.Canvas.Object;
+            [[The content matched to $index in the stack.]]
+         params {
+            @in index: int;
+               [[The index of the content to be returned in the stack.]]
+         }
+      }
+      top {
+         [[Gets the top content in the stack.
+         ]]
+         return: Efl.Canvas.Object; [[The top content in the stack.]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+   events {
+      loaded: Efl.Ui.Stack_Event_Loaded;      [[Called when content is loaded right before transition.]]
+      unloaded: Efl.Ui.Stack_Event_Unloaded;    [[Called when content is unloaded right after being deactivated.]]
+      activated: Efl.Ui.Stack_Event_Activated;   [[Called when content is activated right after transition.]]
+      deactivated: Efl.Ui.Stack_Event_Deactivated; [[Called when content is deactivated right after transition.]]
+   }
+}

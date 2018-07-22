@@ -312,7 +312,7 @@ _process_events(Elput_Input *ei)
 {
    struct libinput_event *event;
 
-   while ((event = libinput_get_event(ei->lib)))
+   while ((ei->lib) && (event = libinput_get_event(ei->lib)))
      {
         _process_event(event);
         libinput_event_destroy(event);
@@ -326,7 +326,7 @@ _cb_input_dispatch(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 
    ei = data;
 
-   if (libinput_dispatch(ei->lib) != 0)
+   if ((ei->lib) && (libinput_dispatch(ei->lib) != 0))
      WRN("libinput failed to dispatch events");
 
    _process_events(ei);
@@ -443,7 +443,7 @@ _elput_input_disable(Elput_Manager *manager)
 
    EINA_LIST_FOREACH(manager->input.seats, l, seat)
      seat->pending_motion = 1;
-   libinput_suspend(manager->input.lib);
+   if (manager->input.lib) libinput_suspend(manager->input.lib);
    _process_events(&manager->input);
    manager->input.suspended = EINA_TRUE;
 }

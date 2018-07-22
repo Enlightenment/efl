@@ -535,17 +535,25 @@ _ecore_con_eet_base_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore
 }
 
 EOLIAN static void
-_ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
+_ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, Ecore_Con_Reply *reply, const char *protocol_name, const char *section, Eina_Binbuf *section_data)
 {
    unsigned int protocol[4];
    unsigned int protocol_length;
    unsigned int section_length;
    unsigned int size;
+   unsigned int length = 0;
+   const void *value = NULL;
    char *tmp;
 
    if (!reply) return;
    if (!protocol_name) return;
    if (!section) return;
+
+   if (section_data)
+     {
+        length = eina_binbuf_length_get(section_data);
+        value = eina_binbuf_string_get(section_data);
+     }
 
    protocol_length = strlen(protocol_name) + 1;
    if (protocol_length == 1) return;
@@ -678,18 +686,18 @@ _ecore_con_eet_base_efl_object_constructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 EOLIAN static void
 _ecore_con_eet_base_efl_object_destructor(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
-   efl_destructor(efl_super(obj, ECORE_CON_EET_BASE_CLASS));
-
    eet_data_descriptor_free(pd->edd);
    eet_data_descriptor_free(pd->matching);
    eina_hash_free(pd->data_callbacks);
    eina_hash_free(pd->raw_data_callbacks);
+
+   efl_destructor(efl_super(obj, ECORE_CON_EET_BASE_CLASS));
 }
 
 EOLIAN static Efl_Object *
 _ecore_con_eet_base_efl_object_finalize(Eo *obj, Ecore_Con_Eet_Base_Data *pd)
 {
-   if (pd->server) return obj;
+   if (pd->server) return efl_finalize(efl_super(obj, ECORE_CON_EET_BASE_CLASS));
 
    eet_data_descriptor_free(pd->edd);
    eet_data_descriptor_free(pd->matching);
@@ -709,7 +717,7 @@ _ecore_con_eet_base_server_set(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd,
 }
 
 EOLIAN static Ecore_Con_Server *
-_ecore_con_eet_base_server_get(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd)
+_ecore_con_eet_base_server_get(const Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd)
 {
    return pd->server;
 }
@@ -725,7 +733,7 @@ ecore_con_eet_server_new(Ecore_Con_Server *server)
 
    if (!server) return NULL;
 
-   ece_obj = efl_add(ECORE_CON_EET_SERVER_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(efl_added, server));
+   ece_obj = efl_add_ref(ECORE_CON_EET_SERVER_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(efl_added, server));
 
    return ece_obj;
 }
@@ -737,7 +745,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 
    if (!server) return NULL;
 
-   ece_obj = efl_add(ECORE_CON_EET_CLIENT_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(efl_added, server));
+   ece_obj = efl_add_ref(ECORE_CON_EET_CLIENT_OBJ_CLASS, NULL, ecore_con_eet_base_server_set(efl_added, server));
 
    return ece_obj;
 }
@@ -745,7 +753,7 @@ ecore_con_eet_client_new(Ecore_Con_Server *server)
 EAPI void
 ecore_con_eet_server_free(Ecore_Con_Eet *server)
 {
-   efl_del(server);
+   efl_unref(server);
 }
 
 EAPI void
@@ -946,7 +954,9 @@ ecore_con_eet_send(Ecore_Con_Reply *reply, const char *name, void *value)
 EAPI void
 ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length)
 {
-   ecore_con_eet_base_raw_send(reply->ece, reply, protocol_name, section, value, length);
+   Eina_Binbuf *buf = eina_binbuf_manage_new(value, length, 1);
+   ecore_con_eet_base_raw_send(reply->ece, reply, protocol_name, section, buf);
+   eina_binbuf_free(buf);
 }
 
 #include "ecore_con_eet_base.eo.c"

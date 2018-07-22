@@ -4,6 +4,14 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
+
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,15 +65,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ELEMENTARY_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_BUILD */
+# endif
 # define EAPI_WEAK
 #else
 # ifdef __GNUC__
@@ -80,7 +88,7 @@
 #  define EAPI
 #  define EAPI_WEAK
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define EWAPI EAPI EAPI_WEAK
 
@@ -110,7 +118,9 @@
 #include <Efl_Net.h>
 
 #include <Evas.h>
-#include <Evas_GL.h>
+#ifndef EFL_NOLEGACY_API_SUPPORT
+# include <Evas_GL.h>
+#endif
 #include <Eio.h>
 #include <Edje.h>
 #include <Eldbus.h>
@@ -135,25 +145,29 @@ extern EAPI double _efl_startup_time;
 
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
+#include "efl_selection_types.eot.h"
+
+//define focus manager earlier since focus object and manager is circular
+typedef Eo Efl_Ui_Focus_Manager;
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
 
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_user.eo.h>
+# include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
-# include <efl_access.h>
+# include <efl_access_object.h>
 # include <efl_access_text.h>
 # include <efl_access_window.h>
 
 # include <efl_access_action.eo.h>
 # include <efl_access_component.eo.h>
 # include <efl_access_editable_text.eo.h>
-# include <efl_access_image.eo.h>
 # include <efl_access_selection.eo.h>
 # include <efl_access_value.eo.h>
 
@@ -176,18 +190,29 @@ extern EAPI double _efl_startup_time;
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
+
+/* FIXME: Efl.Ui.Text must not use elm_general.h */
+# warning Efl.Ui.Text is not available yet without Elementary.h
+# if 0
 # include <efl_ui_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
+# endif
+
 # include <efl_ui_clock.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_video.h>
 # include <efl_ui_nstate.h>
 # include <efl_ui_calendar.h>
 # include <efl_ui_button_eo.h>
+
+/* FIXME: Multibuttonentry must not use elm_widget_item */
+# warning Efl.Ui.Multibutton is not available yet without Elementary.h
+# if 0
 # include <efl_ui_multibuttonentry.h>
-# include <efl_ui_slider_eo.h>
+# endif
+
 # include <efl_ui_flip_eo.h>
 # include <efl_ui_frame_eo.h>
 # include <efl_ui_check_eo.h>

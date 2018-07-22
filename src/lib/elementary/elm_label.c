@@ -2,8 +2,9 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -182,7 +183,7 @@ _elm_label_horizontal_size_policy_update(Eo *obj, Elm_Label_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_label_elm_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
+_elm_label_efl_ui_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -337,20 +338,17 @@ static Eina_Bool
 _elm_label_text_set(Eo *obj, Elm_Label_Data *sd, const char *part, const char *label)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool int_ret = EINA_TRUE;
 
    if (!label) label = "";
    _label_format_set(wd->resize_obj, sd->format);
 
    efl_text_markup_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
-   if (int_ret)
-     {
-        sd->lastw = -1;
-        elm_layout_sizing_eval(obj);
-        _label_slide_change(obj);
-     }
-   return int_ret;
+   sd->lastw = -1;
+   elm_layout_sizing_eval(obj);
+   _label_slide_change(obj);
+
+   return EINA_TRUE;
 }
 
 static char *
@@ -426,7 +424,7 @@ _elm_label_efl_object_constructor(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_LABEL);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LABEL);
 
    return obj;
 }
@@ -480,7 +478,7 @@ _elm_label_line_wrap_set(Eo *obj, Elm_Label_Data *sd, Elm_Wrap_Type wrap)
 }
 
 EOLIAN static Elm_Wrap_Type
-_elm_label_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_line_wrap_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->linewrap;
 }
@@ -503,7 +501,7 @@ _elm_label_wrap_width_set(Eo *obj, Elm_Label_Data *sd, Evas_Coord w)
 }
 
 EOLIAN static Evas_Coord
-_elm_label_wrap_width_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_wrap_width_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->wrap_w;
 }
@@ -545,7 +543,7 @@ _elm_label_ellipsis_set(Eo *obj, Elm_Label_Data *sd, Eina_Bool ellipsis)
 }
 
 EOLIAN static Eina_Bool
-_elm_label_ellipsis_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_ellipsis_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->ellipsis;
 }
@@ -557,7 +555,7 @@ _elm_label_slide_mode_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, Elm_Label_Sli
 }
 
 EOLIAN static Elm_Label_Slide_Mode
-_elm_label_slide_mode_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_slide_mode_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->slide_mode;
 }
@@ -595,7 +593,7 @@ _elm_label_slide_speed_set(Eo *obj EINA_UNUSED, Elm_Label_Data *sd, double speed
 }
 
 EOLIAN static double
-_elm_label_slide_speed_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_slide_speed_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->slide_speed;
 }
@@ -610,7 +608,7 @@ _elm_label_slide_go(Eo *obj, Elm_Label_Data *sd)
 }
 
 EOLIAN static double
-_elm_label_slide_duration_get(Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
+_elm_label_slide_duration_get(const Eo *obj EINA_UNUSED, Elm_Label_Data *sd)
 {
    return sd->slide_duration;
 }

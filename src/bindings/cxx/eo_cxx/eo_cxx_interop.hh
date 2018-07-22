@@ -7,7 +7,6 @@
 #include <utility>
 #include <type_traits>
 #include <initializer_list>
-#include <future>
 
 #include <Eina.hh>
 #include <Eo.hh>
@@ -59,8 +58,6 @@ template <typename T>
 struct out_traits<eina::optional<T&>> { typedef eina::optional<T&> type; };
 template <>
 struct out_traits<void*> { typedef void*& type; };
-template <typename T>
-struct out_traits<efl::shared_future<T>> { typedef efl::shared_future<T>& type; };
 template <>
 struct out_traits<efl::eina::strbuf> { typedef efl::eina::strbuf_wrapper& type; };
 
@@ -68,8 +65,6 @@ template <typename T>
 struct inout_traits { typedef T& type; };
 template <>
 struct inout_traits<void> { typedef void* type; };
-template <typename T>
-struct inout_traits<efl::shared_future<T>> { typedef efl::shared_future<T>& type; };
 
 template <typename T>
 struct return_traits { typedef T type; };
@@ -141,10 +136,6 @@ void assign_out_impl(T& lhs, Eo const* rhs, tag<T&, Eo const*>
                      , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
   lhs._reset(const_cast<Eo*>(rhs));
-}
-template <typename T>
-void assign_out_impl(efl::shared_future<T>& /*v*/, Efl_Future*, tag<efl::shared_future<T>&, Efl_Future*>)
-{
 }
 template <typename Tag>
 void assign_out_impl(efl::eina::string_view& view, const char* string, Tag)
@@ -276,11 +267,6 @@ Eo const* convert_inout_impl(T v, tag<T, Eo const*>
                             , typename std::enable_if<eo::is_eolian_object<T>::value>::type* = 0)
 {
   return v._eo_ptr();
-}
-template <typename T>
-Efl_Future* convert_inout_impl(efl::shared_future<T>& /*v*/, tag<efl::shared_future<T>, Efl_Future*>)
-{
-  return nullptr;
 }
 }
     
@@ -545,11 +531,6 @@ inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, 
 {
    return eina_stringshare_ref(x.c_str());
 }
-template <typename T>
-Efl_Future* convert_to_c_impl(efl::shared_future<T> const&, tag<Efl_Future*, efl::shared_future<T>const&>)
-{
-  std::abort();
-}
 template <typename T, typename U, typename Deleter>
 T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, Deleter>>)
 {
@@ -709,12 +690,6 @@ eina::accessor<T> convert_to_return(Eina_Accessor* value, tag<Eina_Accessor*, ei
 {
   return eina::accessor<T>{ value };
 }
-template <typename T>
-efl::shared_future<T> convert_to_return(Efl_Future* /*value*/, tag<Efl_Future*, efl::shared_future<T>>)
-{
-  std::abort();
-  return {};
-}
 // Eina_Value*
 inline efl::eina::value convert_to_return(Eina_Value* value, tag<Eina_Value*, efl::eina::value>)
 {
@@ -836,7 +811,7 @@ inline void do_eo_add(Eo*& object, P const& parent
                       , Efl_Class const* klass
                       , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
-  bool is_ref = (parent._eo_ptr() != nullptr);
+  bool const is_ref = true;
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), is_ref, EINA_FALSE);
   object = ::_efl_add_end(object, is_ref, EINA_FALSE);
 }
@@ -862,7 +837,7 @@ void do_eo_add(Eo*& object, P const& parent, Efl_Class const* klass
                , F&& f
                , typename std::enable_if< eo::is_eolian_object<P>::value>::type* = 0)
 {
-  bool is_ref = (parent._eo_ptr() != nullptr);
+  bool const is_ref = true;
   object = ::_efl_add_internal_start(__FILE__, __LINE__, klass, parent._eo_ptr(), is_ref, EINA_FALSE);
   ::efl::eolian::call_lambda(std::forward<F>(f), proxy);
   object = ::_efl_add_end(object, is_ref, EINA_FALSE);

@@ -3,10 +3,11 @@
 
 evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_object.eo \
-	lib/evas/canvas/efl_canvas_object_event_grabber.eo \
+	lib/evas/canvas/efl_canvas_event_grabber.eo \
 	lib/evas/canvas/efl_canvas_polygon.eo \
 	lib/evas/canvas/efl_canvas_rectangle.eo \
 	lib/evas/canvas/efl_canvas_text.eo \
+	lib/evas/canvas/efl_canvas_text_factory.eo \
 	lib/evas/canvas/efl_canvas_group.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \
 	lib/evas/canvas/evas_canvas3d_camera.eo\
@@ -18,13 +19,13 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/evas_canvas3d_node.eo\
 	lib/evas/canvas/evas_canvas3d_scene.eo\
 	lib/evas/canvas/evas_canvas3d_object.eo \
-	lib/evas/canvas/efl_canvas_vg.eo \
-	lib/evas/canvas/efl_vg.eo \
-	lib/evas/canvas/efl_vg_container.eo \
-	lib/evas/canvas/efl_vg_shape.eo \
-	lib/evas/canvas/efl_vg_gradient.eo \
-	lib/evas/canvas/efl_vg_gradient_radial.eo \
-	lib/evas/canvas/efl_vg_gradient_linear.eo \
+	lib/evas/canvas/efl_canvas_vg_object.eo \
+	lib/evas/canvas/efl_canvas_vg_node.eo \
+	lib/evas/canvas/efl_canvas_vg_container.eo \
+	lib/evas/canvas/efl_canvas_vg_shape.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient_radial.eo \
+	lib/evas/canvas/efl_canvas_vg_gradient_linear.eo \
 	lib/evas/canvas/efl_canvas_image.eo \
 	lib/evas/canvas/efl_canvas_snapshot.eo \
 	lib/evas/canvas/efl_canvas_proxy.eo \
@@ -42,31 +43,24 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_input_hold.eo \
 	lib/evas/canvas/efl_input_focus.eo \
 	lib/evas/canvas/efl_gfx_map.eo \
-	lib/evas/canvas/efl_animation.eo \
-	lib/evas/canvas/efl_animation_alpha.eo \
-	lib/evas/canvas/efl_animation_rotate.eo \
-	lib/evas/canvas/efl_animation_scale.eo \
-	lib/evas/canvas/efl_animation_translate.eo \
-	lib/evas/canvas/efl_animation_group.eo \
-	lib/evas/canvas/efl_animation_group_parallel.eo \
-	lib/evas/canvas/efl_animation_group_sequential.eo \
-	lib/evas/canvas/efl_animation_object.eo \
-	lib/evas/canvas/efl_animation_object_alpha.eo \
-	lib/evas/canvas/efl_animation_object_rotate.eo \
-	lib/evas/canvas/efl_animation_object_scale.eo \
-	lib/evas/canvas/efl_animation_object_translate.eo \
-	lib/evas/canvas/efl_animation_object_group.eo \
-	lib/evas/canvas/efl_animation_object_group_parallel.eo \
-	lib/evas/canvas/efl_animation_object_group_sequential.eo \
+	lib/evas/canvas/efl_canvas_animation.eo \
+	lib/evas/canvas/efl_canvas_animation_alpha.eo \
+	lib/evas/canvas/efl_canvas_animation_rotate.eo \
+	lib/evas/canvas/efl_canvas_animation_scale.eo \
+	lib/evas/canvas/efl_canvas_animation_translate.eo \
+	lib/evas/canvas/efl_canvas_animation_group.eo \
+	lib/evas/canvas/efl_canvas_animation_group_parallel.eo \
+	lib/evas/canvas/efl_canvas_animation_group_sequential.eo \
+	lib/evas/canvas/efl_canvas_animation_player.eo \
 	$(NULL)
 
 evas_gesture_eolian_pub_files = \
-	lib/evas/gesture/efl_gesture_touch.eo \
-	lib/evas/gesture/efl_gesture.eo \
-	lib/evas/gesture/efl_gesture_tap.eo \
-	lib/evas/gesture/efl_gesture_long_tap.eo \
-	lib/evas/gesture/efl_gesture_recognizer.eo \
-	lib/evas/gesture/efl_gesture_manager.eo \
+	lib/evas/gesture/efl_canvas_gesture_touch.eo \
+	lib/evas/gesture/efl_canvas_gesture.eo \
+	lib/evas/gesture/efl_canvas_gesture_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_long_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer.eo \
+	lib/evas/gesture/efl_canvas_gesture_manager.eo \
 	$(NULL)
 
 evas_eolian_legacy_files = \
@@ -84,15 +78,15 @@ evas_canvas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo
 
 evas_gesture_eolian_priv_files = \
-	lib/evas/gesture/efl_gesture_recognizer_tap.eo \
-	lib/evas/gesture/efl_gesture_recognizer_long_tap.eo
+	lib/evas/gesture/efl_canvas_gesture_recognizer_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.eo
 
 evas_canvas_eolian_type_files = \
     lib/evas/canvas/evas_canvas3d_types.eot \
-    lib/evas/canvas/efl_animation_types.eot
+    lib/evas/canvas/efl_canvas_animation_types.eot
 
 evas_gesture_eolian_type_files = \
-    lib/evas/gesture/efl_gesture_types.eot
+    lib/evas/gesture/efl_canvas_gesture_types.eot
 
 evas_canvas_eolian_priv_c = $(evas_canvas_eolian_priv_files:%.eo=%.eo.c)
 evas_canvas_eolian_priv_h = $(evas_canvas_eolian_priv_files:%.eo=%.eo.h) \
@@ -178,23 +172,17 @@ lib/evas/canvas/evas_image_private.h \
 lib/evas/canvas/evas_polygon_private.h \
 lib/evas/canvas/efl_canvas_surface.h \
 lib/evas/common3d/primitives/primitive_common.h \
-lib/evas/canvas/efl_animation_private.h \
-lib/evas/canvas/efl_animation_alpha_private.h \
-lib/evas/canvas/efl_animation_rotate_private.h \
-lib/evas/canvas/efl_animation_scale_private.h \
-lib/evas/canvas/efl_animation_translate_private.h \
-lib/evas/canvas/efl_animation_group_private.h \
-lib/evas/canvas/efl_animation_group_parallel_private.h \
-lib/evas/canvas/efl_animation_group_sequential_private.h \
-lib/evas/canvas/efl_animation_object_private.h \
-lib/evas/canvas/efl_animation_object_alpha_private.h \
-lib/evas/canvas/efl_animation_object_rotate_private.h \
-lib/evas/canvas/efl_animation_object_scale_private.h \
-lib/evas/canvas/efl_animation_object_translate_private.h \
-lib/evas/canvas/efl_animation_object_group_private.h \
-lib/evas/canvas/efl_animation_object_group_parallel_private.h \
-lib/evas/canvas/efl_animation_object_group_sequential_private.h \
-lib/evas/gesture/efl_gesture_private.h
+lib/evas/canvas/efl_canvas_animation_private.h \
+lib/evas/canvas/efl_canvas_animation_alpha_private.h \
+lib/evas/canvas/efl_canvas_animation_rotate_private.h \
+lib/evas/canvas/efl_canvas_animation_scale_private.h \
+lib/evas/canvas/efl_canvas_animation_translate_private.h \
+lib/evas/canvas/efl_canvas_animation_group_private.h \
+lib/evas/canvas/efl_canvas_animation_group_parallel_private.h \
+lib/evas/canvas/efl_canvas_animation_group_sequential_private.h \
+lib/evas/canvas/efl_canvas_animation_player_private.h \
+lib/evas/canvas/evas_stack.x \
+lib/evas/gesture/efl_canvas_gesture_private.h
 
 # Linebreak
 
@@ -257,7 +245,6 @@ lib/evas/canvas/evas_render.c \
 lib/evas/canvas/render2/evas_render2.c \
 lib/evas/canvas/render2/evas_render2.h \
 lib/evas/canvas/evas_smart.c \
-lib/evas/canvas/evas_stack.c \
 lib/evas/canvas/evas_async_events.c \
 lib/evas/canvas/evas_stats.c \
 lib/evas/canvas/evas_touch_point.c \
@@ -266,7 +253,7 @@ lib/evas/canvas/evas_map.h \
 lib/evas/canvas/evas_gl.c \
 lib/evas/canvas/evas_out.c \
 lib/evas/canvas/efl_canvas_image.c \
-lib/evas/canvas/efl_canvas_object_event_grabber.c \
+lib/evas/canvas/efl_canvas_event_grabber.c \
 lib/evas/canvas/efl_canvas_proxy.c \
 lib/evas/canvas/efl_canvas_snapshot.c \
 lib/evas/canvas/efl_canvas_scene3d.c \
@@ -280,30 +267,23 @@ lib/evas/canvas/efl_input_key.c \
 lib/evas/canvas/efl_input_pointer.c \
 lib/evas/canvas/efl_input_hold.c \
 lib/evas/canvas/efl_input_focus.c \
-lib/evas/canvas/efl_animation.c \
-lib/evas/canvas/efl_animation_alpha.c \
-lib/evas/canvas/efl_animation_rotate.c \
-lib/evas/canvas/efl_animation_scale.c \
-lib/evas/canvas/efl_animation_translate.c \
-lib/evas/canvas/efl_animation_group.c \
-lib/evas/canvas/efl_animation_group_parallel.c \
-lib/evas/canvas/efl_animation_group_sequential.c \
-lib/evas/canvas/efl_animation_object.c \
-lib/evas/canvas/efl_animation_object_alpha.c \
-lib/evas/canvas/efl_animation_object_rotate.c \
-lib/evas/canvas/efl_animation_object_scale.c \
-lib/evas/canvas/efl_animation_object_translate.c \
-lib/evas/canvas/efl_animation_object_group.c \
-lib/evas/canvas/efl_animation_object_group_parallel.c \
-lib/evas/canvas/efl_animation_object_group_sequential.c \
-lib/evas/gesture/efl_gesture_touch.c \
-lib/evas/gesture/efl_gesture.c \
-lib/evas/gesture/efl_gesture_tap.c \
-lib/evas/gesture/efl_gesture_long_tap.c \
-lib/evas/gesture/efl_gesture_recognizer.c \
-lib/evas/gesture/efl_gesture_recognizer_tap.c \
-lib/evas/gesture/efl_gesture_recognizer_long_tap.c \
-lib/evas/gesture/efl_gesture_manager.c \
+lib/evas/canvas/efl_canvas_animation.c \
+lib/evas/canvas/efl_canvas_animation_alpha.c \
+lib/evas/canvas/efl_canvas_animation_rotate.c \
+lib/evas/canvas/efl_canvas_animation_scale.c \
+lib/evas/canvas/efl_canvas_animation_translate.c \
+lib/evas/canvas/efl_canvas_animation_group.c \
+lib/evas/canvas/efl_canvas_animation_group_parallel.c \
+lib/evas/canvas/efl_canvas_animation_group_sequential.c \
+lib/evas/canvas/efl_canvas_animation_player.c \
+lib/evas/gesture/efl_canvas_gesture_touch.c \
+lib/evas/gesture/efl_canvas_gesture.c \
+lib/evas/gesture/efl_canvas_gesture_tap.c \
+lib/evas/gesture/efl_canvas_gesture_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_manager.c \
 $(NULL)
 
 EXTRA_DIST2 += \
@@ -345,7 +325,9 @@ lib_evas_file_SOURCES = \
 lib/evas/file/evas_module.c \
 lib/evas/file/evas_module.h \
 lib/evas/file/evas_path.c \
-lib/evas/file/evas_path.h
+lib/evas/file/evas_path.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_evas_libevas_la_SOURCES += \
 $(lib_evas_file_SOURCES)
@@ -395,7 +377,7 @@ lib/evas/common3d/primitives/primitive_common.c
 
 # Evas_VG
 lib_evas_libevas_la_SOURCES += \
-lib/evas/canvas/efl_canvas_vg.c \
+lib/evas/canvas/efl_canvas_vg_object.c \
 lib/evas/canvas/evas_vg_node.c \
 lib/evas/canvas/evas_vg_container.c \
 lib/evas/canvas/evas_vg_gradient.c \
@@ -518,6 +500,7 @@ lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @EVAS_CFLAGS@ \
 @VALGRIND_CFLAGS@ \
 @NEON_CFLAGS@ \
@@ -1566,6 +1549,7 @@ bin_evas_evas_cserve2_slave_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 -DEVAS_MODULE_NO_ENGINES=1 \
 -DEVAS_MODULE_NO_IMAGE_SAVERS=1 \
 -DEVAS_MODULE_NO_VG_LOADERS=1 \
@@ -2450,6 +2434,7 @@ TESTS += tests/evas/evas_suite
 tests_evas_evas_suite_SOURCES = \
 tests/evas/evas_suite.c \
 tests/evas/evas_test_init.c \
+tests/evas/evas_test_new.c \
 tests/evas/evas_test_object.c \
 tests/evas/evas_test_object_smart.c \
 tests/evas/evas_test_textblock.c \
@@ -2540,7 +2525,9 @@ tests/evas/images/bg_gray.png \
 tests/evas/images/flower.jp2 \
 tests/evas/images/flower.jp2.png \
 tests/evas/images/train.j2k \
-tests/evas/images/train.j2k.png
+tests/evas/images/train.j2k.png \
+tests/evas/dicts/hyph_en_US.dic \
+tests/evas/dicts/hyph_de_DE.dic
 
 if HAVE_ELUA
 

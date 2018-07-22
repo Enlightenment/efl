@@ -8,15 +8,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_IMF_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_IMF_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -27,7 +27,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -195,7 +195,9 @@ typedef enum
    ECORE_IMF_CALLBACK_DELETE_SURROUNDING, /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
    ECORE_IMF_CALLBACK_SELECTION_SET,      /**< "SELECTION_SET" is called when the input method needs to set the selection @since 1.9 */
    ECORE_IMF_CALLBACK_PRIVATE_COMMAND_SEND, /**< "PRIVATE_COMMAND_SEND" is called when the input method sends a private command @since 1.12 */
-   ECORE_IMF_CALLBACK_COMMIT_CONTENT      /**< "COMMIT_CONTENT" is called when the input method commits content such as an image @since 1.20 */
+   ECORE_IMF_CALLBACK_COMMIT_CONTENT,     /**< "COMMIT_CONTENT" is called when the input method commits content such as an image @since 1.20 */
+   ECORE_IMF_CALLBACK_TRANSACTION_START,  /**< "TRANSACTION_START" is called when a new transaction sequence starts. @since 1.21 */
+   ECORE_IMF_CALLBACK_TRANSACTION_END     /**< "TRANSACTION_END" is called when a new transaction sequence starts. @since 1.21 */
 } Ecore_IMF_Callback_Type;
 
 /**
@@ -378,13 +380,12 @@ typedef enum
    ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_MONTH  = 0x300, /**< Autofill hint for a credit card expiration month @since 1.21 */
    ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_EXPIRATION_YEAR   = 0x400, /**< Autofill hint for a credit card expiration year @since 1.21 */
    ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_NUMBER            = 0x500, /**< Autofill hint for a credit card number @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_CREDIT_CARD_SECURITY_CODE     = 0x600, /**< Autofill hint for a credit card security code @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_EMAIL_ADDRESS                 = 0x700, /**< Autofill hint for an email address @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_NAME                          = 0x800, /**< Autofill hint for a user's real name @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_PHONE                         = 0x900, /**< Autofill hint for a phone number @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_ADDRESS                = 0xA00, /**< Autofill hint for a postal address @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_CODE                   = 0xB00, /**< Autofill hint for a postal code @since 1.21 */
-   ECORE_IMF_INPUT_HINT_AUTOFILL_ID                            = 0xC00  /**< Autofill hint for a user's ID @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_EMAIL_ADDRESS                 = 0x600, /**< Autofill hint for an email address @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_NAME                          = 0x700, /**< Autofill hint for a user's real name @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_PHONE                         = 0x800, /**< Autofill hint for a phone number @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_ADDRESS                = 0x900, /**< Autofill hint for a postal address @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_POSTAL_CODE                   = 0xA00, /**< Autofill hint for a postal code @since 1.21 */
+   ECORE_IMF_INPUT_HINT_AUTOFILL_ID                            = 0xB00  /**< Autofill hint for a user's ID @since 1.21 */
 } Ecore_IMF_Input_Hints;
 
 /**

@@ -23,7 +23,10 @@ struct parameter_type_generator
             break;
           case attributes::parameter_direction::in:
             dir = "in";
-          break;
+            break;
+          case attributes::parameter_direction::unknown:
+            dir = "";
+            break;
         }
 
       attributes::regular_type_def const* typ =

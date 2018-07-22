@@ -49,7 +49,7 @@ _efl_access_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void 
    Elm_Config_Binding_Key *binding;
    int tmp = 0;
 
-   if (!efl_isa(obj, ELM_WIDGET_CLASS))
+   if (!efl_isa(obj, EFL_UI_WIDGET_CLASS))
       return NULL;
 
    actions = efl_access_widget_action_elm_actions_get(obj);
@@ -94,7 +94,7 @@ _efl_access_widget_action_efl_access_action_action_keybinding_get(Eo *obj, void 
 }
 
 EOLIAN static const char *
-_efl_access_widget_action_efl_access_action_action_name_get(Eo *obj, void *pd EINA_UNUSED, int id)
+_efl_access_widget_action_efl_access_action_action_name_get(const Eo *obj, void *pd EINA_UNUSED, int id)
 {
    const Efl_Access_Action_Data *actions = NULL;
    int tmp = 0;
@@ -117,13 +117,13 @@ _efl_access_widget_action_efl_access_action_action_description_set(Eo *obj EINA_
 }
 
 EOLIAN static const char *
-_efl_access_widget_action_efl_access_action_action_description_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED)
+_efl_access_widget_action_efl_access_action_action_description_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, int id EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static Eina_List*
-_efl_access_widget_action_efl_access_action_actions_get(Eo *obj, void *pd EINA_UNUSED)
+_efl_access_widget_action_efl_access_action_actions_get(const Eo *obj, void *pd EINA_UNUSED)
 {
    const Efl_Access_Action_Data *actions = NULL;
    Eina_List *ret = NULL;

@@ -1,5 +1,3 @@
-import eina_types;
-
 struct Eldbus.Proxy; [[Represents a client object bound to an interface]]
 struct Eldbus.Connection; [[Represents a connection of one the type of connection with the DBus daemon.]]
 struct Eldbus.Object; [[Represents an object path already attached with bus name or unique id]]

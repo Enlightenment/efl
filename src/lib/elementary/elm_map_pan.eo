@@ -7,8 +7,8 @@ class Elm.Map.Pan (Elm.Pan)
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_calculate;
       Elm.Pan.content_size { get; }
       Elm.Pan.pos { get; set; }
@@ -16,6 +16,7 @@ class Elm.Map.Pan (Elm.Pan)
       Elm.Pan.pos_max { get; }
    }
    events {
+      /* FIXME: Nobody is emitting these
       loaded; [[Called when map loaded]]
       tile,load; [[Called when map tile loading started]]
       tile,loaded; [[Called when map tile loading finished]]
@@ -28,5 +29,6 @@ class Elm.Map.Pan (Elm.Pan)
       name,loaded,fail; [[Called when name loading failed]]
       overlay,clicked; [[Called when overlay was clicked]]
       overlay,del; [[Called when overlay was deleted]]
+      */
    }
 }

@@ -56,7 +56,6 @@ struct _Eina_Debug_Timer
 static Eina_List *_timers = NULL;
 
 static Eina_Bool _thread_runs = EINA_FALSE;
-static Eina_Bool _exit_required = EINA_FALSE;
 static pthread_t _thread;
 
 static int pipeToThread[2];
@@ -103,9 +102,10 @@ _monitor(void *_data EINA_UNUSED)
 # endif
      (pthread_self(), "Edbg-tim");
 #endif
-   for (;!_exit_required;)
+   while (1)
      {
         int timeout = -1; //in milliseconds
+        pthread_testcancel();
         eina_spinlock_take(&_lock);
         if (_timers)
           {
@@ -115,13 +115,13 @@ _monitor(void *_data EINA_UNUSED)
         eina_spinlock_release(&_lock);
 
         ret = epoll_wait(epfd, events, MAX_EVENTS, timeout);
-        if (_exit_required) continue;
+        pthread_testcancel();
 
         /* Some timer has been add/removed or we need to exit */
         if (ret)
           {
              char c;
-             if (read(pipeToThread[0], &c, 1) != 1) _exit_required = EINA_TRUE;
+             if (read(pipeToThread[0], &c, 1) != 1) break;
           }
         else
           {
@@ -220,11 +220,19 @@ _eina_debug_timer_init(void)
 Eina_Bool
 _eina_debug_timer_shutdown(void)
 {
-   char c = '\0';
-   _exit_required = EINA_TRUE;
-   if (write(pipeToThread[1], &c, 1) != 1)
-     e_debug("Eina debug timer shutdown write failed!");
+   Eina_Debug_Timer *t;
+
+   eina_spinlock_take(&_lock);
+   EINA_LIST_FREE(_timers, t)
+     free(t);
+   close(pipeToThread[0]);
+   close(pipeToThread[1]);
+   if (_thread_runs)
+     pthread_cancel(_thread);
+   _thread_runs = 0;
+   eina_spinlock_release(&_lock);
    eina_spinlock_free(&_lock);
+
    return EINA_TRUE;
 }
 

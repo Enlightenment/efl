@@ -86,6 +86,9 @@ static const Elm_Text_Class _elm_text_classes[] = {
    {"multibuttonentry_item_text", "Multibuttonentry Items"},
    {"multibuttonentry_item_text_pressed", "Multibuttonentry Pressed Items"},
    {"multibuttonentry_item_text_disabled", "Multibuttonentry Disabled Items"},
+   {"tags_item_text", "Tags Items"},
+   {"tags_item_text_pressed", "Tags Pressed Items"},
+   {"tags_item_text_disabled", "Tags Disabled Items"},
    {"title_bar", "Title Bar"},
    {"list_item", "List Items"},
    {"grid_item", "Grid Items"},
@@ -112,6 +115,8 @@ static const Elm_Color_Class _elm_color_classes[] = {
    {"calendar_day_highlighted", "Highlighted Day Effect"},
    {"calendar_day_checked", "Checked Day Effect"},
    {"datetime_bg", "Datetime Background"},
+   {"datepicker_bg", "Datepicker Background"},
+   {"timepicker_bg", "Timepicker Background"},
    {"datetime_separator_text", "Datetime Separator Text"},
    {"datetime_separator_text_disabled", "Datetime Separator Disabled Text"},
    {"hoversel_item_active", "Hoversel Item Text"},
@@ -160,10 +165,18 @@ static const Elm_Color_Class _elm_color_classes[] = {
    {"multibuttonentry_item_text", "Multibuttonentry Item Text"},
    {"multibuttonentry_item_text_pressed", "Multibuttonentry Item Pressed Text"},
    {"multibuttonentry_item_text_disabled", "Multibuttonentry Item Disabled Text"},
+   {"tags_bg", "Tags Background"},
+   {"tags_item_bg", "Tags Item Background"},
+   {"tags_item_bg_selected", "Tags Item Selected Background"},
+   {"tags_item_text", "Tags Item Text"},
+   {"tags_item_text_pressed", "Tags Item Pressed Text"},
+   {"tags_item_text_disabled", "Tags Item Disabled Text"},
    {"border_title", "Border Title Text"},
    {"border_title_active", "Border Title Active Text"},
    {"datetime_text", "Datetime Text"},
    {"multibuttonentry_label", "Multibuttonentry Text"},
+   {"tags_label", "Tags Text"},
+   {"tags_number", "Tags Number Text"},
    {"spinner", "Spinner Text"},
    {"spinner_disabled", "Spinner Disabled Text"},
    {NULL, NULL}
@@ -461,6 +474,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_flick_time_limit_ms, T_INT);
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_double_tap_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_tap_finger_size, T_INT);
    ELM_CONFIG_VAL(D, T, access_mode, T_UCHAR);
    ELM_CONFIG_VAL(D, T, selection_clear_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, glayer_continues_enable, T_UCHAR);
@@ -508,6 +522,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, entry_select_allow, T_UCHAR);
    ELM_CONFIG_VAL(D, T, offline, T_UCHAR);
    ELM_CONFIG_VAL(D, T, powersave, T_INT);
+   ELM_CONFIG_VAL(D, T, drag_anim_duration, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -614,7 +629,7 @@ _elm_config_user_dir_snprintf(char       *dst,
 {
    size_t user_dir_len = 0, off = 0;
    va_list ap;
-   Efl_Vpath_File *file_obj;
+   char *tmp;
    static int use_xdg_config = -1;
 
    if (use_xdg_config == -1)
@@ -623,13 +638,12 @@ _elm_config_user_dir_snprintf(char       *dst,
         else use_xdg_config = 0;
      }
    if (use_xdg_config)
-     file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                        "(:config:)/elementary");
+     tmp = eina_vpath_resolve("(:usr.config:)/elementary");
    else
-     file_obj = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS,
-                                        "(:home:)/.elementary");
-   eina_strlcpy(dst, efl_vpath_file_result_get(file_obj), size);
-   efl_del(file_obj);
+     tmp = eina_vpath_resolve("(:home:)/" ELEMENTARY_BASE_DIR);
+
+   eina_strlcpy(dst, tmp, size);
+   free(tmp);
 
    user_dir_len = strlen(dst);
    off = user_dir_len + 1;
@@ -1430,7 +1444,7 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   for (i = 0; i < 2; i++)
+   for (i = 0; i < 2 && !_use_build_config; i++)
      {
         // user profile
         if (i == 0)
@@ -1642,6 +1656,12 @@ _config_system_load(void)
                           _elm_profile);
 
    ef = eet_open(buf, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+        _elm_data_dir_snprintf(buf, sizeof(buf), "config/default/base.cfg");
+
+        ef = eet_open(buf, EET_FILE_MODE_READ);
+     }
    if (ef)
      {
         cfg = eet_data_read(ef, _config_edd, "config");
@@ -1659,25 +1679,39 @@ _efl_config_obj_del(Eo *obj EINA_UNUSED)
 static void
 _config_load(void)
 {
-   _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, NULL);
+   if (_efl_config_obj)
+     {
+        efl_del_intercept_set(_efl_config_obj, NULL);
+        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
+        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+        ELM_SAFE_FREE(_efl_config_obj, efl_del);
+        ELM_SAFE_FREE(_elm_config, _config_free);
+        _elm_font_overlays_del_free();
+
+        ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
+     }
+   _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, efl_main_loop_get());
    efl_loop_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_loop_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
-   _elm_config = _config_user_load();
-   if (_elm_config)
+   if (!_use_build_config)
      {
-        if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
-           {
-              WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
-              _config_free(_elm_config);
-              _elm_config = NULL;
-           }
-        else
+        _elm_config = _config_user_load();
+        if (_elm_config)
           {
-             if (_elm_config->config_version < ELM_CONFIG_VERSION)
-               _config_update();
-             _env_get();
-             return;
+             if ((_elm_config->config_version >> ELM_CONFIG_VERSION_EPOCH_OFFSET) < ELM_CONFIG_EPOCH)
+                {
+                   WRN("User's elementary config seems outdated and unusable. Fallback to load system config.");
+                   _config_free(_elm_config);
+                   _elm_config = NULL;
+                }
+             else
+               {
+                  if (_elm_config->config_version < ELM_CONFIG_VERSION)
+                    _config_update();
+                  _env_get();
+                  return;
+               }
           }
      }
 
@@ -1777,6 +1811,7 @@ _config_load(void)
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
    _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
+   _elm_config->glayer_tap_finger_size = 10;
    _elm_config->access_mode = ELM_ACCESS_MODE_OFF;
    _elm_config->selection_clear_enable = EINA_FALSE;
    _elm_config->week_start = 1; /* monday */
@@ -1821,6 +1856,7 @@ _config_load(void)
    _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
    _elm_config->popup_scrollable = EINA_FALSE;
    _elm_config->entry_select_allow = EINA_TRUE;
+   _elm_config->drag_anim_duration = 0.0;
    _env_get();
 }
 
@@ -1935,6 +1971,7 @@ _elm_config_reload_do(void)
         KEEP_VAL(glayer_flick_time_limit_ms);
         KEEP_VAL(glayer_long_tap_start_timeout);
         KEEP_VAL(glayer_double_tap_timeout);
+        KEEP_VAL(glayer_tap_finger_size);
         KEEP_VAL(access_mode);
         KEEP_VAL(glayer_continues_enable);
         KEEP_VAL(week_start);
@@ -2021,6 +2058,7 @@ _elm_config_reload_do(void)
         KEEP_VAL(gl_msaa);
         KEEP_STR(icon_theme);
         KEEP_VAL(entry_select_allow);
+        KEEP_VAL(drag_anim_duration);
 
         _elm_config->priv = prev_config->priv;
         _config_free(prev_config);
@@ -2056,7 +2094,7 @@ _config_flush_get(void)
    if (pre_scale != _elm_config->scale)
      _elm_rescale();
    _elm_recache();
-   _elm_clouseau_reload();
+   _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
@@ -2791,6 +2829,12 @@ _env_get(void)
    if (s) _elm_config->popup_vertical_align = _elm_atof(s);
    s = getenv("ELM_POPUP_SCROLLABLE");
    if (s) _elm_config->popup_scrollable = atoi(s);
+
+   s = getenv("ELM_GLAYER_TAP_FINGER_SIZE");
+   if (s) _elm_config->glayer_tap_finger_size = atoi(s);
+
+   s = getenv("EFL_UI_DND_DRAG_ANIM_DURATION");
+   if (s) _elm_config->drag_anim_duration = _elm_atof(s);
 }
 
 static void
@@ -3434,6 +3478,40 @@ elm_config_focus_move_policy_get(void)
    return _elm_config->focus_move_policy;
 }
 
+static void
+_efl_ui_widget_config_reload(Efl_Ui_Widget *obj)
+{
+   Elm_Focus_Move_Policy focus_move_policy = elm_config_focus_move_policy_get();
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
+   Efl_Ui_Widget *w;
+   Eina_List *n;
+
+   //reload focus move policy
+   if (efl_ui_widget_focus_move_policy_automatic_get(obj) &&
+       (sd->focus_move_policy != focus_move_policy))
+     {
+        sd->focus_move_policy = focus_move_policy;
+     }
+
+   EINA_LIST_FOREACH(sd->subobjs, n, w)
+     {
+        if (efl_isa(w, EFL_UI_WIDGET_CLASS))
+          _efl_ui_widget_config_reload(w);
+     }
+}
+
+void
+_elm_win_focus_reconfigure(void)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        _efl_ui_widget_config_reload(obj);
+     }
+}
+
 EAPI void
 elm_config_focus_move_policy_set(Elm_Focus_Move_Policy policy)
 {
@@ -3865,7 +3943,7 @@ elm_config_clouseau_enabled_set(Eina_Bool enable)
 {
    _elm_config->priv.clouseau_enable = EINA_TRUE;
    _elm_config->clouseau_enable = !!enable;
-   _elm_clouseau_reload();
+   _elm_old_clouseau_reload();
 }
 
 EAPI double
@@ -4128,7 +4206,7 @@ _elm_config_init(void)
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
    _elm_recache();
-   _elm_clouseau_reload();
+   _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
 
@@ -4137,17 +4215,6 @@ _elm_config_sub_shutdown(void)
 {
    ecore_event_type_flush(ELM_EVENT_CONFIG_ALL_CHANGED);
 
-#ifdef HAVE_ELEMENTARY_X
-   if (ecore_x_display_get()) ecore_x_shutdown();
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   if (_elm_wl_display)
-     {
-        ecore_wl2_display_disconnect(_elm_wl_display);
-        _elm_wl_display = NULL;
-        ecore_wl2_shutdown();
-     }
-#endif
 #ifdef HAVE_ELEMENTARY_WIN32
    ecore_win32_shutdown();
 #endif
@@ -4238,78 +4305,6 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 void
 _elm_config_sub_init(void)
 {
-#if defined(HAVE_ELEMENTARY_X) || defined(HAVE_ELEMENTARY_WL2) || defined(HAVE_ELEMENTARY_WIN32)
-   const char *ev = getenv("ELM_DISPLAY");
-#endif
-
-#ifdef HAVE_ELEMENTARY_X
-   Eina_Bool init_x = EINA_FALSE;
-   Eina_Bool have_display = !!getenv("DISPLAY");
-
-   if (ev) /* If ELM_DISPLAY is specified */
-     {
-        if (!strcmp(ev, "x11")) /* and it is X11 */
-          {
-             if (!have_display) /* if there is no $DISPLAY */
-               {
-                  ERR("$ELM_DISPLAY is set to x11 but $DISPLAY is not set");
-                  init_x = EINA_FALSE;
-               }
-             else /* if there is */
-               init_x = EINA_TRUE;
-          }
-        else /* not X11 */
-          init_x = EINA_FALSE;
-     }
-   else /* ELM_DISPLAY not specified */
-     {
-        if (have_display) /* If there is a $DISPLAY */
-          init_x = EINA_TRUE;
-        else /* No $DISPLAY */
-          init_x = EINA_FALSE;
-     }
-   if (init_x)
-     {
-        ecore_x_init(NULL);
-     }
-#endif
-#ifdef HAVE_ELEMENTARY_WL2
-   Eina_Bool init_wl = EINA_FALSE;
-   Eina_Bool have_wl_display = !!getenv("WAYLAND_DISPLAY");
-
-   if (ev) /* If ELM_DISPLAY is specified */
-     {
-        if (!strcmp(ev, "wl")) /* and it is WL */
-          {
-             /* always try to connect to wl when it is enforced */
-             init_wl = EINA_TRUE;
-          }
-        else /* not wl */
-          init_wl = EINA_FALSE;
-     }
-   else /* ELM_DISPLAY not specified */
-     {
-        /* If there is a $WAYLAND_DISPLAY */
-        if ((have_wl_display) && (!getenv("DISPLAY")))
-          init_wl = EINA_TRUE;
-        else /* No $WAYLAND_DISPLAY */
-          init_wl = EINA_FALSE;
-     }
-   if (init_wl)
-     {
-        if (!ecore_wl2_init())
-          {
-             ERR("Could not initialize Ecore_Wl2");
-             goto end;
-          }
-        _elm_wl_display = ecore_wl2_display_connect(NULL);
-        if (!_elm_wl_display)
-          {
-             ERR("Could not connect to Wayland Display");
-             goto end;
-          }
-     }
-#endif
 #ifdef HAVE_ELEMENTARY_COCOA
    ecore_cocoa_init();
 #endif
@@ -4403,7 +4398,7 @@ _elm_config_reload(void)
      _elm_rescale();
 #undef CMP
    _elm_recache();
-   _elm_clouseau_reload();
+   _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
    if (ptheme) eina_stringshare_del(ptheme);
@@ -4599,7 +4594,7 @@ elm_config_web_backend_set(const char *backend)
 {
    _elm_config->priv.web_backend = EINA_TRUE;
    if (_elm_web_init(backend))
-     _elm_config->web_backend = backend;
+     eina_stringshare_replace(&_elm_config->web_backend, backend);
 }
 
 EAPI const char *
@@ -4637,6 +4632,20 @@ elm_config_powersave_set(int set)
    _elm_config->powersave = set;
 }
 
+EAPI double
+elm_config_drag_anim_duration_get(void)
+{
+   if (!_elm_config) return 0.0;
+   return _elm_config->drag_anim_duration;
+}
+
+EAPI void
+elm_config_drag_anim_duration_set(double set)
+{
+   if (!_elm_config) return;
+   _elm_config->drag_anim_duration = set;
+}
+
 void
 _elm_config_profile_set(const char *profile)
 {
@@ -4670,7 +4679,7 @@ _elm_config_profile_set(const char *profile)
    _elm_config_color_overlay_apply();
    _elm_rescale();
    _elm_recache();
-   _elm_clouseau_reload();
+   _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
 
@@ -4967,7 +4976,7 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
 }
 
 EOLIAN static Eina_Value *
-_efl_config_global_efl_config_config_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
+_efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED,
                                          const char *name)
 {
    Eina_Value *val = NULL;
@@ -5074,6 +5083,7 @@ _efl_config_global_efl_config_config_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_GETS(web_backend);
    CONFIG_GETB(offline);
    CONFIG_GETI(powersave);
+   CONFIG_GETD(drag_anim_duration);
 
    const size_t len = sizeof("audio_mute") - 1;
    if (!strncmp(name, "audio_mute", len))
@@ -5103,7 +5113,7 @@ _efl_config_global_profile_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED, const
 }
 
 EOLIAN static const char *
-_efl_config_global_profile_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+_efl_config_global_profile_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    return elm_config_profile_get();
 }
@@ -5125,7 +5135,7 @@ typedef struct
 static Eina_Bool
 _profile_iterator_next(Profile_Iterator *it, void **data)
 {
-   Efl_Gfx *sub;
+   Efl_Gfx_Entity *sub;
 
    if (!it->object) return EINA_FALSE;
    if (!eina_iterator_next(it->real_iterator, (void **) &sub))

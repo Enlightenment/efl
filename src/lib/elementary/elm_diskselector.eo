@@ -1,7 +1,7 @@
-class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
+class Elm.Diskselector (Efl.Ui.Widget, Elm.Interface_Scrollable,
                         Efl.Access.Widget.Action,
                         Efl.Ui.Clickable, Efl.Ui.Scrollable,
-                        Efl.Ui.Selectable)
+                        Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary diskselector class]]
    legacy_prefix: elm_diskselector;
@@ -198,15 +198,15 @@ class Elm.Diskselector (Elm.Widget, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.on_access_update;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
       Elm.Interface_Scrollable.policy { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }

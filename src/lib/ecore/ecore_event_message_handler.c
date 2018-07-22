@@ -21,6 +21,7 @@ struct _Handler
    int                     type;
    Eina_Bool               delete_me : 1;
    Eina_Bool               to_add : 1;
+   Eina_Bool               prepend : 1;
 };
 
 struct _Filter
@@ -156,6 +157,29 @@ _ecore_event_message_handler_handler_add(Eo *obj EINA_UNUSED, Ecore_Event_Messag
      }
    else
      pd->handlers[type] = eina_inlist_append(pd->handlers[type],
+                                             EINA_INLIST_GET(h));
+   return h;
+}
+
+EOLIAN static void *
+_ecore_event_message_handler_handler_prepend(Eo *obj EINA_UNUSED, Ecore_Event_Message_Handler_Data *pd, int type, void *func, void *data)
+{
+   Handler *h;
+
+   if ((type < 0) || (type > pd->event_type_count) || (!func)) return NULL;
+   h = calloc(1, sizeof(Handler));
+   if (!h) return NULL;
+   h->func = func;
+   h->data = data;
+   h->type = type;
+   if (pd->current_event_type == type)
+     {
+        h->to_add = EINA_TRUE;
+        h->prepend = EINA_TRUE;
+        pd->handlers_add = eina_list_append(pd->handlers_add, h);
+     }
+   else
+     pd->handlers[type] = eina_inlist_prepend(pd->handlers[type],
                                              EINA_INLIST_GET(h));
    return h;
 }
@@ -344,8 +368,12 @@ _ecore_event_message_handler_efl_loop_message_handler_message_call(Eo *obj, Ecor
                   h->to_add = EINA_FALSE;
                   pd->handlers_add =
                     eina_list_remove_list(pd->handlers_add, l);
-                  pd->handlers[type] =
-                    eina_inlist_append(pd->handlers[type], EINA_INLIST_GET(h));
+                  if (h->prepend)
+                    pd->handlers[type] =
+                      eina_inlist_prepend(pd->handlers[type], EINA_INLIST_GET(h));
+                  else
+                    pd->handlers[type] =
+                      eina_inlist_append(pd->handlers[type], EINA_INLIST_GET(h));
                }
           }
         if (pd->handlers_walking == 0)
@@ -385,18 +413,10 @@ _flush_cb(void *data, void *handler EINA_UNUSED, void *message)
 {
    int *type = data;
    int evtype = -1;
-   void *evdata = NULL, *free_func = NULL, *free_data = NULL;
-   Ecore_End_Cb fn_free = NULL;
 
    if (!efl_isa(message, ECORE_EVENT_MESSAGE_CLASS)) return EINA_TRUE;
-   ecore_event_message_data_steal(message, &evtype, &evdata, &free_func, &free_data);
-   if (*type != evtype) return EINA_TRUE;
-   if (free_func)
-     {
-        fn_free = free_func;
-        fn_free(free_data, evdata);
-     }
-   return EINA_FALSE;
+   ecore_event_message_data_get(message, &evtype, NULL, NULL, NULL);
+   return *type != evtype;
 }
 
 EOLIAN static void

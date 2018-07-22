@@ -8,7 +8,6 @@
 #include <eo_wref.hh>
 //#include <eo_inherit.hh>
 //#include <eo_own_ptr.hh>
-#include <eo_promise.hh>
 #include <eo_cxx_interop.hh>
 #include <eo_event.hh>
 

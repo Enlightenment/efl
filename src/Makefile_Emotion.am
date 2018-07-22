@@ -36,13 +36,16 @@ lib/emotion/emotion_private.h \
 lib/emotion/emotion_smart.c \
 lib/emotion/emotion_webcam.c \
 lib/emotion/emotion_modules.c \
-lib/emotion/emotion_main.c
+lib/emotion/emotion_main.c \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_emotion_libemotion_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @EMOTION_CFLAGS@
 lib_emotion_libemotion_la_LIBADD = @EMOTION_LIBS@
 lib_emotion_libemotion_la_DEPENDENCIES = @EMOTION_INTERNAL_LIBS@

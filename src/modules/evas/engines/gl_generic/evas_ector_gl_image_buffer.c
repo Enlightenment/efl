@@ -126,14 +126,14 @@ _evas_ector_gl_image_buffer_evas_ector_buffer_engine_image_release(Eo *obj EINA_
 }
 
 EOLIAN static Ector_Buffer_Flag
-_evas_ector_gl_image_buffer_ector_buffer_flags_get(Eo *obj EINA_UNUSED,
+_evas_ector_gl_image_buffer_ector_buffer_flags_get(const Eo *obj EINA_UNUSED,
                                                    Evas_Ector_GL_Image_Buffer_Data *pd EINA_UNUSED)
 {
    return ECTOR_BUFFER_FLAG_CPU_READABLE | ECTOR_BUFFER_FLAG_DRAWABLE;
 }
 
 EOLIAN static void
-_evas_ector_gl_image_buffer_ector_buffer_size_get(Eo *obj EINA_UNUSED,
+_evas_ector_gl_image_buffer_ector_buffer_size_get(const Eo *obj EINA_UNUSED,
                                                   Evas_Ector_GL_Image_Buffer_Data *pd,
                                                   int *w, int *h)
 {
@@ -142,7 +142,7 @@ _evas_ector_gl_image_buffer_ector_buffer_size_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Gfx_Colorspace
-_evas_ector_gl_image_buffer_ector_buffer_cspace_get(Eo *obj EINA_UNUSED,
+_evas_ector_gl_image_buffer_ector_buffer_cspace_get(const Eo *obj EINA_UNUSED,
                                                     Evas_Ector_GL_Image_Buffer_Data *pd EINA_UNUSED)
 {
    return EFL_GFX_COLORSPACE_ARGB8888;

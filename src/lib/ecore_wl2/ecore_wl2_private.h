@@ -12,6 +12,7 @@
 
 # include "session-recovery-client-protocol.h"
 
+# include "xdg-shell-client-protocol.h"
 # include "xdg-shell-unstable-v6-client-protocol.h"
 # include "efl-aux-hints-client-protocol.h"
 
@@ -68,7 +69,7 @@ typedef struct _Ecore_Wl2_Input_Devices
    Eo *keyboard_dev;
    Eo *touch_dev;
    Eo *seat_dev;
-   int window_id;
+   Ecore_Wl2_Window *window;
 } Ecore_Wl2_Input_Devices;
 
 struct _Ecore_Wl2_Display
@@ -88,6 +89,7 @@ struct _Ecore_Wl2_Display
         struct wl_shm *shm;
         struct zwp_linux_dmabuf_v1 *dmabuf;
         struct zxdg_shell_v6 *zxdg_shell;
+        struct xdg_wm_base *xdg_wm_base;
         struct www *www;
         struct zwp_e_session_recovery *session_recovery;
         struct efl_aux_hints *efl_aux_hints;
@@ -154,7 +156,6 @@ typedef struct _Ecore_Wl2_Window_Configure_State
 {
    uint32_t serial;
    Eina_Rectangle geometry;
-   Eina_Bool minimized : 1;
    Eina_Bool maximized : 1;
    Eina_Bool fullscreen : 1;
    Eina_Bool focused : 1;
@@ -172,7 +173,7 @@ struct _Ecore_Wl2_Window
 
    Ecore_Wl2_Surface *wl2_surface;
 
-   int id, rotation, surface_id;
+   int rotation, surface_id;
    const char *title;
    const char *class;
    const char *role;
@@ -181,11 +182,19 @@ struct _Ecore_Wl2_Window
    void *buffer;
    struct wl_callback *callback;
    struct www_surface *www_surface;
+   struct xdg_surface *xdg_surface;
+   struct xdg_toplevel *xdg_toplevel;
+   struct xdg_popup *xdg_popup;
+
    struct zxdg_surface_v6 *zxdg_surface;
    struct zxdg_toplevel_v6 *zxdg_toplevel;
    struct zxdg_popup_v6 *zxdg_popup;
 
    Eina_Stringshare *uuid;
+
+   void (*xdg_configure_ack)(struct xdg_surface *surface, uint32_t serial);
+   void (*xdg_set_min_size)(struct xdg_toplevel *toplevel, int32_t w, int32_t h);
+   void (*xdg_set_max_size)(struct xdg_toplevel *toplevel, int32_t w, int32_t h);
 
    void (*zxdg_configure_ack)(struct zxdg_surface_v6 *surface, uint32_t serial);
    void (*zxdg_set_min_size)(struct zxdg_toplevel_v6 *toplevel, int32_t w, int32_t h);
@@ -214,13 +223,13 @@ struct _Ecore_Wl2_Window
    Eina_List *supported_aux_hints;
    Eina_List *frame_callbacks;
 
+   Eina_List *outputs;
+
    Ecore_Wl2_Window_Configure_State set_config;
    Ecore_Wl2_Window_Configure_State req_config;
    Ecore_Wl2_Window_Configure_State def_config;
 
-   Eina_Bool moving : 1;
    Eina_Bool alpha : 1;
-   Eina_Bool transparent : 1;
 
    Eina_Bool input_set : 1;
    Eina_Bool opaque_set : 1;
@@ -252,6 +261,7 @@ struct _Ecore_Wl2_Window
      } wm_rot;
    Eina_Bool has_buffer : 1;
    Eina_Bool updating : 1;
+   Eina_Bool deferred_minimize : 1;
 };
 
 struct _Ecore_Wl2_Output
@@ -499,7 +509,7 @@ struct _Ecore_Wl2_Input
    {
       Ecore_Wl2_Offer *offer;
       uint32_t enter_serial;
-      Ecore_Window window_id;
+      Ecore_Wl2_Window *window;
    } drag, selection;
 
    unsigned int seat_version;
@@ -513,7 +523,7 @@ struct _Ecore_Wl2_Input
 
 typedef struct Ecore_Wl2_Event_Window_WWW
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    int x_rel;
    int y_rel;
    uint32_t timestamp;
@@ -521,7 +531,7 @@ typedef struct Ecore_Wl2_Event_Window_WWW
 
 typedef struct Ecore_Wl2_Event_Window_WWW_Drag
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    Eina_Bool dragging;
 } Ecore_Wl2_Event_Window_WWW_Drag;
 
@@ -546,21 +556,13 @@ typedef struct _Ecore_Wl2_Buffer
 
 typedef struct _Ecore_Wl2_Surface
 {
+   void *private_data;
    Ecore_Wl2_Window *wl2_win;
-   Ecore_Wl2_Buffer *current;
-   Eina_List *buffers;
 
    int w, h;
+   Ecore_Wl2_Surface_Interface *funcs;
+   Ecore_Event_Handler *offscreen_handler;
    Eina_Bool alpha : 1;
-   struct
-     {
-        void (*destroy)(Ecore_Wl2_Surface *surface);
-        void (*reconfigure)(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
-        void *(*data_get)(Ecore_Wl2_Surface *surface, int *w, int *h);
-        int  (*assign)(Ecore_Wl2_Surface *surface);
-        void (*post)(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-        void (*flush)(Ecore_Wl2_Surface *surface);
-     } funcs;
 } Ecore_Wl2_Surface;
 
 Ecore_Wl2_Window *_ecore_wl2_display_window_surface_find(Ecore_Wl2_Display *display, struct wl_surface *wl_surface);
@@ -604,5 +606,7 @@ EAPI void ecore_wl2_window_weight_set(Ecore_Wl2_Window *window, double w, double
 
 EAPI extern int _ecore_wl2_event_window_www;
 EAPI extern int _ecore_wl2_event_window_www_drag;
+
+Ecore_Wl2_Output *_ecore_wl2_output_find(Ecore_Wl2_Display *dsp, struct wl_output *op);
 
 #endif

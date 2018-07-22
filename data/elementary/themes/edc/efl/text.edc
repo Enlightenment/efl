@@ -1,8 +1,9 @@
+
 group { "efl/text/scroller";
-   inherit: "elm/scroller/base/default";
+   inherit: "efl/scroller";
    image: "bg_glow_in.png" COMP;
    parts {
-      part { name: "elm.swallow.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
@@ -28,17 +29,17 @@ group { "efl/text/scroller";
             color: DARK_GREY_BG_COLOR;
          }
       }
-      part { name: "elm.swallow.content";
+      part { name: "efl.content"; type: SWALLOW;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
+            rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 0;
-            rel2.to: "elm.swallow.end";
+            rel2.to: "efl.end";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 -1;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "efl.icon"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -57,16 +58,16 @@ group { "efl/text/scroller";
          }
       }
       program {
-         signal: "elm,action,show,icon"; source: "elm";
+         signal: "efl,action,show,icon"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.icon";
+         target: "efl.icon";
       }
       program {
-         signal: "elm,action,hide,icon"; source: "elm";
+         signal: "efl,action,hide,icon"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.icon";
+         target: "efl.icon";
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "efl.end"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -85,14 +86,14 @@ group { "efl/text/scroller";
          }
       }
       program {
-         signal: "elm,action,show,end"; source: "elm";
+         signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.end";
+         target: "efl.end";
       }
       program {
-         signal: "elm,action,hide,end"; source: "elm";
+         signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.end";
+         target: "efl.end";
       }
       part { name: "glow";
          insert_after: "shadow";
@@ -118,7 +119,7 @@ group { "efl/text/scroller";
    }
    programs {
       program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+         signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          target: "glow";
          after: "focus_in2";
@@ -129,26 +130,26 @@ group { "efl/text/scroller";
          target: "glow";
       }
       program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "fail" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_pass";
          signal: "validation,default,pass";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "pass" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_off";
          signal: "validation,default";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
@@ -182,7 +183,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "elm.dragable.vbar"; type: RECT;
+      part { name: "efl.dragable.vbar"; type: RECT;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "sb_vbar_base";
@@ -202,7 +203,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "elm.dragable.hbar"; type: RECT;
+      part { name: "efl.dragable.hbar"; type: RECT;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "sb_hbar_base";
@@ -217,35 +218,35 @@ group { "efl/text/single/scroller";
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.background";
-            rel2.to: "elm.swallow.background";
+            rel1.to: "efl.background";
+            rel2.to: "efl.background";
             color: DARK_GREY_BG_COLOR;
             color_class: "scroller_bg";
          }
       }
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.background";
-            rel2.to: "elm.swallow.background";
+            rel1.to: "efl.background";
+            rel2.to: "efl.background";
          }
       }
-      part { name: "elm.swallow.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
+            rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
-            rel2.to: "elm.swallow.end";
+            rel2.to: "efl.end";
             rel2.relative: 0.0 1.0;
          }
       }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
+      part { name: "efl.icon"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -262,16 +263,16 @@ group { "efl/text/single/scroller";
          }
       }
       program {
-         signal: "elm,action,show,icon"; source: "elm";
+         signal: "efl,action,show,icon"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.icon";
+         target: "efl.icon";
       }
       program {
-         signal: "elm,action,hide,icon"; source: "elm";
+         signal: "efl,action,hide,icon"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.icon";
+         target: "efl.icon";
       }
-      part { name: "elm.swallow.end"; type: SWALLOW;
+      part { name: "efl.end"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -288,14 +289,14 @@ group { "efl/text/single/scroller";
          }
       }
       program {
-         signal: "elm,action,show,end"; source: "elm";
+         signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "elm.swallow.end";
+         target: "efl.end";
       }
       program {
-         signal: "elm,action,hide,end"; source: "elm";
+         signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.end";
+         target: "efl.end";
       }
       part { name: "inset"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -320,7 +321,7 @@ group { "efl/text/single/scroller";
             color: 255 255 255 128;
          }
       }
-      part { name: "elm.swallow.overlay"; type: SWALLOW;
+      part { name: "efl.overlay"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
@@ -350,7 +351,7 @@ group { "efl/text/single/scroller";
    }
    programs {
       program {
-         signal: "elm,action,focus_highlight,show"; source: "elm";
+         signal: "efl,action,focus_highlight,show"; source: "efl";
          action: STATE_SET "focused" 0.0;
          target: "glow";
          after: "focus_in2";
@@ -361,26 +362,26 @@ group { "efl/text/single/scroller";
          target: "glow";
       }
       program {
-         signal: "elm,action,focus_highlight,hide"; source: "elm";
+         signal: "efl,action,focus_highlight,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.3;
          target: "glow";
       }
       program { name: "validation_fail";
          signal: "validation,default,fail";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "fail" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_pass";
          signal: "validation,default,pass";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "pass" 0.0;
          target: "validation_glow";
       }
       program { name: "validation_off";
          signal: "validation,default";
-         source: "elm";
+         source: "efl";
          action: STATE_SET "default" 0.0;
          target: "validation_glow";
       }
@@ -422,22 +423,22 @@ group { "efl/text/cursor";
    }
    programs {
       program {
-         signal: "selection,changed"; source: "elm.text";
+         signal: "selection,changed"; source: "efl.text";
          action: STATE_SET "hidden" 0.0;
          target: "clipper";
       }
       program {
-         signal: "selection,cleared"; source: "elm.text";
+         signal: "selection,cleared"; source: "efl.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
       program {
-         signal: "selection,reset"; source: "elm.text";
+         signal: "selection,reset"; source: "efl.text";
          action: STATE_SET "default" 0.0;
          target: "clipper";
       }
       program {
-         signal: "elm,action,focus"; source: "elm";
+         signal: "efl,action,focus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -446,7 +447,7 @@ group { "efl/text/cursor";
          after: "cursor_show";
       }
       program {
-         signal: "elm,action,unfocus"; source: "elm";
+         signal: "efl,action,unfocus"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -455,7 +456,7 @@ group { "efl/text/cursor";
          after: "cursor_hide_stop";
       }
       program {
-         signal: "elm,action,show,cursor"; source: "elm";
+         signal: "efl,action,show,cursor"; source: "efl";
          action: ACTION_STOP;
          target: "cursor_show";
          target: "cursor_hide";
@@ -541,17 +542,17 @@ group { "efl/text";
       }
    }
    parts {
-      part { name: "elm.swallow.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW;
          description { state: "default" 0.0;
             rel1.offset: 1 1;
             rel2.offset: -2 -2;
          }
       }
-      part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+      part { name: "efl.guide"; type: TEXTBLOCK; mouse_events: 0;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
+            rel1.to: "efl.text";
+            rel2.to: "efl.text";
             text { style: "efl_ui_text_guide_style";
                min: 0 1;
                align: 0.0 0.0;
@@ -562,7 +563,7 @@ group { "efl/text";
             visible: 0;
          }
       }
-      part { name: "elm.text"; type: SWALLOW;
+      part { name: "efl.text"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             /* we gotta use 0 0 here, because of scrolled entries */
@@ -579,32 +580,32 @@ group { "efl/text";
       program {
          signal: "load"; source: "";
          action: FOCUS_SET;
-         target: "elm.text";
+         target: "efl.text";
       }
       program {
-         signal: "elm,state,disabled"; source: "elm";
+         signal: "efl,state,disabled"; source: "efl";
          action: STATE_SET "disabled" 0.0;
-         target: "elm.text";
+         target: "efl.text";
       }
       program {
-         signal: "elm,state,enabled"; source: "elm";
+         signal: "efl,state,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.text";
+         target: "efl.text";
       }
       #if 0
       program {
-         signal: "elm,guide,disabled"; source: "elm";
+         signal: "efl,guide,disabled"; source: "efl";
          action: STATE_SET "hidden" 0.0;
-         target: "elm.guide";
+         target: "efl.guide";
       }
       program {
-         signal: "elm,guide,enabled"; source: "elm";
+         signal: "efl,guide,enabled"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.guide";
+         target: "efl.guide";
       }
       #endif
       program { name: "key-down";
-         signal: "entry,keydown"; source: "elm.text";
+         signal: "entry,keydown"; source: "efl.text";
          script {
             new buf[32];
             snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
@@ -645,7 +646,7 @@ group { "efl/text/magnifier";
             visible: 0;
          }
       }
-      part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
+      part { name: "efl.content"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.offset: 10 10;
             rel1.to: "over";
@@ -675,16 +676,16 @@ group { "efl/text/magnifier";
    }
    programs {
       program { name: "magnifier_show";
-         signal: "elm,action,show,magnifier"; source: "elm";
+         signal: "efl,action,show,magnifier"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "elm.swallow.content";
+         target: "efl.content";
          target: "bg";
          target: "over";
       }
       program { name: "magnifier_hide";
-         signal: "elm,action,hide,magnifier"; source: "elm";
+         signal: "efl,action,hide,magnifier"; source: "efl";
          action: STATE_SET "hidden" 0.0;
-         target: "elm.swallow.content";
+         target: "efl.content";
          target: "bg";
          target: "over";
       }
@@ -725,13 +726,13 @@ group { "efl/text/handler/start";
    }
    programs {
       program {
-         signal: "elm,handler,show"; source: "elm";
+         signal: "efl,handler,show"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "elm,handler,hide"; source: "elm";
+         signal: "efl,handler,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";
@@ -773,13 +774,13 @@ group { "efl/text/handler/end";
    }
    programs {
       program {
-         signal: "elm,handler,show"; source: "elm";
+         signal: "efl,handler,show"; source: "efl";
          action: STATE_SET "visible" 0.0;
          target: "base";
          target: "event";
       }
       program {
-         signal: "elm,handler,hide"; source: "elm";
+         signal: "efl,handler,hide"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "event";

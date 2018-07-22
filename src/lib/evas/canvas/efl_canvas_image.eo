@@ -1,5 +1,5 @@
-class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
-                        Efl.Image.Load, Efl.Image.Animated,
+class Efl.Canvas.Image (Efl.Canvas.Image_Internal, Efl.Gfx.Buffer,
+                        Efl.Gfx.Image_Load_Controller, Efl.Gfx.Image_Animation_Controller,
                         Efl.File)
 {
    [[Low-level Image object.
@@ -18,20 +18,20 @@ class Efl.Canvas.Image (Efl.Canvas.Image.Internal, Efl.Gfx.Buffer,
       Efl.Gfx.Buffer.buffer_unmap;
       Efl.File.mmap { get; set; }
       Efl.File.load_error { get; }
-      Efl.Image.Animated.animated { get; }
-      Efl.Image.Animated.animated_frame { get; set; }
-      Efl.Image.Animated.animated_frame_count { get; }
-      Efl.Image.Animated.animated_loop_type { get; }
-      Efl.Image.Animated.animated_loop_count { get; }
-      Efl.Image.Animated.animated_frame_duration { get; }
-      Efl.Image.Load.load_async_start;
-      Efl.Image.Load.load_async_cancel;
-      Efl.Image.Load.load_dpi { get; set; }
-      Efl.Image.Load.load_size { get; set; }
-      Efl.Image.Load.load_orientation { get; set; }
-      Efl.Image.Load.load_scale_down { get; set; }
-      Efl.Image.Load.load_skip_header { get; set; }
-      Efl.Image.Load.load_region { get; set; }
-      Efl.Image.Load.load_region_support { get; }
+      Efl.Gfx.Image_Animation_Controller.animated { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame { get; set; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame_count { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_loop_type { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_loop_count { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame_duration { get; }
+      Efl.Gfx.Image_Load_Controller.load_async_start;
+      Efl.Gfx.Image_Load_Controller.load_async_cancel;
+      Efl.Gfx.Image_Load_Controller.load_dpi { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_size { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_orientation { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_scale_down { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_skip_header { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_region { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_region_support { get; }
    }
 }

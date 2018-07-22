@@ -66,7 +66,7 @@ ecore_exe_pipe_run(const char      *exe_cmd,
                    const void      *data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   Ecore_Exe *ret = efl_add(MY_CLASS, efl_loop_main_get(EFL_LOOP_CLASS),
+   Ecore_Exe *ret = efl_add(MY_CLASS, efl_main_loop_get(),
                             ecore_obj_exe_command_set(efl_added, exe_cmd,
                                                       flags));
    if (ret)
@@ -86,7 +86,7 @@ _ecore_exe_command_set(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char *cmd,
 }
 
 EOLIAN static void
-_ecore_exe_command_get(Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd, Ecore_Exe_Flags *flags)
+_ecore_exe_command_get(const Eo *obj EINA_UNUSED, Ecore_Exe_Data *pd, const char **cmd, Ecore_Exe_Flags *flags)
 {
    if (cmd) *cmd = pd->cmd;
    if (flags) *flags = pd->flags;

@@ -1,11 +1,46 @@
 /* bg widget style information
 
    [SWALLOW]
-      elm.swallow.rectangle: Used for elm_bg_color_set()
-      elm.swallow.background: Used for elm_bg_file_set()
-      elm.swallow.content: Used for elm_layout_part_content_set(bg, "overlay", content).
+      efl.rectangle: Used for elm_bg_color_set()
+      efl.background: Used for elm_bg_file_set()
+      efl.content: Used for elm_layout_part_content_set(bg, "overlay", content).
 */
 
 group { "efl/bg";
-   inherit: "elm/bg/base/default";
+   data.item: "version" "119";
+   images.image: "bevel_dark_out.png" COMP;
+   parts {
+      part { name: "clipper"; type: RECT;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "base"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "dialog_base";
+            color: 64 64 64 255;
+         }
+      }
+      part { name: "efl.rectangle"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+      part { name: "efl.background"; type: SWALLOW;
+         clip_to: "clipper";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+         }
+      }
+      part { name: "bevel";
+         description { state: "default" 0.0;
+            image.normal: "bevel_dark_out.png";
+            image.border: 1 1 1 1;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      part { name: "efl.content"; type: SWALLOW;
+         description { state: "default" 0.0;
+         }
+      }
+   }
 }

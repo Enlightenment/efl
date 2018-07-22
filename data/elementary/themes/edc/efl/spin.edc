@@ -6,7 +6,7 @@ group { "efl/spin";
             color: 0 0 0 0;
          }
       }
-      text { "elm.text";
+      text { "efl.text";
          nomouse;
          scale;
          desc { "default";

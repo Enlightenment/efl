@@ -106,7 +106,7 @@ _evas_canvas3d_scene_root_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas_C
 }
 
 EOLIAN static Evas_Canvas3D_Node *
-_evas_canvas3d_scene_root_node_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
+_evas_canvas3d_scene_root_node_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
 {
    return pd->root_node;
 }
@@ -133,7 +133,7 @@ _evas_canvas3d_scene_camera_node_set(Eo *obj, Evas_Canvas3D_Scene_Data *pd, Evas
 }
 
 EOLIAN static Evas_Canvas3D_Node *
-_evas_canvas3d_scene_camera_node_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
+_evas_canvas3d_scene_camera_node_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd)
 {
    return pd->camera_node;
 }
@@ -828,7 +828,7 @@ _evas_canvas3d_scene_shadows_depth_set(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_
 }
 
 EOLIAN static void
-_evas_canvas3d_scene_shadows_depth_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
+_evas_canvas3d_scene_shadows_depth_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Scene_Data *pd,
                                        Evas_Real *depth_offset, Evas_Real *depth_constant)
 {
    if (depth_offset) *depth_offset = pd->depth_offset;

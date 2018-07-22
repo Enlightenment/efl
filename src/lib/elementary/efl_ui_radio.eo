@@ -59,16 +59,13 @@ class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_activate;
-      Elm.Widget.widget_event;
-      Efl.Access.state_set { get; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.widget_event;
+      Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
       Efl.Ui.Nstate.value { set; get; }
    }
 }

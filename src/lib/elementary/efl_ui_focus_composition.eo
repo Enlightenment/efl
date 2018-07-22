@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
+mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
    [[This defines the inheriting widget as Composition widget.
 
      A composition widget is a widget that's the logical parent of another set of widgets which can be used for interaction.
@@ -7,22 +7,18 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
       @property composition_elements @protected  {
          [[Set the order of elements that will be used for composition
 
-           Elements of the list can be either an Elm.Widget, an Efl.Ui.Focus.Object or an Efl.Gfx.
+           Elements of the list can be either an Efl.Ui.Widget, an Efl.Ui.Focus.Object or an Efl.Gfx.
 
-           If the element is an Efl.Gfx, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
+           If the element is an Efl.Gfx.Entity, then the geometry is used as focus geometry, the focus property is redirected to the evas focus property. The mixin will take care of registration.
 
            If the element is an Efl.Ui.Focus.Object, then the mixin will take care of registering the element.
 
-           If the element is a Elm.Widget nothing is done and the widget is simply part of the order.
+           If the element is a Efl.Ui.Widget nothing is done and the widget is simply part of the order.
          ]]
          values {
-            logical_order : list<Efl.Gfx> @owned; [[The order to use]]
+            logical_order : list<Efl.Gfx.Entity> @owned; [[The order to use]]
          }
       }
-      elements_flush {
-        [[Function that will emit prepare if this is marked as dirty]]
-      }
-
       dirty @protected {
          [[ Mark this widget as dirty, the children can be considered to be changed after that call
          ]]
@@ -50,8 +46,8 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Elm.Widget ) {
       }
    }
    implements {
-      Elm.Widget.focus_state_apply;
-      Efl.Ui.Focus.Object.prepare_logical;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       @empty .prepare;
    }
 }

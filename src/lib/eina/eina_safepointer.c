@@ -2,6 +2,11 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,26 +71,32 @@ static void *
 _eina_safepointer_calloc(int number, size_t size)
 {
 #ifdef HAVE_MMAP
-   Eina_Memory_Header *header;
-   size_t newsize;
-
-   size = size * number + sizeof (Eina_Memory_Header);
-   newsize = ((size / MEM_PAGE_SIZE) +
-              (size % MEM_PAGE_SIZE ? 1 : 0))
-     * MEM_PAGE_SIZE;
-
-   header = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-                 MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (header == MAP_FAILED)
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) return calloc(number, size);
+   else
+# endif
      {
-        ERR("mmap of Eina_Safepointer table region failed.");
-        return NULL;
+        Eina_Memory_Header *header;
+        size_t newsize;
+
+        size = size * number + sizeof (Eina_Memory_Header);
+        newsize = ((size / MEM_PAGE_SIZE) +
+                   (size % MEM_PAGE_SIZE ? 1 : 0))
+          * MEM_PAGE_SIZE;
+
+        header = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                      MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (header == MAP_FAILED)
+          {
+             ERR("mmap of Eina_Safepointer table region failed.");
+             return NULL;
+          }
+
+        header->size = newsize;
+        EINA_MAGIC_SET(header, SAFEPOINTER_MAGIC);
+
+        return (void *)(header + 1);
      }
-
-   header->size = newsize;
-   EINA_MAGIC_SET(header, SAFEPOINTER_MAGIC);
-
-   return (void*)(header + 1);
 #else
    return calloc(number, size);
 #endif
@@ -95,18 +106,24 @@ static void
 _eina_safepointer_free(void *pointer)
 {
 #ifdef HAVE_MMAP
-   Eina_Memory_Header *header;
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free((void *)((uintptr_t) pointer & ~0x3));
+   else
+# endif
+     {
+        Eina_Memory_Header *header;
 
-   if (!pointer) return ;
+        if (!pointer) return;
 
-   header = (Eina_Memory_Header*)(pointer) - 1;
-   if (!EINA_MAGIC_CHECK(header, SAFEPOINTER_MAGIC))
-     EINA_MAGIC_FAIL(header, SAFEPOINTER_MAGIC);
+        header = (Eina_Memory_Header*)(pointer) - 1;
+        if (!EINA_MAGIC_CHECK(header, SAFEPOINTER_MAGIC))
+          EINA_MAGIC_FAIL(header, SAFEPOINTER_MAGIC);
 
-   EINA_MAGIC_SET(header, 0);
-   munmap(header, header->size);
+        EINA_MAGIC_SET(header, 0);
+        munmap(header, header->size);
+     }
 #else
-   free((void*) ((uintptr_t) pointer & ~0x3));
+   free((void *)((uintptr_t) pointer & ~0x3));
 #endif
 }
 
@@ -115,15 +132,21 @@ static void
 _eina_safepointer_protect(void *pointer, Eina_Bool may_not_write)
 {
 #ifdef HAVE_MMAP
-   Eina_Memory_Header *header;
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) { (void) pointer; }
+   else
+# endif
+     {
+        Eina_Memory_Header *header;
 
-   if (!pointer) return ;
+        if (!pointer) return;
 
-   header = (Eina_Memory_Header*)(pointer) - 1;
-   if (!EINA_MAGIC_CHECK(header, SAFEPOINTER_MAGIC))
-     EINA_MAGIC_FAIL(header, SAFEPOINTER_MAGIC);
+        header = (Eina_Memory_Header*)(pointer) - 1;
+        if (!EINA_MAGIC_CHECK(header, SAFEPOINTER_MAGIC))
+          EINA_MAGIC_FAIL(header, SAFEPOINTER_MAGIC);
 
-   mprotect(header, header->size, PROT_READ | ( may_not_write ? 0 : PROT_WRITE));
+        mprotect(header, header->size, PROT_READ | ( may_not_write ? 0 : PROT_WRITE));
+     }
 #else
    (void) pointer;
 #endif
@@ -347,7 +370,7 @@ eina_safepointer_init(void)
 
    DBG("entry[Size, Align] = { %zu, %u }",
        sizeof (Eina_Memory_Entry), eina_mempool_alignof(sizeof (Eina_Memory_Entry)));
-   DBG("table[Size, Align] = { %zu, %u }\n",
+   DBG("table[Size, Align] = { %zu, %u }",
        sizeof (Eina_Memory_Table), eina_mempool_alignof(sizeof (Eina_Memory_Table)));
 
    return EINA_TRUE;

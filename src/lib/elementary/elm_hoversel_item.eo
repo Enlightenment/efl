@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Hoversel.Item(Elm.Widget.Item)
+class Elm.Hoversel.Item(Elm.Widget.Item, Efl.Ui.Legacy)
 {
    [[Elementary hoversel item class]]
    legacy_prefix: elm_hoversel_item;
@@ -28,6 +28,6 @@ class Elm.Hoversel.Item(Elm.Widget.Item)
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.style { get; set; }
-        Elm.Widget.Item.focus { get; set; }
+        Elm.Widget.Item.item_focus { get; set; }
    }
 }

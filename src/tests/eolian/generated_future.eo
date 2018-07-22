@@ -1,57 +1,6 @@
 class Generated_Future (Efl.Object)
 {
    methods {
-      method1 {
-         params {
-            @inout future1: future<int>;
-         }
-      }
-      method_progress_type {
-         params {
-            @inout future1: future<int, double>;
-         }
-      }
-      method_multiple_args_1 {
-         params {
-            @inout future1: future<int>;
-            @in data: void_ptr;
-         }
-      }
-      method_multiple_args_2 {
-         params {
-            @in data: void_ptr;
-            @inout future1: future<int>;
-         }
-      }
-      method2 {
-         params {
-            @out future1: future<int>;
-         }
-      }
-      method3 {
-         params {
-            @in future1: future<int>;
-         }
-      }
-      @property prop1 {
-         get {}
-         values {
-            future1: future<int>;
-         }
-      }
-      @property prop2 {
-         get {}
-         values {
-            i: int;
-            future1: future<int>;
-         }
-      }
-      @property prop3 {
-         set {}
-         values {
-            future1: future<int>;
-         }
-      }
    }
 }
 

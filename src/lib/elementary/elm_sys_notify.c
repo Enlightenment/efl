@@ -185,7 +185,7 @@ _elm_sys_notify_servers_set(Eo                     *obj  EINA_UNUSED,
 }
 
 EOLIAN static Elm_Sys_Notify_Server
-_elm_sys_notify_servers_get(Eo                  *obj EINA_UNUSED,
+_elm_sys_notify_servers_get(const Eo            *obj EINA_UNUSED,
                             Elm_Sys_Notify_Data *sd)
 {
    Elm_Sys_Notify_Server servers = ELM_SYS_NOTIFY_SERVER_NONE;
@@ -203,7 +203,7 @@ _elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
                               void *sd  EINA_UNUSED)
 {
    if (!_singleton)
-     _singleton = efl_add(MY_CLASS, NULL);
+     _singleton = efl_add(MY_CLASS, efl_main_loop_get());
    return _singleton;
 }
 

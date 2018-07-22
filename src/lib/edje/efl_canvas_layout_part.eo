@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
+class Efl.Canvas.Layout_Part (Efl.Object, Efl.Gfx.Entity, Efl.Ui.Drag)
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 
@@ -17,12 +17,13 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
 
            This is the state name as it appears in EDC description blocks. A
            state has both a name and a value (double). The default state is
-           "default" 0.0.
+           "default" 0.0, but this function will return "" if the part is
+           invalid.
          ]]
          get {}
          values {
-            state: string("default"); [[The name of the state.]]
-            val: double; [[The value of the state.]]
+            state: string(""); [[The name of the state.]]
+            val: double(0.0); [[The value of the state.]]
          }
       }
       @property part_type {
@@ -31,14 +32,14 @@ class Efl.Canvas.Layout.Part (Efl.Object, Efl.Gfx, Efl.Ui.Drag)
             [[Returns the type of the part.]]
          }
          values {
-            type: Efl.Canvas.Layout.Part_Type(Efl.Canvas.Layout.Part_Type.none);
+            type: Efl.Canvas.Layout_Part_Type(Efl.Canvas.Layout_Part_Type.none);
                [[One of the types or $none if not an existing part.]]
          }
       }
    }
    implements {
       Efl.Object.finalize;
-      Efl.Gfx.geometry { get; }
+      Efl.Gfx.Entity.geometry { get; }
       Efl.Ui.Drag.drag_value { set; get; }
       Efl.Ui.Drag.drag_size { set; get; }
       Efl.Ui.Drag.drag_dir { get; }

@@ -36,18 +36,50 @@ mixin Efl.Ui.Focus.Object
                 focus : bool; [[The state in which the object should be put]]
             }
         }
+        @property focus_manager {
+            [[Describes which manager is used to register.
+
+              If an instance of this interface is the root of a manager, this instance should not have a manager where as root of this property. The other manager in this instance will be set as focused in the corresponding manager.
+              This instance should be registered with its own manager as redirect.
+            ]]
+            get {}
+            values {
+                manager : Efl.Ui.Focus.Manager; [[The manager object]]
+            }
+        }
+        @property focus_parent {
+            [[Describes which logical parent is used by this object.]]
+            get {}
+            values {
+                logical_parent : Efl.Ui.Focus.Object; [[The focus parent.]]
+            }
+        }
         prepare_logical {
             [[Tells the object that its children will be queried soon by the given manager.
+              The call will be a NOP if there is already a active preprare_logical call on this object
 
               Deleting manager items in this call will result in undefied behaviour and may cause your system to crash.
             ]]
         }
+        prepare_logical_none_recursive @protected {
+            [[]]
+        }
+        on_focus_update @protected @pure_virtual {
+           [[Virtual function handling focus in/out events on the widget]]
+           return: bool; [[$true if this widget can handle focus, $false otherwise]]
+        }
     }
     implements {
         @empty .focus_geometry;
-        @empty .prepare_logical;
+        @empty .prepare_logical_none_recursive;
+        @empty .focus_manager;
+        @empty .focus_parent;
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
+        manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
+                                                 the parent for this object.]]
+        logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
+                                                parent should be used.]]
     }
 }

@@ -127,6 +127,7 @@
  *
  * @{
  */
+typedef Eo Evas_Textblock;
 
 /**
  * @typedef Evas_Textblock_Style
@@ -155,6 +156,14 @@ typedef struct _Efl_Text_Cursor_Cursor       Evas_Textblock_Cursor;
  * XXX: Adapter for legacy.
  */
 typedef struct _Evas_Textblock_Node_Format Evas_Object_Textblock_Node_Format;
+
+/**
+ * @typedef Evas_Textblock_Node_Format
+ * A format node.
+ *
+ * XXX: Adapter for legacy.
+ */
+typedef struct _Evas_Textblock_Node_Format Evas_Textblock_Node_Format;
 
 /**
  * @typedef Evas_Textblock_Rectangle

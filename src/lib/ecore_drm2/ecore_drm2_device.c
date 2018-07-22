@@ -97,9 +97,10 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
    Eina_List *devs, *l;
    const char *dev, *ret = NULL, *chosen_dev = NULL;
    Eina_Bool found = EINA_FALSE;
-   Eina_Bool platform = EINA_FALSE;
    Eina_Bool modeset;
    int fd;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
 
    devs = eeze_udev_find_by_subsystem_sysname("drm", "card[0-9]*");
    if (!devs) return NULL;
@@ -114,9 +115,7 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
         dseat = eeze_udev_syspath_get_property(dev, "ID_SEAT");
         if (!dseat) dseat = eina_stringshare_add("seat0");
 
-        if ((seat) && (strcmp(seat, dseat)))
-          goto cont;
-        else if (strcmp(dseat, "seat0"))
+        if (strcmp(seat, dseat))
           goto cont;
 
         fd = elput_manager_open(em, dpath, -1);
@@ -127,30 +126,19 @@ _drm2_device_find(Elput_Manager *em, const char *seat)
         if (!modeset)
           goto cont;
 
-        dparent = eeze_udev_syspath_get_parent_filtered(dev, "pci", NULL);
-        if (!dparent)
-          {
-             dparent =
-               eeze_udev_syspath_get_parent_filtered(dev, "platform", NULL);
-             platform = EINA_TRUE;
-          }
+        chosen_dev = dev;
 
+        dparent = eeze_udev_syspath_get_parent_filtered(dev, "pci", NULL);
         if (dparent)
           {
-             if (!platform)
-               {
-                  const char *id;
+             const char *id;
 
-                  chosen_dev = dev;
-                  id = eeze_udev_syspath_get_sysattr(dparent, "boot_vga");
-                  if (id)
-                    {
-                       if (!strcmp(id, "1")) found = EINA_TRUE;
-                       eina_stringshare_del(id);
-                    }
+             id = eeze_udev_syspath_get_sysattr(dparent, "boot_vga");
+             if (id)
+               {
+                  if (!strcmp(id, "1")) found = EINA_TRUE;
+                  eina_stringshare_del(id);
                }
-             else
-               found = EINA_TRUE;
 
              eina_stringshare_del(dparent);
           }

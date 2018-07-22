@@ -1,0 +1,83 @@
+~~Title: EFL Namespaces~~
+
+#!##############################################################################
+#!####  CLS_LINK(cls)  #########################################################
+#!##############################################################################
+<!--(macro CLS_LINK)-->
+[[:develop:api#!
+   <!--(for n in cls.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${cls.short_name.lower()}$|${cls.short_name}$]]
+<!--(end)-->
+
+#!##############################################################################
+#!####  TYPEDECL_LINK(typedecl)  ###############################################
+#!##############################################################################
+<!--(macro TYPEDECL_LINK)-->
+[[:develop:api#!
+   <!--(for n in typedecl.namespaces)-->
+:${n.lower()}$#!
+   <!--(end)-->
+:${typedecl.short_name.lower()}$|${typedecl.short_name}$]]
+<!--(end)-->
+
+#!##############################################################################
+#!####  NAMESPACE_ITEM(ns)  ####################################################
+#!##############################################################################
+<!--(macro NAMESPACE_ITEM)-->
+**${ns.name}$** #!
+  <!--(if len(ns.regulars))-->
+  \\ Classes: <!--(for cls in ns.regulars)--> ${CLS_LINK(cls=cls)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.abstracts))-->
+  \\ Abstracts: <!--(for cls in ns.abstracts)--> ${CLS_LINK(cls=cls)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.mixins))-->
+  \\ Mixins: <!--(for cls in ns.mixins)--> ${CLS_LINK(cls=cls)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.interfaces))-->
+  \\ Interfaces: <!--(for cls in ns.interfaces)--> ${CLS_LINK(cls=cls)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.structs))-->
+  \\ Structs: <!--(for struct in ns.structs)--> ${TYPEDECL_LINK(typedecl=struct)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.enums))-->
+  \\ Enums: <!--(for enum in ns.enums)--> ${TYPEDECL_LINK(typedecl=enum)}$, <!--(end)--> #!
+  <!--(end)-->
+  <!--(if len(ns.aliases))-->
+  \\ Aliases: <!--(for alias in ns.aliases)--> ${TYPEDECL_LINK(typedecl=alias)}$, <!--(end)--> #!
+  <!--(end)-->
+<!--(end)-->
+
+
+====== Unified-API namespaces hierarchy ======
+This page is just a temporary work to analyze the namespaces in the new API
+
+
+^** Some numbers just for information **^^
+<!--(for label, val in totals)-->
+| ${label}$ | **${val}$** |
+<!--(end)-->
+
+
+
+===== Namespaces hierarchy =====
+
+
+  * ${NAMESPACE_ITEM(ns=root_ns)}$
+<!--(for sub in root_ns.sub_namespaces)-->
+    * ${NAMESPACE_ITEM(ns=sub)}$
+  <!--(for sub in sub.sub_namespaces)-->
+      * ${NAMESPACE_ITEM(ns=sub)}$
+    <!--(for sub in sub.sub_namespaces)-->
+        * ${NAMESPACE_ITEM(ns=sub)}$
+      <!--(for sub in sub.sub_namespaces)-->
+          * ${NAMESPACE_ITEM(ns=sub)}$
+      <!--(end)-->
+    <!--(end)-->
+  <!--(end)-->
+<!--(end)-->
+
+
+

@@ -124,7 +124,7 @@ static Eina_Bool _input_attach_internal(Eo *eo_obj, Eo *in)
   ss.rate = ecore_audio_obj_in_samplerate_get(in);
   speed = ecore_audio_obj_in_speed_get(in);
   ss.channels = ecore_audio_obj_in_channels_get(in);
-  name = ecore_audio_obj_name_get(in);
+  name = efl_name_get(in);
 
   ss.rate = ss.rate * speed;
 

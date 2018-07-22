@@ -59,8 +59,6 @@
 EAPI Eina_Bool _ecore_evas_app_comp_sync = EINA_FALSE;
 EAPI int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
-static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
-static Eina_Bool _ecore_evas_async_events_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 
 static Ecore_Idle_Exiter *ecore_evas_idle_exiter = NULL;
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
@@ -151,6 +149,8 @@ ecore_evas_render(Ecore_Evas *ee)
 {
    Eina_Bool rend = EINA_FALSE;
 
+   if (!ee->evas) return EINA_FALSE;
+
    if (ee->in_async_render)
      {
         DBG("ee=%p is rendering, skip.", ee);
@@ -163,15 +163,14 @@ ecore_evas_render(Ecore_Evas *ee)
 
    ecore_evas_render_prepare(ee);
 
-   ee->in_async_render = 1;
-
-   if (!ee->visible)
+   if (!ee->visible || ee->draw_block)
      {
         evas_norender(ee->evas);
      }
    else if (ee->can_async_render && !ee->manual_render)
      {
         rend |= !!evas_render_async(ee->evas);
+        if (rend) ee->in_async_render = 1;
      }
    else
      {
@@ -215,6 +214,8 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+        if (ee->draw_block) continue;
+
         if (ee->manual_render)
           {
              if (ee->engine.func->fn_evas_changed)
@@ -373,7 +374,7 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
 {
    Ecore_Evas *ee = data;
 
-   if (event->desc == EFL_CANVAS_EVENT_DEVICE_ADDED)
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED)
      {
         if (_is_pointer(event->info))
           _ecore_evas_cursor_add(ee, event->info);
@@ -403,8 +404,8 @@ _ecore_evas_dev_added_or_removed(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_evas_device_cbs,
-                           { EFL_CANVAS_EVENT_DEVICE_ADDED, _ecore_evas_dev_added_or_removed },
-                           { EFL_CANVAS_EVENT_DEVICE_REMOVED, _ecore_evas_dev_added_or_removed });
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, _ecore_evas_dev_added_or_removed },
+                           { EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, _ecore_evas_dev_added_or_removed });
 Eina_Bool
 _ecore_evas_cursors_init(Ecore_Evas *ee)
 {
@@ -583,26 +584,9 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
      };
 }
 
-static void
-_ecore_evas_fork_cb(void *data EINA_UNUSED)
-{
-   int fd;
-   
-   if (_ecore_evas_async_events_fd)
-     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-   fd = evas_async_events_fd_get();
-   if (fd >= 0)
-     _ecore_evas_async_events_fd = 
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                               _ecore_evas_async_events_fd_handler, NULL,
-                               NULL, NULL);
-}
-
 EAPI int
 ecore_evas_init(void)
 {
-   int fd;
-
    if (++_ecore_evas_init_count != 1)
      return _ecore_evas_init_count;
 
@@ -619,14 +603,6 @@ ecore_evas_init(void)
         EINA_LOG_ERR("Impossible to create a log domain for Ecore_Evas.");
         goto shutdown_ecore;
      }
-
-   ecore_fork_reset_callback_add(_ecore_evas_fork_cb, NULL);
-   fd = evas_async_events_fd_get();
-   if (fd >= 0)
-     _ecore_evas_async_events_fd = 
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
-                               _ecore_evas_async_events_fd_handler, NULL,
-                               NULL, NULL);
 
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
@@ -690,15 +666,11 @@ ecore_evas_shutdown(void)
    while (_ecore_evas_ews_shutdown());
 #endif
    _ecore_evas_engine_shutdown();
-   if (_ecore_evas_async_events_fd)
-     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
-
-   ecore_fork_reset_callback_del(_ecore_evas_fork_cb, NULL);
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
    _ecore_evas_log_dom = -1;
-   evas_shutdown();
    ecore_shutdown();
+   evas_shutdown();
 
    return _ecore_evas_init_count;
 }
@@ -1832,6 +1804,9 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file,
                       int layer, int hot_x, int hot_y)
 {
    Evas_Object *obj = NULL;
+
+   ECORE_EVAS_CHECK(ee);
+
    if (file)
      {
         int x, y;
@@ -3075,7 +3050,8 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
      {
-        ecore_evas_animator_tick(subee, NULL, loop_time);
+        if (subee->evas)
+          ecore_evas_animator_tick(subee, NULL, loop_time);
      }
 
    // We are a source of sync for general animator.
@@ -3144,16 +3120,26 @@ _ecore_evas_tick_source_find(void)
 {
    Ecore_Evas *ee;
    Eina_Bool source = EINA_FALSE;
+   Eina_Bool have_x = EINA_FALSE;
 
    // Check if we do have a potential tick source for legacy
    EINA_INLIST_FOREACH(ecore_evases, ee)
-     if (!ee->deleted &&
-         ee->engine.func->fn_animator_register &&
-         ee->engine.func->fn_animator_unregister)
-       {
-          source = EINA_TRUE;
-          break;
-       }
+     {
+        if (!ee->deleted)
+          {
+             if ((ee->engine.func->fn_animator_register) &&
+                 (ee->engine.func->fn_animator_unregister))
+               {
+                  source = EINA_TRUE;
+               }
+             if (ee->driver)
+               {
+                  if ((!strcmp(ee->driver, "software_x11")) ||
+                      (!strcmp(ee->driver, "opengl_x11")))
+                    have_x = EINA_TRUE;
+               }
+          }
+     }
 
    // If just one source require fallback, we can't be sure that
    // we are not running enlightenment and that this source might
@@ -3170,16 +3156,21 @@ _ecore_evas_tick_source_find(void)
 
    if (!source)
      {
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+        if (!have_x)
+          {
+             ecore_animator_custom_source_tick_begin_callback_set(NULL, NULL);
+             ecore_animator_custom_source_tick_end_callback_set(NULL, NULL);
+             ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_TIMER);
+          }
      }
    else
      {
         // Source set will trigger the previous tick end registered and then the new begin.
         // As we don't what was in behind, better first begin and end after source is set.
         ecore_animator_custom_source_tick_begin_callback_set(_ecore_evas_custom_tick_begin, NULL);
-        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
         ecore_animator_custom_source_tick_end_callback_set(_ecore_evas_custom_tick_end, NULL);
-     }
+        ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
+    }
 }
 
 static Eina_Bool
@@ -3192,7 +3183,7 @@ _ecore_evas_animator_fallback(void *data)
 static void
 _check_animator_event_catcher_add(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3226,7 +3217,7 @@ _check_animator_event_catcher_add(void *data, const Efl_Event *event)
 static void
 _check_animator_event_catcher_del(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Ecore_Evas *ee = data;
    int i;
 
@@ -3268,6 +3259,8 @@ _ecore_evas_register_animators(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_register(Ecore_Evas *ee)
 {
+   if (ee->registered) return;
+
    ee->registered = 1;
    ecore_evases = (Ecore_Evas *)eina_inlist_prepend
      (EINA_INLIST_GET(ecore_evases), EINA_INLIST_GET(ee));
@@ -3284,9 +3277,11 @@ _ecore_evas_register(Ecore_Evas *ee)
 EAPI void
 _ecore_evas_subregister(Ecore_Evas *ee_target, Ecore_Evas *ee)
 {
-   _ecore_evas_register_animators(ee);
-
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
+
+   if (!ee->evas) return;
+
+   _ecore_evas_register_animators(ee);
 
    if (!ee->engine.func->fn_render)
      evas_event_callback_priority_add(ee->evas, EVAS_CALLBACK_RENDER_POST, EVAS_CALLBACK_PRIORITY_AFTER,
@@ -3418,14 +3413,6 @@ _ecore_evas_cb_idle_flush(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Eina_Bool
-_ecore_evas_async_events_fd_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd_handler EINA_UNUSED)
-{
-   evas_async_events_process();
-
-   return ECORE_CALLBACK_RENEW;
-}
-
 EAPI void
 _ecore_evas_idle_timeout_update(Ecore_Evas *ee)
 {
@@ -3531,7 +3518,7 @@ _ecore_evas_mouse_move_process_internal(Ecore_Evas *ee,
 
    efl_event_callback_legacy_call(ee->evas,
                                   _event_description_get(ev->action), evt);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 EAPI void
@@ -3744,12 +3731,7 @@ ecore_evas_sub_ecore_evas_list_get(const Ecore_Evas *ee)
 EAPI void
 ecore_evas_input_event_register(Ecore_Evas *ee)
 {
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set((Ecore_Window)ee, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 }
 
 EAPI void
@@ -4692,7 +4674,7 @@ _direct_mouse_updown(Ecore_Evas *ee, const Ecore_Event_Mouse_Button *info, Efl_P
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -4754,7 +4736,7 @@ _direct_mouse_move_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Move *info)
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -4789,7 +4771,7 @@ _direct_mouse_wheel_cb(Ecore_Evas *ee, const Ecore_Event_Mouse_Wheel *info)
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -4819,7 +4801,7 @@ _direct_mouse_inout(Ecore_Evas *ee, const Ecore_Event_Mouse_IO *info, Efl_Pointe
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -4949,7 +4931,7 @@ _direct_axis_update_cb(Ecore_Evas *ee, const Ecore_Event_Axis_Update *info)
 
    efl_event_callback_legacy_call(e, _event_description_get(ev->action), evt);
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -4991,7 +4973,7 @@ _direct_key_updown_cb(Ecore_Evas *ee, const Ecore_Event_Key *info, Eina_Bool dow
      efl_event_callback_legacy_call(e, EFL_EVENT_KEY_UP, evt);
 
    processed = ev->evas_done;
-   efl_del(evt);
+   efl_unref(evt);
 
    return processed;
 }
@@ -5086,4 +5068,55 @@ ecore_evas_callback_device_mouse_in_set(Ecore_Evas *ee,
    IFC(ee, fn_callback_device_mouse_in_set) (ee, func);
    IFE;
    ee->func.fn_device_mouse_in = func;
+}
+
+static Evas *(*replacement_new)(int w, int h) = NULL;
+
+EAPI void
+ecore_evas_callback_new_set(Evas *(*func)(int w, int h))
+{
+   replacement_new = func;
+}
+
+EAPI Evas *
+ecore_evas_evas_new(Ecore_Evas *ee, int w, int h)
+{
+   Evas *e;
+
+   if (ee->evas) return ee->evas;
+
+   if (replacement_new) e = replacement_new(w, h);
+   else e = evas_new();
+   if (!e) return NULL;
+
+   ee->evas = e;
+   evas_data_attach_set(e, ee);
+
+   if (ECORE_EVAS_PORTRAIT(ee))
+     {
+        evas_output_size_set(e, w, h);
+        evas_output_viewport_set(e, 0, 0, w, h);
+     }
+   else
+     {
+        evas_output_size_set(e, h, w);
+        evas_output_viewport_set(e, 0, 0, h, w);
+     }
+
+   return e;
+}
+
+EAPI void
+ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window)
+{
+   _ecore_evas_register(ee);
+   ecore_event_window_register(ee->prop.window, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+
+   if (single_window)
+     evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 }

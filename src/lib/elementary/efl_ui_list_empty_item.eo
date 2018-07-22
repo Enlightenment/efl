@@ -1,0 +1,16 @@
+
+class Efl.Ui.List_Empty_Item (Efl.Ui.List_Item, Efl.Content)
+{
+   [[List Empty Item class. This item have only one swallow space,
+     thus user can decorate item by filling the swallow with
+     any kind of container.]]
+   data: null;
+   implements {
+      //Efl.Object
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part_get;
+   }
+}

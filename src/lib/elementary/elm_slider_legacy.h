@@ -1,3 +1,5 @@
+typedef Eo Elm_Slider;
+
 /**
  * Add a new slider widget to the given parent Elementary
  * (container) object.
@@ -349,5 +351,35 @@ EAPI void elm_slider_indicator_visible_mode_set(Evas_Object *obj, Elm_Slider_Ind
  * @ingroup Elm_Slider
  */
 EAPI Elm_Slider_Indicator_Visible_Mode elm_slider_indicator_visible_mode_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the step by which slider indicator moves.
+ *
+ * @param[in] obj The object.
+ *
+ * @return The step value.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI double elm_slider_step_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the step by which slider indicator will move.
+ *
+ * This value is used when a draggable object is moved automatically such as
+ * when key events like the up/down/left/right key are pressed or in case
+ * accessibility is set and flick event is used to inc/dec slider values. By
+ * default step value is 0.05.
+ *
+ * @param[in] obj The object.
+ * @param[in] step The step value.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Slider
+ */
+EAPI void elm_slider_step_set(Evas_Object *obj, double step);
 
 #include "efl_ui_slider.eo.legacy.h"

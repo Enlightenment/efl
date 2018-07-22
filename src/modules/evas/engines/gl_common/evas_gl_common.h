@@ -79,15 +79,15 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -98,7 +98,7 @@ typedef Eina_Bool (*evas_gl_make_current_cb)(void *engine_data, void *doit);
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define PROGRAM_HITCOUNT_MAX 0x1000000
 
@@ -563,6 +563,7 @@ EAPI void         evas_gl_preload_render_lock(evas_gl_make_current_cb make_curre
 EAPI void         evas_gl_preload_render_unlock(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_preload_render_relax(evas_gl_make_current_cb make_current, void *engine_data);
 EAPI void         evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn);
+EAPI Eina_Bool    evas_gl_extension_string_check(const char *ext, const char *exts);
 
 EAPI void         evas_gl_common_error_set(int error_enum);
 EAPI int          evas_gl_common_error_get(void);
@@ -577,6 +578,7 @@ typedef Evas_Engine_GL_Context *(*Evas_GL_Common_Context_New)(void);
 typedef void (*Evas_GL_Common_Context_Resize_Call)(Evas_Engine_GL_Context *gc, int w, int h, int rot);
 typedef int (*Evas_GL_Common_Buffer_Dump_Call)(Evas_Engine_GL_Context *gc,const char* dname, const char* fname, int frame, const char* suffix);
 typedef void (*Evas_Gl_Symbols)(void *(*GetProcAddress)(const char *sym), const char *extsn);
+typedef Eina_Bool (*Evas_Gl_Extension_String_Check)(const char *exts, const char *ext);
 
 EAPI void __evas_gl_err(int err, const char *file, const char *func, int line, const char *op);
 

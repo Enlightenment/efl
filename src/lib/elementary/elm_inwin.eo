@@ -1,4 +1,4 @@
-class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Content)
+class Elm.Inwin (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Content, Efl.Ui.Legacy)
 {
    [[Elementary inwin class]]
    legacy_prefix: elm_inwin;
@@ -21,7 +21,7 @@ class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Content)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_parent { set; }
+      Efl.Ui.Widget.widget_parent { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
    }

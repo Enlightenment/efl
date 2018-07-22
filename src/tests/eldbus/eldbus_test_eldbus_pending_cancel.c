@@ -30,24 +30,8 @@ const char *member = "GetId";
 * @li eldbus_pending_path_get()
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   eldbus_shutdown();
-   ecore_shutdown();
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -58,7 +42,7 @@ _ecore_loop_close(void *data EINA_UNUSED)
 }
 
 static void
-_response_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_response_message_cb(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    if (timeout != NULL)
      {
@@ -115,7 +99,7 @@ _pending_connection_get()
 {
    const int send_timeout_ms = 500;
 
-   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
         return NULL;
@@ -131,7 +115,6 @@ _pending_connection_get()
    message = eldbus_object_method_call_new(obj, interface, member);
    if (!message)
      {
-        eldbus_object_unref(obj);
         eldbus_connection_unref(conn);
         return NULL;
      }
@@ -139,8 +122,6 @@ _pending_connection_get()
    Eldbus_Pending *pending = eldbus_connection_send(conn, message, _response_message_cb, NULL, send_timeout_ms);
    if (!pending)
      {
-        eldbus_message_unref(message);
-        eldbus_object_unref(obj);
         eldbus_connection_unref(conn);
         return NULL;
      }
@@ -180,29 +161,26 @@ _pending_connection_get()
  * @}
  */
 
-START_TEST(utc_eldbus_pending_info_get_cancel_p)
+EFL_START_TEST(utc_eldbus_pending_info_get_cancel_p)
 {
    Eldbus_Pending *pending = _pending_connection_get();
    ck_assert_ptr_ne(NULL, pending);
 
    eldbus_pending_cancel(pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert(is_success_cb == EINA_TRUE);
 
-   eldbus_message_unref(message);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eldbus_test_eldbus_pending_cancel(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_pending_info_get_cancel_p);
 }

@@ -73,7 +73,7 @@ mixin Efl.Gfx.Color
           }
           keys {
              color_class: string; [[The name of color class]]
-             layer: Efl.Gfx.Color_Class.Layer @optional; [[The layer to set the color]]
+             layer: Efl.Gfx.Color_Class_Layer @optional; [[The layer to set the color]]
           }
           values {
              colorcode: string; [[the hex color code.]]

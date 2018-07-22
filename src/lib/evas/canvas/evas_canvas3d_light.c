@@ -129,7 +129,7 @@ _evas_canvas3d_light_directional_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Eina
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_light_directional_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_directional_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
 {
    return pd->directional;
 }
@@ -202,7 +202,7 @@ _evas_canvas3d_light_spot_exponent_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Ev
 }
 
 EOLIAN static Evas_Real
-_evas_canvas3d_light_spot_exponent_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_spot_exponent_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
 {
    return pd->spot_exp;
 }
@@ -216,7 +216,7 @@ _evas_canvas3d_light_spot_cutoff_set(Eo *obj, Evas_Canvas3D_Light_Data *pd, Evas
 }
 
 EOLIAN static Evas_Real
-_evas_canvas3d_light_spot_cutoff_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_spot_cutoff_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
 {
    return pd->spot_cutoff;
 }
@@ -249,7 +249,7 @@ _evas_canvas3d_light_attenuation_enable_set(Eo *obj, Evas_Canvas3D_Light_Data *p
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_light_attenuation_enable_get(Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
+_evas_canvas3d_light_attenuation_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Light_Data *pd)
 {
    return pd->enable_attenuation;
 }

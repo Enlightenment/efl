@@ -27,8 +27,8 @@ enum Tokens
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
     KW(destructor), KW(eo), KW(eo_prefix), KW(event_prefix), KW(events), KW(free), \
     KW(get), KW(implements), KW(import), KW(interface), KW(keys), KW(legacy), \
-    KW(legacy_prefix), KW(methods), KW(mixin), KW(params), KW(parts), KW(ptr), \
-    KW(set), KW(type), KW(values), KW(var), KWAT(auto), KWAT(beta), \
+    KW(legacy_prefix), KW(methods), KW(mixin), KW(params), KW(parse), KW(parts), \
+    KW(ptr), KW(set), KW(type), KW(values), KW(var), KWAT(auto), KWAT(beta), \
     KWAT(class), KWAT(const), KWAT(cref), KWAT(empty), KWAT(extern), \
     KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(nullable), \
     KWAT(optional), KWAT(out), KWAT(owned), KWAT(private), KWAT(property), \
@@ -51,9 +51,8 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(iterator), KW(hash), KW(list), KW(inarray), KW(inlist), \
-    KW(future),                                   \
-    KW(any_value), KW(any_value_ptr), \
+    KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
+    KW(inarray), KW(inlist), KW(any_value), KW(any_value_ptr), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
     KW(void_ptr), \
@@ -119,16 +118,11 @@ typedef struct _Lexer_Ctx
    Eo_Token token;
 } Lexer_Ctx;
 
-typedef struct _Eo_Lexer_Temps
+typedef struct _Eo_Lexer_Dtor
 {
-   Eolian_Class *kls;
-   Eolian_Variable *var;
-   Eina_List *str_bufs;
-   Eina_List *type_defs;
-   Eina_List *type_decls;
-   Eina_List *expr_defs;
-   Eina_List *strs;
-} Eo_Lexer_Temps;
+   Eina_Free_Cb free_cb;
+   void *data;
+} Eo_Lexer_Dtor;
 
 /* keeps all lexer state */
 typedef struct _Eo_Lexer
@@ -167,7 +161,7 @@ typedef struct _Eo_Lexer
     * display the current line with a caret at the respective column */
    const char  *stream_line;
    /* a pointer to the state this lexer belongs to */
-   Eolian      *state;
+   Eolian_State *state;
    /* the unit being filled during current parsing */
    Eolian_Unit *unit;
    /* this is jumped to when an error happens */
@@ -176,11 +170,20 @@ typedef struct _Eo_Lexer
    /* saved context info */
    Eina_List *saved_ctxs;
 
-   /* represents the temporaries, every object that is allocated by the
-    * parser is temporarily put here so the resources can be reclaimed in
-    * case of error - and it's nulled when it's written into a more permanent
-    * position (e.g. as part of another struct, or into nodes */
-   Eo_Lexer_Temps tmp;
+   Eolian_Class *klass;
+   /* a dtor list; dtors can be pushed and popped during
+    * parser execution to simulate scoped resource management
+    *
+    * unpopped dtors (e.g. on error) are run when the state is freed
+    */
+   Eina_List *dtors;
+   /* a node hash; eolian objects can be allocated through this and
+    * they are stored here (with 1 reference) until they're released
+    * into the environment (they also get deref'd)
+    *
+    * if the release never happens, everything is just freed when the state is
+    */
+   Eina_Hash *nodes;
 
    /* whether we allow lexing expression related tokens */
    Eina_Bool expr_mode;
@@ -189,9 +192,16 @@ typedef struct _Eo_Lexer
    char decpoint;
 } Eo_Lexer;
 
-int         eo_lexer_init           (void);
-int         eo_lexer_shutdown       (void);
-Eo_Lexer   *eo_lexer_new            (Eolian *state, const char *source);
+typedef enum _Eo_Lexer_Error
+{
+   EO_LEXER_ERROR_UNKNOWN = 0,
+   EO_LEXER_ERROR_NORMAL,
+   EO_LEXER_ERROR_OOM
+} Eo_Lexer_Error;
+
+void        eo_lexer_init           (void);
+void        eo_lexer_shutdown       (void);
+Eo_Lexer   *eo_lexer_new            (Eolian_State *state, const char *source);
 void        eo_lexer_free           (Eo_Lexer *ls);
 /* gets a regular token, singlechar or one of TOK_something */
 int         eo_lexer_get            (Eo_Lexer *ls);
@@ -216,5 +226,69 @@ void eo_lexer_context_push   (Eo_Lexer *ls);
 void eo_lexer_context_pop    (Eo_Lexer *ls);
 void eo_lexer_context_restore(Eo_Lexer *ls);
 void eo_lexer_context_clear  (Eo_Lexer *ls);
+
+/* node ("heap") management */
+Eolian_Object *eo_lexer_node_new(Eo_Lexer *ls, size_t objsize);
+Eolian_Object *eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj);
+
+static inline Eolian_Type *
+eo_lexer_type_new(Eo_Lexer *ls)
+{
+   return (Eolian_Type *)eo_lexer_node_new(ls, sizeof(Eolian_Type));
+}
+
+static inline Eolian_Type *
+eo_lexer_type_release(Eo_Lexer *ls, Eolian_Type *tp)
+{
+   return (Eolian_Type *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
+}
+
+static inline Eolian_Typedecl *
+eo_lexer_typedecl_new(Eo_Lexer *ls)
+{
+   return (Eolian_Typedecl *)eo_lexer_node_new(ls, sizeof(Eolian_Typedecl));
+}
+
+static inline Eolian_Typedecl *
+eo_lexer_typedecl_release(Eo_Lexer *ls, Eolian_Typedecl *tp)
+{
+   return (Eolian_Typedecl *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
+}
+
+static inline Eolian_Variable *
+eo_lexer_variable_new(Eo_Lexer *ls)
+{
+   return (Eolian_Variable *)eo_lexer_node_new(ls, sizeof(Eolian_Variable));
+}
+
+static inline Eolian_Variable *
+eo_lexer_variable_release(Eo_Lexer *ls, Eolian_Variable *var)
+{
+   return (Eolian_Variable *)eo_lexer_node_release(ls, (Eolian_Object *)var);
+}
+
+static inline Eolian_Expression *
+eo_lexer_expr_new(Eo_Lexer *ls)
+{
+   return (Eolian_Expression *)eo_lexer_node_new(ls, sizeof(Eolian_Expression));
+}
+
+static inline Eolian_Expression *
+eo_lexer_expr_release(Eo_Lexer *ls, Eolian_Expression *expr)
+{
+   return (Eolian_Expression *)eo_lexer_node_release(ls, (Eolian_Object *)expr);
+}
+
+static inline Eolian_Expression *
+eo_lexer_expr_release_ref(Eo_Lexer *ls, Eolian_Expression *expr)
+{
+   eolian_object_ref(&expr->base);
+   return eo_lexer_expr_release(ls, expr);
+}
+
+/* "stack" management, only to protect against errors (jumps) in parsing */
+void eo_lexer_dtor_push(Eo_Lexer *ls, Eina_Free_Cb free_cb, void *data);
+void eo_lexer_dtor_pop(Eo_Lexer *ls);
+
 
 #endif /* __EO_LEXER_H__ */

@@ -1,6 +1,6 @@
-class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
-                        Efl.Access.Widget.Action,
-                        Efl.Ui.Clickable, Efl.Ui.Selectable)
+class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
+                        Efl.Access.Widget.Action, Efl.Ui.Focus.Composition,
+                        Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary fileselector class]]
    legacy_prefix: elm_fileselector;
@@ -35,12 +35,10 @@ class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_event;
-      Elm.Widget.theme_apply;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
       Elm.Interface.Fileselector.selected_models { get; }
-      Elm.Interface.Fileselector.selected_model_get;
-      Elm.Interface.Fileselector.selected_model_set;
+      Elm.Interface.Fileselector.selected_model { get; set; }
       Elm.Interface.Fileselector.custom_filter_append;
       Elm.Interface.Fileselector.expandable { get; set; }
       Elm.Interface.Fileselector.thumbnail_size { get; set; }
@@ -48,19 +46,20 @@ class Elm.Fileselector (Efl.Ui.Layout, Elm.Interface.Fileselector,
       Elm.Interface.Fileselector.hidden_visible { get; set; }
       Elm.Interface.Fileselector.filters_clear;
       Elm.Interface.Fileselector.is_save { get; set; }
-      Elm.Interface.Fileselector.model { get; set; }
+      Efl.Ui.View.model { get; set; }
       Elm.Interface.Fileselector.sort_method { get; set; }
       Elm.Interface.Fileselector.multi_select { get; set; }
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.mode { get; set; }
       Elm.Interface.Fileselector.current_name { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      done; [[Called when OK button was pressed]]
-      activated; [[Called when the filesector was activated]]
-      selected,invalid; [[Called when fileselector was selected]]
-      directory,open; [[Called when a directory was opened]]
+      done: string; [[Called when OK button was pressed]]
+      /* FIXME: For all three events below, event_info can either be a string or an Efl.Model */
+      activated: void; [[Called when the filesector was activated]]
+      selected,invalid: void; [[Called when fileselector was selected]]
+      directory,open: void; [[Called when a directory was opened]]
    }
 }

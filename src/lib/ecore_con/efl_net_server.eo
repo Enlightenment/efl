@@ -29,7 +29,7 @@ interface Efl.Net.Server {
         error: Eina.Error; [[An error has occurred and the server needs
                              to be stopped.
                            ]]
-        serving; [[Notifies the server is ready to accept clients.
+        serving: void; [[Notifies the server is ready to accept clients.
                    See property @.serving]]
     }
 

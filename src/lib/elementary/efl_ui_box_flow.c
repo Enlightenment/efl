@@ -17,7 +17,7 @@ _efl_ui_box_flow_box_flow_homogenous_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Da
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_flow_box_flow_homogenous_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data *pd)
+_efl_ui_box_flow_box_flow_homogenous_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data *pd)
 {
    return pd->homogenous;
 }
@@ -29,7 +29,7 @@ _efl_ui_box_flow_box_flow_max_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_box_flow_box_flow_max_size_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data *pd)
+_efl_ui_box_flow_box_flow_max_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Flow_Data *pd)
 {
    return pd->max_size;
 }

@@ -54,9 +54,9 @@ _efl_net_dialer_udp_efl_object_constructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd EI
 }
 
 EOLIAN static void
-_efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
+_efl_net_dialer_udp_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
 {
-   if (efl_io_closer_close_on_destructor_get(o) &&
+   if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
      {
         efl_event_freeze(o);
@@ -70,6 +70,12 @@ _efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
         pd->resolver.thread = NULL;
      }
 
+   efl_invalidate(efl_super(o, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_net_dialer_udp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Udp_Data *pd)
+{
    efl_destructor(efl_super(o, MY_CLASS));
 
    eina_stringshare_replace(&pd->address_dial, NULL);
@@ -196,7 +202,7 @@ _efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
 {
    Eo *o = data;
    Efl_Net_Dialer_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
-   Eina_Error err;
+   Eina_Error err = EINA_ERROR_NO_ERROR;
    struct addrinfo *addr;
 
    pd->resolver.thread = NULL;
@@ -288,7 +294,7 @@ _efl_net_dialer_udp_efl_net_dialer_address_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 }
 
 EOLIAN static const char *
-_efl_net_dialer_udp_efl_net_dialer_address_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
+_efl_net_dialer_udp_efl_net_dialer_address_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
 {
    return pd->address_dial;
 }
@@ -302,7 +308,7 @@ _efl_net_dialer_udp_efl_net_dialer_timeout_dial_set(Eo *o EINA_UNUSED, Efl_Net_D
 }
 
 EOLIAN static double
-_efl_net_dialer_udp_efl_net_dialer_timeout_dial_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
+_efl_net_dialer_udp_efl_net_dialer_timeout_dial_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
 {
    return pd->timeout_dial;
 }
@@ -317,7 +323,7 @@ _efl_net_dialer_udp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Udp_Data 
 }
 
 EOLIAN static Eina_Bool
-_efl_net_dialer_udp_efl_net_dialer_connected_get(Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
+_efl_net_dialer_udp_efl_net_dialer_connected_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Udp_Data *pd)
 {
    return pd->connected;
 }

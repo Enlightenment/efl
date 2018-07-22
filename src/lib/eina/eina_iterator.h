@@ -356,7 +356,7 @@ EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_
  * @warning unless explicitly stated in functions returning iterators,
  *    do not modify the iterated object while you walk it, in this
  *    example using lists, do not remove list nodes or you might
- *    crash!  This is not a limitiation of iterators themselves,
+ *    crash!  This is not a limitation of iterators themselves,
  *    rather in the iterators implementations to keep them as simple
  *    and fast as possible.
  */

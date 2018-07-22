@@ -12,13 +12,16 @@ lib_ecore_imf_libecore_imf_la_SOURCES = \
 lib/ecore_imf/ecore_imf.c \
 lib/ecore_imf/ecore_imf_context.c \
 lib/ecore_imf/ecore_imf_module.c \
-lib/ecore_imf/ecore_imf_private.h
+lib/ecore_imf/ecore_imf_private.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_ecore_imf_libecore_imf_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_imf\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @ECORE_IMF_CFLAGS@
 lib_ecore_imf_libecore_imf_la_LIBADD = @ECORE_IMF_LIBS@
 lib_ecore_imf_libecore_imf_la_DEPENDENCIES = @ECORE_IMF_INTERNAL_LIBS@
@@ -134,6 +137,14 @@ modules_ecore_imf_wayland_module_la_SOURCES = \
 modules/ecore_imf/wayland/wayland_module.c \
 modules/ecore_imf/wayland/wayland_imcontext.c \
 modules/ecore_imf/wayland/wayland_imcontext.h
+
+nodist_modules_ecore_imf_wayland_module_la_SOURCES = \
+modules/ecore_imf/wayland/text-input-unstable-v1-client-protocol.h \
+modules/ecore_imf/wayland/text-input-unstable-v1-protocol.c
+
+BUILT_SOURCES += \
+modules/ecore_imf/wayland/text-input-unstable-v1-client-protocol.h \
+modules/ecore_imf/wayland/text-input-unstable-v1-protocol.c
 
 modules_ecore_imf_wayland_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/modules/ecore_imf/wayland \

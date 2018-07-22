@@ -25,7 +25,7 @@ enum Elm.Fileselector.Sort
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Elm.Interface.Fileselector ()
+interface Elm.Interface.Fileselector (Efl.Ui.View)
 {
    [[Elementary fileselector interface]]
    eo_prefix: elm_interface_fileselector;
@@ -97,17 +97,6 @@ interface Elm.Interface.Fileselector ()
             expand: bool; [[$true if tree view is expanded, $false otherwise]]
          }
       }
-      @property model {
-         set {
-            [[Set, programmatically, the directory that a given file selector widget will display contents from]]
-         }
-         get {
-            [[Get the directory's model that a given file selector selector widget display contents from]]
-         }
-         values {
-            model: Efl.Model; [[Directory model]]
-         }
-      }
       @property mode {
          set {
             [[Set the mode in which a given file selector widget will display (layout) file system entries in its view]]
@@ -139,7 +128,7 @@ interface Elm.Interface.Fileselector ()
          }
       }
       @property current_name {
-      	 [[ Current name property]]
+          [[ Current name property]]
          set {
          }
          get {
@@ -148,16 +137,17 @@ interface Elm.Interface.Fileselector ()
             name: string; [[Name]]
          }
       }
-      selected_model_set {
-         [[Set, programmatically, the currently selected file/directory in the given file selector widget]]
-         params {
-            @in model: Efl.Model; [[Model to be set]]
+      @property selected_model @beta {
+         set {
+            [[Set, programmatically, the currently selected file/directory in the given file selector widget]]
+            return: bool; [[$true on success, $false otherwise]]
          }
-         return: future<Efl.Model>; [[Promise returning the recorded selected model or error]]
-      }
-      selected_model_get {
-         [[Get the currently selected item's model, in the given file the given file selector widget]]
-         return: Efl.Model; [[Selected model]]
+         get {
+            [[Get the currently selected item's model, in the given file the given file selector widget]]
+         }
+         values {
+            model: Eio.Model; [[Model to be set, NULL reset it.]]
+         }
       }
       custom_filter_append {
          [[Append custom filter into filter list]]

@@ -6,14 +6,21 @@ interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
          [[Create a UI object from the necessary properties in the specified model.]]
          params {
             model: Efl.Model; [[Efl model]]
-            parent: Efl.Gfx; [[Efl canvas]]
+            parent: Efl.Gfx.Entity; [[Efl canvas]]
          }
-         return: Efl.Gfx; [[Created UI object]]
+         return: Efl.Gfx.Entity; [[Created UI object]]
       }
       release {
          [[Release a UI object and disconnect from models.]]
          params {
-            ui_view: Efl.Gfx; [[Efl canvas]]
+            ui_view: Efl.Gfx.Entity; [[Efl canvas]]
+         }
+      }
+      model_connect {
+         [[Connect factory to a model]]
+         params {
+            name: string; [[Model name]]
+            factory: Efl.Ui.Factory; [[Efl factory]]
          }
       }
    }

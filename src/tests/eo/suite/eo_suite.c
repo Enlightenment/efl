@@ -4,6 +4,7 @@
 
 #include "eo_suite.h"
 #include "../../efl_check.h"
+#include <Eo.h>
 
 static const Efl_Test_Case etc[] = {
   { "Eo init", eo_test_init },
@@ -14,8 +15,19 @@ static const Efl_Test_Case etc[] = {
   { "Eo eina value", eo_test_value },
   { "Eo threaded eo calls", eo_test_threaded_calls },
   { "Eo event calls", eo_test_event},
+  { "Eo lifecycle", eo_test_lifecycle},
   { NULL, NULL }
 };
+
+SUITE_INIT(efl_object)
+{
+   ck_assert_int_eq(efl_object_init(), 1);
+}
+
+SUITE_SHUTDOWN(efl_object)
+{
+   ck_assert_int_eq(efl_object_shutdown(), 0);
+}
 
 int
 main(int argc, char **argv)
@@ -30,7 +42,7 @@ main(int argc, char **argv)
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eo", etc);
+                                           "Eo", etc, SUITE_INIT_FN(efl_object), SUITE_SHUTDOWN_FN(efl_object));
 
    return (failed_count == 0) ? 0 : 255;
 }

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -27,14 +27,14 @@ static void
 _elm_box_efl_ui_focus_composition_prepare(Eo *obj, Elm_Box_Data *pd EINA_UNUSED)
 {
    Eina_List *n, *nn;
-   Elm_Widget *elem;
+   Efl_Ui_Widget *elem;
 
-   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_CLASS);
+   Elm_Widget_Smart_Data *wpd = efl_data_scope_get(obj, EFL_UI_WIDGET_CLASS);
    Eina_List *order = evas_object_box_children_get(wpd->resize_obj);
 
    EINA_LIST_FOREACH_SAFE(order, n, nn, elem)
      {
-        if (!efl_isa(elem, ELM_WIDGET_CLASS))
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
           order = eina_list_remove(order, elem);
      }
 
@@ -58,7 +58,7 @@ _child_removed_cb_proxy(void *data, const Efl_Event *event)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_box_elm_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
+_elm_box_efl_ui_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -97,7 +97,7 @@ _on_size_hints_changed(void *data,
 }
 
 EOLIAN static Eina_Bool
-_elm_box_elm_widget_widget_sub_object_del(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *child)
+_elm_box_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Object *child)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
@@ -375,8 +375,8 @@ _elm_box_efl_object_constructor(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    return obj;
 }
@@ -391,7 +391,7 @@ _elm_box_horizontal_set(Eo *obj, Elm_Box_Data *sd, Eina_Bool horizontal)
 }
 
 EOLIAN static Eina_Bool
-_elm_box_horizontal_get(Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
+_elm_box_horizontal_get(const Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
 {
    return sd->horizontal;
 }
@@ -406,7 +406,7 @@ _elm_box_homogeneous_set(Eo *obj, Elm_Box_Data *sd, Eina_Bool homogeneous)
 }
 
 EOLIAN static Eina_Bool
-_elm_box_homogeneous_get(Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
+_elm_box_homogeneous_get(const Eo *obj EINA_UNUSED, Elm_Box_Data *sd)
 {
    return sd->homogeneous;
 }
@@ -604,7 +604,7 @@ elm_box_transition_free(void *data)
 }
 
 EOLIAN static Eina_List*
-_elm_box_children_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
+_elm_box_children_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return evas_object_box_children_get(wd->resize_obj);
@@ -620,7 +620,7 @@ _elm_box_padding_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord horizont
 }
 
 EOLIAN static void
-_elm_box_padding_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
+_elm_box_padding_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_box_padding_get
@@ -636,7 +636,7 @@ _elm_box_align_set(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double horizontal, do
 }
 
 EOLIAN static void
-_elm_box_align_get(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double *horizontal, double *vertical)
+_elm_box_align_get(const Eo *obj, Elm_Box_Data *_pd EINA_UNUSED, double *horizontal, double *vertical)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 

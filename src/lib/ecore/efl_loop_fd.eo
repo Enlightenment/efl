@@ -1,6 +1,4 @@
-import eina_types;
-
-class Efl.Loop.Fd (Efl.Loop.Consumer)
+class Efl.Loop_Fd (Efl.Loop_Consumer)
 {
    [[Fds are objects that watch the activity on a given
      file descriptor. This file descriptor can be a
@@ -12,35 +10,35 @@ class Efl.Loop.Fd (Efl.Loop.Consumer)
    methods {
       @property fd {
          [[Defines which file descriptor to watch. If it is a file, use file_fd variant.]]
-	 set {
-	    [[Defines the fd to watch.]]
-	 }
-	 get {
-	 }
-	 values {
-	    fd: int; [[The file descriptor.]]
-	 }
+    set {
+       [[Defines the fd to watch.]]
+    }
+    get {
+    }
+    values {
+       fd: int; [[The file descriptor.]]
+    }
       }
       @property fd_file {
          [[Defines which file descriptor to watch when watching a file.]]
-	 set {
-	    [[Defines the fd to watch on.]]
-	 }
-	 get {
-	 }
-	 values {
-	    fd: int; [[The file descriptor.]]
-	 }
+    set {
+       [[Defines the fd to watch on.]]
+    }
+    get {
+    }
+    values {
+       fd: int; [[The file descriptor.]]
+    }
       }
    }
    events {
-      read; [[Called when a read happened on the file descriptor]]
-      write; [[Called when a write happened on the file descriptor]]
-      error; [[Called when a error occurred on the file descriptor]]
+      read: void; [[Called when a read happened on the file descriptor]]
+      write: void; [[Called when a write happened on the file descriptor]]
+      error: void; [[Called when a error occurred on the file descriptor]]
    }
    implements {
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.parent { set; }
    }
 }

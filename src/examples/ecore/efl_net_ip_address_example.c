@@ -12,6 +12,9 @@
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
 #endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
 
 static int retval = EXIT_SUCCESS;
 static Eina_List *resolving = NULL;
@@ -65,40 +68,48 @@ _print_ip_addr_info(const Eo *o)
    printf("INFO:   - any: %d\n", efl_net_ip_address_any_check(o));
 }
 
-static void
-_resolved(void *data EINA_UNUSED, const Efl_Event *event)
+static Eina_Value
+_resolved(void *data, const Eina_Value v,
+          const Eina_Future *dead_future)
 {
-   Efl_Future *future = event->object;
-   Efl_Future_Event_Success *f = event->info;
-   Efl_Net_Ip_Address_Resolve_Results *r = f->value;
-   Eina_Array_Iterator it;
-   unsigned int i;
-   const Efl_Net_Ip_Address *o;
+   const char *address = data;
+   const char *canonical_name = NULL;
+   const char *request_address = NULL;
+   const Eina_Value_Array desc = { 0 };
+   const Efl_Net_Ip_Address **o = NULL;
+
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+
+        eina_value_error_get(&v, &err);
+
+        fprintf(stderr, "ERROR: Failed to resolve '%s': %s\n",
+                address, eina_error_msg_get(err));
+        retval = EXIT_FAILURE;
+        goto end;
+     }
+
+   eina_value_struct_get(&v, "canonical_name", canonical_name);
+   eina_value_struct_get(&v, "request_address", request_address);
+   eina_value_struct_get(&v, "results", &desc);
 
    printf("INFO: resolved '%s' to canonical name '%s':\n",
-          r->request_address, r->canonical_name);
+          request_address, canonical_name);
 
-   EINA_ARRAY_ITER_NEXT(r->results, i, o, it)
-     _print_ip_addr_info(o);
+   EINA_INARRAY_FOREACH(desc.array, o)
+     if (o) _print_ip_addr_info(*o);
 
    putchar('\n');
 
-   resolving = eina_list_remove(resolving, future);
-   if (!resolving) ecore_main_loop_quit();
-}
+   eina_stringshare_del(canonical_name);
+   eina_stringshare_del(request_address);
 
-static void
-_resolve_failed(void *data, const Efl_Event *event)
-{
-   const char *address = data;
-   Efl_Future *future = event->object;
-   Efl_Future_Event_Failure *f = event->info;
-   fprintf(stderr, "ERROR: Failed to resolve '%s': %s\n",
-           address, eina_error_msg_get(f->error));
-   retval = EXIT_FAILURE;
-
-   resolving = eina_list_remove(resolving, future);
+ end:
+   resolving = eina_list_remove(resolving, dead_future);
    if (!resolving) ecore_main_loop_quit();
+
+   return v;
 }
 
 int
@@ -120,18 +131,10 @@ main(int argc, char *argv[])
           }
         else
           {
-             Efl_Future *f = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS, address, 0, 0);
-             if (!f)
-               {
-                  fprintf(stderr, "ERROR: cannot resolve '%s'!\n", address);
-                  retval = EXIT_FAILURE;
-               }
-             else
-               {
-                  printf("INFO: %s is not numeric, resolving...\n", address);
-                  efl_future_then(f, _resolved, _resolve_failed, NULL, address);
-                  resolving = eina_list_append(resolving, f);
-               }
+             Eina_Future *f = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS, address, 0, 0);
+             eina_future_then(f, _resolved, address);
+             printf("INFO: %s is not numeric, resolving...\n", address);
+             resolving = eina_list_append(resolving, f);
           }
      }
 

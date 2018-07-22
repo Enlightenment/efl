@@ -1,4 +1,4 @@
-class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
+class Elm.Segment_Control (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary segment control class]]
    legacy_prefix: elm_segment_control;
@@ -136,12 +136,12 @@ class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
-      Elm.Widget.on_disabled_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Translatable.translation_update;
    }
    events {
-      changed; [[Called when segment control changed]]
+      changed: Efl.Object; [[Called when segment control changed]]
    }
 }

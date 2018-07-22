@@ -18,6 +18,7 @@
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 typedef struct {
    Eina_Thread_Queue  *thq;
@@ -87,9 +88,7 @@ _efl_net_proxy_helper_spawn(void)
      }
    // find binary location path
    if (run_in_tree == 1)
-     snprintf
-       (buf, sizeof(buf),
-        PACKAGE_BUILD_DIR"/src/bin/ecore_con/utils/efl_net_proxy_helper"HELPER_EXT);
+     bs_binary_get(buf, sizeof(buf), "ecore_con", "efl_net_proxy_helper");
    else
 #endif
      snprintf
@@ -322,7 +321,7 @@ _efl_net_proxy_helper_cb_send_do(void *data)
 }
 
 int
-_efl_net_proxy_helper_url_req_send(const char *url)
+_efl_net_proxy_helper_url_req_send(const char *url, Ecore_Thread *eth)
 {
    char *buf;
    int id = -1;
@@ -340,6 +339,7 @@ _efl_net_proxy_helper_url_req_send(const char *url)
         locks--;
      }
    eina_spinlock_release(&_efl_net_proxy_helper_queue_lock);
+   if (ecore_thread_check(eth)) return -1;
    // create request to quque up to look up responses for
    req = calloc(1, sizeof(Efl_Net_Proxy_Helper_Req));
    if (!req) return -1;
@@ -353,9 +353,10 @@ _efl_net_proxy_helper_url_req_send(const char *url)
    buf = alloca(strlen(url) + 256);
    sprintf(buf, "P %i %s\n", req->id, url);
    req->str = strdup(buf);
-   if (!req->str)
+   if ((!req->str) || ecore_thread_check(eth))
      {
         eina_thread_queue_free(req->thq);
+        free(req->str);
         free(req);
         return -1;
      }

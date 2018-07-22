@@ -6,11 +6,13 @@
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
+#include "name_helpers.hh"
 #include "helpers.hh"
 #include "type.hh"
-#include "keyword.hh"
 #include "using_decl.hh"
 #include "documentation.hh"
+#include "struct_fields.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -24,19 +26,12 @@ inline std::string binding_struct_internal_name(attributes::struct_def const& st
    return struct_.cxx_name + "_StructInternal";
 }
 
-inline std::string to_field_name(std::string const& in)
-{
-  std::string field_name = in;
-  field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
-  return field_name;
-}
-
 struct struct_definition_generator
 {
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-
+     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
      if(!as_generator(documentation).generate(sink, struct_, context))
        return false;
      if(!as_generator
@@ -57,7 +52,7 @@ struct struct_definition_generator
                documentation(1)
                << scope_tab(1) << "public " << type << " " << string << ";\n"
               )
-              .generate(sink, std::make_tuple(field, field.type, to_field_name(field.name)), context))
+              .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
             return false;
        }
 
@@ -67,8 +62,23 @@ struct struct_definition_generator
      // those 'mini-amd64.c condition fields not met' crashes.
      if (struct_.fields.size() == 0)
        {
-           if (!as_generator("public IntPtr field;\n").generate(sink, nullptr, context))
+           if (!as_generator("///<summary>Placeholder field</summary>\npublic IntPtr field;\n").generate(sink, nullptr, context))
              return false;
+       }
+     else
+       {
+          // Constructor with default parameters for easy struct initialization
+          auto struct_name = binding_struct_name(struct_);
+          if(!as_generator(
+                      scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
+                      << scope_tab << "public " << string << "(\n"
+                      << ((scope_tab << scope_tab << field_argument_default) % ",\n")
+                      << scope_tab << ")\n"
+                      << scope_tab << "{\n"
+                      << *(scope_tab << scope_tab << field_argument_assignment << ";\n")
+                      << scope_tab << "}\n")
+             .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
+              return false;
        }
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
@@ -85,16 +95,17 @@ struct struct_internal_definition_generator
   {
      if (!as_generator
          (
+          "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
           "[StructLayout(LayoutKind.Sequential)]\n"
-          "internal struct " << string << "\n{\n"
+          "public struct " << string << "\n{\n"
          )
-         .generate(sink, binding_struct_internal_name(struct_), context))
+         .generate(sink, std::make_tuple<>(binding_struct_name(struct_), binding_struct_internal_name(struct_)), context))
        return false;
 
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
-          auto field_name = to_field_name(field.name);
+          auto field_name = name_helpers::to_field_name(field.name);
           auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
           auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
 
@@ -123,6 +134,24 @@ struct struct_internal_definition_generator
              return false;
        }
 
+     auto external_name = binding_struct_name(struct_);
+     auto internal_name = binding_struct_internal_name(struct_);
+
+     if(!as_generator(
+                 scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
+                 << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToExternal(struct_);\n"
+                 << scope_tab << "}\n"
+                 << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
+                 << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToInternal(struct_);\n"
+                 << scope_tab << "}\n"
+                 ).generate(sink, std::make_tuple(external_name, internal_name, external_name,
+                                                  internal_name, external_name, external_name), context))
+         return false;
+
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
      return true;
@@ -137,7 +166,7 @@ struct to_internal_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = to_field_name(field.name);
+      auto field_name = name_helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -163,17 +192,17 @@ struct to_internal_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular))
+      else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
-      else if (need_struct_conversion(regular))
+      else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConvertion.ToInternal(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConversion.ToInternal(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -211,7 +240,7 @@ struct to_internal_field_convert_generator
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".Handle;\n"
+                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".NativeHandle;\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -231,20 +260,22 @@ struct to_external_field_convert_generator
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-      auto field_name = to_field_name(field.name);
+      auto field_name = name_helpers::to_field_name(field.name);
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
 
       if (klass)
         {
+           auto interface_name = name_helpers::klass_full_interface_name(*klass);
+           auto concrete_name = name_helpers::klass_full_concrete_name(*klass);
            if (!as_generator(
                  "\n"
                  << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << type << ") System.Activator.CreateInstance(typeof("
-                 << type << "Concrete), new System.Object[] {_internal_struct." << string << "});\n"
+                 << " = (" << interface_name << ") System.Activator.CreateInstance(typeof("
+                 << concrete_name << "), new System.Object[] {_internal_struct." << string << "});\n"
                  << scope_tab << scope_tab << "efl.eo.Globals.efl_ref(_internal_struct." << string << ");\n\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field.type, field_name, field_name), context))
+               .generate(sink, std::make_tuple(field_name, field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
@@ -273,17 +304,17 @@ struct to_external_field_convert_generator
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
-      else if (field.type.is_ptr && need_pointer_conversion(regular))
+      else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
-      else if (need_struct_conversion(regular))
+      else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConvertion.ToExternal(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToExternal(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -314,7 +345,7 @@ struct to_external_field_convert_generator
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.ValueOwnership.Unmanaged);\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.Ownership.Unmanaged);\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -337,7 +368,7 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "internal static class " << string << "_StructConvertion\n{\n"
+          "public static class " << string << "_StructConversion\n{\n"
          )
          .generate(sink, struct_.cxx_name, context))
        return false;
@@ -411,13 +442,11 @@ struct struct_entities_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-     if (is_struct_blacklisted(struct_))
+     if (blacklist::is_struct_blacklisted(struct_))
        return true;
 
-     std::vector<std::string> cpp_namespaces = escape_namespace(attributes::cpp_namespaces(struct_.namespaces));
 
-     auto open_namespace = *("namespace " << string << " { ") << "\n";
-     if (!as_generator(open_namespace).generate(sink, cpp_namespaces, add_lower_case_context(context)))
+     if (!name_helpers::open_namespaces(sink, struct_.namespaces, context))
        return false;
 
      if (!struct_definition.generate(sink, struct_, context))
@@ -429,10 +458,8 @@ struct struct_entities_generator
      if (!struct_binding_conversion_functions.generate(sink, struct_, context))
        return false;
 
-     auto close_namespace = *(lit("} ")) << "\n";
-     if(!as_generator(close_namespace).generate(sink, cpp_namespaces, context)) return false;
+     return name_helpers::close_namespaces(sink, struct_.namespaces, context);
 
-     return true;
   }
 } const struct_entities {};
 

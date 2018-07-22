@@ -25,9 +25,8 @@
 
 #include "eina_suite.h"
 
-START_TEST(tmpstr_simple)
+EFL_START_TEST(tmpstr_simple)
 {
-   eina_init();
 
    const int cnt_tmp_strings = 10;
    const int max_str_len = 255;
@@ -57,13 +56,11 @@ START_TEST(tmpstr_simple)
    // Delete non tmp string (should do nothing)
    eina_tmpstr_del("Some non tmp string");
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_simple_len)
+EFL_START_TEST(tmpstr_simple_len)
 {
-   eina_init();
 
    const int cnt_tmp_strings = 10;
    const int max_str_len = 255;
@@ -93,13 +90,11 @@ START_TEST(tmpstr_simple_len)
    // Delete non tmp string (should do nothing)
    eina_tmpstr_del("Some non tmp string");
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_manage)
+EFL_START_TEST(tmpstr_manage)
 {
-   eina_init();
 
    char *buf = malloc(7);
    strcpy(buf, "tmpstr");
@@ -107,13 +102,11 @@ START_TEST(tmpstr_manage)
    fail_if(strcmp(buf, tstr1));
    eina_tmpstr_del(tstr1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_manage_len)
+EFL_START_TEST(tmpstr_manage_len)
 {
-   eina_init();
 
    char *buf = malloc(10);
    strcpy(buf, "tmpstr");
@@ -121,13 +114,11 @@ START_TEST(tmpstr_manage_len)
    fail_if(strcmp(buf, tstr1));
    eina_tmpstr_del(tstr1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(tmpstr_len)
+EFL_START_TEST(tmpstr_len)
 {
-   eina_init();
 
    const char *str1 = "12345";
    const char *str2 = "123456789";
@@ -143,9 +134,8 @@ START_TEST(tmpstr_len)
    eina_tmpstr_del(tstr1);
    eina_tmpstr_del(tstr2);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_tmpstr(TCase *tc)

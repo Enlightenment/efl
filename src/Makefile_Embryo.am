@@ -44,12 +44,15 @@ bin/embryo/embryo_cc_scexpand.c \
 bin/embryo/embryo_cc_sclist.c \
 bin/embryo/embryo_cc_scvars.c \
 bin/embryo/embryo_cc_prefix.c \
-bin/embryo/embryo_cc_prefix.h
+bin/embryo/embryo_cc_prefix.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 bin_embryo_embryo_cc_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/embryo\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
 @EMBRYO_CFLAGS@
 

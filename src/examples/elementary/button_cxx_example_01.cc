@@ -5,7 +5,7 @@
 
 using efl::eo::instantiate;
 
-efl::Gfx icon_still(nullptr);
+efl::gfx::Entity icon_still(nullptr);
 
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
@@ -117,7 +117,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         if (!icon_still)
           {
              efl::ui::Image obj(instantiate, cmid);
-             efl::eina::optional<efl::Gfx> icon_still_p = cmid.content_unset();
+             efl::eina::optional<efl::gfx::Entity> icon_still_p = cmid.content_unset();
              if (icon_still_p)
                {
                   icon_still = *icon_still_p;

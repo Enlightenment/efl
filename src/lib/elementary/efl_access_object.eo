@@ -1,0 +1,466 @@
+enum Efl.Access.Type
+{
+   [[Type of accessibility object]]
+   regular, [[default accessibile object]]
+   disabled, [[skip object and its children in accessibility hierarchy]]
+   skipped [[skip object in accessibility hierarchy]]
+}
+
+enum Efl.Access.Role
+{
+   [[Describes the role of an object visible to Accessibility Clients.]]
+   invalid, [[Role: invalid]]
+   accelerator_label, [[Role: accelerator label]]
+   alert, [[Role: alert]]
+   animation, [[Role: animation]]
+   arrow, [[Role: arrow]]
+   calendar, [[Role: calendar]]
+   canvas, [[Role: canvas]]
+   check_box, [[Role: check box]]
+   check_menu_item, [[Role: check menu item]]
+   color_chooser, [[Role: color chooser]]
+   column_header, [[Role: column header]]
+   combo_box, [[Role: combo box]]
+   date_editor, [[Role: data editor]]
+   desktop_icon, [[Role: desktop icon]]
+   desktop_frame, [[Role: desktop frame]]
+   dial, [[Role: dial]]
+   dialog, [[Role: dialog]]
+   directory_pane, [[Role: directory pane]]
+   drawing_area, [[Role: drawing area]]
+   file_chooser, [[Role: file chooser]]
+   filler, [[Role: filler]]
+   focus_traversable, [[Role: focus traversable]]
+   font_chooser, [[Role: font chooser]]
+   frame, [[Role: frame]]
+   glass_pane, [[Role: glass pane]]
+   html_container, [[Role: HTML container]]
+   icon, [[Role: icon]]
+   image, [[Role: image]]
+   internal_frame, [[Role: internal frame]]
+   label, [[Role: label]]
+   layered_pane, [[Role: layered pane]]
+   list, [[Role: list]]
+   list_item, [[Role: list item]]
+   menu, [[Role: menu]]
+   menu_bar, [[Role: menu bar]]
+   menu_item, [[Role: menu item]]
+   option_pane, [[Role: option pane]]
+   page_tab, [[Role: page tab]]
+   page_tab_list, [[Role: page tab list]]
+   panel, [[Role: panel]]
+   password_text, [[Role: password text]]
+   popup_menu, [[Role: popup menu]]
+   progress_bar, [[Role: progress bar]]
+   push_button, [[Role: push button]]
+   radio_button, [[Role: radio button]]
+   radio_menu_item, [[Role: radio menu item]]
+   root_pane, [[Role: root pane]]
+   row_header, [[Role: row header]]
+   scroll_bar, [[Role: scroll bar]]
+   scroll_pane, [[Role: scroll pane]]
+   separator, [[Role: separator]]
+   slider, [[Role: slider]]
+   spin_button, [[Role: spin button]]
+   split_pane, [[Role: split pane]]
+   status_bar, [[Role: status bar]]
+   table, [[Role: table]]
+   table_cell, [[Role: table cell]]
+   table_column_header, [[Role: table column header]]
+   table_row_header, [[Role: table row header]]
+   tearoff_menu_item, [[Role: tearoff menu item]]
+   terminal, [[Role: terminal]]
+   text, [[Role: text]]
+   toggle_button, [[Role: toggle button]]
+   tool_bar, [[Role: too bar]]
+   tool_tip, [[Role: tool tip]]
+   tree, [[Role: tree]]
+   tree_table, [[Role: tree table]]
+   unknown, [[Role: unknown]]
+   viewport, [[Role: viewport]]
+   window, [[Role: window]]
+   extended, [[Role: extended]]
+   header, [[Role: header]]
+   footer, [[Role: footer]]
+   paragraph, [[Role: paragraph]]
+   ruler, [[Role: ruler]]
+   application, [[Role: application]]
+   autocomplete, [[Role: autocomplete]]
+   editbar, [[Role: editbar]]
+   embedded, [[Role: embedded]]
+   entry, [[Role: entry]]
+   chart, [[Role: chart]]
+   caption, [[Role: caption]]
+   document_frame, [[Role: document frame]]
+   heading, [[Role: heading]]
+   page, [[Role: page]]
+   section, [[Role: section]]
+   redundant_object, [[Role: redundant object]]
+   form, [[Role: form]]
+   link, [[Role: link]]
+   input_method_window, [[Role: input method window]]
+   table_row, [[Role: table row]]
+   tree_item, [[Role: table item]]
+   document_spreadsheet, [[Role: document spreadsheet]]
+   document_presentation, [[Role: document presentation]]
+   document_text, [[Role: document text]]
+   document_web, [[Role: document web]]
+   document_email, [[Role: document email]]
+   comment, [[Role: comment]]
+   list_box, [[Role: list box]]
+   grouping, [[Role: grouping]]
+   image_map, [[Role: image map]]
+   notification, [[Role: notification]]
+   info_bar, [[Role: info bar]]
+   last_defined,  [[Last enum entry sentinel]]
+}
+
+enum Efl.Access.State_Type
+{
+   [[Describes the possible states for an object visible to accessibility clients.]]
+   legacy: efl_access_state;
+   invalid, [[State: invalid]]
+   active, [[State: active]]
+   armed, [[State: armed]]
+   busy, [[State: busy]]
+   checked, [[State: checked]]
+   collapsed, [[State: collapsed]]
+   defunct, [[State: defunct]]
+   editable, [[State: editable]]
+   enabled, [[State: enabled]]
+   expandable, [[State: expandable]]
+   expanded, [[State: expanded]]
+   focusable, [[State: focusable]]
+   focused, [[State: focused]]
+   has_tooltip, [[State: has a tooltip]]
+   horizontal, [[State: horizontal]]
+   iconified, [[State: iconified]]
+   modal, [[State: modal]]
+   multi_line, [[State: multi line]]
+   multiselectable, [[State: multiselectable]]
+   opaque, [[State: opaque]]
+   pressed, [[State: pressed]]
+   resizable, [[State: resizable]]
+   selectable, [[State: selectable]]
+   selected, [[State: selected]]
+   sensitive, [[State: sensitive]]
+   showing, [[State: showing]]
+   single_line, [[State: single line]]
+   stale, [[State: stale]]
+   transient, [[State: transient]]
+   vertical, [[State: vertical]]
+   visible, [[State: visible]]
+   manages_descendants, [[State: manage descendants]]
+   indeterminate, [[State: indeterminate]]
+   required, [[State: required]]
+   truncated, [[State: truncated]]
+   animated, [[State: animated]]
+   invalid_entry, [[State: invalid entry]]
+   supports_autocompletion, [[State: supports autocompletion]]
+   selectable_text, [[State: selectable text]]
+   is_default, [[State: is default]]
+   visited, [[State: visited]]
+   last_defined,  [[Last enum entry sentinel]]
+}
+
+enum Efl.Access.Relation_Type
+{
+   [[Describes the relationship between two objects.]]
+   legacy: efl_access_relation;
+   null, [[No relation]]
+   label_for, [[Label for relation]]
+   labelled_by, [[Labelled by relation]]
+   controller_for, [[Controller for relation]]
+   controlled_by, [[Controlled by relation]]
+   member_of, [[Member of relation]]
+   tooltip_for, [[Tooltip for relation]]
+   node_child_of, [[Node child of relation]]
+   node_parent_of, [[Node parent of relation]]
+   extended, [[Extended relation]]
+   flows_to, [[Flows to relation]]
+   flows_from, [[Flows from relation]]
+   subwindow_of, [[Subwindow of relation]]
+   embeds, [[Embeds relation]]
+   embedded_by, [[Embedded by relation]]
+   popup_for, [[Popup for relation]]
+   parent_window_of, [[Parent window of relation]]
+   description_for, [[Description for relation]]
+   described_by, [[Described by relation]]
+   last_defined, [[Last enum entry sentinel]]
+}
+
+enum Efl.Access.Reading.Info.Type
+{
+   [[The accessible Reading information type that can be read.]]
+   name = 1 << 0, [[Name should be read]]
+   role = 1 << 1, [[Role should be read]]
+   description = 1 << 2, [[description should be read.]]
+   state = 1 << 3, [[State should be read.]]
+}
+
+type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
+
+struct Efl.Access.Event.Handler; [[Accessibility event listener]]
+
+struct Efl.Access.Event.State_Changed.Data
+{
+   [[Accessibility state changed event data]]
+   type: Efl.Access.State_Type; [[Type of the state changed event]]
+   new_value: bool; [[New value]]
+}
+
+struct Efl.Access.Event.Geometry_Changed.Data
+{
+   [[Accessibility geometry changed event data]]
+   x: int; [[X coordinate]]
+   y: int; [[Y coordinate]]
+   width: int; [[Width]]
+   height: int; [[Height]]
+}
+
+struct Efl.Access.Event.Children_Changed.Data
+{
+   [[Accessibility children changed event data]]
+   is_added: bool; [[Child is added or not]]
+   child: Efl.Object; [[Child object]]
+}
+
+struct Efl.Access.Attribute
+{
+   [[Accessibility Attribute]]
+   key: string; [[Attribute key]]
+   value: string; [[Attribute value]]
+}
+
+struct Efl.Access.Relation
+{
+   [[Accessibility Relation]]
+   type: Efl.Access.Relation_Type; [[Relation type]]
+   objects: list<Efl.Object>; [[List with relation objects]]
+}
+
+mixin Efl.Access.Object (Efl.Interface, Efl.Object)
+{
+   [[Accessibility accessible mixin]]
+   eo_prefix: efl_access_object;
+   data: Efl_Access_Object_Data;
+   methods {
+      @property localized_role_name @protected @beta {
+         [[Gets an localized string describing accessible object role name.]]
+         get {
+         }
+         values {
+            localized_name: string; [[Localized accessible object role name]]
+         }
+      }
+      @property i18n_name @beta {
+         [[Accessible name of the object.]]
+         get {
+         }
+         set {
+         }
+         values {
+            i18n_name: string; [[Accessible name]]
+         }
+      }
+      relations_get @protected @beta @const {
+         [[Gets an all relations between accessible object and other accessible objects.]]
+         return: iterator<ptr(Efl.Access.Relation)>; [[Accessible relation set]]
+      }
+      @property role @beta {
+         [[The role of the object in accessibility domain.]]
+         get {
+         }
+         set {
+         }
+         values {
+            role: Efl.Access.Role; [[Accessible role]]
+         }
+      }
+      @property access_children @protected @beta {
+         [[Gets object's accessible children.]]
+         get {
+         }
+         values {
+            children: list<Efl.Access.Object> @owned; [[List of widget's children]]
+         }
+      }
+      @property role_name @protected @beta {
+         [[Gets human-readable string indentifying object accessibility role.]]
+         get {
+         }
+         values {
+            role_name: string; [[Accessible role name]]
+         }
+      }
+      @property attributes @protected @beta {
+         [[Gets key-value pairs indentifying object extra attributes. Must be free by a user.]]
+         get {
+         }
+         values {
+            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes, Must be freed by the user]]
+         }
+      }
+      attribute_append {
+         [[Add key-value pair identifying object extra attributes
+         ]]
+         params {
+            @in key: string; [[The string key to give extra information]]
+            @in value: string; [[The string value to give extra information]]
+         }
+      }
+      attributes_clear {
+         [[Removes all attributes in accessible object.
+
+           \@internal
+         ]]
+      }
+      @property reading_info_type @protected {
+         get {
+            [[Gets reading information types of an accessible object.]]
+         }
+         set {
+            [[Sets reading information of an accessible object.]]
+         }
+         values {
+            reading_info: Efl.Access.Reading.Info.Type; [[Reading information types]]
+         }
+      }
+      @property index_in_parent @protected @beta {
+         [[Gets index of the child in parent's children list.]]
+         get {
+         }
+         values {
+            idx: int; [[Index in children list]]
+         }
+      }
+      @property description @beta {
+         [[Contextual information about object.]]
+         get {
+         }
+         set {
+         }
+         values {
+            description: string; [[Accessible contextual information]]
+         }
+      }
+      @property state_set @protected @beta {
+         [[Gets set describing object accessible states.]]
+         get {
+         }
+         values {
+            states: Efl.Access.State_Set; [[Accessible state set]]
+         }
+      }
+      event_handler_add @class @protected @beta {
+         [[Register accessibility event listener]]
+         params {
+              @in cb: Efl.Event_Cb; [[Callback]]
+              @in data: void_ptr; [[Data]]
+         }
+         return: ptr(Efl.Access.Event.Handler); [[Event handler]]
+      }
+      event_handler_del @class @protected @beta {
+         [[Deregister accessibility event listener]]
+         params {
+              @in handler: ptr(Efl.Access.Event.Handler); [[Event handler]]
+         }
+      }
+      event_emit @class @protected @beta {
+          [[Emit event]]
+         params {
+            @in accessible: Efl.Access.Object; [[Accessibility object.]]
+            @cref event: Efl.Event_Description; [[Accessibility event type.]]
+            @in event_info: void_ptr; [[Accessibility event details.]]
+         }
+      }
+      @property translation_domain @beta {
+         [[The translation domain of "name" and "description"
+           properties.
+
+           Translation domain should be set if the application wants to support i18n
+           for accessibily "name" and "description" properties.
+
+           When translation domain is set, values of "name" and "description"
+           properties will be translated with the dgettext function using the
+           current translation domain as the "domainname" parameter.
+
+           It is the application developer's responsibility to ensure that
+           translation files are loaded and bound to the translation domain
+           when accessibility is enabled.]]
+         get {
+         }
+         set {
+         }
+         values {
+            domain: string; [[Translation domain]]
+         }
+      }
+      @property access_type @beta {
+           [[Type of accessibility object]]
+           get {
+           }
+           set {
+           }
+           values {
+               type: Efl.Access.Type; [[Object type]]
+           }
+      }
+      relationship_append @beta {
+         [[Defines the relationship between two accessible objects.
+
+           Adds a unique relationship between source object and relation_object of a
+           given type.
+
+           Relationships can be queried by Assistive Technology clients to
+           provide customized feedback, improving overall user experience.
+
+           Relationship_append API is asymmetric, which means that
+           appending, for example, relation EFL_ACCESS_RELATION_FLOWS_TO from object A to B,
+           do NOT append relation EFL_ACCESS_RELATION_FLOWS_FROM from object B to
+           object A.]]
+         return: bool; [[$true if relationship was successfully appended, $false otherwise]]
+         params {
+            @in type: Efl.Access.Relation_Type; [[Relation type]]
+            @in relation_object: const(Efl.Access.Object); [[Object to relate to]]
+         }
+      }
+      relationship_remove @beta {
+         [[Removes the relationship between two accessible objects.
+
+          If relation_object is NULL function removes all relations
+          of the given type.
+         ]]
+         params {
+            @in type: Efl.Access.Relation_Type; [[Relation type]]
+            @in relation_object: const(Efl.Access.Object); [[Object to remove relation from]]
+         }
+      }
+      relationships_clear @beta {
+         [[Removes all relationships in accessible object.]]
+      }
+      @property access_root @class @beta {
+         get {
+            [[Get root object of accessible object hierarchy]]
+            values {
+               ret: Efl.Object; [[Root object]]
+            }
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Object.invalidate;
+      Efl.Object.provider_find;
+   }
+   events {
+      property,changed: string; [[Called when property has changed]]
+      children,changed: Efl.Access.Event.Children_Changed.Data; [[Called when children have changed]]
+      state,changed: Efl.Access.Event.State_Changed.Data; [[Called when state has changed]]
+      bounds,changed: Efl.Access.Event.Geometry_Changed.Data; [[Called when boundaries have changed]]
+      visible,data,changed: void; [[Called when visibility has changed]]
+      active,descendant,changed: Efl.Object; [[Called when active state of descendant has changed]]
+      added: void; [[Called when item is added]]
+      removed: void; [[Called when item is removed]]
+   }
+}

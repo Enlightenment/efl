@@ -57,7 +57,7 @@ _test_free(Eina_Lazy_Allocator_Test *elat)
    elat->num = 0;
 }
 
-START_TEST(eina_lalloc_simple)
+EFL_START_TEST(eina_lalloc_simple)
 {
    Eina_Lazy_Allocator_Test *elat;
    Eina_Lalloc *test;
@@ -81,7 +81,7 @@ START_TEST(eina_lalloc_simple)
 
       eina_lalloc_free(test);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_lalloc(TCase *tc)

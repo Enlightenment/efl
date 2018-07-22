@@ -2,8 +2,9 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include <math.h>
@@ -113,7 +114,7 @@ _mirroredness_change_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_actionslider_elm_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
+_elm_actionslider_efl_ui_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
 {
    Eina_Bool mirrored;
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
@@ -548,7 +549,7 @@ _elm_actionslider_efl_object_constructor(Eo *obj, Elm_Actionslider_Data *_pd EIN
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SLIDER);
 
    return obj;
 }
@@ -571,7 +572,7 @@ _elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNU
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_indicator_pos_get(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
+_elm_actionslider_indicator_pos_get(const Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED)
 {
    double position;
 
@@ -599,7 +600,7 @@ _elm_actionslider_magnet_pos_set(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd,
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_magnet_pos_get(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
+_elm_actionslider_magnet_pos_get(const Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
 {
    return sd->magnet_position;
 }
@@ -611,13 +612,13 @@ _elm_actionslider_enabled_pos_set(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd
 }
 
 EOLIAN static Elm_Actionslider_Pos
-_elm_actionslider_enabled_pos_get(Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
+_elm_actionslider_enabled_pos_get(const Eo *obj EINA_UNUSED, Elm_Actionslider_Data *sd)
 {
    return sd->enabled_position;
 }
 
 EOLIAN static const char*
-_elm_actionslider_selected_label_get(Eo *obj, Elm_Actionslider_Data *sd)
+_elm_actionslider_selected_label_get(const Eo *obj, Elm_Actionslider_Data *sd)
 {
    const char *ret;
    ret = NULL;

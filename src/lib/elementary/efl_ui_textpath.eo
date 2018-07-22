@@ -1,10 +1,10 @@
-enum Efl.Ui.Textpath.Direction {
+enum Efl.Ui.Textpath_Direction {
     [[Textpath direction]]
     cw, [[Clockwise]]
     ccw [[Counter-clockwise]]
 }
 
-class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
+class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
 {
    [[Efl Ui Textpath class]]
    methods {
@@ -15,16 +15,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
             @in y: double; [[Y coordinate of center]]
             @in radius: double; [[Radius of the circle]]
             @in start_angle: double; [[Start angle of the circle]]
-            @in direction: Efl.Ui.Textpath.Direction; [[Textpath direction]]
-         }
-      }
-      @property autofit {
-         [[The ability to fit the text within the path.
-           Set it to $true to let text occupy only portion
-           same as its size. Otherwise, text will occupied the whole path.
-           By default, it is $true.]]
-         values {
-            autofit: bool; [[Autofit enabled if $true, $false otherwise]]
+            @in direction: Efl.Ui.Textpath_Direction; [[Textpath direction]]
          }
       }
       @property slice_number {
@@ -50,9 +41,9 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Object, Efl.Text, Efl.Gfx.Path)
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text {get; set;}
-      Efl.Part.part;
-      Elm.Widget.theme_apply;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Part.part_get;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
    }
 }

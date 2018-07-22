@@ -136,6 +136,7 @@ struct _Ecore_Fd_Handler
    Eina_Bool               error_active : 1;
    Eina_Bool               delete_me : 1;
    Eina_Bool               file : 1;
+   Eina_Bool               legacy : 1;
 };
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
 
@@ -215,7 +216,7 @@ static gboolean   ecore_fds_ready;
 static inline void
 _ecore_fd_valid(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
 {
-# ifdef HAVE_EPOLL
+# ifdef HAVE_SYS_EPOLL_H
    if ((pd->epoll_fd >= 0) &&
        (fcntl(pd->epoll_fd, F_GETFD) < 0))
      {
@@ -259,7 +260,7 @@ _throttle_do(Efl_Loop_Data *pd)
    eina_evlog("-throttle", NULL, 0.0, NULL);
 }
 
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
 static inline int
 _ecore_get_epoll_fd(Eo *obj, Efl_Loop_Data *pd)
 {
@@ -289,9 +290,9 @@ static inline int
 _ecore_poll_events_from_fdh(Ecore_Fd_Handler *fdh)
 {
    int events = 0;
-   if (fdh->flags & ECORE_FD_READ)  events |= EPOLLIN;
-   if (fdh->flags & ECORE_FD_WRITE) events |= EPOLLOUT;
-   if (fdh->flags & ECORE_FD_ERROR) events |= EPOLLERR | EPOLLPRI;
+   if (fdh->flags & ECORE_FD_READ)  events |= EPOLLIN | EPOLLHUP;
+   if (fdh->flags & ECORE_FD_WRITE) events |= EPOLLOUT | EPOLLHUP;
+   if (fdh->flags & ECORE_FD_ERROR) events |= EPOLLERR | EPOLLPRI | EPOLLHUP;
    return events;
 }
 #endif
@@ -301,9 +302,9 @@ static inline int
 _gfd_events_from_fdh(Ecore_Fd_Handler *fdh)
 {
    int events = 0;
-   if (fdh->flags & ECORE_FD_READ)  events |= G_IO_IN;
-   if (fdh->flags & ECORE_FD_WRITE) events |= G_IO_OUT;
-   if (fdh->flags & ECORE_FD_ERROR) events |= G_IO_ERR;
+   if (fdh->flags & ECORE_FD_READ)  events |= G_IO_IN | G_IO_HUP;
+   if (fdh->flags & ECORE_FD_WRITE) events |= G_IO_OUT | G_IO_HUP;
+   if (fdh->flags & ECORE_FD_ERROR) events |= G_IO_ERR | G_IO_HUP;
    return events;
 }
 #endif
@@ -331,6 +332,12 @@ _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
   if (events & UV_READABLE) fdh->read_active  = EINA_TRUE;
   if (events & UV_WRITABLE) fdh->write_active = EINA_TRUE;
 
+  if (events & UV_DISCONNECT)
+     {
+        fdh->read_active  = EINA_TRUE;
+        fdh->write_active = EINA_TRUE;
+        fdh->error_active = EINA_TRUE;
+     }
   _ecore_try_add_to_call_list(obj, pd, fdh);
 
   _ecore_main_fd_handlers_call(obj, pd);
@@ -358,7 +365,7 @@ _ecore_main_fdh_poll_add(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh)
    DBG("_ecore_main_fdh_poll_add");
    int r = 0;
 
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
 # ifdef HAVE_LIBUV
    if (!_dl_uv_run)
 # endif
@@ -413,11 +420,17 @@ _ecore_main_fdh_poll_add(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh)
 static inline void
 _ecore_main_fdh_poll_del(Efl_Loop_Data *pd, Ecore_Fd_Handler *fdh)
 {
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
 # ifdef HAVE_LIBUV
    if (!_dl_uv_run)
 # endif
      {
+        if (!pd)
+          {
+             WRN("Efl_Loop_Data is NULL!");
+             return;
+          }
+
         if ((!fdh->file) && (pd->epoll_fd >= 0))
           {
              struct epoll_event ev;
@@ -465,7 +478,7 @@ _ecore_main_fdh_poll_modify(Efl_Loop_Data *pd EINA_UNUSED, Ecore_Fd_Handler *fdh
 {
    DBG("_ecore_main_fdh_poll_modify %p", fdh);
    int r = 0;
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
 # ifdef HAVE_LIBUV
    if (!_dl_uv_run)
 # endif
@@ -517,7 +530,7 @@ _ecore_main_idler_all_call(Eo *loop)
    eina_freeq_reduce(eina_freeq_main_get(), 84);
 }
 
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
 static inline int
 _ecore_main_fdh_epoll_mark_active(Eo *obj, Efl_Loop_Data *pd)
 {
@@ -556,6 +569,13 @@ _ecore_main_fdh_epoll_mark_active(Eo *obj, Efl_Loop_Data *pd)
         if (ev[i].events & EPOLLOUT) fdh->write_active = EINA_TRUE;
         if (ev[i].events & EPOLLERR) fdh->error_active = EINA_TRUE;
 
+        if (ev[i].events & EPOLLHUP)
+          {
+             fdh->read_active  = EINA_TRUE;
+             fdh->write_active = EINA_TRUE;
+             fdh->error_active = EINA_TRUE;
+          }
+
         _ecore_try_add_to_call_list(obj, pd, fdh);
      }
    return ret;
@@ -578,7 +598,14 @@ _ecore_main_fdh_glib_mark_active(Eo *obj, Efl_Loop_Data *pd)
         if (fdh->gfd.revents & G_IO_OUT) fdh->write_active = EINA_TRUE;
         if (fdh->gfd.revents & G_IO_ERR) fdh->error_active = EINA_TRUE;
 
-        _ecore_try_add_to_call_list(obj, fdh);
+        if (fdh->gfd.revents & G_IO_HUP)
+          {
+             fdh->read_active  = EINA_TRUE;
+             fdh->write_active = EINA_TRUE;
+             fdh->error_active = EINA_TRUE;
+          }
+
+        _ecore_try_add_to_call_list(obj, pd, fdh);
 
         if (fdh->gfd.revents & (G_IO_IN | G_IO_OUT | G_IO_ERR)) ret++;
      }
@@ -600,7 +627,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
 
    if ((!ecore_idling) && (!_ecore_glib_idle_enterer_called))
      {
-        pd->loop_time = _ecore_time_loop_time = ecore_time_get();
+        pd->loop_time = ecore_time_get();
         _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
 
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_ENTER, NULL);
@@ -626,7 +653,7 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                   int r = -1;
                   double t = _efl_loop_timer_next_get(obj, pd);
 
-                  if ((timer_fd >= 0) && (t > 0.0))
+                  if ((pd->timer_fd >= 0) && (t > 0.0))
                     {
                        struct itimerspec ts;
 
@@ -638,13 +665,13 @@ _ecore_main_gsource_prepare(GSource *source EINA_UNUSED,
                        // timerfd cannot sleep for 0 time
                        if (ts.it_value.tv_sec || ts.it_value.tv_nsec)
                          {
-                            r = timerfd_settime(timer_fd, 0, &ts, NULL);
+                            r = timerfd_settime(pd->timer_fd, 0, &ts, NULL);
                             if (r < 0)
                               {
                                  ERR("timer set returned %d (errno=%d)",
                                      r, errno);
-                                 close(timer_fd);
-                                 timer_fd = -1;
+                                 close(pd->timer_fd);
+                                 pd->timer_fd = -1;
                               }
                             else INF("sleeping for %ld s %06ldus",
                                      ts.it_value.tv_sec,
@@ -690,10 +717,10 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
    if (ecore_idling && (!_ecore_main_idlers_exist(pd)) &&
        (!pd->message_queue))
      {
-        if (timer_fd >= 0)
+        if (pd->timer_fd >= 0)
           {
              uint64_t count = 0;
-             int r = read(timer_fd, &count, sizeof count);
+             int r = read(pd->timer_fd, &count, sizeof count);
              if ((r == -1) && (errno == EAGAIN))
                {
                }
@@ -702,15 +729,15 @@ _ecore_main_gsource_check(GSource *source EINA_UNUSED)
                {
                   // unexpected things happened... fail back to old way
                   ERR("timer read returned %d (errno=%d)", r, errno);
-                  close(timer_fd);
-                  timer_fd = -1;
+                  close(pd->timer_fd);
+                  pd->timer_fd = -1;
                }
           }
      }
    else ret = TRUE;
 
    // check if fds are ready
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
    if (pd->epoll_fd >= 0)
      ecore_fds_ready = (_ecore_main_fdh_epoll_mark_active(obj, pd) > 0);
    else
@@ -871,7 +898,7 @@ _ecore_main_loop_setup(Eo *obj, Efl_Loop_Data *pd)
 {
    // Please note that this function is being also called in case of a bad
    // fd to reset the main loop.
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
    pd->epoll_fd = epoll_create(1);
    if (pd->epoll_fd < 0) WRN("Failed to create epoll fd!");
    else
@@ -974,7 +1001,7 @@ _ecore_main_loop_setup(Eo *obj, Efl_Loop_Data *pd)
           {
              g_source_set_priority(ecore_glib_source,
                                    G_PRIORITY_HIGH_IDLE + 20);
-# ifdef HAVE_EPOLL
+# ifdef HAVE_SYS_EPOLL_H
              if (pd->epoll_fd >= 0)
                {
                   // epoll multiplexes fds into the g_main_loop
@@ -1030,7 +1057,7 @@ _ecore_main_loop_clear(Eo *obj, Efl_Loop_Data *pd)
           }
 #endif
      }
-# ifdef HAVE_EPOLL
+# ifdef HAVE_SYS_EPOLL_H
    if (pd->epoll_fd >= 0)
      {
         close(pd->epoll_fd);
@@ -1058,7 +1085,8 @@ _ecore_main_loop_shutdown(void)
    if (!ML_OBJ) return;
    _ecore_main_loop_clear(ML_OBJ, ML_DAT);
 // XXX: this seemingly closes fd's it shouldn't.... :( fd 0?
-   efl_del(ML_OBJ);
+   efl_replace(&ML_OBJ, NULL);
+   ML_DAT = NULL;
 }
 
 void
@@ -1084,8 +1112,12 @@ _ecore_main_loop_iterate(Eo *obj, Efl_Loop_Data *pd)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->loop_time = ecore_time_get();
         _ecore_main_loop_iterate_internal(obj, pd, 1);
+#else
+             g_main_context_iteration(NULL, 0);
+#endif
      }
 }
 
@@ -1118,11 +1150,15 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->in_loop++;
         pd->loop_time = ecore_time_get();
         _ecore_main_loop_iterate_internal(obj, pd, !may_block);
         pd->in_loop--;
         return pd->message_queue ? 1 : 0;
+#else
+        return g_main_context_iteration(NULL, may_block);
+#endif
      }
    return 0;
 }
@@ -1132,11 +1168,6 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
    if (obj == ML_OBJ)
      {
-        if (pd->in_loop > 0)
-          {
-             ERR("Beginning main loop() inside an existing main loop");
-             return;
-          }
 #ifdef HAVE_SYSTEMD
         sd_notify(0, "READY=1");
 #endif
@@ -1181,12 +1212,22 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
      }
    else
      {
+#ifndef USE_G_MAIN_LOOP
         pd->in_loop++;
         pd->loop_time = ecore_time_get();
         while (!pd->do_quit)
           _ecore_main_loop_iterate_internal(obj, pd, 0);
         pd->do_quit = 0;
         pd->in_loop--;
+#else
+        if (!pd->do_quit)
+          {
+             if (!ecore_main_loop)
+               ecore_main_loop = g_main_loop_new(NULL, 1);
+             g_main_loop_run(ecore_main_loop);
+          }
+        pd->do_quit = 0;
+#endif
      }
 }
 
@@ -1230,10 +1271,9 @@ EAPI void
 ecore_main_loop_quit(void)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
-   int val = 0;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-   eina_value_set(&v, &val);
+   eina_value_set(&v, 0);
    EINA_MAIN_LOOP_CHECK_RETURN;
    efl_loop_quit(ML_OBJ, v);
 }
@@ -1280,7 +1320,7 @@ _ecore_main_fd_handler_add(Eo                    *obj,
    DBG("_ecore_main_fd_handler_add");
    Ecore_Fd_Handler *fdh = NULL;
 
-   if ((fd < 0) || (!func)) return NULL;
+   if ((fd < 0) || (flags == 0) || (!func)) return NULL;
 
    fdh = ecore_fd_handler_calloc(1);
    if (!fdh) return NULL;
@@ -1320,6 +1360,8 @@ _ecore_main_fd_handler_del(Eo *obj EINA_UNUSED,
                            Efl_Loop_Data *pd,
                            Ecore_Fd_Handler *fd_handler)
 {
+   void *r = fd_handler->data;
+
    DBG("_ecore_main_fd_handler_del %p", fd_handler);
    if (fd_handler->delete_me)
      {
@@ -1329,16 +1371,25 @@ _ecore_main_fd_handler_del(Eo *obj EINA_UNUSED,
 
    fd_handler->handler = NULL;
    fd_handler->delete_me = EINA_TRUE;
-   _ecore_main_fdh_poll_del(pd, fd_handler);
-   pd->fd_handlers_to_delete = eina_list_append
-     (pd->fd_handlers_to_delete, fd_handler);
-   if (fd_handler->prep_func && pd->fd_handlers_with_prep)
-     pd->fd_handlers_with_prep = eina_list_remove
-      (pd->fd_handlers_with_prep, fd_handler);
-   if (fd_handler->buf_func && pd->fd_handlers_with_buffer)
-     pd->fd_handlers_with_buffer = eina_list_remove
-       (pd->fd_handlers_with_buffer, fd_handler);
-   return fd_handler->data;
+   if (pd)
+     {
+        _ecore_main_fdh_poll_del(pd, fd_handler);
+        pd->fd_handlers_to_delete = eina_list_append
+          (pd->fd_handlers_to_delete, fd_handler);
+        if (fd_handler->prep_func && pd->fd_handlers_with_prep)
+          pd->fd_handlers_with_prep = eina_list_remove
+            (pd->fd_handlers_with_prep, fd_handler);
+        if (fd_handler->buf_func && pd->fd_handlers_with_buffer)
+          pd->fd_handlers_with_buffer = eina_list_remove
+            (pd->fd_handlers_with_buffer, fd_handler);
+     }
+   else
+     {
+        // The main loop is dead by now, so cleanup is required.
+        ECORE_MAGIC_SET(fd_handler, ECORE_MAGIC_NONE);
+        ecore_fd_handler_mp_free(fd_handler);
+     }
+   return r;
 }
 
 EAPI Ecore_Fd_Handler *
@@ -1351,9 +1402,10 @@ ecore_main_fd_handler_add(int                    fd,
 {
    Ecore_Fd_Handler *fdh = NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   fdh = _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
+   fdh = _ecore_main_fd_handler_add(efl_main_loop_get(),
                                     ML_DAT, NULL, fd, flags, func, data,
                                     buf_func, buf_data, EINA_FALSE);
+   if (fdh) fdh->legacy = EINA_TRUE;
    return fdh;
 }
 
@@ -1366,7 +1418,7 @@ ecore_main_fd_handler_file_add(int                    fd,
                                const void            *buf_data)
 {
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   return _ecore_main_fd_handler_add(efl_loop_main_get(EFL_LOOP_CLASS),
+   return _ecore_main_fd_handler_add(efl_main_loop_get(),
                                      ML_DAT, NULL, fd, flags, func, data,
                                      buf_func, buf_data, EINA_TRUE);
 }
@@ -1498,6 +1550,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
                                            Ecore_Fd_Prep_Cb  func,
                                            const void       *data)
 {
+   if (!fd_handler) return;
    Efl_Loop_Data *pd = fd_handler->loop_data;
    EINA_MAIN_LOOP_CHECK_RETURN;
 
@@ -1520,6 +1573,8 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
 EAPI int
 ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
+   if (!fd_handler) return -1;
+
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -1572,20 +1627,9 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 }
 
 void
-_ecore_main_content_clear(Efl_Loop_Data *pd)
+_ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd)
 {
-   Efl_Promise *promise;
-   Efl_Future *future;
-
-   EINA_LIST_FREE(pd->pending_futures, future)
-     efl_del(future);
-   Eina_List *tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, promise)
-     ecore_loop_promise_fulfill(promise);
-
-   // FIXME
-   __eina_promise_cancel_all();
+   __eina_promise_cancel_data(obj);
 
    while (pd->fd_handlers)
      {
@@ -1594,7 +1638,7 @@ _ecore_main_content_clear(Efl_Loop_Data *pd)
         pd->fd_handlers = (Ecore_Fd_Handler *)
           eina_inlist_remove(EINA_INLIST_GET(pd->fd_handlers),
                              EINA_INLIST_GET(fdh));
-        if (fdh->handler) efl_del(fdh->handler);
+        if ((fdh->handler) && (fdh->legacy)) efl_del(fdh->handler);
         else
           {
 // XXX: can't do this because this fd handler is legacy and might
@@ -1725,7 +1769,7 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    // call the prepare callback for all handlers
    if (pd->fd_handlers_with_prep) _ecore_main_prepare_handlers(obj, pd);
 
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
    if (pd->epoll_fd < 0)
      {
 #endif
@@ -1750,8 +1794,8 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
                     }
                }
           }
+#ifdef HAVE_SYS_EPOLL_H
      }
-#ifdef HAVE_EPOLL
    else
      {
         // polling on the epoll fd will wake when fd in the epoll set is active
@@ -1805,7 +1849,7 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      }
    if (ret > 0)
      {
-#ifdef HAVE_EPOLL
+#ifdef HAVE_SYS_EPOLL_H
         if (pd->epoll_fd >= 0)
           _ecore_main_fdh_epoll_mark_active(obj, pd);
         else
@@ -2002,7 +2046,7 @@ _ecore_main_win32_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 #endif
 
 static void
-_ecore_main_fd_handlers_call(Eo *obj, Efl_Loop_Data *pd)
+_ecore_main_fd_handlers_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
 {
    // grab a new list
    if (!pd->fd_handlers_to_call_current)
@@ -2281,19 +2325,12 @@ static void
 _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
 {
    double next_time = -1.0;
-   Eo *f, *p;
 
    if (obj == ML_OBJ)
      {
         in_main_loop++;
         pd->in_loop = in_main_loop;
      }
-   // destroy all optional futures
-   EINA_LIST_FREE(pd->pending_futures, f) efl_del(f);
-   // and propagate all promise value
-   Eina_List *tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, p) ecore_loop_promise_fulfill(p);
    // expire any timers
    _efl_loop_timer_expired_timers_call(obj, pd, pd->loop_time);
    // process signals into events ....
@@ -2362,14 +2399,6 @@ _ecore_main_loop_iterate_internal(Eo *obj, Efl_Loop_Data *pd, int once_only)
 
    // start of the sleeping or looping section
 start_loop: //-*************************************************************
-   // We could be looping here without exiting the function and we need to
-   // process future and promise before the next waiting period.
-   // destroy all optional futures
-   EINA_LIST_FREE(pd->pending_futures, f) efl_del(f);
-   // and propagate all promise value
-   tmp = pd->pending_promises;
-   pd->pending_promises = NULL;
-   EINA_LIST_FREE(tmp, p) ecore_loop_promise_fulfill(p);
    // any timers re-added as a result of these are allowed to go
    _efl_loop_timer_enable_new(obj, pd);
    // if we have been asked to quit the mainloop then exit at this point

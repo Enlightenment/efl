@@ -1,10 +1,10 @@
-const Efl.Gfx.Stack.Layer.Min: short = -32768; [[bottom-most layer number]]
-const Efl.Gfx.Stack.Layer.Max: short = 32767;  [[top-most layer number]]
+const Efl.Gfx.Stack_Layer_Min: short = -32768; [[bottom-most layer number]]
+const Efl.Gfx.Stack_Layer_Max: short = 32767;  [[top-most layer number]]
 
 interface Efl.Gfx.Stack
 {
    [[Efl graphics stack interface]]
-   event_prefix: efl_gfx;
+   event_prefix: efl_gfx_entity;
    methods {
       @property layer {
          set {
@@ -129,6 +129,6 @@ interface Efl.Gfx.Stack
       }
    }
    events {
-      restack; [[Object stacking was changed.]]
+      restack: void; [[Object stacking was changed.]]
    }
 }

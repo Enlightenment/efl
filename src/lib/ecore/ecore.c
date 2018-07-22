@@ -32,6 +32,7 @@
 #include "Ecore.h"
 #include "Efl_Core.h"
 #include "ecore_private.h"
+#include "../../static_libs/buildsystem/buildsystem.h"
 
 #if defined(HAVE_MALLINFO) || defined(HAVE_MALLOC_INFO)
 #include <malloc.h>
@@ -68,6 +69,8 @@ static int _ecore_init_count_threshold = 0;
 int _ecore_log_dom = -1;
 int _ecore_fps_debug = 0;
 
+extern void _ecore_thread_join();
+
 typedef struct _Ecore_Safe_Call Ecore_Safe_Call;
 struct _Ecore_Safe_Call
 {
@@ -103,6 +106,8 @@ static Eina_Condition _thread_cond;
 static Eina_Lock _thread_feedback_mutex;
 static Eina_Condition _thread_feedback_cond;
 
+Eina_Lock _environ_lock;
+
 static Eina_Lock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
@@ -116,8 +121,6 @@ static void _systemd_watchdog_cb(void *data, const Efl_Event *event);
 
 static Efl_Loop_Timer *_systemd_watchdog = NULL;
 #endif
-
-static Efl_Vpath *vpath = NULL;
 
 Eina_Lock _ecore_main_loop_lock;
 int _ecore_main_lock_count;
@@ -162,9 +165,7 @@ ecore_system_modules_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
-                       snprintf(buf, sizeof(buf),
-                                "%s/src/modules/ecore/system/%s/.libs",
-                                PACKAGE_BUILD_DIR, *itr);
+                       bs_mod_get(buf, sizeof(buf), "ecore/system", "system");
                        module_list = eina_module_list_get(module_list, buf,
                                                           EINA_FALSE, NULL, NULL);
                     }
@@ -214,8 +215,7 @@ _efl_first_loop_iterate(void *data, const Efl_Event *event)
       case 'T': fprintf(stderr, "Loop started: '%f' - '%f' = '%f' sec\n", end, _efl_startup_time, end - _efl_startup_time);
          break;
      }
-
-   efl_event_callback_del(event->object, EFL_LOOP_EVENT_RESUME,
+   efl_event_callback_del(event->object, EFL_APP_EVENT_RESUME,
                           _efl_first_loop_iterate, data);
 }
 
@@ -266,6 +266,8 @@ ecore_init(void)
         goto shutdown_log_dom;
      }
 
+   eina_lock_new(&_environ_lock);
+
    efl_object_init();
 
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
@@ -273,9 +275,6 @@ ecore_init(void)
    if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
    if (!_ecore_event_init()) goto shutdown_event;
-
-   vpath = efl_add(EFL_VPATH_CORE_CLASS, NULL);
-   if (vpath) efl_vpath_manager_register(EFL_VPATH_MANAGER_CLASS, 0, vpath);
 
    _ecore_signal_init();
 #ifndef HAVE_EXOTIC
@@ -310,7 +309,7 @@ ecore_init(void)
        _ecore_memory_statistic_file = fopen(tmp, "wb");
 #endif
         _ecore_memory_pid = getpid();
-        ecore_animator_add(_ecore_memory_statistic, NULL);
+        ecore_poller_add(ECORE_POLLER_CORE, 1, _ecore_memory_statistic, NULL);
         _ecore_memory_statistic(NULL);
      }
 #endif
@@ -345,13 +344,11 @@ ecore_init(void)
 
    if (!_no_system_modules)
      ecore_system_modules_load();
-
    if (getenv("EFL_FIRST_LOOP"))
      efl_event_callback_add(efl_main_loop_get(),
-                            EFL_LOOP_EVENT_RESUME,
+                            EFL_APP_EVENT_RESUME,
                             _efl_first_loop_iterate,
                             getenv("EFL_FIRST_LOOP"));
-
    _ecore_init_count_threshold = _ecore_init_count;
 
    eina_log_timing(_ecore_log_dom,
@@ -390,8 +387,7 @@ ecore_shutdown(void)
        }
      if (_ecore_init_count-- != _ecore_init_count_threshold)
        goto end;
-
-     efl_event_callback_call(efl_main_loop_get(), EFL_LOOP_EVENT_TERMINATE, NULL);
+     efl_event_callback_call(efl_main_loop_get(), EFL_APP_EVENT_TERMINATE, NULL);
 
      ecore_system_modules_unload();
 
@@ -428,9 +424,10 @@ ecore_shutdown(void)
     * It should be fine now as we do wait for thread to shutdown before
     * we try to destroy the pipe.
     */
+     _ecore_pipe_wait(_thread_call, 1, 0);
      p = _thread_call;
      _thread_call = NULL;
-     _ecore_pipe_wait(p, 1, 0.1);
+     _ecore_pipe_wait(p, 1, 0);
      _ecore_pipe_del(p);
      eina_lock_free(&_thread_safety);
      eina_condition_free(&_thread_cond);
@@ -439,19 +436,12 @@ ecore_shutdown(void)
      eina_lock_free(&_thread_feedback_mutex);
      eina_lock_free(&_thread_id_lock);
 
-
 #ifndef HAVE_EXOTIC
      _ecore_exe_shutdown();
 #endif
      _ecore_event_shutdown();
      _ecore_main_shutdown();
      _ecore_signal_shutdown();
-
-   if (vpath)
-     {
-        efl_del(vpath);
-        vpath = NULL;
-     }
 
      _ecore_main_loop_shutdown();
 
@@ -481,6 +471,8 @@ ecore_shutdown(void)
 
      efl_object_shutdown();
 
+     eina_lock_free(&_environ_lock);
+
      eina_evlog("<RUN", NULL, 0.0, NULL);
      eina_shutdown();
 #ifdef _WIN32
@@ -499,8 +491,8 @@ ecore_init_ex(int argc, char **argv)
    if (_ecore_init_ex++ != 0) return _ecore_init_ex;
 
    ecore_init();
-   ecore_loop_arguments_send(argc - 1,
-                             (argc > 1) ? ((const char **) argv + 1) : NULL);
+   ecore_loop_arguments_send(argc,
+                             (argc > 0) ? ((const char **)argv) : NULL);
    ecore_app_args_set(argc, (const char**) argv);
 
    return _ecore_init_ex;
@@ -571,13 +563,27 @@ ecore_fork_reset(void)
    Eina_List *l, *ln;
    Ecore_Fork_Cb *fcb;
 
+   eina_debug_fork_reset();
+
    eina_main_loop_define();
    eina_lock_take(&_thread_safety);
 
    ecore_pipe_del(_thread_call);
    _thread_call = ecore_pipe_add(_thread_callback, NULL);
    /* If there was something in the pipe, trigger a wakeup again */
-   if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+   if (_thread_cb)
+     {
+        Ecore_Safe_Call *call;
+
+        EINA_LIST_FOREACH_SAFE(_thread_cb, l, ln, call)
+          {
+             if (call->suspend || call->sync) continue;
+             if (call->cb.async != (Ecore_Cb)&_ecore_thread_join) continue;
+             _thread_cb = eina_list_remove_list(_thread_cb, l);
+             free(call);
+          }
+        if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+     }
 
    eina_lock_release(&_thread_safety);
 

@@ -31,7 +31,7 @@
  * index is always correct. Also once a pointer is unregistered the index
  * won't be served back for 2^8 on 32 bits system and 2^28 on 64 bits system
  * for that specific slot. Finally we guarantee that the lower 2 bits of the
- * returned index are actually never used and completly ignored by our API.
+ * returned index are actually never used and completely ignored by our API.
  * So you can safely store whatever information you want in it, we will ignore
  * it and treat as if it wasn't there.
  *

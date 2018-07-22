@@ -2,6 +2,11 @@
 # include <config.h>
 #endif
 
+#ifdef HAVE_VALGRIND
+# include <valgrind.h>
+# include <memcheck.h>
+#endif
+
 #if defined HAVE_DLADDR && ! defined _WIN32
 # include <dlfcn.h>
 #endif
@@ -32,20 +37,26 @@ static void *
 _eo_call_stack_mem_alloc(size_t size)
 {
 #ifdef HAVE_MMAP
-   // allocate eo call stack via mmped anon segment if on linux - more
-   // secure and safe. also gives page aligned memory allowing madvise
-   void *ptr;
-   size_t newsize;
-   newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
-                              MEM_PAGE_SIZE);
-   ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
-              MAP_PRIVATE | MAP_ANON, -1, 0);
-   if (ptr == MAP_FAILED)
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) return calloc(1, size);
+   else
+# endif
      {
-        ERR("eo call stack mmap failed.");
-        return NULL;
+        // allocate eo call stack via mmped anon segment if on linux - more
+        // secure and safe. also gives page aligned memory allowing madvise
+        void *ptr;
+        size_t newsize;
+        newsize = MEM_PAGE_SIZE * ((size + MEM_PAGE_SIZE - 1) /
+                                   MEM_PAGE_SIZE);
+        ptr = mmap(NULL, newsize, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANON, -1, 0);
+        if (ptr == MAP_FAILED)
+          {
+             ERR("eo call stack mmap failed.");
+             return NULL;
+          }
+        return ptr;
      }
-   return ptr;
 #else
    //in regular cases just use malloc
    return calloc(1, size);
@@ -56,6 +67,10 @@ static void
 _eo_call_stack_mem_free(void *ptr, size_t size)
 {
 #ifdef HAVE_MMAP
+# ifdef HAVE_VALGRIND
+   if (RUNNING_ON_VALGRIND) free(ptr);
+   else
+# endif
    munmap(ptr, size);
 #else
    (void) size;

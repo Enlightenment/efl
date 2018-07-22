@@ -12,7 +12,7 @@ enum Elm.Bubble.Pos
   bottom_right [[The arrow of the bubble points to the bottom right corner.]]
 }
 
-class Elm.Bubble (Efl.Ui.Layout, Efl.Ui.Clickable)
+class Elm.Bubble (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legacy)
 {
    [[Speech bubble widget used in messaging applications]]
 
@@ -38,7 +38,7 @@ class Elm.Bubble (Efl.Ui.Layout, Efl.Ui.Clickable)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.on_access_update;
-      Efl.Part.part;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Part.part_get;
    }
 }

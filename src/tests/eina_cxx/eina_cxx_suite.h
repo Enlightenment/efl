@@ -5,7 +5,7 @@
 #include <algorithm>
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eina_test_inlist(TCase* tc);
 void eina_test_inarray(TCase* tc);
 void eina_test_ptrlist(TCase* tc);

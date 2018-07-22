@@ -117,6 +117,17 @@ _ecore_wl2_output_del(Ecore_Wl2_Output *output)
    free(output);
 }
 
+Ecore_Wl2_Output *
+_ecore_wl2_output_find(Ecore_Wl2_Display *display, struct wl_output *op)
+{
+   Ecore_Wl2_Output *wl2op;
+
+   EINA_INLIST_FOREACH(display->outputs, wl2op)
+     if (wl2op->wl_output == op) return wl2op;
+
+   return NULL;
+}
+
 EAPI int
 ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output)
 {

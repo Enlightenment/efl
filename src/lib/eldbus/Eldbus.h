@@ -87,15 +87,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ELDBUS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ELDBUS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -225,6 +225,7 @@ typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
 
 #ifdef EFL_BETA_API_SUPPORT
 
+#include "eldbus_model.eo.h"
 #include "eldbus_model_arguments.eo.h"
 #include "eldbus_model_connection.eo.h"
 #include "eldbus_model_method.eo.h"

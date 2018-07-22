@@ -23,11 +23,14 @@ static Eo *pong_signal = NULL;
 static void
 _setup(void)
 {
-   check_init();
+   char buf[1024];
+   snprintf(buf, sizeof(buf), FAKE_SERVER_BUS ".%s", basename(__FILE__));
+   fake_server = fake_server_start(&fake_server_data, buf);
 
-   fake_server = fake_server_start(&fake_server_data);
-
-   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(), eldbus_model_object_constructor(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE, FAKE_SERVER_BUS, FAKE_SERVER_PATH));
+   fake_server_object = efl_add(ELDBUS_MODEL_OBJECT_CLASS, efl_main_loop_get(),
+                                eldbus_model_connect(efl_added, ELDBUS_CONNECTION_TYPE_SESSION, NULL, EINA_FALSE),
+                                eldbus_model_object_bus_set(efl_added, buf),
+                                eldbus_model_object_path_set(efl_added, FAKE_SERVER_PATH));
    ck_assert_ptr_ne(NULL, fake_server_object);
 
    fake_server_proxy = eldbus_model_proxy_from_object_get(fake_server_object, FAKE_SERVER_INTERFACE);
@@ -40,14 +43,13 @@ _setup(void)
 static void
 _teardown(void)
 {
-   efl_unref(fake_server_object);
+   efl_del(fake_server_object);
 
    fake_server_stop(fake_server);
 
-   check_shutdown();
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    properties = efl_model_properties_get(pong_signal);
@@ -57,30 +59,37 @@ START_TEST(properties_get)
    const unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
+   Eina_Value *value;
+   Eina_Error err;
+
    // Signal properties always have output direction
-   Efl_Future *future;
-   future = efl_model_property_get(pong_signal, ARGUMENT_A);
-   efl_model_future_then(future);
+   value = efl_model_property_get(pong_signal, ARGUMENT_A);
+   fail_if(value == NULL);
 
    // Nonexistent property must return ERROR
-   future = efl_model_property_get(pong_signal, "nonexistent");
-   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
-}
-END_TEST
+   value = efl_model_property_get(pong_signal, "nonexistent");
+   fail_if(value == NULL);
+   fail_if(eina_value_type_get(value) != EINA_VALUE_TYPE_ERROR);
 
-START_TEST(property_set)
+   eina_value_error_get(value, &err);
+   fail_if(err != EFL_MODEL_ERROR_NOT_FOUND);
+}
+EFL_END_TEST
+
+EFL_START_TEST(property_set)
 {
    // Signals have output arguments only. All returns error
-   Efl_Future *future;
-   Eina_Value dummy = {0};
+   Eina_Value dummy = EINA_VALUE_EMPTY;
+   Eina_Future *future;
+
    future = efl_model_property_set(pong_signal, ARGUMENT_A, &dummy);
    check_efl_model_future_error(future, NULL);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_signal_children_count(Eo *efl_model)
@@ -88,37 +97,38 @@ _test_signal_children_count(Eo *efl_model)
    check_efl_model_children_count_eq(efl_model, 0);
 }
 
-START_TEST(children_count)
+EFL_START_TEST(children_count)
 {
    _test_signal_children_count(pong_signal);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
-   Efl_Future *future;
+   Eina_Future *future;
+
    future = efl_model_children_slice_get(pong_signal, 1, 1);
    check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(pong_signal);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+EFL_START_TEST(child_del)
 {
    // efl_model_child_del always returns ERROR FIXME catch error
    Eo *child = NULL;
    efl_model_child_del(pong_signal, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(signals)
+EFL_START_TEST(signals)
 {
    Eldbus_Model_Method *ping_method = eldbus_model_method_from_proxy_get(fake_server_proxy, FAKE_SERVER_PING_METHOD_NAME);
    ck_assert_ptr_ne(NULL, ping_method);
@@ -131,7 +141,7 @@ START_TEST(signals)
 
    check_efl_model_property_int_eq(pong_signal, ARGUMENT_A, 100);
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_model_signal(TCase *tc)
 {

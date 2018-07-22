@@ -1,0 +1,56 @@
+class Efl.Canvas.Animation_Player (Efl.Object, Efl.Player)
+{
+   [[Efl animation object class]]
+   eo_prefix: efl_animation_player;
+   methods {
+      @property animation {
+         set {}
+         get {}
+         values {
+            animation: Efl.Canvas.Animation;
+         }
+      }
+      @property auto_del {
+         [[Auto delete property]]
+         set {
+         }
+         get {
+         }
+         values {
+            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
+         }
+      }
+      @property target {
+         [[Target object property]]
+         set {
+         }
+         get {
+         }
+         values {
+            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Player.start;
+      Efl.Player.stop;
+      Efl.Player.play { get; set; }
+      Efl.Player.playable { get; }
+      Efl.Player.pos { get; set; }
+      Efl.Player.progress { get;}
+      Efl.Player.play_speed { get; set; }
+      //Efl.Player.volume { get; set; }
+      //Efl.Player.mute { get; set; }
+      Efl.Player.length { get; }
+      Efl.Player.seekable { get; }
+   }
+   events {
+      /* FIXME: This event is similar to Efl.Canvas.Object.anim_started but with different type, might be confusing. */
+      started: void; [[Animation is started.]]
+      running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
+      /* FIXME: This event is similar to Efl.Canvas.Object.anim_ended but with different type, might be confusing. */
+      ended: void; [[Animation is ended.]]
+   }
+}

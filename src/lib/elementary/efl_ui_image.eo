@@ -1,4 +1,4 @@
-struct Efl.Ui.Image.Progress
+struct Efl.Ui.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -8,7 +8,7 @@ struct Efl.Ui.Image.Progress
    total: double; [[Total percentage]]
 }
 
-struct Efl.Ui.Image.Error
+struct Efl.Ui.Image_Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -18,10 +18,10 @@ struct Efl.Ui.Image.Error
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
-                 Efl.File, Efl.Image, Efl.Image.Load, Efl.Player, Efl.Gfx.View,
-                 Efl.Access.Image, Efl.Access.Widget.Action, Efl.Gfx.Color,
-                 Efl.Orientation, Efl.Flipable,
+class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
+                 Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
+                 Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
+                 Efl.Orientation,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal)
 {
@@ -88,21 +88,20 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.File.mmap { set; }
       Efl.Gfx.Color.color { set; }
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
-      Efl.Image.image_size { get; }
-      Efl.Image.Load.load_size { get; set; }
-      Efl.Image.smooth_scale { get; set; }
-      Efl.Image.scale_type { get; set; }
+      Efl.Gfx.Image.image_size { get; }
+      Efl.Gfx.Image_Load_Controller.load_size { get; set; }
+      Efl.Gfx.Image.smooth_scale { get; set; }
+      Efl.Gfx.Image.scale_type { get; set; }
       Efl.Orientation.orientation { get; set; }
-      Efl.Flipable.flip { get; set; }
+      Efl.Orientation.flip { get; set; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Layout.Signal.signal_emit;
@@ -116,12 +115,12 @@ class Efl.Ui.Image (Elm.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Ui.Draggable.drag_target { get; set; }
       Efl.Ui.Model.Connect.connect;
       Efl.Ui.View.model { get; set; }
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
-      Efl.Access.Image.extents { get; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      drop; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
+      drop: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
    }
 }

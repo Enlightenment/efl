@@ -2,7 +2,7 @@
 #define _EIO_SUITE_H
 
 #include <check.h>
-
+#include "../efl_check.h"
 void eio_test_monitor(TCase *tc);
 void eio_test_sentry(TCase *tc);
 void eio_model_test_file(TCase *tc);

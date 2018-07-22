@@ -14,7 +14,12 @@
 # include <Evil.h>
 #endif
 
+#define EFL_NET_SOCKET_SSL_PROTECTED
+
 #include "Ecore.h"
+
+#include "Efl_Net.h"
+
 #include "ecore_private.h"
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
@@ -88,15 +93,16 @@ typedef struct _Ecore_Con_Lookup_Ctx {
 } Ecore_Con_Lookup_Ctx;
 
 /* allows delete_me to be true */
-#define ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, ...) \
-  do \
-    { \
-       if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER)) \
-         { \
+#define ECORE_CON_SERVER_CHECK_RELAXED_RETURN(svr, ...)                 \
+  do                                                                    \
+    {                                                                   \
+       if (!svr) return __VA_ARGS__;                                    \
+       if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))             \
+         {                                                              \
             ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __FUNCTION__); \
-            return __VA_ARGS__; \
-         } \
-    } \
+            return __VA_ARGS__;                                         \
+         }                                                              \
+    }                                                                   \
   while (0)
 
 #define ECORE_CON_SERVER_CHECK_RETURN(svr, ...) \
@@ -107,15 +113,16 @@ typedef struct _Ecore_Con_Lookup_Ctx {
     } \
   while (0)
 
-#define ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, ...) \
-  do \
-    { \
-       if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT)) \
-         { \
+#define ECORE_CON_CLIENT_CHECK_RELAXED_RETURN(cl, ...)                  \
+  do                                                                    \
+    {                                                                   \
+       if (!cl) return __VA_ARGS__;                                     \
+       if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))              \
+         {                                                              \
             ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, __FUNCTION__); \
-            return __VA_ARGS__; \
-         } \
-    } \
+            return __VA_ARGS__;                                         \
+         }                                                              \
+    }                                                                   \
   while (0)
 
 #define ECORE_CON_CLIENT_CHECK_RETURN(cl, ...) \
@@ -258,31 +265,35 @@ _ecore_con_client_socket_close(Ecore_Con_Client *cl)
 {
    if (!cl->socket) return;
 
-   /* socket may remain alive due other references, we don't own it */
-   efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
-
    if (!efl_io_closer_closed_get(cl->socket))
      efl_io_closer_close(cl->socket);
+
+   /* socket may remain alive due other references, we don't own it */
+   efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
 }
 
 static void
 _ecore_con_client_free(Ecore_Con_Client *cl)
 {
-   cl->delete_me = EINA_TRUE;
+   Ecore_Con_Server *svr = cl->svr;
 
-   if (cl->svr)
-     cl->svr->clients = eina_list_remove(cl->svr->clients, cl);
+   cl->delete_me = EINA_TRUE;
+   cl->svr = NULL;
+
+   if (svr)
+     svr->clients = eina_list_remove(svr->clients, cl);
 
    _ecore_con_client_socket_close(cl);
 
    if (cl->socket)
      {
-        Eo *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
-        efl_event_callback_array_del(cl->socket, _ecore_con_client_socket_cbs(), cl);
+        Eo *parent, *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
+
         if (efl_isa(inner_socket, EFL_NET_SOCKET_SSL_CLASS))
           efl_event_callback_array_del(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
 
-        if (efl_parent_get(cl->socket) != cl->svr->server)
+        parent = efl_parent_get(cl->socket);
+        if (parent && (parent != svr->server))
           efl_del(cl->socket); /* we own it */
         else
           efl_unref(cl->socket);
@@ -298,6 +309,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      }
 
    if (cl->event_count) return;
+
+   if (svr && (!svr->event_count) && (svr->delete_me))
+     _ecore_con_server_free(svr);
 
    cl->data = NULL;
    eina_stringshare_replace(&cl->ip, NULL);
@@ -778,9 +792,21 @@ ecore_con_client_fd_get(const Ecore_Con_Client *cl)
    ECORE_CON_CLIENT_CHECK_RETURN(cl, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
    if (cl->socket)
      {
-        if (efl_isa(cl->socket, EFL_LOOP_FD_CLASS))
-          return efl_loop_fd_get(cl->socket);
-        return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
+        Eo *inner_socket = efl_io_buffered_stream_inner_io_get(cl->socket);
+        if (efl_isa(inner_socket, EFL_LOOP_FD_CLASS))
+          {
+             return efl_loop_fd_get(inner_socket);
+          }
+        else
+          {
+             if (efl_isa(inner_socket, EFL_NET_SOCKET_SSL_CLASS))
+               {
+                  Eo* adopted_socket = NULL;
+                  if (efl_net_socket_ssl_adopted_get(inner_socket, &adopted_socket, NULL))
+                    if (efl_isa(adopted_socket, EFL_LOOP_FD_CLASS))
+                      return efl_loop_fd_get(adopted_socket);
+               }
+          }
      }
    return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
 }
@@ -842,11 +868,9 @@ _ecore_con_client_ssl_upgrade_job(void *data, const Eina_Value v,
 
    efl_parent_set(inner_socket, socket);
 
-   efl_unref(inner_socket); /* socket keeps it */
-
    cl->socket = socket;
    efl_io_closer_close_on_exec_set(socket, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(socket, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(socket, EINA_TRUE);
    efl_event_callback_array_del(tcp_socket, _ecore_con_client_socket_cbs(), cl);
    efl_event_callback_array_add(socket, _ecore_con_client_socket_cbs(), cl);
    efl_event_callback_array_add(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
@@ -940,6 +964,8 @@ ecore_con_server_check(const Ecore_Con_Server *svr)
 static Ecore_Con_Server *
 _ecore_con_server_new(Eina_Bool is_dialer, Ecore_Con_Type type, const char *name, int port, const void *data)
 {
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!name || (!name[0]), NULL);
+
    Ecore_Con_Server *svr = calloc(1, sizeof(Ecore_Con_Server));
    EINA_SAFETY_ON_NULL_RETURN_VAL(svr, NULL);
    svr->start_time = ecore_time_get();
@@ -957,6 +983,7 @@ _ecore_con_server_new(Eina_Bool is_dialer, Ecore_Con_Type type, const char *name
 static void
 _ecore_con_server_dialer_close(Ecore_Con_Server *svr)
 {
+   svr->connecting = EINA_FALSE;
    if (!svr->dialer) return;
 
    if (!efl_io_closer_closed_get(svr->dialer))
@@ -976,6 +1003,14 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 
    _ecore_con_server_dialer_close(svr);
 
+   if (svr->ssl.clients_ctx)
+     {
+        // This is always created with efl_add_ref
+        efl_parent_set(svr->ssl.clients_ctx, NULL);
+        efl_unref(svr->ssl.clients_ctx);
+        svr->ssl.clients_ctx = NULL;
+     }
+
    if (svr->dialer)
      {
         efl_del(svr->dialer);
@@ -986,12 +1021,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      {
         efl_del(svr->server);
         svr->server = NULL;
-     }
-
-   if (svr->ssl.clients_ctx)
-     {
-        efl_unref(svr->ssl.clients_ctx);
-        svr->ssl.clients_ctx = NULL;
      }
 
    if (svr->ssl.job) eina_future_cancel(svr->ssl.job);
@@ -1317,8 +1346,8 @@ _ecore_con_server_dialer_error(void *data, const Efl_Event *event)
 
    WRN("error reaching server %s: %s", efl_net_dialer_address_dial_get(svr->dialer), eina_error_msg_get(*perr));
 
-   _ecore_con_server_dialer_close(svr);
    _ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr));
+   _ecore_con_server_dialer_close(svr);
 }
 
 static void
@@ -1581,7 +1610,10 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        return NULL;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
@@ -1590,13 +1622,13 @@ _ecore_con_server_ssl_ctx_create(const Ecore_Con_Server *svr)
 
    /* legacy compatibility: server never verified peer, only dialer did */
 
-   return efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
-                  efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
-                  efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                  efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
-                  efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
-                  efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
-                  efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
+   return efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
+                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
+                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
+                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                      efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
+                      efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
+                      efl_net_ssl_context_setup(efl_added, cipher, EINA_FALSE));
 }
 
 static Eina_Value
@@ -1625,7 +1657,6 @@ _ecore_con_server_server_ssl_job(void *data, const Eina_Value v,
    efl_parent_set(inner_server, server);
 
    efl_unref(ssl_ctx); /* inner_server keeps it */
-   efl_unref(inner_server); /* server keeps it */
 
    if (!_ecore_con_server_server_set(svr, server))
      goto error_serve;
@@ -1673,6 +1704,15 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    type = compl_type & ECORE_CON_TYPE;
+
+   /* The allowable port number is an unsigned 16-bit integer for remote connection, so 1-65535, 0 is reserved */
+   if (((type == ECORE_CON_REMOTE_TCP) || (type == ECORE_CON_REMOTE_NODELAY) || (type == ECORE_CON_REMOTE_CORK) ||
+        (type == ECORE_CON_REMOTE_UDP) || (type == ECORE_CON_REMOTE_MCAST)) &&
+       ((port < 0) || (port > 65535)))
+     {
+        ERR("Port %i invalid (0 <= port <= 65535)", port);
+        return NULL;
+     }
 
    loop = efl_main_loop_get();
    EINA_SAFETY_ON_NULL_RETURN_VAL(loop, NULL);
@@ -1842,7 +1882,7 @@ _ecore_con_server_dialer_set(Ecore_Con_Server *svr, Eo *dialer)
 
    svr->dialer = dialer;
    efl_io_closer_close_on_exec_set(dialer, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(dialer, EINA_TRUE);
    efl_io_buffered_stream_timeout_inactivity_set(dialer, svr->timeout);
    efl_event_callback_array_add(dialer, _ecore_con_server_dialer_cbs(), svr);
 
@@ -1950,7 +1990,10 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        goto error_ssl_ctx;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
@@ -1960,7 +2003,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    if (svr->ssl.verify)
      verify_mode = EFL_NET_SSL_VERIFY_MODE_REQUIRED;
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
                      efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
                      efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
                      efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
@@ -1981,9 +2024,7 @@ _ecore_con_server_dialer_ssl_job(void *data, const Eina_Value v,
    EINA_SAFETY_ON_NULL_GOTO(dialer, error_dialer);
 
    efl_parent_set(inner_dialer, dialer);
-
-   efl_unref(ssl_ctx); /* inner_dialer keeps it */
-   efl_unref(inner_dialer); /* dialer keeps it */
+   efl_parent_set(ssl_ctx, inner_dialer);
 
    if (!_ecore_con_server_dialer_set(svr, dialer))
      goto error_dial;
@@ -2044,7 +2085,10 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    else if (ssl_type & ECORE_CON_USE_TLS)
      cipher = EFL_NET_SSL_CIPHER_TLSV1;
    else if (ssl_type & ECORE_CON_USE_SSL3)
-     cipher = EFL_NET_SSL_CIPHER_SSLV3;
+     {
+        ERR("SSLv3 is unsupported!");
+        goto error_ssl_ctx;
+     }
    else if (ssl_type & ECORE_CON_USE_SSL2)
      {
         ERR("SSLv2 is unsupported!");
@@ -2054,16 +2098,16 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    if (svr->ssl.verify)
      verify_mode = EFL_NET_SSL_VERIFY_MODE_REQUIRED;
 
-   ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
-                     efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
-                     efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
-                     efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
-                     efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
-                     efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
-                     efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),
-                     efl_net_ssl_context_hostname_verify_set(efl_added, svr->ssl.verify_basic),
-                     efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
-                     efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
+   ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, efl_main_loop_get(),
+                         efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(svr->ssl.certs)),
+                         efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(svr->ssl.privkeys)),
+                         efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(svr->ssl.crls)),
+                         efl_net_ssl_context_certificate_authorities_set(efl_added, eina_list_iterator_new(svr->ssl.cafiles)),
+                         efl_net_ssl_context_verify_mode_set(efl_added, verify_mode),
+                         efl_net_ssl_context_hostname_set(efl_added, svr->ssl.verify_name ? svr->ssl.verify_name : svr->name),
+                         efl_net_ssl_context_hostname_verify_set(efl_added, svr->ssl.verify_basic),
+                         efl_net_ssl_context_default_paths_load_set(efl_added, EINA_FALSE), /* old API didn't load default paths */
+                         efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
    EINA_SAFETY_ON_NULL_GOTO(ssl_ctx, error_ssl_ctx);
 
    tcp_dialer = svr->dialer;
@@ -2082,11 +2126,10 @@ _ecore_con_server_dialer_ssl_upgrade_job(void *data, const Eina_Value v,
    efl_parent_set(inner_dialer, dialer);
 
    efl_unref(ssl_ctx); /* inner_dialer keeps it */
-   efl_unref(inner_dialer); /* dialer keeps it */
 
    svr->dialer = dialer;
    efl_io_closer_close_on_exec_set(dialer, EINA_TRUE);
-   efl_io_closer_close_on_destructor_set(dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(dialer, EINA_TRUE);
    efl_event_callback_array_del(tcp_dialer, _ecore_con_server_dialer_cbs(), svr);
    efl_event_callback_array_add(dialer, _ecore_con_server_dialer_cbs(), svr);
 
@@ -2393,7 +2436,19 @@ ecore_con_server_fd_get(const Ecore_Con_Server *svr)
      {
         Eo *inner_dialer = efl_io_buffered_stream_inner_io_get(svr->dialer);
         if (efl_isa(inner_dialer, EFL_LOOP_FD_CLASS))
-          return efl_loop_fd_get(inner_dialer);
+          {
+             return efl_loop_fd_get(inner_dialer);
+          }
+        else
+          {
+             if (efl_isa(inner_dialer, EFL_NET_DIALER_SSL_CLASS))
+               {
+                  Eo* adopted_dialer = NULL;
+                  if (efl_net_socket_ssl_adopted_get(inner_dialer, &adopted_dialer, NULL))
+                    if (efl_isa(adopted_dialer, EFL_LOOP_FD_CLASS))
+                      return efl_loop_fd_get(adopted_dialer);
+               }
+          }
         return SOCKET_TO_LOOP_FD(INVALID_SOCKET);
      }
    if (svr->server)
@@ -2625,7 +2680,7 @@ ecore_con_lookup(const char *name, Ecore_Con_Dns_Cb done_cb, const void *data)
      .ai_flags = AI_ADDRCONFIG | AI_V4MAPPED | AI_CANONNAME,
    };
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!name || (!name[0]), EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, EINA_FALSE);
 
    ctx = malloc(sizeof(Ecore_Con_Lookup_Ctx));

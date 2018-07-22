@@ -80,7 +80,7 @@ enum Elm.GLView.Render.Policy
    always    = 2  [[Render always even when it is not visible]]
 }
 
-class Elm.Glview (Elm.Widget, Efl.Gfx.View)
+class Elm.Glview (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy)
 {
    [[Elementary GL view class]]
    legacy_prefix: elm_glview;
@@ -189,26 +189,29 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
    implements {
       class.constructor;
       Efl.Object.finalize;
-      Efl.Gfx.size { set; }
-      Elm.Widget.on_focus_update;
+      Efl.Gfx.Entity.size { set; }
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Gfx.View.view_size { get; set; }
    }
    events {
-      created; [[Event dispatched when first render happens.
+      created: void; 
+            [[Event dispatched when first render happens.
 
               The callback function gets called once during the
               render loop. Callback function allows glview to hide all the
               rendering context/surface details and have the user just
               call GL calls that they desire for initialization GL calls.
             ]]
-      destroyed; [[Event dispatched when GLView object is deleted.
+      destroyed: void;
+            [[Event dispatched when GLView object is deleted.
 
               The registered destroyed function gets called when GLView object
               is deleted. Callback function allows glview to hide all the
               rendering context/surface  details and have the user just
               call GL calls that they desire  when delete happens.
             ]]
-      resized; [[Event dispatched when resize happens.
+      resized: void;
+            [[Event dispatched when resize happens.
 
               The resized event callback functions gets called
               during the render loop. The callback function allows
@@ -216,7 +219,8 @@ class Elm.Glview (Elm.Widget, Efl.Gfx.View)
               details and have the user just call GL alls that
               they desire when resize happens.
             ]]
-      render; [[Event dispatched when GLView is rendered.
+      render: void;
+            [[Event dispatched when GLView is rendered.
 
               The callback function gets called in the main loop but whether
               it runs depends on the rendering policy and whether

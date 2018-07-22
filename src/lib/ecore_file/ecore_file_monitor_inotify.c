@@ -47,7 +47,26 @@ static int                 _ecore_file_monitor_inotify_monitor(Ecore_File_Monito
 static void                _ecore_file_monitor_inotify_print(char *file, int mask);
 #endif
 
+static Eina_Bool reseting;
 static Eina_Hash *monitor_hash;
+
+static void
+_ecore_file_monitor_inotify_reset()
+{
+   Eina_Iterator *it;
+   Ecore_File_Monitor *em;
+   Eina_Hash *h = monitor_hash;
+   monitor_hash = NULL;
+   reseting = 1;
+   ecore_file_monitor_backend_shutdown();
+   ecore_file_monitor_backend_init();
+   it = eina_hash_iterator_data_new(h);
+   EINA_ITERATOR_FOREACH(it, em)
+     _ecore_file_monitor_inotify_monitor(em, em->path);
+   eina_iterator_free(it);
+   eina_hash_free(h);
+   reseting = 0;
+}
 
 int
 ecore_file_monitor_backend_init(void)
@@ -68,6 +87,8 @@ ecore_file_monitor_backend_init(void)
         return 0;
      }
 
+   if (!reseting)
+     ecore_fork_reset_callback_add(_ecore_file_monitor_inotify_reset, NULL);
    _inotify_fd_pid = getpid();
    monitor_hash = eina_hash_int32_new(NULL);
    return 1;
@@ -87,10 +108,13 @@ ecore_file_monitor_backend_shutdown(void)
         ecore_main_fd_handler_del(_fdh);
         if (fd > -1)
           close(fd);
+        _fdh = NULL;
      }
    eina_hash_free(monitor_hash);
    monitor_hash = NULL;
    _inotify_fd_pid = -1;
+   if (!reseting)
+     ecore_fork_reset_callback_del(_ecore_file_monitor_inotify_reset, NULL);
    return 1;
 }
 
@@ -108,10 +132,7 @@ ecore_file_monitor_backend_add(const char *path,
    if (_inotify_fd_pid == -1) return NULL;
 
    if (_inotify_fd_pid != getpid())
-     {
-        ecore_file_monitor_backend_shutdown();
-        ecore_file_monitor_backend_init();
-     }
+     _ecore_file_monitor_inotify_reset();
 
    em = (Ecore_File_Monitor *)calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
@@ -144,7 +165,7 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
      eina_hash_list_remove(monitor_hash, &ECORE_FILE_MONITOR_INOTIFY(em)->wd, em);
 
    fd = ecore_main_fd_handler_fd_get(_fdh);
-   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
+   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd >= 0)
      inotify_rm_watch(fd, ECORE_FILE_MONITOR_INOTIFY(em)->wd);
    eina_stringshare_del(em->path);
    free(em);
@@ -153,7 +174,7 @@ ecore_file_monitor_backend_del(Ecore_File_Monitor *em)
 static Eina_Bool
 _ecore_file_monitor_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 {
-   Eina_List *l, *ll;
+   Eina_List *l, *ll, *ll2;
    Ecore_File_Monitor *em;
    char buffer[16384];
    struct inotify_event *event;
@@ -173,7 +194,7 @@ _ecore_file_monitor_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fd
         i += event_size;
 
         l = _ecore_file_monitor_inotify_monitor_find(event->wd);
-        EINA_LIST_FOREACH(l, ll, em)
+        EINA_LIST_FOREACH_SAFE(l, ll, ll2, em)
           _ecore_file_monitor_inotify_events(em, (event->len ? event->name : NULL), event->mask);
      }
 

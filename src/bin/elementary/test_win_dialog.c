@@ -60,7 +60,7 @@ _size_update(void *data, const Efl_Event *ev)
    cmin = efl_gfx_size_hint_combined_min_get(dia);
    min = efl_gfx_size_hint_min_get(dia);
    max = efl_gfx_size_hint_max_get(dia);
-   sz = efl_gfx_size_get(dia);
+   sz = efl_gfx_entity_size_get(dia);
 
    sprintf(buf, "This is a dialog with min/max size<br>"
            "Min size: %dx%d (requested) %dx%d (effective)<br>"
@@ -83,8 +83,8 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
    lb = elm_label_add(dia);
-   efl_event_callback_add(dia, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
-   efl_event_callback_add(dia, EFL_GFX_EVENT_RESIZE, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Dialog Window");
    efl_gfx_size_hint_weight_set(lb, 1.0, 1.0);
 
@@ -101,7 +101,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 {
    Efl_Canvas_Object *dia, *lb;
 
-   dia = efl_add(EFL_UI_WIN_CLASS, NULL,
+   dia = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-4"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
@@ -110,8 +110,8 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 
    //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
    lb = elm_label_add(dia);
-   efl_event_callback_add(dia, EFL_GFX_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
-   efl_event_callback_add(dia, EFL_GFX_EVENT_RESIZE, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Centered Dialog Window");
    efl_gfx_size_hint_weight_set(lb, 1.0, 1.0);
 

@@ -71,7 +71,7 @@
  *
  * A queue of pointers to free in the future. You may create custom free
  * queues of your own to defer freeing, use the main free queue where the
- * mainloop will free thnigs as it iterates, or eina will free everything
+ * mainloop will free things as it iterates, or eina will free everything
  * on shut down.
  * 
  */
@@ -90,7 +90,7 @@ typedef enum _Eina_FreeQ_Type
     * safety purposes only.
     *
     * As this type of free queue is thread-safe, the free functions used must
-    * also be thread-safe (eg. libc free()).
+    * also be thread-safe (e.g.. libc free()).
     *
     * @since 1.19
     */
@@ -173,7 +173,7 @@ eina_freeq_main_get(void);
  * called.
  *
  * @note Setting a maximum count on a postponed free queue leads to undefined
- *       behaviour.
+ *       behavior.
  *
  * @since 1.19
  */
@@ -206,7 +206,7 @@ eina_freeq_count_max_get(Eina_FreeQ *fq);
  * memory used by items in the queue is below or at the limit.
  *
  * @note Setting a memory limit on a postponed free queue leads to undefined
- *       behaviour.
+ *       behavior.
  * 
  * @since 1.19
  */

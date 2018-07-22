@@ -1,0 +1,69 @@
+class Efl.Ui.Text_Factory.Images (Efl.Object, Efl.Canvas.Text_Factory)
+{
+   [[Factory that creates images given key string
+
+     The key can be either a full image path, or associated with one. The
+     factory will fallback if key was not matches with an image, and try
+     to load it as a full path.
+
+     @since 1.21
+   ]]
+   methods {
+      matches_add {
+         [[Associates given name with a path of an image or EET file.
+
+          This can be used for quick retrieval (instead of
+          providing actual filenames.
+
+          This $file is associated with $name is considered a full file path.
+
+          see @.matches_mmap_add for mmap version
+          see @.matches_del
+         ]]
+         params {
+            name: string; [[the name associated with filename]]
+            path: string; [[the image or EET file path]]
+            key: string; [[the key to use (in cases of loading an EET file]]
+         }
+         return: bool; [[$true if successful, $false otherwise]]
+      }
+      matches_del {
+         [[Deletes an association of $key with its respective file path.
+
+          see @.matches_add
+         ]]
+         params {
+            key: string; [[the entry's key to delete]]
+         }
+         return: bool; [[$true if successful, $false otherwise]]
+      }
+      matches_mmap_add {
+         [[Associates given name with a mmap'd image or EET file and key.
+
+          see @.matches_add for string file path version
+          see @.matches_mmap_del
+         ]]
+         params {
+            name: string; [[the name associated with filename]]
+            file: ptr(const(Eina.File)); [[the image or EET file]]
+            key: string; [[the key to use (in cases of loading an EET file]]
+         }
+         return: bool; [[$true if successful, $false otherwise]]
+      }
+      matches_mmap_del {
+         [[Deletes an association of $key with its respective file.
+
+          see @.matches_mmap_add
+         ]]
+         params {
+            key: string; [[the entry's key to delete]]
+         }
+         return: bool; [[$true if successful, $false otherwise]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Text_Factory.create;
+   }
+}

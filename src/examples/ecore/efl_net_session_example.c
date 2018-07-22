@@ -1,11 +1,5 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
-
-static int retval = EXIT_SUCCESS;
-
 
 static const char *
 _state_str(Efl_Net_Session_State state)
@@ -51,7 +45,7 @@ _changed(void *data EINA_UNUSED, const Efl_Event *event)
           "INFO:  - state: %s\n"
           "INFO:  - technology: %s\n"
           "INFO:  - interface: '%s'\n",
-          efl_net_session_name_get(session),
+          efl_net_session_network_name_get(session),
           _state_str(efl_net_session_state_get(session)),
           _technology_str(efl_net_session_technology_get(session)),
           efl_net_session_interface_get(session));
@@ -96,8 +90,39 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *session = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (session)
+     {
+        efl_del(session);
+        session = NULL;
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *str;
    Eina_List *techs = NULL;
@@ -118,16 +143,11 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *session;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -152,12 +172,11 @@ main(int argc, char **argv)
           }
      }
 
-   session = efl_add(EFL_NET_SESSION_CLASS, efl_main_loop_get(),
+   session = efl_add(EFL_NET_SESSION_CLASS, ev->object,
                      efl_event_callback_array_add(efl_added, session_events_cbs(), NULL));
    if (!session)
      {
         fputs("ERROR: Could not create Efl.Net.Session object.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -169,13 +188,10 @@ main(int argc, char **argv)
 
    printf("INFO: the session will active while this application runs. Use ^C (Control + C) to close it\n");
 
-   ecore_main_loop_begin();
-
-   efl_del(session);
+   return ;
 
  end:
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();

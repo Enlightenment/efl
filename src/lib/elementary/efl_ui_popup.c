@@ -2,7 +2,9 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_PART_PROTECTED
 #define EFL_UI_POPUP_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -27,10 +29,10 @@ _backwall_clicked_cb(void *data,
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
+_efl_ui_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
 {
    pd->align = EFL_UI_POPUP_ALIGN_NONE;
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
 
 static void
@@ -38,9 +40,9 @@ _calc_align(Eo *obj)
 {
    Efl_Ui_Popup_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-   Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-   Eina_Rect o_geom = efl_gfx_geometry_get(obj);
+   Eina_Rect o_geom = efl_gfx_entity_geometry_get(obj);
 
    Evas_Coord pw, ph;
    pw = p_geom.w;
@@ -53,19 +55,19 @@ _calc_align(Eo *obj)
    switch (pd->align)
      {
       case EFL_UI_POPUP_ALIGN_CENTER:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow ) / 2, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow ) / 2, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_LEFT:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(0, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(0, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_RIGHT:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(pw - ow, (ph - oh) / 2));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D(pw - ow, (ph - oh) / 2));
          break;
       case EFL_UI_POPUP_ALIGN_TOP:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, 0));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, 0));
          break;
       case EFL_UI_POPUP_ALIGN_BOTTOM:
-         efl_gfx_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, ph - oh));
+         efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), EINA_POSITION2D((pw - ow) / 2, ph - oh));
          break;
       default:
          break;
@@ -73,9 +75,9 @@ _calc_align(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
+_efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), size);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
 
    elm_layout_sizing_eval(obj);
 }
@@ -94,7 +96,7 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
+_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
 {
    pd->win_parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!pd->win_parent)
@@ -103,13 +105,13 @@ _efl_ui_popup_elm_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_U
         return;
      }
 
-   Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-   efl_gfx_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
-   efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+   efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
+   efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb, obj);
-   efl_event_callback_add(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb, obj);
 }
 
 EOLIAN static void
@@ -124,7 +126,7 @@ _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup
 }
 
 EOLIAN static Efl_Ui_Popup_Align
-_efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->align;
 }
@@ -132,13 +134,13 @@ _efl_ui_popup_align_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
 {
-   efl_gfx_size_set(obj, size);
+   efl_gfx_entity_size_set(obj, size);
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_popup_popup_size_get(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
+_efl_ui_popup_popup_size_get(const Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
 {
-   return efl_gfx_size_get(obj);
+   return efl_gfx_entity_size_get(obj);
 }
 
 static Eina_Bool
@@ -169,12 +171,12 @@ _timer_init(Eo *obj, Efl_Ui_Popup_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bool v)
+_efl_ui_popup_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bool v)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, v))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), v);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), v);
 
    if (v)
      {
@@ -193,12 +195,12 @@ _efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 
    _timer_del(pd);
 
-   if (efl_gfx_visible_get(obj))
+   if (efl_gfx_entity_visible_get(obj))
      _timer_init(obj, pd);
 }
 
 EOLIAN static double
-_efl_ui_popup_timeout_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->timeout;
 }
@@ -227,7 +229,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->backwall, "elm,action,clicked", "*",
+   edje_object_signal_callback_add(pd->backwall, "efl,action,clicked", "*",
                                    _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
@@ -240,9 +242,9 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
 
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_RESIZE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb,
                           obj);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_EVENT_MOVE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb,
                           obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -259,12 +261,12 @@ _sizing_eval(Eo *obj)
       (wd->resize_obj, &minw, &minh, minw, minh);
    efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
 
-   Eina_Size2D size = efl_gfx_size_get(obj);
+   Eina_Size2D size = efl_gfx_entity_size_get(obj);
 
    Eina_Size2D new_size;
    new_size.w = (minw > size.w ? minw : size.w);
    new_size.h = (minh > size.h ? minh : size.h);
-   efl_gfx_size_set(obj, new_size);
+   efl_gfx_entity_size_set(obj, new_size);
 }
 
 EOLIAN static void
@@ -307,10 +309,10 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
              pd->needs_align_calc = EINA_FALSE;
           }
 
-        Eina_Rect p_geom = efl_gfx_geometry_get(pd->win_parent);
+        Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-        efl_gfx_position_set(pd->backwall, EINA_POSITION2D(0, 0));
-        efl_gfx_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+        efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+        efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
         pd->needs_group_calc = EINA_FALSE;
      }
@@ -318,18 +320,17 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
 
 /* Standard widget overrides */
 
-ELM_PART_CONTENT_DEFAULT_GET(efl_ui_popup, "elm.swallow.content")
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_popup, Efl_Ui_Popup_Data)
 
 EOLIAN static Eo *
-_efl_ui_popup_efl_part_part(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
+_efl_ui_popup_efl_part_part_get(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
 
    if (eina_streq(part, "backwall"))
      return ELM_PART_IMPLEMENT(EFL_UI_POPUP_PART_CLASS, obj, part);
 
-   return efl_part(efl_super(obj, MY_CLASS), part);
+   return efl_part_get(efl_super(obj, MY_CLASS), part);
 }
 
 EOLIAN static void
@@ -345,7 +346,7 @@ _efl_ui_popup_part_efl_canvas_object_repeat_events_set(Eo *obj, void *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_popup_part_efl_canvas_object_repeat_events_get(Eo *obj, void *_pd EINA_UNUSED)
+_efl_ui_popup_part_efl_canvas_object_repeat_events_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
@@ -364,9 +365,10 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
 
    if (eina_streq(pd->part, "backwall"))
      {
-        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "elm.swallow.image");
+        Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
         if (prev_obj)
           {
+             edje_object_signal_emit(sd->backwall, "efl,state,content,unset", "efl");
              edje_object_part_unswallow(sd->backwall, prev_obj);
              efl_del(prev_obj);
           }
@@ -375,12 +377,11 @@ _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char 
         Eina_Bool ret = elm_image_file_set(image, file, group);
         if (!ret)
           {
-             edje_object_signal_emit(sd->backwall, "elm,state,image,hidden", "elm");
              efl_del(image);
              return EINA_FALSE;
           }
-        edje_object_part_swallow(sd->backwall, "elm.swallow.image", image);
-        edje_object_signal_emit(sd->backwall, "elm,state,image,visible", "elm");
+        edje_object_part_swallow(sd->backwall, "efl.content", image);
+        edje_object_signal_emit(sd->backwall, "efl,state,content,set", "efl");
 
         return EINA_TRUE;
      }

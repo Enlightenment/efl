@@ -280,7 +280,11 @@ _elm_tooltip_hide_anim_start(Elm_Tooltip *tt)
    TTDBG("HIDE START\n");
    /* hide slightly faster when in window mode to look less stupid */
    if ((tt->hide_timeout > 0) && tt->tt_win) extra = 0.1;
-   edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
+
+   if (elm_widget_is_legacy(tt->owner))
+     edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
+   else
+     edje_object_signal_emit(tt->tooltip, "efl,action,hide", "efl");
    tt->hide_timer = ecore_timer_add
      (tt->hide_timeout - extra, _elm_tooltip_hide_anim_cb, tt);
 }
@@ -290,7 +294,12 @@ _elm_tooltip_hide_anim_stop(Elm_Tooltip *tt)
 {
    if (!tt->hide_timer) return;
    if (tt->tooltip)
-     edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+     {
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        else
+          edje_object_signal_emit(tt->tooltip, "efl,action,show", "efl");
+     }
 
    ELM_SAFE_FREE(tt->hide_timer, ecore_timer_del);
 }
@@ -426,6 +435,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x = 0.0, rel_y = 0.0;
    Eina_Bool inside_eventarea;
+   Eina_Bool new_content = EINA_FALSE;
 
    _elm_tooltip_reconfigure_job_stop(tt);
 
@@ -435,8 +445,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      {
         const char *style = tt->style ? tt->style : "default";
         const char *str;
-        if (!_elm_theme_object_set(tt->tt_win ? NULL : tt->owner, tt->tooltip,
-                                  "tooltip", "base", style))
+        if (!_elm_theme_object_set(tt->tt_win ? : tt->owner, tt->tooltip,
+                                  "tooltip", NULL, style))
           {
              ERR("Could not apply the theme to the tooltip! style=%s", style);
              if (tt->tt_win) evas_object_del(tt->tt_win);
@@ -490,10 +500,19 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
         tt->changed_style = EINA_FALSE;
         if (tt->tooltip)
-          edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
-                                   tt->content);
+          {
+             if (elm_widget_is_legacy(tt->owner))
+               edje_object_part_swallow(tt->tooltip, "elm.swallow.content",
+                                        tt->content);
+             else
+               edje_object_part_swallow(tt->tooltip, "efl.content",
+                                        tt->content);
+          }
 
-        edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_signal_emit(tt->tooltip, "elm,action,show", "elm");
+        else
+          edje_object_signal_emit(tt->tooltip, "efl,action,show", "efl");
      }
 
    if (!tt->content)
@@ -518,10 +537,14 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              tt->tooltip = NULL;
              return;
           }
-        edje_object_part_swallow
-          (tt->tooltip, "elm.swallow.content", tt->content);
-        evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-           _elm_tooltip_content_changed_hints_cb, tt);
+
+        if (elm_widget_is_legacy(tt->owner))
+          edje_object_part_swallow
+             (tt->tooltip, "elm.swallow.content", tt->content);
+        else
+          edje_object_part_swallow
+             (tt->tooltip, "efl.content", tt->content);
+        new_content = EINA_TRUE;
         evas_object_event_callback_add(tt->content, EVAS_CALLBACK_DEL,
            _elm_tooltip_content_del_cb, tt);
 
@@ -530,6 +553,16 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    TTDBG("*******RECALC\n");
    evas_object_size_hint_combined_min_get(tt->content, &ominw, &ominh);
+   /* force size hints to update */
+   if ((!ominw) || (!ominh))
+     {
+        evas_object_smart_need_recalculate_set(tt->content, 1);
+        evas_object_smart_calculate(tt->content);
+        evas_object_size_hint_combined_min_get(tt->content, &ominw, &ominh);
+     }
+   if (new_content)
+     evas_object_event_callback_add(tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+           _elm_tooltip_content_changed_hints_cb, tt);
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
    if (eminw && (ominw < eminw)) ominw = eminw;
@@ -988,6 +1021,8 @@ elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner
    tt->del_cb = del_cb;
 
    if (!just_created) _elm_tooltip_reconfigure_job_start(tt);
+   else if (efl_canvas_pointer_inside_get(eventarea, NULL) && (!tt->tooltip))
+     _elm_tooltip_show(tt);
    return;
 
  error:

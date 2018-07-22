@@ -1,11 +1,11 @@
-class Efl.Ui.Table (Elm.Widget, Efl.Pack.Table, Efl.Pack.Layout,
+class Efl.Ui.Table (Efl.Ui.Widget, Efl.Pack_Table, Efl.Pack_Layout,
                    Efl.Ui.Direction)
 {
    [[Efl UI table class]]
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       //Efl.Container.content_remove; // TODO
       Efl.Container.content_iterate;
       Efl.Container.content_count;
@@ -15,16 +15,16 @@ class Efl.Ui.Table (Elm.Widget, Efl.Pack.Table, Efl.Pack.Layout,
       Efl.Pack.unpack;
       Efl.Pack.pack;
       Efl.Pack.pack_padding { get; set; }
-      Efl.Pack.Table.pack_table;
-      Efl.Pack.Table.table_content_get;
-      Efl.Pack.Table.table_contents_get;
-      Efl.Pack.Table.table_position { get; }
-      Efl.Pack.Table.table_size { get; set; }
-      Efl.Pack.Table.table_columns { get; set; }
-      Efl.Pack.Table.table_rows { get; set; }
-      Efl.Pack.Table.table_direction { get; set; }
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Layout.layout_update;
-      Efl.Pack.Layout.layout_request;
+      Efl.Pack_Table.pack_table;
+      Efl.Pack_Table.table_content_get;
+      Efl.Pack_Table.table_contents_get;
+      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_size { get; set; }
+      Efl.Pack_Table.table_columns { get; set; }
+      Efl.Pack_Table.table_rows { get; set; }
+      Efl.Pack_Table.table_direction { get; set; }
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
    }
 }

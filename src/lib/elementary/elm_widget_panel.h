@@ -46,6 +46,7 @@ struct _Elm_Panel_Data
    Eina_Bool                             delete_me : 1;
    Eina_Bool                             scrollable : 1;
    Eina_Bool                             freeze: 1;
+   Eina_Bool                             callback_added: 1;
 };
 
 /**
@@ -59,7 +60,7 @@ struct _Elm_Panel_Data
   ELM_PANEL_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -68,7 +69,7 @@ struct _Elm_Panel_Data
   ELM_PANEL_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }

@@ -7,176 +7,35 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "linux-dmabuf-unstable-v1-client-protocol.h"
-
-#define MAX_BUFFERS 4
-
-static void
-_evas_dmabuf_surface_reconfigure(Ecore_Wl2_Surface *s, int w, int h, uint32_t flags EINA_UNUSED, Eina_Bool force)
-{
-   Ecore_Wl2_Buffer *b;
-   Eina_List *l, *tmp;
-
-   if ((!w) || (!h)) return;
-   EINA_LIST_FOREACH_SAFE(s->buffers, l, tmp, b)
-     {
-        int stride = b->stride;
-
-        /* If stride is a little bigger than width we still fit */
-        if (!force && (w >= b->w) && (w <= stride / 4) && (h == b->h))
-          {
-             b->w = w;
-             continue;
-          }
-        ecore_wl2_buffer_destroy(b);
-        s->buffers = eina_list_remove_list(s->buffers, l);
-     }
-   s->w = w;
-   s->h = h;
-}
-
-static void *
-_evas_dmabuf_surface_data_get(Ecore_Wl2_Surface *s, int *w, int *h)
-{
-   Ecore_Wl2_Buffer *b;
-   void *ptr;
-
-   b = s->current;
-   if (!b) return NULL;
-
-   /* We return stride/bpp because it may not match the allocated
-    * width.  evas will figure out the clipping
-    */
-   if (w) *w = b->stride / 4;
-   if (h) *h = b->h;
-   if (b->locked) return b->mapping;
-
-   ptr = ecore_wl2_buffer_map(b);
-   if (!ptr)
-     return NULL;
-
-   b->mapping = ptr;
-   b->locked = EINA_TRUE;
-   return b->mapping;
-}
-
-static Ecore_Wl2_Buffer *
-_evas_dmabuf_surface_wait(Ecore_Wl2_Surface *s)
-{
-   Ecore_Wl2_Buffer *b, *best = NULL;
-   Eina_List *l;
-   int best_age = -1;
-
-   EINA_LIST_FOREACH(s->buffers, l, b)
-     {
-        if (b->locked || b->busy) continue;
-        if (b->age > best_age)
-          {
-             best = b;
-             best_age = b->age;
-          }
-     }
-
-   if (!best && (eina_list_count(s->buffers) < MAX_BUFFERS))
-     {
-        Ecore_Wl2_Display *ewd;
-
-        ewd = ecore_wl2_window_display_get(s->wl2_win);
-        EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
-
-        best = ecore_wl2_buffer_create(ewd, s->w, s->h, s->alpha);
-        /* Start at -1 so it's age is incremented to 0 for first draw */
-        best->age = -1;
-        s->buffers = eina_list_append(s->buffers, best);
-     }
-   return best;
-}
-
-static int
-_evas_dmabuf_surface_assign(Ecore_Wl2_Surface *s)
-{
-   Ecore_Wl2_Buffer *b;
-   Eina_List *l;
-
-   s->current = _evas_dmabuf_surface_wait(s);
-   if (!s->current)
-     {
-        /* Should be unreachable and will result in graphical
-         * anomalies - we should probably blow away all the
-         * existing buffers and start over if we actually
-         * see this happen...
-         */
-        WRN("No free DMAbuf buffers, dropping a frame");
-        EINA_LIST_FOREACH(s->buffers, l, b)
-          b->age = 0;
-        return 0;
-     }
-   EINA_LIST_FOREACH(s->buffers, l, b)
-     b->age++;
-
-   return s->current->age;
-}
-
-static void
-_evas_dmabuf_surface_post(Ecore_Wl2_Surface *s, Eina_Rectangle *rects, unsigned int count)
-{
-   Ecore_Wl2_Buffer *b;
-
-   b = s->current;
-   if (!b) return;
-
-   ecore_wl2_buffer_unlock(b);
-
-   s->current = NULL;
-   b->busy = EINA_TRUE;
-   b->age = 0;
-
-   ecore_wl2_window_buffer_attach(s->wl2_win, b->wl_buffer, 0, 0, EINA_FALSE);
-   ecore_wl2_window_damage(s->wl2_win, rects, count);
-
-   ecore_wl2_window_commit(s->wl2_win, EINA_TRUE);
-}
-
-static void
-_evas_dmabuf_surface_destroy(Ecore_Wl2_Surface *s)
-{
-   Ecore_Wl2_Buffer *b;
-
-   if (!s) return;
-
-   EINA_LIST_FREE(s->buffers, b)
-     ecore_wl2_buffer_destroy(b);
-}
-
-static void
-_surface_flush(Ecore_Wl2_Surface *surface)
-{
-   Ecore_Wl2_Buffer *b;
-
-   EINA_SAFETY_ON_NULL_RETURN(surface);
-
-   EINA_LIST_FREE(surface->buffers, b)
-     ecore_wl2_buffer_destroy(b);
-}
-
+static Eina_List *_smanagers = NULL;
+static int _smanager_count = 0;
 
 EAPI void
 ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.destroy(surface);
+   ecore_event_handler_del(surface->offscreen_handler);
+   surface->funcs->destroy(surface, surface->private_data);
+   surface->wl2_win->wl2_surface = NULL;
    surface->wl2_win = NULL;
 
    free(surface);
+   /* We took a reference to ecore_wl2 in surface create to prevent
+    * modules unloading with surfaces in flight.  Release that now.
+    */
+   ecore_wl2_shutdown();
 }
 
 EAPI void
-ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force)
+ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.reconfigure(surface, w, h, flags, force);
+   surface->funcs->reconfigure(surface, surface->private_data, w, h, flags, alpha);
+   surface->w = w;
+   surface->h = h;
+   surface->alpha = alpha;
 }
 
 EAPI void *
@@ -184,7 +43,7 @@ ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
 
-   return surface->funcs.data_get(surface, w, h);
+   return surface->funcs->data_get(surface, surface->private_data, w, h);
 }
 
 EAPI int
@@ -192,7 +51,7 @@ ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);
 
-   return surface->funcs.assign(surface);
+   return surface->funcs->assign(surface, surface->private_data);
 }
 
 EAPI void
@@ -200,55 +59,115 @@ ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsign
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.post(surface, rects, count);
+   surface->funcs->post(surface, surface->private_data, rects, count);
 }
 
 EAPI void
-ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface)
+ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge)
 {
    EINA_SAFETY_ON_NULL_RETURN(surface);
 
-   surface->funcs.flush(surface);
+   surface->funcs->flush(surface, surface->private_data, purge);
+}
+
+static Eina_Bool
+_ecore_wl2_surface_cb_offscreen(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_Wl2_Event_Window_Offscreen *ev = event;
+   Ecore_Wl2_Surface *surf = data;
+
+   if (surf->wl2_win == ev->win)
+      ecore_wl2_surface_flush(surf, EINA_FALSE);
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 EAPI Ecore_Wl2_Surface *
 ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha)
 {
    Ecore_Wl2_Surface *out;
-   Ecore_Wl2_Display *ewd;
-   Ecore_Wl2_Buffer_Type types = 0;
+   Eina_List *l;
+   Ecore_Wl2_Surface_Interface *intf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(win, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_smanagers, NULL);
 
    if (win->wl2_surface) return win->wl2_surface;
 
    out = calloc(1, sizeof(*out));
    if (!out) return NULL;
+
    out->wl2_win = win;
-
-   ewd = ecore_wl2_window_display_get(win);
-   if (ecore_wl2_display_shm_get(ewd))
-     types |= ECORE_WL2_BUFFER_SHM;
-   if (ecore_wl2_display_dmabuf_get(ewd))
-     types |= ECORE_WL2_BUFFER_DMABUF;
-
    out->alpha = alpha;
    out->w = 0;
    out->h = 0;
 
-   /* create surface buffers */
-   if (!ecore_wl2_buffer_init(ewd, types)) goto err;
+   EINA_LIST_FOREACH(_smanagers, l, intf)
+     {
+        out->private_data = intf->setup(win);
+        if (out->private_data)
+          {
+             out->funcs = intf;
+             win->wl2_surface = out;
+             out->offscreen_handler =
+               ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN,
+                                       _ecore_wl2_surface_cb_offscreen,
+                                       out);
+             /* Since we have loadable modules, we need to make sure this
+              * surface keeps ecore_wl2 from de-initting and dlclose()ing
+              * things until after it's destroyed
+              */
+             ecore_wl2_init();
+             return out;
+          }
+     }
 
-   out->funcs.destroy = _evas_dmabuf_surface_destroy;
-   out->funcs.reconfigure = _evas_dmabuf_surface_reconfigure;
-   out->funcs.data_get = _evas_dmabuf_surface_data_get;
-   out->funcs.assign = _evas_dmabuf_surface_assign;
-   out->funcs.post = _evas_dmabuf_surface_post;
-   out->funcs.flush = _surface_flush;
-   win->wl2_surface = out;
-   return out;
-
-err:
    free(out);
    return NULL;
+}
+
+EAPI Ecore_Wl2_Buffer *
+ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface)
+{
+   Ecore_Wl2_Display *ewd;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   ewd = ecore_wl2_window_display_get(surface->wl2_win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ewd, NULL);
+
+   return ecore_wl2_buffer_create(ewd, surface->w, surface->h, surface->alpha);
+}
+
+EAPI int
+ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf)
+{
+   if (intf->version < ECORE_WL2_SURFACE_INTERFACE_VERSION)
+     return 0;
+
+   _smanagers = eina_list_prepend(_smanagers, intf);
+   intf->id = ++_smanager_count;
+   return intf->id;
+}
+
+EAPI void
+ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf)
+{
+   _smanagers = eina_list_remove(_smanagers, intf);
+}
+
+EAPI Ecore_Wl2_Window *
+ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, NULL);
+
+   return surface->wl2_win;
+}
+
+EAPI Eina_Bool
+ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(surface, EINA_FALSE);
+
+   return surface->alpha;
 }

@@ -27,13 +27,12 @@
 #include <lauxlib.h>
 
 typedef struct _External_Lookup External_Lookup;
-typedef struct _Part_Lookup Part_Lookup;
+typedef struct _Part_Lookup     Part_Lookup;
 typedef struct _Part_Lookup_Key Part_Lookup_Key;
-typedef struct _Program_Lookup Program_Lookup;
-typedef struct _Group_Lookup Group_Lookup;
-typedef struct _Image_Lookup Image_Lookup;
-typedef struct _Code_Lookup Code_Lookup;
-
+typedef struct _Program_Lookup  Program_Lookup;
+typedef struct _Group_Lookup    Group_Lookup;
+typedef struct _Image_Lookup    Image_Lookup;
+typedef struct _Code_Lookup     Code_Lookup;
 
 struct _External_Lookup
 {
@@ -43,15 +42,17 @@ struct _External_Lookup
 struct _Part_Lookup_Key
 {
    Edje_Part_Collection *pc;
-   
-   union {
+
+   union
+   {
       int *dest;
-      struct {
+      struct
+      {
          unsigned char **base;
-         int offset;
+         int             offset;
       } reallocated;
    } mem;
-   char **dest2;
+   char    **dest2;
 
    Eina_Bool stable : 1;
 };
@@ -59,7 +60,7 @@ struct _Part_Lookup_Key
 struct _Part_Lookup
 {
    Part_Lookup_Key key;
-   char *name;
+   char           *name;
 };
 
 struct _Program_Lookup
@@ -68,39 +69,39 @@ struct _Program_Lookup
 
    union
    {
-      char *name;
+      char         *name;
       Edje_Program *ep;
    } u;
 
-   int *dest;
+   int                  *dest;
 
-   Eina_Bool anonymous : 1;
+   Eina_Bool             anonymous : 1;
 };
 
 struct _Group_Lookup
 {
-   char *name;
+   char      *name;
    Edje_Part *part;
 };
 
 struct _String_Lookup
 {
    char *name;
-   int *dest;
+   int  *dest;
 };
 
 struct _Image_Lookup
 {
-   char *name;
-   int *dest;
+   char      *name;
+   int       *dest;
    Eina_Bool *set;
 };
 
 struct _Code_Lookup
 {
-   char *ptr;
-   int   len;
-   int   val;
+   char     *ptr;
+   int       len;
+   int       val;
    Eina_Bool set;
 };
 
@@ -109,94 +110,94 @@ typedef struct _Script_Lua_Writer Script_Lua_Writer;
 struct _Script_Lua_Writer
 {
    char *buf;
-   int size;
+   int   size;
 };
 
-typedef struct _Script_Write Script_Write;
-typedef struct _Head_Write Head_Write;
-typedef struct _Fonts_Write Fonts_Write;
-typedef struct _Image_Write Image_Write;
-typedef struct _Sound_Write Sound_Write;
-typedef struct _Mo_Write Mo_Write;
+typedef struct _Script_Write    Script_Write;
+typedef struct _Head_Write      Head_Write;
+typedef struct _Fonts_Write     Fonts_Write;
+typedef struct _Image_Write     Image_Write;
+typedef struct _Sound_Write     Sound_Write;
+typedef struct _Mo_Write        Mo_Write;
 typedef struct _Vibration_Write Vibration_Write;
-typedef struct _Group_Write Group_Write;
-typedef struct _License_Write License_Write;
+typedef struct _Group_Write     Group_Write;
+typedef struct _License_Write   License_Write;
 
 struct _Script_Write
 {
-   Eet_File *ef;
-   Code *cd;
-   int i;
-   Ecore_Exe *exe;
-   int tmpn_fd, tmpo_fd;
+   Eet_File    *ef;
+   Code        *cd;
+   int          i;
+   Ecore_Exe   *exe;
+   int          tmpn_fd;
    Eina_Tmpstr *tmpn;
    Eina_Tmpstr *tmpo;
-   char *errstr;
+   char        *errstr;
 };
 
 struct _Head_Write
 {
    Eet_File *ef;
-   char *errstr;
+   char     *errstr;
 };
 
 struct _Fonts_Write
 {
-   Eet_File *ef;
+   Eet_File  *ef;
    Edje_Font *fn;
-   char *errstr;
+   char      *errstr;
 };
 
 struct _Image_Write
 {
-   Eet_File *ef;
+   Eet_File                   *ef;
    Edje_Image_Directory_Entry *img;
-   Evas_Object *im;
-   Emile_Image_Property prop;
-   Eina_File *f;
-   Emile_Image *emi;
-   int w, h;
-   int alpha;
-   unsigned int *data;
-   char *path;
-   char *errstr;
+   Evas_Object                *im;
+   Emile_Image_Property        prop;
+   Eina_File                  *f;
+   Emile_Image                *emi;
+   int                         w, h;
+   int                         alpha;
+   unsigned int               *data;
+   char                       *path;
+   char                       *errstr;
 };
 
 struct _Sound_Write
 {
-   Eet_File *ef;
+   Eet_File          *ef;
    Edje_Sound_Sample *sample;
-   int i;
+   int                i;
 };
 
 struct _Mo_Write
 {
-   Eet_File *ef;
-   Edje_Mo *mo_entry;
-   char *mo_path;
+   Eet_File  *ef;
+   Edje_Mo   *mo_entry;
+   char      *mo_path;
    Ecore_Exe *exe;
-   char *errstr;
+   char      *errstr;
 };
 
 struct _Vibration_Write
 {
-   Eet_File *ef;
+   Eet_File              *ef;
    Edje_Vibration_Sample *sample;
-   int i;
+   int                    i;
 };
 
 struct _Group_Write
 {
-   Eet_File *ef;
+   Eet_File             *ef;
    Edje_Part_Collection *pc;
-   char *errstr;
+   char                 *errstr;
 };
 
 struct _License_Write
 {
-   Eet_File *ef;
+   Eet_File   *ef;
    const char *file;
-   Eina_Bool master;
+   Eina_Bool   master;
 };
 
 struct _Image_Unused_Ids
@@ -208,8 +209,9 @@ struct _Image_Unused_Ids
 typedef struct _Image_Unused_Ids Image_Unused_Ids;
 
 static int pending_threads = 0;
+static int pending_image_threads = 0;
 
-static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
+static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
 
 extern Eina_List *po_files;
 
@@ -234,6 +236,14 @@ static Eina_List *model_lookups = NULL;
 
 static Eina_Hash *part_dest_lookup = NULL;
 static Eina_Hash *part_pc_dest_lookup = NULL;
+static Eina_Hash *groups_sourced = NULL;
+
+static Eet_File *cur_ef;
+static int image_num;
+static Ecore_Evas *buffer_ee;
+static int cur_image_entry;
+
+static void data_write_images(void);
 
 void
 error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
@@ -247,6 +257,21 @@ error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
    unlink(file_out);
    if (watchfile) unlink(watchfile);
    exit(-1);
+}
+
+static void
+thread_end(Eina_Bool img)
+{
+   if (img)
+     pending_image_threads--;
+   else
+     pending_threads--;
+   if (threads)
+     {
+        if ((pending_image_threads + pending_threads) < (int)max_open_files - 2)
+          data_write_images();
+     }
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
 }
 
 static unsigned int
@@ -281,23 +306,23 @@ _part_lookup_key_pc_hash(const void *key, int key_length EINA_UNUSED)
    if (a->stable)
      {
 #ifdef EFL64
-        return eina_hash_int64((unsigned long long int *) &a->pc, sizeof (void*)) ^
-          eina_hash_int64((unsigned long long int *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int64((unsigned long long int *)&a->pc, sizeof (void *)) ^
+               eina_hash_int64((unsigned long long int *)&a->mem.dest, sizeof (void *));
 #else
-        return eina_hash_int32((uintptr_t *) &a->pc, sizeof (void*)) ^
-          eina_hash_int32((uintptr_t *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int32((uintptr_t *)&a->pc, sizeof (void *)) ^
+               eina_hash_int32((uintptr_t *)&a->mem.dest, sizeof (void *));
 #endif
      }
    else
      {
 #ifdef EFL64
-        return eina_hash_int64((unsigned long long int *) &a->pc, sizeof (void*)) ^
-          eina_hash_int64((unsigned long long int *) &a->mem.reallocated.base, sizeof (void*)) ^
-          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+        return eina_hash_int64((unsigned long long int *)&a->pc, sizeof (void *)) ^
+               eina_hash_int64((unsigned long long int *)&a->mem.reallocated.base, sizeof (void *)) ^
+               eina_hash_int32((unsigned int *)&a->mem.reallocated.offset, sizeof (int));
 #else
-        return eina_hash_int32((uintptr_t *) &a->pc, sizeof (void*)) ^
-          eina_hash_int32((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
-          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+        return eina_hash_int32((uintptr_t *)&a->pc, sizeof (void *)) ^
+               eina_hash_int32((uintptr_t *)&a->mem.reallocated.base, sizeof (void *)) ^
+               eina_hash_int32((unsigned int *)&a->mem.reallocated.offset, sizeof (int));
 #endif
      }
 }
@@ -325,19 +350,19 @@ _part_lookup_key_hash(const void *key, int key_length EINA_UNUSED)
    if (a->stable)
      {
 #ifdef EFL64
-        return eina_hash_int64((unsigned long long int *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int64((unsigned long long int *)&a->mem.dest, sizeof (void *));
 #else
-        return eina_hash_int32((uintptr_t *) &a->mem.dest, sizeof (void*));
+        return eina_hash_int32((uintptr_t *)&a->mem.dest, sizeof (void *));
 #endif
      }
    else
      {
 #ifdef EFL64
-        return eina_hash_int64((unsigned long long int *) &a->mem.reallocated.base, sizeof (void*)) ^
-          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+        return eina_hash_int64((unsigned long long int *)&a->mem.reallocated.base, sizeof (void *)) ^
+               eina_hash_int32((unsigned int *)&a->mem.reallocated.offset, sizeof (int));
 #else
-        return eina_hash_int32((uintptr_t *) &a->mem.reallocated.base, sizeof (void*)) ^
-          eina_hash_int32((unsigned int *) &a->mem.reallocated.offset, sizeof (int));
+        return eina_hash_int32((uintptr_t *)&a->mem.reallocated.base, sizeof (void *)) ^
+               eina_hash_int32((unsigned int *)&a->mem.reallocated.offset, sizeof (int));
 #endif
      }
 }
@@ -378,16 +403,16 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
 
    if (epd->image.id == -1 && epd->common.visible)
      WRN("Collection %s(%i): image attributes missing for "
-	 "part \"%s\", description \"%s\" %f",
-	 pc->part, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
+         "part \"%s\", description \"%s\" %f",
+         pc->part, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
 
    for (i = 0; i < epd->image.tweens_count; ++i)
      {
-	if (epd->image.tweens[i]->id == -1)
-	  error_and_abort(ef, "Collection %i: tween image id missing for "
-			  "part \"%s\", description \"%s\" %f",
-			  pc->id, ep->name, epd->common.state.name, epd->common.state.value);
-    }
+        if (epd->image.tweens[i]->id == -1)
+          error_and_abort(ef, "Collection %i: tween image id missing for "
+                              "part \"%s\", description \"%s\" %f",
+                          pc->id, ep->name, epd->common.state.name, epd->common.state.value);
+     }
 }
 
 static Edje_Part_Collection *
@@ -453,7 +478,6 @@ check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
 
    if (epd->text.id_text_source != -1)
      {
-
         if ((pc->parts[epd->text.id_text_source]->type == EDJE_PART_TYPE_TEXT) ||
             (pc->parts[epd->text.id_text_source]->type == EDJE_PART_TYPE_TEXTBLOCK))
           return;
@@ -468,7 +492,7 @@ check_text_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
 
         error_and_abort(ef, "Collection \"%s\" Part \"%s\" Description \"%s\" [%.3f]: "
                             "text.text_source point to a non TEXT part \"%s\"!",
-                        pc->part, ep->name,epd->common.state.name,
+                        pc->part, ep->name, epd->common.state.name,
                         epd->common.state.value, pc->parts[epd->text.id_text_source]->name);
      }
 }
@@ -503,9 +527,9 @@ check_source_links(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_L
                          {
                             if (data == pc_source->parts[i]->source)
                               {
-                                 error_and_abort(ef,"Recursive loop group '%s' "
-                                                 "already included inside "
-                                                 "part '%s' of group '%s'",
+                                 error_and_abort(ef, "Recursive loop group '%s' "
+                                                     "already included inside "
+                                                     "part '%s' of group '%s'",
                                                  data, pc_source->parts[i]->name,
                                                  pc->part);
                               }
@@ -525,14 +549,14 @@ check_packed_items(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 
    for (i = 0; i < ep->items_count; ++i)
      {
-	if (ep->items[i]->type == EDJE_PART_TYPE_GROUP && !ep->items[i]->source)
-	  error_and_abort(ef, "Collection %i: missing source on packed item "
-			  "of type GROUP in part \"%s\"",
-			  pc->id, ep->name);
-	if (ep->type == EDJE_PART_TYPE_TABLE && (ep->items[i]->col < 0 || ep->items[i]->row < 0))
-	  error_and_abort(ef, "Collection %i: missing col/row on packed item "
-			  "for part \"%s\" of type TABLE",
-			  pc->id, ep->name);
+        if (ep->items[i]->type == EDJE_PART_TYPE_GROUP && !ep->items[i]->source)
+          error_and_abort(ef, "Collection %i: missing source on packed item "
+                              "of type GROUP in part \"%s\"",
+                          pc->id, ep->name);
+        if (ep->type == EDJE_PART_TYPE_TABLE && (ep->items[i]->col < 0 || ep->items[i]->row < 0))
+          error_and_abort(ef, "Collection %i: missing col/row on packed item "
+                              "for part \"%s\" of type TABLE",
+                          pc->id, ep->name);
      }
 }
 
@@ -565,8 +589,38 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
 }
 
 static void
+_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_Bool ns_required)
+{
+   char buf[1024], *p;
+   size_t len;
+   Edje_Part_Collection_Directory_Entry *de;
+
+   if (!namespace_verify) return;
+   /* this is from a group used as a source, either GROUP or TEXTBLOCK
+    * namespacing not required
+    */
+   if (eina_hash_find(groups_sourced, pc->part)) return;
+
+   de = eina_hash_find(edje_collections_lookup, &pc->id);
+
+   p = strchr(de->entry, '/');
+   if (!p) return;
+
+   len = p - de->entry;
+   if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
+
+   p = strchr(ep->name, '.');
+   /* ignore part types without required namespacing or without '.' in name */
+   if ((!ns_required) && (!p)) return;
+
+   if (strncmp(ep->name, buf, len))
+     error_and_abort(ef, "Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
+}
+
+static void
 check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser*)pc;
    unsigned int i;
    Eina_List *group_path = NULL;
    /* FIXME: check image set and sort them. */
@@ -580,10 +634,10 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
-        check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->default_desc, ef);
+        check_image_part_desc(pc, ep, (Edje_Part_Description_Image *)ep->default_desc, ef);
 
         for (i = 0; i < ep->other.desc_count; ++i)
-          check_image_part_desc(pc, ep, (Edje_Part_Description_Image*) ep->other.desc[i], ef);
+          check_image_part_desc(pc, ep, (Edje_Part_Description_Image *)ep->other.desc[i], ef);
      }
    else if ((ep->type == EDJE_PART_TYPE_BOX) ||
             (ep->type == EDJE_PART_TYPE_TABLE))
@@ -592,12 +646,29 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
      check_source_links(pc, ep, ef, group_path);
    else if (ep->type == EDJE_PART_TYPE_TEXT)
      {
-        check_text_part_desc(pc, ep, (Edje_Part_Description_Text*) ep->default_desc, ef);
+        check_text_part_desc(pc, ep, (Edje_Part_Description_Text *)ep->default_desc, ef);
 
         for (i = 0; i < ep->other.desc_count; ++i)
-          check_text_part_desc(pc, ep, (Edje_Part_Description_Text*) ep->other.desc[i], ef);
+          check_text_part_desc(pc, ep, (Edje_Part_Description_Text *)ep->other.desc[i], ef);
      }
 
+   if (!pcp->skip_namespace_validation)
+     {
+        switch (ep->type)
+          {
+           case EDJE_PART_TYPE_BOX:
+           case EDJE_PART_TYPE_TABLE:
+           case EDJE_PART_TYPE_SWALLOW:
+             _part_namespace_verify(pc, ep, ef, 1);
+             break;
+           case EDJE_PART_TYPE_TEXT:
+           case EDJE_PART_TYPE_TEXTBLOCK:
+           case EDJE_PART_TYPE_SPACER:
+             _part_namespace_verify(pc, ep, ef, 0);
+             break;
+           default: break;
+          }
+     }
 
    /* FIXME: When smart masks are supported, remove this check */
    if (ep->clip_to_id != -1 &&
@@ -609,8 +680,36 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
+_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef, const char *sig, const char *src)
+{
+   char buf[1024], *p;
+   size_t len;
+   Edje_Part_Collection_Directory_Entry *de;
+
+   if (!namespace_verify) return;
+   /* this is from a group used as a source, either GROUP or TEXTBLOCK
+    * namespacing not required
+    */
+   if (eina_hash_find(groups_sourced, pc->part)) return;
+
+   /* ignore propagation to GROUP parts */
+   if (strchr(sig, ':')) return;
+
+   de = eina_hash_find(edje_collections_lookup, &pc->id);
+
+   p = strchr(de->entry, '/');
+   if (!p) return;
+   len = p - de->entry;
+   if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
+
+   if (strncmp(sig, buf, len))
+     error_and_abort(ef, "SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
+}
+
+static void
 check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
+   Edje_Part_Collection_Parser *pcp = (Edje_Part_Collection_Parser*)pc;
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_STATE_SET:
@@ -618,12 +717,13 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
       case EDJE_ACTION_TYPE_DRAG_VAL_SET:
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-	 if (!ep->targets)
-	   error_and_abort(ef, "Collection %i: target missing in program "
-			   "\"%s\"", pc->id, ep->name);
-	 break;
+        if (!ep->targets)
+          error_and_abort(ef, "Collection %i: target missing in program "
+                              "\"%s\"", pc->id, ep->name);
+        break;
+
       default:
-	 break;
+        break;
      }
    Edje_Program_Target *et;
    Eina_List *l;
@@ -635,6 +735,12 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
         if (pc->parts[i]->type == EDJE_PART_TYPE_CAMERA)
           camera_id = i;
      }
+
+    if ((!ep->targets) && (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT))
+      {
+         if (!pcp->skip_namespace_validation)
+           _program_signal_namespace_verify(pc, ef, ep->state, ep->state2);
+      }
 
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
@@ -660,22 +766,22 @@ _alias_clean(Edje_Part_Collection_Directory_Entry *ce)
 {
    if (ce)
      {
-         ce->count.RECTANGLE = 0;
-         ce->count.TEXT = 0;
-         ce->count.IMAGE = 0;
-         ce->count.SWALLOW = 0;
-         ce->count.TEXTBLOCK = 0;
-         ce->count.GROUP = 0;
-         ce->count.BOX = 0;
-         ce->count.TABLE = 0;
-         ce->count.EXTERNAL = 0;
-         ce->count.PROXY = 0;
-         ce->count.MESH_NODE = 0;
-         ce->count.LIGHT = 0;
-         ce->count.CAMERA = 0;
-         ce->count.SPACER = 0;
-         ce->count.VECTOR = 0;
-         ce->count.part = 0;
+        ce->count.RECTANGLE = 0;
+        ce->count.TEXT = 0;
+        ce->count.IMAGE = 0;
+        ce->count.SWALLOW = 0;
+        ce->count.TEXTBLOCK = 0;
+        ce->count.GROUP = 0;
+        ce->count.BOX = 0;
+        ce->count.TABLE = 0;
+        ce->count.EXTERNAL = 0;
+        ce->count.PROXY = 0;
+        ce->count.MESH_NODE = 0;
+        ce->count.LIGHT = 0;
+        ce->count.CAMERA = 0;
+        ce->count.SPACER = 0;
+        ce->count.VECTOR = 0;
+        ce->count.part = 0;
      }
 }
 
@@ -688,15 +794,15 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if (edje_file)
      {
-	if (edje_file->collection)
-	  {
-	     Edje_Part_Collection_Directory_Entry *ce;
+        if (edje_file->collection)
+          {
+             Edje_Part_Collection_Directory_Entry *ce;
 
-	     EINA_LIST_FREE(aliases, ce)
-	       {
-		  Edje_Part_Collection_Directory_Entry *sce;
+             EINA_LIST_FREE(aliases, ce)
+               {
+                  Edje_Part_Collection_Directory_Entry *sce;
 
-		  if (!ce->entry)
+                  if (!ce->entry)
                     {
                        snprintf(buf, sizeof(buf),
                                 "Collection %i: name missing.", ce->id);
@@ -704,12 +810,12 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
                        return;
                     }
 
-		  sce = eina_hash_find(edje_collections_lookup, &ce->id);
-		  if (sce)
+                  sce = eina_hash_find(edje_collections_lookup, &ce->id);
+                  if (sce)
                     {
                        memcpy(&ce->count, &sce->count, sizeof (ce->count));
                     }
-		  else
+                  else
                     {
                        snprintf(buf, sizeof(buf),
                                 "Collection %s (%i) can't find an correct alias.",
@@ -719,12 +825,12 @@ data_thread_head(void *data, Ecore_Thread *thread EINA_UNUSED)
                     }
 
                   _alias_clean(ce);
-		  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
-	       }
-	  }
-	bytes = eet_data_write(hw->ef, edd_edje_file, "edje/file", edje_file,
+                  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
+               }
+          }
+        bytes = eet_data_write(hw->ef, edd_edje_file, "edje/file", edje_file,
                                compress_mode);
-	if (bytes <= 0)
+        if (bytes <= 0)
           {
              snprintf(buf, sizeof(buf),
                       "Unable to write \"edje_file\" entry to \"%s\"",
@@ -743,20 +849,19 @@ data_thread_head_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Head_Write *hw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (hw->errstr)
      {
         error_and_abort(hw->ef, hw->errstr);
         free(hw->errstr);
      }
    free(hw);
+   thread_end(0);
 }
 
 static void
 data_write_header(Eet_File *ef)
 {
-   Head_Write  *hw;
+   Head_Write *hw;
 
    hw = calloc(1, sizeof(Head_Write));
    hw->ef = ef;
@@ -785,7 +890,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
    f = eina_file_open(fc->fn->file, 0);
    if (f)
      {
-       using_file(fc->fn->file, 'F');
+        using_file(fc->fn->file, 'F');
         m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
      }
    else
@@ -798,7 +903,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
              f = eina_file_open(buf, 0);
              if (f)
                {
-		 using_file(buf, 'F');
+                  using_file(buf, 'F');
                   m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
                   if (m) break;
                   eina_file_close(f);
@@ -843,14 +948,13 @@ static void
 data_thread_fonts_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Fonts_Write *fc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (fc->errstr)
      {
         error_and_abort(fc->ef, fc->errstr);
         free(fc->errstr);
      }
    free(fc);
+   thread_end(0);
 }
 
 static void
@@ -891,82 +995,82 @@ error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
 
    if (error == EVAS_LOAD_ERROR_DOES_NOT_EXIST)
      {
-	snprintf
-	  (hint, sizeof(hint),
-	   " Check if path to file \"%s\" is correct "
-	   "(both directory and file name).",
-	   file);
+        snprintf
+          (hint, sizeof(hint),
+          " Check if path to file \"%s\" is correct "
+          "(both directory and file name).",
+          file);
      }
    else if (error == EVAS_LOAD_ERROR_CORRUPT_FILE)
      {
-	snprintf
-	  (hint, sizeof(hint),
-	   " Check if file \"%s\" is consistent.",
-	   file);
+        snprintf
+          (hint, sizeof(hint),
+          " Check if file \"%s\" is consistent.",
+          file);
      }
    else if (error == EVAS_LOAD_ERROR_UNKNOWN_FORMAT)
      {
-	const char *ext = strrchr(file, '.');
-	const char **itr, *known_loaders[] = {
-	  /* list from evas_image_load.c */
-	  "png",
-	  "jpg",
-	  "jpeg",
-	  "jfif",
-	  "eet",
-	  "edj",
-	  "eap",
-	  "edb",
-	  "xpm",
-	  "tiff",
-	  "tif",
-	  "svg",
-	  "svgz",
-	  "gif",
-	  "pbm",
-	  "pgm",
-	  "ppm",
-	  "pnm",
-	  "bmp",
-	  "ico",
-	  "tga",
-	  "tgv",
-	  NULL
-	};
+        const char *ext = strrchr(file, '.');
+        const char **itr, *known_loaders[] = {
+           /* list from evas_image_load.c */
+           "png",
+           "jpg",
+           "jpeg",
+           "jfif",
+           "eet",
+           "edj",
+           "eap",
+           "edb",
+           "xpm",
+           "tiff",
+           "tif",
+           "svg",
+           "svgz",
+           "gif",
+           "pbm",
+           "pgm",
+           "ppm",
+           "pnm",
+           "bmp",
+           "ico",
+           "tga",
+           "tgv",
+           NULL
+        };
 
-	if (!ext)
-	  {
-	     snprintf
-	       (hint, sizeof(hint),
-		" File \"%s\" does not have an extension, "
-		"maybe it should?",
-		file);
-	     goto show_err;
-	  }
+        if (!ext)
+          {
+             snprintf
+               (hint, sizeof(hint),
+               " File \"%s\" does not have an extension, "
+               "maybe it should?",
+               file);
+             goto show_err;
+          }
 
-	ext++;
-	for (itr = known_loaders; *itr; itr++)
-	  {
-	     if (strcasecmp(ext, *itr) == 0)
-	       {
-		  snprintf
-		    (hint, sizeof(hint),
-		     " Check if Evas was compiled with %s module enabled and "
-		     "all required dependencies exist.",
-		     ext);
-		  goto show_err;
-	       }
-	  }
+        ext++;
+        for (itr = known_loaders; *itr; itr++)
+          {
+             if (strcasecmp(ext, *itr) == 0)
+               {
+                  snprintf
+                    (hint, sizeof(hint),
+                    " Check if Evas was compiled with %s module enabled and "
+                    "all required dependencies exist.",
+                    ext);
+                  goto show_err;
+               }
+          }
 
-	snprintf(hint, sizeof(hint),
-		 " Check if Evas supports loading files of type \"%s\" (%s) "
-		 "and this module was compiled and all its dependencies exist.",
-		 ext, file);
+        snprintf(hint, sizeof(hint),
+                 " Check if Evas supports loading files of type \"%s\" (%s) "
+                 "and this module was compiled and all its dependencies exist.",
+                 ext, file);
      }
- show_err:
+show_err:
    error_and_abort
      (ef, "Unable to load image \"%s\" used by file \"%s\": %s.%s",
-      file, file_out, errmsg, hint);
+     file, file_out, errmsg, hint);
 }
 
 static void
@@ -987,27 +1091,27 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
         qual = 80;
         if ((iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
             (iw->img->source_param == 0))
-          mode = 0; /* RAW */
+          mode = 0;  /* RAW */
         else if ((iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
                  (iw->img->source_param == 1))
-          mode = 1; /* COMPRESS */
+          mode = 1;  /* COMPRESS */
         else if (iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1)
-          mode = 3; /* LOSSY_ETC1 */
+          mode = 3;  /* LOSSY_ETC1 */
         else if (iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC2)
-          mode = 4; /* LOSSY_ETC2 */
+          mode = 4;  /* LOSSY_ETC2 */
         else
-          mode = 2; /* LOSSY */
+          mode = 2;  /* LOSSY */
         if ((mode == 0) && (no_raw))
           {
              mode = 1; /* promote compression */
              iw->img->source_param = 95;
           }
-        if ((mode == 4) && (no_etc2)) mode = 2; /* demote etc2 to jpeg */
-        if ((mode == 3) && (no_etc1)) mode = 2; /* demote etc1 to jpeg */
-        if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
+        if ((mode == 4) && (no_etc2)) mode = 2;  /* demote etc2 to jpeg */
+        if ((mode == 3) && (no_etc1)) mode = 2;  /* demote etc1 to jpeg */
+        if ((mode == 2) && (no_lossy)) mode = 1;  /* demote compression */
         if ((mode == 1) && (no_comp))
           {
-             if (no_lossy) mode = 0; /* demote compression */
+             if (no_lossy) mode = 0;  /* demote compression */
              else if (no_raw)
                {
                   iw->img->source_param = 90;
@@ -1023,7 +1127,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
           }
         if (iw->alpha)
           {
-             start = (unsigned int *) iw->data;
+             start = (unsigned int *)iw->data;
              end = start + (iw->w * iw->h);
              while (start < end)
                {
@@ -1100,7 +1204,7 @@ data_thread_image(void *data, Ecore_Thread *thread EINA_UNUSED)
                  bytes, (bytes + 512) / 1024, buf, iw->img->entry,
                  100 - (100 * (double)bytes) / ((double)(iw->w * iw->h * 4)),
                  100 - (100 * (double)bytes) / ((double)(st.st_size))
-                );
+                 );
           }
      }
 }
@@ -1110,8 +1214,6 @@ data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Image_Write *iw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1120,6 +1222,7 @@ data_thread_image_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    free(iw->path);
    evas_object_del(iw->im);
    free(iw);
+   thread_end(1);
 }
 
 static void
@@ -1157,8 +1260,6 @@ tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Image_Write *iw = data;
 
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (iw->errstr)
      {
         error_and_abort(iw->ef, iw->errstr);
@@ -1169,10 +1270,11 @@ tgv_file_thread_end(void *data, Ecore_Thread *thread EINA_UNUSED)
    eina_file_map_free(iw->f, iw->data);
    eina_file_close(iw->f);
    free(iw);
+   thread_end(1);
 }
 
 static Eina_Bool
-tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image_num)
+tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img)
 {
    Emile_Image_Load_Error err;
    Emile_Image *emi = NULL;
@@ -1212,7 +1314,7 @@ tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image
    iw->ef = ef;
    iw->img = img;
    iw->emi = emi;
-   iw->data = (unsigned int *) data;
+   iw->data = (unsigned int *)data;
    iw->w = iw->prop.w;
    iw->h = iw->prop.h;
 
@@ -1238,10 +1340,10 @@ tgv_file_check_and_add(Eet_File *ef, Edje_Image_Directory_Entry *img, int *image
           goto on_error;
      }
 
-   *image_num += 1;
+   image_num += 1;
    iw->path = strdup(img->entry);
 
-   pending_threads++;
+   pending_image_threads++;
    if (threads)
      ecore_thread_run(tgv_file_thread, tgv_file_thread_end, NULL, iw);
    else
@@ -1270,17 +1372,16 @@ data_write_vectors(Eet_File *ef, int *vector_num)
    Edje_Vector_Directory_Entry *vector;
    Eina_Strbuf *buf;
    Eina_Bool found = EINA_FALSE;
-   Ecore_Evas *ee;
    Evas *evas;
    Evas_Object *vg;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
      error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
-   evas = ecore_evas_get(ee);
+   evas = ecore_evas_get(buffer_ee);
    vg = evas_object_vg_add(evas);
    buf = eina_strbuf_new();
    for (i = 0; i < edje_file->image_dir->vectors_count; i++)
@@ -1317,22 +1418,43 @@ data_write_vectors(Eet_File *ef, int *vector_num)
 }
 
 static void
-data_write_images(Eet_File *ef, int *image_num)
+data_image_sets_init(void)
 {
    int i;
-   Ecore_Evas *ee;
+
+   if (!((edje_file) && (edje_file->image_dir))) return;
+   for (i = 0; i < (int)edje_file->image_dir->sets_count; i++)
+     {
+        Edje_Image_Directory_Set *set;
+        Edje_Image_Directory_Set_Entry *set_entry;
+        Edje_Image_Directory_Entry *img;
+        Eina_List *ll = NULL;
+
+        set = edje_file->image_dir->sets + i;
+        if (!set->entries) continue;
+        EINA_LIST_FOREACH(set->entries, ll, set_entry)
+          {
+             img = &edje_file->image_dir->entries[set_entry->id];
+             set_entry->name = img->entry;
+          }
+     }
+}
+
+static void
+data_write_images(void)
+{
    Evas *evas;
    const char *ext = NULL;
 
    if (!((edje_file) && (edje_file->image_dir))) return;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
-     error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
-   evas = ecore_evas_get(ee);
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
+     error_and_abort(cur_ef, "Cannot create buffer engine canvas for image load.");
+   evas = ecore_evas_get(buffer_ee);
 
-   for (i = 0; i < (int)edje_file->image_dir->entries_count; i++)
+   for (; cur_image_entry < (int)edje_file->image_dir->entries_count; cur_image_entry++)
      {
         Edje_Image_Directory_Entry *img;
         Evas_Object *im;
@@ -1341,8 +1463,8 @@ data_write_images(Eet_File *ef, int *image_num)
         int load_err = EVAS_LOAD_ERROR_NONE;
         Image_Write *iw;
 
-        img = &edje_file->image_dir->entries[i];
-        if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) || !img->entry)
+        img = &edje_file->image_dir->entries[cur_image_entry];
+        if ((img->source_type >= EDJE_IMAGE_SOURCE_TYPE_USER) || !img->entry)
           continue;
 
         if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY_ETC1 ||
@@ -1351,7 +1473,7 @@ data_write_images(Eet_File *ef, int *image_num)
              ext = strrchr(img->entry, '.');
              if (ext && !strcasecmp(ext, ".tgv"))
                {
-                  if (tgv_file_check_and_add(ef, img, image_num))
+                  if (tgv_file_check_and_add(cur_ef, img))
                     {
                        DBG("Directly copying data from TGV file into EDJ");
                        continue;
@@ -1362,7 +1484,7 @@ data_write_images(Eet_File *ef, int *image_num)
           }
 
         iw = calloc(1, sizeof(Image_Write));
-        iw->ef = ef;
+        iw->ef = cur_ef;
         iw->img = img;
         iw->im = im = evas_object_image_add(evas);
         if (threads)
@@ -1379,9 +1501,9 @@ data_write_images(Eet_File *ef, int *image_num)
              load_err = evas_object_image_load_error_get(im);
              if (load_err == EVAS_LOAD_ERROR_NONE)
                {
-                  *image_num += 1;
+                  image_num += 1;
                   iw->path = strdup(buf);
-                  pending_threads++;
+                  pending_image_threads++;
                   if (threads)
                     evas_object_image_preload(im, 0);
                   using_file(buf, 'I');
@@ -1396,9 +1518,9 @@ data_write_images(Eet_File *ef, int *image_num)
              load_err = evas_object_image_load_error_get(im);
              if (load_err == EVAS_LOAD_ERROR_NONE)
                {
-                  *image_num += 1;
+                  image_num += 1;
                   iw->path = strdup(img->entry);
-                  pending_threads++;
+                  pending_image_threads++;
                   if (threads)
                     evas_object_image_preload(im, 0);
                   using_file(img->entry, 'I');
@@ -1408,11 +1530,12 @@ data_write_images(Eet_File *ef, int *image_num)
              else
                {
                   free(iw);
-                  error_and_abort_image_load_error(ef, img->entry, load_err);
+                  error_and_abort_image_load_error(cur_ef, img->entry, load_err);
                   exit(1); // ensure static analysis tools know we exit
                }
           }
-        if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+
+        if (img->source_type < EDJE_IMAGE_SOURCE_TYPE_USER)
           {
              ext = strrchr(img->entry, '.');
              if (ext && (!strcasecmp(ext, ".svg") || !strcasecmp(ext, ".svgz")))
@@ -1425,21 +1548,9 @@ data_write_images(Eet_File *ef, int *image_num)
                   img->entry = tmp;
                }
           }
-     }
-
-   for (i = 0; i < (int)edje_file->image_dir->sets_count; i++)
-     {
-        Edje_Image_Directory_Set *set;
-        Edje_Image_Directory_Set_Entry *set_entry;
-        Edje_Image_Directory_Entry *img;
-        Eina_List *ll = NULL;
-
-        set = edje_file->image_dir->sets + i;
-        if (!set->entries) continue;
-        EINA_LIST_FOREACH(set->entries, ll, set_entry)
+        if (threads)
           {
-             img = &edje_file->image_dir->entries[set_entry->id];
-             set_entry->name = img->entry;
+             if (pending_threads + pending_image_threads > (int)max_open_files - 2) break;
           }
      }
 }
@@ -1467,7 +1578,6 @@ data_check_models(Eet_File *ef EINA_UNUSED, int *model_num EINA_UNUSED)
              snprintf(buf, sizeof(buf), "%s/%s", s, model->entry);
 
              file_exist = file_exist || ecore_file_exists(buf);
-
           }
         if (!file_exist)
           {
@@ -1564,9 +1674,8 @@ static void
 data_thread_sounds_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Sound_Write *sw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    free(sw);
+   thread_end(0);
 }
 
 static void
@@ -1629,51 +1738,49 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if (!f)
      {
-         snprintf(buf, sizeof(buf), "Unable to load mo data of: %s", mo_path);
-         ERR("%s", buf);
-         mw->errstr = strdup(buf);
-         exit(-1);
+        snprintf(buf, sizeof(buf), "Unable to load mo data of: %s", mo_path);
+        ERR("%s", buf);
+        mw->errstr = strdup(buf);
+        exit(-1);
      }
 
    snprintf(moid_str, sizeof(moid_str), "edje/mo/%i/%s/LC_MESSAGES", mw->mo_entry->id, mw->mo_entry->locale);
    m = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (m)
      {
-         bytes = eet_write(mw->ef, moid_str, m, eina_file_size_get(f), EET_COMPRESSION_NONE);
-         if (eina_file_map_faulted(f, m))
-           {
-              snprintf(buf, sizeof(buf), "File access error when reading '%s'",
-              eina_file_filename_get(f));
-              ERR("%s", buf);
-              mw->errstr = strdup(buf);
-              eina_file_close(f);
-              exit(-1);
-           }
-         eina_file_map_free(f, m);
+        bytes = eet_write(mw->ef, moid_str, m, eina_file_size_get(f), EET_COMPRESSION_NONE);
+        if (eina_file_map_faulted(f, m))
+          {
+             snprintf(buf, sizeof(buf), "File access error when reading '%s'",
+                      eina_file_filename_get(f));
+             ERR("%s", buf);
+             mw->errstr = strdup(buf);
+             eina_file_close(f);
+             exit(-1);
+          }
+        eina_file_map_free(f, m);
      }
    eina_file_close(f);
    if (mw->mo_path)
      ecore_file_remove(mo_path);
 
    INF("Wrote %9i bytes (%4iKb) for \"%s\" %s mo entry \"%s\"",
-	   bytes, (bytes + 512) / 1024, moid_str, "RAW PCM", mw->mo_entry->locale);
-
+       bytes, (bytes + 512) / 1024, moid_str, "RAW PCM", mw->mo_entry->locale);
 }
 
 static void
 data_thread_mo_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Mo_Write *mw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (mw->errstr)
      {
-       error_and_abort(mw->ef, mw->errstr);
-       free(mw->errstr);
+        error_and_abort(mw->ef, mw->errstr);
+        free(mw->errstr);
      }
    if (mw->mo_path)
      free(mw->mo_path);
    free(mw);
+   thread_end(0);
 }
 
 Eina_Bool
@@ -1700,7 +1807,7 @@ _exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *evinfo)
      }
    else
      return ECORE_CALLBACK_RENEW;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1828,9 +1935,8 @@ static void
 data_thread_vibrations_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Vibration_Write *sw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    free(sw);
+   thread_end(0);
 }
 
 static void
@@ -1861,6 +1967,7 @@ data_write_vibrations(Eet_File *ef, int *num)
           }
      }
 }
+
 static void
 check_groups(Eet_File *ef)
 {
@@ -1870,20 +1977,20 @@ check_groups(Eet_File *ef)
    /* sanity checks for parts and programs */
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	unsigned int i;
+        unsigned int i;
 
-	for (i = 0; i < pc->parts_count; ++i)
-	  check_part(pc, pc->parts[i], ef);
+        for (i = 0; i < pc->parts_count; ++i)
+          check_part(pc, pc->parts[i], ef);
 
-#define CHECK_PROGRAM(Type, Pc, It)				\
-	for (It = 0; It < Pc->programs.Type ## _count; ++It)	\
-	  check_program(Pc, Pc->programs.Type[i], ef);		\
+#define CHECK_PROGRAM(Type, Pc, It)                    \
+  for (It = 0; It < Pc->programs.Type ## _count; ++It) \
+    check_program(Pc, Pc->programs.Type[i], ef);       \
 
-	CHECK_PROGRAM(fnmatch, pc, i);
-	CHECK_PROGRAM(strcmp, pc, i);
-	CHECK_PROGRAM(strncmp, pc, i);
-	CHECK_PROGRAM(strrncmp, pc, i);
-	CHECK_PROGRAM(nocmp, pc, i);
+        CHECK_PROGRAM(fnmatch, pc, i);
+        CHECK_PROGRAM(strcmp, pc, i);
+        CHECK_PROGRAM(strncmp, pc, i);
+        CHECK_PROGRAM(strrncmp, pc, i);
+        CHECK_PROGRAM(nocmp, pc, i);
      }
 }
 
@@ -1903,14 +2010,13 @@ static void
 data_thread_group_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Group_Write *gw = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (gw->errstr)
      {
         error_and_abort(gw->ef, gw->errstr);
         free(gw->errstr);
      }
    free(gw);
+   thread_end(0);
 }
 
 static void
@@ -1949,7 +2055,7 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd, int fd)
    FILE *f = fdopen(fd, "wb");
    if (!f)
      error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-		     "compilation.", filename);
+                         "compilation.", filename);
 
    Eina_List *ll;
    Code_Program *cp;
@@ -1959,63 +2065,65 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd, int fd)
 
    if (cd->shared)
      {
-	while (ln < (cd->l1 - 1))
-	  {
-	     fprintf(f, " \n");
-	     ln++;
-	  }
-	{
-	   char *sp;
-	   int hash = 0;
-	   int newlined = 0;
+        while (ln < (cd->l1 - 1))
+          {
+             fprintf(f, " \n");
+             ln++;
+          }
+        {
+           char *sp;
+           int hash = 0;
+           int newlined = 0;
 
-	   for (sp = cd->shared; *sp; sp++)
-	     {
-		if ((sp[0] == '#') && (newlined))
-		  {
-		     hash = 1;
-		  }
-		newlined = 0;
-		if (sp[0] == '\n') newlined = 1;
-		if (!hash) fputc(sp[0], f);
-		else if (sp[0] == '\n') hash = 0;
-	     }
-	   fputc('\n', f);
-	}
-	ln += cd->l2 - cd->l1 + 1;
+           for (sp = cd->shared; *sp; sp++)
+             {
+                if ((sp[0] == '#') && (newlined))
+                  {
+                     hash = 1;
+                  }
+                newlined = 0;
+                if (sp[0] == '\n') newlined = 1;
+                if (!hash) fputc(sp[0], f);
+                else if (sp[0] == '\n')
+                  hash = 0;
+             }
+           fputc('\n', f);
+        }
+        ln += cd->l2 - cd->l1 + 1;
      }
    EINA_LIST_FOREACH(cd->programs, ll, cp)
      {
-	if (cp->script)
-	  {
-	     while (ln < (cp->l1 - 1))
-	       {
-		  fprintf(f, " \n");
-		  ln++;
-	       }
-	     /* FIXME: this prototype needs to be */
-	     /* formalised and set in stone */
-	     fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
-	     {
-		char *sp;
-		int hash = 0;
-		int newlined = 0;
+        if (cp->script)
+          {
+             while (ln < (cp->l1 - 1))
+               {
+                  fprintf(f, " \n");
+                  ln++;
+               }
+             /* FIXME: this prototype needs to be */
+             /* formalised and set in stone */
+             fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
+             {
+                char *sp;
+                int hash = 0;
+                int newlined = 0;
 
-		for (sp = cp->script; *sp; sp++)
-		  {
-		     if ((sp[0] == '#') && (newlined))
-		       {
-			  hash = 1;
-		       }
-		     newlined = 0;
-		     if (sp[0] == '\n') newlined = 1;
-		     if (!hash) fputc(sp[0], f);
-		     else if (sp[0] == '\n') hash = 0;
-		  }
-	     }
-	     fprintf(f, "}\n");
-	     ln += cp->l2 - cp->l1 + 1;
-	  }
+                for (sp = cp->script; *sp; sp++)
+                  {
+                     if ((sp[0] == '#') && (newlined))
+                       {
+                          hash = 1;
+                       }
+                     newlined = 0;
+                     if (sp[0] == '\n') newlined = 1;
+                     if (!hash) fputc(sp[0], f);
+                     else if (sp[0] == '\n')
+                       hash = 0;
+                  }
+             }
+             fprintf(f, "}\n");
+             ln += cp->l2 - cp->l1 + 1;
+          }
      }
 
    fclose(f);
@@ -2029,7 +2137,7 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
    int size;
    char buf[PATH_MAX];
 
-   f = fdopen(sc->tmpo_fd, "rb");
+   f = fopen(sc->tmpo, "rb");
    if (!f)
      {
         snprintf(buf, sizeof(buf),
@@ -2045,11 +2153,11 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    if (size > 0)
      {
-	void *dat = malloc(size);
+        void *dat = malloc(size);
 
-	if (dat)
-	  {
-	     if (fread(dat, size, 1, f) != 1)
+        if (dat)
+          {
+             if (fread(dat, size, 1, f) != 1)
                {
                   snprintf(buf, sizeof(buf),
                            "Unable to read all of script object \"%s\"",
@@ -2059,11 +2167,11 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
                   fclose(f);
                   return;
                }
-	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i",
+             snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i",
                       sc->i);
-	     eet_write(sc->ef, buf, dat, size, compress_mode);
-	     free(dat);
-	  }
+             eet_write(sc->ef, buf, dat, size, compress_mode);
+             free(dat);
+          }
         else
           {
              snprintf(buf, sizeof(buf),
@@ -2104,13 +2212,11 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
    eina_tmpstr_del(sc->tmpo);
 // closed by fclose(f) in create_script_file()
 //   close(sc->tmpn_fd);
-// closed by fclose(f) above
-//   close(sc->tmpo_fd);
 }
 
 typedef struct
 {
-   char *exe;
+   char         *exe;
    Script_Write *sc;
 } Pending_Script_Write;
 
@@ -2125,14 +2231,13 @@ static void
 data_thread_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Script_Write *sc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
         free(sc->errstr);
      }
    free(sc);
+   thread_end(0);
 }
 
 static Eina_Bool
@@ -2151,7 +2256,7 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
              Pending_Script_Write *pend = pending_script_writes->data;
 
              pending_script_writes = eina_list_remove_list
-               (pending_script_writes, pending_script_writes);
+                 (pending_script_writes, pending_script_writes);
              data_write_script_queue(pend->sc, pend->exe);
              free(pend->exe);
              free(pend);
@@ -2171,7 +2276,7 @@ data_scripts_exe_del_cb(void *data EINA_UNUSED, int evtype EINA_UNUSED, void *ev
         data_thread_script(sc, NULL);
         data_thread_script_end(sc, NULL);
      }
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (pending_threads + pending_image_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -2224,39 +2329,40 @@ data_write_scripts(Eet_File *ef)
 # define BIN_EXT
 #endif
 #ifdef NEED_RUN_IN_TREE
-     if (getenv("EFL_RUN_IN_TREE"))
-       {
-          snprintf(embryo_cc_path, sizeof(embryo_cc_path),
-                   "%s/src/bin/embryo/embryo_cc" BIN_EXT,
-                   PACKAGE_BUILD_DIR);
-          snprintf(inc_path, sizeof(inc_path),
-                   "%s/data/edje/include", PACKAGE_SRC_DIR);
-          if (!ecore_file_exists(embryo_cc_path))
-            embryo_cc_path[0] = '\0';
-       }
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        snprintf(embryo_cc_path, sizeof(embryo_cc_path),
+                 "%s/src/bin/embryo/embryo_cc" BIN_EXT,
+                 PACKAGE_BUILD_DIR);
+        snprintf(inc_path, sizeof(inc_path),
+                 "%s/data/edje/include", PACKAGE_SRC_DIR);
+        if (!ecore_file_exists(embryo_cc_path))
+          embryo_cc_path[0] = '\0';
+     }
 #endif
 
-     if (embryo_cc_path[0] == '\0')
-       {
-          snprintf(embryo_cc_path, sizeof(embryo_cc_path),
-                   "%s/embryo_cc" BIN_EXT,
-                   eina_prefix_bin_get(pfx));
-          snprintf(inc_path, sizeof(inc_path),
-                   "%s/include",
-                   eina_prefix_data_get(pfx));
-       }
+   if (embryo_cc_path[0] == '\0')
+     {
+        snprintf(embryo_cc_path, sizeof(embryo_cc_path),
+                 "%s/embryo_cc" BIN_EXT,
+                 eina_prefix_bin_get(pfx));
+        snprintf(inc_path, sizeof(inc_path),
+                 "%s/include",
+                 eina_prefix_data_get(pfx));
+     }
 #undef BIN_EXT
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
-	Code *cd = eina_list_data_get(l);
+        Code *cd = eina_list_data_get(l);
         Script_Write *sc;
+        int fd;
         char buf[EINA_PATH_MAX];
 
-	if (cd->is_lua)
-	  continue;
-	if ((!cd->shared) && (!cd->programs))
-	  continue;
+        if (cd->is_lua)
+          continue;
+        if ((!cd->shared) && (!cd->programs))
+          continue;
         sc = calloc(1, sizeof(Script_Write));
         sc->ef = ef;
         sc->cd = cd;
@@ -2264,15 +2370,19 @@ data_write_scripts(Eet_File *ef)
         sc->tmpn_fd = eina_file_mkstemp("edje_cc.sma-tmp-XXXXXX", &sc->tmpn);
         if (sc->tmpn_fd < 0)
           error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-                          "compilation.", sc->tmpn);
-        sc->tmpo_fd = eina_file_mkstemp("edje_cc.amx-tmp-XXXXXX", &sc->tmpo);
-        if (sc->tmpo_fd < 0)
+                              "compilation.", sc->tmpn);
+        fd = eina_file_mkstemp("edje_cc.amx-tmp-XXXXXX", &sc->tmpo);
+        if (fd < 0)
           {
              unlink(sc->tmpn);
              eina_tmpstr_del(sc->tmpn);
              error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-                             "compilation.", sc->tmpo);
+                                 "compilation.", sc->tmpo);
           }
+        //do not carry the fd over the time
+        //we should not unnesseserrily carry filedescriptors over time as this could excede system limits
+        //which have been fetched earlier
+        close(fd);
         create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
         snprintf(buf, sizeof(buf),
                  "%s -i %s -o %s %s", embryo_cc_path, inc_path,
@@ -2288,7 +2398,6 @@ _edje_lua_script_writer(lua_State *L EINA_UNUSED, const void *chunk_buf, size_t 
    Script_Lua_Writer *data;
    void *old;
 
-
    data = (Script_Lua_Writer *)_data;
    old = data->buf;
    data->buf = realloc(data->buf, data->size + chunk_size);
@@ -2297,7 +2406,7 @@ _edje_lua_script_writer(lua_State *L EINA_UNUSED, const void *chunk_buf, size_t 
         memcpy(&((data->buf)[data->size]), chunk_buf, chunk_size);
         data->size += chunk_size;
      }
-    else
+   else
      {
         ERR("Failed to copy chunk buffer.\n");
         data->buf = old;
@@ -2305,6 +2414,7 @@ _edje_lua_script_writer(lua_State *L EINA_UNUSED, const void *chunk_buf, size_t 
 
    return 0;
 }
+
 #endif
 
 void
@@ -2316,20 +2426,24 @@ _edje_lua_error_and_abort(lua_State *L, int err_code, Script_Write *sc)
    switch (err_code)
      {
       case LUA_ERRRUN:
-	err_type = "runtime";
-	break;
+        err_type = "runtime";
+        break;
+
       case LUA_ERRSYNTAX:
-	err_type = "syntax";
-	break;
+        err_type = "syntax";
+        break;
+
       case LUA_ERRMEM:
-	err_type = "memory allocation";
-	break;
+        err_type = "memory allocation";
+        break;
+
       case LUA_ERRERR:
-	err_type = "error handler";
-	break;
+        err_type = "error handler";
+        break;
+
       default:
-	err_type = "unknown";
-	break;
+        err_type = "unknown";
+        break;
      }
    snprintf(buf, sizeof(buf),
             "Lua %s error: %s", err_type, lua_tostring(L, -1));
@@ -2395,7 +2509,7 @@ data_thread_lua_script(void *data, Ecore_Thread *thread EINA_UNUSED)
      }
    luaL_pushresult(&b);
 #ifdef LUA_BINARY
-   if (err_code = luaL_loadstring(L, lua_tostring (L, -1)))
+   if (err_code = luaL_loadstring(L, lua_tostring(L, -1)))
      {
         _edje_lua_error_and_abort(L, err_code, sc);
         return;
@@ -2412,10 +2526,10 @@ data_thread_lua_script(void *data, Ecore_Thread *thread EINA_UNUSED)
     */
 
    /*
-    if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
-    printf("lua load error: %s\n", lua_tostring (L, -1));
-    if (lua_pcall(L, 0, 0, 0))
-    printf("lua call error: %s\n", lua_tostring (L, -1));
+      if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
+      printf("lua load error: %s\n", lua_tostring (L, -1));
+      if (lua_pcall(L, 0, 0, 0))
+      printf("lua call error: %s\n", lua_tostring (L, -1));
     */
 
    snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", sc->i);
@@ -2436,14 +2550,13 @@ static void
 data_thread_lua_script_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
    Script_Write *sc = data;
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    if (sc->errstr)
      {
         error_and_abort(sc->ef, sc->errstr);
         free(sc->errstr);
      }
    free(sc);
+   thread_end(0);
 }
 
 static void
@@ -2488,8 +2601,7 @@ data_thread_source(void *data, Ecore_Thread *thread EINA_UNUSED)
 static void
 data_thread_source_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   thread_end(0);
 }
 
 static void
@@ -2502,7 +2614,7 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
    int bytes;
 
    f = eina_file_open(lw->file, 0);
-   if (!f) return ;
+   if (!f) return;
 
    m = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!m) goto on_error;
@@ -2537,16 +2649,15 @@ data_thread_license(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    eina_file_map_free(f, m);
 
- on_error:
+on_error:
    eina_file_close(f);
 }
 
 static void
 data_thread_license_end(void *data, Ecore_Thread *thread EINA_UNUSED)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
    free(data);
+   thread_end(0);
 }
 
 static void
@@ -2556,10 +2667,10 @@ data_write_license(Eet_File *ef)
    Eina_List *l;
    const char *file;
 
-   if (!license) return ;
+   if (!license) return;
 
    lw = calloc(1, sizeof (License_Write));
-   if (!lw) return ;
+   if (!lw) return;
 
    lw->ef = ef;
    lw->file = license;
@@ -2577,7 +2688,7 @@ data_write_license(Eet_File *ef)
    EINA_LIST_FOREACH(licenses, l, file)
      {
         lw = calloc(1, sizeof (License_Write));
-        if (!lw) return ;
+        if (!lw) return;
 
         lw->ef = ef;
         lw->file = file;
@@ -2603,7 +2714,7 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
    int bytes;
 
    f = eina_file_open(authors, 0);
-   if (!f) return ;
+   if (!f) return;
 
    m = eina_file_map_all(f, EINA_FILE_WILLNEED);
    if (!m) goto on_error;
@@ -2625,15 +2736,14 @@ data_thread_authors(void *data, Ecore_Thread *thread EINA_UNUSED)
 
    eina_file_map_free(f, m);
 
- on_error:
+on_error:
    eina_file_close(f);
 }
 
 static void
 data_thread_authors_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   thread_end(0);
 }
 
 static void
@@ -2646,8 +2756,7 @@ data_thread_fontmap(void *data, Ecore_Thread *thread EINA_UNUSED)
 static void
 data_thread_fontmap_end(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED)
 {
-   pending_threads--;
-   if (pending_threads <= 0) ecore_main_loop_quit();
+   thread_end(0);
 }
 
 void
@@ -2655,7 +2764,6 @@ data_write(void)
 {
    Eet_File *ef;
    Eet_Error err;
-   int image_num = 0;
    int model_num = 0;
    int sound_num = 0;
    int mo_num = 0;
@@ -2667,15 +2775,15 @@ data_write(void)
 
    if (!edje_file)
      {
-	ERR("No data to put in \"%s\"", file_out);
-	exit(-1);
+        ERR("No data to put in \"%s\"", file_out);
+        exit(-1);
      }
 
-   ef = eet_open(file_out, EET_FILE_MODE_WRITE);
+   cur_ef = ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
-	ERR("Unable to open \"%s\" for writing output", file_out);
-	exit(-1);
+        ERR("Unable to open \"%s\" for writing output", file_out);
+        exit(-1);
      }
 
    if ((edje_file->efl_version.major <= 1) && (edje_file->efl_version.minor <= 18)
@@ -2689,6 +2797,20 @@ data_write(void)
             "for all textblock parts that specify text min/max values (the bool "
             "defined as description.text.{min,max}).",
             EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
+     }
+
+   if (eina_array_count(requires))
+     {
+        int i = 0;
+
+        edje_file->requires_count = eina_array_count(requires);
+        edje_file->requires = mem_alloc(edje_file->requires_count * sizeof(void*));
+        do
+          {
+             edje_file->requires[i] = eina_array_pop(requires);
+             i++;
+          } while (eina_array_count(requires));
+        eina_array_free(requires);
      }
 
    check_groups(ef);
@@ -2727,8 +2849,6 @@ data_write(void)
         data_thread_fontmap_end(ef, NULL);
      }
    INF("fontmap: %3.5f", ecore_time_get() - t); t = ecore_time_get();
-   data_write_images(ef, &image_num);
-   INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_write_vectors(ef, &vector_num);
    INF("vectors: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    data_check_models(ef, &model_num);
@@ -2754,10 +2874,21 @@ data_write(void)
              data_thread_authors_end(ef, NULL);
           }
      }
+   data_write_images();
+   data_image_sets_init();
+   INF("images: %3.5f", ecore_time_get() - t); t = ecore_time_get();
    pending_threads--;
-   if (pending_threads > 0) ecore_main_loop_begin();
+   if (pending_threads + pending_image_threads > 0) ecore_main_loop_begin();
    INF("THREADS: %3.5f", ecore_time_get() - t);
    data_write_header(ef);
+   if (pending_threads + pending_image_threads > 0) ecore_main_loop_begin();
+   INF("THREADS: %3.5f", ecore_time_get() - t);
+
+   if (threads)
+     {
+        /* probably caught signal, exit immediately to avoid crash */
+        if (pending_threads + pending_image_threads > 0) exit(-1);
+     }
 
    err = eet_close(ef);
    if (err)
@@ -2793,9 +2924,9 @@ reorder_parts(void)
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
         unsigned int i, j, k;
-	Eina_Bool found = EINA_FALSE;
+        Eina_Bool found = EINA_FALSE;
 
-	for (i = 0; i < pc->parts_count; i++)
+        for (i = 0; i < pc->parts_count; i++)
           {
              ep = (Edje_Part_Parser *)pc->parts[i];
              if (ep->reorder.insert_before && ep->reorder.insert_after)
@@ -2858,7 +2989,7 @@ reorder_parts(void)
                     }
                   if (found)
                     {
-		       unsigned int amount, linked;
+                       unsigned int amount, linked;
 
                        if (((i > k) && ((i - ep->reorder.linked_prev) <= k))
                            || ((i < k) && ((i + ep->reorder.linked_next) >= k)))
@@ -2867,19 +2998,19 @@ reorder_parts(void)
                        amount = ep->reorder.linked_prev + ep->reorder.linked_next + 1;
                        linked = i - ep->reorder.linked_prev;
                        parts = malloc(amount * sizeof(Edje_Part *));
-                       for (j = 0 ; j < amount ; j++)
+                       for (j = 0; j < amount; j++)
                          {
                             parts[j] = pc->parts[linked];
                             linked++;
                          }
                        if (i > k)
                          {
-                            for (j = i - ep->reorder.linked_prev ; j > k; j--)
+                            for (j = i - ep->reorder.linked_prev; j > k; j--)
                               {
                                  pc->parts[j + amount - 1] = pc->parts[j - 1];
                                  pc->parts[j + amount - 1]->id = j + amount - 1;
                               }
-                            for (j = 0 ; j < amount ; j++)
+                            for (j = 0; j < amount; j++)
                               {
                                  pc->parts[j + k] = parts[j];
                                  pc->parts[j + k]->id = j + k;
@@ -2887,12 +3018,12 @@ reorder_parts(void)
                          }
                        else if (i < k)
                          {
-                            for (j = i + ep->reorder.linked_next + 1 ; j <= k ; j++)
+                            for (j = i + ep->reorder.linked_next + 1; j <= k; j++)
                               {
                                  pc->parts[j - amount] = pc->parts[j];
                                  pc->parts[j - amount]->id = j - amount;
                               }
-                            for (j = 0 ; j < amount ; j++)
+                            for (j = 0; j < amount; j++)
                               {
                                  pc->parts[j + k - amount + 1] = parts[j];
                                  pc->parts[j + k - amount + 1]->id = j + k - amount + 1;
@@ -2992,7 +3123,7 @@ data_queue_part_nest_lookup(Edje_Part_Collection *pc, const char *name, int *des
 
 void
 data_queue_part_reallocated_lookup(Edje_Part_Collection *pc, const char *name,
-				   unsigned char **base, int offset)
+                                   unsigned char **base, int offset)
 {
    Part_Lookup_Key key;
    Part_Lookup *pl = NULL;
@@ -3054,7 +3185,6 @@ part_lookup_del(Edje_Part_Collection *pc, int *dest)
    eina_hash_del(part_pc_dest_lookup, &key, pl);
 }
 
-
 void
 part_lookup_delete(Edje_Part_Collection *pc, const char *name, int *dest, char **dest2)
 {
@@ -3109,7 +3239,7 @@ data_queue_anonymous_lookup(Edje_Part_Collection *pc, Edje_Program *ep, int *des
    Eina_List *l, *l1, *l2, *l3;
    Program_Lookup *pl;
 
-   if (!ep) return; /* FIXME: should we stop compiling ? */
+   if (!ep) return;  /* FIXME: should we stop compiling ? */
 
    EINA_LIST_FOREACH_SAFE(program_lookups, l, l1, pl)
      {
@@ -3189,31 +3319,31 @@ data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest
      {
         if (pl->dest == src && pl->u.ep->name)
           {
-             for (i = 0 ; i < pc->programs.fnmatch_count ; i++)
+             for (i = 0; i < pc->programs.fnmatch_count; i++)
                {
                   if (pc->programs.fnmatch[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.fnmatch[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.fnmatch[i], dest);
                }
-             for (i = 0 ; i < pc->programs.strcmp_count ; i++)
+             for (i = 0; i < pc->programs.strcmp_count; i++)
                {
                   if (pc->programs.strcmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strcmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strcmp[i], dest);
                }
-             for (i = 0 ; i < pc->programs.strncmp_count ; i++)
+             for (i = 0; i < pc->programs.strncmp_count; i++)
                {
                   if (pc->programs.strncmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strncmp[i], dest);
                }
-             for (i = 0 ; i < pc->programs.strrncmp_count ; i++)
+             for (i = 0; i < pc->programs.strrncmp_count; i++)
                {
                   if (pc->programs.strrncmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strrncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strrncmp[i], dest);
                }
-             for (i = 0 ; i < pc->programs.nocmp_count ; i++)
+             for (i = 0; i < pc->programs.nocmp_count; i++)
                {
                   if (pc->programs.nocmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.nocmp[i]->name))
@@ -3231,7 +3361,7 @@ data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 
    if (pcp->inherit_only && (!current_group_inherit)) return NULL;
 
-   if (!name) return NULL; /* FIXME: should we stop compiling ? */
+   if (!name) return NULL;  /* FIXME: should we stop compiling ? */
 
    pl = mem_alloc(SZ(Program_Lookup));
    program_lookups = eina_list_append(program_lookups, pl);
@@ -3311,7 +3441,7 @@ data_queue_image_remove(int *dest, Eina_Bool *set)
              return;
           }
      }
- }
+}
 
 void
 data_queue_model_lookup(char *name, int *dest, Eina_Bool *set)
@@ -3379,8 +3509,8 @@ data_process_part_set(Part_Lookup *target, int value)
      }
    else
      {
-        *((int*)(*target->key.mem.reallocated.base +
-                 target->key.mem.reallocated.offset)) = value;
+        *((int *)(*target->key.mem.reallocated.base +
+                  target->key.mem.reallocated.offset)) = value;
      }
    return EINA_FALSE;
 }
@@ -3413,20 +3543,19 @@ static void
 _data_image_sets_size_set()
 {
    Evas *evas;
-   Ecore_Evas *ee;
    Edje_Image_Directory_Set *set;
    Edje_Image_Directory_Set_Entry *simg, *preimg;
    Eina_List *l, *entries;
    unsigned int i;
 
-   ecore_evas_init();
-   ee = ecore_evas_buffer_new(1, 1);
-   if (!ee)
+   if (!buffer_ee)
+     buffer_ee = ecore_evas_buffer_new(1, 1);
+   if (!buffer_ee)
      {
         ERR("Cannot create buffer engine canvas for image load.");
         exit(-1);
      }
-   evas = ecore_evas_get(ee);
+   evas = ecore_evas_get(buffer_ee);
 
    for (i = 0; i < edje_file->image_dir->sets_count; i++)
      {
@@ -3523,40 +3652,40 @@ _data_image_id_update(Eina_List *images_unused_list)
    unsigned int i, j, desc_it;
    Eina_List *l, *l2, *l3;
 
-#define PART_DESC_IMAGE_ID_UPDATE \
-   EINA_LIST_FOREACH(images_unused_list, l3, iui) \
-     { \
-        if ((iui) && (part_desc_image->image.id == iui->old_id)) \
-          { \
-             part_desc_image->image.id = iui->new_id; \
-             break; \
-          } \
-     } \
-   for (desc_it = 0; desc_it < part_desc_image->image.tweens_count; desc_it++) \
-     { \
-        tween_id = part_desc_image->image.tweens[desc_it]; \
-        EINA_LIST_FOREACH(images_unused_list, l3, iui) \
-          { \
-             if ((iui) && (tween_id->id == iui->old_id)) \
-               { \
-                  tween_id->id = iui->new_id; \
-                  break; \
-               } \
-          } \
-     }
+#define PART_DESC_IMAGE_ID_UPDATE                                             \
+  EINA_LIST_FOREACH(images_unused_list, l3, iui)                             \
+    {                                                                         \
+       if ((iui) && (part_desc_image->image.id == iui->old_id))               \
+         {                                                                    \
+            part_desc_image->image.id = iui->new_id;                          \
+            break;                                                            \
+         }                                                                    \
+    }                                                                         \
+  for (desc_it = 0; desc_it < part_desc_image->image.tweens_count; desc_it++) \
+    {                                                                         \
+       tween_id = part_desc_image->image.tweens[desc_it];                     \
+       EINA_LIST_FOREACH(images_unused_list, l3, iui)                        \
+         {                                                                    \
+            if ((iui) && (tween_id->id == iui->old_id))                       \
+              {                                                               \
+                 tween_id->id = iui->new_id;                                  \
+                 break;                                                       \
+              }                                                               \
+         }                                                                    \
+    }
 
-#define PART_DESC_PROXY_ID_UPDATE \
-   EINA_LIST_FOREACH(images_unused_list, l3, iui) \
-     { \
-        if ((iui) && (part_desc_mesh_node->mesh_node.texture.id == iui->old_id)) \
-          { \
-             part_desc_mesh_node->mesh_node.texture.id = iui->new_id; \
-             break; \
-          } \
-     }
+#define PART_DESC_PROXY_ID_UPDATE                                               \
+  EINA_LIST_FOREACH(images_unused_list, l3, iui)                               \
+    {                                                                           \
+       if ((iui) && (part_desc_mesh_node->mesh_node.texture.id == iui->old_id)) \
+         {                                                                      \
+            part_desc_mesh_node->mesh_node.texture.id = iui->new_id;            \
+            break;                                                              \
+         }                                                                      \
+    }
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
      {
-        for(i = 0; i < pc->parts_count; i++)
+        for (i = 0; i < pc->parts_count; i++)
           {
              part = pc->parts[i];
              if (part->type == EDJE_PART_TYPE_IMAGE)
@@ -3565,10 +3694,10 @@ _data_image_id_update(Eina_List *images_unused_list)
                   if (!part_desc_image) continue;
                   PART_DESC_IMAGE_ID_UPDATE
                   for (j = 0; j < part->other.desc_count; j++)
-                     {
-                        part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
-                        PART_DESC_IMAGE_ID_UPDATE
-                     }
+                    {
+                       part_desc_image = (Edje_Part_Description_Image *)part->other.desc[j];
+                       PART_DESC_IMAGE_ID_UPDATE
+                    }
                }
              else if (part->type == EDJE_PART_TYPE_MESH_NODE)
                {
@@ -3576,10 +3705,10 @@ _data_image_id_update(Eina_List *images_unused_list)
                   if (!part_desc_mesh_node) continue;
                   PART_DESC_PROXY_ID_UPDATE
                   for (j = 0; j < part->other.desc_count; j++)
-                     {
-                        part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
-                        PART_DESC_PROXY_ID_UPDATE
-                     }
+                    {
+                       part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
+                       PART_DESC_PROXY_ID_UPDATE
+                    }
                }
           }
      }
@@ -3599,7 +3728,6 @@ _data_image_id_update(Eina_List *images_unused_list)
                        break;
                     }
                }
-
           }
      }
 }
@@ -3614,19 +3742,19 @@ _data_model_id_update(Eina_List *models_unused_list)
    unsigned int i, j;
    Eina_List *l, *l2, *l3;
 
-#define PART_DESC_MODEL_ID_UPDATE \
-   EINA_LIST_FOREACH(models_unused_list, l3, iui) \
-     { \
-        if ((iui) && (part_desc_mesh_node->mesh_node.mesh.id == iui->old_id)) \
-          { \
-             part_desc_mesh_node->mesh_node.mesh.id = iui->new_id; \
-             break; \
-          } \
-     } \
+#define PART_DESC_MODEL_ID_UPDATE                                            \
+  EINA_LIST_FOREACH(models_unused_list, l3, iui)                            \
+    {                                                                        \
+       if ((iui) && (part_desc_mesh_node->mesh_node.mesh.id == iui->old_id)) \
+         {                                                                   \
+            part_desc_mesh_node->mesh_node.mesh.id = iui->new_id;            \
+            break;                                                           \
+         }                                                                   \
+    }                                                                        \
 
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
      {
-        for(i = 0; i < pc->parts_count; i++)
+        for (i = 0; i < pc->parts_count; i++)
           {
              part = pc->parts[i];
              if (part->type == EDJE_PART_TYPE_MESH_NODE)
@@ -3635,10 +3763,10 @@ _data_model_id_update(Eina_List *models_unused_list)
                   if (!part_desc_mesh_node) continue;
                   PART_DESC_MODEL_ID_UPDATE
                   for (j = 0; j < part->other.desc_count; j++)
-                     {
-                        part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
-                        PART_DESC_MODEL_ID_UPDATE
-                     }
+                    {
+                       part_desc_mesh_node = (Edje_Part_Description_Mesh_Node *)part->other.desc[j];
+                       PART_DESC_MODEL_ID_UPDATE
+                    }
                }
           }
      }
@@ -3676,18 +3804,19 @@ data_process_lookups(void)
              ERR("A collection without a name was detected, that's not allowed.");
              exit(-1);
           }
+
         find = eina_hash_find(edje_file->collection, pc->part);
         if (find && find->id == pc->id)
           {
-             if ( ((Edje_Part_Collection_Parser*)pc)->inherit_only)
+             if (((Edje_Part_Collection_Parser *)pc)->inherit_only)
                eina_hash_del_by_data(edje_file->collection, find);
              else
-               continue ;
+               continue;
           }
 
         EINA_LIST_FOREACH(aliases, l3, alias)
           if (alias->id == pc->id)
-            continue ;
+            continue;
 
         /* This Edje_Part_Collection is not used at all */
         edje_collections = eina_list_remove_list(edje_collections, l);
@@ -3696,23 +3825,27 @@ data_process_lookups(void)
 
         /* Unref all image used by that group */
         for (i = 0; i < pc->parts_count; ++i)
-	  part_description_image_cleanup(pc->parts[i]);
+          part_description_image_cleanup(pc->parts[i]);
 
         /* Correct all id */
         EINA_LIST_FOREACH(edje_collections, l3, pc)
           {
              Eina_List *l4;
+             Edje_Part_Collection_Directory_Entry *de;
 
              /* Some group could be removed from the collection, but still be referenced by alias */
-             find = eina_hash_find(edje_file->collection, pc->part);
-             if (pc->id != find->id) find = NULL;
-
              /* Update all matching alias */
              EINA_LIST_FOREACH(aliases, l4, alias)
                if (pc->id == alias->id)
                  alias->id = id;
 
-             pc->id = id++;
+             find = eina_hash_find(edje_file->collection, pc->part);
+             if (pc->id != find->id) find = NULL;
+
+             de = eina_hash_find(edje_collections_lookup, &pc->id);
+             eina_hash_set(edje_collections_lookup, &pc->id, NULL);
+             de->id = pc->id = id++;
+             eina_hash_set(edje_collections_lookup, &pc->id, de);
              if (find) find->id = pc->id;
           }
      }
@@ -3724,11 +3857,11 @@ data_process_lookups(void)
 
         if (pc->lua_script_only)
           is_lua = EINA_TRUE;
-#define PROGRAM_ID_SET(Type, Pc, It, Count)				\
-        for (It = 0; It < Pc->programs.Type ## _count; ++It)		\
-          {								\
-             Pc->programs.Type[It]->id = Count++;			\
-          }
+#define PROGRAM_ID_SET(Type, Pc, It, Count)            \
+  for (It = 0; It < Pc->programs.Type ## _count; ++It) \
+    {                                                  \
+       Pc->programs.Type[It]->id = Count++;            \
+    }
 
         PROGRAM_ID_SET(fnmatch, pc, i, count);
         PROGRAM_ID_SET(strcmp, pc, i, count);
@@ -3779,7 +3912,7 @@ data_process_lookups(void)
                     }
                }
 
-             if ((i == part->key.pc->parts_count) && (!((Edje_Part_Collection_Parser*)part->key.pc)->inherit_only))
+             if ((i == part->key.pc->parts_count) && (!((Edje_Part_Collection_Parser *)part->key.pc)->inherit_only))
                {
                   ERR("Unable to find part name \"%s\" needed in group '%s'.",
                       alias, part->key.pc->part);
@@ -3796,21 +3929,21 @@ data_process_lookups(void)
         unsigned int i;
         Eina_Bool find = EINA_FALSE;
 
-#define PROGRAM_MATCH(Type, Pl, It)					\
-        for (It = 0; It < Pl->pc->programs.Type ## _count; ++It)	\
-          {								\
-             Edje_Program *ep;						\
-             \
-             ep = Pl->pc->programs.Type[It];				\
-             \
-             if ((Pl->anonymous && ep == Pl->u.ep) ||			\
-                 ((!Pl->anonymous) && (ep->name) && (!strcmp(ep->name, Pl->u.name)))) \
-               {							\
-                  *(Pl->dest) = ep->id;					\
-                  find = EINA_TRUE;					\
-                  break;						\
-               }							\
-          }
+#define PROGRAM_MATCH(Type, Pl, It)                                             \
+  for (It = 0; It < Pl->pc->programs.Type ## _count; ++It)                      \
+    {                                                                           \
+       Edje_Program *ep;                                                        \
+                                                                                \
+       ep = Pl->pc->programs.Type[It];                                          \
+                                                                                \
+       if ((Pl->anonymous && ep == Pl->u.ep) ||                                 \
+           ((!Pl->anonymous) && (ep->name) && (!strcmp(ep->name, Pl->u.name)))) \
+         {                                                                      \
+            *(Pl->dest) = ep->id;                                               \
+            find = EINA_TRUE;                                                   \
+            break;                                                              \
+         }                                                                      \
+    }
 
         PROGRAM_MATCH(fnmatch, program, i);
         PROGRAM_MATCH(strcmp, program, i);
@@ -3835,6 +3968,7 @@ data_process_lookups(void)
         free(program);
      }
 
+   groups_sourced = eina_hash_string_superfast_new(NULL);
    EINA_LIST_FREE(group_lookups, group)
      {
         Edje_Part_Collection_Directory_Entry *de;
@@ -3869,6 +4003,7 @@ data_process_lookups(void)
              exit(-1);
           }
 
+        eina_hash_add(groups_sourced, group->name, (void*)1);
 free_group:
         free(group->name);
         free(group);
@@ -3919,7 +4054,7 @@ free_group:
 
                   if ((de->entry) && (!strcmp(de->entry, image->name)))
                     {
-                       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+                       if (de->source_type >= EDJE_IMAGE_SOURCE_TYPE_USER)
                          *(image->dest) = -de->id - 1;
                        else
                          *(image->dest) = de->id;
@@ -3950,8 +4085,8 @@ free_group:
                             find = EINA_TRUE;
 
                             EINA_LIST_FOREACH(set->entries, lc, child)
-                               if (!eina_hash_find(images_in_use, child->name))
-                                 eina_hash_direct_add(images_in_use, child->name, child);
+                              if (!eina_hash_find(images_in_use, child->name))
+                                eina_hash_direct_add(images_in_use, child->name, child);
 
                             if (!eina_hash_find(images_in_use, image->name))
                               eina_hash_direct_add(images_in_use, set->name, set);
@@ -3986,7 +4121,7 @@ free_group:
              de = edje_file->image_dir->entries + i;
 
              if (de->entry && eina_hash_find(images_in_use, de->entry))
-               continue ;
+               continue;
 
              INF("Image '%s' in resource 'edje/image/%i' will not be included as it is unused.",
                  de->entry, de->id);
@@ -4014,7 +4149,7 @@ free_group:
              set = edje_file->image_dir->sets + i;
 
              if (set->name && eina_hash_find(images_in_use, set->name))
-               continue ;
+               continue;
 
              INF("Set '%s' will not be included as it is unused.", set->name);
 
@@ -4031,7 +4166,7 @@ free_group:
              images_unused_list = eina_list_append(images_unused_list, iui);
              iui->new_id = i;
              set_last->id = i;
-              memcpy(set, set_last, sizeof(Edje_Image_Directory_Set));
+             memcpy(set, set_last, sizeof(Edje_Image_Directory_Set));
              --i;
              edje_file->image_dir->sets_count--;
              set_realloc = realloc(edje_file->image_dir->sets,
@@ -4042,7 +4177,7 @@ free_group:
         /* update image id in parts */
         if (images_unused_list) _data_image_id_update(images_unused_list);
         EINA_LIST_FREE(images_unused_list, iui)
-           free(iui);
+          free(iui);
 
         _data_image_sets_size_set();
      }
@@ -4098,7 +4233,7 @@ free_group:
              de = edje_file->model_dir->entries + i;
 
              if (de->entry && eina_hash_find(models_in_use, de->entry))
-               continue ;
+               continue;
 
              INF("Model '%s' in resource 'edje/model/%i' will not be included as it is unused.",
                  de->entry, de->id);
@@ -4124,14 +4259,14 @@ free_group:
         /* update model id in parts */
         if (models_unused_list) _data_model_id_update(models_unused_list);
         EINA_LIST_FREE(models_unused_list, iui)
-           free(iui);
+          free(iui);
      }
 
    eina_hash_free(models_in_use);
 }
 
 static void
-data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len))
+data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len))
 {
    char *p;
    char *key;
@@ -4147,97 +4282,98 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
    escape = 0;
    for (p = s; (p) && (*p); p++)
      {
-	if (!quote)
-	  {
-	     if (*p == '\"')
-	       {
-		  quote = 1;
-		  p++;
-	       }
-	  }
-	if (!quote)
-	  {
-	     if (!strncmp(p, key, keyl))
-	       {
+        if (!quote)
+          {
+             if (*p == '\"')
+               {
+                  quote = 1;
+                  p++;
+               }
+          }
+        if (!quote)
+          {
+             if (!strncmp(p, key, keyl))
+               {
                   char *ptr;
                   int len;
                   int inesc = 0;
-		  char *name;
+                  char *name;
 
                   ptr = p;
                   p += keyl;
-		  while ((*p))
-		    {
-		       if (!inesc)
-		         {
-			    if (*p == '\\') inesc = 1;
-			    else if (*p == '\"')
-			      {
-			         /* string concatenation, see below */
-				 if (*(p + 1) != '\"')
-				   break;
-				 else
-				   p++;
-			      }
-			 }
+                  while ((*p))
+                    {
+                       if (!inesc)
+                         {
+                            if (*p == '\\') inesc = 1;
+                            else if (*p == '\"')
+                              {
+                                 /* string concatenation, see below */
+                                 if (*(p + 1) != '\"')
+                                   break;
+                                 else
+                                   p++;
+                              }
+                         }
                        else
-                            inesc = 0;
+                         inesc = 0;
                        p++;
-		    }
-		  len = p - ptr + 1;
-		  name = alloca(len);
-		  if (name)
-		    {
-		       char *pp;
-		       int i;
+                    }
+                  len = p - ptr + 1;
+                  name = alloca(len);
+                  if (name)
+                    {
+                       char *pp;
+                       int i;
 
-		       name[0] = 0;
-		       pp = ptr + keyl;
-		       inesc = 0;
-		       i = 0;
-		       while (*pp)
-		         {
-			    if (!inesc)
-			      {
-			         if (*pp == '\\') inesc = 1;
-			         else if (*pp == '\"')
-				   {
-				      /* concat strings like "foo""bar" to "foobar" */
-				      if (*(pp + 1) == '\"')
-				        pp++;
-				      else
-				        {
-					   name[i] = 0;
-					   break;
-					}
-				   }
-				 else
-				   {
-				      name[i] = *pp;
-				      name[i + 1] = 0;
-				      i++;
-				   }
-			      }
-			    else
+                       name[0] = 0;
+                       pp = ptr + keyl;
+                       inesc = 0;
+                       i = 0;
+                       while (*pp)
+                         {
+                            if (!inesc)
+                              {
+                                 if (*pp == '\\') inesc = 1;
+                                 else if (*pp == '\"')
+                                   {
+                                      /* concat strings like "foo""bar" to "foobar" */
+                                      if (*(pp + 1) == '\"')
+                                        pp++;
+                                      else
+                                        {
+                                           name[i] = 0;
+                                           break;
+                                        }
+                                   }
+                                 else
+                                   {
+                                      name[i] = *pp;
+                                      name[i + 1] = 0;
+                                      i++;
+                                   }
+                              }
+                            else
                               inesc = 0;
-			    pp++;
-			}
-		      func(pc, name, ptr, len);
-		   }
-              }
-	  }
-	else
-	  {
-	     if (!escape)
-	       {
-		  if (*p == '\"') quote = 0;
-		  else if (*p == '\\') escape = 1;
-	       }
-	     else if (escape)
-	       {
-		  escape = 0;
-	       }
-	  }
+                            pp++;
+                         }
+                       func(pc, name, ptr, len);
+                    }
+               }
+          }
+        else
+          {
+             if (!escape)
+               {
+                  if (*p == '\"') quote = 0;
+                  else if (*p == '\\')
+                    escape = 1;
+               }
+             else if (escape)
+               {
+                  escape = 0;
+               }
+          }
      }
 }
 
@@ -4254,6 +4390,7 @@ _data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len
 
    code_lookups = eina_list_append(code_lookups, cl);
 }
+
 static void
 _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
@@ -4267,11 +4404,13 @@ _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int 
 
    code_lookups = eina_list_append(code_lookups, cl);
 }
+
 static void
 _data_queue_group_lookup(Edje_Part_Collection *pc EINA_UNUSED, char *name, char *ptr EINA_UNUSED, int len EINA_UNUSED)
 {
    data_queue_group_lookup(name, NULL);
 }
+
 static void
 _data_queue_image_pc_lookup(Edje_Part_Collection *pc EINA_UNUSED, char *name, char *ptr, int len)
 {
@@ -4281,7 +4420,7 @@ _data_queue_image_pc_lookup(Edje_Part_Collection *pc EINA_UNUSED, char *name, ch
    cl->ptr = ptr;
    cl->len = len;
 
-   data_queue_image_lookup(name, &(cl->val),  &(cl->set));
+   data_queue_image_lookup(name, &(cl->val), &(cl->set));
 
    code_lookups = eina_list_append(code_lookups, cl);
 }
@@ -4293,36 +4432,36 @@ data_process_scripts(void)
 
    for (l = codes, l2 = edje_collections; (l) && (l2); l = eina_list_next(l), l2 = eina_list_next(l2))
      {
-	Edje_Part_Collection *pc;
-	Code *cd;
+        Edje_Part_Collection *pc;
+        Code *cd;
 
-	cd = eina_list_data_get(l);
-	pc = eina_list_data_get(l2);
+        cd = eina_list_data_get(l);
+        pc = eina_list_data_get(l2);
 
-	if ((cd->shared) && (!cd->is_lua))
-	  {
-	     data_process_string(pc, "PART",    cd->shared, _data_queue_part_lookup);
-	     data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);
-	     data_process_string(pc, "IMAGE",   cd->shared, _data_queue_image_pc_lookup);
-	     data_process_string(pc, "GROUP",   cd->shared, _data_queue_group_lookup);
-	  }
+        if ((cd->shared) && (!cd->is_lua))
+          {
+             data_process_string(pc, "PART", cd->shared, _data_queue_part_lookup);
+             data_process_string(pc, "PROGRAM", cd->shared, _data_queue_program_lookup);
+             data_process_string(pc, "IMAGE", cd->shared, _data_queue_image_pc_lookup);
+             data_process_string(pc, "GROUP", cd->shared, _data_queue_group_lookup);
+          }
 
-	if (cd->programs)
-	  {
-	     Code_Program *cp;
-	     Eina_List *ll;
+        if (cd->programs)
+          {
+             Code_Program *cp;
+             Eina_List *ll;
 
-	     EINA_LIST_FOREACH(cd->programs, ll, cp)
-	       {
-		  if (cp->script)
-		    {
-		       data_process_string(pc, "PART",    cp->script, _data_queue_part_lookup);
-		       data_process_string(pc, "PROGRAM", cp->script, _data_queue_program_lookup);
-		       data_process_string(pc, "IMAGE",   cp->script, _data_queue_image_pc_lookup);
-		       data_process_string(pc, "GROUP",   cp->script, _data_queue_group_lookup);
-		    }
-	       }
-	  }
+             EINA_LIST_FOREACH(cd->programs, ll, cp)
+               {
+                  if (cp->script)
+                    {
+                       data_process_string(pc, "PART", cp->script, _data_queue_part_lookup);
+                       data_process_string(pc, "PROGRAM", cp->script, _data_queue_program_lookup);
+                       data_process_string(pc, "IMAGE", cp->script, _data_queue_image_pc_lookup);
+                       data_process_string(pc, "GROUP", cp->script, _data_queue_group_lookup);
+                    }
+               }
+          }
      }
 }
 
@@ -4334,18 +4473,18 @@ data_process_script_lookups(void)
 
    EINA_LIST_FOREACH(code_lookups, l, cl)
      {
-	char buf[12];
-	int n;
+        char buf[12];
+        int n;
 
-	/* FIXME !! Handle set in program */
-	n = eina_convert_itoa(cl->val, buf);
-	if (n > cl->len)
-	  {
-	     ERR("The unexpected happened. A numeric replacement string was larger than the original!");
-	     exit(-1);
-	  }
-	memset(cl->ptr, ' ', cl->len);
-	strncpy(cl->ptr, buf, n);
+        /* FIXME !! Handle set in program */
+        n = eina_convert_itoa(cl->val, buf);
+        if (n > cl->len)
+          {
+             ERR("The unexpected happened. A numeric replacement string was larger than the original!");
+             exit(-1);
+          }
+        memset(cl->ptr, ' ', cl->len);
+        strncpy(cl->ptr, buf, n);
      }
 }
 
@@ -4431,10 +4570,10 @@ color_tree_parent_node_get(const char *color_class)
    char *name;
 
    EINA_LIST_FOREACH(edje_file->color_tree, l, ctn)
-      if (ctn->color_classes)
-         EINA_LIST_FOREACH(ctn->color_classes, ll, name)
-            if (!strcmp(name, color_class))
-              return ctn;
+     if (ctn->color_classes)
+       EINA_LIST_FOREACH(ctn->color_classes, ll, name)
+         if (!strcmp(name, color_class))
+           return ctn;
 
    return NULL;
 }
@@ -4490,12 +4629,12 @@ process_color_tree(char *s, const char *f_in, int ln)
                       if (!strcmp(name, token[id]))
                         {
                            error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the root node.",
-                                           f_in, ln -1, token[id]);
+                                           f_in, ln - 1, token[id]);
                         }
 
                   if ((ctn = color_tree_parent_node_get(token[id])))
                     error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
-                                    f_in, ln -1, token[id], ctn->name);
+                                    f_in, ln - 1, token[id], ctn->name);
 
                   ctn = eina_array_data_get(array, eina_array_count(array) - 1);
                   ctn->color_classes = eina_list_append(ctn->color_classes, strdup(token[id]));
@@ -4504,14 +4643,13 @@ process_color_tree(char *s, const char *f_in, int ln)
                {
                   if ((ctn = color_tree_parent_node_get(token[id])))
                     error_and_abort(NULL, "parse error %s:%i. The color class \"%s\" already belongs to the \"%s\" node.",
-                                    f_in, ln -1, token[id], ctn->name);
+                                    f_in, ln - 1, token[id], ctn->name);
 
                   color_tree_root = eina_list_append(color_tree_root, strdup(token[id]));
                }
           }
 
         id = !id;
-
      } while (*s);
 
    if (eina_array_count(array))
@@ -4525,7 +4663,7 @@ char
 validate_hex_digit(char c)
 {
    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))
-    return c;
+     return c;
 
    ERR("%s:%i. invalid character '%c' is used in color code.",
        file_in, line - 1, c);
@@ -4619,3 +4757,4 @@ convert_color_code(char *str, int *r, int *g, int *b, int *a)
 
    free(str);
 }
+

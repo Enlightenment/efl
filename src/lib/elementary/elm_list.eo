@@ -1,44 +1,8 @@
 import elm_general;
 
-enum Elm.List.Mode
-{
-   [[Set list's resizing behavior, transverse axis scrolling and items
-     cropping. See each mode's description for more details.
-
-     Note: Default value is @Elm.List.Mode.scroll.
-
-     Values here don't work as bitmasks -- only one can be chosen at
-     a time.
-
-     See also @Elm.List.mode.set, @Elm.List.mode.get.
-   ]]
-   legacy: elm_list;
-   compress = 0, [[The list won't set any of its size hints to inform how a
-                   possible container should resize it. Then, if it's not
-                   created as a "resize object", it might end with zeroed
-                   dimensions. The list will respect the container's geometry
-                   and, if any of its items won't fit into its transverse axis,
-                   one won't be able to scroll it in that direction.]]
-   scroll, [[Default value. This is the same as #ELM_LIST_COMPRESS, with the
-             exception that if any of its items won't fit into its transverse
-             axis, one will be able to scroll it in that direction.]]
-   limit, [[Sets a minimum size hint on the list object, so that containers may
-            respect it (and resize itself to fit the child properly). More
-            specifically, a minimum size hint will be set for its transverse
-            axis, so that the largest item in that direction fits well. This
-            is naturally bound by the list object's maximum size hints, set
-            externally.]]
-   expand, [[Besides setting a minimum size on the transverse axis, just like
-             on @Elm.List.Mode.limit, the list will set a minimum size on the
-             longitudinal axis, trying to reserve space to all its children to
-             be visible at a time. . This is naturally bound by the list
-             object's maximum size hints, set externally.]]
-   last [[Indicates error if returned by elm_list_mode_get().]]
-}
-
-class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
-                Efl.Access.Widget.Action, Efl.Access.Selection,
-                Efl.Ui.Clickable, Efl.Ui.Selectable)
+class Elm.List (Efl.Ui.Layout.Object, Elm.Interface_Scrollable,
+                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary list class]]
    legacy_prefix: elm_list;
@@ -430,22 +394,22 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
-      Elm.Widget.focus_highlight_geometry { get; }
-      Elm.Widget.on_disabled_update;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.focus_highlight_geometry { get; }
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
-      Elm.Widget.focused_item { get; }
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focused_item { get; }
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.policy { set; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.children { get; }
+      Efl.Access.Object.access_children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;
@@ -453,20 +417,22 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Access.Selection.child_deselect;
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
+      Efl.Access.Selection.access_selection_clear;
    }
    events {
-      activated; [[Called when activated]]
-      edge,top; [[Called when top edge was reached]]
-      edge,bottom; [[Called when bottom edge was reached]]
-      edge,left; [[Called when left edge was reached]]
-      edge,right; [[Called when right edge was reached]]
-      swipe; [[Called when swipe is detected]]
-      highlighted; [[Called when highlighted]]
-      unhighlighted; [[Called when no longer highlighted]]
-      item,focused; [[Called when item got focus]]
-      item,unfocused; [[Called when item no longer has focus]]
+      activated: Efl.Object; [[Called when activated]]
+      edge,top: void; [[Called when top edge was reached]]
+      edge,bottom: void; [[Called when bottom edge was reached]]
+      edge,left: void; [[Called when left edge was reached]]
+      edge,right: void; [[Called when right edge was reached]]
+      swipe: Efl.Object; [[Called when swipe is detected]]
+      highlighted: Efl.Object; [[Called when highlighted]]
+      unhighlighted: Efl.Object; [[Called when no longer highlighted]]
+      item,focused: Efl.Object; [[Called when item got focus]]
+      item,unfocused: Efl.Object; [[Called when item no longer has focus]]
+      /* FIXME: Nobody emits these
       item,reorder,anim,start; [[Called when item reorder animation started]]
       item,reorder,anim,stop; [[Called when item reorder animation stopped]]
+      */
    }
 }

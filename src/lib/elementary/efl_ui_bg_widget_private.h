@@ -28,6 +28,8 @@ struct _Efl_Ui_Bg_Widget_Data
 {
    Evas_Object          *rect; /*<< Used for elm_bg_color_set(): elm.swallow.rectangle */
    Evas_Object          *img; /*<< Used for elm_bg_file_set(): elm.swallow.content */
+   const char           *file; /*<< Used for elm_bg_file_set() with legacy widget */
+   const char           *key; /*<< Used for elm_bg_file_set() with legacy widget */
 };
 
 /**
@@ -41,7 +43,7 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
   EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -50,7 +52,7 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
   EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return val;                                   \
     }

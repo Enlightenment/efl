@@ -215,9 +215,6 @@ efl_net_ssl_ctx_setup(Efl_Net_Ssl_Ctx *ctx, Efl_Net_Ssl_Ctx_Config cfg)
       case EFL_NET_SSL_CIPHER_AUTO:
          priority = NULL;
          break;
-      case EFL_NET_SSL_CIPHER_SSLV3:
-         priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-TLS1.0:!VERS-TLS1.1:!VERS-TLS1.2";
-         break;
       case EFL_NET_SSL_CIPHER_TLSV1:
          priority = "NORMAL:%VERIFY_ALLOW_X509_V1_CA_CRT:!VERS-SSL3.0!VERS-TLS1.1:!VERS-TLS1.2";
          break;

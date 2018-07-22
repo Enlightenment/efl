@@ -318,6 +318,7 @@ drag_grab_button(Comp_Seat *s,
 {
    Comp_Data_Device_Source *data_source = s->drag.source;
    enum wl_pointer_button_state state = state_w;
+   struct wl_resource *res;
 
    if (data_source &&
        s->drag.id == button &&
@@ -328,8 +329,12 @@ drag_grab_button(Comp_Seat *s,
             data_source->current_dnd_action)
           {
              if (s->drag.enter)
-               wl_data_device_send_drop(data_device_find(s, s->drag.enter->res));
+               {
+                  res = data_device_find(s, s->drag.enter->res);
+                  if (!res) return;
 
+                  wl_data_device_send_drop(res);
+               }
              if (wl_resource_get_version(data_source->res) >=
                  WL_DATA_SOURCE_DND_DROP_PERFORMED_SINCE_VERSION)
                wl_data_source_send_dnd_drop_performed(data_source->res);
@@ -356,3 +361,53 @@ drag_grab_button(Comp_Seat *s,
 #endif
      }
 }
+
+#ifdef HAVE_ECORE_X
+static xkb_mod_index_t x11_kbd_shift_mod;
+static xkb_mod_index_t x11_kbd_caps_mod;
+static xkb_mod_index_t x11_kbd_ctrl_mod;
+static xkb_mod_index_t x11_kbd_alt_mod;
+static xkb_mod_index_t x11_kbd_mod2_mod;
+static xkb_mod_index_t x11_kbd_mod3_mod;
+static xkb_mod_index_t x11_kbd_super_mod;
+static xkb_mod_index_t x11_kbd_mod5_mod;
+
+static void
+keymap_mods_init(struct xkb_keymap *keymap)
+{
+   x11_kbd_shift_mod = xkb_keymap_mod_get_index(keymap,  XKB_MOD_NAME_SHIFT);
+   x11_kbd_caps_mod = xkb_keymap_mod_get_index(keymap, XKB_MOD_NAME_CAPS);
+   x11_kbd_ctrl_mod = xkb_keymap_mod_get_index(keymap, XKB_MOD_NAME_CTRL);
+   x11_kbd_alt_mod = xkb_keymap_mod_get_index(keymap, XKB_MOD_NAME_ALT);
+   x11_kbd_mod2_mod = xkb_keymap_mod_get_index(keymap, "Mod2");
+   x11_kbd_mod3_mod = xkb_keymap_mod_get_index(keymap, "Mod3");
+   x11_kbd_super_mod = xkb_keymap_mod_get_index(keymap,  XKB_MOD_NAME_LOGO);
+   x11_kbd_mod5_mod = xkb_keymap_mod_get_index(keymap, "Mod5");
+}
+
+static uint32_t
+get_xkb_mod_mask(uint32_t in)
+{
+	uint32_t ret = 0;
+
+	if ((in & ECORE_X_MODIFIER_SHIFT) && x11_kbd_shift_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_shift_mod);
+	if ((in & ECORE_X_LOCK_CAPS) && x11_kbd_caps_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_caps_mod);
+	if ((in & ECORE_X_MODIFIER_CTRL) && x11_kbd_ctrl_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_ctrl_mod);
+	if ((in & ECORE_X_MODIFIER_ALT) && x11_kbd_alt_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_alt_mod);
+	if ((in & ECORE_X_LOCK_NUM) && x11_kbd_mod2_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_mod2_mod);
+	if ((in & ECORE_X_LOCK_SCROLL) && x11_kbd_mod3_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_mod3_mod);
+	if ((in & ECORE_X_MODIFIER_WIN) && x11_kbd_super_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_super_mod);
+	if ((in & ECORE_X_MODIFIER_ALTGR) && x11_kbd_mod5_mod != XKB_MOD_INVALID)
+		ret |= (1 << x11_kbd_mod5_mod);
+
+	return ret;
+}
+
+#endif

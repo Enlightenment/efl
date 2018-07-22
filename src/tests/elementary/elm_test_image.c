@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_BETA
+#define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -17,22 +17,40 @@ struct _Test_Data
    int success;
 };
 
-START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_image_legacy_type_check)
+{
+   Evas_Object *win, *image;
+   const char *type;
+
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+
+   type = elm_object_widget_type_get(image);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "Elm_Image"));
+
+   type = evas_object_type_get(image);
+   ck_assert(type != NULL);
+   ck_assert(!strcmp(type, "elm_image"));
+
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_atspi_role_get)
 {
    Evas_Object *win, *image;
    Efl_Access_Role role;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = elm_image_add(win);
-   role = efl_access_role_get(image);
+   role = efl_access_object_role_get(image);
 
    ck_assert(role == EFL_ACCESS_ROLE_IMAGE);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _async_error_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
@@ -109,14 +127,14 @@ _timeout_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-START_TEST (elm_image_async_path)
+EFL_START_TEST (elm_image_async_path)
 {
    Evas_Object *win, *image;
+   Ecore_Timer *t;
    Eina_Bool ok;
    Test_Data td;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 0;
    td.image_id = 0;
@@ -130,25 +148,25 @@ START_TEST (elm_image_async_path)
    ok = elm_image_file_set(image, invalid, NULL);
    ck_assert(ok);
 
-   ecore_timer_add(10.0, _timeout_cb, &td);
+   t = ecore_timer_add(10.0, _timeout_cb, &td);
 
    elm_run();
    ck_assert(td.success == 3);
 
-   elm_shutdown();
+   ecore_timer_del(t);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_image_async_mmap)
+EFL_START_TEST (elm_image_async_mmap)
 {
    Evas_Object *win, *image;
+   Ecore_Timer *t;
    Eina_Bool ok;
    Test_Data td;
    Eina_File *f;
    char path[PATH_MAX];
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
 
    td.success = 1; // skip "error" case
    td.image_id = 1;
@@ -166,25 +184,46 @@ START_TEST (elm_image_async_mmap)
    ok = elm_image_mmap_set(image, f, NULL);
    ck_assert(ok);
 
-   ecore_timer_add(10.0, _timeout_cb, &td);
+   t = ecore_timer_add(10.0, _timeout_cb, &td);
 
    elm_run();
    ck_assert(td.success == 3);
 
    eina_file_close(f);
 
-   elm_shutdown();
+   ecore_timer_del(t);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (efl_ui_image_icon)
+EFL_START_TEST (elm_image_evas_object_color_set)
+{
+   Evas_Object *win, *image;
+   Eina_Bool ok;
+   Test_Data td;
+   Eina_File *f;
+   char path[PATH_MAX];
+   int r = 128, g = 99, b = 3, a = 230;
+   int rr = 0, gg = 0, bb = 0, aa = 0;
+
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+   evas_object_color_set(image, r, g, b, a);
+   evas_object_color_get(image, &rr, &gg, &bb, &aa);
+   ck_assert(r == rr);
+   ck_assert(g == gg);
+   ck_assert(b == bb);
+   ck_assert(a == aa);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_image_icon)
 {
    Evas_Object *win, *image;
    Eina_Bool ok;
    const char *icon_name;
 
-   elm_init(1, NULL);
-   win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
 
    image = efl_add(EFL_UI_IMAGE_CLASS, win);
    evas_object_show(image);
@@ -199,14 +238,15 @@ START_TEST (efl_ui_image_icon)
    icon_name = efl_ui_image_icon_get(image);
    ck_assert(icon_name == NULL);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_image(TCase *tc)
 {
-    tcase_add_test(tc, elm_atspi_role_get);
-    tcase_add_test(tc, elm_image_async_path);
-    tcase_add_test(tc, elm_image_async_mmap);
-    tcase_add_test(tc, efl_ui_image_icon);
+   tcase_add_test(tc, elm_image_legacy_type_check);
+   tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_image_async_path);
+   tcase_add_test(tc, elm_image_async_mmap);
+   tcase_add_test(tc, elm_image_evas_object_color_set);
+   tcase_add_test(tc, efl_ui_image_icon);
 }

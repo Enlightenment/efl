@@ -1,6 +1,6 @@
 type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item class type]]
 
-class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
+class Elm.Slideshow (Efl.Ui.Layout.Object, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary slideshow class]]
    eo_prefix: elm_obj_slideshow;
@@ -80,7 +80,7 @@ class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
             transition: string @nullable; [[The new transition's name string.]]
          }
       }
-      @property loop {
+      @property items_loop {
          set {
             [[Set if the slideshow items should be displayed cyclically or not,
               so when the end is reached it will restart from the first item.
@@ -88,11 +88,13 @@ class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
               Note: This will affect the "automatic" slidshow behaviour and the
               @.next and @.previous functions as well.
             ]]
+            legacy: elm_slideshow_loop_set;
          }
          get {
             [[Get if, after a slideshow is started, for a given slideshow
               widget, its items are to be displayed cyclically or not.
             ]]
+            legacy: elm_slideshow_loop_get;
          }
          values {
             loop: bool; [[Use $true to make it cycle through items or
@@ -304,11 +306,11 @@ class Elm.Slideshow (Efl.Ui.Layout, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      changed; [[Called when slideshow widget changed]]
-      transition,end; [[Called on transition end]]
+      changed: Efl.Object; [[Called when slideshow widget changed]]
+      transition,end: Efl.Object; [[Called on transition end]]
    }
 }

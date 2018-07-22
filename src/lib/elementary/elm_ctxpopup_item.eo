@@ -1,11 +1,60 @@
-class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action)
+class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Access.Widget.Action,
+                        Efl.Ui.Legacy)
 {
    [[Elementary context popup item class]]
    legacy_prefix: elm_ctxpopup_item;
    eo_prefix: elm_obj_ctxpopup_item;
    methods {
+      @property prev {
+         get {
+            [[Get the item before this one in the widget's list of items.
+
+              See also @.next.
+            ]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The item before the object in its parent's
+                                     list. If there is no previous item or in case
+                                     of error, $null is returned.]]
+         }
+      }
+      @property next {
+         get {
+            [[Get the item after this one in the widget's list of items.
+
+              See also @.prev.
+            ]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The item after the object in its parent's
+                                     list. If there is no next item or in case
+                                     of error, $null is returned.]]
+         }
+      }
+      @property selected {
+         [[Indicates whether this item is currently selected.]]
+         get {
+            [[Get the selected state of this item.]]
+         }
+         set {
+             [[Set the selected state of $item.
+
+               This sets the selected state of the given item $it.
+               $true for selected, $false for not selected.
+
+               If a new item is selected the previously selected will
+               be unselected. Previously selected item can be retrieved
+               with @Elm.Ctxpopup.selected_item.get.
+
+               Selected items will be highlighted.
+             ]]
+         }
+         values {
+            selected: bool; [[The selection state.]]
+         }
+      }
       init {
-      	 [[Init context popup item]]
+          [[Init context popup item]]
          params {
             func: Evas_Smart_Cb @nullable; [[Smart callback function]]
             data: const(void_ptr) @optional; [[Data pointer]]
@@ -21,10 +70,7 @@ class Elm.Ctxpopup.Item(Elm.Widget.Item, Efl.Ui.Item, Efl.Access.Widget.Action)
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
         Elm.Widget.Item.part_content_unset;
-        Elm.Widget.Item.focus { get; set; }
-        Efl.Ui.Item.selected { get; set; }
-        Efl.Ui.Item.prev { get; }
-        Efl.Ui.Item.next { get; }
+        Elm.Widget.Item.item_focus { get; set; }
         Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

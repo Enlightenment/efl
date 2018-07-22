@@ -1,4 +1,5 @@
-class Elm.Photo (Elm.Widget, Efl.File, Efl.Ui.Clickable, Efl.Ui.Draggable)
+class Elm.Photo (Efl.Ui.Widget, Efl.File, Efl.Ui.Clickable, Efl.Ui.Draggable,
+                 Efl.Ui.Legacy)
 {
    [[Elementary photo class]]
    legacy_prefix: elm_photo;
@@ -7,6 +8,6 @@ class Elm.Photo (Elm.Widget, Efl.File, Efl.Ui.Clickable, Efl.Ui.Draggable)
       class.constructor;
       Efl.Object.constructor;
       Efl.File.file { set; }
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
    }
 }

@@ -1,0 +1,21 @@
+class Efl.Appthread (Efl.Loop, Efl.ThreadIO)
+{
+   [[ ]]
+   methods {
+   }
+   events {
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Io.Closer.close;
+      Efl.Io.Closer.closed { get; }
+      Efl.Io.Reader.read;
+      Efl.Io.Reader.can_read { get; set; }
+      Efl.Io.Reader.eos { get; set; }
+      Efl.Io.Writer.write;
+      Efl.Io.Writer.can_write { get; set; }
+      Efl.ThreadIO.call;
+      Efl.ThreadIO.call_sync;
+   }
+}

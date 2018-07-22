@@ -1,9 +1,7 @@
-import eina_types;
-
 type Elm_Prefs_Data: __undefined_type; [[Elementary preferences data type]]
 type Elm_Prefs_Reset_Mode: __undefined_type; [[Elementary preferences reset mode type]]
 
-class Elm.Prefs (Elm.Widget, Efl.File)
+class Elm.Prefs (Efl.Ui.Widget, Efl.File, Efl.Ui.Legacy)
 {
    [[Elementary preferences class]]
    legacy_prefix: elm_prefs;
@@ -218,11 +216,13 @@ class Elm.Prefs (Elm.Widget, Efl.File)
       Efl.File.file { get; set; }
    }
    events {
-      page,changed; [[Called when page changed]]
-      page,saved; [[Called when page was saved]]
+      page,changed: string; [[Called when page changed]]
+      page,saved: string; [[Called when page was saved]]
+      /* FIXME: Nobody emits this
       page,reset; [[Called when page was reset]]
-      page,loaded; [[Called when page got loaded]]
-      item,changed; [[Called when item changed]]
-      action; [[Called when action was done]]
+      */
+      page,loaded: string; [[Called when page got loaded]]
+      item,changed: string; [[Called when item changed]]
+      action: string; [[Called when action was done]]
    }
 }

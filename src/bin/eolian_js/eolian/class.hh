@@ -10,12 +10,12 @@
 
 inline std::string name(Eolian_Class const* klass)
 {
-  return ::eolian_class_name_get(klass);
+  return ::eolian_class_short_name_get(klass);
 }
 
 inline std::string full_name(Eolian_Class const* klass)
 {
-  return ::eolian_class_full_name_get(klass);
+  return ::eolian_class_name_get(klass);
 }
 
 inline std::string full_name_transformed(Eolian_Class const* klass)
@@ -44,10 +44,10 @@ inline std::string type_class_name(Eolian_Type const* tp)
              tpt = ::eolian_type_type_get(tp);
              if (tpt == EOLIAN_TYPE_CLASS)
                {
-                  Eolian_Class const* klass = ::eolian_type_class_get(NULL, tp);
+                  Eolian_Class const* klass = ::eolian_type_class_get(tp);
                   if (klass)
                     {
-                       Eina_Stringshare* klass_name = ::eolian_class_full_name_get(klass);
+                       Eina_Stringshare* klass_name = ::eolian_class_name_get(klass);
                        if (!klass_name)
                          throw std::runtime_error("Could not get Eo class name");
 
@@ -59,7 +59,7 @@ inline std::string type_class_name(Eolian_Type const* tp)
                   auto tpd = eolian_type_typedecl_get(tp);
                   if (tpd && eolian_typedecl_type_get(tpd) == EOLIAN_TYPEDECL_STRUCT)
                     {
-                       auto struct_type_full_name = ::eolian_type_full_name_get(tp);
+                       auto struct_type_full_name = ::eolian_type_name_get(tp);
                        if (!struct_type_full_name)
                          throw std::runtime_error("Could not get struct name");
                        return struct_type_full_name;

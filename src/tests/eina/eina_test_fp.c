@@ -27,7 +27,7 @@
 
 #include "eina_suite.h"
 
-START_TEST(eina_fp_cos)
+EFL_START_TEST(eina_fp_cos)
 {
    Eina_F32p32 fc;
    Eina_F32p32 fl;
@@ -36,8 +36,6 @@ START_TEST(eina_fp_cos)
    double dc;
    double dresult;
    double delta;
-
-        fail_if(!eina_init());
 
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
@@ -52,11 +50,10 @@ START_TEST(eina_fp_cos)
         fail_if(delta > 0.005);
      }
 
-        eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_sin)
+EFL_START_TEST(eina_fp_sin)
 {
    Eina_F32p32 fc;
    Eina_F32p32 fl;
@@ -65,8 +62,6 @@ START_TEST(eina_fp_sin)
    double dc;
    double dresult;
    double delta;
-
-        fail_if(!eina_init());
 
    fl = eina_f32p32_scale(EINA_F32P32_PI, 4);
    step = eina_f32p32_div(fl, eina_f32p32_int_from(2048));
@@ -82,11 +77,10 @@ START_TEST(eina_fp_sin)
      }
 
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_mul)
+EFL_START_TEST(eina_fp_mul)
 {
    Eina_F32p32 fc1, fc2;
    Eina_F32p32 fresult;
@@ -98,12 +92,10 @@ START_TEST(eina_fp_mul)
    double maxdelta = 0;
    double maxdelta_per = 0;
 
-        fail_if(!eina_init());
-
    dl1 = 10;
-   step1 = 0.001;
+   step1 = 0.007;
    dl2 = 1000;
-   step2 = 0.01;
+   step2 = 0.061;
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
@@ -135,11 +127,10 @@ START_TEST(eina_fp_mul)
      }
    printf("Max delta(multiplication): %f (%f%%)\n", maxdelta, maxdelta_per*100);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_fp_div)
+EFL_START_TEST(eina_fp_div)
 {
    Eina_F32p32 fc1, fc2;
    Eina_F32p32 fresult;
@@ -151,12 +142,10 @@ START_TEST(eina_fp_div)
    double maxdelta = 0;
    double maxdelta_per = 0;
 
-        fail_if(!eina_init());
-
    dl1 = 10;
-   step1 = 0.001;
+   step1 = 0.007;
    dl2 = 1000;
-   step2 = 0.01;
+   step2 = 0.061;
 
    for (dc1 = 0; dc1 < dl1; dc1 += step1)
      {
@@ -187,9 +176,8 @@ START_TEST(eina_fp_div)
      }
    printf("Max delta(division): %f (%f%%)\n", maxdelta, maxdelta_per*100);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_fp(TCase *tc)

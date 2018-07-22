@@ -1,22 +1,11 @@
 type Elm_Naviframe_Item_Pop_Cb: __undefined_type; [[Elementary naviframe item pop callback type]]
 
-class Elm.Naviframe.Item(Elm.Widget.Item)
+class Elm.Naviframe.Item(Elm.Widget.Item, Efl.Ui.Legacy)
 {
    [[Elementary naviframe item class]]
    legacy_prefix: elm_naviframe_item;
    eo_prefix: elm_obj_naviframe_item;
    methods {
-        @property style {
-             get {
-                 [[Get an item style.]]
-             }
-             set {
-                 [[Set an item style.]]
-             }
-             values {
-                 style: string @nullable; [[The current item style name. $null would be default]]
-             }
-        }
       pop_to {
             [[Pop the top item and delete the items between the top and the
               above one on the given item.
@@ -82,6 +71,7 @@ class Elm.Naviframe.Item(Elm.Widget.Item)
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
         Elm.Widget.Item.part_content_unset;
-        Efl.Access.children { get; }
+        Elm.Widget.Item.style { set; }
+        Efl.Access.Object.access_children { get; }
    }
 }

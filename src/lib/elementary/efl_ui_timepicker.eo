@@ -1,0 +1,44 @@
+class Efl.Ui.Timepicker (Efl.Ui.Layout.Object)
+{
+   [[Timepicker widget
+   
+     This is a widget which allows the user to pick a time using internal spinner. 
+     User can use the internal spinner to select hour, minute, AM/PM or user can input
+     value using internal entry.
+   ]]
+   methods {
+     @property time {
+         [[The current value of time
+
+           $hour: Hour. The hour value is in terms of 24 hour format from 0 to 23.
+
+           $min: Minute. The minute range is from 0 to 59.
+         ]]
+         set {
+         }
+         get{
+         }
+         values {
+            hour: int; [[The hour value from 0 to 23.]]
+            min: int; [[The minute value from 0 to 59.]]
+         }
+      }
+      @property ampm {
+         [[Control if the Timepicker displays 24 hour time or 12 hour time including AM/PM button.]]
+         set {
+         }
+         get {
+         }
+         values {
+            is_24hour: bool; [[$true to display the 24 hour time, $false to display 12 hour time including AM/PM button.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+   events {
+      changed: void; [[Called when date is changed]]
+   }
+}

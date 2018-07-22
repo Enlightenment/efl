@@ -1,0 +1,14 @@
+class Efl.Canvas.Vg.Gradient_Linear (Efl.Canvas.Vg.Gradient, Efl.Gfx.Gradient_Linear)
+{
+   [[Efl vector graphics gradient linear class]]
+   legacy_prefix: evas_vg_gradient_linear;
+   implements {
+      Efl.Gfx.Gradient_Linear.start { get; set; }
+      Efl.Gfx.Gradient_Linear.end { get; set; }
+      Efl.Gfx.Path.interpolate;
+      Efl.Duplicate.duplicate;
+      Efl.Gfx.Path.bounds_get;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

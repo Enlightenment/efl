@@ -7,6 +7,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#include "efl_ui_focus_graph.h"
+
 #define MY_CLASS EFL_UI_FOCUS_MANAGER_CALC_CLASS
 #define FOCUS_DATA(obj) Efl_Ui_Focus_Manager_Calc_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
@@ -38,7 +40,6 @@ typedef struct _Border Border;
 typedef struct _Node Node;
 
 struct _Border {
-  Eina_List *partners; //partners that are linked in both directions
   Eina_List *one_direction; //partners that are linked in one direction
   Eina_List *cleanup_nodes; //a list of nodes that needs to be cleaned up when this node is deleted
 };
@@ -64,6 +65,8 @@ struct _Node{
   struct _Graph_Node {
     Border directions[NODE_DIRECTIONS_COUNT];
   } graph;
+
+  Eina_Bool on_list : 1;
 };
 
 #define T(n) (n->tree)
@@ -73,71 +76,40 @@ typedef struct {
     Eina_List *focus_stack;
     Eina_Hash *node_hash;
     Efl_Ui_Focus_Manager *redirect;
+    Efl_Ui_Focus_Object *redirect_entry;
     Eina_List *dirty;
+    Efl_Ui_Focus_Graph_Context graph_ctx;
 
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
 
+
+static Node* _request_subchild(Node *node);
+static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
+static Node* _next(Node *node);
+static void _prepare_node(Node *root);
+
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-   EINA_SAFETY_ON_NULL_RETURN(pd->root);
+   Eo *manager, *root;
 
-   if (!efl_isa(pd->root->focusable, EFL_UI_WIN_CLASS))
-     EINA_SAFETY_ON_NULL_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable));
+   root = efl_ui_focus_manager_root_get(obj);
+   manager = efl_ui_focus_object_focus_manager_get(pd->root->focusable);
+
+   EINA_SAFETY_ON_NULL_RETURN(root);
+
+   if (!efl_isa(root, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE))
+     EINA_SAFETY_ON_NULL_RETURN(manager);
 
    //so we dont run infinitly this does not fix it, but at least we only have a error
-   EINA_SAFETY_ON_TRUE_RETURN(efl_ui_focus_user_focus_manager_get(pd->root->focusable) == obj);
+   EINA_SAFETY_ON_TRUE_RETURN(manager == obj);
 
-   efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(pd->root->focusable), pd->root->focusable);
-}
-
-static Efl_Ui_Focus_Direction
-_complement(Efl_Ui_Focus_Direction dir)
-{
-    #define COMP(a,b) \
-        if (dir == a) return b; \
-        if (dir == b) return a;
-
-    COMP(EFL_UI_FOCUS_DIRECTION_RIGHT, EFL_UI_FOCUS_DIRECTION_LEFT)
-    COMP(EFL_UI_FOCUS_DIRECTION_UP, EFL_UI_FOCUS_DIRECTION_DOWN)
-    COMP(EFL_UI_FOCUS_DIRECTION_PREVIOUS, EFL_UI_FOCUS_DIRECTION_NEXT)
-
-    #undef COMP
-
-    return EFL_UI_FOCUS_DIRECTION_LAST;
-}
-
-/*
- * Set this new list of partners to the border.
- * All old partners will be deleted
- */
-static void
-border_partners_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list)
-{
-   Node *partner;
-   Eina_List *lnode;
-   Border *border;
-
-   EINA_SAFETY_ON_FALSE_RETURN(DIRECTION_IS_2D(direction));
-
-   border = &DIRECTION_ACCESS(node, direction);
-
-   EINA_LIST_FREE(border->partners, partner)
-     {
-        Border *comp_border = &DIRECTION_ACCESS(partner, _complement(direction));
-
-        comp_border->partners = eina_list_remove(comp_border->partners, node);
-     }
-
-   border->partners = list;
-
-   EINA_LIST_FOREACH(border->partners, lnode, partner)
-     {
-        Border *comp_border = &DIRECTION_ACCESS(partner,_complement(direction));
-
-        comp_border->partners = eina_list_append(comp_border->partners, node);
-     }
+   if (manager)
+     efl_ui_focus_manager_focus_set(manager, root);
+   else
+      DBG("No focus manager for focusable %s@%p",
+          efl_class_name_get(pd->root->focusable), root);
 }
 
 static void
@@ -153,7 +125,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FREE(border->one_direction, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, _complement(direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
         b->cleanup_nodes = eina_list_remove(b->cleanup_nodes, node);
      }
 
@@ -161,7 +133,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FOREACH(border->one_direction, lnode, partner)
      {
-        Border *comp_border = &DIRECTION_ACCESS(partner,_complement(direction));
+        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
 
         comp_border->cleanup_nodes = eina_list_append(comp_border->cleanup_nodes, node);
      }
@@ -179,7 +151,7 @@ border_onedirection_cleanup(Node *node, Efl_Ui_Focus_Direction direction)
 
    EINA_LIST_FREE(border->cleanup_nodes, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, _complement(direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
         b->one_direction = eina_list_remove(b->one_direction, node);
      }
 }
@@ -226,13 +198,43 @@ node_item_free(Node *item)
 {
    Node *n;
    Eina_List *l;
-   //free the graph items
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+   Eo *obj = item->manager;
+   FOCUS_DATA(obj);
+
+   /*cleanup graph parts*/
+
+   //add all neighbors of the node to the dirty list
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
      {
-        border_partners_set(item, i, NULL);
+        Node *partner;
+
+#define MAKE_LIST_DIRTY(node, field) \
+        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
+          { \
+             dirty_add(obj, pd, partner); \
+          }
+
+        MAKE_LIST_DIRTY(item, one_direction)
+        MAKE_LIST_DIRTY(item, cleanup_nodes)
+
         border_onedirection_cleanup(item, i);
         border_onedirection_set(item, i, NULL);
      }
+
+   /*cleanup manager householdings*/
+
+   //remove from the focus stack
+   pd->focus_stack = eina_list_remove(pd->focus_stack, item);
+
+   //if this is the entry for redirect, NULL them out!
+   if (pd->redirect_entry == item->focusable)
+     pd->redirect_entry = NULL;
+
+   //remove from the dirty parts
+   pd->dirty = eina_list_remove(pd->dirty, item);
+   item->on_list = EINA_FALSE;
+
+   /*merge tree items*/
 
    //free the tree items
    if (!item->tree.parent && item->tree.children)
@@ -287,248 +289,6 @@ _focus_stack_unfocus_last(Efl_Ui_Focus_Manager_Calc_Data *pd)
    return focusable;
 }
 
-static Node*
-_focus_stack_last_regular(Efl_Ui_Focus_Manager_Calc_Data *pd)
-{
-   Eina_List *l;
-   Node *upper;
-
-   l = eina_list_last(pd->focus_stack);
-   upper = eina_list_last_data_get(pd->focus_stack);
-
-   while (upper && upper->type != NODE_TYPE_NORMAL)
-     {
-        l = eina_list_prev(l);
-        upper = eina_list_data_get(l);
-     }
-
-   return upper;
-}
-
-//CALCULATING STUFF
-
-static inline int
-_distance(Eina_Rect node, Eina_Rect op, Dimension dim)
-{
-    int min, max, point;
-    int v1, v2;
-
-    if (dim == DIMENSION_X)
-      {
-         min = op.x;
-         max = eina_rectangle_max_x(&op.rect);
-         point = node.x + node.w/2;
-      }
-    else
-      {
-         min = op.y;
-         max = eina_rectangle_max_y(&op.rect);
-         point = node.y + node.h/2;
-      }
-
-    v1 = min - point;
-    v2 = max - point;
-
-    if (abs(v1) < abs(v2))
-      return v1;
-    else
-      return v2;
-}
-
-static inline void
-_min_max_gen(Dimension dim, Eina_Rect rect, int *min, int *max)
-{
-   if (dim == DIMENSION_X)
-     {
-        *min = rect.y;
-        *max = eina_rectangle_max_y(&rect.rect);
-     }
-   else
-     {
-        *min = rect.x;
-        *max = eina_rectangle_max_x(&rect.rect);
-     }
-}
-
-static inline void
-_calculate_node(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Dimension dim, Eina_List **pos, Eina_List **neg)
-{
-   int dim_min, dim_max, cur_pos_min = 0, cur_neg_min = 0;
-   Efl_Ui_Focus_Object *op;
-   Eina_Iterator *nodes;
-   Eina_Rect rect;
-   Node *n;
-
-   *pos = NULL;
-   *neg = NULL;
-
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-   nodes = eina_hash_iterator_data_new(pd->node_hash);
-   _min_max_gen(dim, rect, &dim_min, &dim_max);
-
-   EINA_ITERATOR_FOREACH(nodes, n)
-     {
-        Eina_Rect op_rect;
-        int min, max;
-
-        op = n->focusable;
-        if (op == node) continue;
-
-        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
-
-        op_rect = efl_ui_focus_object_focus_geometry_get(op);
-
-        _min_max_gen(dim, op_rect, &min, &max);
-
-        /* The only way the calculation does make sense is if the two number
-         * lines are not disconnected.
-         * If they are connected one point of the 4 lies between the min and max of the other line
-         */
-        if (!((min <= max && max <= dim_min && dim_min <= dim_max) ||
-              (dim_min <= dim_max && dim_max <= min && min <= max)) &&
-              !eina_rectangle_intersection(&op_rect.rect, &rect.rect))
-          {
-             //this thing hits horizontal
-             int tmp_dis;
-
-             tmp_dis = _distance(rect, op_rect, dim);
-
-             if (tmp_dis < 0)
-               {
-                  if (tmp_dis == cur_neg_min)
-                    {
-                       //add it
-                       *neg = eina_list_append(*neg, op);
-                    }
-                  else if (tmp_dis > cur_neg_min
-                    || cur_neg_min == 0) //init case
-                    {
-                       //nuke the old and add
-#ifdef CALC_DEBUG
-                       printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
-                         tmp_dis,
-                         op_rect.x, op_rect.y, op_rect.w, op_rect.h,
-                         rect.x, rect.y, rect.w, rect.h);
-#endif
-                       *neg = eina_list_free(*neg);
-                       *neg = eina_list_append(NULL, op);
-                       cur_neg_min = tmp_dis;
-                    }
-               }
-             else
-               {
-                  if (tmp_dis == cur_pos_min)
-                    {
-                       //add it
-                       *pos = eina_list_append(*pos, op);
-                    }
-                  else if (tmp_dis < cur_pos_min
-                    || cur_pos_min == 0) //init case
-                    {
-                       //nuke the old and add
-#ifdef CALC_DEBUG
-                       printf("CORRECTION FOR %s-%s\n found anchor %s-%s in distance %d\n (%d,%d,%d,%d)\n (%d,%d,%d,%d)\n\n", DEBUG_TUPLE(node), DEBUG_TUPLE(op),
-                         tmp_dis,
-                         op_rect.x, op_rect.y, op_rect.w, op_rect.h,
-                         rect.x, rect.y, rect.w, rect.h);
-#endif
-                       *pos = eina_list_free(*pos);
-                       *pos = eina_list_append(NULL, op);
-                       cur_pos_min = tmp_dis;
-                    }
-               }
-
-
-#if 0
-             printf("(%d,%d,%d,%d)%s vs(%d,%d,%d,%d)%s\n", rect.x, rect.y, rect.w, rect.h, elm_widget_part_text_get(node, NULL), op_rect.x, op_rect.y, op_rect.w, op_rect.h, elm_widget_part_text_get(op, NULL));
-             printf("(%d,%d,%d,%d)\n", min, max, dim_min, dim_max);
-             printf("Candidate %d\n", tmp_dis);
-             if (anchor->anchor == NULL || abs(tmp_dis) < abs(distance)) //init case
-               {
-                  distance = tmp_dis;
-                  anchor->positive = tmp_dis > 0 ? EINA_FALSE : EINA_TRUE;
-                  anchor->anchor = op;
-                  //Helper for debugging wrong calculations
-
-               }
-#endif
-         }
-
-
-     }
-   eina_iterator_free(nodes);
-   nodes = NULL;
-
-}
-
-static inline Eina_Position2D
-_relative_position_rects(Eina_Rect *a, Eina_Rect *b)
-{
-   Eina_Position2D a_pos = {a->rect.x + a->rect.w/2, a->rect.y + a->rect.h/2};
-   Eina_Position2D b_pos = {b->rect.x + b->rect.w/2, b->rect.y + b->rect.h/2};
-
-   return (Eina_Position2D){b_pos.x - a_pos.x, b_pos.y - b_pos.y};
-}
-
-static inline Eina_Rectangle_Outside
-_direction_to_outside(Efl_Ui_Focus_Direction direction)
-{
-   if (direction == EFL_UI_FOCUS_DIRECTION_RIGHT) return EINA_RECTANGLE_OUTSIDE_RIGHT;
-   if (direction == EFL_UI_FOCUS_DIRECTION_LEFT) return EINA_RECTANGLE_OUTSIDE_LEFT;
-   if (direction == EFL_UI_FOCUS_DIRECTION_DOWN) return EINA_RECTANGLE_OUTSIDE_BOTTOM;
-   if (direction == EFL_UI_FOCUS_DIRECTION_UP) return EINA_RECTANGLE_OUTSIDE_TOP;
-
-   return -1;
-}
-
-static inline void
-_calculate_node_indirection(Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *node, Efl_Ui_Focus_Direction direction, Eina_List **lst)
-{
-   Efl_Ui_Focus_Object *op;
-   Eina_Iterator *nodes;
-   int min_distance = 0;
-   Node *n;
-   Eina_Rect rect;
-
-   rect = efl_ui_focus_object_focus_geometry_get(node);
-   nodes = eina_hash_iterator_data_new(pd->node_hash);
-
-   EINA_ITERATOR_FOREACH(nodes, n)
-     {
-        Eina_Rectangle_Outside outside, outside_dir;
-        Eina_Position2D pos;
-        int distance;
-        Eina_Rect op_rect;
-
-        op = n->focusable;
-
-        if (op == node) continue;
-        if (n->type == NODE_TYPE_ONLY_LOGICAL) continue;
-
-        op_rect = efl_ui_focus_object_focus_geometry_get(op);
-        outside = eina_rectangle_outside_position(&rect.rect, &op_rect.rect);
-        outside_dir = _direction_to_outside(direction);
-        //calculate relative position of the nodes
-        pos = _relative_position_rects(&rect, &op_rect);
-        //calculate distance
-        distance = pow(pos.x, 2) + pow(pos.y, 2);
-
-        if (outside & outside_dir)
-          {
-             if (min_distance == 0 || min_distance > distance)
-               {
-                  min_distance = distance;
-                  *lst = eina_list_free(*lst);
-                  *lst = eina_list_append(*lst, op);
-               }
-             else if (min_distance == distance)
-               {
-                  *lst = eina_list_append(*lst, op);
-               }
-          }
-     }
-}
-
 #ifdef CALC_DEBUG
 static void
 _debug_node(Node *node)
@@ -560,57 +320,48 @@ _debug_node(Node *node)
 }
 #endif
 
-static void
-convert_set(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node, Eina_List *focusable_list, Efl_Ui_Focus_Direction dir, void (*converter)(Node *node, Efl_Ui_Focus_Direction direction, Eina_List *list))
+static Eina_Bool
+_no_logical(const void *iter EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
-   Eina_List *partners = NULL;
-   Efl_Ui_Focus_Object *fobj;
+   Node *n = data;
 
-   EINA_LIST_FREE(focusable_list, fobj)
-     {
-        Node *entry;
-
-        entry = node_get(obj, pd, fobj);
-        if (!entry)
-          {
-             CRI("Found a obj in graph without node-entry!");
-             return;
-          }
-        partners = eina_list_append(partners, entry);
-     }
-
-   converter(node, dir, partners);
+   return n->type != NODE_TYPE_ONLY_LOGICAL;
 }
 
 static void
 dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   Eina_List *x_partners_pos, *x_partners_neg;
-   Eina_List *y_partners_pos, *y_partners_neg;
+   Efl_Ui_Focus_Graph_Calc_Result result;
 
-   _calculate_node(pd, node->focusable, DIMENSION_X, &x_partners_pos, &x_partners_neg);
-   _calculate_node(pd, node->focusable, DIMENSION_Y, &y_partners_pos, &y_partners_neg);
+   efl_ui_focus_graph_calc(&pd->graph_ctx, eina_iterator_filter_new(eina_hash_iterator_data_new(pd->node_hash), _no_logical, NULL, NULL) ,  (Opaque_Graph_Member*) node, &result);
 
-   convert_set(obj, pd, node, x_partners_pos, EFL_UI_FOCUS_DIRECTION_RIGHT, border_partners_set);
-   convert_set(obj, pd, node, x_partners_neg, EFL_UI_FOCUS_DIRECTION_LEFT, border_partners_set);
-   convert_set(obj, pd, node, y_partners_neg, EFL_UI_FOCUS_DIRECTION_UP, border_partners_set);
-   convert_set(obj, pd, node, y_partners_pos, EFL_UI_FOCUS_DIRECTION_DOWN, border_partners_set);
-
-
-   /*
-    * Stage 2: if there is still no relation in a special direction,
-    *          just take every single node that is in the given direction
-    *          and take the one with the shortest direction
-    */
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+   for (int i = 0; i < 4; ++i)
      {
-        if (!DIRECTION_ACCESS(node, i).partners)
-          {
-             Eina_List *tmp = NULL;
+        Efl_Ui_Focus_Direction direction = -1;
+        Efl_Ui_Focus_Graph_Calc_Direction_Result *res = NULL;
 
-             _calculate_node_indirection(pd, node->focusable, i, &tmp);
-             convert_set(obj, pd, node, tmp, i, border_onedirection_set);
+        if (i == 0)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_RIGHT;
+             res = &result.right;
           }
+        else if (i == 1)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_LEFT;
+             res = &result.left;
+          }
+        else if (i == 2)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_UP;
+             res = &result.top;
+          }
+        else if (i == 3)
+          {
+             direction = EFL_UI_FOCUS_DIRECTION_DOWN;
+             res = &result.bottom;
+          }
+
+       border_onedirection_set(node, direction, res->relation);
      }
 
 #ifdef CALC_DEBUG
@@ -621,11 +372,12 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 static void
 dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   if (!eina_list_data_find(pd->dirty, node)) return;
+   if (!node->on_list) return;
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
    pd->dirty = eina_list_remove(pd->dirty, node);
+   node->on_list = EINA_FALSE;
 
    dirty_flush_node(obj, pd, node);
 }
@@ -639,6 +391,7 @@ dirty_flush_all(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 
    EINA_LIST_FREE(pd->dirty, node)
      {
+        node->on_list = EINA_FALSE;
         dirty_flush_node(obj, pd, node);
      }
 }
@@ -651,10 +404,11 @@ dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty)
         ERR("Only not only logical nodes can be marked dirty");
         return;
      }
+   if (dirty->on_list) return;
 
    //if (eina_list_data_find(pd->dirty, dirty)) return;
-   pd->dirty = eina_list_remove(pd->dirty, dirty);
    pd->dirty = eina_list_append(pd->dirty, dirty);
+   dirty->on_list = EINA_TRUE;
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
 }
@@ -685,20 +439,25 @@ _object_del_cb(void *data, const Efl_Event *event)
    efl_ui_focus_manager_calc_unregister(data, event->object);
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(focusable_node,
-    {EFL_GFX_EVENT_RESIZE, _node_new_geometry_cb},
-    {EFL_GFX_EVENT_MOVE, _node_new_geometry_cb},
+EFL_CALLBACKS_ARRAY_DEFINE(regular_node,
+    {EFL_GFX_ENTITY_EVENT_RESIZE, _node_new_geometry_cb},
+    {EFL_GFX_ENTITY_EVENT_MOVE, _node_new_geometry_cb},
     {EFL_EVENT_DEL, _object_del_cb},
 );
+
+EFL_CALLBACKS_ARRAY_DEFINE(logical_node,
+    {EFL_EVENT_DEL, _object_del_cb},
+);
+
 
 //=============================
 
 static Node*
-_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Node *parent)
+_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child, Node *parent, Node_Type type, Efl_Ui_Focus_Manager *redirect)
 {
    Node *node;
    node = eina_hash_find(pd->node_hash, &child);
-   if (node)
+   if (node && !(node->type == type && T(node).parent == parent && node->redirect_manager == redirect))
      {
         ERR("Child %p is already registered in the graph (%s)", child, node->type == NODE_TYPE_ONLY_LOGICAL ? "logical" : "regular");
         return NULL;
@@ -713,6 +472,8 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *chil
         T(node).parent = parent;
         T(parent).children = eina_list_append(T(parent).children, node);
      }
+   node->type = NODE_TYPE_ONLY_LOGICAL;
+   node->redirect_manager = redirect;
 
    return node;
 }
@@ -733,11 +494,11 @@ _efl_ui_focus_manager_calc_register_logical(Eo *obj, Efl_Ui_Focus_Manager_Calc_D
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
-   node = _register(obj, pd, child, pnode);
+   node = _register(obj, pd, child, pnode, NODE_TYPE_ONLY_LOGICAL, redirect);
    if (!node) return EINA_FALSE;
 
-   node->type = NODE_TYPE_ONLY_LOGICAL;
-   node->redirect_manager = redirect;
+   //listen to deletion
+   efl_event_callback_array_add(child, logical_node(), obj);
 
    //set again
    if (T(pnode).saved_order)
@@ -769,11 +530,11 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
    pnode = node_get(obj, pd, parent);
    if (!pnode) return EINA_FALSE;
 
-   node = _register(obj, pd, child, pnode);
+   node = _register(obj, pd, child, pnode, NODE_TYPE_NORMAL, redirect);
    if (!node) return EINA_FALSE;
 
    //listen to changes
-   efl_event_callback_array_add(child, focusable_node(), obj);
+   efl_event_callback_array_add(child, regular_node(), obj);
 
    node->type = NODE_TYPE_NORMAL;
    node->redirect_manager = redirect;
@@ -955,11 +716,22 @@ _efl_ui_focus_manager_calc_update_children(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Man
    return EINA_TRUE;
 }
 
+static inline Node*
+_request_subchild_except(Node *n, Node *except)
+{
+   n = _request_subchild(n);
+   while (n == except)
+     {
+        n = _next(n);
+     }
+
+   return n;
+}
+
 EOLIAN static void
 _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *child)
 {
    Node *node;
-   Eina_Bool refocus = EINA_FALSE;
 
    node = eina_hash_find(pd->node_hash, &child);
 
@@ -967,43 +739,28 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    F_DBG("Manager: %p unregister %p", obj, child);
 
-   if (eina_list_last_data_get(pd->focus_stack) == node)
+   if (eina_list_last_data_get(pd->focus_stack) == node && !pd->redirect)
      {
-        //unfocus the current head
-        efl_ui_focus_object_focus_set(child, EINA_FALSE);
-        refocus = EINA_TRUE;
-     }
-
-
-   //remove the object from the stack if it hasn't done that until now
-   //after this it's not at the top anymore
-   //elm_widget_focus_set(node->focusable, EINA_FALSE);
-   //delete again from the list, for the case it was not at the top
-   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
-
-   if (refocus)
-     {
-        Node *n = eina_list_last_data_get(pd->focus_stack);
-        if (n)
-          efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
-     }
-
-   //add all neighbors of the node to the dirty list
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
-     {
-        Node *partner;
-        Eina_List *n;
-
-        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).partners, n, partner)
+        if (!efl_invalidated_get(pd->root->focusable))
           {
-             dirty_add(obj, pd, partner);
+             Node *n;
+
+             n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
+             if (!n)
+               n = _request_subchild_except(pd->root, node);
+
+             if (n)
+               efl_ui_focus_manager_focus_set(obj, n->focusable);
           }
      }
 
-   //remove from the dirty parts
-   pd->dirty = eina_list_remove(pd->dirty, node);
-
    eina_hash_del_by_key(pd->node_hash, &child);
+}
+
+static void
+_redirect_del(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   efl_ui_focus_manager_redirect_set(data, NULL);
 }
 
 EOLIAN static void
@@ -1018,24 +775,14 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
    old_manager = pd->redirect;
 
    if (pd->redirect)
-     efl_wref_del(pd->redirect, &pd->redirect);
+     efl_event_callback_del(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
 
    pd->redirect = redirect;
 
    if (pd->redirect)
-     efl_wref_add(pd->redirect, &pd->redirect);
+     efl_event_callback_add(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
 
    efl_ui_focus_manager_reset_history(old_manager);
-
-   //we might have saved a logical element at the top, remove that if there is one
-   {
-      Node *n = NULL;
-
-      n = eina_list_last_data_get(pd->focus_stack);
-
-      if (n && n->type == NODE_TYPE_ONLY_LOGICAL && n->redirect_manager == old_manager)
-        pd->focus_stack = eina_list_remove(pd->focus_stack, n);
-   }
 
    //adjust focus property of the most upper element
    {
@@ -1062,7 +809,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 }
 
 EOLIAN static Efl_Ui_Focus_Manager *
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    return pd->redirect;
 }
@@ -1073,7 +820,10 @@ _free_node(void *data)
    Node *node = data;
    FOCUS_DATA(node->manager);
 
-   efl_event_callback_array_del(node->focusable, focusable_node(), node->manager);
+   if (node->type == NODE_TYPE_ONLY_LOGICAL)
+     efl_event_callback_array_del(node->focusable, logical_node(), node->manager);
+   else
+     efl_event_callback_array_del(node->focusable, regular_node(), node->manager);
 
    if (pd->root != data)
      {
@@ -1086,6 +836,9 @@ _efl_ui_focus_manager_calc_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    pd->node_hash = eina_hash_pointer_new(_free_node);
+
+   pd->graph_ctx.offset_focusable = offsetof(Node, focusable);
+
    return obj;
 }
 
@@ -1101,9 +854,13 @@ _efl_ui_focus_manager_calc_efl_object_provider_find(const Eo *obj, Efl_Ui_Focus_
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
-   eina_list_free(pd->focus_stack);
-   eina_list_free(pd->dirty);
+   Node *n;
 
+   pd->focus_stack = eina_list_free(pd->focus_stack);
+   EINA_LIST_FREE(pd->dirty, n)
+     {
+        n->on_list = EINA_FALSE;
+     }
    eina_hash_free(pd->node_hash);
 
    efl_ui_focus_manager_redirect_set(obj, NULL);
@@ -1128,10 +885,11 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 
    EINA_ITERATOR_FOREACH(it->real_iterator, node)
      {
+        if (node->type == NODE_TYPE_ONLY_LOGICAL) continue;
+
         for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
           {
-             if (node->type != NODE_TYPE_ONLY_LOGICAL &&
-                 !DIRECTION_ACCESS(node, i).partners)
+             if (!DIRECTION_ACCESS(node, i).one_direction)
                {
                   *data = node->focusable;
                   return EINA_TRUE;
@@ -1154,12 +912,30 @@ _iterator_free(Border_Elements_Iterator *it)
    free(it);
 }
 
+static void
+_prepare_node(Node *root)
+{
+   Eina_List *n;
+   Node *node;
+
+   efl_ui_focus_object_prepare_logical(root->focusable);
+
+   EINA_LIST_FOREACH(root->tree.children, n, node)
+     {
+        _prepare_node(node);
+     }
+}
+
 EOLIAN static Eina_Iterator*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Border_Elements_Iterator *it;
 
-   dirty_flush_all(obj, pd);
+   /* XXX const */
+   dirty_flush_all((Eo *)obj, pd);
+
+   //now call prepare on every node
+   _prepare_node(pd->root);
 
    it = calloc(1, sizeof(Border_Elements_Iterator));
 
@@ -1170,7 +946,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(Eo *obj, Efl
    it->iterator.next = FUNC_ITERATOR_NEXT(_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_iterator_free);
-   it->object = obj;
+   it->object = (Eo *)obj;
 
    return (Eina_Iterator*) it;
 }
@@ -1209,7 +985,7 @@ _get_middle(Evas_Object *obj, Eina_Vector2 *elem)
 }
 
 static Node*
-_coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
+_coords_movement(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_Direction direction)
 {
    Node *candidate;
    Eina_List *node_list;
@@ -1217,10 +993,12 @@ _coords_movement(Efl_Ui_Focus_Manager_Calc_Data *pd, Node *upper, Efl_Ui_Focus_D
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_IS_2D(direction), NULL);
 
+   //flush the node and prepare all the nodes
+   _prepare_node(pd->root);
+   dirty_flush(obj, pd, upper);
+
    //decide which direction we take
-   lst = DIRECTION_ACCESS(upper, direction).partners;
-   if (!lst)
-     lst = DIRECTION_ACCESS(upper, direction).one_direction;
+   lst = DIRECTION_ACCESS(upper, direction).one_direction;
 
    //we are searching which of the partners is lower to the history
    EINA_LIST_REVERSE_FOREACH(pd->focus_stack, node_list, candidate)
@@ -1361,7 +1139,7 @@ _prev(Node *node)
 
 
 static Node*
-_logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction)
+_logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction, Eina_Bool accept_logical)
 {
    Node* (*deliver)(Node *n);
    Node *result;
@@ -1392,6 +1170,8 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
           efl_ui_focus_object_prepare_logical(result->focusable);
 
         result = deliver(result);
+        if (accept_logical)
+          break;
    } while(result && result->type != NODE_TYPE_NORMAL && !result->redirect_manager);
 
    eina_list_free(stack);
@@ -1400,12 +1180,12 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
 }
 
 static Efl_Ui_Focus_Object*
-_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper)
+_request_move(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Node *upper, Eina_Bool accept_logical)
 {
    Node *dir = NULL;
 
    if (!upper)
-     upper = _focus_stack_last_regular(pd);
+     upper = eina_list_last_data_get(pd->focus_stack);
 
    if (!upper)
      {
@@ -1416,13 +1196,11 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 
      }
 
-   dirty_flush(obj, pd, upper);
-
    if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-      dir = _logical_movement(pd, upper, direction);
+      dir = _logical_movement(pd, upper, direction, accept_logical);
    else
-      dir = _coords_movement(pd, upper, direction);
+      dir = _coords_movement(obj, pd, upper, direction);
 
    //return the widget
    if (dir)
@@ -1432,28 +1210,34 @@ _request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Fo
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
 {
+   Node *child_node;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
-   if (pd->redirect)
-     return efl_ui_focus_manager_request_move(pd->redirect, direction);
+   if (!child)
+     child_node = eina_list_last_data_get(pd->focus_stack);
    else
-     {
-        Node *upper = NULL;
+     child_node = node_get(obj, pd, child);
 
-        upper = eina_list_last_data_get(pd->focus_stack);
+   if (!child_node)
+     return NULL;
 
-        if (!upper)
-          {
-             upper = _no_history_element(pd->node_hash);
-             if (upper)
-               return upper->focusable;
-             return NULL;
-          }
+   return _request_move(obj, pd, direction, child_node, logical);
+}
 
-        return _request_move(obj, pd, direction, upper);
-     }
+static int
+_node_depth(Node *node)
+{
+  int i = 0;
+
+  while (node && node->tree.parent)
+    {
+      node = node->tree.parent;
+      i++;
+    }
+
+  return i;
 }
 
 static Node*
@@ -1464,19 +1248,22 @@ _request_subchild(Node *node)
 
    if (node->tree.children)
      {
-        target = node;
+        int new_depth, old_depth = _node_depth(node);
 
+        target = node;
         //try to find a child that is not logical or has a redirect manager
-        while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager)
+        do
           {
              if (target != node)
                efl_ui_focus_object_prepare_logical(target->focusable);
 
              target = _next(target);
              //abort if we are exceeding the childrens of node
-             if (target == node) target = NULL;
-          }
+             new_depth = _node_depth(target);
 
+             if (new_depth <= old_depth) target = NULL;
+          }
+        while (target && target->type == NODE_TYPE_ONLY_LOGICAL && !target->redirect_manager);
         F_DBG("Found node %p", target);
      }
 
@@ -1487,8 +1274,9 @@ EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
    Node *node, *last;
-   Efl_Ui_Focus_Object *last_focusable = NULL;
+   Efl_Ui_Focus_Object *last_focusable = NULL, *new_focusable;
    Efl_Ui_Focus_Manager *redirect_manager;
+   Node_Type node_type;
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
 
@@ -1521,8 +1309,6 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
 
    F_DBG("Manager: %p focusing object %p %s", obj, node->focusable, efl_class_name_get(node->focusable));
 
-   //make sure this manager is in the chain of redirects
-   _manager_in_chain_set(obj, pd);
 
    if (eina_list_last_data_get(pd->focus_stack) == node)
      {
@@ -1531,7 +1317,36 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           return;
      }
 
-   if (pd->redirect)
+   //make sure this manager is in the chain of redirects
+   _manager_in_chain_set(obj, pd);
+
+   node_type = node->type;
+   new_focusable = node->focusable;
+
+   redirect_manager = node->redirect_manager;
+
+   last = eina_list_last_data_get(pd->focus_stack);
+   if (last)
+     last_focusable = last->focusable;
+
+   //remove the object from the list and add it again
+   if (node_type == NODE_TYPE_NORMAL)
+     {
+        pd->focus_stack = eina_list_remove(pd->focus_stack, node);
+        pd->focus_stack = eina_list_append(pd->focus_stack, node);
+     }
+
+   //capture how we came to the redirect manager
+   if (redirect_manager)
+     {
+        pd->redirect_entry = new_focusable;
+     }
+
+   //set to NULL here, from the event earlier this pointer could be dead.
+   node = NULL;
+
+   //unset redirect manager for the case that its a different one to the one we want
+   if (pd->redirect && pd->redirect != redirect_manager)
      {
         Efl_Ui_Focus_Manager *m = obj;
 
@@ -1545,36 +1360,25 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           }
      }
 
-   redirect_manager = node->redirect_manager;
-
-   last = eina_list_last_data_get(pd->focus_stack);
-   if (last)
-     last_focusable = last->focusable;
-
-   //remove the object from the list and add it again
-   pd->focus_stack = eina_list_remove(pd->focus_stack, node);
-   pd->focus_stack = eina_list_append(pd->focus_stack, node);
-
-   /*
-     Only emit those signals if we are already at the top of the focus stack.
-     Otherwise focus_get in the callback to that signal might return false.
-    */
-   if (node->type == NODE_TYPE_NORMAL)
-     {
-        //populate the new change
-        efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
-        efl_ui_focus_object_focus_set(node->focusable, EINA_TRUE);
-        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
-     }
-
-   //set to NULL here, from the event earlier this pointer could be dead.
-   node = NULL;
-
    //now check if this is also a listener object
    if (redirect_manager)
      {
         //set the redirect
         efl_ui_focus_manager_redirect_set(obj, redirect_manager);
+     }
+
+   /*
+     Only emit those signals if we are already at the top of the focus stack.
+     Otherwise focus_get in the callback to that signal might return false.
+    */
+   if (node_type == NODE_TYPE_NORMAL)
+     {
+        //populate the new change
+        if (last_focusable)
+          efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
+        if (new_focusable)
+          efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
      }
 }
 
@@ -1608,6 +1412,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
    Efl_Ui_Focus_Object *candidate = NULL;
    Efl_Ui_Focus_Manager *early, *late;
 
+   // for the case that focus is set to a new element, a new redirect
+   // manager could have been set, to adjust everything
+   // in the new reidirect manager we have to call the first touch function.
+   Eina_Bool adjust_redirect_manager = EINA_FALSE;
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(DIRECTION_CHECK(direction), NULL);
 
    early = efl_ui_focus_manager_redirect_get(obj);
@@ -1623,13 +1432,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
 
              if (DIRECTION_IS_LOGICAL(direction))
                {
-                  // lets just take the last
-
-                  Node *n = eina_list_last_data_get(pd->focus_stack);
-                  new_candidate = _request_move(obj, pd, direction, n);
+                  // lets just take the redirect_entry
+                  Node *n = node_get(obj, pd, pd->redirect_entry);
+                  new_candidate = _request_move(obj, pd, direction, n, EINA_FALSE);
 
                   if (new_candidate)
-                    efl_ui_focus_manager_focus_set(obj, new_candidate);
+                    {
+                       efl_ui_focus_manager_focus_set(obj, new_candidate);
+                       adjust_redirect_manager = EINA_TRUE;
+                    }
+                  else
+                    {
+                       //we set the redirect to NULL since it cannot
+                       //help us, later on the redirect manager can be
+                       //set to the same again, and it is strictly new setted up.
+                       efl_ui_focus_manager_redirect_set(obj, NULL);
+                       pd->redirect_entry = NULL;
+                    }
 
                   candidate = new_candidate;
                }
@@ -1641,12 +1460,22 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
                   n = eina_hash_find(pd->node_hash, &old_candidate);
 
                   if (n)
-                    new_candidate = _request_move(obj, pd, direction, n);
+                    new_candidate = _request_move(obj, pd, direction, n, EINA_FALSE);
 
                   if (new_candidate)
                     {
                        //redirect does not have smth. but we do have.
                        efl_ui_focus_manager_focus_set(obj, new_candidate);
+                       adjust_redirect_manager = EINA_TRUE;
+                    }
+                  else
+                    {
+                       /*
+                         DO NOT unset the redirect here, the value has to stay,
+                         if one direction is not continuing in one direction, the
+                         other can continue thus we need to safe the redirect for this case.
+                        */
+
                     }
 
                   candidate = new_candidate;
@@ -1655,22 +1484,38 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_move(Eo *obj EINA_UNUSED, Efl_Ui
      }
    else
      {
-        candidate = efl_ui_focus_manager_request_move(obj, direction);
+        Efl_Ui_Focus_Object *child = NULL;
+
+        if (!pd->focus_stack)
+          {
+             Node *child_node;
+
+             child_node = _no_history_element(pd->node_hash);
+             if (child_node)
+               child = child_node->focusable;
+          }
+
+        candidate = efl_ui_focus_manager_request_move(obj, direction, child, EINA_FALSE);
 
         F_DBG("Manager: %p moved to %p %s in direction %d", obj, candidate, efl_class_name_get(candidate), direction);
 
         if (candidate)
           {
              efl_ui_focus_manager_focus_set(obj, candidate);
+             adjust_redirect_manager = EINA_TRUE;
           }
      }
 
-   late = efl_ui_focus_manager_redirect_get(obj);
-
-   if (early != late)
+   if (adjust_redirect_manager)
      {
-        //this is a new manager, we have to init its case!
-        efl_ui_focus_manager_setup_on_first_touch(pd->redirect, direction, candidate);
+        late = efl_ui_focus_manager_redirect_get(obj);
+
+        if (early != late)
+          {
+             //this is a new manager, we have to init its case!
+             if (late)
+               efl_ui_focus_manager_setup_on_first_touch(late, direction, candidate);
+          }
      }
 
    return candidate;
@@ -1687,8 +1532,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Ef
         return EINA_FALSE;
      }
 
-   node = _register(obj, pd, root, NULL);
-   node->type = NODE_TYPE_ONLY_LOGICAL;
+   node = _register(obj, pd, root, NULL, NODE_TYPE_ONLY_LOGICAL, NULL);
 
    pd->root = node;
 
@@ -1696,7 +1540,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_root_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_root_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    if (!pd->root) return NULL;
 
@@ -1725,9 +1569,6 @@ _convert(Border b)
    Eina_List *n, *par = NULL;
    Node *node;
 
-   EINA_LIST_FOREACH(b.partners, n, node)
-     par = eina_list_append(par, node->focusable);
-
    EINA_LIST_FOREACH(b.one_direction, n, node)
      par = eina_list_append(par, node->focusable);
 
@@ -1735,9 +1576,11 @@ _convert(Border b)
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Node *upper = NULL;
+
+   if (pd->redirect && pd->redirect_entry) return pd->redirect_entry;
 
    upper = eina_list_last_data_get(pd->focus_stack);
 
@@ -1857,6 +1700,8 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_request_subchild(Eo *obj, Efl_Ui
    Node *child, *target;
 
    child = node_get(obj, pd, child_obj);
+   if (!child) return NULL;
+
    target = _request_subchild(child);
 
    if (target) return target->focusable;

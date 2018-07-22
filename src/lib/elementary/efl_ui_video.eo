@@ -1,4 +1,4 @@
-class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
+class Efl.Ui.Video (Efl.Ui.Layout.Object, Efl.File,
                  Efl.Player, Efl.Access.Widget.Action)
 {
    [[Efl UI video class]]
@@ -23,16 +23,6 @@ class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
             remember: bool; [[$true when the object can remember the last position, $false otherwise]]
          }
       }
-      @property is_playing {
-         get {
-            [[Is the video actually playing.
-
-              You should consider watching event on the object instead of
-              polling the object state.
-            ]]
-            return: bool; [[$true if the video is playing, $false otherwise]]
-         }
-      }
       @property emotion {
          get {
             [[Get the underlying Emotion object.]]
@@ -50,21 +40,14 @@ class Efl.Ui.Video (Efl.Ui.Layout, Efl.File,
             return: string; [[A string containing the title.]]
          }
       }
-      play {
-         [[Start playing a video.]]
-      }
-      pause {
-         [[Pause a video.]]
-      }
-      stop {
-         [[Stop a video.]]
-      }
    }
    implements {
-      class.constructor;
       Efl.Object.constructor;
       Efl.File.file { get; set; }
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Player.start;
+      Efl.Player.stop;
+      Efl.Player.play { get; set; }
    }
 }

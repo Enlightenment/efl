@@ -1776,6 +1776,9 @@ _ecore_win32_event_handle_create_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Create *e;
 
+   if (msg->window == ecore_win32_monitor_window)
+     return;
+
    INF("window create notify");
 
    e = calloc(1, sizeof(Ecore_Win32_Event_Window_Create));
@@ -1792,6 +1795,9 @@ void
 _ecore_win32_event_handle_destroy_notify(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Win32_Event_Window_Destroy *e;
+
+   if (msg->window == ecore_win32_monitor_window)
+     return;
 
    INF("window destroy notify");
 
@@ -1841,7 +1847,7 @@ _ecore_win32_event_handle_unmap_notify(Ecore_Win32_Callback_Data *msg)
 }
 
 void
-_ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
+_ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg, Eina_Bool wmsize)
 {
    WINDOWINFO                          wi;
    Ecore_Win32_Event_Window_Configure *e;
@@ -1854,14 +1860,15 @@ _ecore_win32_event_handle_configure_notify(Ecore_Win32_Callback_Data *msg)
 
    window_pos = (WINDOWPOS *)msg->data_param;
    wi.cbSize = sizeof(WINDOWINFO);
-   if (!GetWindowInfo(window_pos->hwnd, &wi))
+   if (!GetWindowInfo(msg->window, &wi))
      {
         free(e);
         return;
      }
 
    e->window = (void *)GetWindowLongPtr(msg->window, GWLP_USERDATA);
-   e->abovewin = (void *)GetWindowLongPtr(window_pos->hwndInsertAfter, GWLP_USERDATA);
+   if (!wmsize)
+     e->abovewin = (void *)GetWindowLongPtr(window_pos->hwndInsertAfter, GWLP_USERDATA);
    e->x = wi.rcClient.left;
    e->y = wi.rcClient.top;
    e->width = wi.rcClient.right - wi.rcClient.left;

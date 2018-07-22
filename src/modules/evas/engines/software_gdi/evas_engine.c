@@ -16,6 +16,14 @@ struct _Render_Engine
 };
 
 /* engine api this module provides */
+static void
+eng_output_info_setup(void *info)
+{
+   Evas_Engine_Info_Software_Gdi *einfo = info;
+
+   einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
+}
+
 static void *
 eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 {
@@ -35,9 +43,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 
    ob = evas_software_gdi_outbuf_setup(w, h,
                                        info->info.rotation,
-                                       OUTBUF_DEPTH_INHERIT,
                                        info->info.window,
-                                       info->info.depth,
                                        info->info.borderless,
                                        info->info.fullscreen,
                                        info->info.region,
@@ -81,9 +87,7 @@ eng_output_update(void *engine EINA_UNUSED, void *data, void *in, unsigned int w
    ob = evas_software_gdi_outbuf_setup(w,
                                        h,
                                        info->info.rotation,
-                                       OUTBUF_DEPTH_INHERIT,
                                        info->info.window,
-                                       info->info.depth,
                                        info->info.borderless,
                                        info->info.fullscreen,
                                        info->info.region,
@@ -134,6 +138,7 @@ module_open(Evas_Module *em)
    func = pfunc;
    /* now to override methods */
 #define ORD(f) EVAS_API_OVERRIDE(f, &func, eng_)
+   ORD(output_info_setup);
    ORD(output_setup);
    ORD(output_update);
    ORD(canvas_alpha_get);

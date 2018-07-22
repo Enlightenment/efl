@@ -42,7 +42,6 @@ _detect_osmesa(void)
    Ecore_Evas *ee; Evas *evas; Evas_Object *im = NULL; \
    if (!strcmp(engine, "buffer") && !_detect_osmesa()) return; \
    putenv("EVAS_GL_API_DEBUG=1"); \
-   ecore_evas_init(); \
    if (!options || !strcmp(engine, "buffer")) ee = ecore_evas_new(engine, 0, 0, 1, 1, NULL); \
    else ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 1, 1, options); \
    if (!ee) { printf("Could not create ecore evas. Skipping Evas GL tests.\n"); \
@@ -60,7 +59,6 @@ _detect_osmesa(void)
    init_failed: \
    evas_object_del(im); \
    ecore_evas_free(ee); \
-   ecore_evas_shutdown(); \
    do {} while (0)
 
 static void
@@ -479,12 +477,12 @@ _test_evasgl_formats(const char *engine)
 }
 
 #define TEST_ADD_OPT(name, opt) \
-   START_TEST(evas ## name ## _opengl_x11) \
+   EFL_START_TEST(evas ## name ## _opengl_x11) \
    { name("opengl_x11"); } \
-   END_TEST \
-   START_TEST(evas ## name ## _buffer) \
+   EFL_END_TEST \
+   EFL_START_TEST(evas ## name ## _buffer) \
    { name("buffer"); } \
-   END_TEST
+   EFL_END_TEST
 #define TEST_ADD(name) TEST_ADD_OPT(name, NULL)
 
 TEST_ADD(_test_evasgl_init)

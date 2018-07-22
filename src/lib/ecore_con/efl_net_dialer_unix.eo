@@ -1,4 +1,4 @@
-class Efl.Net.Dialer.Unix (Efl.Net.Socket.Unix, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Unix (Efl.Net.Socket_Unix, Efl.Net.Dialer) {
     [[Connects to a local AF_UNIX server.
 
       The dial address is a file system path (portable) or
@@ -12,6 +12,7 @@ class Efl.Net.Dialer.Unix (Efl.Net.Socket.Unix, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }

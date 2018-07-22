@@ -135,6 +135,17 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestErrorSimple()
+    {
+        using (eina.Value v = new eina.Value(eina.ValueType.Error)) {
+            eina.Error error = new eina.Error(eina.Error.NO_ERROR);
+            Test.Assert(v.Set(error));
+            eina.Error x;
+            Test.Assert(v.Get(out x));
+            Test.AssertEquals(error, x);
+        }
+    }
+
     public static void TestSetWrongType()
     {
         using (eina.Value v = new eina.Value(eina.ValueType.String)) {
@@ -209,20 +220,20 @@ public static class TestEinaValue {
     {
         using (eina.Value a = new eina.Value(eina.ValueType.Optional)) {
             Test.Assert(a.Optional);
-            Test.Assert(a.Empty); // By default, optional values are empty
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
 
             // Sets expectation
             int expected = 1984;
             Test.Assert(a.Set(expected));
             Test.Assert(a.Optional);
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             Test.Assert(a.Reset());
-            Test.Assert(a.Empty);
+            Test.Assert(a.OptionalEmpty);
 
             expected = -4891;
             Test.Assert(a.Set(expected)); // Set() automatically infers the subtype from the argument.
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             int actual = 0;
             Test.Assert(a.Get(out actual));
@@ -233,20 +244,20 @@ public static class TestEinaValue {
     {
         using (eina.Value a = new eina.Value(eina.ValueType.Optional)) {
             Test.Assert(a.Optional);
-            Test.Assert(a.Empty); // By default, optional values are empty
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
 
             // Sets expectation
             uint expected = 1984;
             Test.Assert(a.Set(expected));
             Test.Assert(a.Optional);
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             Test.Assert(a.Reset());
-            Test.Assert(a.Empty);
+            Test.Assert(a.OptionalEmpty);
 
             expected = 0xdeadbeef;
             Test.Assert(a.Set(expected));
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             uint actual = 0;
             Test.Assert(a.Get(out actual));
@@ -257,26 +268,26 @@ public static class TestEinaValue {
     {
         using (eina.Value a = new eina.Value(eina.ValueType.Int32)) {
             Test.Assert(!a.Optional);
-            BoolRet dummy = () => a.Empty;
+            BoolRet dummy = () => a.OptionalEmpty;
             Test.AssertRaises<eina.InvalidValueTypeException>(() => dummy());
         }
 
         using (eina.Value a = new eina.Value(eina.ValueType.Optional)) {
             Test.Assert(a.Optional);
-            Test.Assert(a.Empty); // By default, optional values are empty
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
 
             // Sets expectation
             string expected = "Hello, world!";
             Test.Assert(a.Set(expected));
             Test.Assert(a.Optional);
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             Test.Assert(a.Reset());
-            Test.Assert(a.Empty);
+            Test.Assert(a.OptionalEmpty);
 
             expected = "!dlrow olleH";
             Test.Assert(a.Set(expected));
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             string actual = String.Empty;
             Test.Assert(a.Get(out actual));
@@ -291,7 +302,7 @@ public static class TestEinaValue {
         {
 
             Test.Assert(a.Optional);
-            Test.Assert(a.Empty); // By default, optional values are empty
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
 
             // Sets expectation
             Test.Assert(expected.Append(-1));
@@ -300,14 +311,14 @@ public static class TestEinaValue {
 
             Test.Assert(a.Set(expected));
             Test.Assert(a.Optional);
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             Test.Assert(a.Reset());
-            Test.Assert(a.Empty);
+            Test.Assert(a.OptionalEmpty);
 
             expected.Append(-42);
             Test.Assert(a.Set(expected));
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             eina.Value actual = null;
             Test.Assert(a.Get(out actual));
@@ -325,7 +336,7 @@ public static class TestEinaValue {
         {
 
             Test.Assert(a.Optional);
-            Test.Assert(a.Empty); // By default, optional values are empty
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
 
             // Sets expectation
             Test.Assert(expected.Append(-1));
@@ -334,14 +345,14 @@ public static class TestEinaValue {
 
             Test.Assert(a.Set(expected));
             Test.Assert(a.Optional);
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             Test.Assert(a.Reset());
-            Test.Assert(a.Empty);
+            Test.Assert(a.OptionalEmpty);
 
             expected.Append(-42);
             Test.Assert(a.Set(expected));
-            Test.Assert(!a.Empty);
+            Test.Assert(!a.OptionalEmpty);
 
             eina.Value actual = null;
             Test.Assert(a.Get(out actual));
@@ -800,6 +811,30 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestStringThroughValue() {
+        // Check if Value_Native->Value doesn't try to free the pointed string.
+        using(eina.Value value_ptr = new eina.Value(eina.ValueType.String)) {
+            string payload = "Something";
+            value_ptr.Set(payload);
+            eina.Value_Native byvalue = value_ptr;
+            eina.Value another_value_ptr = byvalue;
+            Test.AssertEquals(value_ptr, another_value_ptr);
+        }
+    }
+
+    public static void TestValueEmpty() {
+        using (eina.Value empty = new eina.Value(eina.ValueType.Empty)) {
+            Test.Assert(empty.Empty, "Value must be empty");
+
+            empty.Setup(eina.ValueType.Int32);
+
+            // Values already set-up are not empty. For this kind of empty, use Optional
+            Test.Assert(!empty.Empty, "Values already set-up must not be empty.");
+
+            empty.Set(42);
+            Test.Assert(!empty.Empty, "Values with payload must not be empty.");
+        }
+    }
 
     // FIXME Add remaining list tests
 

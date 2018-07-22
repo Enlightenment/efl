@@ -11,7 +11,7 @@
 
 #include "eolian_cxx_suite.h"
 
-START_TEST(eolian_cxx_test_addess_of_conversions)
+EFL_START_TEST(eolian_cxx_test_addess_of_conversions)
 {
    efl::eo::eo_init init;
 
@@ -26,7 +26,7 @@ START_TEST(eolian_cxx_test_addess_of_conversions)
    fail_unless(a_ptr == (void*) c_ptr);
    fail_unless(a_ptr == (void*) d_ptr);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_address_of(TCase* tc)

@@ -2,17 +2,15 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
 
 #include <stdbool.h>
 typedef unsigned int uint;
 
-START_TEST (elm_config_eoapi)
+EFL_START_TEST (elm_config_eoapi)
 {
-   elm_init(1, NULL);
-
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
@@ -101,7 +99,8 @@ START_TEST (elm_config_eoapi)
    CONFIG_CHKB(item_select_on_focus_disabled, !old);
    CONFIG_CHKB(first_item_focus_on_first_focusin, 0);
    CONFIG_CHKB(mirrored, 0);
-   CONFIG_CHKB(clouseau_enabled, !old);
+   //see clouseau tests
+   //CONFIG_CHKB(clouseau_enabled, !old);
    CONFIG_CHKD(glayer_long_tap_start_timeout, 0);
    CONFIG_CHKD(glayer_double_tap_timeout, 0);
    //color_overlay
@@ -142,28 +141,24 @@ START_TEST (elm_config_eoapi)
           fail(channels[i].name);
      }
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST (elm_config_win)
+EFL_START_TEST (elm_config_win)
 {
-   elm_init(1, NULL);
-
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
 
-   Eo *win = efl_add(EFL_UI_WIN_CLASS, NULL);
+   Eo *win = efl_add_ref(EFL_UI_WIN_CLASS, NULL);
    Eo *cfg2 = efl_provider_find(win, EFL_CONFIG_INTERFACE);
    fail_if(cfg != cfg2);
 
    elm_config_cache_flush_interval_set(42);
    fail_if(efl_config_int_get(win, "cache_flush_interval") != 42);
 
-   efl_del(win);
-   elm_shutdown();
+   efl_unref(win);
 }
-END_TEST
+EFL_END_TEST
 
 static inline Eina_Bool
 _eina_list_string_has(const Eina_List *list, const char *str)
@@ -178,10 +173,8 @@ _eina_list_string_has(const Eina_List *list, const char *str)
    return EINA_FALSE;
 }
 
-START_TEST (elm_config_profiles)
+EFL_START_TEST (elm_config_profiles)
 {
-   elm_init(1, NULL);
-
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)
 
@@ -225,9 +218,8 @@ START_TEST (elm_config_profiles)
    elm_config_profile_dir_free(dir);
    eina_stringshare_del(str);
 
-   elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void elm_test_config(TCase *tc)
 {

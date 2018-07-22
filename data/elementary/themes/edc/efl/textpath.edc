@@ -1,3 +1,24 @@
-group { "efl/textpath";
-   inherit: "elm/textpath/base/default";
+group { name: "efl/textpath";
+   styles {
+      style { name: "textpath_style2";
+         base: "font="FN" font_size=16 text_class=tb_plain wrap=none align=left color=#ffffffff style=shadow,bottom shadow_color=#00000080";
+         tag: "br" "\n";
+         tag: "b" "+ font="FNBD" text_class=tb_light";
+         ENABLED_TEXTBLOCK_TAGS
+      }
+   }
+   parts {
+      part { name: "efl.text";
+         type: TEXTBLOCK;
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            text {
+               style: "textpath_style2";
+               min: 0 1;
+               align: 0.0 0.5;
+            }
+         }
+      }
+   }
 }

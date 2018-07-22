@@ -13,27 +13,6 @@ EAPI extern Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED;
 EAPI extern Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT; /**< @since 1.19 */
 
 /**
- * @struct _Efl_Model_Children_Event
- * Every time a child id added the event
- * EFL_MODEL_EVENT_CHILD_ADDED is dispatched
- * passing along this structure.
- */
-struct _Efl_Model_Children_Event
-{
-   Eo *child; /**< child, for child_add */
-   /**
-    * index is a hint and is intended
-    * to provide a way for applications
-    * to control/know children relative
-    * positions through listings.
-    *
-    * NOTE: If listing is performed asynchronously
-    * exact order may not be guaranteed.
-    */
-   unsigned int index;
-};
-
-/**
  * @struct Efl_Model_Children_Event
  */
 typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
@@ -41,20 +20,6 @@ typedef struct _Efl_Model_Children_Event Efl_Model_Children_Event;
 #include "interfaces/efl_model.eo.h"
 
 EAPI int efl_model_init(void);
-
-/**
- * @brief Slices a list
- *
- * If the @p start and @p count are 0, a new accessor of the entire list is returned
- *
- * @param list The list to get the slice
- * @param start The nth element to start the slice
- * @param count The number of elements
- * @return The accessor to the sliced elements or @c NULL if error
- *
- * @since 1.17
- */
-EAPI Eina_Accessor *efl_model_list_slice(Eina_List *list, unsigned start, unsigned count) EINA_ARG_NONNULL(1);
 
 
 /**
@@ -65,7 +30,9 @@ EAPI Eina_Accessor *efl_model_list_slice(Eina_List *list, unsigned start, unsign
  *
  * @since 1.17
  */
-EAPI void efl_model_property_changed_notify(Efl_Model *model, const char *property);
+EAPI void _efl_model_properties_changed_internal(const Efl_Model *model, ...);
+
+#define efl_model_properties_changed(Model, ...) _efl_model_properties_changed_internal(Model, ##__VA_ARGS__, NULL)
 
 /**
  * @brief Notifies a property invalidated event with an @c EFL_MODEL_EVENT_PROPERTIES_CHANGED

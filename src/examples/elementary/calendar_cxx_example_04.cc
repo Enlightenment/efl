@@ -1,6 +1,6 @@
 #include <Elementary.hh>
 
-#warning This example can't be implemented with EO APIs... FIXME
+#warning This example can not be implemented with EO APIs... FIXME
 
 using efl::eo::instantiate;
 
@@ -9,8 +9,10 @@ using efl::eo::instantiate;
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
+#if 0
    struct tm selected_time;
    time_t current_time;
+#endif
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 

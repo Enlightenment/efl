@@ -658,12 +658,12 @@ class Evas.Box (Efl.Canvas.Group)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.size { set; }
-      Efl.Gfx.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.position { set; }
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      child,added; [[Called when a child object was added to the box]]
-      child,removed; [[Called when a child object was removed from the box]]
+      child,added: ptr(Evas_Object_Box_Option); [[Called when a child object was added to the box]]
+      child,removed: Efl.Canvas.Object; [[Called when a child object was removed from the box]]
    }
 }

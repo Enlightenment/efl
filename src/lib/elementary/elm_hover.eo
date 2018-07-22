@@ -7,7 +7,8 @@ enum Elm.Hover.Axis
    both [[ELM_HOVER_AXIS_BOTH -- both.]]
 }
 
-class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable, Efl.Access.Widget.Action)
+class Elm.Hover (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
+                 Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary hover class]]
    legacy_prefix: elm_hover;
@@ -61,19 +62,19 @@ class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable, Efl.Access
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_add;
-      Elm.Widget.widget_parent { get; set; }
-      Elm.Widget.widget_sub_object_del;
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.widget_parent { get; set; }
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.state_set { get; }
-      Efl.Part.part;
+      Efl.Access.Object.state_set { get; }
+      Efl.Part.part_get;
    }
    events {
-      smart,changed; [[Called when hover changed]]
-      dismissed; [[Called when hover was dismissed]]
+      smart,changed: string; [[Called when hover changed]]
+      dismissed: void; [[Called when hover was dismissed]]
    }
 }

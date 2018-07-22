@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
@@ -219,7 +219,7 @@ apply:
    else
      elm_layout_text_set(obj, "elm.text", buf);
 
-   efl_access_name_changed_signal_emit(obj);
+   efl_access_i18n_name_changed_signal_emit(obj);
    if (sd->entry_visible) _entry_show(sd);
 }
 
@@ -236,13 +236,24 @@ _delay_change_timer_cb(void *data)
 
 static Eina_Bool
 _value_set(Evas_Object *obj,
-           double new_val)
+           double val, double changed)
 {
+   double new_val;
+
    ELM_SPINNER_DATA_GET(obj, sd);
 
    if (sd->round > 0)
-     new_val = sd->val_base +
-       (double)((((int)(new_val - sd->val_base)) / sd->round) * sd->round);
+     {
+        //Spin value changed by entry input.
+        if (changed != 0)
+          new_val = sd->val_base +
+            (double)((((int)((val + changed) - sd->val_base)) / sd->round) * sd->round);
+        else
+          new_val = sd->val_base +
+            (double)((((int)(val - sd->val_base + (sd->round / 2))) / sd->round) * sd->round);
+     }
+   else
+     new_val = val + changed;
 
    if (sd->wrap)
      {
@@ -336,7 +347,7 @@ _drag_cb(void *data,
    if (!strncmp(style, "vertical", 8)) delta *= -1;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (efl_ui_mirrored_get(obj)) delta *= -1;
-   if (_value_set(data, sd->val + delta)) _label_write(data);
+   if (_value_set(data, sd->val, delta)) _label_write(data);
    sd->dragging = 1;
 }
 
@@ -414,12 +425,8 @@ _entry_value_apply(Evas_Object *obj)
 
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - sd->val) < DBL_EPSILON)) return;
-   elm_spinner_value_set(obj, val);
 
-   efl_event_callback_legacy_call(obj, ELM_SPINNER_EVENT_CHANGED, NULL);
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(ELM_SPINNER_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, obj);
+   if (_value_set(obj, val, 0.0)) _label_write(obj);
 }
 
 static int
@@ -594,11 +601,11 @@ _entry_show_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
 
    _entry_show(sd);
+   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
+   evas_object_hide(sd->text_button);
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
-   evas_object_hide(sd->text_button);
 }
 
 static void
@@ -660,7 +667,7 @@ _toggle_entry(Evas_Object *obj)
 
            efl_ui_focus_composition_elements_set(obj, items);
         }
-        efl_ui_focus_manager_focus_set(efl_ui_focus_user_focus_manager_get(obj), sd->ent);
+        efl_ui_focus_manager_focus_set(efl_ui_focus_object_focus_manager_get(obj), sd->ent);
      }
 }
 
@@ -691,7 +698,7 @@ _spin_value(void *data)
    // spin_timer does not exist when _spin_value() is called from wheel event
    if (sd->spin_timer)
      ecore_timer_interval_set(sd->spin_timer, sd->interval);
-   if (_value_set(data, sd->val + real_speed)) _label_write(data);
+   if (_value_set(data, sd->val, real_speed)) _label_write(data);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -737,7 +744,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_elm_spinner_efl_ui_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -930,17 +937,18 @@ _elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_elm_widget_on_focus_update(Eo *obj, Elm_Spinner_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (!efl_ui_focus_object_focus_get(obj))
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
         ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
+        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
      }
    else
      {
@@ -972,7 +980,9 @@ _access_activate_cb(void *data,
      increment_part = "right_bt";
 
    eo = elm_layout_edje_get(data);
+   edje_object_freeze(eo);
    inc_btn = (Evas_Object *)edje_object_part_object_get(eo, increment_part);
+   edje_object_thaw(eo);
 
    if (part_obj != inc_btn)
      {
@@ -1210,6 +1220,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         priv->text_button = elm_button_add(obj);
         elm_object_style_set(priv->text_button, "spinner/default");
+        elm_widget_can_focus_set(priv->text_button, _elm_config->access_mode);
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
@@ -1289,7 +1300,7 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
@@ -1346,7 +1357,7 @@ _elm_spinner_elm_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
 
 EOLIAN static void
-_elm_spinner_elm_widget_on_access_update(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
+_elm_spinner_efl_ui_widget_on_access_update(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED, Eina_Bool acs)
 {
    _elm_spinner_smart_focus_next_enable = acs;
    _access_spinner_register(obj, _elm_spinner_smart_focus_next_enable);
@@ -1401,7 +1412,7 @@ _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
 }
@@ -1432,7 +1443,7 @@ _elm_spinner_label_format_set(Eo *obj, Elm_Spinner_Data *sd, const char *fmt)
 }
 
 EOLIAN static const char*
-_elm_spinner_label_format_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_label_format_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->label;
 }
@@ -1453,7 +1464,7 @@ _elm_spinner_efl_ui_range_range_min_max_set(Eo *obj, Elm_Spinner_Data *sd, doubl
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
+_elm_spinner_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -1466,7 +1477,7 @@ _elm_spinner_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }
@@ -1476,7 +1487,9 @@ _elm_spinner_efl_ui_range_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double 
 {
    if (sd->val == val) return;
 
-   sd->val = val;
+   sd->val = (sd->round <= 0) ? val : sd->val_base +
+      (double)((((int)(val - sd->val_base + (sd->round / 2))) / sd->round) * sd->round);
+
    sd->val_updated = EINA_FALSE;
 
    if (sd->val < sd->val_min)
@@ -1495,7 +1508,7 @@ _elm_spinner_efl_ui_range_range_value_set(Eo *obj, Elm_Spinner_Data *sd, double 
 }
 
 EOLIAN static double
-_elm_spinner_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->val;
 }
@@ -1507,7 +1520,7 @@ _elm_spinner_wrap_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool wrap)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_wrap_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_wrap_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->wrap;
 }
@@ -1583,10 +1596,11 @@ EOLIAN static void
 _elm_spinner_editable_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool editable)
 {
    sd->editable = editable;
+   elm_widget_can_focus_set(sd->text_button, editable | _elm_config->access_mode);
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_editable_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_editable_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->editable;
 }
@@ -1598,7 +1612,7 @@ _elm_spinner_interval_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double inte
 }
 
 EOLIAN static double
-_elm_spinner_interval_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_interval_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->first_interval;
 }
@@ -1610,7 +1624,7 @@ _elm_spinner_base_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double base)
 }
 
 EOLIAN static double
-_elm_spinner_base_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_base_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->val_base;
 }
@@ -1622,7 +1636,7 @@ _elm_spinner_round_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, int rnd)
 }
 
 EOLIAN static int
-_elm_spinner_round_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_round_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->round;
 }
@@ -1637,7 +1651,7 @@ _elm_spinner_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data *
-_elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},
@@ -1649,7 +1663,7 @@ _elm_spinner_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_S
 // A11Y Accessibility
 
 EOLIAN static void
-_elm_spinner_efl_access_value_value_and_text_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
+_elm_spinner_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *value, const char **text)
 {
    if (value) *value = sd->val;
    if (text) *text = NULL;
@@ -1668,7 +1682,7 @@ _elm_spinner_efl_access_value_value_and_text_set(Eo *obj, Elm_Spinner_Data *sd, 
 }
 
 EOLIAN static void
-_elm_spinner_efl_access_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
+_elm_spinner_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *lower, double *upper, const char **descr)
 {
    if (lower) *lower = sd->val_min;
    if (upper) *upper = sd->val_max;
@@ -1676,16 +1690,16 @@ _elm_spinner_efl_access_value_range_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *s
 }
 
 EOLIAN static double
-_elm_spinner_efl_access_value_increment_get(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static const char*
-_elm_spinner_efl_access_name_get(Eo *obj, Elm_Spinner_Data *sd)
+_elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd)
 {
    const char *name, *ret;
-   name = efl_access_name_get(efl_super(obj, ELM_SPINNER_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, ELM_SPINNER_CLASS));
    if (name) return name;
    if (sd->button_layout)
      {

@@ -1,7 +1,4 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 
@@ -200,7 +197,7 @@ _copier_done(void *data EINA_UNUSED, const Efl_Event *event)
      }
 
    fprintf(stderr, "INFO: done\n");
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -209,7 +206,7 @@ _copier_error(void *data EINA_UNUSED, const Efl_Event *event)
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
    retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -362,8 +359,38 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *copier = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (copier)
+     {
+        efl_io_closer_close(copier);
+        efl_del(copier);
+     }
+   copier = NULL;
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *input_fname = NULL;
    char *output_fname = NULL;
@@ -394,14 +421,10 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *input, *output, *copier;
+   Eo *input, *output;
    Eina_Slice line_delm_slice = EINA_SLICE_STR_LITERAL("");
 
-   ecore_init();
-   ecore_con_init();
-   ecore_con_url_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
@@ -411,7 +434,7 @@ main(int argc, char **argv)
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
@@ -429,7 +452,7 @@ main(int argc, char **argv)
 
    if (strcmp(input_fname, ":stdin:") == 0)
      {
-        input = efl_add(EFL_IO_STDIN_CLASS, NULL,
+        input = efl_add_ref(EFL_IO_STDIN_CLASS, NULL,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL));
         if (!input)
           {
@@ -446,7 +469,7 @@ main(int argc, char **argv)
          */
         const char *address = input_fname + strlen("tcp://");
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_TCP_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_TCP_CLASS, ev->object,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
@@ -470,7 +493,7 @@ main(int argc, char **argv)
      {
         Eina_Error err;
 
-        input = efl_add(EFL_NET_DIALER_HTTP_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_HTTP_CLASS, ev->object,
                         efl_net_dialer_http_method_set(efl_added, "GET"),
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL), /* optional */
@@ -496,7 +519,7 @@ main(int argc, char **argv)
      {
         Eina_Error err;
 
-        input = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ev->object,
                          efl_net_dialer_websocket_streaming_mode_set(efl_added, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
@@ -525,7 +548,7 @@ main(int argc, char **argv)
         const char *bind_address = input_fname + strlen("udp://");
         const char *address;
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_UDP_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_UDP_CLASS, ev->object,
                         efl_net_socket_udp_bind_set(efl_added, bind_address), /* use the address as the bind, so we can get data at it */
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
@@ -557,7 +580,7 @@ main(int argc, char **argv)
          */
         const char *address = input_fname + strlen("unix://");
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_UNIX_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_UNIX_CLASS, ev->object,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
@@ -586,7 +609,7 @@ main(int argc, char **argv)
          */
         const char *address = input_fname + strlen("windows://");
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ev->object,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
@@ -614,7 +637,7 @@ main(int argc, char **argv)
          */
         const char *address = input_fname + strlen("ssl://");
         Eina_Error err;
-        input = efl_add(EFL_NET_DIALER_SSL_CLASS, efl_main_loop_get(),
+        input = efl_add(EFL_NET_DIALER_SSL_CLASS, ev->object,
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL), /* optional */
                         efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                         );
@@ -639,7 +662,7 @@ main(int argc, char **argv)
    else
      {
         /* regular file, open with flags: read-only and close-on-exec */
-        input = efl_add(EFL_IO_FILE_CLASS, NULL,
+        input = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
                         efl_file_set(efl_added, input_fname, NULL), /* mandatory */
                         efl_io_file_flags_set(efl_added, O_RDONLY), /* default */
                         efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
@@ -656,7 +679,7 @@ main(int argc, char **argv)
 
    if (strcmp(output_fname, ":stdout:") == 0)
      {
-        output = efl_add(EFL_IO_STDOUT_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_STDOUT_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
@@ -668,7 +691,7 @@ main(int argc, char **argv)
      }
    else if (strcmp(output_fname, ":stderr:") == 0)
      {
-        output = efl_add(EFL_IO_STDERR_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_STDERR_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL) /* optional */
                          );
         if (!output)
@@ -695,7 +718,7 @@ main(int argc, char **argv)
          * When finished get the efl_io_buffer_slice_get(), see
          * _copier_done().
          */
-        output = efl_add(EFL_IO_BUFFER_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, output_buffer_cbs(), NULL) /* optional */
                          );
@@ -725,7 +748,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("tcp://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_TCP_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_TCP_CLASS, ev->object,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
@@ -749,7 +772,7 @@ main(int argc, char **argv)
      {
         Eina_Error err;
 
-        output = efl_add(EFL_NET_DIALER_HTTP_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_HTTP_CLASS, ev->object,
                          efl_net_dialer_http_method_set(efl_added, "PUT"),
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL), /* optional */
@@ -775,7 +798,7 @@ main(int argc, char **argv)
      {
         Eina_Error err;
 
-        output = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_WEBSOCKET_CLASS, ev->object,
                          efl_net_dialer_websocket_streaming_mode_set(efl_added, EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_TEXT),
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
@@ -803,7 +826,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("udp://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_UDP_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_UDP_CLASS, ev->object,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
@@ -831,7 +854,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("unix://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_UNIX_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_UNIX_CLASS, ev->object,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
@@ -860,7 +883,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("windows://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_WINDOWS_CLASS, ev->object,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
@@ -888,7 +911,7 @@ main(int argc, char **argv)
          */
         const char *address = output_fname + strlen("ssl://");
         Eina_Error err;
-        output = efl_add(EFL_NET_DIALER_SSL_CLASS, efl_main_loop_get(),
+        output = efl_add(EFL_NET_DIALER_SSL_CLASS, ev->object,
                          efl_event_callback_array_add(efl_added, output_cbs(), NULL), /* optional */
                          efl_event_callback_array_add(efl_added, dialer_cbs(), NULL) /* optional */
                          );
@@ -915,7 +938,7 @@ main(int argc, char **argv)
         /* regular file, open with flags: write-only, close-on-exec,
          * create if did not exist and truncate if exist.
          */
-        output = efl_add(EFL_IO_FILE_CLASS, NULL,
+        output = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
                          efl_file_set(efl_added, output_fname, NULL), /* mandatory */
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT | O_TRUNC), /* mandatory for write */
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
@@ -941,7 +964,7 @@ main(int argc, char **argv)
    if (line_delimiter)
      line_delm_slice = (Eina_Slice)EINA_SLICE_STR(line_delimiter);
 
-   copier = efl_add(EFL_IO_COPIER_CLASS, efl_main_loop_get(),
+   copier = efl_add(EFL_IO_COPIER_CLASS, ev->object,
                     efl_io_copier_source_set(efl_added, input), /* mandatory */
                     efl_io_copier_destination_set(efl_added, output), /* optional, see :none: */
                     efl_io_copier_line_delimiter_set(efl_added, line_delm_slice), /* optional */
@@ -963,10 +986,7 @@ main(int argc, char **argv)
            output,
            output ? efl_class_name_get(efl_class_get(output)) : ":none:");
 
-   ecore_main_loop_begin();
-   efl_io_closer_close(copier);
-   efl_del(copier);
-   copier = NULL;
+   return ;
 
  end_output:
    if (output)
@@ -979,9 +999,8 @@ main(int argc, char **argv)
    input = NULL;
 
  end:
-   ecore_con_url_shutdown();
-   ecore_con_shutdown();
-   ecore_shutdown();
 
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(retval));
 }
+
+EFL_MAIN_EX();

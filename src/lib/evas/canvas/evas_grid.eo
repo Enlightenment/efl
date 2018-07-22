@@ -4,37 +4,20 @@ class Evas.Grid (Efl.Canvas.Group)
    legacy_prefix: evas_object_grid;
    eo_prefix: evas_obj_grid;
    methods {
-      @property mirrored {
-         set {
-            [[Sets the mirrored mode of the grid. In mirrored mode the grid items go
-              from right to left instead of left to right. That is, 0,0 is top right, not
-              to left.
-
-              @since 1.1]]
-         }
-         get {
-            [[Gets the mirrored mode of the grid.
-
-              See also @.mirrored.set
-
-              @since 1.1]]
-         }
-         values {
-            mirrored: bool; [[$true if mirrored mode is set, $false otherwise]]
-         }
-      }
-      @property size {
+      @property grid_size {
          set {
             [[Set the virtual resolution for the grid
 
               @since 1.1]]
+            legacy: evas_object_grid_size_set;
          }
          get {
             [[Get the current virtual resolution
 
-              See also @.size.set
+              See also @.grid_size.set
 
               @since 1.1]]
+            legacy: evas_object_grid_size_get;
          }
          values {
             w: int; [[The virtual horizontal size (resolution) in integer units.]]
@@ -135,5 +118,6 @@ class Evas.Grid (Efl.Canvas.Group)
    }
    implements {
       Efl.Object.constructor;
+      Efl.Ui.Base.mirrored {get; set;}
    }
 }

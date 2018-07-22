@@ -9,15 +9,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_AUDIO_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_AUDIO_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -28,7 +28,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 /**
  * @file Ecore_Audio.h
@@ -191,6 +191,23 @@ EAPI int                 ecore_audio_init(void);
  * it shuts down all the services it uses.
  */
 EAPI int                 ecore_audio_shutdown(void);
+
+//Legacy compatibility code
+
+/**
+ * @brief Get the name of the object
+ *
+ * @since 1.8
+ *
+ */
+EAPI const char*         ecore_audio_obj_name_get(const Efl_Object* obj);
+/**
+ * @brief Name of the object
+ *
+ * @since 1.8
+ *
+ */
+EAPI void                ecore_audio_obj_name_set(Efl_Object* obj, const char *name);
 
 #include <ecore_audio_obj.h>
 #include <ecore_audio_obj_in.h>

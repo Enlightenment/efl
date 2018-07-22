@@ -25,7 +25,6 @@
    Ecore_Evas *ee; Evas *evas; \
    Evas_Object *to; \
    setenv("EVAS_DATA_DIR", EVAS_DATA_DIR, 1); \
-   ecore_evas_init(); \
    ee = ecore_evas_buffer_new(1, 1); \
    ecore_evas_show(ee); \
    ecore_evas_manual_render_set(ee, EINA_TRUE); \
@@ -41,7 +40,6 @@
 #define END_FILTER_TEST() \
    evas_object_del(to); \
    ecore_evas_free(ee); \
-   ecore_evas_shutdown(); \
    do {} while (0)
 
 #ifdef LITTLE_ENDIAN
@@ -61,7 +59,7 @@
 #endif
 
 
-START_TEST(evas_filter_parser)
+EFL_START_TEST(evas_filter_parser)
 {
    Evas_Filter_Program *pgm;
 
@@ -196,7 +194,7 @@ START_TEST(evas_filter_parser)
 
    // fillmodes are parsed when converting from instructions to commands
 }
-END_TEST
+EFL_END_TEST
 
 struct Filter_Test_Case {
    int l, r, t, b;
@@ -278,7 +276,7 @@ static struct Filter_Test_Case _test_cases[] = {
 
 static const int _test_cases_count = sizeof(_test_cases) / sizeof(_test_cases[0]);
 
-START_TEST(evas_filter_text_padding_test)
+EFL_START_TEST(evas_filter_text_padding_test)
 {
    START_FILTER_TEST();
    Evas_Coord x, y, w, h, W, H;
@@ -308,7 +306,7 @@ START_TEST(evas_filter_text_padding_test)
 
    END_FILTER_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 /* This will only check that all pixels are valid premultiplied values
  * and that they are not all zero.
@@ -344,7 +342,7 @@ _ecore_evas_pixels_check(Ecore_Evas *ee)
    return nonzero;
 }
 
-START_TEST(evas_filter_text_render_test)
+EFL_START_TEST(evas_filter_text_render_test)
 {
    Evas_Filter_Program *pgm;
 
@@ -408,7 +406,7 @@ START_TEST(evas_filter_text_render_test)
      }
 
 }
-END_TEST
+EFL_END_TEST
 
 static inline Eina_Bool
 strequal(const char *a, const char *b)
@@ -418,7 +416,7 @@ strequal(const char *a, const char *b)
    return !strcmp(a, b);
 }
 
-START_TEST(evas_filter_state_test)
+EFL_START_TEST(evas_filter_state_test)
 {
    /* dumb code testing state values */
    static const char *code =
@@ -458,7 +456,7 @@ START_TEST(evas_filter_state_test)
 
    END_FILTER_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 void evas_test_filters(TCase *tc)
 {

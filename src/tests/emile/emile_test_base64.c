@@ -30,7 +30,7 @@ static const struct {
   { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", "YWJjMTIzIT8kKiYoKSctPUB-", 18 }
 };
 
-START_TEST(emile_test_base64_normal)
+EFL_START_TEST(emile_test_base64_normal)
 {
    Eina_Binbuf *buffer, *decoded;
    Eina_Strbuf *str, *encoded;
@@ -75,9 +75,9 @@ START_TEST(emile_test_base64_normal)
    eina_strbuf_reset(str);
    fail_if(decoded);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(emile_test_base64_url)
+EFL_START_TEST(emile_test_base64_url)
 {
    Eina_Binbuf *buffer, *decoded;
    Eina_Strbuf *str, *encoded;
@@ -114,7 +114,7 @@ START_TEST(emile_test_base64_url)
    decoded = emile_base64url_decode(str);
    fail_if(memcmp(eina_binbuf_string_get(decoded), "Man", 3));
 }
-END_TEST
+EFL_END_TEST
 
 void
 emile_test_base64(TCase *tc)

@@ -6,12 +6,10 @@
 
 #include "eina_suite.h"
 
-START_TEST(freeq_simple)
+EFL_START_TEST(freeq_simple)
 {
    Eina_FreeQ *fq;
    int *p;
-
-   eina_init();
 
    fq = eina_freeq_main_get();
    fail_if(fq == NULL);
@@ -28,9 +26,8 @@ START_TEST(freeq_simple)
 
    eina_freeq_free(fq);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static int _n = 0;
 
@@ -40,11 +37,9 @@ static void freefn(void *data)
    _n--;
 }
 
-START_TEST(freeq_tune)
+EFL_START_TEST(freeq_tune)
 {
    void *p;
-
-   eina_init();
 
    eina_freeq_count_max_set(eina_freeq_main_get(), 3);
    fail_if(eina_freeq_count_max_get(eina_freeq_main_get()) != 3);
@@ -72,15 +67,12 @@ START_TEST(freeq_tune)
 
    fail_if(eina_freeq_ptr_pending(eina_freeq_main_get()) == EINA_TRUE);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(freeq_reduce)
+EFL_START_TEST(freeq_reduce)
 {
    void *p;
-
-   eina_init();
 
    _n++;
    p = malloc(9);
@@ -112,9 +104,8 @@ START_TEST(freeq_reduce)
    fail_if(_n > 0);
    fail_if(eina_freeq_ptr_pending(eina_freeq_main_get()) == EINA_TRUE);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 postponed_free(void *data)
@@ -136,13 +127,12 @@ new_uint(int val)
    return p;
 }
 
-START_TEST(freeq_postponed)
+EFL_START_TEST(freeq_postponed)
 {
    Eina_FreeQ *fq;
    unsigned int *values[20];
    size_t k;
 
-   eina_init();
    _n = 0;
 
    fq = eina_freeq_new(EINA_FREEQ_POSTPONED);
@@ -192,9 +182,8 @@ START_TEST(freeq_postponed)
 
    eina_freeq_free(fq);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_freeq(TCase *tc)

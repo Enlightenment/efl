@@ -4,7 +4,7 @@
 
 #include <Emotion.h>
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #include <Elementary.h>
@@ -18,7 +18,6 @@
 
 #define MY_CLASS EFL_UI_VIDEO_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Video"
-#define MY_CLASS_NAME_LEGACY "elm_video"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_LAYOUT_FOCUSED, ""}, /**< handled by elm_layout */
@@ -99,7 +98,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   if (elm_video_is_playing_get(obj))
+   if (efl_player_play_get(obj))
      elm_video_pause(obj);
    else
      elm_video_play(obj);
@@ -141,13 +140,19 @@ _on_size_hints_changed(void *data EINA_UNUSED,
 static void
 _on_open_done(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_signal_emit(data, "elm,video,open", "elm");
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,open", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,open", "efl");
 }
 
 static void
 _on_playback_started(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_signal_emit(data, "elm,video,play", "elm");
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,play", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,play", "efl");
 
    return;
 
@@ -158,7 +163,11 @@ _on_playback_finished(void *data, const Efl_Event *event EINA_UNUSED)
 {
    EFL_UI_VIDEO_DATA_GET(data, sd);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(data, "elm,video,end", "elm");
+
+   if(elm_widget_is_legacy(data))
+     elm_layout_signal_emit(data, "elm,video,end", "elm");
+   else
+     elm_layout_signal_emit(data, "efl,video,end", "efl");
 }
 
 static void
@@ -175,8 +184,17 @@ _on_title_changed(void *data, const Efl_Event *event EINA_UNUSED)
    EFL_UI_VIDEO_DATA_GET(data, sd);
 
    title = emotion_object_title_get(sd->emotion);
-   elm_layout_text_set(data, "elm,title", title);
-   elm_layout_signal_emit(data, "elm,video,title", "elm");
+
+   if(elm_widget_is_legacy(data))
+     {
+        elm_layout_text_set(data, "elm,title", title);
+        elm_layout_signal_emit(data, "elm,video,title", "elm");
+     }
+   else
+     {
+        elm_layout_text_set(data, "efl,title", title);
+        elm_layout_signal_emit(data, "efl,video,title", "efl");
+     }
 }
 
 static void
@@ -220,7 +238,6 @@ EOLIAN static void
 _efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   _elm_emotion_init();
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "video");
@@ -238,7 +255,10 @@ _efl_ui_video_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Video_Data *priv)
                                        elm_widget_theme_style_get(obj)))
      CRI("Failed to set layout!");
 
-   elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
+   if (elm_widget_is_legacy(obj))
+     elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
+   else
+     elm_layout_content_set(obj, "efl.video", priv->emotion);
 
    efl_event_callback_array_add(priv->emotion, _video_cb(), obj);
 
@@ -258,20 +278,12 @@ _efl_ui_video_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Video_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EAPI Evas_Object *
-elm_video_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
 EOLIAN static Eo *
 _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ANIMATION);
 
    return obj;
 }
@@ -286,52 +298,69 @@ _efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *file
    if (filename && ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://"))))
      emotion_object_last_position_load(sd->emotion);
 
-   elm_layout_signal_emit(obj, "elm,video,load", "elm");
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,load", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,load", "efl");
 
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_efl_ui_video_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
+_efl_ui_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
 {
    if (filename)
      *filename = emotion_object_file_get(sd->emotion);
 }
 
 EOLIAN static Evas_Object*
-_efl_ui_video_emotion_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_emotion_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->emotion;
 }
 
 EOLIAN static void
-_efl_ui_video_play(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_start(Eo *obj, Efl_Ui_Video_Data *sd EINA_UNUSED)
 {
-   if (emotion_object_play_get(sd->emotion)) return;
-
-   ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-   sd->stop = EINA_FALSE;
-   emotion_object_play_set(sd->emotion, EINA_TRUE);
-   elm_layout_signal_emit(obj, "elm,video,play", "elm");
+   efl_player_pos_set(obj, 0.0);
+   efl_player_play_set(obj, EINA_TRUE);
 }
 
-/* FIXME: pause will setup timer and go into sleep or
- * hibernate after a while without activity.
- */
 EOLIAN static void
-_efl_ui_video_pause(Eo *obj, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play)
 {
-   if (!emotion_object_play_get(sd->emotion)) return;
+   if (emotion_object_play_get(sd->emotion) == !!play) return;
 
-   if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
-   emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+   if (play)
+     {
+        ELM_SAFE_FREE(sd->timer, ecore_timer_del);
+        sd->stop = EINA_FALSE;
+        emotion_object_play_set(sd->emotion, EINA_TRUE);
+
+        if(elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,video,play", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,video,play", "efl");
+     }
+   else
+     {
+        /* FIXME: pause will setup timer and go into sleep or
+         * hibernate after a while without activity.
+         */
+        if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
+        emotion_object_play_set(sd->emotion, EINA_FALSE);
+
+        if(elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,video,pause", "efl");
+     }
 }
 
 /* FIXME: stop should go into hibernate state directly.
  */
 EOLIAN static void
-_efl_ui_video_stop(Eo *obj, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
 
@@ -339,18 +368,23 @@ _efl_ui_video_stop(Eo *obj, Efl_Ui_Video_Data *sd)
 
    sd->stop = EINA_TRUE;
    emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,stop", "efl");
+
    emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_is_playing_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
 }
 
 EOLIAN static const char*
-_efl_ui_video_title_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_title_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_title_get(sd->emotion);
 }
@@ -362,19 +396,13 @@ _efl_ui_video_remember_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd, 
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_remember_position_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_remember_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return sd->remember;
 }
 
-EOLIAN static void
-_efl_ui_video_class_constructor(Efl_Class *klass)
-{
-   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
-}
-
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
+_efl_ui_video_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
@@ -383,6 +411,42 @@ _efl_ui_video_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Efl_
           { NULL, NULL, NULL, NULL}
    };
    return &atspi_actions[0];
+}
+/* Internal EO APIs and hidden overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
+
+/* Internal EO APIs and hidden overrides */
+
+#define EFL_UI_VIDEO_EXTRA_OPS \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
+
+#include "efl_ui_video.eo.c"
+
+#include "efl_ui_video_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_video"
+
+static void
+_efl_ui_video_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_video_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_VIDEO_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_video_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_VIDEO_LEGACY_CLASS, parent);
 }
 
 EAPI Eina_Bool
@@ -436,23 +500,37 @@ elm_video_is_seekable_get(const Evas_Object *obj)
 EAPI void
 elm_video_play_position_set(Evas_Object *obj, double position)
 {
-   efl_player_position_set(obj, position);
+   efl_player_pos_set(obj, position);
 }
 
 EAPI double
 elm_video_play_position_get(const Evas_Object *obj)
 {
-   return efl_player_position_get(obj);
+   return efl_player_pos_get(obj);
 }
 
-/* Internal EO APIs and hidden overrides */
+EAPI Eina_Bool
+elm_video_is_playing_get(Evas_Object *obj)
+{
+   return efl_player_play_get(obj);
+}
 
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
+EAPI void
+elm_video_play(Evas_Object *obj)
+{
+   efl_player_play_set(obj, EINA_TRUE);
+}
 
-/* Internal EO APIs and hidden overrides */
+EAPI void
+elm_video_stop(Evas_Object *obj)
+{
+   efl_player_stop(obj);
+}
 
-#define EFL_UI_VIDEO_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
+EAPI void
+elm_video_pause(Evas_Object *obj)
+{
+   efl_player_play_set(obj, EINA_FALSE);
+}
 
-#include "efl_ui_video.eo.c"
+#include "efl_ui_video_legacy.eo.c"

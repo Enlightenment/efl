@@ -113,7 +113,7 @@ static void
 child_evt_cb(void *data, const Efl_Event *event)
 {
    Elm_Label *o = data;
-   Efl_Gfx *it = event->info;
+   Efl_Gfx_Entity *it = event->info;
    int col, row, colspan, rowspan;
    char buf[64];
 
@@ -139,7 +139,7 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
    Eina_Rect g;
    Eo *item;
 
-   g = efl_gfx_geometry_get(pack);
+   g = efl_gfx_entity_geometry_get(pack);
 
    efl_pack_table_size_get(pack, &cols, &rows);
    if (!cols || !rows) goto end;
@@ -151,10 +151,10 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
           {
              Eina_Rect m;
 
-             m.x = g.x + c * g.w / cols + (cs * g.w / cols - m.w) / 2;
-             m.y = g.y + r * g.h / rows + (rs * g.h / rows - m.h) / 2;
+             m.x = g.x + c * g.w / cols + (cs * g.w / cols - g.x) / 2;
+             m.y = g.y + r * g.h / rows + (rs * g.h / rows - g.y) / 2;
              m.size = efl_gfx_size_hint_combined_min_get(item);
-             efl_gfx_geometry_set(item, m);
+             efl_gfx_entity_geometry_set(item, m);
 
              gmw = MAX(gmw, m.w);
              gmh = MAX(gmh, m.h);
@@ -174,7 +174,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    win = elm_win_util_standard_add("ui-table", "Efl.Ui.Table");
    elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, EINA_SIZE2D(600,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(600,  400));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
@@ -194,7 +194,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_hint_align_set(f, -1, -1);
    efl_gfx_size_hint_weight_set(f, 1, 0);
    efl_pack(vbox, f);
-   efl_gfx_visible_set(f, 1);
+   efl_gfx_entity_visible_set(f, 1);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
@@ -214,7 +214,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "No weight + table fill");
@@ -223,7 +223,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_radio_state_value_set(o, NONE_BUT_FILL);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Equal weights");
@@ -232,7 +232,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_radio_state_value_set(o, EQUAL);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "One weight only");
@@ -241,7 +241,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_radio_state_value_set(o, ONE);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Two weights");
@@ -250,7 +250,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_radio_state_value_set(o, TWO);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Custom layout");
@@ -259,7 +259,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_radio_state_value_set(o, CUSTOM);
    elm_radio_group_add(o, chk);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    elm_radio_value_set(chk, EQUAL);
 
@@ -274,7 +274,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    o = elm_label_add(win);
    elm_object_text_set(o, "User min size");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_slider_add(win);
    elm_slider_indicator_format_set(o, "%.0fpx");
@@ -287,7 +287,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 0);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* inner box padding */
@@ -300,7 +300,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    o = elm_label_add(win);
    elm_object_text_set(o, "Padding");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_slider_add(win);
    elm_slider_indicator_format_set(o, "%.0fpx");
@@ -313,7 +313,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* outer margin */
@@ -326,7 +326,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    o = elm_label_add(win);
    elm_object_text_set(o, "Margin");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_slider_add(win);
    elm_slider_indicator_format_set(o, "%.0fpx");
@@ -339,7 +339,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* button margins */
@@ -352,7 +352,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    o = elm_label_add(win);
    elm_object_text_set(o, "Buttons margins");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_slider_add(win);
    elm_slider_indicator_format_set(o, "%.0fpx");
@@ -365,7 +365,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_slider_inverted_set(o, 1);
    elm_slider_value_set(o, 10);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* ro info */
@@ -378,12 +378,12 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    o = elm_label_add(win);
    elm_object_text_set(o, "<b>Properties</>");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_label_add(win);
    efl_event_callback_add(table, EFL_PACK_EVENT_LAYOUT_UPDATED, layout_updated_cb, o);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_label_add(win);
    efl_event_callback_add(table, EFL_CONTAINER_EVENT_CONTENT_ADDED, child_evt_cb, o);
@@ -391,7 +391,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_hint_align_set(o, 0.5, 0);
    efl_gfx_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* contents */
@@ -400,11 +400,11 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_hint_align_set(f, -1, -1);
    efl_gfx_size_hint_weight_set(f, 1, 1);
    efl_pack(vbox, f);
-   efl_gfx_visible_set(f, 1);
+   efl_gfx_entity_visible_set(f, 1);
 
    efl_gfx_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, table);
-   efl_gfx_visible_set(table, 1);
+   efl_gfx_entity_visible_set(table, 1);
 
    objects[i++] = o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_size_hint_min_set(o, EINA_SIZE2D(10, 10));
@@ -416,44 +416,44 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 0, 0, 1, 1);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 2");
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 1, 0, 1, 1);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 3");
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 2, 0, 1, 1);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 4");
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 0, 1, 2, 1);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 5");
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 2, 1, 1, 2);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    objects[i++] = o = elm_button_add(win);
    elm_object_text_set(o, "Button 6");
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_pack_table(table, o, 0, 2, 2, 1);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
-   efl_gfx_visible_set(win, 1);
+   efl_gfx_entity_visible_set(win, 1);
 }
 
 static const char *
@@ -480,7 +480,7 @@ append_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    elm_object_tooltip_text_set(o, "Click to unpack");
    efl_pack_end(table, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 }
 
 static void
@@ -498,14 +498,14 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    win = elm_win_util_standard_add("ui-table-linear", "Efl.Ui.Table Linear APIs");
    elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_size_set(win, EINA_SIZE2D(600,  400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(600,  400));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
    efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
    efl_gfx_size_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
-   efl_gfx_visible_set(vbox, 1);
+   efl_gfx_entity_visible_set(vbox, 1);
 
 
    // create here to pass in cb
@@ -518,13 +518,13 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_size_hint_align_set(f, -1, -1);
    efl_gfx_size_hint_weight_set(f, 1, 0);
    efl_pack(vbox, f);
-   efl_gfx_visible_set(f, 1);
+   efl_gfx_entity_visible_set(f, 1);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    elm_object_content_set(f, hbox);
    efl_pack_padding_set(hbox, 5, 0, EINA_TRUE);
-   efl_gfx_visible_set(hbox, 1);
+   efl_gfx_entity_visible_set(hbox, 1);
 
    ico = elm_icon_add(win);
    elm_icon_standard_set(ico, "list-add");
@@ -533,7 +533,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_text_set(o, "Append");
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, append_cb, table);
    efl_pack(hbox, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    ico = elm_icon_add(win);
    elm_icon_standard_set(ico, "edit-clear-all");
@@ -542,7 +542,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_object_text_set(o, "Clear");
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, clear_cb, table);
    efl_pack(hbox, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* ro info */
@@ -551,17 +551,17 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_size_hint_align_set(bx, 0, -1);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
-   efl_gfx_visible_set(bx, 1);
+   efl_gfx_entity_visible_set(bx, 1);
 
    o = elm_label_add(win);
    elm_object_text_set(o, "<b>Properties</>");
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_label_add(win);
    efl_event_callback_add(table, EFL_PACK_EVENT_LAYOUT_UPDATED, layout_updated_cb, o);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_label_add(win);
    efl_event_callback_add(table, EFL_CONTAINER_EVENT_CONTENT_ADDED, child_evt_cb, o);
@@ -569,7 +569,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_size_hint_align_set(o, 0.5, 0);
    efl_gfx_size_hint_weight_set(o, 1, 1);
    efl_pack(bx, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
 
    /* contents */
@@ -578,31 +578,31 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_size_hint_align_set(f, -1, -1);
    efl_gfx_size_hint_weight_set(f, 1, 1);
    efl_pack(vbox, f);
-   efl_gfx_visible_set(f, 1);
+   efl_gfx_entity_visible_set(f, 1);
 
    efl_pack_table_columns_set(table, 4);
    efl_pack_table_direction_set(table, EFL_UI_DIR_RIGHT, EFL_UI_DIR_DOWN);
    efl_gfx_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, table);
-   efl_gfx_visible_set(table, 1);
+   efl_gfx_entity_visible_set(table, 1);
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
    o = elm_button_add(win);
    elm_object_text_set(o, btn_text(NULL));
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
-   efl_gfx_visible_set(o, 1);
+   efl_gfx_entity_visible_set(o, 1);
 
-   efl_gfx_visible_set(win, 1);
+   efl_gfx_entity_visible_set(win, 1);
 }

@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action)
+class Elm.Popup (Efl.Ui.Layout.Object, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary popup class]]
    legacy_prefix: elm_popup;
@@ -168,23 +168,23 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
-      Elm.Widget.widget_parent { set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.widget_parent { set; }
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.widget_sub_object_del;
-      Elm.Widget.widget_event;
+      Efl.Ui.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
-      Efl.Part.part;
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
+      Efl.Part.part_get;
    }
    events {
-      block,clicked; [[Called when popup was clicked]]
-      timeout; [[Called when popup timed out]]
-      item,focused; [[Called when popup got focus]]
-      item,unfocused; [[Called when popup lost focus]]
-      dismissed; [[Called when popup was dismissed]]
+      block,clicked: void; [[Called when popup was clicked]]
+      timeout: void; [[Called when popup timed out]]
+      item,focused: Efl.Object; [[Called when popup got focus]]
+      item,unfocused: Efl.Object; [[Called when popup lost focus]]
+      dismissed: void; [[Called when popup was dismissed]]
    }
 }

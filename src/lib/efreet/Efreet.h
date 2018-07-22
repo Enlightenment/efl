@@ -78,16 +78,22 @@
 # undef EAPI
 #endif
 
+#ifdef EFL_BUILD
+# define EFREET_DEPRECATED_API
+#else
+# define EFREET_DEPRECATED_API EINA_DEPRECATED
+#endif
+
 #ifdef _WIN32
-# ifdef EFL_EFREET_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EFREET_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -148,6 +154,18 @@ EAPI int efreet_shutdown(void);
  * @since 1.7
  */
 EAPI void efreet_lang_reset(void);
+
+/**
+ * @brief Disables connecting to efreet cache for this process.
+ * @since 1.21
+ */
+EAPI void efreet_cache_disable(void);
+
+/**
+ * @brief Enables connecting to efreet cache for this process.
+ * @since 1.21
+ */
+EAPI void efreet_cache_enable(void);
 
 #undef EAPI
 #define EAPI

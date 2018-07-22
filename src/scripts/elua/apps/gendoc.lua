@@ -7,6 +7,7 @@ local dutil = require("docgen.util")
 local writer = require("docgen.writer")
 local keyref = require("docgen.keyref")
 local dtree = require("docgen.doctree")
+local mono = require("docgen.mono")
 
 local printgen = function() end
 
@@ -306,11 +307,16 @@ end
 -- builders
 
 local nspaces_group = function(ns)
-    if ns[1] == "efl" and (ns[2] ~= "class" and ns[2] ~= "interface" and ns[2] ~= "object" and ns[2] ~= "promise") then
-        return ns[1] .. "." .. ns[2]
+    if #ns <= 2 then
+        return ns[1]
     end
 
-    return ns[1]
+    if ns[1] == "efl" and (ns[2] == "class" or ns[2] == "interface" or
+                           ns[2] == "object" or ns[2] == "promise") then
+        return ns[1]
+    end
+
+    return ns[1] .. "." .. ns[2]
 end
 
 local nspaces_filter = function(items, ns)
@@ -337,7 +343,7 @@ local build_reftable = function(f, title, ctype, t, iscl)
             writer.Buffer():write_link(
                 iscl and v:nspaces_get(true)
                       or dtree.Node.nspaces_get(v, true),
-                v:full_name_get()
+                v:name_get()
             ):finish(),
             v:doc_get():brief_get()
         }
@@ -423,7 +429,7 @@ build_inherits = function(cl, t, lvl)
     lvl = lvl or 0
     local lbuf = writer.Buffer()
     if lvl > 0 then
-        lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+        lbuf:write_link(cl:nspaces_get(true), cl:name_get())
         lbuf:write_raw(" ")
         lbuf:write_i("(" .. cl:type_str_get() .. ")")
  
@@ -441,7 +447,7 @@ build_inherit_summary = function(cl, buf)
     buf = buf or writer.Buffer()
     buf:write_raw(" => ")
 
-    buf:write_link(cl:nspaces_get(true), cl:full_name_get())
+    buf:write_link(cl:nspaces_get(true), cl:name_get())
     buf:write_raw(" ")
     buf:write_i("(" .. cl:type_str_get() .. ")")
 
@@ -666,7 +672,7 @@ local find_parent_impl
 find_parent_impl = function(fulln, cl)
     for i, pcl in ipairs(cl:inherits_get()) do
         for j, impl in ipairs(pcl:implements_get()) do
-            if impl:full_name_get() == fulln then
+            if impl:name_get() == fulln then
                 return impl, pcl
             end
         end
@@ -729,7 +735,7 @@ local build_functable = function(f, tcl, tbl)
     table.sort(nt, function(v1, v2)
         local cl1, cl2 = v1[0], v2[0]
         if cl1 ~= cl2 then
-            return cl1:full_name_get() < cl2:full_name_get()
+            return cl1:name_get() < cl2:name_get()
         end
 
         local f1, f2 = v1[1], v2[1]
@@ -756,7 +762,7 @@ local write_description = function(f, impl, func, cl)
     local doc = impl:doc_get(func.METHOD, true)
     local docf = impl:fallback_doc_get(true)
     if over and (not doc:exists() and (not docf or not docf:exists())) then
-        bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
+        bdoc = find_parent_briefdoc(impl:name_get(), cl)
     else
         bdoc = doc:brief_get(docf)
     end
@@ -842,7 +848,7 @@ local write_functable = function(f, tcl, tbl)
             -- but we get latest doc every time so it's ok for now
             local llbuf = writer.Buffer()
             llbuf:write_raw(" [Overridden from ")
-            llbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
+            llbuf:write_link(ocl:nspaces_get(true), ocl:name_get())
             llbuf:write_raw("]")
             f:write_i(llbuf:finish())
         end
@@ -894,7 +900,7 @@ local write_inherit_functable = function(f, tcl, tbl)
         if cl ~= prevcl then
             prevcl = cl
             f:write_raw("^ ")
-            f:write_link(cl:nspaces_get(true), cl:full_name_get())
+            f:write_link(cl:nspaces_get(true), cl:name_get())
             f:write_raw(" ^^^")
             f:write_nl()
         end
@@ -979,7 +985,7 @@ local build_evtable = function(f, tcl, tbl, newm)
 
     table.sort(nt, function(v1, v2)
         if v1[0] ~= v2[0] then
-            return v1[0]:full_name_get() < v2[0]:full_name_get()
+            return v1[0]:name_get() < v2[0]:name_get()
         end
 
         return v1[2] < v2[2]
@@ -1048,7 +1054,7 @@ local write_inherit_evtable = function(f, tcl, tbl)
         if cl ~= prevcl then
             prevcl = cl
             f:write_raw("^ ")
-            f:write_link(cl:nspaces_get(true), cl:full_name_get())
+            f:write_link(cl:nspaces_get(true), cl:name_get())
             f:write_raw(" ^^^")
             f:write_nl()
         end
@@ -1075,11 +1081,13 @@ end
 
 local build_class = function(cl)
     local cln = cl:nspaces_get()
-    local fulln = cl:full_name_get()
+    local fulln = cl:name_get()
     local f = writer.Writer(cln, fulln)
     printgen("Generating class: " .. fulln)
 
-    f:write_h(cl:full_name_get() .. " (" .. cl:type_str_get() .. ")", 1)
+    mono.build_class(cl)
+
+    f:write_h(cl:name_get() .. " (" .. cl:type_str_get() .. ")", 1)
  
     f:write_h("Description", 2)
     f:write_raw(cl:doc_get():full_get(nil, true))
@@ -1146,7 +1154,7 @@ end
 
 local build_alias = function(tp)
     local ns = dtree.Node.nspaces_get(tp)
-    local fulln = tp:full_name_get()
+    local fulln = tp:name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating alias: " .. fulln)
 
@@ -1164,7 +1172,7 @@ end
 
 local build_struct = function(tp)
     local ns = dtree.Node.nspaces_get(tp)
-    local fulln = tp:full_name_get()
+    local fulln = tp:name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating struct: " .. fulln)
 
@@ -1197,7 +1205,7 @@ end
 
 local build_enum = function(tp)
     local ns = dtree.Node.nspaces_get(tp)
-    local fulln = tp:full_name_get()
+    local fulln = tp:name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating enum: " .. fulln)
 
@@ -1230,7 +1238,7 @@ end
 
 local build_variable = function(v, constant)
     local ns = v:nspaces_get()
-    local fulln = v:full_name_get()
+    local fulln = v:name_get()
     local f = writer.Writer(ns, fulln)
     printgen("Generating variable: " .. fulln)
 
@@ -1332,9 +1340,9 @@ local write_inherited_from = function(f, impl, cl, over, prop)
     end
     local buf = writer.Buffer()
     buf:write_raw("Overridden from ")
-    local pimpl, pcl = find_parent_impl(impl:full_name_get(), cl)
+    local pimpl, pcl = find_parent_impl(impl:name_get(), cl)
     buf:write_link(
-        impl:function_get():nspaces_get(pcl, true), impl:full_name_get()
+        impl:function_get():nspaces_get(pcl, true), impl:name_get()
     )
     if prop then
         buf:write_raw(" ")
@@ -1360,7 +1368,7 @@ local impls_of = {}
 
 local get_all_impls_of
 get_all_impls_of = function(tbl, cl, fn, got)
-    local cfn = cl:full_name_get()
+    local cfn = cl:name_get()
     if got[cfn] then
         return
     end
@@ -1381,7 +1389,7 @@ local write_ilist = function(f, impl, cl)
     local fn = impl:function_get()
     local fnn = fn:name_get()
     local ocl = fn:implement_get():class_get()
-    local onm = ocl:full_name_get() .. "." .. fnn
+    local onm = ocl:name_get() .. "." .. fnn
     local imps = impls_of[onm]
     if not imps then
         imps = {}
@@ -1393,7 +1401,7 @@ local write_ilist = function(f, impl, cl)
     local t = {}
     for i, icl in ipairs(imps) do
         local buf = writer.Buffer()
-        local cfn = icl:full_name_get() .. "." .. fnn
+        local cfn = icl:name_get() .. "." .. fnn
         if icl:is_same(cl) then
             buf:write_b(cfn)
         else
@@ -1408,13 +1416,13 @@ build_method = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local mns = fn:nspaces_get(cl)
-    local methn = cl:full_name_get() .. "." .. fn:name_get()
+    local methn = cl:name_get() .. "." .. fn:name_get()
     local f = writer.Writer(mns, methn)
     printgen("Generating method: " .. methn)
 
     local doc = impl:doc_get(fn.METHOD)
     if over and not doc:exists() then
-        doc = find_parent_doc(impl:full_name_get(), cl, fn.METHOD)
+        doc = find_parent_doc(impl:name_get(), cl, fn.METHOD)
     end
 
     f:write_h("Description", 2)
@@ -1451,7 +1459,7 @@ build_property = function(impl, cl)
     local over = impl:is_overridden(cl)
     local fn = impl:function_get()
     local pns = fn:nspaces_get(cl)
-    local propn = cl:full_name_get() .. "." .. fn:name_get()
+    local propn = cl:name_get() .. "." .. fn:name_get()
     local f = writer.Writer(pns, propn)
     printgen("Generating property: " .. propn)
 
@@ -1466,13 +1474,13 @@ build_property = function(impl, cl)
 
     if over then
         if not doc:exists() then
-            doc = find_parent_doc(impl:full_name_get(), cl, fn.PROPERTY)
+            doc = find_parent_doc(impl:name_get(), cl, fn.PROPERTY)
         end
         if isget and not gdoc:exists() then
-            gdoc = find_parent_doc(impl:full_name_get(), cl, fn.PROP_GET)
+            gdoc = find_parent_doc(impl:name_get(), cl, fn.PROP_GET)
         end
         if isset and not sdoc:exists() then
-            sdoc = find_parent_doc(impl:full_name_get(), cl, fn.PROP_SET)
+            sdoc = find_parent_doc(impl:name_get(), cl, fn.PROP_SET)
         end
     end
 
@@ -1587,7 +1595,7 @@ end
 
 build_event = function(ev, cl)
     local evn = ev:nspaces_get(cl)
-    local evnm = cl:full_name_get() .. ": " .. ev:name_get()
+    local evnm = cl:name_get() .. ": " .. ev:name_get()
     local f = writer.Writer(evn, evnm)
     printgen("Generating event: " .. evnm)
 
@@ -1641,7 +1649,7 @@ end
 local build_stats_keyref = function()
     for i, cl in ipairs(dtree.Class.all_get()) do
         stats.check_class(cl)
-        keyref.add(cl:full_name_get():gsub("%.", "_"), cl:nspaces_get(), "c")
+        keyref.add(cl:name_get():gsub("%.", "_"), cl:nspaces_get(), "c")
         for i, imp in ipairs(cl:implements_get()) do
             -- TODO: handle doc overrides in stats system
             if not imp:is_overridden(cl) then
@@ -1748,7 +1756,7 @@ getopt.parse {
 
         if st == "clist" then
             for i, cl in ipairs(dtree.Class.all_get()) do
-                print(cl:full_name_get())
+                print(cl:name_get())
             end
             return
         end

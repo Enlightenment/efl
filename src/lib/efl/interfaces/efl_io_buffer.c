@@ -107,13 +107,13 @@ _efl_io_buffer_limit_set(Eo *o, Efl_Io_Buffer_Data *pd, size_t limit)
 }
 
 EOLIAN static size_t
-_efl_io_buffer_limit_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_limit_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->limit;
 }
 
 EOLIAN static Eina_Slice
-_efl_io_buffer_slice_get(Eo *o, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_slice_get(const Eo *o, Efl_Io_Buffer_Data *pd)
 {
    Eina_Slice slice = { };
 
@@ -221,7 +221,7 @@ _efl_io_buffer_efl_io_reader_read(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Rw_Slice *
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->can_read;
 }
@@ -236,7 +236,7 @@ _efl_io_buffer_efl_io_reader_can_read_set(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_reader_eos_get(Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+_efl_io_buffer_efl_io_reader_eos_get(const Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED)
 {
    return efl_io_closer_closed_get(o) ||
      efl_io_buffer_position_read_get(o) >= efl_io_sizer_size_get(o);
@@ -311,7 +311,7 @@ _efl_io_buffer_efl_io_writer_write(Eo *o, Efl_Io_Buffer_Data *pd, Eina_Slice *sl
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_writer_can_write_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_efl_io_writer_can_write_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->can_write;
 }
@@ -336,7 +336,7 @@ _efl_io_buffer_efl_io_closer_close(Eo *o, Efl_Io_Buffer_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_closer_closed_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_efl_io_closer_closed_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->closed;
 }
@@ -350,18 +350,18 @@ _efl_io_buffer_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Buffer_
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_closer_close_on_exec_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+_efl_io_buffer_efl_io_closer_close_on_exec_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
 EOLIAN static void
-_efl_io_buffer_efl_io_closer_close_on_destructor_set(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED, Eina_Bool close_on_destructor EINA_UNUSED)
+_efl_io_buffer_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED, Eina_Bool close_on_invalidate EINA_UNUSED)
 {
 }
 
 EOLIAN static Eina_Bool
-_efl_io_buffer_efl_io_closer_close_on_destructor_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+_efl_io_buffer_efl_io_closer_close_on_invalidate_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
@@ -427,7 +427,7 @@ _efl_io_buffer_efl_io_sizer_resize(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t size)
 }
 
 EOLIAN static uint64_t
-_efl_io_buffer_efl_io_sizer_size_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_efl_io_sizer_size_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->used;
 }
@@ -463,7 +463,7 @@ _efl_io_buffer_efl_io_positioner_seek(Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED,
 }
 
 EOLIAN static uint64_t
-_efl_io_buffer_efl_io_positioner_position_get(Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED)
+_efl_io_buffer_efl_io_positioner_position_get(const Eo *o, Efl_Io_Buffer_Data *pd EINA_UNUSED)
 {
    uint64_t r = efl_io_buffer_position_read_get(o);
    uint64_t w = efl_io_buffer_position_write_get(o);
@@ -508,7 +508,7 @@ _efl_io_buffer_position_read_set(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t positio
 }
 
 EOLIAN static uint64_t
-_efl_io_buffer_position_read_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_position_read_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->position_read;
 }
@@ -544,7 +544,7 @@ _efl_io_buffer_position_write_set(Eo *o, Efl_Io_Buffer_Data *pd, uint64_t positi
 }
 
 EOLIAN static uint64_t
-_efl_io_buffer_position_write_get(Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
+_efl_io_buffer_position_write_get(const Eo *o EINA_UNUSED, Efl_Io_Buffer_Data *pd)
 {
    return pd->position_write;
 }

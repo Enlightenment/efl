@@ -37,7 +37,65 @@
 
 #ifndef _WIN32
 # include <signal.h>
-# define SIG SIGPROF
+// realtime signals guarantee a minimum of 8, so SIGRTMIN + 7 would be valid
+// at a minimum, so let's choose + 6 ... second last of the minimum set.
+// SIGRTMAX of course is defined too... note the manual pages for sigation say
+// that it calls rt_sigaction transparently for us so... no need for anything
+// else special
+# ifdef SIGRTMIN
+#  define SIG (SIGRTMIN + 6)
+# else
+// OSX seems to not support posix RT signals... too old a kernel. so be partly
+// broken on OSX in that a HUP signal will maybe cause a crash... but compiling
+// with -pg would have guaranteed always caused a crash before anyway.
+// given OSX only supports "old-style" signals like:
+// 
+// #define  SIGHUP     1 /* hangup */
+// #define  SIGINT     2 /* interrupt */
+// #define  SIGQUIT    3 /* quit */
+// #define  SIGILL     4 /* illegal instruction (not reset when caught) */
+// #define  SIGTRAP    5 /* trace trap (not reset when caught) */
+// #define  SIGABRT    6 /* abort() */
+// #if  (defined(_POSIX_C_SOURCE) && !defined(_DARWIN_C_SOURCE))
+// # define SIGPOLL    7 /* pollable event ([XSR] generated, not supported) */
+// #else /* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
+// # define SIGIOT     SIGABRT /* compatibility */
+// # define SIGEMT     7 /* EMT instruction */
+// #endif /* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */
+// #define  SIGFPE     8 /* floating point exception */
+// #define  SIGKILL    9 /* kill (cannot be caught or ignored) */
+// #define  SIGBUS    10 /* bus error */
+// #define  SIGSEGV   11 /* segmentation violation */
+// #define  SIGSYS    12 /* bad argument to system call */
+// #define  SIGPIPE   13 /* write on a pipe with no one to read it */
+// #define  SIGALRM   14 /* alarm clock */
+// #define  SIGTERM   15 /* software termination signal from kill */
+// #define  SIGURG    16 /* urgent condition on IO channel */
+// #define  SIGSTOP   17 /* sendable stop signal not from tty */
+// #define  SIGTSTP   18 /* stop signal from tty */
+// #define  SIGCONT   19 /* continue a stopped process */
+// #define  SIGCHLD   20 /* to parent on child stop or exit */
+// #define  SIGTTIN   21 /* to readers pgrp upon background tty read */
+// #define  SIGTTOU   22 /* like TTIN for output if (tp->t_local&LTOSTOP) */
+// #if  (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
+// # define SIGIO     23 /* input/output possible signal */
+// #endif
+// #define  SIGXCPU   24 /* exceeded CPU time limit */
+// #define  SIGXFSZ   25 /* exceeded file size limit */
+// #define  SIGVTALRM 26 /* virtual time alarm */
+// #define  SIGPROF   27 /* profiling time alarm */
+// #if  (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))
+// # define SIGWINCH  28 /* window size changes */
+// # define SIGINFO   29 /* information request */
+// #endif
+// #define  SIGUSR1   30 /* user defined signal 1 */
+// #define  SIGUSR2   31 /* user defined signal 2 */
+// 
+// (excerpt from OSX's signal.h - found at:
+// http://github.com/st3fan/osx-10.9/blob/master/xnu-2422.1.72/bsd/sys/signal.h
+// pasting here due to how difficult it was to find a signal list for OSX)
+#  define SIG SIGHUP
+# endif
 #endif
 
 static Eina_Semaphore _wait_for_bts_sem;
@@ -51,6 +109,10 @@ static int                *_bt_cpu;
 /* Used by trace timer */
 static double _trace_t0 = 0.0;
 static Eina_Debug_Timer *_timer = NULL;
+
+#ifndef _WIN32
+static struct sigaction old_sigprof_action;
+#endif
 
 void
 _eina_debug_dump_fhandle_bt(FILE *f, void **bt, int btlen)
@@ -196,6 +258,15 @@ _signal_init(void)
 #ifndef _WIN32
    struct sigaction sa;
 
+   memset(&sa, 0, sizeof(struct sigaction));
+
+   sa.sa_handler = SIG_DFL;
+   sa.sa_sigaction = NULL;
+   sa.sa_flags = SA_RESTART | SA_SIGINFO;
+   sigemptyset(&sa.sa_mask);
+   sigaction(SIG, &sa, &old_sigprof_action);
+
+   memset(&sa, 0, sizeof(struct sigaction));
    // set up signal handler for our profiling signal - eevery thread should
    // obey this (this is the case on linux - other OSs may vary)
    sa.sa_sigaction = _signal_handler;
@@ -209,6 +280,14 @@ _signal_init(void)
    sigemptyset(&sa.sa_mask);
    sa.sa_flags = 0;
    if (sigaction(SIGPIPE, &sa, 0) == -1) perror(0);
+#endif
+}
+
+static void
+_signal_shutdown(void)
+{
+#ifndef _WIN32
+   sigaction(SIG, &old_sigprof_action, NULL);
 #endif
 }
 
@@ -290,6 +369,8 @@ static Eina_Bool
 _prof_on_cb(Eina_Debug_Session *session, int cid EINA_UNUSED, void *buffer, int size)
 {
    unsigned int time;
+
+   _signal_init();
    if (size >= 4)
      {
         memcpy(&time, buffer, 4);
@@ -305,6 +386,7 @@ _prof_off_cb(Eina_Debug_Session *session EINA_UNUSED, int cid EINA_UNUSED, void 
 {
    eina_debug_timer_del(_timer);
    _timer = NULL;
+   _signal_shutdown();
    return EINA_TRUE;
 }
 
@@ -317,7 +399,6 @@ EINA_DEBUG_OPCODES_ARRAY_DEFINE(_OPS,
 Eina_Bool
 _eina_debug_bt_init(void)
 {
-   _signal_init();
    eina_semaphore_new(&_wait_for_bts_sem, 0);
    eina_debug_opcodes_register(NULL, _OPS(), NULL, NULL);
    return EINA_TRUE;

@@ -780,14 +780,11 @@ ecore_x_init_from_display(Ecore_X_Display *display)
    return --_ecore_x_init_count;
 }
 
-static int
-_ecore_x_shutdown(int close_display)
+int
+_ecore_x_shutdown(void)
 {
-   if (--_ecore_x_init_count != 0)
-     return _ecore_x_init_count;
-
    if (!_ecore_x_disp)
-     return _ecore_x_init_count;
+     return 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -854,19 +851,9 @@ _ecore_x_shutdown(int close_display)
                           ECORE_X_EVENT_PRESENT_COMPLETE,
                           ECORE_X_EVENT_PRESENT_IDLE);
    ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
-   if (close_display)
-     XCloseDisplay(_ecore_x_disp);
-   else
-     {
-        close(ConnectionNumber(_ecore_x_disp));
-        // FIXME: may have to clean up x display internal here
-// getting segv here? hmmm. odd. disable
-//        XFree(_ecore_x_disp);
-     }
 
    free(_ecore_x_event_handlers);
    _ecore_x_fd_handler_handle = NULL;
-   _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
    _ecore_x_events_shutdown();
    _ecore_x_input_shutdown();
@@ -874,6 +861,12 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_dnd_shutdown();
    ecore_x_netwm_shutdown();
 
+   return 0;
+}
+
+static void
+_ecore_x_shutdown2(void)
+{
    ecore_event_shutdown();
    ecore_shutdown();
 
@@ -881,8 +874,6 @@ _ecore_x_shutdown(int close_display)
    _ecore_xlib_log_dom = -1;
    eina_shutdown();
    _ecore_xlib_sync = EINA_FALSE;
-
-   return _ecore_x_init_count;
 }
 
 /**
@@ -898,7 +889,14 @@ _ecore_x_shutdown(int close_display)
 EAPI int
 ecore_x_shutdown(void)
 {
-   return _ecore_x_shutdown(1);
+   if (--_ecore_x_init_count != 0)
+     return _ecore_x_init_count;
+   if (_ecore_x_shutdown()) return _ecore_x_init_count;
+   if (_ecore_x_disp)
+     XCloseDisplay(_ecore_x_disp);
+   _ecore_x_disp = NULL;
+   _ecore_x_shutdown2();
+   return 0;
 }
 
 /**
@@ -911,7 +909,16 @@ ecore_x_shutdown(void)
 EAPI int
 ecore_x_disconnect(void)
 {
-   return _ecore_x_shutdown(0);
+   if (--_ecore_x_init_count != 0)
+     return _ecore_x_init_count;
+   if (_ecore_x_shutdown()) return _ecore_x_init_count;
+   close(ConnectionNumber(_ecore_x_disp));
+    // FIXME: may have to clean up x display internal here
+// getting segv here? hmmm. odd. disable
+//        XFree(_ecore_x_disp);
+   _ecore_x_disp = NULL;
+   _ecore_x_shutdown2();
+   return 0;
 }
 
 /**
@@ -976,7 +983,7 @@ ecore_x_screen_size_get(const Ecore_X_Screen *screen,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (w) *w = 0;
    if (h) *h = 0;
-   if (!s) return;
+   EINA_SAFETY_ON_NULL_RETURN(screen);
    if (w) *w = s->width;
    if (h) *h = s->height;
 }
@@ -1009,6 +1016,7 @@ ecore_x_screen_count_get(void)
 EAPI int
 ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(screen, -1);
    return XScreenNumberOfScreen((Screen *)screen);
 }
 
@@ -1863,6 +1871,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win,
                              int mod,
                              int any_mod)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_button_ungrab_internal(win, button, mod, any_mod);
    _ecore_x_sync_magic_send(1, win, button, mod, any_mod);
 //   _ecore_x_window_grab_remove(win, button, mod, any_mod);
@@ -1967,6 +1976,7 @@ ecore_x_window_key_grab(Ecore_X_Window win,
 {
    Keygrab *t;
 
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_key_grab_internal(win, key, mod, any_mod);
    _ecore_key_grabs_num++;
    t = realloc(_ecore_key_grabs,
@@ -2073,6 +2083,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
                           int mod,
                           int any_mod)
 {
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    _ecore_x_window_key_ungrab_internal(win, key, mod, any_mod);
    _ecore_x_sync_magic_send(2, win, XStringToKeysym(key), mod, any_mod);
 //   _ecore_x_key_grab_remove(win, key, mod, any_mod);
@@ -2508,6 +2519,13 @@ ecore_x_default_depth_get(Ecore_X_Display *disp,
    return depth;
 }
 
+EAPI Ecore_X_Connection *
+ecore_x_connection_get(void)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, NULL);
+   return XGetXCBConnection(_ecore_x_disp);
+}
+
 EAPI void
 ecore_x_xkb_select_group(int group)
 {
@@ -2516,6 +2534,42 @@ ecore_x_xkb_select_group(int group)
    XkbLockGroup(_ecore_x_disp, XkbUseCoreKbd, group);
    if (_ecore_xlib_sync) ecore_x_sync();
 #endif
+}
+
+EAPI Eina_Bool
+ecore_x_xkb_track_state(void)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef ECORE_XKB
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+   ret = XkbSelectEvents(_ecore_x_disp, XkbUseCoreKbd, XkbStateNotifyMask, XkbStateNotifyMask);
+   if (_ecore_xlib_sync) ecore_x_sync();
+#endif
+   return ret;
+}
+
+EAPI Eina_Bool
+ecore_x_xkb_state_get(Ecore_X_Xkb_State *state)
+{
+   Eina_Bool ret = EINA_FALSE;
+#ifdef ECORE_XKB
+   XkbStateRec xkbstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_ecore_x_disp, EINA_FALSE);
+   ret = XkbGetState(_ecore_x_disp, XkbUseCoreKbd, &xkbstate);
+   if (!ret) return ret;
+
+   state->group = xkbstate.group;
+   state->base_group = xkbstate.base_group;
+   state->latched_group = xkbstate.latched_group;
+   state->locked_group = xkbstate.locked_group;
+
+   state->mods = xkbstate.mods;
+   state->base_mods = xkbstate.base_mods;
+   state->latched_mods = xkbstate.latched_mods;
+   state->locked_mods = xkbstate.locked_mods;
+#endif
+   return ret;
 }
 
 /*****************************************************************************/

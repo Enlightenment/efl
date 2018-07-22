@@ -1,4 +1,4 @@
-class Efl.Net.Server.Windows (Efl.Loop.Consumer, Efl.Net.Server) {
+class Efl.Net.Server_Windows (Efl.Loop_Consumer, Efl.Net.Server) {
     [[A Windows NamedPipe server.
 
       The @Efl.Net.Server.serve method calls CreateNamedPipe()
@@ -25,6 +25,7 @@ class Efl.Net.Server.Windows (Efl.Loop.Consumer, Efl.Net.Server) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Server.address { get; set; }
         Efl.Net.Server.clients_count { get; set; }

@@ -20,7 +20,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    std::cout << ", name = " << icon.icon_get() << std::endl;
 
-   icon.scale_type_set(EFL_IMAGE_SCALE_TYPE_NONE);
+   icon.scale_type_set(EFL_GFX_IMAGE_SCALE_TYPE_NONE);
    //icon.resizable_set(false, true);
    //icon.smooth_set(false);
    //icon.fill_outside_set(true);

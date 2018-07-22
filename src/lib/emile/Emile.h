@@ -27,7 +27,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EMILE_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else

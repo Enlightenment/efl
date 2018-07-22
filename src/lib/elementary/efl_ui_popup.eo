@@ -1,4 +1,4 @@
-enum Efl.Ui.Popup.Align {
+enum Efl.Ui.Popup_Align {
     [[Popup alignment type]]
     none = 0, [[Popup not aligned]]
     center,   [[Popup aligned to center]]
@@ -8,7 +8,7 @@ enum Efl.Ui.Popup.Align {
     bottom    [[Popup aligned to bottom]]
 }
 
-class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
+class Efl.Ui.Popup(Efl.Ui.Layout.Object, Efl.Content)
 {
    [[EFL UI popup class]]
    methods {
@@ -20,7 +20,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
             [[ Get the current popup alignment.]]
          }
          values {
-             type: Efl.Ui.Popup.Align; [[Alignment type]]
+             type: Efl.Ui.Popup_Align; [[Alignment type]]
          }
       }
       @property timeout {
@@ -49,22 +49,22 @@ class Efl.Ui.Popup(Efl.Ui.Layout, Efl.Content)
       }
    }
    parts {
-      backwall: Efl.Ui.Popup.Part; [[A backwall behind the popup.]]
+      backwall: Efl.Ui.Popup_Part; [[A backwall behind the popup.]]
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set;}
-      Efl.Gfx.visible { set; }
-      Elm.Widget.widget_parent { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set;}
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Ui.Widget.widget_parent { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      backwall,clicked; [[This is called whenever the user clicks back wall of popup.]]
-      timeout; [[This is called when popup times out.]]
+      backwall,clicked: void; [[This is called whenever the user clicks back wall of popup.]]
+      timeout: void; [[This is called when popup times out.]]
    }
 }

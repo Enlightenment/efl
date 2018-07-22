@@ -38,7 +38,6 @@ struct Elm_Gen_Item
    Elm_Gen_Item             *parent;
    Eina_List                *texts, *contents, *states, *content_objs;
    Ecore_Timer              *long_timer;
-   int                       walking;
    int                       generation; /**< a generation of an item. when the item is created, this value is set to the value of genlist/gengrid generation. this value will be decreased when the item is going to be deleted */
    const char               *mouse_cursor;
    Eina_List                *item_focus_chain;
@@ -72,6 +71,8 @@ struct Elm_Gen_Item
    Eina_Bool                 cursor_engine_only : 1;
    Eina_Bool                 hide : 1; /**< flag used for hiding the items which do not match filter text */
    Eina_Bool                 filtered: 1; /**<flag used to indicate whether or not item has been filtered */
+
+   Eina_Bool                 callbacks : 1;
 };
 
 #endif

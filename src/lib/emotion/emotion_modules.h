@@ -8,15 +8,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EMOTION_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EMOTION_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -27,7 +27,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define META_TRACK_TITLE 1
 #define META_TRACK_ARTIST 2
@@ -162,5 +162,8 @@ EAPI const char *emotion_webcam_custom_get(const char *device);
 
 EAPI Eina_Bool _emotion_module_register(const Emotion_Engine *api);
 EAPI Eina_Bool _emotion_module_unregister(const Emotion_Engine *api);
+
+#undef EAPI
+#define EAPI
 
 #endif

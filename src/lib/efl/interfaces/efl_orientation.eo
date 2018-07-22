@@ -1,4 +1,4 @@
-import efl_ui_direction; // For documentation references
+parse efl_ui_direction;
 
 enum Efl.Orient
 {
@@ -17,6 +17,17 @@ enum Efl.Orient
    left = 270, [[Orient left, rotate 90 degrees clock-wise.]]
 }
 
+enum Efl.Flip
+{
+   [[A flip type, to flip visual objects.
+
+     See also @Efl.Orientation.
+   ]]
+   none = 0, [[No flip]]
+   horizontal = 1, [[Flip image horizontally]]
+   vertical = 2 [[Flip image vertically]]
+}
+
 interface Efl.Orientation
 {
    [[Efl orientation interface]]
@@ -31,5 +42,16 @@ interface Efl.Orientation
             dir: Efl.Orient(Efl.Orient.none); [[The rotation angle (CCW), see @Efl.Orient.]]
          }
       }
+      @property flip {
+        [[Control the flip of the given image
+
+          Use this function to change how your image is to be
+          flipped: vertically or horizontally or transpose
+          or traverse.
+        ]]
+        values {
+           flip: Efl.Flip; [[Flip method]]
+        }
+     }
    }
 }

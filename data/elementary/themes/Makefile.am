@@ -149,7 +149,6 @@ elementary/themes/edc/elm/textpath.edc \
 elementary/themes/edc/elm/thumb.edc \
 elementary/themes/edc/elm/toolbar.edc \
 elementary/themes/edc/elm/tooltip.edc \
-elementary/themes/edc/elm/uiclock.edc \
 elementary/themes/edc/elm/video.edc \
 elementary/themes/edc/elm/win.edc \
 \
@@ -1022,23 +1021,32 @@ elementary/themes/edc/efl/uiclock.edc \
 elementary/themes/edc/efl/cursor.edc \
 elementary/themes/edc/efl/focus.edc \
 elementary/themes/edc/efl/frame.edc \
-elementary/themes/edc/efl/multibuttonentry.edc \
+elementary/themes/edc/efl/navigation_bar.edc \
+elementary/themes/edc/efl/navigation_layout.edc \
+elementary/themes/edc/efl/tags.edc \
 elementary/themes/edc/efl/nstate.edc \
 elementary/themes/edc/efl/panes.edc \
 elementary/themes/edc/efl/photocam.edc \
 elementary/themes/edc/efl/popup.edc \
+elementary/themes/edc/efl/pointer.edc \
 elementary/themes/edc/efl/progress.edc \
 elementary/themes/edc/efl/radio.edc \
 elementary/themes/edc/efl/scroller.edc \
 elementary/themes/edc/efl/slider.edc \
 elementary/themes/edc/efl/spin.edc \
 elementary/themes/edc/efl/spin_button.edc \
+elementary/themes/edc/efl/datepicker.edc \
+elementary/themes/edc/efl/timepicker.edc \
 elementary/themes/edc/efl/text.edc \
 elementary/themes/edc/efl/textpath.edc \
 elementary/themes/edc/efl/tooltip.edc \
 elementary/themes/edc/efl/video.edc \
 elementary/themes/edc/efl/list.edc \
-elementary/themes/edc/efl/win.edc
+elementary/themes/edc/efl/win.edc \
+elementary/themes/edc/efl/pager.edc \
+elementary/themes/edc/efl/tab_pager.edc \
+elementary/themes/edc/efl/tab_bar.edc \
+elementary/themes/edc/efl/tab_page.edc
 
 elementary_fdo_actions_128_files = \
 	elementary/themes/fdo/actions/128/address-book-new.png \
@@ -1492,6 +1500,12 @@ elementary_fdo_intl_128_files = \
 	elementary/themes/fdo/intl/128/flag-vn.png \
 	elementary/themes/fdo/intl/128/flag-za.png
 
+elementary_fdo_mimetypes_16_files = \
+	elementary/themes/fdo/mimetypes/16/inode-directory.png 
+
+elementary_fdo_mimetypes_128_files = \
+	elementary/themes/fdo/mimetypes/128/inode-directory.png 
+
 
 elementary_fdo_files = \
 	$(elementary_fdo_actions_128_files) \
@@ -1503,7 +1517,9 @@ elementary_fdo_files = \
 	$(elementary_fdo_status_128_files) \
 	$(elementary_fdo_devices_128_files) \
 	$(elementary_fdo_apps_64_files) \
-	$(elementary_fdo_intl_128_files)
+	$(elementary_fdo_intl_128_files) \
+	$(elementary_fdo_mimetypes_16_files) \
+	$(elementary_fdo_mimetypes_128_files)
 
 
 EXTRA_DIST += $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files)

@@ -1,4 +1,4 @@
-class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
+class Efl.Ui.Box (Efl.Ui.Widget, Efl.Pack_Linear, Efl.Pack_Layout,
                   Efl.Ui.Direction)
 {
    [[The box widget.
@@ -28,15 +28,15 @@ class Efl.Ui.Box (Elm.Widget, Efl.Pack.Linear, Efl.Pack.Layout,
       Efl.Pack.pack;
       Efl.Pack.pack_padding { get; set; }
       Efl.Pack.pack_align { get; set; }
-      Efl.Pack.Linear.pack_begin;
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Linear.pack_before;
-      Efl.Pack.Linear.pack_after;
-      Efl.Pack.Linear.pack_at;
-      Efl.Pack.Linear.pack_content_get;
-      Efl.Pack.Linear.pack_unpack_at;
-      Efl.Pack.Linear.pack_index_get;
-      Efl.Pack.Layout.layout_update;
-      Efl.Pack.Layout.layout_request;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
    }
 }

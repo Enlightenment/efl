@@ -48,6 +48,7 @@ test_bg.c \
 test_box.c \
 test_bubble.c \
 test_button.c \
+test_ui_button.c \
 test_calendar.c \
 test_check.c \
 test_clock.c \
@@ -132,6 +133,9 @@ test_slideshow.c \
 test_spinner.c \
 test_ui_spinner.c \
 test_ui_buttonspin.c \
+test_ui_datepicker.c \
+test_ui_timepicker.c \
+test_ui_tags.c \
 test_store.c \
 test_sys_notify.c \
 test_systray.c \
@@ -155,6 +159,7 @@ test_win_state.c \
 test_win_wm_rotation.c \
 test_win_dialog.c \
 test_gesture_framework.c \
+test_ui_tab_pager.c \
 test.h
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \

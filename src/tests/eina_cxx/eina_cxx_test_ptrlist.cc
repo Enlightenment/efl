@@ -27,7 +27,7 @@ struct is_eolian_object< ::wrapper> : std::true_type {};
     
 } }
 
-START_TEST(eina_cxx_ptrlist_push_back)
+EFL_START_TEST(eina_cxx_ptrlist_push_back)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -74,9 +74,9 @@ START_TEST(eina_cxx_ptrlist_push_back)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_pop_back)
+EFL_START_TEST(eina_cxx_ptrlist_pop_back)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -128,9 +128,9 @@ START_TEST(eina_cxx_ptrlist_pop_back)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_push_front)
+EFL_START_TEST(eina_cxx_ptrlist_push_front)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -168,9 +168,9 @@ START_TEST(eina_cxx_ptrlist_push_front)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_pop_front)
+EFL_START_TEST(eina_cxx_ptrlist_pop_front)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -222,9 +222,9 @@ START_TEST(eina_cxx_ptrlist_pop_front)
     ck_assert(std::equal(list.rbegin(), list.rend(), rresult_));
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_insert)
+EFL_START_TEST(eina_cxx_ptrlist_insert)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -336,10 +336,10 @@ START_TEST(eina_cxx_ptrlist_insert)
     ck_assert(std::equal(list.begin(), list.end(), list4.begin()));
   }
 }
-END_TEST
+EFL_END_TEST
 
 
-START_TEST(eina_cxx_ptrlist_malloc_clone_allocator)
+EFL_START_TEST(eina_cxx_ptrlist_malloc_clone_allocator)
 {
   efl::eina::eina_init eina_init;
 
@@ -349,9 +349,9 @@ START_TEST(eina_cxx_ptrlist_malloc_clone_allocator)
 
   efl::eina::ptr_list<int, efl::eina::malloc_clone_allocator> list2 = list1;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_constructors)
+EFL_START_TEST(eina_cxx_ptrlist_constructors)
 {
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
@@ -399,9 +399,9 @@ START_TEST(eina_cxx_ptrlist_constructors)
     ck_assert(list2 == list4);
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_erase)
+EFL_START_TEST(eina_cxx_ptrlist_erase)
 {
   efl::eina::eina_init eina_init;
 
@@ -449,9 +449,9 @@ START_TEST(eina_cxx_ptrlist_erase)
   ck_assert(list1.front() == 10);
   ck_assert(list1.back() == 25);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_ptrlist_range)
+EFL_START_TEST(eina_cxx_ptrlist_range)
 {
   efl::eina::eina_init eina_init;
 
@@ -482,7 +482,7 @@ START_TEST(eina_cxx_ptrlist_range)
   ck_assert(*const_range_list.begin() == 0);
   ck_assert(*list.begin() == 0);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ptrlist(TCase* tc)

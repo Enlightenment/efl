@@ -1899,7 +1899,6 @@ eng_image_data_slice_add(void *engdata, void *image,
              for (int y = 0; y < (h / 2); y++)
                cs_data[h + (h / 2) + y] = slice->bytes + (y * stride);
           }
-        else goto fail;
         evas_common_image_colorspace_dirty(im);
         break;
 
@@ -2773,7 +2772,7 @@ _map_draw_thread_cmd(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RG
 static void
 evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
-   if (m->count - offset < 3) return;
+   if (m->count - offset < 4) return;
 
    if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
        (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
@@ -2834,7 +2833,7 @@ evas_software_image_map_draw(void *engine EINA_UNUSED, void *data, void *context
 
    if (m->count > 4)
      {
-        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 2);
+        evas_software_image_map_draw(engine, data, context, surface, im, m, smooth, level, offset + 4);
      }
 }
 
@@ -3461,12 +3460,27 @@ _tls_check(void)
 }
 #endif
 
+static inline Eina_Bool
+_check_gl(void)
+{
+   if (!gl_lib_init()) return 0;
+   return 1;
+}
+
+static Eina_Bool
+eng_gl_supports_evas_gl(void *data EINA_UNUSED)
+{
+   return _check_gl();
+}
+
 static void *
 eng_gl_surface_create(void *data EINA_UNUSED, void *config, int w, int h)
 {
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_GL_Config *cfg;
+
+   if (!_check_gl()) return NULL;
 
    sfc = calloc(1, sizeof(Render_Engine_GL_Surface));
    if (!sfc) return NULL;
@@ -3568,6 +3582,8 @@ eng_gl_surface_destroy(void *data EINA_UNUSED, void *surface)
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
 
+   if (!_check_gl()) return 0;
+
    sfc = (Render_Engine_GL_Surface*)surface;
 
    if (!sfc) return 0;
@@ -3598,11 +3614,7 @@ eng_gl_context_create(void *data EINA_UNUSED, void *share_context, int version,
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
 
-   if (!_tls_check() && !gl_lib_init())
-     {
-        WRN("Failed to initialize Evas GL (with OSMesa)");
-        return NULL;
-     }
+   if (!_check_gl()) return NULL;
 
    if (version != EVAS_GL_GLES_2_X)
      {
@@ -3648,6 +3660,8 @@ eng_gl_context_destroy(void *data EINA_UNUSED, void *context)
 #ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
 
+   if (!_check_gl()) return 0;
+
    ctx = (Render_Engine_GL_Context*)context;
 
    if (!ctx) return 0;
@@ -3676,6 +3690,8 @@ eng_gl_make_current(void *data EINA_UNUSED, void *surface, void *context)
    Render_Engine_GL_Context *ctx;
    OSMesaContext share_ctx;
    GLboolean ret;
+
+   if (!_check_gl()) return 0;
 
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
@@ -3760,6 +3776,8 @@ static void *
 eng_gl_proc_address_get(void *data EINA_UNUSED, const char *name)
 {
 #ifdef EVAS_GL
+   if (!_check_gl()) return NULL;
+
    if (_sym_OSMesaGetProcAddress) return _sym_OSMesaGetProcAddress(name);
    return dlsym(RTLD_DEFAULT, name);
 #else
@@ -3774,6 +3792,8 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 #ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_Native_Surface *ns;
+
+   if (!_check_gl()) return 0;
 
    sfc = (Render_Engine_GL_Surface*)surface;
    ns  = (Evas_Native_Surface*)native_surface;
@@ -3792,7 +3812,6 @@ eng_gl_native_surface_get(void *data EINA_UNUSED, void *surface, void *native_su
 #endif
 }
 
-
 static void *
 eng_gl_api_get(void *data EINA_UNUSED, int version)
 {
@@ -3800,8 +3819,7 @@ eng_gl_api_get(void *data EINA_UNUSED, int version)
      return NULL;
 
 #ifdef EVAS_GL
-   if (!_tls_init)
-     gl_lib_init();
+   if (!_check_gl()) return NULL;
 
    return &gl_funcs;
 #else
@@ -4308,12 +4326,12 @@ eng_ector_create(void *engine EINA_UNUSED)
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
    if (ector_backend && !strcasecmp(ector_backend, "default"))
      {
-        ector = efl_add(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_FALSE;
      }
    else
      {
-        ector = efl_add(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
+        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
         use_cairo = EINA_TRUE;
      }
    efl_domain_current_pop();
@@ -4368,7 +4386,7 @@ eng_ector_surface_cache_drop(void *engine, void *key)
 static void
 eng_ector_destroy(void *data EINA_UNUSED, Ector_Surface *ector)
 {
-   if (ector) efl_del(ector);
+   if (ector) efl_unref(ector);
 }
 
 static Ector_Buffer *
@@ -4381,7 +4399,7 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 
    if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
      return NULL;
-   buf = efl_add(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
+   buf = efl_add_ref(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
                  evas_ector_buffer_engine_image_set(efl_added, data, ie));
    efl_domain_current_pop();
 
@@ -4418,20 +4436,6 @@ eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int width, int height,
    evas_cache_image_drop(ie);
 
    return buf;
-}
-
-static Efl_Gfx_Render_Op
-_evas_render_op_to_ector_rop(Evas_Render_Op op)
-{
-   switch (op)
-     {
-      case EVAS_RENDER_BLEND:
-         return EFL_GFX_RENDER_OP_BLEND;
-      case EVAS_RENDER_COPY:
-         return EFL_GFX_RENDER_OP_COPY;
-      default:
-         return EFL_GFX_RENDER_OP_BLEND;
-     }
 }
 
 static void
@@ -4518,9 +4522,8 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
 
    ector.r = renderer; // This has already been refcounted by Evas_Object_VG
    ector.clips = c;
-   ector.render_op = _evas_render_op_to_ector_rop(dc->render_op);
-   ector.mul_col = ector_color_multiply(dc->mul.use ? dc->mul.col : 0xffffffff,
-                                        dc->col.col);;
+   ector.render_op = EFL_GFX_RENDER_OP_BLEND;
+   ector.mul_col = 0xffffffff;
    ector.free_it = EINA_FALSE;
 
    if (do_async)
@@ -4570,7 +4573,7 @@ _draw_thread_ector_surface_set(void *data)
         memset(pixels, 0, (w * h * 4));
      }
 
-   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+   ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(ector_surface->ector, x, y);
 
    eina_mempool_free(_mp_command_ector_surface, ector_surface);
@@ -4608,7 +4611,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         // clear the surface before giving to ector
         memset(pixels, 0, (w * h * 4));
 
-        ector_buffer_pixels_set(ector, pixels, w, h, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
      }
 }
@@ -4632,7 +4635,7 @@ eng_ector_end(void *engine EINA_UNUSED, void *surface EINA_UNUSED,
      }
    else
      {
-        ector_buffer_pixels_set(ector, NULL, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+        ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
      }
 }
@@ -4817,26 +4820,27 @@ static Evas_Func func =
      eng_font_pen_coords_get,
      eng_font_text_props_info_create,
      eng_font_right_inset_get,
+     eng_gl_supports_evas_gl, // returns true iif OSMesa is present
      NULL, // No need to set output for software engine
-     NULL, // need software mesa for gl rendering <- gl_surface_create
+     eng_gl_surface_create, // need software mesa for gl rendering <- gl_surface_create
      NULL, // need software mesa for gl rendering <- gl_pbuffer_surface_create
-     NULL, // need software mesa for gl rendering <- gl_surface_destroy
-     NULL, // need software mesa for gl rendering <- gl_context_create
-     NULL, // need software mesa for gl rendering <- gl_context_destroy
-     NULL, // need software mesa for gl rendering <- gl_make_current
-     NULL, // need software mesa for gl rendering <- gl_string_query
-     NULL, // need software mesa for gl rendering <- gl_proc_address_get
-     NULL, // need software mesa for gl rendering <- gl_native_surface_get
-     NULL, // need software mesa for gl rendering <- gl_api_get
+     eng_gl_surface_destroy, // need software mesa for gl rendering <- gl_surface_destroy
+     eng_gl_context_create, // need software mesa for gl rendering <- gl_context_create
+     eng_gl_context_destroy, // need software mesa for gl rendering <- gl_context_destroy
+     eng_gl_make_current, // need software mesa for gl rendering <- gl_make_current
+     eng_gl_string_query, // need software mesa for gl rendering <- gl_string_query
+     eng_gl_proc_address_get, // need software mesa for gl rendering <- gl_proc_address_get
+     eng_gl_native_surface_get, // need software mesa for gl rendering <- gl_native_surface_get
+       eng_gl_api_get, // need software mesa for gl rendering <- gl_api_get
      NULL, // need software mesa for gl rendering <- gl_direct_override
      NULL, // need software mesa for gl rendering <- gl_get_pixels_set
      NULL, // need software mesa for gl rendering <- gl_surface_lock
      NULL, // need software mesa for gl rendering <- gl_surface_read_pixels
      NULL, // need software mesa for gl rendering <- gl_surface_unlock
-     NULL, // need software mesa for gl rendering <- gl_error_get
-     NULL, // need software mesa for gl rendering <- gl_current_context_get
-     NULL, // need software mesa for gl rendering <- gl_current_surface_get
-     NULL, // need software mesa for gl rendering <- gl_rotation_angle_get
+     eng_gl_error_get, // need software mesa for gl rendering <- gl_error_get
+     eng_gl_current_context_get, // need software mesa for gl rendering <- gl_current_context_get
+     eng_gl_current_surface_get, // need software mesa for gl rendering <- gl_current_surface_get
+     eng_gl_rotation_angle_get, // need software mesa for gl rendering <- gl_rotation_angle_get
      NULL, // need software mesa for gl rendering <- gl_surface_query
      NULL, // need software mesa for gl rendering <- gl_surface_direct_renderable_get
      NULL, // need software mesa for gl rendering <- gl_image_direct_set
@@ -5888,6 +5892,7 @@ gl_lib_init(void)
 {
 #ifdef EVAS_GL
    // Current ctx & sfc stuff
+   if (gl_lib_handle) return 1;
    if (!_tls_check()) return 0;
 
    // dlopen OSMesa
@@ -5903,23 +5908,33 @@ gl_lib_init(void)
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so", RTLD_NOW);
    if (!gl_lib_handle)
      {
-        DBG("Unable to open libOSMesa:  %s", dlerror());
+        WRN("Unable to open libOSMesa:  %s", dlerror());
+        DBG("Unable to support EvasGL in this engine module. Install OSMesa to get it running");
         return 0;
      }
 
    //------------------------------------------------//
-   if (!glue_sym_init()) return 0;
-   if (!gl_sym_init()) return 0;
+   if (!glue_sym_init())
+     {
+        WRN("Unable to glue OSMesa syms");
+        return 0;
+     }
+   if (!gl_sym_init())
+     {
+        WRN("Unable to init OSMesa syms");
+        return 0;
+     }
 
    override_gl_apis(&gl_funcs);
 
    return 1;
 #else
+   WRN("Evas GL not compiled in");
    return 0;
 #endif
 }
 
-
+/*
 static void
 init_gl(void)
 {
@@ -5938,7 +5953,6 @@ init_gl(void)
         ORD(gl_string_query);           // FIXME: Need to implement
         ORD(gl_proc_address_get);       // FIXME: Need to implement
         ORD(gl_native_surface_get);
-        ORD(gl_api_get);
         ORD(gl_error_get);
         ORD(gl_current_context_get);
         ORD(gl_current_surface_get);
@@ -5946,7 +5960,7 @@ init_gl(void)
 #undef ORD
      }
 }
-
+*/
 
 /*
  *****
@@ -5997,7 +6011,8 @@ module_open(Evas_Module *em)
                       NULL, sizeof(Evas_Thread_Command_Ector_Surface), 128);
 
    ector_init();
-   init_gl();
+// do on demand when first evas_gl_api_get is called...
+//   init_gl();
    ector_glsym_set(dlsym, RTLD_DEFAULT);
    evas_common_pipe_init();
 

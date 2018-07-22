@@ -30,6 +30,8 @@
 
 # ifdef EFL_BETA_API_SUPPORT
 
+#define ECORE_WL2_SURFACE_INTERFACE_VERSION 1
+
 typedef struct _Ecore_Wl2_Subsurface Ecore_Wl2_Subsurface;
 
 #  ifndef _ECORE_WL2_WINDOW_PREDEF
@@ -88,7 +90,7 @@ typedef struct _Ecore_Wl2_Event_Global
 
 typedef struct _Ecore_Wl2_Event_Focus_In
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    unsigned int timestamp;
    Eo *dev; //The seat device
    Ecore_Wl2_Display *display;
@@ -96,7 +98,7 @@ typedef struct _Ecore_Wl2_Event_Focus_In
 
 typedef struct _Ecore_Wl2_Event_Focus_Out
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    unsigned int timestamp;
    Eo *dev; //The seat device
    Ecore_Wl2_Display *display;
@@ -104,7 +106,7 @@ typedef struct _Ecore_Wl2_Event_Focus_Out
 
 typedef struct _Ecore_Wl2_Event_Dnd_Enter
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    Ecore_Wl2_Offer *offer;
    int x, y;
    unsigned int seat;
@@ -113,7 +115,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Enter
 
 typedef struct _Ecore_Wl2_Event_Dnd_Leave
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    Ecore_Wl2_Offer *offer;
    unsigned int seat;
    Ecore_Wl2_Display *display;
@@ -121,7 +123,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Leave
 
 typedef struct _Ecore_Wl2_Event_Dnd_Motion
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    Ecore_Wl2_Offer *offer;
    int x, y;
    unsigned int seat;
@@ -130,7 +132,7 @@ typedef struct _Ecore_Wl2_Event_Dnd_Motion
 
 typedef struct _Ecore_Wl2_Event_Dnd_Drop
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    int x, y;
    Ecore_Wl2_Offer *offer;
    unsigned int seat;
@@ -139,14 +141,14 @@ typedef struct _Ecore_Wl2_Event_Dnd_Drop
 
 typedef struct _Ecore_Wl2_Event_Dnd_End
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    unsigned int seat;
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Dnd_End;
 
 struct _Ecore_Wl2_Event_Data_Source_Event
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    Ecore_Wl2_Drag_Action action;
    unsigned int seat;
    uint32_t serial;
@@ -155,7 +157,7 @@ struct _Ecore_Wl2_Event_Data_Source_Event
 
 typedef struct Ecore_Wl2_Event_Data_Source_End
 {
-   unsigned int win, source;
+   Ecore_Wl2_Window *win, *source;
    Ecore_Wl2_Drag_Action action;
    unsigned int seat;
    uint32_t serial;
@@ -214,7 +216,7 @@ typedef enum
 typedef struct _Ecore_Wl2_Event_Device
 {
    Eo *dev;
-   int window_id;
+   Ecore_Wl2_Window *window;
    unsigned int seat_id;
    Ecore_Wl2_Device_Type type;
 } Ecore_Wl2_Event_Device;
@@ -234,14 +236,15 @@ typedef enum
 
 typedef struct _Ecore_Wl2_Event_Window_Configure
 {
-   unsigned int win, event_win, edges;
+   Ecore_Wl2_Window *win, *event_win;
+   unsigned int edges;
    unsigned int w, h;
    unsigned int states;
 } Ecore_Wl2_Event_Window_Configure;
 
 typedef struct _Ecore_Wl2_Event_Window_Configure_Complete
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
 } Ecore_Wl2_Event_Window_Configure_Complete;
 
 typedef struct _Ecore_Wl2_Event_Input_Keymap_Changed
@@ -279,7 +282,7 @@ typedef struct _Ecore_Wl2_Event_Output_Transform
 
 typedef struct _Ecore_Wl2_Event_Window_Rotation
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
    int rotation, w, h, angle;
    Eina_Bool resize : 1;
 } Ecore_Wl2_Event_Window_Rotation;
@@ -290,35 +293,35 @@ typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_
 
 typedef struct _Ecore_Wl2_Event_Window_Show
 {
-   unsigned int win;
-   unsigned int parent_win;
-   unsigned int event_win;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *parent_win;
+   Ecore_Wl2_Window *event_win;
 } Ecore_Wl2_Event_Window_Show;
 
 typedef struct _Ecore_Wl2_Event_Window_Hide
 {
-   unsigned int win;
-   unsigned int parent_win;
-   unsigned int event_win;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *parent_win;
+   Ecore_Wl2_Window *event_win;
 } Ecore_Wl2_Event_Window_Hide;
 
 typedef struct _Ecore_Wl2_Event_Window_Activate
 {
-   unsigned int win;
-   unsigned int parent_win;
-   unsigned int event_win;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *parent_win;
+   Ecore_Wl2_Window *event_win;
 } Ecore_Wl2_Event_Window_Activate;
 
 typedef struct _Ecore_Wl2_Event_Window_Deactivate
 {
-   unsigned int win;
-   unsigned int parent_win;
-   unsigned int event_win;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Window *parent_win;
+   Ecore_Wl2_Window *event_win;
 } Ecore_Wl2_Event_Window_Deactivate;
 
 typedef struct _Ecore_Wl2_Event_Window_Iconify_State_Change
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
    unsigned int iconified;
    unsigned int force;
 } Ecore_Wl2_Event_Window_Iconify_State_Change;
@@ -340,25 +343,30 @@ typedef enum _Ecore_Wl2_Window_Type
 
 typedef struct _Ecore_Wl2_Event_Aux_Hint_Allowed
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
    int id;
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Aux_Hint_Allowed;
 
 typedef struct _Ecore_Wl2_Event_Aux_Hint_Supported
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Aux_Hint_Supported;
 
 typedef struct Ecore_Wl2_Event_Aux_Message
 {
-   unsigned int win;
+   Ecore_Wl2_Window *win;
    Eina_Stringshare *key;
    Eina_Stringshare *val;
    Eina_List *options;
    Ecore_Wl2_Display *display;
 } Ecore_Wl2_Event_Aux_Message;
+
+typedef struct Ecore_Wl2_Event_Window_Offscreen
+{
+   Ecore_Wl2_Window *win;
+} Ecore_Wl2_Event_Window_Offscreen;
 
 typedef struct _Ecore_Wl2_Buffer Ecore_Wl2_Buffer;
 
@@ -416,6 +424,21 @@ EAPI extern int ECORE_WL2_EVENT_WINDOW_HIDE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_DEACTIVATE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE; /** @since 1.21 */
+EAPI extern int ECORE_WL2_EVENT_WINDOW_OFFSCREEN; /** @since 1.21 */
+
+typedef struct _Ecore_Wl2_Surface_Interface
+{
+   int id;
+   int version;
+
+   void *(*setup)(Ecore_Wl2_Window *win);
+   void (*destroy)(Ecore_Wl2_Surface *surface, void *priv_data);
+   void (*reconfigure)(Ecore_Wl2_Surface *surface, void *priv_data, int w, int h, uint32_t flags, Eina_Bool alpha);
+   void *(*data_get)(Ecore_Wl2_Surface *surface, void *priv_data, int *w, int *h);
+   int  (*assign)(Ecore_Wl2_Surface *surface, void *priv_data);
+   void (*post)(Ecore_Wl2_Surface *surface, void *priv_data, Eina_Rectangle *rects, unsigned int count);
+   void (*flush)(Ecore_Wl2_Surface *surface, void *priv_data, Eina_Bool purge);
+} Ecore_Wl2_Surface_Interface;
 
 /**
  * @file
@@ -649,19 +672,6 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *disp
 EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find_by_name(const Ecore_Wl2_Display *display, const char *name);
 
 /**
- * Find an Ecore_Wl2_Window based on id
- *
- * @param display The display to search for the window
- * @param id The id of the window to find
- *
- * @return The Ecore_Wl2_Window if found, or NULL if no such window exists
- *
- * @ingroup Ecore_Wl2_Display_Group
- * @since 1.17
- */
-EAPI Ecore_Wl2_Window *ecore_wl2_display_window_find(Ecore_Wl2_Display *display, unsigned int id);
-
-/**
  * Retrieves the Wayland Registry used for the current Wayland display.
  *
  * @param display The display to get the registry of
@@ -720,18 +730,6 @@ EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
  * @since 1.17
  */
 EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
-
-/**
- * Get the window id associated with an Ecore_Wl2_Window
- *
- * @param window The Ecore_Wl2_Window of which to retrieve the window id
- *
- * @return The id associated with this window
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI int ecore_wl2_window_id_get(Ecore_Wl2_Window *window);
 
 /**
  * Get the wl_surface which belongs to this window
@@ -818,16 +816,6 @@ EAPI void ecore_wl2_window_move(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input
 EAPI void ecore_wl2_window_resize(Ecore_Wl2_Window *window, Ecore_Wl2_Input *input, int location);
 
 /**
- * Raise a given Ecore_Wl2_Window
- *
- * @param window The Ecore_Wl2_Window which to raise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_raise(Ecore_Wl2_Window *window);
-
-/**
  * Get if a given window is alpha
  *
  * @param window The window to get if is alpha
@@ -849,18 +837,6 @@ EAPI Eina_Bool ecore_wl2_window_alpha_get(Ecore_Wl2_Window *window);
  * @since 1.17
  */
 EAPI void ecore_wl2_window_alpha_set(Ecore_Wl2_Window *window, Eina_Bool alpha);
-
-/**
- * Set a given window's transparent property
- *
- * @param window The window on which to set the transparent property
- * @param transparent EINA_TRUE to set window as transparent,
- *                    EINA_FALSE otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI void ecore_wl2_window_transparent_set(Ecore_Wl2_Window *window, Eina_Bool transparent);
 
 /**
  * Set the opaque region of the Ecore_Wl2_Window
@@ -1020,18 +996,6 @@ EAPI void ecore_wl2_window_geometry_get(Ecore_Wl2_Window *window, int *x, int *y
  * @since 1.17
  */
 EAPI void ecore_wl2_window_geometry_set(Ecore_Wl2_Window *window, int x, int y, int w, int h);
-
-/**
- * Get the iconified state of a given window
- *
- * @param window The window to get the iconified state of
- *
- * @return EINA_TRUE if window is iconified, EINA_FALSE otherwise
- *
- * @ingroup Ecore_Wl2_Window_Group
- * @since 1.17
- */
-EAPI Eina_Bool ecore_wl2_window_iconified_get(Ecore_Wl2_Window *window);
 
 /**
  * Iconify a window
@@ -1331,14 +1295,6 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
 
 /* TODO: doxy */
 /** @since 1.17 */
-EAPI void ecore_wl2_input_grab(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, unsigned int button);
-
-/* TODO: doxy */
-/** @since 1.17 */
-EAPI void ecore_wl2_input_ungrab(Ecore_Wl2_Input *input);
-
-/* TODO: doxy */
-/** @since 1.17 */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
@@ -1358,7 +1314,7 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
-EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input);
+EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_UNUSED_RESULT;
 
 /**
  * Get the display object of an input
@@ -1990,21 +1946,33 @@ EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rect
 EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
 EAPI Ecore_Wl2_Buffer *ecore_wl2_buffer_create(Ecore_Wl2_Display *ewd, int w, int h, Eina_Bool alpha);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
-EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer *buf);
-EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf);
+EAPI struct wl_buffer *ecore_wl2_buffer_wl_buffer_get(Ecore_Wl2_Buffer *buf);
+EAPI void *ecore_wl2_buffer_map(Ecore_Wl2_Buffer *buf, int *w, int *h, int *stride);
 EAPI void ecore_wl2_buffer_unmap(Ecore_Wl2_Buffer *buf);
 EAPI void ecore_wl2_buffer_discard(Ecore_Wl2_Buffer *buf);
+EAPI void ecore_wl2_buffer_lock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_unlock(Ecore_Wl2_Buffer *b);
 EAPI void ecore_wl2_buffer_destroy(Ecore_Wl2_Buffer *b);
+EAPI Eina_Bool ecore_wl2_buffer_busy_get(Ecore_Wl2_Buffer *buffer);
+EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
+EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
+EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
+EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
+EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool force);
+EAPI void ecore_wl2_surface_reconfigure(Ecore_Wl2_Surface *surface, int w, int h, uint32_t flags, Eina_Bool alpha);
 EAPI void *ecore_wl2_surface_data_get(Ecore_Wl2_Surface *surface, int *w, int *h);
 EAPI int  ecore_wl2_surface_assign(Ecore_Wl2_Surface *surface);
 EAPI void ecore_wl2_surface_post(Ecore_Wl2_Surface *surface, Eina_Rectangle *rects, unsigned int count);
-EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface);
-EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window);
+EAPI void ecore_wl2_surface_flush(Ecore_Wl2_Surface *surface, Eina_Bool purge);
+EAPI void ecore_wl2_window_surface_flush(Ecore_Wl2_Window *window, Eina_Bool purge);
+EAPI Ecore_Wl2_Buffer *ecore_wl2_surface_buffer_create(Ecore_Wl2_Surface *surface);
+EAPI int ecore_wl2_surface_manager_add(Ecore_Wl2_Surface_Interface *intf);
+EAPI void ecore_wl2_surface_manager_del(Ecore_Wl2_Surface_Interface *intf);
+EAPI Ecore_Wl2_Window *ecore_wl2_surface_window_get(Ecore_Wl2_Surface *surface);
+EAPI Eina_Bool ecore_wl2_surface_alpha_get(Ecore_Wl2_Surface *surface);
 
 # endif
 

@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
 #define ELM_WIDGET_ITEM_PROTECTED
@@ -157,7 +157,7 @@ _elm_flipselector_item_elm_widget_item_part_text_set(Eo *eo_item,
 }
 
 EOLIAN static const char *
-_elm_flipselector_item_elm_widget_item_part_text_get(Eo *eo_it EINA_UNUSED,
+_elm_flipselector_item_elm_widget_item_part_text_get(const Eo *eo_it EINA_UNUSED,
                                                      Elm_Flipselector_Item_Data *it,
                                                      const char *part)
 {
@@ -351,7 +351,7 @@ _item_new(Evas_Object *obj,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_flipselector_elm_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
 {
    const char *max_len;
 
@@ -482,7 +482,7 @@ _elm_flipselector_efl_ui_range_range_min_max_set(Eo *obj, Elm_Flipselector_Data 
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_range_min_max_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
+_elm_flipselector_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -498,13 +498,13 @@ _elm_flipselector_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselec
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_range_range_step_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_range_range_value_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    if (sd->val_min == 0 && sd->val_max == 0)
      {
@@ -642,7 +642,7 @@ _elm_flipselector_efl_canvas_group_group_del(Eo *obj, Elm_Flipselector_Data *sd)
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)
-     elm_wdg_item_del(DATA_GET(sd->items));
+     efl_del(DATA_GET(sd->items));
 
    ecore_timer_del(sd->spin);
    ecore_job_del(sd->view_update);
@@ -664,7 +664,7 @@ _elm_flipselector_efl_object_constructor(Eo *obj, Elm_Flipselector_Data *sd)
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
    return obj;
 }
@@ -748,25 +748,25 @@ _elm_flipselector_item_prepend(Eo *obj, Elm_Flipselector_Data *sd, const char *l
 }
 
 EOLIAN static const Eina_List*
-_elm_flipselector_items_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_items_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->items;
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_flipselector_first_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_first_item_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return eina_list_data_get(sd->items);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_flipselector_last_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_last_item_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return eina_list_last_data_get(sd->items);
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_flipselector_selected_item_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_selected_item_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return DATA_GET(sd->current);
 }
@@ -817,7 +817,7 @@ _elm_flipselector_item_selected_set(Eo *eo_item,
 }
 
 EOLIAN static Eina_Bool
-_elm_flipselector_item_selected_get(Eo *eo_item,
+_elm_flipselector_item_selected_get(const Eo *eo_item,
                                     Elm_Flipselector_Item_Data *item)
 {
    ELM_FLIPSELECTOR_DATA_GET(WIDGET(item), sd);
@@ -864,7 +864,7 @@ _elm_flipselector_first_interval_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data 
 }
 
 EOLIAN double
-_elm_flipselector_first_interval_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_first_interval_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->first_interval;
 }
@@ -876,7 +876,7 @@ _elm_flipselector_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_flipselector_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
+_elm_flipselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "flip,up", "flip", "up", _key_action_flip},

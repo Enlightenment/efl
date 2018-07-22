@@ -338,9 +338,9 @@ class Test.Object (Efl.Object) {
       Efl.Object.destructor;
    }
    events {
-      test;
+      test: void;
       test,structarg: Test.Struct_Ex;
       test,stringarg: string;
-      repeated,event,name;
+      repeated,event,name: void;
    }
 }

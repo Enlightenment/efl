@@ -2384,16 +2384,12 @@ eng_image_native_set(void *engine, void *image, void *native)
 #endif
           }
     }
-  if ((!ns) && (!im->native.data)) return im;
+   if (!ns)
+     {
+        glsym_evas_gl_common_image_free(im);
+        return NULL;
+     }
 
-  if (im->native.data)
-    {
-       if (im->native.func.free)
-         im->native.func.free(im);
-       glsym_evas_gl_common_image_native_disable(im);
-    }
-
-  if (!ns) return im;
 
   if (ns->type == EVAS_NATIVE_SURFACE_X11)
     {
@@ -2554,6 +2550,8 @@ eng_image_native_set(void *engine, void *image, void *native)
                    n->ns_data.x11.multiple_buffer = 0;
                  else
                    n->ns_data.x11.multiple_buffer = 1;
+                 if (ob->detected.no_multi_buffer_native)
+                   n->ns_data.x11.multiple_buffer = 0;
 
                  if (!n->ns_data.x11.surface)
                    {

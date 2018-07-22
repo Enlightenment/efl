@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_UI_POPUP_ALERT_SCROLL_BETA
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -37,20 +38,20 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
    if ((max_size.w == -1) && (max_size.h == -1))
      {
         elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-        efl_gfx_size_set(obj, size);
+        efl_gfx_entity_size_set(obj, size);
      }
    else if ((max_size.w == -1) && (max_size.h != -1))
      {
         if (max_size.h < scr_min.h)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
+             efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
           }
         else
           {
              new_min.h = scr_min.h;
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(size.w, scr_min.h));
+             efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, scr_min.h));
           }
      }
    else if ((max_size.w != -1) && (max_size.h == -1))
@@ -58,13 +59,13 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
         if (max_size.w < scr_min.w)
           {
              elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
+             efl_gfx_entity_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
           }
         else
           {
              new_min.w = scr_min.w;
              elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
-             efl_gfx_size_set(obj, EINA_SIZE2D(scr_min.w, size.h));
+             efl_gfx_entity_size_set(obj, EINA_SIZE2D(scr_min.w, size.h));
           }
      }
    else if ((max_size.w != -1) && (max_size.h != -1))
@@ -96,7 +97,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
           }
 
         elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
-        efl_gfx_size_set(obj, new_size);
+        efl_gfx_entity_size_set(obj, new_size);
      }
 
    efl_gfx_size_hint_min_set(obj, new_min);
@@ -154,7 +155,7 @@ static Eina_Bool
 _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part, Eo *content)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      {
         pd->content = content;
 
@@ -162,7 +163,7 @@ _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
         efl_gfx_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         efl_gfx_size_hint_align_set(pd->content, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-        efl_content_set(efl_part(pd->scroller, "default"), pd->content);
+        efl_content_set(pd->scroller, pd->content);
      }
    else
      {
@@ -176,7 +177,7 @@ Eo *
 _efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      return pd->content;
 
    return efl_content_get(efl_part(efl_super(obj, MY_CLASS), part));
@@ -186,14 +187,14 @@ static Eo *
 _efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
 {
    //For efl_content_set()
-   if (part && !strcmp(part, "elm.swallow.content"))
+   if (part && !strcmp(part, "efl.content"))
      {
         Eo *content = pd->content;
         if (!content) return content;
 
         pd->content = NULL;
 
-        return efl_content_unset(efl_part(pd->scroller, "default"));
+        return efl_content_unset(pd->scroller);
      }
 
    return efl_content_unset(efl_part(efl_super(obj, MY_CLASS), part));
@@ -240,7 +241,7 @@ _efl_ui_popup_alert_scroll_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Aler
 }
 
 static Eina_Size2D
-_efl_ui_popup_alert_scroll_expandable_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_efl_ui_popup_alert_scroll_expandable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd)
 {
    return pd->max_size;
 }
@@ -250,7 +251,7 @@ _efl_ui_popup_alert_scroll_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Ale
 {
    pd->size = size;
 
-   efl_gfx_size_set(obj, size);
+   efl_gfx_entity_size_set(obj, size);
 
    elm_layout_sizing_eval(obj);
 }
@@ -273,7 +274,7 @@ _efl_ui_popup_alert_scroll_efl_object_constructor(Eo *obj,
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_AUTO,
                            ELM_SCROLLER_POLICY_AUTO);
 
-   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"),
+   efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
 
    pd->size = EINA_SIZE2D(0, 0);

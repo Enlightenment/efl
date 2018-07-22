@@ -1,0 +1,22 @@
+mixin Efl.Ui.Widget_Focus_Manager (Efl.Interface, Efl.Ui.Widget, Efl.Ui.Focus.Manager)
+{
+  methods {
+      focus_manager_create @protected @pure_virtual {
+         [[If the widget needs a focus manager, this function will be called.
+
+           It can be used and overriden to inject your own manager or set
+           custom options on the focus manager.
+         ]]
+         params {
+            @in root: Efl.Ui.Focus.Object; [[The logical root object for focus.]]
+         }
+         return: Efl.Ui.Focus.Manager; [[The focus manager.]]
+      }
+  }
+
+  implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Widget.focus_state_apply;
+  }
+}

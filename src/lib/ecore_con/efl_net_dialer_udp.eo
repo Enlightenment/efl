@@ -1,4 +1,4 @@
-class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Udp (Efl.Net.Socket_Udp, Efl.Net.Dialer) {
     [[Connects to a remote UDP server.
 
       UDP proxies are not supported, not even using SOCKSv5.
@@ -15,10 +15,10 @@ class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
 
       To allow finer control, see:
 
-       - @Efl.Net.Socket.Udp.bind: choose the local address to bind.
-       - @Efl.Net.Socket.Udp.multicast_join: join other multicast groups.
-       - @Efl.Net.Socket.Udp.multicast_loopback: if packets should be delivered locally or only to remote peers.
-       - @Efl.Net.Socket.Udp.multicast_time_to_live: how far, in number of hops, the packet should go.
+       - @Efl.Net.Socket_Udp.bind: choose the local address to bind.
+       - @Efl.Net.Socket_Udp.multicast_join: join other multicast groups.
+       - @Efl.Net.Socket_Udp.multicast_loopback: if packets should be delivered locally or only to remote peers.
+       - @Efl.Net.Socket_Udp.multicast_time_to_live: how far, in number of hops, the packet should go.
 
       I
 
@@ -27,6 +27,7 @@ class Efl.Net.Dialer.Udp (Efl.Net.Socket.Udp, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }

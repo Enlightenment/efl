@@ -9,15 +9,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_ECORE_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -28,7 +28,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 /**
  * @file Ecore_Evas.h
@@ -2093,7 +2093,7 @@ EAPI void       *ecore_evas_data_get(const Ecore_Evas *ee, const char *key);
  */
 EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);
 
-/**
+  /**
  * @brief Sets a callback for Ecore_Evas resize events.
  *
  * @param ee The Ecore_Evas to set callbacks on
@@ -3183,6 +3183,20 @@ EAPI Evas_Object *ecore_evas_vnc_start(Ecore_Evas *ee, const char *addr, int por
                                        void *data);
 
 #endif
+
+/**
+ * @brief Sets a callback for building new Evas.
+ *
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+ *
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever a new Ecore_Evas is created.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
+EAPI void        ecore_evas_callback_new_set(Evas *(*func)(int w, int h));
 
 /**
  * @defgroup Ecore_Evas_Ews Ecore_Evas Single Process Windowing System.

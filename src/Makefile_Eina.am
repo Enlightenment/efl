@@ -107,7 +107,8 @@ lib/eina/eina_slice.h \
 lib/eina/eina_inline_slice.x \
 lib/eina/eina_inline_modinfo.x \
 lib/eina/eina_freeq.h \
-lib/eina/eina_slstr.h
+lib/eina/eina_slstr.h \
+lib/eina/eina_vpath.h
 
 
 lib_eina_libeina_la_SOURCES = \
@@ -183,7 +184,8 @@ lib/eina/eina_quaternion.c \
 lib/eina/eina_bezier.c \
 lib/eina/eina_safepointer.c \
 lib/eina/eina_freeq.c \
-lib/eina/eina_slstr.c
+lib/eina/eina_slstr.c \
+lib/eina/eina_vpath.c
 
 
 if HAVE_WIN32
@@ -356,13 +358,15 @@ tests/eina/eina_test_bezier.c \
 tests/eina/eina_test_safepointer.c \
 tests/eina/eina_test_slice.c \
 tests/eina/eina_test_freeq.c \
-tests/eina/eina_test_slstr.c
+tests/eina/eina_test_slstr.c \
+tests/eina/eina_test_vpath.c \
+tests/eina/eina_test_debug.c
 
 tests_eina_eina_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eina\" \
--DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina\" \
--DTESTS_BUILD_DIR=PACKAGE_BUILD_DIR \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eina\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 tests_eina_eina_suite_LDADD = @CHECK_LIBS@ @USE_EINA_LIBS@
@@ -377,7 +381,7 @@ check_LTLIBRARIES = tests/eina/module_dummy.la
 
 tests_eina_module_dummy_la_SOURCES = tests/eina/eina_test_module_dummy.c
 tests_eina_module_dummy_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eina\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 tests_eina_module_dummy_la_LIBADD = @USE_EINA_LIBS@

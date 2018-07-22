@@ -1,0 +1,37 @@
+import efl_canvas_gesture_types;
+
+abstract Efl.Canvas.Gesture(Efl.Object)
+{
+   [[EFL Gesture abstract class]]
+   eo_prefix: efl_gesture;
+   methods {
+      @property type {
+         [[This property holds the type of the gesture.]]
+         get {
+         }
+         values {
+            @cref type: Efl.Event_Description; [[gesture type]]
+         }
+      }
+      @property state {
+         [[This property holds the current state of the gesture.]]
+         get {
+         }
+         set {
+         }
+         values {
+            state: Efl.Canvas.Gesture_State; [[gesture state]]
+         }
+      }
+      @property hotspot {
+         [[This property holds the hotspot of the current gesture.]]
+         get {
+         }
+         set {
+         }
+         values {
+            hotspot: Eina.Vector2;[[hotspot co-ordinate]]
+         }
+      }
+   }
+}

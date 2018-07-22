@@ -211,5 +211,69 @@ EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *
  */
 EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
+/**
+ * @brief Set a given gengrid widget's scrolling page size.
+ *
+ * @param[in] obj The object.
+ * @param[in] h_pagesize Page size horizontal
+ * @param[in] v_pagesize Page size vertical
+ *
+ * @ingroup Elm_Gengrid
+ */
+EAPI void elm_gengrid_page_size_set(Evas_Object *obj, int h_pagesize, int v_pagesize);
+
+/**
+ * @brief Control  a given gengrid widget's scrolling page size, relative to
+ * its viewport size.
+ *
+ * @param[in] obj The object.
+ * @param[in] h_pagerel Page relation horizontal
+ * @param[in] v_pagerel Page relation vertical
+ *
+ * @ingroup Elm_Gengrid
+ */
+EAPI void elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
+
+/**
+ * @brief Control  a given gengrid widget's scrolling page size, relative to
+ * its viewport size.
+ *
+ * @param[in] obj The object.
+ * @param[out] h_pagerel Page relation horizontal
+ * @param[out] v_pagerel Page relation vertical
+ *
+ * @ingroup Elm_Gengrid
+ */
+EAPI void elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+
+
+/**
+ * @brief Enable or disable mouse wheel to be used to scroll the gengrid.
+ *
+ * Mouse wheel can be used for the user to scroll up and down the gengrid.
+ *
+ * Wheel is enabled by default.
+ *
+ * @param[in] obj The object.
+ * @param[in] disabled Use @c true to disable mouse wheel or @c false to enable
+ * it.
+ *
+ * @ingroup Elm_Gengrid
+ */
+EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * @brief Get a value whether mouse wheel is enabled or not.
+ *
+ * Mouse wheel can be used for the user to scroll up and down the gengrid.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Use @c true to disable mouse wheel or @c false to enable it.
+ *
+ * @ingroup Elm_Gengrid
+ */
+EAPI Eina_Bool elm_gengrid_wheel_disabled_get(const Evas_Object *obj);
+
 #include "elm_gengrid_item.eo.legacy.h"
 #include "elm_gengrid.eo.legacy.h"

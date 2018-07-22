@@ -33,31 +33,31 @@ _efl_net_session_efl_object_finalize(Eo *obj, Efl_Net_Session_Data *pd EINA_UNUS
 }
 
 EOLIAN static const char *
-_efl_net_session_name_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
+_efl_net_session_network_name_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static Efl_Net_Session_State
-_efl_net_session_state_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
+_efl_net_session_state_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
 {
    return EFL_NET_SESSION_STATE_ONLINE; /* best default for unsupported, hope we're online */
 }
 
 EOLIAN static Efl_Net_Session_Technology
-_efl_net_session_technology_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
+_efl_net_session_technology_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
 {
    return EFL_NET_SESSION_TECHNOLOGY_UNKNOWN;
 }
 
 EOLIAN static const char *
-_efl_net_session_interface_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
+_efl_net_session_interface_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static void
-_efl_net_session_ipv4_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED, const char **address, const char **netmask, const char **gateway)
+_efl_net_session_ipv4_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED, const char **address, const char **netmask, const char **gateway)
 {
    if (address) *address = NULL;
    if (netmask) *netmask = NULL;
@@ -65,7 +65,7 @@ _efl_net_session_ipv4_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNU
 }
 
 EOLIAN static void
-_efl_net_session_ipv6_get(Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED, const char **address, uint8_t *prefix_length, const char **netmask, const char **gateway)
+_efl_net_session_ipv6_get(const Eo *obj EINA_UNUSED, Efl_Net_Session_Data *pd EINA_UNUSED, const char **address, uint8_t *prefix_length, const char **netmask, const char **gateway)
 {
    if (address) *address = NULL;
    if (prefix_length) *prefix_length = 0;

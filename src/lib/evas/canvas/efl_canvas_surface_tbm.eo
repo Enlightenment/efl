@@ -1,4 +1,4 @@
-class Efl.Canvas.Surface.Tbm (Efl.Object, Efl.Canvas.Surface)
+class Efl.Canvas.Surface_Tbm (Efl.Object, Efl.Canvas.Surface)
 {
    [[Native Tizen Buffer Manager surface for Efl canvas]]
 

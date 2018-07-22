@@ -4,7 +4,6 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
-#include <dirent.h>
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -617,22 +616,16 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
    ee->prop.fullscreen = EINA_FALSE;
    ee->prop.withdrawn = EINA_TRUE;
    ee->prop.sticky = EINA_FALSE;
+   ee->prop.window = 1;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Could not create the canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    evas_output_method_set(ee->evas, rmethod);
-
-   if (ECORE_EVAS_PORTRAIT(ee))
-     {
-       evas_output_size_set(ee->evas, w, h);
-       evas_output_viewport_set(ee->evas, 0, 0, w, h);
-     }
-   else
-     {
-       evas_output_size_set(ee->evas, h, w);
-       evas_output_viewport_set(ee->evas, 0, 0, h, w);
-     }
 
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
    if (einfo && disp_name)
@@ -655,15 +648,7 @@ ecore_evas_fb_new_internal(const char *disp_name, int rotation, int w, int h)
         return NULL;
      }
 
-   ecore_evas_input_event_register(ee);
+   ecore_evas_done(ee, EINA_TRUE);
 
-   _ecore_evas_register(ee);
-   ecore_event_window_register(1, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(1, _ecore_evas_input_direct_cb);
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return ee;
 }

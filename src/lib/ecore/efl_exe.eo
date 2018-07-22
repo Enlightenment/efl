@@ -1,0 +1,60 @@
+enum Efl.Exe_Signal {
+   [[ ]]
+   int,
+   quit,
+   term,
+   kill,
+   cont,
+   stop,
+   hup,
+   usr1,
+   usr2
+}
+
+enum Efl.Exe_Flags {
+   [[ ]]
+   none             = 0,
+   group_leader     = 1,
+   exit_with_parent = 2,
+   hide_io          = 4
+}
+
+class Efl.Exe (Efl.Task)
+{
+   [[ ]]
+   methods {
+      signal {
+         params {
+            sig: Efl.Exe_Signal; [[ Send this signal to the task ]]
+         }
+      }
+      @property exe_flags {
+        set { }
+        get { }
+        values {
+          flags: Efl.Exe_Flags; [[ ]]
+        }
+      }
+      @property exit_signal {
+         [[ The final exit signal of this task. ]]
+         get { }
+         values {
+            sig: int; [[ The exit signal, or -1 if no exit signal happened ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Task.priority { get; set; }
+      Efl.Task.run;
+      Efl.Task.end;
+      Efl.Io.Closer.close;
+      Efl.Io.Closer.closed { get; }
+      Efl.Io.Reader.read;
+      Efl.Io.Reader.can_read { get; set; }
+      Efl.Io.Reader.eos { get; set; }
+      Efl.Io.Writer.write;
+      Efl.Io.Writer.can_write { get; set; }
+   }
+}

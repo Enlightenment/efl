@@ -1,0 +1,31 @@
+abstract Efl.Canvas.Animation_Group (Efl.Canvas.Animation)
+{
+   [[Efl group animation abstract class]]
+   eo_prefix: efl_animation_group;
+   data: Efl_Canvas_Animation_Group_Data;
+   methods {
+      animation_add {
+         [[Add the given animation to the animation group.]]
+         params {
+            @in animation: Efl.Canvas.Animation; [[The animation which needs to be added to the animation group]]
+         }
+      }
+      animation_del {
+         [[Delete the given animation from the animation group.]]
+         params {
+            @in animation: Efl.Canvas.Animation; [[The animation which needs to be deleted from the animation group]]
+         }
+      }
+      animations_get @const {
+         [[Get the animations of the animation group.]]
+         return: list<Efl.Canvas.Animation>; [[The animations of the animation group]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Animation.duration { set; }
+      Efl.Canvas.Animation.final_state_keep { set; }
+      Efl.Canvas.Animation.interpolator { set; }
+   }
+}

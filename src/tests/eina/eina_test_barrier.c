@@ -39,7 +39,6 @@ wk_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk1_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(1);
     eina_barrier_wait(&barrier);
     return NULL;
 }
@@ -47,7 +46,6 @@ wk1_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk2_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(2);
     eina_barrier_wait(&barrier);
     return NULL;
 }
@@ -55,18 +53,14 @@ wk2_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 static void *
 wk3_func(void *data EINA_UNUSED, Eina_Thread thread EINA_UNUSED)
 {
-    sleep(3);
     eina_barrier_wait(&barrier);
     return NULL;
 }
 
-START_TEST(eina_barrier_test_simple)
+EFL_START_TEST(eina_barrier_test_simple)
 {
     Eina_Bool r;
     int i;
-
-    i = eina_init();
-    _ck_assert_int(i, >=, 1);
 
     i = eina_threads_init();
     _ck_assert_int(i, >=, 1);
@@ -104,15 +98,14 @@ START_TEST(eina_barrier_test_simple)
     eina_barrier_free(&barrier);
 
     eina_threads_shutdown();
-    eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_barrier(TCase *tc)
 {
 #ifndef _WIN32
-   tcase_set_timeout(tc, 6);
+   tcase_set_timeout(tc, 1);
 #endif
    tcase_add_test(tc, eina_barrier_test_simple);
 }

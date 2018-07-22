@@ -15,7 +15,7 @@ _singleton_efl_constructor(Eo *eo_obj EINA_UNUSED, void *_pd EINA_UNUSED)
 {
    if (!singleton_obj)
      {
-        singleton_obj = efl_add(SIMPLE_CLASS, NULL);
+        singleton_obj = efl_add_ref(SIMPLE_CLASS, NULL);
      }
    else
      {

@@ -1,0 +1,9 @@
+class Efl.Ui.Win_Socket_Legacy (Efl.Ui.Win_Socket, Efl.Ui.Legacy)
+{
+   [[Elementary window socket class]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.finalize;
+   }
+}

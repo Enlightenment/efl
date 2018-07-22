@@ -210,7 +210,7 @@ EAPI const char *
  * @brief Defines if on module load we should expose all symbol
  *
  * @param module The module to turn off/on symbol to be exposed
- * @param global @c ture to turn on symbol to be exposed, @c false otherwise
+ * @param global @c true to turn on symbol to be exposed, @c false otherwise
  * @since 1.11
  */
 EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
@@ -230,7 +230,7 @@ EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) E
  * or allocation fails, this function returns @c NULL.
  */
 EAPI char *
- eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_PURE EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+ eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Returns the path built from the value of an environment variable and a
@@ -247,7 +247,7 @@ EAPI char *
  * allocation fails, this function returns @c NULL.
  */
 EAPI char *
- eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_PURE EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+ eina_module_environment_path_get(const char *env, const char *sub_dir) EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 
 /**

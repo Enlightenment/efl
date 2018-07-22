@@ -121,13 +121,13 @@ _on_keydown(void        *data EINA_UNUSED,
          efl_orientation_set(d.img, EFL_ORIENT_270);
          break;
       case 4:
-         efl_flip_set(d.img, EFL_FLIP_HORIZONTAL);
+         efl_orientation_flip_set(d.img, EFL_FLIP_HORIZONTAL);
          break;
       case 5:
-         efl_flip_set(d.img, EFL_FLIP_VERTICAL);
+         efl_orientation_flip_set(d.img, EFL_FLIP_VERTICAL);
          break;
       case 6:
-         efl_flip_set(d.img, EFL_FLIP_NONE);
+         efl_orientation_flip_set(d.img, EFL_FLIP_NONE);
          break;
      }
 }

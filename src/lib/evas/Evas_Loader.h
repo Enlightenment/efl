@@ -44,15 +44,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -63,7 +63,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -134,16 +134,16 @@ typedef Emile_Image_Property  Evas_Image_Property;
 
 typedef struct _Evas_Image_Load_Func Evas_Image_Load_Func;
 
-typedef Efl_Image_Load_Error Evas_Load_Error;
+typedef Efl_Gfx_Image_Load_Error Evas_Load_Error;
 
-#define EVAS_LOAD_ERROR_NONE EFL_IMAGE_LOAD_ERROR_NONE
-#define EVAS_LOAD_ERROR_GENERIC EFL_IMAGE_LOAD_ERROR_GENERIC
-#define EVAS_LOAD_ERROR_DOES_NOT_EXIST EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST
-#define EVAS_LOAD_ERROR_PERMISSION_DENIED EFL_IMAGE_LOAD_ERROR_PERMISSION_DENIED
-#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED EFL_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
-#define EVAS_LOAD_ERROR_CORRUPT_FILE EFL_IMAGE_LOAD_ERROR_CORRUPT_FILE
-#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT EFL_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT
-#define EVAS_LOAD_ERROR_CANCELLED EFL_IMAGE_LOAD_ERROR_CANCELLED
+#define EVAS_LOAD_ERROR_NONE EFL_GFX_IMAGE_LOAD_ERROR_NONE
+#define EVAS_LOAD_ERROR_GENERIC EFL_GFX_IMAGE_LOAD_ERROR_GENERIC
+#define EVAS_LOAD_ERROR_DOES_NOT_EXIST EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST
+#define EVAS_LOAD_ERROR_PERMISSION_DENIED EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED
+#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
+#define EVAS_LOAD_ERROR_CORRUPT_FILE EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE
+#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT
+#define EVAS_LOAD_ERROR_CANCELLED EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED
 
 typedef Emile_Image_Animated_Loop_Hint Evas_Image_Animated_Loop_Hint;
 
@@ -219,7 +219,7 @@ EAPI Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
           Count = 0;                                                    \
           if (evas_module_task_cancelled())                             \
             {                                                           \
-               *Error = EFL_IMAGE_LOAD_ERROR_CANCELLED;                 \
+               *Error = EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED;                 \
                goto Error_Handler;                                      \
             }                                                           \
        }                                                                \

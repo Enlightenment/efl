@@ -5,12 +5,33 @@
 #include "evas_private.h"
 #include "interfaces/efl_common_internal.h"
 
+
+static int evas_focus_log_domain = -1;
+
+#define F_CRI(...) EINA_LOG_DOM_CRIT(evas_focus_log_domain, __VA_ARGS__)
+#define F_ERR(...) EINA_LOG_DOM_ERR(evas_focus_log_domain, __VA_ARGS__)
+#define F_WRN(...) EINA_LOG_DOM_WARN(evas_focus_log_domain, __VA_ARGS__)
+#define F_INF(...) EINA_LOG_DOM_INFO(evas_focus_log_domain, __VA_ARGS__)
+#define F_DBG(...) EINA_LOG_DOM_DBG(evas_focus_log_domain, __VA_ARGS__)
+
 /* private calls */
 
 /* local calls */
 
 /* public calls */
 
+void
+evas_focus_init(void)
+{
+   evas_focus_log_domain = eina_log_domain_register("evas-focus", "red");
+}
+
+void
+evas_focus_shutdown(void)
+{
+   eina_log_domain_unregister(evas_focus_log_domain);
+   evas_focus_log_domain = -1;
+}
 
 static Eina_Bool
 _already_focused(Eina_List *seats, Efl_Input_Device *seat)
@@ -28,15 +49,17 @@ _already_focused(Eina_List *seats, Efl_Input_Device *seat)
 }
 
 static Efl_Input_Device *
-_default_seat_get(Eo *evas_obj)
+_default_seat_get(const Eo *evas_obj)
 {
    Evas_Public_Data *edata;
-   Evas *evas = evas_object_evas_get(evas_obj);
+   Evas *evas = evas_object_evas_get((Evas_Object *)evas_obj);
 
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
    if (!edata) return NULL;
    return edata->default_seat;
 }
+
+#define DEBUG_TUPLE(v) v, (v ? efl_class_name_get(v) : "(null)")
 
 static void
 _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
@@ -47,8 +70,18 @@ _evas_focus_set(Eo *evas_obj, Efl_Input_Device *key, Eina_Bool focus)
    EINA_SAFETY_ON_NULL_RETURN(evas);
    edata = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
 
+   F_DBG("Focus moved in %d from (%p,%s) to (%p,%s)", efl_input_device_seat_id_get(key), DEBUG_TUPLE(eina_hash_find(edata->focused_objects, &key)), DEBUG_TUPLE(evas_obj));
+
    if (focus)
-     eina_hash_add(edata->focused_objects, &key, evas_obj);
+     {
+        Eo *foc;
+
+        foc = eina_hash_set(edata->focused_objects, &key, evas_obj);
+        if (foc)
+          {
+             F_ERR("Element %p was focused while a other object was unfocused, this is not expected! No unfocus event will be sent to it", foc);
+          }
+     }
    else
      eina_hash_del_by_key(edata->focused_objects, &key);
 }
@@ -101,7 +134,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
                                    evt, _evas_object_event_new(),
                                    efl_object_focus_event);
    evas_event_callback_call(obj->layer->evas->evas, cb_evas, evt);
-   efl_del(evt);
+   efl_unref(evt);
 }
 
 static void
@@ -120,7 +153,7 @@ _evas_object_unfocus(Evas_Object_Protected_Data *obj, Efl_Input_Device *seat)
 }
 
 void
-_evas_focus_device_del_cb(void *data, const Efl_Event *ev)
+_evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev)
 {
    _evas_object_unfocus(data, ev->object);
 }
@@ -170,8 +203,8 @@ _efl_canvas_object_seat_focus_del(Eo *eo_obj,
              return EINA_FALSE;
           }
 
-        efl_event_callback_del(dev, EFL_EVENT_DEL,
-                               _evas_focus_device_del_cb, obj);
+        efl_event_callback_del(dev, EFL_EVENT_INVALIDATE,
+                               _evas_focus_device_invalidate_cb, obj);
         _evas_object_unfocus(obj, dev);
         return EINA_TRUE;
      }
@@ -236,7 +269,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
    //In case intercept focus callback focused object we should return.
    if (_current_focus_get(eo_obj, seat)) goto end;
 
-   efl_event_callback_add(seat, EFL_EVENT_DEL, _evas_focus_device_del_cb, obj);
+   efl_event_callback_add(seat, EFL_EVENT_INVALIDATE, _evas_focus_device_invalidate_cb, obj);
 
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
      events->focused_by_seats = eina_list_append(events->focused_by_seats, seat);
@@ -252,7 +285,7 @@ _efl_canvas_object_seat_focus_add(Eo *eo_obj,
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_seat_focus_check(Eo *eo_obj,
+_efl_canvas_object_seat_focus_check(const Eo *eo_obj,
                                     Evas_Object_Protected_Data *obj,
                                     Efl_Input_Device *seat)
 {
@@ -289,7 +322,7 @@ _efl_canvas_object_key_focus_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Ei
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_seat_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_seat_focus_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
@@ -299,13 +332,13 @@ _efl_canvas_object_seat_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_object_key_focus_get(Eo *eo_obj, Evas_Object_Protected_Data *obj)
+_efl_canvas_object_key_focus_get(const Eo *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return _efl_canvas_object_seat_focus_check(eo_obj, obj, NULL);
 }
 
 EOLIAN Evas_Object *
-_evas_canvas_seat_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
+_evas_canvas_seat_focus_get(const Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
                             Efl_Input_Device *seat)
 {
    if (!seat)
@@ -315,7 +348,7 @@ _evas_canvas_seat_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e,
 }
 
 EOLIAN Evas_Object*
-_evas_canvas_focus_get(Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_focus_get(const Eo *eo_obj EINA_UNUSED, Evas_Public_Data *e)
 {
    return _evas_canvas_seat_focus_get(eo_obj, e, NULL);
 }

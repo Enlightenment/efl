@@ -21,6 +21,9 @@ struct _api_data
    void *gl;
 
    void *filter_data;   /* The data used for filtering     */
+   Elm_Genlist_Item_Scrollto_Type type;
+   Elm_List_Mode mode;
+   int max_items, show_item;
    int scrollto;
 };
 typedef struct _api_data api_data;
@@ -365,11 +368,11 @@ _bounce_cb(void *data)
         unsigned long long tll, t0ll, tdll;
 
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
-        t0ll = (t0.tv_sec * 1000000000) + t0.tv_nsec;
-        tll = (t.tv_sec * 1000000000) + t.tv_nsec;
+        t0ll = (((unsigned long long)t0.tv_sec) * 1000000000ULL) + t0.tv_nsec;
+        tll = (((unsigned long long)t.tv_sec) * 1000000000ULL) + t.tv_nsec;
         tdll = tll - t0ll;
         printf("NS since 2 = %llu , %llu frames = %llu / frame\n",
-               tdll, frames, tdll / (unsigned long long)frames);
+               tdll, frames, tdll / frames);
 #endif
         if (getenv("ELM_TEST_AUTOBOUNCE")) elm_exit();
      }
@@ -2092,10 +2095,56 @@ gl9_con_req(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_genlist_item_expanded_set(glit, EINA_FALSE);
 }
 
+static void
+gl9_item_next(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_selected_item_get(api->gl);
+   it = elm_genlist_item_next_get(it);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Next item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_prev(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_selected_item_get(api->gl);
+   it = elm_genlist_item_prev_get(it);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Prev item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_first(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_first_item_get(api->gl);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("First item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
+static void
+gl9_item_last(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   api_data *api = data;
+   Elm_Object_Item *it;
+
+   it = elm_genlist_last_item_get(api->gl);
+   elm_genlist_item_selected_set(it, EINA_TRUE);
+   printf("Last item: #%d\n", (int)(uintptr_t)elm_object_item_data_get(it));
+}
+
 void
 test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *gl, *bx;
+   Evas_Object *win, *gl, *bx, *bx2, *bt;
    Elm_Object_Item *git;
 
    api_data *api = calloc(1, sizeof(api_data));
@@ -2135,7 +2184,6 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    git = elm_genlist_item_append(gl, api->itc2,
                                  (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
-   elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
    elm_genlist_item_append(gl, api->itc1,
                            (void *)1/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -2149,7 +2197,6 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    git = elm_genlist_item_append(gl, api->itc2,
                                  (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
-   elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
    elm_genlist_item_append(gl, api->itc1,
                            (void *)5/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -2167,6 +2214,36 @@ test_genlist9(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    evas_object_smart_callback_add(gl, "contract,request", gl9_con_req, api);
    evas_object_smart_callback_add(gl, "expanded", gl9_exp, api);
    evas_object_smart_callback_add(gl, "contracted", gl9_con, api);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "First item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_first, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Next item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_next, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+   bt = elm_button_add(bx2);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Prev item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_prev, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(bx2);
+   elm_object_text_set(bt, "Last item");
+   evas_object_smart_callback_add(bt, "clicked", gl9_item_last, api);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -5395,6 +5472,283 @@ test_genlist_show_bring(void *data EINA_UNUSED,
    gli = elm_genlist_nth_item_get(gl, 1340);
    elm_genlist_item_selected_set(gli, EINA_TRUE);
    elm_genlist_item_show(gli, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+
+   evas_object_resize(win, 480, 400);
+   explode_win_enable(win);
+   evas_object_show(win);
+}
+
+static Eina_Bool
+_late_item_prepender(void *data)
+{
+   api_data *api = (api_data*)data;
+   int i;
+   Elm_Object_Item *it = elm_genlist_nth_item_get(api->gl, api->show_item);
+   for (i = 0; i <= 100; i++)
+      elm_genlist_item_prepend(api->gl, api->itc1, (void*)(uintptr_t)i, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   elm_genlist_item_class_free(api->itc1);
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+test_genlist_show_item(void *data,
+                            Evas_Object *obj EINA_UNUSED,
+                            void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *gl;
+   Elm_Object_Item *gli = NULL;
+   int i, max;
+   api_data *api = calloc(1, sizeof(api_data));
+   api_data *g_data = (api_data*)data;
+
+   win = elm_win_util_standard_add("genlist", "Genlist Show Last Item");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, api);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(gl);
+   if (g_data)
+     elm_genlist_mode_set(gl, g_data->mode);
+   else
+     elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
+   api->gl = gl;
+   elm_win_resize_object_add(win, gl);
+
+   api->itc1 = elm_genlist_item_class_new();
+   api->itc1->item_style = "default";
+   api->itc1->func.text_get = gl_text_get1;
+   api->itc1->func.content_get = gl_content_get;
+   api->itc1->func.state_get = NULL;
+   api->itc1->func.del = NULL;
+
+   g_data->gl = gl;
+   g_data->itc1 = api->itc1;
+
+   if (g_data)
+     max = g_data->max_items;
+   else max = 20000;
+   for (i = 0; i <= max; i++)
+       elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   if (g_data)
+     gli = elm_genlist_nth_item_get(gl, g_data->show_item);
+   if (!gli) gli = elm_genlist_last_item_get(gl);
+   elm_genlist_item_show(gli, g_data->type);
+
+   //prepends item while queue processing is happening
+   ecore_timer_add(0.1, _late_item_prepender, g_data);
+
+   evas_object_resize(win, 480, 400);
+   explode_win_enable(win);
+   evas_object_show(win);
+}
+
+static void
+test_genlist_show_tree(void *data,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *gl;
+   Elm_Object_Item *gli = NULL, *show = NULL;
+   int i, max;
+   api_data *api = calloc(1, sizeof(api_data));
+   api_data *g_data = (api_data*)data;
+
+   win = elm_win_util_standard_add("genlist", "Genlist Show Tree");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, api);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(gl);
+   api->gl = gl;
+   elm_win_resize_object_add(win, gl);
+   if (g_data)
+     elm_genlist_mode_set(gl, g_data->mode);
+   else
+     elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
+
+   api->itc1 = elm_genlist_item_class_new();
+   api->itc1->item_style = "default";
+   api->itc1->func.text_get = gl_text_get1;
+   api->itc1->func.content_get = gl_content_get;
+   api->itc1->func.state_get = NULL;
+   api->itc1->func.del = NULL;
+
+   if (g_data)
+     max = g_data->max_items;
+   else max = 2000;
+   for (i = 0; i <= max; i++)
+     {
+       if (i % (max / 20) == 0)
+          gli = elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, gli, ELM_GENLIST_ITEM_TREE, NULL, NULL);
+       else
+          elm_genlist_item_append(gl, api->itc1, (void*)(uintptr_t)i, gli, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+     }
+
+   if (g_data)
+     show = elm_genlist_nth_item_get(gl, g_data->show_item);
+   else show = gli;
+   elm_genlist_item_class_free(api->itc1);
+   elm_genlist_item_show(show, g_data->type);
+
+   evas_object_resize(win, 480, 400);
+   explode_win_enable(win);
+   evas_object_show(win);
+}
+
+static void
+_entry_changed_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
+{
+   int *val = (int*) data;
+   *val = atoi(elm_entry_entry_get(obj));
+}
+
+static void
+_radio_changed_type_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
+{
+   int val = elm_radio_state_value_get(obj);
+   api_data *api = (api_data*)data;
+   api->type = val;
+}
+
+static void
+_radio_changed_mode_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info EINA_UNUSED)
+{
+   int val = elm_radio_state_value_get(obj);
+   api_data *api = (api_data*)data;
+   api->mode = val;
+}
+
+void
+test_genlist_item_show(void *data EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED,
+                       void *event_info EINA_UNUSED)
+{
+
+   Evas_Object *win, *bt_show, *bt_bring, *bx, *max_items, *show_item, *bxx, *rd1, *rd2, *rd3;
+   static Elm_Entry_Filter_Accept_Set digits_filter_data;
+   api_data *api = calloc(1, sizeof(api_data));
+
+   win = elm_win_util_standard_add("genlist", "Genlist Item Show");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, api);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(bx);
+   elm_win_resize_object_add(win, bx);
+
+   digits_filter_data.accepted = "0123456789";
+   digits_filter_data.rejected = NULL;
+
+   max_items = elm_entry_add(win);
+   elm_entry_single_line_set(max_items, EINA_TRUE);
+   elm_entry_scrollable_set(max_items, EINA_TRUE);
+   evas_object_size_hint_weight_set(max_items, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(max_items, EVAS_HINT_FILL, 0.5);
+   elm_object_part_text_set(max_items, "guide", "Enter the maximum number of items needed");
+   evas_object_smart_callback_add(max_items, "changed", _entry_changed_cb, (void*)(&(api->max_items)));
+   elm_entry_markup_filter_append(max_items, elm_entry_filter_accept_set, &digits_filter_data);
+   evas_object_show(max_items);
+   elm_box_pack_end(bx, max_items);
+
+   show_item = elm_entry_add(win);
+   elm_entry_single_line_set(show_item, EINA_TRUE);
+   elm_entry_scrollable_set(show_item, EINA_TRUE);
+   evas_object_size_hint_weight_set(show_item, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(show_item, EVAS_HINT_FILL, 0.5);
+   elm_object_part_text_set(show_item, "guide", "Enter the number of item to be shown");
+   evas_object_smart_callback_add(show_item, "changed", _entry_changed_cb, (void*)(&(api->show_item)));
+   elm_entry_markup_filter_append(show_item, elm_entry_filter_accept_set, &digits_filter_data);
+   evas_object_show(show_item);
+   elm_box_pack_end(bx, show_item);
+
+   bxx = elm_box_add(win);
+   elm_box_horizontal_set(bxx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bxx, EVAS_HINT_FILL, 0.5);
+
+   rd1 = elm_radio_add(win);
+   elm_object_text_set(rd1, "Top");
+   elm_radio_state_value_set(rd1, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+   evas_object_smart_callback_add(rd1, "changed", _radio_changed_type_cb, api);
+   evas_object_show(rd1);
+   elm_box_pack_end(bxx, rd1);
+
+   rd2 = elm_radio_add(win);
+   elm_object_text_set(rd2, "Middle");
+   evas_object_smart_callback_add(rd2, "changed", _radio_changed_type_cb, api);
+   elm_radio_state_value_set(rd2, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
+   elm_radio_group_add(rd2, rd1);
+   evas_object_show(rd2);
+   elm_box_pack_end(bxx, rd2);
+
+   rd3 = elm_radio_add(win);
+   elm_object_text_set(rd3, "Bottom");
+   evas_object_smart_callback_add(rd3, "changed", _radio_changed_type_cb, api);
+   elm_radio_state_value_set(rd3, ELM_GENLIST_ITEM_SCROLLTO_BOTTOM);
+   elm_radio_group_add(rd3, rd1);
+   evas_object_show(rd3);
+   elm_box_pack_end(bxx, rd3);
+   evas_object_show(bxx);
+   elm_box_pack_end(bx, bxx);
+   elm_radio_value_set(rd1, ELM_GENLIST_ITEM_SCROLLTO_TOP);
+   api->type = ELM_GENLIST_ITEM_SCROLLTO_TOP;
+
+   bxx = elm_box_add(win);
+   elm_box_horizontal_set(bxx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bxx, EVAS_HINT_FILL, 0.5);
+
+   rd1 = elm_radio_add(win);
+   elm_object_text_set(rd1, "ELM_LIST_SCROLL");
+   elm_radio_state_value_set(rd1, ELM_LIST_SCROLL);
+   evas_object_smart_callback_add(rd1, "changed", _radio_changed_mode_cb, api);
+   evas_object_show(rd1);
+   elm_box_pack_end(bxx, rd1);
+
+   rd2 = elm_radio_add(win);
+   elm_object_text_set(rd2, "ELM_LIST_LIMIT");
+   evas_object_smart_callback_add(rd2, "changed", _radio_changed_mode_cb, api);
+   elm_radio_state_value_set(rd2, ELM_LIST_LIMIT);
+   elm_radio_group_add(rd2, rd1);
+   evas_object_show(rd2);
+   elm_box_pack_end(bxx, rd2);
+
+   rd3 = elm_radio_add(win);
+   elm_object_text_set(rd3, "ELM_LIST_COMPRESS");
+   evas_object_smart_callback_add(rd3, "changed", _radio_changed_mode_cb, api);
+   elm_radio_state_value_set(rd3, ELM_LIST_COMPRESS);
+   elm_radio_group_add(rd3, rd1);
+   evas_object_show(rd3);
+   elm_box_pack_end(bxx, rd3);
+   evas_object_show(bxx);
+   elm_box_pack_end(bx, bxx);
+   elm_radio_value_set(rd1, ELM_LIST_SCROLL);
+   api->mode = ELM_LIST_SCROLL;
+
+   bt_show = elm_button_add(win);
+   elm_object_text_set(bt_show, "Plain Genlist");
+   evas_object_smart_callback_add(bt_show, "clicked", test_genlist_show_item, api);
+   evas_object_show(bt_show);
+   elm_box_pack_end(bx, bt_show);
+
+   bt_bring = elm_button_add(win);
+   elm_object_text_set(bt_bring, "Genlist Tree");
+   evas_object_smart_callback_add(bt_bring, "clicked", test_genlist_show_tree, api);
+   evas_object_show(bt_bring);
+   elm_box_pack_end(bx, bt_bring);
 
    evas_object_resize(win, 480, 400);
    explode_win_enable(win);

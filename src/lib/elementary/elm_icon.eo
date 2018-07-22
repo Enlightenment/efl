@@ -1,4 +1,4 @@
-class Elm.Icon (Efl.Ui.Image)
+class Elm.Icon (Efl.Ui.Image, Efl.Ui.Legacy)
 {
    [[Elementary Icon Class]]
    legacy_prefix: elm_icon;
@@ -9,11 +9,11 @@ class Elm.Icon (Efl.Ui.Image)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.File.file { set; }
    }
    events {
-      thumb,done; [[Called when thumb nailing is successfully done]]
-      thumb,error; [[Called when thumb nailing failed]]
+      thumb,done: void; [[Called when thumb nailing is successfully done]]
+      thumb,error: void; [[Called when thumb nailing failed]]
    }
 }

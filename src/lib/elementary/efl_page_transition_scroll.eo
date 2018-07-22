@@ -1,0 +1,22 @@
+class Efl.Page.Transition_Scroll (Efl.Page.Transition)
+{
+   [[Page transition for @Efl.Ui.Pager
+
+     With this type of transition, pages are arranged linearly and move parallel
+     to the screen by scrolling. The current page is displayed at center, and
+     previous and next pages might be displayed optionally.
+   ]]
+   methods {
+      @property side_page_num {
+         [[The number of pages displayed on each side of the current page]]
+         values {
+            side_page_num: int;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Page.Transition.bind;
+   }
+}

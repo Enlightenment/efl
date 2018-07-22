@@ -746,7 +746,7 @@ efreet_mime_special_check(const char *file)
    struct stat s;
    int path_len = 0;
 
-   /* no link on Windows < Vista */
+   /* no symlink on Windows */
 #ifdef _WIN32
    if (!stat(file, &s))
 #else

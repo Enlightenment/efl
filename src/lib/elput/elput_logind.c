@@ -523,15 +523,18 @@ _logind_connect(Elput_Manager **manager, const char *seat, unsigned int tty)
         goto seat_err;
      }
 
-   if (!_logind_session_vt_get(em->sid, &em->vt_num))
+   if ((seat) && (!strcmp(seat, "seat0")))
      {
-        ERR("Could not get session vt");
-        goto vt_err;
-     }
-   else if ((tty > 0) && (em->vt_num != tty))
-     {
-        ERR("Requested VT %u differs from session VT %u", tty, em->vt_num);
-        goto vt_err;
+        if (!_logind_session_vt_get(em->sid, &em->vt_num))
+          {
+             ERR("Could not get session vt");
+             goto vt_err;
+          }
+        else if ((tty > 0) && (em->vt_num != tty))
+          {
+             ERR("Requested VT %u differs from session VT %u", tty, em->vt_num);
+             goto vt_err;
+          }
      }
 
    free(s);

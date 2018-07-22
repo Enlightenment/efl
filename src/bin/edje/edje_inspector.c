@@ -22,13 +22,13 @@ static int _log_dom;
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 #define CRI(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
-#define INDENT "   "
-#define INDENT2 INDENT INDENT
-#define INDENT3 INDENT2 INDENT
-#define INDENT4 INDENT3 INDENT
-#define INDENT5 INDENT4 INDENT
-#define INDENT6 INDENT5 INDENT
-#define INDENT7 INDENT6 INDENT
+#define INDENT          "   "
+#define INDENT2         INDENT INDENT
+#define INDENT3         INDENT2 INDENT
+#define INDENT4         INDENT3 INDENT
+#define INDENT5         INDENT4 INDENT
+#define INDENT6         INDENT5 INDENT
+#define INDENT7         INDENT6 INDENT
 
 #define FLOAT_PRECISION 0.0001
 #define FDIFF(a, b) (fabs((a) - (b)) > FLOAT_PRECISION)
@@ -48,53 +48,53 @@ static Eina_Bool api_fix = EINA_FALSE;
 static Eina_Bool machine = EINA_FALSE;
 
 static const char *mode_choices[] = {
-  "groups",
-  "parts",
-  "programs",
-  "groups-names",
-  "part-names",
-  "global-data",
-  "images",
-  "fonts",
-  "externals",
-  NULL,
+   "groups",
+   "parts",
+   "programs",
+   "groups-names",
+   "part-names",
+   "global-data",
+   "images",
+   "fonts",
+   "externals",
+   NULL,
 };
 
 static const char *detail_choices[] = {
-  "none",
-  "terse",
-  "all",
-  NULL
+   "none",
+   "terse",
+   "all",
+   NULL
 };
 
 const Ecore_Getopt optdesc = {
-  "edje_inspector",
-  "%prog [options] <file.edj>",
-  PACKAGE_VERSION,
-  "(C) 2010 - The Enlightenment Project",
-  "BSD",
-  "Edje file inspector, let one see groups, parts, programs and other details "
-  "of a compiled (binary) edje file.\n",
-  0,
-  {
-    ECORE_GETOPT_CHOICE('m', "mode", "Choose which mode to operate on file.",
-                        mode_choices),
-    ECORE_GETOPT_CHOICE('d', "detail", "Choose detail level (default=terse)",
-                        detail_choices),
-    ECORE_GETOPT_STORE_STR('g', "group", "Limit output to group (or glob)."),
-    ECORE_GETOPT_STORE_STR('p', "part", "Limit output to part (or glob)."),
-    ECORE_GETOPT_STORE_STR('r', "program",
-                           "Limit output to program (or glob)."),
-    ECORE_GETOPT_STORE_TRUE('a', "api-only", "Limit to just api parts or "
-                            "programs."),
-    ECORE_GETOPT_STORE_TRUE('A', "api-fix", "Fix API names to be C compliant."),
-    ECORE_GETOPT_STORE_TRUE('M', "machine", "Produce machine readable output."),
-    ECORE_GETOPT_LICENSE('L', "license"),
-    ECORE_GETOPT_COPYRIGHT('C', "copyright"),
-    ECORE_GETOPT_VERSION('V', "version"),
-    ECORE_GETOPT_HELP('h', "help"),
-    ECORE_GETOPT_SENTINEL
-  }
+   "edje_inspector",
+   "%prog [options] <file.edj>",
+   PACKAGE_VERSION,
+   "(C) 2010 - The Enlightenment Project",
+   "BSD",
+   "Edje file inspector, let one see groups, parts, programs and other details "
+   "of a compiled (binary) edje file.\n",
+   0,
+   {
+      ECORE_GETOPT_CHOICE('m', "mode", "Choose which mode to operate on file.",
+                          mode_choices),
+      ECORE_GETOPT_CHOICE('d', "detail", "Choose detail level (default=terse)",
+                          detail_choices),
+      ECORE_GETOPT_STORE_STR('g', "group", "Limit output to group (or glob)."),
+      ECORE_GETOPT_STORE_STR('p', "part", "Limit output to part (or glob)."),
+      ECORE_GETOPT_STORE_STR('r', "program",
+                             "Limit output to program (or glob)."),
+      ECORE_GETOPT_STORE_TRUE('a', "api-only", "Limit to just api parts or "
+                                               "programs."),
+      ECORE_GETOPT_STORE_TRUE('A', "api-fix", "Fix API names to be C compliant."),
+      ECORE_GETOPT_STORE_TRUE('M', "machine", "Produce machine readable output."),
+      ECORE_GETOPT_LICENSE('L', "license"),
+      ECORE_GETOPT_COPYRIGHT('C', "copyright"),
+      ECORE_GETOPT_VERSION('V', "version"),
+      ECORE_GETOPT_HELP('h', "help"),
+      ECORE_GETOPT_SENTINEL
+   }
 };
 
 static inline Eina_Bool
@@ -130,12 +130,14 @@ group_details(Evas_Object *ed)
    w = edje_edit_group_min_w_get(ed);
    h = edje_edit_group_min_h_get(ed);
    if (machine) printf("MIN-W: %d\nMIN-H: %d\n", w, h);
-   else if ((w > 0) || (h > 0)) printf(INDENT "min: %d %d;\n", w, h);
+   else if ((w > 0) || (h > 0))
+     printf(INDENT "min: %d %d;\n", w, h);
 
    w = edje_edit_group_max_w_get(ed);
    h = edje_edit_group_max_h_get(ed);
    if (machine) printf("MAX-W: %d\nMAX-H: %d\n", w, h);
-   else if ((w > 0) || (h > 0)) printf(INDENT "max: %d %d;\n", w, h);
+   else if ((w > 0) || (h > 0))
+     printf(INDENT "max: %d %d;\n", w, h);
 
    if (detail > 1)
      {
@@ -185,39 +187,52 @@ part_type_name_get(Edje_Part_Type t)
    switch (t)
      {
       case EDJE_PART_TYPE_RECTANGLE:
-         return "RECT";
+        return "RECT";
+
       case EDJE_PART_TYPE_TEXT:
-         return "TEXT";
+        return "TEXT";
+
       case EDJE_PART_TYPE_IMAGE:
-         return "IMAGE";
+        return "IMAGE";
+
       case EDJE_PART_TYPE_PROXY:
-	 return "PROXY";
+        return "PROXY";
+
       case EDJE_PART_TYPE_SWALLOW:
-         return "SWALLOW";
+        return "SWALLOW";
+
       case EDJE_PART_TYPE_TEXTBLOCK:
-         return "TEXTBLOCK";
+        return "TEXTBLOCK";
+
       case EDJE_PART_TYPE_GRADIENT:
-         return "GRADIENT";
+        return "GRADIENT";
+
       case EDJE_PART_TYPE_GROUP:
-         return "GROUP";
+        return "GROUP";
+
       case EDJE_PART_TYPE_BOX:
-         return "BOX";
+        return "BOX";
+
       case EDJE_PART_TYPE_TABLE:
-         return "TABLE";
+        return "TABLE";
+
       case EDJE_PART_TYPE_EXTERNAL:
-         return "EXTERNAL";
+        return "EXTERNAL";
+
       case EDJE_PART_TYPE_SPACER:
-         return "SPACER";
+        return "SPACER";
+
       case EDJE_PART_TYPE_VECTOR:
-         return "VECTOR";
+        return "VECTOR";
 
       case EDJE_PART_TYPE_NONE:
       case EDJE_PART_TYPE_LAST:
-         ERR("Invalid part type %d", t);
-         return "???";
+        ERR("Invalid part type %d", t);
+        return "???";
+
       default:
-         ERR("Unknown part type %d", t);
-         return "???";
+        ERR("Unknown part type %d", t);
+        return "???";
      }
 }
 
@@ -239,12 +254,16 @@ aspect_pref_name_get(int id)
    switch (id)
      {
       case 0: return "NONE";
+
       case 1: return "VERTICAL";
+
       case 2: return "HORIZONTAL";
+
       case 3: return "BOTH";
+
       default:
-         ERR("Unknown aspect preference %d", id);
-         return "???";
+        ERR("Unknown aspect preference %d", id);
+        return "???";
      }
 }
 
@@ -254,11 +273,14 @@ border_fill_name_get(int id)
    switch (id)
      {
       case 0: return "NONE";
+
       case 1: return "DEFAULT";
+
       case 2: return "SOLID";
+
       default:
-         ERR("Unknown border fill %d", id);
-         return "???";
+        ERR("Unknown border fill %d", id);
+        return "???";
      }
 }
 
@@ -274,7 +296,8 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
 
    b = edje_edit_state_visible_get(ed, ppart, state, value);
    if (machine) printf("VISIBLE: %d\n", b);
-   else if (!b) puts(INDENT4 "visible: 0;");
+   else if (!b)
+     puts(INDENT4 "visible: 0;");
 
    edje_edit_state_color_get(ed, ppart, state, value, &r, &g, &b, &a);
    if (machine)
@@ -308,12 +331,14 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
    x = edje_edit_state_min_w_get(ed, ppart, state, value);
    y = edje_edit_state_min_h_get(ed, ppart, state, value);
    if (machine) printf("MIN-W: %d\nMIN-H: %d\n", x, y);
-   else if ((x) || (y)) printf(INDENT4 "min: %d %d;\n", x, y);
+   else if ((x) || (y))
+     printf(INDENT4 "min: %d %d;\n", x, y);
 
    x = edje_edit_state_max_w_get(ed, ppart, state, value);
    y = edje_edit_state_max_h_get(ed, ppart, state, value);
    if (machine) printf("MAX-W: %d\nMAX-H: %d\n", x, y);
-   else if ((x != -1) || (y != -1)) printf(INDENT4 "max: %d %d;\n", x, y);
+   else if ((x != -1) || (y != -1))
+     printf(INDENT4 "max: %d %d;\n", x, y);
 
    //TODO Support fixed
    //TODO Support step
@@ -329,12 +354,14 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
         x = edje_edit_state_aspect_pref_get(ed, ppart, state, value);
         str = aspect_pref_name_get(x);
         if (machine) printf("ASPECT-PREFERENCE: %s\n", str);
-        else if (x) printf(INDENT4 "aspect_preference: %s;\n", str);
+        else if (x)
+          printf(INDENT4 "aspect_preference: %s;\n", str);
         /* do not free this str! */
 
         str = edje_edit_state_color_class_get(ed, ppart, state, value);
         if (machine) printf("COLOR_CLASS: %s\n", str ? str : "");
-        else if (str) printf(INDENT4 "color_class: \"%s\";\n", str);
+        else if (str)
+          printf(INDENT4 "color_class: \"%s\";\n", str);
         edje_edit_string_free(str);
      }
 
@@ -354,7 +381,8 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
           printf(INDENT5 "relative: %g %g;\n", dx, dy);
 
         if (machine) printf("OFFSET-X: %d\nOFFSET-Y: %d\n", x, y);
-        else if ((x) || (y)) printf(INDENT5 "offset: %d %d;\n", x, y);
+        else if ((x) || (y))
+          printf(INDENT5 "offset: %d %d;\n", x, y);
 
         if (machine)
           printf("TO-X: %s\nTO-Y: %s\n", str ? str : "", str2 ? str2 : "");
@@ -418,7 +446,8 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
              puts(INDENT4 "image {");
              if (str) printf(INDENT5 "normal: \"%s\";\n", str);
           }
-        else if (str) printf(INDENT4 "image.normal: \"%s\";\n", str);
+        else if (str)
+          printf(INDENT4 "image.normal: \"%s\";\n", str);
 
         edje_edit_string_free(str);
 
@@ -448,28 +477,29 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
              x = edje_edit_state_image_border_fill_get(ed, ppart, state, value);
              str = border_fill_name_get(x);
              if (machine) printf("BORDER-FILL: %s\n", str);
-             else if (x != 1) printf(INDENT5 "middle: %s;\n", str);
+             else if (x != 1)
+               printf(INDENT5 "middle: %s;\n", str);
              /* do not free str! */
 
              // TODO support image.fill.smooth
 
              dx = edje_edit_state_fill_origin_relative_x_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              dy = edje_edit_state_fill_origin_relative_y_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              x = edje_edit_state_fill_origin_offset_x_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              y = edje_edit_state_fill_origin_offset_y_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
 
              dx2 = edje_edit_state_fill_size_relative_x_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              dy2 = edje_edit_state_fill_size_relative_y_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              x2 = edje_edit_state_fill_size_offset_x_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
              y2 = edje_edit_state_fill_size_offset_y_get
-               (ed, ppart, state, value);
+                 (ed, ppart, state, value);
 
              has_orgin = (FDIFF(dx, 0.0) || FDIFF(dy, 0.0) || (x) || (y));
              has_size = (FDIFF(dx2, 1.0) || FDIFF(dy2, 1.0) || (x2) || (y2));
@@ -517,83 +547,84 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
           }
 
         if (machine) puts("IMAGE-END");
-        else if (detail > 1) puts(INDENT4 "}");
+        else if (detail > 1)
+          puts(INDENT4 "}");
      }
    else if (t == EDJE_PART_TYPE_PROXY)
-     { 
-       int x2, y2;
-       double dx2, dy2;
-       Eina_Bool has_orgin, has_size;
+     {
+        int x2, y2;
+        double dx2, dy2;
+        Eina_Bool has_orgin, has_size;
 
-       if (machine) puts("PROXY-BEGIN");
-       else puts(INDENT4 "proxy {");
-       // TODO Support source
-       // TODO support proxy.fill.smooth
+        if (machine) puts("PROXY-BEGIN");
+        else puts(INDENT4 "proxy {");
+        // TODO Support source
+        // TODO support proxy.fill.smooth
 
-       dx = edje_edit_state_fill_origin_relative_x_get
-	 (ed, ppart, state, value);
-       dy = edje_edit_state_fill_origin_relative_y_get
-	 (ed, ppart, state, value);
-       x = edje_edit_state_fill_origin_offset_x_get
-	 (ed, ppart, state, value);
-       y = edje_edit_state_fill_origin_offset_y_get
-	 (ed, ppart, state, value);
+        dx = edje_edit_state_fill_origin_relative_x_get
+            (ed, ppart, state, value);
+        dy = edje_edit_state_fill_origin_relative_y_get
+            (ed, ppart, state, value);
+        x = edje_edit_state_fill_origin_offset_x_get
+            (ed, ppart, state, value);
+        y = edje_edit_state_fill_origin_offset_y_get
+            (ed, ppart, state, value);
 
-       dx2 = edje_edit_state_fill_size_relative_x_get
-	 (ed, ppart, state, value);
-       dy2 = edje_edit_state_fill_size_relative_y_get
-	 (ed, ppart, state, value);
-       x2 = edje_edit_state_fill_size_offset_x_get
-	 (ed, ppart, state, value);
-       y2 = edje_edit_state_fill_size_offset_y_get
-	 (ed, ppart, state, value);
+        dx2 = edje_edit_state_fill_size_relative_x_get
+            (ed, ppart, state, value);
+        dy2 = edje_edit_state_fill_size_relative_y_get
+            (ed, ppart, state, value);
+        x2 = edje_edit_state_fill_size_offset_x_get
+            (ed, ppart, state, value);
+        y2 = edje_edit_state_fill_size_offset_y_get
+            (ed, ppart, state, value);
 
-       has_orgin = (FDIFF(dx, 0.0) || FDIFF(dy, 0.0) || (x) || (y));
-       has_size = (FDIFF(dx2, 1.0) || FDIFF(dy2, 1.0) || (x2) || (y2));
+        has_orgin = (FDIFF(dx, 0.0) || FDIFF(dy, 0.0) || (x) || (y));
+        has_size = (FDIFF(dx2, 1.0) || FDIFF(dy2, 1.0) || (x2) || (y2));
 
-       if ((has_orgin) || (has_size))
-	 {
-	   if (machine) puts("PROXY-FILL-BEGIN");
-	   else puts(INDENT5 "fill {");
+        if ((has_orgin) || (has_size))
+          {
+             if (machine) puts("PROXY-FILL-BEGIN");
+             else puts(INDENT5 "fill {");
 
-	   if (has_orgin)
-	     {
-	       if (machine)
-		 printf("ORIGIN-RELATIVE-X: %g\n"
-			"ORIGIN-RELATIVE-Y: %g\n"
-			"ORIGIN-OFFSET-X: %d\n"
-			"ORIGIN-OFFSET-Y: %d\n",
-			dx, dy, x, y);
-	       else
-		 printf(INDENT6 "origin {\n"
-			INDENT7 "relative: %g %g;\n"
-			INDENT7 "offset: %d %d;\n"
-			INDENT6 "}\n",
-			dx, dy, x, y);
-	     }
+             if (has_orgin)
+               {
+                  if (machine)
+                    printf("ORIGIN-RELATIVE-X: %g\n"
+                           "ORIGIN-RELATIVE-Y: %g\n"
+                           "ORIGIN-OFFSET-X: %d\n"
+                           "ORIGIN-OFFSET-Y: %d\n",
+                           dx, dy, x, y);
+                  else
+                    printf(INDENT6 "origin {\n"
+                           INDENT7 "relative: %g %g;\n"
+                           INDENT7 "offset: %d %d;\n"
+                           INDENT6 "}\n",
+                           dx, dy, x, y);
+               }
 
-	   if (has_size)
-	     {
-	       if (machine)
-		 printf("SIZE-RELATIVE-X: %g\n"
-			"SIZE-RELATIVE-Y: %g\n"
-			"SIZE-OFFSET-X: %d\n"
-			"SIZE-OFFSET-Y: %d\n",
-			dx2, dy2, x2, y2);
-	       else
-		 printf(INDENT6 "size {\n"
-			INDENT7 "relative: %g %g;\n"
-			INDENT7 "offset: %d %d;\n"
-			INDENT6 "}\n",
-			dx2, dy2, x2, y2);
-	     }
+             if (has_size)
+               {
+                  if (machine)
+                    printf("SIZE-RELATIVE-X: %g\n"
+                           "SIZE-RELATIVE-Y: %g\n"
+                           "SIZE-OFFSET-X: %d\n"
+                           "SIZE-OFFSET-Y: %d\n",
+                           dx2, dy2, x2, y2);
+                  else
+                    printf(INDENT6 "size {\n"
+                           INDENT7 "relative: %g %g;\n"
+                           INDENT7 "offset: %d %d;\n"
+                           INDENT6 "}\n",
+                           dx2, dy2, x2, y2);
+               }
 
-	   if (machine) puts("PROXY-FILL-END");
-	   else puts(INDENT5 "}");
-	 }
+             if (machine) puts("PROXY-FILL-END");
+             else puts(INDENT5 "}");
+          }
 
         if (machine) puts("PROXY-END");
-        else puts(INDENT4 "}");       
+        else puts(INDENT4 "}");
      }
    else if ((t == EDJE_PART_TYPE_TEXTBLOCK) || (t == EDJE_PART_TYPE_TEXT))
      {
@@ -602,17 +633,20 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
 
         str = edje_edit_state_text_get(ed, ppart, state, value);
         if (machine) printf("TEXT: %s\n", str ? str : "");
-        else if (str) printf(INDENT5 "text: \"%s\";\n", str);
+        else if (str)
+          printf(INDENT5 "text: \"%s\";\n", str);
         edje_edit_string_free(str);
 
         str = edje_edit_state_font_get(ed, ppart, state, value);
         if (machine) printf("FONT: %s\n", str ? str : "");
-        else if (str) printf(INDENT5 "font: \"%s\";\n", str);
+        else if (str)
+          printf(INDENT5 "font: \"%s\";\n", str);
         edje_edit_string_free(str);
 
         x = edje_edit_state_text_size_get(ed, ppart, state, value);
         if (machine) printf("SIZE: %d\n", x);
-        else if (x > 0) printf(INDENT5 "size: %d;\n", x);
+        else if (x > 0)
+          printf(INDENT5 "size: %d;\n", x);
 
         // TODO text_class
 
@@ -625,11 +659,13 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
         x = edje_edit_state_text_fit_x_get(ed, ppart, state, value);
         y = edje_edit_state_text_fit_y_get(ed, ppart, state, value);
         if (machine) printf("TEXT-FIT-X: %d\nTEXT-FIT-Y: %d\n", x, y);
-        else if ((x) || (y)) printf(INDENT5 "fit: %d %d;\n", x, y);
+        else if ((x) || (y))
+          printf(INDENT5 "fit: %d %d;\n", x, y);
 
         dx = edje_edit_state_text_elipsis_get(ed, ppart, state, value);
         if (machine) printf("TEXT-ELLIPSIS: %g\n", dx);
-        else if (FDIFF(dx, 0.5)) printf(INDENT5 "ellipsis: %g;\n", dx);
+        else if (FDIFF(dx, 0.5))
+          printf(INDENT5 "ellipsis: %g;\n", dx);
 
         if (machine) puts("TEXT-END");
         else puts(INDENT4 "}");
@@ -640,7 +676,7 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
         const Edje_External_Param *p;
 
         params = edje_edit_state_external_params_list_get
-          (ed, ppart, state, value);
+            (ed, ppart, state, value);
 
         if (params)
           {
@@ -651,26 +687,31 @@ state_details(Evas_Object *ed, const char *ppart, const char *state, double valu
                switch (p->type)
                  {
                   case EDJE_EXTERNAL_PARAM_TYPE_INT:
-                     printf(INDENT5 "int: \"%s\" \"%d\";\n", p->name, p->i);
-                     break;
+                    printf(INDENT5 "int: \"%s\" \"%d\";\n", p->name, p->i);
+                    break;
+
                   case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
-                     printf(INDENT5 "double: \"%s\" \"%g\";\n", p->name, p->d);
-                     break;
+                    printf(INDENT5 "double: \"%s\" \"%g\";\n", p->name, p->d);
+                    break;
+
                   case EDJE_EXTERNAL_PARAM_TYPE_STRING:
-                     if (p->s)
-                       printf(INDENT5 "string: \"%s\" \"%s\";\n",
-                              p->name, p->s);
-                     break;
+                    if (p->s)
+                      printf(INDENT5 "string: \"%s\" \"%s\";\n",
+                             p->name, p->s);
+                    break;
+
                   case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
-                     printf(INDENT5 "bool: \"%s\" \"%d\";\n", p->name, p->i);
-                     break;
+                    printf(INDENT5 "bool: \"%s\" \"%d\";\n", p->name, p->i);
+                    break;
+
                   case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
-                     if (p->s)
-                       printf(INDENT5 "choice: \"%s\" \"%s\";\n",
-                              p->name, p->s);
-                     break;
+                    if (p->s)
+                      printf(INDENT5 "choice: \"%s\" \"%s\";\n",
+                             p->name, p->s);
+                    break;
+
                   default:
-                     break;
+                    break;
                  }
 
              if (machine) puts("PARAMS-END");
@@ -683,7 +724,8 @@ static void
 state_end(void)
 {
    if (machine) puts("PART-STATE-END");
-   else if (detail > 0) puts(INDENT3 "}");
+   else if (detail > 0)
+     puts(INDENT3 "}");
    else puts(" }");
 }
 
@@ -705,34 +747,45 @@ text_effect_name_get(Edje_Text_Effect effect)
    switch (effect)
      {
       case EDJE_TEXT_EFFECT_NONE:
-         return "NONE";
+        return "NONE";
+
       case EDJE_TEXT_EFFECT_PLAIN:
-         return "PLAIN";
+        return "PLAIN";
+
       case EDJE_TEXT_EFFECT_OUTLINE:
-         return "OUTLINE";
+        return "OUTLINE";
+
       case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
-         return "SOFT_OUTLINE";
+        return "SOFT_OUTLINE";
+
       case EDJE_TEXT_EFFECT_SHADOW:
-         return "SHADOW";
+        return "SHADOW";
+
       case EDJE_TEXT_EFFECT_SOFT_SHADOW:
-         return "SOFT_SHADOW";
+        return "SOFT_SHADOW";
+
       case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
-         return "OUTLINE_SHADOW";
+        return "OUTLINE_SHADOW";
+
       case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
-         return "OUTLINE_SOFT_SHADOW";
+        return "OUTLINE_SOFT_SHADOW";
+
       case EDJE_TEXT_EFFECT_FAR_SHADOW:
-         return "FAR_SHADOW";
+        return "FAR_SHADOW";
+
       case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
-         return "FAR_SOFT_SHADOW";
+        return "FAR_SOFT_SHADOW";
+
       case EDJE_TEXT_EFFECT_GLOW:
-         return "GLOW";
+        return "GLOW";
 
       case EDJE_TEXT_EFFECT_LAST:
-         ERR("Invalid part type %d", effect);
-         return "???";
+        ERR("Invalid part type %d", effect);
+        return "???";
+
       default:
-         ERR("Unknown effect type %d", effect);
-         return "???";
+        ERR("Unknown effect type %d", effect);
+        return "???";
      }
 }
 
@@ -786,7 +839,7 @@ part_details(Evas_Object *ed, const char *ppart)
 
    if (machine) puts("PART-DETAILS-BEGIN");
 
-   str = api =_part_api_name_get(ed, ppart);
+   str = api = _part_api_name_get(ed, ppart);
    str2 = edje_edit_part_api_description_get(ed, ppart);
    if (machine)
      {
@@ -800,27 +853,32 @@ part_details(Evas_Object *ed, const char *ppart)
 
    b = edje_edit_part_mouse_events_get(ed, ppart);
    if (machine) printf("MOUSE_EVENTS: %d\n", b);
-   else if (!b) puts(INDENT3 "mouse_events: 0;");
+   else if (!b)
+     puts(INDENT3 "mouse_events: 0;");
 
    if (detail > 1)
      {
         b = edje_edit_part_repeat_events_get(ed, ppart);
         if (machine) printf("REPEAT_EVENTS: %d\n", b);
-        else if (b) puts(INDENT3 "repeat_events: 1;");
+        else if (b)
+          puts(INDENT3 "repeat_events: 1;");
 
         b = edje_edit_part_scale_get(ed, ppart);
         if (machine) printf("SCALE: %d\n", b);
-        else if (b) puts(INDENT3 "scale: 1;");
+        else if (b)
+          puts(INDENT3 "scale: 1;");
      }
 
    str = edje_edit_part_clip_to_get(ed, ppart);
    if (machine) printf("CLIP_TO: %s\n", str ? str : "");
-   else if (str) printf(INDENT3 "clip_to: \"%s\";\n", str);
+   else if (str)
+     printf(INDENT3 "clip_to: \"%s\";\n", str);
    edje_edit_string_free(str);
 
    str = edje_edit_part_source_get(ed, ppart);
    if (machine) printf("SOURCE: %s\n", str ? str : "");
-   else if (str) printf(INDENT3 "source: \"%s\";\n", str);
+   else if (str)
+     printf(INDENT3 "source: \"%s\";\n", str);
    edje_edit_string_free(str);
 
    if (detail > 1)
@@ -829,7 +887,8 @@ part_details(Evas_Object *ed, const char *ppart)
           {
              str = text_effect_name_get(edje_edit_part_effect_get(ed, ppart));
              if (machine) printf("EFFECT: %s\n", str ? str : "");
-             else if (str) printf(INDENT3 "effect: %s;\n", str);
+             else if (str)
+               printf(INDENT3 "effect: %s;\n", str);
              /* do not free this str! */
           }
 
@@ -855,12 +914,14 @@ part_details(Evas_Object *ed, const char *ppart)
 
              str = edje_edit_part_drag_confine_get(ed, ppart);
              if (machine) printf("DRAG-CONFINE: %s\n", str ? str : "");
-             else if (str) printf(INDENT4 "confine: \"%s\";\n", str);
+             else if (str)
+               printf(INDENT4 "confine: \"%s\";\n", str);
              edje_edit_string_free(str);
 
              str = edje_edit_part_drag_event_get(ed, ppart);
              if (machine) printf("DRAG-EVENTS: %s\n", str ? str : "");
-             else if (str) printf(INDENT4 "events: \"%s\";\n", str);
+             else if (str)
+               printf(INDENT4 "events: \"%s\";\n", str);
              edje_edit_string_free(str);
 
              if (machine) puts("DRAGABLE-END");
@@ -875,7 +936,7 @@ part_details(Evas_Object *ed, const char *ppart)
         double value;
         eina_strlcpy(state, str, sizeof(state)); /* bad states_list! :-( */
         delim = strchr(state, ' ');
-        if (!delim) continue ;
+        if (!delim) continue;
         *delim = '\0';
         delim++;
         value = strtod(delim, NULL);
@@ -892,7 +953,8 @@ static void
 part_end(void)
 {
    if (machine) puts("PART-END");
-   else if (detail > 0) puts(INDENT2 "}");
+   else if (detail > 0)
+     puts(INDENT2 "}");
    else puts(" }");
 }
 
@@ -1046,7 +1108,6 @@ program_end(void)
    else puts(INDENT2 "}");
 }
 
-
 static char *
 _program_api_name_get(Evas_Object *ed, const char *pprogram)
 {
@@ -1062,13 +1123,18 @@ _transition_name_get(Edje_Tween_Mode mode)
    switch (mode)
      {
       case EDJE_TWEEN_MODE_LINEAR: return "LINEAR";
+
       case EDJE_TWEEN_MODE_ACCELERATE: return "ACCELERATE";
+
       case EDJE_TWEEN_MODE_DECELERATE: return "DECELERATE";
+
       case EDJE_TWEEN_MODE_SINUSOIDAL: return "SINUSOIDAL";
+
       case EDJE_TWEEN_MODE_CUBIC_BEZIER: return "CUBIC_BEZIER";
+
       default:
-         ERR("Unknown transition mode %d", mode);
-         return "???";
+        ERR("Unknown transition mode %d", mode);
+        return "???";
      }
 }
 
@@ -1082,7 +1148,7 @@ program_details(Evas_Object *ed, const char *pprogram)
 
    if (machine) puts("PROGRAM-DETAILS-BEGIN");
 
-   str = api =_program_api_name_get(ed, pprogram);
+   str = api = _program_api_name_get(ed, pprogram);
    str2 = edje_edit_program_api_description_get(ed, pprogram);
    if (machine)
      {
@@ -1096,12 +1162,14 @@ program_details(Evas_Object *ed, const char *pprogram)
 
    str = edje_edit_program_signal_get(ed, pprogram);
    if (machine) printf("SIGNAL: %s\n", str ? str : "");
-   else if (str) printf(INDENT3 "signal: \"%s\";\n", str);
+   else if (str)
+     printf(INDENT3 "signal: \"%s\";\n", str);
    edje_edit_string_free(str);
 
    str = edje_edit_program_source_get(ed, pprogram);
    if (machine) printf("SOURCE: %s\n", str ? str : "");
-   else if (str) printf(INDENT3 "source: \"%s\";\n", str);
+   else if (str)
+     printf(INDENT3 "source: \"%s\";\n", str);
    edje_edit_string_free(str);
 
    if (detail >= 1)
@@ -1111,45 +1179,48 @@ program_details(Evas_Object *ed, const char *pprogram)
         switch (type)
           {
            case EDJE_ACTION_TYPE_ACTION_STOP:
-              if (machine) puts("ACTION: ACTION_STOP");
-              else puts(INDENT3 "action: ACTION_STOP;");
-              break;
+             if (machine) puts("ACTION: ACTION_STOP");
+             else puts(INDENT3 "action: ACTION_STOP;");
+             break;
+
            case EDJE_ACTION_TYPE_STATE_SET:
-              str = edje_edit_program_state_get(ed, pprogram);
-              if (machine)
-                printf("ACTION: STATE_SET\nACTION-STATE: %s %g\n",
-                       str, edje_edit_program_value_get(ed, pprogram));
-              else
-                printf(INDENT3 "action: STATE_SET \"%s\" %2.1f;\n",
-                       str, edje_edit_program_value_get(ed, pprogram));
-              edje_edit_string_free(str);
-              break;
+             str = edje_edit_program_state_get(ed, pprogram);
+             if (machine)
+               printf("ACTION: STATE_SET\nACTION-STATE: %s %g\n",
+                      str, edje_edit_program_value_get(ed, pprogram));
+             else
+               printf(INDENT3 "action: STATE_SET \"%s\" %2.1f;\n",
+                      str, edje_edit_program_value_get(ed, pprogram));
+             edje_edit_string_free(str);
+             break;
+
            case EDJE_ACTION_TYPE_SIGNAL_EMIT:
-              str = edje_edit_program_state_get(ed, pprogram);
-              str2 = edje_edit_program_state2_get(ed, pprogram);
-              if (machine)
-                printf("ACTION: SIGNAL_EMIT\nACTION-SIGNAL: %s\n"
-                       "ACTION-SOURCE: %s\n",
-                       str ? str : "", str2 ? str2 : "");
-              else if ((str) || (str2))
-                printf(INDENT3 "action: SIGNAL_EMIT \"%s\" \"%s\";\n",
-                       str ? str : "", str2 ? str2 : "");
-              edje_edit_string_free(str);
-              edje_edit_string_free(str2);
-              break;
-              //TODO Support Drag
-              //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-              //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_SET TODO;\n");
-              //~ break;
-              //~ case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-              //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_STEP TODO;\n");
-              //~ break;
-              //~ case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-              //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_PAGE TODO;\n");
-              //~ break;
+             str = edje_edit_program_state_get(ed, pprogram);
+             str2 = edje_edit_program_state2_get(ed, pprogram);
+             if (machine)
+               printf("ACTION: SIGNAL_EMIT\nACTION-SIGNAL: %s\n"
+                      "ACTION-SOURCE: %s\n",
+                      str ? str : "", str2 ? str2 : "");
+             else if ((str) || (str2))
+               printf(INDENT3 "action: SIGNAL_EMIT \"%s\" \"%s\";\n",
+                      str ? str : "", str2 ? str2 : "");
+             edje_edit_string_free(str);
+             edje_edit_string_free(str2);
+             break;
+
+           //TODO Support Drag
+           //~ case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+           //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_SET TODO;\n");
+           //~ break;
+           //~ case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+           //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_STEP TODO;\n");
+           //~ break;
+           //~ case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+           //~ eina_strbuf_append(buf, I4"action: DRAG_VAL_PAGE TODO;\n");
+           //~ break;
            default:
-              ERR("Unhandled pprogram action type %d", type);
-              break;
+             ERR("Unhandled pprogram action type %d", type);
+             break;
           }
 
         if (detail > 1)
@@ -1160,7 +1231,7 @@ program_details(Evas_Object *ed, const char *pprogram)
              if (from > 0.0)
                {
                   str = _transition_name_get
-                    (edje_edit_program_transition_get(ed, pprogram));
+                      (edje_edit_program_transition_get(ed, pprogram));
                   if (machine)
                     printf("TRANSITION-NAME: %s\nTRANSITION-DURATION: %g\n",
                            str, from);
@@ -1372,26 +1443,32 @@ _comp_str_get(Evas_Object *ed, const char *img)
    switch (type)
      {
       case EDJE_EDIT_IMAGE_COMP_RAW:
-         return "RAW";
+        return "RAW";
+
       case EDJE_EDIT_IMAGE_COMP_USER:
-         return "USER";
+        return "USER";
+
       case EDJE_EDIT_IMAGE_COMP_COMP:
-         return "COMP";
+        return "COMP";
+
       case EDJE_EDIT_IMAGE_COMP_LOSSY:
-         rate = edje_edit_image_compression_rate_get(ed, img);
-         snprintf(buf, sizeof(buf), "LOSSY %d", rate);
-         return buf;
+        rate = edje_edit_image_compression_rate_get(ed, img);
+        snprintf(buf, sizeof(buf), "LOSSY %d", rate);
+        return buf;
+
       case EDJE_EDIT_IMAGE_COMP_LOSSY_ETC1:
         rate = edje_edit_image_compression_rate_get(ed, img);
         snprintf(buf, sizeof(buf), "LOSSY_ETC1 %d", rate);
         return buf;
+
       case EDJE_EDIT_IMAGE_COMP_LOSSY_ETC2:
         rate = edje_edit_image_compression_rate_get(ed, img);
         snprintf(buf, sizeof(buf), "LOSSY_ETC2 %d", rate);
         return buf;
+
       default:
-         ERR("Unknown compression type %d", type);
-         return "???";
+        ERR("Unknown compression type %d", type);
+        return "???";
      }
 }
 
@@ -1521,7 +1598,6 @@ _externals_list(void)
    return EINA_TRUE;
 }
 
-
 int
 main(int argc, char **argv)
 {
@@ -1531,19 +1607,19 @@ main(int argc, char **argv)
    int arg_index;
    int ret = 0;
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(mode),
-     ECORE_GETOPT_VALUE_STR(detail_name),
-     ECORE_GETOPT_VALUE_STR(group),
-     ECORE_GETOPT_VALUE_STR(part),
-     ECORE_GETOPT_VALUE_STR(program),
-     ECORE_GETOPT_VALUE_BOOL(api_only),
-     ECORE_GETOPT_VALUE_BOOL(api_fix),
-     ECORE_GETOPT_VALUE_BOOL(machine),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_NONE
+      ECORE_GETOPT_VALUE_STR(mode),
+      ECORE_GETOPT_VALUE_STR(detail_name),
+      ECORE_GETOPT_VALUE_STR(group),
+      ECORE_GETOPT_VALUE_STR(part),
+      ECORE_GETOPT_VALUE_STR(program),
+      ECORE_GETOPT_VALUE_BOOL(api_only),
+      ECORE_GETOPT_VALUE_BOOL(api_fix),
+      ECORE_GETOPT_VALUE_BOOL(machine),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_NONE
    };
 
    setlocale(LC_NUMERIC, "C");
@@ -1570,7 +1646,8 @@ main(int argc, char **argv)
         ret = 1;
         goto error_getopt;
      }
-   else if (quit_option) goto error_getopt;
+   else if (quit_option)
+     goto error_getopt;
    else if (arg_index != argc - 1)
      {
         ERR("incorrect number of parameters. Requires one single file.");
@@ -1583,8 +1660,10 @@ main(int argc, char **argv)
    if (detail_name)
      {
         if (!strcmp(detail_name, "none")) detail = 0;
-        else if (!strcmp(detail_name, "terse")) detail = 1;
-        else if (!strcmp(detail_name, "all")) detail = 2;
+        else if (!strcmp(detail_name, "terse"))
+          detail = 1;
+        else if (!strcmp(detail_name, "all"))
+          detail = 2;
         else ERR("Unknown detail level: '%s'", detail_name);
      }
 
@@ -1608,7 +1687,6 @@ main(int argc, char **argv)
        program ? program : "",
        api_only, api_fix, machine, file);
 
-
    groups = edje_file_collection_list(file);
    if (!groups)
      {
@@ -1629,19 +1707,23 @@ main(int argc, char **argv)
         else
           {
              if (!strcmp(mode, "parts-names")) ret = _parts_names_list();
-             else if (!strcmp(mode, "global-data")) ret = _gdata_list();
-             else if (!strcmp(mode, "images")) ret = _images_list();
-             else if (!strcmp(mode, "fonts")) ret = _fonts_list();
-             else if (!strcmp(mode, "externals")) ret = _externals_list();
+             else if (!strcmp(mode, "global-data"))
+               ret = _gdata_list();
+             else if (!strcmp(mode, "images"))
+               ret = _images_list();
+             else if (!strcmp(mode, "fonts"))
+               ret = _fonts_list();
+             else if (!strcmp(mode, "externals"))
+               ret = _externals_list();
              else ret = _list(mode);
              ecore_evas_free(ee);
           }
      }
 
    edje_file_collection_list_free(groups);
- error_getopt:
+error_getopt:
    eina_log_domain_unregister(_log_dom);
- error_log:
+error_log:
    edje_shutdown();
    ecore_evas_shutdown();
    ecore_shutdown();
@@ -1649,3 +1731,4 @@ main(int argc, char **argv)
 
    return ret;
 }
+

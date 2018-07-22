@@ -369,7 +369,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
      }
 
    client = efl_add(EFL_NET_SERVER_UDP_CLIENT_CLASS, o,
-                    efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                    efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
 
                     efl_net_socket_address_local_set(efl_added, efl_net_server_address_get(o)),
                     _efl_net_server_udp_client_init(efl_added, fd, (const struct sockaddr *)&addr, addrlen, str),
@@ -425,7 +425,7 @@ _efl_net_server_udp_dont_route_set(Eo *o, Efl_Net_Server_Udp_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_dont_route_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+_efl_net_server_udp_dont_route_get(const Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
 #ifdef _WIN32
@@ -545,7 +545,7 @@ _efl_net_server_udp_multicast_time_to_live_set(Eo *o, Efl_Net_Server_Udp_Data *p
 }
 
 EOLIAN static uint8_t
-_efl_net_server_udp_multicast_time_to_live_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+_efl_net_server_udp_multicast_time_to_live_get(const Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
    Eina_Error err;
@@ -584,7 +584,7 @@ _efl_net_server_udp_multicast_loopback_set(Eo *o, Efl_Net_Server_Udp_Data *pd, E
 }
 
 EOLIAN static Eina_Bool
-_efl_net_server_udp_multicast_loopback_get(Eo *o, Efl_Net_Server_Udp_Data *pd)
+_efl_net_server_udp_multicast_loopback_get(const Eo *o, Efl_Net_Server_Udp_Data *pd)
 {
    SOCKET fd = efl_loop_fd_get(o);
    Eina_Error err;

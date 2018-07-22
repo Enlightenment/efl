@@ -46,16 +46,14 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-# if 0
-   /* FIXME: n900 - omap3 sgx libs break here */
+
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_GREEN_SIZE;
    config_attrs[n++] = 1;
    config_attrs[n++] = EGL_BLUE_SIZE;
    config_attrs[n++] = 1;
-   /* FIXME: end n900 breakage */
-# endif
+
    config_attrs[n++] = EGL_ALPHA_SIZE;
    config_attrs[n++] = gw->alpha;
    config_attrs[n++] = EGL_DEPTH_SIZE;
@@ -326,33 +324,10 @@ eng_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth EIN
 
    if (ob->win)
      {
-        int aw, ah, dx = 0, dy = 0;
-
         if ((ob->rot == 90) || (ob->rot == 270))
-          wl_egl_window_get_attached_size(ob->win, &ah, &aw);
+          wl_egl_window_resize(ob->win, h, w, 0, 0);
         else
-          wl_egl_window_get_attached_size(ob->win, &aw, &ah);
-
-        if (ob->info->info.edges & 4) // resize from left
-          {
-             if ((ob->rot == 90) || (ob->rot == 270))
-               dx = ah - h;
-             else
-               dx = aw - w;
-          }
-
-        if (ob->info->info.edges & 1) // resize from top
-          {
-             if ((ob->rot == 90) || (ob->rot == 270))
-               dy = aw - w;
-             else
-               dy = ah - h;
-          }
-
-        if ((ob->rot == 90) || (ob->rot == 270))
-          wl_egl_window_resize(ob->win, h, w, dx, dy);
-        else
-          wl_egl_window_resize(ob->win, w, h, dx, dy);
+          wl_egl_window_resize(ob->win, w, h, 0, 0);
      }
 }
 

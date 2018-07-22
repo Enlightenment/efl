@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout.Part_Table (Efl.Canvas.Layout.Part, Efl.Pack.Table)
+class Efl.Canvas.Layout_Part_Table (Efl.Canvas.Layout_Part, Efl.Pack_Table)
 {
    [[Represents a Table created as part of a layout.
 
@@ -13,12 +13,12 @@ class Efl.Canvas.Layout.Part_Table (Efl.Canvas.Layout.Part, Efl.Pack.Table)
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
-      Efl.Pack.Table.pack_table;
-      Efl.Pack.Table.table_content_get;
-      Efl.Pack.Table.table_contents_get;
-      Efl.Pack.Table.table_position { get; }
-      Efl.Pack.Table.table_size { get; }
-      Efl.Pack.Table.table_columns { get; }
-      Efl.Pack.Table.table_rows { get; }
+      Efl.Pack_Table.pack_table;
+      Efl.Pack_Table.table_content_get;
+      Efl.Pack_Table.table_contents_get;
+      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_size { get; }
+      Efl.Pack_Table.table_columns { get; }
+      Efl.Pack_Table.table_rows { get; }
    }
 }

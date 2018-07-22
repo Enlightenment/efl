@@ -10,6 +10,7 @@ class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
       }
    }
    implements {
+      class.destructor;
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Input.Event.reset;

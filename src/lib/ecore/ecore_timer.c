@@ -74,7 +74,7 @@ static void
 _check_timer_event_catcher_add(void *data, const Efl_Event *event)
 {
    Efl_Loop_Timer_Data *timer = data;
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
@@ -94,7 +94,7 @@ static void
 _check_timer_event_catcher_del(void *data, const Efl_Event *event)
 {
    Efl_Loop_Timer_Data *timer = data;
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
@@ -174,9 +174,13 @@ ecore_timer_add(double in, Ecore_Task_Cb func, const void *data)
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   if (!func)
+     {
+        ERR("Callback function must be set up for the class.");
+        return NULL;
+     }
    legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
    if (!legacy) return NULL;
-
    legacy->func = func;
    legacy->data = data;
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
@@ -193,9 +197,13 @@ ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void  *data)
    Eo *timer;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   if (!func)
+     {
+        ERR("Callback function must be set up for the class.");
+        return NULL;
+     }
    legacy = calloc(1, sizeof (Ecore_Timer_Legacy));
    if (!legacy) return NULL;
-
    legacy->func = func;
    legacy->data = data;
    timer = efl_add(MY_CLASS, efl_main_loop_get(),
@@ -239,7 +247,7 @@ _efl_loop_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, do
 }
 
 EOLIAN static double
-_efl_loop_timer_interval_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_interval_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    return timer->in;
 }
@@ -293,7 +301,7 @@ _efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 }
 
 EOLIAN static double
-_efl_loop_timer_pending_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_pending_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, ret = 0.0;
 
@@ -341,7 +349,7 @@ ecore_timer_freeze_get(Ecore_Timer *timer)
 }
 
 EOLIAN static int
-_efl_loop_timer_efl_object_event_freeze_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    return timer->frozen;
 }
@@ -459,6 +467,8 @@ _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Obje
 
    _efl_loop_timer_util_loop_clear(pd);
 
+   if (efl_invalidated_get(obj)) return;
+
    pd->loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    if (pd->loop)
      pd->loop_data = efl_data_scope_get(pd->loop, EFL_LOOP_CLASS);
@@ -547,7 +557,8 @@ _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer, double when)
 {
    if (timer->frozen) return;
 
-   if (timer->loop_data)
+   if (timer->loop_data &&
+       (EINA_INLIST_GET(timer)->next || EINA_INLIST_GET(timer)->prev))
      {
         if (timer->loop_data->timers && (!timer->noparent))
           timer->loop_data->timers = eina_inlist_remove

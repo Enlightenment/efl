@@ -11,7 +11,6 @@ set(PUBLIC_EO_FILES
   interfaces/efl_content.eo
   interfaces/efl_control.eo
   interfaces/efl_file.eo
-  interfaces/efl_flipable.eo
   interfaces/efl_gfx.eo
   interfaces/efl_gfx_buffer.eo
   interfaces/efl_gfx_fill.eo
@@ -49,11 +48,8 @@ set(PUBLIC_EO_FILES
   interfaces/efl_player.eo
   interfaces/efl_screen.eo
   interfaces/efl_text.eo
-  interfaces/efl_text_properties.eo
   interfaces/efl_text_types.eot
   interfaces/efl_types.eot
-  interfaces/efl_ui_item.eo
-  interfaces/efl_ui_menu.eo
   interfaces/efl_ui_range.eo
   interfaces/efl_ui_autorepeat.eo
   interfaces/efl_vpath.eo

@@ -431,7 +431,7 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    current_date = time(NULL) + SEC_PER_YEAR;
    localtime_r(&current_date, &max_date);
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_text_set(efl_added, "Efl Ui Calendar"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -454,5 +454,5 @@ test_efl_ui_calendar(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_format_cb_set(efl_added, NULL, _cal_format_cb, NULL),
            efl_pack(box, efl_added));
 
-   efl_gfx_size_set(win, EINA_SIZE2D(300, 300));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 300));
 }

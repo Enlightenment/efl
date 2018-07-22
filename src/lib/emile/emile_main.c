@@ -140,7 +140,10 @@ emile_pbkdf2_sha1(const char *key, unsigned int key_len, const unsigned char *sa
      return EINA_FALSE;
    step2 = eina_binbuf_manage_new(digest, 20, EINA_TRUE);
    if (!step2)
-     return EINA_FALSE;
+     {
+        eina_binbuf_free(step1);
+        return EINA_FALSE;
+     }
 
    for (i = 1; len; len -= tmp_len, p += tmp_len, i++)
      {

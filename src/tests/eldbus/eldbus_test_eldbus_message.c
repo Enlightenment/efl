@@ -26,9 +26,9 @@ static const char *path = "/org/freedesktop/DBus";
 static const char *method_name = "GetId";
 static const char *signal_name = "NameOwnerChanged";
 
-const char *dbus_session_path = "/org/freedesktop/Test";
-const char *interface_session = "org.freedesktop.Test";
-const char *bus_session = "org.freedesktop.Test";
+static const char *dbus_session_path = "/org/freedesktop/Test";
+static const char *interface_session = "org.freedesktop.Test";
+static const char *bus_session = "org.freedesktop.Test.eldbus_test_eldbus_message";
 
 #define CONTAINER_COUNT 2
 
@@ -46,25 +46,8 @@ static Eldbus_Message_Iter *iter_value_swap = NULL;
 *
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   ecore_shutdown();
-   int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -524,9 +507,13 @@ _response_swap_value(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_P
 {
    Eina_Value *eina_value;
    int swap_value;
+   const char *name, *err;
 
-   if (!eldbus_message_error_get(msg, NULL, NULL))
+   if (eldbus_message_error_get(msg, &name, &err))
+     ck_abort_msg("%s: %s", name, err);
+   else
     {
+
        Eldbus_Message_Iter *iter = eldbus_message_iter_get(msg);
        eina_value = eldbus_message_iter_struct_like_to_eina_value(iter);
        eina_value_struct_get(eina_value, "arg0", &swap_value);
@@ -639,13 +626,13 @@ _activable_list_get(Eldbus_Message_Cb message_cb)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Pending *pending = eldbus_names_activatable_list(conn, message_cb, NULL);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -689,11 +676,11 @@ _activable_list_get(Eldbus_Message_Cb message_cb)
  * @}
  */
 
-START_TEST(utc_eldbus_message_iterator_activatable_list_p)
+EFL_START_TEST(utc_eldbus_message_iterator_activatable_list_p)
 {
    _activable_list_get(_response_message_cb);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -738,13 +725,13 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_info_data_get_p)
+EFL_START_TEST(utc_eldbus_message_info_data_get_p)
 {
    const int timeout_send_ms = 1000;
 
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *msg = eldbus_message_method_call_new(bus, path, interface, method_name);
@@ -762,17 +749,16 @@ START_TEST(utc_eldbus_message_info_data_get_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _message_method_cb, NULL, timeout_send_ms);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Method %s is not call", method_name);
 
-   eldbus_message_unref(msg);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -806,13 +792,13 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_signal_new_p)
+EFL_START_TEST(utc_eldbus_message_signal_new_p)
 {
    const int timeout_send_ms = 1000;
 
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Signal_Handler *signal_handler = eldbus_signal_handler_add(conn, NULL, path, interface,
@@ -826,18 +812,17 @@ START_TEST(utc_eldbus_message_signal_new_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, msg, _message_without_body_cb, NULL, timeout_send_ms);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Signal NameOwnerChanged is not emit");
 
-   eldbus_signal_handler_unref(signal_handler);
-   eldbus_message_unref(msg);
+   eldbus_signal_handler_del(signal_handler);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -872,9 +857,9 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_ref_unref_p)
+EFL_START_TEST(utc_eldbus_message_ref_unref_p)
 {
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *msg = eldbus_message_method_call_new(bus, path, interface, method_name);
@@ -893,7 +878,7 @@ START_TEST(utc_eldbus_message_ref_unref_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -925,17 +910,17 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_basic_eina_value_p)
+EFL_START_TEST(utc_eldbus_message_basic_eina_value_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Pending *pending = eldbus_name_owner_has(conn, bus, _response_owner_has_cb, NULL);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -944,7 +929,7 @@ START_TEST(utc_eldbus_message_basic_eina_value_p)
 
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -975,11 +960,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_message_iter_next_p)
+EFL_START_TEST(utc_eldbus_message_iter_next_p)
 {
    _activable_list_get(_activatable_list_response_cb);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1012,10 +997,10 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_arguments_vappend_p)
+EFL_START_TEST(utc_eldbus_message_arguments_vappend_p)
 {
    is_success = EINA_FALSE;
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    message_vparam = eldbus_message_method_call_new(bus, path, interface, "GetNameOwner");
@@ -1026,17 +1011,16 @@ START_TEST(utc_eldbus_message_arguments_vappend_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, message_vparam, _message_response_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Method GetNameOwner is not call");
 
-   eldbus_message_unref(message_vparam);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1072,10 +1056,10 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_arguments_vget_p)
+EFL_START_TEST(utc_eldbus_message_arguments_vget_p)
 {
    is_success = EINA_FALSE;
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Message *message = eldbus_message_method_call_new(bus, path, interface, "NameHasOwner");
@@ -1087,17 +1071,16 @@ START_TEST(utc_eldbus_message_arguments_vget_p)
    Eldbus_Pending *pending = eldbus_connection_send(conn, message, _message_vget_response_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Can't get arguments");
 
-   eldbus_message_unref(message);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1159,7 +1142,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_eina_p)
+EFL_START_TEST(utc_eldbus_message_eina_p)
 {
    is_success = EINA_FALSE;
    is_register_service = EINA_FALSE;
@@ -1194,7 +1177,7 @@ START_TEST(utc_eldbus_message_eina_p)
    pending = eldbus_proxy_call(proxy, "SwapValue", _response_swap_iter_vget, NULL, -1 , "i", value_from_client);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1203,14 +1186,11 @@ START_TEST(utc_eldbus_message_eina_p)
    ck_assert_msg(is_register_service, "Can't registered service");
    ck_assert_msg(is_iter_vget, "Can't get argument");
 
-   eldbus_message_unref(msg);
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1271,7 +1251,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_container_p)
+EFL_START_TEST(utc_eldbus_message_container_p)
 {
    int i;
 
@@ -1315,7 +1295,7 @@ START_TEST(utc_eldbus_message_container_p)
    Eldbus_Pending *pending = eldbus_proxy_send(proxy, msg, _container_receive_cb, NULL, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1324,14 +1304,11 @@ START_TEST(utc_eldbus_message_container_p)
    ck_assert_msg(is_register_service, "Can't registered service");
    ck_assert_msg(is_receive, "Can't get container data");
 
-   eldbus_message_unref(msg);
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1376,7 +1353,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_error_new_p)
+EFL_START_TEST(utc_eldbus_message_error_new_p)
 {
    is_success = EINA_FALSE;
 
@@ -1401,20 +1378,18 @@ START_TEST(utc_eldbus_message_error_new_p)
 
    eldbus_proxy_call(proxy, "SendBool", _on_send_bool, NULL, -1, "b", NULL);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 
    ck_assert_msg(is_success, "Can't get response");
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1451,7 +1426,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_iter_del_p)
+EFL_START_TEST(utc_eldbus_message_iter_del_p)
 {
    Eldbus_Connection *conn_server = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn_server);
@@ -1480,12 +1455,11 @@ START_TEST(utc_eldbus_message_iter_del_p)
         eldbus_message_iter_del(iter);
      }
 
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1530,7 +1504,7 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
+EFL_START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
 {
    is_success = EINA_FALSE;
 
@@ -1556,13 +1530,11 @@ START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
    Eldbus_Pending *pending = eldbus_proxy_call(proxy, "SendArrayInt", _on_send_array_int, NULL, -1 , "");
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
-   eldbus_proxy_unref(proxy);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
@@ -1570,7 +1542,7 @@ START_TEST(utc_eldbus_message_iter_fixed_array_get_p)
    ck_assert_msg(is_success, "Can't get response");
 
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_message
@@ -1599,16 +1571,16 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_hello_p)
+EFL_START_TEST(utc_eldbus_hello_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    eldbus_hello(conn, _hello_cb, &cb_data);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -1617,11 +1589,10 @@ START_TEST(utc_eldbus_hello_p)
 
    ck_assert_msg(is_success, "Can't get response");
 }
-END_TEST
+EFL_END_TEST
 
 void eldbus_test_eldbus_message(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_message_iterator_activatable_list_p);
    tcase_add_test(tc, utc_eldbus_message_info_data_get_p);
    tcase_add_test(tc, utc_eldbus_message_signal_new_p);

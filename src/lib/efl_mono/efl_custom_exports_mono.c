@@ -27,6 +27,11 @@ EAPI void *efl_mono_native_alloc(unsigned int size)
    return malloc(size);
 }
 
+EAPI void efl_mono_native_memset(void *ptr, unsigned int fill, unsigned int count)
+{
+   memset(ptr, fill, count);
+}
+
 EAPI void efl_mono_native_free(void *ptr)
 {
    free(ptr);
@@ -313,6 +318,9 @@ EAPI const Eina_Value_Type *type_array() {
 EAPI const Eina_Value_Type *type_list() {
    return EINA_VALUE_TYPE_LIST;
 }
+EAPI const Eina_Value_Type *type_error() {
+   return EINA_VALUE_TYPE_ERROR;
+}
 
 EAPI const Eina_Value_Type *type_optional() {
    return EINA_VALUE_TYPE_OPTIONAL;
@@ -354,6 +362,11 @@ EAPI void eina_value_flush_wrapper(Eina_Value *value)
 
 EAPI const Eina_Value_Type *eina_value_type_get_wrapper(const Eina_Value *value)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);
+
+   // Can't pass null value type (for Empty values) to value_type_get.
+   if (value->type == NULL)
+     return NULL;
    return eina_value_type_get(value);
 }
 

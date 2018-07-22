@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -492,7 +492,7 @@ _elm_prefs_efl_object_constructor(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_prefs_smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_REDUNDANT_OBJECT);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_REDUNDANT_OBJECT);
 
    return obj;
 }
@@ -1155,7 +1155,7 @@ _elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, cons
 }
 
 EOLIAN static void
-_elm_prefs_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
+_elm_prefs_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
 {
    if (file) *file = sd->file;
    if (page) *page = sd->page;
@@ -1200,7 +1200,7 @@ end:
 }
 
 EOLIAN static Elm_Prefs_Data*
-_elm_prefs_data_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
+_elm_prefs_data_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
    if (!sd->root) return NULL;
    else return sd->prefs_data;
@@ -1235,7 +1235,7 @@ _elm_prefs_autosave_set(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED, Eina_Bool auto
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_autosave_get(Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
+_elm_prefs_autosave_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd)
 {
    return sd->autosave;
 }

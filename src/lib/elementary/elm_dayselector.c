@@ -2,8 +2,9 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -123,7 +124,7 @@ _item_location_get(Elm_Dayselector_Data *sd,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
+_elm_dayselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -140,8 +141,13 @@ _elm_dayselector_elm_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
           (buf, sizeof(buf), "dayselector/%s", elm_object_style_get(obj));
         elm_object_style_set(VIEW(it), buf);
 
+        /* XXX kept for legacy compatibility, remove eventually */
         snprintf
           (buf, sizeof(buf), "day%d,visible", _item_location_get(sd, it));
+        elm_layout_signal_emit(obj, buf, "elm");
+        /* XXX */
+        snprintf
+          (buf, sizeof(buf), "elm,day%d,visible", _item_location_get(sd, it));
         elm_layout_signal_emit(obj, buf, "elm");
      }
 
@@ -169,12 +175,16 @@ _item_del_cb(void *data,
           {
              sd->items = eina_list_remove(sd->items, it);
              eina_stringshare_del(it->day_style);
+             /* XXX kept for legacy compatibility, remove eventually */
              snprintf(buf, sizeof(buf), "day%d,default",
                       _item_location_get(sd, it));
              elm_layout_signal_emit(obj, buf, "elm");
+             /* XXX */
+             snprintf(buf, sizeof(buf), "elm,day%d,default",
+                      _item_location_get(sd, it));
+             elm_layout_signal_emit(obj, buf, "elm");
 
-             VIEW(it) = NULL;
-             efl_del(EO_OBJ(it));
+             // The object is already being deleted, there is no point in calling efl_del on it nore setting it to NULL.
 
              elm_layout_sizing_eval(obj);
              break;
@@ -234,15 +244,23 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
    it = _item_find(obj, day);
    if (it)
      {
-        snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
+        snprintf(buf, sizeof(buf), "elm.swallow.day%d", _item_location_get(sd, it));
 
         int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), buf), content);
+        if (!int_ret)
+          {
+             /* XXX kept for legacy compatibility, remove eventually */
+             snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
+
+             int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), buf), content);
+             /* XXX */
+          }
         if (!int_ret) return EINA_FALSE;
 
         if (!content) return EINA_TRUE; /* item deletion already handled */
 
         evas_object_del(VIEW(it));
-        VIEW(it) = content;
+        VIEW_SET(it, content);
      }
    else
      {
@@ -250,9 +268,17 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
         it = efl_data_scope_get(eo_it, ELM_DAYSELECTOR_ITEM_CLASS);
         it->day = day;
 
-        snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
+        snprintf(buf, sizeof(buf), "elm.swallow.day%d", _item_location_get(sd, it));
 
         int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), buf), content);
+        if (!int_ret)
+          {
+             /* XXX kept for legacy compatibility, remove eventually */
+             snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
+
+             int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), buf), content);
+             /* XXX */
+          }
         if (!int_ret)
           {
              efl_del(eo_it);
@@ -260,9 +286,12 @@ _elm_dayselector_content_set(Eo *obj, Elm_Dayselector_Data *sd, const char *item
           }
 
         sd->items = eina_list_append(sd->items, it);
-        VIEW(it) = content;
+        VIEW_SET(it, content);
      }
 
+   snprintf(buf, sizeof(buf), "elm,day%d,visible", _item_location_get(sd, it));
+   elm_layout_signal_emit(obj, buf, "elm");
+   /* XXX kept for legacy compatibility, remove eventually */
    snprintf(buf, sizeof(buf), "day%d,visible", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");
 
@@ -325,10 +354,12 @@ _elm_dayselector_content_unset(Eo *obj, Elm_Dayselector_Data *sd, const char *it
    elm_object_signal_callback_del
      (content, ITEM_TYPE_WEEKEND_STYLE1, "*", _item_signal_emit_cb);
 
+   snprintf(buf, sizeof(buf), "elm,day%d,default", _item_location_get(sd, it));
+   elm_layout_signal_emit(obj, buf, "elm");
+   /* XXX kept for legacy compatibility, remove eventually */
    snprintf(buf, sizeof(buf), "day%d,default", _item_location_get(sd, it));
    elm_layout_signal_emit(obj, buf, "elm");
 
-   VIEW(it) = NULL;
    efl_del(EO_OBJ(it));
 
    elm_layout_sizing_eval(obj);
@@ -394,8 +425,12 @@ _items_create(Evas_Object *obj)
         strftime(buf, sizeof(buf), "%a", &time_daysel);
         elm_object_text_set(chk, buf);
 
-        snprintf(buf, sizeof(buf), "day%u", idx);
-        elm_layout_content_set(obj, buf, chk);
+        snprintf(buf, sizeof(buf), "elm.swallow.day%u", idx);
+        if (!elm_layout_content_set(obj, buf, chk))
+          {
+             snprintf(buf, sizeof(buf), "day%u", idx);
+             elm_layout_content_set(obj, buf, chk);
+          }
 
         // XXX: ACCESS
         _elm_access_text_set(_elm_access_info_get(chk),
@@ -436,7 +471,7 @@ _elm_dayselector_efl_canvas_group_group_del(Eo *obj, Elm_Dayselector_Data *sd)
      {
         sd->items = eina_list_remove(sd->items, it);
         eina_stringshare_del(it->day_style);
-        efl_del(EO_OBJ(it));
+        // No need to efl_del the object as they have been created by efl_add and are dead by now.
      }
 
    /* handles freeing sd */
@@ -456,7 +491,7 @@ _elm_dayselector_efl_object_constructor(Eo *obj, Elm_Dayselector_Data *_pd EINA_
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_PANEL);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
 
    return obj;
 }
@@ -497,16 +532,19 @@ _elm_dayselector_week_start_set(Eo *obj, Elm_Dayselector_Data *sd, Elm_Dayselect
    sd->week_start = day;
    EINA_LIST_FOREACH(sd->items, l, it)
      {
-        snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
-        edje_object_part_swallow
-          (wd->resize_obj, buf, VIEW(it));
+        snprintf(buf, sizeof(buf), "elm.swallow.day%d", _item_location_get(sd, it));
+        if (!edje_object_part_swallow(wd->resize_obj, buf, VIEW(it)))
+          {
+             snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
+             edje_object_part_swallow(wd->resize_obj, buf, VIEW(it));
+          }
      }
 
    _update_items(obj);
 }
 
 EOLIAN static Elm_Dayselector_Day
-_elm_dayselector_week_start_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_week_start_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->week_start;
 }
@@ -521,7 +559,7 @@ _elm_dayselector_weekend_start_set(Eo *obj, Elm_Dayselector_Data *sd, Elm_Daysel
 }
 
 EOLIAN static Elm_Dayselector_Day
-_elm_dayselector_weekend_start_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_weekend_start_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->weekend_start;
 }
@@ -536,7 +574,7 @@ _elm_dayselector_weekend_length_set(Eo *obj, Elm_Dayselector_Data *sd, unsigned 
 }
 
 EOLIAN static unsigned int
-_elm_dayselector_weekend_length_get(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_weekend_length_get(const Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    return sd->weekend_len;
 }

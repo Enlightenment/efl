@@ -6,62 +6,11 @@
 #include "eolian_database.h"
 #include "eolian_priv.h"
 
-EAPI Eina_Stringshare *
-eolian_class_file_get(const Eolian_Class *cl)
-{
-   return cl ? cl->base.file : NULL;
-}
-
-EAPI Eina_Stringshare *
-eolian_class_full_name_get(const Eolian_Class *cl)
-{
-   return cl ? cl->full_name : NULL;
-}
-
-EAPI Eina_Stringshare *
-eolian_class_name_get(const Eolian_Class *cl)
-{
-   return cl ? cl->name : NULL;
-}
-
-EAPI Eina_Iterator *
-eolian_class_namespaces_get(const Eolian_Class *cl)
-{
-   return ((cl && cl->namespaces) ? eina_list_iterator_new(cl->namespaces)
-                                  : NULL);
-}
-
-EAPI const Eolian_Class *
-eolian_class_get_by_name(const Eolian_Unit *unit, const char *class_name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(class_name);
-   Eolian_Class *cl = eina_hash_find(unit->state->unit.classes, shr);
-   eina_stringshare_del(shr);
-   return cl;
-}
-
-EAPI const Eolian_Class *
-eolian_class_get_by_file(const Eolian_Unit *unit, const char *file_name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(file_name);
-   Eolian_Class *cl = eina_hash_find(unit->state->classes_f, shr);
-   eina_stringshare_del(shr);
-   return cl;
-}
-
 EAPI Eolian_Class_Type
 eolian_class_type_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EOLIAN_CLASS_UNKNOWN_TYPE);
    return cl->type;
-}
-
-EAPI Eina_Iterator *
-eolian_all_classes_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->state->unit.classes) : NULL);
 }
 
 EAPI const Eolian_Documentation *
@@ -121,7 +70,7 @@ eolian_class_constructors_get(const Eolian_Class *cl)
 }
 
 EAPI const Eolian_Function *
-eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
+eolian_class_function_by_name_get(const Eolian_Class *cl, const char *func_name, Eolian_Function_Type f_type)
 {
    Eina_List *itr;
    Eolian_Function *fid;
@@ -130,7 +79,7 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
    if (f_type == EOLIAN_UNRESOLVED || f_type == EOLIAN_METHOD)
       EINA_LIST_FOREACH(cl->methods, itr, fid)
         {
-           if (!strcmp(fid->name, func_name))
+           if (!strcmp(fid->base.name, func_name))
               return fid;
         }
 
@@ -141,12 +90,13 @@ eolian_class_function_get_by_name(const Eolian_Class *cl, const char *func_name,
           {
              if (!database_function_is_type(fid, f_type))
                continue;
-             if (!strcmp(fid->name, func_name))
+             if (!strcmp(fid->base.name, func_name))
                 return fid;
           }
      }
 
-   _eolian_log("function '%s' not found in class '%s'", func_name, cl->name);
+   eolian_state_log(cl->base.unit->state, "function '%s' not found in class '%s'",
+                    func_name, eolian_object_short_name_get(&cl->base));
    return NULL;
 }
 
@@ -199,7 +149,7 @@ eolian_class_c_get_function_name_get(const Eolian_Class *cl)
    Eina_Stringshare *ret;
    Eina_Strbuf *buf = eina_strbuf_new();
    char *bufp;
-   eina_strbuf_append(buf, cl->full_name);
+   eina_strbuf_append(buf, cl->base.name);
    switch (cl->type)
      {
       case EOLIAN_CLASS_INTERFACE:
@@ -228,7 +178,7 @@ eolian_class_c_name_get(const Eolian_Class *cl)
    Eina_Stringshare *ret;
    Eina_Strbuf *buf = eina_strbuf_new();
    char *bufp;
-   eina_strbuf_append(buf, cl->full_name);
+   eina_strbuf_append(buf, cl->base.name);
    switch (cl->type)
      {
       case EOLIAN_CLASS_INTERFACE:
@@ -256,7 +206,7 @@ eolian_class_c_data_type_get(const Eolian_Class *cl)
    char buf[512];
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    if (!cl->data_type)
-     snprintf(buf, sizeof(buf), "%s_Data", cl->full_name);
+     snprintf(buf, sizeof(buf), "%s_Data", cl->base.name);
    else if (!strcmp(cl->data_type, "null"))
      return eina_stringshare_add("void");
    else

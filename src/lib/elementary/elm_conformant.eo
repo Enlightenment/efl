@@ -1,4 +1,4 @@
-class Elm.Conformant (Efl.Ui.Layout)
+class Elm.Conformant (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
 {
    [[Elementary conformant class]]
    legacy_prefix: elm_conformant;
@@ -7,13 +7,13 @@ class Elm.Conformant (Efl.Ui.Layout)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_parent { set; }
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.widget_parent { set; }
+      Efl.Ui.Widget.theme_apply;
    }
    events {
-      virtualkeypad,state,on; [[Called when virtualkeypad was enabled]]
-      virtualkeypad,state,off; [[Called when virtualkeypad was disabled]]
-      clipboard,state,on; [[Called when clipboard was enabled]]
-      clipboard,state,off; [[Called when clipboard was disabled]]
+      virtualkeypad,state,on: void; [[Called when virtualkeypad was enabled]]
+      virtualkeypad,state,off: void; [[Called when virtualkeypad was disabled]]
+      clipboard,state,on: void; [[Called when clipboard was enabled]]
+      clipboard,state,off: void; [[Called when clipboard was disabled]]
    }
 }

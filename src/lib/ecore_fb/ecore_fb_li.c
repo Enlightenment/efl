@@ -634,7 +634,7 @@ EAPI void
 ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h)
 {
    if (!dev) return;
-   if ((w < 0) || (h < 0)) return;
+   if ((w <= 0) || (h <= 0)) return;
    /* FIXME
     * this code is for a touchscreen device,
     * make it configurable (ABSOLUTE | RELATIVE)

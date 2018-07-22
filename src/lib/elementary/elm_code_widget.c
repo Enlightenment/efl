@@ -58,14 +58,17 @@ static Eina_Unicode status_icons[] = {
 
 static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
 
-#ifndef ELM_CODE_TEST
+#include "elm_code_widget_legacy.eo.h"
+
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
+   return elm_legacy_add(ELM_CODE_WIDGET_LEGACY_CLASS, parent,
+                         elm_obj_code_widget_code_set(efl_added, code));
 }
-#endif // ELM_CODE_TEST
+
+#include "elm_code_widget_legacy.eo.c"
 
 EOLIAN static Eo *
 _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
@@ -1233,11 +1236,19 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
 static void
 _elm_code_widget_scroller_clicked_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
-                                     void *event_info EINA_UNUSED)
+                                     void *event_info)
 {
    Elm_Code_Widget *widget;
+   Elm_Code_Widget_Data *pd;
+   Evas_Event_Mouse_Down *event;
 
    widget = (Elm_Code_Widget *)data;
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+   event = (Evas_Event_Mouse_Down *)event_info;
+
+   if (_elm_code_widget_position_at_coordinates_get(widget, pd,
+         event->canvas.x, event->canvas.y, NULL, NULL))
+     return;
 
    elm_code_widget_selection_clear(widget);
 }
@@ -1864,7 +1875,7 @@ _elm_code_widget_scroll_event_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_elm_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_elm_code_widget_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -2126,7 +2137,7 @@ _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static void
-_elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+_elm_code_widget_font_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
                           const char **name, Evas_Font_Size *size)
 {
    if (name)
@@ -2136,7 +2147,7 @@ _elm_code_widget_font_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_columns_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_columns_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->col_count;
 }
@@ -2153,7 +2164,7 @@ _elm_code_widget_code_set(Eo *obj, Elm_Code_Widget_Data *pd, Elm_Code *code)
 }
 
 EOLIAN static Elm_Code *
-_elm_code_widget_code_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_code_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->code;
 }
@@ -2166,7 +2177,7 @@ _elm_code_widget_gravity_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, doub
 }
 
 EOLIAN static void
-_elm_code_widget_gravity_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double *x, double *y)
+_elm_code_widget_gravity_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, double *x, double *y)
 {
    *x = pd->gravity_x;
    *y = pd->gravity_y;
@@ -2179,7 +2190,7 @@ _elm_code_widget_policy_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_S
 }
 
 EOLIAN static void
-_elm_code_widget_policy_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+_elm_code_widget_policy_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
 {
    elm_scroller_policy_get(pd->scroller, policy_h, policy_v);
 }
@@ -2192,7 +2203,7 @@ _elm_code_widget_tabstop_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsi
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_tabstop_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_tabstop_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->tabstop;
 }
@@ -2205,7 +2216,7 @@ _elm_code_widget_editable_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Bool edita
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_editable_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_editable_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->editable;
 }
@@ -2217,7 +2228,7 @@ _elm_code_widget_line_numbers_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_line_numbers_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_line_numbers_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_line_numbers;
 }
@@ -2230,7 +2241,7 @@ _elm_code_widget_line_width_marker_set(Eo *obj, Elm_Code_Widget_Data *pd, unsign
 }
 
 EOLIAN static unsigned int
-_elm_code_widget_line_width_marker_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_line_width_marker_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->line_width_marker;
 }
@@ -2243,7 +2254,7 @@ _elm_code_widget_show_whitespace_set(Eo *obj, Elm_Code_Widget_Data *pd, Eina_Boo
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_show_whitespace_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_show_whitespace_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->show_whitespace;
 }
@@ -2266,9 +2277,9 @@ _elm_code_widget_syntax_enabled_set(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_syntax_enabled_get(Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
+_elm_code_widget_syntax_enabled_get(const Eo *obj, Elm_Code_Widget_Data *pd EINA_UNUSED)
 {
-   Elm_Code_Widget *widget = obj;
+   const Elm_Code_Widget *widget = obj;
    Elm_Code *code;
 
    code = elm_code_widget_code_get(widget);
@@ -2280,10 +2291,12 @@ _elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
                                         Eina_Bool spaces)
 {
    pd->tab_inserts_spaces = spaces;
+   if (!spaces)
+     elm_code_widget_code_get(obj)->config.indent_style_efl = EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
-_elm_code_widget_tab_inserts_spaces_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_tab_inserts_spaces_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->tab_inserts_spaces;
 }
@@ -2295,19 +2308,19 @@ _elm_code_widget_cursor_position_set(Eo *obj, Elm_Code_Widget_Data *pd, unsigned
 }
 
 EOLIAN static void
-_elm_code_widget_cursor_position_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int *row, unsigned int *col)
+_elm_code_widget_cursor_position_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd, unsigned int *row, unsigned int *col)
 {
    *row = pd->cursor_line;
    *col = pd->cursor_col;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
-_elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+EOLIAN static void
+_elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    Eo *edje;
    int r, g, b, a;
-   double fade;
    unsigned int i;
+   double fade;
    Evas_Object *grid;
 
    edje = elm_layout_edje_get(obj);
@@ -2315,17 +2328,28 @@ _elm_code_widget_elm_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
    fade = (double) pd->alpha / 255;
+   evas_object_color_set(pd->background, r * fade, g * fade, b * fade, a * fade);
+
    for (i = 0; i < eina_list_count(pd->grids); i++)
      {
         grid = eina_list_nth(pd->grids, i);
         _elm_code_widget_setup_palette(grid, obj, fade);
      }
+}
+
+EOLIAN static Efl_Ui_Theme_Apply
+_elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
+{
+   if (!efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)))
+     return EFL_UI_THEME_APPLY_FAILED;
+
+   _elm_code_widget_theme_refresh(obj, pd);
 
    return EFL_UI_THEME_APPLY_SUCCESS;
 }
 
 EOLIAN static int
-_elm_code_widget_alpha_get(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
+_elm_code_widget_alpha_get(const Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd)
 {
    return pd->alpha;
 }
@@ -2335,22 +2359,21 @@ _elm_code_widget_alpha_set(Eo *obj, Elm_Code_Widget_Data *pd, int alpha)
 {
    pd->alpha = alpha;
 
-   _elm_code_widget_elm_widget_theme_apply(obj, pd);
+   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 }
 
 EOLIAN static void
 _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   Evas_Object *gridrows, *scroller;
+   Evas_Object *gridrows, *scroller, *background;
    const char *fontname, *fontsize;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
-   _elm_code_widget_elm_widget_theme_apply(obj, pd);
 
-   efl_canvas_group_add(efl_super(obj, ELM_CODE_WIDGET_CLASS));
    elm_object_focus_allow_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
@@ -2370,6 +2393,13 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
                                   _elm_code_widget_scroller_clicked_cb, obj);
 
+   background = elm_bg_add(scroller);
+   evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(background);
+   elm_object_part_content_set(scroller, "elm.swallow.background", background);
+   pd->background = background;
+
    fontname = edje_object_data_get(elm_layout_edje_get(obj), "font.name");
    fontsize = edje_object_data_get(elm_layout_edje_get(obj), "font.size");
    if (fontname && fontsize)
@@ -2380,6 +2410,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_size_hint_align_set(gridrows, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(scroller, gridrows);
    pd->gridbox = gridrows;
+
+   _elm_code_widget_efl_ui_widget_theme_apply(obj, pd);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _elm_code_widget_resize_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _elm_code_widget_key_down_cb, obj);
@@ -2403,6 +2435,4 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
 #include "elm_code_widget_text.c"
 #include "elm_code_widget_undo.c"
-#ifndef ELM_CODE_TEST
 #include "elm_code_widget.eo.c"
-#endif // ELM_CODE_TEST

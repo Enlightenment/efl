@@ -1,0 +1,27 @@
+//Efl.Ui.Navigation_Layout Themes
+group { "efl/navigation_layout";
+   parts {
+      spacer { "base";
+         desc { "default";
+         }
+      }
+      swallow { "efl.bar";
+         desc { "default";
+            fixed: 0 1;
+            min: 0 40;
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+         }
+      }
+      swallow { "efl.content";
+         desc { "default";
+            rel1 {
+               to_x: "base";
+               to_y: "efl.bar";
+               relative: 0.0 1.0;
+            }
+            rel2.to_x: "base";
+         }
+      }
+   }
+}

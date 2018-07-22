@@ -47,8 +47,6 @@ struct _Elm_Hover_Data
                               sizeof(_content_aliases[0]) - 1];
 
    Eina_Bool             on_del : 1;
-   Efl_Ui_Focus_Manager *manager;
-   Efl_Ui_Focus_Manager *redirected;
 };
 
 /**
@@ -62,7 +60,7 @@ struct _Elm_Hover_Data
   ELM_HOVER_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -71,7 +69,7 @@ struct _Elm_Hover_Data
   ELM_HOVER_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }

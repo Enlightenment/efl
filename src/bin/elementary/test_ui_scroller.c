@@ -28,11 +28,11 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *sc, *sc2, *sc3, *bx, *bx2, *gd, *gd2;
    int i, j;
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
                  efl_text_set(efl_added, "Efl Ui Scroller"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   efl_gfx_size_set(win, EINA_SIZE2D(320, 400));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
@@ -46,6 +46,9 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0),
                 efl_content_set(sc, efl_added));
 
+   efl_add(EFL_UI_SLIDER_CLASS, bx,
+           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
+           efl_pack(bx, efl_added));
 
    for (i = 0; i < 3; i++)
       {

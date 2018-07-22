@@ -272,7 +272,6 @@ _ecore_evas_show(Ecore_Evas *ee)
    if (ee->visible) return;
    ee->visible = 1;
    ee->should_be_visible = 1;
-   ee->draw_ok = EINA_TRUE;
    if (ee->func.fn_show) ee->func.fn_show(ee);
 }
 
@@ -293,7 +292,6 @@ _ecore_evas_hide(Ecore_Evas *ee)
    if (!ee->visible) return;
    ee->visible = 0;
    ee->should_be_visible = 0;
-   ee->draw_ok = EINA_FALSE;
 
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
@@ -561,15 +559,11 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    ee->prop.withdrawn = EINA_TRUE;
    ee->can_async_render = EINA_FALSE;
 
-   ee->evas = evas_new();
+   ecore_evas_evas_new(ee, w, h);
    INF("ecore_evas: %p, evas: %p", ee, ee->evas);
 
    if (!ee->evas)
      goto free_name;
-
-   evas_data_attach_set(ee->evas, ee);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    ee->prop.window = (Ecore_Window)ecore_cocoa_window_new(x, y, w, h);
 
@@ -600,15 +594,7 @@ ecore_evas_cocoa_new_internal(Ecore_Cocoa_Window *parent EINA_UNUSED, int x, int
    iface->window_get = _ecore_evas_cocoa_window_get;
    ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
-   _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
-
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   ecore_evas_done(ee, EINA_TRUE);
 
    return ee;
 

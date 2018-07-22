@@ -68,6 +68,7 @@
 #include "eina_evlog.h"
 #include "eina_freeq.h"
 #include "eina_slstr.h"
+#include "eina_vpath.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -112,6 +113,7 @@ static int _mt_enabled = 0;
 EAPI int _eina_threads_debug = 0;
 EAPI pthread_mutex_t _eina_tracking_lock;
 EAPI Eina_Inlist *_eina_tracking = NULL;
+extern Eina_Lock       _sysmon_lock;
 #endif
 
 /* place module init/shutdown functions here to avoid other modules
@@ -155,6 +157,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(safepointer);
    S(slstr);
    S(promise);
+   S(vpath);
 #undef S
 
 struct eina_desc_setup
@@ -167,6 +170,9 @@ struct eina_desc_setup
 static const struct eina_desc_setup _eina_desc_setup[] = {
 #define S(x) {# x, eina_ ## x ## _init, eina_ ## x ## _shutdown}
    /* log is a special case as it needs printf */
+   S(module),
+   S(mempool),
+   S(list),
    S(debug),
    S(evlog),
    S(stringshare),
@@ -177,9 +183,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(accessor),
    S(inarray),
    S(array),
-   S(module),
-   S(mempool),
-   S(list),
    S(binshare),
    S(ustringshare),
    S(matrixsparse),
@@ -202,6 +205,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(safepointer),
    S(slstr),
    S(promise),
+   S(vpath),
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /
@@ -219,6 +223,39 @@ _eina_shutdown_from_desc(const struct eina_desc_setup *itr)
    eina_log_domain_unregister(_eina_log_dom);
    _eina_log_dom = -1;
    eina_log_shutdown();
+}
+
+static void
+_eina_threads_do_shutdown(void)
+{
+#ifdef EINA_HAVE_DEBUG_THREADS
+   const Eina_Lock *lk;
+
+   pthread_mutex_lock(&_eina_tracking_lock);
+   if (_eina_tracking)
+     {
+       if (((Eina_Lock*)_eina_tracking != (&_sysmon_lock)) || (_eina_tracking->next))
+         {
+            fprintf(stderr, "*************************\n");
+            fprintf(stderr, "* The IMPOSSIBLE HAPPEN *\n");
+            fprintf(stderr, "* LOCK STILL TAKEN :    *\n");
+            fprintf(stderr, "*************************\n");
+            EINA_INLIST_FOREACH(_eina_tracking, lk)
+              {
+                 fprintf(stderr, "=======\n");
+                 eina_lock_debug(lk);
+              }
+            fprintf(stderr, "*************************\n");
+            abort();
+         }
+     }
+   pthread_mutex_unlock(&_eina_tracking_lock);
+#endif
+
+   eina_share_common_threads_shutdown();
+   eina_log_threads_shutdown();
+
+   _eina_threads_activated = EINA_FALSE;
 }
 
 /**
@@ -328,6 +365,8 @@ eina_shutdown(void)
 
         _eina_shutdown_from_desc(_eina_desc_setup + _eina_desc_setup_len);
 
+        if (_eina_threads_activated && (!_eina_main_thread_count))
+          _eina_threads_do_shutdown();
 #ifdef EINA_HAVE_DEBUG_THREADS
 	pthread_mutex_destroy(&_eina_tracking_lock);
 #endif
@@ -378,8 +417,6 @@ eina_threads_shutdown(void)
    int ret;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-   const Eina_Lock *lk;
-
    assert(pthread_equal(_eina_main_loop, pthread_self()));
    assert(_eina_main_thread_count > 0);
 #endif
@@ -388,29 +425,8 @@ eina_threads_shutdown(void)
    if(_eina_main_thread_count > 0)
      return ret;
 
-#ifdef EINA_HAVE_DEBUG_THREADS
-   pthread_mutex_lock(&_eina_tracking_lock);
-   if (_eina_tracking)
-     {
-       fprintf(stderr, "*************************\n");
-       fprintf(stderr, "* The IMPOSSIBLE HAPPEN *\n");
-       fprintf(stderr, "* LOCK STILL TAKEN :    *\n");
-       fprintf(stderr, "*************************\n");
-       EINA_INLIST_FOREACH(_eina_tracking, lk)
-	 {
-            fprintf(stderr, "=======\n");
-            eina_lock_debug(lk);
-	 }
-       fprintf(stderr, "*************************\n");
-       abort();
-     }
-   pthread_mutex_unlock(&_eina_tracking_lock);
-#endif
-
-   eina_share_common_threads_shutdown();
-   eina_log_threads_shutdown();
-
-   _eina_threads_activated = EINA_FALSE;
+   if (!_eina_main_count)
+     _eina_threads_do_shutdown();
 
    return ret;
 #else

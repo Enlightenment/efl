@@ -1,4 +1,4 @@
-class Elm.Route (Elm.Widget)
+class Elm.Route (Efl.Ui.Widget, Efl.Ui.Legacy)
 {
    [[Elementary route class]]
    legacy_prefix: elm_route;
@@ -42,6 +42,6 @@ class Elm.Route (Elm.Widget)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
    }
 }

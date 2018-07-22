@@ -1,6 +1,6 @@
 import efl_net_ip_address;
 
-class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
+class Efl.Net.Socket_Udp (Efl.Net.Socket_Fd) {
     [[A base UDP socket.
 
       This is the common class and takes an existing FD, usually
@@ -8,7 +8,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
 
       Since for the server 'clients' there is no accepted connection
       it will reuse the same file decriptor. To avoid it being
-      closed, another class Efl.Net.Server.Udp.Client is used instead.
+      closed, another class Efl.Net.Server_Udp_Client is used instead.
 
       @since 1.19
     ]]
@@ -176,7 +176,7 @@ class Efl.Net.Socket.Udp (Efl.Net.Socket.Fd) {
     implements {
         Efl.Object.constructor;
         Efl.Object.destructor;
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;
     }

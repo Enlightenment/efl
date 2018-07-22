@@ -12,7 +12,7 @@ struct _Efl_Loop_Consumer_Data
 };
 
 static Efl_Loop *
-_efl_loop_consumer_loop_get(Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED)
+_efl_loop_consumer_loop_get(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED)
 {
    Efl_Loop *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    if (!loop && eina_main_loop_is())

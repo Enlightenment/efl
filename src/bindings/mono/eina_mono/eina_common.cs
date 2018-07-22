@@ -23,6 +23,8 @@ internal static class NativeCustomExportFunctions
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc(uint count);
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+        efl_mono_native_memset(IntPtr ptr, uint fill, uint count);
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_alloc_copy(IntPtr val, uint size);
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
         efl_mono_native_strdup(string str);
@@ -54,6 +56,11 @@ public static class MemoryNative {
     public static IntPtr Alloc(int count)
     {
         return NativeCustomExportFunctions.efl_mono_native_alloc(Convert.ToUInt32(count));
+    }
+
+    public static void Memset(IntPtr ptr, int fill, int count)
+    {
+        NativeCustomExportFunctions.efl_mono_native_memset(ptr, Convert.ToUInt32(fill), Convert.ToUInt32(count));
     }
 
     public static IntPtr AllocCopy(IntPtr ptr, int count)
@@ -110,11 +117,9 @@ public static class PrimitiveConversion
 
    public static IntPtr ManagedToPointerAlloc<T>(T man)
    {
-       GCHandle pinnedData = GCHandle.Alloc(man, GCHandleType.Pinned);
-       IntPtr ptr = pinnedData.AddrOfPinnedObject();
-       IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<T>());
-       pinnedData.Free();
-       return nat;
+       IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<T>());
+       Marshal.StructureToPtr(man, ptr, false);
+       return ptr;
    }
 }
 
@@ -147,18 +152,12 @@ public static class StringConversion
     }
 }
 
-public struct Unicode {
-    private uint val;
-
-    public static implicit operator Unicode(uint x)
-    {
-        return new Unicode{val=x};
-    }
-    public static implicit operator uint(Unicode x)
-    {
-        return x.val;
-    }
+/// <summary>Enum to handle resource ownership between managed and unmanaged code.</summary>
+public enum Ownership {
+    /// <summary> The resource is owned by the managed code. It should free the handle on disposal.</summary>
+    Managed,
+    /// <summary> The resource is owned by the unmanaged code. It won't be freed on disposal.</summary>
+    Unmanaged
 }
-
 
 }

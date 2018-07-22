@@ -15,7 +15,6 @@
 
 #define START_MASK_TEST(w, h) \
    Ecore_Evas *ee; Evas *e; \
-   ecore_evas_init(); \
    ee = ecore_evas_buffer_new(w, h); \
    ecore_evas_show(ee); \
    ecore_evas_manual_render_set(ee, EINA_TRUE); \
@@ -27,7 +26,6 @@
    Evas_Object *o; \
    EINA_LIST_FREE(tofree, o) { evas_object_del(o); } \
    ecore_evas_free(ee); \
-   ecore_evas_shutdown(); \
    } while (0)
 
 #define AUTODEL(o) do { tofree = eina_list_prepend(tofree, o); } while (0)
@@ -57,7 +55,7 @@ _bgra_compare(unsigned int *data, unsigned int *ref, int w, int h)
 }
 
 // The usual useless unit test
-START_TEST(evas_mask_test_setget)
+EFL_START_TEST(evas_mask_test_setget)
 {
    Evas *e = _setup_evas();
    Evas_Object *obj = NULL, *mask = NULL;
@@ -99,12 +97,11 @@ START_TEST(evas_mask_test_setget)
    evas_object_del(obj);
 
    evas_free(e);
-   ecore_evas_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 // This test is also very basic but will check the pixels
-START_TEST(evas_mask_test_compare_clip)
+EFL_START_TEST(evas_mask_test_compare_clip)
 {
    Evas_Object *obj, *mask, *rect, *bg, *clip, *text;
    unsigned int *data, *refdata[3];
@@ -250,10 +247,10 @@ START_TEST(evas_mask_test_compare_clip)
    free(data);
    END_MASK_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 // This will simply check that a mask is recursively applied to children
-START_TEST(evas_mask_test_mask_of_mask)
+EFL_START_TEST(evas_mask_test_mask_of_mask)
 {
    Evas_Object *bg, *tbl, *rect0, *mask0, *mask1, *obj;
    unsigned int *data, *refdata;
@@ -372,7 +369,7 @@ START_TEST(evas_mask_test_mask_of_mask)
    free(data);
    END_MASK_TEST();
 }
-END_TEST
+EFL_END_TEST
 
 // NOTE: Much more extensive tests are required. But they should
 // be based on "exactness" or a pixel similarity tool.

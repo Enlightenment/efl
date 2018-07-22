@@ -44,14 +44,14 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * single shared library binaries, but also come with extra modules that they
  * have to load, extra binary utilities they need to run, or have data files
  * that they need to load. A very primitive application ASSUMES a fixed install
- * location at compile-time, but this disallows the ability to re-locate
+ * location at compile-time, but this disallows the ability to relocate
  * the application (or library) somewhere else after compilation (if you run
  * out of space on a given disk, partition, etc. for example), or necessitate
  * the need for having to maintain environment variables for every piece of
  * software to let it know its location, or have to use large sets of
  * symlinks pointing from the compiled location to the new one.
  *
- * Being re-locatable at runtime allows much easier distribution and
+ * Being relocatable at runtime allows much easier distribution and
  * installation into places like the users own home directory, instead of
  * on a system partition, if the developer wishes for easier distribution
  * of pre-compiled binaries.
@@ -121,7 +121,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * locale dir. Also note that the magicsharefile is optional for testing and
  * ensuring that the prefix check is correct. This file must be installed
  * in the application data dir (e.g. /usr/local/share/appname) and be referred
- * to using a unix-style relative path from that dir, eg directory/filename.png)
+ * to using a unix-style relative path from that dir, e.g. directory/filename.png)
  *
  * @code
  * #include <Eina.h>
@@ -173,7 +173,7 @@ EAPI void eina_prefix_free(Eina_Prefix *pfx) EINA_ARG_NONNULL(1);
  * @brief Gets the prefix base directory.
  *
  * @param[in] pfx The prefix object
- * @return The base prefix (eg "/usr/local", "/usr", "/opt/appname" or
+ * @return The base prefix (e.g. "/usr/local", "/usr", "/opt/appname" or
  *         "/home/user/myapps/appname", etc.) that the software resides in at runtime
  *
  * @since 1.1.0
@@ -184,7 +184,7 @@ EAPI const char *eina_prefix_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_WARN
  * @brief Gets the binary installation directory.
  *
  * @param[in] pfx The prefix object
- * @return The location of installed binaries (eg "/usr/local/bin",
+ * @return The location of installed binaries (e.g. "/usr/local/bin",
  *         "/usr/bin", "/opt/appname/bin", "/home/user/myapps/appname/bin" etc.)
  *
  * @since 1.1.0
@@ -195,7 +195,7 @@ EAPI const char *eina_prefix_bin_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_
  * @brief Gets the library installation directory.
  *
  * @param[in] pfx The prefix object
- * @return The location of installed binaries (eg "/usr/local/lib",
+ * @return The location of installed binaries (e.g. "/usr/local/lib",
  *         "/usr/lib32", "/opt/appname/lib64", "/home/user/myapps/appname/lib" etc.)
  *
  * @since 1.1.0
@@ -206,7 +206,7 @@ EAPI const char *eina_prefix_lib_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA_
  * @brief Gets the data installation directory.
  *
  * @param[in] pfx The prefix object
- * @return The location of installed binaries (eg "/usr/local/share/appname",
+ * @return The location of installed binaries (e.g. "/usr/local/share/appname",
  *         "/usr/share/appname", "/opt/appname/share/appname", "/home/user/myapps/appname/share/appname" etc.)
  *
  * @since 1.1.0
@@ -217,7 +217,7 @@ EAPI const char *eina_prefix_data_get(Eina_Prefix *pfx) EINA_ARG_NONNULL(1) EINA
  * @brief Gets the locale installation directory.
  *
  * @param[in] pfx The prefix object
- * @return The location of installed binaries (eg "/usr/local/share/locale",
+ * @return The location of installed binaries (e.g. "/usr/local/share/locale",
  *         "/usr/share/locale", "/opt/appname/share/locale", "/home/user/myapps/appname/share/locale" etc.)
  *
  * @since 1.1.0

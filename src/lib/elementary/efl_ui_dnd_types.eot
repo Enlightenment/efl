@@ -1,0 +1,58 @@
+import efl_selection_types;
+
+function Efl.Dnd.Drag_Icon_Create {
+   [[Function pointer for creating icon at the drag side.]]
+   params {
+      @in win: Efl.Canvas.Object; [[The window to create the objects relative to]]
+      @in drag_obj: Efl.Canvas.Object; [[The drag object]]
+      @out off: Eina.Position2D;
+   }
+   return: Efl.Canvas.Object; [[The drag icon object]]
+};
+
+function Efl.Dnd.Drag_Data_Get {
+   [[Function pointer for getting data and format at the drag side.]]
+   params {
+      @in obj: Efl.Canvas.Object; [[The container object]]
+      @out format: Efl.Selection_Format; [[Data format]]
+      @out drag_data: Eina.Rw_Slice; [[Data]]
+      @out action: Efl.Selection_Action; [[The drag action]]
+   }
+};
+
+function Efl.Dnd.Item_Get {
+   [[Function pointer to find out which item is under position (x, y)]]
+   params {
+      @in obj: Efl.Canvas.Object; [[The container object]]
+      @in pos: Eina.Position2D; [[The coordinates to get item]]
+      @out posret: Eina.Position2D; [[position relative to item (left (-1), middle (0), right (1)]]
+   }
+   return: Efl.Object; [[Object under x,y coordinates or NULL if not found]]
+};
+
+function Efl.Dnd.Drag_Icon_List_Create {
+   [[Function pointer to create list of icons at the drag side.
+     These icons are used for animation on combining selection icons
+     to one icon.]]
+   params {
+      @in obj: Efl.Canvas.Object; [[The container object]]
+   }
+   return: list<Efl.Canvas.Object>;
+};
+
+struct Efl.Dnd.Drag_Accept {
+   accepted: bool;
+}
+
+struct Efl.Dnd.Drag_Pos {
+   pos: Eina.Position2D; [[Evas Coordinate]]
+   action: Efl.Selection_Action; [[The drag action]]
+   format: Efl.Selection_Format; [[The drag format]]
+   item: Efl.Canvas.Object; [[The item object. It is only available for container object.]]
+}
+
+struct Efl.Dnd.Drag_Item_Container_Drop {
+   item: Efl.Canvas.Object; [[The item object]]
+   data: Efl.Selection_Data; [[The selection data]]
+   pos: Eina.Position2D; [[Position relative to item (left (-1), middle (0), right (1)]]
+}

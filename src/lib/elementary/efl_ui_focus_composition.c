@@ -25,21 +25,15 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 {
    Efl_Ui_Focus_Manager *manager;
 
+   //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
+   if (elm_object_focus_custom_chain_get(obj)) return;
+
    if (pd->custom_manager)
      manager = pd->custom_manager;
    else
      manager = pd->registered;
 
-   if (!pd->registered && pd->registered_targets)
-     {
-        Efl_Ui_Focus_Object *o;
-        //remove all of them
-        EINA_LIST_FREE(pd->registered_targets, o)
-          {
-             efl_ui_focus_manager_calc_unregister(manager, o);
-          }
-     }
-   else if (pd->registered)
+   if (manager)
      {
         Eina_List *n;
         Eina_List *safed = NULL;
@@ -52,6 +46,12 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
                safed = eina_list_append(safed, o);
              else
                efl_ui_focus_manager_calc_unregister(manager, o);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, NULL);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, NULL);
+               }
           }
         pd->registered_targets = safed;
 
@@ -63,11 +63,24 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
                efl_ui_focus_manager_calc_register(manager, o, obj, NULL);
              else
                efl_ui_focus_manager_calc_register_logical(manager, o, obj, NULL);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, obj);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, manager);
+               }
+
              pd->registered_targets = eina_list_append(pd->registered_targets, o);
           }
 
         efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->targets_ordered));
      }
+}
+static void
+_del(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Focus_Composition_Data *pd = efl_data_scope_get(data, EFL_UI_FOCUS_COMPOSITION_MIXIN);
+   pd->register_target = eina_list_remove(pd->register_target, ev->object);
 }
 
 EOLIAN static void
@@ -78,7 +91,10 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    Eina_List *n;
 
    pd->targets_ordered = eina_list_free(pd->targets_ordered);
-   pd->register_target = eina_list_free(pd->register_target);
+   EINA_LIST_FREE(pd->register_target, elem)
+     {
+        efl_event_callback_del(elem, EFL_EVENT_DEL, _del, obj);
+     }
 
    pd->order = eina_list_free(pd->order);
    pd->order = logical_order;
@@ -86,7 +102,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    //get rid of all adapter objects
    EINA_LIST_FREE(pd->adapters, adapter)
      {
-        efl_del(adapter);
+        efl_unref(adapter);
      }
 
    //now build a composition_elements list
@@ -96,22 +112,16 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
 
         EINA_SAFETY_ON_NULL_GOTO(elem, cont);
 
-        if (!efl_isa(elem, ELM_WIDGET_CLASS))
+        if (!efl_isa(elem, EFL_UI_WIDGET_CLASS))
           {
              if (efl_isa(elem, EFL_UI_FOCUS_OBJECT_MIXIN))
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
-               }
-             else if (efl_isa(elem, EFL_GFX_INTERFACE))
-               {
-                  o = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, NULL, efl_ui_focus_composition_adapter_canvas_object_set(efl_added, elem));
-
-                  pd->adapters = eina_list_append(pd->adapters, o);
-                  pd->register_target = eina_list_append(pd->register_target , o);
+                  efl_event_callback_add(o, EFL_EVENT_DEL, _del, obj);
                }
              else
                {
-                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_INTERFACE or ELM_WIDGET_CLASS");
+                  EINA_SAFETY_ERROR("List contains element that is not EFL_UI_FOCUS_OBJECT_MIXIN or EFL_GFX_ENTITY_INTERFACE or EFL_UI_WIDGET_CLASS");
                   continue;
                }
           }
@@ -124,13 +134,13 @@ cont:
 }
 
 EOLIAN static Eina_List*
-_efl_ui_focus_composition_composition_elements_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_composition_elements_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return eina_list_clone(pd->order);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_composition_elm_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Elm_Widget *redirect)
+_efl_ui_focus_composition_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect)
 {
    Eina_Bool registered;
 
@@ -164,21 +174,15 @@ _efl_ui_focus_composition_dirty(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Da
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_elements_flush(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
 {
-   if (!pd->dirty) return;
+   if (pd->dirty)
+     {
+        efl_ui_focus_composition_prepare(obj);
+        pd->dirty = EINA_FALSE;
+     }
 
-   efl_ui_focus_composition_prepare(obj);
-
-   pd->dirty = EINA_FALSE;
-}
-
-EOLIAN static void
-_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
-{
-   efl_ui_focus_composition_elements_flush(obj);
-
-   efl_ui_focus_object_prepare_logical(efl_super(obj, MY_CLASS));
+   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -188,7 +192,7 @@ _efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_C
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_composition_custom_manager_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_custom_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return pd->custom_manager;
 }
@@ -200,7 +204,7 @@ _efl_ui_focus_composition_logical_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Com
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_focus_composition_logical_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
+_efl_ui_focus_composition_logical_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
 {
    return pd->logical;
 }
@@ -209,24 +213,54 @@ _efl_ui_focus_composition_logical_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Com
 
 typedef struct {
    Evas_Object *object;
+   Efl_Ui_Focus_Manager *manager;
+   Efl_Ui_Focus_Object *parent;
 }  Efl_Ui_Focus_Composition_Adapter_Data;
 
-EOLIAN static void
-_efl_ui_focus_composition_adapter_canvas_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Canvas_Object *v)
+static void
+_canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 {
+  efl_ui_focus_composition_adapter_canvas_object_set(data, NULL);
+}
+
+static void
+_new_geom(void *data, const Efl_Event *event)
+{
+   efl_event_callback_call(data, event->desc, event->info);
+}
+
+
+EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
+    {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_MOVE, _new_geom},
+    {EFL_EVENT_DEL, _canvas_object_deleted},
+);
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_canvas_object_set(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Canvas_Object *v)
+{
+   if (pd->object)
+     {
+        efl_event_callback_array_del(pd->object, canvas_obj(), obj);
+     }
    pd->object = v;
+   if (v)
+     {
+        efl_event_callback_array_add(pd->object, canvas_obj(), obj);
+     }
+
 }
 
 EOLIAN static Efl_Canvas_Object*
-_efl_ui_focus_composition_adapter_canvas_object_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+_efl_ui_focus_composition_adapter_canvas_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
 {
    return pd->object;
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_geometry_get(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
 {
-   return efl_gfx_geometry_get(pd->object);
+   return efl_gfx_entity_geometry_get(pd->object);
 }
 
 EOLIAN static void
@@ -236,5 +270,38 @@ _efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_set(Eo *obj EINA_UNU
 
    evas_object_focus_set(pd->object, efl_ui_focus_object_focus_get(obj));
 }
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Composition_Adapter_Data *pd EINA_UNUSED)
+{
+   efl_ui_focus_composition_adapter_canvas_object_set(obj, NULL);
+
+   efl_destructor(efl_super(obj, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_focus_manager_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Manager *v)
+{
+   pd->manager = v;
+}
+
+EOLIAN static void
+_efl_ui_focus_composition_adapter_focus_manager_parent_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd, Efl_Ui_Focus_Object *parent)
+{
+   pd->parent = parent;
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+{
+   return pd->parent;
+}
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_efl_ui_focus_composition_adapter_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Adapter_Data *pd)
+{
+   return pd->manager;
+}
+
 
 #include "efl_ui_focus_composition_adapter.eo.c"

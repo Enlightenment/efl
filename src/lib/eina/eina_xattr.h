@@ -21,6 +21,8 @@
 
 #include "eina_types.h"
 
+#include <sys/types.h>
+
 /**
  * @addtogroup Eina_Tools_Group Tools
  *
@@ -34,7 +36,7 @@
  * @since 1.1
  */
 typedef enum {
-  EINA_XATTR_INSERT, /**< This is the default behaviour, it will either create or replace the extended attribute */
+  EINA_XATTR_INSERT, /**< This is the default behavior, it will either create or replace the extended attribute */
   EINA_XATTR_REPLACE, /**< This will only succeed if the extended attribute previously existed */
   EINA_XATTR_CREATED /**< This will only succeed if the extended attribute wasn't previously set */
 } Eina_Xattr_Flags;
@@ -42,10 +44,10 @@ typedef enum {
 typedef struct _Eina_Xattr Eina_Xattr;
 struct _Eina_Xattr
 {
-   const char *name; /**< The eXtended attribute name @since 1.2 */
-   const char *value; /**< The eXtended attribute value @since 1.2 */
+   const char *name; /**< The extended attribute name @since 1.2 */
+   const char *value; /**< The extended attribute value @since 1.2 */
 
-   size_t length; /**< The length of the eXtended attribute value @since 1.2 */
+   size_t length; /**< The length of the extended attribute value @since 1.2 */
 };
 
 /**

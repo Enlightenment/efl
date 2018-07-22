@@ -4,6 +4,143 @@
 
 #ifdef EFL_EO_API_SUPPORT
 
+#ifndef _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
+#define _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Vg_Node;
+
+#endif
+
+
+#ifndef _EFL_CANVAS_ANIMATION_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_ALPHA_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_ALPHA_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Alpha;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_ROTATE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_ROTATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Rotate;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_SCALE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_SCALE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Scale;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_TRANSLATE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_TRANSLATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Translate;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_GROUP_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_GROUP_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Group;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Group_Parallel;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Group_Sequential;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_ALPHA_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player_Alpha;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_ROTATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player_Rotate;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_SCALE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player_Scale;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_TRANSLATE_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player_Translate;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_PLAYER_GROUP_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Player_Group;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_GROUP_PARALLEL_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Group_Parallel;
+
+#endif
+
+#ifndef _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+#define _EFL_CANVAS_ANIMATION_GROUP_SEQUENTIAL_EO_CLASS_TYPE
+
+typedef Eo Efl_Canvas_Animation_Group_Sequential;
+
+#endif
+
+#define EFL_ANIMATION_GROUP_DURATION_NONE -1
+#define EFL_ANIMATION_PLAYER_GROUP_DURATION_NONE -1
+
+#define EFL_ANIMATION_REPEAT_INFINITE -1
+#define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
+
+
+struct _Efl_Canvas_Animation_Player_Event_Running
+{
+   double progress;
+};
+
+struct _Efl_Canvas_Object_Animation_Event
+{
+   const Efl_Event_Description *event_desc;
+};
+
 /**
  * @ingroup Evas_Object_Rectangle
  *
@@ -21,6 +158,7 @@
  */
 //#include "canvas/efl_canvas_text_cursor.eo.h"
 #include "canvas/efl_canvas_text.eo.h"
+#include "canvas/efl_canvas_text_factory.eo.h"
 /**
  * @}
  */
@@ -49,32 +187,25 @@
  * @}
  */
 
-#include "canvas/efl_animation_types.eot.h"
+#include "canvas/efl_canvas_animation_types.eot.h"
 
 #include "canvas/efl_canvas_object.eo.h"
 
-#include "canvas/efl_animation.eo.h"
-#include "canvas/efl_animation_alpha.eo.h"
-#include "canvas/efl_animation_rotate.eo.h"
-#include "canvas/efl_animation_scale.eo.h"
-#include "canvas/efl_animation_translate.eo.h"
-#include "canvas/efl_animation_group.eo.h"
-#include "canvas/efl_animation_group_parallel.eo.h"
-#include "canvas/efl_animation_group_sequential.eo.h"
-#include "canvas/efl_animation_object.eo.h"
-#include "canvas/efl_animation_object_alpha.eo.h"
-#include "canvas/efl_animation_object_rotate.eo.h"
-#include "canvas/efl_animation_object_scale.eo.h"
-#include "canvas/efl_animation_object_translate.eo.h"
-#include "canvas/efl_animation_object_group.eo.h"
-#include "canvas/efl_animation_object_group_parallel.eo.h"
-#include "canvas/efl_animation_object_group_sequential.eo.h"
+#include "canvas/efl_canvas_animation.eo.h"
+#include "canvas/efl_canvas_animation_alpha.eo.h"
+#include "canvas/efl_canvas_animation_rotate.eo.h"
+#include "canvas/efl_canvas_animation_scale.eo.h"
+#include "canvas/efl_canvas_animation_translate.eo.h"
+#include "canvas/efl_canvas_animation_group.eo.h"
+#include "canvas/efl_canvas_animation_group_parallel.eo.h"
+#include "canvas/efl_canvas_animation_group_sequential.eo.h"
+#include "canvas/efl_canvas_animation_player.eo.h"
 
 #endif /* EFL_EO_API_SUPPORT */
 
 #if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
 
-#include "canvas/efl_canvas_object_event_grabber.eo.h"
+#include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**
  * @defgroup Evas_3D Evas 3D Extensions
@@ -303,17 +434,17 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
  *
  * @{
  */
-#include "canvas/efl_canvas_vg.eo.h"
+#include "canvas/efl_canvas_vg_object.eo.h"
 /**
  * @}
  */
 
-#include "canvas/efl_vg.eo.h"
-#include "canvas/efl_vg_container.eo.h"
-#include "canvas/efl_vg_shape.eo.h"
-#include "canvas/efl_vg_gradient.eo.h"
-#include "canvas/efl_vg_gradient_linear.eo.h"
-#include "canvas/efl_vg_gradient_radial.eo.h"
+#include "canvas/efl_canvas_vg_node.eo.h"
+#include "canvas/efl_canvas_vg_container.eo.h"
+#include "canvas/efl_canvas_vg_shape.eo.h"
+#include "canvas/efl_canvas_vg_gradient.eo.h"
+#include "canvas/efl_canvas_vg_gradient_linear.eo.h"
+#include "canvas/efl_canvas_vg_gradient_radial.eo.h"
 #endif /* EFL_BETA_API_SUPPORT */
 
 #ifdef EFL_EO_API_SUPPORT
@@ -327,11 +458,11 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #endif /* EFL_EO_API_SUPPORT */
 
 #ifdef EFL_EO_API_SUPPORT
-# include "gesture/efl_gesture_types.eot.h"
-# include "gesture/efl_gesture_touch.eo.h"
-# include "gesture/efl_gesture.eo.h"
-# include "gesture/efl_gesture_tap.eo.h"
-# include "gesture/efl_gesture_long_tap.eo.h"
-# include "gesture/efl_gesture_recognizer.eo.h"
-# include "gesture/efl_gesture_manager.eo.h"
+# include "gesture/efl_canvas_gesture_types.eot.h"
+# include "gesture/efl_canvas_gesture_touch.eo.h"
+# include "gesture/efl_canvas_gesture.eo.h"
+# include "gesture/efl_canvas_gesture_tap.eo.h"
+# include "gesture/efl_canvas_gesture_long_tap.eo.h"
+# include "gesture/efl_canvas_gesture_recognizer.eo.h"
+# include "gesture/efl_canvas_gesture_manager.eo.h"
 #endif /* EFL_EO_API_SUPPORT */

@@ -6,7 +6,6 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-   { "Promise", eo_cxx_test_promise },
    { NULL, NULL }
 };
 
@@ -21,7 +20,7 @@ main(int argc, char* argv[])
    putenv(const_cast<char*>("EFL_RUN_IN_TREE=1"));
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eo C++", etc);
+                                           "Eo C++", etc, NULL, NULL);
 
    return (failed_count == 0) ? 0 : 255;
 }

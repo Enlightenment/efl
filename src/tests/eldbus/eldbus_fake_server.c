@@ -53,7 +53,7 @@ static const Eldbus_Service_Interface_Desc test_interface_desc = {
 
 
 Eldbus_Service_Interface *
-fake_server_start(Fake_Server_Data *data)
+fake_server_start(Fake_Server_Data *data, const char *name)
 {
    ck_assert_ptr_ne(NULL, data);
 
@@ -62,7 +62,7 @@ fake_server_start(Fake_Server_Data *data)
    Eldbus_Service_Interface *interface = eldbus_service_interface_register(conn, FAKE_SERVER_PATH, &test_interface_desc);
    eldbus_service_object_data_set(interface, FAKE_SERVER_DATA_KEY, data);
 
-   eldbus_name_request(conn, FAKE_SERVER_BUS, ELDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
+   eldbus_name_request(conn, name, ELDBUS_NAME_REQUEST_FLAG_DO_NOT_QUEUE,
                        _fake_server_name_request_cb, interface);
 
    ecore_main_loop_begin();
@@ -166,8 +166,9 @@ _fake_server_name_request_cb(void *data EINA_UNUSED,
                              const Eldbus_Message *msg,
                              Eldbus_Pending *pending EINA_UNUSED)
 {
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     ck_abort_msg("error on _fake_server_name_request_cb");
+   const char *name, *text;
+   if (eldbus_message_error_get(msg, &name, &text))
+     ck_abort_msg("error on _fake_server_name_request_cb: %s %s", name, text);
 
    unsigned int reply;
    if (!eldbus_message_arguments_get(msg, "u", &reply))

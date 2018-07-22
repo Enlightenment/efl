@@ -23,15 +23,15 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_EVAS_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -42,7 +42,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -822,7 +822,6 @@ struct _Evas_Public_Data
 
    int               output_validity;
 
-   int               walking_list;
    Evas_Event_Flags  default_event_flags;
 
    struct {
@@ -1130,6 +1129,8 @@ struct _Evas_Object_Protected_Data
    // Pointer to the Evas_Object itself
    Evas_Object                *object;
 
+   Evas_Object                *anim_player;
+
    Evas_Size_Hints            *size_hints;
 
    int                         last_mouse_down_counter;
@@ -1183,7 +1184,6 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   child_has_map : 1;
    Eina_Bool                   efl_del_called : 1;
    Eina_Bool                   no_render : 1; // since 1.15
-   Eina_Bool                   clean_layer : 1; // destructor option
 
    Eina_Bool                   snapshot_needs_redraw : 1;
    Eina_Bool                   snapshot_no_obscure : 1;
@@ -1430,6 +1430,7 @@ struct _Evas_Func
    int  (*font_right_inset_get)            (void *engine, Evas_Font_Set *font, const Evas_Text_Props *text_props);
 
    /* EFL-GL Glue Layer */
+   Eina_Bool (*gl_supports_evas_gl)      (void *engine);
    void *(*gl_output_set)                (void *engine, void *output);
    void *(*gl_surface_create)            (void *engine, void *config, int w, int h);
    void *(*gl_pbuffer_surface_create)    (void *engine, void *config, int w, int h, int const *attrib_list);
@@ -1551,7 +1552,7 @@ Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object_Protected_Data *obj);
 void evas_object_clip_recalc_do(Evas_Object_Protected_Data *obj, Evas_Object_Protected_Data *clipper);
 void evas_object_cur_prev(Evas_Object_Protected_Data *obj);
-void evas_object_free(Evas_Object *obj, Eina_Bool clean_layer);
+void evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer);
 void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Smart_Data *s);
 void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
 void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);
@@ -1684,9 +1685,9 @@ void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bo
 
 Eina_Bool _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
 Eina_Bool _efl_canvas_object_clip_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
-Eina_Bool _efl_canvas_object_efl_gfx_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
+Eina_Bool _efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
 
-void _evas_focus_device_del_cb(void *data, const Efl_Event *ev);
+void _evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev);
 
 /* Node functions. */
 void evas_canvas3d_node_traverse(Evas_Canvas3D_Node *from, Evas_Canvas3D_Node *to, Evas_Canvas3D_Node_Traverse_Type type, Eina_Bool skip, Evas_Canvas3D_Node_Func func, void *data);
@@ -1877,11 +1878,10 @@ void _evas_touch_point_remove(Evas *e, int id);
 void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 
-/* to show object if show is called during hide animation */
-Eina_Bool _efl_canvas_object_event_animation_is_running(Eo *eo_obj, const Efl_Event_Description *desc);
-void _efl_canvas_object_event_animation_cancel(Eo *eo_obj);
-
 /* legacy/eo events */
+Efl_Input_Event *efl_input_event_instance_get(Eo *klass, Eo *owner);
+void efl_input_event_instance_clean(Eo *klass);
+
 void *efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Callback_Type type, Evas_Event_Flags **pflags);
 void *efl_input_key_legacy_info_fill(Efl_Input_Key *evt, Evas_Event_Flags **pflags);
 void *efl_input_hold_legacy_info_fill(Efl_Input_Hold *evt, Evas_Event_Flags **pflags);
@@ -1906,10 +1906,13 @@ Eina_List *_evas_pointer_list_in_rect_get(Evas_Public_Data *edata,
 void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
 
 // Gesture Manager
-void _efl_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
-void _efl_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
-void _efl_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
+void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
 
+//evas focus functions
+void evas_focus_init(void);
+void evas_focus_shutdown(void);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;

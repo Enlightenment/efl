@@ -1,9 +1,9 @@
+/* FIXME - Text object must stop using elm_general! */
 import elm_general;
-import elm_entry;
 
-class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Ui.Text.Interactive)
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Text_Interactive)
 {
    [[Efl UI text class]]
    methods {
@@ -59,6 +59,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
          }
       }
       @property cnp_mode {
+         /* FIXME: Efl.Selection_Format does not allow markup without images! */
          set {
             [[Control pasting of text and images for the widget.
 
@@ -77,7 +78,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             ]]
          }
          values {
-            cnp_mode: Elm.Cnp_Mode; [[One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.]]
+            format: Efl.Selection_Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {
@@ -134,7 +135,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
          }
       }
-      @property password {
+      @property password_mode {
          set {
             [[Sets the entry to password mode.
 
@@ -232,13 +233,12 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
-      item_provider_prepend {
-         [[This prepends a custom item provider to the list for that entry
-
-           This prepends the given callback.]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
+      @property item_factory {
+         [[The factory that provides item in the text e.g.
+           "emoticon/happy" or "href=file://image.jpg" etc.
+         ]]
+         values {
+            item_factory: Efl.Canvas.Text_Factory; [[Factory to create items]]
          }
       }
       input_panel_show {
@@ -250,17 +250,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       selection_copy {
          [[This executes a "copy" action on the selected text in the entry.]]
-      }
-      item_provider_remove {
-         [[This removes a custom item provider to the list for that entry
-
-           This removes the given callback. See @.item_provider_append for
-           more information
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
       }
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
@@ -305,23 +294,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       selection_cut {
          [[This executes a "cut" action on the selected text in the entry.]]
       }
-      item_provider_append {
-         [[This appends a custom item provider to the list for that entry
-
-           This appends the given callback. The list is walked from beginning to end
-           with each function called given the item href string in the text. If the
-           function returns an object handle other than $null (it should create an
-           object to do this), then this object is used to replace that item. If
-           not the next provider is called until one provides an item object, or the
-           default provider in entry does.
-
-           See also \@ref entry-items.
-         ]]
-         params {
-            @in func: Elm_Entry_Item_Provider_Cb; [[The function called to provide the item object.]]
-            @in data: void_ptr @optional; [[The data passed to $func.]]
-         }
-      }
       context_menu_item_add {
          [[This adds an item to the entry's contextual menu.
 
@@ -344,33 +316,33 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       }
       cursor_new {
          [[Creates and returns a new cursor for the text.]]
-         return: ptr(Efl.Text.Cursor.Cursor); [[Text cursor]]
+         return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor]]
       }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
       Efl.Layout.Signal.signal_emit;
-      Elm.Widget.on_access_activate;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
-      Elm.Widget.interest_region { get; }
-      Elm.Widget.on_disabled_update;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.interest_region { get; }
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.widget_sub_object_del;
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
-      Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
-      Efl.Access.Text.text { get; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
+      Efl.Access.Text.access_text { get; }
       Efl.Access.Text.string { get; }
       Efl.Access.Text.attribute { get; }
-      Efl.Access.Text.attributes { get; }
+      Efl.Access.Text.text_attributes { get; }
       Efl.Access.Text.default_attributes { get; }
       Efl.Access.Text.caret_offset { get; set; }
       Efl.Access.Text.character { get; }
@@ -379,41 +351,44 @@ class Efl.Ui.Text (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Text.offset_at_point { get; }
       Efl.Access.Text.bounded_ranges { get; }
       Efl.Access.Text.range_extents { get; }
-      Efl.Access.Text.selection { get; set; }
+      Efl.Access.Text.access_selection { get; set; }
       Efl.Access.Text.selections_count { get; }
       Efl.Access.Text.selection_add;
       Efl.Access.Text.selection_remove;
-      Efl.Access.Editable.Text.content { set; }
+      Efl.Access.Editable.Text.text_content { set; }
       Efl.Access.Editable.Text.insert;
       Efl.Access.Editable.Text.copy;
       Efl.Access.Editable.Text.cut;
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
       Efl.File.file { get; set; }
-      Efl.Ui.Text.Interactive.editable { set; }
+      Efl.Text_Interactive.editable { set; }
    }
    events {
-      activated; [[Called when entry is activated]]
-      changed; [[Called when entry changes]]
-      changed,user: Efl.Ui.Text.Change_Info;
+      activated: void; [[Called when entry is activated]]
+      changed: void; [[Called when entry changes]]
+      /* FIXME: Sometimes it can be NULL but @nullable does not work on events */
+      changed,user: Efl.Ui.Text_Change_Info;
          [[The text object has changed due to user interaction]]
-      validate; [[Called when validating]]
-      context,open; [[Called when context menu was opened]]
-      anchor,clicked; [[Called when anchor is clicked]]
-      rejected; [[Called when entry is rejected]]
-      maxlength,reached; [[Called when maximum entry length has been reached]]
-      preedit,changed; [[Called when entry preedit changed]]
-      press; [[Called when entry pressed]]
-      redo,request; [[Called when redo is requested]]
-      undo,request; [[Called when undo is requested]]
+      validate: Elm.Validate_Content; [[Called when validating]]
+      context,open: void; [[Called when context menu was opened]]
+      preedit,changed: void; [[Called when entry preedit changed]]
+      press: void; [[Called when entry pressed]]
+      redo,request: void; [[Called when redo is requested]]
+      undo,request: void; [[Called when undo is requested]]
+      aborted: void; [[Called when entry is aborted]]
+      anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
+      anchor,hover,opened: Elm.Entry_Anchor_Hover_Info; [[Called when hover opened]]
+      anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
+      anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
+      anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
+      cursor,changed,manual: void; [[Called on manual cursor change]]
+      /* FIXME: Nobody emits these
+      anchor,clicked: void; [[Called when anchor is clicked]]
+      rejected: void; [[Called when entry is rejected]]
+      maxlength,reached: void; [[Called when maximum entry length has been reached]]
       text,set,done; [[Called when text set finished]]
-      aborted; [[Called when entry is aborted]]
-      anchor,down; [[Called on anchor down]]
-      anchor,hover,opened; [[Called when hover opened]]
-      anchor,in; [[Called on anchor in]]
-      anchor,out; [[Called on anchor out]]
-      anchor,up; [[called on anchor up]]
-      cursor,changed; [[Called on cursor changed]]
-      cursor,changed,manual; [[Called on manual cursor change]]
+      cursor,changed: void; [[Called on cursor changed]]
+      */
    }
 }

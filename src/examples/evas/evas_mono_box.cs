@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 public class MyBox : evas.BoxInherit
 {
-    public MyBox(efl.Object parent) : base(parent) {}
+    public MyBox(efl.IObject parent) : base(parent) {}
 
     [DllImport("evas")] static extern void evas_obj_box_layout_vertical(IntPtr obj, IntPtr data, IntPtr privdata);
     [DllImport("evas")] static extern void evas_obj_box_layout_horizontal(IntPtr obj, IntPtr data, IntPtr privdata);
@@ -32,18 +32,18 @@ class TestMain
     {
         efl.All.Init();
 
-        efl.Loop loop = new efl.LoopConcrete();
+        efl.Loop loop = new efl.Loop();
 
 
         EcoreEvas ecore_evas = new EcoreEvas();
 
-        efl.canvas.Object canvas = ecore_evas.canvas;
+        efl.canvas.IObject canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.Object parent = canvas.GetParent();
+        efl.IObject parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
 
-        evas.Box box = new MyBox(canvas);
+        evas.IBox box = new MyBox(canvas);
         eina.Size2D size = new eina.Size2D();
 
         size.W = 320;
@@ -52,7 +52,7 @@ class TestMain
         box.SetSize(size);
         box.SetVisible(true);
 
-        efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(0, 0, 255, 255);
         size.W = 320;
         size.H = 120;
@@ -60,7 +60,7 @@ class TestMain
         rect.SetVisible(true);
         box.Append(rect);
 
-        efl.canvas.Rectangle rect2 = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle rect2 = new efl.canvas.Rectangle(canvas);
         rect2.SetColor(0, 255, 0, 255);
         rect2.SetSize(size);
         rect2.SetVisible(true);

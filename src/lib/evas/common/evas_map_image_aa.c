@@ -1,117 +1,57 @@
-#define  READY_TX() \
+#define PUSH_EDGE_POINT() \
+do \
 { \
-  if (eidx == 0) \
-    { \
-       tx[0] = edge2.x; \
-       tx[1] = spans[y].span[0].x[0]; \
-    } \
-  else \
-    { \
-       tx[0] = spans[y].span[0].x[1]; \
-       tx[1] = edge2.x; \
-    } \
+   p_edge.x = spans[y].span[0].x[eidx]; \
+   p_edge.y = y; \
+   ptx[0] = tx[0]; \
+   ptx[1] = tx[1]; \
+} while (0)
+
+static void
+calc_irregular_coverage(Line* spans, int eidx, int y, int diagonal,
+                       int edge_dist, Eina_Bool reverse)
+{
+   if (eidx == 1) reverse = !reverse;
+   int coverage = (256 / (diagonal + 2));
+   int tmp;
+   for (int ry = 0; ry < (diagonal + 2); ry++)
+     {
+        tmp = y - ry - edge_dist;
+        if (tmp < 0) return;
+        spans[tmp].aa_len[eidx] = 1;
+        if (reverse) spans[tmp].aa_cov[eidx] = 256 - (coverage * ry);
+        else spans[tmp].aa_cov[eidx] = (coverage * ry);
+     }
 }
 
-#define READY_TX2() \
-{ \
-   if (eidx == 0) \
-     { \
-        tx2[0] = edge2.x; \
-        tx2[1] = edge1.x; \
-     } \
-   else \
-    { \
-       tx2[0] = edge1.x; \
-       tx2[1] = edge2.x; \
-    } \
+static void
+calc_vert_coverage(Line *spans, int eidx, int y, int rewind, Eina_Bool reverse)
+{
+   if (eidx == 1) reverse = !reverse;
+   int coverage = (256 / (rewind + 1));
+   int tmp;
+   for (int ry = 1; ry < (rewind + 1); ry++)
+     {
+        tmp = y - ry;
+        if (tmp < 0 ) return;
+        spans[tmp].aa_len[eidx] = 1;
+        if (reverse) spans[tmp].aa_cov[eidx] = (256 - (coverage * ry));
+        else spans[tmp].aa_cov[eidx] = (coverage * ry);
+     }
 }
 
-#define PUSH_EDGES(xx) \
-{ \
-   if (!leftover) \
-     { \
-        edge1.x = edge2.x; \
-        edge1.y = edge2.y; \
-        edge2.x = (xx); \
-        edge2.y = y; \
-     } \
-   else \
-     { \
-        edge1.y = edge2.y; \
-        edge2.y = y; \
-     } \
-   reset_tx2 = EINA_TRUE; \
-}
-
-//Vertical Inside Direction
-#define VERT_INSIDE(rewind, y_advance) \
-{ \
-   int cov_range = edge2.y - edge1.y; \
-   int coverage = (256 / (cov_range + 1)); \
-   int ry; \
-   int val; \
-   for (ry = 1; ry < ((rewind) + 1); ry++) \
-     { \
-        int ridx = (y - ry) + (y_advance); \
-        if (spans[ridx].aa_len[eidx] > 1) continue; \
-        if (eidx == 1) \
-          val = (256 - (coverage * (ry + (cov_range - (rewind))))); \
-        else \
-          val = (coverage * (ry + (cov_range - (rewind)))); \
-        if ((spans[ridx].aa_len[eidx] == 0) || \
-            (val < spans[ridx].aa_cov[eidx])) \
-          spans[ridx].aa_cov[eidx] = val; \
-        spans[ridx].aa_len[eidx] = 1; \
-     } \
-   prev_aa = 4; \
-}
-
-//Vertical Outside Direction
-#define VERT_OUTSIDE(rewind, y_advance, cov_range) \
-{ \
-   int coverage = (256 / ((cov_range) + 1)); \
-   int ry = 1; \
-   for (; ry < ((rewind) + 1); ry++) \
-     { \
-        int ridx = (y - ry) + (y_advance); \
-        if (spans[ridx].aa_len[(eidx)] > 1) continue; \
-        spans[ridx].aa_len[(eidx)] = 1; \
-        if (eidx == 1) \
-          { \
-             spans[ridx].aa_cov[(eidx)] = \
-                (coverage * (ry + (cov_range - (rewind)))); \
-          } \
-        else \
-          { \
-             spans[ridx].aa_cov[(eidx)] = \
-                (256 - (coverage * (ry + ((cov_range) - (rewind))))); \
-          } \
-     } \
-   prev_aa = 2; \
-}
-
-//Horizontal Inside Direction
-#define HORIZ_INSIDE(yy, xx, xx2) \
-{ \
-   if (((xx) - (xx2)) > spans[(yy)].aa_len[(eidx)]) \
-     { \
-        spans[(yy)].aa_len[(eidx)] = ((xx) - (xx2)); \
-        spans[(yy)].aa_cov[(eidx)] = (256 / (spans[(yy)].aa_len[(eidx)] + 1)); \
-     } \
-}
-
-//Horizontal Outside Direction
-#define HORIZ_OUTSIDE(yy, xx, xx2) \
-{ \
-   if (((xx) - (xx2)) > spans[(yy)].aa_len[(eidx)]) \
-     { \
-        spans[(yy)].aa_len[(eidx)] = ((xx) - (xx2)); \
-        spans[(yy)].aa_cov[(eidx)] = (256 / (spans[(yy)].aa_len[(eidx)] + 1)); \
-     } \
+static void
+calc_horiz_coverage(Line *spans, int eidx, int y, int x, int x2)
+{
+   if (spans[y].aa_len[eidx] < abs(x - x2))
+     {
+        spans[y].aa_len[eidx] = abs(x - x2);
+        spans[y].aa_cov[eidx] = (256 / (spans[y].aa_len[eidx] + 1));
+     }
 }
 
 static inline DATA32
-_aa_coverage_apply(Line *line, int ww, int w, DATA32 val)
+_aa_coverage_apply(Line *line, int ww, int w, DATA32 val, Eina_Bool src_alpha)
 {
    //Left Edge Anti Anliasing
    if ((w - line->aa_len[0]) < ww)
@@ -124,28 +64,37 @@ _aa_coverage_apply(Line *line, int ww, int w, DATA32 val)
         return MUL_256(256 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
                        val);
      }
+   //Remove Transparency if src image alpha is off.
+   if (!src_alpha)
+     {
+        if (((val & 0xff000000) >> 24) < 0xff)
+          return (val | 0xff000000);
+     }
    return val;
 }
 
-void
+static void
 _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
 {
    int y;
-   Evas_Coord_Point edge1 = { -1, -1 }; //prev-previous edge pixel
-   Evas_Coord_Point edge2 = { -1, -1 }; //previous edge pixel
+   Evas_Coord_Point p_edge = {-1, -1};  //previous edge point
+   Evas_Coord_Point edge_diff = {0, 0}; //temporary used for point distance 
 
-   /* store larger to tx[0] between prev and current edge's x positions. */
+   /* store bigger to tx[0] between prev and current edge's x positions. */
    int tx[2] = {0, 0};
+   /* back up prev tx values */
+   int ptx[2] = {0, 0};
+   int diagonal = 0;                      //straight diagonal pixels counti
 
-   /* store lager to tx2[0] between edge1 and edge2's x positions. */
-   int tx2[2] = {0, 0};
+//Previous edge direction:
+#define DirOutHor 0x0011
+#define DirOutVer 0x0001
+#define DirInHor  0x0010
+#define DirInVer  0x0000
+#define DirNone   0x1000
 
-   /* previous edge anti-aliased type.
-      2: vertical outside
-      4: vertical inside */
-   int prev_aa = 0;
-
-   Eina_Bool reset_tx2 = EINA_TRUE;
+   int prev_dir = DirNone;
+   int cur_dir = DirNone;
 
    yend -= ystart;
 
@@ -153,129 +102,131 @@ _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
    for (y = 0; y < yend; y++)
      {
         if (spans[y].span[0].x[0] == -1) continue;
-        edge1.x = edge2.x = spans[y].span[0].x[eidx];
-        edge1.y = edge2.y = y;
+        p_edge.x = spans[y].span[0].x[eidx];
+        p_edge.y = y;
         break;
      }
 
    //Calculates AA Edges
-   for (y++; y <= yend; y++)
+   for (y++; y < yend; y++)
      {
-       Eina_Bool leftover = EINA_FALSE;
-
-       if (spans[y].span[0].x[eidx] == -1) leftover = EINA_TRUE;
-
-       if (!leftover) READY_TX()
-
-       //Case1. Outside Incremental
-       if (tx[0] > tx[1])
-         {
-            //Horizontal Edge
-            if ((y - edge2.y) == 1)
-              {
-                  HORIZ_OUTSIDE(y, tx[0], tx[1])
-              }
-            //Vertical Edge
-            else if (tx[0] > tx[1])
-              {
-                 VERT_OUTSIDE((y - edge2.y), 0, (y - edge2.y))
-
-                 //Just in case: 1 pixel alias next to vertical edge?
-                 if (abs(spans[(y + 1)].span[0].x[eidx] -
-                         spans[y].span[0].x[eidx]) >= 1)
-                   {
-                      HORIZ_OUTSIDE(y, tx[0], tx[1])
-                   }
-              }
-            PUSH_EDGES(spans[y].span[0].x[eidx])
-         }
-       //Case2. Inside Incremental
-       else if (tx[1] > tx[0])
-         {
-            //Just in case: direction is reversed at the outside vertical edge?
-            if (prev_aa == 2)
-              {
-                 VERT_OUTSIDE((y - edge2.y), 0, (y - edge2.y))
-                 edge1.x = spans[y - 1].span[0].x[eidx];
-                 edge1.y = y - 1;
-                 edge2.x = spans[y].span[0].x[eidx];
-                 edge2.y = y;
-              }
-            else
-              PUSH_EDGES(spans[y].span[0].x[eidx])
-
-            /* Find next edge. We go forward 2 more index since this logic
-               computes aa edges by looking back in advance 2 spans. */
-            for (y++; y <= (yend + 2); y++)
-              {
-                 leftover = EINA_FALSE;
-
-                 if ((spans[y].span[0].x[eidx] == -1) || (y > yend))
-                   leftover = EINA_TRUE;
-
-                 if (!leftover) READY_TX()
-                 if (reset_tx2) READY_TX2()
-
-                 //Case 1. Inside Direction
-                 if (tx[1] > tx[0])
-                   {
-                      //Horizontal Edge
-                      if ((edge2.y - edge1.y) == 1)
-                        {
-                           HORIZ_INSIDE(edge1.y, tx2[0], tx2[1]);
-                        }
-                      //Vertical Edge
-                      else if ((tx2[0] - tx2[1]) == 1)
-                        {
-                           VERT_INSIDE((edge2.y - edge1.y), -(y - edge2.y))
-                        }
-                      //Just in case: Right Side Square Edge...?
-                      else if (prev_aa == 4)
-                        {
-                           VERT_INSIDE((edge2.y - edge1.y), -(y - edge2.y))
-                           if ((y - edge2.y) == 1)
-                             {
-                                HORIZ_INSIDE((edge2.y - 1), edge2.x,
-                                             spans[y].span[0].x[eidx]);
-                             }
-                        }
-                      PUSH_EDGES(spans[y].span[0].x[eidx])
-                   }
-                 //Case 2. Reversed. Outside Direction
-                 else if (tx[1] < tx[0])
-                   {
-                      //Horizontal Edge
-                      if ((edge2.y - edge1.y) == 1)
-                        HORIZ_INSIDE(edge1.y, tx2[0], tx2[1])
-                      //Vertical Edge
-                      else
-                        VERT_INSIDE((edge2.y - edge1.y), -(y - edge2.y))
-
-                      PUSH_EDGES(spans[y].span[0].x[eidx])
-                      break;
-                   }
-              }
-         }
-     }
-
-   y = yend;
-
-   //Leftovers for verticals.
-   if (prev_aa == 2)
-     {
-      if (((eidx == 0) && (edge1.x > edge2.x)) ||
-          ((eidx == 1) && (edge1.x < edge2.x)))
-        VERT_OUTSIDE((y - edge2.y + 1), 1, (edge2.y - edge1.y));
-     }
-   else if (prev_aa == 4)
-     {
-        if (((eidx == 0) && (edge1.x < edge2.x)) ||
-           ((eidx == 1) && (edge1.x > edge2.x)))
+        //Ready tx
+        if (eidx == 0)
           {
-             VERT_INSIDE((edge2.y - edge1.y), -(y - edge2.y))
-             VERT_INSIDE((y - edge2.y) + 1, 1);
+             tx[0] = p_edge.x;
+             tx[1] = spans[y].span[0].x[0];
           }
+        else
+          {
+             tx[0] = spans[y].span[0].x[1];
+             tx[1] = p_edge.x;
+          }
+
+        edge_diff.x = (tx[0] - tx[1]);
+        edge_diff.y = (y - p_edge.y);
+
+        //Confirm current edge direction
+        if (edge_diff.x > 0)
+          {
+             if (edge_diff.y == 1) cur_dir = DirOutHor;
+             else cur_dir = DirOutVer;
+          }
+        else if (edge_diff.x < 0)
+          {
+             if (edge_diff.y == 1) cur_dir = DirInHor;
+             else cur_dir = DirInVer;
+          }
+        else cur_dir = DirNone;
+
+       //straight diagonal increase
+       if ((cur_dir == prev_dir) && (y < yend))
+         {
+            if ((abs(edge_diff.x) == 1) && (edge_diff.y == 1))
+              {
+                 ++diagonal;
+                 PUSH_EDGE_POINT();
+                 continue;
+              }
+         }
+       switch (cur_dir)
+         {
+          case DirOutHor:
+            {
+               calc_horiz_coverage(spans, eidx, y, tx[0], tx[1]);
+               if (diagonal > 0)
+                 {
+                    calc_irregular_coverage(spans, eidx, y, diagonal, 0,
+                                            EINA_TRUE);
+                    diagonal = 0;
+                 }
+               /* Increment direction is changed:
+                  Outside Vertical -> Outside Horizontal */
+               if (prev_dir == DirOutVer)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+               PUSH_EDGE_POINT();
+            }
+          break;
+          case DirOutVer:
+            {
+               calc_vert_coverage(spans, eidx, y, edge_diff.y, EINA_TRUE);
+               if (diagonal > 0)
+                 {
+                    calc_irregular_coverage(spans, eidx, y, diagonal,
+                                            edge_diff.y, EINA_FALSE);
+                    diagonal = 0;
+                 }
+               /* Increment direction is changed:
+                  Outside Horizontal -> Outside Vertical */
+               if (prev_dir == DirOutHor)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+               PUSH_EDGE_POINT();
+            }
+          break;
+          case DirInHor:
+            {
+               calc_horiz_coverage(spans, eidx, (y - 1), tx[0], tx[1]);
+               if (diagonal > 0)
+                 {
+                    calc_irregular_coverage(spans, eidx, y, diagonal, 0,
+                                            EINA_FALSE);
+                    diagonal = 0;
+                 }
+               /* Increment direction is changed:
+                  Outside Horizontal -> Inside Horizontal */
+               if (prev_dir == DirOutHor)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+               PUSH_EDGE_POINT();
+            }
+          break;
+          case DirInVer:
+            {
+               calc_vert_coverage(spans, eidx, y, edge_diff.y, EINA_FALSE);
+               if (diagonal > 0)
+                 {
+                    calc_irregular_coverage(spans, eidx, y, diagonal,
+                                            edge_diff.y, EINA_TRUE);
+                    diagonal = 0;
+                 }
+               /* Increment direction is changed:
+                  Outside Horizontal -> Inside Vertical */
+               if (prev_dir == DirOutHor)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+               PUSH_EDGE_POINT();
+            }
+          break;
+         }
+       if (cur_dir != DirNone) prev_dir = cur_dir;
      }
+
+   //leftovers...?
+   if ((edge_diff.y == 1) && (edge_diff.x != 0))
+     {
+        calc_horiz_coverage(spans, eidx, y - 1, ptx[0], ptx[1]);
+        calc_horiz_coverage(spans, eidx, y, tx[0], tx[1]);
+     }
+   else
+     calc_vert_coverage(spans, eidx, (y + 1), (edge_diff.y + 2),
+                        (prev_dir & 0x00000001));
 }
 
 static void

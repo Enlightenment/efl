@@ -83,8 +83,7 @@ class Ecore.Con.Eet.Base (Efl.Object) {
                                            to which the data has to be sent.]]
             protocol_name: string; [[The name of the eet stream.]]
             section: string; [[Name of section in the eet descriptor.]]
-            value: void_ptr; [[The value of the section.]]
-            length: uint; [[The length of the data that is being sent.]]
+            section_data: ptr(Eina.Binbuf);
          }
       }
    }

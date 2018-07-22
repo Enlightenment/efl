@@ -57,11 +57,11 @@ SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
 
 
 # load the whole eolian db
-eolian_db = eolian.Eolian()
-if not isinstance(eolian_db, eolian.Eolian):
+eolian_db = eolian.Eolian_State()
+if not isinstance(eolian_db, eolian.Eolian_State):
     raise(RuntimeError('Eolian, failed to create Eolian state'))
 
-if not eolian_db.directory_scan(SCAN_FOLDER):
+if not eolian_db.directory_add(SCAN_FOLDER):
     raise(RuntimeError('Eolian, failed to scan source directory'))
 
 if not eolian_db.all_eot_files_parse():
@@ -112,6 +112,7 @@ class Template(pyratemp.Template):
             #  'eolian_version': eolian.__version__,
             #  'eolian_version_info': eolian.__version_info__,
             # Eolian Classes
+            'Object': eolian.Object,
             'Class': eolian.Class,
             'Part': eolian.Part,
             'Constructor': eolian.Constructor,
@@ -125,7 +126,6 @@ class Template(pyratemp.Template):
             'Struct_Type_Field': eolian.Struct_Type_Field,
             'Expression': eolian.Expression,
             'Variable': eolian.Variable,
-            'Declaration': eolian.Declaration,
             'Documentation': eolian.Documentation,
             'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
@@ -142,9 +142,7 @@ class Template(pyratemp.Template):
             'Eolian_Variable_Type': eolian.Eolian_Variable_Type,
             'Eolian_Binary_Operator': eolian.Eolian_Binary_Operator,
             'Eolian_Unary_Operator': eolian.Eolian_Unary_Operator,
-            'Eolian_Declaration_Type': eolian.Eolian_Declaration_Type,
             'Eolian_Doc_Token_Type': eolian.Eolian_Doc_Token_Type,
-            'Eolian_Doc_Ref_Type': eolian.Eolian_Doc_Ref_Type,
         })
 
         # Call the parent __init__ func
@@ -163,15 +161,15 @@ class Template(pyratemp.Template):
         if kargs:
             ctx.update(kargs)
         if cls:
-            ctx['cls'] = eolian_db.class_get_by_name(cls)
+            ctx['cls'] = eolian_db.class_by_name_get(cls)
         if ns:
             ctx['namespace'] = eolian_db.namespace_get_by_name(ns)
         if struct:
-            ctx['struct'] = eolian_db.typedecl_struct_get_by_name(struct)
+            ctx['struct'] = eolian_db.struct_by_name_get(struct)
         if enum:
-            ctx['enum'] = eolian_db.typedecl_enum_get_by_name(enum)
+            ctx['enum'] = eolian_db.enum_by_name_get(enum)
         if alias:
-            ctx['alias'] = eolian_db.typedecl_alias_get_by_name(alias)
+            ctx['alias'] = eolian_db.alias_by_name_get(alias)
 
         if verbose and filename:
             print("rendering: {} => {}".format(

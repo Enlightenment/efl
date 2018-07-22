@@ -72,9 +72,8 @@ static const Eina_Unicode STR3[] = {'P', 'a', 'n', 't', 's',' ', 'O', 'n', 0};
 static const Eina_Unicode STR4[] = {'A', 0};
 static const Eina_Unicode EMPTYSTR[] = {0};
 
-START_TEST(eina_unicode_strcmp_test)
+EFL_START_TEST(eina_unicode_strcmp_test)
 {
-   eina_init();
 
    /* 1 & 2 */
    fail_if(eina_unicode_strcmp(STR1,STR2) == 0);
@@ -97,16 +96,14 @@ START_TEST(eina_unicode_strcmp_test)
    fail_if(eina_unicode_strcmp(STR4, STR4) != 0);
    fail_if(eina_unicode_strcmp(EMPTYSTR, EMPTYSTR) != 0);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strcpy_test)
+EFL_START_TEST(eina_unicode_strcpy_test)
 {
    Eina_Unicode buf[10] = { 0 };
    Eina_Unicode *rv;
 
-   eina_init();
 
    rv = eina_unicode_strcpy(buf,STR1);
    fail_if(rv != buf);
@@ -133,16 +130,14 @@ START_TEST(eina_unicode_strcpy_test)
    fail_if(buf[0] != 0);
    fail_if(buf[1] != '7');
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strncpy_test)
+EFL_START_TEST(eina_unicode_strncpy_test)
 {
    Eina_Unicode buf[10] = { 0 };
    Eina_Unicode *rv;
 
-   eina_init();
 
    rv = eina_unicode_strncpy(buf,STR1,9);
    fail_if(rv != buf);
@@ -201,16 +196,14 @@ START_TEST(eina_unicode_strncpy_test)
    }
 #endif
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 
 
-START_TEST(eina_ustr_strlen_test)
+EFL_START_TEST(eina_ustr_strlen_test)
 {
 
-   eina_init();
 
    fail_if(eina_unicode_strlen(STR1) != 8);
    fail_if(eina_unicode_strlen(STR2) != 9);
@@ -242,13 +235,11 @@ START_TEST(eina_ustr_strlen_test)
    }
 #endif
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strnlen_test)
+EFL_START_TEST(eina_unicode_strnlen_test)
 {
-   eina_init();
 
    /* Strlen style tests*/
    fail_if(eina_unicode_strnlen(STR1,10) != 8);
@@ -287,15 +278,13 @@ START_TEST(eina_unicode_strnlen_test)
    }
 #endif
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strdup_test)
+EFL_START_TEST(eina_unicode_strdup_test)
 {
    Eina_Unicode *buf;
 
-   eina_init();
 
    buf = eina_unicode_strdup(STR1);
    fail_if(!buf);
@@ -307,16 +296,14 @@ START_TEST(eina_unicode_strdup_test)
    fail_if(!buf);
    fail_if(buf[0] != 0);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_strstr_test)
+EFL_START_TEST(eina_unicode_strstr_test)
 {
    Eina_Unicode *buf;
    Eina_Unicode on[] = { 'O', 'n', 0 };
 
-   eina_init();
 
    buf = eina_unicode_strstr(STR1,on);
    fail_if(!buf);
@@ -333,11 +320,10 @@ START_TEST(eina_unicode_strstr_test)
    fail_if(!buf);
    fail_if(buf != STR1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_escape_test)
+EFL_START_TEST(eina_unicode_escape_test)
 {
    Eina_Unicode str[][10] = {{'P', 'a', ' ', 'O', 'n', 0},
                              {'P', 'a', ' ', '\\', '\'',0},
@@ -348,7 +334,6 @@ START_TEST(eina_unicode_escape_test)
    Eina_Unicode *buf;
    size_t i;
 
-   eina_init();
 
    for (i = 0; i < sizeof(str)/sizeof(str[0]); ++i)
      {
@@ -359,15 +344,13 @@ START_TEST(eina_unicode_escape_test)
         free(buf);
      }
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_utf8)
+EFL_START_TEST(eina_unicode_utf8)
 {
    int ind;
    unsigned char ch;
-   eina_init();
 
    /* Valid utf-8 cases */
    /* First possible sequence of a certain length */
@@ -574,11 +557,10 @@ START_TEST(eina_unicode_utf8)
    fail_if((eina_unicode_utf8_get_prev("\xED\x9F\xBF", &ind) != 0x00) ||
            (ind != 0));
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_unicode_utf8_conversion)
+EFL_START_TEST(eina_unicode_utf8_conversion)
 {
    Eina_Unicode uni_in[] = {0x5D0, 0xFDF6, 0xDC80, 0x1F459, 0x3FFFFFF,
         0x7FFFFFFF, 'a', 'b', 'c', 0};
@@ -592,7 +574,6 @@ START_TEST(eina_unicode_utf8_conversion)
    char *c_sub_out;
    int len;
 
-   eina_init();
 
    uni_out = eina_unicode_utf8_to_unicode(c_in, &len);
    fail_if((len != 9) || eina_unicode_strcmp(uni_in, uni_out));
@@ -615,9 +596,8 @@ START_TEST(eina_unicode_utf8_conversion)
    ck_assert_int_eq(len, 0);
    ck_assert_str_eq("", c_sub_out);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_ustr(TCase *tc)

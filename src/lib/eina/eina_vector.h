@@ -141,7 +141,7 @@ static inline void eina_vector2_scale(Eina_Vector2 *out, const Eina_Vector2 *v, 
  * @brief Return the dot product of the two vectors.
  *
  * @param a The first member.
- * @param b The secondt member.
+ * @param b The second member.
  * @return The dot product.
  *
  * @since 1.17
@@ -328,7 +328,7 @@ static inline void eina_vector3_multiply(Eina_Vector3 *out, const Eina_Vector3 *
  * @brief Return the dot product of the two vectors.
  *
  * @param a The first member.
- * @param b The secondt member.
+ * @param b The second member.
  * @return The dot product.
  *
  * @since 1.18
@@ -340,7 +340,7 @@ static inline double eina_vector3_dot_product(const Eina_Vector3 *a, const Eina_
  *
  * @param out The resulting vector.
  * @param a The first member.
- * @param b The secondt member.
+ * @param b The second member.
  *
  * @since 1.18
  */

@@ -2,10 +2,11 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
 #include "elm_priv.h"
 #include "elm_widget_web.h"
 
@@ -98,7 +99,7 @@ _elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *sd)
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_web_smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_HTML_CONTAINER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_HTML_CONTAINER);
 
    return obj;
 }
@@ -156,6 +157,64 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf,
    ewm.window_features_region_get(wf, x, y, w, h);
 }
 
+
+static inline void
+_convert_web_zoom_mode(Elm_Web_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, Eina_Bool to_legacy)
+{
+   #define CONVERT(LEGACY_MODE, NEW_MODE) \
+      if (to_legacy  && *mode == NEW_MODE) \
+        { \
+           *legacy_mode =LEGACY_MODE; \
+           return; \
+        } \
+      if (!to_legacy && *legacy_mode == LEGACY_MODE) \
+        { \
+           *mode = NEW_MODE; \
+           return; \
+        } \
+
+   CONVERT(ELM_WEB_ZOOM_MODE_MANUAL,    EFL_UI_ZOOM_MODE_MANUAL)
+   CONVERT(ELM_WEB_ZOOM_MODE_AUTO_FIT,  EFL_UI_ZOOM_MODE_AUTO_FIT)
+   CONVERT(ELM_WEB_ZOOM_MODE_AUTO_FILL, EFL_UI_ZOOM_MODE_AUTO_FILL)
+   CONVERT(ELM_WEB_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_LAST)
+   CONVERT(ELM_WEB_ZOOM_MODE_LAST,      EFL_UI_ZOOM_MODE_AUTO_FIT_IN)
+
+   #undef CONVERT
+}
+
+EAPI void
+elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
+{
+   Efl_Ui_Zoom_Mode new_mode;
+
+   _convert_web_zoom_mode(&mode, &new_mode, EINA_FALSE);
+
+   efl_ui_zoom_mode_set(obj, new_mode);
+}
+
+EAPI Elm_Web_Zoom_Mode
+elm_web_zoom_mode_get(const Evas_Object *obj)
+{
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
+   Elm_Web_Zoom_Mode mode;
+
+   _convert_web_zoom_mode(&mode, &new_mode, EINA_TRUE);
+
+   return mode;
+}
+
+EAPI void
+elm_web_zoom_set(Evas_Object *obj, double zoom)
+{
+   efl_ui_zoom_level_set(obj, zoom);
+}
+
+EAPI double
+elm_web_zoom_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_level_get(obj);
+}
+
 static void
 _elm_web_class_constructor(Efl_Class *klass)
 {
@@ -173,16 +232,10 @@ _elm_web_init(const char *engine)
 {
    char buf[PATH_MAX];
 
-#ifdef NEED_RUN_IN_TREE
-   if (getenv("ELM_RUN_IN_TREE"))
-     snprintf(buf, sizeof(buf),
-              ELM_TOP_BUILD_DIR"/src/modules/web/%s/.libs/module"EFL_SHARED_EXTENSION,
-              engine);
-   else
-#endif
-     snprintf(buf, sizeof(buf),
-              "%s/elementary/modules/web/%s/%s/module"EFL_SHARED_EXTENSION,
-              _elm_lib_dir, engine, MODULE_ARCH);
+     if (!bs_mod_get(buf, sizeof(buf), "elementary/web", engine))
+       snprintf(buf, sizeof(buf),
+                "%s/elementary/modules/web/%s/%s/module"EFL_SHARED_EXTENSION,
+                _elm_lib_dir, engine, MODULE_ARCH);
 
    if (ewm.m)
      {

@@ -1,14 +1,23 @@
-class Efl.Model.Composite.Boolean.Children (Efl.Object, Efl.Model)
+class Efl.Model_Composite_Boolean_Children (Efl.Model_Composite)
 {
    [[Efl model composite boolean children class]]
+   methods {
+      @property index {
+         [[Position of children in the parent model.]]
+         set {
+            [[Set the index. It can only be set before the object is finalized.]]
+         }
+       	 get {
+            [[Get the index.]]
+         }
+         values {
+            index: uint; [[The index of the child in the parent model.]]
+         }
+      }
+   }
    implements {
-      Efl.Object.destructor;
       Efl.Model.properties { get; }
-      Efl.Model.property_get;
-      Efl.Model.property_set;
-      Efl.Model.children_slice_get;
-      Efl.Model.children_count_get;
-      Efl.Model.child_add;
-      Efl.Model.child_del;
+      Efl.Model.property { get; set; }
+      Efl.Object.finalize;
    }
 }

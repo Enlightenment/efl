@@ -26,7 +26,7 @@
 // like get them to stop and dump a backtrace for us
 Eina_Spinlock         _eina_debug_thread_lock;
 
-pthread_t             _eina_debug_thread_mainloop = 0;
+Eina_Thread             _eina_debug_thread_mainloop = 0;
 Eina_Debug_Thread    *_eina_debug_thread_active = NULL;
 int                   _eina_debug_thread_active_num = 0;
 
@@ -39,7 +39,7 @@ static int            _thread_id_counter = 1;
 void
 _eina_debug_thread_add(void *th)
 {
-   pthread_t *pth = th;
+   Eina_Thread *pth = th;
    // take thread tracking lock
    eina_spinlock_take(&_eina_debug_thread_lock);
    // if we don't have enough space to store thread id's - make some more
@@ -74,7 +74,7 @@ _eina_debug_thread_add(void *th)
 void
 _eina_debug_thread_del(void *th)
 {
-   pthread_t *pth = th;
+   Eina_Thread *pth = th;
    int i;
    // take a thread tracking lock
    eina_spinlock_take(&_eina_debug_thread_lock);
@@ -99,7 +99,7 @@ _eina_debug_thread_del(void *th)
 void
 _eina_debug_thread_mainloop_set(void *th)
 {
-   pthread_t *pth = th;
+   Eina_Thread *pth = th;
    _eina_debug_thread_mainloop = *pth;
 }
 

@@ -157,8 +157,25 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
 /**
  * @endcond
  */
+static Eina_Bool reseting;
+static void
+_eio_monitor_reset()
+{
+   Eina_Hash *h = _inotify_monitors;
+   Eina_Iterator *it;
+   Eio_Monitor_Backend *backend;
 
-
+   _inotify_monitors = NULL;
+   reseting = 1;
+   eio_monitor_backend_shutdown();
+   eio_monitor_backend_init();
+   it = eina_hash_iterator_data_new(h);
+   EINA_ITERATOR_FOREACH(it, backend)
+     eio_monitor_backend_add(backend->parent);
+   reseting = 0;
+   eina_iterator_free(it);
+   eina_hash_free(h);
+}
 /*============================================================================*
  *                                 Global                                     *
  *============================================================================*/
@@ -189,6 +206,8 @@ void eio_monitor_backend_init(void)
      }
 
    _inotify_monitors = eina_hash_int32_new(_eio_inotify_del);
+   if (!reseting)
+     ecore_fork_reset_callback_add(_eio_monitor_reset, NULL);
 }
 
 void eio_monitor_backend_shutdown(void)
@@ -207,6 +226,8 @@ void eio_monitor_backend_shutdown(void)
      return;
 
    close(fd);
+   if (!reseting)
+     ecore_fork_reset_callback_del(_eio_monitor_reset, NULL);
 }
 
 void eio_monitor_backend_add(Eio_Monitor *monitor)

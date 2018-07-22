@@ -590,6 +590,7 @@ _slave_mode(void *data, Ecore_Fd_Handler *fd_handler)
 
    return ECORE_CALLBACK_RENEW;
 }
+
 #endif
 
 static void
@@ -1124,9 +1125,9 @@ main(int argc, char **argv)
    f = eina_file_open(opts.file, EINA_FALSE);
    if (edje_mmap_3d_has(f, group))
      {
-        Eina_List* engine_list, *n;
+        Eina_List *engine_list, *n;
         Eina_Bool opengl_x11_has = EINA_FALSE, wayland_egl_has = EINA_FALSE;
-        const char* engine;
+        const char *engine;
         engine_list = ecore_evas_engines_get();
         EINA_LIST_FOREACH(engine_list, n, engine)
           {

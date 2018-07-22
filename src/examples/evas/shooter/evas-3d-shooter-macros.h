@@ -144,7 +144,7 @@ typedef struct _vec2
 
 
 #define SETUP_MESH_NODE(Name)                                                             \
-   data->mesh_node_##Name = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_constructor(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));     \
+   data->mesh_node_##Name = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));     \
                                                                                           \
    evas_canvas3d_node_mesh_add(data->mesh_node_##Name, data->mesh_##Name);
 

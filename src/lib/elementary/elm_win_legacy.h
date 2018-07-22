@@ -66,7 +66,12 @@ typedef Efl_Ui_Win_Type       Elm_Win_Type;
 #define ELM_WIN_TOOLTIP              EFL_UI_WIN_TOOLTIP
 #define ELM_WIN_NOTIFICATION         EFL_UI_WIN_NOTIFICATION
 #define ELM_WIN_COMBO                EFL_UI_WIN_COMBO
-#define ELM_WIN_DND                  EFL_UI_WIN_DND
+/**
+ * Used to indicate the window is a representation of an object being
+ * dragged across different windows, or even applications. Typically
+ * used with elm_win_override_set().
+ */
+#define ELM_WIN_DND                  13
 #define ELM_WIN_INLINED_IMAGE        14
 #define ELM_WIN_SOCKET_IMAGE         15
 #define ELM_WIN_FAKE                 16 /**< See elm_win_fake_add(). @since 1.13 */

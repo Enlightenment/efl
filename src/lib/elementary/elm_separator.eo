@@ -1,4 +1,4 @@
-class Elm.Separator (Efl.Ui.Layout)
+class Elm.Separator (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
 {
    [[Elementary separator class]]
    legacy_prefix: elm_separator;
@@ -19,6 +19,6 @@ class Elm.Separator (Efl.Ui.Layout)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
    }
 }

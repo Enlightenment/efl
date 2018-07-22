@@ -1,9 +1,0 @@
-struct Efl.Ui.List.LayoutItem {
-   layout: Efl.Ui.Layout;
-   children: Efl.Model;
-   index_offset: int;
-   tree_node: void_ptr;
-   min: Eina.Size2D;
-   size: Eina.Size2D;
-   pos: Eina.Position2D;
-}

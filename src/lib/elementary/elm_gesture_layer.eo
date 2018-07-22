@@ -31,7 +31,7 @@ enum Elm.Gesture.State
    abort [[Ongoing gesture was aborted]]
 }
 
-class Elm.Gesture_Layer (Elm.Widget)
+class Elm.Gesture_Layer (Efl.Ui.Widget, Efl.Ui.Legacy)
 {
    [[Elementary gesture layer class]]
    legacy_prefix: elm_gesture_layer;
@@ -162,6 +162,6 @@ class Elm.Gesture_Layer (Elm.Widget)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.on_disabled_update;
+      Efl.Ui.Widget.on_disabled_update;
    }
 }

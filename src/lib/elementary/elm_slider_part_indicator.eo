@@ -1,0 +1,20 @@
+import efl_ui;
+
+class Elm.Slider.Part_Indicator (Efl.Ui.Layout.Part, Efl.Ui.Format)
+{
+   [[Elementary slider internal part class]]
+   data: null;
+   methods {
+      @property visible_mode {
+         [[Set/Get the visible mode of indicator.
+         ]]
+         values {
+            mode: Efl.Ui.Slider_Indicator_Visible_Mode; [[The indicator visible mode.]]
+         }
+      }
+   }
+   implements {
+      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.format_string { set; get; }
+   }
+}

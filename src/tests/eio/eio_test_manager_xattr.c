@@ -36,13 +36,14 @@ static const char *attr_data[] =
 int total_attributes = sizeof(attribute)/sizeof(attribute[0]);
 
 static void
-_main_cb(void *data, Eina_Accessor *access)
+_main_cb(void *data, Eina_Array *array)
 {
    const char* attr;
    int *num_of_attr = (int *)data;
-   unsigned int count;
+   Eina_Array_Iterator iterator;
+   unsigned int j;
 
-   EINA_ACCESSOR_FOREACH(access, count, attr)
+   EINA_ARRAY_ITER_NEXT(array, j, attr, iterator)
      {
         unsigned int i;
 
@@ -73,7 +74,7 @@ _future_done_cb(void *data EINA_UNUSED,
         fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
         abort();
      }
-   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, v)
      {
         buf = eina_value_to_binbuf(&v);
         fail_if(!buf);
@@ -103,7 +104,7 @@ _future_all_cb(void *data,
         fprintf(stderr, "Something has gone wrong: %s\n", eina_error_msg_get(err));
         abort();
      }
-   EINA_VALUE_ARRAY_FOREACH(&array, len, i, &v)
+   EINA_VALUE_ARRAY_FOREACH(&array, len, i, v)
      {
         if (v.type == EINA_VALUE_TYPE_ERROR)
           {
@@ -117,7 +118,7 @@ _future_all_cb(void *data,
    return array;
 }
 
-START_TEST(eio_test_job_xattr_set)
+EFL_START_TEST(eio_test_job_xattr_set)
 {
    char *filename = "eio-tmpfile";
    Eina_Tmpstr *test_file_path;
@@ -125,10 +126,6 @@ START_TEST(eio_test_job_xattr_set)
    unsigned int i;
    Eo *job;
    Eina_Future **futures = NULL;
-
-   ecore_init();
-   eina_init();
-   eio_init();
 
    job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
 
@@ -160,7 +157,7 @@ START_TEST(eio_test_job_xattr_set)
 
    num_of_attr = 0;
 
-   futures = calloc(total_attributes + 1, sizeof(Efl_Future*));
+   futures = calloc(total_attributes + 1, sizeof(Eina_Future*));
    futures[total_attributes] = NULL;
 
    for (i = 0; i < sizeof(attribute) / sizeof(attribute[0]); ++i)
@@ -188,11 +185,8 @@ START_TEST(eio_test_job_xattr_set)
    close(fd);
    unlink(test_file_path);
    eina_tmpstr_del(test_file_path);
-   eio_shutdown();
-   eina_shutdown();
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eio_test_job_xattr(TCase *tc)
 {

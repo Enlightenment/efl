@@ -7,5 +7,18 @@ class Efl.Ui.Focus.Util(Efl.Object) {
             focus_elem : Efl.Ui.Focus.Object; [[Focus element]]
          }
       }
+      active_manager @class {
+         [[Get the highest manager in the redirect property]]
+         params {
+            manager : Efl.Ui.Focus.Manager;
+         }
+         return: Efl.Ui.Focus.Manager;
+      }
+      direction_complement @class {
+         params {
+            dir : Efl.Ui.Focus.Direction;
+         }
+         return: Efl.Ui.Focus.Direction;
+      }
    }
 }

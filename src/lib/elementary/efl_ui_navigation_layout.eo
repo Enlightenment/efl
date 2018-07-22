@@ -1,0 +1,30 @@
+class Efl.Ui.Navigation_Layout (Efl.Ui.Layout.Object, Efl.Content)
+{
+   [[Navigation_Layout widget.
+
+     Navigation_Layout widget provides a layout form useful for navigation.
+     Navigation_Layout widget is used to be pushed to or popped from Stack
+     widget(Efl.Ui.Stack class) as a content.
+   ]]
+   methods {
+      @property bar {
+         [[The bar object which is located at the top area as a title.
+           e.g. Navigation_Bar widget(Efl.Ui.Navigation_Bar) can be used as $bar.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            value: Efl.Ui.Layout.Object;
+               [[The bar object located at the top area of the Navigation Layout.
+               ]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
+   }
+}

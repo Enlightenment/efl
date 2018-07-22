@@ -1,6 +1,4 @@
-import evas_box;
-
-class Elm.Box (Elm.Widget, Efl.Ui.Focus.Composition)
+class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
 {
    [[Elementary box class]]
    legacy_prefix: elm_box;
@@ -249,12 +247,12 @@ class Elm.Box (Elm.Widget, Efl.Ui.Focus.Composition)
       class.constructor;
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Focus.Composition.prepare;
    }
    events {
-      child,added; [[Called when child was added]]
-      child,removed; [[Called when child was removed]]
+      child,added: Efl.Object; [[Called when child was added]]
+      child,removed: Efl.Object; [[Called when child was removed]]
    }
 }

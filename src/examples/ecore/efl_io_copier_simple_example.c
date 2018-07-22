@@ -1,14 +1,11 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-
-static int retval = EXIT_SUCCESS;
+#include <Efl_Core.h>
 
 static void
 _copier_done(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
    fprintf(stderr, "INFO: done\n");
-   ecore_main_loop_quit();
+
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -16,22 +13,50 @@ _copier_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: #%d '%s'\n", *perr, eina_error_msg_get(*perr));
-   ecore_main_loop_quit();
-   retval = EXIT_FAILURE;
+
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(copier_cbs,
                            { EFL_IO_COPIER_EVENT_DONE, _copier_done },
                            { EFL_IO_COPIER_EVENT_ERROR, _copier_error });
 
-int
-main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
+static Eo *copier = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *input, *output, *copier, *loop;
+}
 
-   ecore_init();
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
 
-   loop = efl_main_loop_get();
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (copier)
+     {
+        efl_io_closer_close(copier);
+        efl_del(copier);
+     }
+   copier = NULL;
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
+{
+   Eo *input, *output, *loop;
+
+   loop = ev->object;
    input = efl_add(EFL_IO_STDIN_CLASS, loop);
    output = efl_add(EFL_IO_STDOUT_CLASS, loop);
    copier = efl_add(EFL_IO_COPIER_CLASS, loop,
@@ -39,14 +64,6 @@ main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
                     efl_io_copier_destination_set(efl_added, output), /* optional */
                     efl_event_callback_array_add(efl_added, copier_cbs(), NULL) /* recommended, at least EFL_IO_COPIER_EVENT_DONE. */
                     );
-
-   ecore_main_loop_begin();
-
-   efl_io_closer_close(copier);
-   efl_del(copier);
-   efl_del(output);
-   efl_del(input);
-
-   ecore_shutdown();
-   return retval;
 }
+
+EFL_MAIN_EX();

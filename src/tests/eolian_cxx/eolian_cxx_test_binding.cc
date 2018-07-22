@@ -11,7 +11,7 @@
 
 #include "eolian_cxx_suite.h"
 
-START_TEST(eolian_cxx_test_binding_constructor_only_required)
+EFL_START_TEST(eolian_cxx_test_binding_constructor_only_required)
 {
   efl::eo::eo_init init;
 
@@ -24,12 +24,12 @@ START_TEST(eolian_cxx_test_binding_constructor_only_required)
      }
     );
 
-  fail_if(1 != g.req_ctor_a_value_get());
-  fail_if(2 != g.req_ctor_b_value_get());
+  ck_assert_int_eq(1, g.req_ctor_a_value_get());
+  ck_assert_int_eq(2, g.req_ctor_b_value_get());
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
+EFL_START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
 {
   efl::eo::eo_init i;
 
@@ -55,14 +55,14 @@ START_TEST(eolian_cxx_test_binding_constructor_all_optionals)
     }
     );
   
-  fail_if(2 != g.req_ctor_a_value_get());
-  fail_if(3 != g.opt_ctor_a_value_get());
-  fail_if(4 != g.req_ctor_b_value_get());
-  fail_if(5 != g.opt_ctor_b_value_get());
+  ck_assert_int_eq(2, g.req_ctor_a_value_get());
+  ck_assert_int_eq(3, g.opt_ctor_a_value_get());
+  ck_assert_int_eq(4, g.req_ctor_b_value_get());
+  ck_assert_int_eq(5, g.opt_ctor_b_value_get());
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_type_generation)
+EFL_START_TEST(eolian_cxx_test_type_generation)
 {
   efl::eo::eo_init eo_init;
 
@@ -72,9 +72,9 @@ START_TEST(eolian_cxx_test_type_generation)
   name1::name2::Type_Generation g3(efl::eo::instantiate
                                    , [] (name1::name2::Type_Generation) {});
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_type_generation_in)
+EFL_START_TEST(eolian_cxx_test_type_generation_in)
 {
   efl::eo::eo_init i;
 
@@ -92,9 +92,9 @@ START_TEST(eolian_cxx_test_type_generation_in)
   g.instring("foobar");
   g.instringown("foobar");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_type_generation_return)
+EFL_START_TEST(eolian_cxx_test_type_generation_return)
 {
   efl::eo::eo_init i;
 
@@ -129,9 +129,9 @@ START_TEST(eolian_cxx_test_type_generation_return)
     ck_assert_str_eq(string.c_str(), "foobar");
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_type_generation_optional)
+EFL_START_TEST(eolian_cxx_test_type_generation_optional)
 {
   efl::eo::eo_init init;
 
@@ -175,9 +175,9 @@ START_TEST(eolian_cxx_test_type_generation_optional)
   ck_assert(*k == 42);
   g.optionaloutintptrown(nullptr);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eolian_cxx_test_type_callback)
+EFL_START_TEST(eolian_cxx_test_type_callback)
 {
   efl::eo::eo_init i;
 
@@ -221,7 +221,7 @@ START_TEST(eolian_cxx_test_type_callback)
   ck_assert(event4);
   ck_assert(event5);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eolian_cxx_test_binding(TCase* tc)

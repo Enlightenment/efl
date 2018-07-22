@@ -1,5 +1,4 @@
 import elm_general;
-import elm_gengrid_item;
 
 type @extern Ecore_Pos_Map: __undefined_type; [[External ecore position map]]
 
@@ -10,9 +9,9 @@ enum Elm.Gengrid.Reorder_Type
    swap    [[Swap reorder type]]
 }
 
-class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
+class Elm.Gengrid (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Efl.Access.Widget.Action,
-                   Efl.Access.Selection)
+                   Efl.Access.Selection, Efl.Ui.Legacy)
 {
    [[Elementary gengrid class]]
    legacy_prefix: elm_gengrid;
@@ -65,17 +64,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
          }
          values {
             fill: bool; [[$true if the grid is filled, $false otherwise]]
-         }
-      }
-      @property page_relative {
-         [[Control  a given gengrid widget's scrolling page size, relative
-           to its viewport size.
-         ]]
-         set {}
-         get {}
-         values {
-            h_pagerel: double; [[Page relation horizontal]]
-            v_pagerel: double; [[Page relation vertical]]
          }
       }
       @property multi_select {
@@ -269,15 +257,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
             $false to expand vertically.]]
          }
       }
-      @property page_size {
-         set {
-            [[Set a given gengrid widget's scrolling page size.]]
-         }
-         values {
-            h_pagesize: int; [[Page size horizontal]]
-            v_pagesize: int; [[Page size vertical]]
-         }
-      }
       @property selected_item {
          get {
             [[Get the selected item in a given gengrid widget.
@@ -346,28 +325,6 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
             return: Elm.Widget.Item; [[The last item's handle or $null
                                          if there are no  items in $obj
                                          (and on errors).]]
-         }
-      }
-      @property wheel_disabled {
-         set {
-            [[Enable or disable mouse wheel to be used to scroll the gengrid.
-
-              Mouse wheel can be used for the user to scroll up and down
-              the gengrid.
-
-              Wheel is enabled by default.
-            ]]
-         }
-         get {
-            [[Get a value whether mouse wheel is enabled or not.
-
-              Mouse wheel can be used for the user to scroll up and down
-              the gengrid.
-            ]]
-         }
-         values {
-            disabled: bool; [[Use $true to disable mouse wheel or $false
-                              to enable it.]]
          }
       }
       item_insert_before {
@@ -545,20 +502,20 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.provider_find;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
-      Elm.Widget.interest_region { get; }
-      Elm.Widget.widget_event;
-      Elm.Widget.focus_highlight_geometry { get; }
-      Elm.Widget.focused_item { get; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.interest_region { get; }
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focus_highlight_geometry { get; }
+      Efl.Ui.Widget.focused_item { get; }
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
       Elm.Interface_Scrollable.policy { get; set; }
-      Efl.Access.children { get; }
-      Efl.Access.state_set { get; }
+      Efl.Access.Object.access_children { get; }
+      Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
@@ -567,27 +524,27 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Access.Selection.child_deselect;
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
+      Efl.Access.Selection.access_selection_clear;
       Efl.Ui.Focus.Composition.prepare;
-      Elm.Widget.focus_state_apply;
+      Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.setup_on_first_touch;
    }
    events {
-      realized; [[Called when gengrid realized]]
-      unrealized; [[Called when gengrid unrealized]]
-      index,update; [[Called on gengrid index update]]
-      scroll,page,changed; [[Called when scroll page changed]]
-      edge,bottom; [[Called when bottom edge is reached]]
-      edge,top; [[Called when top edge is reached]]
-      edge,right; [[Called when right edge is reached]]
-      edge,left; [[Called when left edge is reached]]
-      item,focused; [[Called when item got focus]]
-      item,unfocused; [[Called when item no longer has focus]]
-      item,reorder,anim,start; [[Called when item reorder animation started]]
-      item,reorder,anim,stop; [[Called when item reorder animation stopped]]
-      activated; [[Called when gengrid got activated]]
-      highlighted; [[Called when gengrid is highlighted]]
-      unhighlighted; [[Called when gengrid is no longer highlighted]]
-      released; [[Called when gengrid is released]]
+      realized: Efl.Object; [[Called when gengrid realized]]
+      unrealized: Efl.Object; [[Called when gengrid unrealized]]
+      index,update: Efl.Object; [[Called on gengrid index update]]
+      scroll,page,changed: void; [[Called when scroll page changed]]
+      edge,bottom: void; [[Called when bottom edge is reached]]
+      edge,top: void; [[Called when top edge is reached]]
+      edge,right: void; [[Called when right edge is reached]]
+      edge,left: void; [[Called when left edge is reached]]
+      item,focused: Efl.Object; [[Called when item got focus]]
+      item,unfocused: Efl.Object; [[Called when item no longer has focus]]
+      item,reorder,anim,start: Efl.Object; [[Called when item reorder animation started]]
+      item,reorder,anim,stop: Efl.Object; [[Called when item reorder animation stopped]]
+      activated: Efl.Object; [[Called when gengrid got activated]]
+      highlighted: Efl.Object; [[Called when gengrid is highlighted]]
+      unhighlighted: Efl.Object; [[Called when gengrid is no longer highlighted]]
+      released: Efl.Object; [[Called when gengrid is released]]
    }
 }

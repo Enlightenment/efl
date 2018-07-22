@@ -58,7 +58,7 @@ struct _Eina_Evlog_Buf
 /**
  * @brief Logs an event in our event log for profiling data.
  *
- * Log some interesting event inside of EFL, eg a wakeup (and why etc.).
+ * Log some interesting event inside of EFL, e.g. a wakeup (and why etc.).
  * The @p event string must always be provided and be of the form:
  *
  * "+eventname"

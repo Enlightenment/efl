@@ -9,8 +9,9 @@
 #include "grammar/alternative.hpp"
 #include "type.hh"
 #include "parameter.hh"
-#include "keyword.hh"
+#include "name_helpers.hh"
 #include "using_decl.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -19,7 +20,7 @@ struct function_declaration_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static)
       return true;
 
     if(!as_generator(documentation).generate(sink, f, context))
@@ -27,7 +28,7 @@ struct function_declaration_generator
 
     return as_generator
         (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
-      .generate(sink, std::make_tuple(f.return_type, managed_method_name(f.name), f.parameters), context);
+      .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f), f.parameters), context);
   }
 };
 

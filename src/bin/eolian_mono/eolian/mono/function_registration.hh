@@ -10,12 +10,13 @@
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
+#include "logging.hh"
 #include "type.hh"
 #include "marshall_type.hh"
 #include "parameter.hh"
-#include "keyword.hh"
 #include "using_decl.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
@@ -28,7 +29,8 @@ struct function_registration_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
-    if(is_function_blacklisted(f.c_name))
+    EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_registration_generator: " << f.name << std::endl;
+    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Static methods aren't overrideable
       return true;
     else
       {
@@ -40,9 +42,9 @@ struct function_registration_generator
 #else
        (scope_tab << scope_tab << "descs[" << index << "].api_func = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, \"" << string << "\");\n"
 #endif
-        << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << string << "NativeInherit." << string << "_static_delegate);\n"
+        << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << name_helpers::klass_native_inherit_name(*klass) << "." << string << "_static_delegate);\n"
        )
-       .generate(sink, std::make_tuple(f.c_name, klass->cxx_name, f.c_name), context))
+       .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
       return false;
     return true;
       }

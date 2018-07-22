@@ -33,7 +33,7 @@ void thread_2_arg(int a0, test t)
   ck_assert(t.x == 10);
 }
 
-START_TEST(eina_cxx_thread_constructors)
+EFL_START_TEST(eina_cxx_thread_constructors)
 {
   efl::eina::eina_init init;
   efl::eina::eina_threads_init threads_init;
@@ -61,9 +61,9 @@ START_TEST(eina_cxx_thread_constructors)
     ck_assert( ::args_2);
   }
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_thread_mutexes)
+EFL_START_TEST(eina_cxx_thread_mutexes)
 {
   efl::eina::eina_init init;
   efl::eina::mutex m;
@@ -87,7 +87,7 @@ START_TEST(eina_cxx_thread_mutexes)
     efl::eina::lock_guard<efl::eina::mutex> lock1(m);
   }
 }
-END_TEST
+EFL_END_TEST
 
 bool b = false;
 
@@ -99,7 +99,7 @@ void condition_thread(efl::eina::mutex& condition_mutex
   condition_condition.notify_one();
 }
 
-START_TEST(eina_cxx_thread_conditional)
+EFL_START_TEST(eina_cxx_thread_conditional)
 {
   efl::eina::eina_init init;
   efl::eina::mutex m;
@@ -119,7 +119,7 @@ START_TEST(eina_cxx_thread_conditional)
 
   thread.join();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_thread(TCase* tc)

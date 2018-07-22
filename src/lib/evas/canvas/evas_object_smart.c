@@ -309,7 +309,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
              EINA_SAFETY_ON_NULL_RETURN(clipper);
              efl_canvas_object_clip_set(eo_obj, clipper);
              if (!had_clippees && smart->cur->visible)
-               efl_gfx_visible_set(clipper, 1);
+               efl_gfx_entity_visible_set(clipper, 1);
           }
      }
 
@@ -323,7 +323,10 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
 EAPI void
 evas_object_smart_member_del(Evas_Object *eo_obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
+
+   if (!eo_obj) return ;
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
@@ -354,7 +357,7 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
         EINA_SAFETY_ON_NULL_RETURN(clipper);
         efl_canvas_object_clip_set(eo_obj, NULL);
         if (!efl_canvas_object_clipees_has(clipper))
-          efl_gfx_visible_set(clipper, 0);
+          efl_gfx_entity_visible_set(clipper, 0);
      }
 
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
@@ -579,17 +582,16 @@ evas_object_smart_members_get_direct(const Evas_Object *eo_obj)
 static void
 _efl_canvas_group_group_members_all_del_internal(Evas_Smart_Data *o)
 {
+   Evas_Object_Smart_Clipped_Data *cso = o->clipped ? o->data : NULL;
    Evas_Object_Protected_Data *memobj;
    Eina_Inlist *itrn;
-   Eo *eo_clipper;
 
-   eo_clipper = _smart_clipper_get(o);
    EINA_INLIST_FOREACH_SAFE(o->contained, itrn, memobj)
      {
-        if (memobj->object != eo_clipper)
-          efl_del(memobj->object);
+        if (memobj->object != cso->clipper)
+          _evas_wrap_del(&memobj->object, memobj);
      }
-   efl_del(eo_clipper);
+   _evas_wrap_del(&cso->clipper, efl_data_scope_get(cso->clipper, EFL_CANVAS_OBJECT_CLASS));
    o->group_del_called = EINA_TRUE;
 }
 
@@ -676,7 +678,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
    MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
+   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, evas_find(eo_e), efl_canvas_object_legacy_ctor(efl_added));
    evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }
@@ -863,12 +865,12 @@ _efl_canvas_group_efl_gfx_color_color_set(Eo *eo_obj, Evas_Smart_Data *o, int r,
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool vis)
+_efl_canvas_group_efl_gfx_entity_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(eo_obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(eo_obj, MY_CLASS), vis);
 
    if (o->clipped)
      {
@@ -879,19 +881,19 @@ _efl_canvas_group_efl_gfx_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Bool 
         if (vis && !evas_object_clipees_has(clipper))
           return;
 
-        efl_gfx_visible_set(clipper, vis);
+        efl_gfx_entity_visible_set(clipper, vis);
      }
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_gfx_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
+_efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    if (o->clipped)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
-   efl_gfx_position_set(efl_super(eo_obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
 }
 
 EOLIAN static void
@@ -917,6 +919,10 @@ evas_object_smart_attach(Evas_Object *eo_obj, Evas_Smart *s)
 {
    Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
    unsigned int i;
+
+   MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
+   return;
+   MAGIC_CHECK_END();
 
    obj->smart.smart = s;
    obj->type = s->smart_class->name;
@@ -1136,7 +1142,7 @@ _efl_canvas_group_group_need_recalculate_set(Eo *eo_obj, Evas_Smart_Data *o, Ein
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_group_group_need_recalculate_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_group_need_recalculate_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->need_recalculate;
 }
@@ -1152,24 +1158,6 @@ _efl_canvas_group_group_calculate(Eo *eo_obj, Evas_Smart_Data *o)
    evas_object_async_block(obj);
    o->need_recalculate = 0;
    obj->smart.smart->smart_class->calculate(eo_obj);
-}
-
-EOLIAN void
-_evas_canvas_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
-{
-   evas_call_smarts_calculate(eo_e);
-}
-
-EOLIAN Eina_Bool
-_evas_canvas_smart_objects_calculating_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   return !!e->in_smart_calc;
-}
-
-EOLIAN int
-_evas_canvas_smart_objects_calculate_count_get(Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
-{
-   return e->smart_calc_count;
 }
 
 /**
@@ -1492,7 +1480,13 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
                (Evas_Object_Protected_Data *)o->contained;
              Evas_Object *contained_obj = contained->object;
 
-             if (contained->smart.parent != eo_obj)
+             if (!contained_obj)
+               {
+                  ERR("Found an undefined object %p in %s.", contained, efl_debug_name_get(eo_obj));
+                  o->contained = eina_inlist_remove
+                    (o->contained, EINA_INLIST_GET(contained));
+               }
+             else if (contained->smart.parent != eo_obj)
                {
                   Evas_Layer *lay = obj->layer;
 
@@ -1833,13 +1827,13 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Sma
 }
 
 EOLIAN static Evas_BiDi_Direction
-_efl_canvas_group_efl_canvas_object_paragraph_direction_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    return o->paragraph_direction;
 }
 
 EOLIAN static const Eo *
-_efl_canvas_group_group_clipper_get(Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
+_efl_canvas_group_group_clipper_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
    // NOTE: This may be NULL until all EO smart objects are clipped!
    return _smart_clipper_get(o);

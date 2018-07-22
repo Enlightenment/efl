@@ -164,7 +164,7 @@ error_user:
 #endif
 
 #ifdef ECORE_CON_FTP_TEST_URL
-START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
+EFL_START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 {
    Ecore_Con_Url *ec_url;
    url_test *info = NULL;
@@ -172,8 +172,6 @@ START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
    char link[] = ECORE_CON_FTP_TEST_URL;
    char url[4096], *username, *password, *file = NULL, *dir = NULL;
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -196,13 +194,12 @@ START_TEST(ecore_con_test_ecore_con_url_ftp_upload)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 #ifdef ECORE_CON_HTTP_TEST_URL
-START_TEST(ecore_con_test_ecore_con_url_post)
+EFL_START_TEST(ecore_con_test_ecore_con_url_post)
 {
    Ecore_Con_Url *ec_url;
    url_test *info = NULL;
@@ -212,8 +209,6 @@ START_TEST(ecore_con_test_ecore_con_url_post)
    char *username = NULL, *password = NULL;
    char url[4096];
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -240,12 +235,11 @@ START_TEST(ecore_con_test_ecore_con_url_post)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(ecore_con_test_ecore_con_url_download)
+EFL_START_TEST(ecore_con_test_ecore_con_url_download)
 {
    Ecore_Con_Url *url;
    url_test *info;
@@ -257,8 +251,6 @@ START_TEST(ecore_con_test_ecore_con_url_download)
 #endif
    char url_data[] = "test";
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -290,17 +282,14 @@ START_TEST(ecore_con_test_ecore_con_url_download)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_con_test_ecore_con_url_create)
+EFL_START_TEST(ecore_con_test_ecore_con_url_create)
 {
    Ecore_Con_Url *url;
    int ret;
 
-   ret = eina_init();
-   fail_if(ret != 1);
    ret = ecore_con_url_init();
    fail_if(ret != 1);
 
@@ -311,11 +300,10 @@ START_TEST(ecore_con_test_ecore_con_url_create)
 
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
-   ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_con_test_ecore_con_url_init)
+EFL_START_TEST(ecore_con_test_ecore_con_url_init)
 {
    int ret;
 
@@ -325,7 +313,7 @@ START_TEST(ecore_con_test_ecore_con_url_init)
    ret = ecore_con_url_shutdown();
    fail_if(ret != 0);
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Bool
 _url_cookies_compl_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event_info)
@@ -359,8 +347,6 @@ _ecore_con_url_cookies_test_init()
    const char link[] = DEFAULT_LINK;
 #endif
 
-   eina_init();
-   ecore_con_init();
    ecore_con_url_init();
 
    ec_url = ecore_con_url_new(link);
@@ -385,11 +371,9 @@ _ecore_con_url_cookies_test_shutdown(Ecore_Con_Url *ec_url, int tmpfd, Eina_Tmps
    eina_tmpstr_del(*path);
    ecore_con_url_free(ec_url);
    ecore_con_url_shutdown();
-   ecore_con_shutdown();
-   eina_shutdown();
 }
 
-START_TEST(ecore_con_test_ecore_con_url_cookies_clear)
+EFL_START_TEST(ecore_con_test_ecore_con_url_cookies_clear)
 {
    Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
    Eina_Tmpstr *path;
@@ -407,9 +391,9 @@ START_TEST(ecore_con_test_ecore_con_url_cookies_clear)
 
    _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_con_test_ecore_con_url_cookies_clear_session)
+EFL_START_TEST(ecore_con_test_ecore_con_url_cookies_clear_session)
 {
    Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
    Eina_Tmpstr *path;
@@ -427,9 +411,9 @@ START_TEST(ecore_con_test_ecore_con_url_cookies_clear_session)
 
    _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_con_test_ecore_con_url_cookies_ignore_session)
+EFL_START_TEST(ecore_con_test_ecore_con_url_cookies_ignore_session)
 {
    Ecore_Con_Url *ec_url = _ecore_con_url_cookies_test_init();
    Eina_Tmpstr *path;
@@ -446,7 +430,7 @@ START_TEST(ecore_con_test_ecore_con_url_cookies_ignore_session)
 
    _ecore_con_url_cookies_test_shutdown(ec_url, tmpfd, &path);
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_con_test_ecore_con_url(TCase *tc)
 {

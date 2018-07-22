@@ -2,12 +2,15 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_LAYOUT_CALC_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED 1
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -793,7 +796,7 @@ _get_drop_format(Evas_Object *obj)
 
 /* we can't reuse layout's here, because it's on entry_edje only */
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
+_elm_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
 {
    const char *emission;
 
@@ -853,19 +856,20 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
    Efl_Ui_Theme_Apply theme_apply;
+   int cursor_pos;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
-   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
    if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    evas_event_freeze(evas_object_evas_get(obj));
@@ -877,7 +881,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_gfx_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -896,6 +900,8 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
    eina_stringshare_del(stl_user);
+
+   cursor_pos = sd->cursor_pos;
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
@@ -927,10 +933,9 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_prediction_hint_set
      (sd->entry_edje, "elm.text", sd->prediction_hint);
 
-   // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
-   // -> smart_objects_calculate will call all smart calculate functions,
-   // and one of them can delete elm_entry.
    evas_object_ref(obj);
+
+   if (cursor_pos) elm_entry_cursor_pos_set(obj, cursor_pos);
 
    if (efl_ui_focus_object_focus_get(obj))
      {
@@ -948,7 +953,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
      {
         Efl_Ui_Theme_Apply ok = EFL_UI_THEME_APPLY_FAILED;
 
-        elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
+        efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
           ok = elm_widget_theme_object_set
@@ -996,7 +1001,7 @@ _elm_entry_elm_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_OBJECT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 
@@ -1295,12 +1300,13 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
                   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
                }
           }
-        edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
+        if (sd->scr_edje)
+          edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
      }
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_elm_entry_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Entry_Data *sd)
 {
    _elm_entry_focus_update(obj, sd);
 
@@ -1308,7 +1314,7 @@ _elm_entry_elm_widget_on_focus_update(Eo *obj, Elm_Entry_Data *sd, Elm_Object_It
 }
 
 EOLIAN static Eina_Rect
-_elm_entry_elm_widget_interest_region_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_ui_widget_interest_region_get(const Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord cx, cy, cw, ch;
    Evas_Coord edx, edy;
@@ -1346,7 +1352,7 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
@@ -1511,6 +1517,7 @@ _elm_entry_entry_paste(Evas_Object *obj,
    ELM_ENTRY_CHECK(obj);
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
      {
         str = _item_tags_remove(entry);
@@ -1534,6 +1541,7 @@ _paste_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
@@ -1553,6 +1561,7 @@ _selection_clear(void *data, Elm_Sel_Type selection)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->have_selection) return;
    if ((selection == ELM_SEL_TYPE_CLIPBOARD) ||
        (selection == ELM_SEL_TYPE_PRIMARY))
@@ -1569,6 +1578,7 @@ _selection_store(Elm_Sel_Type seltype,
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    sel = edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
 
@@ -1586,6 +1596,7 @@ _cut_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
@@ -1609,6 +1620,7 @@ _copy_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
@@ -1629,6 +1641,7 @@ _hover_cancel_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
@@ -1659,6 +1672,7 @@ _menu_call(Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->anchor_hover.hover) return;
 
    efl_event_callback_legacy_call(obj, ELM_ENTRY_EVENT_CONTEXT_OPEN, NULL);
@@ -1778,6 +1792,7 @@ _magnifier_create(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    double scale = _elm_config->magnifier_scale;
    Evas *e;
    Evas_Coord w, h, mw, mh;
@@ -1822,6 +1837,7 @@ _magnifier_move(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Coord x, y, w, h;
    Evas_Coord px, py, pw, ph;
    Evas_Coord cx, cy, ch;
@@ -1908,6 +1924,7 @@ static void
 _magnifier_hide(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
    elm_widget_scroll_freeze_pop(data);
    evas_object_hide(sd->mgf_clip);
@@ -1917,6 +1934,7 @@ static void
 _magnifier_show(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
    elm_widget_scroll_freeze_push(data);
    evas_object_show(sd->mgf_clip);
@@ -1927,6 +1945,7 @@ _long_press_cb(void *data)
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return ECORE_CALLBACK_CANCEL;
    if (_elm_config->magnifier_enable)
      {
         _magnifier_create(data);
@@ -1971,6 +1990,7 @@ _mouse_down_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    sd->downx = ev->canvas.x;
@@ -2007,6 +2027,7 @@ _mouse_up_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->button == 1)
      {
@@ -2056,6 +2077,7 @@ _mouse_move_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (sd->disabled) return;
    if (ev->buttons == 1)
      {
@@ -2127,6 +2149,7 @@ _entry_changed_handle(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    evas_event_freeze(evas_object_evas_get(data));
    sd->changed = EINA_TRUE;
    /* Reset the size hints which are no more relevant. Keep the
@@ -2197,14 +2220,14 @@ _entry_changed_user_signal_cb(void *data,
              atspi_info.content = edje_info->change.insert.content;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
           }
         else if (edje_info && !edje_info->insert)
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
           }
      }
 }
@@ -2229,7 +2252,7 @@ _entry_preedit_changed_signal_cb(void *data,
              atspi_info.content = text;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_event_emit(EFL_ACCESS_MIXIN,
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN,
                                                        data,
                                                        EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED,
                                                        &atspi_info);
@@ -2293,13 +2316,15 @@ _entry_selection_none_signal_cb(void *data,
    elm_entry_select_none(data);
 }
 
-static inline Eina_Bool
-_entry_win_is_wl(Evas_Object *obj)
-{
-   Evas_Object *win = _entry_win_get(obj);
-   /* primary selection does not exist (yet) */
-   return win && elm_win_wl_window_get(win);
-}
+// XXX: still try primary selection even if on wl in case it's
+// supported
+//static inline Eina_Bool
+//_entry_win_is_wl(Evas_Object *obj)
+//{
+//   Evas_Object *win = _entry_win_get(obj);
+//   /* primary selection does not exist (yet) */
+//   return win && elm_win_wl_window_get(win);
+//}
 
 static void
 _entry_selection_changed_signal_cb(void *data,
@@ -2309,14 +2334,17 @@ _entry_selection_changed_signal_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->have_selection = EINA_TRUE;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
-   if (!_entry_win_is_wl(data))
+   // XXX: still try primary selection even if on wl in case it's
+   // supported
+//   if (!_entry_win_is_wl(data))
      _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -2327,12 +2355,15 @@ _entry_selection_cleared_signal_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->have_selection) return;
 
    sd->have_selection = EINA_FALSE;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
-   if (!_entry_win_is_wl(data))
+   // XXX: still try primary selection even if on wl in case it's
+   // supported
+//   if (!_entry_win_is_wl(data))
      {
         if (sd->cut_sel)
           {
@@ -2361,11 +2392,14 @@ _entry_paste_request_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
 
    if (!sd->editable) return;
-   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
+   // XXX: still try primary selection even if on wl in case it's
+   // supported
+//   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
      (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
@@ -2410,6 +2444,7 @@ _entry_cursor_changed_signal_cb(void *data,
                                 const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
        (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
@@ -2420,7 +2455,7 @@ _entry_cursor_changed_signal_cb(void *data,
    efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2432,7 +2467,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
    efl_event_callback_legacy_call
      (data, ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL, NULL);
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2480,6 +2515,7 @@ _entry_anchor_down_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,down,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2503,6 +2539,7 @@ _entry_anchor_up_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,up,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2522,6 +2559,7 @@ _anchor_hover_del_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ELM_SAFE_FREE(sd->anchor_hover.pop, evas_object_del);
    evas_object_event_callback_del_full
      (sd->anchor_hover.hover, EVAS_CALLBACK_DEL, _anchor_hover_del_cb, obj);
@@ -2543,6 +2581,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->hoversel) return;
 
    ei.anchor_info = info;
@@ -2622,6 +2661,7 @@ _entry_anchor_clicked_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    p = emission + sizeof("nchor,mouse,clicked,");
    ei.button = strtol(p, &p2, 10);
    ei.name = p2 + 1;
@@ -2654,6 +2694,7 @@ _entry_anchor_in_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ei.name = emission + sizeof("nchor,mouse,in,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
@@ -2674,6 +2715,7 @@ _entry_anchor_out_signal_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    ei.name = emission + sizeof("nchor,mouse,out,");
    ei.button = 0;
    ei.x = ei.y = ei.w = ei.h = 0;
@@ -2690,7 +2732,10 @@ _entry_key_enter_signal_cb(void *data,
                            const char *emission EINA_UNUSED,
                            const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ACTIVATED, NULL);
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (sd->single_line)
+     efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ACTIVATED, NULL);
 }
 
 static void
@@ -2699,7 +2744,10 @@ _entry_key_escape_signal_cb(void *data,
                             const char *emission EINA_UNUSED,
                             const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ABORTED, NULL);
+   ELM_ENTRY_DATA_GET(data, sd);
+
+   if (sd->single_line)
+     efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_ABORTED, NULL);
 }
 
 static void
@@ -2754,6 +2802,7 @@ _item_get(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return NULL;
    EINA_LIST_FOREACH(sd->item_providers, l, ip)
      {
         o = ip->func(ip->data, data, item);
@@ -2873,6 +2922,7 @@ _markup_filter_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    EINA_LIST_FOREACH(sd->markup_filters, l, tf)
      {
         tf->func(tf->data, data, text);
@@ -2891,6 +2941,7 @@ _text_append_idler(void *data)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return ECORE_CALLBACK_CANCEL;
    evas_event_freeze(evas_object_evas_get(obj));
    ELM_SAFE_FREE(sd->text, eina_stringshare_del);
    sd->changed = EINA_TRUE;
@@ -3168,6 +3219,7 @@ _entry_text_append(Evas_Object* obj, const char* entry, Eina_Bool set)
    if (!entry) return;
 
    ELM_ENTRY_DATA_GET(obj, sd);
+   if (!sd) return;
    len = strlen(entry);
 
    if (sd->append_text_left)
@@ -3324,6 +3376,7 @@ _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return NULL;
    if (sd->password) return NULL;
 
    txt = elm_widget_access_info_get(obj);
@@ -3341,6 +3394,7 @@ _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return NULL;
    ret = NULL;
    buf = eina_strbuf_new();
 
@@ -3437,6 +3491,7 @@ _elm_entry_resize_internal(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    if (sd->line_wrap)
      {
         elm_layout_sizing_eval(obj);
@@ -3473,6 +3528,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler, Evas_Coo
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
+   if (!sd) return;
    evas_object_geometry_get(sd->entry_edje, &ex, &ey, NULL, NULL);
    edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
                                                            &cx, &cy, &cw, &ch);
@@ -3502,6 +3558,7 @@ _start_handler_mouse_down_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Event_Mouse_Down *ev = event_info;
    int start_pos, end_pos, main_pos, pos;
 
@@ -3536,6 +3593,7 @@ _start_handler_mouse_up_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->start_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
@@ -3554,6 +3612,7 @@ _start_handler_mouse_move_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->start_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
@@ -3585,6 +3644,7 @@ _end_handler_mouse_down_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    Evas_Event_Mouse_Down *ev = event_info;
    int pos, start_pos, end_pos, main_pos;
 
@@ -3619,6 +3679,7 @@ _end_handler_mouse_up_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    sd->end_handler_down = EINA_FALSE;
    if (_elm_config->magnifier_enable)
      _magnifier_hide(data);
@@ -3637,6 +3698,7 @@ _end_handler_mouse_move_cb(void *data,
 {
    ELM_ENTRY_DATA_GET(data, sd);
 
+   if (!sd) return;
    if (!sd->end_handler_down) return;
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord ex, ey;
@@ -3667,6 +3729,7 @@ _entry_on_size_evaluate_signal(void *data,
                                const char *source EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(data, sd);
+   if (!sd) return;
    sd->cur_changed = EINA_TRUE;
    elm_entry_calc_force(data);
 }
@@ -3955,13 +4018,13 @@ _elm_entry_efl_canvas_group_group_del(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos)
+_elm_entry_efl_gfx_entity_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 
    if (sd->hoversel) _hoversel_position(obj);
 
@@ -3970,25 +4033,25 @@ _elm_entry_efl_gfx_position_set(Eo *obj, Elm_Entry_Data *sd, Eina_Position2D pos
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_size_set(Eo *obj, Elm_Entry_Data *sd, Eina_Size2D sz)
+_elm_entry_efl_gfx_entity_size_set(Eo *obj, Elm_Entry_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    if (sd->have_selection)
      _update_selection_handler(obj);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void
-_elm_entry_efl_gfx_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool vis)
+_elm_entry_efl_gfx_entity_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    if (sd->have_selection)
      {
@@ -4016,9 +4079,10 @@ elm_entry_add(Evas_Object *parent)
 static void
 _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators++;
 }
@@ -4026,9 +4090,10 @@ _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    ELM_ENTRY_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == ELM_ENTRY_EVENT_VALIDATE)
      sd->validators--;
    return;
@@ -4041,7 +4106,7 @@ _elm_entry_efl_object_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
@@ -4102,7 +4167,7 @@ _elm_entry_single_line_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool single_line)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_single_line_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_single_line_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->single_line;
 }
@@ -4126,7 +4191,7 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
         sd->line_wrap = ELM_WRAP_NONE;
         elm_entry_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_unregister(obj);
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
      }
    else
      {
@@ -4139,16 +4204,22 @@ _elm_entry_password_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool password)
 
         elm_entry_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
         _entry_selection_callbacks_register(obj);
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
 
    efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_password_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_password_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->password;
+}
+
+EAPI void
+elm_entry_calc_force(Evas_Object *obj)
+{
+   efl_layout_calc_force(obj);
 }
 
 EAPI void
@@ -4192,14 +4263,14 @@ _elm_entry_is_empty(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Evas_Object*
-_elm_entry_textblock_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_textblock_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return (Evas_Object *)edje_object_part_object_get
         (sd->entry_edje, "elm.text");
 }
 
 EOLIAN static void
-_elm_entry_calc_force(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_layout_calc_calc_force(Eo *obj, Elm_Entry_Data *sd)
 {
    edje_object_calc_force(sd->entry_edje);
    sd->changed = EINA_TRUE;
@@ -4207,7 +4278,7 @@ _elm_entry_calc_force(Eo *obj, Elm_Entry_Data *sd)
 }
 
 EOLIAN static const char*
-_elm_entry_selection_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_selection_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    if ((sd->password)) return NULL;
    return edje_object_part_text_selection_get(sd->entry_edje, "elm.text");
@@ -4221,7 +4292,7 @@ _elm_entry_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_selection_handler_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->sel_handler_disabled;
 }
@@ -4246,7 +4317,7 @@ _elm_entry_line_wrap_set(Eo *obj, Elm_Entry_Data *sd, Elm_Wrap_Type wrap)
 }
 
 EOLIAN static Elm_Wrap_Type
-_elm_entry_line_wrap_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_line_wrap_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->line_wrap;
 }
@@ -4282,7 +4353,7 @@ _elm_entry_editable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool editable)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_editable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_editable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->editable;
 }
@@ -4351,7 +4422,7 @@ _elm_entry_select_region_set(Eo *obj, Elm_Entry_Data *sd, int start, int end)
 }
 
 EOLIAN static void
-_elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
+_elm_entry_select_region_get(const Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
 {
    if (!elm_entry_selection_get(obj))
      {
@@ -4367,7 +4438,7 @@ _elm_entry_select_region_get(Eo *obj, Elm_Entry_Data *sd, int *start, int *end)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_geometry_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+_elm_entry_textblock_cursor_geometry_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
@@ -4443,21 +4514,21 @@ _elm_entry_cursor_selection_end(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_is_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_is_format_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_is_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_cursor_is_visible_format_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_is_visible_format_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_is_visible_format_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
 }
 
 EOLIAN static char*
-_elm_entry_cursor_content_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_textblock_cursor_content_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_content_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
@@ -4472,7 +4543,7 @@ _elm_entry_cursor_pos_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, int pos)
 }
 
 EOLIAN static int
-_elm_entry_cursor_pos_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cursor_pos_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return edje_object_part_text_cursor_pos_get
             (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
@@ -4538,7 +4609,7 @@ _elm_entry_context_menu_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Ei
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_context_menu_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return !sd->context_menu;
 }
@@ -4898,7 +4969,7 @@ elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *f
 }
 
 EOLIAN static void
-_elm_entry_efl_file_file_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
+_elm_entry_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
    if (group) *group = NULL;
@@ -4920,7 +4991,7 @@ _elm_entry_autosave_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool auto_
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_autosave_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_autosave_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->auto_save;
 }
@@ -4973,7 +5044,7 @@ _elm_entry_cnp_mode_set(Eo *obj, Elm_Entry_Data *sd, Elm_Cnp_Mode cnp_mode)
 }
 
 EOLIAN static Elm_Cnp_Mode
-_elm_entry_cnp_mode_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_cnp_mode_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->cnp_mode;
 }
@@ -5064,7 +5135,7 @@ _elm_entry_scrollable_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool scroll)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_scrollable_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->scroll;
 }
@@ -5165,7 +5236,7 @@ _elm_entry_input_panel_layout_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_I
 }
 
 EOLIAN static Elm_Input_Panel_Layout
-_elm_entry_input_panel_layout_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_layout_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_layout;
 }
@@ -5184,7 +5255,7 @@ _elm_entry_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Elm_Entry_Data 
 }
 
 EOLIAN static int
-_elm_entry_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_layout_variation;
 }
@@ -5198,7 +5269,7 @@ _elm_entry_autocapital_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Aut
 }
 
 EOLIAN static Elm_Autocapital_Type
-_elm_entry_autocapital_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_autocapital_type_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->autocapital_type;
 }
@@ -5212,7 +5283,7 @@ _elm_entry_prediction_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bo
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_prediction_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_prediction_allow_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->prediction_allow;
 }
@@ -5227,7 +5298,7 @@ _elm_entry_input_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Input_Hin
 }
 
 EOLIAN static Elm_Input_Hints
-_elm_entry_input_hint_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_hint_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_hints;
 }
@@ -5242,6 +5313,20 @@ _elm_entry_prediction_hint_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const ch
 
    edje_object_part_text_prediction_hint_set
      (sd->entry_edje, "elm.text", prediction_hint);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_prediction_hint_hash_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *key, const char *value)
+{
+   return edje_object_part_text_prediction_hint_hash_set
+      (sd->entry_edje, "elm.text", key, value);
+}
+
+EOLIAN static Eina_Bool
+_elm_entry_prediction_hint_hash_del(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char *key)
+{
+   return edje_object_part_text_prediction_hint_hash_del
+      (sd->entry_edje, "elm.text", key);
 }
 
 EOLIAN static void
@@ -5259,7 +5344,7 @@ _elm_entry_input_panel_enabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_enabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_enabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_enable;
 }
@@ -5286,7 +5371,7 @@ _elm_entry_input_panel_language_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm
 }
 
 EOLIAN static Elm_Input_Panel_Lang
-_elm_entry_input_panel_language_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_language_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_lang;
 }
@@ -5322,7 +5407,7 @@ _elm_entry_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *
 }
 
 EOLIAN static Elm_Input_Panel_Return_Key_Type
-_elm_entry_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_return_key_type;
 }
@@ -5337,7 +5422,7 @@ _elm_entry_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Elm_Entry_Da
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_return_key_disabled_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_return_key_disabled;
 }
@@ -5359,13 +5444,13 @@ _elm_entry_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *s
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->input_panel_show_on_demand;
 }
 
 EOLIAN static void*
-_elm_entry_imf_context_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_imf_context_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    if (!sd) return NULL;
 
@@ -5399,7 +5484,7 @@ _elm_entry_anchor_hover_parent_set(Eo *obj, Elm_Entry_Data *sd, Evas_Object *par
 }
 
 EOLIAN static Evas_Object*
-_elm_entry_anchor_hover_parent_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_anchor_hover_parent_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->anchor_hover.hover_parent;
 }
@@ -5411,7 +5496,7 @@ _elm_entry_anchor_hover_style_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const
 }
 
 EOLIAN static const char*
-_elm_entry_anchor_hover_style_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_anchor_hover_style_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->anchor_hover.hover_style;
 }
@@ -5440,7 +5525,7 @@ _activate(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_elm_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_elm_entry_efl_ui_widget_on_access_activate(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
    _activate(obj);
@@ -5458,7 +5543,7 @@ _elm_entry_select_allow_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Eina_Bool a
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_select_allow_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
+_elm_entry_select_allow_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 {
    return sd->sel_allow;
 }
@@ -5472,7 +5557,7 @@ _elm_entry_class_constructor(Efl_Class *klass)
 // ATSPI Accessibility
 
 EOLIAN static Eina_Unicode
-_elm_entry_efl_access_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
+_elm_entry_efl_access_text_character_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset)
 {
    char *txt;
    int idx = 0;
@@ -5494,7 +5579,7 @@ _elm_entry_efl_access_text_character_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_character_count_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    char *txt;
    int ret = -1;
@@ -5509,7 +5594,7 @@ _elm_entry_efl_access_text_character_count_get(Eo *obj, Elm_Entry_Data *_pd EINA
 }
 
 EOLIAN static char*
-_elm_entry_efl_access_text_string_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_string_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5594,7 +5679,7 @@ fail:
 }
 
 EOLIAN static char*
-_elm_entry_efl_access_text_text_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
+_elm_entry_efl_access_text_access_text_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    Evas_Object *tblk;
@@ -5634,7 +5719,7 @@ fail:
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_caret_offset_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_caret_offset_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_cursor_pos_get(obj);
 }
@@ -5647,13 +5732,13 @@ _elm_entry_efl_access_text_caret_offset_set(Eo *obj, Elm_Entry_Data *_pd EINA_UN
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_selections_count_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_selections_count_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    return elm_entry_selection_get(obj) ? 1 : 0;
 }
 
 EOLIAN static void
-_elm_entry_efl_access_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_access_selection_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -5661,7 +5746,7 @@ _elm_entry_efl_access_text_selection_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+_elm_entry_efl_access_text_access_selection_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
 {
    if (selection_number != 0) return EINA_FALSE;
 
@@ -5687,13 +5772,13 @@ _elm_entry_efl_access_text_selection_add(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
+_elm_entry_efl_access_text_bounded_ranges_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_elm_entry_efl_access_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+_elm_entry_efl_access_text_offset_at_point_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5727,7 +5812,7 @@ _elm_entry_efl_access_text_offset_at_point_get(Eo *obj, Elm_Entry_Data *_pd EINA
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
+_elm_entry_efl_access_text_character_extents_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur;
@@ -5759,7 +5844,7 @@ _elm_entry_efl_access_text_character_extents_get(Eo *obj, Elm_Entry_Data *_pd EI
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_range_extents_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
+_elm_entry_efl_access_text_range_extents_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5837,7 +5922,7 @@ _textblock_node_format_to_atspi_text_attr(const Evas_Object_Textblock_Node_Forma
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+_elm_entry_efl_access_text_attribute_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5885,7 +5970,7 @@ _elm_entry_efl_access_text_attribute_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSE
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
+_elm_entry_efl_access_text_text_attributes_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Evas_Object *txtblk;
    Evas_Textblock_Cursor *cur1, *cur2;
@@ -5927,7 +6012,7 @@ _elm_entry_efl_access_text_attributes_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUS
 }
 
 EOLIAN static Eina_List*
-_elm_entry_efl_access_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_text_default_attributes_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    Evas_Object *txtblk;
    Eina_List *ret = NULL;
@@ -5952,7 +6037,7 @@ _elm_entry_efl_access_text_default_attributes_get(Eo *obj EINA_UNUSED, Elm_Entry
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_access_editable_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
+_elm_entry_efl_access_editable_text_text_content_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, const char *content)
 {
    elm_entry_entry_set(obj, content);
    return EINA_TRUE;
@@ -6025,10 +6110,10 @@ _elm_entry_efl_access_editable_text_cut(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED
 }
 
 EOLIAN static Efl_Access_State_Set
-_elm_entry_efl_access_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
+_elm_entry_efl_access_object_state_set_get(const Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, ELM_ENTRY_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, ELM_ENTRY_CLASS));
 
    if (elm_entry_editable_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
@@ -6037,10 +6122,10 @@ _elm_entry_efl_access_state_set_get(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static const char*
-_elm_entry_efl_access_name_get(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_access_object_i18n_name_get(const Eo *obj, Elm_Entry_Data *sd)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(obj, ELM_ENTRY_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, ELM_ENTRY_CLASS));
    if (name && strncmp("", name, 1)) return name;
 
    if (sd->password) return NULL;
@@ -6060,7 +6145,7 @@ _action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_entry_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
+_elm_entry_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _action_activate },
@@ -6068,6 +6153,15 @@ _elm_entry_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED, Elm_Ent
    };
    return &atspi_actions[0];
 }
+
+EOLIAN static Efl_Ui_Focus_Manager*
+_elm_entry_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Elm_Entry_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
+{
+   return efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
+     efl_ui_focus_manager_root_set(efl_added, root)
+   );
+}
+
 
 /* Efl.Part begin */
 

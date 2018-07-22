@@ -2110,6 +2110,24 @@ EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
  */
 EAPI Eina_Bool edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene);
 
+/**
+ * @brief Gets seat data passed to callbacks.
+ *
+ * @return The seat data for that callback.
+ *
+ * When a callback is initiated by an input event from a seat, we try to
+ * provide seat information with it.
+ *
+ * Signals fired as programmed responses to these signals will also try
+ * to carry the seat data along.
+ *
+ * This returns an opaque pointer to the seat data.
+ *
+ * @see edje_object_signal_callback_add() for more on Edje signals.
+ * @since 1.21
+ */
+EAPI void *edje_object_signal_callback_seat_data_get(void);
+
 #endif
 
 /**

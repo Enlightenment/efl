@@ -23,9 +23,6 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>

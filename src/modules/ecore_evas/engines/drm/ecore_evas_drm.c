@@ -63,6 +63,7 @@ typedef struct _Ecore_Evas_Engine_Drm_Data
    Eina_Bool ticking : 1;
    Eina_Bool once : 1;
    Ecore_Job *tick_job;
+   Ecore_Job *focus_job;
 } Ecore_Evas_Engine_Drm_Data;
 
 static int _drm_init_count = 0;
@@ -198,6 +199,11 @@ _ecore_evas_drm_shutdown(Ecore_Evas_Engine_Drm_Data *edata)
    Ecore_Event_Handler *h;
    if (--_drm_init_count != 0) return _drm_init_count;
 
+   if (edata->focus_job)
+     {
+        ecore_job_del(edata->focus_job);
+        edata->focus_job = NULL;
+     }
    ecore_drm2_outputs_destroy(edata->dev);
    ecore_drm2_device_close(edata->dev);
    ecore_drm2_shutdown();
@@ -383,6 +389,17 @@ _drm_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y)
 }
 
 static void
+_drm_show_focus_job(void *data)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Drm_Data *edata;
+
+   _ecore_evas_focus_device_set(ee, NULL, EINA_TRUE);
+   edata = ee->engine.data;
+   edata->focus_job = NULL;
+}
+
+static void
 _drm_show(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Drm_Data *edata;
@@ -406,14 +423,10 @@ _drm_show(Ecore_Evas *ee)
    if (ee->visible) return;
 
    ee->visible = 1;
-   if (ee->prop.fullscreen)
-     {
-        evas_focus_in(ee->evas);
-        if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-     }
    if (ee->func.fn_show) ee->func.fn_show(ee);
 
    edata = ee->engine.data;
+   edata->focus_job = ecore_job_add(_drm_show_focus_job, ee);
    /* HACK: sometimes we still have an animator ticking when we vc switch
     * so for now we just fire off a flip here to kick it when we come back.
     * This is just papering over a bug for now until I have time to track
@@ -715,10 +728,14 @@ _cb_pageflip(int fd EINA_UNUSED, unsigned int frame EINA_UNUSED, unsigned int se
 
    if (edata->ticking)
      {
+        int x, y, w, h;
         double t = (double)sec + ((double)usec / 1000000);
 
+        ecore_drm2_output_info_get(edata->output, &x, &y, &w, &h, NULL);
+
         if (!edata->once) t = ecore_time_get();
-        ecore_evas_animator_tick(ee, NULL, t - edata->offset);
+        ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                                 t - edata->offset);
      }
    else if (ret)
      ecore_drm2_fb_flip(NULL, edata->output);
@@ -741,11 +758,16 @@ _tick_job(void *data)
 {
    Ecore_Evas_Engine_Drm_Data *edata;
    Ecore_Evas *ee;
+   int x, y, w, h;
 
    ee = data;
    edata = ee->engine.data;
    edata->tick_job = NULL;
-   ecore_evas_animator_tick(ee, NULL, edata->tick_job_timestamp);
+
+   ecore_drm2_output_info_get(edata->output, &x, &y, &w, &h, NULL);
+
+   ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
+                            edata->tick_job_timestamp);
 }
 
 static void
@@ -787,6 +809,12 @@ _drm_animator_register(Ecore_Evas *ee)
           }
      }
 
+   if (ee->animator_ticked || ee->animator_ran)
+     {
+        edata->ticking = EINA_TRUE;
+        return;
+     }
+
    if (edata->tick_job) ERR("Double animator register");
    else
    if (!edata->ticking &&
@@ -799,10 +827,9 @@ _drm_animator_register(Ecore_Evas *ee)
                                        + ((double)usec / 1000000);
              edata->tick_job = ecore_job_add(_tick_job, ee);
           }
+        else
+          ecore_drm2_fb_flip(NULL, edata->output);
      }
-
-   if (!ecore_drm2_output_pending_get(edata->output) && !ee->in_async_render)
-     ecore_drm2_fb_flip(NULL, edata->output);
 
    edata->ticking = EINA_TRUE;
 }
@@ -1000,11 +1027,13 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER"))
      ee->can_async_render = 0;
 
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Can not create a Canvas.");
+        goto eng_err;
+     }
+
    evas_output_method_set(ee->evas, method);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
    if (ee->can_async_render)
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
@@ -1059,13 +1088,7 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
 
    ecore_evas_data_set(ee, "device", edata->dev);
 
-   _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    ecore_drm2_output_info_get(edata->output, NULL, NULL, &mw, &mh, NULL);
 

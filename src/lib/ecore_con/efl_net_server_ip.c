@@ -74,7 +74,7 @@ _efl_net_server_ip_ipv6_only_set(Eo *o, Efl_Net_Server_Ip_Data *pd, Eina_Bool ip
 }
 
 EOLIAN Eina_Bool
-_efl_net_server_ip_ipv6_only_get(Eo *o EINA_UNUSED, Efl_Net_Server_Ip_Data *pd)
+_efl_net_server_ip_ipv6_only_get(const Eo *o EINA_UNUSED, Efl_Net_Server_Ip_Data *pd)
 {
    return pd->ipv6_only;
 }

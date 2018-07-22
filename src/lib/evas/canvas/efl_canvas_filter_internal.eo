@@ -1,5 +1,4 @@
 // import efl_gfx_types -> need to add Efl.Gfx.Color
-import eina_types;
 
 /* Everything in this file is internal to Evas. It is not meant to be used
    from outside EFL itself! */
@@ -83,10 +82,10 @@ mixin Efl.Canvas.Filter.Internal (Efl.Gfx.Filter, Efl.Object)
          return: bool; [[Indicates success from the object render function.]]
          params {
             filter: void_ptr; [[Current filter context]]
-	    engine: void_ptr; [[Engine context]]
-	    output: void_ptr; [[Output context]]
+       engine: void_ptr; [[Engine context]]
+       output: void_ptr; [[Output context]]
             drawctx: void_ptr; [[Draw context (for evas engine)]]
-	    data: void_ptr; [[Private data used by textblock]]
+       data: void_ptr; [[Private data used by textblock]]
             l: int; [[Left]]
             r: int; [[Right]]
             t: int; [[Top]]

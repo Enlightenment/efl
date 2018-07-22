@@ -3,19 +3,36 @@
 
 #include "evas_vg_private.h"
 
-#define MY_CLASS EFL_VG_CONTAINER_CLASS
+#define MY_CLASS EFL_CANVAS_VG_CONTAINER_CLASS
 
 static void
-_efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
+_invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   Efl_Canvas_Vg_Container_Data *pd;
+   Eina_List *l;
+   Efl_VG* child;
+
+   pd = efl_data_scope_get(event->object, MY_CLASS);
+
+   /* Clean up all the references by copying.
+      If the container is copied, it copies its children as well.
+      Since evas_vg_node is duplicated using efl_add_ref(),
+      we definitely call efl_unref() after that. */
+   EINA_LIST_FOREACH(pd->children, l, child)
+      efl_unref(child);
+}
+
+static void
+_efl_canvas_vg_container_render_pre(Eo *obj EINA_UNUSED,
                              Eina_Matrix3 *parent,
                              Ector_Surface *s,
                              void *data,
-                             Efl_VG_Data *nd)
+                             Efl_Canvas_Vg_Node_Data *nd)
 {
-   Efl_VG_Container_Data *pd = data;
+   Efl_Canvas_Vg_Container_Data *pd = data;
    Eina_List *l;
    Eo *child;
-   Efl_VG_Data *child_nd;
+   Efl_Canvas_Vg_Node_Data *child_nd;
    Efl_Gfx_Change_Flag flag;
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
@@ -23,13 +40,13 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
    flag = nd->flags;
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
-   EFL_VG_COMPUTE_MATRIX(current, parent, nd);
+   EFL_CANVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    EINA_LIST_FOREACH(pd->children, l, child)
      {
         if (flag & EFL_GFX_CHANGE_FLAG_MATRIX)
           {
-             child_nd = efl_data_scope_get(child, EFL_VG_CLASS);
+             child_nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
              child_nd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
           }
         _evas_vg_render_pre(child, s, current);
@@ -37,17 +54,17 @@ _efl_vg_container_render_pre(Eo *obj EINA_UNUSED,
 }
 
 static Eo *
-_efl_vg_container_efl_object_constructor(Eo *obj,
-                                      Efl_VG_Container_Data *pd)
+_efl_canvas_vg_container_efl_object_constructor(Eo *obj,
+                                      Efl_Canvas_Vg_Container_Data *pd)
 {
-   Efl_VG_Data *nd;
+   Efl_Canvas_Vg_Node_Data *nd;
 
    pd->names = eina_hash_stringshared_new(NULL);
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
-   nd->render_pre = _efl_vg_container_render_pre;
+   nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
+   nd->render_pre = _efl_canvas_vg_container_render_pre;
    nd->data = pd;
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
@@ -55,18 +72,16 @@ _efl_vg_container_efl_object_constructor(Eo *obj,
 }
 
 static void
-_efl_vg_container_efl_object_destructor(Eo *obj,
-                                     Efl_VG_Container_Data *pd EINA_UNUSED)
+_efl_canvas_vg_container_efl_object_destructor(Eo *obj,
+                                     Efl_Canvas_Vg_Container_Data *pd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_CLASS));
-
    eina_hash_free(pd->names);
-   pd->names = NULL;
 }
 
 static void
-_efl_vg_container_efl_vg_bounds_get(Eo *obj EINA_UNUSED,
-                                    Efl_VG_Container_Data *pd,
+_efl_canvas_vg_container_efl_gfx_path_bounds_get(const Eo *obj EINA_UNUSED,
+                                    Efl_Canvas_Vg_Container_Data *pd,
                                     Eina_Rect *r)
 {
    Eina_Rect s;
@@ -80,19 +95,19 @@ _efl_vg_container_efl_vg_bounds_get(Eo *obj EINA_UNUSED,
      {
         if (first)
           {
-             efl_vg_bounds_get(child, r);
+             efl_gfx_path_bounds_get(child, r);
              first = EINA_FALSE;
           }
         else
           {
-             efl_vg_bounds_get(child, &s);
+             efl_gfx_path_bounds_get(child, &s);
              eina_rectangle_union(&r->rect, &s.rect);
           }
      }
 }
 
 static Efl_VG *
-_efl_vg_container_child_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd, const char *name)
+_efl_canvas_vg_container_child_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Container_Data *pd, const char *name)
 {
    const char *tmp = eina_stringshare_add(name);
    Efl_VG *r;
@@ -104,33 +119,31 @@ _efl_vg_container_child_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd, cons
 }
 
 static Eina_Iterator *
-_efl_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_VG_Container_Data *pd)
+_efl_canvas_vg_container_children_get(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Container_Data *pd)
 {
    return eina_list_iterator_new(pd->children);
 }
 
 static Eina_Bool
-_efl_vg_container_efl_vg_interpolate(Eo *obj,
-                                          Efl_VG_Container_Data *pd,
-                                          const Efl_VG *from, const Efl_VG *to,
-                                          double pos_map)
+_efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Container_Data *pd, const Efl_VG *from, const Efl_VG *to, double pos_map)
 {
    Eina_Iterator *from_it, *to_it;
    Eina_List *l;
    Eina_Bool r, res = EINA_TRUE;
    Eo *from_child, *to_child, *child;
 
-   //1. check if both the object are containers
-   if (!(efl_isa(from, EFL_VG_CONTAINER_CLASS) &&
-         efl_isa(to, EFL_VG_CONTAINER_CLASS)))
+   //Check if both objects have same type
+   if (!(efl_isa(from, MY_CLASS) && efl_isa(to, MY_CLASS)))
      return EINA_FALSE;
 
-   r = efl_vg_interpolate(efl_super(obj, EFL_VG_CONTAINER_CLASS), from, to, pos_map);
-
+   //Interpolates this nodes
+   r = efl_gfx_path_interpolate(efl_super(obj, MY_CLASS), from, to, pos_map);
    if (!r) return EINA_FALSE;
 
-   from_it = efl_vg_container_children_get((Efl_VG *)from);
-   to_it = efl_vg_container_children_get((Efl_VG *)to);
+   from_it = efl_canvas_vg_container_children_get((Efl_VG *)from);
+   to_it = efl_canvas_vg_container_children_get((Efl_VG *)to);
+
+   //Interpolates children
    EINA_LIST_FOREACH (pd->children, l, child)
      {
         res &= eina_iterator_next(from_it, (void **)&from_child);
@@ -141,10 +154,10 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
              r = EINA_FALSE;
              break;
           }
-        r &= efl_vg_interpolate(child, from_child, to_child, pos_map);
-        if (!r)
-          break;
+        r = efl_gfx_path_interpolate(child, from_child, to_child, pos_map);
+        if (!r) break;
      }
+
    eina_iterator_free(from_it);
    eina_iterator_free(to_it);
 
@@ -152,25 +165,34 @@ _efl_vg_container_efl_vg_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_container_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Container_Data *pd)
+_efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
+                                             Efl_Canvas_Vg_Container_Data *pd)
 {
    Eina_List *l;
    Efl_VG *child;
-   Efl_VG *cn = NULL;
+   Efl_VG *container;
 
-   cn = efl_duplicate(efl_super(obj, MY_CLASS));
+   container = efl_duplicate(efl_super(obj, MY_CLASS));
+   efl_event_callback_add(container, EFL_EVENT_INVALIDATE, _invalidate_cb, NULL);
+   efl_parent_set(container, efl_parent_get(obj));
+
+   //Copy Children
    EINA_LIST_FOREACH(pd->children, l, child)
      {
-        // parent_set adds the new node to the list of children of cn
-        efl_parent_set(efl_duplicate(child), cn);
+        Efl_VG *eo = efl_duplicate(child);
+        efl_parent_set(eo, container);
      }
-   return cn;
+
+   return container;
 }
 
 EAPI Efl_VG*
 evas_vg_container_add(Efl_VG *parent)
 {
-   return efl_add(EFL_VG_CONTAINER_CLASS, parent);
+   /* Warn it because the usage has been changed.
+      We can remove this message after v1.21. */
+   if (!parent) CRI("Efl_VG Container doesn't allow null parent!");
+   return efl_add(MY_CLASS, parent);
 }
 
-#include "efl_vg_container.eo.c"
+#include "efl_canvas_vg_container.eo.c"

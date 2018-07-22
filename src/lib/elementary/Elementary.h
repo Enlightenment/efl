@@ -93,10 +93,10 @@
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVAS_BUILD */
+# endif
 # define EAPI_WEAK
 #else
 # ifdef __GNUC__
@@ -111,7 +111,7 @@
 #  define EAPI
 #  define EAPI_WEAK
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #define EWAPI EAPI EAPI_WEAK
 
@@ -148,12 +148,17 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+
+//define focus manager earlier since focus object and manager is circular
+typedef Eo Efl_Ui_Focus_Manager;
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
+# include <efl_ui_focus_manager_window_root.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
-# include <efl_ui_focus_user.eo.h>
 # include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_translatable.eo.h>
@@ -275,9 +280,9 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
-# include <efl_ui_list_segarray.h>
+# include <efl_selection_types.eot.h>
 # include <efl_config_global.eo.h>
-# include <elm_widget.eo.h>
+# include <efl_ui_widget.eo.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_widget_part_bg.eo.h>
 # include <efl_ui_widget_part_shadow.eo.h>
@@ -299,29 +304,70 @@ EAPI extern Elm_Version *elm_version;
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
-# include <efl_ui_text_interactive.eo.h>
+# include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_popup.eo.h>
 # include <efl_ui_popup_alert.eo.h>
 # include <efl_ui_popup_alert_scroll.eo.h>
 # include <efl_ui_popup_alert_text.eo.h>
 # include <efl_ui_popup_anchor.eo.h>
+# include <efl_ui_text_factory_images.eo.h>
+# include <efl_ui_text_factory_emoticons.eo.h>
+# include <efl_ui_text_factory_fallback.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
 # include <efl_ui_clock.eo.h>
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
+# include <efl_ui_datepicker.eo.h>
+# include <efl_ui_timepicker.eo.h>
+# include <efl_ui_tags.eo.h>
 # include <efl_ui_image_factory.eo.h>
+# include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
-# include <efl_ui_list_types.eot.h>
-# include <efl_ui_list_model.eo.h>
-# include <efl_ui_list_relayout.eo.h>
+# include <efl_ui_item.eo.h>
+# include <efl_ui_list_item.eo.h>
+# include <efl_ui_list_default_item_part_icon.eo.h>
+# include <efl_ui_list_default_item_part_end.eo.h>
+# include <efl_ui_list_default_item.eo.h>
+# include <efl_ui_list_empty_item.eo.h>
 # include <efl_ui_list.eo.h>
-# include <efl_ui_list_pan.eo.h>
+# include <efl_ui_view_list_types.eot.h>
+# include <efl_ui_view_list_segarray.h>
+# include <efl_ui_view_list_segarray.eo.h>
+# include <efl_ui_view_list_model.eo.h>
+# include <efl_ui_view_list_relayout.eo.h>
+# include <efl_ui_view_list.eo.h>
+# include <efl_ui_view_list_pan.eo.h>
+# include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>
-# include <efl_ui_pan.eo.h>
+# include <efl_ui_dnd_types.eot.h>
+# include <efl_selection.eo.h>
+# include <efl_ui_dnd.eo.h>
+# include <efl_ui_dnd_container.eo.h>
+# include <efl_ui_navigation_bar.eo.h>
+# include <efl_ui_navigation_bar_part.eo.h>
+# include <efl_ui_navigation_bar_part_back_button.eo.h>
+# include <efl_ui_navigation_layout.eo.h>
+# include <efl_ui_stack.eo.h>
+
+# ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
+# define _EFL_UI_PAGER_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Pager;
+# endif
+
+# include <efl_page_transition.eo.h>
+# include <efl_page_transition_scroll.eo.h>
+# include <efl_page_indicator.eo.h>
+# include <efl_page_indicator_icon.eo.h>
+# include <efl_ui_pager.eo.h>
+
+# include <efl_ui_tab_bar.eo.h>
+# include <efl_ui_tab_page.eo.h>
+# include <efl_ui_tab_page_part_tab.eo.h>
+# include <efl_ui_tab_pager.eo.h>
 #endif
 
 /* include deprecated calls last of all */

@@ -1,12 +1,8 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 #include <ctype.h>
 
-static int retval = EXIT_SUCCESS;
 static int waiting;
 
 static void
@@ -43,7 +39,7 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -87,7 +83,7 @@ _done(void *data EINA_UNUSED, const Efl_Event *event)
    fprintf(stderr, "INFO: done %s, waiting=%d\n",
            efl_name_get(event->object), waiting);
    if (waiting == 0)
-     ecore_main_loop_quit();
+     efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(copier_cbs,
@@ -199,8 +195,49 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *dialer = NULL;
+static Eo *sender = NULL;
+static Eo *receiver = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (sender ||
+       receiver ||
+       dialer)
+     {
+        efl_io_closer_close(sender);
+        efl_del(sender);
+        sender = NULL;
+
+        efl_io_closer_close(receiver);
+        efl_del(receiver);
+        receiver = NULL;
+
+        efl_del(dialer);
+        dialer = NULL;
+     }
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *method = "GET";
    char *primary_mode_str = "auto";
@@ -246,7 +283,7 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *input, *dialer, *output, *sender, *receiver, *loop;
+   Eo *input, *output, *loop;
    Efl_Net_Dialer_Http_Primary_Mode primary_mode;
    Efl_Net_Http_Version http_version;
    Efl_Net_Http_Authentication_Method authentication_method;
@@ -255,27 +292,21 @@ main(int argc, char **argv)
    Eina_Error err;
    char *str;
 
-   ecore_init();
-   ecore_con_init();
-   ecore_con_url_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   loop = efl_main_loop_get();
+   loop = ev->object;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -371,7 +402,7 @@ main(int argc, char **argv)
      {
         fprintf(stderr, "ERROR: could not dial '%s': %s",
                 address, eina_error_msg_get(err));
-        goto no_mainloop;
+        goto end;
      }
 
    fprintf(stderr,
@@ -398,25 +429,10 @@ main(int argc, char **argv)
      fprintf(stderr, "INFO:       %s: %s\n", header->key, header->value);
    eina_iterator_free(itr);
 
-   ecore_main_loop_begin();
-
-   fprintf(stderr, "INFO: main loop finished.\n");
-
- no_mainloop:
-   efl_io_closer_close(sender);
-   efl_del(sender);
-
-   efl_io_closer_close(receiver);
-   efl_del(receiver);
-
-   efl_del(dialer);
-   efl_del(output);
-   efl_del(input);
+   return ;
 
  end:
-   ecore_con_url_shutdown();
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(ev->object, eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();

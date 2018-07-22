@@ -176,7 +176,7 @@ struct _Eina_Lines_Iterator
 
 /**
  * @brief Determines if a path is relative or absolute.
- * The implementation simply chekcs if the first char in the path is '/'.  If it
+ * The implementation simply checks if the first char in the path is '/'.  If it
  * is not, the path is considered relative.
  *
  * @param path The path to check.
@@ -267,7 +267,7 @@ extern int _eina_file_log_dom;
 
 // Common function to handle virtual file
 /**
- * @brief Map the entire contents fo a virtual file to a buffer.
+ * @brief Map the entire contents of a virtual file to a buffer.
  *
  * @param file The virtual file to map in memory
  *
@@ -297,7 +297,7 @@ void eina_file_virtual_map_free(Eina_File *file, void *map);
 // Common hash function
 /**
  * @brief Get the length of a map key.
- * @warning This function is not yet implemented.  At present it ony returns
+ * @warning This function is not yet implemented.  At present it only returns
  * @code sizeof (unsigned long int) * 2 @endcode
  *
  * @param key The key for which length will be calculated.

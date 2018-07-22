@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout.Part_Box (Efl.Canvas.Layout.Part, Efl.Pack.Linear,
+class Efl.Canvas.Layout_Part_Box (Efl.Canvas.Layout_Part, Efl.Pack_Linear,
                                   Efl.Ui.Direction)
 {
    [[Represents a Box created as part of a layout.
@@ -15,14 +15,14 @@ class Efl.Canvas.Layout.Part_Box (Efl.Canvas.Layout.Part, Efl.Pack.Linear,
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.Linear.pack_begin;
-      Efl.Pack.Linear.pack_end;
-      Efl.Pack.Linear.pack_before;
-      Efl.Pack.Linear.pack_after;
-      Efl.Pack.Linear.pack_at;
-      Efl.Pack.Linear.pack_content_get;
-      Efl.Pack.Linear.pack_unpack_at;
-      Efl.Pack.Linear.pack_index_get;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
       Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
    }
 }

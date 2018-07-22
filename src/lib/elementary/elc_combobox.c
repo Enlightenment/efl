@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define EFL_UI_TRANSLATABLE_PROTECTED
@@ -61,7 +61,7 @@ _elm_combobox_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Co
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_combobox_elm_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
+_elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 {
    const char *style;
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
@@ -330,12 +330,12 @@ _elm_combobox_efl_canvas_group_group_del(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 EOLIAN static void
-_elm_combobox_efl_gfx_visible_set(Eo *obj, Elm_Combobox_Data *sd, Eina_Bool vis)
+_elm_combobox_efl_gfx_entity_visible_set(Eo *obj, Elm_Combobox_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
    if (vis)
      {
         if (sd->expanded) evas_object_show(sd->hover);
@@ -347,7 +347,7 @@ _elm_combobox_efl_gfx_visible_set(Eo *obj, Elm_Combobox_Data *sd, Eina_Bool vis)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_efl_ui_autorepeat_autorepeat_supported_get(Eo *obj EINA_UNUSED,
+_elm_combobox_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED,
                                                          Elm_Combobox_Data *sd EINA_UNUSED)
 {
    return EINA_FALSE;
@@ -373,7 +373,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
 
    //hover-parent
    sd->hover_parent = elm_object_top_widget_get(obj);
@@ -382,7 +382,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
 
    //hover
    sd->hover = _elm_combobox_component_add(obj, sd->hover_parent, ELM_HOVER_CLASS, buf);
-   efl_gfx_visible_set(sd->hover, EINA_FALSE);
+   efl_gfx_entity_visible_set(sd->hover, EINA_FALSE);
    evas_object_layer_set(sd->hover, EVAS_LAYER_MAX);
    efl_ui_mirrored_automatic_set(sd->hover, EINA_FALSE);
    elm_hover_target_set(sd->hover, obj);
@@ -466,7 +466,7 @@ _elm_combobox_hover_end(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_elm_combobox_expanded_get(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_expanded_get(const Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
    return sd->expanded;
 }
@@ -521,7 +521,7 @@ _elm_combobox_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_combobox_efl_access_widget_action_elm_actions_get(Eo *obj EINA_UNUSED,
+_elm_combobox_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED,
                                                                 Elm_Combobox_Data *pd
                                                                 EINA_UNUSED)
 {
@@ -561,13 +561,13 @@ _elm_combobox_part_text_get(const Eo *obj, const char *part)
 }
 
 EOLIAN static void
-_elm_combobox_efl_gfx_size_set(Eo *obj, Elm_Combobox_Data *pd, Eina_Size2D sz)
+_elm_combobox_efl_gfx_entity_size_set(Eo *obj, Elm_Combobox_Data *pd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
    if (pd->count > 0) _table_resize(obj);
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 /* Internal EO APIs and hidden overrides */

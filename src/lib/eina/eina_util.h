@@ -30,7 +30,7 @@
 
 /**
  * @brief Returns the content of the environment referred by HOME on this system.
- * @return A temporary string to the content refered by HOME on this system.
+ * @return A temporary string to the content referred by HOME on this system.
  *
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("HOME").
@@ -41,7 +41,7 @@ EAPI const char *eina_environment_home_get(void);
 
 /**
  * @brief Returns the content of the environment referred as TMPDIR on this system.
- * @return A temporary string to the content refered by TMPDIR on this system.
+ * @return A temporary string to the content referred by TMPDIR on this system.
  *
  * @note The result of this call is highly system dependent and you better use
  * it instead of the naive getenv("TMPDIR").
@@ -72,8 +72,8 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
 
 /**
  * @brief Safe comparison of float
- * @param a First member to compar
- * @param b Second member to compar
+ * @param a First member to compare
+ * @param b Second member to compare
  * @since 1.19
  *
  * @return @c true if two floats match
@@ -91,8 +91,8 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
 
 /**
  * @brief Safe comparison of double
- * @param a First member to compar
- * @param b Second member to compar
+ * @param a First member to compare
+ * @param b Second member to compare
  * @since 1.19
  *
  * @return @c true if two double match

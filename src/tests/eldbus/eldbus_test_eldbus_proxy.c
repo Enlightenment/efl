@@ -29,24 +29,8 @@ static int proxy_data_stored = 5;
 * @defgroup eldbus_proxy
 *
 * @preconditio
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   eldbus_shutdown();
-   ecore_shutdown();
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -134,11 +118,11 @@ _proxy_message_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_info_get_call_p)
+EFL_START_TEST(utc_eldbus_proxy_info_get_call_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -162,7 +146,7 @@ START_TEST(utc_eldbus_proxy_info_get_call_p)
    Eldbus_Pending *pending = eldbus_proxy_call(proxy, method_name, _proxy_message_cb, &cb_data, -1, empty_string);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -173,7 +157,7 @@ START_TEST(utc_eldbus_proxy_info_get_call_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -216,11 +200,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_send_call_p)
+EFL_START_TEST(utc_eldbus_proxy_send_call_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -235,19 +219,18 @@ START_TEST(utc_eldbus_proxy_send_call_p)
    Eldbus_Pending *pending = eldbus_proxy_send(proxy, msg, _proxy_message_cb, &cb_data, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Method GetId is not call");
 
-   eldbus_message_unref(msg);
    eldbus_proxy_unref(proxy);
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -287,14 +270,14 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_send_and_block_p)
+EFL_START_TEST(utc_eldbus_proxy_send_and_block_p)
 {
    const int timeout = 1000;
    is_success = EINA_FALSE;
    const char *errname, *errmsg;
    char *text_reply = NULL;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -326,12 +309,11 @@ START_TEST(utc_eldbus_proxy_send_and_block_p)
    ck_assert_str_ne(text_reply, empty_string);
 
    eldbus_message_unref(message_reply);
-   eldbus_message_unref(msg);
    eldbus_proxy_unref(proxy);
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_proxy
@@ -373,11 +355,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_proxy_data_p)
+EFL_START_TEST(utc_eldbus_proxy_data_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -403,7 +385,7 @@ START_TEST(utc_eldbus_proxy_data_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}
@@ -411,7 +393,6 @@ END_TEST
 void
 eldbus_test_eldbus_proxy(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_proxy_info_get_call_p);
    tcase_add_test(tc, utc_eldbus_proxy_send_call_p);
    tcase_add_test(tc, utc_eldbus_proxy_send_and_block_p);

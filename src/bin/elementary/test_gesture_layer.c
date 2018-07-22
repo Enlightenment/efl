@@ -57,6 +57,7 @@ apply_changes(Photo_Object *po)
          po->bx + po->bw / 2, po->by + po->bh /2);
    evas_object_map_enable_set(po->ic, EINA_TRUE);
    evas_object_map_set(po->ic, map);
+   evas_object_anti_alias_set(po->ic, EINA_TRUE);
 
      {
         Evas_Map *shadow_map = evas_map_new(4);

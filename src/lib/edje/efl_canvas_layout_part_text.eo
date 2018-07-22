@@ -1,5 +1,5 @@
-class Efl.Canvas.Layout.Part_Text (Efl.Canvas.Layout.Part, Efl.Text,
-Efl.Text.Markup, Efl.Text.Cursor)
+class Efl.Canvas.Layout_Part_Text (Efl.Canvas.Layout_Part, Efl.Text,
+Efl.Text_Markup, Efl.Text_Cursor)
 {
    [[Represents a TEXT part of a layout
 
@@ -9,20 +9,20 @@ Efl.Text.Markup, Efl.Text.Cursor)
    data: null;
    implements {
       Efl.Text.text { set; get; }
-      Efl.Text.Markup.markup { get; set; }
-      Efl.Text.Cursor.cursor { get; }
-      Efl.Text.Cursor.cursor_paragraph_first;
-      Efl.Text.Cursor.cursor_paragraph_last;
-      Efl.Text.Cursor.cursor_position { set; get; }
-      Efl.Text.Cursor.cursor_coord_set;
-      Efl.Text.Cursor.cursor_line_char_first;
-      Efl.Text.Cursor.cursor_line_char_last;
-      Efl.Text.Cursor.cursor_char_next;
-      Efl.Text.Cursor.cursor_char_prev;
-      Efl.Text.Cursor.cursor_line_jump_by;
-      Efl.Text.Cursor.cursor_copy;
-      Efl.Text.Cursor.cursor_content { get; }
-      Efl.Text.Cursor.cursor_geometry { get; }
-      Efl.Text.Markup.cursor_markup_insert;
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Text_Cursor.text_cursor { get; }
+      Efl.Text_Cursor.cursor_paragraph_first;
+      Efl.Text_Cursor.cursor_paragraph_last;
+      Efl.Text_Cursor.cursor_position { set; get; }
+      Efl.Text_Cursor.cursor_coord_set;
+      Efl.Text_Cursor.cursor_line_char_first;
+      Efl.Text_Cursor.cursor_line_char_last;
+      Efl.Text_Cursor.cursor_char_next;
+      Efl.Text_Cursor.cursor_char_prev;
+      Efl.Text_Cursor.cursor_line_jump_by;
+      Efl.Text_Cursor.cursor_copy;
+      Efl.Text_Cursor.cursor_content { get; }
+      Efl.Text_Cursor.cursor_geometry { get; }
+      Efl.Text_Markup.cursor_markup_insert;
    }
 }

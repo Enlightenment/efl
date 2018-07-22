@@ -1,12 +1,10 @@
-import edje_types;
 import elm_interface_scrollable;
-import elm_general;
 
 /* FIXME: Those types make elm_code unusable from pure EO */
-struct @extern Elm_Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
-struct @extern Elm_Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
+struct @extern Elm.Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
+struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
 
-class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
+class Elm.Code_Widget (Efl.Ui.Layout.Object, Efl.Access.Text)
 {
    [[Elementary code widget]]
    eo_prefix: elm_obj_code_widget;
@@ -22,7 +20,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
             [[Get the underlying code object we are rendering]]
          }
          values {
-            code: ptr(Elm_Code); [[Our underlying Elm_Code object]]
+            code: ptr(Elm.Code); [[Our underlying Elm.Code object]]
          }
       }
       @property font {
@@ -95,15 +93,15 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
             [[Set whether this widget allows editing
 
             If editable then the widget will allow user input to manipulate
-            the underlying Elm_Code_File of this Elm_Code instance.
-            Any other Elm_Code_Widget's connected to this Elm_Code will
+            the underlying Elm.Code_File of this Elm.Code instance.
+            Any other Elm.Code_Widget's connected to this Elm.Code will
             update to reflect the changes.]]
          }
          get {
             [[Get the current editable state of this widget
 
             returns EINA_TRUE if the widget is editable, EINA_FALSE otherwise.
-            If this widget is not editable the underlying Elm_Code_File could
+            If this widget is not editable the underlying Elm.Code_File could
             still be manipulated by a different widget or the filesystem.]]
          }
          values {
@@ -193,21 +191,24 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
             col: uint; [[The horizontal position of the cursor, starting from column 1]]
          }
       }
+      theme_refresh {
+        [[Update and refresh theme for widget.]]
+      }
       line_refresh {
-      	 [[Refresh code line in widget]]
+          [[Refresh code line in widget]]
          params {
-            line: ptr(Elm_Code_Line); [[The line to refresh.]]
+            line: ptr(Elm.Code_Line); [[The line to refresh.]]
          }
       }
       line_visible_get {
          [[Check if the code line is currently visible]]
          params {
-            line: ptr(Elm_Code_Line); [[The line to test for visibility.]]
+            line: ptr(Elm.Code_Line); [[The line to test for visibility.]]
          }
          return: bool; [[$true if the line specified is currently visible within the scroll region.]]
       }
       lines_visible_get {
-      	 [[Get the number of code lines currently visible in the widget]]
+          [[Get the number of code lines currently visible in the widget]]
          return: uint; [[the number of lines currently visible in the widget.]]
       }
       position_at_coordinates_get {
@@ -234,11 +235,11 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       }
 
       text_left_gutter_width_get {
-      	 [[Get the column width of the gutter]]
+          [[Get the column width of the gutter]]
          return: int; [[The current column width of the gutter for the widget.]]
       }
       text_between_positions_get {
-      	 [[Get text between given positions]]
+          [[Get text between given positions]]
          params {
             start_line: uint; [[The line of the first character to get]]
             start_col: uint; [[The widget column of the first character to get]]
@@ -256,30 +257,30 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       }
 
       line_text_column_width_to_position {
-      	 [[Get text column width at given position]]
+          [[Get text column width at given position]]
          params {
-            line: ptr(Elm_Code_Line); [[Code line]]
+            line: ptr(Elm.Code_Line); [[Code line]]
             position: uint; [[Code position]]
          }
          return: uint; [[Text column width]]
       }
       line_text_column_width_get {
-      	 [[Get text column width for code line]]
+          [[Get text column width for code line]]
          params {
-            line: ptr(Elm_Code_Line); [[Code line]]
+            line: ptr(Elm.Code_Line); [[Code line]]
          }
          return: uint; [[Text column width]]
       }
       line_text_position_for_column_get {
-      	 [[Get position from column]]
+          [[Get position from column]]
          params {
-            line: ptr(Elm_Code_Line); [[Code line]]
+            line: ptr(Elm.Code_Line); [[Code line]]
             column: uint; [[Column]]
          }
          return: uint; [[Position]]
       }
       text_tabwidth_at_column_get {
-      	 [[Get tabwidth for column]]
+          [[Get tabwidth for column]]
          params {
             column: uint; [[Column]]
          }
@@ -288,7 +289,7 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       line_status_toggle {
          [[Toggle the display of the line status widget]]
          params {
-            line: ptr(Elm_Code_Line); [[Code line]]
+            line: ptr(Elm.Code_Line); [[Code line]]
          }
       }
 
@@ -311,22 +312,23 @@ class Elm.Code_Widget (Efl.Ui.Layout, Efl.Access.Text)
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Elm.Widget.widget_event;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.theme_apply;
    }
    constructors {
       .code;
    }
    events {
-      line,clicked; [[Called when text line was clicked]]
-      line,gutter,clicked; [[Called when gutter was clicked]]
-      cursor,changed; [[Called when cursor changed]]
-      changed,user; [[Called when object changed due to user interaction]]
-      selection,start; [[Called when a selection is started]]
-      selection,changed; [[Called when selection changed]]
-      selection,cleared; [[Called when selection was cleared]]
-      selection,cut; [[Called when a cut action is performed]]
-      selection,copy; [[Called when a copy action is performed]]
-      selection,paste; [[Called when a paste action is performed]]
+      line,clicked: Elm.Code_Line; [[Called when text line was clicked]]
+      line,gutter,clicked: Elm.Code_Line; [[Called when gutter was clicked]]
+      changed,user: void; [[Called when object changed due to user interaction]]
+      /* FIXME: All events below send the obj in the event_info, which is redundant */
+      cursor,changed: Elm.Code_Widget; [[Called when cursor changed]]
+      selection,start: Elm.Code_Widget; [[Called when a selection is started]]
+      selection,changed: Elm.Code_Widget; [[Called when selection changed]]
+      selection,cleared: Elm.Code_Widget; [[Called when selection was cleared]]
+      selection,cut: Elm.Code_Widget; [[Called when a cut action is performed]]
+      selection,copy: Elm.Code_Widget; [[Called when a copy action is performed]]
+      selection,paste: Elm.Code_Widget; [[Called when a paste action is performed]]
    }
 }

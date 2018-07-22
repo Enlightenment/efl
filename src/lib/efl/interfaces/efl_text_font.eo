@@ -1,6 +1,6 @@
 // src/lib/efl/interfaces/efl_text_font.eo
-
-enum Efl.Text.Font.Weight {
+import efl_gfx_types;
+enum Efl.Text_Font_Weight {
    [[Type of font weight]]
    normal, [[Normal font weight]]
    thin, [[Thin font weight]]
@@ -17,7 +17,7 @@ enum Efl.Text.Font.Weight {
    extrablack, [[Extrablack font weight]]
 }
 
-enum Efl.Text.Font.Width {
+enum Efl.Text_Font_Width {
    [[Type of font width]]
    normal, [[Normal font width]]
    ultracondensed, [[Ultracondensed font width]]
@@ -30,7 +30,7 @@ enum Efl.Text.Font.Width {
    ultraexpanded, [[Ultraexpanded font width]]
 }
 
-enum Efl.Text.Font.Slant {
+enum Efl.Text_Font_Slant {
     [[Type of font slant]]
     normal, [[Normal font slant]]
     oblique, [[Oblique font slant]]
@@ -40,7 +40,7 @@ enum Efl.Text.Font.Slant {
 /* FIXME: It needs to support "normal" option for non-color bitmap font.
    For supporting "normal" option, S/W glyph drawing engine should be updated.
  */
-enum Efl.Text.Font.Bitmap_Scalable {
+enum Efl.Text_Font_Bitmap_Scalable {
    [[Scalable of bitmap fonts
 
      @since 1.21
@@ -49,7 +49,7 @@ enum Efl.Text.Font.Bitmap_Scalable {
    color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
 }
 
-interface Efl.Text.Font {
+interface Efl.Text_Font {
    [[Font settings of the text
 
      @since 1.20
@@ -57,20 +57,55 @@ interface Efl.Text.Font {
    eo_prefix: efl_text;
    methods {
       @property font {
-         [[The font name and size that is used for the displayed text]]
+         set {
+            [[Set the font family, filename and size for a given text object.
+
+              This function allows the font name and size of a text object to
+              be set. The font string has to follow fontconfig's convention for
+              naming fonts, as it's the underlying library used to query system
+              fonts by Evas (see the fc-list command's output, on your system,
+              to get an idea). Alternatively, youe can use the full path to a font
+              file.
+
+              See also @.font.get, @.font_source.get.
+            ]]
+         }
+         get {
+            [[Retrieve the font family and size in use on a given text object.
+
+              This function allows the font name and size of a text object to
+              be queried. Remember that the font name string is still owned by
+              Evas and should not have free() called on it by the caller of the
+              function.
+
+              See also @.font.set.
+            ]]
+         }
          values {
-            font: string; [[Font name]]
-            size: int; [[Font size]]
+            font: string; [[The font family name or filename.]]
+            size: Efl.Font.Size; [[The font size, in points.]]
          }
       }
       @property font_source {
-         [[The source that will be used to lookup the font of the text
+         set {
+            [[Set the font (source) file to be used on a given text object.
 
-           The source can be either a path to a font file e.g.
-           "/path/to/font.ttf", or an eet file e.g. "/path/to/font.eet".
-         ]]
+              This function allows the font file to be explicitly set for a
+              given text object, overriding system lookup, which will first
+              occur in the given file's contents.
+
+              See also @.font.set.
+            ]]
+         }
+         get {
+            [[Get the font file's path which is being used on a given text
+              object.
+
+              See @.font.get for more details.
+            ]]
+         }
          values {
-            font_source: string; [[Path to font source]]
+            font_source: string; [[The font file's path.]]
          }
       }
 
@@ -87,30 +122,30 @@ interface Efl.Text.Font {
       @property font_weight {
          [[Type of weight of the displayed font
 
-           Default is @Efl.Text.Font.Weight.normal\.
+           Default is @Efl.Text_Font_Weight.normal\.
          ]]
          values {
-            font_weight: Efl.Text.Font.Weight; [[Font weight]]
+            font_weight: Efl.Text_Font_Weight; [[Font weight]]
          }
       }
 
       @property font_slant {
          [[Type of slant of the displayed font
 
-           Default is @Efl.Text.Font.Slant.normal\.
+           Default is @Efl.Text_Font_Slant.normal\.
          ]]
          values {
-            style: Efl.Text.Font.Slant; [[Font slant]]
+            style: Efl.Text_Font_Slant; [[Font slant]]
          }
       }
 
       @property font_width {
          [[Type of width of the displayed font
 
-           Default is @Efl.Text.Font.Width.normal\.
+           Default is @Efl.Text_Font_Width.normal\.
          ]]
          values {
-            width: Efl.Text.Font.Width; [[Font width]]
+            width: Efl.Text_Font_Width; [[Font width]]
          }
       }
 
@@ -132,10 +167,10 @@ interface Efl.Text.Font {
              Basically, it is not scalable. But, it needs to be scalable for some use cases.
              (ex. colorful emoji fonts)
 
-             Default is @Efl.Text.Font.Bitmap_Scalable.none\.
+             Default is @Efl.Text_Font_Bitmap_Scalable.none\.
            ]]
            values {
-              scalable: Efl.Text.Font.Bitmap_Scalable; [[Scalable]]
+              scalable: Efl.Text_Font_Bitmap_Scalable; [[Scalable]]
            }
       }
    }

@@ -1,4 +1,4 @@
-class Elm.Segment_Control.Item(Elm.Widget.Item, Efl.Ui.Focus.Object)
+class Elm.Segment_Control.Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
 {
    [[Elementary segment control item class]]
    legacy_prefix: elm_segment_control_item;

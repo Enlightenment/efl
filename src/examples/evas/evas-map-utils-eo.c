@@ -71,8 +71,9 @@ _anim_cb(void *data)
    App_Data *ad = data;
    Evas_Object *o;
    Eina_Rect rect;
-   int r, g, b, a, f, h, w;
+   int r, g, b, a, f;
    int win_w, win_h, mx, my;
+   Eina_Size2D size;
 
    f = ad->frame;
    r = ad->colors[ad->colors_index].r;
@@ -90,13 +91,13 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj2");
-   h = efl_gfx_size_get(o).h;
+   size = efl_gfx_entity_size_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
    efl_gfx_map_color_set(o, -1, r, g, b, a);
    efl_gfx_map_translate(o, 0, 0, 100);
-   efl_gfx_map_rotate_3d(o, f * 6, f * 6, f * 6, NULL, 1./3., 10. / h, 0);
+   efl_gfx_map_rotate_3d(o, f * 6, f * 6, f * 6, NULL, 1./3., 10. / size.h, 0);
    if (ad->apply_lighting)
      {
         efl_gfx_map_lightning_3d(o, ad->canvas, 0.5, 0.5, -100.,
@@ -105,13 +106,13 @@ _anim_cb(void *data)
 
 
    o = evas_object_name_find(ad->canvas, "obj3");
-   EINA_SIZE2D(w, h) = efl_gfx_size_get(o);
+   size = efl_gfx_entity_size_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);
    efl_gfx_map_color_set(o, -1, r, g, b, a);
-   efl_gfx_map_translate(o, 0, h/2, -20);
-   efl_gfx_map_rotate_3d(o, 20, f * 6, 0, NULL, 0.5, 0.5, w / 2);
+   efl_gfx_map_translate(o, 0, size.h/2, -20);
+   efl_gfx_map_rotate_3d(o, 20, f * 6, 0, NULL, 0.5, 0.5, size.w / 2);
    if (ad->apply_perspective)
      efl_gfx_map_perspective_3d(o, NULL, 0.5, 0.5, 0, 256);
    if (ad->apply_lighting)
@@ -122,13 +123,13 @@ _anim_cb(void *data)
                                  -256, 255, 255, 255, 0, 0, 0);
      }
    if (ad->backface_culling)
-     efl_gfx_visible_set(o, efl_gfx_map_clockwise_get(o));
+     efl_gfx_entity_visible_set(o, efl_gfx_map_clockwise_get(o));
    else
-     efl_gfx_visible_set(o, 1);
+     efl_gfx_entity_visible_set(o, 1);
 
 
    o = evas_object_name_find(ad->canvas, "obj4");
-   rect = efl_gfx_geometry_get(o);
+   rect = efl_gfx_entity_geometry_get(o);
    efl_gfx_map_reset(o);
    efl_gfx_map_smooth_set(o, ad->smooth);
    efl_gfx_map_alpha_set(o, ad->alpha);

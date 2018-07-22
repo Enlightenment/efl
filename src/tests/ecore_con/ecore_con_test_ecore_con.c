@@ -182,7 +182,6 @@ _dns_err(void *data, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_Bool *err_check = data;
    *err_check = EINA_TRUE;
-   ecore_main_loop_quit();
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -199,11 +198,6 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    int ret;
    void *del_ret;
    const char *server_name;
-
-   ret = eina_init();
-   fail_if(ret != 1);
-   ret = ecore_con_init();
-   fail_if(ret != 1);
 
    handlers[0] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
                                          _add, (void *) 1);
@@ -316,19 +310,15 @@ void _ecore_con_server_client_tests(Ecore_Con_Type compl_type, const char *name,
    fail_if (del_ret != (void *) 2);
    del_ret = ecore_event_handler_del (handlers[5]);
    fail_if (del_ret != (void *) 2);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-   ret = eina_shutdown();
 }
 
-START_TEST(ecore_test_ecore_con_local_user)
+EFL_START_TEST(ecore_test_ecore_con_local_user)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_sock", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_user_home)
+EFL_START_TEST(ecore_test_ecore_con_local_user_home)
 {
    const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
 
@@ -336,9 +326,9 @@ START_TEST(ecore_test_ecore_con_local_user_home)
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_USER, "test_soc", EINA_FALSE, 12345);
    if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_user_tmp)
+EFL_START_TEST(ecore_test_ecore_con_local_user_tmp)
 {
    const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
    const char *homedir = getenv("HOME");
@@ -349,9 +339,9 @@ START_TEST(ecore_test_ecore_con_local_user_tmp)
    if (homedir) setenv("HOME", homedir, 1);
    if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_user_none)
+EFL_START_TEST(ecore_test_ecore_con_local_user_none)
 {
    const char *xdg_runtime_dir = getenv("XDG_RUNTIME_DIR");
    const char *homedir = getenv("HOME");
@@ -365,99 +355,99 @@ START_TEST(ecore_test_ecore_con_local_user_none)
    if (homedir) setenv("HOME", homedir, 1);
    if (xdg_runtime_dir) setenv("XDG_RUNTIME_DIR", xdg_runtime_dir, 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_system)
+EFL_START_TEST(ecore_test_ecore_con_local_system)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_system_fullpath)
+EFL_START_TEST(ecore_test_ecore_con_local_system_fullpath)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "/tmp/test_sock", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_system_negport)
+EFL_START_TEST(ecore_test_ecore_con_local_system_negport)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "test_sock", EINA_FALSE, -6);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_system_negport_fullpath)
+EFL_START_TEST(ecore_test_ecore_con_local_system_negport_fullpath)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_SYSTEM, "/tmp/test_sock", EINA_FALSE, -6);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_local_abstract)
+EFL_START_TEST(ecore_test_ecore_con_local_abstract)
 {
    _ecore_con_server_client_tests(ECORE_CON_LOCAL_ABSTRACT, "test_sock", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp)
+EFL_START_TEST(ecore_test_ecore_con_remote_tcp)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP, "127.0.0.1", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_nodelay)
+EFL_START_TEST(ecore_test_ecore_con_remote_nodelay)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY, "127.0.0.1", EINA_FALSE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp_tls)
+EFL_START_TEST(ecore_test_ecore_con_remote_tcp_tls)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp_tls_load_cert)
+EFL_START_TEST(ecore_test_ecore_con_remote_tcp_tls_load_cert)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp_mixed)
+EFL_START_TEST(ecore_test_ecore_con_remote_tcp_mixed)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_tcp_mixed_load_cert)
+EFL_START_TEST(ecore_test_ecore_con_remote_tcp_mixed_load_cert)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_nodelay_tls)
+EFL_START_TEST(ecore_test_ecore_con_remote_nodelay_tls)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_nodelay_tls_load_cert)
+EFL_START_TEST(ecore_test_ecore_con_remote_nodelay_tls_load_cert)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_TLS | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_nodelay_mixed)
+EFL_START_TEST(ecore_test_ecore_con_remote_nodelay_mixed)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_remote_nodelay_mixed_load_cert)
+EFL_START_TEST(ecore_test_ecore_con_remote_nodelay_mixed_load_cert)
 {
    _ecore_con_server_client_tests(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", EINA_TRUE, 12345);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_ssl_available)
+EFL_START_TEST(ecore_test_ecore_con_ssl_available)
 {
    int ret = ecore_con_ssl_available_get();
 #ifdef HAVE_GNUTLS
@@ -468,32 +458,14 @@ START_TEST(ecore_test_ecore_con_ssl_available)
    fail_if(!ret);
 #endif
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_init)
-{
-   int ret;
-
-   ret = ecore_con_init();
-   fail_if(ret != 1);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-}
-END_TEST
-
-START_TEST(ecore_test_ecore_con_dns)
+EFL_START_TEST(ecore_test_ecore_con_dns)
 {
    Ecore_Con_Server *client;
    Ecore_Event_Handler *e_err;
    Ecore_Event_Handler *e_add;
    Eina_Bool err_check = EINA_FALSE;
-   int ret;
-
-   ret = eina_init();
-   fail_if(ret != 1);
-   ret = ecore_con_init();
-   fail_if(ret != 1);
 
    e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add_del, (void *) &err_check);
    e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, _dns_err, (void *) &err_check);
@@ -506,32 +478,21 @@ START_TEST(ecore_test_ecore_con_dns)
    ecore_con_server_timeout_set(client, 5.0);
 
    ecore_main_loop_begin();
-   fail_if (err_check == EINA_FALSE);
+   fail_if (err_check != EINA_FALSE);
    fail_if (ecore_event_handler_del(e_err) != (void *) &err_check);
    fail_if (ecore_event_handler_del(e_add) != (void *) &err_check);
-
-   ret = ecore_con_shutdown();
-   fail_if(ret != 0);
-   ret = eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_con_shutdown_bef_init)
+EFL_START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 {
-   int ret;
-
-   eina_init();
-   ret = ecore_con_shutdown();
+   int ret = ecore_con_shutdown();
    fail_if(ret != 0);
-
-   ret = ecore_con_init();
-   fail_if(ret != 1);
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _lookup_done_cb(const char *canonname, const char *ip, struct sockaddr *addr, int addrlen, void *data)
@@ -546,22 +507,18 @@ _lookup_done_cb(const char *canonname, const char *ip, struct sockaddr *addr, in
    ecore_main_loop_quit();
 }
 
-START_TEST(ecore_test_ecore_con_dns_lookup)
+EFL_START_TEST(ecore_test_ecore_con_dns_lookup)
 {
    const char link[] = "www.google.com";
-   ecore_con_init();
 
    fail_unless(ecore_con_lookup(link, _lookup_done_cb, link));
 
    ecore_main_loop_begin();
-
-   ecore_con_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void ecore_con_test_ecore_con(TCase *tc)
 {
-   tcase_add_test(tc, ecore_test_ecore_con_init);
    tcase_add_test(tc, ecore_test_ecore_con_local_user);
    tcase_add_test(tc, ecore_test_ecore_con_local_user_home);
    tcase_add_test(tc, ecore_test_ecore_con_local_user_tmp);

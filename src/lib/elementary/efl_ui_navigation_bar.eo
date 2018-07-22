@@ -1,0 +1,30 @@
+class Efl.Ui.Navigation_Bar (Efl.Ui.Layout.Object, Efl.Content, Efl.Text, Efl.Ui.Translatable)
+{
+   [[Navigation_Bar widget.
+
+     Navigation_Bar widget provides a bar form useful for navigation.
+     Navigation_Bar has a back button which is used to navigate to the previous
+     content in the stack.
+   ]]
+   parts {
+      back_button: Efl.Ui.Navigation_Bar_Part_Back_Button;
+         [[Back button to navigate to the previous content in the stack.
+
+           The back button works only if the Navigation_Bar widget is contained
+           in the Stack widget(Efl.Ui.Stack class).
+           e.g. The Navigation_Bar widget is set in the Navigation_Layout widget
+           and the Navigation_Layout widget is pushed to the Stack widget.
+
+           The back button is hidden by default and it can be visible.
+           e.g. efl_gfx_visible_set(efl_part(navigation_bar, "back_button"), EINA_TRUE);
+         ]]
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
+      Efl.Text.text { set; get; }
+      Efl.Ui.Translatable.translatable_text { set; get; }
+      Efl.Part.part_get;
+   }
+}

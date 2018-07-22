@@ -1,4 +1,4 @@
-class Efl.Net.Server.Ssl (Efl.Net.Server.Tcp) {
+class Efl.Net.Server_Ssl (Efl.Net.Server_Tcp) {
     [[A SSL server over TCP.
 
       @since 1.19
@@ -21,8 +21,9 @@ class Efl.Net.Server.Ssl (Efl.Net.Server.Tcp) {
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Server.client_announce;
-        Efl.Net.Server.Fd.client_add;
+        Efl.Net.Server_Fd.client_add;
     }
 }

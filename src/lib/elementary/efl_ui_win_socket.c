@@ -7,8 +7,12 @@
 
 #include <Elementary.h>
 
+#include "elm_priv.h"
+#include "efl_ui_win_socket_legacy.eo.h"
+
 #define MY_CLASS EFL_UI_WIN_SOCKET_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win_Socket"
+#define MY_CLASS_NAME_LEGACY "elm_win"
 
 typedef struct
 {
@@ -33,3 +37,19 @@ _efl_ui_win_socket_socket_listen(Eo *obj, Efl_Ui_Win_Socket_Data *pd EINA_UNUSED
 }
 
 #include "efl_ui_win_socket.eo.c"
+
+static void
+_efl_ui_win_socket_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_win_socket_legacy_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
+{
+   obj = efl_finalize(efl_super(obj, EFL_UI_WIN_SOCKET_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+#include "efl_ui_win_socket_legacy.eo.c"

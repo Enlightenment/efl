@@ -29,7 +29,7 @@
 
 #include "eina_suite.h"
 
-#define EINA_HASH_BUCKET_SIZE       8
+#define EINA_HASH_BUCKET_SIZE 8
 
 static unsigned int
 _eina_string_key_length(const char *key)
@@ -61,7 +61,7 @@ eina_foreach_check(EINA_UNUSED const Eina_Hash *hash,
    int i;
 
    if (strlen(key) <= 0)
-      return EINA_TRUE;
+     return EINA_TRUE;
 
    i = atoi(key);
    fail_if(i != *j);
@@ -69,15 +69,13 @@ eina_foreach_check(EINA_UNUSED const Eina_Hash *hash,
    return EINA_TRUE;
 }
 
-START_TEST(eina_hash_simple)
+EFL_START_TEST(eina_test_hash_simple)
 {
    Eina_Hash *hash = NULL;
    int *test;
    int array[] = { 1, 42, 4, 5, 6 };
 
    /* As mempool is already initialized and it use hash, we should have 2 init. */
-   fail_if(eina_init() != 2);
-
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
 
@@ -121,19 +119,14 @@ START_TEST(eina_hash_simple)
    fail_if(eina_hash_del(hash, "42", NULL) != EINA_TRUE);
 
    eina_hash_free(hash);
-
-   /* Same comment as eina_init */
-        fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_hash_crc)
+EFL_START_TEST(eina_test_hash_crc)
 {
    Eina_Hash *hash = NULL;
    int *test;
    int array[] = { 1, 42, 4, 5, 6 };
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
                         EINA_KEY_CMP(_eina_string_key_cmp),
@@ -182,47 +175,43 @@ START_TEST(eina_test_hash_crc)
    fail_if(eina_hash_del(hash, "42", NULL) != EINA_TRUE);
 
    eina_hash_free(hash);
-
-   /* Same comment as eina_init */
-        fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_extended)
+EFL_START_TEST(eina_test_hash_extended)
 {
    Eina_Hash *hash = NULL;
-   int i;
-
-        fail_if(eina_init() != 2);
+   unsigned int i;
+   unsigned int num_loops = 3011;
+   char *array;
 
    hash = eina_hash_string_djb2_new(NULL);
-        fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
-        fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
+   fail_if(eina_hash_direct_add(hash, "42", "42") != EINA_TRUE);
 
-   for (i = 43; i < 3043; ++i)
+   array = malloc(num_loops * 10);
+   ck_assert_ptr_ne(array, NULL);
+
+   for (i = 0; i < num_loops; ++i)
      {
-        char *tmp = malloc(10);
-        fail_if(!tmp);
-        eina_convert_itoa(i, tmp);
+        char *tmp = array + (i * 10);
+        eina_convert_itoa(i + 42, tmp);
         fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
      }
 
-        fail_if(eina_hash_find(hash, "42") == NULL);
+   fail_if(eina_hash_find(hash, "42") == NULL);
 
-        eina_hash_free(hash);
-
-   fail_if(eina_shutdown() != 1);
+   eina_hash_free(hash);
+   free(array);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_double_item)
+EFL_START_TEST(eina_test_hash_double_item)
 {
    Eina_Hash *hash = NULL;
    int i[] = { 7, 7 };
    int *test;
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_string_superfast_new(NULL);
    fail_if(hash == NULL);
@@ -235,12 +224,10 @@ START_TEST(eina_hash_double_item)
    fail_if(test != &i[0]);
 
    eina_hash_free(hash);
-
-      fail_if(eina_shutdown() != 1);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_all_int)
+EFL_START_TEST(eina_test_hash_all_int)
 {
    Eina_Hash *hash;
    int64_t j[] = { 4321312301243122, 6, 7, 128 };
@@ -249,183 +236,162 @@ START_TEST(eina_hash_all_int)
    int *test;
    int it;
 
-      fail_if(eina_init() != 2);
-
    hash = eina_hash_int32_new(NULL);
-      fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
    for (it = 0; it < 4; ++it)
-      fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
+     fail_if(eina_hash_add(hash, &i[it], &i[it]) != EINA_TRUE);
 
-      fail_if(eina_hash_del(hash, &i[1], &i[1]) != EINA_TRUE);
+   fail_if(eina_hash_del(hash, &i[1], &i[1]) != EINA_TRUE);
    test = eina_hash_find(hash, &i[2]);
-      fail_if(test != &i[2]);
+   fail_if(test != &i[2]);
 
    test = eina_hash_find(hash, &i[3]);
-      fail_if(test != &i[3]);
+   fail_if(test != &i[3]);
 
-      eina_hash_free(hash);
+   eina_hash_free(hash);
 
    hash = eina_hash_int64_new(NULL);
-      fail_if(hash == NULL);
+   fail_if(hash == NULL);
 
    for (it = 0; it < 4; ++it)
-      fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);
+     fail_if(eina_hash_add(hash, &j[it], &j[it]) != EINA_TRUE);
 
-      fail_if(eina_hash_del(hash, &j[1], &j[1]) != EINA_TRUE);
+   fail_if(eina_hash_del(hash, &j[1], &j[1]) != EINA_TRUE);
    test2 = eina_hash_find(hash, &j[0]);
-      fail_if(test2 != &j[0]);
+   fail_if(test2 != &j[0]);
 
-      eina_hash_free(hash);
-
-   fail_if(eina_shutdown() != 1);
+   eina_hash_free(hash);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_int32_fuzze)
+EFL_START_TEST(eina_test_hash_int32_fuzze)
 {
    Eina_Hash *hash;
-   Eina_List *added = NULL;
-   unsigned int *r;
+   unsigned int *r, *array;
    unsigned int i;
-   unsigned int j;
    unsigned int seed;
-
-   eina_init();
+   unsigned int num_loops = 10000;
 
    seed = time(NULL);
    srand(seed);
 
-   hash = eina_hash_int32_new(free);
+   hash = eina_hash_int32_new(NULL);
 
-   for (i = 0; i < 10000; ++i)
+   array = malloc(sizeof(int) * num_loops);
+   for (i = 0; i < num_loops; ++i)
      {
-        r = malloc(sizeof (unsigned int));
-        *r = rand();
-        eina_hash_direct_add(hash, r, r);
+        r = array + i;
+        *r = rand() % 10000;
+        ck_assert_int_ne(eina_hash_direct_add(hash, r, r), 0);
      }
 
-   for (j = 0; j < 100; ++j)
+   for (i = 0; i < num_loops / 2; ++i)
      {
-        for (i = 0; i < 1000; ++i)
-          {
-             do
-               {
-                  unsigned int tr;
+        unsigned int tr = rand() + 10000;
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_eq(r, NULL);
+     }
 
-                  tr = rand();
-                  r = eina_hash_find(hash, &tr);
-                  if (r)
-                    {
-                       r = NULL;
-                       continue;
-                    }
-
-                  r = malloc(sizeof (unsigned int));
-                  *r = tr;
-                  eina_hash_direct_add(hash, r, r);
-                  added = eina_list_append(added, r);
-               }
-             while (r == NULL);
-          }
-
-        EINA_LIST_FREE(added, r)
-          {
-             unsigned int *s;
-
-             s = eina_hash_find(hash, r);
-	     fail_if(s != r);
-             eina_hash_del(hash, r, r);
-          }
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        unsigned int tr = (rand() % 10000) - (10000 * 2);
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    eina_hash_free(hash);
-
-   eina_shutdown();
+   free(array);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_string_fuzze)
+EFL_START_TEST(eina_test_hash_int64_fuzze)
 {
    Eina_Hash *hash;
-   Eina_List *added = NULL;
-   char *r;
-   unsigned int i;
-   unsigned int j;
-   unsigned int seed;
+   uint64_t *r, *array;
+   uint64_t i;
+   uint64_t num_loops = 10000;
 
-   eina_init();
+   srand(time(NULL));
+
+   hash = eina_hash_int64_new(NULL);
+
+   array = malloc(sizeof(int64_t) * num_loops);
+   for (i = 0; i < num_loops; ++i)
+     {
+        r = array + i;
+        *r = rand() % 10000;
+        ck_assert_int_ne(eina_hash_direct_add(hash, r, r), 0);
+     }
+
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        uint64_t tr = rand() + 10000;
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_eq(r, NULL);
+     }
+
+   for (i = 0; i < num_loops / 2; ++i)
+     {
+        uint64_t tr = (rand() % 10000) - (10000 * 2);
+        r = eina_hash_find(hash, &tr);
+        ck_assert_ptr_eq(r, NULL);
+     }
+
+   eina_hash_free(hash);
+   free(array);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_test_hash_string_fuzze)
+{
+   Eina_Hash *hash;
+   unsigned int i;
+   unsigned int seed;
+   char *array;
+   unsigned int num_loops = 100;
 
    seed = time(NULL);
    srand(seed);
 
-   hash = eina_hash_string_superfast_new(free);
+   hash = eina_hash_string_superfast_new(NULL);
 
-   for (i = 0; i < 10000; ++i)
+   array = malloc(num_loops * 10);
+   ck_assert_ptr_ne(array, NULL);
+
+   for (i = 0; i < num_loops; ++i)
+     {
+        char *tmp = array + (i * 10);
+        eina_convert_itoa(i, tmp);
+        fail_if(eina_hash_direct_add(hash, tmp, tmp) != EINA_TRUE);
+     }
+
+   for (i = 0; i < num_loops; ++i)
      {
         char convert[128];
+        char *r;
 
-        eina_convert_itoa(rand(), convert);
-        r = strdup(convert);
-        eina_hash_direct_add(hash, r, r);
-     }
-
-   for (j = 0; j < 50; ++j)
-     {
-        for (i = 0; i < 1000; ++i)
-          {
-             do
-               {
-                  char convert[128];
-
-                  eina_convert_itoa(rand(), convert);
-                  r = eina_hash_find(hash, convert);
-                  if (r)
-                    {
-                       r = NULL;
-                       continue;
-                    }
-
-                  r = strdup(convert);
-                  eina_hash_direct_add(hash, r, r);
-                  added = eina_list_append(added, r);
-               }
-             while (r == NULL);
-          }
-
-        EINA_LIST_FREE(added, r)
-          {
-             char *s;
-
-             s = eina_hash_find(hash, r);
-	     fail_if(s != r);
-             eina_hash_del(hash, r, r);
-          }
+        eina_convert_itoa(rand() + num_loops, convert);
+        r = eina_hash_find(hash, convert);
+        ck_assert_ptr_eq(r, NULL);
      }
 
    eina_hash_free(hash);
-
-   eina_shutdown();
+   free(array);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_seed)
+EFL_START_TEST(eina_test_hash_seed)
 {
-   eina_init();
-
    fail_if(eina_seed == 0);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_hash_add_del_by_hash)
+EFL_START_TEST(eina_test_hash_add_del_by_hash)
 {
    Eina_Hash *hash = NULL;
    int array[] = { 1, 42, 4, 5, 6 };
    int key_len, key_hash;
-
-   fail_if(eina_init() != 2);
 
    hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
                         EINA_KEY_CMP(_eina_string_key_cmp),
@@ -446,22 +412,26 @@ START_TEST(eina_hash_add_del_by_hash)
    fail_if(eina_hash_del_by_hash(hash, "4", key_len, key_hash, &array[2]) != EINA_FALSE);
 
    key_len = _eina_string_key_length("42");
-   key_hash =  eina_hash_crc("42", key_len);
+   key_hash = eina_hash_crc("42", key_len);
    fail_if(eina_hash_del_by_hash(hash, "42", key_len, key_hash, &array[1]) != EINA_TRUE);
 
    fail_if(eina_hash_population(hash) != 3);
+   eina_hash_free(hash);
 }
-END_TEST
+EFL_END_TEST
 
-void eina_test_hash(TCase *tc)
+void
+eina_test_hash(TCase *tc)
 {
-   tcase_add_test(tc, eina_hash_simple);
+   tcase_add_test(tc, eina_test_hash_simple);
    tcase_add_test(tc, eina_test_hash_crc);
-   tcase_add_test(tc, eina_hash_extended);
-   tcase_add_test(tc, eina_hash_double_item);
-   tcase_add_test(tc, eina_hash_all_int);
-   tcase_add_test(tc, eina_hash_seed);
-   tcase_add_test(tc, eina_hash_int32_fuzze);
-   tcase_add_test(tc, eina_hash_string_fuzze);
-   tcase_add_test(tc, eina_hash_add_del_by_hash);
+   tcase_add_test(tc, eina_test_hash_extended);
+   tcase_add_test(tc, eina_test_hash_double_item);
+   tcase_add_test(tc, eina_test_hash_all_int);
+   tcase_add_test(tc, eina_test_hash_seed);
+   tcase_add_test(tc, eina_test_hash_int32_fuzze);
+   tcase_add_test(tc, eina_test_hash_int64_fuzze);
+   tcase_add_test(tc, eina_test_hash_string_fuzze);
+   tcase_add_test(tc, eina_test_hash_add_del_by_hash);
 }
+

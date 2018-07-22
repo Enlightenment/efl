@@ -1,12 +1,8 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 #include <ctype.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_Bool do_read = EINA_FALSE;
 static Eina_Bool do_discard = EINA_FALSE;
 static Eina_Slice line_delm_slice;
@@ -75,8 +71,7 @@ _can_read(void *data EINA_UNUSED, const Efl_Event *event)
                        break;
                     }
                   fprintf(stderr, "ERROR: could not read: %s\n", eina_error_msg_get(err));
-                  retval = EXIT_FAILURE;
-                  ecore_main_loop_quit();
+                  efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
                   return;
                }
 
@@ -153,18 +148,16 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
    fprintf(stderr, "INFO: error: %d '%s'\n", *perr, eina_error_msg_get(*perr));
    if (!efl_io_closer_closed_get(event->object))
      efl_io_closer_close(event->object);
-   retval = EXIT_FAILURE;
+
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
-_done_sending(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_done_sending(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: done sending\n");
    if (!do_read)
-     {
-        ecore_main_loop_quit();
-        return;
-     }
+     efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -174,10 +167,11 @@ _done_receiving(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_done(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_done(void *data EINA_UNUSED, const Efl_Event *event)
 {
    fprintf(stderr, "INFO: done sending and receiving\n");
-   ecore_main_loop_quit();
+
+   efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
@@ -272,8 +266,39 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *dialer = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (dialer)
+     {
+        efl_del(dialer);
+        dialer = NULL;
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    const Efl_Class *cls;
    Eina_List *to_send = NULL;
@@ -310,36 +335,30 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *dialer, *loop;
+   Eo *loop;
    Eina_Error err;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   loop = efl_main_loop_get();
+   loop = ev->object;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (!protocol)
      {
         fputs("ERROR: missing protocol.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -433,17 +452,15 @@ main(int argc, char **argv)
      }
    efl_io_buffered_stream_eos_mark(dialer); /* we're done sending */
 
-   ecore_main_loop_begin();
-
-   fprintf(stderr, "INFO: main loop finished.\n");
+   return ;
 
  no_mainloop:
    efl_del(dialer);
 
  end:
    EINA_LIST_FREE(to_send, str) free(str);
-   ecore_con_shutdown();
-   ecore_shutdown();
 
-   return retval;
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();

@@ -10,28 +10,41 @@ extern "C" {
 #ifdef EAPI
 # undef EAPI
 #endif
+#ifdef EWAPI
+# undef EWAPI
+#endif
+#ifdef EOAPI
+# undef EOAPI
+#endif
 
 #ifdef _WIN32
-# ifdef EFL_EFL_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EFL_BUILD */
+# endif
+# define EAPI_WEAK
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
 #   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
 #  else
 #   define EAPI
+#   define EAPI_WEAK
 #  endif
 # else
 #  define EAPI
+#  define EAPI_WEAK
 # endif
-#endif /* ! _WIN32 */
+#endif
+
+#define EWAPI EAPI EAPI_WEAK
+#define EOAPI EAPI EAPI_WEAK
 
 #define EFL_VERSION_1_18 1
 #define EFL_VERSION_1_19 1
@@ -39,7 +52,7 @@ extern "C" {
 #define EFL_VERSION_1_21 1
 
 /* Add here all the required ifdef for any @protected method */
-#ifdef EFL_EFL_BUILD
+#ifdef EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
 # define EFL_GFX_SIZE_HINT_PROTECTED
 #endif
@@ -62,12 +75,6 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #include <Efl_Model_Common.h>
 
-#include "interfaces/efl_vpath_file.eo.h"
-#include "interfaces/efl_vpath.eo.h"
-#include "interfaces/efl_vpath_core.eo.h"
-#include "interfaces/efl_vpath_manager.eo.h"
-#include "interfaces/efl_vpath_file_core.eo.h"
-
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_types.eot.h"
@@ -78,22 +85,19 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_duplicate.eo.h"
 #include "interfaces/efl_file.eo.h"
-#include "interfaces/efl_image.eo.h"
-#include "interfaces/efl_image_animated.eo.h"
-#include "interfaces/efl_image_load.eo.h"
+#include "interfaces/efl_gfx_image.eo.h"
+#include "interfaces/efl_gfx_image_animation_controller.eo.h"
+#include "interfaces/efl_gfx_image_load_controller.eo.h"
 #include "interfaces/efl_part.eo.h"
+#include "interfaces/efl_playable.eo.h"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_types.eot.h"
-#include "interfaces/efl_text_properties.eo.h"
 #include "interfaces/efl_orientation.eo.h"
-#include "interfaces/efl_flipable.eo.h"
 #include "interfaces/efl_ui_base.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"
 #include "interfaces/efl_ui_range.eo.h"
-#include "interfaces/efl_ui_item.eo.h"
-#include "interfaces/efl_ui_menu.eo.h"
 #include "interfaces/efl_ui_autorepeat.eo.h"
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_clickable.eo.h"
@@ -101,6 +105,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_scrollbar.eo.h"
 #include "interfaces/efl_ui_scrollable_interactive.eo.h"
 #include "interfaces/efl_ui_selectable.eo.h"
+#include "interfaces/efl_ui_multi_selectable.eo.h"
 #include "interfaces/efl_ui_zoom.eo.h"
 
 #include "interfaces/efl_screen.eo.h"
@@ -114,7 +119,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_animator.eo.h"
 
 /* Graphics */
-#include "interfaces/efl_gfx.eo.h"
+#include "interfaces/efl_gfx_entity.eo.h"
 #include "interfaces/efl_gfx_color.eo.h"
 #include "interfaces/efl_gfx_buffer.eo.h"
 #include "interfaces/efl_gfx_stack.eo.h"
@@ -137,12 +142,11 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_input_device.eo.h"
 
 /* Canvas & UI */
-#include "interfaces/efl_canvas.eo.h"
+#include "interfaces/efl_canvas_scene.eo.h"
 #include "interfaces/efl_canvas_pointer.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
 #include "interfaces/efl_ui_model_connect.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
-#include "interfaces/efl_ui_model_factory_connect.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
 
 /* Observable interface */
@@ -176,6 +180,22 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
 
+/**
+ * @brief Get a proxy object referring to a part of an object.
+ *
+ * The returned object is valid for only a single function call.
+ * Of course, if the first call is @ref efl_ref, it will last
+ * until @ref efl_unref.
+ *
+ * @param[in] obj The object.
+ * @param[in] name The part name.
+ *
+ * @return A (proxy) object, valid for a single call.
+ *
+ * @since 1.21
+ */
+EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
+
 #else
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
@@ -183,9 +203,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_gfx_fill.eo.legacy.h"
-#include "interfaces/efl_gfx.eo.legacy.h"
-#include "interfaces/efl_image.eo.legacy.h"
-#include "interfaces/efl_image_animated.eo.legacy.h"
+#include "interfaces/efl_gfx_entity.eo.legacy.h"
+#include "interfaces/efl_gfx_image.eo.legacy.h"
+#include "interfaces/efl_gfx_image_animation_controller.eo.legacy.h"
 #include "interfaces/efl_input_device.eo.legacy.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif

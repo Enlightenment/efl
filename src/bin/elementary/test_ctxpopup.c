@@ -56,10 +56,10 @@ _btn_remove_cb(void *data EINA_UNUSED, Evas_Object *obj,
 static void
 _ctxpopup_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info)
 {
-   printf("Item selected status: %d\n", efl_ui_item_selected_get(event_info));
+   printf("Item selected status: %d\n", elm_ctxpopup_item_selected_get(event_info));
 
    printf("ctxpopup item selected: %s\n",
-         elm_object_item_text_get(efl_ui_menu_selected_item_get(obj)));
+         elm_object_item_text_get(elm_ctxpopup_selected_item_get(obj)));
    elm_ctxpopup_dismiss(obj);
 }
 
@@ -105,7 +105,7 @@ _list_item_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UN
    _ctxpopup_item_new(ctxpopup, "Go to home folder", "home");
    _ctxpopup_item_new(ctxpopup, "Save file", "file");
    it = _ctxpopup_item_new(ctxpopup, "Delete file", "delete");
-   efl_ui_item_selected_set(it, EINA_TRUE);
+   elm_ctxpopup_item_selected_set(it, EINA_TRUE);
    it = _ctxpopup_item_new(ctxpopup, "Navigate to folder", "folder");
    elm_object_item_disabled_set(it, EINA_TRUE);
    _ctxpopup_item_new(ctxpopup, "Edit entry", "edit");
@@ -470,6 +470,31 @@ _list_item_cb10(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_
 }
 
 static void
+_list_item_cb11(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   Evas_Object *ctxpopup;
+   Evas_Coord x,y;
+   char label[16];
+   int i = 0;
+
+   if (list_mouse_down > 0) return;
+
+   ctxpopup = elm_ctxpopup_add(obj);
+   evas_object_smart_callback_add(ctxpopup, "dismissed", _dismissed, NULL);
+   evas_object_smart_callback_add(ctxpopup, "geometry,update", _geometry_update, NULL);
+
+   while (i++ < 100)
+     {
+        snprintf(label, sizeof(label), "Item %d", i);
+        _ctxpopup_item_new(ctxpopup, label, "clock");
+     }
+
+   evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
+   evas_object_move(ctxpopup, x, y);
+   evas_object_show(ctxpopup);
+}
+
+static void
 _list_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    elm_list_item_selected_set(event_info, EINA_FALSE);
@@ -532,6 +557,8 @@ test_ctxpopup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                         _list_item_cb9, NULL);
    elm_list_item_append(list, "Ctxpopup with user content (enable to remove)", NULL, NULL,
                         _list_item_cb10, NULL);
+   elm_list_item_append(list, "Ctxpopup with more items", NULL, NULL,
+                        _list_item_cb11, NULL);
    evas_object_show(list);
    elm_list_go(list);
 

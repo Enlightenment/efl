@@ -3,7 +3,9 @@
 
 #include <check.h>
 #include "elm_test_helper.h"
+#include "../efl_check.h"
 
+#include <Evas.h>
 void elm_test_init(TCase *tc);
 void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);
@@ -84,5 +86,7 @@ void elm_code_test_widget(TCase *tc);
 void elm_code_test_widget_text(TCase *tc);
 void elm_code_test_widget_selection(TCase *tc);
 void elm_code_test_widget_undo(TCase *tc);
+
+Evas_Object *win_add();
 
 #endif /* _ELM_SUITE_H */

@@ -1,5 +1,7 @@
 #include "efl_ui_flip.eo.legacy.h"
 
+typedef Eo Elm_Flip;
+
 typedef Efl_Ui_Flip_Interaction       Elm_Flip_Interaction;
 
 #define ELM_FLIP_INTERACTION_NONE     EFL_UI_FLIP_INTERACTION_NONE

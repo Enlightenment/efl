@@ -14,6 +14,8 @@
 #include "Ecore_IMF.h"
 #include "ecore_imf_private.h"
 
+#include "../../static_libs/buildsystem/buildsystem.h"
+
 static void _ecore_imf_module_free(Ecore_IMF_Module *module);
 static int _ecore_imf_modules_exists(const char *ctx_id);
 
@@ -77,9 +79,7 @@ ecore_imf_module_init(void)
                     }
                   for (itr = modules_load; *itr != NULL; itr++)
                     {
-                       snprintf(buf, sizeof(buf),
-                                "%s/src/modules/ecore_imf/%s/.libs",
-                                PACKAGE_BUILD_DIR, *itr);
+                       bs_mod_dir_get(buf, sizeof(buf), "ecore_imf", *itr);
                        module_list = eina_module_list_get
                          (module_list, buf, EINA_FALSE, NULL, NULL);
                     }

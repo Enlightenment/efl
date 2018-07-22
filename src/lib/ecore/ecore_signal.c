@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <pthread.h>
 
 #include "Ecore.h"
@@ -19,7 +20,13 @@
 /* make mono happy - this is evil though... */
 #undef SIGPWR
 
-#define ECORE_SIGNAL_THREAD 1
+typedef struct _Pid_Info Pid_Info;
+
+struct _Pid_Info
+{
+   pid_t pid;
+   int fd;
+};
 
 static void _ecore_signal_exe_exit_delay(void *data, const Efl_Event *event);
 static void _ecore_signal_waitpid(Eina_Bool once, siginfo_t info);
@@ -27,12 +34,12 @@ static void _ecore_signal_generic_free(void *data, void *event);
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-#ifdef ECORE_SIGNAL_THREAD
-static Eina_Thread sig_thread;
-static Eina_Bool sig_thread_exists = EINA_FALSE;
-#endif
 static int sig_pipe[2] = { -1, -1 }; // [0] == read, [1] == write
 static Eo *sig_pipe_handler = NULL;
+static Eina_Spinlock sig_pid_lock;
+static Eina_List *sig_pid_info_list = NULL;
+
+volatile int exit_signal_received = 0;
 
 typedef struct _Signal_Data
 {
@@ -73,9 +80,9 @@ _ecore_signal_pipe_read(Eo *obj)
              if (loop)
                {
                   if (sdata.sig == SIGUSR1)
-                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR1, NULL);
+                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR1, NULL);
                   else
-                    efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_USR2, NULL);
+                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR2, NULL);
                }
           }
         break;
@@ -90,7 +97,7 @@ _ecore_signal_pipe_read(Eo *obj)
                }
              Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
              if (loop)
-               efl_event_callback_call(loop, EFL_LOOP_EVENT_SIGNAL_HUP, NULL);
+               efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_HUP, NULL);
           }
         break;
       case SIGQUIT:
@@ -107,6 +114,9 @@ _ecore_signal_pipe_read(Eo *obj)
                   ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
                                   _ecore_signal_generic_free, NULL);
                }
+             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+             if (loop)
+               efl_event_callback_call(loop, EFL_LOOP_EVENT_QUIT, NULL);
           }
         break;
 #ifdef SIGPWR
@@ -149,9 +159,29 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
 {
    Signal_Data sdata;
 
+   memset(&sdata, 0, sizeof(Signal_Data));
    sdata.sig = sig;
    sdata.info = *si;
-   if (sdata.sig >= 0) write(sig_pipe[1], &sdata, sizeof(sdata));
+   if (sdata.sig >= 0)
+     {
+        int err = errno;
+        const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
+        if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+          {
+             err = errno;
+             ERR("write() failed: %s", strerror(err));
+          }
+        errno = err;
+     }
+   switch (sig)
+     {
+      case SIGQUIT:
+      case SIGINT:
+      case SIGTERM:
+        exit_signal_received = 1;
+        break;
+      default: break;
+     }
 }
 
 static void
@@ -159,12 +189,6 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
 {
    struct sigaction sa;
 
-#ifdef ECORE_SIGNAL_THREAD
-   if (eina_thread_self() != sig_thread)
-     {
-        fprintf(stderr, "Ecore sig handler NOT called from sigwatcher thread\n");
-     }
-#endif
    sa.sa_sigaction = func;
    sa.sa_flags = SA_RESTART | SA_SIGINFO;
    sigemptyset(&sa.sa_mask);
@@ -207,19 +231,10 @@ _signalhandler_setup(void)
 #endif
 }
 
-static void *
-_ecore_signal_thread_watcher(void *data EINA_UNUSED, Eina_Thread t)
-{
-   eina_thread_cancellable_set(EINA_FALSE, NULL);
-   eina_thread_name_set(t, "Esigwatcher");
-   _signalhandler_setup();
-   for (;;) pause();
-   return NULL;
-}
-
 static void
 _ecore_signal_pipe_init(void)
 {
+   eina_spinlock_new(&sig_pid_lock);
    if (sig_pipe[0] == -1)
      {
         if (pipe(sig_pipe) != 0)
@@ -231,23 +246,7 @@ _ecore_signal_pipe_init(void)
         eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
         fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK);
      }
-#ifdef ECORE_SIGNAL_THREAD
-   if (!sig_thread_exists)
-     {
-        if (!eina_thread_create(&sig_thread, EINA_THREAD_NORMAL,
-                                -1, _ecore_signal_thread_watcher, NULL))
-          {
-             close(sig_pipe[0]);
-             close(sig_pipe[1]);
-             sig_pipe[0] = -1;
-             sig_pipe[1] = -1;
-             return;
-          }
-        sig_thread_exists = EINA_TRUE;
-     }
-#else
    _signalhandler_setup();
-#endif
    if (!sig_pipe_handler)
      sig_pipe_handler =
        efl_add(EFL_LOOP_HANDLER_CLASS, ML_OBJ,
@@ -259,6 +258,11 @@ _ecore_signal_pipe_init(void)
 static void
 _ecore_signal_pipe_shutdown(void)
 {
+   if (sig_pipe_handler)
+     {
+        efl_del(sig_pipe_handler);
+        sig_pipe_handler = NULL;
+     }
    if (sig_pipe[0] != -1)
      {
         close(sig_pipe[0]);
@@ -266,29 +270,34 @@ _ecore_signal_pipe_shutdown(void)
         sig_pipe[0] = -1;
         sig_pipe[1] = -1;
      }
-   if (sig_pipe_handler)
-     {
-        efl_del(sig_pipe_handler);
-        sig_pipe_handler = NULL;
-     }
+   eina_spinlock_free(&sig_pid_lock);
 }
 
 static void
 _ecore_signal_cb_fork(void *data EINA_UNUSED)
 {
    _ecore_signal_pipe_shutdown();
-#ifdef ECORE_SIGNAL_THREAD
-   sig_thread_exists = EINA_FALSE;
-#endif
    _ecore_signal_pipe_init();
 }
 
 void
 _ecore_signal_init(void)
 {
-#ifndef _WIN32
+   _ecore_signal_pipe_init();
+   ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
+}
+
+void
+_ecore_signal_shutdown(void)
+{
    sigset_t newset;
 
+   ecore_fork_reset_callback_del(_ecore_signal_cb_fork, NULL);
+   _ecore_signal_pipe_shutdown();
+   // we probably should restore.. but not a good idea
+   // pthread_sigmask(SIG_SETMASK, &sig_oldset, NULL);
+   // at least do not trigger signal callback after shutdown
+#ifndef _WIN32
    sigemptyset(&newset);
    sigaddset(&newset, SIGPIPE);
    sigaddset(&newset, SIGALRM);
@@ -304,17 +313,7 @@ _ecore_signal_init(void)
 # endif
    pthread_sigmask(SIG_BLOCK, &newset, NULL);
 #endif
-   _ecore_signal_pipe_init();
-   ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
-}
-
-void
-_ecore_signal_shutdown(void)
-{
-   ecore_fork_reset_callback_del(_ecore_signal_cb_fork, NULL);
-   _ecore_signal_pipe_shutdown();
-   // we probably should restore.. but not a good idea
-   // pthread_sigmask(SIG_SETMASK, &sig_oldset, NULL);
+   exit_signal_received = 0;
 }
 
 void
@@ -330,6 +329,45 @@ _ecore_signal_count_get(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd EINA_UNUSED)
    // a pipe fd and placed in a queue/list that
    // _ecore_signal_received_process() will then walk and process/do
    return 0;
+}
+
+void
+_ecore_signal_pid_lock(void)
+{
+   eina_spinlock_take(&sig_pid_lock);
+}
+
+void
+_ecore_signal_pid_unlock(void)
+{
+   eina_spinlock_release(&sig_pid_lock);
+}
+
+void
+_ecore_signal_pid_register(pid_t pid, int fd)
+{
+   Pid_Info *pi = calloc(1, sizeof(Pid_Info));
+   if (!pi) return;
+   pi->pid = pid;
+   pi->fd = fd;
+   sig_pid_info_list = eina_list_append(sig_pid_info_list, pi);
+}
+
+void
+_ecore_signal_pid_unregister(pid_t pid, int fd)
+{
+   Eina_List *l;
+   Pid_Info *pi;
+
+   EINA_LIST_FOREACH(sig_pid_info_list, l, pi)
+     {
+        if ((pi->pid == pid) && (pi->fd == fd))
+          {
+             sig_pid_info_list = eina_list_remove_list(sig_pid_info_list, l);
+             free(pi);
+             return;
+          }
+     }
 }
 
 static void
@@ -408,6 +446,45 @@ _ecore_signal_waitpid(Eina_Bool once, siginfo_t info)
                }
              else ecore_event_add(ECORE_EXE_EVENT_DEL, e,
                                   _ecore_exe_event_del_free, NULL);
+          }
+
+        // XXX: this is not brilliant. this ends up running from the main loop
+        // reading the signal pipe to handle signals. that means handling
+        // exe exits from children will be bottlenecked by how often
+        // the main loop can wake up (or well latency may not be great).
+        // this should probably have a dedicated thread ythat does a waitpid()
+        // and blocks and waits sending results to the resulting pipe
+        Eina_List *l, *ll;
+        Pid_Info *pi;
+
+        EINA_LIST_FOREACH_SAFE(sig_pid_info_list, l, ll, pi)
+          {
+             if (pi->pid == pid)
+               {
+                  Ecore_Signal_Pid_Info pinfo;
+
+                  sig_pid_info_list = eina_list_remove_list
+                    (sig_pid_info_list, ll);
+                  pinfo.pid = pid;
+                  pinfo.info = info;
+                  if (WIFEXITED(status))
+                    {
+                       pinfo.exit_code = WEXITSTATUS(status);
+                       pinfo.exit_signal = -1;
+                    }
+                  else if (WIFSIGNALED(status))
+                    {
+                       pinfo.exit_code = -1;
+                       pinfo.exit_signal = WTERMSIG(status);
+                    }
+                  if (write(pi->fd, &pinfo, sizeof(Ecore_Signal_Pid_Info))
+                      != sizeof(Ecore_Signal_Pid_Info))
+                    {
+                       ERR("Can't write to custom exe exit info pipe");
+                    }
+                  free(pi);
+                  break;
+               }
           }
         if (once) break;
      }

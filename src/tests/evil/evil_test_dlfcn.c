@@ -29,7 +29,7 @@ typedef int (*_evil_init)(void);
 typedef int (*_evil_shutdwon)(void);
 
 
-START_TEST(evil_dlfcn_dlopen_success)
+EFL_START_TEST(evil_dlfcn_dlopen_success)
 {
    void *mod;
    int res;
@@ -40,9 +40,9 @@ START_TEST(evil_dlfcn_dlopen_success)
    res = dlclose(mod);
    fail_if(res != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_dlfcn_dlopen_failure)
+EFL_START_TEST(evil_dlfcn_dlopen_failure)
 {
    void *mod;
 
@@ -50,9 +50,9 @@ START_TEST(evil_dlfcn_dlopen_failure)
    mod = dlopen("c:\\windows\\system32\\kernel32.dl", 0);
    fail_if(mod != NULL);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_dlfcn_dlsym_success)
+EFL_START_TEST(evil_dlfcn_dlsym_success)
 {
    _evil_init sym_init;
    _evil_shutdwon sym_shutdown;
@@ -64,18 +64,18 @@ START_TEST(evil_dlfcn_dlsym_success)
 
    sym_init = dlsym(mod, "evil_init");
    fail_if(sym_init == NULL);
-   fail_if(sym_init() != 1);
+   fail_if(sym_init() != 2);
 
    sym_shutdown = dlsym(mod, "evil_shutdown");
    fail_if(sym_shutdown == NULL);
-   fail_if(sym_shutdown() != 0);
+   fail_if(sym_shutdown() != 1);
 
    res = dlclose(mod);
    fail_if(res != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_dlfcn_dlsym_failure)
+EFL_START_TEST(evil_dlfcn_dlsym_failure)
 {
    void *mod;
    void *sym;
@@ -91,9 +91,9 @@ START_TEST(evil_dlfcn_dlsym_failure)
    res = dlclose(mod);
    fail_if(res != 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(evil_dlfcn_dladdr)
+EFL_START_TEST(evil_dlfcn_dladdr)
 {
    Dl_info info;
    void *mod;
@@ -119,7 +119,7 @@ START_TEST(evil_dlfcn_dladdr)
    res = dlclose(mod);
    fail_if(res != 0);
 }
-END_TEST
+EFL_END_TEST
 
 void evil_test_dlfcn(TCase *tc)
 {

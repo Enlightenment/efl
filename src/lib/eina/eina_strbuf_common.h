@@ -25,6 +25,7 @@ struct _Eina_Strbuf
 
 #define EINA_MAGIC_CHECK_STRBUF(d, ...)                         \
    do {                                                         \
+        if (!(d)) return __VA_ARGS__;                           \
         if (!EINA_MAGIC_CHECK((d), _STRBUF_MAGIC))              \
           {                                                     \
              EINA_MAGIC_FAIL((d), _STRBUF_MAGIC);               \

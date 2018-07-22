@@ -129,7 +129,6 @@ struct _Elm_Gengrid_Data
    Eina_Bool                             show_region : 1;
    Eina_Bool                             bring_in : 1;
    Eina_Bool                             mouse_down : 1; /**< a flag that mouse is down on the list at the moment. this flag is set to true on mouse and reset to false on mouse up */
-   Eina_Bool                             wheel_disabled : 1; /**< a flag that shows mouse wheel is disabled or not. */
    /**< value whether item loop feature is enabled or not. */
    Eina_Bool                             item_loop_enable : 1;
 
@@ -211,7 +210,7 @@ struct _Elm_Gengrid_Pan_Data
   ELM_GENGRID_DATA_GET(o, ptr);                      \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -220,7 +219,7 @@ struct _Elm_Gengrid_Pan_Data
   ELM_GENGRID_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
-       CRI("No widget data for object %p (%s)",         \
+       ERR("No widget data for object %p (%s)",         \
            o, evas_object_type_get(o));                 \
        return val;                                      \
     }

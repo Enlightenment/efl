@@ -16,14 +16,14 @@ bindings/cxx/eo_cxx/Eo.hh \
 bindings/cxx/eo_cxx/eo_init.hh \
 bindings/cxx/eo_cxx/eo_ops.hh \
 bindings/cxx/eo_cxx/eo_wref.hh \
-bindings/cxx/eo_cxx/eo_future.hh \
-bindings/cxx/eo_cxx/eo_promise.hh \
-bindings/cxx/eo_cxx/eo_promise_meta.hh \
 bindings/cxx/eo_cxx/eo_private.hh \
 bindings/cxx/eo_cxx/efl_object_impl.hh
 
 installed_eflcxxmainheadersdir = $(includedir)/efl-cxx-@VMAJ@/
-dist_installed_eflcxxmainheaders_DATA = lib/efl/Efl.hh lib/efl/cxx/efl_part_impl.hh
+dist_installed_eflcxxmainheaders_DATA = lib/efl/Efl.hh
+
+installed_eflcxxextraheadersdir = $(includedir)/efl-cxx-@VMAJ@/cxx
+dist_installed_eflcxxextraheaders_DATA = lib/efl/cxx/efl_part_impl.hh
 
 installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
 dist_installed_elementarycxxmainheaders_DATA = lib/elementary/Elementary.hh
@@ -244,8 +244,7 @@ tests_eina_cxx_eina_cxx_suite_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_IN
 
 tests_eo_cxx_eo_cxx_suite_SOURCES = \
 tests/eo_cxx/eo_cxx_suite.cc \
-tests/eo_cxx/eo_cxx_suite.h \
-tests/eo_cxx/eo_cxx_test_promise.cc
+tests/eo_cxx/eo_cxx_suite.h
 
 tests_eo_cxx_eo_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \

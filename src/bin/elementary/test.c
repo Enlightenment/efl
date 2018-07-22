@@ -31,6 +31,7 @@ void test_box_align(void *data, Evas_Object *obj, void *event_info);
 void test_box_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_box(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
+void test_ui_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_events(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
@@ -140,6 +141,7 @@ void test_genlist_filter(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_show_bring(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_cache(void *data, Evas_Object *obj, void *event_info);
 void test_genlist_reusable(void *data, Evas_Object *obj, void *event_info);
+void test_genlist_item_show(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
@@ -169,6 +171,7 @@ void test_win_state2(void *data, Evas_Object *obj, void *event_info);
 void test_win_stack(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar2(void *data, Evas_Object *obj, void *event_info);
+void test_ui_progressbar(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector(void *data, Evas_Object *obj, void *event_info);
 void test_separator(void *data, Evas_Object *obj, void *event_info);
 void test_scroller(void *data, Evas_Object *obj, void *event_info);
@@ -181,6 +184,9 @@ void test_efl_ui_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
+void test_ui_datepicker(void *data, Evas_Object *obj, void *event_info);
+void test_ui_timepicker(void *data, Evas_Object *obj, void *event_info);
+void test_ui_tags(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index3(void *data, Evas_Object *obj, void *event_info);
@@ -275,6 +281,7 @@ void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe2(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe3(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe_complex(void *data, Evas_Object *obj, void *event_info);
+void test_ui_stack(void *data, Evas_Object *obj, void *event_info);
 //void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
 void test_ui_clock(void *data, Evas_Object *obj, void *event_info);
@@ -325,6 +332,7 @@ void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 void test_code_welcome(void *data, Evas_Object *obj, void *event_info);
 void test_code_editor(void *data, Evas_Object *obj, void *event_info);
 void test_code_syntax(void *data, Evas_Object *obj, void *event_info);
+void test_code_syntax_tabbed(void *data, Evas_Object *obj, void *event_info);
 void test_code_mirror(void *data, Evas_Object *obj, void *event_info);
 void test_code_log(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff(void *data, Evas_Object *obj, void *event_info);
@@ -333,6 +341,7 @@ void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_async(void *data, Evas_Object *obj, void *event_info);
+void test_ui_text_item_factory(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
@@ -358,6 +367,8 @@ void test_efl_anim_start_delay(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 
 void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
+
+void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -834,11 +845,14 @@ add_tests:
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
+   ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 
    //------------------------------//
+   ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
+   ADD_TEST(NULL, "Advanced Entries", "Code Editor", test_code_editor);
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);
-   ADD_TEST(NULL, "Advanced Entries", "Entry Markup", test_code_welcome);
-   ADD_TEST(NULL, "Advanced Entries", "Text Editor", test_code_editor);
+   ADD_TEST(NULL, "Advanced Entries", "Code Syntax (Tabbed)", test_code_syntax_tabbed);
    ADD_TEST(NULL, "Advanced Entries", "Mirrored Editor", test_code_mirror);
    ADD_TEST(NULL, "Advanced Entries", "Logger", test_code_log);
    ADD_TEST(NULL, "Advanced Entries", "Diff Comparison", test_code_diff);
@@ -846,6 +860,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Button", test_button);
+   ADD_TEST_EO(NULL, "Buttons", "Efl.Ui.Button", test_ui_button);
 
    //------------------------------//
    ADD_TEST(NULL, "Prefs", "Prefs", test_prefs);
@@ -955,6 +970,7 @@ add_tests:
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Show/Bring", test_genlist_show_bring);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Cache", test_genlist_cache);
    ADD_TEST(NULL, "Lists - Genlist", "Genlist Reusable Contents", test_genlist_reusable);
+   ADD_TEST(NULL, "Lists - Genlist", "Genlist Item Show", test_genlist_item_show);
 
    //------------------------------//
 
@@ -1041,13 +1057,17 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Slider", test_slider);
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Progressbar", test_ui_progressbar);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
-   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider", test_ui_slider);
+   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
 
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Check", test_check);
    ADD_TEST(NULL, "Booleans", "Check Toggle", test_check_toggle);
+
+   //------------------------------//
+   ADD_TEST_EO(NULL, "Tab Pager", "Efl.Ui.Tab_Pager", test_ui_tab_pager);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
@@ -1077,6 +1097,8 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Datetime", test_datetime);
    ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Calendar", test_efl_ui_calendar);
    ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Clock", test_ui_clock);
+   ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Datepicker", test_ui_datepicker);
+   ADD_TEST_EO(NULL, "Times & Dates", "Efl.Ui.Timepicker", test_ui_timepicker);
 
    //------------------------------//
    ADD_TEST(NULL, "Text", "Label", test_label);
@@ -1110,6 +1132,7 @@ add_tests:
    ADD_TEST(NULL, "Naviframe", "Naviframe 2", test_naviframe2);
    ADD_TEST(NULL, "Naviframe", "Naviframe 3", test_naviframe3);
    ADD_TEST(NULL, "Naviframe", "Naviframe: Complex", test_naviframe_complex);
+   ADD_TEST_EO(NULL, "Naviframe", "Efl.Ui.Stack", test_ui_stack);
 
    //------------------------------//
    ADD_TEST(NULL, "Geographic", "Map", test_map);
@@ -1291,7 +1314,7 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 1)
+   if (eina_array_count(arge->argv) == 2)
      {
         if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
           {
@@ -1306,15 +1329,15 @@ efl_main(void *data EINA_UNUSED,
           }
         autorun = eina_array_data_get(arge->argv, 0);
      }
-   else if (eina_array_count(arge->argv) == 2)
+   else if (eina_array_count(arge->argv) == 3)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 0), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 0), "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 1);
+             autorun = eina_array_data_get(arge->argv, 2);
           }
      }
 

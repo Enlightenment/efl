@@ -358,7 +358,7 @@ EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
  *
  * @param   t1 The first tiler.
  * @param   t2 The second tiler.
- * @return  #EINA_TRUE is equal, #EINA_FALSE is inequal.
+ * @return  #EINA_TRUE if equal, #EINA_FALSE if unequal.
  *
  * This function gets result of comparison for @p t1 and @p t2.
  * It returns #EINA_TRUE if tilers are equal.

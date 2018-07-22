@@ -1,7 +1,7 @@
-class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Simple (Efl.Net.Socket_Simple, Efl.Net.Dialer) {
     [[Connects to a remote server offering an easy to use, buffered I/O.
 
-      The simple dialer is based on @Efl.Net.Socket.Simple, which
+      The simple dialer is based on @Efl.Net.Socket_Simple, which
       encapsulates an actual @Efl.Net.Socket and uses it with an
       @Efl.Io.Buffered_Stream. This creates an input @Efl.Io.Queue,
       an output @Efl.Io.Queue. Both of these are linked using a receiver
@@ -69,6 +69,7 @@ class Efl.Net.Dialer.Simple (Efl.Net.Socket.Simple, Efl.Net.Dialer) {
 
     implements {
         Efl.Object.finalize;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Io.Buffered_Stream.inner_io { set; }
         Efl.Net.Dialer.dial;

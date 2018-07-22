@@ -120,7 +120,7 @@ _clicked_button2(void *data, const Efl_Event *ev EINA_UNUSED)
 
    if (!td->evkeyup)
      {
-        r = efl_gfx_geometry_get(bt);
+        r = efl_gfx_entity_geometry_get(bt);
 
         r.x = r.x + r.w / 2;
         r.y = r.y + r.h / 2;

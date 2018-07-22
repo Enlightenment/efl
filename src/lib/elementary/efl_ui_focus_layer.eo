@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manager) {
+mixin Efl.Ui.Focus.Layer (Efl.Interface, Efl.Ui.Widget, Efl.Gfx.Entity, Efl.Ui.Widget_Focus_Manager) {
    [[This defines the inheriting widget as focus layer
 
      A focus layer is the uppermost one which received input and handles all focus related events for as long as it exists and is visible. It's NOT possible to escape this layer with focus movement.
@@ -21,11 +21,12 @@ mixin Efl.Ui.Focus.Layer (Efl.Interface, Elm.Widget, Efl.Gfx, Efl.Ui.Focus.Manag
      }
    }
    implements {
-      Elm.Widget.focus_manager_create;
-      Elm.Widget.focus_state_apply;
-      Efl.Gfx.visible {set;}
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Gfx.Entity.visible {set;}
       Efl.Ui.Focus.Manager.move;
-      Efl.Ui.Focus.User.focus_manager { get; }
+      Efl.Ui.Focus.Object.focus_manager { get; }
+      Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

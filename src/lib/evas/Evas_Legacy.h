@@ -85,6 +85,23 @@ EAPI Eina_Bool evas_engine_info_set(Evas *obj, Evas_Engine_Info *info);
  */
 EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
 
+/**
+ * @brief Get the maximum image size evas can possibly handle.
+ *
+ * This function returns the largest image or surface size that evas can handle
+ * in pixels, and if there is one, returns @c true. It returns @c false if no
+ * extra constraint on maximum image size exists. You still should check the
+ * return values of @c maxw and @c maxh as there may still be a limit, just a
+ * much higher one.
+ *
+ * @param[in] obj The object.
+ * @param[out] max The maximum image size (in pixels).
+ *
+ * @return @c true on success, @c false otherwise
+ */
+EAPI Eina_Bool evas_image_max_size_get(Eo *eo_e, int *w, int *h);
+
+
 #include "canvas/evas_canvas.eo.legacy.h"
 
 /**
@@ -2276,6 +2293,105 @@ EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, 
 EAPI Evas *evas_object_evas_get(const Eo *obj);
 
 /**
+ * @brief Retrieve a list of objects lying over a given position in a canvas.
+ *
+ * This function will traverse all the layers of the given canvas, from top to
+ * bottom, querying for objects with areas covering the given position. The
+ * user can remove from query objects which are hidden and/or which are set to
+ * pass events.
+ *
+ * @warning This function will skip objects parented by smart objects, acting
+ * only on the ones at the "top level", with regard to object parenting.
+ *
+ * @param[in] obj The object.
+ * @param[in] x The pixel position.
+ * @param[in] y The pixel position.
+ * @param[in] include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation.
+ * @param[in] include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation.
+ *
+ * @return The list of objects that are over the given position in @c e.
+ *
+ * @ingroup Efl_Canvas
+ */
+ EAPI Eina_List *evas_objects_at_xy_get(Eo *eo_e, int x, int y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
+
+
+/**
+ * @brief Retrieve the object stacked at the top of a given position in a
+ * canvas.
+ *
+ * This function will traverse all the layers of the given canvas, from top to
+ * bottom, querying for objects with areas covering the given position. The
+ * user can remove from the query objects which are hidden and/or which are set
+ * to pass events.
+ *
+ * @warning This function will skip objects parented by smart objects, acting
+ * only on the ones at the "top level", with regard to object parenting.
+ *
+ * @param[in] obj The object.
+ * @param[in] x The pixel position.
+ * @param[in] y The pixel position.
+ * @param[in] include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation.
+ * @param[in] include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation.
+ *
+ * @return The Evas object that is over all other objects at the given
+ * position.
+ */
+ EAPI Evas_Object* evas_object_top_at_xy_get(Eo *eo_e, Evas_Coord x, Evas_Coord y, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects);
+
+
+/**
+ * @brief Get all objects in the given rectangle
+ *
+ * @param[in] obj The object.
+ * @param[in] x X coordinate
+ * @param[in] y Y coordinate
+ * @param[in] w Width
+ * @param[in] h Height
+ * @param[in] include_pass_events_objects @c true if the list should include
+ * objects which pass events
+ * @param[in] include_hidden_objects @c true if the list should include hidden
+ * objects
+ *
+ * @return List of objects
+ */
+EAPI Eina_List *evas_objects_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Retrieve the Evas object stacked at the top of a given rectangular
+ * region in a canvas
+ *
+ * This function will traverse all the layers of the given canvas, from top to
+ * bottom, querying for objects with areas overlapping with the given
+ * rectangular region inside @c e. The user can remove from the query objects
+ * which are hidden and/or which are set to pass events.
+ *
+ * @warning This function will skip objects parented by smart objects, acting
+ * only on the ones at the "top level", with regard to object parenting.
+ *
+ * @param[in] obj The object.
+ * @param[in] x The top left corner's horizontal coordinate for the rectangular
+ * region.
+ * @param[in] y The top left corner's vertical coordinate for the rectangular
+ * region.
+ * @param[in] w The width of the rectangular region.
+ * @param[in] h The height of the rectangular region.
+ * @param[in] include_pass_events_objects Boolean flag to include or not
+ * objects which pass events in this calculation.
+ * @param[in] include_hidden_objects Boolean flag to include or not hidden
+ * objects in this calculation.
+ *
+ * @return The Evas object that is over all other objects at the given
+ * rectangular region.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Evas_Object *evas_object_top_in_rectangle_get(const Eo *obj, int x, int y, int w, int h, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects) EINA_WARN_UNUSED_RESULT;
+/**
  * @}
  */
 
@@ -3471,8 +3587,6 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * @since 1.14
  */
 
-#ifdef EFL_BETA_API_SUPPORT
-
 /**
  * Creates a new vector object on the given Evas @p e canvas.
  *
@@ -3488,8 +3602,9 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/efl_canvas_vg.eo.legacy.h"
-#include "canvas/efl_vg_container.eo.legacy.h"
+#include "canvas/efl_canvas_vg_node.eo.legacy.h"
+#include "canvas/efl_canvas_vg_object.eo.legacy.h"
+#include "canvas/efl_canvas_vg_container.eo.legacy.h"
 /**
  * Creates a new vector shape object \.
  *
@@ -3682,7 +3797,7 @@ EAPI void evas_vg_node_raise(Eo *obj);
  */
 EAPI void evas_vg_node_lower(Eo *obj);
 
-#include "canvas/efl_vg.eo.legacy.h"
+#include "canvas/efl_canvas_vg_node.eo.legacy.h"
 
 /**
  *
@@ -4125,7 +4240,7 @@ EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
  */
 EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
 
-#include "canvas/efl_vg_shape.eo.legacy.h"
+#include "canvas/efl_canvas_vg_shape.eo.legacy.h"
 
 /**
  *
@@ -4169,7 +4284,7 @@ EAPI void evas_vg_gradient_spread_set(Eo *obj, Efl_Gfx_Gradient_Spread s);
  */
 EAPI Efl_Gfx_Gradient_Spread evas_vg_gradient_spread_get(Eo *obj);
 
-#include "canvas/efl_vg_gradient.eo.legacy.h"
+#include "canvas/efl_canvas_vg_gradient.eo.legacy.h"
 
 /**
  * Creates a new linear gradient object \.
@@ -4220,7 +4335,7 @@ EAPI void evas_vg_gradient_linear_end_set(Eo *obj, double x, double y);
  */
 EAPI void evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y);
 
-#include "canvas/efl_vg_gradient_linear.eo.legacy.h"
+#include "canvas/efl_canvas_vg_gradient_linear.eo.legacy.h"
 
 /**
  * Creates a new radial gradient object \.
@@ -4288,9 +4403,7 @@ EAPI void evas_vg_gradient_radial_focal_set(Eo *obj, double x, double y);
  */
 EAPI void evas_vg_gradient_radial_focal_get(Eo *obj, double *x, double *y);
 
-#include "canvas/efl_vg_gradient_radial.eo.legacy.h"
-
-#endif
+#include "canvas/efl_canvas_vg_gradient_radial.eo.legacy.h"
 
 /**
  * @}
@@ -6134,6 +6247,27 @@ EAPI void evas_object_polygon_points_clear(Evas_Object *obj);
  *
  * @{
  */
+
+
+/** Call user-provided @c calculate smart functions and unset the flag
+ * signalling that the object needs to get recalculated to all smart objects in
+ * the canvas.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI void evas_smart_objects_calculate(Eo *obj);
+
+/**
+ * @brief Get if the canvas is currently calculating smart objects.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if currently calculating smart objects.
+ *
+ * @ingroup Evas_Canvas
+ */
+EAPI Eina_Bool evas_smart_objects_calculating_get(const Eo *obj);
+
 /**
  * Instantiates a new smart object described by @p s.
  *
@@ -6775,6 +6909,35 @@ EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *
  */
 EAPI Evas_Object                       *evas_object_table_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/**
+ * @brief Control the mirrored mode of the table. In mirrored mode, the table
+ * items go from right to left instead of left to right. That is, 1,1 is top
+ * right, not top left.
+ *
+ * @param[in] obj The object.
+ * @param[in] mirrored @c true if mirrored, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Table
+ */
+EAPI void evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored);
+
+/**
+ * @brief Control the mirrored mode of the table. In mirrored mode, the table
+ * items go from right to left instead of left to right. That is, 1,1 is top
+ * right, not top left.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if mirrored, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Table
+ */
+EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
+
 #include "canvas/evas_table.eo.legacy.h"
 
 /**
@@ -6794,6 +6957,36 @@ EAPI Evas_Object                       *evas_object_table_add(Evas *evas) EINA_W
  * @since 1.1
  */
 EAPI Evas_Object   *evas_object_grid_add(Evas *evas) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
+
+
+/**
+ * @brief Sets the mirrored mode of the grid. In mirrored mode the grid items
+ * go from right to left instead of left to right. That is, 0,0 is top right,
+ * not to left.
+ *
+ * @param[in] obj The object.
+ * @param[in] mirrored @c true if mirrored mode is set, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Grid
+ */
+EAPI void evas_object_grid_mirrored_set(Eo *obj, Eina_Bool mirrored);
+
+/**
+ * @brief Gets the mirrored mode of the grid.
+ *
+ * See also @ref evas_object_grid_mirrored_set
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if mirrored mode is set, @c false otherwise
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Grid
+ */
+EAPI Eina_Bool evas_object_grid_mirrored_get(const Eo *obj);
 
 #include "canvas/evas_grid.eo.legacy.h"
 
@@ -7865,7 +8058,6 @@ EAPI void evas_object_text_filter_program_set(Evas_Object *obj, const char *code
  */
 EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Object *source) EINA_DEPRECATED;
 
-#ifdef EFL_BETA_API_SUPPORT
 /**
  * Creates a new smart rectangle object on the given Evas @p e canvas.
  *
@@ -7889,5 +8081,14 @@ EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name,
  * @since 1.20
  */
 EAPI Evas_Object *evas_object_event_grabber_add(Evas *e);
-#include "canvas/efl_canvas_object_event_grabber.eo.legacy.h"
-#endif
+#include "canvas/efl_canvas_event_grabber.eo.legacy.h"
+
+#include "canvas/efl_canvas_animation_alpha.eo.legacy.h"
+#include "canvas/efl_canvas_animation.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group_parallel.eo.legacy.h"
+#include "canvas/efl_canvas_animation_group_sequential.eo.legacy.h"
+#include "canvas/efl_canvas_animation_player.eo.legacy.h"
+#include "canvas/efl_canvas_animation_rotate.eo.legacy.h"
+#include "canvas/efl_canvas_animation_scale.eo.legacy.h"
+#include "canvas/efl_canvas_animation_translate.eo.legacy.h"

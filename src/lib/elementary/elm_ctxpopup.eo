@@ -8,14 +8,44 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action,
-                    Efl.Ui.Menu)
+class Elm.Ctxpopup (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;
    eo_prefix: elm_obj_ctxpopup;
    event_prefix: elm_ctxpopup;
    methods {
+      @property selected_item {
+         get {
+            [[Get the selected item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The selected item or $null.]]
+         }
+      }
+      @property first_item {
+         get {
+            [[Get the first item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The first item or $null.]]
+         }
+      }
+      @property last_item {
+         get {
+            [[Get the last item in the widget.]]
+         }
+         values {
+            item: Elm.Widget.Item; [[The last item or $null.]]
+         }
+      }
+      @property items {
+         get {
+            [[Returns a list of the widget item.]]
+            return: const(list<Elm.Widget.Item>); [[const list to widget items]]
+         }
+      }
+
       @property horizontal {
          set {
             [[Change the ctxpopup's orientation to horizontal or vertical.]]
@@ -201,23 +231,19 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.widget_parent { set; }
-      Elm.Widget.on_disabled_update;
-      Elm.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.widget_parent { set; }
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Translatable.translation_update;
-      Elm.Widget.theme_apply;
-      Elm.Widget.widget_event;
-      Elm.Widget.focused_item { get; }
-      Efl.Ui.Menu.selected_item { get; }
-      Efl.Ui.Menu.first_item { get; }
-      Efl.Ui.Menu.last_item { get; }
-      Efl.Ui.Menu.items { get; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focused_item { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.state_set { get; }
-      Efl.Part.part;
+      Efl.Access.Object.state_set { get; }
+      Efl.Part.part_get;
    }
    events {
-      dismissed; [[Called when context popup was dismissed]]
+      dismissed: void; [[Called when context popup was dismissed]]
       geometry,update: const(ptr(Eina.Rect)); [[Called when context popup geometry was updated]]
    }
 }

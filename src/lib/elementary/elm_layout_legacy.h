@@ -25,6 +25,8 @@ struct _Elm_Layout_Part_Alias_Description
                           * with "elm.content.swallow" on this one */
 };
 
+typedef Eo Elm_Layout;
+
 typedef struct _Elm_Layout_Part_Alias_Description Elm_Layout_Part_Alias_Description;
 
 /**
@@ -710,4 +712,4 @@ EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const 
  */
 EAPI Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
 
-#include "efl_ui_layout.eo.legacy.h"
+#include "efl_ui_layout_object.eo.legacy.h"

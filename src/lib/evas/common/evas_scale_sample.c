@@ -889,8 +889,6 @@ evas_common_scale_sample_init(void)
    return;
 #endif
 
-   ecore_init();
-
    ecore_fork_reset_callback_add(evas_common_scale_sample_fork_reset, NULL);
 
    thread_queue = eina_thread_queue_new();
@@ -944,6 +942,4 @@ evas_common_scale_sample_shutdown(void)
 
    eina_thread_queue_free(thread_queue);
    eina_thread_queue_free(main_queue);
-
-   ecore_shutdown();
 }

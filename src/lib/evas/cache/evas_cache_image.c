@@ -52,6 +52,7 @@ static void
 _evas_cache_image_dirty_add(Image_Entry *im)
 {
    if (im->flags.dirty) return;
+   if (!im->cache) return;
    _evas_cache_image_activ_del(im);
    _evas_cache_image_lru_del(im);
    _evas_cache_image_lru_nodata_del(im);
@@ -69,6 +70,7 @@ static void
 _evas_cache_image_dirty_del(Image_Entry *im)
 {
    if (!im->flags.dirty) return;
+   if (!im->cache) return;
    im->flags.dirty = 0;
    im->flags.cached = 0;
    im->cache->dirty = eina_inlist_remove(im->cache->dirty, EINA_INLIST_GET(im));  
@@ -78,6 +80,7 @@ static void
 _evas_cache_image_activ_add(Image_Entry *im)
 {
    if (im->flags.activ) return;
+   if (!im->cache) return;
    _evas_cache_image_dirty_del(im);
    _evas_cache_image_lru_del(im);
    _evas_cache_image_lru_nodata_del(im);
@@ -95,6 +98,7 @@ _evas_cache_image_activ_del(Image_Entry *im)
 {
    if (!im->flags.activ) return;
    if (!im->cache_key) return;
+   if (!im->cache) return;
    im->flags.activ = 0;
    im->flags.cached = 0;
    if (im->flags.given_mmap)
@@ -107,6 +111,7 @@ static void
 _evas_cache_image_lru_add(Image_Entry *im)
 {
    if (im->flags.lru) return;
+   if (!im->cache) return;
    _evas_cache_image_dirty_del(im);
    _evas_cache_image_activ_del(im);
    _evas_cache_image_lru_nodata_del(im);
@@ -126,6 +131,7 @@ _evas_cache_image_lru_del(Image_Entry *im)
 {
    if (!im->flags.lru) return;
    if (!im->cache_key) return;
+   if (!im->cache) return;
    im->flags.lru = 0;
    im->flags.cached = 0;
    if (im->flags.given_mmap)
@@ -140,6 +146,7 @@ static void
 _evas_cache_image_lru_nodata_add(Image_Entry *im)
 {
    if (im->flags.lru_nodata) return;
+   if (!im->cache) return;
    _evas_cache_image_dirty_del(im);
    _evas_cache_image_activ_del(im);
    _evas_cache_image_lru_del(im);
@@ -152,6 +159,7 @@ static void
 _evas_cache_image_lru_nodata_del(Image_Entry *im)
 {
    if (!im->flags.lru_nodata) return;
+   if (!im->cache) return;
    im->flags.lru = 0;
    im->flags.cached = 0;
    im->cache->lru_nodata = eina_inlist_remove(im->cache->lru_nodata, EINA_INLIST_GET(im));
@@ -163,6 +171,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    Image_Entry_Task *task;
 
    if (!ie) return;
+   if (!ie->cache) return;
 ////   SLKL(ie->lock);
 ////   SLKU(ie->lock);
    if ((cache) && (cache->func.debug)) cache->func.debug("deleting", ie);
@@ -345,6 +354,7 @@ _evas_cache_image_async_heavy(void *data)
 
    current = data;
 
+   if (!current->cache) return;
    SLKL(current->lock);
    pchannel = current->channel;
    current->channel++;
@@ -426,6 +436,7 @@ _evas_cache_image_async_end(void *data)
    Image_Entry *ie = (Image_Entry *)data;
    Image_Entry_Task *task;
 
+   if (!ie->cache) return;
    evas_cache_image_ref(ie);
    ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
@@ -448,6 +459,7 @@ _evas_cache_image_async_cancel(void *data)
    Evas_Cache_Image *cache = NULL;
    Image_Entry *ie = (Image_Entry *)data;
 
+   if (!ie->cache) return;
    evas_cache_image_ref(ie);
    ie->preload = NULL;
    ie->cache->pending = eina_list_remove(ie->cache->pending, ie);
@@ -495,6 +507,7 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
    Evas_Cache_Target *tg;
    Image_Entry_Task *task;
 
+   if (!ie->cache) return 0;
    evas_cache_image_ref(ie);
    if (ie->flags.preload_done)
      {
@@ -550,6 +563,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
    Eina_List *l;
    Image_Entry_Task *task;
 
+   if (!ie->cache) return;
 //   evas_cache_image_ref(ie);
    if (target)
      {
@@ -605,18 +619,21 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
 EAPI int
 evas_cache_image_usage_get(Evas_Cache_Image *cache)
 {
+   if (!cache) return 0;
    return cache->usage;
 }
 
 EAPI int
 evas_cache_image_get(Evas_Cache_Image *cache)
 {
+   if (!cache) return 0;
    return cache->limit;
 }
 
 EAPI void
 evas_cache_image_set(Evas_Cache_Image *cache, unsigned int limit)
 {
+   if (!cache) return;
    if (cache->limit == limit)
      {
         return;
@@ -904,6 +921,7 @@ evas_cache_image_drop(Image_Entry *im)
    Evas_Cache_Image *cache;
    int references;
 
+   if (!im->cache) return;
    SLKL(engine_lock);
 ////   SLKL(im->lock);
    im->references--;
@@ -957,6 +975,7 @@ evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned
    Image_Entry *im_dirty = im;
    Evas_Cache_Image *cache;
 
+   if (!im->cache) return NULL;
    cache = im->cache;
    if (!(im->flags.dirty))
      {
@@ -996,6 +1015,7 @@ evas_cache_image_alone(Image_Entry *im)
    Image_Entry *im_dirty = im;
    int references;
 
+   if (!im->cache) return NULL;
    cache = im->cache;
    references = im->references;
 
@@ -1034,6 +1054,7 @@ evas_cache_image_copied_data(Evas_Cache_Image *cache,
    int err;
    Image_Entry *im;
 
+   if (!cache) return NULL;
    if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (cspace == EVAS_COLORSPACE_YCBCR422P709_PL) ||
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
@@ -1066,6 +1087,7 @@ evas_cache_image_data(Evas_Cache_Image *cache, unsigned int w, unsigned int h,
    int err;
    Image_Entry *im;
 
+   if (!cache) return NULL;
    if ((cspace == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (cspace == EVAS_COLORSPACE_YCBCR422P709_PL) ||
        (cspace == EVAS_COLORSPACE_YCBCR422601_PL))
@@ -1096,6 +1118,7 @@ evas_cache_image_surface_alloc(Image_Entry *im, unsigned int w, unsigned int h)
 {
    Evas_Cache_Image *cache = im->cache;
 
+   if (!im->cache) return;
    if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->space == EVAS_COLORSPACE_YCBCR422P709_PL) ||
        (im->space == EVAS_COLORSPACE_YCBCR422601_PL))
@@ -1112,6 +1135,7 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
    Image_Entry *im2 = NULL;
    int error;
 
+   if (!im->cache) return im;
    evas_cache_image_ref(im);
    if ((im->space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->space == EVAS_COLORSPACE_YCBCR422P709_PL) ||
@@ -1157,6 +1181,7 @@ evas_cache_image_load_data(Image_Entry *im)
    Eina_Bool preload = EINA_FALSE;
    int error = EVAS_LOAD_ERROR_NONE;
 
+   if (!im->cache) return error;
    evas_cache_image_ref(im);
    if ((im->flags.loaded) && (!im->animated.animated))
      {
@@ -1211,6 +1236,7 @@ evas_cache_image_load_data(Image_Entry *im)
 EAPI void
 evas_cache_image_unload_data(Image_Entry *im)
 {
+   if (!im->cache) return;
    evas_cache_image_ref(im);
    if (im->flags.in_progress)
      {
@@ -1256,6 +1282,7 @@ evas_cache_image_unload_all(Evas_Cache_Image *cache)
 {
    Image_Entry *im;
 
+   if (!cache) return;
 // _evas_cache_image_unload_cb -> evas_cache_image_unload_data -> evas_cache_image_ref
 //  deadlock
 //////   SLKL(engine_lock);
@@ -1299,6 +1326,7 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
+   if (!im->cache) return;
    evas_cache_image_ref(im);
    if (((int)im->w > 0) && ((int)im->h > 0) &&
        (((im->flags.loaded) && (img->image.data)) ||
@@ -1330,6 +1358,7 @@ static int total = 0;
 static void
 _dump_img(Image_Entry *im, const char *type)
 {
+   if (!im->cache) return;
    total += im->cache->func.mem_size_get(im);
    printf("%s: %4i: %4ib, %4ix%4i alloc[%4ix%4i] [%s] [%s]\n",
           type,
@@ -1352,6 +1381,7 @@ _dump_cache(Evas_Cache_Image *cache)
 {
    Image_Entry *im;
 
+   if (!cache) return;
    printf("--CACHE DUMP----------------------------------------------------\n");
    printf("cache: %ikb / %ikb\n",
           cache->usage / 1024,
@@ -1375,6 +1405,7 @@ _dump_cache(Evas_Cache_Image *cache)
 EAPI int
 evas_cache_image_flush(Evas_Cache_Image *cache)
 {
+   if (!cache) return 0;
 #ifdef CACHEDUMP
    _dump_cache(cache);
 #endif  
@@ -1411,6 +1442,7 @@ evas_cache_image_empty(Evas_Cache_Image *cache)
    int err;
    Image_Entry *im;
 
+   if (!cache) return NULL;
    SLKL(engine_lock);
    im = _evas_cache_image_entry_new(cache, NULL, NULL, NULL, NULL, NULL, NULL, &err);
    SLKU(engine_lock);
@@ -1422,6 +1454,7 @@ evas_cache_image_empty(Evas_Cache_Image *cache)
 EAPI void
 evas_cache_image_colorspace(Image_Entry *im, Evas_Colorspace cspace)
 {
+   if (!im->cache) return;
    evas_cache_image_ref(im);
    if (im->space == cspace) goto done;
    im->space = cspace;
@@ -1435,6 +1468,7 @@ EAPI void *
 evas_cache_private_from_image_entry_get(Image_Entry *im)
 {
    void *data;
+   if (!im->cache) return NULL;
    evas_cache_image_ref(im);
    data = (void *)im->cache->data;
    evas_cache_image_drop(im);
@@ -1444,12 +1478,14 @@ evas_cache_private_from_image_entry_get(Image_Entry *im)
 EAPI void *
 evas_cache_private_get(Evas_Cache_Image *cache)
 {
+   if (!cache) return NULL;
    return cache->data;
 }
 
 EAPI void
 evas_cache_private_set(Evas_Cache_Image *cache, const void *data)
 {
+   if (!cache) return;
    cache->data = (void *)data;
 }
 

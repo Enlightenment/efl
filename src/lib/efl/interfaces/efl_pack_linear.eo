@@ -1,4 +1,4 @@
-interface Efl.Pack.Linear (Efl.Pack)
+interface Efl.Pack_Linear (Efl.Pack)
 {
    [[API for containers ]]
    eo_prefix: efl_pack;
@@ -13,7 +13,7 @@ interface Efl.Pack.Linear (Efl.Pack)
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx; [[Item to pack.]]
+            @in subobj: Efl.Gfx.Entity; [[Item to pack.]]
          }
          return: bool; [[$false if $subobj could not be packed]]
       }
@@ -27,7 +27,7 @@ interface Efl.Pack.Linear (Efl.Pack)
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx; [[Item to pack at the end.]]
+            @in subobj: Efl.Gfx.Entity; [[Item to pack at the end.]]
          }
          return: bool; [[$false if $subobj could not be packed]]
       }
@@ -39,8 +39,8 @@ interface Efl.Pack.Linear (Efl.Pack)
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx; [[Item to pack before $existing.]]
-            @in existing: const(Efl.Gfx); [[Item to refer to.]]
+            @in subobj: Efl.Gfx.Entity; [[Item to pack before $existing.]]
+            @in existing: const(Efl.Gfx.Entity); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
@@ -53,8 +53,8 @@ interface Efl.Pack.Linear (Efl.Pack)
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx; [[Item to pack after $existing.]]
-            @in existing: const(Efl.Gfx); [[Item to refer to.]]
+            @in subobj: Efl.Gfx.Entity; [[Item to pack after $existing.]]
+            @in existing: const(Efl.Gfx.Entity); [[Item to refer to.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
@@ -70,7 +70,7 @@ interface Efl.Pack.Linear (Efl.Pack)
             container without deleting it.
           ]]
           params {
-             @in subobj: Efl.Gfx; [[Item to pack at given index.]]
+             @in subobj: Efl.Gfx.Entity; [[Item to pack at given index.]]
              @in index:  int; [[A position.]]
           }
           return: bool; [[$false if $subobj could not be packed.]]
@@ -84,12 +84,12 @@ interface Efl.Pack.Linear (Efl.Pack)
          params {
             index: int; [[Index number]]
          }
-         return: Efl.Gfx; [[The object contained at the given $index.]]
+         return: Efl.Gfx.Entity; [[The object contained at the given $index.]]
       }
       pack_index_get {
          [[Get the index of a child in this container.]]
          params {
-            subobj: const(Efl.Gfx); [[An object contained in this pack.]]
+            subobj: const(Efl.Gfx.Entity); [[An object contained in this pack.]]
          }
          return: int(-1); [[-1 in case of failure, or the index of this item.]]
       }
@@ -101,7 +101,7 @@ interface Efl.Pack.Linear (Efl.Pack)
          params {
             index: int; [[Index number]]
          }
-         return: Efl.Gfx; [[The child item if it could be removed.]]
+         return: Efl.Gfx.Entity; [[The child item if it could be removed.]]
       }
    }
 }

@@ -1,4 +1,4 @@
-class Efl.Ui.Calendar.Item (Efl.Object, Efl.Ui.Focus.Object)
+class Efl.Ui.Calendar_Item (Efl.Object, Efl.Ui.Focus.Object)
 {
     [[EFL UI Calendar Item class]]
     methods {

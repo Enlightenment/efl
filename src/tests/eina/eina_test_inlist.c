@@ -84,7 +84,7 @@ _eina_test_inlist_build(int i)
    return tmp;
 }
 
-START_TEST(eina_inlist_simple)
+EFL_START_TEST(eina_inlist_simple)
 {
    Eina_Inlist *lst = NULL;
    Eina_Inlist *tmpl = NULL;
@@ -95,8 +95,6 @@ START_TEST(eina_inlist_simple)
    Eina_Inlist *bkp;
    struct log_ctx ctx;
 #endif
-
-   fail_if(!eina_init());
 
    tmp = _eina_test_inlist_build(42);
    lst = eina_inlist_append(lst, EINA_INLIST_GET(tmp));
@@ -296,9 +294,8 @@ START_TEST(eina_inlist_simple)
    while (lst)
       lst = eina_inlist_remove(lst, lst);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Eina_Test_Inlist_Sorted Eina_Test_Inlist_Sorted;
 struct _Eina_Test_Inlist_Sorted
@@ -317,48 +314,122 @@ _eina_test_inlist_cmp(const void *d1, const void *d2)
    return t1->value - t2->value;
 }
 
+static int
+_eina_test_inlist_cmp2(const void *d1, const void *d2)
+{
+   const Eina_Test_Inlist_Sorted *t1 = d1;
+   const Eina_Test_Inlist_Sorted *t2 = d2;
+
+   return t2->value - t1->value;
+}
+
+#define _eina_test_inlist_check(LIST) \
+{ \
+   const Eina_Test_Inlist_Sorted *_t; \
+   int _i = 0; \
+ \
+   EINA_INLIST_FOREACH(LIST, _t) \
+     { \
+        ck_assert_int_eq(_t->value, values[_i]); \
+        _i++; \
+     } \
+}
+
+#define _eina_test_inlist_check_reverse(LIST) \
+{ \
+   const Eina_Test_Inlist_Sorted *_t; \
+   int _i = EINA_C_ARRAY_LENGTH(values) - 1; \
+ \
+   EINA_INLIST_FOREACH(LIST, _t) \
+     { \
+        ck_assert_int_eq(_t->value, values[_i]); \
+        _i--; \
+     } \
+}
+
+static int values_unsorted[] =
+{
+   3,
+   10,
+   2,
+   1,
+   8,
+   4,
+   4,
+   5,
+   7,
+   9,
+   6,
+};
+
+static int values[] =
+{
+   1,
+   2,
+   3,
+   4,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+};
+
+
 static void
-_eina_test_inlist_check(const Eina_Inlist *list)
+_eina_test_inlist_check_insert(const Eina_Inlist *list)
 {
    const Eina_Test_Inlist_Sorted *t;
    int last_value = 0;
 
    EINA_INLIST_FOREACH(list, t)
      {
-        fail_if(t->value < last_value);
+        ck_assert_int_ge(t->value, last_value);
         last_value = t->value;
      }
 }
 
-START_TEST(eina_inlist_sorted)
+static void
+_eina_test_inlist_check_insert_reverse(const Eina_Inlist *list)
 {
-   Eina_Test_Inlist_Sorted *tmp;
+   const Eina_Test_Inlist_Sorted *t;
+   int last_value = 0;
+
+   EINA_INLIST_FOREACH(list, t)
+     {
+        if (last_value)
+          ck_assert_int_le(t->value, last_value);
+        last_value = t->value;
+     }
+}
+ 
+EFL_START_TEST(eina_inlist_sorted)
+{
+   Eina_Test_Inlist_Sorted *t, tmp[EINA_C_ARRAY_LENGTH(values_unsorted)];
    Eina_Inlist *list = NULL;
    Eina_Inlist *sorted = NULL;
-   int i;
+   unsigned int i;
 
-   fail_if(!eina_init());
-
-   srand(time(NULL));
-
-   for (i = 0; i < 2000; ++i)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(values_unsorted); ++i)
      {
-        tmp = malloc(sizeof (Eina_Test_Inlist_Sorted));
-        if (!tmp) continue ;
+        tmp[i].value = values_unsorted[i];
 
-        tmp->value = rand();
-
-        list = eina_inlist_prepend(list, EINA_INLIST_GET(tmp));
+        list = eina_inlist_prepend(list, EINA_INLIST_GET(&tmp[i]));
      }
 
    list = eina_inlist_sort(list, _eina_test_inlist_cmp);
 
    _eina_test_inlist_check(list);
 
-   EINA_INLIST_FOREACH(list, tmp)
-     tmp->value = rand();
+   i = EINA_C_ARRAY_LENGTH(values_unsorted) - 1;
+   EINA_INLIST_FOREACH(list, t)
+     {
+        t->value = values_unsorted[i];
+        i--;
+     }
 
-   i = 0;
    while (list)
      {
         Eina_Inlist *p = list;
@@ -366,45 +437,93 @@ START_TEST(eina_inlist_sorted)
         list = eina_inlist_remove(list, list);
 
         sorted = eina_inlist_sorted_insert(sorted, p, _eina_test_inlist_cmp);
-        _eina_test_inlist_check(sorted);
+        _eina_test_inlist_check_insert(sorted);
      }
-
    _eina_test_inlist_check(sorted);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_inlist_sorted_state)
+EFL_START_TEST(eina_inlist_sorted_state)
 {
-   Eina_Test_Inlist_Sorted *tmp;
+   Eina_Test_Inlist_Sorted tmp[EINA_C_ARRAY_LENGTH(values_unsorted)];
    Eina_Inlist_Sorted_State *state;
    Eina_Inlist *list = NULL;
-   int i;
-
-   fail_if(!eina_init());
+   unsigned int i;
 
    state = eina_inlist_sorted_state_new();
    fail_if(!state);
 
-   for (i = 0; i < 2000; ++i)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(values_unsorted); ++i)
      {
-        tmp = malloc(sizeof (Eina_Test_Inlist_Sorted));
-        if (!tmp) continue ;
+        tmp[i].value = values_unsorted[i];
 
-        tmp->value = rand();
+        list = eina_inlist_sorted_state_insert(list, EINA_INLIST_GET(&tmp[i]), _eina_test_inlist_cmp, state);
+        _eina_test_inlist_check_insert(list);
+     }
+   eina_inlist_sorted_state_free(state);
+   _eina_test_inlist_check(list);
+}
+EFL_END_TEST
+ 
+EFL_START_TEST(eina_inlist_sorted2)
+{
+   Eina_Test_Inlist_Sorted *t, tmp[EINA_C_ARRAY_LENGTH(values_unsorted)];
+   Eina_Inlist *list = NULL;
+   Eina_Inlist *sorted = NULL;
+   unsigned int i;
 
-        list = eina_inlist_sorted_state_insert(list, EINA_INLIST_GET(tmp), _eina_test_inlist_cmp, state);
-        _eina_test_inlist_check(list);
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(values_unsorted); ++i)
+     {
+        tmp[i].value = values_unsorted[i];
+
+        list = eina_inlist_prepend(list, EINA_INLIST_GET(&tmp[i]));
      }
 
-   _eina_test_inlist_check(list);
+   list = eina_inlist_sort(list, _eina_test_inlist_cmp2);
 
-   eina_inlist_sorted_state_free(state);
+   _eina_test_inlist_check_reverse(list);
 
-   eina_shutdown();
+   i = EINA_C_ARRAY_LENGTH(values_unsorted) - 1;
+   EINA_INLIST_FOREACH(list, t)
+     {
+        t->value = values_unsorted[i];
+        i--;
+     }
+
+   while (list)
+     {
+        Eina_Inlist *p = list;
+
+        list = eina_inlist_remove(list, list);
+
+        sorted = eina_inlist_sorted_insert(sorted, p, _eina_test_inlist_cmp2);
+        _eina_test_inlist_check_insert_reverse(sorted);
+     }
+   _eina_test_inlist_check_reverse(sorted);
 }
-END_TEST
+EFL_END_TEST
+
+EFL_START_TEST(eina_inlist_sorted_state2)
+{
+   Eina_Test_Inlist_Sorted tmp[EINA_C_ARRAY_LENGTH(values_unsorted)];
+   Eina_Inlist_Sorted_State *state;
+   Eina_Inlist *list = NULL;
+   unsigned int i;
+
+   state = eina_inlist_sorted_state_new();
+   fail_if(!state);
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(values_unsorted); ++i)
+     {
+        tmp[i].value = values_unsorted[i];
+
+        list = eina_inlist_sorted_state_insert(list, EINA_INLIST_GET(&tmp[i]), _eina_test_inlist_cmp2, state);
+        _eina_test_inlist_check_insert_reverse(list);
+     }
+   eina_inlist_sorted_state_free(state);
+   _eina_test_inlist_check_reverse(list);
+}
+EFL_END_TEST
 
 void
 eina_test_inlist(TCase *tc)
@@ -412,4 +531,6 @@ eina_test_inlist(TCase *tc)
    tcase_add_test(tc, eina_inlist_simple);
    tcase_add_test(tc, eina_inlist_sorted);
    tcase_add_test(tc, eina_inlist_sorted_state);
+   tcase_add_test(tc, eina_inlist_sorted2);
+   tcase_add_test(tc, eina_inlist_sorted_state2);
 }

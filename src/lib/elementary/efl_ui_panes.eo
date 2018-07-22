@@ -1,4 +1,4 @@
-class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
+class Efl.Ui.Panes (Efl.Ui.Layout.Object, Efl.Ui.Direction,
                     Efl.Ui.Clickable)
 {
    [[Elementary panes class]]
@@ -44,15 +44,18 @@ class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
          }
       }
    }
+   parts {
+      first: Efl.Ui.Panes_Part; [[The first half of the panes widget (left or top)]]
+      second: Efl.Ui.Panes_Part; [[The second half of the panes widget (right or bottom)]]
+   }
    implements {
-      class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
+      Efl.Ui.Widget.theme_apply;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      press; [[Called when panes got pressed]]
-      unpress; [[Called when panes are no longer pressed]]
+      press: void; [[Called when panes got pressed]]
+      unpress: void; [[Called when panes are no longer pressed]]
    }
 }

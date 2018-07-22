@@ -50,26 +50,26 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_KEY_UP,
                       EFL_EVENT_FOCUS_IN,
                       EFL_EVENT_FOCUS_OUT,
-                      EFL_GFX_EVENT_SHOW,
-                      EFL_GFX_EVENT_HIDE,
-                      EFL_GFX_EVENT_MOVE,
-                      EFL_GFX_EVENT_RESIZE,
-                      EFL_GFX_EVENT_RESTACK,
+                      EFL_GFX_ENTITY_EVENT_SHOW,
+                      EFL_GFX_ENTITY_EVENT_HIDE,
+                      EFL_GFX_ENTITY_EVENT_MOVE,
+                      EFL_GFX_ENTITY_EVENT_RESIZE,
+                      EFL_GFX_ENTITY_EVENT_RESTACK,
                       EVAS_OBJECT_EVENT_DEL,
                       EFL_EVENT_HOLD,
-                      EFL_GFX_EVENT_CHANGE_SIZE_HINTS,
-                      EFL_IMAGE_EVENT_PRELOAD,
-                      EFL_CANVAS_EVENT_FOCUS_IN,
-                      EFL_CANVAS_EVENT_FOCUS_OUT,
+                      EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+                      EFL_GFX_IMAGE_EVENT_PRELOAD,
+                      EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+                      EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
-                      EFL_CANVAS_EVENT_OBJECT_FOCUS_IN,
-                      EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT,
-                      EFL_IMAGE_EVENT_UNLOAD,
-                      EFL_CANVAS_EVENT_RENDER_PRE,
-                      EFL_CANVAS_EVENT_RENDER_POST,
-                      EFL_IMAGE_EVENT_RESIZE,
-                      EFL_CANVAS_EVENT_DEVICE_CHANGED,
+                      EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
+                      EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
+                      EFL_GFX_IMAGE_EVENT_UNLOAD,
+                      EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
+                      EFL_CANVAS_SCENE_EVENT_RENDER_POST,
+                      EFL_GFX_IMAGE_EVENT_RESIZE,
+                      EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                       EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
 
@@ -209,8 +209,8 @@ _eo_evas_cb(void *data, const Efl_Event *event)
 
    if (!info->func.evas_cb) return;
 
-   if (event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_IN ||
-       event->desc == EFL_CANVAS_EVENT_OBJECT_FOCUS_OUT)
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN ||
+       event->desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT)
      {
         event_info = efl_input_focus_object_get(efl_event_info);
         goto emit;
@@ -385,7 +385,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         type == EVAS_CALLBACK_MULTI_DOWN ||
         type == EVAS_CALLBACK_MOUSE_UP ||
         type == EVAS_CALLBACK_MULTI_UP)
-     _efl_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
+     _efl_canvas_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
 
    if (!_evas_object_callback_has_by_type(obj, type))
      goto nothing_here;
@@ -471,12 +471,17 @@ evas_object_event_callback_add(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void
 evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *cb_info;
    const Efl_Event_Description *desc;
 
-   if (!obj) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_obj);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_obj));
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
 
    cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func.object_cb = func;
@@ -494,11 +499,14 @@ evas_object_event_callback_priority_add(Evas_Object *eo_obj, Evas_Callback_Type 
 EAPI void *
 evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!obj) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    if (!obj->callbacks) return NULL;
 
@@ -521,11 +529,14 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
 EAPI void *
 evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!obj) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    if (!obj->callbacks) return NULL;
 
@@ -555,12 +566,17 @@ evas_event_callback_add(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func,
 EAPI void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *cb_info;
    const Efl_Event_Description *desc;
 
-   if (!e) return;
-   if (!func) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_e));
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func.evas_cb = func;
@@ -577,11 +593,14 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
 EAPI void *
 evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!e) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
 
@@ -604,11 +623,14 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
 EAPI void *
 evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   if (!e) return NULL;
-   if (!func) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_e, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
 
@@ -631,10 +653,15 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
 EAPI void
 evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
 
-   if (!e || e->delete_me) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(eo_e));
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   if (e->delete_me) return;
    if (e->current_event == EVAS_CALLBACK_LAST)
      {
         ERR("%s() can only be called from an input event callback!", __FUNCTION__);
@@ -655,11 +682,14 @@ evas_post_event_callback_push(Evas *eo_e, Evas_Object_Event_Post_Cb func, const 
 EAPI void
 evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
    Eina_List *l;
 
-   if (!e) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if (pc->func == func)
@@ -673,11 +703,14 @@ evas_post_event_callback_remove(Evas *eo_e, Evas_Object_Event_Post_Cb func)
 EAPI void
 evas_post_event_callback_remove_full(Evas *eo_e, Evas_Object_Event_Post_Cb func, const void *data)
 {
-   Evas_Public_Data *e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *e;
    Evas_Post_Callback *pc;
    Eina_List *l;
 
-   if (!e) return;
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
+
+   e = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(e);
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if ((pc->func == func) && (pc->data == data))
@@ -700,7 +733,7 @@ _animator_repeater(void *data, const Efl_Event *event)
 static void
 _check_event_catcher_add(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
    int i;
@@ -708,7 +741,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
@@ -728,14 +761,18 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
 static void
 _check_event_catcher_del(void *data, const Efl_Event *event)
 {
-   const Efl_Callback_Array_Item *array = event->info;
+   const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    int i;
+
+   if (!obj->layer ||
+       !obj->layer->evas)
+     return ;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {

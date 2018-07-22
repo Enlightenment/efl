@@ -1,5 +1,5 @@
-class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
-                 Efl.Ui.Clickable, Efl.Ui.Selectable)
+class Elm.Index (Efl.Ui.Layout.Object, Efl.Ui.Direction,
+                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[elementary index class]]
    legacy_prefix: elm_index;
@@ -98,7 +98,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.
 
-           Note: If $relative is $NULL this function will behave as
+           Note: If $after is $NULL this function will behave as
            elm_index_item_append().]]
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
@@ -127,7 +127,7 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
            $item will be the pointer returned back on $"changed",
            "delay,changed" and $"selected" smart events.
 
-           Note: If $relative is $NULL this function will behave as
+           Note: If $before is $NULL this function will behave as
            elm_index_item_prepend().]]
 
          return: Elm.Widget.Item; [[A handle to the item added or $NULL, on errors]]
@@ -197,15 +197,15 @@ class Elm.Index (Efl.Ui.Layout, Efl.Ui.Direction,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_access_update;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_access_update;
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
-      Efl.Access.children { get; }
+      Efl.Access.Object.access_children { get; }
    }
    events {
-      changed; [[Called when index changed]]
-      delay,changed; [[Called when delay changed]]
-      level,up; [[Called when level increased]]
-      level,down; [[Called when level decreased]]
+      changed: Efl.Object; [[Called when index changed]]
+      delay,changed: Efl.Object; [[Called when delay changed]]
+      level,up: void; [[Called when level increased]]
+      level,down: void; [[Called when level decreased]]
    }
 }

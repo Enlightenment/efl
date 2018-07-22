@@ -69,13 +69,11 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
 #endif
 }
 
-START_TEST(eina_error_errno)
+EFL_START_TEST(eina_error_errno)
 {
    int test;
 
    setenv("EINA_ERROR_LEVEL", "1", 0);
-
-   eina_init();
 
    test = eina_error_msg_register(TEST_TEXT);
    fail_if(!eina_error_msg_get(test));
@@ -88,16 +86,13 @@ START_TEST(eina_error_errno)
    ck_assert_int_eq(eina_error_get(), EBADF);
    ck_assert_str_eq(eina_error_msg_get(EBADF), strerror(EBADF));
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_find)
+EFL_START_TEST(eina_error_test_find)
 {
    int test, r;
    const char *str;
-
-   eina_init();
 
    /* Make sure the value isn't already there. */
    r = eina_error_find(TEST_TEXT TEST_TEXT);
@@ -116,16 +111,13 @@ START_TEST(eina_error_test_find)
    r = eina_error_find(TEST_TEXT TEST_TEXT);
    ck_assert_int_eq(r, test);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_modify)
+EFL_START_TEST(eina_error_test_modify)
 {
    int test, r;
    const char *str, smsg[] = "Do not copy this string";
-
-   eina_init();
 
    test = eina_error_msg_register("Some Test Error");
    ck_assert_int_ne(test, 0);
@@ -153,17 +145,14 @@ START_TEST(eina_error_test_modify)
    r = eina_error_find("Change that!");
    ck_assert_int_eq(r, test);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_error_test_lots)
+EFL_START_TEST(eina_error_test_lots)
 {
    char buf[64];
    int codes[512];
    unsigned int i;
-
-   eina_init();
 
    for (i = 0; i < sizeof(codes)/sizeof(codes[0]); i++)
      {
@@ -182,17 +171,14 @@ START_TEST(eina_error_test_lots)
         ck_assert_int_eq(codes[i], found);
      }
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #ifdef EINA_SAFETY_CHECKS
-START_TEST(eina_error_test_failures)
+EFL_START_TEST(eina_error_test_failures)
 {
    struct log_ctx ctx;
    Eina_Error local_error;
-
-   eina_init();
 
    eina_log_print_cb_set(_eina_test_safety_print_cb, &ctx);
 
@@ -249,9 +235,8 @@ START_TEST(eina_error_test_failures)
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
 void

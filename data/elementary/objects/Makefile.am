@@ -6,6 +6,7 @@ elementary/objects/test_external.edc \
 elementary/objects/test_masking.edc \
 elementary/objects/test_prefs.edc \
 elementary/objects/test_prefs.epc \
+elementary/objects/test_tab_pager.edc \
 elementary/objects/multip.edc \
 elementary/objects/cursors.edc \
 elementary/objects/font_preview.edc \

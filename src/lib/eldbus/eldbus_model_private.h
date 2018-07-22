@@ -8,23 +8,42 @@
 #include <Eo.h>
 #include <Efl.h>
 
-typedef struct _Eldbus_Children_Slice_Promise _Eldbus_Children_Slice_Promise;
+#include "ecore_internal.h"
+
+typedef struct _Eldbus_Children_Slice_Promise Eldbus_Children_Slice_Promise;
+typedef struct _Eldbus_Model_Data Eldbus_Model_Data;
+
 struct _Eldbus_Children_Slice_Promise
 {
-  unsigned start;
-  unsigned count;
-  Efl_Promise* promise;
+   Eina_Promise *p;
+
+   unsigned int start;
+   unsigned int count;
 };
 
-typedef struct _Eldbus_Property_Promise _Eldbus_Property_Promise;
-struct _Eldbus_Property_Promise
+struct _Eldbus_Model_Data
 {
-  char *property;
-  Efl_Promise* promise;
+   Eldbus_Connection *connection;
+   Eldbus_Connection_Type type;
+
+   Eina_Stringshare *address;
+   Eina_Stringshare *unique_name;
+
+   Eina_Bool private : 1;
+
+   Eina_Bool is_listed : 1;
 };
+
+#define UNIQUE_NAME_PROPERTY "unique_name"
 
 /* logging support */
 extern int eldbus_model_log_dom;
+
+static inline void
+_eldbus_eina_promise_cancel(void *data EINA_UNUSED,
+                            const Eina_Promise *dead_ptr EINA_UNUSED)
+{
+}
 
 #define ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(exp, promise, err, v)    \
   do                                                                    \

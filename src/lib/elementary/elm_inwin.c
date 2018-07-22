@@ -3,8 +3,9 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -19,12 +20,6 @@
 
 #define MY_CLASS_NAME "Elm_Inwin"
 #define MY_CLASS_NAME_LEGACY "elm_inwin"
-
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
-{
-   {"default", "elm.swallow.content"},
-   {NULL, NULL}
-};
 
 typedef struct {
 
@@ -63,7 +58,7 @@ _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_inwin_elm_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
+_elm_inwin_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
 {
    elm_win_resize_object_add(parent, obj);
 
@@ -92,7 +87,7 @@ _elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
 
    return obj;
 }
@@ -109,24 +104,6 @@ _elm_inwin_activate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    edje_object_signal_emit
      (wd->resize_obj, "elm,action,show", "elm");
    elm_object_focus_set(obj, EINA_TRUE);
-}
-
-EOLIAN static Eina_Bool
-_elm_inwin_efl_content_content_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Efl_Gfx *content)
-{
-   return efl_content_set(efl_part(obj, _content_aliases[0].real_part), content);
-}
-
-EOLIAN static Efl_Gfx *
-_elm_inwin_efl_content_content_get(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return efl_content_get(efl_part(obj, _content_aliases[0].real_part));
-}
-
-EOLIAN static Efl_Gfx *
-_elm_inwin_efl_content_content_unset(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
-{
-   return efl_content_unset(efl_part(obj, _content_aliases[0].real_part));
 }
 
 EAPI void
@@ -158,13 +135,10 @@ _elm_inwin_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_inwin)
-ELM_PART_CONTENT_DEFAULT_GET(elm_inwin, _content_aliases[0].real_part)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(elm_inwin, Elm_Inwin_Data)
 
 #define ELM_INWIN_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(elm_inwin), \
-   ELM_PART_CONTENT_DEFAULT_OPS(elm_inwin)
+   ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin)
 
 #include "elm_inwin.eo.c"

@@ -1,0 +1,7 @@
+FROM opensuse:42.3
+
+# Install
+RUN zypper --non-interactive update
+RUN zypper --non-interactive install -t pattern devel_basis
+RUN zypper --non-interactive in -d efl
+RUN zypper --non-interactive install gcc-c++ gettext-devel doxygen check libcheck0 check-devel libopenssl-devel systemd-devel libjpeg-devel glib2-devel gstreamer-devel gstreamer-plugins-base-devel luajit-devel freetype2-devel fontconfig-devel fribidi-devel libpng-devel libtiff-devel libcurl-devel libsndfile-devel libX11-devel libXau-devel libXcomposite-devel libXdamage-devel libXdmcp-devel libXext-devel libXfixes-devel libXinerama-devel libXrandr-devel libXrender-devel libXScrnSaver-devel libXtst-devel libXcursor-devel libXp-devel libXi-devel Mesa-libGL-devel giflib-devel libmount-devel libblkid-devel poppler-devel libraw-devel libspectre-devel librsvg2-devel gettext-devel libbullet-devel libudev-devel dbus-1-devel libpulse-devel

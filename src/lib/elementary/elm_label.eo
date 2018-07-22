@@ -8,7 +8,7 @@ enum Elm.Label.Slide_Mode
    always [[Slide always.]]
 }
 
-class Elm.Label (Efl.Ui.Layout)
+class Elm.Label (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
 {
    [[Elementary label class]]
    legacy_prefix: elm_label;
@@ -124,10 +124,10 @@ class Elm.Label (Efl.Ui.Layout)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.theme_apply;
-      Efl.Part.part;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Part.part_get;
    }
    events {
-      slide,end; [[Called when slide stopped]]
+      slide,end: void; [[Called when slide stopped]]
    }
 }

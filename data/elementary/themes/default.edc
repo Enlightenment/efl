@@ -5,6 +5,7 @@ externals.external: "elm";
 // theme api version. from 1.10 on we will check version to avoid
 // compat issues
 data.item: "version" "119";
+data.item: "efl_theme_base" "dark";
 
 collections {
 #include "fonts.edc"
@@ -35,7 +36,6 @@ collections {
 #include "edc/elm/access.edc"
 #include "edc/elm/photo.edc"
 #include "edc/elm/focus.edc"
-#include "edc/elm/uiclock.edc"
 #include "edc/elm/player.edc"
 #include "edc/elm/thumb.edc"
 #include "edc/elm/pointer.edc"
@@ -167,10 +167,12 @@ collections {
 #include "edc/efl/bg.edc"
 #include "edc/efl/button.edc"
 #include "edc/efl/calendar.edc"
+#include "edc/efl/navigation_bar.edc"
+#include "edc/efl/navigation_layout.edc"
 #include "edc/efl/nstate.edc"
-#include "edc/efl/list.edc"
 // XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
+#include "edc/efl/list.edc"
 // XXX: mobile mode needs different entry setup
 #include "edc/efl/text.edc"
 #include "edc/efl/frame.edc"
@@ -181,16 +183,23 @@ collections {
 #include "edc/efl/popup.edc"
 #include "edc/efl/video.edc"
 #include "edc/efl/focus.edc"
-#include "edc/efl/multibuttonentry.edc"
+#include "edc/efl/tags.edc"
 #include "edc/efl/tooltip.edc"
 #include "edc/efl/photocam.edc"
 #include "edc/efl/progress.edc"
 #include "edc/efl/border.edc"
 #include "edc/efl/spin.edc"
 #include "edc/efl/spin_button.edc"
+#include "edc/efl/datepicker.edc"
+#include "edc/efl/timepicker.edc"
 // XXX: min size calc problems - too wide! ... err ok on my 32bit box... eh?
 #include "edc/efl/cursor.edc"
+#include "edc/efl/pointer.edc"
 #include "edc/efl/textpath.edc"
 #include "edc/efl/win.edc"
 #include "edc/efl/uiclock.edc"
+#include "edc/efl/pager.edc"
+#include "edc/efl/tab_pager.edc"
+#include "edc/efl/tab_bar.edc"
+#include "edc/efl/tab_page.edc"
 }

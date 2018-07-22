@@ -3,9 +3,10 @@ import elm_general;
 type Elm_Entry_Item_Provider_Cb: __undefined_type; [[Elementary entry item provider callback type]]
 type Elm_Entry_Filter_Cb: __undefined_type; [[Elementary entry filter callback type]]
 
-class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Elm.Entry (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Access.Widget.Action)
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Access.Widget.Action,
+                 Efl.Ui.Legacy)
 {
    [[Elementary entry class]]
    legacy_prefix: elm_entry;
@@ -469,7 +470,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             return: Efl.Canvas.Object; [[Textblock object]]
          }
       }
-      @property cursor_geometry {
+      @property textblock_cursor_geometry {
          get {
             [[This function returns the geometry of the cursor.
 
@@ -477,6 +478,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               or for example in the case of scrolled entry where you want to show the
               cursor.
             ]]
+            legacy: elm_entry_cursor_geometry_get;
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -511,7 +513,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             return: bool; [[$true if format node exists, $false otherwise]]
          }
       }
-      @property cursor_content {
+      @property textblock_cursor_content {
          get {
             [[Get the character pointed by the cursor at its current position.
 
@@ -520,6 +522,7 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
               Only the text is returned, any format that may exist will not be part
               of the return value. You must free the string when done with \@ref free.
             ]]
+            legacy: elm_entry_cursor_content_get;
             return: mstring @owned @warn_unused; [[Character]]
          }
       }
@@ -588,13 +591,6 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
 
            This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
            This will typically cause the Input Method Context to clear the preedit state.
-         ]]
-      }
-      calc_force {
-         [[Forces calculation of the entry size and text layouting.
-
-           This should be used after modifying the textblock object directly. See
-           @.textblock.get for more information.
          ]]
       }
       anchor_hover_end {
@@ -834,31 +830,54 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
             prediction_hint: string; [[The prediction hint text.]]
          }
       }
+      prediction_hint_hash_set {
+         [[Sets the prediction hint data at the specified key.
+
+           @since 1.21
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            key: string; [[The key of the prediction hint.]]
+            value: string; [[The data to replace.]]
+         }
+      }
+      prediction_hint_hash_del {
+         [[Removes the prediction hint data identified by a key.
+
+           @since 1.21
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            key: string; [[The key of the prediction hint.]]
+         }
+      }
    }
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.visible { set; }
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
       Efl.Layout.Signal.signal_emit;
-      Elm.Widget.on_access_activate;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
-      Elm.Widget.interest_region { get; }
-      Elm.Widget.on_disabled_update;
-      Elm.Widget.widget_sub_object_del;
+      Efl.Layout.Calc.calc_force;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.interest_region { get; }
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.widget_sub_object_del;
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
-      Efl.Access.state_set { get; }
-      Efl.Access.name { get; }
-      Efl.Access.Text.text { get; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
+      Efl.Access.Text.access_text { get; }
       Efl.Access.Text.string { get; }
       Efl.Access.Text.attribute { get; }
-      Efl.Access.Text.attributes { get; }
+      Efl.Access.Text.text_attributes { get; }
       Efl.Access.Text.default_attributes { get; }
       Efl.Access.Text.caret_offset { get; set; }
       Efl.Access.Text.character { get; }
@@ -867,11 +886,11 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Text.offset_at_point { get; }
       Efl.Access.Text.bounded_ranges { get; }
       Efl.Access.Text.range_extents { get; }
-      Efl.Access.Text.selection { get; set; }
+      Efl.Access.Text.access_selection { get; set; }
       Efl.Access.Text.selections_count { get; }
       Efl.Access.Text.selection_add;
       Efl.Access.Text.selection_remove;
-      Efl.Access.Editable.Text.content { set; }
+      Efl.Access.Editable.Text.text_content { set; }
       Efl.Access.Editable.Text.insert;
       Efl.Access.Editable.Text.copy;
       Efl.Access.Editable.Text.cut;
@@ -879,29 +898,30 @@ class Elm.Entry (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Editable.Text.paste;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
-      Efl.Part.part;
+      Efl.Part.part_get;
    }
    events {
-      activated; [[Called when entry got activated]]
-      changed; [[Called when entry changed]]
-      changed,user; [[Called when the object changed due to user interaction]]
-      validate; [[Called when validating]]
-      context,open; [[Called when context menu was opened]]
-      anchor,clicked; [[Called when anchor was clicked]]
-      rejected; [[Called when entry was rejected]]
-      maxlength,reached; [[Called when maximum entry length has been reached]]
-      preedit,changed; [[Called when entry preedit changed]]
-      press; [[Called when entry pressed]]
-      redo,request; [[Called when redo was requested]]
-      undo,request; [[Called when undo was requested]]
-      text,set,done; [[Called when text set finished]]
-      aborted; [[Called when entry was aborted]]
-      anchor,down; [[Called on anchor down]]
-      anchor,hover,opened; [[Called when hover opened]]
-      anchor,in; [[Called on anchor in]]
-      anchor,out; [[Called on anchor out]]
-      anchor,up; [[called on anchor up]]
-      cursor,changed; [[Called on cursor changed]]
-      cursor,changed,manual; [[Called on manual cursor change]]
+      activated: void; [[Called when entry got activated]]
+      changed: void; [[Called when entry changed]]
+      /* FIXME: Canm be NULL but @nullable does not work on events */
+      changed,user: Elm.Entry_Change_Info; [[Called when the object changed due to user interaction]]
+      validate: Elm.Validate_Content; [[Called when validating]]
+      context,open: void; [[Called when context menu was opened]]
+      anchor,clicked: Elm.Entry_Anchor_Info; [[Called when anchor was clicked]]
+      rejected: void; [[Called when entry was rejected]]
+      maxlength,reached: void; [[Called when maximum entry length has been reached]]
+      preedit,changed: void; [[Called when entry preedit changed]]
+      press: void; [[Called when entry pressed]]
+      redo,request: void; [[Called when redo was requested]]
+      undo,request: void; [[Called when undo was requested]]
+      text,set,done: void; [[Called when text set finished]]
+      aborted: void; [[Called when entry was aborted]]
+      anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
+      anchor,hover,opened: Elm.Entry_Anchor_Hover_Info; [[Called when hover opened]]
+      anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
+      anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
+      anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
+      cursor,changed: void; [[Called on cursor changed]]
+      cursor,changed,manual: void; [[Called on manual cursor change]]
    }
 }

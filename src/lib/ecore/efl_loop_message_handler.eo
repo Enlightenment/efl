@@ -1,7 +1,4 @@
-import efl_types;
-import eina_types;
-
-class Efl.Loop.Message.Handler (Efl.Object)
+class Efl.Loop_Message_Handler (Efl.Object)
 {
    [[Message handlers represent a single message type on the Efl.Loop
      parent object. These message handlers can be used to listen for
@@ -12,20 +9,20 @@ class Efl.Loop.Message.Handler (Efl.Object)
       message_add {
          [[Creates a new message object of the correct type for this
            message type.]]
-         return: Efl.Loop.Message; [[The new message payload object.]]
+         return: Efl.Loop_Message; [[The new message payload object.]]
       }
       message_send {
          [[Place the message on the queue to be called later when
            message_process() is called on the loop object.]]
          params {
-            @in message: Efl.Loop.Message; [[The message to place on the queue.]]
+            @in message: Efl.Loop_Message; [[The message to place on the queue.]]
          }
       }
       message_call {
          [[Overide me (implement) then call super after calling the
            right callback type if you specialize the message type.]]
          params {
-            @in message: Efl.Loop.Message; [[ Generic message event type ]]
+            @in message: Efl.Loop_Message; [[ Generic message event type ]]
          }
       }
       message_clear {
@@ -36,7 +33,7 @@ class Efl.Loop.Message.Handler (Efl.Object)
       }
    }
    events {
-      message: Efl.Loop.Message; [[The message payload data]]
+      message: Efl.Loop_Message; [[The message payload data]]
    }
    implements {
       Efl.Object.constructor;

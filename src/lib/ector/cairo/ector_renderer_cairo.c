@@ -84,7 +84,7 @@ _ector_renderer_cairo_ector_renderer_color_set(Eo *obj EINA_UNUSED,
 }
 
 void
-_ector_renderer_cairo_ector_renderer_color_get(Eo *obj EINA_UNUSED,
+_ector_renderer_cairo_ector_renderer_color_get(const Eo *obj EINA_UNUSED,
                                                                  Ector_Renderer_Cairo_Data *pd,
                                                                  int *r, int *g, int *b, int *a)
 {

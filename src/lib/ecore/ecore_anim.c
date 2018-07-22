@@ -86,7 +86,7 @@ static int _ecore_anim_log_dom = -1;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_anim_log_dom, __VA_ARGS__)
 
-static Eina_Bool _do_tick(void);
+static void _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
 
 static int animators_delete_me = 0;
@@ -109,6 +109,10 @@ static volatile int timer_event_is_busy = 0;
 static Eina_Spinlock tick_queue_lock;
 static int           tick_queue_count = 0;
 static Eina_Bool     tick_skip = EINA_FALSE;
+
+#ifndef _WIN32
+extern volatile int exit_signal_received;
+#endif
 
 static void
 _tick_send(signed char val)
@@ -175,14 +179,14 @@ _timer_tick_core(void *data EINA_UNUSED, Ecore_Thread *thread)
         timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
         if (timerfd >= 0) eina_file_close_on_exec(timerfd, EINA_TRUE);
      }
-   if (timerfd < 0)
+   if ((timerfd < 0) && (pollfd >= 0))
      {
         close(pollfd);
         pollfd = -1;
      }
 
-#define INPUT_TIMER_CONTROL ((void *) ((unsigned long) 0x11))
-#define INPUT_TIMER_TIMERFD ((void *) ((unsigned long) 0x22))
+#define INPUT_TIMER_CONTROL (&(pollincoming[0]))
+#define INPUT_TIMER_TIMERFD (&(pollincoming[1]))
 
    if (pollfd >= 0)
      {
@@ -367,7 +371,11 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
-             _do_tick();
+#ifndef _WIN32
+             if (!exit_signal_received)
+#endif
+               _do_tick();
+             _ecore_animator_flush();
           }
         pt = *t;
      }
@@ -481,7 +489,7 @@ _end_tick(void)
      end_tick_cb((void *)end_tick_data);
 }
 
-static Eina_Bool
+static void
 _do_tick(void)
 {
    Ecore_Animator *animator;
@@ -510,9 +518,6 @@ _do_tick(void)
           }
         else animator->just_added = EINA_FALSE;
      }
-   if (!_ecore_animator_flush())
-     return ECORE_CALLBACK_CANCEL;
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Ecore_Animator *
@@ -880,6 +885,7 @@ EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+   if (!animator) return ;
    if (animator->delete_me) return;
    if (animator->suspended)
      {
@@ -935,7 +941,12 @@ EAPI void
 ecore_animator_custom_tick(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
+   if (src != ECORE_ANIMATOR_SOURCE_CUSTOM) return;
+#ifndef _WIN32
+   if (!exit_signal_received)
+#endif
+     _do_tick();
+   _ecore_animator_flush();
 }
 
 void
@@ -988,7 +999,7 @@ _ecore_animator_run(void *data)
           pos = 0.0;
      }
    run_ret = animator->run_func(animator->run_data, pos);
-   if (t >= (animator->start + animator->run) && (pos >= 1.0)) run_ret = EINA_FALSE;
+   if (eina_dbl_exact(pos, 1.0)) run_ret = EINA_FALSE;
    return run_ret;
 }
 

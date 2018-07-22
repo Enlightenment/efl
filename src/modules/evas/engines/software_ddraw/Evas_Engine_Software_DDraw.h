@@ -17,7 +17,6 @@ struct _Evas_Engine_Info_Software_DDraw
 
    struct {
       HWND         window;
-      int          depth;
       int          rotation;
       unsigned int fullscreen : 1;
    } info;

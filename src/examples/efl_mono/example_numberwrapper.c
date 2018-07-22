@@ -10,15 +10,15 @@
 #define EOAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
-# ifdef EFL_EO_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
 #   define EAPI
-#  endif /* ! DLL_EXPORT */
+#  endif
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EO_BUILD */
+# endif
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4
@@ -29,7 +29,7 @@
 # else
 #  define EAPI
 # endif
-#endif /* ! _WIN32 */
+#endif
 
 #include "example_numberwrapper.eo.h"
 
@@ -57,7 +57,7 @@ void _example_numberwrapper_number_set_call(Eo *obj, EINA_UNUSED Example_Numberw
    example_numberwrapper_number_set(obj, n);
 }
 
-int _example_numberwrapper_number_get(EINA_UNUSED Eo *obj, Example_Numberwrapper_Data *pd)
+int _example_numberwrapper_number_get(EINA_UNUSED const Eo *obj, Example_Numberwrapper_Data *pd)
 {
    return pd->number;
 }

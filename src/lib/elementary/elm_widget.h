@@ -316,7 +316,7 @@ typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
-#include "elm_widget.eo.h"
+#include "efl_ui_widget.eo.h"
 
 /**
  * @addtogroup Widget
@@ -389,10 +389,6 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *hover_obj;
    Evas_Object                  *bg;
    Eina_List                    *tooltips, *cursors;
-   Evas_Object                  *focus_previous, *focus_next;
-   Evas_Object                  *focus_up, *focus_down, *focus_right, *focus_left;
-   Elm_Object_Item              *item_focus_previous, *item_focus_next;
-   Elm_Object_Item              *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
 
    /* "show region" coordinates. all widgets got those because this
     * info may be set and queried recursively through the widget
@@ -439,9 +435,14 @@ typedef struct _Elm_Widget_Smart_Data
    } logical;
    struct {
       Efl_Ui_Focus_Manager *manager;
-      Efl_Ui_Focus_User *provider;
+      Efl_Ui_Focus_Object *provider;
    } manager;
-
+   struct {
+     Eina_Bool listen_to_manager;
+     Eina_List *custom_chain;
+     Evas_Object *prev, *next, *up, *down, *right, *left;
+     Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
+   } legacy_focus;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
@@ -464,7 +465,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     on_create : 1; /**< This is true when the widget is on creation(general widget constructor). */
    Eina_Bool                     on_destroy: 1; /**< This is true when the widget is on destruction(general widget destructor). */
    Eina_Bool                     provider_lookup : 1; /**< This is true when efl_provider_find is currently walking the tree */
-   Eina_Bool                     legacy : 1; /**< Widget was created with a legacy API, not efl_add() */
    Eina_Bool                     has_shadow : 1;
 } Elm_Widget_Smart_Data;
 
@@ -474,7 +474,7 @@ typedef Elm_Widget_Smart_Data Efl_Ui_Widget_Data;
  * @}
  */
 
-/**< base structure for all widget items that are not Elm_Widget themselves */
+/**< base structure for all widget items that are not Efl_Ui_Widget themselves */
 typedef struct _Elm_Widget_Item_Data Elm_Widget_Item_Data;
 typedef struct _Elm_Widget_Item_Signal_Data Elm_Widget_Item_Signal_Data;
 
@@ -602,6 +602,7 @@ struct _Elm_Widget_Item_Data
    EINA_MAGIC;
 /* simple accessor macros */
 #define VIEW(X)   X->base->view
+#define VIEW_SET(X, V) efl_wref_add(V, &X->base->view)
 #define WIDGET(X) X->base->widget
 #define EO_OBJ(X) ((X)?X->base->eo_obj:NULL)
    /**< the owner widget that owns this item */
@@ -619,6 +620,7 @@ struct _Elm_Widget_Item_Data
    Evas_Object                   *focus_up, *focus_down, *focus_right, *focus_left;
    Elm_Object_Item               *item_focus_previous, *item_focus_next;
    Elm_Object_Item               *item_focus_up, *item_focus_down, *item_focus_right, *item_focus_left;
+   Eina_Stringshare              *style;
 
    Evas_Object                   *access_obj;
    const char                    *access_info;
@@ -736,8 +738,6 @@ EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const 
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
-EAPI void             elm_widget_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled);
-EAPI Eina_Bool        elm_widget_orientation_mode_disabled_get(const Evas_Object *obj);
 EAPI Eina_Rect        elm_widget_focus_highlight_geometry_get(const Evas_Object *obj);
 void                  _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *it);
 EAPI void             elm_widget_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode);
@@ -756,25 +756,25 @@ EAPI Efl_Ui_Theme_Apply elm_widget_element_update(Evas_Object *obj, Evas_Object 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);
-EAPI Eina_Bool        _elm_widget_onscreen_is(Evas_Object *widget);
-EAPI Eina_Bool        _elm_widget_item_onscreen_is(Elm_Object_Item *item);
-const char*           _elm_widget_accessible_plain_name_get(Evas_Object *obj, const char* name);
-const char*           _elm_widget_item_accessible_plain_name_get(Elm_Object_Item *item, const char* name);
+EAPI Eina_Bool        _elm_widget_onscreen_is(const Evas_Object *widget);
+EAPI Eina_Bool        _elm_widget_item_onscreen_is(const Elm_Object_Item *item);
+const char*           _elm_widget_accessible_plain_name_get(const Evas_Object *obj, const char* name);
+const char*           _elm_widget_item_accessible_plain_name_get(const Elm_Object_Item *item, const char* name);
 
-Efl_Canvas_Object *   _efl_ui_widget_bg_get(Elm_Widget *obj);
+Efl_Canvas_Object *   _efl_ui_widget_bg_get(const Efl_Ui_Widget *obj);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
-  ptr = efl_data_scope_get(o, ELM_WIDGET_CLASS);  \
+  ptr = efl_data_scope_get(o, EFL_UI_WIDGET_CLASS);  \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("no widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return __VA_ARGS__;                           \
     }
 
 #define ELM_WIDGET_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), ELM_WIDGET_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_WIDGET_CLASS))) \
     return
 
 #define ELM_WIDGET_ITEM_RETURN_IF_ONDEL(item, ...)              \
@@ -824,27 +824,27 @@ _elm_widget_sub_object_redirect_to_top(Evas_Object *obj, Evas_Object *sobj)
    return ret;
 }
 
-/* Internal hack to mark legacy objects as such before construction.
- * No need for TLS: Only UI objects created in the main loop matter. */
-EAPI extern Eina_Bool _elm_legacy_add;
-#define elm_legacy_add(k, p, ...) ({ _elm_legacy_add = 1;  \
-   efl_add(k, p, efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
+#define elm_legacy_add(k, p, ...) ({ \
+       efl_add(k, p ? p : efl_main_loop_get(), efl_canvas_object_legacy_ctor(efl_added), ##__VA_ARGS__); })
+
+static inline Eo *
+elm_widget_resize_object_get(const Eo *obj)
+{
+   Elm_Widget_Smart_Data *wd = efl_data_scope_safe_get(obj, EFL_UI_WIDGET_CLASS);
+   return wd ? wd->resize_obj : NULL;
+}
 
 static inline Eina_Bool
 elm_widget_is_legacy(const Eo *obj)
 {
-   Elm_Widget_Smart_Data *sd;
-
-   if (_elm_legacy_add) return EINA_TRUE;
-   sd = (Elm_Widget_Smart_Data *) efl_data_scope_safe_get(obj, ELM_WIDGET_CLASS);
-   return sd ? sd->legacy : EINA_FALSE;
+   return efl_isa(obj, EFL_UI_LEGACY_INTERFACE);
 }
 
 /** Takes in any canvas object and returns the first smart parent that is a widget */
-static inline Elm_Widget *
+static inline Efl_Ui_Widget *
 evas_object_widget_parent_find(Evas_Object *o)
 {
-   while (o && !efl_isa(o, ELM_WIDGET_CLASS))
+   while (o && !efl_isa(o, EFL_UI_WIDGET_CLASS))
      evas_object_smart_parent_get(o);
    return o;
 }
@@ -860,8 +860,8 @@ EAPI Eina_Bool _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                                               Eina_Bool is_text);
 
 /* Internal EO APIs */
-const char *elm_widget_default_content_part_get(const Eo *obj);
-const char *elm_widget_default_text_part_get(const Eo *obj);
+const char *efl_ui_widget_default_content_part_get(const Eo *obj);
+const char *efl_ui_widget_default_text_part_get(const Eo *obj);
 
 
 #define ELM_WIDGET_ITEM_PROTECTED

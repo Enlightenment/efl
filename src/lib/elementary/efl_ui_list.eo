@@ -1,113 +1,93 @@
-import elm_general;
+import efl_ui_list_item;
 
-struct Efl.Ui.List.Item_Event
+class Efl.Ui.List (Efl.Ui.Layout.Object,
+                   Efl.Ui.Scrollable_Interactive,
+                   Efl.Ui.Scrollbar,
+                   Efl.Pack_Linear, Efl.Pack_Layout,
+                   Efl.Ui.Clickable,
+                   Efl.Ui.Selectable,
+                   Efl.Ui.Multi_Selectable)
 {
-   layout: Efl.Ui.Layout;
-   child: Efl.Model;
-   index: int;
-}
-class Efl.Ui.List (Efl.Ui.Layout, Efl.Ui.View, Efl.Ui.Scrollable.Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List.Model)
-{
+   [[Simple list widget with Pack interface.]]
    methods {
-      @property relayout {
-         values {
-            object: Efl.Ui.List.Relayout;
+      item_scroll {
+         [[scroll move the item to show in the viewport.]]
+         params {
+            @in item: Efl.Ui.List_Item; [[Target item.]]
+            @in animation: bool; [[Boolean value for animation of scroll move.]]
          }
       }
-      @property homogeneous {
-         get {
-           [[Get whether the homogeneous mode is enabled.]]
-         }
-         set {
-           [[Enable/disable homogeneous mode.]]
-         }
-         values {
-            homogeneous: bool; [[Assume the items within the genlist are of
-                                 the same height and width. Default is $false.]]
+      item_scroll_align {
+         [[scroll move the item to show at the align position of the viewport.]]
+         params {
+            @in item: Efl.Ui.List_Item; [[Target item.]]
+            @in align: double; [[align value in Viewport.]]
+            @in animation: bool; [[Boolean value for animation of scroll move.]]
          }
       }
-      @property select_mode {
-         [[Listview select mode.]]
+      @property last_selected_item {
+         [[Property data of last selected item.]]
          get {}
-         set {}
          values {
-            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode.]]
+            return: Efl.Ui.List_Item; [[last selected item of list.]]
          }
       }
-      @property default_style {
-         values {
-            style: stringshare;
-         }
-      }
-      @property layout_factory {
-         [[Listview layout factory set.]]
-         set {}
-         values {
-            factory: Efl.Ui.Factory; [[The factory.]]
-         }
+      selected_items_get {
+         [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
+         return: iterator<Efl.Ui.List_Item> @owned @warn_unused; [[Iterator covered by selected items list.
+                                                                   user have to free the iterator after used.]]
       }
    }
-   events {
-      item,realized : Efl.Ui.List.Item_Event;
-      item,unrealized : Efl.Ui.List.Item_Event;
-      item,focused : Efl.Ui.List.Item_Event;
-      item,unfocused : Efl.Ui.List.Item_Event;
-      item,highlighted : Efl.Ui.List.Item_Event;
-      item,unhighlighted : Efl.Ui.List.Item_Event;
-      item,selected : Efl.Ui.List.Item_Event;
-      item,unselected : Efl.Ui.List.Item_Event;
-   }
-
    implements {
+      //Efl.Object
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
-      // Smart obj
-      Efl.Canvas.Group.group_member_add;
+
+      //Efl.Canvas
       Efl.Canvas.Group.group_calculate;
 
-      Efl.Ui.List.Model.load_range { set;}
-      Efl.Ui.List.Model.realize;
-      Efl.Ui.List.Model.unrealize;
-      Efl.Ui.List.Model.size { get; }
-      Efl.Ui.List.Model.min_size { get; set; }
+      //Efl.Container
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
 
-      // Widget
-//      Elm.Widget.focus_next_manager_is;
-//      Elm.Widget.focus_direction_manager_is;
-//      Elm.Widget.focus_register;
-//      Elm.Widget.focus_next;
-//      Elm.Widget.on_focus_update;
-//      Elm.Widget.activate;
-//      Elm.Widget.focused_item { get; }
-//      Elm.Widget.focused_object { get; }
-      Elm.Widget.focus_manager_create;
-      Elm.Widget.widget_event;
+      //Efl.Ui.Direction.direction { get; set; } //TODO
 
-//      Efl.Ui.Focus.Manager.focus {set; }
-      //Efl.Ui.Layout.sizing_eval;
-      Efl.Ui.View.model { get; set; }
+      //Efl.Ui.Widget
+      Efl.Ui.Widget.theme_apply;
 
-      Efl.Ui.Scrollable.Interactive.viewport_geometry { get; }
-      Efl.Ui.Scrollable.Interactive.content_pos { get; set; }
-      Efl.Ui.Scrollable.Interactive.content_size { get; }
-//      Efl.Ui.Scrollable.Interactive.scroll;
-      Efl.Layout.Signal.signal_callback_add;
-      Efl.Layout.Signal.signal_callback_del;
-//      Elm.Interface.Atspi_Accessible.children { get; }
-//      Elm.Interface.Atspi_Widget_Action.elm_actions { get; }
-//      Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.Selection.selected_children_count { get; }
-      Efl.Access.Selection.selected_child { get; }
-      Efl.Access.Selection.selected_child_deselect;
-      Efl.Access.Selection.child_select;
-      Efl.Access.Selection.child_deselect;
-      Efl.Access.Selection.is_child_selected;
-      Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.clear;
+      //Efl.Ui.Focus
+      //Efl.Ui.Focus.Object.on_focus_update;
+
+      //Efl.Pack
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
+      Efl.Pack.pack_padding { get; set; }
+      //Efl.Pack.pack_align { get; set; }
+
+      //Efl.Ui.Scrollable
+      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Ui.Scrollable_Interactive.content_size{ get; }
+      Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }
+      Efl.Ui.Scrollable_Interactive.bounce_enabled { set; get; }
+      Efl.Ui.Scrollable_Interactive.scroll_freeze { get; set; }
+      Efl.Ui.Scrollable_Interactive.scroll_hold { get; set; }
+      Efl.Ui.Scrollable_Interactive.match_content { set; }
+      Efl.Ui.Scrollbar.bar_mode { get; set; }
+
+      //Efl.Ui.Multi_Selectable
+      Efl.Ui.Multi_Selectable.select_mode {get; set;}
    }
 }

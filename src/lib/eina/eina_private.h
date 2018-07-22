@@ -96,7 +96,7 @@
 
 #define EINA_MAGIC_CLASS 0x9877CB30
 
-/* undef the following, we want out version */
+/* undef the following, we want our version */
 #undef FREE
 #define FREE(ptr)				\
   do {						\

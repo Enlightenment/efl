@@ -34,7 +34,7 @@ struct options_type
 {
    std::vector<std::string> include_dirs;
    std::vector<std::string> in_files;
-   mutable Eolian* state;
+   mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
    std::string out_file;
    bool main_header;
@@ -42,7 +42,7 @@ struct options_type
    options_type() : main_header(false) {}
    ~options_type()
      {
-        eolian_free(state);
+        eolian_state_free(state);
      }
 };
 
@@ -68,7 +68,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
          std::string const& cpp_types_header)
 {
    std::string header_decl_file_name = opts.out_file.empty()
-     ? (::eolian_class_file_get(klass) + std::string(".hh")) : opts.out_file;
+     ? (::eolian_object_file_get((const Eolian_Object *)klass) + std::string(".hh")) : opts.out_file;
 
    std::string header_impl_file_name = header_decl_file_name;
    std::size_t dot_pos = header_impl_file_name.rfind(".hh");
@@ -83,7 +83,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
 
    std::set<std::string> c_headers;
    std::set<std::string> cpp_headers;
-   c_headers.insert(eolian_class_file_get(klass) + std::string(".h"));
+   c_headers.insert(eolian_object_file_get((const Eolian_Object *)klass) + std::string(".h"));
         
    std::function<void(efl::eolian::grammar::attributes::type_def const&)>
      variant_function;
@@ -92,8 +92,8 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
      {
         Eolian_Class const* klass2 = get_klass(name, opts.unit);
         assert(klass2);
-        c_headers.insert(eolian_class_file_get(klass2) + std::string(".h"));
-        cpp_headers.insert(eolian_class_file_get(klass2) + std::string(".hh"));
+        c_headers.insert(eolian_object_file_get((const Eolian_Object *)klass2) + std::string(".h"));
+        cpp_headers.insert(eolian_object_file_get((const Eolian_Object *)klass2) + std::string(".hh"));
         efl::eolian::grammar::attributes::klass_def cls{klass2, opts.unit};
         forward_klasses.insert(cls);
      };
@@ -124,8 +124,8 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
              , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
          {
            Eolian_Class const* inherit = &*inherit_iterator;
-           c_headers.insert(eolian_class_file_get(inherit) + std::string(".h"));
-           cpp_headers.insert(eolian_class_file_get(inherit) + std::string(".hh"));
+           c_headers.insert(eolian_object_file_get((const Eolian_Object *)inherit) + std::string(".h"));
+           cpp_headers.insert(eolian_object_file_get((const Eolian_Object *)inherit) + std::string(".hh"));
            efl::eolian::grammar::attributes::klass_def klass3{inherit, opts.unit};
            forward_klasses.insert(klass3);
 
@@ -157,7 +157,7 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
         forward_klasses.insert(part_klass);
      }
 
-   cpp_headers.erase(eolian_class_file_get(klass) + std::string(".hh"));
+   cpp_headers.erase(eolian_object_file_get((const Eolian_Object *)klass) + std::string(".hh"));
 
    std::string guard_name;
    as_generator(*(efl::eolian::grammar::string << "_") << efl::eolian::grammar::string << "_EO_HH")
@@ -226,18 +226,19 @@ types_generate(std::string const& fname, options_type const& opts,
    using namespace efl::eolian::grammar::attributes;
 
    std::vector<function_def> functions;
-   Eina_Iterator *itr = eolian_declarations_get_by_file(opts.state, fname.c_str());
-   /* const */ Eolian_Declaration *decl;
+   Eina_Iterator *itr = eolian_state_objects_by_file_get(opts.state, fname.c_str());
+   /* const */ Eolian_Object *decl;
 
    // Build list of functions with their parameters
    while(::eina_iterator_next(itr, reinterpret_cast<void**>(&decl)))
      {
-        Eolian_Declaration_Type dt = eolian_declaration_type_get(decl);
-        if (dt != EOLIAN_DECL_ALIAS)
+        Eolian_Object_Type dt = eolian_object_type_get(decl);
+        if (dt != EOLIAN_OBJECT_TYPEDECL)
           continue;
 
-        const Eolian_Typedecl *tp = eolian_declaration_data_type_get(decl);
-        if (!tp || eolian_typedecl_is_extern(tp))
+        const Eolian_Typedecl *tp = (const Eolian_Typedecl *)decl;
+
+        if (eolian_typedecl_is_extern(tp))
           continue;
 
         if (::eolian_typedecl_type_get(tp) != EOLIAN_TYPEDECL_FUNCTION_POINTER)
@@ -246,8 +247,8 @@ types_generate(std::string const& fname, options_type const& opts,
         const Eolian_Function *func = eolian_typedecl_function_pointer_get(tp);
         if (!func) return false;
 
-        function_def def(func, EOLIAN_FUNCTION_POINTER, opts.unit);
-        def.c_name = eolian_typedecl_full_name_get(tp);
+        function_def def(func, EOLIAN_FUNCTION_POINTER, tp, opts.unit);
+        def.c_name = eolian_typedecl_name_get(tp);
         std::replace(def.c_name.begin(), def.c_name.end(), '.', '_');
         functions.push_back(std::move(def));
      }
@@ -279,7 +280,7 @@ run(options_type const& opts)
        char* base = basename(dup);
        std::string cpp_types_header;
        opts.unit = (Eolian_Unit*)opts.state;
-       klass = ::eolian_class_get_by_file(opts.unit, base);
+       klass = ::eolian_state_class_by_file_get(opts.state, base);
        free(dup);
        if (klass)
          {
@@ -287,7 +288,7 @@ run(options_type const& opts)
                !generate(klass, opts, cpp_types_header))
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-                 << "Error generating: " << ::eolian_class_name_get(klass)
+                 << "Error generating: " << ::eolian_class_short_name_get(klass)
                  << std::endl;
                assert(false && "error generating class");
              }
@@ -304,7 +305,7 @@ run(options_type const& opts)
 
        for(auto&& name : opts.in_files)
          {
-           Eolian_Unit const* unit = ::eolian_file_parse(opts.state, name.c_str());
+           Eolian_Unit const* unit = ::eolian_state_file_parse(opts.state, name.c_str());
            if(!unit)
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
@@ -317,11 +318,11 @@ run(options_type const& opts)
              }
            char* dup = strdup(name.c_str());
            char* base = basename(dup);
-           Eolian_Class const* klass = ::eolian_class_get_by_file(unit, base);
+           Eolian_Class const* klass = ::eolian_state_class_by_file_get(opts.state, base);
            free(dup);
            if (klass)
              {
-               std::string filename = eolian_class_file_get(klass);
+               std::string filename = eolian_object_file_get((const Eolian_Object *)klass);
                headers.insert(filename + std::string(".hh"));
                eo_files.insert(filename);
              }
@@ -354,7 +355,7 @@ run(options_type const& opts)
 static void
 state_init(options_type const& opts)
 {
-   Eolian *eos = ::eolian_new();
+   Eolian_State *eos = ::eolian_state_new();
    if (!eos)
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
@@ -369,13 +370,13 @@ database_load(options_type const& opts)
 {
    for (auto src : opts.include_dirs)
      {
-        if (!::eolian_directory_scan(opts.state, src.c_str()))
+        if (!::eolian_state_directory_add(opts.state, src.c_str()))
           {
              EINA_CXX_DOM_LOG_WARN(eolian_cxx::domain)
                << "Couldn't load eolian from '" << src << "'.";
           }
      }
-   if (!::eolian_all_eot_files_parse(opts.state))
+   if (!::eolian_state_all_eot_files_parse(opts.state))
      {
         EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
           << "Eolian failed parsing eot files";
@@ -387,7 +388,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!opts.main_header && !::eolian_file_parse(opts.state, opts.in_files[0].c_str()))
+   if (!opts.main_header && !::eolian_state_file_parse(opts.state, opts.in_files[0].c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
          << "Failed parsing: " << opts.in_files[0] << ".";

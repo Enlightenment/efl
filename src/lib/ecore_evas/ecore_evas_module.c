@@ -9,6 +9,8 @@
 #include "ecore_evas_private.h"
 #include <unistd.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
+
 static Eina_Hash *_registered_engines = NULL;
 static Eina_List *_engines_paths = NULL;
 static Eina_List *_engines_available = NULL;
@@ -63,26 +65,23 @@ Eina_Module *
 _ecore_evas_vnc_server_module_load(void)
 {
    char *prefix;
+   char buf[PATH_MAX];
 
    if (_ecore_evas_vnc)
      return _ecore_evas_vnc;
 
-#ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
+   if (bs_mod_get(buf, sizeof(buf), "ecore_evas", "vnc_server"))
      {
-        if (getenv("EFL_RUN_IN_TREE"))
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+        if (getuid() == geteuid())
+#endif
           {
-             _ecore_evas_vnc = _ecore_evas_vnc_server_module_try_load(PACKAGE_BUILD_DIR
-                                                                      "/src/modules/ecore_evas/vnc_server/.libs/"
-                                                                      ECORE_EVAS_ENGINE_NAME,
+             _ecore_evas_vnc = _ecore_evas_vnc_server_module_try_load(buf,
                                                                       EINA_TRUE);
              if (_ecore_evas_vnc)
                return _ecore_evas_vnc;
           }
      }
-#endif
 
    prefix = eina_module_symbol_path_get(_ecore_evas_vnc_server_module_load,
                                         "/ecore_evas");
@@ -105,41 +104,31 @@ _ecore_evas_engine_load(const char *engine)
    const char *path;
    Eina_List *l;
    Eina_Module *em = NULL;
-#ifdef NEED_RUN_IN_TREE
-   Eina_Bool run_in_tree;
-#endif
+   char tmp[PATH_MAX] = "";
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(engine, NULL);
 
    em =  (Eina_Module *)eina_hash_find(_registered_engines, engine);
    if (em) return em;
 
-#ifdef NEED_RUN_IN_TREE
-   run_in_tree = !!getenv("EFL_RUN_IN_TREE");
-#endif
+   if (bs_mod_get(tmp, sizeof(tmp), "ecore_evas/engines", engine))
+     {
+        em = eina_module_new(tmp);
+        if (!em) return NULL;
+
+        if (!eina_module_load(em))
+          {
+             eina_module_free(em);
+             return NULL;
+          }
+        if (eina_hash_add(_registered_engines, engine, em))
+          return em;
+     }
 
    EINA_LIST_FOREACH(_engines_paths, l, path)
      {
-        char tmp[PATH_MAX] = "";
-
-#ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        if (getuid() == geteuid())
-#endif
-          {
-             if (run_in_tree)
-               {
-                  snprintf(tmp, sizeof(tmp), "%s/%s/.libs/%s",
-                           path, engine, ECORE_EVAS_ENGINE_NAME);
-                  if (!_file_exists(tmp))
-                  tmp[0] = '\0';
-               }
-          }
-#endif
-
-        if (tmp[0] == '\0')
-          snprintf(tmp, sizeof(tmp), "%s/%s/%s/%s",
-                   path, engine, MODULE_ARCH, ECORE_EVAS_ENGINE_NAME);
+        snprintf(tmp, sizeof(tmp), "%s/%s/%s/%s",
+                 path, engine, MODULE_ARCH, ECORE_EVAS_ENGINE_NAME);
 
         em = eina_module_new(tmp);
         if (!em) continue;
@@ -166,23 +155,6 @@ _ecore_evas_engine_init(void)
 /* avoid freeing modules ever to avoid deferred cb symbol problems */
 //   _registered_engines = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
    _registered_engines = eina_hash_string_small_new(NULL);
-
-#ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid())
-#endif
-     {
-        if (getenv("EFL_RUN_IN_TREE"))
-          {
-             const char mp[] = PACKAGE_BUILD_DIR"/src/modules/ecore_evas/engines/";
-             if (_file_exists(mp))
-               {
-                  _engines_paths = eina_list_append(_engines_paths, strdup(mp));
-                  return;
-               }
-          }
-     }
-#endif
 
    /* 1. libecore_evas.so/../ecore_evas/engines/ */
    paths[0] = eina_module_symbol_path_get(_ecore_evas_engine_init, "/ecore_evas/engines");
@@ -218,7 +190,7 @@ _ecore_evas_engine_shutdown(void)
        _registered_engines = NULL;
      }
  */
-   
+
    EINA_LIST_FREE(_engines_paths, path)
      free(path);
 

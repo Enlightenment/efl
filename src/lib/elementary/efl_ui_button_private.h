@@ -47,7 +47,7 @@ typedef struct _Efl_Ui_button_Data
   ELM_BUTTON_DATA_GET(o, ptr);                       \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -56,7 +56,7 @@ typedef struct _Efl_Ui_button_Data
   ELM_BUTTON_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                             \
     {                                                  \
-       CRI("No widget data for object %p (%s)",        \
+       ERR("No widget data for object %p (%s)",        \
            o, evas_object_type_get(o));                \
        return val;                                     \
     }

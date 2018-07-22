@@ -76,6 +76,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 static void
 _del_cb(void *data, const Efl_Event *ev)
 {
+   Efl_Input_Device_Type devtype;
    Evas_Public_Data *e = data;
 
    e->devices_modified = EINA_TRUE;
@@ -89,7 +90,8 @@ _del_cb(void *data, const Efl_Event *ev)
    else if (e->default_keyboard == ev->object)
      e->default_keyboard = _new_default_device_find(e, ev->object);
 
-   if ((efl_input_device_type_get(ev->object) == EFL_INPUT_DEVICE_TYPE_SEAT) && (!e->default_seat))
+   devtype = efl_input_device_type_get(ev->object);
+   if ((devtype == EFL_INPUT_DEVICE_TYPE_SEAT) && (!e->default_seat))
      {
         Evas_Pointer_Data *pdata = _evas_pointer_data_by_device_get(e, ev->object);
         if (pdata)
@@ -108,15 +110,16 @@ _del_cb(void *data, const Efl_Event *ev)
           }
      }
 
-   _evas_pointer_data_remove(e, ev->object);
+   if (devtype == EFL_INPUT_DEVICE_TYPE_MOUSE)
+     _evas_pointer_data_remove(e, ev->object);
    eina_hash_del_by_key(e->locks.masks, &ev->object);
    eina_hash_del_by_key(e->modifiers.masks, &ev->object);
-   efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED,
+   efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED,
                            ev->object);
 }
 
 EOLIAN Efl_Input_Device *
-_evas_canvas_efl_canvas_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
+_evas_canvas_efl_canvas_scene_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, const char *name)
 {
    const char *dev_name;
    Evas_Device *dev;
@@ -138,11 +141,11 @@ _evas_canvas_efl_canvas_device_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, 
 EAPI Evas_Device *
 evas_device_get(Evas *eo_e, const char *name)
 {
-   return efl_canvas_device_get(eo_e, name);
+   return efl_canvas_scene_device_get(eo_e, name);
 }
 
 EOLIAN Efl_Input_Device *
-_evas_canvas_efl_canvas_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
+_evas_canvas_efl_canvas_scene_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
 {
    Evas_Device *dev;
    Eina_List *l;
@@ -162,7 +165,7 @@ _evas_canvas_efl_canvas_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, un
 EAPI Evas_Device *
 evas_device_get_by_seat_id(Evas *eo_e, unsigned int id)
 {
-   return efl_canvas_seat_get(eo_e, id);
+   return efl_canvas_scene_seat_get(eo_e, id);
 }
 
 EAPI Evas_Device *
@@ -184,11 +187,11 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
 
    SAFETY_CHECK(eo_e, EVAS_CANVAS_CLASS, NULL);
 
-   dev = efl_add(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
-                 efl_name_set(efl_added, name),
-                 efl_comment_set(efl_added, desc),
-                 efl_input_device_type_set(efl_added, clas),
-                 efl_input_device_source_set(efl_added, emulation_dev));
+   dev = efl_add_ref(EFL_INPUT_DEVICE_CLASS, parent_dev ?: eo_e,
+                     efl_name_set(efl_added, name),
+                     efl_comment_set(efl_added, desc),
+                     efl_input_device_type_set(efl_added, clas),
+                     efl_input_device_source_set(efl_added, emulation_dev));
 
    d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    d->evas = eo_e;
@@ -247,7 +250,7 @@ evas_device_add_full(Evas *eo_e, const char *name, const char *desc,
    e->devices = eina_list_append(e->devices, dev);
    efl_event_callback_add(dev, EFL_EVENT_DEL, _del_cb, e);
 
-   efl_event_callback_call(eo_e, EFL_CANVAS_EVENT_DEVICE_ADDED, dev);
+   efl_event_callback_call(eo_e, EFL_CANVAS_SCENE_EVENT_DEVICE_ADDED, dev);
    // Keeping this event to do not break things...
    evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
    if (e->pending_default_focus_obj && (e->default_seat == dev))
@@ -264,8 +267,9 @@ EAPI void
 evas_device_del(Evas_Device *dev)
 {
    SAFETY_CHECK(dev, EFL_INPUT_DEVICE_CLASS);
-
-   efl_del(dev);
+   if (!efl_invalidated_get(dev))
+     efl_del(dev);
+   efl_unref(dev);
 }
 
 EAPI void
@@ -500,7 +504,7 @@ again:
    */
    EINA_LIST_FREE(e->devices, dev)
      {
-        efl_event_callback_call(e->evas, EFL_CANVAS_EVENT_DEVICE_REMOVED, dev);
+        efl_event_callback_call(e->evas, EFL_CANVAS_SCENE_EVENT_DEVICE_REMOVED, dev);
         efl_event_callback_del(dev, EFL_EVENT_DEL, _del_cb, e);
      }
 }

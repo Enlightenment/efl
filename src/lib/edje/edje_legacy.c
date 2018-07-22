@@ -5,10 +5,10 @@
 EAPI Edje_Load_Error
 edje_object_load_error_get(const Eo *obj)
 {
-   Efl_Image_Load_Error p = efl_file_load_error_get(obj);
+   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(obj);
    Edje *ed;
 
-   if (p != EFL_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
 
    ed = _edje_fetch(obj);
    if (!ed) return EDJE_LOAD_ERROR_GENERIC;
@@ -195,13 +195,13 @@ EAPI const char *edje_object_language_get(const Edje_Object *obj)
 
 EAPI Eina_Bool edje_object_scale_set(Edje_Object *obj, double scale)
 {
-   efl_gfx_scale_set(obj, scale);
+   efl_gfx_entity_scale_set(obj, scale);
    return EINA_TRUE;
 }
 
 EAPI double edje_object_scale_get(const Edje_Object *obj)
 {
-   return efl_gfx_scale_get(obj);
+   return efl_gfx_entity_scale_get(obj);
 }
 
 /* Legacy part drag APIs */
@@ -325,33 +325,73 @@ edje_object_part_text_cursor_line_end_set(Edje_Object *obj, const char *part, Ed
 EAPI Eina_Bool
 edje_object_part_text_cursor_prev(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_char_prev(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur));
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_char_prev(efl_part(obj, part), c);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_next(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_char_next(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur));
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_char_next(efl_part(obj, part), c);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_down(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_line_jump_by(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur), 1);
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_line_jump_by(efl_part(obj, part), c, 1);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
 edje_object_part_text_cursor_up(Edje_Object *obj, const char *part, Edje_Cursor cur)
 {
-   efl_text_cursor_line_jump_by(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), (int) cur), -1);
-   return EINA_TRUE;
+   Efl_Text_Cursor_Cursor *c;
+   int old_pos, new_pos;
+
+   c = efl_text_cursor_get(efl_part(obj, part), (int) cur);
+
+   old_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+   efl_text_cursor_line_jump_by(efl_part(obj, part), c, -1);
+   new_pos = efl_text_cursor_position_get(efl_part(obj, part), c);
+
+   if (old_pos != new_pos)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
 }
 
 EAPI void
@@ -1205,14 +1245,5 @@ edje_object_size_max_get(const Edje_Object *obj, int *maxw, int *maxh)
 EAPI Eina_Bool
 edje_object_part_exists(const Eo *obj, const char *part)
 {
-   Edje_Real_Part *rp;
-   Edje *ed;
-
-   if (!part) return EINA_FALSE;
-   ed = _edje_fetch(obj);
-   if (!ed) return EINA_FALSE;
-   rp = _edje_real_part_recursive_get(&ed, part);
-   if (!rp) return EINA_FALSE;
-
-   return EINA_TRUE;
+   return efl_layout_group_part_exist_get(obj, part);
 }

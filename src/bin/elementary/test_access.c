@@ -286,7 +286,9 @@ test_access2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                   evas_object_show(ly2);
 
                   /* access */
+                  edje_object_freeze(elm_layout_edje_get(ly2));
                   to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly2), "access");
+                  edje_object_thaw(elm_layout_edje_get(ly2));
                   ao = elm_access_object_register(to, ly2);
                   elm_object_focus_custom_chain_append(ly2, ao, NULL);
                }
@@ -371,22 +373,30 @@ test_access3(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    elm_object_part_content_set(ly, "center", btn);
 
+   edje_object_freeze(elm_layout_edje_get(ly));
    to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "red");
+   edje_object_thaw(elm_layout_edje_get(ly));
    red_ao = elm_access_object_register(to, ly);
    elm_access_info_cb_set(red_ao, ELM_ACCESS_INFO, _access_info_cb, "red");
    elm_access_highlight_next_set(btn, ELM_HIGHLIGHT_DIR_NEXT, red_ao);
 
+   edje_object_freeze(elm_layout_edje_get(ly));
    to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "green");
+   edje_object_thaw(elm_layout_edje_get(ly));
    green_ao = elm_access_object_register(to, ly);
    elm_access_info_cb_set(green_ao, ELM_ACCESS_INFO, _access_info_cb, "green");
    elm_access_highlight_next_set(red_ao, ELM_HIGHLIGHT_DIR_NEXT, green_ao);
 
+   edje_object_freeze(elm_layout_edje_get(ly));
    to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "blue");
+   edje_object_thaw(elm_layout_edje_get(ly));
    blue_ao = elm_access_object_register(to, ly);
    elm_access_info_cb_set(blue_ao, ELM_ACCESS_INFO, _access_info_cb, "blue");
    elm_access_highlight_next_set(green_ao, ELM_HIGHLIGHT_DIR_NEXT, blue_ao);
 
+   edje_object_freeze(elm_layout_edje_get(ly));
    to = (Evas_Object *)edje_object_part_object_get(elm_layout_edje_get(ly), "black");
+   edje_object_thaw(elm_layout_edje_get(ly));
    black_ao = elm_access_object_register(to, ly);
    elm_access_info_cb_set(black_ao, ELM_ACCESS_INFO, _access_info_cb, "black");
    elm_access_highlight_next_set(blue_ao, ELM_HIGHLIGHT_DIR_NEXT, black_ao);

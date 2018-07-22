@@ -18,18 +18,16 @@ static Eo *object = NULL;
 static void
 _setup(void)
 {
-   check_init();
    object = create_object();
 }
 
 static void
 _teardown(void)
 {
-   efl_unref(object);
-   check_shutdown();
+   efl_del(object);
 }
 
-START_TEST(properties_get)
+EFL_START_TEST(properties_get)
 {
    const Eina_Array *properties = NULL;
    properties = efl_model_properties_get(object);
@@ -39,39 +37,66 @@ START_TEST(properties_get)
    unsigned int actual_properties_count = eina_array_count(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_get)
+EFL_START_TEST(property_get)
 {
-   Efl_Future *future;
-   future = efl_model_property_get(object, UNIQUE_NAME_PROPERTY);
-   efl_model_future_then(future);
+   Eina_Value *v;
+
+   v = efl_model_property_get(object, UNIQUE_NAME_PROPERTY);
+   fail_if(v == NULL);
+   fail_if(eina_value_type_get(v) == EINA_VALUE_TYPE_ERROR);
+   eina_value_free(v);
 
    // Nonexistent property must raise ERROR
-   future = NULL;
-   future = efl_model_property_get(object, "nonexistent");
-   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
+   v = efl_model_property_get(object, "nonexistent");
+   fail_if(v == NULL);
+   fail_if(eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR);
+   eina_value_free(v);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(property_set)
+static Eina_Value
+_expect_error(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eina_Value value;
-   Efl_Future *future;
+   Eina_Error *expected = data;
+   Eina_Error result = 0;
+
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ERROR);
+
+   if (!expected) return v;
+
+   eina_value_error_get(&v, &result);
+   fail_if(result != *expected);
+
+   ecore_main_loop_quit();
+
+   return v;
+}
+
+EFL_START_TEST(property_set)
+{
+   Eina_Future *future;
+   Eina_Value value = EINA_VALUE_EMPTY;
 
    // Nonexistent property must raise ERROR
    eina_value_setup(&value, EINA_VALUE_TYPE_INT);
    eina_value_set(&value, 1);
+
    future = efl_model_property_set(object, "nonexistent", &value);
-   check_efl_model_future_error(future, &EFL_MODEL_ERROR_NOT_FOUND);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_NOT_FOUND);
+
+   ecore_main_loop_begin();
 
    // UNIQUE_NAME_PROPERTY is read-only
    future = efl_model_property_set(object, UNIQUE_NAME_PROPERTY, &value);
-   check_efl_model_future_error(future, &EFL_MODEL_ERROR_READ_ONLY);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_READ_ONLY);
+
+   ecore_main_loop_begin();
 
    eina_value_flush(&value);
 }
-END_TEST
+EFL_END_TEST
 
 static void
 _test_children_count(Eo *efl_model)
@@ -80,55 +105,108 @@ _test_children_count(Eo *efl_model)
    check_efl_model_children_count_ge(efl_model, 2);
 }
 
-START_TEST(children_count)
+static Eina_Value
+_leave(void *data EINA_UNUSED, const Eina_Value v,
+       const Eina_Future *dead EINA_UNUSED)
 {
+   ecore_main_loop_quit();
+
+   return v;
+}
+
+static void
+_count_changed(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Eina_Future *f;
+
+   f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
+   eina_future_then(f, _leave, NULL);
+}
+
+EFL_START_TEST(children_count)
+{
+   efl_event_callback_add(object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, NULL);
+   efl_model_children_count_get(object);
+
+   ecore_main_loop_begin();
+
    _test_children_count(object);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(children_slice_get)
+EFL_START_TEST(children_slice_get)
 {
+   efl_event_callback_add(object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, NULL);
+   efl_model_children_count_get(object);
+
+   ecore_main_loop_begin();
+
    check_efl_model_children_slice_get(object);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_add)
+EFL_START_TEST(child_add)
 {
    Eo *child;
    child = efl_model_child_add(object);
    ck_assert_ptr_eq(NULL, child);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(child_del)
+#if 0
+static Eina_Value
+_one_child(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
-   unsigned int expected_children_count = 0;
-   Efl_Future *future;
-   future = efl_model_children_count_get(object);
-   ck_assert_ptr_ne(NULL, future);
-   expected_children_count = efl_model_future_then_u(future);
-   ck_assert_msg(expected_children_count, "There must be at least 1 child to test");
+   Eo **child = data;
 
-   Eo *child = efl_model_first_child_get(object);
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
+   fail_if(eina_value_array_count(&v) != 1);
+   eina_value_array_get(&v, 0, &child);
+
+   ecore_main_loop_quit();
+
+   return v;
+}
+
+// FIXME: I don't know what the expected behavior for destroying a child of eldbus model object should be
+EFL_START_TEST(child_del)
+{
+   Eina_Future *future;
+   Eo *child = NULL;
+   unsigned int expected_children_count = 0;
+   unsigned int actual_children_count = 0;
+
+   efl_event_callback_add(object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, _count_changed, NULL);
+   efl_model_children_count_get(object);
+
+   ecore_main_loop_begin();
+
+   expected_children_count = efl_model_children_count_get(object);
+
+   fail_if(expected_children_count == 0);
+
+   future = efl_model_children_slice_get(object, 0, 1);
+   eina_future_then(future, _one_child, &child);
+
+   ecore_main_loop_begin();
+
+   fail_if(!child);
    efl_model_child_del(object, child);
 
-   future = NULL;
-   unsigned int actual_children_count = 0;
-   future = efl_model_children_count_get(object);
-   ck_assert_ptr_ne(NULL, future);
-   actual_children_count = efl_model_future_then_u(future);
+   actual_children_count = efl_model_children_count_get(object);
    ck_assert_int_le(expected_children_count, actual_children_count);
 }
-END_TEST
+EFL_END_TEST
+#endif
 
 void eldbus_test_eldbus_model_object(TCase *tc)
 {
    tcase_add_checked_fixture(tc, _setup, _teardown);
-   /* tcase_add_test(tc, properties_get); */
-   /* tcase_add_test(tc, property_get); */
-   /* tcase_add_test(tc, property_set); */
-   /* tcase_add_test(tc, children_count); */
+   tcase_add_test(tc, properties_get);
+   tcase_add_test(tc, property_get);
+   tcase_add_test(tc, property_set);
+   tcase_add_test(tc, children_count);
    tcase_add_test(tc, children_slice_get);
    tcase_add_test(tc, child_add);
-   tcase_add_test(tc, child_del);
+   /* tcase_add_test(tc, child_del); */
 }

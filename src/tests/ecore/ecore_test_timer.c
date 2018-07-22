@@ -12,7 +12,7 @@
 #define TIMEOUT_2 0.02 // timer2
 #define TIMEOUT_3 0.06 // timer3
 #define TIMEOUT_4 0.1  // timer4
-#define TIMEOUT_5 1.0  // timer5 - end ecore_main_loop_begin()
+#define TIMEOUT_5 0.5  // timer5 - end ecore_main_loop_begin()
 #define SIZE 3
 
 static int freeze_thaw = 0;   // 1 - freeze timer, 0 - thaw
@@ -33,22 +33,6 @@ struct _timers           // timer struct
    double interval_1[3];
    double precision[3];
 };
-
-static int
-_efl_test_jenkins_run(void)
-{
-   char *jenkins_url = NULL;
-
-   jenkins_url = getenv("JENKINS_URL");
-
-   if (!jenkins_url)
-     return 0;
-
-   if (strcmp(jenkins_url, "https://build.enlightenment.org/") == 0)
-     return 1;
-   else
-     return 0;
-}
 
 static Eina_Bool
 _timer1_cb(void *data)
@@ -152,7 +136,7 @@ _timer5_cb(void *data)
   Timer 5 finishes testing.
 */
 
-START_TEST(ecore_test_timers)
+EFL_START_TEST(ecore_test_timers)
 {
    struct _timers timer = \
    {
@@ -161,8 +145,6 @@ START_TEST(ecore_test_timers)
       .interval_1 = {0.01, 0.05, 0.1},
       .precision = {0.01, 0.02, 0.03}
    };
-
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
 
    timer.timer1 = ecore_timer_add(TIMEOUT_1, _timer1_cb, &timer);
    timer.timer2 = ecore_timer_add(TIMEOUT_2, _timer2_cb, &timer);
@@ -185,112 +167,91 @@ START_TEST(ecore_test_timers)
      ecore_timer_del(timer.timer4);
    if (timer.timer5)
      ecore_timer_del(timer.timer5);
-
-   ecore_shutdown();
-
 }
-END_TEST
+EFL_END_TEST
 
 typedef struct _Test_Inside_Call
 {
    Ecore_Timer *t;
    double start;
+   int it;
 } Test_Inside_Call;
 
 static Eina_Bool
 _timeri_cb(void *data)
 {
-   static int it = 5;
    Test_Inside_Call *c = data;
 
-   fail_if(fabs(((ecore_time_get() - c->start) / (6 - it)) - 0.011) > 0.01);
+   fail_if(fabs((ecore_time_get() - c->start) - 0.011) > 0.01);
    ecore_timer_reset(c->t);
+   c->start = ecore_time_get();
 
-   it--;
+   c->it--;
 
-   if (it == 0) ecore_main_loop_quit();
-   return it != 0;
+   if (c->it > 0) return EINA_TRUE;
+   free(c);
+   ecore_main_loop_quit();
+   return EINA_FALSE;
 }
 
-START_TEST(ecore_test_timer_inside_call)
+EFL_START_TEST(ecore_test_timer_inside_call)
 {
-   Test_Inside_Call c;
+   Test_Inside_Call *c;
 
-   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   c = malloc(sizeof(Test_Inside_Call));
+   c->start = ecore_time_get();
+   c->it = 5;
+   c->t = ecore_timer_add(0.01, _timeri_cb, c);
 
-   c.start = ecore_time_get();
-   c.t = ecore_timer_add(0.01, _timeri_cb, &c);
-
-   fail_if(!c.t, "Error add timer\n");
+   fail_if(!c->t, "Error add timer\n");
 
    ecore_main_loop_begin();
-
-   ecore_shutdown();
-
 }
-END_TEST
+EFL_END_TEST
+
+
+EFL_START_TEST(ecore_test_timer_valid_callbackfunc)
+{
+   Ecore_Timer *t = NULL;
+   fail_if((t = ecore_timer_add(0.5, NULL, NULL)), "ERROR: Invalid callback func!\n");
+}
+EFL_END_TEST
 
 static Eina_Bool
-_test_time_cb(void *data)
+_quit_cb(void *data)
 {
-   Eina_Bool *run = data;
-
-   *run = EINA_TRUE;
-
-   return EINA_TRUE;
+   Eina_Bool *val = data;
+   if (val) *val = EINA_TRUE;
+   ecore_main_loop_quit();
+   return EINA_FALSE;
 }
 
-static void
-_test_death_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+EFL_START_TEST(ecore_test_ecore_main_loop_timer)
 {
-   Eina_Bool *die = data;
+   Eina_Bool did = EINA_FALSE;
+   Ecore_Timer *timer;
+   double start, end, elapsed;
 
-   *die = EINA_TRUE;
+
+   timer = ecore_timer_add(0.1, _quit_cb, &did);
+   fail_if(timer == NULL);
+
+   start = ecore_time_get();
+   ecore_main_loop_begin();
+   end = ecore_time_get();
+   elapsed = end - start;
+
+   fail_if(did == EINA_FALSE);
+   fail_if(elapsed < 0.05);
+   fail_if(elapsed > 0.15); /* .05 second "error margin" */
+
 }
-
-static void
-_test_run_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   _test_time_cb(data);
-}
-
-START_TEST(ecore_test_timer_lifecycle)
-{
-   Eina_Bool rl = EINA_FALSE, re = EINA_FALSE;
-   Eina_Bool dl = EINA_FALSE, de = EINA_FALSE;
-   Ecore_Timer *t;
-   Eo *et;
-
-   efl_object_init();
-   ecore_init();
-
-   t = ecore_timer_add(1.0, _test_time_cb, &rl);
-   efl_event_callback_add((Eo*) t, EFL_EVENT_DEL, _test_death_cb, &dl);
-
-   et = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
-               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _test_run_cb, &re),
-               efl_event_callback_add(efl_added, EFL_EVENT_DEL, _test_death_cb, &de),
-               efl_loop_timer_interval_set(efl_added, 1.0));
-   efl_ref(et);
-
-   ecore_shutdown();
-
-   fail_if(re == EINA_TRUE && rl == EINA_TRUE);
-   fail_if(dl == EINA_FALSE);
-   fail_if(de == EINA_TRUE);
-
-   efl_del(et);
-   fail_if(de == EINA_FALSE);
-
-   efl_object_shutdown();
-}
-END_TEST
+EFL_END_TEST
 
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
-/* XXX: this seems a silly test - that we del the loop object?
-  tcase_add_test(tc, ecore_test_timer_lifecycle);
- */
   tcase_add_test(tc, ecore_test_timer_inside_call);
+  tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
+  tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
 }

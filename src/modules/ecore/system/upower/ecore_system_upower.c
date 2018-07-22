@@ -408,12 +408,26 @@ disp_error:
    return EINA_FALSE;
 }
 
+static Eina_Bool _ecore_system_upower_init(void);
+static void _ecore_system_upower_shutdown(void);
+static unsigned int reseting;
+
+static void
+_ecore_system_upower_reset()
+{
+   reseting = 1;
+   _ecore_system_upower_shutdown();
+   _ecore_system_upower_init();
+   reseting = 0;
+}
 static Eina_Bool
 _ecore_system_upower_init(void)
 {
    Eldbus_Signal_Handler *s;
 
    eldbus_init();
+   if (!reseting)
+     ecore_fork_reset_callback_add(_ecore_system_upower_reset, NULL);
 
    _log_dom = eina_log_domain_register("ecore_system_upower", NULL);
    if (_log_dom < 0)
@@ -469,6 +483,8 @@ _ecore_system_upower_shutdown(void)
    Eldbus_Pending *pend;
 
    DBG("ecore system 'upower' unloaded");
+   if (!reseting)
+     ecore_fork_reset_callback_del(_ecore_system_upower_reset, NULL);
 
    eldbus_name_owner_changed_callback_del(_conn, "org.freedesktop.UPower",
                                           _upower_name_owner_cb,
@@ -497,6 +513,11 @@ _ecore_system_upower_shutdown(void)
         _obj = NULL;
      }
 
+   EINA_LIST_FREE(_eldbus_pending, pend)
+     {
+        eldbus_pending_cancel(pend);
+     }
+
    if (_conn)
      {
         eldbus_connection_unref(_conn);
@@ -507,11 +528,6 @@ _ecore_system_upower_shutdown(void)
      {
         eina_log_domain_unregister(_log_dom);
         _log_dom = -1;
-     }
-
-   EINA_LIST_FREE(_eldbus_pending, pend)
-     {
-        eldbus_pending_cancel(pend);
      }
 
    eldbus_shutdown();

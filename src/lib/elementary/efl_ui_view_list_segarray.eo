@@ -1,0 +1,61 @@
+import efl_ui_view_list_types;
+
+class Efl.Ui.View_List_SegArray (Efl.Object)
+{
+   methods {
+      @property accessor {
+         get {
+            [[ Get a SegArray List items accessor ]]
+         }
+         values {
+             acc: accessor<ptr(Efl.Ui.View.List.LayoutItem)>;
+         }
+      }
+      @property node_accessor {
+         get {
+            [[ Get a SegArray node accessor ]]
+         }
+         values {
+             acc: accessor<ptr(Efl.Ui.View.List.SegArray.Node)>;
+         }
+      }
+      insert_value {
+         [[ Insert a accessor in segarray tree ]]
+          params {
+              @in first: int;
+              @in v: any_value;
+          }
+      }
+      count {
+         [[ Get the number of items in SegArray tree ]]
+         return: int;
+      }
+      setup {
+         [[ Configure a step of SegArray tree, this is the max node size ]]
+          params {
+              @in initial_step_size: int;
+          }
+      }
+      flush {
+         [[ flush the SegArray tree ]]
+      }
+      insert {
+         [[ Insert a new model in SegArray tree at index position ]]
+          params {
+              @in index: int;
+              @in model: Efl.Model;
+          }
+      }
+      remove {
+         [[ Remove the item at index position in SegArray tree ]]
+          params {
+              @in index: int;
+          }
+          return: ptr(Efl.Ui.View.List.LayoutItem) @owned;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

@@ -1,0 +1,15 @@
+class Efl.Canvas.Vg.Gradient_Radial (Efl.Canvas.Vg.Gradient, Efl.Gfx.Gradient_Radial)
+{
+   [[Efl vector graphics gradient radial class]]
+   legacy_prefix: evas_vg_gradient_radial;
+   implements {
+      Efl.Gfx.Gradient_Radial.center { get; set; }
+      Efl.Gfx.Gradient_Radial.radius { get; set; }
+      Efl.Gfx.Gradient_Radial.focal { get; set; }
+      Efl.Gfx.Path.bounds_get;
+      Efl.Gfx.Path.interpolate;
+      Efl.Duplicate.duplicate;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

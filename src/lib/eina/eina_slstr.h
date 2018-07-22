@@ -105,7 +105,7 @@ eina_slstr_tmpstr_new(Eina_Tmpstr *string);
 /**
  * @brief Create a new short lived string by taking ownership of a strbuf.
  *
- * @param string An existing strbuf, that will be released (ie. steal + free).
+ * @param string An existing strbuf, that will be released (i.e.. steal + free).
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:

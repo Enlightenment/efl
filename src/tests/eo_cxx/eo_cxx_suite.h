@@ -5,7 +5,6 @@
 #include <algorithm>
 
 #include <check.h>
-
-void eo_cxx_test_promise(TCase* tc);
+#include "../efl_check.h"
 
 #endif /* _EINA_CXX_SUITE_H */

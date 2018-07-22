@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_WIDGET_PROTECTED
+#define EFL_UI_WIDGET_PROTECTED
 #include <Elementary.h>
 
 typedef struct Test_Data
@@ -71,7 +71,7 @@ _delete_cb(void *data, const Efl_Event *ev)
    Test_Data *td = data;
 
    pulse_stop(td, NULL);
-   efl_del(ev->object);
+   efl_unref(ev->object);
    free(td);
 }
 
@@ -85,7 +85,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    td = calloc(1, sizeof(*td));
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                  efl_ui_win_name_set(efl_added, "shadow"),
                  efl_text_set(efl_added, "Shadow effects"));
    efl_event_callback_add(win, EFL_UI_WIN_EVENT_DELETE_REQUEST, _delete_cb, td);
@@ -190,5 +190,5 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_pack(bt_bx, bt);
    td->btn_stop = bt;
 
-   efl_gfx_size_set(win, EINA_SIZE2D(240, 320));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(240, 320));
 }

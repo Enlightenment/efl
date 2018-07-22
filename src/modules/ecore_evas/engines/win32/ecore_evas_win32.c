@@ -342,6 +342,7 @@ _ecore_evas_win32_event_window_configure(void *data EINA_UNUSED, int type EINA_U
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
+   ee->draw_block = EINA_FALSE;
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
    pointer = evas_device_parent_get(pointer);
    cursor = eina_hash_find(ee->prop.cursors, &pointer);
@@ -563,36 +564,13 @@ static void
 _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 {
    INF("ecore evas resize (%dx%d)", width, height);
-   ee->req.w = width;
-   ee->req.h = height;
 
-   if ((ee->w != width) || (ee->h != height))
+   if ((ee->req.w != width) || (ee->req.h != height))
      {
-        ee->w = width;
-        ee->h = height;
+        ee->req.w = width;
+        ee->req.h = height;
         ecore_win32_window_resize((Ecore_Win32_Window *)ee->prop.window,
                                   width, height);
-        if (ECORE_EVAS_PORTRAIT(ee))
-          {
-             evas_output_size_set(ee->evas, ee->w, ee->h);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-          }
-        else
-          {
-             evas_output_size_set(ee->evas, ee->h, ee->w);
-             evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-          }
-        if (ee->prop.avoid_damage)
-          {
-             int pdam;
-
-             pdam = ecore_evas_avoid_damage_get(ee);
-             ecore_evas_avoid_damage_set(ee, 0);
-             ecore_evas_avoid_damage_set(ee, pdam);
-          }
-/*         if ((ee->shaped) || (ee->alpha)) */
-/*           _ecore_evas_win32_region_border_resize(ee); */
-        if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -1334,7 +1312,6 @@ _ecore_evas_engine_software_gdi_init(Ecore_Evas *ee)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((Ecore_Win32_Window *)ee->prop.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
         einfo->info.rotation = 0;
         einfo->info.borderless = 0;
         einfo->info.fullscreen = 0;
@@ -1377,7 +1354,6 @@ _ecore_evas_engine_software_ddraw_init(Ecore_Evas *ee)
      {
         /* FIXME: REDRAW_DEBUG missing for now */
         einfo->info.window = ((Ecore_Win32_Window *)ee->prop.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
         einfo->info.rotation = 0;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -1441,6 +1417,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->req.w = ee->w;
    ee->req.h = ee->h;
    ee->can_async_render = EINA_FALSE;
+   ee->draw_block = EINA_TRUE;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
@@ -1452,10 +1429,12 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
    ee->prop.withdrawn = EINA_TRUE;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
-   evas_output_size_set(ee->evas, width, height);
-   evas_output_viewport_set(ee->evas, 0, 0, width, height);
+   if (!ecore_evas_evas_new(ee, width, height))
+     {
+        ERR("Can not create Canvas.");
+        free(ee);
+        return NULL;
+     }
 
    wdata->parent = parent;
    ee->prop.window = (Ecore_Window)ecore_win32_window_new(parent, x, y, width, height);
@@ -1473,13 +1452,7 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_backend_init)(Ecore_Evas
         return NULL;
      }
 
-   _ecore_evas_register(ee);
-   ecore_event_window_register(ee->prop.window, ee, ee->evas,
-                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
-                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
-                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
-                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
-   _ecore_event_window_direct_cb_set(ee->prop.window, _ecore_evas_input_direct_cb);
+   ecore_evas_done(ee, EINA_FALSE);
 
    return ee;
 }

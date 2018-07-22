@@ -1,11 +1,7 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
-#include <Ecore_Con.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_Bool echo = EINA_FALSE;
 static double timeout = 10.0;
 
@@ -77,7 +73,7 @@ _echo_copier_error(void *data EINA_UNUSED, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    fprintf(stderr, "ERROR: echo copier %p failed %d '%s', close and del.\n",
            copier, *perr, eina_error_msg_get(*perr));
@@ -182,7 +178,7 @@ _send_copier_error(void *data, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    offset = efl_io_buffer_position_read_get(buffer);
    slice = efl_io_buffer_slice_get(buffer);
@@ -263,7 +259,7 @@ _recv_copier_error(void *data, const Efl_Event *event)
         return;
      }
 
-   retval = EXIT_FAILURE;
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 
    slice = efl_io_buffer_slice_get(buffer);
    fprintf(stderr,
@@ -325,7 +321,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                   efl_io_copier_destination_set(efl_added, client),
                                   efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                   efl_event_callback_array_add(efl_added, echo_copier_cbs(), client),
-                                  efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
+                                  efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE) /* we want to auto-close as we have a single copier */
                                   );
 
         fprintf(stderr, "INFO: using an echo copier=%p for client %s\n",
@@ -354,11 +350,11 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
              return;
           }
 
-        send_buffer = efl_add(EFL_IO_BUFFER_CLASS, NULL,
+        send_buffer = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL,
                               efl_io_buffer_adopt_readonly(efl_added, hello_world_slice));
 
         /* Unlimited buffer to store the received data. */
-        recv_buffer = efl_add(EFL_IO_BUFFER_CLASS, NULL);
+        recv_buffer = efl_add_ref(EFL_IO_BUFFER_CLASS, NULL);
 
         /* an input copier that takes data from send_buffer and pushes to client */
         d->send_copier = efl_add(EFL_IO_COPIER_CLASS, efl_parent_get(client),
@@ -366,7 +362,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                  efl_io_copier_destination_set(efl_added, client),
                                  efl_io_copier_timeout_inactivity_set(efl_added, timeout),
                                  efl_event_callback_array_add(efl_added, send_copier_cbs(), d),
-                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
+                                 efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using sender buffer %p with copier %p for client %s\n",
@@ -383,7 +379,7 @@ _server_client_add(void *data EINA_UNUSED, const Efl_Event *event)
                                  efl_io_copier_destination_set(efl_added, recv_buffer),
                                  efl_io_copier_timeout_inactivity_set(efl_added, 0.0), /* we'll only set an inactivity timeout once the sender is done */
                                  efl_event_callback_array_add(efl_added, recv_copier_cbs(), d),
-                                 efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
+                                 efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE) /* we must wait both copiers to finish before we close! */
                                  );
 
         fprintf(stderr, "INFO: using receiver buffer %p with copier %p for client %s\n",
@@ -410,8 +406,7 @@ _server_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    const Eina_Error *perr = event->info;
    fprintf(stderr, "ERROR: %d '%s'\n", *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 static void
@@ -472,7 +467,6 @@ static const char * protocols[] = {
 
 static const char *ciphers_strs[] = {
   "auto",
-  "sslv3",
   "tlsv1",
   "tlsv1.1",
   "tlsv1.2",
@@ -536,8 +530,39 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+static Eo *server = NULL;
+
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+   /* FIXME: For the moment the main loop doesn't get
+      properly destroyed on shutdown which disallow
+      relying on parent destroying their children */
+   if (server)
+     {
+        efl_del(server);
+        server = NULL;
+     }
+
+   fprintf(stderr, "INFO: main loop finished.\n");
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    const Efl_Class *cls;
    char *protocol = NULL;
@@ -591,34 +616,27 @@ main(int argc, char **argv)
      ECORE_GETOPT_VALUE_NONE /* sentinel */
    };
    int args;
-   Eo *server;
    Eina_Error err;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (!protocol)
      {
         fputs("ERROR: missing protocol.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -637,7 +655,7 @@ main(int argc, char **argv)
         goto end;
      }
 
-   server = efl_add(cls, efl_main_loop_get(), /* it's mandatory to use a main loop provider as the server parent */
+   server = efl_add(cls, ev->object, /* it's mandatory to use a main loop provider as the server parent */
                     efl_net_server_clients_limit_set(efl_added,
                                                      clients_limit,
                                                      clients_reject_excess), /* optional */
@@ -683,8 +701,6 @@ main(int argc, char **argv)
           {
              if (strcmp(cipher_choice, "auto") == 0)
                cipher = EFL_NET_SSL_CIPHER_AUTO;
-             else if (strcmp(cipher_choice, "sslv3") == 0)
-               cipher = EFL_NET_SSL_CIPHER_SSLV3;
              else if (strcmp(cipher_choice, "tlsv1") == 0)
                cipher = EFL_NET_SSL_CIPHER_TLSV1;
              else if (strcmp(cipher_choice, "tlsv1.1") == 0)
@@ -693,7 +709,7 @@ main(int argc, char **argv)
                cipher = EFL_NET_SSL_CIPHER_TLSV1_2;
           }
 
-        ssl_ctx = efl_add(EFL_NET_SSL_CONTEXT_CLASS, NULL,
+        ssl_ctx = efl_add_ref(EFL_NET_SSL_CONTEXT_CLASS, NULL,
                           efl_net_ssl_context_certificates_set(efl_added, eina_list_iterator_new(certificates)),
                           efl_net_ssl_context_private_keys_set(efl_added, eina_list_iterator_new(private_keys)),
                           efl_net_ssl_context_certificate_revocation_lists_set(efl_added, eina_list_iterator_new(crls)),
@@ -733,7 +749,7 @@ main(int argc, char **argv)
           }
      }
 
-   ecore_main_loop_begin();
+   return ;
 
  end_server:
    efl_del(server);
@@ -742,8 +758,8 @@ main(int argc, char **argv)
  end:
    EINA_LIST_FREE(udp_mcast_groups, str)
      free(str);
-   ecore_con_shutdown();
-   ecore_shutdown();
 
-   return retval;
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();

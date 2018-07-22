@@ -51,20 +51,20 @@ _seek_vol(void *data)
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_audio_obj_pulse)
+EFL_START_TEST(ecore_test_ecore_audio_obj_pulse)
 {
    Eo *in, *out;
    Eina_Bool ret = EINA_FALSE;
    Eina_Bool pulse_context_failed = EINA_FALSE;
 
-   in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
-   ecore_audio_obj_name_set(in, "sample.wav");
+   efl_name_set(in, "sample.wav");
    ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.wav");
    fail_if(!ret);
 
-   out = efl_add(ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_PULSE_CLASS, NULL);
    fail_if(!out);
 
    ecore_timer_add(1.8, _seek_vol, in);
@@ -78,10 +78,10 @@ START_TEST(ecore_test_ecore_audio_obj_pulse)
    ecore_main_loop_begin();
    fail_if(pulse_context_failed);
 
-   efl_del(out);
-   efl_del(in);
+   efl_unref(out);
+   efl_unref(in);
 }
-END_TEST
+EFL_END_TEST
 #endif
 #endif
 
@@ -96,24 +96,24 @@ static Eina_Bool
 _idle_del(void *data)
 {
    Eo *in = data;
-   efl_del(in);
+   efl_unref(in);
    ecore_idler_add(_quit, NULL);
 
    return EINA_FALSE;
 }
 
-START_TEST(ecore_test_ecore_audio_cleanup)
+EFL_START_TEST(ecore_test_ecore_audio_cleanup)
 {
    Eo *in, *out;
    int freq = 1000;
    Eina_Bool ret = EINA_FALSE;
 
-   in = efl_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_TONE_CLASS, NULL);
    fail_if(!in);
    efl_key_data_set(in, ECORE_AUDIO_ATTR_TONE_FREQ, &freq);
    ecore_audio_obj_in_length_set(in, 2);
 
-   out = efl_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
    ret = ecore_audio_obj_format_set(out, ECORE_AUDIO_FORMAT_OGG);
    fail_if(!ret);
@@ -129,9 +129,9 @@ START_TEST(ecore_test_ecore_audio_cleanup)
 
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.ogg");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_tone)
+EFL_START_TEST(ecore_test_ecore_audio_obj_tone)
 {
    Eo *in, *out;
    double len;
@@ -139,10 +139,10 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    Eina_Bool ret;
    char *tmp;
 
-   in = efl_add(ECORE_AUDIO_IN_TONE_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_TONE_CLASS, NULL);
    fail_if(!in);
 
-   ecore_audio_obj_name_set(in, "tone");
+   efl_name_set(in, "tone");
 
    channel = ecore_audio_obj_in_channels_get(in);
    fail_if(channel != 1);
@@ -197,10 +197,10 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
    len = ecore_audio_obj_in_remaining_get(in);
    fail_if(len != 1.0);
 
-   out = efl_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
 
-   ecore_audio_obj_name_set(out, "tmp.wav");
+   efl_name_set(out, "tmp.wav");
    ret = ecore_audio_obj_format_set(out, ECORE_AUDIO_FORMAT_WAV);
    fail_if(!ret);
    ret = ecore_audio_obj_source_set(out, TESTS_BUILD_DIR"/tmp.wav");
@@ -214,15 +214,15 @@ START_TEST(ecore_test_ecore_audio_obj_tone)
 
    ecore_main_loop_begin();
 
-   efl_del(in);
-   efl_del(out);
+   efl_unref(in);
+   efl_unref(out);
 
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_sndfile)
+EFL_START_TEST(ecore_test_ecore_audio_obj_sndfile)
 {
    Eo *in, *out;
    double len, rem;
@@ -231,7 +231,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    Ecore_Audio_Format fmt;
    const char *src;
 
-   in = efl_add(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
+   in = efl_add_ref(ECORE_AUDIO_IN_SNDFILE_CLASS, NULL);
    fail_if(!in);
 
    fmt = ecore_audio_obj_format_get(in);
@@ -246,7 +246,7 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    ret = ecore_audio_obj_format_set(in, ECORE_AUDIO_FORMAT_AUTO);
    fail_if(!ret);
 
-   ecore_audio_obj_name_set(in, "sample.ogg");
+   efl_name_set(in, "sample.ogg");
    ret = ecore_audio_obj_source_set(in, TESTS_SRC_DIR"/sample.ogg");
    fail_if(!ret);
 
@@ -277,10 +277,10 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
    len = ecore_audio_obj_in_seek(in, -1.5, SEEK_END);
    fail_if(fabs(rem - 1 - len) > 0.6);
 
-   out = efl_add(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
+   out = efl_add_ref(ECORE_AUDIO_OUT_SNDFILE_CLASS, NULL);
    fail_if(!out);
 
-   ecore_audio_obj_name_set(out, "tmp.wav");
+   efl_name_set(out, "tmp.wav");
    ret = ecore_audio_obj_format_set(out, ECORE_AUDIO_FORMAT_WAV);
    fail_if(!ret);
 
@@ -304,23 +304,23 @@ START_TEST(ecore_test_ecore_audio_obj_sndfile)
 
    ecore_main_loop_begin();
 
-   efl_del(in);
-   efl_del(out);
+   efl_unref(in);
+   efl_unref(out);
 
    //TODO: Compare and fail
    ecore_file_remove(TESTS_BUILD_DIR"/tmp.wav");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj_in_out)
+EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
   Eina_List *in3;
   Eina_Bool attached;
 
-  Eo *in = efl_add(ECORE_AUDIO_IN_CLASS, NULL);
-  Eo *in2 = efl_add(ECORE_AUDIO_IN_CLASS, NULL);
-  Eo *out = efl_add(ECORE_AUDIO_OUT_CLASS, NULL);
+  Eo *in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
+  Eo *in2 = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
+  Eo *out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
 
   fail_if(!in);
   fail_if(!in2);
@@ -357,22 +357,22 @@ START_TEST(ecore_test_ecore_audio_obj_in_out)
   fail_if(eina_list_count(in3) != 2);
   fail_if(eina_list_data_get(in3) != in);
 
-  efl_del(in2);
+  efl_unref(in2);
 
   in3 = ecore_audio_obj_out_inputs_get(out);
 
   fail_if(eina_list_count(in3) != 1);
   fail_if(eina_list_data_get(in3) != in);
 
-  efl_del(out);
+  efl_unref(out);
 
   out2 = ecore_audio_obj_in_output_get(in);
 
   fail_if(out2);
 
-  efl_del(in);
+  efl_unref(in);
 }
-END_TEST
+EFL_END_TEST
 
 static int read_cb(void *data EINA_UNUSED, Eo *eo_obj EINA_UNUSED, void *buffer, int len)
 {
@@ -412,14 +412,14 @@ Ecore_Audio_Vio out_vio = {
     .write = write_cb,
 };
 
-START_TEST(ecore_test_ecore_audio_obj_vio)
+EFL_START_TEST(ecore_test_ecore_audio_obj_vio)
 {
   Eo *in, *out;
 
-  in = efl_add(ECORE_AUDIO_IN_CLASS, NULL);
+  in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!in);
 
-  out = efl_add(ECORE_AUDIO_OUT_CLASS, NULL);
+  out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
   fail_if(!out);
 
   ecore_audio_obj_vio_set(in, &in_vio, NULL, NULL);
@@ -429,10 +429,10 @@ START_TEST(ecore_test_ecore_audio_obj_vio)
 
   ecore_main_loop_begin();
 
-  efl_del(out);
-  efl_del(in);
+  efl_unref(out);
+  efl_unref(in);
 }
-END_TEST
+EFL_END_TEST
 
 static void _myfree(void *data)
 {
@@ -441,7 +441,7 @@ static void _myfree(void *data)
   *freed = EINA_TRUE;
 }
 
-START_TEST(ecore_test_ecore_audio_obj_in)
+EFL_START_TEST(ecore_test_ecore_audio_obj_in)
 {
   int i;
   double speed, length;
@@ -454,7 +454,7 @@ START_TEST(ecore_test_ecore_audio_obj_in)
   Ecore_Audio_Vio vio;
   Eina_Bool freed = EINA_FALSE;
 
-  Eo *in = efl_add(ECORE_AUDIO_IN_CLASS, NULL);
+  Eo *in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
 
   fail_if(!in);
 
@@ -529,11 +529,11 @@ START_TEST(ecore_test_ecore_audio_obj_in)
       fail_if(buf[i] != 0x00);
   }
 
-  efl_del(in);
+  efl_unref(in);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_obj)
+EFL_START_TEST(ecore_test_ecore_audio_obj)
 {
   int i;
   const char *name;
@@ -541,10 +541,10 @@ START_TEST(ecore_test_ecore_audio_obj)
   double volume;
   Eo *objs[2], *obj;
 
-  objs[0] = efl_add(ECORE_AUDIO_IN_CLASS, NULL);
+  objs[0] = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!objs[0]);
 
-  objs[1] = efl_add(ECORE_AUDIO_OUT_CLASS, NULL);
+  objs[1] = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
   fail_if(!objs[1]);
 
   for (i=0; i<2; i++) {
@@ -552,16 +552,16 @@ START_TEST(ecore_test_ecore_audio_obj)
 
     fail_if(!obj);
 
-    name = ecore_audio_obj_name_get(obj);
+    name = efl_name_get(obj);
 
     fail_if(name);
 
-    ecore_audio_obj_name_set(obj, "In1");
-    name = ecore_audio_obj_name_get(obj);
+    efl_name_set(obj, "In1");
+    name = efl_name_get(obj);
 
     ck_assert_str_eq(name, "In1");
 
-    ecore_audio_obj_name_get(obj);
+    efl_name_get(obj);
 
     paused = ecore_audio_obj_paused_get(obj);
     fail_if(paused);
@@ -577,13 +577,13 @@ START_TEST(ecore_test_ecore_audio_obj)
     volume = ecore_audio_obj_volume_get(obj);
     fail_if(volume != 0.5);
 
-    efl_del(obj);
+    efl_unref(obj);
   }
 
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(ecore_test_ecore_audio_init)
+EFL_START_TEST(ecore_test_ecore_audio_init)
 {
    int ret;
 
@@ -594,17 +594,11 @@ START_TEST(ecore_test_ecore_audio_init)
    ck_assert_int_eq(ret, 1);
 
 }
-END_TEST
+EFL_END_TEST
 
 void setup(void)
 {
    int ret;
-
-   ret = eina_init();
-   ck_assert_int_eq(ret, 1);
-
-   ret = ecore_init();
-   fail_if(ret < 1);
 
    ret = ecore_audio_init();
    ck_assert_int_eq(ret, 1);
@@ -613,8 +607,6 @@ void setup(void)
 void teardown(void)
 {
    ecore_audio_shutdown();
-   ecore_shutdown();
-   eina_shutdown();
 }
 
 void

@@ -1,0 +1,10 @@
+class Efl.Ui.Text_Factory.Emoticons (Efl.Object, Efl.Canvas.Text_Factory)
+{
+   [[Factory that creates emoticons from the current theme given a key.
+
+     @since 1.21
+   ]]
+   implements {
+      Efl.Canvas.Text_Factory.create;
+   }
+}

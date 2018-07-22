@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
 
@@ -59,13 +59,13 @@ _elm_plug_resized(Ecore_Evas *ee)
 }
 
 EOLIAN static Eina_Bool
-_elm_plug_elm_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_Item *item EINA_UNUSED)
+_elm_plug_efl_ui_focus_object_on_focus_update(Eo *obj, void *sd EINA_UNUSED)
 {
    Eina_Bool int_ret = EINA_FALSE;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   int_ret = efl_ui_widget_on_focus_update(efl_super(obj, MY_CLASS), NULL);
+   int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
    if (efl_ui_focus_object_focus_get(obj))
@@ -81,7 +81,7 @@ _elm_plug_elm_widget_on_focus_update(Eo *obj, void *sd EINA_UNUSED, Elm_Object_I
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_plug_elm_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -145,13 +145,13 @@ _elm_plug_efl_object_constructor(Eo *obj, void *sd EINA_UNUSED)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
    return obj;
 }
 
 EOLIAN static Evas_Object*
-_elm_plug_image_object_get(Eo *obj, void *sd EINA_UNUSED)
+_elm_plug_image_object_get(const Eo *obj, void *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    return wd->resize_obj;

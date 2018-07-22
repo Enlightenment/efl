@@ -1,0 +1,42 @@
+class Efl.Ui.Tab_Bar (Efl.Ui.Layout.Object, Efl.Ui.Clickable)
+{
+   [[Tab Bar class]]
+   methods {
+      @property current_tab {
+         values {
+            index: int;
+         }
+      }
+      tab_count @const {
+         return: uint;
+      }
+      tab_add @beta {
+         params {
+            @in index: int;
+            @in label: string;
+            @in icon: string;
+         }
+      }
+      tab_remove @beta {
+         params {
+            @in index: int;
+         }
+      }
+      tab_label_set @beta {
+         params {
+            @in index: int;
+            @in label: string;
+         }
+      }
+      tab_icon_set @beta {
+         params {
+            @in index: int;
+            @in icon: string;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

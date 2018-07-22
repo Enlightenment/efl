@@ -2,7 +2,8 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
@@ -36,7 +37,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_mapbuf_elm_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
+_elm_mapbuf_efl_ui_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -75,7 +76,7 @@ _elm_mapbuf_content_unset_internal(Elm_Mapbuf_Data *sd, Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_elm_widget_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
+_elm_mapbuf_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool int_ret = EINA_FALSE;
    int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -156,12 +157,12 @@ _mapbuf_auto_smooth(Evas_Object *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D pos)
+_elm_mapbuf_efl_gfx_entity_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
    _mapbuf_auto_eval(obj, sd);
    _mapbuf_auto_smooth(obj, sd);
@@ -169,26 +170,26 @@ _elm_mapbuf_efl_gfx_position_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Position2D p
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_size_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Size2D sz)
+_elm_mapbuf_efl_gfx_entity_size_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
    if (sd->content)
-     efl_gfx_size_set(sd->content, sz);
+     efl_gfx_entity_size_set(sd->content, sz);
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
 }
 
 EOLIAN static void
-_elm_mapbuf_efl_gfx_visible_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool vis)
+_elm_mapbuf_efl_gfx_entity_visible_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
    _mapbuf_auto_eval(obj, sd);
    _configure(obj);
@@ -227,7 +228,7 @@ _elm_mapbuf_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Obj
 }
 
 static Evas_Object*
-_elm_mapbuf_content_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
+_elm_mapbuf_content_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
    return sd->content;
@@ -253,7 +254,7 @@ _elm_mapbuf_efl_content_content_set(Eo *obj, Elm_Mapbuf_Data *sd, Evas_Object *c
 }
 
 EOLIAN static Evas_Object*
-_elm_mapbuf_efl_content_content_get(Eo *obj, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_efl_content_content_get(const Eo *obj, Elm_Mapbuf_Data *sd)
 {
    return _elm_mapbuf_content_get(obj, sd, NULL);
 }
@@ -317,7 +318,7 @@ _elm_mapbuf_efl_object_constructor(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
 
    return obj;
 }
@@ -345,7 +346,7 @@ _elm_mapbuf_enabled_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool enabled)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_enabled_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_enabled_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->enabled;
 }
@@ -360,7 +361,7 @@ _elm_mapbuf_smooth_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool smooth)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_smooth_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_smooth_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->smooth;
 }
@@ -374,7 +375,7 @@ _elm_mapbuf_alpha_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool alpha)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_alpha_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_alpha_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->alpha;
 }
@@ -398,13 +399,13 @@ _elm_mapbuf_auto_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool on)
 }
 
 EOLIAN static Eina_Bool
-_elm_mapbuf_auto_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
+_elm_mapbuf_auto_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd)
 {
    return sd->automode;
 }
 
 EOLIAN static void
-_elm_mapbuf_point_color_get(Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, int idx, int *r, int *g, int *b, int *a)
+_elm_mapbuf_point_color_get(const Eo *obj EINA_UNUSED, Elm_Mapbuf_Data *sd, int idx, int *r, int *g, int *b, int *a)
 {
    if ((idx < 0) || (idx >= 4))
      {

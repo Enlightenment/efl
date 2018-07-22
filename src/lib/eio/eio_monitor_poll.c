@@ -44,7 +44,6 @@ struct _Eio_Monitor_Backend
    Eina_Hash *children;
 
    Ecore_Timer *timer;
-   Ecore_Idler *idler;
    Ecore_Thread *work;
 
    int version;
@@ -53,6 +52,9 @@ struct _Eio_Monitor_Backend
    Eina_Bool initialised : 1;
    Eina_Bool destroyed : 1;
 };
+
+static double fallback_interval = 60.0;
+static Eina_Hash *timer_hash;
 
 static Eina_Bool _eio_monitor_fallback_timer_cb(void *data);
 
@@ -64,6 +66,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    Eina_Stat *est;
    Eina_File_Direct_Info *info;
    _eio_stat_t st;
+   Eina_Bool deleted = EINA_FALSE;
    /* FIXME : copy ecore_file_monitor_poll here */
 
    if (!backend->initialised)
@@ -79,7 +82,9 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
         if (backend->initialised && !backend->destroyed)
           {
              ecore_thread_main_loop_begin();
-             _eio_monitor_send(backend->parent, backend->parent->path, EIO_MONITOR_SELF_DELETED);
+             deleted = backend->delete_me;
+             if (!deleted)
+               _eio_monitor_send(backend->parent, backend->parent->path, EIO_MONITOR_SELF_DELETED);
              ecore_thread_main_loop_end();
              backend->destroyed = EINA_TRUE;
           }
@@ -124,9 +129,17 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 
    if (memcmp(est, &backend->self, sizeof (Eina_Stat)) != 0)
      {
+        int event = EIO_MONITOR_DIRECTORY_MODIFIED;
+
+        if (!S_ISDIR(est->mode))
+          /* regular file: eina_file_direct_ls will return NULL */
+          event = EIO_MONITOR_FILE_MODIFIED;
         ecore_thread_main_loop_begin();
-        _eio_monitor_send(backend->parent, backend->parent->path, EIO_MONITOR_SELF_DELETED);
+        deleted = backend->delete_me;
+        if (!deleted)
+          _eio_monitor_send(backend->parent, backend->parent->path, event);
         ecore_thread_main_loop_end();
+        if (deleted) return;
      }
 
    it = eina_file_direct_ls(backend->parent->path);
@@ -157,10 +170,12 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
                {
                   /* New file or new directory added */
                   ecore_thread_main_loop_begin();
-                  _eio_monitor_send(backend->parent, info->path,
-                                    info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_CREATED : EIO_MONITOR_DIRECTORY_CREATED);
+                  deleted = backend->delete_me;
+                  if (!deleted)
+                    _eio_monitor_send(backend->parent, info->path,
+                                      info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_CREATED : EIO_MONITOR_DIRECTORY_CREATED);
                   ecore_thread_main_loop_end();
-
+                  if (deleted) break;
                   cmp = malloc(sizeof (Eio_Monitor_Stat));
                   memcpy(cmp, &buffer, sizeof (Eina_Stat));
 
@@ -170,25 +185,29 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
                {
                   /* file has been modified */
                   ecore_thread_main_loop_begin();
-                  _eio_monitor_send(backend->parent, info->path,
-                                    info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_MODIFIED : EIO_MONITOR_DIRECTORY_MODIFIED);
+                  deleted = backend->delete_me;
+                  if (!deleted)
+                    _eio_monitor_send(backend->parent, info->path,
+                                      info->type != EINA_FILE_DIR ? EIO_MONITOR_FILE_MODIFIED : EIO_MONITOR_DIRECTORY_MODIFIED);
                   ecore_thread_main_loop_end();
-
+                  if (deleted) break;
                   memcpy(cmp, &buffer, sizeof (Eina_Stat));
                }
           }
 
         cmp->version = backend->version;
-        if (ecore_thread_check(thread)) goto out;
+        if (ecore_thread_check(thread)) break;
      }
- out:
+
    if (it) eina_iterator_free(it);
 
    if (backend->initialised && !ecore_thread_check(thread))
      {
         Eina_Hash_Tuple *tuple;
+        Eina_Array *arr;
 
         it = eina_hash_iterator_tuple_new(backend->children);
+        arr = eina_array_new(1);
         ecore_thread_main_loop_begin();
 
         EINA_ITERATOR_FOREACH(it, tuple)
@@ -197,13 +216,18 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 
              if (cmp->version != backend->version)
                {
+                  deleted = backend->delete_me;
+                  if (deleted) break;
                   _eio_monitor_send(backend->parent, tuple->key,
                                     eio_file_is_dir(&cmp->buffer) ? EIO_MONITOR_DIRECTORY_DELETED : EIO_MONITOR_FILE_DELETED);
-                  eina_hash_del(backend->children, tuple->key, tuple->data);
+                  eina_array_push(arr, tuple->key);
                }
           }
 
         ecore_thread_main_loop_end();
+        while (eina_array_count(arr))
+          eina_hash_del_by_key(backend->children, eina_array_pop);
+        eina_array_free(arr);
         eina_iterator_free(it);
      }
 
@@ -217,7 +241,16 @@ _eio_monitor_fallback_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    Eio_Monitor_Backend *backend = data;
 
    backend->work = NULL;
-   backend->timer = ecore_timer_add(60.0, _eio_monitor_fallback_timer_cb, backend);
+   if (backend->delete_me)
+     {
+        eina_hash_free(backend->children);
+        free(backend);
+        return;
+     }
+   /* indicates eio shutdown is in progress */
+   if (!timer_hash) return;
+   backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
+   eina_hash_set(timer_hash, &backend, backend->timer);
 }
 
 static void
@@ -228,23 +261,14 @@ _eio_monitor_fallback_cancel_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
    backend->work = NULL;
    if (backend->delete_me)
      {
+        eina_hash_free(backend->children);
         free(backend);
         return;
      }
-   backend->timer = ecore_timer_add(60.0, _eio_monitor_fallback_timer_cb, backend);
-}
-
-static Eina_Bool
-_eio_monitor_fallback_idler_cb(void *data)
-{
-   Eio_Monitor_Backend *backend = data;
-
-   backend->idler = NULL;
-   backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
-                                    _eio_monitor_fallback_end_cb,
-                                    _eio_monitor_fallback_cancel_cb,
-                                    backend);
-   return EINA_FALSE;
+   /* indicates eio shutdown is in progress */
+   if (!timer_hash) return;
+   backend->timer = ecore_timer_add(fallback_interval, _eio_monitor_fallback_timer_cb, backend);
+   eina_hash_set(timer_hash, &backend, backend->timer);
 }
 
 static Eina_Bool
@@ -253,7 +277,11 @@ _eio_monitor_fallback_timer_cb(void *data)
    Eio_Monitor_Backend *backend = data;
 
    backend->timer = NULL;
-   backend->idler = ecore_idler_add(_eio_monitor_fallback_idler_cb, backend);
+   eina_hash_set(timer_hash, &backend, NULL);
+   backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
+                                    _eio_monitor_fallback_end_cb,
+                                    _eio_monitor_fallback_cancel_cb,
+                                    backend);
 
    return EINA_FALSE;
 }
@@ -294,11 +322,14 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
 void
 eio_monitor_fallback_init(void)
 {
+   timer_hash = eina_hash_pointer_new(NULL);
 }
 
 void
 eio_monitor_fallback_shutdown(void)
 {
+   eina_hash_free(timer_hash);
+   timer_hash = NULL;
 }
 
 void
@@ -314,6 +345,7 @@ eio_monitor_fallback_add(Eio_Monitor *monitor)
    backend->children = eina_hash_string_superfast_new(free);
    backend->parent = monitor;
    monitor->backend = backend;
+   monitor->fallback = EINA_TRUE;
    backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
                                     _eio_monitor_fallback_end_cb,
                                     _eio_monitor_fallback_cancel_cb,
@@ -329,17 +361,16 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
    monitor->backend = NULL;
 
    if (!backend) return;
+   backend->delete_me = EINA_TRUE;
 
-   if (backend->work) ecore_thread_cancel(backend->work);
 
    if (backend->timer) ecore_timer_del(backend->timer);
+   eina_hash_set(timer_hash, &backend, NULL);
    backend->timer = NULL;
-   if (backend->idler) ecore_idler_del(backend->idler);
-   backend->idler = NULL;
 
-   if (backend->work && !ecore_thread_wait(backend->work, 0.3))
+   if (backend->work)
      {
-        backend->delete_me = EINA_TRUE;
+        ecore_thread_cancel(backend->work);
         return;
      }
 
@@ -356,3 +387,26 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
 /*============================================================================*
  *                                   API                                      *
  *============================================================================*/
+
+
+EAPI void
+eio_monitoring_interval_set(double interval)
+{
+   Eina_Iterator *it;
+   Ecore_Timer *timer;
+
+   EINA_SAFETY_ON_TRUE_RETURN(interval < 0.0);
+   fallback_interval = interval;
+   if (!timer_hash) return;
+   it = eina_hash_iterator_data_new(timer_hash);
+   EINA_ITERATOR_FOREACH(it, timer)
+     ecore_timer_interval_set(timer, fallback_interval);
+   eina_iterator_free(it);
+}
+
+EAPI Eina_Bool
+eio_monitor_fallback_check(const Eio_Monitor *monitor)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, EINA_FALSE);
+   return monitor->fallback;
+}

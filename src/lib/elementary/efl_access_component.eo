@@ -1,38 +1,10 @@
 import eina_types;
 
-mixin Efl.Access.Component ()
+mixin Efl.Access.Component (Efl.Gfx.Entity, Efl.Gfx.Stack)
 {
    [[AT-SPI component mixin]]
    data: null;
    methods {
-      @property size @protected @beta {
-         [[Size of accessible widget.]]
-         set {
-            return: bool; [[$true if size was set, $false otherwise]]
-         }
-         get {
-         }
-         values {
-            w: int; [[Width of the widget]]
-            h: int; [[Height of the widget]]
-         }
-      }
-      @property layer @protected @beta {
-         [[Evas layer of accessible widget.]]
-         get {
-         }
-         values {
-            layer: int; [[Evas layer of the widget]]
-         }
-      }
-      @property alpha @protected @beta {
-         [[Gets alpha of accessible widget.]]
-         get {
-         }
-         values {
-            alpha: double; [[Alpha value in [0, 1] range.]]
-         }
-      }
       @property z_order @protected @beta {
          [[Gets the depth at which the component is shown in relation to other
            components in the same container.]]
@@ -57,16 +29,12 @@ mixin Efl.Access.Component ()
             rect: Eina.Rect; [[The geometry.]]
          }
       }
-      @property position @protected @beta {
+      @property screen_position @protected @beta {
          [[Position of accessible widget.]]
          set {
             return: bool; [[$true if position was set, $false otherwise]]
          }
          get {
-         }
-         keys {
-            screen_coords: bool; [[If $true x and y values will be relative to
-                                   screen origin, otherwise relative to canvas]]
          }
          values {
             x: int; [[X coordinate]]
@@ -74,7 +42,7 @@ mixin Efl.Access.Component ()
          }
       }
       contains @protected @beta {
-      	 [[Contains accessible widget]]
+          [[Contains accessible widget]]
          params {
             screen_coords: bool; [[If $true x and y values will be relative to
                                    screen origin, otherwise relative to canvas]]

@@ -73,7 +73,7 @@ static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
 
 Eina_Bool   _efl_net_proxy_helper_can_do      (void);
-int         _efl_net_proxy_helper_url_req_send(const char *url);
+int         _efl_net_proxy_helper_url_req_send(const char *url, Ecore_Thread *eth);
 char      **_efl_net_proxy_helper_url_wait    (int id);
 void        _efl_net_proxy_helper_init        (void);
 void        _efl_net_proxy_helper_shutdown    (void);
@@ -89,13 +89,16 @@ ecore_con_init(void)
      return --_ecore_con_init_count;
 #endif
 
-   if (!ecore_init())
-     goto ecore_err;
+   if (!eina_init())
+     goto eina_err;
 
    _ecore_con_log_dom = eina_log_domain_register
          ("ecore_con", ECORE_CON_DEFAULT_LOG_COLOR);
    if (_ecore_con_log_dom < 0)
      goto ecore_con_log_error;
+
+   if (!ecore_init())
+     goto ecore_err;
 
    _efl_net_proxy_helper_init();
 
@@ -125,7 +128,9 @@ ecore_con_log_error:
    EINA_LOG_ERR("Failed to create a log domain for Ecore Con.");
    ecore_shutdown();
 
-ecore_err:
+ ecore_err:
+   eina_shutdown();
+ eina_err:
 #ifdef _WIN32
    evil_shutdown();
 #endif
@@ -152,13 +157,15 @@ ecore_con_shutdown(void)
 
    ecore_con_legacy_shutdown();
 
-   eina_log_domain_unregister(_ecore_con_log_dom);
-   _ecore_con_log_dom = -1;
-
    ecore_shutdown();
 #ifdef _WIN32
    evil_shutdown();
 #endif
+
+   eina_log_domain_unregister(_ecore_con_log_dom);
+   _ecore_con_log_dom = -1;
+
+   eina_shutdown();
 
    return _ecore_con_init_count;
 }
@@ -2031,7 +2038,7 @@ _efl_net_ip_connect_async_run_socks5h(Efl_Net_Ip_Connect_Async_Data *d, const ch
 }
 
 static void
-_efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
+_efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread)
 {
    Efl_Net_Ip_Connect_Async_Data *d = data;
    const char *host, *port, *proxy;
@@ -2069,7 +2076,7 @@ _efl_net_ip_connect_async_run(void *data, Ecore_Thread *thread EINA_UNUSED)
           }
         else
           {
-             proxies = ecore_con_libproxy_proxies_get(url);
+             proxies = ecore_con_libproxy_proxies_get(url, thread);
              eina_stringshare_del(url);
           }
      }
@@ -2571,9 +2578,9 @@ efl_net_udp_datagram_size_query(SOCKET fd)
 }
 
 char **
-ecore_con_libproxy_proxies_get(const char *url)
+ecore_con_libproxy_proxies_get(const char *url, Ecore_Thread *eth)
 {
-   int id =  _efl_net_proxy_helper_url_req_send(url);
+   int id =  _efl_net_proxy_helper_url_req_send(url, eth);
    if (id < 0) return NULL;
    return _efl_net_proxy_helper_url_wait(id);
 }

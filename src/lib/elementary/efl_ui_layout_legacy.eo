@@ -1,0 +1,8 @@
+class Efl.Ui.Layout_Legacy (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
+{
+   [[Elementary layout class]]
+   data: null;
+   implements {
+      Efl.Object.constructor;
+   }
+}

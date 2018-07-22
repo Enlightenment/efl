@@ -1,4 +1,4 @@
-class Efl.Config.Global (Efl.Object, Efl.Config)
+class Efl.Config_Global (Efl.Object, Efl.Config)
 {
    [[This class is a singleton representing the global configuration for the
      running application.

@@ -6,6 +6,9 @@ BUILT_SOURCES =
 EOLIAN_FLAGS = -I$(srcdir)
 EOLIAN_GEN_FLAGS = -S
 
+LOG_COMPILER = dbus-run-session
+AM_LOG_FLAGS = --
+
 DIST_SUBDIRS =
 SUBDIRS =
 
@@ -129,11 +132,8 @@ examples/ethumb_client \
 examples/eina_cxx \
 examples/eolian_cxx \
 examples/efl_mono \
-examples/elementary
-
-if HAVE_ELUA
-EXAMPLES_SUBDIRS += examples/elua
-endif
+examples/elementary \
+examples/elua
 
 if ALWAYS_BUILD_EXAMPLES
 SUBDIRS += . $(EXAMPLES_SUBDIRS)
@@ -165,6 +165,7 @@ dist-hook:
 	@mkdir -p $(distdir)/tests/efreet/data $(distdir)/tests/edje/data
 	@mkdir -p $(distdir)/tests/emotion/data $(distdir)/tests/evas/meshes/md2
 	@mkdir -p $(distdir)/tests/evas/meshes/obj $(distdir)/tests/efreet/data/sub
+	@mkdir -p $(distdir)/tests/efl_mono
 	@mkdir -p $(distdir)/scripts/eina $(distdir)/scripts/elua/modules
 	@mkdir -p $(distdir)/scripts/elua/core $(distdir)/scripts/elua/apps/docgen
 	@mkdir -p $(distdir)/lib/evas/common/evas_op_add $(distdir)/lib/evas/common/evas_op_copy
@@ -173,12 +174,17 @@ dist-hook:
 	@mkdir -p $(distdir)/static_libs/http-parser/contrib $(distdir)/bindings/luajit/eina
 	@mkdir -p $(distdir)/wayland_protocol $(distdir)/lib/efl_wl/
 	@mkdir -p $(distdir)/modules/evas/engines/software_generic/filters/blur
+	@mkdir -p $(distdir)/bindings/mono/ecore_evas_mono
+	@mkdir -p $(distdir)/bindings/mono/efl_mono
+	@mkdir -p $(distdir)/bindings/mono/eina_mono
+	@mkdir -p $(distdir)/bindings/mono/eldbus_mono
+	@mkdir -p $(distdir)/bindings/mono/eo_mono
 	for F in $(EXTRA_DIST2); do cp -f $(srcdir)/$$F $(distdir)/$$F; done
 
 clean-local:
 	find . -type f -name '*.gcno' -delete
 	find . -type f -name '*.gcda' -delete
-	find . -type f -name check-results.xml -delete
+	find . -type f -name check-results*.xml -delete
 	rm -f $(GENERATED_JS_BINDINGS)
 	rm -f $(GENERATED_LUA_BINDINGS)
 	rm -f $(BUILT_SOURCES)

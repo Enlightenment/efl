@@ -4,6 +4,7 @@
 
 #include "eeze_suite.h"
 #include "../efl_check.h"
+#include <Eeze.h>
 
 static const Efl_Test_Case etc[] = {
   { "Init", eeze_test_init },
@@ -12,6 +13,16 @@ static const Efl_Test_Case etc[] = {
   { "Sensor", eeze_test_sensor },
   { NULL, NULL }
 };
+
+SUITE_INIT(eeze)
+{
+   ck_assert_int_eq(eeze_init(), 1);
+}
+
+SUITE_SHUTDOWN(eeze)
+{
+   ck_assert_int_eq(eeze_shutdown(), 0);
+}
 
 int
 main(int argc, char *argv[])
@@ -26,7 +37,7 @@ main(int argc, char *argv[])
 #endif
 
    failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
-                                           "Eeze", etc);
+                                           "Eeze", etc, SUITE_INIT_FN(eeze), SUITE_SHUTDOWN_FN(eeze));
 
    return (failed_count == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

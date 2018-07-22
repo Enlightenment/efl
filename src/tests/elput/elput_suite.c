@@ -4,6 +4,7 @@
 
 #include "elput_suite.h"
 #include "../efl_check.h"
+#include <Elput.h>
 
 static const Efl_Test_Case etc[] =
 {
@@ -12,6 +13,16 @@ static const Efl_Test_Case etc[] =
 #endif
    { NULL, NULL }
 };
+
+SUITE_INIT(elput)
+{
+   ck_assert_int_eq(elput_init(), 1);
+}
+
+SUITE_SHUTDOWN(elput)
+{
+   ck_assert_int_eq(elput_shutdown(), 0);
+}
 
 int
 main(int argc, char **argv)
@@ -25,7 +36,7 @@ main(int argc, char **argv)
 #endif
 
    count =
-     _efl_suite_build_and_run(argc - 1, (const char **)argv + 1, "Elput", etc);
+     _efl_suite_build_and_run(argc - 1, (const char **)argv + 1, "Elput", etc, SUITE_INIT_FN(elput), SUITE_SHUTDOWN_FN(elput));
 
    return (count == 0) ? 0 : 255;
 }

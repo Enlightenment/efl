@@ -1,10 +1,10 @@
 # Even though libefl is new, it contains definitions used by legacy APIs
 efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_fill.eo \
-	lib/efl/interfaces/efl_gfx.eo \
+	lib/efl/interfaces/efl_gfx_entity.eo \
 	lib/efl/interfaces/efl_gfx_color.eo \
-	lib/efl/interfaces/efl_image.eo \
-	lib/efl/interfaces/efl_image_animated.eo \
+	lib/efl/interfaces/efl_gfx_image.eo \
+	lib/efl/interfaces/efl_gfx_image_animation_controller.eo \
 	lib/efl/interfaces/efl_input_device.eo \
         lib/efl/interfaces/efl_ui_draggable.eo \
         lib/efl/interfaces/efl_ui_clickable.eo \
@@ -12,18 +12,20 @@ efl_eolian_legacy_files = \
         lib/efl/interfaces/efl_ui_scrollable_interactive.eo \
         lib/efl/interfaces/efl_ui_scrollbar.eo \
         lib/efl/interfaces/efl_ui_selectable.eo \
+        lib/efl/interfaces/efl_ui_multi_selectable.eo \
         lib/efl/interfaces/efl_ui_zoom.eo \
 	$(NULL)
 
 efl_eolian_files = \
-      lib/efl/interfaces/efl_canvas.eo \
+      lib/efl/interfaces/efl_canvas_scene.eo \
       lib/efl/interfaces/efl_canvas_pointer.eo \
       lib/efl/interfaces/efl_config.eo \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_duplicate.eo \
       lib/efl/interfaces/efl_file.eo \
-      lib/efl/interfaces/efl_image_load.eo \
+      lib/efl/interfaces/efl_gfx_image_load_controller.eo \
       lib/efl/interfaces/efl_part.eo \
+      lib/efl/interfaces/efl_playable.eo \
       lib/efl/interfaces/efl_player.eo \
       lib/efl/interfaces/efl_text.eo \
       lib/efl/interfaces/efl_text_font.eo \
@@ -33,7 +35,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_text_annotate.eo \
       lib/efl/interfaces/efl_text_markup.eo \
       lib/efl/interfaces/efl_text_markup_util.eo \
-      lib/efl/interfaces/efl_text_properties.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
       lib/efl/interfaces/efl_gfx_buffer.eo \
@@ -48,18 +49,12 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_model.eo \
       lib/efl/interfaces/efl_animator.eo \
       lib/efl/interfaces/efl_orientation.eo \
-      lib/efl/interfaces/efl_flipable.eo \
       lib/efl/interfaces/efl_container.eo \
       lib/efl/interfaces/efl_content.eo \
       lib/efl/interfaces/efl_pack.eo \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \
       lib/efl/interfaces/efl_pack_table.eo \
-      lib/efl/interfaces/efl_vpath.eo \
-      lib/efl/interfaces/efl_vpath_manager.eo \
-      lib/efl/interfaces/efl_vpath_file.eo \
-      lib/efl/interfaces/efl_vpath_core.eo \
-      lib/efl/interfaces/efl_vpath_file_core.eo \
       lib/efl/interfaces/efl_ui_base.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
@@ -67,7 +62,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_view.eo \
       lib/efl/interfaces/efl_ui_model_connect.eo \
       lib/efl/interfaces/efl_ui_factory.eo \
-      lib/efl/interfaces/efl_ui_model_factory_connect.eo \
       lib/efl/interfaces/efl_screen.eo \
       lib/efl/interfaces/efl_io_closer.eo \
       lib/efl/interfaces/efl_io_positioner.eo \
@@ -78,8 +72,6 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_io_queue.eo \
       lib/efl/interfaces/efl_observer.eo \
       lib/efl/interfaces/efl_observable.eo \
-      lib/efl/interfaces/efl_ui_item.eo \
-      lib/efl/interfaces/efl_ui_menu.eo \
       lib/efl/interfaces/efl_ui_autorepeat.eo \
       lib/efl/interfaces/efl_ui_format.eo \
       lib/efl/interfaces/efl_gfx_color_class.eo \
@@ -124,10 +116,6 @@ lib/efl/interfaces/efl_interfaces_main.c \
 lib/efl/interfaces/efl_model_common.c \
 lib/efl/interfaces/efl_gfx_path.c \
 lib/efl/interfaces/efl_gfx_shape.c \
-lib/efl/interfaces/efl_vpath_file.c \
-lib/efl/interfaces/efl_vpath_manager.c \
-lib/efl/interfaces/efl_vpath_core.c \
-lib/efl/interfaces/efl_vpath_file_core.c \
 lib/efl/interfaces/efl_input_device.c \
 lib/efl/interfaces/efl_io_closer.c \
 lib/efl/interfaces/efl_io_positioner.c \

@@ -34,6 +34,7 @@ main(int argc, char **argv)
    int we_are_elementary_run = 0;
    char *domain;
    char *cwd;
+   char *rundir;
 
    int sargc, slen, envnum;
    unsigned char *sbuf = NULL, *pos;
@@ -51,7 +52,9 @@ main(int argc, char **argv)
         if (!domain) domain = getenv("DISPLAY");
         if (!domain) domain = "unknown";
      }
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), domain);
+   rundir = getenv("XDG_RUNTIME_DIR");
+   if (!rundir) rundir = "/tmp";
+   snprintf(buf, sizeof(buf), "%s/elm-ql-%i/%s", rundir, getuid(), domain);
    if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
      {
         perror("elementary_quicklaunch: socket(AF_UNIX, SOCK_STREAM, 0)");

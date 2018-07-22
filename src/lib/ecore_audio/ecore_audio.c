@@ -68,10 +68,16 @@ ecore_audio_shutdown(void)
      return _ecore_audio_init_count;
 
 #ifdef HAVE_SNDFILE
-   ecore_audio_sndfile_lib_unload();
+// explicitly disabled - yes, we know to "fix a leak" you unload here, but
+// objects may still exist at this point and may access functions/symbols
+// from sndfile
+//   ecore_audio_sndfile_lib_unload();
 #endif /* HAVE_SNDFILE */
 #ifdef HAVE_PULSE
-   ecore_audio_pulse_lib_unload();
+// explicitly disabled - yes, we know to "fix a leak" you unload here, but
+// objects may still exist at this point and may access functions/symbols
+// from pulseaudio
+//   ecore_audio_pulse_lib_unload();
 #endif /* HAVE_PULSE */
 
    /* FIXME: Shutdown all the inputs and outputs first */
@@ -97,11 +103,7 @@ ecore_audio_pulse_lib_load(void)
 {
    if (ecore_audio_pulse_lib)
      {
-        if (!ecore_audio_pulse_lib->mod)
-          {
-             ERR("Cannot find libpulse at runtime!");
-             return EINA_FALSE;
-          }
+        if (!ecore_audio_pulse_lib->mod) return EINA_FALSE;
         return EINA_TRUE;
      }
 
@@ -167,6 +169,7 @@ err:
      {
         eina_module_free(ecore_audio_pulse_lib->mod);
         ecore_audio_pulse_lib->mod = NULL;
+        ERR("Cannot find libpulse at runtime!");
      }
    return EINA_FALSE;
 }
@@ -190,11 +193,7 @@ ecore_audio_sndfile_lib_load(void)
 {
    if (ecore_audio_sndfile_lib)
      {
-        if (!ecore_audio_sndfile_lib->mod)
-          {
-             ERR("Cannot find libsndfile at runtime!");
-             return EINA_FALSE;
-          }
+        if (!ecore_audio_sndfile_lib->mod) return EINA_FALSE;
         return EINA_TRUE;
      }
 
@@ -243,6 +242,7 @@ err:
      {
         eina_module_free(ecore_audio_sndfile_lib->mod);
         ecore_audio_sndfile_lib->mod = NULL;
+        ERR("Cannot find libsndfile at runtime!");
      }
    return EINA_FALSE;
 }
@@ -259,6 +259,20 @@ ecore_audio_sndfile_lib_unload(void)
      }
 }
 #endif /* HAVE_SNDFILE */
+
+
+EAPI const char*
+ecore_audio_obj_name_get(const Efl_Object* obj)
+{
+   return efl_name_get(obj);
+}
+
+EAPI void
+ecore_audio_obj_name_set(Efl_Object* obj, const char *name)
+{
+   efl_name_set(obj, name);
+}
+
 
 /**
  * @}

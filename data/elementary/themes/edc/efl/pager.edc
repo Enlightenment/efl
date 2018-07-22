@@ -1,0 +1,66 @@
+group { "efl/pager";
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+      }
+      swallow { "efl.background";
+         scale;
+         desc { "default";
+         }
+      }
+      swallow { "efl.page_root";
+         scale;
+         desc { "default";
+            rel1.relative: 0.0 1.0;
+            rel1.to: "efl.indicator";
+         }
+      }
+      swallow { "efl.indicator";
+         scale;
+         desc { "default";
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            min: 0 50;
+         }
+      }
+      swallow { "efl.event";
+         scale;
+         repeat_events: 1;
+         desc { "default";
+         }
+      }
+   }
+}
+
+group { "efl/pager/indicator";
+   images {
+      image: "ring_white_middle.png" COMP;
+   }
+   parts {
+      spacer { "base";
+         scale;
+         desc { "default";
+         }
+      }
+      image { "icon";
+         scale;
+         desc { "default";
+            image.normal: "ring_white_middle.png";
+            color: 0 0 0 255;
+            min: 6 6;
+         }
+         desc { "selected";
+            inherit: "default";
+            color: 255 0 0 255;
+         }
+      }
+   }
+   script {
+      public message(Msg_Type:type, id, ...) {
+         set_tween_state(PART:"icon", getfarg(2),
+                         "default", 0.0, "selected", 0.0);
+      }
+   }
+}

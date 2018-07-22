@@ -26,51 +26,49 @@
 
 #include "eina_suite.h"
 
-static int test_array[1024] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+static int test_array[128] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 static int test_array2[64] = { 8, 9, 10, 11, 12, 13, 14 };
-static const void *pointers[1088] = { NULL };
+static const void *pointers[EINA_C_ARRAY_LENGTH(test_array) + EINA_C_ARRAY_LENGTH(test_array2)] = { NULL };
 
-START_TEST(eina_test_reusable)
+EFL_START_TEST(eina_test_safepointer_reusable)
 {
    unsigned int i;
 
-   eina_init();
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
-        pointers[i] = eina_safepointer_register(&test_array[i]);
-        fail_if(pointers[i] == NULL);
-        fail_if(pointers[i] == &test_array[i]);
-        fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
+        const void *ptr = pointers[i] = eina_safepointer_register(&test_array[i]);
+        ck_assert_ptr_ne(ptr, NULL);
+        ck_assert_ptr_ne(ptr, &test_array[i]);
+        ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(pointers[i]));
      }
 
-   for (i = 0; i < sizeof (test_array2) / sizeof (test_array2[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
-        pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] = eina_safepointer_register(&test_array2[i]);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == NULL);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == &test_array2[i]);
-        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]));
-        eina_safepointer_unregister(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]);
+        const void *ptr = pointers[i + EINA_C_ARRAY_LENGTH(test_array)] = eina_safepointer_register(&test_array2[i]);
+        ck_assert_ptr_ne(ptr, NULL);
+        ck_assert_ptr_ne(ptr, &test_array2[i]);
+        ck_assert_ptr_eq(&test_array2[i], eina_safepointer_get(ptr));
+        eina_safepointer_unregister(ptr);
      }
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         eina_safepointer_unregister(pointers[i]);
      }
 
-   for (i = 0; i < sizeof (pointers) / sizeof (pointers[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(pointers); i++)
      {
         unsigned int j;
 
-        for (j = i + 1; j < sizeof (pointers) / sizeof (pointers[0]); j++)
+        for (j = i + 1; j < EINA_C_ARRAY_LENGTH(pointers); j++)
           {
-             fail_if(pointers[j] == pointers[i]);
+             ck_assert_ptr_ne(pointers[j], pointers[i]);
           }
      }
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 static Eina_Barrier b;
 
@@ -79,14 +77,14 @@ _thread1(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
    unsigned int i;
 
-   fail_if(!eina_barrier_wait(&b));
+   ck_assert_int_ne(eina_barrier_wait(&b), 0);
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
-        pointers[i] = eina_safepointer_register(&test_array[i]);
-        fail_if(pointers[i] == NULL);
-        fail_if(pointers[i] == &test_array[i]);
-        fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
+        const void *ptr = pointers[i] = eina_safepointer_register(&test_array[i]);
+        ck_assert_ptr_ne(ptr, NULL);
+        ck_assert_ptr_ne(ptr, &test_array[i]);
+        ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(ptr));
      }
 
    return NULL;
@@ -97,92 +95,87 @@ _thread2(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
    unsigned int i;
 
-   fail_if(!eina_barrier_wait(&b));
+   ck_assert_int_ne(eina_barrier_wait(&b), 0);
 
-   for (i = 0; i < sizeof (test_array2) / sizeof (test_array2[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array2); i++)
      {
-        pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] = eina_safepointer_register(&test_array2[i]);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == NULL);
-        fail_if(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))] == &test_array2[i]);
-        fail_if(&test_array2[i] != eina_safepointer_get(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]));
-        eina_safepointer_unregister(pointers[i + (sizeof (test_array) / sizeof (test_array[0]))]);
+        const void *ptr = pointers[i + (EINA_C_ARRAY_LENGTH(test_array))] = eina_safepointer_register(&test_array2[i]);
+        ck_assert_ptr_ne(ptr, NULL);
+        ck_assert_ptr_ne(ptr, &test_array2[i]);
+        ck_assert_ptr_eq(&test_array2[i], eina_safepointer_get(ptr));
+        eina_safepointer_unregister(ptr);
      }
 
    return NULL;
 }
 
-START_TEST(eina_test_threading)
+EFL_START_TEST(eina_test_safepointer_threading)
 {
    Eina_Thread t1, t2;
    unsigned int i;
 
-   eina_init();
 
    // We need a barrier so that both thread are more likely
    // to start running in parallel
-   fail_if(!eina_barrier_new(&b, 2));
+   ck_assert_int_ne(eina_barrier_new(&b, 2), 0);
 
    // Spawn them
-   fail_if(!eina_thread_create(&t1, EINA_THREAD_NORMAL, -1, _thread1, NULL));
-   fail_if(!eina_thread_create(&t2, EINA_THREAD_NORMAL, -1, _thread2, NULL));
+   ck_assert_int_ne(eina_thread_create(&t1, EINA_THREAD_NORMAL, -1, _thread1, NULL), 0);
+   ck_assert_int_ne(eina_thread_create(&t2, EINA_THREAD_NORMAL, -1, _thread2, NULL), 0);
 
    // And wait for the outcome !
    eina_thread_join(t1);
    eina_thread_join(t2);
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
         eina_safepointer_unregister(pointers[i]);
      }
 
    eina_barrier_free(&b);
 
-   for (i = 0; i < sizeof (pointers) / sizeof (pointers[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(pointers); i++)
      {
         unsigned int j;
 
-        for (j = i + 1; j < sizeof (pointers) / sizeof (pointers[0]); j++)
+        for (j = i + 1; j < EINA_C_ARRAY_LENGTH(pointers); j++)
           {
-             fail_if(pointers[j] == pointers[i]);
+             ck_assert_ptr_ne(pointers[j], pointers[i]);
           }
      }
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_lowestbit)
+EFL_START_TEST(eina_test_safepointer_lowestbit)
 {
    unsigned int i;
 
-   eina_init();
 
-   for (i = 0; i < sizeof (test_array) / sizeof (test_array[0]); i++)
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(test_array); i++)
      {
-        pointers[i] = eina_safepointer_register(&test_array[i]);
-        fail_if(pointers[i] == NULL);
-        fail_if(pointers[i] == &test_array[i]);
-        fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
+        const void *ptr = eina_safepointer_register(&test_array[i]);
+        ck_assert_ptr_ne(ptr, NULL);
+        ck_assert_ptr_ne(ptr, &test_array[i]);
+        ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(ptr));
 
-        // We do guaranty that the two lower bit are always zero and will be internally ignored
-        fail_if((((uintptr_t) pointers[i]) & 0x3) != 0);
-        pointers[i] = (void*)(((uintptr_t) pointers[i]) | 0x3);
+        // We do guarantee that the two lower bit are always zero and will be internally ignored
+        ck_assert_int_eq((((uintptr_t) ptr) & 0x3), 0);
+        ptr = (void*)(((uintptr_t) ptr) | 0x3);
 
-        fail_if(&test_array[i] != eina_safepointer_get(pointers[i]));
+        ck_assert_ptr_eq(&test_array[i], eina_safepointer_get(ptr));
 
-        eina_safepointer_unregister(pointers[i]);
+        eina_safepointer_unregister(ptr);
 
-        fail_if(eina_safepointer_get(pointers[i]) != NULL);
+        ck_assert_ptr_eq(eina_safepointer_get(ptr), NULL);
      }
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_safepointer(TCase *tc)
 {
-   tcase_add_test(tc, eina_test_reusable);
-   tcase_add_test(tc, eina_test_threading);
-   tcase_add_test(tc, eina_test_lowestbit);
+   tcase_add_test(tc, eina_test_safepointer_reusable);
+   tcase_add_test(tc, eina_test_safepointer_threading);
+   tcase_add_test(tc, eina_test_safepointer_lowestbit);
 }

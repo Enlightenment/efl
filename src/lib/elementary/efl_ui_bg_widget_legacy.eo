@@ -1,0 +1,14 @@
+class Efl.Ui.Bg_Widget_Legacy (Efl.Ui.Bg_Widget, Efl.Ui.Legacy)
+{
+   [[The bg (background) widget is used for setting (solid) background decorations
+
+   for a window (unless it has transparency enabled) or for any container object. It
+   works just like an image, but has some properties useful for backgrounds, such as
+   setting it to tiled, centered, scaled or stretched.
+   ]]
+   data: null;
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+   }
+}

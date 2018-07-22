@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =
 CLEANFILES =
+SUBDIRS =
 
 ########################################################################
 # Embryo
@@ -119,6 +120,8 @@ EXTRA_DIST += $(eluafiles_DATA)
 
 # themes
 
+SUBDIRS += elementary/config
+
 elementaryfilesdir = $(datadir)/elementary/themes
 elementaryfiles_DATA = elementary/themes/default.edj
 CLEANFILES += elementary/themes/default.edj
@@ -128,14 +131,14 @@ include elementary/themes/Makefile.am
 elementary/themes/default.edj: elementary/themes/default.edc $(elementary_themes_files) $(efl_ui_themes_files) $(elementary_fdo_files) $(top_builddir)/src/bin/edje/edje_cc${EXEEXT}
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/themes/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) $< $@
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(EDJE_CC_ELM_FLAGS) -N $< $@
 
 # desktop files
 
 elementarydesktopdir = $(datadir)/applications
 elementarydesktop_DATA = elementary/desktop/elementary_test.desktop elementary/desktop/elementary_config.desktop
 
-elementaryicondir = $(datadir)/icons
+elementaryicondir = $(datadir)/icons/hicolor/128x128/apps
 elementaryicon_DATA = elementary/desktop/elementary.png
 
 EXTRA_DIST += $(elementarydesktop_DATA) $(elementaryicon_DATA)
@@ -176,6 +179,12 @@ elementaryfdo_apps_64_DATA = $(elementary_fdo_apps_64_files)
 
 elementaryfdo_intl_128dir = $(datadir)/icons/Enlightenment-X/intl/128
 elementaryfdo_intl_128_DATA = $(elementary_fdo_intl_128_files)
+
+elementaryfdo_mimetypes_16dir = $(datadir)/icons/Enlightenment-X/mimetypes/16
+elementaryfdo_mimetypes_16_DATA = $(elementary_fdo_mimetypes_16_files)
+
+elementaryfdo_mimetypes_128dir = $(datadir)/icons/Enlightenment-X/mimetypes/128
+elementaryfdo_mimetypes_128_DATA = $(elementary_fdo_mimetypes_128_files)
 
 # edje_externals
 
@@ -220,6 +229,7 @@ elementary/objects/test_prefs.edj \
 elementary/objects/test_prefs.epb \
 elementary/objects/test_focus_style.edj \
 elementary/objects/test_tooltip.edj \
+elementary/objects/test_tab_pager.edj \
 $(NULL)
 
 CLEANFILES += $(elementaryobjects_DATA)
@@ -286,3 +296,7 @@ elementary/objects/test_prefs.epb: elementary/objects/test_prefs.epc
 	$(MKDIR_P) elementary/objects/; \
 	$(ELM_PREFS_CC) $(ELM_PREFS_FLAGS) $< $@
 
+elementary/objects/test_tab_pager.edj: elementary/objects/test_tab_pager.edc
+	$(AM_V_EDJ) \
+	$(MKDIR_P) elementary/objects/; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@

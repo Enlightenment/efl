@@ -38,10 +38,10 @@
 #   else
 #    error "no DLL_EXPORT"
 #    define EAPI
-#   endif /* ! DLL_EXPORT */
+#   endif
 #  else
 #   define EAPI __declspec(dllimport)
-#  endif /* ! EFL_EVAS_BUILD */
+#  endif
 #  define EAPI_WEAK
 # else
 #  ifdef __GNUC__
@@ -56,7 +56,7 @@
 #   define EAPI
 #   define EAPI_WEAK
 #  endif
-# endif /* ! _WIN32 */
+# endif
 
 # define EWAPI EAPI EAPI_WEAK
 
@@ -64,8 +64,11 @@
 # include "elm_access.eo.h"
 # include "elm_code_private.h"
 # include "efl_ui_focus_parent_provider.eo.h"
+# include "efl_ui_widget_focus_manager.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
 # include "elm_widget_item_static_focus.eo.h"
+#include "efl_selection_manager.eo.h"
+# include "efl_datetime_manager.eo.h"
 
 # ifdef HAVE_LANGINFO_H
 #  include <langinfo.h>
@@ -115,21 +118,24 @@ struct _Edje_Signal_Data
    void          *data;
 };
 
-struct _Elm_Theme_Files
+typedef struct Elm_Theme_File
 {
+   EINA_INLIST;
    /*
     * We are conserving a list of path even if that's duplicated
     * because we expose those directly to the outside world :'(
     */
-   Eina_List *items;
-   Eina_List *handles;
-};
+   Eina_Stringshare *item;
+   Eina_File *handle;
+   Eina_Stringshare *base_theme; // data.item: efl_theme_base name
+   Eina_Stringshare *match_theme; // data.item: efl_theme_match name
+} Elm_Theme_File;
 
 struct _Elm_Theme
 {
-   Elm_Theme_Files overlay;
-   Elm_Theme_Files themes;
-   Elm_Theme_Files extension;
+   Eina_Inlist *overlay;
+   Eina_Inlist *themes;
+   Eina_Inlist *extension;
 
    Eina_Hash  *cache;
    Eina_Hash  *cache_data;
@@ -138,6 +144,11 @@ struct _Elm_Theme
    const char *theme;
    int         ref;
    Eina_Hash  *cache_style_load_failed;
+
+   /* these only exist to preserve compat with bad elm_theme_XYZ_list_get() api */
+   Eina_List *overlay_items;
+   Eina_List *theme_items;
+   Eina_List *extension_items;
 };
 
 /* increment this whenever we change config enough that you need new
@@ -148,7 +159,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x000f
+# define ELM_CONFIG_FILE_GENERATION 0x0011
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -281,6 +292,7 @@ struct _Elm_Config_Flags
    Eina_Bool glayer_flick_time_limit_ms : 1; // unused
    Eina_Bool glayer_long_tap_start_timeout : 1;
    Eina_Bool glayer_double_tap_timeout : 1;
+   Eina_Bool glayer_tap_finger_size : 1;
    Eina_Bool access_mode : 1;
    Eina_Bool glayer_continues_enable : 1; // unused
    Eina_Bool week_start : 1; // unused
@@ -326,6 +338,7 @@ struct _Elm_Config_Flags
    Eina_Bool gl_msaa : 1;
    Eina_Bool icon_theme : 1;
    Eina_Bool entry_select_allow : 1; // unused
+   Eina_Bool drag_anim_duration : 1;
 };
 
 struct _Elm_Config
@@ -415,6 +428,7 @@ struct _Elm_Config
    unsigned int  glayer_flick_time_limit_ms;
    double        glayer_long_tap_start_timeout;
    double        glayer_double_tap_timeout;
+   int           glayer_tap_finger_size;
    Eina_Bool     access_mode;
    unsigned char glayer_continues_enable;
    int           week_start;
@@ -462,6 +476,7 @@ struct _Elm_Config
    unsigned char entry_select_allow;
    Eina_Bool     offline;
    int  powersave;
+   double        drag_anim_duration;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
@@ -519,9 +534,6 @@ void                 _elm_prefs_shutdown(void);
 /* these already issued by the two above, respectively */
 void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
-
-void                 _elm_emotion_init(void);
-void                 _elm_emotion_shutdown(void);
 
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
@@ -585,7 +597,7 @@ void                 _elm_unneed_ethumb(void);
 void                 _elm_unneed_web(void);
 
 void                 _elm_rescale(void);
-Eina_Bool            _elm_clouseau_reload(void);
+Eina_Bool            _elm_old_clouseau_reload(void);
 
 void                 _elm_config_init(void);
 void                 _elm_config_sub_init(void);
@@ -652,6 +664,13 @@ void                 elm_cursor_theme(Elm_Cursor *cur);
 void                 elm_object_sub_cursor_set(Evas_Object *eventarea,
                                                Evas_Object *owner,
                                                const char *cursor);
+const char *         elm_object_sub_cursor_get(const Evas_Object *obj);
+Eina_Bool            elm_object_sub_cursor_style_set(Evas_Object *obj,
+                                                     const char *style);
+const char *         elm_object_sub_cursor_style_get(const Evas_Object *obj);
+Eina_Bool            elm_object_sub_cursor_theme_search_enabled_set(Evas_Object *obj,
+                                                                    Eina_Bool theme_search);
+Eina_Bool            elm_object_sub_cursor_theme_search_enabled_get(const Evas_Object *obj);
 
 void                 elm_menu_clone(Evas_Object *from_menu,
                                     Evas_Object *to_menu,
@@ -720,6 +739,17 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
 
 /* DO NOT USE THIS this is only for performance optimization! */
 void                 _elm_widget_full_eval(Eo *obj);
+void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Data *pd);
+
+EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
+EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
+EOAPI void			 efl_page_transition_update(Eo *obj, double pos);
+EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, double move);
+EOAPI void			 efl_page_transition_pack_end(Eo *obj, Efl_Gfx_Entity *subobj);
+EOAPI void			 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
+
+EOAPI void			 efl_page_indicator_update(Eo *obj, double pos);
+EOAPI void			 efl_page_indicator_pack(Eo *obj, int index);
 
 Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa);
 
@@ -762,6 +792,8 @@ _elm_dgettext(const char *string)
 
 # endif
 
+extern Eina_Bool _use_build_config;
+
 /* Used by the paste handler */
 void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
@@ -778,6 +810,10 @@ void efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 /* Internal EO APIs */
 const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
 const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
+void efl_ui_slider_val_fetch(Evas_Object *obj, Eina_Bool user_event);
+void efl_ui_slider_val_set(Evas_Object *obj);
+void efl_ui_slider_down_knob(Evas_Object *obj, double button_x, double button_y);
+void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y);
 //void elm_layout_sizing_eval_eoapi(Eo *obj);
 
 # define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
@@ -801,7 +837,7 @@ const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *o
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
-_##_pfx##_elm_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
+_##_pfx##_efl_ui_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
 { \
    Evas_Event_Key_Down *ev; \
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; \

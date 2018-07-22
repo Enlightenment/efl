@@ -1,7 +1,9 @@
 #include "edje_private.h"
 
 Eina_Hash *_edje_file_hash = NULL;
+Eina_Hash *_edje_id_hash = NULL;
 
+static Eina_Hash *_edje_requires_pending;
 static int _edje_file_cache_size = 16;
 static Eina_List *_edje_file_cache = NULL;
 
@@ -387,6 +389,46 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
      if (sc->name)
        eina_hash_direct_add(edf->size_hash, sc->name, sc);
 
+   if (edf->requires_count)
+     {
+        unsigned int i;
+        Edje_File *required_edf;
+        char **requires = (char**)edf->requires;
+
+        /* EET_DATA_DESCRIPTOR_ADD_VAR_ARRAY_STRING returns an mmapped blob, not stringshares */
+        edf->requires = malloc(edf->requires_count * sizeof(char*));
+        for (i = 0; i < edf->requires_count; i++)
+          {
+             char *str = (char*)requires[i];
+
+             edf->requires[i] = eina_stringshare_add(str);
+             required_edf = eina_hash_find(_edje_id_hash, edf->requires[i]);
+             if (required_edf)
+               {
+                  required_edf->references++;
+                  continue;
+               }
+             ERR("edje file '%s' REQUIRES file '%s' which is not loaded", edf->path, edf->requires[i]);
+             if (!_edje_requires_pending)
+               _edje_requires_pending = eina_hash_stringshared_new(NULL);
+             eina_hash_list_append(_edje_requires_pending, edf->requires[i], edf);
+          }
+        free(requires);
+     }
+   if (_edje_requires_pending && edf->id)
+     {
+        l = eina_hash_set(_edje_requires_pending, edf->id, NULL);
+
+        edf->references += eina_list_count(l);
+        eina_list_free(l);
+
+        if (!eina_hash_population(_edje_requires_pending))
+          {
+             eina_hash_free(_edje_requires_pending);
+             _edje_requires_pending = NULL;
+          }
+     }
+
    return edf;
 }
 
@@ -416,6 +458,8 @@ _edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_r
    Edje_Part_Collection *edc;
    Edje_Part *ep;
 
+   if (!_edje_id_hash)
+     _edje_id_hash = eina_hash_stringshared_new(NULL);
    if (!_edje_file_hash)
      {
         _edje_file_hash = eina_hash_pointer_new(NULL);
@@ -445,6 +489,8 @@ find_list:
    if (!edf) return NULL;
 
    eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
+   if (edf->id)
+     eina_hash_list_append(_edje_id_hash, edf->id, edf);
    /* return edf; */
 
 open:
@@ -648,12 +694,41 @@ _edje_cache_file_unref(Edje_File *edf)
    edf->references--;
    if (edf->references != 0) return;
 
+   if (edf->requires_count)
+     {
+        unsigned int i;
+
+        for (i = 0; i < edf->requires_count; i++)
+          {
+             Edje_File *required_edf = eina_hash_find(_edje_id_hash, edf->requires[i]);
+
+             if (required_edf)
+               _edje_cache_file_unref(edf);
+             else if (_edje_requires_pending)
+               {
+                  eina_hash_list_remove(_edje_requires_pending, edf->requires[i], edf);
+                  if (!eina_hash_population(_edje_requires_pending))
+                    {
+                       eina_hash_free(_edje_requires_pending);
+                       _edje_requires_pending = NULL;
+                    }
+               }
+          }
+     }
+
    if (edf->dangling)
      {
         _edje_file_free(edf);
         return;
      }
 
+   if (edf->id)
+     eina_hash_list_remove(_edje_id_hash, edf->id, edf);
+   if (!eina_hash_population(_edje_id_hash))
+     {
+        eina_hash_free(_edje_id_hash);
+        _edje_id_hash = NULL;
+     }
    eina_hash_del(_edje_file_hash, &edf->f, edf);
    if (!eina_hash_population(_edje_file_hash))
      {

@@ -118,7 +118,7 @@ _efl_net_server_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
    Eo *o = data;
    Efl_Net_Server_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const struct addrinfo *addr;
-   Eina_Error err;
+   Eina_Error err = EINA_ERROR_NO_ERROR;
 
    pd->resolver = NULL;
 
@@ -253,7 +253,7 @@ _efl_net_server_tcp_efl_net_server_fd_client_add(Eo *o, Efl_Net_Server_Tcp_Data 
 {
    Eo *client = efl_add(EFL_NET_SOCKET_TCP_CLASS, o,
                         efl_io_closer_close_on_exec_set(efl_added, efl_net_server_fd_close_on_exec_get(o)),
-                        efl_io_closer_close_on_destructor_set(efl_added, EINA_TRUE),
+                        efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                         efl_loop_fd_set(efl_added, client_fd));
    if (!client)
      {

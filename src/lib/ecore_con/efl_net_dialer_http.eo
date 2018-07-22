@@ -1,13 +1,13 @@
 import efl_net_http_types;
 
-enum Efl.Net.Dialer.Http.Primary_Mode {
+enum Efl.Net.Dialer_Http_Primary_Mode {
     [[Primary HTTP mode]]
     auto, [[HTTP auto mode]]
     download, [[HTTP download mode]]
     upload, [[HTTP upload mode]]
 }
 
-class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
+class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
     [[HTTP Dialer (Client).
 
       The effective URL in use, if @.allow_redirects is $true will be
@@ -71,20 +71,20 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
 
               This property will change the behavior of @Efl.Io.Sizer:
 
-               - If @Efl.Net.Dialer.Http.Primary_Mode.auto, then
-                 @Efl.Net.Dialer.Http.Primary_Mode.download or
-                 @Efl.Net.Dialer.Http.Primary_Mode.upload will be
+               - If @Efl.Net.Dialer_Http_Primary_Mode.auto, then
+                 @Efl.Net.Dialer_Http_Primary_Mode.download or
+                 @Efl.Net.Dialer_Http_Primary_Mode.upload will be
                  choosen based on the @.method: if "PUT", then it's
                  upload, otherwise it's download.
 
-               - If @Efl.Net.Dialer.Http.Primary_Mode.upload, applying
+               - If @Efl.Net.Dialer_Http_Primary_Mode.upload, applying
                  a new size with @Efl.Io.Sizer.resize or
                  @Efl.Io.Sizer.size.set will specify the
                  "Content-Length" to upload. If no size is previously
                  set, then the upload will happen in
                  "Transfer-encoding: chunked".
 
-               - If @Efl.Net.Dialer.Http.Primary_Mode.download, then
+               - If @Efl.Net.Dialer_Http_Primary_Mode.download, then
                  @Efl.Io.Sizer.size.get will report the
                  "Content-Length" provided by the server, if any.
 
@@ -99,15 +99,15 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
                 [[The effective primary mode.
 
                   This will return one of
-                  @Efl.Net.Dialer.Http.Primary_Mode.download or
-                  @Efl.Net.Dialer.Http.Primary_Mode.upload. If "auto"
+                  @Efl.Net.Dialer_Http_Primary_Mode.download or
+                  @Efl.Net.Dialer_Http_Primary_Mode.upload. If "auto"
                   was set (the default), then it will pick the best
                   based on the @.method in use.
                 ]]
             }
             set { }
             values {
-                primary_mode: Efl.Net.Dialer.Http.Primary_Mode; [[Primary HTTP mode]]
+                primary_mode: Efl.Net.Dialer_Http_Primary_Mode; [[Primary HTTP mode]]
             }
         }
 
@@ -388,11 +388,12 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
     }
 
     events {
-        headers,done; [[Notifies all headers were parsed and are available.]]
+        headers,done: void; [[Notifies all headers were parsed and are available.]]
     }
 
     implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Efl.Net.Dialer.dial;
         Efl.Net.Dialer.address_dial { get; set; }
@@ -409,7 +410,7 @@ class Efl.Net.Dialer.Http (Efl.Loop.Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Sizer.resize;
         Efl.Io.Sizer.size { get; }
     }

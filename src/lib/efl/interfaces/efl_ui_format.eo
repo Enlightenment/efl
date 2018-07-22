@@ -1,5 +1,3 @@
-import eina_types;
-
 function Efl.Ui.Format_Func_Cb {
    [[Function pointer for format function hook]]
    params {

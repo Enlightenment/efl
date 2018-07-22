@@ -426,14 +426,7 @@ _edje_message_free(Edje_Message *em)
               emsg = (Edje_Message_Signal *)em->msg;
               if (emsg->sig) eina_stringshare_del(emsg->sig);
               if (emsg->src) eina_stringshare_del(emsg->src);
-              if (emsg->data && (--(emsg->data->ref) == 0))
-                {
-                   if (emsg->data->free_func)
-                     {
-                        emsg->data->free_func(emsg->data->data);
-                     }
-                   free(emsg->data);
-                }
+              _edje_signal_data_free(emsg->data);
               free(emsg);
            }
            break;
@@ -506,7 +499,7 @@ _edje_message_propagate_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
          if (emsg2->data)
            {
               emsg3->data = emsg2->data;
-              emsg3->data->ref++;
+              _edje_signal_data_ref(emsg3->data);
            }
          msg = (unsigned char *)emsg3;
       }

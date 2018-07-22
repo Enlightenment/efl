@@ -9,7 +9,7 @@
 
 #include "eina_cxx_suite.h"
 
-START_TEST(eina_cxx_inarray_pod_push_back)
+EFL_START_TEST(eina_cxx_inarray_pod_push_back)
 {
   efl::eina::eina_init eina_init;
 
@@ -28,9 +28,9 @@ START_TEST(eina_cxx_inarray_pod_push_back)
   ck_assert(std::equal(array.begin(), array.end(), result));
   ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_pod_pop_back)
+EFL_START_TEST(eina_cxx_inarray_pod_pop_back)
 {
   efl::eina::eina_init eina_init;
 
@@ -48,9 +48,9 @@ START_TEST(eina_cxx_inarray_pod_pop_back)
   ck_assert(std::equal(array.begin(), array.end(), result));
   ck_assert(std::equal(array.rbegin(), array.rend(), rresult));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_pod_insert)
+EFL_START_TEST(eina_cxx_inarray_pod_insert)
 {
   efl::eina::eina_init eina_init;
 
@@ -103,9 +103,9 @@ START_TEST(eina_cxx_inarray_pod_insert)
   ck_assert(array4.back() == 1);
   ck_assert(std::equal(array.begin(), array.end(), array4.begin()));
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_pod_constructors)
+EFL_START_TEST(eina_cxx_inarray_pod_constructors)
 {
   efl::eina::eina_init eina_init;
 
@@ -123,9 +123,9 @@ START_TEST(eina_cxx_inarray_pod_constructors)
   efl::eina::inarray<int> array4(array2.begin(), array2.end());
   ck_assert(array2 == array4);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_pod_erase)
+EFL_START_TEST(eina_cxx_inarray_pod_erase)
 {
   efl::eina::eina_init eina_init;
 
@@ -165,7 +165,7 @@ START_TEST(eina_cxx_inarray_pod_erase)
   ck_assert(array1.front() == 10);
   ck_assert(array1.back() == 25);
 }
-END_TEST
+EFL_END_TEST
 
 unsigned int constructors_called = 0u;
 unsigned int destructors_called = 0u;
@@ -202,7 +202,7 @@ bool operator==(non_pod lhs, non_pod rhs)
   return *lhs.x == *rhs.x;
 }
 
-START_TEST(eina_cxx_inarray_nonpod_push_back)
+EFL_START_TEST(eina_cxx_inarray_nonpod_push_back)
 {
   efl::eina::eina_init eina_init;
   {
@@ -224,9 +224,9 @@ START_TEST(eina_cxx_inarray_nonpod_push_back)
   ck_assert(::constructors_called == ::destructors_called);
   ::constructors_called = ::destructors_called = 0;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_nonpod_pop_back)
+EFL_START_TEST(eina_cxx_inarray_nonpod_pop_back)
 {
   {
     efl::eina::eina_init eina_init;
@@ -250,9 +250,9 @@ START_TEST(eina_cxx_inarray_nonpod_pop_back)
   ck_assert(::constructors_called == ::destructors_called);
   ::constructors_called = ::destructors_called = 0;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_nonpod_insert)
+EFL_START_TEST(eina_cxx_inarray_nonpod_insert)
 {
   {
     efl::eina::eina_init eina_init;
@@ -311,9 +311,9 @@ START_TEST(eina_cxx_inarray_nonpod_insert)
   ck_assert(::constructors_called == ::destructors_called);
   ::constructors_called = ::destructors_called = 0;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_nonpod_constructors)
+EFL_START_TEST(eina_cxx_inarray_nonpod_constructors)
 {
   {
     efl::eina::eina_init eina_init;
@@ -337,9 +337,9 @@ START_TEST(eina_cxx_inarray_nonpod_constructors)
   ck_assert(::constructors_called == ::destructors_called);
   ::constructors_called = ::destructors_called = 0;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_nonpod_erase)
+EFL_START_TEST(eina_cxx_inarray_nonpod_erase)
 {
   {
     efl::eina::eina_init eina_init;
@@ -385,9 +385,9 @@ START_TEST(eina_cxx_inarray_nonpod_erase)
   ck_assert(::constructors_called == ::destructors_called);
   ::constructors_called = ::destructors_called = 0;
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_range_inarray)
+EFL_START_TEST(eina_cxx_range_inarray)
 {
   efl::eina::eina_init eina_init;
 
@@ -418,9 +418,9 @@ START_TEST(eina_cxx_range_inarray)
 
   ck_assert(range_array[0] == 0);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_cxx_inarray_from_c)
+EFL_START_TEST(eina_cxx_inarray_from_c)
 {
   efl::eina::eina_init eina_init;
 
@@ -439,7 +439,7 @@ START_TEST(eina_cxx_inarray_from_c)
   ck_assert(eina_inarray_count(c_array) == 3);
   efl::eina::inarray<int> array(c_array);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_inarray(TCase *tc)

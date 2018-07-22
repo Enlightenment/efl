@@ -510,7 +510,7 @@ _sel_cursor_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -1404,35 +1404,35 @@ done:
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Eina_Bool allowed)
+_efl_ui_internal_text_interactive_efl_text_interactive_selection_allowed_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Eina_Bool allowed)
 {
    pd->select_allow = allowed;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_allowed_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd)
+_efl_ui_internal_text_interactive_efl_text_interactive_selection_allowed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd)
 {
    return pd->select_allow;
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_selection_cursors_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
+_efl_ui_internal_text_interactive_efl_text_interactive_selection_cursors_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
 {
    if (start) *start = pd->sel_start;
    if (end) *end = pd->sel_end;
 }
 
 EOLIAN static void
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Eina_Bool editable)
+_efl_ui_internal_text_interactive_efl_text_interactive_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd, Eina_Bool editable)
 {
    sd->editable = editable;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_internal_text_interactive_efl_ui_text_interactive_editable_get(Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
+_efl_ui_internal_text_interactive_efl_text_interactive_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *sd)
 {
    return sd->editable;
 }
 
 #include "efl_ui_internal_text_interactive.eo.c"
-#include "efl_ui_text_interactive.eo.c"
+#include "efl_text_interactive.eo.c"

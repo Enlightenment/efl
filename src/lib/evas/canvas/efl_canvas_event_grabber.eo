@@ -1,0 +1,49 @@
+class Efl.Canvas.Event_Grabber (Efl.Canvas.Group)
+{
+   [[Low-level rectangle object.
+
+     This provides a smart version of the typical "event rectangle",
+     which allows objects to set this as their parent and route events
+     to a group of objects. Events will not propagate to non-member objects
+     below this object.
+
+     Adding members is done just like a normal smart object, using
+     efl_canvas_group_member_add (Eo API) or evas_object_smart_member_add (legacy).
+
+     Child objects are not modified in any way, unlike other types of smart objects.
+
+     No child objects should be stacked above the event
+     grabber parent while the grabber is visible.
+     A critical error will be raised if this is detected.
+
+     @since 1.20
+   ]]
+   data: Efl_Object_Event_Grabber_Data;
+   legacy_prefix: evas_object_event_grabber;
+   methods {
+      @property freeze_when_visible {
+         [[Stops the grabber from updating its internal stacking order while visible]]
+         values {
+            set: bool; [[If $true, stop updating]]
+         }
+         set {}
+         get {}
+      }
+   }
+   implements {
+      class.constructor;
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_member_del;
+      Efl.Canvas.Group.group_member_is;
+      Efl.Canvas.Group.group_members_iterate;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Canvas.Group.group_change;
+      Efl.Canvas.Group.group_need_recalculate { get; set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.Entity.visible { get; set; }
+      Efl.Gfx.Stack.layer { set; }
+   }
+}

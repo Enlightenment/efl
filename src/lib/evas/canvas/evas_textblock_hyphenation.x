@@ -26,14 +26,19 @@ _dicts_hyphen_init(Eo *eo_obj)
      }
 }
 
-static void *
+static HyphenDict *
 _dict_hyphen_load(const char *lang)
 {
-   Eina_Iterator *it;
+   Eina_Iterator *it = NULL;
    Eina_File_Direct_Info *dir;
-   void *dict = NULL;
+   HyphenDict *dict = NULL;
+   const char *env_dir = getenv("EVAS_DICTS_HYPHEN_DIR");
 
-   it = eina_file_direct_ls(EVAS_DICTS_HYPHEN_DIR);
+   if (env_dir && strlen(env_dir) > 0)
+     it = eina_file_direct_ls(env_dir);
+
+   if (!it) it = eina_file_direct_ls(EVAS_DICTS_HYPHEN_DIR);
+
    if (!it)
      {
         ERR("Couldn't list files in hyphens path: %s\n", EVAS_DICTS_HYPHEN_DIR);
@@ -103,7 +108,7 @@ _dicts_hyphen_detach(Eo *eo_obj)
 
 /* Returns the hyphen dictionary that matches the given language
  * string. The string should be in the format xx_XX e.g. en_US */
-static inline void *
+static inline HyphenDict *
 _hyphen_dict_get_from_lang(const char *lang)
 {
    if (!lang || !(*lang))
@@ -127,13 +132,14 @@ static char *
 _layout_wrap_hyphens_get(const Eina_Unicode *text, const char *lang,
       int word_start, int word_len)
 {
-   char *utf8;
-   int utf8_len; /* length of word */
-   char *hyphens;
+   char *hyphens = NULL;
    char **rep = NULL;
    int *pos = NULL;
    int *cut = NULL;
-   void *dict;
+   HyphenDict *dict;
+   char *converted_text = NULL;
+   size_t converted_text_offset = 0;
+   size_t converted_len = 0;
 
    dict = _hyphen_dict_get_from_lang(lang);
    if (!dict)
@@ -142,11 +148,44 @@ _layout_wrap_hyphens_get(const Eina_Unicode *text, const char *lang,
         return NULL;
      }
 
-   utf8 = eina_unicode_unicode_to_utf8_range(
-         text + word_start, word_len, &utf8_len);
-   hyphens = malloc(sizeof(char) * (word_len + 5));
-   hnj_hyphen_hyphenate2(dict, utf8, word_len, hyphens, NULL, &rep, &pos, &cut);
-   free(utf8);
+   /* Convert UTF-32 encoded text to the other encoding
+    * which is described in hyphen dictionary. */
+   if (dict->cset && strcmp(dict->cset, "UTF-32"))
+     {
+        converted_text = eina_str_convert_len("UTF-32", dict->cset,
+                                              (char *)(text + word_start),
+                                              word_len * sizeof(Eina_Unicode),
+                                              &converted_len);
+
+        if (!converted_text) goto hyphens_done;
+
+        /* Skip BOM character (0xFFFE) from converted text */
+        if ((converted_len >= 2) &&
+            (converted_text[0] == 0xff) &&
+            (converted_text[1] == 0xfe))
+          converted_text_offset = 2;
+
+        /* If there is only a BOM character, return NULL */
+        if (converted_len == converted_text_offset)
+          goto hyphens_done;
+     }
+
+   if (converted_text)
+     {
+        hyphens = malloc(sizeof(char) * (converted_len + 5));
+        hnj_hyphen_hyphenate2(dict, converted_text + converted_text_offset,
+                              (int)(converted_len - converted_text_offset), hyphens, NULL, &rep, &pos, &cut);
+     }
+   else
+     {
+        hyphens = malloc(sizeof(char) * (word_len + 5));
+        hnj_hyphen_hyphenate2(dict, (char *)(text + word_start),
+                              word_len, hyphens, NULL, &rep, &pos, &cut);
+     }
+
+hyphens_done:
+   if (converted_text) free(converted_text);
+
    return hyphens;
 }
 

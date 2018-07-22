@@ -29,6 +29,7 @@ struct scanout_handle
 /* external variables */
 int _evas_engine_gl_drm_log_dom = -1;
 int _extn_have_buffer_age = 1;
+int _extn_have_context_priority = 0;
 
 /* local variables */
 static Eina_Bool initted = EINA_FALSE;
@@ -57,6 +58,7 @@ Evas_GL_Preload glsym_evas_gl_preload_shutdown = NULL;
 EVGL_Engine_Call glsym_evgl_engine_shutdown = NULL;
 EVGL_Current_Native_Context_Get_Call glsym_evgl_current_native_context_get = NULL;
 Evas_Gl_Symbols glsym_evas_gl_symbols = NULL;
+Evas_Gl_Extension_String_Check _ckext = NULL;
 
 Evas_GL_Common_Context_New glsym_evas_gl_common_context_new = NULL;
 Evas_GL_Common_Context_Call glsym_evas_gl_common_context_flush = NULL;
@@ -168,6 +170,7 @@ eng_gbm_shutdown(Evas_Engine_Info_GL_Drm *info)
 static void
 symbols(void)
 {
+   Evas_Gl_Extension_String_Check glsym_evas_gl_extension_string_check = NULL;
    static Eina_Bool done = EINA_FALSE;
 
    if (done) return;
@@ -202,15 +205,18 @@ symbols(void)
    LINK2GENERIC(eglGetProcAddress);
    LINK2GENERIC(evas_gl_common_eglCreateImage);
    LINK2GENERIC(evas_gl_common_eglDestroyImage);
+   LINK2GENERIC(evas_gl_extension_string_check);
+
+   _ckext = glsym_evas_gl_extension_string_check;
 
    done = EINA_TRUE;
 }
 
 void
-eng_gl_symbols(EGLDisplay edsp)
+eng_egl_symbols(EGLDisplay edsp)
 {
    static Eina_Bool done = EINA_FALSE;
-   const char *exts = NULL;
+   const char *exts;
 
    if (done) return;
 
@@ -218,7 +224,6 @@ eng_gl_symbols(EGLDisplay edsp)
    if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
 
    exts = eglQueryString(edsp, EGL_EXTENSIONS);
-   glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
 
    FINDSYM(glsym_glEGLImageTargetTexture2DOES,
            "glEGLImageTargetTexture2DOES", glsym_func_void);
@@ -235,6 +240,9 @@ eng_gl_symbols(EGLDisplay edsp)
 
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
+
+   if (evas_gl_extension_string_check(exts, "EGL_IMG_context_priority"))
+     _extn_have_context_priority = 1;
 
    done = EINA_TRUE;
 }
@@ -259,15 +267,15 @@ gl_extn_veto(Render_Engine *re)
              glsym_eglSwapBuffersWithDamage = NULL;
              glsym_eglSetDamageRegionKHR = NULL;
           }
-        if (!strstr(str, "EGL_EXT_buffer_age"))
+        if (!_ckext(str, "EGL_EXT_buffer_age"))
           _extn_have_buffer_age = 0;
 
-        if (!strstr(str, "EGL_KHR_partial_update"))
+        if (!_ckext(str, "EGL_KHR_partial_update"))
           glsym_eglSetDamageRegionKHR = NULL;
 
-        if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
+        if (!_ckext(str, "EGL_EXT_swap_buffers_with_damage"))
           glsym_eglSwapBuffersWithDamage = NULL;
-        if (strstr(str, "EGL_EXT_image_dma_buf_import"))
+        if (_ckext(str, "EGL_EXT_image_dma_buf_import"))
           dmabuf_present = EINA_TRUE;
      }
    else
@@ -1215,18 +1223,13 @@ eng_image_native_set(void *engine, void *image, void *native)
           }
      }
 
-   if ((!ns) && (!img->native.data)) return img;
-
    evas_outbuf_use(ob);
 
-   if (img->native.data)
+   if (!ns)
      {
-        if (img->native.func.free)
-          img->native.func.free(img);
-        glsym_evas_gl_common_image_native_disable(img);
+        glsym_evas_gl_common_image_free(img);
+        return NULL;
      }
-
-   if (!ns) return img;
 
    if (ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
      {

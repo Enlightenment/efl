@@ -42,7 +42,7 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Efl.Ui.Slider.Indicator_Visible_Mode
+enum Efl.Ui.Slider_Indicator_Visible_Mode
 {
    [[Slider's indicator visiblity mode.
 
@@ -87,3 +87,20 @@ enum Efl.Ui.Activate
    left, [[Activate left]]
    back, [[Activate back]]
 }
+
+enum Efl.Ui.Widget_Orientation_Mode
+{
+   [[Widget orientation mode, or how the theme handles screen orientation.
+
+     Note: Support for this feature is highly dependent on the theme in use.
+     At the time of writing, the default theme for EFL does not implement
+     support for orientation modes.
+   ]]
+   default, [[Default or automatic mode: if the widget's theme supports
+      orientation, it will be handled automatically.]]
+   disabled, [[No signal is sent to the widget's theme. Widget's theme will
+      not change according to the window or screen orientation.]]
+}
+
+/* Types for A11Y (internal/beta API) */
+type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]

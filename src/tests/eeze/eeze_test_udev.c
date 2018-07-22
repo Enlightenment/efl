@@ -16,11 +16,9 @@ catch_events(const char *device EINA_UNUSED, Eeze_Udev_Event  event EINA_UNUSED,
 
 #if 0
 // FIXME split udev tests into pieces here
-START_TEST(eeze_test_udev_types)
+EFL_START_TEST(eeze_test_udev_types)
 {
    Eina_List *type;
-
-   eeze_init();
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_NONE, NULL);
    type = eeze_udev_find_unlisted_similar(type);
@@ -54,17 +52,13 @@ START_TEST(eeze_test_udev_types)
    type = eeze_udev_find_by_type(0, NULL);
    type = eeze_udev_find_unlisted_similar(type);
 
-   eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 #endif
 
-START_TEST(eeze_test_udev_watch)
+EFL_START_TEST(eeze_test_udev_watch)
 {
    Eeze_Udev_Watch *watch;
-
-   ecore_init();
-   eeze_init();
 
    /* watch never gets triggered as this is run without user interaction */
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_KEYBOARD, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
@@ -77,19 +71,14 @@ START_TEST(eeze_test_udev_watch)
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_GPIO, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_NONE, (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE), catch_events, NULL);
    eeze_udev_watch_del(watch);
-
-   eeze_shutdown();
-   ecore_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_udev_syspath)
+EFL_START_TEST(eeze_test_udev_syspath)
 {
    Eina_List *type, *l;
    const char *name;
    Eina_Bool r;
-
-   eeze_init();
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_KEYBOARD, NULL);
    type = eeze_udev_find_unlisted_similar(type);
@@ -147,17 +136,13 @@ START_TEST(eeze_test_udev_syspath)
      }
 
    eeze_udev_devpath_get_syspath("/dev/null");
-
-   eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eeze_test_udev_attr)
+EFL_START_TEST(eeze_test_udev_attr)
 {
    Eina_List *type;
    const char *name, *check, *check2;
-
-   eeze_init();
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
    type = eeze_udev_find_unlisted_similar(type);
@@ -203,19 +188,15 @@ START_TEST(eeze_test_udev_attr)
 	 }
        eina_stringshare_del(name);
      }
-
-   eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 /*
-START_TEST(eeze_test_udev_device)
+EFL_START_TEST(eeze_test_udev_device)
 {
    Eina_List *type, *l;
    _udev_device *device, *device2;
    const char *name;
-
-   eeze_init();
 
    type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
    fail_if(type == NULL);
@@ -236,10 +217,8 @@ START_TEST(eeze_test_udev_device)
 
    device2 = _copy_device(device);
    fail_if(device2 != NULL);
-
-   eeze_shutdown();
 }
-END_TEST
+EFL_END_TEST
 */
 
 void eeze_test_udev(TCase *tc)

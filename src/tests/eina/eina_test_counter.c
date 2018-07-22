@@ -65,13 +65,11 @@ _eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const
 }
 #endif
 
-START_TEST(eina_counter_simple)
+EFL_START_TEST(eina_counter_simple)
 {
    Eina_Counter *cnt;
    char *dump;
    int i;
-
-   eina_init();
 
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
@@ -106,15 +104,12 @@ START_TEST(eina_counter_simple)
 
    eina_counter_free(cnt);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_counter_break)
+EFL_START_TEST(eina_counter_break)
 {
    Eina_Counter *cnt;
-
-   eina_init();
 
    cnt = eina_counter_new("eina_test");
    fail_if(!cnt);
@@ -182,9 +177,8 @@ START_TEST(eina_counter_break)
    }
 #endif
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eina_test_counter(TCase *tc)
 {

@@ -1,4 +1,4 @@
-class Efl.Io.Buffered_Stream (Efl.Loop.Consumer, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+class Efl.Io.Buffered_Stream (Efl.Loop_Consumer, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
     [[A wrapper object offering easy to use buffered streams over existing I/O class.
 
       The buffered stream encapsulates an actual @Efl.Io.Reader or
@@ -236,22 +236,22 @@ class Efl.Io.Buffered_Stream (Efl.Loop.Consumer, Efl.Io.Reader, Efl.Io.Writer, E
     }
 
     events {
-        write,finished; [[@.eos_mark was called and all available data was sent to destination]]
-        read,finished; [[Same as @Efl.Io.Reader "eos", for consistency.]]
-        finished; [[Both read and write are finished.]]
+        write,finished: void; [[@.eos_mark was called and all available data was sent to destination]]
+        read,finished: void; [[Same as @Efl.Io.Reader "eos", for consistency.]]
+        finished: void; [[Both read and write are finished.]]
         error: Eina.Error; [[An error has occurred and I/O has stopped]]
-        progress; [[Property @.progress changed]]
-        slice,changed; [[The read-slice returned by @.slice may have changed.]]
+        progress: void; [[Property @.progress changed]]
+        slice,changed: void; [[The read-slice returned by @.slice may have changed.]]
         line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice.]]
     }
 
     implements {
         Efl.Object.finalize;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Io.Closer.close;
         Efl.Io.Closer.closed { get; }
         Efl.Io.Closer.close_on_exec { get; set; }
-        Efl.Io.Closer.close_on_destructor { get; set; }
+        Efl.Io.Closer.close_on_invalidate { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
         Efl.Io.Reader.eos { get; set; }

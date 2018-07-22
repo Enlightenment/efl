@@ -2656,6 +2656,14 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
           return;
 
         e->group = xkbev->state.group;
+        e->base_group = xkbev->state.base_group;
+        e->latched_group = xkbev->state.latched_group;
+        e->locked_group = xkbev->state.locked_group;
+
+        e->mods = xkbev->state.mods;
+        e->base_mods = xkbev->state.base_mods;
+        e->latched_mods = xkbev->state.latched_mods;
+        e->locked_mods = xkbev->state.locked_mods;
         ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, free_hash, NULL);
         eina_hash_add(emitted_events, &xkbev->state.serial, (void*) 1);
      }
@@ -2670,6 +2678,11 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
 
              xkbmapping = (XkbMapNotifyEvent *)xkbev;
              XkbRefreshKeyboardMapping(xkbmapping);
+          }
+        else
+          {
+             XkbNewKeyboardNotifyEvent *xkbnkn = (void*)xkbev;
+             if (!(xkbnkn->changed & XkbNKN_KeycodesMask)) return;
           }
         ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, NULL, free_hash, NULL);
         eina_hash_add(emitted_events, &xkbev->new_kbd.serial, (void*) 1);

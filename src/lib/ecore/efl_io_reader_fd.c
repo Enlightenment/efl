@@ -24,7 +24,7 @@ _efl_io_reader_fd_reader_fd_set(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd, in
 }
 
 EOLIAN static int
-_efl_io_reader_fd_reader_fd_get(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
+_efl_io_reader_fd_reader_fd_get(const Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
 {
    return pd->fd;
 }
@@ -68,7 +68,7 @@ _efl_io_reader_fd_efl_io_reader_read(Eo *o, Efl_Io_Reader_Fd_Data *pd EINA_UNUSE
 }
 
 EOLIAN static Eina_Bool
-_efl_io_reader_fd_efl_io_reader_can_read_get(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
+_efl_io_reader_fd_efl_io_reader_can_read_get(const Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
 {
    return pd->can_read;
 }
@@ -83,7 +83,7 @@ _efl_io_reader_fd_efl_io_reader_can_read_set(Eo *o, Efl_Io_Reader_Fd_Data *pd, E
 }
 
 EOLIAN static Eina_Bool
-_efl_io_reader_fd_efl_io_reader_eos_get(Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
+_efl_io_reader_fd_efl_io_reader_eos_get(const Eo *o EINA_UNUSED, Efl_Io_Reader_Fd_Data *pd)
 {
    return pd->eos;
 }

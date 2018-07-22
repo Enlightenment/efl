@@ -27,25 +27,8 @@ static int cb_data = 5;
 * @defgroup eldbus_object
 *
 * @precondition
-* @step 1 Initialize ecore with ecore_init()
-* @step 2 Initialize eldbus with eldbus_init()
+* @step 1 Initialize eldbus with eldbus_init()
 */
-
-static void
-_setup(void)
-{
-   ecore_init();
-   int ret = eldbus_init();
-   ck_assert_int_ge(ret, 1);
-}
-
-static void
-_teardown(void)
-{
-   ecore_shutdown();
-   int ret = eldbus_shutdown();
-   ck_assert_int_eq(ret, 0);
-}
 
 static Eina_Bool
 _ecore_loop_close(void *data EINA_UNUSED)
@@ -201,11 +184,11 @@ _machine_id_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending E
  * @}
  */
 
-START_TEST(utc_eldbus_object_send_info_get_p)
+EFL_START_TEST(utc_eldbus_object_send_info_get_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -231,18 +214,16 @@ START_TEST(utc_eldbus_object_send_info_get_p)
    Eldbus_Pending *pending = eldbus_object_send(obj, msg, _object_message_cb, &cb_data, -1);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
 
    ck_assert_msg(is_success, "Method %s is not call", method_name);
 
-   eldbus_message_unref(msg);
-   eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_object
@@ -275,11 +256,11 @@ END_TEST
  * @}
  */
 
-START_TEST(utc_eldbus_introspect_p)
+EFL_START_TEST(utc_eldbus_introspect_p)
 {
    is_success = EINA_FALSE;
 
-   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   Eldbus_Connection *conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    ck_assert_ptr_ne(NULL, conn);
 
    Eldbus_Object *obj = eldbus_object_get(conn, bus, path);
@@ -288,7 +269,7 @@ START_TEST(utc_eldbus_introspect_p)
    Eldbus_Pending *pending = eldbus_object_introspect(obj, _object_message_cb, &cb_data);
    ck_assert_ptr_ne(NULL, pending);
 
-   timeout = ecore_timer_add(1.0, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.1, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -298,7 +279,7 @@ START_TEST(utc_eldbus_introspect_p)
    eldbus_object_unref(obj);
    eldbus_connection_unref(conn);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  * @addtogroup eldbus_object
@@ -349,10 +330,10 @@ END_TEST
  * @}
  * @}
  */
-START_TEST(utc_eldbus_object_peer_p)
+EFL_START_TEST(utc_eldbus_object_peer_p)
 {
    const char *dbus_path = "/org/freedesktop/Test";
-   const char *bus_session = "org.freedesktop.Test";
+   const char *bus_session = "org.freedesktop.Test.utc_eldbus_object_peer_p";
 
    is_success = EINA_FALSE;
    is_register_service = EINA_FALSE;
@@ -380,7 +361,7 @@ START_TEST(utc_eldbus_object_peer_p)
    Eldbus_Pending *pending2 = eldbus_object_peer_ping(obj, _peer_ping_cb, &cb_data);
    ck_assert_ptr_ne(NULL, pending2);
 
-   timeout = ecore_timer_add(2.5, _ecore_loop_close, NULL);
+   timeout = ecore_timer_add(0.15, _ecore_loop_close, NULL);
    ck_assert_ptr_ne(NULL, timeout);
 
    ecore_main_loop_begin();
@@ -394,7 +375,7 @@ START_TEST(utc_eldbus_object_peer_p)
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
 }
-END_TEST
+EFL_END_TEST
 
 /**
  *@}
@@ -402,7 +383,6 @@ END_TEST
 void
 eldbus_test_eldbus_object(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _teardown);
    tcase_add_test(tc, utc_eldbus_object_send_info_get_p);
    tcase_add_test(tc, utc_eldbus_introspect_p);
    tcase_add_test(tc, utc_eldbus_object_peer_p);

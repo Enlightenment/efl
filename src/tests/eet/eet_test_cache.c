@@ -44,7 +44,7 @@ _open_close_worker(void *path, Eina_Thread tid EINA_UNUSED)
    return NULL;
 }
 
-START_TEST(eet_test_cache_concurrency)
+EFL_START_TEST(eet_test_cache_concurrency)
 {
    char *file;
    const char *buffer = "test data";
@@ -57,7 +57,6 @@ START_TEST(eet_test_cache_concurrency)
 
    file = strdup("/tmp/eet_suite_testXXXXXX");
 
-   eet_init();
    eina_threads_init();
 
    eina_lock_new(&open_worker_mutex);
@@ -95,9 +94,8 @@ START_TEST(eet_test_cache_concurrency)
    fail_if(unlink(file) != 0);
 
    eina_threads_shutdown();
-   eet_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void eet_test_cache(TCase *tc)
 {

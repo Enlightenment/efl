@@ -1,4 +1,4 @@
-class Efl.Net.Server.Ip (Efl.Net.Server.Fd) {
+class Efl.Net.Server_Ip (Efl.Net.Server_Fd) {
     [[An IP server.
 
       @since 1.20

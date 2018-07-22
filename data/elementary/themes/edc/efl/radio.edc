@@ -1,3 +1,292 @@
 group { "efl/radio";
-   inherit: "elm/radio/base/default";
+   images.image: "inset_shadow_circle_tiny.png" COMP;
+   images.image: "inset_circle_tiny.png" COMP;
+   images.image: "sym_radio_alum.png" COMP;
+#define ICON     1
+#define LABEL    2
+#define MASK     3
+#define DISABLE  4
+   script {
+      public btmode;
+      public eval_mode(m) {
+         new m1 = m & MASK;
+         new d = m & DISABLE;
+         if (m1 == (ICON | LABEL)) {
+            if (!d) {
+               set_state(PART:"efl.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
+               set_state(PART:"efl.text", "visible", 0.0);
+               set_state(PART:"inset", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+            } else {
+               set_state(PART:"efl.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "visible", 0.0);
+               set_state(PART:"efl.text", "disabled_visible", 0.0);
+               set_state(PART:"inset", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+            }
+         } else if (m1 == (ICON)) {
+            if (!d) {
+               set_state(PART:"efl.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
+               set_state(PART:"inset", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+            } else {
+               set_state(PART:"efl.content", "visible", 0.0);
+               set_state(PART:"sizer_content", "icononly", 0.0);
+               set_state(PART:"efl.text", "disabled", 0.0);
+               set_state(PART:"inset", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+            }
+         } else if (m1 == (LABEL)) {
+            if (!d) {
+               set_state(PART:"efl.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
+               set_state(PART:"efl.text", "visible", 0.0);
+               set_state(PART:"inset", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+            } else {
+               set_state(PART:"efl.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
+               set_state(PART:"efl.text", "disabled_visible", 0.0);
+               set_state(PART:"inset", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+            }
+         } else {
+            if (!d) {
+               set_state(PART:"efl.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
+               set_state(PART:"inset", "default", 0.0);
+               set_state(PART:"clip", "default", 0.0);
+               set_state(PART:"event", "default", 0.0);
+            } else {
+               set_state(PART:"efl.content", "default", 0.0);
+               set_state(PART:"sizer_content", "default", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
+               set_state(PART:"inset", "disabled", 0.0);
+               set_state(PART:"clip", "disabled", 0.0);
+               set_state(PART:"event", "disabled", 0.0);
+            }
+         }
+      }
+   }
+   parts {
+      part { name: "inset"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 2 -3;
+            image.normal: "inset_shadow_circle_tiny.png";
+            align: 0.0 0.5;
+            min: 13 13;
+            max: 13 13;
+            fixed: 1 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "inset_circle_tiny.png";
+         }
+      }
+      part { name: "indicator"; mouse_events: 0;
+         scale: 1;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "inset";
+            rel2.to: "inset";
+            image.normal: "sym_radio_alum.png";
+            min: 11 11;
+            max: 11 11;
+            visible: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "efl.content"; type: SWALLOW;
+         required;
+         scale: 1;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            visible: 0;
+            align: 0.0 0.5;
+            max: 0 0;
+            rel1.to_x: "inset";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 1 1;
+            rel2.to_x: "inset";
+            rel2.offset: 1 -2;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            aspect: 1.0 1.0;
+            min: 16 16;
+         }
+      }
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            text { font: FN; size: 10;
+               min: 0 0;
+               text_class: "radio_text";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "efl.content";
+            rel2.to: "efl.content";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: "M";
+            }
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "efl.content";
+            rel2.to: "efl.content";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: "M";
+            }
+         }
+      }
+      part { name: "efl.text"; type: TEXT; mouse_events: 0;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         required;
+         description { state: "default" 0.0;
+            rel1.offset: 2 2;
+            rel1.to_x: "efl.content";
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+            color: FN_COL_DEFAULT;
+            color_class: "radio_text";
+            text { font: FN; size: 10;
+              min: 0 0;
+              align: 0.0 0.5;
+              text_class: "radio";
+            }
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color_class: "radio_text_disabled";
+            color3: 255 255 255 255;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.min: 1 1;
+            text.ellipsis: -1;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color_class: "radio_text_disabled";
+            color3: 255 255 255 255;
+            visible: 1;
+            text.min: 1 1;
+            text.ellipsis: -1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "mouse,clicked,1"; source: "event";
+         action: SIGNAL_EMIT "efl,action,radio,toggle" "efl";
+      }
+      program {
+         signal: "efl,state,radio,on"; source: "efl";
+         action:  STATE_SET "selected" 0.0;
+         target: "indicator";
+      }
+      program {
+         signal: "efl,state,radio,off"; source: "efl";
+         action:  STATE_SET "default" 0.0;
+         target: "indicator";
+      }
+      program {
+         signal: "efl,state,text,set"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,text,unset"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~LABEL; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,content,set"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,content,unset"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~ICON; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,disabled"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m |= DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+      program {
+         signal: "efl,state,enabled"; source: "efl";
+         script {
+            new m = get_int(btmode);
+            m &= ~DISABLE; set_int(btmode, m);
+            eval_mode(m);
+         }
+      }
+   }
+#undef ICON
+#undef LABEL
+#undef MASK
+#undef DISABLE
 }

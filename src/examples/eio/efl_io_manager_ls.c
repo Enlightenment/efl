@@ -39,12 +39,13 @@ done_cb(void *data EINA_UNUSED,
 
 // Progress used to be the "Eio_Main_Cb" family of callbacks in the legacy API.
 static void
-progress_cb(void *data EINA_UNUSED, Eina_Accessor *access)
+progress_cb(void *data EINA_UNUSED, Eina_Array *array)
 {
+   Eina_Array_Iterator it;
    const char *filename;
    unsigned int count;
 
-   EINA_ACCESSOR_FOREACH(access, count, filename)
+   EINA_ARRAY_ITER_NEXT(array, count, filename, it)
      printf("%s listing filename: %s\n", __FUNCTION__, filename);
 }
 

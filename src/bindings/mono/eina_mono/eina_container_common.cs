@@ -1,6 +1,7 @@
 #pragma warning disable 1591
 
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
@@ -522,19 +523,41 @@ public static class TraitFunctions
 
     private static IDictionary<System.Type, object> register = new Dictionary<System.Type, object>();
 
+    private static System.Type AsEflInstantiableType(System.Type type)
+    {
+        if (!IsEflObject(type))
+            return null;
+
+        if (type.IsInterface)
+        {
+            string[] names = type.FullName.Split('.');
+            names[names.Count() - 1] = names.Last().Substring(1); // Remove the leading 'I' (What about user-defined interfaces?)
+
+            string fullName = string.Join(".", names);
+            return type.Assembly.GetType(fullName); // That was our best guess...
+        }
+
+
+        System.Type current = type;
+        while (current != null)
+        {
+            if (current.Name.EndsWith("Inherit"))
+                throw new Exception("Inherit-based classes are not currently supported.");
+            current = current.BaseType;
+        }
+
+        return type; // Not inherited neither interface, so it should be a concrete.
+    }
+
     public static object RegisterTypeTraits<T>()
     {
         object traits;
         var type = typeof(T);
         if (IsEflObject(type))
         {
-            System.Type concrete = type;
-            if (!type.Name.EndsWith("Concrete"))
-            {
-                var c = type.Assembly.GetType(type.FullName + "Concrete");
-                if (c != null && type.IsAssignableFrom(c))
-                    concrete = c;
-            }
+            System.Type concrete = AsEflInstantiableType(type);
+            if (concrete == null || !type.IsAssignableFrom(concrete))
+                throw new Exception("Failed to get a suitable concrete class for this type.");
             traits = new EflObjectElementTraits<T>(concrete);
         }
         else if (IsString(type))

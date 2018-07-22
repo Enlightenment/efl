@@ -11,6 +11,8 @@ struct class_context
         inherit,
         inherit_native,
         structs,
+        function_ptr,
+        alias,
     };
     wrapper_kind current_wrapper_kind;
 };

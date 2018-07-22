@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <dirent.h>
 #include <Ethumb.h>
 #include <Ethumb_Client.h>
 #include <Eina.h>

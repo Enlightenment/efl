@@ -9,13 +9,13 @@
       <entry name="both" value="4"/>
     </enum>
     <request name="set_aspect">
-      <arg name="surface" type="object" interface="zxdg_surface_v6"/>
+      <arg name="surface" type="object" interface="xdg_surface"/>
       <arg name="width" type="uint"/>
       <arg name="height" type="uint"/>
       <arg name="aspect" type="uint" enum="aspect"/>
     </request>
     <request name="set_weight">
-      <arg name="surface" type="object" interface="zxdg_surface_v6"/>
+      <arg name="surface" type="object" interface="xdg_surface"/>
       <arg name="width" type="int"/>
       <arg name="height" type="int"/>
     </request>

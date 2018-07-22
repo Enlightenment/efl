@@ -1,4 +1,4 @@
-class Efl.Loop.Timer (Efl.Loop.Consumer)
+class Efl.Loop_Timer (Efl.Loop_Consumer)
 {
    [[Timers are objects that will call a given callback at some point
      in the future and repeat that tick at a given interval.
@@ -42,7 +42,7 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
       loop_reset {
          [[This effectively resets a timer but based on the time when this iteration of the main loop started.
            @since 1.18
-	 ]]
+    ]]
       }
       delay {
          [[Adds a delay to the next occurrence of a timer.
@@ -54,7 +54,7 @@ class Efl.Loop.Timer (Efl.Loop.Consumer)
       }
    }
    events {
-      tick; [[Event triggered when the specified time as passed.]]
+      tick: void; [[Event triggered when the specified time as passed.]]
    }
    implements {
       Efl.Object.constructor;

@@ -34,9 +34,7 @@ eng_output_setup(void *engine, void *in, unsigned int w, unsigned int h)
 
    ob = evas_software_ddraw_outbuf_setup(w, h,
                                          info->info.rotation,
-                                         OUTBUF_DEPTH_INHERIT,
                                          info->info.window,
-                                         info->info.depth,
                                          info->info.fullscreen);
    if (!ob) goto on_error;
 

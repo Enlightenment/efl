@@ -1,5 +1,9 @@
-class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
-                             Efl.Ui.Scrollable.Interactive,
+/* FIXME: Define these structs in EO, or they are useless to bindings */
+struct @extern Elm.Photocam.Error;
+struct @extern Elm.Photocam.Progress;
+
+class Efl.Ui.Image_Zoomable (Efl.Ui.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
+                             Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar)
 {
    [[Elementary Image Zoomable class]]
@@ -47,40 +51,40 @@ class Efl.Ui.Image_Zoomable (Elm.Widget, Efl.Ui.Image, Efl.Ui.Zoom,
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Efl.Gfx.position { set; }
-      Efl.Gfx.size { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
-      Efl.Image.image_size { get; }
+      Efl.Gfx.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }
       Efl.Player.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
-      Efl.Ui.Zoom.zoom { set; get; }
+      Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
       Efl.Canvas.Group.group_member_add;
-      Elm.Widget.theme_apply;
-      Elm.Widget.on_focus_update;
-      Elm.Widget.widget_event;
-      Efl.Ui.Scrollable.Interactive.scroll;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
-      Efl.Flipable.flip { get; set; }
+      Efl.Orientation.flip { get; set; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
-	  Efl.Layout.Signal.signal_callback_add;
-	  Efl.Layout.Signal.signal_callback_del;
+     Efl.Layout.Signal.signal_callback_add;
+     Efl.Layout.Signal.signal_callback_del;
       //Efl.Canvas.Layout_Group.group_data { get; }
    }
    events {
-      press; [[Called when photocam got pressed]]
-      load; [[Called when photocam loading started]]
-      loaded; [[Called when photocam loading finished]]
-      load,detail; [[Called when photocal detail loading started]]
-      loaded,detail; [[Called when photocam detail loading finished]]
-      download,start; [[Called when photocam download started]]
-      download,progress; [[Called when photocam download progress updated]]
-      download,done; [[Called when photocam download finished]]
-      download,error; [[Called when photocam download failed]]
+      press: void; [[Called when photocam got pressed]]
+      load: void; [[Called when photocam loading started]]
+      loaded: void; [[Called when photocam loading finished]]
+      load,detail: void; [[Called when photocal detail loading started]]
+      loaded,detail: void; [[Called when photocam detail loading finished]]
+      download,start: void; [[Called when photocam download started]]
+      download,progress: Elm.Photocam.Progress; [[Called when photocam download progress updated]]
+      download,done: void; [[Called when photocam download finished]]
+      download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
    }
 }

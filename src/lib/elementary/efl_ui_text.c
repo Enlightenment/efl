@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
@@ -63,7 +63,8 @@ struct _Efl_Ui_Text_Data
    Eina_List                            *sel;
    Eina_List                            *items; /** context menu item list */
    Item_Obj                             *item_objs;
-   Eina_List                            *item_providers;
+   Efl_Canvas_Text_Factory              *item_factory;
+   Efl_Canvas_Text_Factory              *item_fallback_factory;
    Eina_List                            *markup_filters;
    Ecore_Job                            *hov_deljob;
    Mod_Api                              *api; // module api if supplied
@@ -131,6 +132,7 @@ struct _Efl_Ui_Text_Data
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;
    Eina_Bool                             anchors_updated : 1;
+   Eina_Bool                             fallback_item_provider_disabled : 1;
 };
 
 struct _Anchor
@@ -157,7 +159,7 @@ struct _Item_Obj
   EFL_UI_TEXT_DATA_GET(o, ptr);                        \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
-       CRI("No widget data for object %p (%s)",      \
+       ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return;                                       \
     }
@@ -166,7 +168,7 @@ struct _Item_Obj
   EFL_UI_TEXT_DATA_GET(o, ptr);                         \
   if (EINA_UNLIKELY(!ptr))                            \
     {                                                 \
-       CRI("No widget data for object %p (%s)",       \
+       ERR("No widget data for object %p (%s)",       \
            o, evas_object_type_get(o));               \
        return val;                                    \
     }
@@ -242,8 +244,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 /* static const Elm_Layout_Part_Alias_Description _content_aliases[] = */
 /* { */
-/*    {"icon", "elm.swallow.icon"}, */
-/*    {"end", "elm.swallow.end"}, */
+/*    {"icon", "efl.icon"}, */
+/*    {"end", "efl.end"}, */
 /*    {NULL, NULL} */
 /* }; */
 
@@ -276,7 +278,7 @@ static void _efl_ui_text_move_cb(void *data, Evas *e, Evas_Object *obj, void *ev
 static void _efl_ui_text_select_none(Eo *obj, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_end(Eo *obj, Efl_Ui_Text_Data *sd);
 static void _efl_ui_text_anchor_hover_parent_set(Eo *obj, Efl_Ui_Text_Data *sd, Evas_Object *parent);
-static const char* _efl_ui_text_selection_get(Eo *obj, Efl_Ui_Text_Data *sd);
+static const char* _efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd);
 static void _edje_signal_emit(Efl_Ui_Text_Data *obj, const char *sig, const char *src);
 static void _decoration_defer_all(Eo *obj);
 static inline Eo * _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd, const char *source, Eina_Bool above);
@@ -442,9 +444,9 @@ _efl_ui_text_guide_update(Evas_Object *obj,
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if ((has_text) && (!sd->has_text))
-     edje_object_signal_emit(sd->entry_edje, "elm,guide,disabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,guide,disabled", "efl");
    else if ((!has_text) && (sd->has_text))
-     edje_object_signal_emit(sd->entry_edje, "elm,guide,enabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,guide,enabled", "efl");
 
    sd->has_text = has_text;
 }
@@ -459,11 +461,11 @@ _validate(Evas_Object *obj)
 
    if (sd->validators == 0) return;
 
-   vc.text = edje_object_part_text_get(sd->entry_edje, "elm.text");
+   vc.text = edje_object_part_text_get(sd->entry_edje, "efl.text");
    res = efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_VALIDATE, (void *)&vc);
    buf = eina_strbuf_new();
    eina_strbuf_append_printf(buf, "validation,%s,%s", vc.signal, res == EINA_FALSE ? "fail" : "pass");
-   edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "elm");
+   edje_object_signal_emit(sd->scr_edje, eina_strbuf_string_get(buf), "efl");
    eina_tmpstr_del(vc.signal);
    eina_strbuf_free(buf);
 }
@@ -513,12 +515,12 @@ _hide_selection_handler(Evas_Object *obj)
 
    if (sd->start_handler_shown)
      {
-        edje_object_signal_emit(sd->start_handler, "elm,handler,hide", "elm");
+        edje_object_signal_emit(sd->start_handler, "efl,handler,hide", "efl");
         sd->start_handler_shown = EINA_FALSE;
      }
    if (sd->end_handler_shown)
      {
-        edje_object_signal_emit(sd->end_handler, "elm,handler,hide", "elm");
+        edje_object_signal_emit(sd->end_handler, "efl,handler,hide", "efl");
         sd->end_handler_shown = EINA_FALSE;
      }
 }
@@ -579,7 +581,7 @@ _update_selection_handler(Eo *obj)
         Eina_Bool hidden = EINA_FALSE;
         Efl_Text_Cursor_Cursor *sel_start, *sel_end;
 
-        efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
+        efl_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
         if (!sd->start_handler)
           _create_selection_handlers(obj, sd);
@@ -604,13 +606,13 @@ _update_selection_handler(Eo *obj)
         if (!sd->start_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,show", "elm");
+                                     "efl,handler,show", "efl");
              sd->start_handler_shown = EINA_TRUE;
           }
         else if (sd->start_handler_shown && hidden)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->start_handler_shown = EINA_FALSE;
           }
 
@@ -630,13 +632,13 @@ _update_selection_handler(Eo *obj)
         if (!sd->end_handler_shown && !hidden)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,show", "elm");
+                                     "efl,handler,show", "efl");
              sd->end_handler_shown = EINA_TRUE;
           }
         else if (sd->end_handler_shown && hidden)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->end_handler_shown = EINA_FALSE;
           }
         eina_rectangle_free(rect);
@@ -646,13 +648,13 @@ _update_selection_handler(Eo *obj)
         if (sd->start_handler_shown)
           {
              edje_object_signal_emit(sd->start_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->start_handler_shown = EINA_FALSE;
           }
         if (sd->end_handler_shown)
           {
              edje_object_signal_emit(sd->end_handler,
-                                     "elm,handler,hide", "elm");
+                                     "efl,handler,hide", "efl");
              sd->end_handler_shown = EINA_FALSE;
           }
      }
@@ -665,7 +667,7 @@ _edje_entry_user_insert(Evas_Object *obj, const char *data)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    sd->changed = EINA_TRUE;
-   edje_object_part_text_user_insert(sd->entry_edje, "elm.text", data);
+   edje_object_part_text_user_insert(sd->entry_edje, "efl.text", data);
    elm_layout_sizing_eval(obj);
 }
 
@@ -704,7 +706,7 @@ _selection_data_cb(void *data EINA_UNUSED,
    else if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
      {
         Efl_Text_Cursor_Cursor *cur, *start, *end;
-        efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+        efl_text_interactive_selection_cursors_get(obj, &start, &end);
         if (!efl_text_cursor_equal(obj, start, end))
           {
              efl_canvas_text_range_delete(obj, start, end);
@@ -754,10 +756,10 @@ _dnd_pos_cb(void *data EINA_UNUSED,
    y = y + oy - ey;
 
    edje_object_part_text_cursor_coord_set
-      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, x, y);
+      (sd->entry_edje, "efl.text", EDJE_CURSOR_USER, x, y);
    pos = edje_object_part_text_cursor_pos_get
-      (sd->entry_edje, "elm.text", EDJE_CURSOR_USER);
-   edje_object_part_text_cursor_pos_set(sd->entry_edje, "elm.text",
+      (sd->entry_edje, "efl.text", EDJE_CURSOR_USER);
+   edje_object_part_text_cursor_pos_set(sd->entry_edje, "efl.text",
                                         EDJE_CURSOR_MAIN, pos);
 }
 
@@ -771,7 +773,7 @@ _dnd_drop_cb(void *data EINA_UNUSED,
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    rv = edje_object_part_text_cursor_coord_set
-       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
+       (sd->entry_edje, "efl.text", EDJE_CURSOR_MAIN, drop->x, drop->y);
 
    if (!rv) WRN("Warning: Failed to position cursor: paste anyway");
 
@@ -792,7 +794,7 @@ _get_drop_format(Evas_Object *obj)
 
 /* we can't reuse layout's here, because it's on entry_edje only */
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
+_efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
 {
    const char *emission ;
 
@@ -802,11 +804,11 @@ _efl_ui_text_elm_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Eina_B
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   emission = disabled ? "elm,state,disabled" : "elm,state,enabled";
-   edje_object_signal_emit(sd->entry_edje, emission, "elm");
+   emission = disabled ? "efl,state,disabled" : "efl,state,enabled";
+   edje_object_signal_emit(sd->entry_edje, emission, "efl");
    if (sd->scroll)
      {
-        edje_object_signal_emit(sd->scr_edje, emission, "elm");
+        edje_object_signal_emit(sd->scr_edje, emission, "efl");
         elm_interface_scrollable_freeze_set(obj, disabled);
      }
    sd->disabled = disabled;
@@ -835,16 +837,16 @@ _efl_ui_text_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 
    if (!from_edje || !to_edje) return;
 
-   if (edje_object_part_exists(from_edje, "elm.swallow.background") &&
-       edje_object_part_exists(to_edje, "elm.swallow.background") &&
-       !edje_object_part_swallow_get(to_edje, "elm.swallow.background"))
+   if (edje_object_part_exists(from_edje, "efl.background") &&
+       edje_object_part_exists(to_edje, "efl.background") &&
+       !edje_object_part_swallow_get(to_edje, "efl.background"))
      {
-        bg_obj = edje_object_part_swallow_get(from_edje, "elm.swallow.background");
+        bg_obj = edje_object_part_swallow_get(from_edje, "efl.background");
 
         if (bg_obj)
           {
              edje_object_part_unswallow(from_edje, bg_obj);
-             edje_object_part_swallow(to_edje, "elm.swallow.background", bg_obj);
+             edje_object_part_swallow(to_edje, "efl.background", bg_obj);
           }
      }
 }
@@ -852,7 +854,7 @@ _efl_ui_text_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
 EOLIAN static Efl_Ui_Theme_Apply
-_efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    const char *str;
    Efl_Ui_Theme_Apply theme_apply;
@@ -861,7 +863,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
-   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, ELM_WIDGET_CLASS));
+   theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
    if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
 
    efl_event_freeze(obj);
@@ -871,7 +873,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    edje_object_scale_set
      (wd->resize_obj,
-     efl_gfx_scale_get(obj) * elm_config_scale_get());
+     efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -879,29 +881,29 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
                                    elm_widget_theme_element_get(obj));
 
    if (elm_widget_disabled_get(obj))
-     edje_object_signal_emit(sd->entry_edje, "elm,state,disabled", "elm");
+     edje_object_signal_emit(sd->entry_edje, "efl,state,disabled", "efl");
 
    edje_object_part_text_input_panel_layout_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)sd->input_panel_layout);
+     (sd->entry_edje, "efl.text", (Edje_Input_Panel_Layout)sd->input_panel_layout);
    edje_object_part_text_input_panel_layout_variation_set
-     (sd->entry_edje, "elm.text", sd->input_panel_layout_variation);
+     (sd->entry_edje, "efl.text", sd->input_panel_layout_variation);
    edje_object_part_text_autocapital_type_set
-     (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)sd->autocapital_type);
+     (sd->entry_edje, "efl.text", (Edje_Text_Autocapital_Type)sd->autocapital_type);
    edje_object_part_text_prediction_allow_set
-     (sd->entry_edje, "elm.text", sd->prediction_allow);
+     (sd->entry_edje, "efl.text", sd->prediction_allow);
    edje_object_part_text_input_hint_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Hints)sd->input_hints);
+     (sd->entry_edje, "efl.text", (Edje_Input_Hints)sd->input_hints);
    edje_object_part_text_input_panel_enabled_set
-     (sd->entry_edje, "elm.text", sd->input_panel_enable);
+     (sd->entry_edje, "efl.text", sd->input_panel_enable);
    edje_object_part_text_input_panel_imdata_set
-     (sd->entry_edje, "elm.text", sd->input_panel_imdata,
+     (sd->entry_edje, "efl.text", sd->input_panel_imdata,
      sd->input_panel_imdata_len);
    edje_object_part_text_input_panel_return_key_type_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)sd->input_panel_return_key_type);
+     (sd->entry_edje, "efl.text", (Edje_Input_Panel_Return_Key_Type)sd->input_panel_return_key_type);
    edje_object_part_text_input_panel_return_key_disabled_set
-     (sd->entry_edje, "elm.text", sd->input_panel_return_key_disabled);
+     (sd->entry_edje, "efl.text", sd->input_panel_return_key_disabled);
    edje_object_part_text_input_panel_show_on_demand_set
-     (sd->entry_edje, "elm.text", sd->input_panel_show_on_demand);
+     (sd->entry_edje, "efl.text", sd->input_panel_show_on_demand);
 
    // elm_entry_cursor_pos_set -> cursor,changed -> widget_show_region_set
    // -> smart_objects_calculate will call all smart calculate functions,
@@ -910,9 +912,9 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (efl_ui_focus_object_focus_get(obj))
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,focus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,focus", "efl");
      }
 
    edje_object_message_signal_process(sd->entry_edje);
@@ -922,7 +924,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 
    if (sd->scroll)
      {
-        elm_interface_scrollable_mirrored_set(obj, efl_ui_mirrored_get(obj));
+        efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
           elm_widget_element_update(obj, sd->scr_edje, PART_NAME_SCROLLER);
@@ -955,7 +957,7 @@ _efl_ui_text_elm_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    _efl_ui_text_guide_update(obj, !sd->has_text);
    efl_event_thaw(obj);
 
-   efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_LAYOUT_OBJECT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 
@@ -989,7 +991,7 @@ _cursor_geometry_recalc(Evas_Object *obj)
    edje_object_size_min_restricted_calc(sd->cursor, &cw, NULL, cw, 0);
    evas_object_geometry_get(sd->entry_edje, &x, &y, &w, &h);
    evas_object_geometry_get(
-         edje_object_part_swallow_get(sd->entry_edje, "elm.text"),
+         edje_object_part_swallow_get(sd->entry_edje, "efl.text"),
          &x2, &y2, &w2, &h2);
    cx = cx + x - x2;
    cy = cy + y - y2;
@@ -1006,7 +1008,7 @@ _layout_text_sizing_eval(Eo *obj, Evas_Coord tw, Evas_Coord th)
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    if (sd->scroll)
      {
         Evas_Coord vw = 0, vh = 0;
@@ -1016,7 +1018,7 @@ _layout_text_sizing_eval(Eo *obj, Evas_Coord tw, Evas_Coord th)
         evas_object_size_hint_min_set(sw, -1, -1);
 
         if (vw > minw) minw = vw;
-        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(minw,  minh));
+        efl_gfx_entity_size_set(sd->entry_edje, EINA_SIZE2D(minw,  minh));
 
         if (!efl_text_multiline_get(sw))
           {
@@ -1071,7 +1073,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
 
-   sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    if (!sw) return;
 
    if (!sd->changed && (resw == sd->ent_w) && (resh == sd->ent_h)) return;
@@ -1087,7 +1089,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
      {
         Evas_Coord vw = 0, vh = 0;
         elm_interface_scrollable_content_viewport_geometry_get(obj, NULL, NULL, &vw, &vh);
-        efl_gfx_size_set(sd->entry_edje, EINA_SIZE2D(vw, vh));
+        efl_gfx_entity_size_set(sd->entry_edje, EINA_SIZE2D(vw, vh));
      }
    if (can_async)
      {
@@ -1126,7 +1128,7 @@ _return_key_enabled_check(Evas_Object *obj)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Object_Item *item EINA_UNUSED)
+_efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Evas_Object *top;
    Eina_Bool top_is_win = EINA_FALSE;
@@ -1139,12 +1141,12 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
 
    if (efl_ui_focus_object_focus_get(obj))
      {
-        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
         evas_object_focus_set(sw, EINA_TRUE);
 
-        _edje_signal_emit(sd, "elm,action,focus", "elm");
+        _edje_signal_emit(sd, "efl,action,focus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,focus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,focus", "efl");
 
         if (top && top_is_win && sd->input_panel_enable && !sd->input_panel_show_on_demand)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
@@ -1155,11 +1157,11 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
      }
    else
      {
-        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
-        _edje_signal_emit(sd, "elm,action,unfocus", "elm");
+        _edje_signal_emit(sd, "efl,action,unfocus", "efl");
         if (sd->scroll)
-          edje_object_signal_emit(sd->scr_edje, "elm,action,unfocus", "elm");
+          edje_object_signal_emit(sd->scr_edje, "efl,action,unfocus", "efl");
         evas_object_focus_set(sw, EINA_FALSE);
 
         if (top && top_is_win && sd->input_panel_enable)
@@ -1173,19 +1175,19 @@ _efl_ui_text_elm_widget_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Objec
                {
                   sd->sel_mode = EINA_FALSE;
                   elm_widget_scroll_hold_pop(obj);
-                  edje_object_part_text_select_allow_set(sd->entry_edje, "elm.text", EINA_FALSE);
-                  edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
-                  edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+                  edje_object_part_text_select_allow_set(sd->entry_edje, "efl.text", EINA_FALSE);
+                  edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
+                  edje_object_part_text_select_none(sd->entry_edje, "efl.text");
                }
           }
-        edje_object_signal_emit(sd->scr_edje, "validation,default", "elm");
+        edje_object_signal_emit(sd->scr_edje, "validation,default", "efl");
      }
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_text_elm_widget_interest_region_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_ui_widget_interest_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    Evas_Coord edje_x, edje_y, elm_x, elm_y;
    Eina_Rect r = {};
@@ -1220,19 +1222,19 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_efl_ui_text_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
     * elm,state,icon,{visible,hidden}, so we have to replicate this
     * smart function */
-   if (sobj == elm_layout_content_get(obj, "elm.swallow.icon"))
+   if (sobj == elm_layout_content_get(obj, "efl.icon"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+        elm_layout_signal_emit(obj, "efl,action,hide,icon", "efl");
      }
-   else if (sobj == elm_layout_content_get(obj, "elm.swallow.end"))
+   else if (sobj == elm_layout_content_get(obj, "efl.end"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+        elm_layout_signal_emit(obj, "efl,action,hide,end", "efl");
      }
 
    ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -1260,7 +1262,7 @@ _hoversel_position(Evas_Object *obj)
      }
    else
      edje_object_part_text_cursor_geometry_get
-       (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
+       (sd->entry_edje, "efl.text", &cx, &cy, &cw, &ch);
 
    evas_object_size_hint_min_get(sd->hoversel, &mw, &mh);
    if (cx + mw > w)
@@ -1293,7 +1295,7 @@ _hover_dismissed_cb(void *data, const Efl_Event *event EINA_UNUSED)
           {
              if (!sd->password)
                edje_object_part_text_select_allow_set
-                 (sd->entry_edje, "elm.text", EINA_TRUE);
+                 (sd->entry_edje, "efl.text", EINA_TRUE);
           }
      }
    elm_widget_scroll_freeze_pop(data);
@@ -1311,15 +1313,15 @@ _hover_selected_cb(void *data,
    if (!sd->sel_allow) return;
 
    sd->sel_mode = EINA_TRUE;
-   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
 
    if (!_elm_config->desktop_entry)
      {
         if (!sd->password)
           edje_object_part_text_select_allow_set
-            (sd->entry_edje, "elm.text", EINA_TRUE);
+            (sd->entry_edje, "efl.text", EINA_TRUE);
      }
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,on", "elm");
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,on", "efl");
 
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_push(data);
@@ -1450,7 +1452,7 @@ _selection_store(Elm_Sel_Type seltype,
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
    sel = efl_canvas_text_range_text_get(obj, start, end);
 
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
@@ -1475,14 +1477,14 @@ _cut_cb(Eo *obj)
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
-       (sd->entry_edje, "elm.text", EINA_FALSE);
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+       (sd->entry_edje, "efl.text", EINA_FALSE);
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
 
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(obj);
 
    _selection_store(ELM_SEL_TYPE_CLIPBOARD, obj);
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
    efl_canvas_text_range_delete(obj, start, end);
 }
 
@@ -1504,8 +1506,8 @@ _copy_cb(Eo *obj)
    if (!_elm_config->desktop_entry)
      {
         edje_object_part_text_select_allow_set
-          (sd->entry_edje, "elm.text", EINA_FALSE);
-        edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+          (sd->entry_edje, "efl.text", EINA_FALSE);
+        edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
         elm_widget_scroll_hold_pop(obj);
      }
    _selection_store(ELM_SEL_TYPE_CLIPBOARD, obj);
@@ -1529,11 +1531,11 @@ _hover_cancel_cb(void *data,
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
-       (sd->entry_edje, "elm.text", EINA_FALSE);
-   edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+       (sd->entry_edje, "efl.text", EINA_FALSE);
+   edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(data);
-   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
 }
 
 static void
@@ -1658,8 +1660,8 @@ _menu_call(Evas_Object *obj)
         if (!_elm_config->desktop_entry)
           {
              edje_object_part_text_select_allow_set
-               (sd->entry_edje, "elm.text", EINA_FALSE);
-             edje_object_part_text_select_abort(sd->entry_edje, "elm.text");
+               (sd->entry_edje, "efl.text", EINA_FALSE);
+             edje_object_part_text_select_abort(sd->entry_edje, "efl.text");
           }
      }
 }
@@ -1696,7 +1698,7 @@ _magnifier_create(void *data)
                                   _magnifier_proxy_update, data);
    evas_object_event_callback_add(sd->mgf_proxy, EVAS_CALLBACK_MOVE,
                                   _magnifier_proxy_update, data);
-   edje_object_part_swallow(sd->mgf_bg, "elm.swallow.content", sd->mgf_proxy);
+   edje_object_part_swallow(sd->mgf_bg, "efl.content", sd->mgf_proxy);
    evas_object_image_source_set(sd->mgf_proxy, data);
    evas_object_geometry_get(data, NULL, NULL, &w, &h);
 
@@ -1729,7 +1731,7 @@ _magnifier_move(void *data)
    double fx, fy, fw, fh;
    double scale = _elm_config->magnifier_scale;
 
-   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "elm.text",
+   edje_object_part_text_cursor_geometry_get(sd->entry_edje, "efl.text",
                                              &cx, &cy, NULL, &ch);
    if (sd->scroll)
      {
@@ -1805,7 +1807,7 @@ static void
 _magnifier_hide(void *data)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
-   edje_object_signal_emit(sd->mgf_bg, "elm,action,hide,magnifier", "elm");
+   edje_object_signal_emit(sd->mgf_bg, "efl,action,hide,magnifier", "efl");
    elm_widget_scroll_freeze_pop(data);
    evas_object_hide(sd->mgf_clip);
 }
@@ -1814,7 +1816,7 @@ static void
 _magnifier_show(void *data)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
-   edje_object_signal_emit(sd->mgf_bg, "elm,action,show,magnifier", "elm");
+   edje_object_signal_emit(sd->mgf_bg, "efl,action,show,magnifier", "efl");
    elm_widget_scroll_freeze_push(data);
    evas_object_show(sd->mgf_clip);
 }
@@ -1996,12 +1998,12 @@ _mouse_move_cb(void *data,
 
              evas_object_geometry_get(sd->entry_edje, &x, &y, NULL, NULL);
              rv = edje_object_part_text_cursor_coord_set
-               (sd->entry_edje, "elm.text", EDJE_CURSOR_USER,
+               (sd->entry_edje, "efl.text", EDJE_CURSOR_USER,
                ev->cur.canvas.x - x, ev->cur.canvas.y - y);
              if (rv)
                {
                   edje_object_part_text_cursor_copy
-                    (sd->entry_edje, "elm.text", EDJE_CURSOR_USER, EDJE_CURSOR_MAIN);
+                    (sd->entry_edje, "efl.text", EDJE_CURSOR_USER, EDJE_CURSOR_MAIN);
                }
              else
                WRN("Warning: Cannot move cursor");
@@ -2128,14 +2130,14 @@ _entry_changed_user_signal_cb(void *data,
              atspi_info.content = edje_info->change.insert.content;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
           }
         else if (edje_info && !edje_info->insert)
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
           }
      }
 }
@@ -2175,22 +2177,22 @@ _entry_cursor_changed_signal_cb(void *data,
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->cursor_pos = edje_object_part_text_cursor_pos_get
-       (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
+       (sd->entry_edje, "efl.text", EDJE_CURSOR_MAIN);
    sd->cur_changed = EINA_TRUE;
    if (efl_ui_focus_object_focus_get(data))
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,show,cursor", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,show,cursor", "efl");
      }
    else
      {
-        edje_object_signal_emit(sd->entry_edje, "elm,action,hide,cursor", "elm");
+        edje_object_signal_emit(sd->entry_edje, "efl,action,hide,cursor", "efl");
      }
 
    sd->deferred_decoration_cursor = EINA_TRUE;
    _decoration_defer(obj);
 
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2201,7 +2203,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
 {
    efl_event_callback_call(data, EFL_UI_TEXT_EVENT_CURSOR_CHANGED_MANUAL, NULL);
    if (_elm_config->atspi_mode)
-     efl_access_event_emit(EFL_ACCESS_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2213,12 +2215,12 @@ _signal_anchor_geoms_do_things_with_lol(Efl_Ui_Text_Data *sd,
    Evas_Coord px, py, x, y;
 
    geoms = edje_object_part_text_anchor_geometry_get
-       (sd->entry_edje, "elm.text", ei->name);
+       (sd->entry_edje, "efl.text", ei->name);
 
    if (!geoms) return;
 
    evas_object_geometry_get(
-      edje_object_part_object_get(sd->entry_edje, "elm.text"),
+      edje_object_part_object_get(sd->entry_edje, "efl.text"),
       &x, &y, NULL, NULL);
    evas_pointer_canvas_xy_get
      (evas_object_evas_get(sd->entry_edje), &px, &py);
@@ -2485,43 +2487,22 @@ _entry_mouse_triple_signal_cb(void *data,
 static Evas_Object *
 _item_get(void *data, const char *item)
 {
-   Eina_List *l;
-   Evas_Object *o;
-   Elm_Entry_Item_Provider *ip;
-   const char *style = elm_widget_style_get(data);
+   Evas_Object *o = NULL;
 
    EFL_UI_TEXT_DATA_GET(data, sd);
 
-   EINA_LIST_FOREACH(sd->item_providers, l, ip)
+   if (item)
      {
-        o = ip->func(ip->data, data, item);
-        if (o) return o;
-     }
-   if (item && !strncmp(item, "file://", 7))
-     {
-        const char *fname = item + 7;
-
-        o = evas_object_image_filled_add(evas_object_evas_get(data));
-        evas_object_image_file_set(o, fname, NULL);
-        if (evas_object_image_load_error_get(o) == EVAS_LOAD_ERROR_NONE)
+        if (sd->item_factory)
           {
-             evas_object_show(o);
+             o = efl_canvas_text_factory_create(sd->item_factory, data, item);
           }
-        else
+        else if (sd->item_fallback_factory)
           {
-             evas_object_del(o);
-             o = edje_object_add(evas_object_evas_get(data));
-             elm_widget_theme_object_set
-               (data, o, "text/emoticon", "wtf", style);
+             o = efl_canvas_text_factory_create(sd->item_fallback_factory,
+                   data, item);
           }
-        return o;
      }
-
-   o = edje_object_add(evas_object_evas_get(data));
-   if (!elm_widget_theme_object_set
-         (data, o, "text", item, style))
-     elm_widget_theme_object_set
-       (data, o, "text/emoticon", "wtf", style);
    return o;
 }
 
@@ -2593,11 +2574,11 @@ _efl_ui_text_content_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char 
    if (!int_ret) return EINA_FALSE;
 
    /* too bad entry does not follow the pattern
-    * "elm,state,{icon,end},visible", we have to repeat ourselves */
-   if (!part || !strcmp(part, "icon") || !strcmp(part, "elm.swallow.icon"))
+    * "efl,state,{icon,end},visible", we have to repeat ourselves */
+   if (!part || !strcmp(part, "icon") || !strcmp(part, "efl.icon"))
      efl_ui_text_icon_visible_set(obj, EINA_TRUE);
 
-   if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
+   if (!part || !strcmp(part, "end") || !strcmp(part, "efl.end"))
      efl_ui_text_end_visible_set(obj, EINA_TRUE);
 
    return EINA_TRUE;
@@ -2612,11 +2593,11 @@ _efl_ui_text_content_unset(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const cha
    if (!ret) return NULL;
 
    /* too bad entry does not follow the pattern
-    * "elm,state,{icon,end},hidden", we have to repeat ourselves */
-   if (!part || !strcmp(part, "icon") || !strcmp(part, "elm.swallow.icon"))
+    * "efl,state,{icon,end},hidden", we have to repeat ourselves */
+   if (!part || !strcmp(part, "icon") || !strcmp(part, "efl.icon"))
      efl_ui_text_icon_visible_set(obj, EINA_FALSE);
 
-   if (!part || !strcmp(part, "end") || !strcmp(part, "elm.swallow.end"))
+   if (!part || !strcmp(part, "end") || !strcmp(part, "efl.end"))
      efl_ui_text_end_visible_set(obj, EINA_FALSE);
 
    return ret;
@@ -2759,12 +2740,12 @@ _start_handler_mouse_down_cb(void *data,
    Efl_Text_Cursor_Cursor *sel_start, *sel_end;
    Efl_Text_Cursor_Cursor *main_cur;
 
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
    sd->start_handler_down = EINA_TRUE;
 
    /* Get the cursors */
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
    main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
 
    start_pos = efl_text_cursor_position_get(obj, sel_start);
@@ -2848,9 +2829,9 @@ _end_handler_mouse_down_cb(void *data,
 
    sd->end_handler_down = EINA_TRUE;
 
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
    main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
 
    start_pos = efl_text_cursor_position_get(obj, sel_start);
@@ -2947,13 +2928,13 @@ _create_selection_handlers(Evas_Object *obj, Efl_Ui_Text_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
+_efl_ui_text_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   efl_gfx_position_set(efl_super(obj, MY_CLASS), pos);
-   efl_gfx_position_set(sd->hit_rect, pos);
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+   efl_gfx_entity_position_set(sd->hit_rect, pos);
 
    if (sd->hoversel) _hoversel_position(obj);
 
@@ -2961,24 +2942,24 @@ _efl_ui_text_efl_gfx_position_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Position2D
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
+_efl_ui_text_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   efl_gfx_size_set(sd->hit_rect, sz);
+   efl_gfx_entity_size_set(sd->hit_rect, sz);
    _update_selection_handler(obj);
 
-   efl_gfx_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
 
 EOLIAN static void
-_efl_ui_text_efl_gfx_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
+_efl_ui_text_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Text_Data *sd EINA_UNUSED, Eina_Bool vis)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_VISIBLE, 0, vis))
      return;
 
-   efl_gfx_visible_set(efl_super(obj, MY_CLASS), vis);
+   efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
    if (vis) _update_selection_handler(obj);
 }
 
@@ -2994,9 +2975,10 @@ _efl_ui_text_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Text_Data *sd, Ev
 static void
 _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
      sd->validators++;
 }
@@ -3004,9 +2986,10 @@ _cb_added(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   const Efl_Callback_Array_Item *event = ev->info;
+   const Efl_Callback_Array_Item_Full *event = ev->info;
 
    EFL_UI_TEXT_DATA_GET(ev->object, sd);
+   // XXX: BUG - not walking the array until a NULL entry
    if (event->desc == EFL_UI_TEXT_EVENT_VALIDATE)
      sd->validators--;
    return;
@@ -3027,7 +3010,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_sub_object_parent_add(obj);
 
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
@@ -3063,11 +3046,11 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    // For now, set this for easier setup
    efl_text_font_set(text_obj, "Sans", 12);
    efl_text_normal_color_set(text_obj, 255, 255, 255, 255);
-   efl_ui_text_interactive_editable_set(obj, EINA_FALSE);
+   efl_text_interactive_editable_set(obj, EINA_FALSE);
 
    sd->single_line = !efl_text_multiline_get(text_obj);
 
-   edje_object_part_swallow(sd->entry_edje, "elm.text", text_obj);
+   edje_object_part_swallow(sd->entry_edje, "efl.text", text_obj);
    evas_object_size_hint_weight_set
       (sd->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set
@@ -3076,7 +3059,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
-   efl_event_callback_add(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+   efl_event_callback_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_add(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
@@ -3110,7 +3093,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_interface_scrollable_objects_set(obj, sd->entry_edje, sd->hit_rect);
 
    edje_object_text_markup_filter_callback_add
-     (sd->entry_edje, "elm.text", _markup_filter_cb, obj);
+     (sd->entry_edje, "efl.text", _markup_filter_cb, obj);
 
    evas_object_event_callback_add
      (sd->entry_edje, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, obj);
@@ -3125,56 +3108,56 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
 
    edje_object_signal_callback_add
-     (sd->entry_edje, "entry,changed,user", "elm.text",
+     (sd->entry_edje, "entry,changed,user", "efl.text",
      _entry_changed_user_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "preedit,changed", "elm.text",
+     (sd->entry_edje, "preedit,changed", "efl.text",
      _entry_preedit_changed_signal_cb, obj);
 
    edje_object_signal_callback_add
-     (sd->entry_edje, "cursor,changed", "elm.text",
+     (sd->entry_edje, "cursor,changed", "efl.text",
      _entry_cursor_changed_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "cursor,changed,manual", "elm.text",
+     (sd->entry_edje, "cursor,changed,manual", "efl.text",
      _entry_cursor_changed_manual_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "anchor,mouse,down,*", "elm.text",
+     (sd->entry_edje, "anchor,mouse,down,*", "efl.text",
      _entry_anchor_down_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "anchor,mouse,up,*", "elm.text",
+     (sd->entry_edje, "anchor,mouse,up,*", "efl.text",
      _entry_anchor_up_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "anchor,mouse,move,*", "elm.text",
+     (sd->entry_edje, "anchor,mouse,move,*", "efl.text",
      _entry_anchor_move_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "anchor,mouse,in,*", "elm.text",
+     (sd->entry_edje, "anchor,mouse,in,*", "efl.text",
      _entry_anchor_in_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "anchor,mouse,out,*", "elm.text",
+     (sd->entry_edje, "anchor,mouse,out,*", "efl.text",
      _entry_anchor_out_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "entry,key,enter", "elm.text",
+     (sd->entry_edje, "entry,key,enter", "efl.text",
      _entry_key_enter_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "entry,key,escape", "elm.text",
+     (sd->entry_edje, "entry,key,escape", "efl.text",
      _entry_key_escape_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "mouse,down,1", "elm.text",
+     (sd->entry_edje, "mouse,down,1", "efl.text",
      _entry_mouse_down_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "mouse,clicked,1", "elm.text",
+     (sd->entry_edje, "mouse,clicked,1", "efl.text",
      _entry_mouse_clicked_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "mouse,down,1,double", "elm.text",
+     (sd->entry_edje, "mouse,down,1,double", "efl.text",
      _entry_mouse_double_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "mouse,down,1,triple", "elm.text",
+     (sd->entry_edje, "mouse,down,1,triple", "efl.text",
      _entry_mouse_triple_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "entry,undo,request", "elm.text",
+     (sd->entry_edje, "entry,undo,request", "efl.text",
      _entry_undo_request_signal_cb, obj);
    edje_object_signal_callback_add
-     (sd->entry_edje, "entry,redo,request", "elm.text",
+     (sd->entry_edje, "entry,redo,request", "efl.text",
      _entry_redo_request_signal_cb, obj);
 
    efl_text_set(sd->text_obj, "");
@@ -3184,7 +3167,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set
-       (sd->entry_edje, "elm.text", EINA_TRUE);
+       (sd->entry_edje, "efl.text", EINA_TRUE);
 
    efl_ui_text_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
    efl_ui_text_input_panel_enabled_set(obj, EINA_TRUE);
@@ -3192,7 +3175,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_ui_text_input_hint_set(obj, ELM_INPUT_HINT_AUTO_COMPLETE);
 
    sd->autocapital_type = (Elm_Autocapital_Type)edje_object_part_text_autocapital_type_get
-       (sd->entry_edje, "elm.text");
+       (sd->entry_edje, "efl.text");
 
    entries = eina_list_prepend(entries, obj);
 
@@ -3215,6 +3198,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    if (_elm_config->desktop_entry)
      sd->sel_handler_disabled = EINA_TRUE;
 
+   sd->item_fallback_factory = efl_add(EFL_UI_TEXT_FACTORY_FALLBACK_CLASS, obj);
    _create_text_cursors(obj, sd);
 
    return obj;
@@ -3224,7 +3208,6 @@ EOLIAN static void
 _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Elm_Entry_Context_Menu_Item *it;
-   Elm_Entry_Item_Provider *ip;
    Elm_Entry_Markup_Filter *tf;
    Eo *text_obj;
 
@@ -3270,10 +3253,6 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
         eina_stringshare_del(it->icon_group);
         free(it);
      }
-   EINA_LIST_FREE(sd->item_providers, ip)
-     {
-        free(ip);
-     }
    EINA_LIST_FREE(sd->markup_filters, tf)
      {
         _filter_free(tf);
@@ -3294,12 +3273,12 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
    _unused_item_objs_free(sd);
    _clear_text_selection(sd);
 
-   text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    efl_event_callback_del(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER,
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
-   efl_event_callback_del(text_obj, EFL_UI_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+   efl_event_callback_del(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_del(text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
@@ -3314,11 +3293,14 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
    ecore_job_del(sd->deferred_decoration_job);
    sd->deferred_decoration_job = NULL;
 
+   if (sd->item_factory) efl_unref(sd->item_factory);
+   if (sd->item_fallback_factory) efl_del(sd->item_fallback_factory);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
-_efl_ui_text_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
+_efl_ui_text_password_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
 {
    password = !!password;
 
@@ -3335,7 +3317,7 @@ _efl_ui_text_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
         sd->single_line = EINA_TRUE;
         sd->line_wrap = ELM_WRAP_NONE;
         efl_ui_text_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PASSWORD_TEXT);
      }
    else
      {
@@ -3347,14 +3329,14 @@ _efl_ui_text_password_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool password)
                             _dnd_drop_cb, NULL);
 
         efl_ui_text_input_hint_set(obj, ((sd->input_hints | ELM_INPUT_HINT_AUTO_COMPLETE) & ~ELM_INPUT_HINT_SENSITIVE_DATA));
-        efl_access_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
+        efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
      }
 
    efl_ui_widget_theme_apply(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_password_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_password_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->password;
 }
@@ -3368,13 +3350,13 @@ _efl_ui_text_calc_force(Eo *obj, Efl_Ui_Text_Data *sd)
 }
 
 static const char*
-_efl_ui_text_selection_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Efl_Text_Cursor_Cursor *start_obj, *end_obj;
 
    if ((sd->password)) return NULL;
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start_obj, &end_obj);
+   efl_text_interactive_selection_cursors_get(obj, &start_obj, &end_obj);
    return efl_canvas_text_range_text_get(obj, start_obj, end_obj);
 }
 
@@ -3386,7 +3368,7 @@ _efl_ui_text_selection_handler_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_selection_handler_disabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->sel_handler_disabled;
 }
@@ -3401,9 +3383,9 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 }
 
 EOLIAN static void
-_efl_ui_text_efl_ui_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
+_efl_ui_text_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool editable)
 {
-   efl_ui_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
+   efl_text_interactive_editable_set(efl_super(obj, MY_CLASS), editable);
    if (sd->editable == editable) return;
    sd->editable = editable;
    efl_ui_widget_theme_apply(obj);
@@ -3443,14 +3425,14 @@ _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
         sd->sel_mode = EINA_FALSE;
         if (!_elm_config->desktop_entry)
           edje_object_part_text_select_allow_set
-            (sd->entry_edje, "elm.text", EINA_FALSE);
-        edje_object_signal_emit(sd->entry_edje, "elm,state,select,off", "elm");
+            (sd->entry_edje, "efl.text", EINA_FALSE);
+        edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
      }
    if (sd->have_selection)
      efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
-   edje_object_part_text_select_none(sd->entry_edje, "elm.text");
+   edje_object_part_text_select_none(sd->entry_edje, "efl.text");
 
    _hide_selection_handler(obj);
 }
@@ -3462,7 +3444,7 @@ _efl_ui_text_select_region_set(Eo *obj, Efl_Ui_Text_Data *sd, int start, int end
 
    if ((sd->password)) return;
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(obj, &sel_start, &sel_end);
 
    efl_text_cursor_position_set(obj, sel_start, start);
    efl_text_cursor_position_set(obj, sel_end, end);
@@ -3471,7 +3453,7 @@ _efl_ui_text_select_region_set(Eo *obj, Efl_Ui_Text_Data *sd, int start, int end
 EOLIAN static void
 _efl_ui_text_cursor_selection_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
-   edje_object_part_text_select_extend(sd->entry_edje, "elm.text");
+   edje_object_part_text_select_extend(sd->entry_edje, "efl.text");
 }
 
 EOLIAN static void
@@ -3534,58 +3516,9 @@ _efl_ui_text_context_menu_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_context_menu_disabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return !sd->context_menu;
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_append(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
-   if (!ip) return;
-
-   ip->func = func;
-   ip->data = data;
-   sd->item_providers = eina_list_append(sd->item_providers, ip);
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_prepend(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   ip = calloc(1, sizeof(Elm_Entry_Item_Provider));
-   if (!ip) return;
-
-   ip->func = func;
-   ip->data = data;
-   sd->item_providers = eina_list_prepend(sd->item_providers, ip);
-}
-
-EOLIAN static void
-_efl_ui_text_item_provider_remove(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Entry_Item_Provider_Cb func, void *data)
-{
-   Eina_List *l;
-   Elm_Entry_Item_Provider *ip;
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   EINA_LIST_FOREACH(sd->item_providers, l, ip)
-     {
-        if ((ip->func == func) && ((!data) || (ip->data == data)))
-          {
-             sd->item_providers = eina_list_remove_list(sd->item_providers, l);
-             free(ip);
-             return;
-          }
-     }
 }
 
 EOLIAN static Eina_Bool
@@ -3599,31 +3532,43 @@ _efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file, 
 }
 
 EOLIAN static void
-_efl_ui_text_efl_file_file_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char **file, const char **group)
+_efl_ui_text_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char **file, const char **group)
 {
    if (file) *file = sd->file;
    if (group) *group = NULL;
 }
 
 EOLIAN static void
-_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Cnp_Mode cnp_mode)
+_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cnp_mode)
 {
-   Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
+   /* FIXME: CnP format handling really odd... */
 
+   Elm_Sel_Format dnd_format = ELM_SEL_FORMAT_MARKUP;
+   Elm_Sel_Format cnp_format = cnp_mode;
 
-   if (sd->cnp_mode == cnp_mode) return;
-   sd->cnp_mode = cnp_mode;
-   if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
-     format = ELM_SEL_FORMAT_TEXT;
-   else if (cnp_mode == ELM_CNP_MODE_MARKUP)
-     format |= ELM_SEL_FORMAT_IMAGE;
+   if (cnp_mode != EFL_SELECTION_FORMAT_TARGETS)
+     {
+        if (cnp_mode & EFL_SELECTION_FORMAT_VCARD)
+          ERR("VCARD format not supported for copy & paste!");
+        else if (cnp_mode & EFL_SELECTION_FORMAT_HTML)
+          ERR("HTML format not supported for copy & paste!");
+        cnp_mode &= ~EFL_SELECTION_FORMAT_VCARD;
+        cnp_mode &= ~EFL_SELECTION_FORMAT_HTML;
+     }
+
+   if (sd->cnp_mode == cnp_format) return;
+   sd->cnp_mode = cnp_format;
+   if (sd->cnp_mode == EFL_SELECTION_FORMAT_TEXT)
+     dnd_format = ELM_SEL_FORMAT_TEXT;
+   else if (cnp_mode == EFL_SELECTION_FORMAT_IMAGE)
+     dnd_format |= ELM_SEL_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
-   sd->drop_format = format;
+   sd->drop_format = dnd_format;
    elm_drop_target_add(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
                        _dnd_leave_cb, NULL,
@@ -3631,8 +3576,8 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Elm_Cnp_Mode cnp_mode)
                        _dnd_drop_cb, NULL);
 }
 
-EOLIAN static Elm_Cnp_Mode
-_efl_ui_text_cnp_mode_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+EOLIAN static Efl_Selection_Format
+_efl_ui_text_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->cnp_mode;
 }
@@ -3720,7 +3665,7 @@ _efl_ui_text_scrollable_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool scroll)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_scrollable_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_scrollable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->scroll;
 }
@@ -3747,7 +3692,7 @@ _efl_ui_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, E
    sd->input_panel_layout = layout;
 
    edje_object_part_text_input_panel_layout_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Layout)layout);
+     (sd->entry_edje, "efl.text", (Edje_Input_Panel_Layout)layout);
 
    if (layout == ELM_INPUT_PANEL_LAYOUT_PASSWORD)
      efl_ui_text_input_hint_set(obj, ((sd->input_hints & ~ELM_INPUT_HINT_AUTO_COMPLETE) | ELM_INPUT_HINT_SENSITIVE_DATA));
@@ -3756,7 +3701,7 @@ _efl_ui_text_input_panel_layout_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, E
 }
 
 EOLIAN static Elm_Input_Panel_Layout
-_efl_ui_text_input_panel_layout_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_layout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_layout;
 }
@@ -3767,11 +3712,11 @@ _efl_ui_text_input_panel_layout_variation_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_D
    sd->input_panel_layout_variation = variation;
 
    edje_object_part_text_input_panel_layout_variation_set
-     (sd->entry_edje, "elm.text", variation);
+     (sd->entry_edje, "efl.text", variation);
 }
 
 EOLIAN static int
-_efl_ui_text_input_panel_layout_variation_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_layout_variation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_layout_variation;
 }
@@ -3781,11 +3726,11 @@ _efl_ui_text_autocapital_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm
 {
    sd->autocapital_type = autocapital_type;
    edje_object_part_text_autocapital_type_set
-     (sd->entry_edje, "elm.text", (Edje_Text_Autocapital_Type)autocapital_type);
+     (sd->entry_edje, "efl.text", (Edje_Text_Autocapital_Type)autocapital_type);
 }
 
 EOLIAN static Elm_Autocapital_Type
-_efl_ui_text_autocapital_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_autocapital_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->autocapital_type;
 }
@@ -3795,11 +3740,11 @@ _efl_ui_text_prediction_allow_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Ein
 {
    sd->prediction_allow = prediction;
    edje_object_part_text_prediction_allow_set
-     (sd->entry_edje, "elm.text", prediction);
+     (sd->entry_edje, "efl.text", prediction);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_prediction_allow_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_prediction_allow_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->prediction_allow;
 }
@@ -3810,11 +3755,11 @@ _efl_ui_text_input_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Elm_Input
    sd->input_hints = hints;
 
    edje_object_part_text_input_hint_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Hints)hints);
+     (sd->entry_edje, "efl.text", (Edje_Input_Hints)hints);
 }
 
 EOLIAN static Elm_Input_Hints
-_efl_ui_text_input_hint_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_hint_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_hints;
 }
@@ -3824,11 +3769,11 @@ _efl_ui_text_input_panel_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, 
 {
    sd->input_panel_enable = enabled;
    edje_object_part_text_input_panel_enabled_set
-     (sd->entry_edje, "elm.text", enabled);
+     (sd->entry_edje, "efl.text", enabled);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_enable;
 }
@@ -3836,14 +3781,14 @@ _efl_ui_text_input_panel_enabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 EOLIAN static void
 _efl_ui_text_input_panel_show(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
-   edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
+   edje_object_part_text_input_panel_show(sd->entry_edje, "efl.text");
 }
 
 EOLIAN static void
 _efl_ui_text_input_panel_hide(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
 
-   edje_object_part_text_input_panel_hide(sd->entry_edje, "elm.text");
+   edje_object_part_text_input_panel_hide(sd->entry_edje, "efl.text");
 }
 
 EOLIAN static void
@@ -3851,11 +3796,11 @@ _efl_ui_text_input_panel_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd,
 {
    sd->input_panel_lang = lang;
    edje_object_part_text_input_panel_language_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Lang)lang);
+     (sd->entry_edje, "efl.text", (Edje_Input_Panel_Lang)lang);
 }
 
 EOLIAN static Elm_Input_Panel_Lang
-_efl_ui_text_input_panel_language_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_lang;
 }
@@ -3870,7 +3815,7 @@ _efl_ui_text_input_panel_imdata_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, c
    memcpy(sd->input_panel_imdata, data, len);
 
    edje_object_part_text_input_panel_imdata_set
-     (sd->entry_edje, "elm.text", sd->input_panel_imdata,
+     (sd->entry_edje, "efl.text", sd->input_panel_imdata,
      sd->input_panel_imdata_len);
 }
 
@@ -3878,7 +3823,7 @@ EOLIAN static void
 _efl_ui_text_input_panel_imdata_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, void *data, int *len)
 {
    edje_object_part_text_input_panel_imdata_get
-     (sd->entry_edje, "elm.text", data, len);
+     (sd->entry_edje, "efl.text", data, len);
 }
 
 EOLIAN static void
@@ -3887,11 +3832,11 @@ _efl_ui_text_input_panel_return_key_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Da
    sd->input_panel_return_key_type = return_key_type;
 
    edje_object_part_text_input_panel_return_key_type_set
-     (sd->entry_edje, "elm.text", (Edje_Input_Panel_Return_Key_Type)return_key_type);
+     (sd->entry_edje, "efl.text", (Edje_Input_Panel_Return_Key_Type)return_key_type);
 }
 
 EOLIAN static Elm_Input_Panel_Return_Key_Type
-_efl_ui_text_input_panel_return_key_type_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_return_key_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_return_key_type;
 }
@@ -3902,11 +3847,11 @@ _efl_ui_text_input_panel_return_key_disabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Tex
    sd->input_panel_return_key_disabled = disabled;
 
    edje_object_part_text_input_panel_return_key_disabled_set
-     (sd->entry_edje, "elm.text", disabled);
+     (sd->entry_edje, "efl.text", disabled);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_input_panel_return_key_disabled_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_return_key_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_return_key_disabled;
 }
@@ -3924,11 +3869,11 @@ _efl_ui_text_input_panel_show_on_demand_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Dat
    sd->input_panel_show_on_demand = ondemand;
 
    edje_object_part_text_input_panel_show_on_demand_set
-     (sd->entry_edje, "elm.text", ondemand);
+     (sd->entry_edje, "efl.text", ondemand);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_input_panel_show_on_demand_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+_efl_ui_text_input_panel_show_on_demand_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->input_panel_show_on_demand;
 }
@@ -3968,7 +3913,7 @@ _efl_ui_text_anchor_hover_end(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 /* END - ANCHOR HOVER */
 
 EOLIAN static Eina_Bool
-_efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
+_efl_ui_text_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
 
@@ -3979,7 +3924,7 @@ _efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
      {
         efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
         if (sd->editable && sd->input_panel_enable)
-          edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
+          edje_object_part_text_input_panel_show(sd->entry_edje, "efl.text");
      }
    return EINA_TRUE;
 }
@@ -3987,7 +3932,7 @@ _efl_ui_text_elm_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
 // ATSPI Accessibility
 
 EOLIAN static Eina_Unicode
-_efl_ui_text_efl_access_text_character_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
+_efl_ui_text_efl_access_text_character_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
 {
    const char *txt;
    int idx = 0;
@@ -4006,7 +3951,7 @@ _efl_ui_text_efl_access_text_character_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_character_count_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_text_character_count_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    const char *txt;
 
@@ -4016,11 +3961,11 @@ _efl_ui_text_efl_access_text_character_count_get(Eo *obj, Efl_Ui_Text_Data *_pd 
 }
 
 EOLIAN static char*
-_efl_ui_text_efl_access_text_string_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
+_efl_ui_text_efl_access_text_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd, Efl_Access_Text_Granularity granularity, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    char *ret = NULL;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    cur = evas_object_textblock_cursor_new(text_obj);
    cur2 = evas_object_textblock_cursor_new(text_obj);
@@ -4098,11 +4043,11 @@ fail:
 }
 
 EOLIAN static char*
-_efl_ui_text_efl_access_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd EINA_UNUSED, int start_offset, int end_offset)
+_efl_ui_text_efl_access_text_access_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd EINA_UNUSED, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur = NULL, *cur2 = NULL;
    char *ret = NULL;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    cur = evas_object_textblock_cursor_new(text_obj);
    cur2 = evas_object_textblock_cursor_new(text_obj);
@@ -4135,7 +4080,7 @@ fail:
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_caret_offset_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_text_caret_offset_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    return efl_text_cursor_position_get(obj, efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN));
 }
@@ -4148,13 +4093,13 @@ _efl_ui_text_efl_access_text_caret_offset_set(Eo *obj, Efl_Ui_Text_Data *_pd EIN
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_selections_count_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_text_selections_count_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    return _efl_ui_text_selection_get(obj, _pd) ? 1 : 0;
 }
 
 EOLIAN static void
-_efl_ui_text_efl_access_text_selection_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
+_efl_ui_text_efl_access_text_access_selection_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int *start_offset, int *end_offset)
 {
    if (selection_number != 0) return;
 
@@ -4162,7 +4107,7 @@ _efl_ui_text_efl_access_text_selection_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_selection_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
+_efl_ui_text_efl_access_text_access_selection_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int selection_number, int start_offset, int end_offset)
 {
    if (selection_number != 0) return EINA_FALSE;
 
@@ -4188,17 +4133,17 @@ _efl_ui_text_efl_access_text_selection_add(Eo *obj, Efl_Ui_Text_Data *pd EINA_UN
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_bounded_ranges_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
+_efl_ui_text_efl_access_text_bounded_ranges_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *_pd EINA_UNUSED, Eina_Bool screen_coods EINA_UNUSED, Eina_Rect rect EINA_UNUSED, Efl_Access_Text_Clip_Type xclip EINA_UNUSED, Efl_Access_Text_Clip_Type yclip EINA_UNUSED)
 {
    return NULL;
 }
 
 EOLIAN static int
-_efl_ui_text_efl_access_text_offset_at_point_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
+_efl_ui_text_efl_access_text_offset_at_point_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int x, int y)
 {
    Evas_Textblock_Cursor *cur;
    int ret;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    if (!text_obj) return -1;
 
@@ -4227,11 +4172,11 @@ _efl_ui_text_efl_access_text_offset_at_point_get(Eo *obj, Efl_Ui_Text_Data *pd E
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_character_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
+_efl_ui_text_efl_access_text_character_extents_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int offset, Eina_Bool screen_coods, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur;
    int ret;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    if (!text_obj) return EINA_FALSE;
 
@@ -4258,12 +4203,12 @@ _efl_ui_text_efl_access_text_character_extents_get(Eo *obj, Efl_Ui_Text_Data *pd
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_range_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
+_efl_ui_text_efl_access_text_range_extents_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, Eina_Bool screen_coods, int start_offset, int end_offset, Eina_Rect *rect)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    int ret;
    int x, xx, y, yy;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    if (!text_obj) return EINA_FALSE;
 
@@ -4306,7 +4251,7 @@ _efl_ui_text_efl_access_text_range_extents_get(Eo *obj, Efl_Ui_Text_Data *pd EIN
 }
 
 static Efl_Access_Text_Attribute*
-_textblock_node_format_to_atspi_text_attr(Eo *obj,
+_textblock_node_format_to_atspi_text_attr(const Eo *obj,
       Efl_Text_Annotate_Annotation *annotation)
 {
    Efl_Access_Text_Attribute *ret;
@@ -4326,7 +4271,7 @@ _textblock_node_format_to_atspi_text_attr(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_text_attribute_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
+_efl_ui_text_efl_access_text_attribute_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, const char *attr_name EINA_UNUSED, int *start_offset, int *end_offset, char **value)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    Efl_Access_Text_Attribute *attr;
@@ -4371,7 +4316,7 @@ _efl_ui_text_efl_access_text_attribute_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_U
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_attributes_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int *start_offset, int *end_offset)
+_efl_ui_text_efl_access_text_text_attributes_get(const Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, int *start_offset, int *end_offset)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
    Eina_List *ret = NULL;
@@ -4411,7 +4356,7 @@ _efl_ui_text_efl_access_text_attributes_get(Eo *obj, Efl_Ui_Text_Data *pd EINA_U
 }
 
 EOLIAN static Eina_List*
-_efl_ui_text_efl_access_text_default_attributes_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_text_default_attributes_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    Eina_List *ret = NULL;
    Efl_Access_Text_Attribute *attr;
@@ -4420,11 +4365,12 @@ _efl_ui_text_efl_access_text_default_attributes_get(Eo *obj, Efl_Ui_Text_Data *_
    Efl_Text_Annotate_Annotation *an;
 
    /* Retrieve all annotations in the text. */
-   start = efl_text_cursor_new(obj);
-   end = efl_text_cursor_new(obj);
+   Eo *mobj = (Eo *)obj; /* XXX const */
+   start = efl_text_cursor_new(mobj);
+   end = efl_text_cursor_new(mobj);
 
-   efl_text_cursor_paragraph_first(obj, start);
-   efl_text_cursor_paragraph_last(obj, end);
+   efl_text_cursor_paragraph_first(mobj, start);
+   efl_text_cursor_paragraph_last(mobj, end);
 
    annotations = efl_text_range_annotations_get(obj, start, end);
 
@@ -4440,7 +4386,7 @@ _efl_ui_text_efl_access_text_default_attributes_get(Eo *obj, Efl_Ui_Text_Data *_
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_text_efl_access_editable_text_content_set(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, const char *content)
+_efl_ui_text_efl_access_editable_text_text_content_set(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNUSED, const char *content)
 {
    efl_text_set(obj, content);
    return EINA_TRUE;
@@ -4469,7 +4415,7 @@ EOLIAN static Eina_Bool
 _efl_ui_text_efl_access_editable_text_delete(Eo *obj, Efl_Ui_Text_Data *pd, int start_offset, int end_offset)
 {
    Evas_Textblock_Cursor *cur1, *cur2;
-   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(pd->entry_edje, "efl.text");
 
    if (!text_obj) return EINA_FALSE;
 
@@ -4514,31 +4460,31 @@ _efl_ui_text_efl_access_editable_text_cut(Eo *obj, Efl_Ui_Text_Data *pd EINA_UNU
 }
 
 EOLIAN static Efl_Access_State_Set
-_efl_ui_text_efl_access_state_set_get(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
+_efl_ui_text_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
    Efl_Access_State_Set ret;
-   ret = efl_access_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_TEXT_CLASS));
 
-   if (efl_ui_text_interactive_editable_get(obj))
+   if (efl_text_interactive_editable_get(obj))
      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
 
    return ret;
 }
 
 EOLIAN static const char*
-_efl_ui_text_efl_access_name_get(Eo *obj, Efl_Ui_Text_Data *pd)
+_efl_ui_text_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Text_Data *pd)
 {
    const char *name;
-   name = efl_access_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
+   name = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_TEXT_CLASS));
    if (name && strncmp("", name, 1)) return name;
-   const char *ret = edje_object_part_text_get(pd->entry_edje, "elm.guide");
+   const char *ret = edje_object_part_text_get(pd->entry_edje, "efl.guide");
    return ret;
 }
 
 EOLIAN static Efl_Text_Cursor_Cursor *
 _efl_ui_text_cursor_new(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd EINA_UNUSED)
 {
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    return efl_text_cursor_new(text_obj);
 }
 
@@ -4555,7 +4501,7 @@ _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd,
       const char *group_name, Eina_Bool above)
 {
    Eo *ret = efl_add(EFL_CANVAS_LAYOUT_CLASS, sd->entry_edje);
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    elm_widget_element_update(obj, ret, group_name);
    evas_object_smart_member_add(ret, sd->entry_edje);
    if (above)
@@ -4581,7 +4527,7 @@ _create_text_cursors(Eo *obj, Efl_Ui_Text_Data *sd)
    sd->cursor = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
    sd->cursor_bidi = _decoration_create(obj, sd, PART_NAME_CURSOR, EINA_TRUE);
 
-   if (!efl_ui_text_interactive_editable_get(obj))
+   if (!efl_text_interactive_editable_get(obj))
      {
         evas_object_hide(sd->cursor);
         evas_object_hide(sd->cursor_bidi);
@@ -4592,7 +4538,7 @@ static void
 _decoration_calc_offset(Efl_Ui_Text_Data *sd, Evas_Coord *_x, Evas_Coord *_y)
 {
    Evas_Coord x, y;
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
    evas_object_geometry_get(text_obj, &x, &y, NULL, NULL);
 
@@ -4613,7 +4559,7 @@ _update_text_cursors(Eo *obj)
    if (!sd->deferred_decoration_cursor) return;
    sd->deferred_decoration_cursor = EINA_FALSE;
 
-   text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
    x = y = w = h = -1;
    xx = yy = ww = hh = -1;
@@ -4676,7 +4622,7 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 
    _decoration_calc_offset(sd, &x, &y);
 
-   efl_ui_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
+   efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
 
    range = efl_canvas_text_range_simple_geometry_get(text_obj,
          sel_start, sel_end);
@@ -4896,7 +4842,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
    Efl_Text_Cursor_Cursor *start, *end;
    Efl_Text_Annotate_Annotation *anchor;
 
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
    _anchors_clear_all(obj, sd);
 
    start = efl_text_cursor_new(text_obj);
@@ -4915,8 +4861,7 @@ _anchors_create(Eo *obj, Efl_Ui_Text_Data *sd)
         Eina_Bool is_anchor = EINA_FALSE;
         Eina_Bool is_item = EINA_FALSE;
 
-        if (efl_text_object_item_geometry_get(obj, anchor,
-                 NULL, NULL, NULL, NULL))
+        if (efl_text_annotation_is_item(obj, anchor))
           {
              is_anchor = EINA_TRUE;
              is_item = EINA_TRUE;
@@ -5006,7 +4951,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
    Anchor *an;
    Eo *sw;
 
-   sw = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
    if (!sd->deferred_decoration_anchor) return;
    sd->deferred_decoration_anchor = EINA_FALSE;
@@ -5019,7 +4964,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
 
    smart = evas_object_smart_parent_get(o);
    clip = evas_object_clip_get(
-         edje_object_part_swallow_get(sd->entry_edje, "elm.text"));
+         edje_object_part_swallow_get(sd->entry_edje, "efl.text"));
    _decoration_calc_offset(sd, &x, &y);
    EINA_LIST_FOREACH(sd->anchors, l, an)
      {
@@ -5040,7 +4985,7 @@ _anchors_update(Eo *o, Efl_Ui_Text_Data *sd)
                     {
                        rect->obj = ob;
 
-                       efl_text_object_item_geometry_get(an->obj,
+                       efl_text_item_geometry_get(an->obj,
                              an->annotation, &cx, &cy, &cw, &ch);
                        evas_object_move(rect->obj, x + cx, y + cy);
                        evas_object_resize(rect->obj, cw, ch);
@@ -5187,7 +5132,7 @@ static void
 _update_decorations(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
-   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "elm.text");
+   Eo *text_obj = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
 
    _update_text_cursors(obj);
    _update_text_selection(obj, text_obj);
@@ -5255,21 +5200,21 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
    char *text;
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_ui_text_interactive_selection_cursors_get(obj, &start, &end);
+   efl_text_interactive_selection_cursors_get(obj, &start, &end);
 
    text = efl_canvas_text_range_text_get(obj, start, end);
    if (!text || (text[0] == '\0'))
      {
-        _edje_signal_emit(sd, "selection,cleared", "elm.text");
+        _edje_signal_emit(sd, "selection,cleared", "efl.text");
         sd->have_selection = EINA_FALSE;
      }
    else
      {
         if (!sd->have_selection)
           {
-             _edje_signal_emit(sd, "selection,start", "elm.text");
+             _edje_signal_emit(sd, "selection,start", "efl.text");
           }
-        _edje_signal_emit(sd, "selection,changed", "elm.text");
+        _edje_signal_emit(sd, "selection,changed", "efl.text");
         sd->have_selection = EINA_TRUE;
      }
    if (text) free(text);
@@ -5282,6 +5227,20 @@ _efl_ui_text_move_cb(void *data, Evas *e EINA_UNUSED,
       Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _decoration_defer_all(data);
+}
+
+static void
+_efl_ui_text_item_factory_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      Efl_Canvas_Text_Factory *item_factory)
+{
+   if (pd->item_factory) efl_unref(pd->item_factory);
+   pd->item_factory = efl_ref(item_factory);
+}
+
+static Eo *
+_efl_ui_text_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
+{
+   return pd->item_factory;
 }
 
 #if 0
@@ -5334,7 +5293,7 @@ _efl_ui_text_editable_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_ui_text_interactive_editable_set(obj, EINA_TRUE);
+   efl_text_interactive_editable_set(obj, EINA_TRUE);
 
    return obj;
 }

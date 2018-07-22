@@ -1,5 +1,3 @@
-import evas_canvas;
-
 interface Evas.Ector.Buffer
 {
    [[Binding layer between ector buffers and evas images.

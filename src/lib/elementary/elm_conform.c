@@ -3,7 +3,7 @@
 #endif
 
 #define ELM_WIDGET_PROTECTED
-#define EFL_ACCESS_PROTECTED
+#define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
 #include <Elementary.h>
@@ -342,7 +342,7 @@ _land_indicator_connect_cb(void *data)
      }
    if (strchr(indicator_serv_name, '/'))
      {
-        sd->port_indi_timer = NULL;
+        sd->land_indi_timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
    if (elm_plug_connect(sd->landscape_indicator, indicator_serv_name, 0, EINA_FALSE))
@@ -574,7 +574,7 @@ _on_rotation_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_conformant_elm_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
+_elm_conformant_efl_ui_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
 
@@ -966,7 +966,7 @@ _elm_conformant_efl_canvas_group_group_del(Eo *obj, Elm_Conformant_Data *sd)
 }
 
 EOLIAN static void
-_elm_conformant_elm_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
+_elm_conformant_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(parent);
@@ -1001,7 +1001,7 @@ _elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   efl_access_role_set(obj, EFL_ACCESS_ROLE_FILLER);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    Efl_Event event = {};
    event.object = sd->win;

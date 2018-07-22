@@ -3,13 +3,20 @@ import eldbus_types;
 class Eldbus.Model.Method (Eldbus.Model.Arguments) {
     [[Eldbus model method class]]
     methods {
-        constructor {
+        @property proxy {
             [[Custom Eldbus_Model_Method constructor.
 
-              @since 1.16]]
-            params {
-                @in proxy: ptr(Eldbus.Proxy); [[Eldbus proxy]]
-                @cref method: Eldbus.Introspection.Method; [[The introspected method]]
+              @since 1.21]]
+	    set {}
+            values {
+                proxy: ptr(Eldbus.Proxy); [[Eldbus proxy]]
+            }
+        }
+        @property method {
+            [[Object]]
+            set {}
+            values {
+                @cref method: Eldbus.Introspection.Method; [[The introspected interface]]
             }
         }
         call {
@@ -24,12 +31,14 @@ class Eldbus.Model.Method (Eldbus.Model.Arguments) {
     }
     implements {
         Efl.Object.constructor;
+        Efl.Object.finalize;
     }
     constructors {
-        .constructor;
+        .proxy;
+        .method;
     }
     events {
-      successful,call; [[Event dispatched for a successful method call.]]
+      successful,call: void; [[Event dispatched for a successful method call.]]
    }
 
 }

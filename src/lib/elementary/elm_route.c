@@ -87,7 +87,7 @@ _move_resize_cb(void *data EINA_UNUSED,
 }
 
 EOLIAN static Efl_Ui_Theme_Apply
-_elm_route_elm_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
+_elm_route_efl_ui_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
@@ -241,14 +241,14 @@ _elm_route_emap_set(Eo *obj, Elm_Route_Data *sd, void *_emap)
 }
 
 EOLIAN static void
-_elm_route_longitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
+_elm_route_longitude_min_max_get(const Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->lon_min;
    if (max) *max = sd->lon_max;
 }
 
 EOLIAN static void
-_elm_route_latitude_min_max_get(Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
+_elm_route_latitude_min_max_get(const Eo *obj EINA_UNUSED, Elm_Route_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->lat_min;
    if (max) *max = sd->lat_max;

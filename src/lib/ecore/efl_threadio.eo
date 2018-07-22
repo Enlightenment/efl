@@ -1,0 +1,52 @@
+import efl_object;
+
+function EFlThreadIOCall {
+   [[ A Function to call on the "other end" of a thread obvject ]]
+   params {
+      @cref event: Efl.Event; [[ ]]
+   }
+};
+
+function EFlThreadIOCallSync {
+   [[ A Function to call on the "other end" of a thread obvject ]]
+   params {
+      @cref event: Efl.Event; [[ ]]
+   }
+   return: void_ptr; [[ ]]
+};
+
+mixin Efl.ThreadIO
+{
+   [[ ]]
+   methods {
+      @property indata {
+         set { }
+         get { }
+         values {
+            data: void_ptr; [[ ]]
+         }
+      }
+      @property outdata {
+         set { }
+         get { }
+         values {
+            data: void_ptr; [[ ]]
+         }
+      }
+      call {
+         params {
+            func: EFlThreadIOCall; [[ ]]
+         }
+      }
+      call_sync {
+         params {
+            func: EFlThreadIOCallSync; [[ ]]
+         }
+         return: void_ptr; [[ ]]
+      }
+   }
+   events {
+   }
+   implements {
+   }
+}

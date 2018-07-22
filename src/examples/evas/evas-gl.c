@@ -338,6 +338,12 @@ _animator_cb(void *data)
    //pixel get callback then.
    evas_object_image_pixels_dirty_set(img, EINA_TRUE);
 
+   //If you know the specific region to be updated, specify here for the patial rendering.
+   //Otherwise, full image region will be redrawn on the canvas.
+   Evas_Coord w, h;
+   evas_object_geometry_get(img, NULL, NULL, &w, &h);
+   evas_object_image_data_update_add(img, 0, 0, w, h);
+
    return ECORE_CALLBACK_RENEW;
 }
 

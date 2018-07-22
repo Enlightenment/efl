@@ -104,7 +104,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *win, *table, *bt, *rc, *en;
    api_data *api = calloc(1, sizeof(*api));
 
-   win = efl_add(EFL_UI_WIN_CLASS, NULL,
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                 efl_ui_win_name_set(efl_added, "table"),
                 efl_text_set(efl_added, "Table"),
                 efl_ui_win_autodel_set(efl_added, EINA_TRUE),
@@ -121,48 +121,48 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    elm_object_text_set(en, "Entry text");
    elm_entry_single_line_set(en, EINA_TRUE);
    efl_pack_table(table, en, 50, 10, 40, 10);
-   efl_gfx_visible_set(en, 1);
+   efl_gfx_entity_visible_set(en, 1);
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_object_text_set(en, "Entry text 2");
    elm_entry_single_line_set(en, EINA_TRUE);
    efl_pack_table(table, en, 60, 20, 30, 10);
-   efl_gfx_visible_set(en, 1);
+   efl_gfx_entity_visible_set(en, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
    efl_pack_table(table, bt, 30, 0, 40, 10);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button");
    efl_pack_table(table, bt,  0,  0, 20, 20);
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button");
    efl_pack_table(table, bt, 10, 10, 40, 20);
    api->data.child = bt;
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button");
    efl_pack_table(table, bt, 10, 30, 20, 50);
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button");
    efl_pack_table(table, bt, 80, 80, 20, 20);
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Change");
    efl_pack_table(table, bt, 40, 40, 20, 20);
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_table, table);
-   efl_gfx_visible_set(bt, 1);
+   efl_gfx_entity_visible_set(bt, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_gfx_color_set(rc, 128, 0, 0, 128);
@@ -184,5 +184,5 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_gfx_color_set(rc, 128, 64, 0, 128);
    efl_pack_table(table, rc, 60, 80, 10, 10);
 
-   efl_gfx_size_set(win, EINA_SIZE2D(480,  480));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(480,  480));
 }

@@ -29,6 +29,8 @@
 # include <Exotic.h>
 #endif
 
+#include "ecore_con_private.h"
+
 /* OpenSSL's BIO is the abstraction for I/O, provide one for Efl.Io.* */
 static int
 efl_net_socket_bio_create(BIO *b)

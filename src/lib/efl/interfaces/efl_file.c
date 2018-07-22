@@ -7,61 +7,54 @@
 typedef struct _Efl_File_Data Efl_File_Data;
 struct _Efl_File_Data
 {
-   Eo *vo;
-
-   Efl_Image_Load_Error error;
+   Efl_Gfx_Image_Load_Error error;
 };
 
 static Eina_Bool
 _efl_file_file_set(Eo *obj, Efl_File_Data *pd, const char *file, const char *key)
 {
+   char *tmp = NULL;
    Eina_File *f = NULL;
    Eina_Bool r = EINA_FALSE;
 
-   pd->error = EFL_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+   pd->error = EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
-   if (file)
+   tmp = (char*)(file);
+   if (tmp)
      {
-        pd->vo = efl_vpath_manager_fetch(EFL_VPATH_MANAGER_CLASS, file);
-        efl_vpath_file_do(pd->vo);
-        // XXX:FIXME: allow this to be async
-        efl_vpath_file_wait(pd->vo);
-        file = efl_vpath_file_result_get(pd->vo);
+        tmp = eina_vpath_resolve(tmp);
      }
 
-   if (file)
+   if (tmp)
      {
-        f = eina_file_open(file, EINA_FALSE);
+        f = eina_file_open(tmp, EINA_FALSE);
         if (!f) goto on_error;
      }
 
-   pd->error = EFL_IMAGE_LOAD_ERROR_NONE;
+   pd->error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 
    r = efl_file_mmap_set(obj, f, key);
    if (f) eina_file_close(f);
 
  on_error:
-   if (pd->vo && (!efl_vpath_file_keep_get(pd->vo)))
-     {
-        efl_del(pd->vo);
-        pd->vo = NULL;
-     }
 
+   free(tmp);
    return r;
 }
 
 static void
-_efl_file_file_get(Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, const char **key)
+_efl_file_file_get(const Eo *obj, Efl_File_Data *pd EINA_UNUSED, const char **file, const char **key)
 {
    const Eina_File *f = NULL;
 
    efl_file_mmap_get(obj, &f, key);
 
    if (f && file) *file = eina_file_filename_get(f);
+   else if (file) *file = NULL;
 }
 
-static Efl_Image_Load_Error
-_efl_file_load_error_get(Eo *obj EINA_UNUSED, Efl_File_Data *pd)
+static Efl_Gfx_Image_Load_Error
+_efl_file_load_error_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 {
    return pd->error;
 }

@@ -11,7 +11,7 @@ _efl_canvas_surface_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Data *pd)
 }
 
 EOLIAN static void *
-_efl_canvas_surface_native_buffer_get(Eo *obj EINA_UNUSED, Efl_Canvas_Surface_Data *pd)
+_efl_canvas_surface_native_buffer_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Surface_Data *pd)
 {
    return pd->buffer;
 }

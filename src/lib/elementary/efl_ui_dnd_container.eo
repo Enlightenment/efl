@@ -1,0 +1,48 @@
+import efl_ui_dnd_types;
+
+mixin Efl.Ui.Dnd_Container {
+   methods {
+      @property drag_delay_time {
+         [[The time since mouse down happens to drag starts.]]
+         set {
+            legacy: null;
+         }
+         get {
+            legacy: null;
+         }
+         values {
+            time: double; [[The drag delay time]]
+         }
+      }
+      drag_item_add {
+         [[This registers a drag for items in a container. Many items can be
+           dragged at a time. During dragging, there are three events emitted:
+           EFL_DND_EVENT_DRAG_POS, EFL_DND_EVENT_DRAG_ACCEPT, EFL_DND_EVENT_DRAG_DONE.]]
+         params {
+            @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
+            @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations CHECKING ]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_item_del {
+         [[Remove drag function of items in the container object.]]
+         params {
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drop_item_add {
+         params {
+            @in format: Efl.Selection_Format; [[Accepted data formats]]
+            @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drop_item_del {
+         params {
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+   }
+}

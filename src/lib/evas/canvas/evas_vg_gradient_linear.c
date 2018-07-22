@@ -5,10 +5,10 @@
 
 #include <strings.h>
 
-#define MY_CLASS EFL_VG_GRADIENT_LINEAR_CLASS
+#define MY_CLASS EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS
 
-typedef struct _Efl_VG_Gradient_Linear_Data Efl_VG_Gradient_Linear_Data;
-struct _Efl_VG_Gradient_Linear_Data
+typedef struct _Efl_Canvas_Vg_Gradient_Linear_Data Efl_Canvas_Vg_Gradient_Linear_Data;
+struct _Efl_Canvas_Vg_Gradient_Linear_Data
 {
    struct {
       double x, y;
@@ -16,19 +16,19 @@ struct _Efl_VG_Gradient_Linear_Data
 };
 
 static void
-_efl_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UNUSED,
-                                                          Efl_VG_Gradient_Linear_Data *pd,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UNUSED,
+                                                          Efl_Canvas_Vg_Gradient_Linear_Data *pd,
                                                           double x, double y)
 {
    pd->start.x = x;
    pd->start.y = y;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static void
-_efl_vg_gradient_linear_efl_gfx_gradient_linear_start_get(Eo *obj EINA_UNUSED,
-                                                          Efl_VG_Gradient_Linear_Data *pd,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_get(const Eo *obj EINA_UNUSED,
+                                                          Efl_Canvas_Vg_Gradient_Linear_Data *pd,
                                                           double *x, double *y)
 {
    if (x) *x = pd->start.x;
@@ -36,19 +36,19 @@ _efl_vg_gradient_linear_efl_gfx_gradient_linear_start_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUSED,
-                                                        Efl_VG_Gradient_Linear_Data *pd,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUSED,
+                                                        Efl_Canvas_Vg_Gradient_Linear_Data *pd,
                                                         double x, double y)
 {
    pd->end.x = x;
    pd->end.y = y;
 
-   _efl_vg_changed(obj);
+   _efl_canvas_vg_node_changed(obj);
 }
 
 static void
-_efl_vg_gradient_linear_efl_gfx_gradient_linear_end_get(Eo *obj EINA_UNUSED,
-                                                        Efl_VG_Gradient_Linear_Data *pd,
+_efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_get(const Eo *obj EINA_UNUSED,
+                                                        Efl_Canvas_Vg_Gradient_Linear_Data *pd,
                                                         double *x, double *y)
 {
    if (x) *x = pd->end.x;
@@ -56,21 +56,21 @@ _efl_vg_gradient_linear_efl_gfx_gradient_linear_end_get(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_vg_gradient_linear_render_pre(Eo *obj,
+_efl_canvas_vg_gradient_linear_render_pre(Eo *obj,
                                    Eina_Matrix3 *parent,
                                    Ector_Surface *s,
                                    void *data,
-                                   Efl_VG_Data *nd)
+                                   Efl_Canvas_Vg_Node_Data *nd)
 {
-   Efl_VG_Gradient_Linear_Data *pd = data;
-   Efl_VG_Gradient_Data *gd;
+   Efl_Canvas_Vg_Gradient_Linear_Data *pd = data;
+   Efl_Canvas_Vg_Gradient_Data *gd;
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
-   gd = efl_data_scope_get(obj, EFL_VG_GRADIENT_CLASS);
-   EFL_VG_COMPUTE_MATRIX(current, parent, nd);
+   gd = efl_data_scope_get(obj, EFL_CANVAS_VG_GRADIENT_CLASS);
+   EFL_CANVAS_VG_COMPUTE_MATRIX(current, parent, nd);
 
    if (!nd->renderer)
      {
@@ -91,53 +91,53 @@ _efl_vg_gradient_linear_render_pre(Eo *obj,
 }
 
 static Eo *
-_efl_vg_gradient_linear_efl_object_constructor(Eo *obj,
-                                            Efl_VG_Gradient_Linear_Data *pd)
+_efl_canvas_vg_gradient_linear_efl_object_constructor(Eo *obj,
+                                            Efl_Canvas_Vg_Gradient_Linear_Data *pd)
 {
-   Efl_VG_Data *nd;
+   Efl_Canvas_Vg_Node_Data *nd;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
-   nd->render_pre = _efl_vg_gradient_linear_render_pre;
+   nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
+   nd->render_pre = _efl_canvas_vg_gradient_linear_render_pre;
    nd->data = pd;
 
    return obj;
 }
 
 static void
-_efl_vg_gradient_linear_efl_object_destructor(Eo *obj, Efl_VG_Gradient_Linear_Data *pd EINA_UNUSED)
+_efl_canvas_vg_gradient_linear_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Gradient_Linear_Data *pd EINA_UNUSED)
 {
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static void
-_efl_vg_gradient_linear_efl_vg_bounds_get(Eo *obj, Efl_VG_Gradient_Linear_Data *pd, Eina_Rect *r)
+_efl_canvas_vg_gradient_linear_efl_gfx_path_bounds_get(const Eo *obj, Efl_Canvas_Vg_Gradient_Linear_Data *pd, Eina_Rect *r)
 {
-   Efl_VG_Data *nd;
+   Efl_Canvas_Vg_Node_Data *nd;
 
-   nd = efl_data_scope_get(obj, EFL_VG_CLASS);
+   nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
    EINA_RECTANGLE_SET(r,
                       nd->x + pd->start.x, nd->y + pd->start.y,
                       pd->end.x - pd->start.x, pd->end.y - pd->start.x);
 }
 
 static Eina_Bool
-_efl_vg_gradient_linear_efl_vg_interpolate(Eo *obj,
-                                                Efl_VG_Gradient_Linear_Data *pd,
+_efl_canvas_vg_gradient_linear_efl_gfx_path_interpolate(Eo *obj,
+                                                Efl_Canvas_Vg_Gradient_Linear_Data *pd,
                                                 const Efl_VG *from, const Efl_VG *to,
                                                 double pos_map)
 {
-   Efl_VG_Gradient_Linear_Data *fromd, *tod;
+   Efl_Canvas_Vg_Gradient_Linear_Data *fromd, *tod;
    double from_map;
    Eina_Bool r;
 
-   r = efl_vg_interpolate(efl_super(obj, EFL_VG_GRADIENT_LINEAR_CLASS), from, to, pos_map);
+   r = efl_gfx_path_interpolate(efl_super(obj, EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS), from, to, pos_map);
 
    if (!r) return EINA_FALSE;
 
-   fromd = efl_data_scope_get(from, EFL_VG_GRADIENT_LINEAR_CLASS);
-   tod = efl_data_scope_get(to, EFL_VG_GRADIENT_LINEAR_CLASS);
+   fromd = efl_data_scope_get(from, EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS);
+   tod = efl_data_scope_get(to, EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS);
    from_map = 1.0 - pos_map;
 
 #define INTP(Pd, From, To, Member, From_Map, Pos_Map)   \
@@ -154,7 +154,7 @@ _efl_vg_gradient_linear_efl_vg_interpolate(Eo *obj,
 }
 
 EOLIAN static Efl_VG *
-_efl_vg_gradient_linear_efl_duplicate_duplicate(const Eo *obj, Efl_VG_Gradient_Linear_Data *pd)
+_efl_canvas_vg_gradient_linear_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Gradient_Linear_Data *pd)
 {
    Efl_VG *cn = NULL;
 
@@ -191,7 +191,7 @@ evas_vg_gradient_linear_end_get(Eo *obj, double *x, double *y)
 EAPI Efl_VG*
 evas_vg_gradient_linear_add(Efl_VG *parent)
 {
-   return efl_add(EFL_VG_GRADIENT_LINEAR_CLASS, parent);
+   return efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
 }
 
-#include "efl_vg_gradient_linear.eo.c"
+#include "efl_canvas_vg_gradient_linear.eo.c"

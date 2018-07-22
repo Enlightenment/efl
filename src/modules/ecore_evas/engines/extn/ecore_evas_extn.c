@@ -1513,16 +1513,19 @@ _ecore_evas_extn_socket_prepare(Ecore_Evas *ee)
 {
    Extn *extn;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
-   int cur_b;
+   void *pixels = NULL;
 
    extn = bdata->data;
    if (!extn) return EINA_FALSE;
 
-   if (bdata->pixels)
+   if (extn->b[extn->cur_b].buf)
      {
-        cur_b = extn->cur_b;
-        bdata->pixels = _extnbuf_lock(extn->b[cur_b].buf, NULL, NULL, NULL);
-        return EINA_TRUE;
+        pixels = _extnbuf_lock(extn->b[extn->cur_b].buf, NULL, NULL, NULL);
+        if (pixels)
+          {
+             bdata->pixels = pixels;
+             return EINA_TRUE;
+          }
      }
    return EINA_FALSE;
 }
@@ -1542,27 +1545,30 @@ _ecore_evas_ews_update_image(void *data, Evas *e EINA_UNUSED, void *event_info)
    prev_b = extn->prev_b;
    _extnbuf_unlock(extn->b[prev_b].buf);
 
-   EINA_LIST_FOREACH(post->updated_area, l, r)
+   if (post->updated_area)
      {
-        Ipc_Data_Update ipc;
-        Eina_List *ll;
+        EINA_LIST_FOREACH(post->updated_area, l, r)
+          {
+             Ipc_Data_Update ipc;
+             Eina_List *ll;
 
-        ipc.x = r->x;
-        ipc.y = r->y;
-        ipc.w = r->w;
-        ipc.h = r->h;
-        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
-          ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc,
-                                sizeof(ipc));
-     }
+             ipc.x = r->x;
+             ipc.y = r->y;
+             ipc.w = r->w;
+             ipc.h = r->h;
+             EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+               ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc,
+                                     sizeof(ipc));
+          }
 
-   EINA_LIST_FOREACH(extn->ipc.clients, l, client)
-     ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
-                           prev_b, NULL, 0);
-   if (extn->profile.done)
-     {
-        _ecore_evas_extn_socket_window_profile_change_done_send(ee);
-        extn->profile.done = EINA_FALSE;
+        EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+          ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0,
+                                prev_b, NULL, 0);
+        if (extn->profile.done)
+          {
+             _ecore_evas_extn_socket_window_profile_change_done_send(ee);
+             extn->profile.done = EINA_FALSE;
+          }
      }
 }
 
@@ -2137,7 +2143,7 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->engine.ifaces = eina_list_append(ee->engine.ifaces, iface);
 
    ee->rotation = 0;
-   ee->visible = 0;
+   ee->visible = 1;
    ee->w = w;
    ee->h = h;
    ee->req.w = ee->w;
@@ -2155,11 +2161,13 @@ ecore_evas_extn_socket_new_internal(int w, int h)
    ee->prop.sticky = EINA_FALSE;
 
    /* init evas here */
-   ee->evas = evas_new();
-   evas_data_attach_set(ee->evas, ee);
+   if (!ecore_evas_evas_new(ee, w, h))
+     {
+        ERR("Failed to create the canvas.");
+        ecore_evas_free(ee);
+        return NULL;
+     }
    evas_output_method_set(ee->evas, rmethod);
-   evas_output_size_set(ee->evas, w, h);
-   evas_output_viewport_set(ee->evas, 0, 0, w, h);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST, _ecore_evas_ews_update_image, ee);
 
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);

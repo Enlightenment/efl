@@ -170,7 +170,7 @@ EAPI void          eina_counter_stop(Eina_Counter *counter,
 
 /**
  * @brief Dumps the result of all the clocks of a counter to a stream.
- * @details This function returns an malloc'd string containing the dump of
+ * @details This function returns a malloc'd string containing the dump of
  *          all the valid clocks of @p counter.
  *          If @p counter is @c NULL, the functions exits
  *          immediately. Otherwise, the output is formatted like this:

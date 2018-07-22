@@ -1,4 +1,4 @@
-class Elm.Access (Elm.Widget, Efl.Access.Widget.Action)
+class Elm.Access (Efl.Ui.Widget, Efl.Access.Widget.Action)
 {
    [[Elm abstract accessibility class]]
    legacy_prefix: elm_access;
@@ -7,9 +7,9 @@ class Elm.Access (Elm.Widget, Efl.Access.Widget.Action)
    implements {
       class.constructor;
       Efl.Object.constructor;
-      Elm.Widget.on_access_activate;
-      Elm.Widget.on_focus_update;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Focus.Object.on_focus_update;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.state_set { get; }
+      Efl.Access.Object.state_set { get; }
    }
 }

@@ -19,7 +19,7 @@ _efl_input_hold_hold_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Eina_Bool
 }
 
 EOLIAN static Eina_Bool
-_efl_input_hold_hold_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_hold_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->hold;
 }
@@ -31,13 +31,13 @@ _efl_input_hold_efl_input_event_device_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_D
 }
 
 EOLIAN static Efl_Input_Device *
-_efl_input_hold_efl_input_event_device_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_device_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->device;
 }
 
 EOLIAN static double
-_efl_input_hold_efl_input_event_timestamp_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->timestamp;
 }
@@ -55,7 +55,7 @@ _efl_input_hold_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Input_H
 }
 
 EOLIAN static Efl_Input_Flags
-_efl_input_hold_efl_input_event_event_flags_get(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->event_flags;
 }
@@ -83,13 +83,20 @@ _efl_input_hold_efl_object_destructor(Eo *obj, Efl_Input_Hold_Data *pd)
 }
 
 EOLIAN static Efl_Input_Event *
-_efl_input_hold_efl_input_event_instance_get(Eo *klass EINA_UNUSED, void *_pd EINA_UNUSED,
+_efl_input_hold_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
                                              Efl_Object *owner, void **priv)
 {
-   // TODO: Implement a cache. Depends only on how many hold events we trigger.
-   Efl_Input_Event *evt = efl_add(MY_CLASS, owner);
+   Efl_Input_Event *evt = efl_input_event_instance_get(klass, owner);;
+
+   if (!evt) return NULL;
    if (priv) *priv = efl_data_scope_get(evt, MY_CLASS);
    return evt;
+}
+
+EOLIAN static void
+_efl_input_hold_class_destructor(Efl_Class *klass)
+{
+   efl_input_event_instance_clean(klass);
 }
 
 EOLIAN static void

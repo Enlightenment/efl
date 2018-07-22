@@ -14,15 +14,15 @@ class TestMain
 
         efl.All.Init();
 
-        efl.Loop loop = new efl.LoopConcrete();
+        efl.Loop loop = new efl.Loop();
         EcoreEvas ecore_evas = new EcoreEvas();
-        efl.canvas.Object canvas = ecore_evas.canvas;
+        efl.canvas.IObject canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.Object parent = canvas.GetParent();
+        efl.IObject parent = canvas.GetParent();
         System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
 
-        efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas);
+        efl.canvas.Rectangle rect = new efl.canvas.Rectangle(canvas);
         rect.SetColor(colors[0, 0], colors[0, 1], colors[0, 2], 255);
         eina.Size2D size = new eina.Size2D();
         size.W = 640;
@@ -30,7 +30,7 @@ class TestMain
         rect.SetSize(size);
         rect.SetVisible(true);
 
-        canvas.KEY_DOWN += (object sender, efl.input.KEY_DOWN_Args e) => {
+        canvas.KeyDownEvt += (object sender, efl.input.Interface.KeyDownEvt_Args e) => {
             color_index = (color_index + 1) % 3;
             Console.WriteLine("Key Down");
             Console.WriteLine("Got key obj at {0}", e.arg.raw_handle.ToString("X"));

@@ -13,22 +13,22 @@ class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
          }
       }
       push {
-      	 [[Push surface to GPU]]
+          [[Push surface to GPU]]
          return: bool; [[$true on success, $false otherwise]]
-	 params {
-	    @in flags: uint64; [[GL flags]]
-	    @in vertex: ptr(GLshort); [[GL vertex]]
-	    @in vertex_count: uint; [[GL vertex count]]
-	    @in mul_col: uint; [[Premultiplied color]]
-	 }
+    params {
+       @in flags: uint64; [[GL flags]]
+       @in vertex: ptr(GLshort); [[GL vertex]]
+       @in vertex_count: uint; [[GL vertex count]]
+       @in mul_col: uint; [[Premultiplied color]]
+    }
       }
       state_define {
-      	 [[Define state]]
+          [[Define state]]
          return: bool; [[$true on success, $false otherwise]]
-	 params {
+    params {
             @in op: Efl.Gfx.Render_Op; [[Render operation]]
-	    @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
-	 }
+       @in clips: array<ptr(Eina.Rect)>; [[Array of @Eina.Rect clip]]
+    }
       }
    }
    implements {

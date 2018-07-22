@@ -1,5 +1,5 @@
-EFL_VERSION([1], [20], [99], [dev])
-AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
+EFL_VERSION([1], [21], [0], [release])
+AC_INIT([efl], [efl_version-alpha1], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -15,7 +15,7 @@ AH_BOTTOM([
 ])
 
 
-AM_INIT_AUTOMAKE([1.6 dist-xz -Wall color-tests subdir-objects])
+AM_INIT_AUTOMAKE([1.6 dist-xz no-dist-gzip -Wall color-tests subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 # Due to a bug in automake 1.14 we need to use this after AM_INIT_AUTOMAKE
@@ -470,7 +470,6 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS([ \
 execinfo.h \
 mcheck.h \
-sys/inotify.h \
 sys/signalfd.h \
 sys/types.h \
 sys/param.h \
@@ -480,7 +479,8 @@ sys/auxv.h \
 asm/hwcap.h \
 ])
 
-if test "x${have_solaris}" != "xyes" ; then
+if test "x${have_linux}" = "xyes" ; then
+    AC_CHECK_HEADERS([sys/inotify.h])
     AC_CHECK_HEADERS([sys/epoll.h])
 fi
 
@@ -689,6 +689,7 @@ pause \
 gmtime_r \
 pthread_getcpuclockid \
 clock_gettime \
+clearenv
 ])
 
 AC_FUNC_ALLOCA
@@ -1355,6 +1356,13 @@ AC_DEFINE_IF([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"],
   [1], [Compiling bindings for C Sharp])
 AC_SUBST([want_csharp])
 
+if test "x${have_windows}" = "xyes"; then
+  eflmonodlldir="$prefix/bin"
+else
+  eflmonodlldir="$libdir/efl-mono-${EFL_VERSION_MAJOR}"
+fi
+AC_SUBST([eflmonodlldir])
+
 # Efl Mono
 EFL_LIB_START_OPTIONAL([Efl_Mono], [test "x${want_csharp}" = "xyes"])
 
@@ -1445,7 +1453,15 @@ AC_SUBST([CUSTOM_EXPORTS_MONO_DL_MONO])
 # Eos file/library mapping
 
 # Unescaped sed pattern: sed -n 's/src\/lib\/\([a-z0-9_]*\)\/[a-z\/]*\/\([a-z0-9\._]*\)/\2,\1/pg'
-_configure_path=`realpath $0`
+AC_CHECK_PROG([have_realpath], [realpath], [yes], [no])
+if test "x${have_realpath}" = "xyes" ; then
+  _configure_path=`realpath $0`
+else
+  AC_CHECK_PROG([have_readlink], [readlink], [yes], [no])
+  if test "x${have_readlink}" = "xyes" ; then
+    _configure_path=`readlink -f $0`
+  fi
+fi
 efl_mono_top_srcdir=`dirname ${_configure_path}`
 EFL_MONO_LIBRARY_MAP=`find ${efl_mono_top_srcdir}/src/lib/ -iname "*\.eo" | sed -n 's/.*\/src\/lib\/\(@<:@a-z0-9_@:>@*\)@<:@\/a-z@:>@*\/\(@<:@a-z0-9\._@:>@*\)/\2,\1/pg'`
 
@@ -2141,7 +2157,7 @@ AC_ARG_ENABLE([wayland],
    [want_wayland="no"])
 
 if test "${want_wayland}" = "yes"; then
-   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0 wayland-scanner >= 1.11.0 wayland-protocols >= 1.9])
+   EFL_PKG_CHECK_STRICT([wayland-client >= 1.11.0 wayland-scanner >= 1.11.0 wayland-protocols >= 1.12])
    PKG_CHECK_MODULES([WAYLAND], [wayland-scanner >= 1.11.0],
     [
       AC_ARG_VAR([wayland_scanner], [The wayland-scanner executable])
@@ -3807,6 +3823,7 @@ EFL_OPTIONAL_INTERNAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [ecore_x])
 
 EFL_DEPEND_PKG([EFL_WL], [WAYLAND],
                [wayland-server >= 1.11.0 xkbcommon >= 0.6.0])
+EFL_OPTIONAL_DEPEND_PKG([EFL_WL], [${want_x11_any}], [XKBCOMMONX11], [xkbcommon-x11])
 
 EFL_EVAL_PKGS([EFL_WL])
 
@@ -3930,7 +3947,7 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eeze])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eo])
 EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
-EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.6.0 xkbcommon >= 0.3.0 libudev])
+EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.7.0 xkbcommon >= 0.3.0 libudev])
 
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
@@ -4581,10 +4598,8 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [emile])
 ECORE_EVAS_MODULE([extn], [${want_ecore_evas_extn}])
 ECORE_EVAS_MODULE([ews], [yes])
 ECORE_EVAS_MODULE([fb], [${want_fb}])
-ECORE_EVAS_MODULE([drm], [${want_drm}],
-  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_drm}], [ecore-drm2])])
-ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}],
-  [EFL_OPTIONAL_INTERNAL_DEPEND_PKG([ECORE_EVAS], [${want_gl_drm}], [ecore-drm2])])
+ECORE_EVAS_MODULE([drm], [${want_drm}])
+ECORE_EVAS_MODULE([gl-drm], [${want_gl_drm}])
 
 ECORE_EVAS_MODULE([opengl-cocoa], [${want_ecore_evas_gl_cocoa}])
 
@@ -4754,12 +4769,6 @@ dnl TODO: remove these ifdefs from code!
 AC_DEFINE([HAVE_EIO], [1], [Have eio library])
 #### End of Eio
 
-# Eo Id
-if test "x${want_eo_id}" = "xyes" ; then
-   AC_DEFINE([HAVE_EO_ID], [1], [Have eo id])
-fi
-
-
 #### Efreet
 EFL_LIB_START([Efreet])
 
@@ -4782,6 +4791,7 @@ EFL_INTERNAL_DEPEND_PKG([EFREET], [eo])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [efl])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [eina])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [emile])
+EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-con])
 EFL_INTERNAL_DEPEND_PKG([EFREET], [ecore-ipc])
 
 ### Checks for header files
@@ -5552,9 +5562,7 @@ AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS([geteuid getuid getpwent])
 
-if test "x${want_quicklaunch}" != "xno"; then
-   AC_CHECK_FUNCS([fork clearenv])
-fi
+AC_CHECK_FUNCS([fork clearenv])
 
 build_quicklaunch="no"
 if test "x${ac_cv_func_fork}" = "xyes" -a "x${efl_func_dlopen}" = "xyes"; then
@@ -5691,13 +5699,13 @@ esac
 AC_CONFIG_FILES([
 Makefile
 data/Makefile
-config/Makefile
-config/default/Makefile
-config/default/base.src
-config/mobile/Makefile
-config/mobile/base.src
-config/standard/Makefile
-config/standard/base.src
+data/elementary/config/Makefile
+data/elementary/config/default/Makefile
+data/elementary/config/default/base.src
+data/elementary/config/mobile/Makefile
+data/elementary/config/mobile/base.src
+data/elementary/config/standard/Makefile
+data/elementary/config/standard/base.src
 doc/Makefile
 doc/Doxyfile
 doc/previews/Makefile
@@ -5869,8 +5877,6 @@ cmakeconfig/ElementaryConfig.cmake
 AC_OUTPUT
 
 #### Info
-
-EFL_ADD_FEATURE([EO], [eo-id], [${want_eo_id}])
 
 case $host_cpu in
   i*86|x86_64|amd64)
@@ -6119,16 +6125,6 @@ if test -n "$CFOPT_WARNING"; then
     echo "You disabled Gstreamer 1.x support. You likely don't want to do"
     echo "this as it will heavily limit your media support options and render"
     echo "some functionality as useless, leading to visible application bugs."
-    echo "_____________________________________________________________________"
-  fi
-  if test "x${want_eo_id}" = "xno"; then
-    echo "_____________________________________________________________________"
-    echo "Eo's ID abstraction interface is a major safety system that"
-    echo "protects code from crashing or misbehaving in many cases. It does"
-    echo "come at a slight cost, but the safety and protection is worth it."
-    echo "Also by disabling this, you may also introduce security holes in"
-    echo "EFL as well as cause all sorts of previously non-existant crashes."
-    echo "Seriously reconsider disabling EO ID."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_evas_cserve2}" = "xno"; then

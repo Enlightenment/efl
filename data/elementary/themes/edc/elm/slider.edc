@@ -112,17 +112,17 @@ group { name: "elm/slider/horizontal/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer.content.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer.content.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -233,7 +233,7 @@ group { name: "elm/slider/horizontal/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -309,7 +309,7 @@ group { name: "elm/slider/horizontal/default";
             rel2.offset: -3 -3;
          }
       }
-      part { name: "sizer.content.end"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -399,6 +399,7 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "elm.dragable.slider"; type: RECT;
+         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -415,6 +416,7 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -432,6 +434,7 @@ group { name: "elm/slider/horizontal/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -829,17 +832,17 @@ group { name: "elm/slider/vertical/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer.content.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer.content.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -950,7 +953,7 @@ group { name: "elm/slider/vertical/default";
             rel2.offset: -3 2;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1027,7 +1030,7 @@ group { name: "elm/slider/vertical/default";
             rel2.offset: -3 -3;
          }
       }
-      part { name: "sizer.content.end"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1120,6 +1123,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -1135,6 +1139,7 @@ group { name: "elm/slider/vertical/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -1152,6 +1157,7 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1577,17 +1583,17 @@ group { name: "elm/slider/range/horizontal/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer.content.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer.content.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -1724,7 +1730,7 @@ group { name: "elm/slider/range/horizontal/default";
             rel2.offset: 2 -3;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1800,7 +1806,7 @@ group { name: "elm/slider/range/horizontal/default";
             rel2.offset: -3 -3;
          }
       }
-      part { name: "sizer.content.end"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1891,6 +1897,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "elm.swallow.bar";
@@ -1906,6 +1913,7 @@ group { name: "elm/slider/range/horizontal/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -1923,6 +1931,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1958,6 +1967,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "elm.swallow.bar";
@@ -1978,6 +1988,7 @@ group { name: "elm/slider/range/horizontal/default";
          }
       }
       part { name: "knob2";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2000,6 +2011,7 @@ group { name: "elm/slider/range/horizontal/default";
       }
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;
@@ -2361,17 +2373,17 @@ group { name: "elm/slider/range/vertical/default";
          }
          if (ic) {
             set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer.content", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer.content", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
          }
          if (e) {
             set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer.content.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
          } else {
             set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer.content.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
          }
          if (!d) {
             set_state(PART:"event", "default", 0.0);
@@ -2508,7 +2520,7 @@ group { name: "elm/slider/range/vertical/default";
             rel2.offset: -3 2;
          }
       }
-      part { name: "sizer.content"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -2585,7 +2597,7 @@ group { name: "elm/slider/range/vertical/default";
             rel2.offset: -3 -3;
          }
       }
-      part { name: "sizer.content.end"; type: TEXT; mouse_events:  0;
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -2678,6 +2690,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -2693,6 +2706,7 @@ group { name: "elm/slider/range/vertical/default";
          }
       }
       part { name: "knob";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2710,6 +2724,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -2745,6 +2760,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "elm.dragable2.slider"; type: RECT;
          scale: 1;
+         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -2765,6 +2781,7 @@ group { name: "elm/slider/range/vertical/default";
          }
       }
       part { name: "knob2";
+         nomouse;
          description { state: "default" 0.0;
             image.normal: "knob";
             fixed: 1 1;
@@ -2787,6 +2804,7 @@ group { name: "elm/slider/range/vertical/default";
       }
       part { name: "slideevent2"; type: RECT; repeat_events: 1;
          scale: 1;
+         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable2.slider";
          description { state: "default" 0.0;

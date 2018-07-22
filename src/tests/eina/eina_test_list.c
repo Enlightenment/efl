@@ -56,7 +56,7 @@ static int eina_int_cmp(const void *a, const void *b)
    return *ia - *ib;
 }
 
-START_TEST(eina_test_simple)
+EFL_START_TEST(eina_test_list_simple)
 {
    Eina_List *list = NULL;
    Eina_List *tmp;
@@ -67,7 +67,6 @@ START_TEST(eina_test_simple)
    int result[] = { 81, 9, 9, 7, 1 };
    int i;
 
-   eina_init();
 
    list = eina_list_append(list, &data[0]);
         fail_if(list == NULL);
@@ -215,11 +214,10 @@ START_TEST(eina_test_simple)
    list = eina_list_free(list);
         fail_if(list != NULL);
 
-        eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_merge)
+EFL_START_TEST(eina_test_list_merge)
 {
    Eina_List *l1;
    Eina_List *l2;
@@ -229,7 +227,6 @@ START_TEST(eina_test_merge)
    int data[] = { 6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008 };
    int i;
 
-   eina_init();
 
    l1 = eina_list_append(NULL, &data[0]);
    l1 = eina_list_append(l1, &data[1]);
@@ -300,11 +297,10 @@ START_TEST(eina_test_merge)
 
       fail_if(!eina_list_sorted_check(l1));
 
-      eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_sorted_insert)
+EFL_START_TEST(eina_test_list_sorted_insert)
 {
    const int data[] = {6, 9, 42, 1, 7, 9, 81, 1664, 1337, 3, 21, 10, 0, 5, 2008};
    const int data2[] = {5, 0, 3, 2, 1, 0, 1, 2, 3, 4, 5};
@@ -313,7 +309,6 @@ START_TEST(eina_test_sorted_insert)
    void *d;
    int *res, val = 2009;
 
-   eina_init();
 
    count = sizeof(data) / sizeof(data[0]);
 
@@ -356,17 +351,15 @@ START_TEST(eina_test_sorted_insert)
    fail_if(!eina_list_sorted_check(l1));
    eina_list_free(l1);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_list_split)
+EFL_START_TEST(eina_test_list_split)
 {
    Eina_List *left = NULL, *right = NULL ;
    Eina_List *list = NULL;
    unsigned int i;
 
-   eina_init();
 
    list = eina_list_append(list, "tigh");
    list = eina_list_append(list, "adar");
@@ -393,72 +386,44 @@ START_TEST(eina_test_list_split)
         list = eina_list_append(list, "roslin");
      }
 
-   eina_shutdown();
 }
-END_TEST
-
-static int uicmp(const void *d1, const void *d2)
-{
-   const unsigned int *a = d1;
-   const unsigned int *b = d2;
-
-   if(*a == *b) return 0;
-   if(*a >  *b) return 1;
-
-   return -1;
-}
+EFL_END_TEST
 
 #define SHUFFLE_SZ 100
-#define SHUFFLE_N 100000
-START_TEST(eina_test_shuffle)
+#define SHUFFLE_N 5
+EFL_START_TEST(eina_test_list_shuffle)
 {
-   double d;
    unsigned int *p;
-   unsigned int i, j;
+   unsigned int i;
    unsigned int n[SHUFFLE_SZ];
-   unsigned int rand_count[SHUFFLE_SZ];
    Eina_List *list = NULL;
    Eina_List *item = NULL;
+   Eina_List *copy, *cl;
 
-   eina_init();
 
    for(i = 0; i < SHUFFLE_SZ; i++)
      {
         n[i] = i;
-        rand_count[i] = 0;
         list = eina_list_append(list, &n[i]);
      }
+   copy = eina_list_clone(list);
 
    for(i = 0; i < SHUFFLE_N; i++)
      {
         list = eina_list_shuffle(list, NULL);
-        p = eina_list_nth(list, SHUFFLE_SZ/2);
-        rand_count[*p]++;
-
-        j = 0;
-        list = eina_list_sort(list, 0, (Eina_Compare_Cb)&uicmp);
+        cl = eina_list_data_get(copy);
         EINA_LIST_FOREACH(list, item, p)
           {
-             if (*p != j++)
-               fail_if(*p != j++);
+             if (eina_list_data_get(cl) != p) break;
+             cl = eina_list_next(cl);
           }
-        if (j != SHUFFLE_SZ)
-          fail_if(j != SHUFFLE_SZ);
+        ck_assert_ptr_ne(item, NULL);
      }
-
-   d = SHUFFLE_SZ/(float)(SHUFFLE_N);
-   for(i = 0; i < SHUFFLE_SZ; i++)
-     {
-        fail_if(rand_count[i]*d > 1.20f);
-        fail_if(rand_count[i]*d < 0.80f);
-     }
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 #define DATA_SIZE 100
-START_TEST(eina_test_clone)
+EFL_START_TEST(eina_test_list_clone)
 {
    unsigned int i;
    unsigned int *d, *rd;
@@ -467,7 +432,6 @@ START_TEST(eina_test_clone)
    Eina_List *clist = NULL;
    Eina_List *rclist = NULL;
 
-   eina_init();
 
    for(i = 0; i < DATA_SIZE; i++)
      {
@@ -502,11 +466,10 @@ START_TEST(eina_test_clone)
    rclist = eina_list_free(rclist);
    fail_if(rclist != NULL);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(eina_test_move)
+EFL_START_TEST(eina_test_list_move)
 {
    Eina_List *list1 = NULL, *list2 = NULL;
    Eina_Bool ret;
@@ -514,7 +477,6 @@ START_TEST(eina_test_move)
    int data2[] = {6, 7, 8, 9, 10};
    int i, *list_data;
 
-   eina_init();
 
    for (i = 0; i < 5; i++)
    {
@@ -542,18 +504,17 @@ START_TEST(eina_test_move)
    eina_list_free(list1);
    eina_list_free(list2);
 
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_list(TCase *tc)
 {
-   tcase_add_test(tc, eina_test_simple);
-   tcase_add_test(tc, eina_test_merge);
-   tcase_add_test(tc, eina_test_sorted_insert);
+   tcase_add_test(tc, eina_test_list_simple);
+   tcase_add_test(tc, eina_test_list_merge);
+   tcase_add_test(tc, eina_test_list_sorted_insert);
    tcase_add_test(tc, eina_test_list_split);
-   tcase_add_test(tc, eina_test_shuffle);
-   tcase_add_test(tc, eina_test_clone);
-   tcase_add_test(tc, eina_test_move);
+   tcase_add_test(tc, eina_test_list_shuffle);
+   tcase_add_test(tc, eina_test_list_clone);
+   tcase_add_test(tc, eina_test_list_move);
 }

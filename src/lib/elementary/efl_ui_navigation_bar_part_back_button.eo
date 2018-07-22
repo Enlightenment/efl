@@ -1,0 +1,11 @@
+class Efl.Ui.Navigation_Bar_Part_Back_Button (Efl.Ui.Widget_Part, Efl.Ui.Button)
+{
+   [[Efl Ui Navigation_Bar internal part back button class]]
+   data: null;
+   implements {
+      Efl.Gfx.Entity.visible { set; get; }
+      Efl.Text.text { set; get; }
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
+   }
+}

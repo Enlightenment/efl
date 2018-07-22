@@ -6,7 +6,6 @@ class Efl.Ui.Slider_Interval (Efl.Ui.Slider)
 
       @since 1.21
     ]]
-    data: null;
     legacy_prefix: null;
     methods {
         @property interval_value {
@@ -27,6 +26,7 @@ class Efl.Ui.Slider_Interval (Efl.Ui.Slider)
         }
     }
     implements {
-        Efl.Object.finalize;
+         Efl.Object.constructor;
+         Efl.Object.destructor;
     }
 }

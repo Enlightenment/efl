@@ -16,6 +16,16 @@ struct marshall_annotation_visitor_generate;
 template <typename OutputIterator, typename Context>
 struct marshall_native_annotation_visitor_generate;
 }
+
+/*
+ * Converts a given type/parameter to the type used in the DllImport signatures.
+ *
+ * For example, Eina.Value can be marshaled either as an eina.Value instance through
+ * CustomMarshallers if we have a ptr(Eina.Value) or through the intermediate
+ * eina.Value_Native blittable struct if it is passed by value.
+ *
+ * For details, check marshall_type_impl.h with the actual conversion rules.
+ */
 struct marshall_type_generator
 {
    marshall_type_generator(bool is_return = false)
@@ -26,6 +36,7 @@ struct marshall_type_generator
    {
       return type.original_type.visit(detail::marshall_type_visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return, type.is_ptr });
    }
+   /* Some types may require a different conversion when they are in @out parameters. */
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
@@ -36,6 +47,12 @@ struct marshall_type_generator
    bool is_return;
 };
 
+/*
+ * Generates the "[MarshalAs(...)]" rules for the given type.
+ *
+ * For example, the CustomMarshallers definitions for String and eina.Values and the
+ * boolean size defintion (Eina_Value is 1 byte, while C# bool has 4 bytes).
+ */
 struct marshall_annotation_generator
 {
    marshall_annotation_generator(bool is_return = false)

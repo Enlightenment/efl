@@ -1,10 +1,6 @@
-#define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
-#include <Ecore.h>
+#include <Efl_Net.h>
 #include <Ecore_Getopt.h>
-#include <Ecore_Con.h>
 
-static int retval = EXIT_SUCCESS;
 static Eina_List *waiting = NULL;
 static Eina_List *commands = NULL;
 static Eina_Slice line_delimiter;
@@ -87,7 +83,7 @@ _copier_done(void *data EINA_UNUSED, const Efl_Event *event)
 
    waiting = eina_list_remove(waiting, event->object);
    if (!waiting)
-     ecore_main_loop_quit();
+     efl_loop_quit(efl_loop_get(event->object), EINA_VALUE_EMPTY);
 }
 
 static void
@@ -96,8 +92,8 @@ _copier_error(void *data EINA_UNUSED, const Efl_Event *event)
    const Eina_Error *perr = event->info;
    fprintf(stderr, "INFO: %s error: #%d '%s'\n",
            efl_name_get(event->object), *perr, eina_error_msg_get(*perr));
-   retval = EXIT_FAILURE;
-   ecore_main_loop_quit();
+
+   efl_loop_quit(efl_loop_get(event->object), eina_value_int_init(EXIT_FAILURE));
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(copier_cbs,
@@ -171,8 +167,34 @@ static const Ecore_Getopt options = {
   }
 };
 
-int
-main(int argc, char **argv)
+EAPI_MAIN void
+efl_pause(void *data EINA_UNUSED,
+          const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_resume(void *data EINA_UNUSED,
+           const Efl_Event *ev EINA_UNUSED)
+{
+}
+
+EAPI_MAIN void
+efl_terminate(void *data EINA_UNUSED,
+              const Efl_Event *ev EINA_UNUSED)
+{
+  if (waiting)
+    {
+       fprintf(stderr, "ERROR: %d operations were waiting!\n",
+               eina_list_count(waiting));
+       eina_list_free(waiting);
+       waiting = NULL;
+    }
+}
+
+EAPI_MAIN void
+efl_main(void *data EINA_UNUSED,
+         const Efl_Event *ev)
 {
    char *address = NULL;
    char *line_delimiter_str = NULL;
@@ -199,24 +221,19 @@ main(int argc, char **argv)
    int args;
    Eo *dialer, *sender, *receiver, *loop;
 
-   ecore_init();
-   ecore_con_init();
-
-   args = ecore_getopt_parse(&options, values, argc, argv);
+   args = ecore_getopt_parse(&options, values, 0, NULL);
    if (args < 0)
      {
         fputs("ERROR: Could not parse command line options.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
    if (quit_option) goto end;
 
-   args = ecore_getopt_parse_positional(&options, values, argc, argv, args);
+   args = ecore_getopt_parse_positional(&options, values, 0, NULL, args);
    if (args < 0)
      {
         fputs("ERROR: Could not parse positional arguments.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -225,7 +242,6 @@ main(int argc, char **argv)
    if (!commands)
      {
         fputs("ERROR: missing commands to send.\n", stderr);
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -242,13 +258,12 @@ main(int argc, char **argv)
     * the line_delimiter, then wait for a reply from the server, then
     * write another.
     */
-   send_queue = efl_add(EFL_IO_QUEUE_CLASS, NULL,
+   send_queue = efl_add_ref(EFL_IO_QUEUE_CLASS, NULL,
                         efl_name_set(efl_added, "send_queue"),
                         efl_io_queue_limit_set(efl_added, buffer_limit));
    if (!send_queue)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Queue (send)\n");
-        retval = EXIT_FAILURE;
         goto end;
      }
 
@@ -264,14 +279,13 @@ main(int argc, char **argv)
     * Our example's usage is to peek its data with slice_get() then
     * clear().
     */
-   receive_queue = efl_add(EFL_IO_QUEUE_CLASS, NULL,
+   receive_queue = efl_add_ref(EFL_IO_QUEUE_CLASS, NULL,
                            efl_name_set(efl_added, "receive_queue"),
                            efl_io_queue_limit_set(efl_added, buffer_limit),
                            efl_event_callback_add(efl_added, EFL_IO_QUEUE_EVENT_SLICE_CHANGED, _receiver_data, NULL));
    if (!receive_queue)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Queue (receive)\n");
-        retval = EXIT_FAILURE;
         goto error_receive_queue;
      }
 
@@ -285,7 +299,7 @@ main(int argc, char **argv)
     * depend on main loop, thus their parent must be a loop
     * provider. We use the loop itself.
     */
-   loop = efl_main_loop_get();
+   loop = ev->object;
 
    /* The TCP client to use to send/receive network data */
    dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, loop,
@@ -294,7 +308,6 @@ main(int argc, char **argv)
    if (!dialer)
      {
         fprintf(stderr, "ERROR: could not create Efl_Net_Dialer_Tcp\n");
-        retval = EXIT_FAILURE;
         goto error_dialer;
      }
 
@@ -308,7 +321,6 @@ main(int argc, char **argv)
    if (!sender)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Copier (sender)\n");
-        retval = EXIT_FAILURE;
         goto error_sender;
      }
 
@@ -322,7 +334,6 @@ main(int argc, char **argv)
    if (!receiver)
      {
         fprintf(stderr, "ERROR: could not create Efl_Io_Copier (receiver)\n");
-        retval = EXIT_FAILURE;
         goto error_receiver;
      }
 
@@ -337,15 +348,7 @@ main(int argc, char **argv)
    waiting = eina_list_append(waiting, sender);
    waiting = eina_list_append(waiting, receiver);
 
-   ecore_main_loop_begin();
-
-   if (waiting)
-     {
-        fprintf(stderr, "ERROR: %d operations were waiting!\n",
-                eina_list_count(waiting));
-        eina_list_free(waiting);
-        waiting = NULL;
-     }
+   return ;
 
  error_dialing:
    efl_io_closer_close(receiver);
@@ -356,9 +359,9 @@ main(int argc, char **argv)
  error_sender:
    efl_del(dialer);
  error_dialer:
-   efl_del(receive_queue);
+   efl_unref(receive_queue);
  error_receive_queue:
-   efl_del(send_queue);
+   efl_unref(send_queue);
  end:
    EINA_LIST_FREE(commands, cmd)
      {
@@ -366,8 +369,7 @@ main(int argc, char **argv)
         free(cmd);
      }
 
-   ecore_con_shutdown();
-   ecore_shutdown();
-
-   return retval;
+   efl_loop_quit(efl_loop_get(ev->object), eina_value_int_init(EXIT_FAILURE));
 }
+
+EFL_MAIN_EX();

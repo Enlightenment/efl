@@ -18,7 +18,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef EFL_ECORE_CON_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -131,7 +131,7 @@ EAPI int               ecore_con_url_shutdown(void);
 
 #include "efl_net_control_technology.eo.h"
 #include "efl_net_control_access_point.eo.h"
-#include "efl_net_control.eo.h"
+#include "efl_net_control_manager.eo.h"
 #include "efl_net_session.eo.h"
 
 #ifdef __cplusplus

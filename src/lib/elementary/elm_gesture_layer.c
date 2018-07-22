@@ -63,7 +63,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                \
   if (!ptr)                                          \
     {                                                \
-       CRI("No widget data for object %p (%s)", \
+       ERR("No widget data for object %p (%s)", \
                 o, evas_object_type_get(o));         \
        return;                                       \
     }
@@ -72,7 +72,7 @@ _glayer_buf_dup(void *buf, size_t size)
   ELM_GESTURE_LAYER_DATA_GET(o, ptr);                         \
   if (!ptr)                                                   \
     {                                                         \
-       CRI("No widget data for object %p (%s)",          \
+       ERR("No widget data for object %p (%s)",          \
                 o, evas_object_type_get(o));                  \
        return val;                                            \
     }
@@ -1657,7 +1657,7 @@ _taps_rect_get(Eina_List *taps, int idx, Eina_Rectangle *r)
  * @ingroup Elm_Gesture_Layer
  */
 static Eina_Bool
-_tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
+_tap_gesture_check_finish(Gesture_Info *gesture)
 {
    /* Here we check if taps-gesture was completed successfully */
    /* Count how many taps were received on each device then   */
@@ -1668,8 +1668,8 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
    Eina_List *pe_list;
    Eina_Rectangle base = {0, 0, 0, 0};
    Eina_Rectangle tmp = {0, 0, 0, 0};
-   if (!tap_finger_size)  /* Use system default if not set by user */
-     tap_finger_size = elm_config_finger_size_get();
+
+   ELM_GESTURE_LAYER_DATA_GET(gesture->obj, sd);
 
    if (!st->l) return EINA_FALSE;
    EINA_LIST_FOREACH(st->l, l, pe_list)
@@ -1690,16 +1690,16 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
      {  /* Compare all other rects to base, tolerance is finger size */
         if (_taps_rect_get(st->l, i, &tmp))
           {
-             if (abs(tmp.x - base.x) > tap_finger_size)
+             if (abs(tmp.x - base.x) > sd->tap_finger_size)
                return EINA_FALSE;
 
-             if (abs(tmp.y - base.y) > tap_finger_size)
+             if (abs(tmp.y - base.y) > sd->tap_finger_size)
                return EINA_FALSE;
 
-             if (abs((tmp.x + tmp.w) - (base.x + base.w)) > tap_finger_size)
+             if (abs((tmp.x + tmp.w) - (base.x + base.w)) > sd->tap_finger_size)
                return EINA_FALSE;
 
-             if (abs((tmp.y + tmp.h) - (base.y + base.h)) > tap_finger_size)
+             if (abs((tmp.y + tmp.h) - (base.y + base.h)) > sd->tap_finger_size)
                return EINA_FALSE;
           }
      }
@@ -1717,14 +1717,14 @@ _tap_gesture_check_finish(Gesture_Info *gesture, Evas_Coord tap_finger_size)
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_tap_gesture_finish(void *data, Evas_Coord tap_finger_size)
+_tap_gesture_finish(void *data)
 {
    /* This function will test each tap gesture when timer expires */
    Elm_Gesture_State s = ELM_GESTURE_STATE_ABORT;
    Gesture_Info *gesture = data;
    Taps_Type *st = gesture->data;
 
-   if (_tap_gesture_check_finish(gesture, tap_finger_size))
+   if (_tap_gesture_check_finish(gesture))
      {
         s = ELM_GESTURE_STATE_END;
      }
@@ -1750,16 +1750,13 @@ _multi_tap_timeout(void *data)
    ELM_GESTURE_LAYER_DATA_GET(data, sd);
 
    if (IS_TESTED(ELM_GESTURE_N_TAPS))
-     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_TAPS],
-           sd->tap_finger_size);
+     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_TAPS]);
 
    if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
-     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_DOUBLE_TAPS],
-           sd->tap_finger_size);
+     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
 
    if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
-     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_TRIPLE_TAPS],
-           sd->tap_finger_size);
+     _tap_gesture_finish(sd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
 
    _clear_if_finished(data);
    sd->gest_taps_timeout = NULL;
@@ -1950,9 +1947,9 @@ _tap_gesture_test(Evas_Object *obj,
                ((gesture->g_type == ELM_GESTURE_N_DOUBLE_TAPS) &&
                 !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)))
            {  /* Test for finish immediately, not waiting for timeout */
-              if (_tap_gesture_check_finish(gesture, sd->tap_finger_size))
+              if (_tap_gesture_check_finish(gesture))
                 {
-                   _tap_gesture_finish(gesture, sd->tap_finger_size);
+                   _tap_gesture_finish(gesture);
                    return;
                 }
            }
@@ -3740,7 +3737,7 @@ _rotate_test(Evas_Object *obj,
 }
 
 EOLIAN static Eina_Bool
-_elm_gesture_layer_elm_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+_elm_gesture_layer_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
    if (disabled)
      _callbacks_unregister(obj);
@@ -3772,6 +3769,7 @@ _elm_gesture_layer_efl_canvas_group_group_add(Eo *obj, Elm_Gesture_Layer_Data *p
    priv->long_tap_start_timeout = _elm_config->glayer_long_tap_start_timeout;
    priv->repeat_events = EINA_TRUE;
    priv->glayer_continues_enable = _elm_config->glayer_continues_enable;
+   priv->tap_finger_size = _elm_config->glayer_tap_finger_size;
 
    /* FIXME: Hack to get around old configs - if too small, enlarge. */
    if (_elm_config->glayer_double_tap_timeout < 0.00001)
@@ -3847,7 +3845,7 @@ _elm_gesture_layer_efl_object_constructor(Eo *obj, Elm_Gesture_Layer_Data *_pd E
 }
 
 EOLIAN static Eina_Bool
-_elm_gesture_layer_hold_events_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_hold_events_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return !sd->repeat_events;
 }
@@ -3859,7 +3857,7 @@ _elm_gesture_layer_hold_events_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *
 }
 
 EOLIAN static double
-_elm_gesture_layer_zoom_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_zoom_step_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->zoom_step;
 }
@@ -3873,7 +3871,7 @@ _elm_gesture_layer_zoom_step_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd
 }
 
 EOLIAN static double
-_elm_gesture_layer_rotate_step_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_rotate_step_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->rotate_step;
 }
@@ -4164,7 +4162,7 @@ _elm_gesture_layer_tap_finger_size_set(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Da
 }
 
 EOLIAN static Evas_Coord
-_elm_gesture_layer_tap_finger_size_get(Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
+_elm_gesture_layer_tap_finger_size_get(const Eo *obj EINA_UNUSED, Elm_Gesture_Layer_Data *sd)
 {
    return sd->tap_finger_size;
 }

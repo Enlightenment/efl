@@ -1,5 +1,3 @@
-import elm_general;
-
 type Elm_Interface_Scrollable_Cb: __undefined_type; [[Elementary interface scrollable callback type]]
 type Elm_Interface_Scrollable_Resize_Cb: __undefined_type; [[Elementary interface scrollable resize callback type]]
 type Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type; [[Elementary interface scrollable minimal limit callback type]]
@@ -29,7 +27,7 @@ enum Elm.Scroller.Single_Direction
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.Widget)
+mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget, Efl.Ui.Widget_Focus_Manager)
 {
    [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;
@@ -105,7 +103,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property momentum_animator_disabled {
-      	 [[Momentum animator]]
+          [[Momentum animator]]
          set {
          }
          get {
@@ -153,7 +151,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
             h: int; [[Height of the region]]
          }
       }
-      @property repeat_events {
+      @property content_events {
          [[It decides whether the scrollable object propagates the events to content object or not.]]
          set {
          }
@@ -186,7 +184,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property bounce_animator_disabled {
-      	 [[Bounce animator]]
+          [[Bounce animator]]
          set {
          }
          get {
@@ -196,7 +194,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property page_scroll_limit {
-      	 [[Page scroll limit]]
+          [[Page scroll limit]]
          set {
          }
          get {
@@ -230,7 +228,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property paging {
-      	 [[Pagin property]]
+          [[Pagin property]]
          set {
          }
          get {
@@ -264,7 +262,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property step_size {
-      	 [[Step size]]
+          [[Step size]]
          set {
          }
          get {
@@ -274,7 +272,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
             y: int; [[Y coordinate]]
          }
       }
-      @property loop {
+      @property content_loop {
          [[Controls an infinite loop for a scroller.
 
            @since 1.14]]
@@ -312,7 +310,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property freeze {
-      	 [[Freeze property]]
+          [[Freeze property]]
          set {
          }
          values {
@@ -368,7 +366,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property extern_pan {
-      	 [[Extern pan]]
+          [[Extern pan]]
          set {
          }
          values {
@@ -384,7 +382,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property hold {
-      	 [[Hold property]]
+          [[Hold property]]
          set {
          }
          values {
@@ -432,16 +430,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
             animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
          }
       }
-      @property mirrored {
-      	 [[Mirroed property]]
-         set {
-         }
-         values {
-            mirrored: bool; [[$true if mirrored, $false otherwise]]
-         }
-      }
       @property content_min_limit_cb {
-      	 [[set the callback to run on minimal limit content]]
+          [[set the callback to run on minimal limit content]]
          set {
          }
          values {
@@ -457,7 +447,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property scrollable_content {
-      	 [[Content property]]
+          [[Content property]]
          set {
          }
          values {
@@ -513,7 +503,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property objects {
-      	 [[Object property]]
+          [[Object property]]
          set {
          }
          values {
@@ -552,7 +542,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       @property content_viewport_geometry {
-      	 [[Content viewport geometry]]
+          [[Content viewport geometry]]
          get {
          }
          values {
@@ -575,7 +565,7 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
          }
       }
       content_pos_set {
-      	 [[Set the content position]]
+          [[Set the content position]]
          params {
             @in x: int; [[X coordinate]]
             @in y: int; [[Y coordinate]]
@@ -583,8 +573,8 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
                              scroll direction, or if an edge was reached.]]
          }
       }
-      content_pos_get {
-      	 [[Get content position]]
+      content_pos_get @const {
+          [[Get content position]]
          params {
             @out x: int; [[X coordinate]]
             @out y: int; [[Y coordinate]]
@@ -669,9 +659,10 @@ mixin Elm.Interface_Scrollable(Efl.Ui.Scrollable, Efl.Ui.Focus.Manager.Sub, Elm.
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Focus.Manager.border_elements { get; }
-      Elm.Widget.focus_manager_create;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Base.mirrored { set; }
    }
    events {
-      changed; [[Called when content changed]]
+      changed: void; [[Called when content changed]]
    }
 }

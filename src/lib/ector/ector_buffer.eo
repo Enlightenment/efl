@@ -77,6 +77,7 @@ mixin Ector.Buffer
             @in pixels: void_ptr; [[If $null, allocates an empty buffer]]
             @in width: int; [[Buffer width]]
             @in height: int; [[Buffer height]]
+            @in stride: int; [[Buffer stride (in bytes). If 0 then calculated based on $cspace and $width]]
             @in cspace: Efl.Gfx.Colorspace; [[Buffer colorspace]]
             @in writable: bool; [[Buffer is writable]]
          }
@@ -91,6 +92,6 @@ mixin Ector.Buffer
       }
    }
    events {
-      detached; [[Emitted whenever the previously attached pixels are detached during pixels_set]]
+      detached: ptr(ubyte); [[Emitted whenever the previously attached pixels are detached during pixels_set]]
    }
 }

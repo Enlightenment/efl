@@ -745,21 +745,21 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
         goto error_dialer;
      }
 
-   efl_io_closer_close_on_destructor_set(svr->dialer.dialer, EINA_TRUE);
+   efl_io_closer_close_on_invalidate_set(svr->dialer.dialer, EINA_TRUE);
    efl_event_callback_array_add(svr->dialer.dialer, _ecore_ipc_dialer_cbs(), svr);
 
    svr->dialer.input = efl_add(EFL_IO_QUEUE_CLASS, loop);
    EINA_SAFETY_ON_NULL_GOTO(svr->dialer.input, error);
 
    svr->dialer.send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, svr->dialer.input),
                                      efl_io_copier_destination_set(efl_added, svr->dialer.dialer),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_dialer_copier_cbs(), svr));
    EINA_SAFETY_ON_NULL_GOTO(svr->dialer.send_copier, error);
 
    svr->dialer.recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, svr->dialer.dialer),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_dialer_copier_cbs(), svr),
                                      efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DATA, _ecore_ipc_dialer_copier_data, svr));
@@ -969,20 +969,23 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
              return 0;
           }
 
-        slice.mem = data;
-        slice.len = size;
-        err = efl_io_writer_write(svr->dialer.input, &slice, NULL);
-        if (err)
+        if ((data) && (size > 0))
           {
-             ERR("could not write queue=%p %zd bytes: %s",
-                 svr->dialer.input, slice.len, eina_error_msg_get(err));
-             return 0;
-          }
-        if (slice.len < (size_t)size)
-          {
-             ERR("only wrote %zd of %d bytes to queue %p",
-                 slice.len, size, svr->dialer.input);
-             return 0;
+             slice.mem = data;
+             slice.len = size;
+             err = efl_io_writer_write(svr->dialer.input, &slice, NULL);
+             if (err)
+               {
+                  ERR("could not write queue=%p %zd bytes: %s",
+                      svr->dialer.input, slice.len, eina_error_msg_get(err));
+                  return 0;
+               }
+             if (slice.len < (size_t)size)
+               {
+                  ERR("only wrote %zd of %d bytes to queue %p",
+                      slice.len, size, svr->dialer.input);
+                  return 0;
+               }
           }
 
         return s + size;
@@ -1078,7 +1081,8 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
         while (!efl_io_closer_closed_get(svr->dialer.dialer) &&
                !efl_net_dialer_connected_get(svr->dialer.dialer))
           ecore_main_loop_iterate();
-        while (efl_io_queue_usage_get(svr->dialer.input) > 0)
+        while ((efl_io_queue_usage_get(svr->dialer.input) > 0) ||
+               (efl_io_copier_pending_size_get(svr->dialer.send_copier) > 0))
           efl_io_copier_flush(svr->dialer.send_copier, EINA_TRUE, EINA_TRUE);
         return;
      }
@@ -1187,21 +1191,23 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
                  slice.len, s, cl->socket.input);
              return 0;
           }
-
-        slice.mem = data;
-        slice.len = size;
-        err = efl_io_writer_write(cl->socket.input, &slice, NULL);
-        if (err)
+        if ((data) && (size > 0))
           {
-             ERR("could not write queue=%p %zd bytes: %s",
-                 cl->socket.input, slice.len, eina_error_msg_get(err));
-             return 0;
-          }
-        if (slice.len < (size_t)size)
-          {
-             ERR("only wrote %zd of %d bytes to queue %p",
-                 slice.len, size, cl->socket.input);
-             return 0;
+             slice.mem = data;
+             slice.len = size;
+             err = efl_io_writer_write(cl->socket.input, &slice, NULL);
+             if (err)
+               {
+                  ERR("could not write queue=%p %zd bytes: %s",
+                      cl->socket.input, slice.len, eina_error_msg_get(err));
+                  return 0;
+               }
+             if (slice.len < (size_t)size)
+               {
+                  ERR("only wrote %zd of %d bytes to queue %p",
+                      slice.len, size, cl->socket.input);
+                  return 0;
+               }
           }
 
         return s + size;
@@ -1337,14 +1343,14 @@ _ecore_ipc_server_client_add(void *data, const Efl_Event *event)
    EINA_SAFETY_ON_NULL_GOTO(cl->socket.input, error);
 
    cl->socket.send_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, cl->socket.input),
                                      efl_io_copier_destination_set(efl_added, cl->socket.socket),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_client_socket_copier_cbs(), cl));
    EINA_SAFETY_ON_NULL_GOTO(cl->socket.send_copier, error);
 
    cl->socket.recv_copier = efl_add(EFL_IO_COPIER_CLASS, loop,
-                                     efl_io_closer_close_on_destructor_set(efl_added, EINA_FALSE),
+                                     efl_io_closer_close_on_invalidate_set(efl_added, EINA_FALSE),
                                      efl_io_copier_source_set(efl_added, cl->socket.socket),
                                      efl_event_callback_array_add(efl_added, _ecore_ipc_client_socket_copier_cbs(), cl),
                                      efl_event_callback_add(efl_added, EFL_IO_COPIER_EVENT_DATA, _ecore_ipc_client_socket_copier_data, cl));

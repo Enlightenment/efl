@@ -22,7 +22,7 @@ main(int argc, char *argv[])
 
    efl_object_init();
 
-   Eo *parent = efl_add(SIMPLE_CLASS, NULL);
+   Eo *parent = efl_add_ref(SIMPLE_CLASS, NULL);
 
    Eo *child1 = efl_add(SIMPLE_CLASS, parent);
    Eo *child2 = efl_add(SIMPLE_CLASS, parent);

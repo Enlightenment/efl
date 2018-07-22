@@ -3,13 +3,15 @@ interface Efl.Ui.Selectable ()
    [[Efl UI selectable interface]]
    event_prefix: efl_ui;
    events {
-      selected; [[Called when selected]]
-      unselected; [[Called when no longer selected]]
-      selection,paste; [[Called when selection is pasted]]
-      selection,copy; [[Called when selection is copied]]
-      selection,cut; [[Called when selection is cut]]
-      selection,start; [[Called at selection start]]
-      selection,changed; [[Called when selection is changed]]
-      selection,cleared; [[Called when selection is cleared]]
+      /* FIXME: Called with multiple types of event_info! */
+      selected: void; [[Called when selected]]
+      /* FIXME: Called with multiple types of event_info! */
+      unselected: void; [[Called when no longer selected]]
+      selection,paste: void; [[Called when selection is pasted]]
+      selection,copy: void; [[Called when selection is copied]]
+      selection,cut: void; [[Called when selection is cut]]
+      selection,start: void; [[Called at selection start]]
+      selection,changed: void; [[Called when selection is changed]]
+      selection,cleared: void; [[Called when selection is cleared]]
    }
 }

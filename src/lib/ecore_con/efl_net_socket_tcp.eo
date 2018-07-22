@@ -1,4 +1,4 @@
-class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
+class Efl.Net.Socket_Tcp (Efl.Net.Socket_Fd) {
     [[A base TCP socket.
 
       This is the common class and takes an existing FD, usually
@@ -43,6 +43,6 @@ class Efl.Net.Socket.Tcp (Efl.Net.Socket.Fd) {
     }
 
     implements {
-        Efl.Loop.Fd.fd { set; }
+        Efl.Loop_Fd.fd { set; }
     }
 }

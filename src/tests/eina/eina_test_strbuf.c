@@ -26,16 +26,14 @@
 
 #include "eina_suite.h"
 
-START_TEST(strbuf_simple)
+EFL_START_TEST(eina_test_strbuf_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
    Eina_Slice ro_slice;
    Eina_Rw_Slice rw_slice;
 #define TEST_TEXT \
-   "This test should be so long that it is longer than the initial size of strbuf"
-
-   eina_init();
+  "This test should be so long that it is longer than the initial size of strbuf"
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -74,19 +72,16 @@ START_TEST(strbuf_simple)
 
    eina_strbuf_free(buf);
 
-   eina_shutdown();
 #undef TEST_TEXT
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_manage_simple)
+EFL_START_TEST(eina_test_strbuf_manage_simple)
 {
    Eina_Strbuf *buf;
    char *txt;
 #define TEST_TEXT \
-   "This test should be so long that it is longer than the initial size of strbuf"
-
-   eina_init();
+  "This test should be so long that it is longer than the initial size of strbuf"
 
    txt = strdup(TEST_TEXT);
 
@@ -126,16 +121,13 @@ START_TEST(strbuf_manage_simple)
    fail_if(strcmp(txt, TEST_TEXT TEST_TEXT));
    free(txt);
 
-   eina_shutdown();
 #undef TEST_TEXT
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_remove)
+EFL_START_TEST(eina_test_strbuf_remove)
 {
    Eina_Strbuf *buf;
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -162,7 +154,7 @@ START_TEST(strbuf_remove)
    fail_if(strcmp(eina_strbuf_string_get(buf), ""));
 
 #define TEST_TEXT \
-   "This test should be so long that it is longer than the initial size of strbuf"
+  "This test should be so long that it is longer than the initial size of strbuf"
    eina_strbuf_append(buf, TEST_TEXT TEST_TEXT);
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    eina_strbuf_remove(buf, 0, eina_strbuf_length_get(buf) - 1);
@@ -170,19 +162,15 @@ START_TEST(strbuf_remove)
 #undef TEST_TEXT
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_append)
+EFL_START_TEST(eina_test_strbuf_append)
 {
    Eina_Strbuf *buf;
    Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("somethingELSE");
 
    ro_slice.len -= strlen("ELSE");
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -223,19 +211,15 @@ START_TEST(strbuf_append)
    eina_strbuf_reset(buf);
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_insert)
+EFL_START_TEST(eina_test_strbuf_insert)
 {
    Eina_Strbuf *buf;
    Eina_Slice ro_slice = EINA_SLICE_STR_LITERAL("EINA");
 
    ro_slice.len = 2;
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -269,24 +253,20 @@ START_TEST(strbuf_insert)
    fail_if(strncmp(eina_strbuf_string_get(buf) + 3, "678", 3));
 
    eina_strbuf_insert_escaped(buf, "089 '\\", 9);
-                   fail_if(strlen(eina_strbuf_string_get(
-                     buf)) != eina_strbuf_length_get(buf));
-                   fail_if(strncmp(eina_strbuf_string_get(buf) + 9,
+   fail_if(strlen(eina_strbuf_string_get(
+                    buf)) != eina_strbuf_length_get(buf));
+   fail_if(strncmp(eina_strbuf_string_get(buf) + 9,
                    "089\\ \\'\\\\",
                    strlen("089\\ \\'\\\\")));
    eina_strbuf_reset(buf);
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_replace)
+EFL_START_TEST(eina_test_strbuf_replace)
 {
    Eina_Strbuf *buf;
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -323,14 +303,11 @@ START_TEST(strbuf_replace)
    fail_if(strlen(eina_strbuf_string_get(buf)) != eina_strbuf_length_get(buf));
    fail_if(strcmp(eina_strbuf_string_get(buf), "baaaab"));
 
-
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_realloc)
+EFL_START_TEST(eina_test_strbuf_realloc)
 {
    Eina_Strbuf *buf;
    char pattern[1024 * 16];
@@ -338,10 +315,8 @@ START_TEST(strbuf_realloc)
    size_t sz;
 
    for (i = 0; i < sizeof(pattern) - 1; i++)
-      pattern[i] = 'a' + (i % 26);
+     pattern[i] = 'a' + (i % 26);
    pattern[i] = '\0';
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_if(!buf);
@@ -379,7 +354,6 @@ START_TEST(strbuf_realloc)
                   1));
    sz += sizeof(pattern) - 1;
 
-
    eina_strbuf_remove(buf, 1024, 1024 + 1234);
    fail_if(eina_strbuf_length_get(buf) != sz - 1234);
    sz -= 1234;
@@ -392,134 +366,121 @@ START_TEST(strbuf_realloc)
    fail_if(eina_strbuf_length_get(buf) != sz - 32);
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_append_realloc)
+EFL_START_TEST(eina_test_strbuf_append_realloc)
 {
    Eina_Strbuf *buf;
-   const size_t runs = 40960;
+   const size_t runs = 3 * 10;
    const char target_pattern[] = "stringstrsstr";
    const char *str;
    size_t i, target_pattern_size;
 
-   eina_init();
-
    buf = eina_strbuf_new();
-        fail_if(!buf);
+   fail_if(!buf);
 
    for (i = 0; i < runs; i++)
      {
-        fail_if(!eina_strbuf_append(buf, "string"));
-        fail_if(!eina_strbuf_append_n(buf, "string", 3));
-        fail_if(!eina_strbuf_append_char(buf, 's'));
-        fail_if(!eina_strbuf_append_length(buf, "string", 3));
+        ck_assert_int_ne(eina_strbuf_append(buf, "string"), 0); //6
+        ck_assert_int_ne(eina_strbuf_append_n(buf, "string", 3), 0); //3
+        ck_assert_int_ne(eina_strbuf_append_char(buf, 's'), 0); //1
+        ck_assert_int_ne(eina_strbuf_append_length(buf, "string", 3), 0); //3
      }
 
    target_pattern_size = strlen(target_pattern);
-        fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+   ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-        fail_if(str == NULL);
+   ck_assert_ptr_ne(str, NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-        fail_if(memcmp(str, target_pattern, target_pattern_size));
+     ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
-        eina_strbuf_free(buf);
-
-   eina_shutdown();
+   eina_strbuf_free(buf);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_prepend_realloc)
+EFL_START_TEST(eina_test_strbuf_prepend_realloc)
 {
    Eina_Strbuf *buf;
-   const size_t runs = 40960;
+   const size_t runs = 3 * 10;
    const char target_pattern[] = "strsstrstring";
    const char *str;
    size_t i, target_pattern_size;
 
-   eina_init();
-
    buf = eina_strbuf_new();
-        fail_if(!buf);
+   fail_if(!buf);
 
    for (i = 0; i < runs; i++)
      {
-        fail_if(!eina_strbuf_prepend(buf, "string"));
-        fail_if(!eina_strbuf_prepend_n(buf, "string", 3));
-        fail_if(!eina_strbuf_prepend_char(buf, 's'));
-        fail_if(!eina_strbuf_prepend_length(buf, "string", 3));
+        ck_assert_int_ne(eina_strbuf_prepend(buf, "string"), 0); //6
+        ck_assert_int_ne(eina_strbuf_prepend_n(buf, "string", 3), 0); //3
+        ck_assert_int_ne(eina_strbuf_prepend_char(buf, 's'), 0); //1
+        ck_assert_int_ne(eina_strbuf_prepend_length(buf, "string", 3), 0); //3
      }
 
    target_pattern_size = strlen(target_pattern);
-        fail_if(eina_strbuf_length_get(buf) != (runs * target_pattern_size));
+   ck_assert_int_eq(eina_strbuf_length_get(buf), runs * target_pattern_size);
 
    str = eina_strbuf_string_get(buf);
-        fail_if(str == NULL);
+   ck_assert_ptr_ne(str, NULL);
    for (i = 0; i < runs; i++, str += target_pattern_size)
-        fail_if(memcmp(str, target_pattern, target_pattern_size));
+     ck_assert_int_eq(memcmp(str, target_pattern, target_pattern_size), 0);
 
-        eina_strbuf_free(buf);
-
-   eina_shutdown();
+   eina_strbuf_free(buf);
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_trim)
+EFL_START_TEST(eina_test_strbuf_trim)
 {
-    Eina_Strbuf* buf;
-    const char *str;
-
-    eina_init();
-    buf = eina_strbuf_new();
-    fail_unless(buf != NULL);
-
-    eina_strbuf_append(buf, "  string     ");
-    eina_strbuf_trim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "string") != 0);
-    eina_strbuf_reset(buf);
-
-    eina_strbuf_append(buf, "  string     ");
-    eina_strbuf_ltrim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "string     ") != 0);
-    eina_strbuf_rtrim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "string") != 0);
-    eina_strbuf_reset(buf);
-
-    eina_strbuf_append(buf,"             ");
-    eina_strbuf_trim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "") != 0);
-    eina_strbuf_reset(buf);
-
-    eina_strbuf_append(buf,"             ");
-    eina_strbuf_rtrim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "") != 0);
-    eina_strbuf_reset(buf);
-
-    eina_strbuf_append(buf, "             ");
-    eina_strbuf_ltrim(buf);
-    str = eina_strbuf_string_get(buf);
-    fail_if(str == NULL || strcmp(str, "") != 0);
-    eina_strbuf_reset(buf);
-
-    eina_strbuf_free(buf);
-    eina_shutdown();
-}
-END_TEST
-
-START_TEST(strbuf_tolower)
-{
-   Eina_Strbuf* buf;
+   Eina_Strbuf *buf;
    const char *str;
 
-   eina_init();
+   buf = eina_strbuf_new();
+   fail_unless(buf != NULL);
+
+   eina_strbuf_append(buf, "  string     ");
+   eina_strbuf_trim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "string") != 0);
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append(buf, "  string     ");
+   eina_strbuf_ltrim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "string     ") != 0);
+   eina_strbuf_rtrim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "string") != 0);
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append(buf, "             ");
+   eina_strbuf_trim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "") != 0);
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append(buf, "             ");
+   eina_strbuf_rtrim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "") != 0);
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_append(buf, "             ");
+   eina_strbuf_ltrim(buf);
+   str = eina_strbuf_string_get(buf);
+   fail_if(str == NULL || strcmp(str, "") != 0);
+   eina_strbuf_reset(buf);
+
+   eina_strbuf_free(buf);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_test_strbuf_tolower)
+{
+   Eina_Strbuf *buf;
+   const char *str;
+
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
 
@@ -538,16 +499,13 @@ START_TEST(strbuf_tolower)
    fail_unless(str || strcmp(str, "upper1@ "));
 
    eina_strbuf_free(buf);
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_substr_get)
+EFL_START_TEST(eina_test_strbuf_substr_get)
 {
-   Eina_Strbuf* buf, *substr;
+   Eina_Strbuf *buf, *substr;
    const char *str;
-
-   eina_init();
 
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
@@ -582,12 +540,10 @@ START_TEST(strbuf_substr_get)
    fail_if(substr);
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-static const char*
+static const char *
 test_prepend_vprintf(Eina_Strbuf *buf, char *fmt, va_list ap)
 {
    const char *str;
@@ -597,7 +553,7 @@ test_prepend_vprintf(Eina_Strbuf *buf, char *fmt, va_list ap)
    return str;
 }
 
-static const char*
+static const char *
 test_prepend(Eina_Strbuf *buf, ...)
 {
    const char *str;
@@ -609,13 +565,12 @@ test_prepend(Eina_Strbuf *buf, ...)
    return str;
 }
 
-START_TEST(strbuf_prepend_print)
+EFL_START_TEST(eina_test_strbuf_prepend_print)
 {
    Eina_Bool ret;
-   Eina_Strbuf* buf;
+   Eina_Strbuf *buf;
    const char *str;
 
-   eina_init();
    buf = eina_strbuf_new();
    fail_unless(buf != NULL);
 
@@ -639,12 +594,10 @@ START_TEST(strbuf_prepend_print)
    fail_if(str == NULL || strcmp(str, "This is test string") != 0);
 
    eina_strbuf_free(buf);
-
-   eina_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_release_test)
+EFL_START_TEST(eina_test_strbuf_release_test)
 {
    Eina_Strbuf *buf;
    char *string;
@@ -656,9 +609,9 @@ START_TEST(strbuf_release_test)
    string = eina_strbuf_release(buf);
    ck_assert_str_eq(string, "strbuf_release_test");
 }
-END_TEST
+EFL_END_TEST
 
-START_TEST(strbuf_strftime_test)
+EFL_START_TEST(eina_test_strbuf_strftime_test)
 {
    Eina_Strbuf *buf;
    time_t curr_time;
@@ -687,24 +640,25 @@ START_TEST(strbuf_strftime_test)
 
    eina_strbuf_free(buf);
 }
-END_TEST
+EFL_END_TEST
 
 void
 eina_test_strbuf(TCase *tc)
 {
-   tcase_add_test(tc, strbuf_simple);
-   tcase_add_test(tc, strbuf_remove);
-   tcase_add_test(tc, strbuf_append);
-   tcase_add_test(tc, strbuf_insert);
-   tcase_add_test(tc, strbuf_replace);
-   tcase_add_test(tc, strbuf_realloc);
-   tcase_add_test(tc, strbuf_append_realloc);
-   tcase_add_test(tc, strbuf_prepend_realloc);
-   tcase_add_test(tc, strbuf_manage_simple);
-   tcase_add_test(tc, strbuf_trim);
-   tcase_add_test(tc, strbuf_tolower);
-   tcase_add_test(tc, strbuf_substr_get);
-   tcase_add_test(tc, strbuf_prepend_print);
-   tcase_add_test(tc, strbuf_release_test);
-   tcase_add_test(tc, strbuf_strftime_test);
+   tcase_add_test(tc, eina_test_strbuf_simple);
+   tcase_add_test(tc, eina_test_strbuf_remove);
+   tcase_add_test(tc, eina_test_strbuf_append);
+   tcase_add_test(tc, eina_test_strbuf_insert);
+   tcase_add_test(tc, eina_test_strbuf_replace);
+   tcase_add_test(tc, eina_test_strbuf_realloc);
+   tcase_add_test(tc, eina_test_strbuf_append_realloc);
+   tcase_add_test(tc, eina_test_strbuf_prepend_realloc);
+   tcase_add_test(tc, eina_test_strbuf_manage_simple);
+   tcase_add_test(tc, eina_test_strbuf_trim);
+   tcase_add_test(tc, eina_test_strbuf_tolower);
+   tcase_add_test(tc, eina_test_strbuf_substr_get);
+   tcase_add_test(tc, eina_test_strbuf_prepend_print);
+   tcase_add_test(tc, eina_test_strbuf_release_test);
+   tcase_add_test(tc, eina_test_strbuf_strftime_test);
 }
+

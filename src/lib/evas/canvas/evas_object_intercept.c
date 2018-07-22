@@ -106,11 +106,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
              /* If show is called during hide animation is running, then the
               * current hide animation is cancelled and show operation is
               * proceeded. */
-             if (i &&
-                 _efl_canvas_object_event_animation_is_running(eo_obj,
-                                                               EFL_GFX_EVENT_HIDE))
-               _efl_canvas_object_event_animation_cancel(eo_obj);
-             else
+             if ((!obj->anim_player) || (!efl_player_play_get(obj->anim_player)))
                return 1;
           }
         if (!obj->interceptors) return 0;
@@ -138,7 +134,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
         j = va_arg(args, int);
         if (obj->interceptors)
           blocked = evas_object_intercept_call_resize(eo_obj, obj, i, j);
-        if (!blocked && _efl_canvas_object_efl_gfx_size_set_block(eo_obj, obj, i, j, internal))
+        if (!blocked && _efl_canvas_object_efl_gfx_entity_size_set_block(eo_obj, obj, i, j, internal))
           blocked = 1;
         break;
 

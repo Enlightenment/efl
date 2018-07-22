@@ -20,10 +20,13 @@
 #define _EINA_SLICE_H
 
 #include "eina_types.h"
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <sys/types.h>
 
 /**
  * @addtogroup Eina_Slice_Group Memory Slices
@@ -408,7 +411,7 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * @def EINA_SLICE_STR_LITERAL(buf)
  *
  * Initializer for string literals (those declared as
- * double-quoted). The size will @b NOT include the trainling
+ * double-quoted). The size will @b NOT include the trailing
  * null-terminator.
  *
  * It is often useful for globals.
@@ -455,7 +458,7 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * @def EINA_SLICE_STR_FMT
  *
  * To be used in printf()-like statements, prints the slice as a
- * string, its @c len is to be used, then it doesn need the null
+ * string, its @c len is to be used, then it doesn't need the null
  * terminator.
  *
  * Use with EINA_SLICE_STR_PRINT()

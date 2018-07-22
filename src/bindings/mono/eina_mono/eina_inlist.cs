@@ -313,6 +313,12 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     {
         return this.GetEnumerator();
     }
+
+    /// <summary> Gets an Accessor for this List.</summary>
+    public eina.Accessor<T> GetAccessor()
+    {
+        return new eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
+    }
 }
 
 }

@@ -4,6 +4,18 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+#ifdef _WIN32
+# include <ws2tcpip.h>
+#endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
 
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -111,6 +123,7 @@ _ecore_glib_context_poll_to(GPollFD      *pfds,
                             int           ready)
 {
    GPollFD *itr = pfds, *itr_end = pfds + count;
+   struct stat st;
 
    for (; (itr < itr_end) && (ready > 0); itr++)
      {
@@ -124,6 +137,19 @@ _ecore_glib_context_poll_to(GPollFD      *pfds,
           {
              itr->revents |= G_IO_OUT;
              ready--;
+             if (!fstat(itr->fd, &st))
+               {
+                  if (S_ISSOCK(st.st_mode))
+                    {
+                       struct sockaddr_in peer;
+                       socklen_t length = sizeof(peer);
+
+                       memset(&peer, 0, sizeof(peer));
+                       if (getpeername(itr->fd, (struct sockaddr *)&peer,
+                                       &length))
+                         itr->revents |= G_IO_ERR;
+                    }
+               }
           }
         if (FD_ISSET(itr->fd, efds) && (itr->events & (G_IO_HUP | G_IO_ERR)))
           {

@@ -170,8 +170,11 @@ ecore_wl_dnd_selection_set(Ecore_Wl_Input *input, const char **types_offered)
    for (type = types_offered; *type; type++)
      {
         t = wl_array_add(&input->data_types, sizeof(*t));
-        if (t) *t = strdup(*type);
-        wl_data_source_offer(input->data_source, *t);
+        if (t)
+          {
+             *t = strdup(*type);
+             wl_data_source_offer(input->data_source, *t);
+          }
      }
 
    /* add a listener for data source events */
@@ -650,7 +653,7 @@ _ecore_wl_dnd_selection_data_receive(Ecore_Wl_Dnd_Source *source, const char *ty
    read_source = calloc(1, sizeof(struct _dnd_source));
    if (!read_source) goto err;
 
-   read_source = source;
+   read_source->source = source;
    read_source->read_fd = p[0];
    task->data = read_source;
    task->cb = _ecore_wl_dnd_selection_data_read;
