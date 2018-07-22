@@ -95,20 +95,20 @@ script:
   - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
   - .ci/ci-make.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
+  #- .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
           .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
       fi
-  - .ci/ci-make-install.sh "$CI_BUILD_TYPE"
+  #- .ci/ci-make-install.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
-  - |
-      if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
-        true
-      elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
-        docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
-      fi
+  #- |
+      #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
+        #true
+      #elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
+        #docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
+      #fi
 before_cache:
   - .ci/ci-ccache-stats.sh
   - |
