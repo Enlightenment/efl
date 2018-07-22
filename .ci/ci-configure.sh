@@ -16,7 +16,7 @@ MISC_LINUX_COPTS=" --enable-harfbuzz --enable-liblz4 --enable-image-loader-webp 
 --enable-pixman --enable-pixman-font --enable-pixman-rect --enable-pixman-line \
 --enable-pixman-poly --enable-pixman-image --enable-pixman-image-scale-sample \
 --enable-image-loader-generic --enable-libuv --enable-tile-rotate --enable-vnc-server \
---enable-sdl --enable-fb --enable-v4l2 --enable-cserve --enable-always-build-examples \
+--enable-sdl --enable-fb --enable-v4l2 --enable-cserve \
 --enable-ecore-wayland --enable-ecore-drm --enable-cancel-ok --with-crypto=gnutls \
 --enable-debug --disable-gstreamer1 --enable-gstreamer"
 
