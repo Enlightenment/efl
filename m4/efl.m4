@@ -26,7 +26,6 @@ m4_define([v_maj], [$1])dnl
 m4_define([v_min], [$2])dnl
 m4_define([v_mic], [$3])dnl
 m4_define([dev_version], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
-m4_define([v_time], m4_esyscmd([(git log --format=%ci -1 2>/dev/null || date -u -d@${SOURCE_DATE_EPOCH:-$(date +%s)} "+%Y-%m-%d %H:%M:%S %z") | tr -d '\n']))dnl
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
 m4_define([v_rel], [])dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
@@ -103,14 +102,12 @@ AC_DEFINE_UNQUOTED([VMAJ], [v_maj], [Major version])dnl
 AC_DEFINE_UNQUOTED([VMIN], [v_min], [Minor version])dnl
 AC_DEFINE_UNQUOTED([VMIC], [v_mic], [Micro version])dnl
 AC_DEFINE_UNQUOTED([VREV], [v_rev], [Revison])dnl
-AC_DEFINE([VTIME], ["v_time"], [Last source reconfigure])dnl
 VMAJ=v_maj
 VMIN=v_min
 VMIC=v_mic
 AC_SUBST([VMAJ])dnl
 AC_SUBST([VMIN])dnl
 AC_SUBST([VMIC])dnl
-AC_SUBST([VTIME])dnl
 dnl
 dnl TODO: warning - lt_cur:
 dnl the previous code assumed v_maj + v_min, but this will be a problem when
