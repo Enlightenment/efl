@@ -290,6 +290,11 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type type,
                                     Elm_Selection_Loss_Cb func, const void *data)
 {
    Sel_Lost_Data *ldata = calloc(1, sizeof(Sel_Lost_Data));
+#if HAVE_ELEMENTARY_COCOA
+   // Currently, we have no way to track changes in Cocoa pasteboard.
+   // Therefore, don't track this...
+   return;
+#endif
    if (!ldata) return;
    ldata->obj = obj;
    ldata->type = type;

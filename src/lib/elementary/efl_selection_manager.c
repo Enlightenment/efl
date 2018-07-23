@@ -3823,23 +3823,17 @@ _cocoa_sel_manager_seat_selection_init(Efl_Selection_Manager_Data *pd, unsigned 
 static Ecore_Cocoa_Window *
 _cocoa_window_get(const Evas_Object *obj)
 {
-   Evas_Object *top, *par;
    Ecore_Cocoa_Window *win = NULL;
+   Evas_Object *_win;
 
-   if (elm_widget_is(obj))
+   _win = elm_win_get(obj);
+   if (_win)
      {
-         top = elm_widget_top_get(obj);
-         if (!top)
-           {
-              par = elm_widget_parent_widget_get(obj);
-              if (par) top = elm_widget_top_get(par);
-           }
-         if ((top) && (efl_isa(top, EFL_UI_WIN_CLASS)))
-           win = elm_win_cocoa_window_get(top);
+        win = elm_win_cocoa_window_get(_win);
      }
+
    if (!win)
      {
-        // FIXME
         CRI("WIN has not been retrieved!!!");
      }
 
@@ -3942,6 +3936,7 @@ _cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    seat_sel = _cocoa_sel_manager_seat_selection_init(pd, seat);
    seat_sel->active_type = type;
    sel = seat_sel->sel;
+
    if ((!data.mem) && (format != EFL_SELECTION_FORMAT_IMAGE))
      {
         efl_selection_manager_selection_clear(pd->sel_man, owner, type, seat);
@@ -4853,6 +4848,10 @@ _efl_selection_manager_selection_has_owner(Eo *obj EINA_UNUSED, Efl_Selection_Ma
    win = _wl_window_get(request);
    if (win)
      return !!ecore_wl2_dnd_selection_get(_wl_seat_get(win, request, seat));
+#endif
+#ifdef HAVE_ELEMENTARY_COCOA
+   // FIXME: need to check if there is clipboard data. Paste always enabled.
+   return EINA_TRUE;
 #endif
    return EINA_FALSE;
 }

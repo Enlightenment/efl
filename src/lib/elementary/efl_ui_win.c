@@ -7629,8 +7629,16 @@ elm_win_cocoa_window_get(const Evas_Object *obj)
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return NULL;
 
+#if HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa.win) return sd->cocoa.win;
+   if (sd->ee) return _elm_ee_cocoa_win_get(sd->ee);
+   if (sd->parent) return elm_win_cocoa_window_get(sd->parent);
+#endif
+
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    return _elm_ee_cocoa_win_get(ee);
+
+   return NULL;
 }
 
 EAPI Ecore_Win32_Window *
