@@ -39,6 +39,7 @@ static Eo *sig_pipe_handler = NULL;
 static Eina_Spinlock sig_pid_lock;
 static Eina_List *sig_pid_info_list = NULL;
 
+volatile int pipe_dead = 0;
 volatile int exit_signal_received = 0;
 
 typedef struct _Signal_Data
@@ -53,6 +54,7 @@ _ecore_signal_pipe_read(Eo *obj)
    Signal_Data sdata;
    int ret;
 
+   if (pipe_dead) return EINA_TRUE;
    ret = read(sig_pipe[0], &sdata, sizeof(sdata));
    if (ret != sizeof(sdata)) return EINA_FALSE;
    switch (sdata.sig)
@@ -165,6 +167,7 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
    if (sdata.sig >= 0)
      {
         int err = errno;
+        if (pipe_dead) return;
         const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
         if (EINA_UNLIKELY(bytes != sizeof(sdata)))
           {
@@ -283,6 +286,7 @@ _ecore_signal_cb_fork(void *data EINA_UNUSED)
 void
 _ecore_signal_init(void)
 {
+   pipe_dead = 0;
    _ecore_signal_pipe_init();
    ecore_fork_reset_callback_add(_ecore_signal_cb_fork, NULL);
 }
@@ -293,6 +297,7 @@ _ecore_signal_shutdown(void)
    sigset_t newset;
 
    ecore_fork_reset_callback_del(_ecore_signal_cb_fork, NULL);
+   pipe_dead = 1;
    // we probably should restore.. but not a good idea
    // pthread_sigmask(SIG_SETMASK, &sig_oldset, NULL);
    // at least do not trigger signal callback after shutdown
