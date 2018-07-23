@@ -1316,7 +1316,7 @@ efl_main(void *data EINA_UNUSED,
     * ex:  elementary_test "Box Vert 2" */
    if (eina_array_count(arge->argv) == 2)
      {
-        if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
+        if (!strcmp(eina_array_data_get(arge->argv, 1), "--help"))
           {
              efl_loop_quit(ev->object,
                            eina_value_string_init("Usages:\n"
@@ -1327,17 +1327,17 @@ efl_main(void *data EINA_UNUSED,
                                                   "$ elementary_test -to Button\n\n"));
              return ;
           }
-        autorun = eina_array_data_get(arge->argv, 0);
+        autorun = eina_array_data_get(arge->argv, 1);
      }
    else if (eina_array_count(arge->argv) == 3)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 2), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 2), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 2);
+             autorun = eina_array_data_get(arge->argv, 3);
           }
      }
 
