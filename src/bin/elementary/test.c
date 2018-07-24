@@ -1316,7 +1316,9 @@ efl_main(void *data EINA_UNUSED,
     * ex:  elementary_test "Box Vert 2" */
    if (eina_array_count(arge->argv) == 2)
      {
-        if (!strcmp(eina_array_data_get(arge->argv, 1), "--help"))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--help")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-help")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-h")))
           {
              efl_loop_quit(ev->object,
                            eina_value_string_init("Usages:\n"
