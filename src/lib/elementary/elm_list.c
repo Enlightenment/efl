@@ -1019,14 +1019,12 @@ _items_fix(Evas_Object *obj)
         if (it->icon)
           {
              evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-             evas_object_size_hint_max_set(it->icon, 99999, 99999);
              edje_object_part_swallow
                 (VIEW(it), "elm.swallow.icon", it->icon);
           }
         if (it->end)
           {
              evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-             evas_object_size_hint_max_set(it->end, 99999, 99999);
              edje_object_part_swallow
                 (VIEW(it), "elm.swallow.end", it->end);
           }
