@@ -1333,11 +1333,11 @@ efl_main(void *data EINA_UNUSED,
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 2), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 2), "-to")))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
           {
              test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 3);
+             autorun = eina_array_data_get(arge->argv, 2);
           }
      }
 
