@@ -438,6 +438,23 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
 }
 
 static void
+_elm_code_widget_cursor_selection_set(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
+{
+   unsigned int end_line, end_col;
+
+   end_line = pd->selection->end_line;
+   end_col = pd->selection->end_col;
+
+   if ((pd->selection->start_line == pd->selection->end_line && pd->selection->end_col > pd->selection->start_col) ||
+       (pd->selection->start_line < pd->selection->end_line))
+     {
+        end_col++;
+     }
+
+   elm_code_widget_cursor_position_set(widget, end_line, end_col);
+}
+
+static void
 _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
                             unsigned int first_row, unsigned int last_row,
                             Elm_Code_Line *newline)
@@ -462,7 +479,11 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
         if (line)
           _elm_code_widget_fill_line(widget, line);
      }
+
+   if (pd->selection)
+     _elm_code_widget_cursor_selection_set(widget, pd);
 }
+
 static void
 _elm_code_widget_fill_update(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row,
                              Elm_Code_Line *newline)
@@ -570,16 +591,8 @@ static void
 _elm_code_widget_selection_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
-   Elm_Code_Widget_Selection_Data *selection;
 
    widget = (Elm_Code_Widget *)data;
-
-   if (!elm_code_widget_selection_is_empty(widget))
-     {
-        selection = elm_code_widget_selection_normalized_get(widget);
-        elm_code_widget_cursor_position_set(widget, selection->start_line, selection->start_col);
-        free(selection);
-     }
 
    _elm_code_widget_refresh(widget, NULL);
 }
