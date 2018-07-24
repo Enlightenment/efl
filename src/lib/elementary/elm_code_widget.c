@@ -312,10 +312,30 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 }
 
 static void
+_elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
+{
+   Evas_Coord cx, cy, cw, ch;
+
+   elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
+
+   if (!pd->cursor_rect)
+     {
+        pd->cursor_rect = elm_layout_add(widget);
+
+        if (!elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget)))
+          CRI("Failed to set layout!");
+        elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
+     }
+
+   evas_object_resize(pd->cursor_rect, cw/8, ch);
+   evas_object_move(pd->cursor_rect, cx, cy);
+   evas_object_show(pd->cursor_rect);
+}
+
+static void
 _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int gutter, int w)
 {
    Elm_Code_Widget_Data *pd;
-   Evas_Coord cx, cy, cw, ch;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
@@ -324,21 +344,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
 
-        elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
-
-        if (!pd->cursor_rect)
-          {
-             pd->cursor_rect = elm_layout_add(widget);
-
-             if (!elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget)))
-               CRI("Failed to set layout!");
-             elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
-
-             evas_object_resize(pd->cursor_rect, cw/8, ch);
-          }
-
-        evas_object_move(pd->cursor_rect, cx, cy);
-        evas_object_show(pd->cursor_rect);
+        _elm_code_widget_cursor_update(widget, pd);
      }
 }
 
@@ -2066,7 +2072,7 @@ _elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static void
-_elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+_elm_code_widget_font_set(Eo *obj, Elm_Code_Widget_Data *pd,
                           const char *name, Evas_Font_Size size)
 {
    Eina_List *item;
@@ -2083,6 +2089,10 @@ _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
      {
         evas_object_textgrid_font_set(grid, face, size * elm_config_scale_get());
      }
+
+   if (pd->cursor_rect && (eina_list_count(pd->grids) >= pd->cursor_line))
+     _elm_code_widget_cursor_update(obj, pd);
+
    if (pd->font_name)
      eina_stringshare_del((char *)pd->font_name);
    pd->font_name = eina_stringshare_add(face);
