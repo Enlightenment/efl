@@ -2377,6 +2377,19 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
           }
         _elm_win_state_eval(NULL);
      }
+   if (!sd->first_draw) return;
+   if (sd->frame_obj)
+     {
+        evas_object_show(sd->frame_obj);
+     }
+   if (sd->img_obj)
+     {
+        evas_object_show(sd->img_obj);
+     }
+   if (sd->pointer.obj)
+     {
+        evas_object_show(sd->pointer.obj);
+     }
 }
 
 static void
