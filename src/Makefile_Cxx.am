@@ -211,12 +211,19 @@ tests/eina_cxx/eina_cxx_test_value.cc \
 tests/eina_cxx/simple.c \
 tests/eina_cxx/eina_cxx_suite.h
 
-tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-eina_cxx_test_iterator.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+if HAVE_AM_16
+TESTS_EINA_CXX_OBJNAME = 
+else
+TESTS_EINA_CXX_OBJNAME = tests_eina_cxx_
+endif
 
-tests/eina_cxx/tests_eina_cxx_eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/simple.eo.c tests/eina_cxx/simple.eo.h
+
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_iterator.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/simple.eo.c tests/eina_cxx/simple.eo.h
 
 CLEANFILES += \
 tests/eina_cxx/simple.eo.c \
@@ -376,7 +383,13 @@ tests_elementary_cxx_libcxx_compile_test_a_CPPFLAGS = -I$(top_builddir)/src/lib/
 @CHECK_CFLAGS@ @ECORE_CXX_CFLAGS@ @EINA_CXX_CFLAGS@ @EVAS_CXX_CFLAGS@ @ELEMENTARY_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
 @ECORE_CFLAGS@ @EINA_CFLAGS@ @EVAS_CFLAGS@ @ELEMENTARY_CFLAGS@ @EO_CFLAGS@
 
-tests/elementary_cxx/tests_elementary_cxx_cxx_dummy_compile_test-cxx_dummy_compile_test.$(OBJEXT): tests/elementary_cxx/libcxx_compile_test.a
+if HAVE_AM_16
+TESTS_ELM_CXX_OBJNAME = 
+else
+TESTS_ELM_CXX_OBJNAME = tests_elementary_cxx_
+endif
+
+tests/elementary_cxx/$(TESTS_ELM_CXX_OBJNAME)cxx_dummy_compile_test-cxx_dummy_compile_test.$(OBJEXT): tests/elementary_cxx/libcxx_compile_test.a
 
 tests_elementary_cxx_cxx_dummy_compile_test_SOURCES = tests/elementary_cxx/cxx_dummy_compile_test.cc
 tests_elementary_cxx_cxx_dummy_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

@@ -22,8 +22,11 @@ bin_eolian_js_eolian_js_LDADD = @USE_EO_LIBS@ @USE_EOLIAN_LIBS@
 bin_eolian_js_eolian_js_DEPENDENCIES = @USE_EO_INTERNAL_LIBS@ @USE_EOLIAN_INTERNAL_LIBS@
 
 # generate C++ bindings before compiling C++ files for JS binding
+if HAVE_AM_16
+bin/eolian_js/eolian_js-main.$(OBJEXT): $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh)
+else
 bin/eolian_js/bin_eolian_js_eolian_js-main.$(OBJEXT): $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh)
-
+endif
 include Makefile_Eolian_Js_Helper.am
 
 ### Unit tests
@@ -68,9 +71,15 @@ tests_eolian_js_libeolian_js_suite_la_LDFLAGS = -rpath $(abs_top_builddir)/src/t
 
 # if compiler_o_lo == yes, lo, otherwise $(OBJEXT)
 
-tests/eolian_js/tests_eolian_js_libeolian_js_suite_la-eolian_js_test_eolian_js_binding.l$(OBJEXT): tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.h tests/eolian_js/test_object.eo.js.cc tests/eolian_js/test_object.eo.h
-tests/eolian_js/tests_eolian_js_libeolian_js_suite_la-eolian_js_test_constructor_method_impl.l$(OBJEXT): tests/eolian_js/constructor_method_class.eo.c
-tests/eolian_js/tests_eolian_js_libeolian_js_suite_la-eolian_js_test_test_object_impl.l$(OBJEXT): tests/eolian_js/test_object.eo.c
+if HAVE_AM_16
+TESTS_EOLIAN_JS_OBJNAME = 
+else
+TESTS_EOLIAN_JS_OBJNAME = tests_eolian_js_
+endif
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)libeolian_js_suite_la-eolian_js_test_eolian_js_binding.l$(OBJEXT): tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.h tests/eolian_js/test_object.eo.js.cc tests/eolian_js/test_object.eo.h
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)libeolian_js_suite_la-eolian_js_test_constructor_method_impl.l$(OBJEXT): tests/eolian_js/constructor_method_class.eo.c
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)libeolian_js_suite_la-eolian_js_test_test_object_impl.l$(OBJEXT): tests/eolian_js/test_object.eo.c
+
 
 CLEANFILES += \
 tests/eolian_js/constructor_method_class.eo.js.cc \
@@ -89,9 +98,9 @@ tests/eolian_js/eolian_js_test_eolian_js_binding.cc \
 tests/eolian_js/eolian_js_test_constructor_method_impl.c \
 tests/eolian_js/eolian_js_test_test_object_impl.c
 
-tests/eolian_js/tests_eolian_js_eolian_js_suite-eolian_js_test_eolian_js_binding.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.h tests/eolian_js/test_object.eo.js.cc tests/eolian_js/test_object.eo.h
-tests/eolian_js/tests_eolian_js_eolian_js_suite-eolian_js_test_constructor_method_impl.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.c
-tests/eolian_js/tests_eolian_js_eolian_js_suite-eolian_js_test_test_object_impl.$(OBJEXT): tests/eolian_js/test_object.eo.c
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)eolian_js_suite-eolian_js_test_eolian_js_binding.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.js.cc tests/eolian_js/constructor_method_class.eo.h tests/eolian_js/test_object.eo.js.cc tests/eolian_js/test_object.eo.h
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)eolian_js_suite-eolian_js_test_constructor_method_impl.$(OBJEXT): tests/eolian_js/constructor_method_class.eo.c
+tests/eolian_js/$(TESTS_EOLIAN_JS_OBJNAME)eolian_js_suite-eolian_js_test_test_object_impl.$(OBJEXT): tests/eolian_js/test_object.eo.c
 
 CLEANFILES += \
 tests/eolian_js/constructor_method_class.eo.js.cc \
