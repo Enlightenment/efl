@@ -738,8 +738,8 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                         ev->action = EFL_POINTER_ACTION_IN;
                         evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_IN, evt,
                                                         event_id2, EFL_EVENT_POINTER_IN);
-                        if ((ev->cur.x != ev->prev.x) &&
-                            (ev->cur.y != ev->prev.y))
+                        if ((curpt.x != ev->prev.x) &&
+                            (curpt.y != ev->prev.y))
                           {
                              ev->action = EFL_POINTER_ACTION_MOVE;
                              evas_object_event_callback_call(eo_child, child, EVAS_CALLBACK_MOUSE_MOVE, evt,
@@ -1666,8 +1666,8 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                   ev->action = EFL_POINTER_ACTION_IN;
                   evas_object_event_callback_call(eo_obj_itr, obj_itr, EVAS_CALLBACK_MOUSE_IN, evt,
                                                   event_id, EFL_EVENT_POINTER_IN);
-                  if ((ev->cur.x != ev->prev.x) &&
-                      (ev->cur.y != ev->prev.y))
+                  if ((pdata->seat->x != ev->prev.x) &&
+                      (pdata->seat->y != ev->prev.y))
                     {
                        ev->action = EFL_POINTER_ACTION_MOVE;
                        evas_object_event_callback_call(eo_obj_itr, obj_itr, EVAS_CALLBACK_MOUSE_MOVE, evt,
@@ -2300,8 +2300,8 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                        ev->action = EFL_POINTER_ACTION_IN;
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, evt,
                                                        event_id, EFL_EVENT_POINTER_IN);
-                        if ((ev->cur.x != ev->prev.x) &&
-                            (ev->cur.y != ev->prev.y))
+                        if ((point.x != ev->prev.x) &&
+                            (point.y != ev->prev.y))
                           {
                              ev->action = EFL_POINTER_ACTION_MOVE;
                              evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
@@ -2443,8 +2443,8 @@ nogrep:
                   ev->action = EFL_POINTER_ACTION_IN;
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, evt,
                                                   event_id, EFL_EVENT_POINTER_IN);
-                  if ((ev->cur.x != ev->prev.x) &&
-                      (ev->cur.y != ev->prev.y))
+                  if ((point.x != ev->prev.x) &&
+                      (point.y != ev->prev.y))
                     {
                        ev->action = EFL_POINTER_ACTION_MOVE;
                        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
@@ -2582,8 +2582,8 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
              ev->action = EFL_POINTER_ACTION_IN;
              evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_IN, evt,
                                              event_id, EFL_EVENT_POINTER_IN);
-             if ((ev->cur.x != ev->prev.x) &&
-                 (ev->cur.y != ev->prev.y))
+             if ((pdata->seat->x != ev->prev.x) &&
+                 (pdata->seat->y != ev->prev.y))
                {
                   ev->action = EFL_POINTER_ACTION_MOVE;
                   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOUSE_MOVE, evt,
