@@ -3075,6 +3075,13 @@ _efl_ui_win_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz
      }
 
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   /* if window is hidden during a resize,
+    * revert to initial state where pre-render triggers recalc and other resizes are deferred
+    */
+   if (efl_gfx_entity_visible_get(obj)) return;
+   if (!sd->first_draw) return;
+   sd->first_draw = EINA_FALSE;
+   edje_object_freeze(sd->frame_obj);
 }
 
 static void
