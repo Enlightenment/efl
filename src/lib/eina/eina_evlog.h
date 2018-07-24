@@ -106,10 +106,10 @@ struct _Eina_Evlog_Buf
  * state at the time of the log events or a series of parameters and input
  * that caused this event.
  *
- * @param event The event string - see above for format
- * @param obj An optional object "pointer" to associate
- * @param srctime An optional source event timestamp that caused this event
- * @param detail An optional event detail string with more info
+ * @param[in] event The event string - see above for format
+ * @param[in] obj An optional object "pointer" to associate
+ * @param[in] srctime An optional source event timestamp that caused this event
+ * @param[in] detail An optional event detail string with more info
  *
  * @since 1.15
  */
