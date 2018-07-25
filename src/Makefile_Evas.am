@@ -514,8 +514,6 @@ $(lib_evas_libevas_la_CPPFLAGS) \
 lib_evas_common_libevas_convert_rgb_32_la_LIBADD = @EVAS_LIBS@
 lib_evas_common_libevas_convert_rgb_32_la_DEPENDENCIES = @EVAS_INTERNAL_LIBS@
 
-lib_evas_libevas_la_CXXFLAGS =
-
 lib_evas_libevas_la_LIBADD = \
 lib/evas/common/libevas_op_blend_sse3.la \
 lib/evas/common/libevas_convert_rgb_32.la \
@@ -1022,9 +1020,12 @@ modules/evas/engines/gl_cocoa/evas_outbuf.m \
 modules/evas/engines/gl_cocoa/evas_engine.h \
 modules/evas/engines/gl_cocoa/Evas_Engine_GL_Cocoa.h
 if EVAS_STATIC_BUILD_GL_COCOA
-lib_evas_libevas_la_SOURCES += $(GL_COCOA_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_gl_cocoa_cflags@
-lib_evas_libevas_la_LIBADD += @evas_engine_gl_cocoa_libs@
+noinst_LTLIBRARIES += modules/evas/engines/gl_cocoa/libglcocoa.la
+lib_evas_libevas_la_LIBADD += modules/evas/engines/gl_cocoa/libglcocoa.la
+lib_evas_libevas_la_DEPENDENCIES += modules/evas/engines/gl_cocoa/libglcocoa.la
+modules_evas_engines_gl_cocoa_libglcocoa_la_SOURCES = $(GL_COCOA_SOURCES)
+modules_evas_engines_gl_cocoa_libglcocoa_la_CPPFLAGS = @evas_engine_gl_cocoa_cflags@
+modules_evas_engines_gl_cocoa_libglcocoa_la_LIBADD = @evas_engine_gl_cocoa_libs@
 else
 engineglcocoapkgdir = $(libdir)/evas/modules/engines/gl_cocoa/$(MODULE_ARCH)
 engineglcocoapkg_LTLIBRARIES = modules/evas/engines/gl_cocoa/module.la
@@ -1128,10 +1129,18 @@ modules/evas/engines/software_ddraw/evas_ddraw_main.cpp \
 modules/evas/engines/software_ddraw/evas_engine.h \
 modules/evas/engines/software_ddraw/Evas_Engine_Software_DDraw.h
 if EVAS_STATIC_BUILD_SOFTWARE_DDRAW
-lib_evas_libevas_la_SOURCES += $(SOFTWARE_DDRAW_SOURCES)
-lib_evas_libevas_la_CPPFLAGS += @evas_engine_software_ddraw_cflags@
-lib_evas_libevas_la_CXXFLAGS += -fno-rtti -fno-exceptions
-lib_evas_libevas_la_LIBADD += @evas_engine_software_ddraw_libs@
+lib_evas_libevas_la_LIBADD += modules/evas/engines/software_ddraw/libswddraw.la
+lib_evas_libevas_la_DEPENDENCIES += modules/evas/engines/software_ddraw/libswddraw.la
+noinst_LTLIBRARIES += modules/evas/engines/software_ddraw/libswddraw.la
+modules_evas_engines_software_ddraw_libswddraw_la_SOURCES = $(SOFTWARE_DDRAW_SOURCES)
+modules_evas_engines_software_ddraw_libswddraw_la_CPPFLAGS = \
+@evas_engine_software_ddraw_cflags@ \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+-I$(top_srcdir)/src/lib/evas/cserve2 \
+@EVAS_CFLAGS@
+modules_evas_engines_software_ddraw_libswddraw_la_CXXFLAGS = -fno-rtti -fno-exceptions
+modules_evas_engines_software_ddraw_libswddraw_la_LIBADD = @evas_engine_software_ddraw_libs@
 else
 enginesoftwareddrawpkgdir = $(libdir)/evas/modules/engines/software_ddraw/$(MODULE_ARCH)
 enginesoftwareddrawpkg_LTLIBRARIES = modules/evas/engines/software_ddraw/module.la
