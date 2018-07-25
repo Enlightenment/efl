@@ -245,6 +245,21 @@ _efl_suite_run_end(SRunner *sr, const char *name)
    return failed_count;
 }
 
+#ifdef HAVE_FORK
+EINA_UNUSED static int
+_efl_suite_wait_on_fork(int *num_forks)
+{
+   int status = 0, ret;
+   waitpid(0, &status, 0);
+   if (WIFEXITED(status))
+     ret = WEXITSTATUS(status);
+   else
+     ret = 1;
+   (*num_forks)--;
+   return ret;
+}
+#endif
+
 EINA_UNUSED static int
 _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc, SFun init, SFun shutdown)
 {
@@ -279,15 +294,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
         if (do_fork && can_fork)
           {
              if (num_forks == eina_cpu_count())
-               {
-                  do
-                    {
-                       int status = 0;
-                       waitpid(0, &status, 0);
-                       failed_count += WEXITSTATUS(status);
-                       num_forks--;
-                    } while (0);
-               }
+               failed_count += _efl_suite_wait_on_fork(&num_forks);
              pid = fork();
              if (pid > 0)
                {
@@ -330,10 +337,8 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
      {
         do
           {
-             int status = 0;
-             waitpid(0, &status, 0);
-             failed_count += WEXITSTATUS(status);
-          } while (--num_forks);
+             failed_count += _efl_suite_wait_on_fork(&num_forks);
+          } while (num_forks);
      }
    else
 #endif
