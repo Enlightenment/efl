@@ -928,6 +928,7 @@ EOLIAN static void
 _efl_ui_layout_object_efl_layout_signal_signal_emit(Eo *obj, Efl_Ui_Layout_Object_Data *_pd EINA_UNUSED, const char *emission, const char *source)
 {
    // Don't do anything else than call forward here
+   EINA_SAFETY_ON_TRUE_RETURN(efl_invalidated_get(obj));
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    efl_layout_signal_emit(wd->resize_obj, emission, source);
 }
