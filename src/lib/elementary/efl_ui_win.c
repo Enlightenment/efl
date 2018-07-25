@@ -995,8 +995,12 @@ _elm_win_pre_render(Ecore_Evas *ee)
      {
         int mw, mh;
 
-        edje_object_thaw(sd->frame_obj);
-        evas_object_show(sd->frame_obj);
+        if (sd->type != ELM_WIN_FAKE)
+          {
+             edje_object_thaw(sd->frame_obj);
+             evas_object_show(sd->frame_obj);
+          }
+
         _elm_win_frame_style_update(sd, 1, 1);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
 
