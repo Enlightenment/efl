@@ -592,6 +592,11 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    active = wdata->activated;
    wdata->activated = ecore_wl2_window_activated_get(wdata->win);
 
+   /* If the compositor set these, we need to update internal state
+    * so things like CSD continue to function */
+   wdata->win->set_config.maximized = ee->prop.maximized;
+   wdata->win->set_config.fullscreen = ee->prop.fullscreen;
+
    nw = ev->w;
    nh = ev->h;
 
