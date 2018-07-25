@@ -449,6 +449,23 @@ Fixes:
    * ecore-con/legacy: kill server with DEL event if a dialer error occurs (T6330)
    * efreet: use correct path when generating error message about stale efreetd socket (T7045)
    * eo/base_class: explicitly refuse to set an object as its own parent
+   * ecore-con/proxy_helper: fix in-tree run path (T6713)
+   * efreet: simplify and fix efreetd launch (T6713)
+   * build: always check for fork() and clearenv()
+   * popup: fix popup sizing when scroll enabled. (T6886)
+   * evas gl-x11 engine - nvidia driver - fix performance drop
+   * canvas vg_loader: close opened file after using it.
+   * elm/win: correctly track and set x11 shaped state
+   * evas textblock: adds missing legacy types
+   * canvas render: stop render_pre/post cb if it didn't render.
+   * Evas text textblock: call evas_font_free even on null fonts
+   * emile image: close file properly.
+   * examples/evas: do not attempt to free animator on window delete (T7000)
+   * ecore_evas: when window resized in ecore_evas, check evas rotate state.
+   * elm_code: (cherry-pick) Fix cusor pos after newline when indenting with tabs
+   * ecore x - fix vsync to not block amdgpu drivers
+   * elm_code_widget: resize cursor at time of font change. (T6470)
+   * evas canvas: fix not to trigger unnecessary events.
 
 Changes since 1.19.0:
 ---------------------
