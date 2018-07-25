@@ -287,7 +287,15 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
 
-if ! test "x${have_win32}" = "xyes" ; then
+if test "x${have_win32}" = "xyes" ; then
+    # We should be using ${CXX} here, but there is a bug in
+    # autotools macro and CXX is always set to g++ even if
+    # it's not found. So we are using an internal variable
+    # that does the work for now, may get broken in the future.
+    if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+       AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+    fi
+else
    CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
    LDFLAGS="${LDFLAGS} -fPIC -DPIC"
 fi
@@ -337,13 +345,6 @@ AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
 
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
-fi
-# We should be using ${CXX} here, but there is a bug in
-# autotools macro and CXX is always set to g++ even if
-# it's not found. So we are using an internal variable
-# that does the work for now, may get broken in the future.
-if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
-   AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
 fi
 
 AC_SYS_LARGEFILE
@@ -1129,15 +1130,25 @@ EFL_LIB_END([Eina])
 #### Eina CXX
 EFL_LIB_START([Eina_Cxx])
 
-EFL_CXX_COMPILE_STDCXX_11([ext])
 AC_ARG_ENABLE([cxx-bindings],
    [AS_HELP_STRING([--disable-cxx-bindings],[disable C++11 bindings. @<:@default=enabled@:>@])],
    [want_cxx11="${enableval}"], [want_cxx11="yes"])
 
-if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
-  have_cxx11="yes"
-else
-  have_cxx11="no"
+have_cxx11="no"
+if test "x${want_cxx11}" = "xyes"; then
+  EFL_CXX_COMPILE_STDCXX_11([ext])
+  if test "x${HAVE_CXX11}" = "x1" ; then
+
+    # We should be using ${CXX} here, but there is a bug in
+    # autotools macro and CXX is always set to g++ even if
+    # it's not found. So we are using an internal variable
+    # that does the work for now, may get broken in the future.
+    if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+       AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+    fi
+
+    have_cxx11="yes"
+  fi
 fi
 
 AM_CONDITIONAL([HAVE_CXX], [test "x${have_cxx11}" = "xyes"])
@@ -3062,6 +3073,16 @@ if test "x${want_poppler}" = "xyes"; then
    PKG_CHECK_MODULES([POPPLER], [poppler-cpp >= 0.12], [have_poppler="yes"])
 fi
 
+if test "x${have_poppler}" = "xyes" ; then
+   # We should be using ${CXX} here, but there is a bug in
+   # autotools macro and CXX is always set to g++ even if
+   # it's not found. So we are using an internal variable
+   # that does the work for now, may get broken in the future.
+   if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+      AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+   fi
+fi
+
 if test "x${want_spectre}" = "xyes"; then
    PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_spectre="yes"])
 fi
@@ -4784,6 +4805,16 @@ AC_ARG_ENABLE([physics],
     fi
    ],
    [want_physics="yes"])
+
+if test "x${want_physics}" = "xyes" ; then
+  # We should be using ${CXX} here, but there is a bug in
+  # autotools macro and CXX is always set to g++ even if
+  # it's not found. So we are using an internal variable
+  # that does the work for now, may get broken in the future.
+  if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+     AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+  fi
+fi
 
 EFL_LIB_START_OPTIONAL([EPhysics], [test "${want_physics}" = "yes"])
 
