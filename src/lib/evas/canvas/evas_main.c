@@ -48,11 +48,13 @@ evas_init(void)
      return --_evas_init_count;
 #endif
 
-   if (!eina_init())
-     goto shutdown_evil;
+   EINA_SAFETY_ON_FALSE_GOTO(eina_init(), shutdown_evil);
 
-   if (!eet_init())
-     goto shutdown_eet;
+   EINA_SAFETY_ON_FALSE_GOTO(eet_init(), shutdown_eet);
+#ifdef BUILD_LOADER_EET
+   /* additional init refcount; cannot fail */
+   eet_init();
+#endif
 
    _evas_log_dom_global = eina_log_domain_register
      ("evas_main", EVAS_DEFAULT_LOG_COLOR);
@@ -62,17 +64,12 @@ evas_init(void)
         goto shutdown_eina;
      }
 
-   efl_object_init();
+   EINA_SAFETY_ON_FALSE_GOTO(efl_object_init(), shutdown_eo);
 
-#ifdef BUILD_LOADER_EET
-   eet_init();
-#endif
-
-   ecore_init();
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_init(), shutdown_ecore);
 
    evas_module_init();
-   if (!evas_async_events_init())
-     goto shutdown_module;
+   EINA_SAFETY_ON_FALSE_GOTO(evas_async_events_init(), shutdown_module);
 #ifdef EVAS_CSERVE2
    int cs2 = 0;
    {
@@ -81,7 +78,7 @@ evas_init(void)
       if (env && atoi(env))
         {
            cs2 = evas_cserve2_init();
-           if (!cs2) goto shutdown_async_events;
+           EINA_SAFETY_ON_FALSE_GOTO(cs2, shutdown_async_events);
         }
    }
 #endif
@@ -89,8 +86,7 @@ evas_init(void)
    evas_filter_init();
    evas_cache_vg_init();
 
-   if (!evas_thread_init())
-     goto shutdown_filter;
+   EINA_SAFETY_ON_FALSE_GOTO(evas_thread_init(), shutdown_filter);
 
    evas_common_init();
 
@@ -108,21 +104,23 @@ evas_init(void)
    _evas_preload_thread_shutdown();
 #ifdef EVAS_CSERVE2
    if (cs2) evas_cserve2_shutdown();
- shutdown_async_events:
+shutdown_async_events:
    evas_async_events_shutdown();
 #endif
- shutdown_module:
+shutdown_module:
    evas_module_shutdown();
+shutdown_ecore:
+   efl_object_shutdown();
+shutdown_eo:
+   eina_log_domain_unregister(_evas_log_dom_global);
+shutdown_eet:
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
 #endif
-   efl_object_shutdown();
-   eina_log_domain_unregister(_evas_log_dom_global);
- shutdown_eet:
    eet_shutdown();
- shutdown_eina:
+shutdown_eina:
    eina_shutdown();
- shutdown_evil:
+shutdown_evil:
 #ifdef _WIN32
    evil_shutdown();
 #endif
