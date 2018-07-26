@@ -390,11 +390,12 @@ elm_init(int argc, char **argv)
 {
    _elm_init_count++;
    if (_elm_init_count > 1) return _elm_init_count;
-   elm_quicklaunch_init(argc, argv ? argv : (char**) bcargv);
-   elm_quicklaunch_sub_init(argc, argv ? argv : (char**) bcargv);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_quicklaunch_init(argc, argv ? argv : (char**) bcargv), --_elm_init_count);
+   EINA_SAFETY_ON_FALSE_GOTO(elm_quicklaunch_sub_init(argc, argv ? argv : (char**) bcargv), shutdown_ql);
 
    _prefix_shutdown();
 
+   /* this is fine if it fails */
    _elm_clouseau_load();
 
    system_handlers[0] =
@@ -419,6 +420,9 @@ elm_init(int argc, char **argv)
    _elm_startup_time = _efl_startup_time;
 
    return _elm_init_count;
+shutdown_ql:
+   elm_quicklaunch_shutdown();
+   return --_elm_init_count;
 }
 
 EAPI int
@@ -724,22 +728,18 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    _use_build_config = !!getenv("EFL_RUN_IN_TREE");
-   eina_init();
+   EINA_SAFETY_ON_FALSE_GOTO(eina_init(), fail_eina);
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
-   if (!_elm_log_dom)
-     {
-        EINA_LOG_ERR("could not register elementary log domain.");
-        _elm_log_dom = EINA_LOG_DOMAIN_GLOBAL;
-     }
+   EINA_SAFETY_ON_TRUE_GOTO(_elm_log_dom < 0, fail_eina_log);
 
-   eet_init();
-   ecore_init();
-   ecore_event_init();
-   edje_init();
-   eio_init();
+   EINA_SAFETY_ON_FALSE_GOTO(eet_init(), fail_eet);
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_init(), fail_ecore);
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_event_init(), fail_ecore_event);
+   EINA_SAFETY_ON_FALSE_GOTO(edje_init(), fail_edje);
+   EINA_SAFETY_ON_FALSE_GOTO(eio_init(), fail_eio);
 
 #ifdef HAVE_ELEMENTARY_EMAP
-   emap_init();
+   EINA_SAFETY_ON_FALSE_GOTO(emap_init(), fail_emap);
 #endif
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
@@ -747,8 +747,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
    ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
 
-   if (!ecore_file_init())
-     ERR("Elementary cannot init ecore_file");
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_file_init(), fail_ecore_file);
 
    _elm_exit_handler =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
@@ -781,6 +780,28 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    if (quicklaunch_on)
      _elm_init_count++;
    return _elm_ql_init_count;
+
+fail_ecore_file:
+#ifdef HAVE_ELEMENTARY_EMAP
+   emap_shutdown();
+fail_emap:
+#endif
+   eio_shutdown();
+fail_eio:
+   edje_shutdown();
+fail_edje:
+   ecore_event_shutdown();
+fail_ecore_event:
+   ecore_shutdown();
+fail_ecore:
+   eet_shutdown();
+fail_eet:
+   eina_log_domain_unregister(_elm_log_dom);
+   _elm_log_dom = -1;
+fail_eina_log:
+   eina_shutdown();
+fail_eina:
+   return --_elm_ql_init_count;
 }
 
 EAPI int
@@ -793,19 +814,34 @@ elm_quicklaunch_sub_init(int    argc,
 
    if (!quicklaunch_on)
      {
-        ecore_evas_init(); // FIXME: check errors
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_init_ex(argc, argv), ql_sub_ecore);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_evas_init(), ql_sub_ee);
         elm_color_class_init();
         _elm_module_init();
         _elm_config_sub_init();
-        ecore_imf_init();
-        ecore_con_init();
-        ecore_con_url_init();
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_imf_init(), ql_sub_imf);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_con_init(), ql_sub_ecore_con);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_con_url_init(), ql_sub_ecore_con_url);
         _elm_prefs_initted = _elm_prefs_init();
-        _elm_ews_wm_init();
-
-        ecore_init_ex(argc, argv);
+        EINA_SAFETY_ON_FALSE_GOTO(_elm_ews_wm_init(), ql_sub_ews);;
      }
    return _elm_sub_init_count;
+ql_sub_ews:
+   if (_elm_prefs_initted) _elm_prefs_shutdown();
+   ecore_con_url_shutdown();
+ql_sub_ecore_con_url:
+   ecore_con_shutdown();
+ql_sub_ecore_con:
+   ecore_imf_shutdown();
+ql_sub_imf:
+   ecore_evas_shutdown();
+   _elm_module_shutdown();
+   _elm_config_sub_shutdown();
+ql_sub_ee:
+   ecore_shutdown_ex();
+ql_sub_ecore:
+   _elm_config_shutdown();
+   return --_elm_sub_init_count;
 }
 
 EAPI int
@@ -877,7 +913,7 @@ elm_quicklaunch_shutdown(void)
    ecore_shutdown();
    eet_shutdown();
 
-   if ((_elm_log_dom > -1) && (_elm_log_dom != EINA_LOG_DOMAIN_GLOBAL))
+   if (_elm_log_dom > -1)
      {
         eina_log_domain_unregister(_elm_log_dom);
         _elm_log_dom = -1;
@@ -1206,12 +1242,16 @@ elm_quicklaunch_fallback(int    argc,
 {
    int ret;
    char cwd[PATH_MAX];
-   elm_quicklaunch_init(argc, argv);
-   elm_quicklaunch_sub_init(argc, argv);
+   /* return nonzero on failure */
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_quicklaunch_init(argc, argv), 1);
+   EINA_SAFETY_ON_FALSE_GOTO(elm_quicklaunch_sub_init(argc, argv), fallback_ql);
    elm_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd)));
    ret = qr_main(argc, argv);
    exit(ret);
    return ret;
+fallback_ql:
+   elm_quicklaunch_shutdown();
+   return 1;
 }
 
 EAPI char *
