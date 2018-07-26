@@ -199,7 +199,7 @@ struct _Eina_Iterator
 /**
  * @brief Frees an iterator.
  *
- * @param iterator The iterator to free.
+ * @param[in,out] iterator The iterator to free.
  *
  * This function frees @p iterator if it is not @c NULL;
  */
@@ -209,7 +209,7 @@ EAPI void      eina_iterator_free(Eina_Iterator *iterator);
 /**
  * @brief Returns the container of an iterator.
  *
- * @param iterator The iterator.
+ * @param[in] iterator The iterator.
  * @return The container which created the iterator.
  *
  * This function returns the container which created @p iterator. If
@@ -220,8 +220,8 @@ EAPI void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NON
 /**
  * @brief Returns the value of the current element and go to the next one.
  *
- * @param iterator The iterator.
- * @param data The data of the element.
+ * @param[in,out] iterator The iterator.
+ * @param[out] data The data of the element.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function returns the value of the current element pointed by
@@ -236,9 +236,9 @@ EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
 /**
  * @brief Iterates over the container and execute a callback on each element.
  *
- * @param iterator The iterator.
- * @param callback The callback called on each iteration.
- * @param fdata The data passed to the callback.
+ * @param[in,out] iterator The iterator.
+ * @param[in] callback The callback called on each iteration.
+ * @param[in] fdata The data passed to the callback.
  *
  * This function iterates over the elements pointed by @p iterator,
  * beginning with the current element. For each element, the callback
@@ -255,7 +255,7 @@ EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
 /**
  * @brief Locks the container of the iterator.
  *
- * @param iterator The iterator.
+ * @param[in,out] iterator The iterator.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * If the container of the @p iterator permits it, it will be locked. When a
@@ -271,7 +271,7 @@ EAPI Eina_Bool eina_iterator_lock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
 /**
  * @brief Unlocks the container of the iterator.
  *
- * @param iterator The iterator.
+ * @param[in,out] iterator The iterator.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * If the container of the @p iterator permits it and was previously
@@ -288,7 +288,7 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  * @brief Creates an Eina_Iterator that iterates through a
  * NUL-terminated C array.
  *
- * @param array The NUL-terminated array
+ * @param[in] array The NUL-terminated array
  *
  * You can create it like this:
  * int array[] = {1, 2, 3, 4};
@@ -303,10 +303,10 @@ EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) E
 /**
  * @brief Creates a new iterator which which iterates through all elements with are accepted by the filter callback
  *
- * @param original the iterator the use as original set
- * @param filter if the callback returns true the element from the original set is taken into the the new set.
- * @param free_cb when the iterator is gone this callback will be called with data as argument
- * @param data the data which is passed to the filter callback
+ * @param[in] original the iterator the use as original set
+ * @param[in] filter if the callback returns true the element from the original set is taken into the the new set.
+ * @param[in] free_cb when the iterator is gone this callback will be called with data as argument
+ * @param[in] data the data which is passed to the filter callback
  *
  * The iterator is filtered while it is being iterated.
  * The original iterator you pass in here is is then owned and will be freed once the the new iterator is freed.
@@ -319,8 +319,8 @@ EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_
  * @def EINA_ITERATOR_FOREACH
  * @brief Definition for the macro to iterate over all elements easily.
  *
- * @param itr The iterator to use.
- * @param data Where to store * data, must be a pointer support getting
+ * @param[in,out] itr The iterator to use.
+ * @param[out] data Where to store * data, must be a pointer support getting
  *        its address since * eina_iterator_next() requires a pointer
  *        to pointer!
  *

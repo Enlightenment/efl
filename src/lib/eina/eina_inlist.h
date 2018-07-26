@@ -430,8 +430,8 @@ struct _Eina_Inlist
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list Existing list head or @c NULL to create a new list.
- * @param in_item New list node, must not be @c NULL.
+ * @param[in,out] in_list Existing list head or @c NULL to create a new list.
+ * @param[in] in_item New list node, must not be @c NULL.
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
@@ -449,8 +449,8 @@ EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list Existing list head or @c NULL to create a new list.
- * @param in_item New list node, must not be @c NULL.
+ * @param[in,out] in_list Existing list head or @c NULL to create a new list.
+ * @param[in] in_item New list node, must not be @c NULL.
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
@@ -473,9 +473,9 @@ EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_append().
  *
- * @param in_list Existing list head or @c NULL to create a new list.
- * @param in_item New list node, must not be @c NULL.
- * @param in_relative Reference node, @a in_item will be added after it.
+ * @param[in,out] in_list Existing list head or @c NULL to create a new list.
+ * @param[in] in_item New list node, must not be @c NULL.
+ * @param[in] in_relative Reference node, @a in_item will be added after it.
  *
  * @return The new list head. Use it and not @a list anymore.
  */
@@ -499,9 +499,9 @@ EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_prepend().
  *
- * @param in_list Existing list head or @c NULL to create a new list.
- * @param in_item New list node, must not be @c NULL.
- * @param in_relative Reference node, @a in_item will be added before it.
+ * @param[in,out] in_list Existing list head or @c NULL to create a new list.
+ * @param[in] in_item New list node, must not be @c NULL.
+ * @param[in] in_relative Reference node, @a in_item will be added before it.
  *
  * @return The new list head. Use it and not @a in_list anymore.
  */
@@ -521,8 +521,8 @@ EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
  *       it will be different from @a list and the wrong new head will
  *       be returned.
  *
- * @param in_list Existing list head, must not be @c NULL.
- * @param in_item Existing list node, must not be @c NULL.
+ * @param[in,out] in_list Existing list head, must not be @c NULL.
+ * @param[in] in_item Existing list node, must not be @c NULL.
  *
  * @return The new list head. Use it and not @a list anymore.
  */
@@ -535,8 +535,8 @@ EAPI Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
  * @warning This is an expensive call and has O(n) cost, possibly
  *    walking the whole list.
  *
- * @param in_list Existing list to search @a in_item in, must not be @c NULL.
- * @param in_item What to search for, must not be @c NULL.
+ * @param[in] in_list Existing list to search @a in_item in, must not be @c NULL.
+ * @param[in] in_item What to search for, must not be @c NULL.
  *
  * @return @a in_item if found, @c NULL if not.
  */
@@ -553,8 +553,8 @@ EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list Existing list head or @c NULL to create a new list.
- * @param item List node to move to beginning (head), must not be @c NULL.
+ * @param[in] list Existing list head or @c NULL to create a new list.
+ * @param[in] item List node to move to beginning (head), must not be @c NULL.
  *
  * @return The new list head. Use it and not @a list anymore.
  */
@@ -571,8 +571,8 @@ EAPI Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list Existing list head or @c NULL to create a new list.
- * @param item List node to move to end (tail), must not be @c NULL.
+ * @param[in] list Existing list head or @c NULL to create a new list.
+ * @param[in] item List node to move to end (tail), must not be @c NULL.
  *
  * @return The new list head. Use it and not @a list anymore.
  */
@@ -582,7 +582,7 @@ EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
 /**
  * @brief Gets the first list node in the list.
  *
- * @param list The list to get the first list node from.
+ * @param[in] list The list to get the first list node from.
  * @return The first list node in the list.
  *
  * This function returns the first list node in the list @p list. If
@@ -598,7 +598,7 @@ static inline Eina_Inlist *eina_inlist_first(const Eina_Inlist *list) EINA_PURE 
 /**
  * @brief Gets the last list node in the list.
  *
- * @param list The list to get the last list node from.
+ * @param[in] list The list to get the last list node from.
  * @return The last list node in the list.
  *
  * This function returns the last list node in the list @p list. If
@@ -614,7 +614,7 @@ static inline Eina_Inlist *eina_inlist_last(const Eina_Inlist *list) EINA_PURE E
 /**
  * @brief Gets the count of the number of items in a list.
  *
- * @param list The list whose count to return.
+ * @param[in] list The list whose count to return.
  * @return The number of members in the list.
  *
  * This function returns how many members @p list contains. If the
@@ -630,7 +630,7 @@ EAPI unsigned int   eina_inlist_count(const Eina_Inlist *list) EINA_WARN_UNUSED_
 /**
  * @brief Returns a new iterator associated to @a list.
  *
- * @param in_list The list.
+ * @param[in] in_list The list.
  * @return A new iterator.
  *
  * This function returns a newly allocated iterator associated to @p
@@ -651,7 +651,7 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
 /**
  * @brief Returns a new accessor associated to a list.
  *
- * @param in_list The list.
+ * @param[in] in_list The list.
  * @return A new accessor.
  *
  * This function returns a newly allocated accessor associated to
@@ -665,11 +665,10 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
 /**
  * @brief Inserts a new node into a sorted list.
  *
- * @param list The given linked list, @b must be sorted.
- * @param item List node to insert, must not be @c NULL.
- * @param func The function called for the sort.
+ * @param[in,out] list The given linked list, @b must be sorted.
+ * @param[in] item List node to insert, must not be @c NULL.
+ * @param[in] func The function called for the sort.
  * @return A list pointer.
- * @since 1.1.0
  *
  * This function inserts item into a linked list assuming it was
  * sorted and the result will be sorted. If @p list is @c NULL, item
@@ -682,6 +681,8 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * lists do not have O(1) access time, so walking to the correct node
  * can be costly, consider worst case to be almost O(n) pointer
  * dereference (list walk).
+ *
+ * @since 1.1.0
  */
 EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item, Eina_Compare_Cb func) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;
 
@@ -689,6 +690,7 @@ EAPI Eina_Inlist *eina_inlist_sorted_insert(Eina_Inlist *list, Eina_Inlist *item
  * @brief Creates state with valid data in it.
  *
  * @return A valid Eina_Inlist_Sorted_State.
+ *
  * @since 1.1.0
  *
  * See eina_inlist_sorted_state_insert() for more information.
@@ -698,9 +700,10 @@ EAPI Eina_Inlist_Sorted_State *eina_inlist_sorted_state_new(void);
 /**
  * @brief Forces an Eina_Inlist_Sorted_State to match the content of a list.
  *
- * @param state The state to update
- * @param list The list to match
+ * @param[in,out] state The state to update
+ * @param[in] list The list to match
  * @return The number of item in the actually in the list
+ *
  * @since 1.1.0
  *
  * See eina_inlist_sorted_state_insert() for more information. This function is
@@ -712,7 +715,8 @@ EAPI int eina_inlist_sorted_state_init(Eina_Inlist_Sorted_State *state, Eina_Inl
 /**
  * @brief Frees an Eina_Inlist_Sorted_State.
  *
- * @param state The state to destroy
+ * @param[in,out] state The state to destroy
+ *
  * @since 1.1.0
  *
  * See eina_inlist_sorted_state_insert() for more information.
@@ -722,10 +726,10 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
 /**
  * @brief Inserts a new node into a sorted list.
  *
- * @param list The given linked list, @b must be sorted.
- * @param item list node to insert, must not be @c NULL.
- * @param func The function called for the sort.
- * @param state The current array for initial dichotomic search
+ * @param[in,out] list The given linked list, @b must be sorted.
+ * @param[in] item list node to insert, must not be @c NULL.
+ * @param[in] func The function called for the sort.
+ * @param[in,out] state The current array for initial dichotomic search
  * @return A list pointer.
  * @since 1.1.0
  *
@@ -754,8 +758,8 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
 /**
  * @brief Sorts a list according to the ordering func will return.
  *
- * @param head The list handle to sort.
- * @param func A function pointer that can handle comparing the list data
+ * @param[in,out] head The list handle to sort.
+ * @param[in] func A function pointer that can handle comparing the list data
  * nodes.
  * @return the new head of list.
  *
@@ -800,15 +804,15 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 /* These two macros are helpers for the _FOREACH ones, don't use them */
 /**
  * @def _EINA_INLIST_OFFSET
- * @param ref The reference to be used.
+ * @param[in,out] ref The reference to be used.
  */
 #define _EINA_INLIST_OFFSET(ref)         ((char *)&(ref)->__in_list - (char *)(ref))
 
 #if !defined(__cplusplus)
 /**
  * @def _EINA_INLIST_CONTAINER
- * @param ref The reference to be used.
- * @param ptr The pointer to be used.
+ * @param[in,out] ref The reference to be used.
+ * @param[out] ptr The pointer to be used.
  */
 #define _EINA_INLIST_CONTAINER(ref, ptr) (void *)((char *)(ptr) - \
                                                   _EINA_INLIST_OFFSET(ref))
@@ -823,9 +827,9 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_FOREACH
- * @param list The list to iterate on.
- * @param it The pointer to the list item, i.e. a pointer to each item
- * that is part of the list.
+ * @param[in,out] list The list to iterate on.
+ * @param[out] it The pointer to the list item, i.e. a pointer to each
+ *             item that is part of the list.
  */
 #define EINA_INLIST_FOREACH(list, it)                                     \
   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL); it; \
@@ -833,13 +837,14 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_FOREACH_SAFE
- * @param list The list to iterate on.
- * @param list2 Auxiliary Eina_Inlist variable so we can save the pointer to the
- * next element, allowing us to free/remove the current one. Note that this
- * macro is only safe if the next element is not removed. Only the current one
- * is allowed to be removed.
- * @param it The pointer to the list item, i.e. a pointer to each item
- * that is part of the list.
+ * @param[in,out] list The list to iterate on.
+ * @param[out] list2 Auxiliary Eina_Inlist variable so we can save the
+ *             pointer to the next element, allowing us to free/remove
+ *             the current one. Note that this macro is only safe if the
+ *             next element is not removed. Only the current one is
+ *             allowed to be removed.
+ * @param[out] it The pointer to the list item, i.e. a pointer to each
+ *             item that is part of the list.
  */
 #define EINA_INLIST_FOREACH_SAFE(list, list2, it) \
    for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL), list2 = it ? EINA_INLIST_GET(it)->next : NULL; \
@@ -848,9 +853,9 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_REVERSE_FOREACH
- * @param list The list to traverse in reverse order.
- * @param it The pointer to the list item, i.e. a pointer to each item
- * that is part of the list.
+ * @param[in,out] list The list to traverse in reverse order.
+ * @param[out] it The pointer to the list item, i.e. a pointer to each
+ *             item that is part of the list.
  */
 #define EINA_INLIST_REVERSE_FOREACH(list, it)                                \
   for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list->last) : NULL); \
@@ -858,10 +863,11 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_REVERSE_FOREACH_FROM
- * @param list The last list to traverse in reverse order.
- * @param it The pointer to the list item, i.e. a pointer to each item
- * that is part of the list.
+ * @param[in,out] list The last list to traverse in reverse order.
+ * @param[in] it The pointer to the list item, i.e. a pointer to each
+ *            item that is part of the list.
  * @see EINA_INLIST_REVERSE_FOREACH()
+ *
  * @since 1.8
  *
  * EINA_INLIST_REVERSE_FOREACH() starts from last list of the given list.
@@ -873,9 +879,9 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /**
  * @def EINA_INLIST_FREE
- * @param list The list to free.
- * @param it The pointer to the list item, i.e. a pointer to each item
- * that is part of the list.
+ * @param[in,out] list The list to free.
+ * @param[in] it The pointer to the list item, i.e. a pointer to each item
+ *            that is part of the list.
  *
  * NOTE: it is the duty of the body loop to properly remove the item from the
  * inlist and free it. This function will turn into a infinite loop if you
