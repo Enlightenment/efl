@@ -344,6 +344,16 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
 
+        if (pd->selection && !pd->selection->in_progress)
+          {
+             Elm_Code_Line *line = elm_code_file_line_get(pd->code->file, number);
+             if (!line)
+               return;
+
+             if (!elm_code_widget_line_visible_get(widget, line))
+               return;
+          }
+
         _elm_code_widget_cursor_update(widget, pd);
      }
 }
@@ -450,6 +460,9 @@ _elm_code_widget_cursor_selection_set(Elm_Code_Widget *widget, Elm_Code_Widget_D
 
    end_line = pd->selection->end_line;
    end_col = pd->selection->end_col;
+
+   if (pd->selection->type == ELM_CODE_WIDGET_SELECTION_KEYBOARD)
+     return;
 
    if ((pd->selection->start_line == pd->selection->end_line && pd->selection->end_col > pd->selection->start_col) ||
        (pd->selection->start_line < pd->selection->end_line))
@@ -700,7 +713,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
      pd->cursor_col = elm_code_widget_line_text_column_width_to_position(widget, line_obj, position);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
-   _elm_code_widget_cursor_ensure_visible(widget);
+   if (!pd->selection || (pd->selection && pd->selection->in_progress))
+     _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
      _elm_code_widget_refresh(widget, line_obj);
@@ -1158,6 +1172,11 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (!pd->selection)
      if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
        elm_code_widget_selection_start(widget, row, col);
+
+   _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_MOUSE);
+   _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
+
+
    elm_code_widget_selection_end(widget, row, col);
 }
 
@@ -1179,6 +1198,8 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
    if (pd->selection)
      {
+        _elm_code_widget_selection_in_progress_set(widget, EINA_FALSE);
+
         if (pd->selection->start_line == pd->selection->end_line &&
             pd->selection->start_col == pd->selection->end_col)
           elm_code_widget_selection_clear(widget);
@@ -1736,6 +1757,9 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
              if (!pd->selection)
                elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col - (backwards?1:0));
 
+             _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_KEYBOARD);
+             _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
+
              if (pd->selection && pd->selection->start_line == pd->selection->end_line)
                {
                   if ((pd->selection->end_col == pd->selection->start_col && !backwards) ||
@@ -1776,6 +1800,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                adjust = (pd->selection->end_line > pd->selection->start_line);
 
              elm_code_widget_selection_end(widget, pd->cursor_line, pd->cursor_col - (adjust?1:0));
+             _elm_code_widget_selection_in_progress_set(widget, EINA_FALSE);
           }
      }
 

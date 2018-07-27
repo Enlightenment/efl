@@ -58,6 +58,8 @@ elm_code_widget_selection_start(Evas_Object *widget,
         pd->selection = selection;
      }
 
+   _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
+
    pd->selection->start_line = line;
    pd->selection->start_col = col;
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_START, widget);
@@ -464,3 +466,30 @@ elm_code_widget_selection_is_empty(Evas_Object *widget)
 
    return ret;
 }
+
+void
+_elm_code_widget_selection_in_progress_set(Evas_Object *widget, Eina_Bool state)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd || !pd->selection)
+     return;
+
+   pd->selection->in_progress = state;
+}
+
+void
+_elm_code_widget_selection_type_set(Evas_Object *widget, Elm_Code_Widget_Selection_Type type)
+{
+   Elm_Code_Widget_Data *pd;
+
+   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
+
+   if (!pd || !pd->selection)
+     return;
+
+   pd->selection->type = type;
+}
+
