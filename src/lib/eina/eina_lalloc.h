@@ -53,7 +53,7 @@ typedef Eina_Bool (*Eina_Lalloc_Alloc)(void *user_data, int num);
 typedef void      (*Eina_Lalloc_Free)(void *user_data);
 /**
  * @def EINA_LALLOC_FREE
- * @param function The function to free.
+ * @param[in] function The function to free.
  */
 #define EINA_LALLOC_FREE(function)  ((Eina_Lalloc_Free)function)
 
@@ -67,10 +67,10 @@ typedef struct _Eina_Lalloc Eina_Lalloc;
 /**
  * @brief Creates a new lazy allocator.
  *
- * @param data The data for which memory will be allocated.
- * @param alloc_cb The callback to allocate memory for @p data items.
- * @param free_cb The callback to free memory for @p data items.
- * @param num_init The number of @p data items to initially allocate space for.
+ * @param[in] data The data for which memory will be allocated.
+ * @param[in] alloc_cb The callback to allocate memory for @p data items.
+ * @param[in] free_cb The callback to free memory for @p data items.
+ * @param[in] num_init The number of @p data items to initially allocate space for.
  *
  * @return A new lazy allocator.
  *
@@ -83,7 +83,7 @@ EAPI Eina_Lalloc *eina_lalloc_new(void             *data,
 /**
  * @brief Frees the resources for a lazy allocator.
  *
- * @param a The lazy allocator to free.
+ * @param[in,out] a The lazy allocator to free.
  *
  */
 EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
@@ -91,8 +91,8 @@ EAPI void      eina_lalloc_free(Eina_Lalloc *a) EINA_ARG_NONNULL(1);
 /**
  * @brief Adds several elements to a lazy allocator.
  *
- * @param a The lazy allocator to add items to.
- * @param num The number of elements to add.
+ * @param[in,out] a The lazy allocator to add items to.
+ * @param[in] num The number of elements to add.
  *
  * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
@@ -103,7 +103,7 @@ EAPI Eina_Bool eina_lalloc_elements_add(Eina_Lalloc *a,
 /**
  * @brief Allocates one more of whatever the lazy allocator is allocating.
  *
- * @param a The lazy allocator to add an item to.
+ * @param[in,out] a The lazy allocator to add an item to.
  *
  * @return #EINA_TRUE on success, else #EINA_FALSE.
  *
