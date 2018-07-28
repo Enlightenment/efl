@@ -493,8 +493,8 @@ typedef enum _Eina_Log_State
 /**
  * Sets logging method to use.
  *
- * @param cb The callback to call when printing a log.
- * @param data The data to pass to the callback.
+ * @param[in] cb The callback to call when printing a log.
+ * @param[in] data The data to pass to the callback.
  *
  * By default, eina_log_print_cb_stderr() is used.
  *
@@ -510,7 +510,7 @@ EAPI void eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data) EINA_ARG_NONNU
 /**
  * @brief Sets the default log level.
  *
- * @param level The log level.
+ * @param[in] level The log level.
  *
  * This function sets the log level @p level. It is used in
  * eina_log_print().
@@ -533,7 +533,7 @@ EAPI int  eina_log_level_get(void) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Determines if a given @p level should be logged.
  *
- * @param level The log level to check
+ * @param[in] level The log level to check
  *
  * @return #EINA_TRUE if the @p level should be logged, else #EINA_FALSE.
  *
@@ -559,7 +559,7 @@ EAPI Eina_Bool          eina_log_main_thread_check(void) EINA_CONST EINA_WARN_UN
 /**
  * @brief Enables or disables colored text in the logs.
  *
- * @param disabled If #EINA_TRUE, color logging should be disabled.
+ * @param[in] disabled If #EINA_TRUE, color logging should be disabled.
  *
  * @note this is initially set to envvar EINA_LOG_COLOR_DISABLE by eina_init().
  *
@@ -579,7 +579,7 @@ EAPI Eina_Bool          eina_log_color_disable_get(void) EINA_WARN_UNUSED_RESULT
 /**
  * @brief Sets if originating file name logging should be disabled.
  *
- * @param disabled If #EINA_TRUE, file name logging should be disabled.
+ * @param[in] disabled If #EINA_TRUE, file name logging should be disabled.
  *
  * @note this is initially set to envvar EINA_LOG_FILE_DISABLE by eina_init().
  *
@@ -599,7 +599,7 @@ EAPI Eina_Bool          eina_log_file_disable_get(void) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Sets if originating function name logging should be disabled.
  *
- * @param disabled If #EINA_TRUE, function name logging should be disabled.
+ * @param[in] disabled If #EINA_TRUE, function name logging should be disabled.
  *
  * @note this is initially set to envvar EINA_LOG_FUNCTION_DISABLE by
  *       eina_init().
@@ -620,7 +620,7 @@ EAPI Eina_Bool          eina_log_function_disable_get(void) EINA_WARN_UNUSED_RES
 /**
  * @brief Sets if critical messages should abort the program.
  *
- * @param abort_on_critical If #EINA_TRUE, messages with level equal
+ * @param[in] abort_on_critical If #EINA_TRUE, messages with level equal
  *        or smaller than eina_log_abort_on_critical_level_get() will
  *        abort the program.
  *
@@ -647,8 +647,8 @@ EAPI Eina_Bool          eina_log_abort_on_critical_get(void) EINA_WARN_UNUSED_RE
 /**
  * @brief Sets level that triggers abort if abort-on-critical is set.
  *
- * @param critical_level Levels equal or smaller than the given value
- *        will trigger program abortion if
+ * @param[in] critical_level Levels equal or smaller than the given
+ *        value will trigger program abortion if
  *        eina_log_abort_on_critical_get() returns #EINA_TRUE.
  *
  * @note this is initially set to envvar EINA_LOG_ABORT_LEVEL by
@@ -678,18 +678,18 @@ EAPI int                eina_log_abort_on_critical_level_get(void) EINA_WARN_UNU
  * This call has the same effect as setting
  * EINA_LOG_LEVELS=&lt;@p domain_name&gt;:&lt;@p level&gt;
  *
- * @param domain_name Domain name to change the level. It may be of a
- *        still not registered domain. If the domain is not registered
+ * @param[in] domain_name Domain name to change the level. It may be of
+ *        a still not registered domain. If the domain is not registered
  *        yet, it will be saved as a pending set and applied upon
  *        registration.
- * @param level Level to use to limit eina_log_print() for given domain.
+ * @param[in] level Level to use to limit eina_log_print() for given domain.
  */
 EAPI void               eina_log_domain_level_set(const char *domain_name, int level) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Gets the domain level given its name.
  *
- * @param domain_name Domain name to retrieve the level. It may be of
+ * @param[in] domain_name Domain name to retrieve the level. It may be of
  *        a still not registered domain. If the domain is not
  *        registered yet, but there is a pending value, either from
  *        eina_log_domain_level_set(),EINA_LOG_LEVELS environment
@@ -709,7 +709,7 @@ EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_
 /**
  * @brief Gets the domain level given its identifier.
  *
- * @param domain Identifier, so it must be previously registered with
+ * @param[in] domain Identifier, so it must be previously registered with
  *        eina_log_domain_register(). It's a much faster version of
  *        eina_log_domain_level_get(), but relies on domain being
  *        present.
@@ -722,11 +722,11 @@ EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WA
 /**
  * @brief Sets the domain level given its identifier.
  *
- * @param domain Identifier, so it must be previously registered with
+ * @param[in] domain Identifier, so it must be previously registered with
  *        eina_log_domain_register(). It's a much faster version of
  *        eina_log_domain_level_get(), but relies on domain being
  *        present.
- * @param level Level to use to limit eina_log_print() for given domain.
+ * @param[in] level Level to use to limit eina_log_print() for given domain.
  * @since 1.10
  */
 EAPI void                eina_log_domain_registered_level_set(int domain, int level);
@@ -738,8 +738,8 @@ static inline Eina_Bool eina_log_domain_level_check(int domain, int level);
  */
 
 /**
- * @param name Domain name
- * @param color Color of the domain name
+ * @param[in] name Domain name
+ * @param[in] color Color of the domain name
  *
  * @return Domain index that will be used as the DOMAIN parameter on log
  *         macros. A negative return value means an error occurred.
@@ -751,7 +751,7 @@ EAPI int  eina_log_domain_register(const char *name, const char *color) EINA_ARG
 /**
  * @brief Forgets about a logging domain registered by eina_log_domain_register()
  *
- * @param domain Domain identifier as reported by eina_log_domain_register(),
+ * @param[in] domain Domain identifier as reported by eina_log_domain_register(),
  *        must be >= 0.
  *
  * @note MT: Safe to call from any thread.
@@ -769,18 +769,18 @@ EAPI void eina_log_domain_unregister(int domain);
  *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
  *       so on. See eina_log.h
  *
- * @param domain Logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
+ * @param[in] domain Logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
  *        you registered none. It is recommended that modules and
  *        applications have their own logging domain.
- * @param level Message level, those with level greater than user
+ * @param[in] level Message level, those with level greater than user
  *        specified value (eina_log_level_set() or environment
  *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
- * @param file Filename that originated the call, must @b not be @c NULL.
- * @param function Function that originated the call, must @b not be @c NULL.
- * @param line Originating line in @a file.
- * @param fmt Printf-like format to use. Should not provide trailing
+ * @param[in] file Filename that originated the call, must @b not be @c NULL.
+ * @param[in] function Function that originated the call, must @b not be @c NULL.
+ * @param[in] line Originating line in @a file.
+ * @param[in] fmt Printf-like format to use. Should not provide trailing
  *        '\n' as it is automatically included.
- * @param ... Variadic args.
+ * @param[in] ... Variadic args.
  *
  * @note MT: This function may be called from different threads if
  *       eina_log_threads_enable() was called before.
@@ -800,18 +800,18 @@ EAPI void eina_log_print(int            domain,
  *       macros EINA_LOG(), EINA_LOG_DOM_CRIT(), EINA_LOG_CRIT() and
  *       so on. See eina_log.h
  *
- * @param domain Logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
+ * @param[in] domain Logging domain to use or @c EINA_LOG_DOMAIN_GLOBAL if
  *        you registered none. It is recommended that modules and
  *        applications have their own logging domain.
- * @param level Message level, those with level greater than user
+ * @param[in] level Message level, those with level greater than user
  *        specified value (eina_log_level_set() or environment
  *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
- * @param file Filename that originated the call, must @b not be @c NULL.
- * @param fnc Function that originated the call, must @b not be @c NULL.
- * @param line Originating line in @a file.
- * @param fmt Printf-like format to use. Should not provide trailing
+ * @param[in] file Filename that originated the call, must @b not be @c NULL.
+ * @param[in] fnc Function that originated the call, must @b not be @c NULL.
+ * @param[in] line Originating line in @a file.
+ * @param[in] fmt Printf-like format to use. Should not provide trailing
  *        '\n' as it is automatically included.
- * @param args The arguments needed by the format.
+ * @param[in] args The arguments needed by the format.
  *
  * @note MT: this function may be called from different threads if
  *       eina_log_threads_enable() was called before.
@@ -833,14 +833,14 @@ EAPI void eina_log_vprint(int            domain,
 /**
  * @brief Alternative logging method, this will output to standard output stream.
  *
- * @param d The domain.
- * @param level The level.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The output format to use.
- * @param data Not used.
- * @param args The arguments needed by the format.
+ * @param[in] d The domain.
+ * @param[in] level The level.
+ * @param[in] file The file which is logged.
+ * @param[in] fnc The function which is logged.
+ * @param[in] line The line which is logged.
+ * @param[in] fmt The output format to use.
+ * @param[in] data Not used.
+ * @param[in] args The arguments needed by the format.
  *
  * This method will colorize output based on domain provided color and
  * message logging level. To disable color, set environment variable
@@ -868,14 +868,14 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
 /**
  * @brief Default logging method, this will output to standard error stream.
  *
- * @param d The domain.
- * @param level The level.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The output format to use.
- * @param data Not used.
- * @param args The arguments needed by the format.
+ * @param[in] d The domain.
+ * @param[in] level The level.
+ * @param[in] file The file which is logged.
+ * @param[in] fnc The function which is logged.
+ * @param[in] line The line which is logged.
+ * @param[in] fmt The output format to use.
+ * @param[in] data Not used.
+ * @param[in] args The arguments needed by the format.
  *
  * This method will colorize output based on domain provided color and
  * message logging level.
@@ -910,14 +910,14 @@ EAPI void eina_log_print_cb_stderr(const Eina_Log_Domain *d,
 /**
  * @brief Alternative logging method, this will output to given file stream.
  *
- * @param d The domain.
- * @param level Not used.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The output format to use.
- * @param data The file which will store the output (as a FILE *).
- * @param args The arguments needed by the format.
+ * @param[in] d The domain.
+ * @param[in] level Not used.
+ * @param[in] file The file which is logged.
+ * @param[in] fnc The function which is logged.
+ * @param[in] line The line which is logged.
+ * @param[in] fmt The output format to use.
+ * @param[in] data The file which will store the output (as a FILE *).
+ * @param[in] args The arguments needed by the format.
  *
  * This method will never output color.
  *
@@ -938,14 +938,14 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
 /**
  * @brief Alternative logging method, this will output to systemd journal.
  *
- * @param d The domain.
- * @param level Not used.
- * @param file The file which is logged.
- * @param fnc The function which is logged.
- * @param line The line which is logged.
- * @param fmt The output format to use.
- * @param data The file which will store the output (as a FILE *).
- * @param args The arguments needed by the format.
+ * @param[in] d The domain.
+ * @param[in] level Not used.
+ * @param[in] file The file which is logged.
+ * @param[in] fnc The function which is logged.
+ * @param[in] line The line which is logged.
+ * @param[in] fmt The output format to use.
+ * @param[in] data The file which will store the output (as a FILE *).
+ * @param[in] args The arguments needed by the format.
  *
  * This method will never output color.
  *
@@ -966,8 +966,8 @@ EAPI void eina_log_print_cb_journald(const Eina_Log_Domain *d,
 /**
  * @brief Configures console color of given file.
  *
- * @param fp File to configure console color (usually stderr or stdout).
- * @param color A VT color code such as EINA_COLOR_RED or EINA_COLOR_RESET.
+ * @param[in] fp File to configure console color (usually stderr or stdout).
+ * @param[in] color A VT color code such as EINA_COLOR_RED or EINA_COLOR_RESET.
  *
  * @note If color is disabled, nothing is done. See
  *       eina_log_color_disable_get()
@@ -996,9 +996,9 @@ extern EAPI const char *_eina_log_state_shutdown;
 /**
  * @brief Starts or stops the timing of a phase.
  *
- * @param domain The domain.
- * @param state State indicating if we are starting or stopping a phase.
- * @param phase The name of the phase to be used in the log.
+ * @param[in] domain The domain.
+ * @param[in] state State indicating if we are starting or stopping a phase.
+ * @param[in] phase The name of the phase to be used in the log.
  *
  * @note One domain can be in only one phase at a time.
  * @note If you change the name of the phase, it is assumed that
