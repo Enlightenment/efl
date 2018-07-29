@@ -5179,20 +5179,27 @@ EFL_EVAL_PKGS([ETHUMB_CLIENT])
 EFL_LIB_END([Ethumb_Client])
 #### End of Ethumb_Client
 
-#### Elua
-AC_ARG_ENABLE([elua],
-   [AS_HELP_STRING([--enable-elua],[enable ELUA support. @<:@default=enabled@:>@])],
+#### Elua and lua bindings
+AC_ARG_ENABLE([lua-bindings],
+   [AS_HELP_STRING([--enable-lua-bindings],[enable Lua bindings. @<:@default=enabled@:>@])],
    [
     if test "x${enableval}" = "xyes" ; then
-       want_elua="yes"
+       want_lua_bindings="yes"
     else
-       want_elua="no"
+       want_lua_bindings="no"
     fi
    ],
-   [want_elua="yes"])
+   [want_lua_bindings="yes"])
+
 have_elua="yes"
-if test "${want_lua_old}" = "yes" -o "x$want_elua" = "xno"; then
+have_lua_bindings="yes"
+
+if test "x$want_lua_old" = "xyes"; then
   have_elua="no"
+fi
+
+if test "x$have_elua" = "xno" -o "x$want_lua_bindings" = "xno"; then
+  have_lua_bindings="no"
 fi
 
 EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
@@ -5200,6 +5207,7 @@ EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
 ### Default values
 
 AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
+AM_CONDITIONAL([HAVE_LUA_BINDINGS], [test "x${have_lua_bindings}" = "xyes"])
 
 ### Additional options to configure
 
@@ -5945,6 +5953,7 @@ echo "  C++11.........: ${have_cxx11}"
 echo "  C#............: ${want_csharp}"
 echo "  JavaScript....: ${want_js}"
 echo "  JavaScript flg: $EINA_JS_LIBS"
+echo "  Lua bindings..: ${have_lua_bindings}"
 echo "Eina............: yes (${features_eina} unwind=$have_unwind)"
 echo "Eo..............: yes (${features_eo})"
 echo "Eolian..........: yes (${features_eolian})"

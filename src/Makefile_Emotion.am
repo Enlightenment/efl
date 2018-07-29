@@ -334,7 +334,7 @@ tests/emotion/data/whb.png \
 tests/emotion/data/window_inner_shadow.png \
 modules/emotion/generic/README
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 emotion_eolian_lua = $(emotion_eolian_files:%.eo=%.eo.lua)
 

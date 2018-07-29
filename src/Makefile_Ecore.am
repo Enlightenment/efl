@@ -390,7 +390,7 @@ EXTRA_DIST2 += \
 tests/ecore/sample.wav \
 tests/ecore/sample.ogg
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 ecore_eolian_lua = $(ecore_eolian_files:%.eo=%.eo.lua)
 

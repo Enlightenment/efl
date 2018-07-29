@@ -2529,7 +2529,7 @@ tests/evas/images/train.j2k.png \
 tests/evas/dicts/hyph_en_US.dic \
 tests/evas/dicts/hyph_de_DE.dic
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 evas_eolian_lua = $(evas_canvas_eolian_pub_files:%.eo=%.eo.lua) \
                   $(evas_gesture_eolian_pub_files:%.eo=%.eo.lua)
