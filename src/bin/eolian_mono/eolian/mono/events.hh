@@ -163,18 +163,18 @@ struct event_definition_generator
       else
         wrapper_evt_name = managed_evt_name;
 
-      std::string klass_name;
+      std::string klass_name_with_dot;
       if (is_inherited_event)
-        klass_name = name_helpers::klass_full_interface_name(klass);
+        klass_name_with_dot = name_helpers::klass_full_concrete_name(klass) + ".";
       else
-        klass_name = name_helpers::klass_interface_name(klass);
+        klass_name_with_dot = "";
 
 
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       std::string wrapper_args_type = "EventArgs";
       std::string wrapper_args_template = "";
       std::string event_args = "EventArgs args = EventArgs.Empty;\n";
-      std::string visibility = is_inherit_context(context) ? "protected" : "private";
+      std::string visibility = /*is_inherit_context(context) ? "protected" :*/ "protected";
 
       efl::eina::optional<grammar::attributes::type_def> etype = evt.type;
 
@@ -201,8 +201,9 @@ struct event_definition_generator
         return false;
 
       if(!as_generator(
-            scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
-            << scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
+            // scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << wrapper_evt_name << ";\n"
+            // << 
+            scope_tab << "///<summary>Method to raise event "<< wrapper_evt_name << ".</summary>\n"
             << scope_tab << visibility << " void On_" << wrapper_evt_name << "(" << wrapper_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "EventHandler" << wrapper_args_template << " evt;\n"
@@ -222,7 +223,7 @@ struct event_definition_generator
             << scope_tab << scope_tab << "}\n"
             << scope_tab << "}\n"
             << scope_tab << "efl.Event_Cb evt_" << wrapper_evt_name << "_delegate;\n"
-            << scope_tab << "event EventHandler" << wrapper_args_template << " " << klass_name << "." << managed_evt_name << "{\n")
+            << scope_tab << visibility << " event EventHandler" << wrapper_args_template << " " << klass_name_with_dot << managed_evt_name << "{\n")
               .generate(sink, NULL, context))
           return false;
 

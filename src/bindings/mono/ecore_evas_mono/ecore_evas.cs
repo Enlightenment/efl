@@ -29,7 +29,7 @@ public class EcoreEvas
         ecore_evas_show(handle);
     }
 
-    public efl.canvas.IObject canvas
+    public efl.canvas.Object canvas
     {
         get { return new efl.canvas.Object(ecore_evas_get(handle)); }
     }

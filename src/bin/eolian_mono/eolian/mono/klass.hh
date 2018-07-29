@@ -4,6 +4,7 @@
 #include "grammar/integral.hpp"
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
+#include "grammar/attribute_conditional.hpp"
 #include "blacklist.hh"
 
 #include "grammar/indentation.hpp"
@@ -35,7 +36,7 @@ static bool generate_static_cast_method(OutputIterator sink, grammar::attributes
 {
    return as_generator(
        scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
-       << scope_tab << "public static " << name_helpers::klass_interface_name(cls) << " static_cast(efl.IObject obj)\n"
+       << scope_tab << "public static " << name_helpers::klass_concrete_name(cls) << " static_cast(efl.Object obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "if (obj == null)\n"
        << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
@@ -51,7 +52,7 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        scope_tab << "///<summary>Verifies if the given object is equals to this.</summary>\n" 
        << scope_tab << "public override bool Equals(object obj)\n"
        << scope_tab << "{\n"
-       << scope_tab << scope_tab << "var other = obj as efl.IObject;\n"
+       << scope_tab << scope_tab << "var other = obj as efl.Object;\n"
        << scope_tab << scope_tab << "if (other == null)\n"
        << scope_tab << scope_tab << scope_tab << "return false;\n"
        << scope_tab << scope_tab << "return this.raw_handle == other.raw_handle;\n"
@@ -117,6 +118,7 @@ struct klass
      auto methods = cls.get_all_methods();
 
      // Interface class
+     if(class_type == "interface")
      {
      auto iface_cxt = context_add_tag(class_context{class_context::interface}, context);
 
@@ -132,8 +134,10 @@ struct klass
      for(auto first = std::begin(cls.immediate_inherits)
            , last = std::end(cls.immediate_inherits); first != last; ++first)
        {
-         if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
-           return false;
+         if(first->type != attributes::class_type::regular
+            && first->type != attributes::class_type::abstract_)
+           if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
+             return false;
        }
 
      if(!as_generator("\n" << scope_tab << "efl.eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
@@ -163,7 +167,7 @@ struct klass
      }
 
      // Concrete class
-     // if(class_type == "class")
+     if(class_type != "class")
        {
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
          auto concrete_name = name_helpers::klass_concrete_name(cls);
@@ -171,7 +175,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public class " << concrete_name << " : " << interface_name << "\n{\n"
+             << "sealed public class " << concrete_name << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
              << scope_tab << "public System.IntPtr raw_handle {\n"
@@ -191,7 +195,7 @@ struct klass
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << concrete_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << concrete_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "System.IntPtr klass = " << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << scope_tab << "System.IntPtr parent_ptr = System.IntPtr.Zero;\n"
@@ -272,15 +276,33 @@ struct klass
         bool cls_has_string_return = has_string_return(cls);
         bool cls_has_stringshare_return = has_stringshare_return(cls);
 
-        auto interface_name = name_helpers::klass_interface_name(cls);
-        auto inherit_name = name_helpers::klass_inherit_name(cls);
+        auto inherit_name = name_helpers::klass_concrete_name(cls);
         auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
 
+        std::vector<attributes::klass_name> inherit_classes;
+        std::vector<attributes::klass_name> inherit_interfaces;
+        std::copy_if(cls.immediate_inherits.begin(), cls.immediate_inherits.end()
+                     , std::back_inserter(inherit_classes)
+                     , [] (attributes::klass_name const& klass)
+                     { switch (klass.type) { case attributes::class_type::regular:
+                                             case attributes::class_type::abstract_: return true;
+                                             default: return false; }; });
+        std::copy_if(cls.immediate_inherits.begin(), cls.immediate_inherits.end()
+                     , std::back_inserter(inherit_interfaces)
+                     , [] (attributes::klass_name const& klass)
+                     { switch (klass.type) { case attributes::class_type::regular:
+                                             case attributes::class_type::abstract_: return false;
+                                             default: return true; }; });
 
-         if(!as_generator
+        if(!as_generator
             (
              documentation
-             << "public " << class_type << " " << inherit_name << " : " << interface_name << "\n{\n"
+             << "public " << class_type << " " << inherit_name
+             << (cls.immediate_inherits.empty() ? "" : " : ")
+             << (klass_full_concrete_or_interface_name % ",") // classes
+             << (inherit_classes.empty() || inherit_interfaces.empty() ? "" : ",")
+             << (klass_full_concrete_or_interface_name % ",") // interfaces
+             << "\n{\n"
              << scope_tab << "System.IntPtr handle;\n"
              << scope_tab << "internal static System.IntPtr klass = System.IntPtr.Zero;\n"
              << scope_tab << "private static readonly object klassAllocLock = new object();\n"
@@ -295,14 +317,14 @@ struct klass
              << scope_tab << scope_tab << "get { return klass; }\n"
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
+             << scope_tab << "public delegate void ConstructingMethod(" << /*interface_name*/ inherit_name << " obj);\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(inherit_cxt).actual_library_name(cls.filename)
              << ")] private static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param>Parent instance.</param>\n"
              << scope_tab << "///<param>Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(efl.IObject parent = null, ConstructingMethod init_cb=null)\n"
+             << scope_tab << "public " << inherit_name << "(efl.Object parent = null, ConstructingMethod init_cb=null)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
@@ -342,9 +364,12 @@ struct klass
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
             )
-            .generate(sink, cls, inherit_cxt))
+           .generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), inherit_cxt))
            return false;
 
+         if (!generate_static_cast_method(sink, cls, inherit_cxt))
+           return false;
+        
          if (!generate_equals_method(sink, inherit_cxt))
            return false;
 
@@ -366,6 +391,9 @@ struct klass
          if(!as_generator(*(async_function_definition(true))).generate(sink, methods, inherit_cxt))
            return false;
 
+         if(!as_generator(*(event_argument_wrapper)).generate(sink, cls.events, context))
+           return false;
+         
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 

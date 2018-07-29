@@ -237,7 +237,10 @@ struct visitor_generate
    }
    bool operator()(attributes::klass_name klass) const
    {
-     return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
+     if(klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
+       return as_generator(string).generate(sink, name_helpers::klass_full_concrete_name(klass), *context);
+     else
+       return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {

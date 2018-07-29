@@ -93,7 +93,7 @@ public class Globals {
         eina.Log.Debug("Registered?");
         return klass;
     }
-    public static IntPtr instantiate_start(IntPtr klass, efl.IObject parent)
+    public static IntPtr instantiate_start(IntPtr klass, efl.Object parent)
     {
         eina.Log.Debug("Instantiating");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
