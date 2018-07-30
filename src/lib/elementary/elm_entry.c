@@ -1698,6 +1698,7 @@ _menu_call(Evas_Object *obj)
         else elm_widget_scroll_freeze_push(obj);
 
         sd->hoversel = elm_hoversel_add(obj);
+        elm_object_tree_focus_allow_set(sd->hoversel, EINA_FALSE);
         context_menu_orientation = edje_object_data_get
             (sd->entry_edje, "context_menu_orientation");
 
