@@ -3130,6 +3130,20 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  */
 EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
+
+/**
+ * @brief Gets the description of an object color class.
+ *
+ * This function gets the description of a color class in use by an object.
+ *
+ * @param[in] color_class Color class description
+ *
+ * @return The description of the target color class or @c null if not found
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
+
 typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
 #define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
 #define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE
