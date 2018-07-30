@@ -45,6 +45,8 @@ static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, un
 static void _set_selection_list(Sel_Manager_Selection *sel_list, Sel_Manager_Seat_Selection *seat_sel);
 #endif
 
+EAPI int ELM_CNP_EVENT_SELECTION_CHANGED = -1;
+
 static Sel_Manager_Seat_Selection *
 _sel_manager_seat_selection_get(Efl_Selection_Manager_Data *pd, unsigned int seat)
 {
@@ -845,6 +847,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
    Efl_Selection_Changed e;
+   Elm_Cnp_Event_Selection_Changed *_e;
    Ecore_X_Event_Fixes_Selection_Notify *ev = event;
    Sel_Manager_Seat_Selection *seat_sel;
    Efl_Selection_Type type;
@@ -870,8 +873,15 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    e.type = type;
    e.seat = 1; /* under x11 this is always the default seat */
    e.exist = !!ev->owner;
+
+   _e = calloc(1, sizeof(Elm_Cnp_Event_Selection_Changed));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_e, ECORE_CALLBACK_RENEW);
+   _e->type = type;
+   _e->seat_id = 1;
+   _e->exists = e.exist;
+
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, NULL, NULL);
    efl_event_callback_call(sel->owner, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
-   //ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, NULL, NULL);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2599,16 +2609,19 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    return _update_sel_lost_list(owner, type, seat_sel);
 }
 
-/*static void
-_wl_selection_changed_free(void *data, void *ev EINA_UNUSED)
+static void
+_wl_selection_changed_free(void *data, void *ev)
 {
    ecore_wl2_display_disconnect(data);
-}*/
+
+   free(ev);
+}
 
 static Eina_Bool
 _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
 {
    Efl_Selection_Manager_Data *pd = data;
+   Elm_Cnp_Event_Selection_Changed *_e;
    Sel_Manager_Seat_Selection *seat_sel;
    Sel_Manager_Selection *sel;
    Efl_Selection_Changed e;
@@ -2627,7 +2640,15 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
    /* connect again to add ref */
    e.display = ecore_wl2_display_connect(ecore_wl2_display_name_get(ev->display));
    e.exist = !!ecore_wl2_dnd_selection_get(seat);
-   //ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, e, _wl_selection_changed_free, ev->display);
+
+   _e = calloc(1, sizeof(Elm_Cnp_Event_Selection_Changed));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(_e, ECORE_CALLBACK_RENEW);
+   _e->type = e.type;
+   _e->seat_id = e.seat;
+   _e->display = e.display;
+   _e->exists = e.exist;
+
+   ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, _wl_selection_changed_free, ev->display);
    efl_event_callback_call(sel->request_obj, EFL_SELECTION_EVENT_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
