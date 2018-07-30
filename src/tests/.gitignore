@@ -4,3 +4,4 @@ check-results*.xml
 *_suite.trs
 *.node
 */cxx_compile_test
+/timeout

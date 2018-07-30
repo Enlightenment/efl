@@ -125,6 +125,10 @@ endif
 DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
 
 if EFL_ENABLE_TESTS
+noinst_PROGRAMS += tests/timeout
+
+$(check_PROGRAMS): tests/timeout
+
 check-build: all
 	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
