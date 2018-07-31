@@ -2649,6 +2649,15 @@ ecore_evas_manual_render(Ecore_Evas *ee)
 
         ecore_evas_animator_tick(ee, NULL, t);
      }
+   else
+     {
+        /* We want to ensure a manual render actually takes place,
+         * even if we were in the middle of an async render.  This
+         * will ensure that any post render callbacks added
+         * specifically for this manual render will fire.
+         */
+        ecore_evas_render_wait(ee);
+     }
 
    if (ee->engine.func->fn_render)
      {
