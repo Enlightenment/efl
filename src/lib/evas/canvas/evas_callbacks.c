@@ -107,6 +107,7 @@ typedef struct
    void                    *data;
    Evas_Callback_Type       type;
    Efl_Event_Info_Type      efl_event_type;
+   Evas_Callback_Priority   priority;
 } Evas_Event_Cb_Wrapper_Info;
 
 static int
@@ -563,6 +564,24 @@ evas_event_callback_add(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func,
                                     func, data);
 }
 
+void
+_deferred_callbacks_process(Evas *eo_e, Evas_Public_Data *e)
+{
+   Evas_Event_Cb_Wrapper_Info *cb_info;
+   const Efl_Event_Description *desc;
+
+   while (e->deferred_callbacks)
+     {
+        cb_info = EINA_INLIST_CONTAINER_GET(e->deferred_callbacks,
+                                            Evas_Event_Cb_Wrapper_Info);
+        e->deferred_callbacks = eina_inlist_remove(e->deferred_callbacks,
+                                                   e->deferred_callbacks);
+        desc = _legacy_evas_callback_table(cb_info->type);
+        efl_event_callback_priority_add(eo_e, desc, cb_info->priority, _eo_evas_cb, cb_info);
+        e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
+     }
+}
+
 EAPI void
 evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callback_Priority priority, Evas_Event_Cb func, const void *data)
 {
@@ -581,13 +600,22 @@ evas_event_callback_priority_add(Evas *eo_e, Evas_Callback_Type type, Evas_Callb
    cb_info = calloc(1, sizeof(*cb_info));
    cb_info->func.evas_cb = func;
    cb_info->data = (void *)data;
+   cb_info->priority = priority;
    cb_info->type = type;
    cb_info->efl_event_type = _evas_event_efl_event_info_type(type);
 
-   desc = _legacy_evas_callback_table(type);
-   efl_event_callback_priority_add(eo_e, desc, priority, _eo_evas_cb, cb_info);
+   if ((e->rendering || e->inside_post_render) && type == EVAS_CALLBACK_RENDER_POST)
+     {
+        e->deferred_callbacks = eina_inlist_append(e->deferred_callbacks,
+                                                   EINA_INLIST_GET(cb_info));
+     }
+   else
+     {
+        desc = _legacy_evas_callback_table(type);
+        efl_event_callback_priority_add(eo_e, desc, priority, _eo_evas_cb, cb_info);
 
-   e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
+        e->callbacks = eina_inlist_append(e->callbacks, EINA_INLIST_GET(cb_info));
+     }
 }
 
 EAPI void *
@@ -603,6 +631,20 @@ evas_event_callback_del(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb func)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
+
+   if (type == EVAS_CALLBACK_RENDER_POST)
+     EINA_INLIST_REVERSE_FOREACH(e->deferred_callbacks, info)
+       {
+          if (info->func.evas_cb == func)
+            {
+               void *tmp = info->data;
+
+               e->deferred_callbacks =
+                  eina_inlist_remove(e->deferred_callbacks, EINA_INLIST_GET(info));
+               free(info);
+               return tmp;
+            }
+       }
 
    EINA_INLIST_REVERSE_FOREACH(e->callbacks, info)
      {
@@ -633,6 +675,20 @@ evas_event_callback_del_full(Evas *eo_e, Evas_Callback_Type type, Evas_Event_Cb 
    EINA_SAFETY_ON_NULL_RETURN_VAL(e, NULL);
 
    if (!e->callbacks) return NULL;
+
+   if (type == EVAS_CALLBACK_RENDER_POST)
+     EINA_INLIST_REVERSE_FOREACH(e->deferred_callbacks, info)
+       {
+          if ((info->func.evas_cb == func) && (info->data == data))
+            {
+               void *tmp = info->data;
+
+               e->deferred_callbacks =
+                  eina_inlist_remove(e->deferred_callbacks, EINA_INLIST_GET(info));
+               free(info);
+               return tmp;
+            }
+       }
 
    EINA_INLIST_FOREACH(e->callbacks, info)
      {

@@ -3838,6 +3838,7 @@ evas_render_wakeup(Evas *eo_e)
    post.updated_area = ret_updates;
    _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
    evas->inside_post_render = EINA_FALSE;
+   _deferred_callbacks_process(eo_e, evas);
 
    evas_render_updates_free(ret_updates);
 

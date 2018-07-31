@@ -860,6 +860,7 @@ struct _Evas_Public_Data
    Eina_List     *post_events; // free me on evas_free
 
    Eina_Inlist    *callbacks;
+   Eina_Inlist    *deferred_callbacks;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -1913,6 +1914,8 @@ void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *targ
 //evas focus functions
 void evas_focus_init(void);
 void evas_focus_shutdown(void);
+
+void _deferred_callbacks_process(Evas *eo_e, Evas_Public_Data *e);
 
 extern Eina_Cow *evas_object_proxy_cow;
 extern Eina_Cow *evas_object_map_cow;
