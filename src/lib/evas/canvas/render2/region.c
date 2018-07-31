@@ -851,10 +851,7 @@ region_add(Region *dest, Region *source)
 
    // Region 1 completely subsumes region 2
    if (!dest->data && CONTAINS(&dest->bound, &source->bound))
-     {
-        if (dest != source) return region_copy(dest, source);
         return EINA_TRUE;
-     }
 
    // Region 2 completely subsumes region 1
    if (!source->data && CONTAINS(&source->bound, &dest->bound))
