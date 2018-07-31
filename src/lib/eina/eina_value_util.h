@@ -40,7 +40,7 @@ EAPI Eina_Value_Struct_Desc *eina_value_util_struct_desc_new(void);
 /**
  * @brief Creates a new #Eina_Value containing the passed parameter.
  *
- * @param timestr The value to use
+ * @param[in] timestr The value to use
  * @return The #Eina_Value
  *
  * @since 1.12

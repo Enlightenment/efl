@@ -666,7 +666,7 @@ struct _Eina_Value
 
 /**
  * @brief Creates generic value storage.
- * @param type How to manage this value.
+ * @param[in] type How to manage this value.
  * @return The new value or @c NULL on failure.
  *
  * Create a new generic value storage. The members are managed using
@@ -690,7 +690,7 @@ EAPI Eina_Value *eina_value_new(const Eina_Value_Type *type) EINA_ARG_NONNULL(1)
 
 /**
  * @brief Frees value and its data.
- * @param value value object
+ * @param[in] value value object
  *
  * @see eina_value_flush()
  *
@@ -701,8 +701,8 @@ EAPI void eina_value_free(Eina_Value *value);
 /**
  * @brief Initializes generic value storage.
  *
- * @param value Value object
- * @param type How to manage this value.
+ * @param[out] value Value object
+ * @param[out] type How to manage this value.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * Initializes existing generic value storage. The members are managed using the
@@ -726,7 +726,7 @@ static inline Eina_Bool eina_value_setup(Eina_Value *value,
 /**
  * @brief Creates generic value storage.
  *
- * @param value Value object
+ * @param[in] value Value object
  *
  * Releases all the resources associated with an #Eina_Value. The
  * value must be already set with eina_value_setup() or
@@ -745,8 +745,8 @@ static inline void eina_value_flush(Eina_Value *value) EINA_ARG_NONNULL(1);
 /**
  * @brief Copies generic value storage.
  *
- * @param value Source value object
- * @param copy Destination value object
+ * @param[in] value Source value object
+ * @param[out] copy Destination value object
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The @a copy object is considered uninitialized and its existing
@@ -763,8 +763,8 @@ EAPI Eina_Bool eina_value_copy(const Eina_Value *value,
 
 /**
  * @brief Compares generic value storage.
- * @param a left side of comparison
- * @param b right side of comparison
+ * @param[in] a left side of comparison
+ * @param[in] b right side of comparison
  * @return less than zero if a < b, greater than zero if a > b, zero
  *         if a == b
  *
@@ -776,7 +776,8 @@ static inline int eina_value_compare(const Eina_Value *a,
 /**
  * @brief Sets the generic value.
  *
- * @param value Source value object
+ * @param[in,out] value Source value object
+ * @param[in] ... Data to set.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The variable argument is dependent on chosen type. The list for
@@ -836,7 +837,8 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
 /**
  * @brief Gets the generic value.
  *
- * @param value Source value object
+ * @param[in] value Source value object.
+ * @param[out] ... Data value retrieved.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The value is returned in the variable argument parameter, the
@@ -904,8 +906,8 @@ static inline Eina_Bool eina_value_get(const Eina_Value *value,
 /**
  * @brief Sets the generic value.
  *
- * @param value Source value object
- * @param args Variable argument
+ * @param[in,out] value Source value object
+ * @param[in] args Variable argument
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @note for array member see eina_value_array_vset()
@@ -924,8 +926,8 @@ static inline Eina_Bool eina_value_vset(Eina_Value *value,
 /**
  * @brief Gets the generic value.
  *
- * @param value Source value object
- * @param args Variable argument
+ * @param[in] value Source value object
+ * @param[out] args Variable argument
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The value is returned in the variable argument parameter, the
@@ -948,8 +950,9 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
 
 /**
  * @brief Sets the generic value from pointer.
- * @param value Source value object
- * @param ptr Pointer to specify the contents.
+ *
+ * @param [in,out] value Source value object
+ * @param [in] ptr Pointer to specify the contents.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The pointer type is dependent on chosen value type. The list for
@@ -1013,8 +1016,8 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
 /**
  * @brief Gets the generic value to pointer.
  *
- * @param value Source value object
- * @param ptr Pointer to receive the contents.
+ * @param[in] value Source value object
+ * @param[out] ptr Pointer to receive the contents.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The value is returned in pointer contents, the actual value is
@@ -1082,8 +1085,8 @@ static inline Eina_Bool eina_value_pget(const Eina_Value *value,
 /**
  * @brief Converts one value to another type.
  *
- * @param value Source value object.
- * @param convert Destination value object.
+ * @param[in] value Source value object.
+ * @param[out] convert Destination value object.
  * @return #EINA_TRUE if converted, #EINA_FALSE otherwise.
  *
  * Converts one value to another trying first @a value type
@@ -1107,7 +1110,8 @@ EAPI Eina_Bool eina_value_convert(const Eina_Value *value,
 
 /**
  * @brief Converts one value to Eina_Binbuf.
- * @param value Source value object.
+ *
+ * @param[in,out] value Source value object.
  * @return @c NULL if it failed to get a memory content, a valid Eina_Binbuf otherwise.
  *
  * Converts one value to EINA_TYPE_VALUE_BLOB if necessary by calling
@@ -1124,7 +1128,8 @@ EAPI Eina_Binbuf *eina_value_to_binbuf(Eina_Value *value);
 
 /**
  * @brief Converts value to string.
- * @param value value object.
+ *
+ * @param[in] value value object.
  * @return newly allocated memory or @c NULL on failure.
  *
  * @see eina_value_convert()
@@ -1135,7 +1140,8 @@ EAPI char *eina_value_to_string(const Eina_Value *value) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Queries value type.
- * @param value Value object.
+ *
+ * @param[in] value Value object.
  * @return Type instance, or @c NULL if type is invalid.
  *
  * Check if value type is valid and returns it. A type is invalid if
