@@ -144,8 +144,8 @@ EAPI void eina_quaternion_matrix4_to(Eina_Matrix4 *m,
 /**
  * @brief Compute the inverse of the given quaternion.
  *
- * @param out The quaternion to invert.
- * @param q The quaternion matrix.
+ * @param[out] out The quaternion to invert.
+ * @param[in] q The quaternion matrix.
  *
  * This function inverses the quaternion @p q and stores the result in
  * @p out.
@@ -157,8 +157,8 @@ EAPI void eina_quaternion_inverse(Eina_Quaternion *out, const Eina_Quaternion *q
 /**
  * @brief Set array to quaternion.
  *
- * @param dst The result quaternion
- * @param v The the array[4] for set
+ * @param[out] dst The result quaternion
+ * @param[in] v The the array[4] for set
  *
  * Set to quaternion first 4 elements from array
  *
@@ -169,8 +169,8 @@ EAPI void eina_quaternion_array_set(Eina_Quaternion *dst, const double *v);
 /**
  * @brief Copy quaternion.
  *
- * @param dst The quaternion copy
- * @param src The quaternion for copy.
+ * @param[out] dst The quaternion copy
+ * @param[in] src The quaternion for copy.
  *
  * @since 1.17
  */
@@ -180,8 +180,8 @@ EAPI void eina_quaternion_copy(Eina_Quaternion *dst,
 /**
  * @brief Homogeneous quaternion
  *
- * @param out The resulting quaternion
- * @param v The given quaternion
+ * @param[out] out The resulting quaternion
+ * @param[in] v The given quaternion
  *
  * @since 1.17
  */
@@ -191,9 +191,9 @@ EAPI void eina_quaternion_homogeneous_regulate(Eina_Quaternion *out,
 /**
  * @brief Subtract two quaternions
  *
- * @param out The resulting quaternion
- * @param a The first member of the subtract
- * @param b The second member of the subtract
+ * @param[out] out The resulting quaternion
+ * @param[in] a The first member of the subtract
+ * @param[in] b The second member of the subtract
  *
  * @since 1.17
  */
@@ -203,7 +203,7 @@ EAPI void eina_quaternion_subtract(Eina_Quaternion *out, const Eina_Quaternion *
 /**
  * @brief Return the length of the given quaternion.
  *
- * @param v The quaternion.
+ * @param[out] v The quaternion.
  * @return The length.
  *
  * @since 1.17
@@ -213,7 +213,7 @@ EAPI double eina_quaternion_length_get(const Eina_Quaternion *v);
 /**
  * @brief Return the length in square of the given quaternion.
  *
- * @param v The quaternion.
+ * @param[out] v The quaternion.
  * @return The length in square.
  *
  * @since 1.17
@@ -223,8 +223,8 @@ EAPI double eina_quaternion_length_square_get(const Eina_Quaternion *v);
 /**
  * @brief Return the distance between of two quaternions.
  *
- * @param a The first quaternion.
- * @param b The second quaternion.
+ * @param[in] a The first quaternion.
+ * @param[in] b The second quaternion.
  * @return The distance.
  *
  * @since 1.17
@@ -234,8 +234,8 @@ EAPI double eina_quaternion_distance_get(const Eina_Quaternion *a,
 /**
  * @brief Return the distance in square between of two quaternions.
  *
- * @param a The first quaternion.
- * @param b The second quaternion.
+ * @param[in] a The first quaternion.
+ * @param[in] b The second quaternion.
  * @return The distance in square.
  *
  * @since 1.17
@@ -246,9 +246,9 @@ EAPI double eina_quaternion_distance_square_get(const Eina_Quaternion *a,
 /**
  * @brief Transform quaternion.
  *
- * @param out The result quaternion.
- * @param v The quaternion for transform.
- * @param m The matrix for transform.
+ * @param[out] out The result quaternion.
+ * @param[in] v The quaternion for transform.
+ * @param[in] m The matrix for transform.
  *
  * @since 1.17
  */
@@ -258,8 +258,8 @@ EAPI void eina_quaternion_transform(Eina_Quaternion *out, const Eina_Quaternion 
 /**
  * @brief Return the angle plains between of two quaternions.
  *
- * @param a The first quaternion.
- * @param b The second quaternion.
+ * @param[in] a The first quaternion.
+ * @param[in] b The second quaternion.
  * @return The angle.
  *
  * @since 1.17
