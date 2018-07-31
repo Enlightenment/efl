@@ -2613,6 +2613,9 @@ ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render)
 {
    ECORE_EVAS_CHECK(ee);
    ee->manual_render = manual_render;
+
+   if (manual_render) ecore_evas_render_wait(ee);
+
    if (!ee->animator_count) return;
    if (!ee->engine.func->fn_animator_register) return;
    if (!ee->engine.func->fn_animator_unregister) return;
