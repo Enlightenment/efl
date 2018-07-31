@@ -1109,7 +1109,7 @@ _elm_slider_efl_part_part_get(const Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, co
 EOLIAN static void
 _elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *_pd EINA_UNUSED, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
    if (sd->indi_format_cb_data == func_data && sd->indi_format_cb == func)
@@ -1154,7 +1154,7 @@ _indi_default_format_free_cb(void *data)
 EOLIAN static void
 _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EINA_UNUSED, const char *template)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
    if (!template) return;
@@ -1166,7 +1166,7 @@ _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EI
 EOLIAN static const char *
 _elm_slider_part_indicator_efl_ui_format_format_string_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
    return sd->indi_template;
@@ -1175,7 +1175,7 @@ _elm_slider_part_indicator_efl_ui_format_format_string_get(const Eo *obj, void *
 EOLIAN static void
 _elm_slider_part_indicator_visible_mode_set(Eo *obj, void *_pd EINA_UNUSED, Elm_Slider_Indicator_Visible_Mode indicator_visible_mode)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
    if (!eina_streq(pd->part, "indicator")) return;
@@ -1188,7 +1188,7 @@ _elm_slider_part_indicator_visible_mode_set(Eo *obj, void *_pd EINA_UNUSED, Elm_
 EOLIAN static Elm_Slider_Indicator_Visible_Mode
 _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
    if (!eina_streq(pd->part, "indicator")) return ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE;

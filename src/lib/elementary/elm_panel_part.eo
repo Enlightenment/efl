@@ -1,4 +1,4 @@
-class Elm.Panel.Part (Efl.Ui.Widget_Part, Efl.Content)
+class Elm.Panel.Part (Efl.Object, Efl.Ui.Widget_Part, Efl.Content)
 {
    [[Elementary panel internal part class]]
    data: null;

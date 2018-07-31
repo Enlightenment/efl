@@ -1,4 +1,4 @@
-class Efl.Ui.Win_Part (Efl.Ui.Widget_Part, Efl.Content, Efl.Gfx.Entity, Efl.Gfx.Color,
+class Efl.Ui.Win_Part (Efl.Object, Efl.Ui.Widget_Part, Efl.Content, Efl.Gfx.Entity, Efl.Gfx.Color,
                        Efl.File)
 {
    [[Efl UI window interal part class]]

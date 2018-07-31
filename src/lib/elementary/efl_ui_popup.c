@@ -336,7 +336,7 @@ _efl_ui_popup_efl_part_part_get(const Eo *obj, Efl_Ui_Popup_Data *_pd EINA_UNUSE
 EOLIAN static void
 _efl_ui_popup_part_efl_canvas_object_repeat_events_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool repeat)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
 
    if (eina_streq(pd->part, "backwall"))
@@ -348,7 +348,7 @@ _efl_ui_popup_part_efl_canvas_object_repeat_events_set(Eo *obj, void *_pd EINA_U
 EOLIAN static Eina_Bool
 _efl_ui_popup_part_efl_canvas_object_repeat_events_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
 
    if (eina_streq(pd->part, "backwall"))
@@ -360,7 +360,7 @@ _efl_ui_popup_part_efl_canvas_object_repeat_events_get(const Eo *obj, void *_pd 
 EOLIAN static Eina_Bool
 _efl_ui_popup_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *group)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
 
    if (eina_streq(pd->part, "backwall"))

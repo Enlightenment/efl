@@ -54,7 +54,7 @@ struct _Elm_Part_Data
 static inline Eo *
 _elm_part_initialize(Eo *proxy, Eo *obj, const char *part)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(proxy, EFL_UI_WIDGET_PART_MIXIN);
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(pd && obj && part, NULL);
    pd->part = eina_tmpstr_add(part);
@@ -89,11 +89,11 @@ _ ## type ## _efl_part_part_get(const Eo *obj, typedata *priv EINA_UNUSED, const
 }
 
 #define ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata) \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN); \
    typedata *sd = efl_data_scope_get(pd->obj, TYPE ## _CLASS);
 
 #define ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD() \
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS); \
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN); \
    void *sd = NULL;
 
 #define ELM_PART_OVERRIDE_CONTENT_SET_FULL(full, type, internals) \

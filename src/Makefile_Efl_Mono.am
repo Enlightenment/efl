@@ -160,7 +160,9 @@ lib/elementary/elm_genlist.eo.cs \
 lib/elementary/elm_view_list.eo.cs \
 lib/elementary/elm_genlist_item.eo.cs \
 lib/elementary/elm_gengrid.eo.cs \
-lib/elementary/elm_glview.eo.cs
+lib/elementary/elm_glview.eo.cs \
+lib/elementary/efl_ui_popup_alert_scroll_part.eo.cs \
+lib/elementary/efl_ui_popup_alert_text_part.eo.cs
 
 efl_mono_blacklisted_files = \
 $(evas_eolian_blacklisted_files) \

@@ -81,7 +81,7 @@ _efl_ui_tab_page_efl_part_part_get(const Eo *obj, Efl_Ui_Tab_Page_Data *sd EINA_
 EOLIAN static void
 _efl_ui_tab_page_part_tab_icon_set(Eo *obj, void *_pd EINA_UNUSED, const char *path)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    eina_stringshare_replace(&sd->tab_icon, path);
@@ -95,7 +95,7 @@ _efl_ui_tab_page_part_tab_icon_set(Eo *obj, void *_pd EINA_UNUSED, const char *p
 EOLIAN static const char *
 _efl_ui_tab_page_part_tab_icon_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    return sd->tab_icon;
@@ -104,7 +104,7 @@ _efl_ui_tab_page_part_tab_icon_get(const Eo *obj, void *_pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_tab_page_part_tab_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    eina_stringshare_replace(&sd->tab_label, text);
@@ -118,7 +118,7 @@ _efl_ui_tab_page_part_tab_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, cons
 EOLIAN static const char *
 _efl_ui_tab_page_part_tab_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    return sd->tab_label;

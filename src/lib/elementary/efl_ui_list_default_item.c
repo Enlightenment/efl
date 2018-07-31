@@ -48,21 +48,21 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_list_default_item, void
 Eina_Bool
 _efl_ui_list_default_item_part_icon_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
 }
 
 Efl_Gfx_Entity *
 _efl_ui_list_default_item_part_icon_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
 }
 
 Efl_Gfx_Entity *
 _efl_ui_list_default_item_part_icon_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
 }
 #include "efl_ui_list_default_item_part_icon.eo.c"
@@ -70,21 +70,21 @@ _efl_ui_list_default_item_part_icon_efl_content_content_unset(Eo *obj, void *pd 
 Eina_Bool
 _efl_ui_list_default_item_part_end_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
 }
 
 Efl_Gfx_Entity *
 _efl_ui_list_default_item_part_end_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
 }
 
 Efl_Gfx_Entity *
 _efl_ui_list_default_item_part_end_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
 {
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
 }
 #include "efl_ui_list_default_item_part_end.eo.c"

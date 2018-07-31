@@ -5617,7 +5617,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      efl_access_window_created_signal_emit(obj);
 
    // attach config API
-   efl_composite_attach(obj, efl_provider_find(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS));
+   efl_composite_attach(obj, efl_provider_find(efl_main_loop_get(), EFL_CONFIG_GLOBAL_MIXIN));
 
    efl_event_callback_array_add(sd->evas, _elm_evas_tracking(), sd);
    efl_event_callback_array_add(obj, _elm_win_evas_feed_fake_callbacks(), sd->evas);
@@ -7549,7 +7549,7 @@ _efl_ui_win_part_file_get(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, const 
 static void
 _efl_ui_win_part_efl_gfx_color_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, int g, int b, int a)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
 
    if (EVAS_COLOR_SANITIZE(r, g, b, a))
@@ -7561,7 +7561,7 @@ _efl_ui_win_part_efl_gfx_color_color_set(Eo *obj, void *_pd EINA_UNUSED, int r, 
 static void
 _efl_ui_win_part_efl_gfx_color_color_get(const Eo *obj, void *_pd EINA_UNUSED, int *r, int *g, int *b, int *a)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    _efl_ui_win_part_color_get(pd->obj, sd, pd->part, r, g, b, a);
 }
@@ -7569,7 +7569,7 @@ _efl_ui_win_part_efl_gfx_color_color_get(const Eo *obj, void *_pd EINA_UNUSED, i
 static Eina_Bool
 _efl_ui_win_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *key)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_win_part_file_set(pd->obj, sd, pd->part, file, key);
 }
@@ -7577,7 +7577,7 @@ _efl_ui_win_part_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *f
 static void
 _efl_ui_win_part_efl_file_file_get(const Eo *obj, void *_pd EINA_UNUSED, const char **file, const char **key)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    _efl_ui_win_part_file_get(pd->obj, sd, pd->part, file, key);
 }

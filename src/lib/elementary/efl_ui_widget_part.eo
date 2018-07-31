@@ -1,4 +1,4 @@
-class Efl.Ui.Widget_Part (Efl.Object)
+mixin Efl.Ui.Widget_Part (Efl.Interface, Efl.Object)
 {
    [[This is the base class for all "Part" handles in Efl.Ui widgets.
 

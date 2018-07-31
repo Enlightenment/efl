@@ -1,4 +1,4 @@
-class Efl.Ui.Widget_Part_Bg (Efl.Ui.Widget_Part, Efl.Gfx.Color, Efl.Ui.Bg)
+class Efl.Ui.Widget_Part_Bg (Efl.Object, Efl.Ui.Widget_Part, Efl.Gfx.Color, Efl.Ui.Bg)
 {
    [[Elementary widget internal part background class]]
    data: null;

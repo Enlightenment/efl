@@ -2328,7 +2328,7 @@ _efl_ui_layout_default_text_part_get(const Eo *obj, Efl_Ui_Layout_Object_Data *s
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, const char *cursor)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_layout_part_cursor_set(sd, pd->part, cursor);
 }
@@ -2336,7 +2336,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_set(Eo *obj, void *_pd EINA_UNUSED, con
 EOLIAN static const char *
 _efl_ui_layout_part_efl_ui_cursor_cursor_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_layout_part_cursor_get(sd, pd->part);
 }
@@ -2344,7 +2344,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_get(const Eo *obj, void *_pd EINA_UNUSE
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_efl_ui_cursor_cursor_style_set(Eo *obj, void *_pd EINA_UNUSED, const char *style)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_layout_part_cursor_style_set(sd, pd->part, style);
 }
@@ -2352,7 +2352,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_style_set(Eo *obj, void *_pd EINA_UNUSE
 EOLIAN static const char *
 _efl_ui_layout_part_efl_ui_cursor_cursor_style_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_layout_part_cursor_style_get(sd, pd->part);
 }
@@ -2360,7 +2360,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_style_get(const Eo *obj, void *_pd EINA
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool allow)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_layout_part_cursor_engine_only_set(sd, pd->part, !allow);
 }
@@ -2368,7 +2368,7 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_set(Eo *obj, void 
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Layout_Object_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return !_efl_ui_layout_part_cursor_engine_only_get(sd, pd->part);
 }
@@ -2398,14 +2398,14 @@ MARKUP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_Ui
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
 }
 
 EOLIAN static void
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
 }
 
@@ -2417,14 +2417,14 @@ MARKUP_FULL(efl_ui_layout_part_legacy, efl_ui_layout, EFL_UI_LAYOUT_OBJECT, Efl_
 EOLIAN static const char *
 _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
 }
 
 EOLIAN static void
 _efl_ui_layout_part_legacy_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
 }
 
@@ -2440,7 +2440,7 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
    obj = efl_finalize(efl_super(obj, EFL_UI_LAYOUT_PART_BG_CLASS));
    if (!obj) return NULL;
 
-   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    sd = efl_data_scope_get(pd->obj, MY_CLASS);
    bg = _efl_ui_widget_bg_get(pd->obj);
    if (!_efl_ui_layout_content_set(pd->obj, sd, "efl.background", bg))

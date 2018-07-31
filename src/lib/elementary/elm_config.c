@@ -1683,16 +1683,16 @@ _config_load(void)
      {
         efl_del_intercept_set(_efl_config_obj, NULL);
         efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+        efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_MIXIN, _efl_config_obj);
         ELM_SAFE_FREE(_efl_config_obj, efl_del);
         ELM_SAFE_FREE(_elm_config, _config_free);
         _elm_font_overlays_del_free();
 
         ELM_SAFE_FREE(_elm_key_bindings, eina_hash_free);
      }
-   _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_CLASS, efl_main_loop_get());
+   _efl_config_obj = efl_add(EFL_CONFIG_GLOBAL_MIXIN, efl_main_loop_get());
    efl_loop_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-   efl_loop_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+   efl_loop_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_MIXIN, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
    if (!_use_build_config)
      {
@@ -4688,7 +4688,7 @@ _elm_config_shutdown(void)
 {
    efl_del_intercept_set(_efl_config_obj, NULL);
    efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
-   efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
+   efl_loop_unregister(efl_main_loop_get(), EFL_CONFIG_GLOBAL_MIXIN, _efl_config_obj);
    ELM_SAFE_FREE(_efl_config_obj, efl_del);
    ELM_SAFE_FREE(_elm_config, _config_free);
    ELM_SAFE_FREE(_elm_preferred_engine, eina_stringshare_del);

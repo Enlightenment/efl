@@ -5649,7 +5649,7 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 {
    Efl_Object *lookup = NULL;
 
-   if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_CLASS))
+   if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_MIXIN))
      return _efl_config_obj;
 
    if (klass == EFL_ACCESS_OBJECT_MIXIN)
@@ -5845,7 +5845,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
 static Widget_Shadow *
 _widget_shadow_part_get(const Eo *part_obj)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_MIXIN);
    Widget_Shadow *shadow;
    Eo *widget = pd->obj;
 
@@ -6071,7 +6071,7 @@ _efl_ui_widget_efl_part_part_get(const Eo *obj, Elm_Widget_Smart_Data *wd EINA_U
      return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_BG_CLASS, obj, part);
    else if (eina_streq(part, "shadow"))
      return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_SHADOW_CLASS, obj, part);
-   return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_CLASS, obj, part);
+   return ELM_PART_IMPLEMENT(EFL_UI_WIDGET_PART_MIXIN, obj, part);
 }
 
 EOLIAN static void \
@@ -6079,7 +6079,7 @@ _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
 {
    ELM_PART_HOOK;
    eina_tmpstr_del(pd->part);
-   efl_destructor(efl_super(obj, EFL_UI_WIDGET_PART_CLASS));
+   efl_destructor(efl_super(obj, EFL_UI_WIDGET_PART_MIXIN));
 }
 
 #include "efl_ui_widget_part.eo.c"
@@ -6111,7 +6111,7 @@ _efl_ui_widget_bg_get(const Efl_Ui_Widget *obj)
 static inline Efl_Canvas_Object *
 efl_ui_widget_part_bg_get(const Eo *part_obj)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(part_obj, EFL_UI_WIDGET_PART_MIXIN);
    return _efl_ui_widget_bg_get(pd->obj);
 }
 

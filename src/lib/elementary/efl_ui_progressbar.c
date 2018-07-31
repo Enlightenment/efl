@@ -709,7 +709,7 @@ _efl_ui_progressbar_efl_part_part_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd
 EOLIAN static void
 _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UNUSED, double val)
 {
-  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
   _progressbar_part_value_set(pd->obj, sd, pd->part, val);
@@ -718,7 +718,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_value_set(Eo *obj, void *_pd EINA_UN
 EOLIAN static double
 _efl_ui_progressbar_part_efl_ui_range_range_value_get(const Eo *obj, void *_pd EINA_UNUSED)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
    return _progressbar_part_value_get(sd, pd->part);
@@ -733,7 +733,7 @@ _efl_ui_progressbar_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSE
 EOLIAN static void
 _efl_ui_progressbar_part_efl_ui_range_range_min_max_set(Eo *obj, void *_pd EINA_UNUSED, double min, double max)
 {
-  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+  Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
   _progress_part_min_max_set(pd->obj, sd, pd->part, min, max);
@@ -745,7 +745,7 @@ _efl_ui_progressbar_part_efl_ui_range_range_min_max_get(const Eo *obj, void *_pd
    Efl_Ui_Progress_Status *ps;
    Eina_List *l;
 
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
 
    EINA_LIST_FOREACH(sd->progress_status, l, ps)

@@ -714,14 +714,14 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_notify, "default")
 EOLIAN static const char *
 _elm_notify_part_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
 }
 
 EOLIAN static void
 _elm_notify_part_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
 {
-   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_MIXIN);
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);
 }
 
