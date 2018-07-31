@@ -60,6 +60,7 @@ _elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
 {
    Evas_Coord mw = 0, mh = 0;
 
+   EINA_SAFETY_ON_FALSE_RETURN(efl_finalized_get(obj));
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->delete_me) return;
