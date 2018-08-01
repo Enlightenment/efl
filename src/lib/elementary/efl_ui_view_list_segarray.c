@@ -324,14 +324,16 @@ _efl_ui_view_list_segarray_accessor_free(Efl_Ui_View_List_Segarray_Eina_Accessor
    free(acc);
 }
 
-static void
+static Eina_Bool
 _efl_ui_view_list_segarray_accessor_lock(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _efl_ui_view_list_segarray_accessor_unlock(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
 static Eina_Accessor*
@@ -420,14 +422,16 @@ _efl_ui_view_list_segarray_node_accessor_free(Efl_Ui_View_List_Segarray_Node_Acc
    free(acc);
 }
 
-static void
+static Eina_Bool
 _efl_ui_view_list_segarray_node_accessor_lock(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _efl_ui_view_list_segarray_node_accessor_unlock(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
+   return EINA_FALSE;
 }
 
 static Eina_Accessor*

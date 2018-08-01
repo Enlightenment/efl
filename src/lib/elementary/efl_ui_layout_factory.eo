@@ -17,6 +17,7 @@ class Efl.Ui.Layout_Factory (Efl.Object, Efl.Ui.Factory)
       Efl.Object.destructor;
       Efl.Ui.Factory.create;
       Efl.Ui.Factory.release;
+      Efl.Ui.Factory.model_connect;
       Efl.Ui.Model.Connect.connect;
    }
 }
