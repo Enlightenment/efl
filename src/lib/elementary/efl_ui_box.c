@@ -41,6 +41,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Box_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!efl_alive_get(obj)) return;
    if (sd->delete_me)
      return;
 

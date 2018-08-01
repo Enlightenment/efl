@@ -59,6 +59,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = 0, minh = 0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   if (!efl_alive_get(obj)) return;
 
    evas_object_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);

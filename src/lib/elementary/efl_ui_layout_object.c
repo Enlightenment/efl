@@ -155,6 +155,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Object_Data *sd)
    Evas_Coord rest_w = 0, rest_h = 0;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
+   if (!efl_alive_get(obj)) return;
+
    if (sd->restricted_calc_w)
      rest_w = wd->w;
    if (sd->restricted_calc_h)

@@ -79,6 +79,7 @@ _sizing_eval(Evas_Object *obj)
    ELM_BOX_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!efl_alive_get(obj)) return;
    if (sd->delete_me) return;
 
    evas_object_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);

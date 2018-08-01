@@ -53,6 +53,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
    Evas_Coord w, h;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   if (!efl_alive_get(obj)) return;
 
    evas_object_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
    evas_object_size_hint_max_get(wd->resize_obj, &maxw, &maxh);
