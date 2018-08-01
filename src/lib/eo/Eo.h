@@ -2135,6 +2135,19 @@ eina_value_object_get(Eina_Value *v)
 }
 
 /**
+ * @brief Get if the object is in its main lifetime.
+ * @param obj the object to check
+ * @return true if the object is finalized, but not invalidating nor invalidated.
+ * @since 1.22
+ */
+
+static inline Eina_Bool
+efl_alive_get(const Eo *obj)
+{
+  return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
+}
+
+/**
  * @brief Event triggered when a callback was added to the object
  */
 #define EFL_EVENT_CALLBACK_ADD (&(_EFL_EVENT_CALLBACK_ADD))
