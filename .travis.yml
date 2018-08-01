@@ -84,10 +84,6 @@ before_script:
       fi
 
   - .ci/ci-ccache-stats.sh
-  - |
-       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-         cp $HOME/cachedir/config.cache . || true
-       fi
 
 script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"

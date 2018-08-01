@@ -70,7 +70,7 @@ else
 
   export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
   export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
-  export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
+  export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
 
   # Normal build test of all targets
   rm -f ~/.ccache/ccache.conf
