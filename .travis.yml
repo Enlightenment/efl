@@ -139,6 +139,7 @@ notifications:
       - "chat.freenode.net#edevelop"
     on_success: change
     on_failure: always
+    on_cancel: never
     template:
       - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message} (%{elapsed_time})"
       - "Commit: %{commit_subject} (%{commit}) from %{author}"
