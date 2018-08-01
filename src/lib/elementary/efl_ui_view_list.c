@@ -2,13 +2,10 @@
 # include "elementary_config.h"
 #endif
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_UI_SCROLLBAR_BETA
-#define EFL_GFX_SIZE_HINT_PROTECTED
-#define EFL_UI_VIEW_LIST_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
@@ -400,12 +397,6 @@ _efl_ui_view_list_hbar_unpress_cb(void *data,
 }
 
 static void
-_scroll_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   //scroll cb
-}
-
-static void
 _efl_ui_view_list_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
@@ -490,8 +481,8 @@ _efl_ui_view_list_edje_object_attach(Eo *obj)
      (obj, "reload", "efl", _efl_ui_view_list_reload_cb, obj);
   //Vertical bar
    efl_layout_signal_callback_add
-     (obj, "drag", "efl.dragable.vbar", _efl_ui_view_list_vbar_drag_cb,
-     obj);
+     (obj, "drag", "efl.dragable.vbar",
+     _efl_ui_view_list_vbar_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,set", "efl.dragable.vbar",
      _efl_ui_view_list_edje_drag_cb, obj);
@@ -516,8 +507,8 @@ _efl_ui_view_list_edje_object_attach(Eo *obj)
 
   //Horizontal bar
    efl_layout_signal_callback_add
-     (obj, "drag", "efl.dragable.hbar", _efl_ui_view_list_hbar_drag_cb,
-     obj);
+     (obj, "drag", "efl.dragable.hbar",
+     _efl_ui_view_list_hbar_drag_cb, obj);
    efl_layout_signal_callback_add
      (obj, "drag,set", "efl.dragable.hbar",
      _efl_ui_view_list_edje_drag_cb, obj);
@@ -574,8 +565,8 @@ _efl_ui_view_list_edje_object_detach(Evas_Object *obj)
 
    //Horizontal bar
    efl_layout_signal_callback_del
-       (obj, "drag", "efl.dragable.hbar", _efl_ui_view_list_hbar_drag_cb,
-     obj);
+       (obj, "drag", "efl.dragable.hbar",
+       _efl_ui_view_list_hbar_drag_cb, obj);
    efl_layout_signal_callback_del
      (obj, "drag,set", "efl.dragable.hbar",
      _efl_ui_view_list_edje_drag_cb, obj);
@@ -632,16 +623,12 @@ _efl_ui_view_list_efl_canvas_group_group_add(Eo *obj, Efl_Ui_View_List_Data *pd)
    edje_object_thaw(wd->resize_obj);
    efl_gfx_stack_raise((Eo *)o);
 
-   pd->mode = ELM_LIST_COMPRESS;
-
    efl_gfx_entity_visible_set(pd->pan_obj, EINA_TRUE);
-
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    edje_object_size_min_calc(wd->resize_obj, &min.w, &min.h);
    efl_gfx_size_hint_restricted_min_set(obj, min);
 
-   efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
                          _efl_ui_view_list_bar_size_changed_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED,
@@ -708,7 +695,6 @@ _efl_ui_view_list_efl_object_constructor(Eo *obj, Efl_Ui_View_List_Data *pd)
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
 
    pd->factory = NULL;
-   pd->orient = EFL_ORIENT_DOWN;
    pd->min.w = 0;
    pd->min.h = 0;
 
@@ -723,7 +709,6 @@ _efl_ui_view_list_efl_object_destructor(Eo *obj, Efl_Ui_View_List_Data *pd)
    efl_unref(pd->model);
    eina_stringshare_del(pd->style);
 
-   efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
    _efl_ui_view_list_edje_object_detach(obj);
 
    ELM_SAFE_FREE(pd->pan_obj, evas_object_del);
