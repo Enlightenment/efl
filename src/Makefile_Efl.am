@@ -147,7 +147,7 @@ nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
 	$(efl_eolian_legacy_files_h)
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 efl_eolian_lua = $(efl_eolian_files:%.eo=%.eo.lua)
 

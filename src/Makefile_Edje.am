@@ -364,7 +364,7 @@ tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ $(EDJE_TEST_FILES)
 
 endif
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 edje_eolian_lua = $(edje_eolian_files:%.eo=%.eo.lua)
 

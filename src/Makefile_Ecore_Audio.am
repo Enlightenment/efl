@@ -75,7 +75,7 @@ lib/ecore_audio/ecore_audio_sndfile_vio.c
 endif
 
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 ecore_audio_eolian_lua = $(ecore_audio_eolian_files:%.eo=%.eo.lua)
 

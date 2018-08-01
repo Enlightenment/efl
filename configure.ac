@@ -5190,16 +5190,27 @@ AC_ARG_ENABLE([elua],
     fi
    ],
    [want_elua="yes"])
+
+# turn this into an AC_ARG_ENABLE when bindings are reenabled
+want_lua_bindings="no"
+
 have_elua="yes"
+have_lua_bindings="yes"
+
 if test "${want_lua_old}" = "yes" -o "x$want_elua" = "xno"; then
   have_elua="no"
 fi
 
+if test "x$have_elua" = "xno" -o "x$want_lua_bindings" = "xno"; then
+  have_lua_bindings="no"
+fi
+
+AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
+AM_CONDITIONAL([HAVE_LUA_BINDINGS], [test "x${have_lua_bindings}" = "xyes"])
+
 EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
 
 ### Default values
-
-AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
 
 ### Additional options to configure
 

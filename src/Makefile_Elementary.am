@@ -1597,7 +1597,7 @@ tests_elementary_efl_ui_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
 tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
 endif
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 elementary_eolian_lua = $(elm_public_eolian_files:%.eo=%.eo.lua)
 
