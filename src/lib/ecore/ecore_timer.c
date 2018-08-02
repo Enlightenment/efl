@@ -461,11 +461,20 @@ _efl_loop_timer_util_delay(Efl_Loop_Timer_Data *timer, double add)
 EOLIAN static void
 _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Object *parent)
 {
+   Eina_Inlist *first;
+
    efl_parent_set(efl_super(obj, EFL_LOOP_TIMER_CLASS), parent);
 
    if ((!pd->constructed) || (!pd->finalized)) return;
 
-   _efl_loop_timer_util_loop_clear(pd);
+   // Remove the timer from all possible pending list
+   first = eina_inlist_first(EINA_INLIST_GET(pd));
+   if (first == pd->loop_data->timers)
+     pd->loop_data->timers = eina_inlist_remove
+       (pd->loop_data->timers, EINA_INLIST_GET(pd));
+   else if (first == pd->loop_data->suspended)
+     pd->loop_data->suspended = eina_inlist_remove
+       (pd->loop_data->suspended, EINA_INLIST_GET(pd));
 
    if (efl_invalidated_get(obj)) return;
 
@@ -555,7 +564,7 @@ _efl_loop_timer_next_get(Eo *obj, Efl_Loop_Data *pd)
 static inline void
 _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer, double when)
 {
-   if (timer->frozen) return;
+   if (timer->frozen || efl_invalidated_get(timer->object)) return;
 
    if (timer->loop_data &&
        (EINA_INLIST_GET(timer)->next || EINA_INLIST_GET(timer)->prev))

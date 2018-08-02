@@ -252,10 +252,47 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
 }
 EFL_END_TEST
 
+static int count = 0;
+
+static Eina_Bool
+_timer_cb(void *data)
+{
+   count++;
+   int num = (intptr_t) data;
+   fail_if (num != count, "Error timer is called out of order");
+   if (count == 8) ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+EFL_START_TEST(ecore_test_timer_in_order)
+{
+   Ecore_Timer *timer;
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 1);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 2);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 3);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 4);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 5);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 6);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 7);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 8);
+   fail_if(timer == NULL);
+
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
   tcase_add_test(tc, ecore_test_timer_inside_call);
   tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
   tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
+  tcase_add_test(tc, ecore_test_timer_in_order);
 }
