@@ -152,14 +152,14 @@ elm_bg_color_set(Evas_Object *obj,
                  int b)
 {
    int a = 255;
-   EFL_UI_BG_WIDGET_CHECK(obj);
+   EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN(obj, sd);
 
    // reset color
    if ((r == -1) && (g == -1) && (b == -1))
    {
       r = g = b = a = 0;
    }
-   efl_gfx_color_set(obj, r, g, b, a);
+   efl_gfx_color_set(sd->rect, r, g, b, a);
 }
 
 EOLIAN static void
