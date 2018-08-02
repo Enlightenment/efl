@@ -268,6 +268,7 @@ struct _Item_Block
    Evas_Coord              x, y, w, h, minw, minh;
    int                     position;
    int                     item_position_stamp;
+   Eo                     *adapter;
 
    Eina_Bool               position_update : 1;
    Eina_Bool               want_unrealize : 1;

@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Genlist (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Elm.Genlist (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
                    Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
@@ -553,7 +553,6 @@ class Elm.Genlist (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Elm.Interface
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.access_selection_clear;
-      Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.setup_on_first_touch;
    }
