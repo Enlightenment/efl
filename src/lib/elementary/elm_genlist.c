@@ -4362,12 +4362,13 @@ _update_block_registration(Item_Block *itb, Elm_Gen_Item *element)
 {
    Elm_Gen_Item *it = NULL;
    Eina_List *order = NULL;
+   const Eina_List *l;
 
    if (!itb->realized) return;
 
    efl_ui_focus_manager_calc_register_logical(itb->sd->obj, EO_OBJ(element), itb->adapter, NULL);
 
-   EINA_INLIST_FOREACH(itb->items, it)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
         order = eina_list_append(order, EO_OBJ(it));
      }
