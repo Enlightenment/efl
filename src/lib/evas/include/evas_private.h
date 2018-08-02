@@ -1633,6 +1633,7 @@ const Eina_List *evas_object_event_grabber_members_list(const Eo *eo_obj);
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _efl_canvas_group_group_members_all_del(Evas_Object *eo_obj);
 void _evas_object_smart_clipped_init(Evas_Object *eo_obj);
+void evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y);
 void _evas_object_smart_clipped_smart_move_internal(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y);
 void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bounding_box_update(Evas_Object_Protected_Data *obj);

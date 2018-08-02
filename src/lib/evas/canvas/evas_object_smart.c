@@ -888,10 +888,17 @@ _efl_canvas_group_efl_gfx_entity_visible_set(Eo *eo_obj, Evas_Smart_Data *o, Ein
 EOLIAN static void
 _efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Eina_Position2D pos)
 {
+   Eina_Bool is_overridden;
+   Evas_Object_Protected_Data *obj = EVAS_OBJ_GET_OR_RETURN(eo_obj);
+
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
-   if (o->clipped)
+   is_overridden = (obj->is_smart && obj->smart.smart &&
+                    obj->smart.smart->smart_class->move !=
+                    (void *)evas_object_smart_clipped_smart_move);
+
+   if (o->clipped && !is_overridden)
      _evas_object_smart_clipped_smart_move_internal(eo_obj, pos.x, pos.y);
    efl_gfx_entity_position_set(efl_super(eo_obj, MY_CLASS), pos);
 }

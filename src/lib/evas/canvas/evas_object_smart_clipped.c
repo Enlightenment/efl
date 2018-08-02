@@ -33,7 +33,7 @@ evas_object_smart_clipped_smart_del(Evas_Object *eo_obj)
    cso->clipper = NULL;
 }
 
-static void
+void
 evas_object_smart_clipped_smart_move(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
 {
    if (!efl_isa(eo_obj, EFL_CANVAS_GROUP_CLASS)) return;
