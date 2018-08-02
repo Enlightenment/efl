@@ -137,15 +137,3 @@ after_success:
         docker push stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
       fi
 
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#edevelop"
-    on_success: change
-    on_failure: always
-    on_cancel: never
-    template:
-      - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message} (%{elapsed_time})"
-      - "Commit: %{commit_subject} (%{commit}) from %{author}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
