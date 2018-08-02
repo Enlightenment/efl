@@ -70,39 +70,43 @@ before_install:
         mv $HOME/cachedir/Homebrew $HOME/Library/Caches/Homebrew
         .ci/ci-osx-deps.sh
       fi
+  - |
+      if [[ "$CI_BUILD_TYPE" = "release-ready" ]] ; then
+        .ci/distcheck-eval.sh "$CI_BUILD_TYPE" || export DISTCHECK_SKIPPED=1
+      fi
 
 before_script:
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
         docker pull stefanschmidt1/ci-support-files:$DISTRO
       fi
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
         docker version
         docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
         cp $HOME/cachedir/config.cache . || true
       fi
 
-  - .ci/ci-ccache-stats.sh
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-ccache-stats.sh ; fi
   - |
-       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+       if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
          cp $HOME/cachedir/config.cache . || true
        fi
 
 
 script:
-  - .ci/ci-configure.sh "$CI_BUILD_TYPE"
-  - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
-  #- .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-configure.sh "$CI_BUILD_TYPE" ; fi
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE" ; fi
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make.sh "$CI_BUILD_TYPE" ; fi
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE" ; fi
+  #- if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-examples.sh "$CI_BUILD_TYPE" ; fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
           .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
       fi
-  #- .ci/ci-make-install.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
+  #- if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-install.sh "$CI_BUILD_TYPE" ; fi
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-check.sh "$CI_BUILD_TYPE" ; fi
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE" ; fi
   #- |
       #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
         #true
@@ -110,10 +114,10 @@ script:
         #docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
       #fi
 before_cache:
-  - .ci/ci-ccache-stats.sh
+  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-ccache-stats.sh ; fi
   - |
        mkdir -p $HOME/cachedir
-       if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
          sudo chown travis:travis $HOME/.ccache
          mkdir -p $HOME/cachedir/
          sudo cp config.cache $HOME/cachedir/
@@ -126,7 +130,7 @@ before_cache:
 
 after_success:
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]] && [[ -z "$DISTCHECK_SKIPPED" ]]; then
         docker login -u stefanschmidt1 -p "$DOCKER_PASSWORD"
         docker tag stefanschmidt1/ci-support-files:$DISTRO stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
         docker push stefanschmidt1/ci-support-files:$DISTRO
