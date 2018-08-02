@@ -555,6 +555,23 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
 }
 
 static void
+_evas_event_mouse_in_set(Evas_Pointer_Seat *pseat,
+                         Evas_Object_Protected_Data *obj, Eina_Bool mouse_in)
+{
+   Evas_Pointer_Data *pdata;
+   Evas_Object_Pointer_Data *obj_pdata;
+
+   if ((!pseat) || (!obj)) return;
+
+   EINA_INLIST_FOREACH(pseat->pointers, pdata)
+     {
+        obj_pdata = _evas_object_pointer_data_get(pdata, obj);
+        if (obj_pdata)
+          obj_pdata->mouse_in = mouse_in;
+     }
+}
+
+static void
 _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                                      Efl_Input_Pointer *parent_ev,
                                      Evas_Pointer_Data *pdata,
@@ -639,7 +656,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
              if ((obj_pdata->mouse_grabbed == 0) && (!e->delete_me))
                {
                   if (obj_pdata->mouse_in) continue; /* FIXME: dubious logic! */
-                  obj_pdata->mouse_in = 0;
+                  _evas_event_mouse_in_set(pdata->seat, child, 0);
                   if (e->is_frozen) continue;
                   ev->cur = curpt_real;
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
@@ -702,7 +719,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                }
              else if (obj_pdata->mouse_in)
                {
-                  obj_pdata->mouse_in = 0;
+                  _evas_event_mouse_in_set(pdata->seat, child, 0);
                   if (e->is_frozen) continue;
                   ev->cur = curpt;
                   _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
@@ -731,7 +748,7 @@ _evas_event_source_mouse_move_events(Evas_Object *eo_obj, Evas *eo_e,
                 {
                    if (!obj_pdata->mouse_in)
                      {
-                        obj_pdata->mouse_in = 1;
+                        _evas_event_mouse_in_set(pdata->seat, child, 1);
                         if (e->is_frozen) continue;
                         ev->cur = curpt;
                         _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
@@ -1222,7 +1239,7 @@ _evas_event_source_mouse_in_events(Evas_Object *eo_obj, Evas *eo_e,
         if (!eina_list_data_find(src->proxy->src_event_in, eo_child))
           {
              if (obj_pdata->mouse_in) continue;
-             obj_pdata->mouse_in = 1;
+             _evas_event_mouse_in_set(pdata->seat, child, 1);
              ev->cur = point;
              _evas_event_havemap_adjust_f(eo_child, child, &ev->cur, obj_pdata->mouse_grabbed);
              ev->action = EFL_POINTER_ACTION_IN;
@@ -1292,7 +1309,7 @@ _evas_event_source_mouse_out_events(Evas_Object *eo_obj, Evas *eo_e,
           }
 
         if (!obj_pdata->mouse_in) continue;
-        obj_pdata->mouse_in = 0;
+        _evas_event_mouse_in_set(pdata->seat, child, 0);
         if (child->delete_me) continue;
 
         ev->cur = point;
@@ -1620,7 +1637,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                   continue;
                }
              if (!obj_pdata->mouse_in) continue;
-             obj_pdata->mouse_in = 0;
+             _evas_event_mouse_in_set(pdata->seat, obj, 0);
              if (!e->is_frozen)
                {
                   ev->cur.x = pdata->seat->x;
@@ -1658,7 +1675,7 @@ _post_up_handle(Evas_Public_Data *e, Efl_Input_Pointer *parent_ev,
                        continue;
                     }
                   if (obj_pdata->mouse_in) continue;
-                  obj_pdata->mouse_in = 1;
+                  _evas_event_mouse_in_set(pdata->seat, obj_itr, 1);
                   if (e->is_frozen) continue;
                   ev->cur.x = pdata->seat->x;
                   ev->cur.y = pdata->seat->y;
@@ -2199,7 +2216,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              if ((obj_pdata->mouse_grabbed == 0) && (!e->delete_me))
                {
                   if (!obj_pdata->mouse_in) continue;
-                  obj_pdata->mouse_in = 0;
+                  _evas_event_mouse_in_set(pdata->seat, obj, 0);
                   if (obj->delete_me || e->is_frozen) continue;
                   pdata->seat->object.in = eina_list_remove(pdata->seat->object.in, eo_obj);
                   ev->cur = point;
@@ -2259,7 +2276,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
              /* otherwise it has left the object */
              else if (obj_pdata->mouse_in)
                {
-                  obj_pdata->mouse_in = 0;
+                  _evas_event_mouse_in_set(pdata->seat, obj, 0);
                   if (e->is_frozen) continue;
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -2293,7 +2310,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                     }
                   if (!obj_pdata->mouse_in)
                     {
-                       obj_pdata->mouse_in = 1;
+                       _evas_event_mouse_in_set(pdata->seat, obj, 1);
                        if (e->is_frozen) continue;
                        ev->cur = point;
                        _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -2404,7 +2421,7 @@ nogrep:
                {
                   /* otherwise it has left the object */
                   if (!obj_pdata->mouse_in) continue;
-                  obj_pdata->mouse_in = 0;
+                  _evas_event_mouse_in_set(pdata->seat, obj, 0);
                   if (e->is_frozen) continue;
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -2436,7 +2453,7 @@ nogrep:
                        continue;
                     }
                   if (obj_pdata->mouse_in) continue;
-                  obj_pdata->mouse_in = 1;
+                  _evas_event_mouse_in_set(pdata->seat, obj, 1);
                   if (e->is_frozen) continue;
                   ev->cur = point;
                   _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -2575,7 +2592,7 @@ _canvas_event_feed_mouse_in_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
                   continue;
                }
              if (obj_pdata->mouse_in) continue;
-             obj_pdata->mouse_in = 1;
+             _evas_event_mouse_in_set(pdata->seat, obj, 1);
              ev->cur.x = pdata->seat->x;
              ev->cur.y = pdata->seat->y;
              _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
@@ -2672,7 +2689,7 @@ _canvas_event_feed_mouse_out_internal(Evas *eo_e, Efl_Input_Pointer_Data *ev)
              continue;
           }
         if (!obj_pdata->mouse_in) continue;
-        obj_pdata->mouse_in = 0;
+        _evas_event_mouse_in_set(pdata->seat, obj, 0);
         ev->cur.x = pdata->seat->x;
         ev->cur.y = pdata->seat->y;
         _evas_event_havemap_adjust_f(eo_obj, obj, &ev->cur, obj_pdata->mouse_grabbed);
