@@ -65,8 +65,8 @@ struct _Outbuf
       int              x1, y1, x2, y2;
    } draw;
 #ifdef GL_GLES
-   EGLContext       egl_context[1];
-   EGLSurface       egl_surface[1];
+   EGLContext       egl_context;
+   EGLSurface       egl_surface;
    EGLConfig        egl_config;
    EGLDisplay       egl_disp;
 #endif
