@@ -2381,7 +2381,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
                                   _elm_code_widget_scroller_clicked_cb, obj);
 
-   background = elm_bg_add(scroller);
+   background = evas_object_rectangle_add(scroller);
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
