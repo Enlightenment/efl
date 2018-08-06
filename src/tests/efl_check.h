@@ -253,6 +253,8 @@ _efl_suite_run_end(SRunner *sr, const char *name)
 }
 
 #ifdef HAVE_FORK
+static EINA_UNUSED Eina_Hash *fork_map;
+
 EINA_UNUSED static int
 _efl_suite_wait_on_fork(int *num_forks, Eina_Bool *timeout)
 {
@@ -265,7 +267,10 @@ _efl_suite_wait_on_fork(int *num_forks, Eina_Bool *timeout)
    if (pid == timeout_pid)
      *timeout = EINA_TRUE;
    else
-     (*num_forks)--;
+     {
+        eina_hash_del_by_key(fork_map, &pid);
+        (*num_forks)--;
+     }
    return ret;
 }
 #endif
@@ -316,6 +321,8 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
              pid = fork();
              if (pid > 0)
                {
+                  if (!fork_map) fork_map = eina_hash_int32_new(NULL);
+                  eina_hash_add(fork_map, &pid, etc[i].test_case);
                   num_forks++;
 #ifdef ENABLE_TIMING_INFO
                   if (timing)
@@ -359,9 +366,16 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
           } while (num_forks && (!timeout_reached));
         if (timeout_reached)
           {
+             Eina_Iterator *it;
+             const char *testname;
+             it = eina_hash_iterator_data_new(fork_map);
              timeout_pid = 0;
              printf("FAILSAFE TIMEOUT REACHED!\n");
              fflush(stdout);
+             EINA_ITERATOR_FOREACH(it, testname)
+               printf("STILL RUNNING: %s\n", testname);
+             fflush(stdout);
+             eina_iterator_free(it);
              failed_count++;
           }
      }
@@ -375,6 +389,8 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
         kill(timeout_pid, SIGKILL);
         timeout_pid = 0;
      }
+   eina_hash_free(fork_map);
+   fork_map = NULL;
 #endif
 
 #ifdef ENABLE_TIMING_INFO
