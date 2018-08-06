@@ -225,6 +225,15 @@ _efl_ui_focus_composition_logical_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Foc
    return pd->logical;
 }
 
+EOLIAN static void
+_efl_ui_focus_composition_efl_object_invalidate(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
+{
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   efl_ui_focus_composition_elements_set(obj, NULL);
+}
+
+
 #include "efl_ui_focus_composition.eo.c"
 
 typedef struct {

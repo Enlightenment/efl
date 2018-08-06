@@ -46,6 +46,7 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
       }
    }
    implements {
+      Efl.Object.invalidate;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       @empty .prepare;
