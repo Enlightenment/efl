@@ -84,6 +84,9 @@ travis_endfold make_install
 travis_fold make_installcheck "make installcheck"
 make ${AM_MAKEFLAGS} installcheck
 travis_endfold make_installcheck
+travis_fold make_testapp "testing external compile"
+PKG_CONFIG_PATH=${dc_install_base}/lib/pkgconfig ${am__cwd}/.ci/build-efl-app.sh
+travis_endfold make_testapp
 travis_fold make_uninstall "make uninstall"
 make ${AM_MAKEFLAGS} uninstall
 travis_endfold make_uninstall
