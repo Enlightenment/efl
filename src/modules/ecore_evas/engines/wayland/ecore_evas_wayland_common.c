@@ -2440,7 +2440,7 @@ Ecore_Evas *
 _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name)
 {
    Ecore_Wl2_Display *ewd;
-   Ecore_Wl2_Window *p = NULL;
+   Ecore_Wl2_Window *p = (Ecore_Wl2_Window *)parent;
    Evas_Engine_Info_Wayland *einfo;
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Evas_Interface_Wayland *iface;
@@ -2516,7 +2516,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
    else
      ee->can_async_render = 1;
 
-   if (parent) ee->alpha = ecore_wl2_window_alpha_get((Ecore_Wl2_Window *)parent);
+   if (p) ee->alpha = ecore_wl2_window_alpha_get(p);
 
    wdata->sync_done = EINA_FALSE;
    wdata->parent = p;
