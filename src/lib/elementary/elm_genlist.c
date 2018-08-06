@@ -1664,6 +1664,8 @@ _item_cache_find(Elm_Gen_Item *it)
    if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
    EINA_INLIST_FOREACH_SAFE(sd->item_cache, l, itc)
      {
+        Evas_Object *obj;
+
         if ((itc->tree == tree) &&
             (((!it->itc) && (!itc->item_class)) ||
              (it->itc && itc->item_class &&
@@ -1677,7 +1679,8 @@ _item_cache_find(Elm_Gen_Item *it)
              itc->spacer = NULL;
              efl_wref_del(itc->base_view, &itc->base_view);
              itc->base_view = NULL;
-             eina_list_free(itc->contents);
+             EINA_LIST_FREE(itc->contents, obj)
+               elm_widget_tree_unfocusable_set(obj, EINA_FALSE);
              itc->contents = NULL;
              _item_cache_free(itc);
              return EINA_TRUE;
@@ -1695,6 +1698,7 @@ _content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
      {
         *cache = eina_list_append(*cache, content);
         eina_hash_del_by_key(pd->content_item_map, &content);
+        elm_widget_tree_unfocusable_set(content, EINA_TRUE);
      }
 
    return *cache;
