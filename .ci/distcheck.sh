@@ -69,6 +69,7 @@ make ${AM_MAKEFLAGS} check-build
 travis_endfold check-build
 travis_fold check-TESTS check-TESTS
 set +e
+export EINA_LOG_BACKTRACE="0"
 for tries in 1 2 3 ; do
   make ${AM_MAKEFLAGS} -C src/ -j1 check-TESTS && break
   cat src/test-suite.log
