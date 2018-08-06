@@ -8793,33 +8793,6 @@ _elm_genlist_efl_object_provider_find(const Eo *obj, Elm_Genlist_Data *pd, const
 }
 
 EOLIAN static void
-_elm_genlist_efl_ui_focus_composition_prepare(Eo *obj, Elm_Genlist_Data *pd)
-{
-   Elm_Gen_Item *item;
-   Eina_List *order = NULL;
-
-   EINA_INLIST_FOREACH(pd->items, item)
-     {
-        if (item->base->disabled)
-          continue;
-        if (item->item->type == ELM_GENLIST_ITEM_GROUP)
-          continue;
-
-        order = eina_list_append(order, item->base->eo_obj);
-     }
-
-   efl_ui_focus_composition_elements_set(obj, order);
-
-   EINA_INLIST_FOREACH(pd->items, item)
-     {
-        if (item->base->disabled)
-          continue;
-
-        efl_ui_focus_object_prepare_logical(item->base->eo_obj);
-     }
-}
-
-EOLIAN static void
 _elm_genlist_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
