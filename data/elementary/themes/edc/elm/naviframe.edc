@@ -555,7 +555,7 @@ group { name: "elm/naviframe/item/basic/default";
 
       /* current page is being pushed: [previous]<----[current] */
       program {
-         signal: "elm,state,cur,pushed"; source: "elm";
+         signal: "elm,state,cur,pushed*"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
@@ -574,7 +574,7 @@ group { name: "elm/naviframe/item/basic/default";
 
       /* current page is being popped: [current]---->[next] */
       program {
-         signal: "elm,state,cur,popped"; source: "elm";
+         signal: "elm,state,cur,popped*"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
@@ -593,7 +593,7 @@ group { name: "elm/naviframe/item/basic/default";
 
       /* new page is being pushed: [current]<----[next] */
       program {
-         signal: "elm,state,new,pushed"; source: "elm";
+         signal: "elm,state,new,pushed*"; source: "elm";
          action: STATE_SET "next" 0.0;
          target: "base";
          target: "elements_clip";
@@ -612,7 +612,7 @@ group { name: "elm/naviframe/item/basic/default";
 
       /* previous page is being pushed: [previous]---->[current] */
       program {
-         signal: "elm,state,prev,popped"; source: "elm";
+         signal: "elm,state,prev,popped*"; source: "elm";
          action: STATE_SET "prev" 0.0;
          target: "base";
          target: "elements_clip";
