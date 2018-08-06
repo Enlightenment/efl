@@ -2331,14 +2331,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
         goto done;
      }
-   /* if it changed render op */
-   if (obj->cur->render_op != obj->prev->render_op)
-     {
-        evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-        goto done;
-     }
-   /* if it changed anti_alias */
-   if (obj->cur->anti_alias != obj->prev->anti_alias)
+   if ((obj->cur->render_op != obj->prev->render_op) ||  /* if it changed render op */
+       (obj->cur->anti_alias != obj->prev->anti_alias))  /* if it changed anti_alias */
      {
         evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
         goto done;
@@ -2373,19 +2367,11 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
           }
-        if (o->dirty_pixels && !o->pixels->pixel_updates)
-          {
+        if ((o->cur->frame != o->prev->frame) ||
+            (o->cur->orient != o->prev->orient) ||
              /* Legacy compatibility (invalid behaviour): dirty_set() used to
               * trigger full image redraw, even though this was not correct. */
-             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             goto done;
-          }
-        if (o->cur->frame != o->prev->frame)
-          {
-             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             goto done;
-          }
-        if (o->cur->orient != o->prev->orient)
+            (o->dirty_pixels && !o->pixels->pixel_updates))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
              goto done;
