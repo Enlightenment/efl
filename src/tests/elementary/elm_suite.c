@@ -137,6 +137,7 @@ static const Efl_Test_Case etc_init[] = {
 static Eina_Bool
 _win_manual_render(void *data)
 {
+   ecore_animator_custom_tick();
    evas_norender(evas_object_evas_get(data));
    return EINA_TRUE;
 }
@@ -160,6 +161,7 @@ _elm_suite_win_create()
    if (!buffer) return win;
    ecore_evas_manual_render_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), EINA_TRUE);
    edje_frametime_set(BUFFER_RENDER_INTERVAL);
+   ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
    evas_object_event_callback_add(win, EVAS_CALLBACK_SHOW, _win_show, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_HIDE, _win_hide, NULL);
    return win;
