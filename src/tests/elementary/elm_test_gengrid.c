@@ -5,7 +5,6 @@
 #define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
 #include "elm_suite.h"
-#include "elm_test_helper.h"
 
 EFL_START_TEST (elm_gengrid_legacy_type_check)
 {

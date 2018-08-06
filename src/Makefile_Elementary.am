@@ -1480,7 +1480,6 @@ TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 
 tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_suite.c \
-	tests/elementary/elm_test_helper.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
 	tests/elementary/elm_test_colorselector.c \
@@ -1628,7 +1627,6 @@ endif
 
 EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
-tests/elementary/elm_test_helper.h \
 lib/elementary/Elementary_Options.h.in \
 lib/elementary/elm_code_widget_text.c \
 lib/elementary/elm_code_widget_undo.c
