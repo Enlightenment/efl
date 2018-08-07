@@ -98,6 +98,11 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
           {
              next_widget = NULL;
           }
+        //check if this is the item block representation of genlist
+        else if (efl_isa(next_widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS) && efl_ui_focus_object_focus_parent_get(next_widget) == wpd->widget)
+          {
+             next_widget = NULL;
+          }
         logical_child = next_widget;
      }
 

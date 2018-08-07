@@ -2542,6 +2542,8 @@ _item_block_realize(Item_Block *itb)
    if (!itb->adapter)
      {
         itb->adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, itb->sd->obj);
+        efl_ui_focus_composition_adapter_focus_manager_parent_set(itb->adapter, itb->sd->obj);
+        efl_ui_focus_composition_adapter_focus_manager_object_set(itb->adapter, itb->sd->obj);
         efl_ui_focus_manager_calc_register_logical(itb->sd->obj, itb->adapter, itb->sd->obj, NULL);
         _flush_block_order(itb->sd);
      }
@@ -3578,9 +3580,13 @@ _item_block_merge(Item_Block *left,
 
    EINA_LIST_FOREACH(right->items, l, it2)
      {
+        if (right->realized)
+          efl_ui_focus_manager_calc_unregister(right->sd->obj, EO_OBJ(it2));
         it2->item->block = left;
         left->count++;
         left->changed = EINA_TRUE;
+        if (left->realized)
+          efl_ui_focus_manager_calc_register_logical(right->sd->obj, EO_OBJ(it2), left->adapter, NULL);
      }
    left->items = eina_list_merge(left->items, right->items);
 }
@@ -4576,8 +4582,10 @@ newblock:
                        itb->items = eina_list_remove_list
                            (itb->items, itb->items);
                        itb->count--;
+                       efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it2));
 
                        itbp->items = eina_list_append(itbp->items, it2);
+                       _update_block_registration(itbp, it2);
                        it2->item->block = itbp;
                        itbp->count++;
                        if (!it2->hide)
@@ -4587,7 +4595,10 @@ newblock:
                             itbp->vis_count++;
                          }
 
-                       if (it2->realized) itbp->realized = EINA_TRUE;
+                       if (it2->realized)
+                         {
+                            _item_block_realize(itbp);
+                         }
                     }
 
                   done = EINA_TRUE;
@@ -4609,8 +4620,10 @@ newblock:
                        it2 = eina_list_data_get(l);
                        itb->items = eina_list_remove_list(itb->items, l);
                        itb->count--;
+                       efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it2));
 
                        itbn->items = eina_list_prepend(itbn->items, it2);
+                       _update_block_registration(itbn, it2);
                        it2->item->block = itbn;
                        itbn->count++;
                        if (!it2->hide)
@@ -4621,7 +4634,10 @@ newblock:
                             itbn->vis_count++;
                          }
 
-                       if (it2->realized) itbn->realized = EINA_TRUE;
+                       if (it2->realized)
+                         {
+                            _item_block_realize(itbn);
+                         }
                     }
 
                   done = EINA_TRUE;
@@ -4646,8 +4662,10 @@ newblock:
                   it2 = l->data;
                   itb->items = eina_list_remove_list(itb->items, l);
                   itb->count--;
+                  efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it2));
 
                   itb2->items = eina_list_prepend(itb2->items, it2);
+                  _update_block_registration(itb2, it2);
                   it2->item->block = itb2;
                   itb2->count++;
                   if (!it2->hide)
@@ -4658,7 +4676,10 @@ newblock:
                        itb2->h += it2->item->h;
                     }
 
-                  if (it2->realized) itb2->realized = EINA_TRUE;
+                  if (it2->realized)
+                    {
+                       _item_block_realize(itb2);
+                    }
                }
 
              itb2->num = itb->num + itb->vis_count;
