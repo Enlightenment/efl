@@ -327,12 +327,6 @@ _efl_loop_timer_efl_object_event_freeze(Eo *obj, Efl_Loop_Timer_Data *timer)
    // Timer already frozen
    if (timer->frozen) return;
 
-   if (EINA_UNLIKELY(!timer->initialized))
-     {
-        ERR("Attempt freezing an non unfinalized timer.");
-        return;
-     }
-
    now = efl_loop_time_get(timer->loop);
    timer->pending = timer->at - now;
    timer->at = 0.0;
@@ -369,6 +363,7 @@ _efl_loop_timer_efl_object_event_thaw(Eo *obj, Efl_Loop_Timer_Data *timer)
    efl_event_thaw(efl_super(obj, MY_CLASS));
 
    if (!timer->frozen) return; // Timer not frozen
+   timer->frozen = 0;
 
    if (timer->loop_data)
      {
@@ -659,12 +654,14 @@ _efl_loop_timer_set(Efl_Loop_Timer_Data *timer, double at, double in)
 {
    if (!timer->loop_data) return;
    timer->loop_data->timers_added = 1;
-   timer->at = at;
    timer->in = in;
    timer->just_added = 1;
    timer->initialized = 1;
-   timer->frozen = 0;
-   timer->pending = 0.0;
+   if (!timer->frozen)
+     {
+        timer->at = at;
+        timer->pending = 0.0;
+     }
    _efl_loop_timer_util_instanciate(timer->loop_data, timer);
 }
 
