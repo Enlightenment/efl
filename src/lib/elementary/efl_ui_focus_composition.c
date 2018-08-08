@@ -15,7 +15,7 @@ typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
    Eina_List *adapters;
-   Efl_Ui_Focus_Manager *registered, *custom_manager;
+   Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
@@ -39,6 +39,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
         Eina_List *safed = NULL;
         Efl_Ui_Focus_Object *o;
 
+        pd->old_manager = manager;
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
@@ -74,6 +75,21 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
           }
 
         efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->targets_ordered));
+     }
+   else
+     {
+        Efl_Ui_Focus_Object *o;
+
+        EINA_LIST_FREE(pd->registered_targets, o)
+          {
+             efl_ui_focus_manager_calc_unregister(pd->old_manager, o);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, NULL);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, NULL);
+               }
+          }
      }
 }
 static void
