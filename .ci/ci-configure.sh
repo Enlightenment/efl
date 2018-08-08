@@ -57,7 +57,7 @@ if [ "$DISTRO" != "" ] ; then
   travis_fold configure "configure $OPTS"
   docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    --env LD="ld.gold" $(cat $HOME/cid) sh -c "./configure $OPTS || cat config.log"
+    --env LD="ld.gold" $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
   travis_endfold configure
 else
   OSX_COPTS="--disable-cxx-bindings --with-tests=regular --disable-dependency-tracking -C"
@@ -78,6 +78,6 @@ else
   autoreconf -iv
   travis_endfold autoreconf
   travis_fold configure "configure $OSX_COPTS"
-  ./configure $OSX_COPTS || cat config.log
+  .ci/configure.sh $OSX_COPTS
   travis_endfold configure
 fi
