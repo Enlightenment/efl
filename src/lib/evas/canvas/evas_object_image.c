@@ -1749,6 +1749,9 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 {
    Evas_Image_Data *o = type_private_data;
 
+   /* image is not ready yet, skip rendering. Leave it to next frame */
+   if (o->preloading) return;
+
    if ((o->cur->fill.w < 1) || (o->cur->fill.h < 1))
      return;  /* no error message, already printed in pre_render */
 
