@@ -46,11 +46,6 @@ _tab_icon_update(Tab_Info *ti)
    efl_content_unset(efl_part(ti->tab, "efl.icon"));
    efl_content_set(efl_part(ti->tab, "efl.icon"), ti->icon);
 
-   if (ti->icon)
-       efl_layout_signal_emit(ti->tab, "efl,state,icon,visible", "efl");
-   else
-       efl_layout_signal_emit(ti->tab, "efl,state,icon,hidden", "efl");
-
    efl_del(old_icon);
 }
 
@@ -63,7 +58,7 @@ _tab_icon_set_cb(void *data,
    Tab_Info *ti = data;
    _tab_icon_update(ti);
 
-   efl_layout_signal_callback_del(obj, emission, source, _tab_icon_set_cb, NULL);
+   efl_layout_signal_callback_del(obj, emission, source, _tab_icon_set_cb, ti);
    efl_layout_signal_emit(ti->tab, "efl,state,icon,reset", "efl");
 }
 
@@ -71,8 +66,7 @@ static void
 _tab_icon_obj_set(Eo *obj,
                   Tab_Info *ti,
                   Eo *icon_obj,
-                  const char *icon_str,
-                  const char *sig)
+                  const char *icon_str)
 {
    Eo *old_icon;
    const char *s;
@@ -104,7 +98,7 @@ _tab_icon_obj_set(Eo *obj,
           }
         efl_content_set
           (efl_part(ti->tab, "efl.icon_new"), ti->icon);
-        efl_layout_signal_emit(ti->tab, sig, "efl");
+        efl_layout_signal_emit(ti->tab, "efl,state,icon_new,set", "efl");
         efl_layout_signal_callback_add
           (ti->tab, "efl,state,icon_set,done", "efl", _tab_icon_set_cb, ti);
      }
@@ -223,29 +217,10 @@ _tab_add(Eo *obj, const char *label, const char *icon)
      (tab, "efl,action,click", "efl", _action_click_cb, ti);
 
    if (ti->icon)
-     {
-        efl_content_set(efl_part(tab, "efl.icon"), ti->icon);
-        efl_layout_signal_emit(tab, "efl,state,icon,visible", "efl");
-        efl_layout_signal_emit(tab, "efl,icon,visible", "efl");
-        efl_gfx_entity_visible_set(ti->icon, EINA_TRUE);
-     }
-   else
-     {
-        efl_layout_signal_emit(tab, "efl,state,icon,hidden", "efl");
-        efl_layout_signal_emit(tab, "efl,icon,hidden", "efl");
-     }
+     efl_content_set(efl_part(tab, "efl.icon"), ti->icon);
 
    if (ti->label)
-     {
-        efl_text_set(efl_part(tab, "efl.text"), ti->label);
-        efl_layout_signal_emit(tab, "efl,state,text,visible", "efl");
-        efl_layout_signal_emit(tab, "efl,text,visible", "efl");
-     }
-   else
-     {
-        efl_layout_signal_emit(tab, "efl,state,text,hidden", "efl");
-        efl_layout_signal_emit(tab, "efl,text,hidden", "efl");
-     }
+     efl_text_set(efl_part(tab, "efl.text"), ti->label);
 
    efl_ui_widget_focus_allow_set(tab, EINA_TRUE);
 
@@ -323,10 +298,10 @@ _efl_ui_tab_bar_tab_icon_set(Eo *obj, Efl_Ui_Tab_Bar_Data *sd, int index, const 
    icon_obj = elm_icon_add(obj);
    if (!icon_obj) return;
    if (_tab_icon_set(icon_obj, "toolbar/", icon))
-     _tab_icon_obj_set(obj, ti, icon_obj, icon, "efl,state,icon_set");
+     _tab_icon_obj_set(obj, ti, icon_obj, icon);
    else
      {
-        _tab_icon_obj_set(obj, ti, NULL, NULL, "efl,state,icon_set");
+        _tab_icon_obj_set(obj, ti, NULL, NULL);
         efl_del(icon_obj);
      }
 }
