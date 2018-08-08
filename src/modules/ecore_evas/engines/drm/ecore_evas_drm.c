@@ -767,7 +767,7 @@ _tick_job(void *data)
    ecore_drm2_output_info_get(edata->output, &x, &y, &w, &h, NULL);
 
    ecore_evas_animator_tick(ee, &(Eina_Rectangle){x, y, w, h},
-                            edata->tick_job_timestamp);
+                            edata->tick_job_timestamp - edata->offset);
 }
 
 static void
