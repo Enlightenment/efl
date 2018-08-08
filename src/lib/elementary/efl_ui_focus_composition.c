@@ -26,7 +26,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    Efl_Ui_Focus_Manager *manager;
 
    //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
-   if (elm_object_focus_custom_chain_get(obj)) return;
+   if (elm_widget_is_legacy(obj) && elm_object_focus_custom_chain_get(obj)) return;
 
    if (pd->custom_manager)
      manager = pd->custom_manager;
