@@ -4324,7 +4324,6 @@ _elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
-   efl_ui_zoom_level_set(efl_super(obj, MY_CLASS), zoom);
 }
 
 EAPI void
@@ -4355,7 +4354,6 @@ _elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode m
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
-   efl_ui_zoom_mode_set(efl_super(obj, MY_CLASS), mode);
 }
 
 static inline void
