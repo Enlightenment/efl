@@ -1236,7 +1236,10 @@ _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
            state_write->image.stride = stride;
         }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+        o->changed = EINA_TRUE;
+        o->preloaded = EINA_TRUE;
         if (resize_call) evas_object_inform_call_image_resize(eo_obj);
+        evas_object_change(eo_obj, obj);
      }
    else
      {
@@ -2251,6 +2254,9 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    int is_v = 0, was_v = 0;
    Eina_Bool changed_prep = EINA_TRUE;
 
+   /* image is not ready yet, skip rendering. Leave it to next frame */
+   if (o->preloading) return;
+
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
@@ -2377,6 +2383,13 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
             (o->dirty_pixels && !o->pixels->pixel_updates))
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             goto done;
+          }
+        //pre-loading is finished
+        if (o->preloaded)
+          {
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             o->preloaded = EINA_FALSE;
              goto done;
           }
      }

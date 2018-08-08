@@ -125,7 +125,8 @@ struct _Evas_Image_Data
    Eina_Bool         filled : 1;
    Eina_Bool         filled_set : 1;
    Eina_Bool         proxyrendering : 1;
-   Eina_Bool         preloading : 1;
+   Eina_Bool         preloading : 1;      //on preloading
+   Eina_Bool         preloaded: 1;        //just finsihed preloading
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
    Eina_Bool         created : 1;
