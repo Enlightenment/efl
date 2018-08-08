@@ -85,7 +85,7 @@ verify_item_iteration_api(Elm_Object_Item *parent)
      }
 }
 
-EFL_START_TEST (elm_genlist_item_iteration)
+EFL_START_TEST (elm_genlist_test_item_iteration)
 {
    Elm_Object_Item *parent;
    int i;
@@ -116,7 +116,7 @@ EFL_START_TEST (elm_genlist_item_iteration)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_genlist_legacy_type_check)
+EFL_START_TEST (elm_genlist_test_legacy_type_check)
 {
    const char *type;
 
@@ -142,7 +142,7 @@ void test_init(void)
    genlist = elm_genlist_add(win);
 }
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_genlist_test_atspi_role_get)
 {
    test_init();
 
@@ -155,7 +155,7 @@ EFL_START_TEST (elm_atspi_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_get1)
+EFL_START_TEST(elm_genlist_test_atspi_children_get1)
 {
    test_init();
    Eina_List *children;
@@ -179,7 +179,7 @@ EFL_START_TEST(elm_atspi_children_get1)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_get2)
+EFL_START_TEST(elm_genlist_test_atspi_children_get2)
 {
    test_init();
    Eina_List *children;
@@ -208,7 +208,7 @@ _children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
    counter++;
 }
 
-EFL_START_TEST(elm_atspi_children_events_add)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_add)
 {
    test_init();
 
@@ -240,7 +240,7 @@ EFL_START_TEST(elm_atspi_children_events_add)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_events_del1)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_del1)
 {
    test_init();
 
@@ -270,7 +270,7 @@ EFL_START_TEST(elm_atspi_children_events_del1)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_events_del2)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_del2)
 {
    test_init();
 
@@ -311,7 +311,7 @@ _it_del()
    it_del = 1;
 }
 
-EFL_START_TEST(elm_genlist_item_destroy)
+EFL_START_TEST(elm_genlist_test_item_destroy)
 {
    Elm_Object_Item *git;
 
@@ -329,13 +329,13 @@ EFL_END_TEST
 
 void elm_test_genlist(TCase *tc)
 {
-   tcase_add_test(tc, elm_genlist_legacy_type_check);
-   tcase_add_test(tc, elm_genlist_item_destroy);
-   tcase_add_test(tc, elm_genlist_item_iteration);
-   tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, elm_atspi_children_get1);
-   tcase_add_test(tc, elm_atspi_children_get2);
-   tcase_add_test(tc, elm_atspi_children_events_add);
-   tcase_add_test(tc, elm_atspi_children_events_del1);
-   tcase_add_test(tc, elm_atspi_children_events_del2);
+   tcase_add_test(tc, elm_genlist_test_legacy_type_check);
+   tcase_add_test(tc, elm_genlist_test_item_destroy);
+   tcase_add_test(tc, elm_genlist_test_item_iteration);
+   tcase_add_test(tc, elm_genlist_test_atspi_role_get);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_get1);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_get2);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_add);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_del1);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_del2);
 }
