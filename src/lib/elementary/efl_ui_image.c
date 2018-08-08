@@ -182,6 +182,15 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 
         //1. Get the original image size (iw x ih)
         evas_object_image_size_get(img, &iw, &ih);
+
+        //Exception Case
+        if ((iw == 0) || (ih == 0) || (sd->img_w == 0) || (sd->img_h == 0))
+          {
+             evas_object_resize(img, 0, 0);
+             evas_object_resize(sd->hit_rect, 0, 0);
+             return;
+          }
+
         iw = ((double)iw) * sd->scale;
         ih = ((double)ih) * sd->scale;
 
