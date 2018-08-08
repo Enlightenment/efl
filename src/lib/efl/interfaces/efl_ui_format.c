@@ -38,6 +38,7 @@ _format_string_check(const char *fmt)
         if (itr[1] == '%')
           {
              itr++;
+             ret_type = FORMAT_TYPE_STRING;
              continue;
           }
 
