@@ -533,8 +533,8 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Ui.Zoom.zoom_level { set; }
-      Efl.Ui.Zoom.zoom_mode { set; }
+      Efl.Ui.Zoom.zoom_level { set; get; }
+      Efl.Ui.Zoom.zoom_mode { set; get; }
       Elm.Interface_Scrollable.wheel_disabled { set; }
    }
    events {

@@ -4304,6 +4304,12 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
    return obj;
 }
 
+EOLIAN static double
+_elm_map_efl_ui_zoom_zoom_level_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+{
+   return sd->zoom;
+}
+
 EOLIAN static void
 _elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
 {
@@ -4331,6 +4337,12 @@ EAPI int
 elm_map_zoom_get(const Eo *obj)
 {
    return efl_ui_zoom_level_get(obj);
+}
+
+EOLIAN static Efl_Ui_Zoom_Mode
+_elm_map_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+{
+   return sd->mode;
 }
 
 EOLIAN static void
