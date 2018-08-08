@@ -2831,7 +2831,7 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
      {
         if (sd->f) eina_file_close(sd->f);
         eina_stringshare_replace(&sd->file, eina_file_filename_get(f));
-        sd->f = f;
+        sd->f = eina_file_dup(f);
 
         return _img_proxy_set(o, sd, NULL, f, buf, resize);
      }
