@@ -29,7 +29,7 @@
 
 /* external functions */
 EAPI Ecore_Evas *
-ecore_evas_wayland_shm_new_internal(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame)
+ecore_evas_wayland_shm_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
