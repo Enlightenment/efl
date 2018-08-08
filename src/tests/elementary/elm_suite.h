@@ -16,6 +16,7 @@
   }
 
 #include <Evas.h>
+#include <Ecore.h>
 void elm_test_init(TCase *tc);
 void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);
@@ -98,5 +99,9 @@ void elm_code_test_widget_selection(TCase *tc);
 void elm_code_test_widget_undo(TCase *tc);
 
 Evas_Object *win_add();
+
+Eo *timer_add(double in, Ecore_Task_Cb cb, void *data);
+
+#define ecore_timer_add timer_add
 
 #endif /* _ELM_SUITE_H */
