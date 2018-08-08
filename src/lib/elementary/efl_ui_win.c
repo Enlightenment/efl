@@ -211,7 +211,6 @@ struct _Efl_Ui_Win_Data
    int          max_w, max_h;
    int          norender;
    int          modal_count;
-   int          response;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
 
@@ -934,11 +933,9 @@ _elm_win_move(Ecore_Evas *ee)
    efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
-   sd->response++;
    sd->req_xy = EINA_FALSE;
    evas_object_move(sd->obj, x, y);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-   sd->response--;
    evas_nochange_pop(evas_object_evas_get(sd->obj));
 }
 
@@ -975,11 +972,9 @@ _elm_win_resize_job(void *data)
         elm_menu_move(sd->main_menu, pos.x, pos.y);
      }
 
-   sd->response++;
    sd->req_wh = EINA_FALSE;
    evas_object_resize(sd->obj, w, h);
    evas_object_resize(sd->legacy.edje, w, h);
-   sd->response--;
 }
 
 static void
@@ -3005,7 +3000,6 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
      }
    else
      {
-        if (!sd->response)
           {
              sd->req_xy = EINA_TRUE;
              sd->req_x = pos.x;
@@ -3071,7 +3065,6 @@ _efl_ui_win_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz
      }
 
    _elm_win_frame_geometry_adjust(sd);
-   if (!sd->response)
      {
         sd->req_wh = EINA_TRUE;
         sd->req_w = sz.w;
@@ -3621,7 +3614,6 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    else
      {
         _elm_win_frame_geometry_adjust(sd);
-        if (!sd->response)
           {
              sd->req_wh = EINA_TRUE;
              sd->req_w = w;

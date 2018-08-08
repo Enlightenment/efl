@@ -1693,16 +1693,14 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
         framespace_resized = EINA_TRUE;
      }
 
+   if ((!e->from_wm) && (!ee->prop.override)) return ECORE_CALLBACK_RENEW;
    if (((ee->w + fw) != e->w) || ((ee->h + fh) != e->h) ||
-       ((ee->req.w + fw) != e->w) || ((ee->req.h + fh) != e->h) ||
        framespace_resized)
      {
         w = e->w;
         h = e->h;
         ee->w = w - fw;
         ee->h = h - fh;
-        ee->req.w = ee->w;
-        ee->req.h = ee->h;
         if (ECORE_EVAS_PORTRAIT(ee))
           {
              evas_output_size_set(ee->evas, w, h);
