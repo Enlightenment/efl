@@ -180,6 +180,7 @@ tests/eeze/eeze_test_sensor.c \
 tests/eeze/eeze_test_udev.c \
 tests/eeze/eeze_suite.h
 tests_eeze_eeze_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EEZE_CFLAGS@ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eeze\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eeze\" \

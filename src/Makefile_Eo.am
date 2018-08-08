@@ -152,6 +152,7 @@ tests/eo/suite/eo_test_init.c \
 tests/eo/suite/eo_test_lifecycle.c
 
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eo\" \
 @CHECK_CFLAGS@ \
 @EO_CFLAGS@ \

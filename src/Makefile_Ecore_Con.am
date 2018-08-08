@@ -219,6 +219,7 @@ tests/ecore_con/ecore_con_test_efl_net_ip_address.c \
 tests/ecore_con/ecore_con_suite.h
 
 tests_ecore_con_ecore_con_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore_con\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore_con\" \
 @CHECK_CFLAGS@ \

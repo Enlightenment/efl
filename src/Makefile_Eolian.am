@@ -131,6 +131,7 @@ tests/eolian/$(TESTS_EOLIAN_OBJNAME)eolian_suite-eolian_generated_future.$(OBJEX
 CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/eolian \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian\" \
 -DEO_SRC_DIR=\"$(top_srcdir)/src/lib\" \

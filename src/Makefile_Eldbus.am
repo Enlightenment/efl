@@ -143,6 +143,7 @@ tests/eldbus/eldbus_fake_server.c \
 tests/eldbus/eldbus_suite.h
 
 tests_eldbus_eldbus_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl @CHECK_CFLAGS@ @ELDBUS_CFLAGS@ \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 @EFL_CFLAGS@ -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eldbus\"
 
 tests_eldbus_eldbus_suite_LDADD = @CHECK_LIBS@ @USE_ELDBUS_LIBS@ @USE_EFL_LIBS@

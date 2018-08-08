@@ -231,6 +231,7 @@ tests/efreet/efreet_test_efreet.c \
 tests/efreet/efreet_test_efreet_cache.c
 
 tests_efreet_efreet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@ \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efreet\"
 tests_efreet_efreet_suite_LDADD = @CHECK_LIBS@ @USE_EFREET_LIBS@
 tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@

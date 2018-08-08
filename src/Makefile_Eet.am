@@ -76,6 +76,7 @@ tests/eet/eet_test_common.h \
 tests/eet/eet_suite.h
 
 tests_eet_eet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eet\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eet\" \

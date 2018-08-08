@@ -89,6 +89,7 @@ tests/eio/eio_test_eet.c \
 tests/eio/eio_suite.h
 
 tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eio\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eio\" \
 @CHECK_CFLAGS@ \

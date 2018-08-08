@@ -200,7 +200,7 @@ SUITE_RUNNER_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bindings/js/eo_js \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl_js\" \
--DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/efl_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl_js\" \
 @CHECK_CFLAGS@ \
 @EFL_JS_CFLAGS@ \

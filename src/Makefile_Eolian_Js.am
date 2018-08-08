@@ -119,7 +119,7 @@ tests_eolian_js_eolian_js_suite_CPPFLAGS = 	\
 -I$(top_srcdir)/src/tests/efl_js \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian_js\" \
--DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/eolian_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eolian_js\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_js\" \
 @CHECK_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EINA_JS_CFLAGS@ @EO_JS_CFLAGS@ @EFL_JS_CFLAGS@ \
