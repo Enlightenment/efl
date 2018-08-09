@@ -1,0 +1,5 @@
+[submodule "examples"]
+	path = examples
+	url = https://git.enlightenment.org/tools/examples.git
+	branch = master
+	shallow = true

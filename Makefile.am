@@ -3,7 +3,6 @@ AM_MAKEFLAGS = --no-print-directory
 AM_DISTCHECK_CONFIGURE_FLAGS = \
 --with-tests=regular \
 --with-systemdunitdir=. \
---enable-always-build-examples \
 --disable-dependency-tracking
 
 SUBDIRS = src data doc
@@ -506,10 +505,11 @@ benchmark:
 # examples
 
 examples:
-	@$(MAKE) $(AM_MAKEFLAGS) -C src examples
-
-install-examples:
-	@$(MAKE) $(AM_MAKEFLAGS) -C src install-examples
+	if [ -d $(abs_top_srcdir)/.git ] ; then \
+		git submodule update --init --recursive --depth 1 -- $(abs_top_srcdir)/examples && \
+		$(MKDIR_P) $(top_builddir)/examples/unsorted && cd $(top_builddir)/examples/unsorted && \
+		$(MAKE) $(AM_MAKEFLAGS) -C $(abs_top_srcdir)/examples/unsorted ; \
+	fi
 
 pkgbuild::
 	@echo "making arch packages"
@@ -519,6 +519,7 @@ pkgbuild::
 
 clean-local:
 	rm -rf benchmark coverage
+
 
 DISTCLEANFILES= \
 ./src/lib/emile/Makefile \

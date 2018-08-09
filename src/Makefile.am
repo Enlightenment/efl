@@ -101,17 +101,6 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
-.PHONY: examples
-
-EXAMPLES_SUBDIRS = \
-examples
-
-if ALWAYS_BUILD_EXAMPLES
-SUBDIRS += . $(EXAMPLES_SUBDIRS)
-endif
-
-DIST_SUBDIRS += $(EXAMPLES_SUBDIRS)
-
 if EFL_ENABLE_TESTS
 noinst_PROGRAMS += tests/timeout
 
@@ -120,18 +109,6 @@ $(check_PROGRAMS): tests/timeout
 check-build: all
 	@$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 endif
-
-examples: all
-	@for d in $(EXAMPLES_SUBDIRS); do \
-	   echo "Making examples in $$d"; \
-	   $(MAKE) $(AM_MAKEFLAGS) -C $$d examples || exit 1; \
-	done
-
-install-examples:
-	@for d in $(EXAMPLES_SUBDIRS); do \
-	   echo "Making install-examples in $$d"; \
-	   $(MAKE) $(AM_MAKEFLAGS) -C $$d install-examples || exit 1; \
-	done
 
 dist-hook:
 	@mkdir -p $(distdir)/tests/elua/data/apps $(distdir)/tests/eolian/data

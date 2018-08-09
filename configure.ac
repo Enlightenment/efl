@@ -1027,8 +1027,6 @@ EFL_OPTIONAL_DEPEND_PKG([EINA], [${want_systemd}], [SYSTEMD], [libsystemd])
 
 EFL_EVAL_PKGS([EINA])
 
-## Examples
-
 ### Checks for header files
 
 # sys/mman.h could be provided by evil/escape/exotic so we need to set CFLAGS accordingly
@@ -5338,18 +5336,6 @@ if test "x${want_tests}" = "xyes" -a "x${want_wayland}" = "xyes"; then
    EFL_EVAL_PKGS([ECORE_WAYLAND_SRV])
 fi
 
-AC_ARG_ENABLE([always-build-examples],
-   [AS_HELP_STRING([--enable-always-build-examples],[always build examples. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_always_build_examples="yes"
-    else
-       want_always_build_examples="no"
-    fi
-   ],
-   [want_always_build_examples="no"])
-AM_CONDITIONAL([ALWAYS_BUILD_EXAMPLES], [test "${want_always_build_examples}" = "yes"])
-
 #### Ecore_Buffer
 build_ecore_buffer_x11_dri2="no"
 build_ecore_buffer_x11_dri3="no"
@@ -5714,7 +5700,6 @@ doc/widgets/Makefile
 src/Makefile
 src/bindings/mono/efl_mono/efl_libs.cs
 src/bindings/mono/efl_mono/efl_libs.csv
-src/examples/Makefile
 src/lib/eina/eina_config.h
 src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h
@@ -5983,7 +5968,6 @@ echo "Tests...........: make check"
 elif test "${build_tests}" = "coverage"; then
 echo "Tests...........: make lcov-check"
 fi
-echo "Examples........: make examples (make install-examples)"
 if test "x${build_doc}" = "xyes"; then
 echo "Documentation...: make doc"
 else
