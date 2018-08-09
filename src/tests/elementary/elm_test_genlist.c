@@ -472,6 +472,48 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
 }
 EFL_END_TEST
 
+EFL_START_TEST (elm_genlist_test_focus_state)
+{
+   Elm_Object_Item *it;
+   Evas_Object *btn;
+
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
+   evas_object_show(win);
+
+   btn = elm_button_add(win);
+   evas_object_show(btn);
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   genlist = elm_genlist_add(win);
+
+   it = elm_genlist_item_append(genlist, &itc, NULL, NULL,
+                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   evas_object_show(genlist);
+
+   elm_object_focus_set(genlist, EINA_TRUE);
+   elm_object_item_focus_set(it, EINA_TRUE);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), btn);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), genlist);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_FALSE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_TRUE);
+
+   elm_object_focus_set(genlist, EINA_FALSE);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), genlist);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_FALSE);
+
+   elm_object_focus_set(btn, EINA_TRUE);
+   elm_object_focus_set(genlist, EINA_TRUE);
+   elm_object_item_focus_set(it, EINA_TRUE);
+   evas_object_hide(genlist);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), genlist);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_FALSE);
+}
+EFL_END_TEST
+
 void elm_test_genlist(TCase *tc)
 {
    tcase_add_test(tc, elm_genlist_test_legacy_type_check);
@@ -484,5 +526,6 @@ void elm_test_genlist(TCase *tc)
    tcase_add_test(tc, elm_genlist_test_atspi_children_events_del1);
    tcase_add_test(tc, elm_genlist_test_atspi_children_events_del2);
 
+   tcase_add_test(tc, elm_genlist_test_focus_state);
    tcase_add_test(tc, elm_genlist_test_tree_expand);
 }
