@@ -864,7 +864,7 @@ EFL_START_TEST(test_pop_history_element)
    ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_TRUE);
 
    efl_ui_focus_manager_pop_history_stack(m);
-   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), NULL);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
    ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_FALSE);
 
    efl_ui_focus_manager_focus_set(m, c1);

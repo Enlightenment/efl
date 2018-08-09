@@ -1682,15 +1682,40 @@ EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
   Efl_Ui_Focus_Object *last_focusable;
-  Node *last;
+  Node *last = NULL;
 
-  if (!pd->focus_stack) return;
+  if (pd->redirect)
+    {
+       Eina_List *n;
 
-  last_focusable = _focus_stack_unfocus_last(pd);
+       last_focusable = pd->redirect_entry;
+       n = eina_list_last(pd->focus_stack);
 
-  //get now the highest, and unfocus that!
-  last = eina_list_last_data_get(pd->focus_stack);
-  if (last) efl_ui_focus_object_focus_set(last->focusable, EINA_TRUE);
+       while (n && (eina_list_data_get(n) != last_focusable))
+         {
+            n = eina_list_prev(n);
+         }
+
+       last = eina_list_data_get(n);
+    }
+  else
+    {
+       last_focusable = _focus_stack_unfocus_last(pd);
+       //get now the highest, and unfocus that!
+       last = eina_list_last_data_get(pd->focus_stack);
+    }
+
+  if (last)
+    {
+       efl_ui_focus_object_focus_set(last->focusable, EINA_TRUE);
+    }
+  else
+    {
+       last = _request_subchild_except(pd->root, node_get(obj, pd, last_focusable));
+       if (last)
+         efl_ui_focus_manager_focus_set(obj, last->focusable);
+    }
+
   efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, last_focusable);
 }
 

@@ -146,7 +146,10 @@ interface Efl.Ui.Focus.Manager {
             ]]
         }
         pop_history_stack {
-            [[Removes the most upper history element, and gives the focus to the next one below]]
+            [[Removes the most upper history element, and move focus on.
+
+              If there is a element that was focused before, it will be taken. Otherwise, the best fitting element from the registered elements will be focused.
+            ]]
         }
         setup_on_first_touch {
            [[Called when this manager is set as redirect]]
