@@ -739,18 +739,28 @@ _efl_ui_focus_manager_calc_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Manager_
 
    F_DBG("Manager: %p unregister %p", obj, child);
 
-   if (eina_list_last_data_get(pd->focus_stack) == node && !pd->redirect)
+   if (eina_list_last_data_get(pd->focus_stack) == node)
      {
         if (!efl_invalidated_get(pd->root->focusable))
           {
-             Node *n;
+             Node *n = NULL;
 
-             n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
+             // if there is no redirect manager, then try to recover the focus property to a different element
+             //allow the removal of the redirect when we are removing the child that is the redirect manager
+             if (!pd->redirect || pd->redirect == child)
+               {
+                  n = eina_list_nth(pd->focus_stack, eina_list_count(pd->focus_stack) - 2);
+                  if (!n)
+                    n = _request_subchild_except(pd->root, node);
+
+                  if (n)
+                    efl_ui_focus_manager_focus_set(obj, n->focusable);
+               }
+             // if there is a redirect manager, then remove the flag from the child
              if (!n)
-               n = _request_subchild_except(pd->root, node);
-
-             if (n)
-               efl_ui_focus_manager_focus_set(obj, n->focusable);
+               {
+                  efl_ui_focus_object_focus_set(child, EINA_FALSE);
+               }
           }
      }
 
