@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -v
 
 . .ci/travis.sh
 
@@ -85,7 +85,13 @@ travis_fold make_installcheck "make installcheck"
 make ${AM_MAKEFLAGS} installcheck
 travis_endfold make_installcheck
 travis_fold make_testapp "testing external compile"
-PKG_CONFIG_PATH=${dc_install_base}/lib/pkgconfig ${am__cwd}/.ci/build-efl-app.sh
+git submodule update --init --recursive --depth 1 -- ${am__cwd}/examples
+export PKG_CONFIG_PATH=${dc_install_base}/lib/pkgconfig
+PREV_PATH=$PATH
+export PATH="${dc_install_base}/bin:$PATH"
+(mkdir examples/ && cp -r ${am__cwd}/examples/unsorted examples/ && cd examples/unsorted \
+  && make ${AM_MAKEFLAGS} && cd ../.. && rm -rf examples)
+PATH=$PREV_PATH
 travis_endfold make_testapp
 travis_fold make_uninstall "make uninstall"
 make ${AM_MAKEFLAGS} uninstall

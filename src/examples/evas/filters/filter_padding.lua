@@ -1,7 +1,0 @@
-fat = buffer ('alpha')
-padding_set ({ l = 10, r = 20, t = 15, b = 25 })
-fill ({ color = 'black' })
-fill ({ color = 'darkblue', l = 2, r = 2, t = 2, b = 2 })
-grow ({ 30, dst = fat })
-blur ({ 40, src = fat, color = 'white' })
-blend ({ color = 'darkblue' })

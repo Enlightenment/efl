@@ -31,6 +31,3 @@ $(top_builddir)/src/lib/eina/libeina.la \
 clean-local:
 	rm -rf *.gcno ..\#..\#src\#*.gcov *.gcda
 
-if ALWAYS_BUILD_EXAMPLES
-noinst_PROGRAMS = $(EXTRA_PROGRAMS)
-endif

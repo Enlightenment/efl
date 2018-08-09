@@ -1,0 +1,5 @@
+[submodule "examples"]
+	path = examples
+	url = https://git.enlightenment.org/tools/examples.git
+	branch = devs/discomfitor/merged
+	shallow = true
