@@ -466,6 +466,11 @@ Fixes:
    * ecore x - fix vsync to not block amdgpu drivers
    * elm_code_widget: resize cursor at time of font change. (T6470)
    * evas canvas: fix not to trigger unnecessary events.
+   * build: fix rpath for binaries which use ecore-x dependencies
+   * elm/genlist: remove conditional in _calc_job for verifying show_item code (T6368)
+   * elementary image: don't calc size using empty ones.
+   * evas image: fix screen flickering issue at partial + image preloading
+   * edje_cc: change .mo file write location to be relative to the .edj file
 
 Changes since 1.19.0:
 ---------------------
