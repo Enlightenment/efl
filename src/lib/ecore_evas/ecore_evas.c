@@ -2613,6 +2613,8 @@ EAPI void
 ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render)
 {
    ECORE_EVAS_CHECK(ee);
+   manual_render = !!manual_render;
+   if (ee->manual_render == manual_render) return;
    ee->manual_render = manual_render;
 
    if (manual_render) ecore_evas_render_wait(ee);
