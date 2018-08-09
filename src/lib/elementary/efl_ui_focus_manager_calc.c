@@ -800,11 +800,22 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 
       n = eina_list_last_data_get(pd->focus_stack);
 
-      if (n)
+      if (!pd->redirect && old_manager)
         {
-           if (!pd->redirect && old_manager)
-             efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
-           else if (pd->redirect && !old_manager)
+           if (n)
+             {
+                efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
+             }
+           else
+             {
+                n = _request_subchild(pd->root);
+                if (n)
+                  efl_ui_focus_manager_focus_set(obj, n->focusable);
+             }
+        }
+      else if (pd->redirect && !old_manager)
+        {
+           if (n)
              efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
         }
    }
