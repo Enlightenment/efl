@@ -4345,7 +4345,7 @@ _elm_map_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 }
 
 EOLIAN static void
-_elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode mode)
+_elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode mode)
 {
    if ((mode == EFL_UI_ZOOM_MODE_MANUAL) && (sd->mode == !!mode)) return;
 
