@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-07-09 16:07+0900\n"
+"POT-Creation-Date: 2018-08-09 11:50+0200\n"
 "PO-Revision-Date: 2014-05-24 08:39+0000\n"
 "Last-Translator: Kaptan <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -238,30 +238,30 @@ msgstr "Imaxes"
 msgid "Videos"
 msgstr "Vídeos"
 
-#: src/lib/elementary/elc_fileselector.c:1798
+#: src/lib/elementary/elc_fileselector.c:1799
 msgid "Up"
 msgstr "Arriba"
 
-#: src/lib/elementary/elc_fileselector.c:1812
+#: src/lib/elementary/elc_fileselector.c:1813
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elementary/elc_fileselector.c:1831
+#: src/lib/elementary/elc_fileselector.c:1832
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2107
+#: src/lib/elementary/elc_fileselector.c:2108
 msgid "OK"
 msgstr "Aceptar"
 
-#: src/lib/elementary/elc_fileselector.c:2117
-#: src/lib/elementary/elm_entry.c:1733 src/lib/elementary/elm_entry.c:1758
+#: src/lib/elementary/elc_fileselector.c:2118
+#: src/lib/elementary/elm_entry.c:1734 src/lib/elementary/elm_entry.c:1759
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
 #: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1511
-#: src/lib/elementary/elm_genlist.c:1759 src/lib/elementary/elm_list.c:2172
+#: src/lib/elementary/elm_genlist.c:1759 src/lib/elementary/elm_list.c:2180
 #: src/lib/elementary/efl_ui_radio.c:201
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
@@ -327,49 +327,48 @@ msgstr "Premido"
 msgid "Button"
 msgstr "Botón"
 
-#: src/lib/elementary/elm_calendar.c:244
-#: src/lib/elementary/efl_ui_calendar.c:198
+#: src/lib/elementary/elm_calendar.c:225
+#: src/lib/elementary/efl_ui_calendar.c:193
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elementary/elm_calendar.c:250
+#: src/lib/elementary/elm_calendar.c:231
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elementary/elm_calendar.c:256
+#: src/lib/elementary/elm_calendar.c:237
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elementary/elm_calendar.c:382
-#: src/lib/elementary/efl_ui_calendar.c:245
+#: src/lib/elementary/elm_calendar.c:363
+#: src/lib/elementary/efl_ui_calendar.c:240
 msgid "calendar item"
 msgstr "calendario"
 
-#: src/lib/elementary/elm_calendar.c:410
-#: src/lib/elementary/efl_ui_calendar.c:272
+#: src/lib/elementary/elm_calendar.c:391
+#: src/lib/elementary/efl_ui_calendar.c:267
 msgid "calendar decrement month button"
 msgstr "Botón de diminución de mes do calendario"
 
-#: src/lib/elementary/elm_calendar.c:416
+#: src/lib/elementary/elm_calendar.c:397
 msgid "calendar decrement year button"
 msgstr "Botón de diminución de ano do calendario"
 
-#: src/lib/elementary/elm_calendar.c:422
-#: src/lib/elementary/efl_ui_calendar.c:278
+#: src/lib/elementary/elm_calendar.c:403
+#: src/lib/elementary/efl_ui_calendar.c:273
 msgid "calendar increment month button"
 msgstr "Botón de aumento de mes do calendario"
 
-#: src/lib/elementary/elm_calendar.c:428
+#: src/lib/elementary/elm_calendar.c:409
 msgid "calendar increment year button"
 msgstr "Botón de aumento de ano do calendario"
 
-#: src/lib/elementary/elm_calendar.c:433
-#: src/lib/elementary/efl_ui_calendar.c:283
+#: src/lib/elementary/elm_calendar.c:414
+#: src/lib/elementary/efl_ui_calendar.c:278
 msgid "calendar month"
 msgstr "mes do calendario"
 
-#: src/lib/elementary/elm_calendar.c:438
-#: src/lib/elementary/efl_ui_calendar.c:286
+#: src/lib/elementary/elm_calendar.c:419
 msgid "calendar year"
 msgstr "ano do calendario"
 
@@ -449,23 +448,23 @@ msgstr "selector de día"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elementary/elm_entry.c:1723
+#: src/lib/elementary/elm_entry.c:1724
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elementary/elm_entry.c:1726
+#: src/lib/elementary/elm_entry.c:1727
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elementary/elm_entry.c:1730 src/lib/elementary/elm_entry.c:1752
+#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1753
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elementary/elm_entry.c:1745
+#: src/lib/elementary/elm_entry.c:1746
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elementary/elm_entry.c:3894
+#: src/lib/elementary/elm_entry.c:3895
 msgid "Entry"
 msgstr "Entrada"
 
@@ -485,23 +484,23 @@ msgstr "Elemento do índice"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elementary/elm_panel.c:84
+#: src/lib/elementary/elm_panel.c:85
 msgid "state: opened"
 msgstr "Estado: aberto"
 
-#: src/lib/elementary/elm_panel.c:85
+#: src/lib/elementary/elm_panel.c:86
 msgid "state: closed"
 msgstr "Estado: pechado"
 
-#: src/lib/elementary/elm_panel.c:127
+#: src/lib/elementary/elm_panel.c:128
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:129
+#: src/lib/elementary/elm_panel.c:130
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:181
+#: src/lib/elementary/elm_panel.c:182
 msgid "panel button"
 msgstr "botón do panel"
 
