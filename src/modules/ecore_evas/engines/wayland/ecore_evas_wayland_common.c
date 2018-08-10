@@ -2162,7 +2162,6 @@ _ecore_evas_wl_common_show(Ecore_Evas *ee)
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->w + fw, ee->h + fh);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->h + fh, ee->w + fw);
-             ecore_evas_manual_render(ee);
           }
      }
 
