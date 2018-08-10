@@ -398,26 +398,7 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
 static void
 _img_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Elm_Transit *trans;
-   static int degree = 0;
-
    fprintf(stderr, "%p - clicked\n", obj);
-
-   trans = elm_transit_add();
-   elm_transit_object_add(trans, data);
-   if (degree == 0)
-     {
-        elm_transit_effect_rotation_add(trans, 0, 180);
-        degree = 180;
-     }
-   else
-     {
-        elm_transit_effect_rotation_add(trans, 180, 360);
-        degree = 0;
-     }
-   elm_transit_duration_set(trans, 3.0);
-   elm_transit_objects_final_state_keep_set(trans, EINA_TRUE);
-   elm_transit_go(trans);
 }
 
 void
