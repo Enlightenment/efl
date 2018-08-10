@@ -2944,7 +2944,6 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
    int x = 0, y = 0, w = 0, h = 0, px = 0, py = 0;
    GLfloat tx[4], ty[4], t2x[4], t2y[4];
-   Eina_Bool blend = EINA_FALSE;
    DATA32 cmul;
    Shader_Sampling masksam = SHD_SAM11;
    Evas_GL_Program *prog;
@@ -2953,23 +2952,25 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    Eina_Bool use_texa = EINA_FALSE;
    Shader_Type type;
    int pn = 0, i;
-   int flat = 0, nomul = 0, yinvert = 0;
+   int nomul = 0, yinvert = 0;
+   Eina_Bool flat = EINA_FALSE;
+   Eina_Bool blend = EINA_FALSE;
 
    if (!(gc->dc->render_op == EVAS_RENDER_COPY) &&
        ((a < 255) || (tex->alpha) || (!!mtex))) blend = EINA_TRUE;
 
    if ((A_VAL(&(p[0].col)) < 0xff) || (A_VAL(&(p[1].col)) < 0xff) ||
        (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
-     blend = 1;
+     blend = EINA_TRUE;
 
    if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
-      flat = 1;
+      flat = EINA_TRUE;
 
    if (!clip) cx = cy = cw = ch = 0;
 
    if (!flat)
      {
-        if (p[0].foc <= 0) flat = 1;
+        if (p[0].foc <= 0) flat = EINA_TRUE;
      }
 
    switch (cspace)
