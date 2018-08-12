@@ -1,0 +1,2 @@
+subdir('eo')
+subdir('elua')

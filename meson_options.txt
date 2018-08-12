@@ -1,0 +1,311 @@
+option('audio',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling audio support in efl'
+)
+
+option('avahi',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling avahi support in efl'
+)
+
+option('x11',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling x11 support in efl'
+)
+
+option('fb',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling frame buffer support in efl'
+)
+
+option('sdl',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling sdl support in efl'
+)
+
+option('wl',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling wayland support in efl'
+)
+
+option('buffer',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling buffer support in efl'
+)
+
+option('drm',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling drm support in efl'
+)
+
+option('cocoa',
+  type : 'boolean',
+  value : false,
+  description : 'Flag for handling drm support in efl'
+)
+
+option('physics',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling the internal physics engine in efl'
+)
+
+option('eeze',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling the device abstraction layer in efl'
+)
+
+option('opengl',
+  type : 'combo',
+  choices : ['full', 'es-egl', 'none'],
+  value : 'full',
+  description : 'build efl with a special opengl support'
+)
+
+option('build-id',
+  type : 'string',
+  value : 'none',
+  description : 'The build id to attach to the efl build')
+
+option('eina-magic-debug',
+  type : 'boolean',
+  value : true,
+  description : 'magic debug of eina structure'
+)
+
+option('debug-threads',
+  type : 'boolean',
+  value : false,
+  description : 'thread debugging'
+)
+
+option('build-examples',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
+
+option('build-tests',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
+
+option('crypto',
+  type : 'combo',
+  choices : ['gnutls', 'openssl'],
+  value : 'openssl'
+)
+
+option('glib',
+  type : 'boolean',
+  value : true,
+  description : 'use glib or not'
+)
+
+option('g-mainloop',
+  type : 'boolean',
+  value : false,
+  description : 'use glib mainloop or not'
+)
+
+option('gstreamer',
+  type : 'boolean',
+  value : true,
+  description : 'use gstreamer 1.0 support'
+)
+
+option('systemd',
+  type : 'boolean',
+  value : true,
+  description : 'use systemd support'
+)
+
+option('pulseaudio',
+  type : 'boolean',
+  value : true,
+  description : 'pulseaudio support'
+)
+
+option('network-backend',
+  type : 'combo',
+  choices : ['connman', 'none'],
+  value : 'none',
+  description : 'connman support'
+)
+
+option('xpresent',
+  type : 'boolean',
+  value : false,
+  description : 'xpresent support'
+)
+
+option('xgesture',
+  type : 'boolean',
+  value : false,
+  description : 'xgesture support'
+)
+
+option('xinput2',
+  type : 'boolean',
+  value : true,
+  description : 'xi2 support'
+)
+
+option('xinput22',
+  type : 'boolean',
+  value : false,
+  description : 'xi22 support'
+)
+
+option('tslib',
+  type : 'boolean',
+  value : true,
+  description : 'tslib support'
+)
+
+option('eject-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('mount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('unmount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('evas-modules',
+  type : 'combo',
+  choices : ['shared', 'static'],
+  value : 'shared',
+  description : 'how to build the evas modules'
+)
+
+option('evas-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm'],
+  value : ['webp']
+)
+
+option('ecore-imf-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['xim', 'ibus', 'scim'],
+  value : ['scim']
+)
+
+option('emotion-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['gstreamer', 'gstreamer1', 'libvlc', 'xine'],
+  value : ['gstreamer', 'libvlc', 'xine']
+)
+
+option('emotion-generic-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['vlc'],
+  value : ['vlc']
+)
+
+option('harfbuzz',
+  type : 'boolean',
+  value : false,
+  description : 'harfbuzz support'
+)
+
+option('fribidi',
+  type : 'boolean',
+  value : true,
+  description : 'fribidi support'
+)
+
+option('fontconfig',
+  type : 'boolean',
+  value : true,
+  description : 'fontconfig support'
+)
+
+option('edje-sound-and-video',
+  type : 'boolean',
+  value : true,
+  description : 'disable sound and video for edje'
+)
+
+option('pixman',
+  type : 'boolean',
+  value : false,
+  description : 'Enable pixman support in evas'
+)
+
+option('hyphen',
+  type : 'boolean',
+  value : false,
+  description : 'Enable hyphen support in evas'
+)
+
+option('embedded-lz4',
+  type : 'boolean',
+  value : true,
+  description : 'do not use the system lz4, but rather the embedded r131 release'
+)
+
+option('libmount',
+  type : 'boolean',
+  value : true,
+  description : 'use libmount support or not'
+)
+
+option('vnc-server',
+  type : 'boolean',
+  value : false,
+  description : 'use libmount support or not'
+)
+
+option('v4l2',
+  type : 'boolean',
+  value : true,
+  description : 'add v4l2 support'
+)
+
+option('elua',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling elua support in efl'
+)
+
+option('wl-deprecated',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling deprecated wayland support in efl'
+)
+
+option('drm-deprecated',
+  type : 'boolean',
+  value : true,
+  description : 'Flag for handling deprecated drm support in efl'
+)
+
+option('nls',
+  type: 'boolean',
+  value: true,
+  description: 'enable localization: (default=true)'
+)
