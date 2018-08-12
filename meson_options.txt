@@ -1,0 +1,406 @@
+option('eina',
+  type : 'boolean',
+  value : true,
+  description : 'build eina'
+)
+
+option('eo',
+  type : 'boolean',
+  value : true,
+  description : 'build eo'
+)
+
+option('eolian',
+  type : 'boolean',
+  value : true,
+  description : 'build eolian'
+)
+
+option('eet',
+  type : 'boolean',
+  value : true,
+  description : 'build eet'
+)
+
+option('emile',
+  type : 'boolean',
+  value : true,
+  description : 'build emile'
+)
+
+option('efl',
+  type : 'boolean',
+  value : true,
+  description : 'build efl'
+)
+
+option('ecore',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore'
+)
+
+option('eldbus',
+  type : 'boolean',
+  value : true,
+  description : 'build eldbus'
+)
+
+option('eeze',
+  type : 'boolean',
+  value : true,
+  description : 'build eeze'
+)
+
+option('ecore_audio',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_audio'
+)
+
+option('ecore_con',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_con'
+)
+
+option('ecore_file',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_file'
+)
+
+option('ecore_avahi',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_avahi'
+)
+
+option('ecore_input',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_input'
+)
+
+option('ecore_x',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_x'
+)
+
+option('ecore_fb',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_fb'
+)
+
+option('ecore_buffer',
+  type : 'boolean',
+  value : false,
+  description : 'build ecore_buffer'
+)
+
+option('ecore_wl2',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_wl2'
+)
+
+option('ecore_ipc',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_ipc'
+)
+
+option('ecore_drm2',
+  type : 'boolean',
+  value : true,
+  description : 'build ecore_ipc'
+)
+
+option('ector',
+  type : 'boolean',
+  value : true,
+  description : 'build ector'
+)
+
+option('elput',
+  type : 'boolean',
+  value : true,
+  description : 'build elput'
+)
+
+option('ecore_cocoa',
+  type : 'boolean',
+  value : false,
+  description : 'build ecore_cocoa'
+)
+
+option('evas_goal',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('opengl',
+  type : 'combo',
+  choices : ['full', 'es-egl', 'none'],
+  value : 'none',
+)
+
+option('ecore_input_evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ecore_evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ecore_imf',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('embryo',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('eio',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('efreet',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ecore_imf_evas',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ephysics',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('edje',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('emotion',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ethumb',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('ethumb_client',
+  type : 'boolean',
+  value : true,
+  description : 'build evas'
+)
+
+option('build-id',
+  type : 'string',
+  value : 'none',
+  description : 'The build id to attach to the efl build')
+
+option('eina-magic-debug',
+  type : 'boolean',
+  value : true,
+  description : 'magic debug of eina structure'
+)
+
+option('debug-threads',
+  type : 'boolean',
+  value : false,
+  description : 'thread debugging'
+)
+
+option('build-examples',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
+
+option('build-tests',
+  type : 'boolean',
+  value : true,
+  description : 'build examples'
+)
+
+option('crypto',
+  type : 'combo',
+  choices : ['gnutls', 'openssl', 'none'],
+  value : 'openssl'
+)
+
+option('glib',
+  type : 'boolean',
+  value : true,
+  description : 'use glib or not'
+)
+
+option('g-mainloop',
+  type : 'boolean',
+  value : false,
+  description : 'use glib mainloop or not'
+)
+
+option('gstreamer',
+  type : 'boolean',
+  value : true,
+  description : 'use gstreamer 1.0 support'
+)
+
+option('libuv',
+  type : 'boolean',
+  value : false,
+  description : 'use libuv'
+)
+
+option('systemd',
+  type : 'boolean',
+  value : true,
+  description : 'use systemd support'
+)
+
+option('pulseaudio',
+  type : 'boolean',
+  value : true,
+  description : 'pulseaudio support'
+)
+
+option('avahi',
+  type : 'boolean',
+  value : true,
+  description : 'avahi support'
+)
+
+option('network-backend',
+  type : 'combo',
+  choices : ['connman', 'none'],
+  value : 'none',
+  description : 'connman support'
+)
+
+option('xpresent',
+  type : 'boolean',
+  value : false,
+  description : 'xpresent support'
+)
+
+option('xgesture',
+  type : 'boolean',
+  value : false,
+  description : 'xgesture support'
+)
+
+option('xi2',
+  type : 'boolean',
+  value : true,
+  description : 'xi2 support'
+)
+
+option('xi22',
+  type : 'boolean',
+  value : false,
+  description : 'xi22 support'
+)
+
+option('tslib',
+  type : 'boolean',
+  value : true,
+  description : 'tslib support'
+)
+
+option('eject-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('mount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('unmount-path',
+  type : 'string',
+  value : 'detect',
+  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+)
+
+option('evas-modules',
+  type : 'combo',
+  choices : ['shared', 'static'],
+  value : 'shared',
+  description : 'how to build the evas modules'
+)
+
+option('evas-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm'],
+  value : []
+)
+
+option('ecore-imf-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['xim', 'ibus', 'scim'],
+  value : ['scim']
+)
+
+option('emotion-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['generic', 'gstreamer', 'gstreamer1', 'libvlc', 'xine'],
+  value : ['gstreamer']
+)
+
+option('emotion-generic-loaders-disabler',
+  type : 'array',
+  description : 'add names here to disable the loaders',
+  choices : ['vlc'],
+  value : ['vlc']
+)
+
+option('harfbuzz',
+  type : 'boolean',
+  value : false,
+  description : 'harfbuzz support'
+)
+
+option('edje-sound-and-video',
+  type : 'boolean',
+  value : true,
+  description : 'disable sound and video for edje'
+)
