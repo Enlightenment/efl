@@ -1,0 +1,19 @@
+# BUILDING EFL WITH MESON
+
+ Building, testing, installing:
+    mkdir build
+    cd build
+    meson ..
+    ninja all
+    ninja test
+    sudo ninja install
+
+there are disabler arrays, where you can add modules to not be loaded. They are called:
+
+   emotion-generic-loaders-disabler
+
+   emotion-loaders-disabler
+
+   ecore-imf-loaders-disabler
+
+   evas-loaders-disabler
