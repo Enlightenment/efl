@@ -23,6 +23,7 @@ AM_CONDITIONAL([HAVE_AM_16], [test $(echo "${am__api_version}"|cut -d. -f2) -ge 
 AC_USE_SYSTEM_EXTENSIONS
 
 CFOPT_WARNING=""
+CXXFLAGS="${CXXFLAGS} -Wno-shadow" # No shadow warnings
 
 #### Apply configuring with legacy api's only, eo api's or both.
 
