@@ -420,6 +420,7 @@ _usage(const char *progname)
      << "  -I, --in <file/dir>     The source containing the .eo descriptions." << std::endl
      << "  -o, --out-file <file>   The output file name. [default: <classname>.eo.hh]" << std::endl
      << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: efl::ecore::file]" << std::endl
+     << "  -S                      Ignore" << std::endl
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
      << "  -h, --help              Print this help." << std::endl;
@@ -448,9 +449,10 @@ opts_get(int argc, char **argv)
        { "version",     no_argument,       nullptr, 'v' },
        { "help",        no_argument,       nullptr, 'h' },
        { "main-header", no_argument,       nullptr, 'm' },
+       { "S",           no_argument,       nullptr, 'S' },
        { nullptr,       0,                 nullptr,  0  }
      };
-   const char* options = "I:D:o:c::marvh";
+   const char* options = "I:D:o:c::marvhS";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
