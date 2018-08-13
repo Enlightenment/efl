@@ -66,6 +66,7 @@ class Elm.Naviframe.Item(Elm.Widget.Item, Efl.Ui.Legacy)
    }
    implements {
         Efl.Object.constructor;
+        Efl.Object.invalidate;
         Efl.Object.destructor;
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text { get; set; }

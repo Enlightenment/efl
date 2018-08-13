@@ -177,43 +177,16 @@ static void
 _item_free(Elm_Naviframe_Item_Data *it)
 {
    Eina_Inlist *l;
-   Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
-
-   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    eina_stringshare_del(it->title_label);
    eina_stringshare_del(it->subtitle_label);
 
-   EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
-     {
-        if (content_pair->content)
-          {
-             evas_object_event_callback_del(content_pair->content,
-                                            EVAS_CALLBACK_DEL,
-                                            _title_content_del);
-             evas_object_del(content_pair->content);
-          }
-        eina_stringshare_del(content_pair->part);
-        free(content_pair);
-     }
+
    EINA_INLIST_FOREACH_SAFE(it->text_list, l, text_pair)
      {
         eina_stringshare_del(text_pair->part);
         free(text_pair);
-     }
-
-   if (it->content)
-     {
-        if ((sd->preserve) && (!sd->on_deletion))
-          {
-             /* so that elm does not delete the contents with the item's
-              * view after the destructor */
-             elm_object_part_content_unset(VIEW(it), CONTENT_PART);
-             evas_object_event_callback_del
-                (it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
-             evas_object_hide(it->content);
-          }
      }
 }
 
@@ -574,46 +547,12 @@ _elm_naviframe_item_efl_object_destructor(Eo *eo_item, Elm_Naviframe_Item_Data *
 {
    Eina_List *l;
    Elm_Naviframe_Op *nfo;
-   Elm_Naviframe_Item_Data *nit = it, *prev_it = NULL;
-   Eina_Bool top;
+   Elm_Naviframe_Item_Data *nit = it;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(nit), sd);
 
    nit->delete_me = EINA_TRUE;
 
-   top = (eo_item == elm_naviframe_top_item_get(WIDGET(nit)));
-   if (evas_object_data_get(VIEW(nit), "out_of_list"))
-     goto end;
-
-   sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(nit));
-
-   if (top && !sd->on_deletion) /* must raise another one */
-     {
-        if (sd->stack && sd->stack->last)
-          prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
-                                              Elm_Naviframe_Item_Data);
-        if (!prev_it)
-          {
-             elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
-             goto end;
-          }
-
-        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
-        elm_widget_tree_unfocusable_set(VIEW(nit), EINA_TRUE);
-
-        if (sd->freeze_events)
-          evas_object_freeze_events_set(VIEW(prev_it), EINA_FALSE);
-        _resize_object_reset(WIDGET(prev_it), prev_it);
-        evas_object_show(VIEW(prev_it));
-
-        _prev_page_focus_recover(prev_it);
-
-        elm_object_signal_emit(VIEW(prev_it), "elm,state,visible", "elm");
-
-        efl_event_callback_legacy_call(WIDGET(prev_it), ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(prev_it));
-     }
-
-end:
    // This should not happen, but just in case and by security
    // make sure there is no more reference to this item.
    EINA_LIST_FOREACH(sd->ops, l, nfo)
@@ -1245,6 +1184,78 @@ static char *
 _access_prev_btn_info_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
    return strdup(E_("Back"));
+}
+
+EOLIAN static void
+_elm_naviframe_item_efl_object_invalidate(Eo *eo_item, Elm_Naviframe_Item_Data *it)
+{
+   Elm_Naviframe_Item_Data *prev_it = NULL;
+   Elm_Naviframe_Content_Item_Pair *content_pair;
+   Eina_Inlist *l;
+
+   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
+   if (it->title_prev_btn)
+     evas_object_event_callback_del(it->title_prev_btn, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb);
+   if (it->title_next_btn)
+     evas_object_event_callback_del(it->title_next_btn, EVAS_CALLBACK_DEL, _item_title_next_btn_del_cb);
+   if (it->title_icon)
+     evas_object_event_callback_del(it->title_icon, EVAS_CALLBACK_DEL, _item_title_icon_del_cb);
+   EINA_INLIST_FOREACH_SAFE(it->content_list, l, content_pair)
+     {
+        if (content_pair->content)
+          {
+             /* content object will be destroyed naturally */
+             evas_object_event_callback_del(content_pair->content,
+                                            EVAS_CALLBACK_DEL,
+                                            _title_content_del);
+             evas_object_del(content_pair->content);
+          }
+        eina_stringshare_del(content_pair->part);
+        free(content_pair);
+     }
+   if (it->content)
+     {
+        evas_object_event_callback_del(it->content, EVAS_CALLBACK_DEL, _item_content_del_cb);
+        if ((sd->preserve) && (!sd->on_deletion))
+          {
+             /* so that elm does not delete the contents with the item's
+              * view after the destructor */
+             elm_object_part_content_unset(VIEW(it), CONTENT_PART);
+             evas_object_hide(it->content);
+          }
+     }
+   if (evas_object_data_get(VIEW(it), "out_of_list"))
+     goto end;
+
+   sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(it));
+
+   if ((elm_naviframe_top_item_get(WIDGET(it)) == eo_item) && !sd->on_deletion) /* must raise another one */
+     {
+        if (sd->stack && sd->stack->last)
+          prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
+                                              Elm_Naviframe_Item_Data);
+        if (!prev_it)
+          {
+             elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+             goto end;
+          }
+
+        elm_widget_tree_unfocusable_set(VIEW(prev_it), EINA_FALSE);
+        elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
+
+        if (sd->freeze_events)
+          evas_object_freeze_events_set(VIEW(prev_it), EINA_FALSE);
+        _resize_object_reset(WIDGET(prev_it), prev_it);
+        evas_object_show(VIEW(prev_it));
+
+        _prev_page_focus_recover(prev_it);
+
+        elm_object_signal_emit(VIEW(prev_it), "elm,state,visible", "elm");
+
+        efl_event_callback_legacy_call(WIDGET(prev_it), ELM_NAVIFRAME_EVENT_ITEM_ACTIVATED, EO_OBJ(prev_it));
+     }
+end:
+   efl_invalidate(efl_super(eo_item, ELM_NAVIFRAME_ITEM_CLASS));
 }
 
 EOLIAN static Eo *
