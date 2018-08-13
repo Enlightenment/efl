@@ -30,8 +30,7 @@ png = dependency('libpng')
 tiff = dependency('libtiff-4')
 giflib = cc.find_library('gif')
 
-#we need to make this a optional
-webp = dependency('libwebp')
+webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
 
 subdir('image_loaders')
 subdir('image_savers')
