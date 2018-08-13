@@ -375,7 +375,8 @@ static void _list_udpate(void);
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
 static Eina_List *tests;
-static Eina_Bool eo_only = EINA_FALSE;
+static Eina_Bool hide_legacy = EINA_FALSE;
+static Eina_Bool hide_beta = EINA_FALSE;
 
 struct elm_test
 {
@@ -426,9 +427,16 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_eo_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_legacy_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   eo_only = elm_check_state_get(obj);
+   hide_legacy = elm_check_state_get(obj);
+   _list_udpate();
+}
+
+static void
+_beta_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   hide_beta = elm_check_state_get(obj);
    _list_udpate();
 }
 
@@ -471,7 +479,9 @@ _menu_create(const char *option_str)
    _clear_menu();
    EINA_LIST_FOREACH(tests, l, t)
      {
-        if (eo_only && !t->is_eo)
+        if (hide_legacy && !t->is_eo)
+          continue;
+        if (hide_beta && t->is_eo)
           continue;
         if (option_str &&
             !(strcasestr(t->name, option_str) || strcasestr(t->category, option_str)))
@@ -725,10 +735,17 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    elm_object_focus_set(en, EINA_TRUE);
    entry = en;
 
-   chk = elm_check_add(win); // Nstate for All/Eo only/Legacy only?
+   chk = elm_check_add(win); // Check for hiding beta api
+   elm_object_text_set(chk, "Hide beta");
+   elm_check_state_set(chk, hide_beta);
+   evas_object_smart_callback_add(chk, "changed", _beta_chk_changed, NULL);
+   elm_box_pack_end(bx1, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(win); // Check for hiding legacy api
    elm_object_text_set(chk, "Hide Legacy");
-   elm_check_state_set(chk, eo_only);
-   evas_object_smart_callback_add(chk, "changed", _eo_chk_changed, NULL);
+   elm_check_state_set(chk, hide_legacy);
+   evas_object_smart_callback_add(chk, "changed", _legacy_chk_changed, NULL);
    elm_box_pack_end(bx1, chk);
    evas_object_show(chk);
 
