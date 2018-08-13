@@ -68,6 +68,8 @@ add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
 add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'c')
 add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'c')
 add_global_arguments('-DNEED_RUN_IN_TREE=1', language: 'c')
+add_global_arguments('-DEFL_BUILD=1', language: 'c')
+add_global_arguments('-DEFL_BUILD=1', language: 'objc')
 add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'objc')
 add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'objc')
 
