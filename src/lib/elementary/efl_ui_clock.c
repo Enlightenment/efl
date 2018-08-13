@@ -76,6 +76,21 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
+static void _part_name_snprintf(char *buffer, int buffer_size,
+   const Evas_Object *obj, const char *template, int n)
+{
+   snprintf(buffer, buffer_size, template, n);
+   if (edje_object_part_exists (obj, buffer)) return;
+   // Try 'elm' prefix instead of 'efl'
+   buffer[0] = 'e';
+   buffer[1] = 'l';
+   buffer[2] = 'm';
+   if (edje_object_part_exists (obj, buffer)) return;
+   // Skip the namespace prefix "elm." which was not present
+   // in previous versions
+   snprintf(buffer, buffer_size, template + 4, n);
+}
+
 static Elm_Module *
 _dt_mod_find(void)
 {
@@ -259,7 +274,8 @@ _field_list_arrange(Evas_Object *obj)
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
-        snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
+        _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
+                            field->location);
 
         if (field->visible && field->fmt_exist)
           {
@@ -396,17 +412,24 @@ _reload_format(Evas_Object *obj)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                       field->location);
-             elm_layout_signal_emit(obj, buf, "efl");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, buf, "elm");
+             else
+               elm_layout_signal_emit(obj, buf, "efl");
           }
         else
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                       field->location);
-             elm_layout_signal_emit(obj, buf, "efl");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, buf, "elm");
+             else
+               elm_layout_signal_emit(obj, buf, "efl");
           }
         if (field->location + 1)
           {
-             snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location + 1));
+             _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_SEPARATOR_STR,
+                                 field->location + 1);
              elm_layout_text_set(obj, buf, field->separator);
           }
      }
@@ -535,11 +558,15 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                       field->location);
-             elm_layout_signal_emit(obj, buf, "efl");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, buf, "elm");
+             else
+               elm_layout_signal_emit(obj, buf, "efl");
 
              if (field->location)
                {
-                  snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location));
+                  _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_SEPARATOR_STR,
+                                      field->location);
                   elm_layout_text_set(obj, buf, field->separator);
                }
 
@@ -549,7 +576,10 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
           {
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                       field->location);
-             elm_layout_signal_emit(obj, buf, "efl");
+             if (elm_widget_is_legacy(obj))
+               elm_layout_signal_emit(obj, buf, "elm");
+             else
+               elm_layout_signal_emit(obj, buf, "efl");
           }
      }
 
@@ -993,12 +1023,16 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
 
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR,
                  field->location);
-        elm_layout_signal_emit(obj, buf, "efl");
+        if (elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, buf, "elm");
+        else
+          elm_layout_signal_emit(obj, buf, "efl");
 
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         edje_object_message_signal_process(wd->resize_obj);
 
-        snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
+        _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
+                            field->location);
         elm_layout_content_unset(obj, buf);
         elm_layout_content_set(obj, buf, field->item_obj);
      }
@@ -1010,12 +1044,16 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
 
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_DISABLE_SIG_STR,
                  field->location);
-        elm_layout_signal_emit(obj, buf, "efl");
+        if (elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, buf, "elm");
+        else
+          elm_layout_signal_emit(obj, buf, "efl");
 
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
         edje_object_message_signal_process(wd->resize_obj);
 
-        snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
+        _part_name_snprintf(buf, sizeof(buf), obj, EDC_PART_FIELD_STR,
+                            field->location);
         evas_object_hide(elm_layout_content_unset(obj, buf));
      }
    sd->freeze_sizing = EINA_FALSE;

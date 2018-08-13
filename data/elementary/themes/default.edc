@@ -36,6 +36,7 @@ collections {
 #include "edc/elm/access.edc"
 #include "edc/elm/photo.edc"
 #include "edc/elm/focus.edc"
+#include "edc/elm/uiclock.edc"
 #include "edc/elm/player.edc"
 #include "edc/elm/thumb.edc"
 #include "edc/elm/pointer.edc"

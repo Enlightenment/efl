@@ -1,0 +1,207 @@
+#define DATETIME_FIELD(_pos) \
+   part { \
+      name: "elm.field"#_pos; type: SWALLOW; \
+      scale: 1; \
+      clip_to: "clip"; \
+      description { state: "default" 0.0; \
+         visible: 0; \
+         min: 0 0; \
+         align: 0.0 0.5; \
+         fixed: 1 1; \
+         rel1.relative: 1.0 0.0; \
+         rel1.to: "elm.separator"#_pos; \
+         rel2.relative: 1.0 1.0; \
+         rel2.to: "elm.separator"#_pos; \
+      } \
+      description { state: "enable" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+         min: 8 10; \
+      } \
+   } \
+   programs{ \
+      program { name: "field_"#_pos"enabled"; \
+         signal: "field"#_pos",enable"; source: "elm"; \
+         action: STATE_SET "enable" 0.0; \
+         target: "elm.field"#_pos; \
+      } \
+      program { name: "field_"#_pos"disabled"; \
+         signal: "field"#_pos",disable"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "elm.field"#_pos; \
+      } \
+    }
+#define DATETIME_SEPARATOR(_pos, _after) \
+   part { \
+      name: "elm.separator"#_pos; type: TEXT; \
+      scale: 1; \
+      effect: SHADOW BOTTOM; \
+      clip_to: "disclip"; \
+      description { state: "default" 0.0; \
+         visible: 0; \
+         min: 0 0; \
+         align: 0.0 0.5; \
+         fixed: 1 0; \
+         rel1 { \
+            relative: 1.0 0.0; \
+            to: "elm.field"#_after; \
+         } \
+         rel2 { \
+            relative: 1.0 1.0; \
+            to: "elm.field"#_after; \
+         } \
+         color_class: "datetime_separator_text"; \
+         text { \
+            font: "Sans"; size: 10; \
+            min: 1 0; \
+            ellipsis: -1; \
+            align: 0.5 0.5; \
+            text_class: "datetime_separator_text"; \
+         } \
+      } \
+      description { state: "enable" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+         min: 8 10; \
+      } \
+   } \
+   part { \
+      name: "separator"#_pos"d"; type: TEXT; \
+      scale: 1; \
+      effect: SHADOW BOTTOM; \
+      clip_to: "disclip2"; \
+      description { state: "default" 0.0; \
+         visible: 0; \
+         rel1.to: "elm.separator"#_pos; \
+         rel2.to: "elm.separator"#_pos; \
+         color_class: "datetime_separator_text_disabled"; \
+         text { \
+            text_source: "elm.separator"#_pos; \
+            font: "Sans"; size: 10; \
+            text_class: "datetime_separator_text_disabled"; \
+         } \
+      } \
+      description { state: "enable" 0.0; \
+         inherit: "default" 0.0; \
+         visible: 1; \
+      } \
+   } \
+   programs { \
+      program { \
+         signal: "field"#_after",enable"; source: "elm"; \
+         action: STATE_SET "enable" 0.0; \
+         target: "elm.separator"#_pos; \
+         target: "separator"#_pos"d"; \
+      } \
+      program { \
+         signal: "field"#_after",disable"; source: "elm"; \
+         action: STATE_SET "default" 0.0; \
+         target: "elm.separator"#_pos; \
+         target: "separator"#_pos"d"; \
+      } \
+   }
+group { name: "elm/uiclock/base/default";
+   parts {
+      part { name: "bg"; type: RECT;
+         description { state: "default" 0.0;
+            color_class: "datetime_bg";
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.separator0";
+            rel2.to: "elm.separator7";
+         }
+      }
+      part { name: "disclip"; type: RECT;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "elm.separator0";
+            rel2.to: "elm.separator7";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "disclip2"; type: RECT;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.to: "elm.separator0";
+            rel2.to: "elm.separator7";
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.separator0"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 8 10;
+            align: 0.0 0.5;
+            fixed: 1 0;
+            rel2.relative: 0.0 1.0;
+         }
+      }
+      DATETIME_FIELD(0)
+      DATETIME_SEPARATOR(1,0)
+      DATETIME_FIELD(1)
+      DATETIME_SEPARATOR(2,1)
+      DATETIME_FIELD(2)
+      DATETIME_SEPARATOR(3,2)
+      DATETIME_FIELD(3)
+      DATETIME_SEPARATOR(4,3)
+      DATETIME_FIELD(4)
+      DATETIME_SEPARATOR(5,4)
+      DATETIME_FIELD(5)
+      DATETIME_SEPARATOR(6,5)
+      DATETIME_FIELD(6)
+      DATETIME_SEPARATOR(7,6)
+      DATETIME_FIELD(7)
+      DATETIME_SEPARATOR(8,7)
+      part { name: "elm.separator9"; type: SPACER;
+         description { state: "default" 0.0;
+            rel1.to: "elm.separator7";
+            rel1.relative: 1.0 0.0;
+            min: 8 10;
+         }
+      }
+      part { name: "discover"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.separator0";
+            rel2.to: "elm.separator7";
+            visible: 0;
+            color: 0 0 0 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.access"; type: RECT; repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "disclip";
+         target: "disclip2";
+         target: "discover";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "disclip";
+         target: "disclip2";
+         target: "discover";
+      }
+   }
+}
+#undef DATETIME_SEPARATOR
+#undef DATETIME_FIELD

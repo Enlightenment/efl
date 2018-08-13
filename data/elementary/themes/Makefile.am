@@ -149,6 +149,7 @@ elementary/themes/edc/elm/textpath.edc \
 elementary/themes/edc/elm/thumb.edc \
 elementary/themes/edc/elm/toolbar.edc \
 elementary/themes/edc/elm/tooltip.edc \
+elementary/themes/edc/elm/uiclock.edc \
 elementary/themes/edc/elm/video.edc \
 elementary/themes/edc/elm/win.edc \
 \
