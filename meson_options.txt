@@ -383,7 +383,7 @@ option('emotion-loaders-disabler',
   type : 'array',
   description : 'add names here to disable the loaders',
   choices : ['generic', 'gstreamer', 'gstreamer1', 'libvlc', 'xine'],
-  value : ['gstreamer']
+  value : ['gstreamer', 'libvlc', 'xine']
 )
 
 option('emotion-generic-loaders-disabler',
