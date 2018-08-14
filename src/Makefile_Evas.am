@@ -963,6 +963,17 @@ if BUILD_ENGINE_GL_COMMON
 if EVAS_STATIC_BUILD_GL_COMMON
 lib_evas_libevas_la_SOURCES += $(GL_COMMON_SOURCES) $(GL_GENERIC_SOURCES)
 lib_evas_libevas_la_LIBADD += @evas_engine_gl_common_libs@
+lib_evas_libevas_la_CPPFLAGS += \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/evas/include \
+-I$(top_builddir)/src/lib/evas/include \
+-I$(top_srcdir)/src/lib/evas/cserve2 \
+-I$(top_srcdir)/src/lib/evas/filters \
+-I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/modules/evas/engines/gl_common \
+-I$(top_builddir)/src/modules/evas/engines/gl_generic \
+@evas_engine_gl_common_cflags@ \
+@EVAS_CFLAGS@
 else
 noinst_LTLIBRARIES += modules/evas/engines/gl_common/libevas_engine_gl_common.la
 modules_evas_engines_gl_common_libevas_engine_gl_common_la_SOURCES = $(GL_COMMON_SOURCES)
