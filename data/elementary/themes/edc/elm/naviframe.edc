@@ -559,9 +559,9 @@ group { name: "elm/naviframe/item/basic/default";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
-         after: "pushed2";
       }
-      program { name: "pushed2";
+      program {
+         signal: "elm,state,cur,pushed,deferred"; source: "elm";
          action: STATE_SET "prev" 0.0;
          transition: DECEL 0.5;
          target: "base";
@@ -578,9 +578,9 @@ group { name: "elm/naviframe/item/basic/default";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "elements_clip";
-         after: "popped2";
       }
-      program { name: "popped2";
+      program {
+         signal: "elm,state,cur,popped,deferred"; source: "elm";
          action: STATE_SET "next" 0.0;
          transition: DECEL 0.5;
          target: "base";
@@ -597,9 +597,9 @@ group { name: "elm/naviframe/item/basic/default";
          action: STATE_SET "next" 0.0;
          target: "base";
          target: "elements_clip";
-         after: "pushedb2";
       }
-      program { name: "pushedb2";
+      program {
+         signal: "elm,state,new,pushed,deferred"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "base";
@@ -616,9 +616,9 @@ group { name: "elm/naviframe/item/basic/default";
          action: STATE_SET "prev" 0.0;
          target: "base";
          target: "elements_clip";
-         after: "poppedb2";
       }
-      program { name: "poppedb2";
+      program {
+         signal: "elm,state,prev,popped,deferred"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "base";
