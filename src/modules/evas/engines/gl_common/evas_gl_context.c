@@ -3078,6 +3078,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    gc->pipe[pn].region.type = SHD_MAP;
    gc->pipe[pn].shader.prog = prog;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
+   gc->pipe[pn].shader.tex_target = GL_TEXTURE_2D;
+
    if (utexture)
      {
        gc->pipe[pn].shader.cur_texu = tex->ptu->texture;
