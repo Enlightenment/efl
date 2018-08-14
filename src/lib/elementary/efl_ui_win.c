@@ -1540,6 +1540,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
    int w, h;
 
    if (!sd->frame_obj) return;
+   if (!sd->csd.need) return;
    _elm_win_frame_geometry_adjust(sd);
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    if (elm_widget_is_legacy(sd->obj))
