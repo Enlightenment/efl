@@ -5101,7 +5101,9 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
              return NULL;
           }
         val = eina_value_new(EINA_VALUE_TYPE_UCHAR);
-        b = edje_audio_channel_mute_get(chan);
+        b = elm_config_audio_mute_get(chan);
+        if (b != edje_audio_channel_mute_get(chan))
+          ERR("config state for audio channel '%s' does not match active state!", channel);
         eina_value_set(val, b);
         return val;
      }
