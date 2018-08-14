@@ -1833,7 +1833,8 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_TRUE;
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
+   if (pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
    _elm_code_widget_refresh(obj, NULL);
 }
@@ -1849,7 +1850,8 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    pd->focussed = EINA_FALSE;
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
+   if (pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
 
   _elm_code_widget_refresh(obj, NULL);
 }
