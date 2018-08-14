@@ -166,8 +166,10 @@ evas_module_paths_init(void)
 
 #if !EVAS_MODULE_NO_ENGINES
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, buffer);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, drm);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, fb);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_generic);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_drm);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, gl_sdl);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_8);
@@ -176,6 +178,8 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_ddraw);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_gdi);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_x11);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, wayland_shm);
+EVAS_EINA_STATIC_MODULE_DEFINE(engine, wayland_egl);
 #endif
 
 #if !EVAS_MODULE_NO_VG_LOADERS
@@ -226,11 +230,17 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_BUFFER
   EVAS_EINA_STATIC_MODULE_USE(engine, buffer),
 #endif
+#ifdef EVAS_STATIC_BUILD_DRM
+  EVAS_EINA_STATIC_MODULE_USE(engine, drm),
+#endif
 #ifdef EVAS_STATIC_BUILD_FB
   EVAS_EINA_STATIC_MODULE_USE(engine, fb),
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_COMMON
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_generic),
+#endif
+#ifdef EVAS_STATIC_BUILD_GL_DRM
+  EVAS_EINA_STATIC_MODULE_USE(engine, gl_drm),
 #endif
 #ifdef EVAS_STATIC_BUILD_GL_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, gl_x11),
@@ -249,6 +259,12 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, software_x11),
+#endif
+#ifdef EVAS_STATIC_BUILD_WAYLAND_EGL
+  EVAS_EINA_STATIC_MODULE_USE(engine, wayland_egl),
+#endif
+#ifdef EVAS_STATIC_BUILD_WAYLAND_SHM
+  EVAS_EINA_STATIC_MODULE_USE(engine, wayland_shm),
 #endif
 #endif
 #if !EVAS_MODULE_NO_VG_LOADERS
