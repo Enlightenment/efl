@@ -20,6 +20,13 @@
 # include "config.h"
 #endif
 
+#if defined(__clang__)
+# pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif (__GNUC__ == 4 && __GNUC_MINOR__ >= 6) || __GNUC__ > 4
+# pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+
 #include "eina_suite.h"
 
 #if EINA_SIZEOF_WCHAR_T >= 4
