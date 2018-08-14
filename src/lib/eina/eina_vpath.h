@@ -3,6 +3,8 @@
 
 #include "eina_prefix.h"
 
+#ifdef EFL_BETA_API_SUPPORT
+
 /**
  * Eina vpath is a path that can be prefixed with a virtual path.
  *
@@ -77,6 +79,8 @@
  *
  * Additional info: https://phab.enlightenment.org/w/eina_vpath/
  *
+ * @since 1.21
+ *
  */
 typedef const char * Eina_Vpath;
 
@@ -85,7 +89,10 @@ typedef const char * Eina_Vpath;
  *
  * @return NULL if failed, or a full normal string file path that is resolved
  *
+ * @since 1.21
+ *
  */
 EAPI char *eina_vpath_resolve(Eina_Vpath path);
 
+#endif
 #endif
