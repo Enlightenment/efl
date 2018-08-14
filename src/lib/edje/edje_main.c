@@ -226,7 +226,10 @@ _edje_shutdown_core(void)
 
 #ifdef HAVE_ECORE_IMF
    if (_need_imf)
-     ecore_imf_shutdown();
+     {
+        ecore_imf_shutdown();
+        _need_imf = EINA_FALSE;
+     }
 #endif
 
 #ifdef HAVE_EPHYSICS
