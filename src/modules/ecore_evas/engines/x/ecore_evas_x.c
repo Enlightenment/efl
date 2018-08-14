@@ -1650,18 +1650,22 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!edata->configured)
+   if ((e->from_wm) || (ee->prop.override))
      {
-        if (edata->fully_obscured)
+        if (!edata->configured)
           {
-             /* FIXME: round trip */
-             if (!ecore_x_screen_is_composited(edata->screen_num))
+             if (edata->fully_obscured)
+               {
+                  /* FIXME: round trip */
+                  if (!ecore_x_screen_is_composited(edata->screen_num))
+                    ee->draw_block = EINA_FALSE;
+               }
+             else
                ee->draw_block = EINA_FALSE;
           }
-        else
-          ee->draw_block = EINA_FALSE;
+        edata->configure_coming = 0;
+        edata->configured = 1;
      }
-   edata->configured = 1;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
@@ -1671,7 +1675,6 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
 
    if (edata->configure_reqs > 0) edata->configure_reqs--;
 
-   edata->configure_coming = 0;
    if ((e->from_wm) || (ee->prop.override))
      {
         if ((ee->x != e->x) || (ee->y != e->y))
