@@ -115,6 +115,16 @@ elif target_machine.system() == 'darwin'
   sys_mod_extension = 'so'
 endif
 
+crypto = []
+
+if (get_option('crypto') == 'gnutls')
+  crypto = dependency('gnutls')
+  config_h.set('HAVE_GNUTLS', '1')
+elif (get_option('crypto') == 'openssl')
+  crypto = dependency('openssl')
+  config_h.set('HAVE_OPENSSL', '1')
+endif
+
 config_h.set_quoted('SHARED_LIB_SUFFIX', '.'+sys_lib_extension)
 config_h.set_quoted('MOD_SUFFIX', '.'+sys_mod_extension)
 config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)

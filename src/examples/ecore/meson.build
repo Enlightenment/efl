@@ -66,7 +66,7 @@ examples = [
 ]
 
 foreach example : examples
-  executable(example, example + '.c', 
+  executable(example, example + '.c',
     dependencies: [eina, ecore_evas],
     c_args : [
       '-DPACKAGE_EXAMPLES_DIR="'+meson.current_source_dir()+'"']

@@ -175,12 +175,7 @@ else
   ecore_con_deps += eldbus
 endif
 
-
-if (get_option('crypto') == 'gnutls')
-  ecore_con_deps += gnutls
-elif (get_option('crypto') == 'openssl')
-  ecore_con_deps += openssl
-endif
+ecore_con_deps += crypto
 
 ecore_con_lib = library('ecore_con',
     ecore_con_src, pub_eo_file_target,
