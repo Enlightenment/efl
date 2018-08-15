@@ -118,10 +118,11 @@ endif
 crypto = []
 
 if (get_option('crypto') == 'gnutls')
-  crypto = dependency('gnutls')
+  crypto += dependency('gnutls')
+  crypto += cc.find_library('gcrypt')
   config_h.set('HAVE_GNUTLS', '1')
 elif (get_option('crypto') == 'openssl')
-  crypto = dependency('openssl')
+  crypto += dependency('openssl')
   config_h.set('HAVE_OPENSSL', '1')
 endif
 
