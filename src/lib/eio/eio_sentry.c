@@ -88,23 +88,34 @@ _handle_event(void *data, int type, void *event)
 static void
 _initialize_handlers(Eio_Sentry_Data *pd)
 {
+   Ecore_Event_Handler *h;
    EINA_SAFETY_ON_NULL_RETURN(pd);
+   pd->handlers = eina_array_new(11);
 
-   ecore_event_handler_add(EIO_MONITOR_FILE_CREATED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_FILE_DELETED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, _handle_event, pd);
+   h = ecore_event_handler_add(EIO_MONITOR_FILE_CREATED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_FILE_DELETED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
 
-   ecore_event_handler_add(EIO_MONITOR_DIRECTORY_CREATED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_DIRECTORY_DELETED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_DIRECTORY_MODIFIED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_DIRECTORY_CLOSED, _handle_event, pd);
+   h = ecore_event_handler_add(EIO_MONITOR_DIRECTORY_CREATED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_DIRECTORY_DELETED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_DIRECTORY_MODIFIED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_DIRECTORY_CLOSED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
 
-   ecore_event_handler_add(EIO_MONITOR_SELF_RENAME, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_SELF_DELETED, _handle_event, pd);
-   ecore_event_handler_add(EIO_MONITOR_ERROR, _handle_event, pd);
-
-   pd->handlers_initialized = EINA_TRUE;
+   h = ecore_event_handler_add(EIO_MONITOR_SELF_RENAME, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_SELF_DELETED, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
+   h = ecore_event_handler_add(EIO_MONITOR_ERROR, _handle_event, pd);
+   eina_array_push(pd->handlers, h);
 }
 
 Eina_Bool
@@ -113,7 +124,7 @@ _eio_sentry_add(Eo *obj EINA_UNUSED, Eio_Sentry_Data *pd, const char *path)
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, EINA_FALSE);
 
-   if (!pd->handlers_initialized)
+   if (!pd->handlers)
      _initialize_handlers(pd);
 
    if (eina_hash_find(pd->targets, path))
@@ -165,7 +176,6 @@ Efl_Object * _eio_sentry_efl_object_constructor(Eo *obj, Eio_Sentry_Data *pd)
 
    pd->object = obj;
    pd->targets = eina_hash_string_small_new((Eina_Free_Cb)&eio_monitor_del);
-   pd->handlers_initialized = EINA_FALSE;
 
    return obj;
 }
@@ -173,6 +183,12 @@ Efl_Object * _eio_sentry_efl_object_constructor(Eo *obj, Eio_Sentry_Data *pd)
 void _eio_sentry_efl_object_destructor(Eo *obj, Eio_Sentry_Data *pd)
 {
    eina_hash_free(pd->targets);
+   if (pd->handlers)
+     {
+        while (eina_array_count(pd->handlers))
+          ecore_event_handler_del(eina_array_pop(pd->handlers));
+        eina_array_free(pd->handlers);
+     }
 
    efl_destructor(efl_super(obj, EIO_SENTRY_CLASS));
 }
