@@ -62,7 +62,7 @@ local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
 local_tests = join_paths('src', 'tests')
 local_benchmark = join_paths('src', 'benchmarks')
-local_examples = join_paths('src', 'examples')
+#local_examples = join_paths('src', 'examples')
 local_scripts = join_paths('src', 'scripts')
 
 add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
@@ -260,11 +260,11 @@ if get_option('build-tests')
   endforeach
 endif
 
-if get_option('build-examples')
-  foreach example : example_dirs
-      subdir(join_paths(local_examples, example))
-  endforeach
-endif
+#if get_option('build-examples')
+#  foreach example : example_dirs
+#      subdir(join_paths(local_examples, example))
+#  endforeach
+#endif
 
 subdir(join_paths(local_scripts))
 
