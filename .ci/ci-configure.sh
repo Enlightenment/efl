@@ -29,6 +29,9 @@ MISC_DISABLED_LINUX_COPTS=" --disable-neon --disable-libeeze --disable-systemd -
 
 RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
+patch -p1 < .ci/efl.m4.diff
+sed -i.orig 's/AC_INIT\(.*\)efl_version-[a-zA-Z0-9]\+/AC_INIT\1efl_version/g' configure.ac
+
 if [ "$DISTRO" != "" ] ; then
   # Normal build test of all targets
   OPTS="$DEFAULT_LINUX_COPTS"
