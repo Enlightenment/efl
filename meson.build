@@ -256,6 +256,7 @@ subdir(join_paths('data', 'elementary', 'objects'))
 
 if get_option('build-tests')
   check = dependency('check')
+  subdir(join_paths('src', 'tests'))
   foreach test : test_dirs
       subdir(join_paths(local_tests, test))
   endforeach
