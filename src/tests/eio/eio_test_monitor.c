@@ -146,6 +146,7 @@ EFL_START_TEST(eio_test_monitor_add_and_remove)
 
    //monitor directory
    monitor = eio_monitor_add(filename);
+   ck_assert_str_eq(eio_monitor_path_get(monitor), filename);
 
    eio_monitor_del(monitor);
 
