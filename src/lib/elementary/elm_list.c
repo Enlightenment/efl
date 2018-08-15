@@ -2431,8 +2431,9 @@ _elm_list_efl_canvas_group_group_del(Eo *obj, Elm_List_Data *sd)
    evas_object_event_callback_del
      (sd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb);
 
-   EINA_LIST_FREE(sd->items, eo_it)
-     efl_del(eo_it);
+   while (sd->items)
+     /* will be removed from list in _elm_list_item_elm_widget_item_del_pre */
+     efl_del(eina_list_data_get(sd->items));
 
    sd->selected = eina_list_free(sd->selected);
 
