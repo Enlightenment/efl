@@ -396,7 +396,7 @@ test_remote_image(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, void *e
 }
 
 static void
-_img_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_img_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    fprintf(stderr, "%p - clicked\n", obj);
 }
