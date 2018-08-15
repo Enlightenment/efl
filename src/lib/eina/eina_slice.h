@@ -123,7 +123,7 @@ struct _Eina_Rw_Slice
 /**
  * @brief Convert the Read-write slice to read-only.
  *
- * @param rw_slice the read-write slice to convert.
+ * @param[in] rw_slice the read-write slice to convert.
  * @return the red-only slice matching the slice.
  */
 static inline Eina_Slice eina_rw_slice_slice_get(const Eina_Rw_Slice rw_slice);
@@ -131,7 +131,7 @@ static inline Eina_Slice eina_rw_slice_slice_get(const Eina_Rw_Slice rw_slice);
 /**
  * @brief Creates a duplicate of slice's memory.
  *
- * @param slice the input to duplicate
+ * @param[in] slice the input to duplicate
  * @return a new read-write slice with new @c mem that matches @a slice
  *         contents. The new @c mem is allocated with malloc() and must
  *         be released with free().
@@ -146,7 +146,7 @@ static inline Eina_Rw_Slice eina_slice_dup(const Eina_Slice slice) EINA_WARN_UNU
 /**
  * @brief Creates a duplicate of slice's memory.
  *
- * @param rw_slice the input to duplicate
+ * @param[in] rw_slice the input to duplicate
  * @return a new read-write slice with new @c mem that matches @a slice
  *         contents. The new @c mem is allocated with malloc() and must
  *         be released with free().
@@ -161,8 +161,8 @@ static inline Eina_Rw_Slice eina_rw_slice_dup(const Eina_Rw_Slice rw_slice) EINA
 /**
  * @brief Compare two slices, similar to memcmp()
  *
- * @param a the first slice to compare.
- * @param b the second slice to compare.
+ * @param[in] a the first slice to compare.
+ * @param[in] b the second slice to compare.
  * @return 0 if equal, < 0 if a < b, > 0 if a > b
  *
  * @since 1.19
@@ -172,8 +172,8 @@ static inline int eina_slice_compare(const Eina_Slice a, const Eina_Slice b);
 /**
  * @brief Compare two slices, similar to memcmp()
  *
- * @param a the first slice to compare.
- * @param b the second slice to compare.
+ * @param[in] a the first slice to compare.
+ * @param[in] b the second slice to compare.
  * @return 0 if equal, < 0 if a < b, > 0 if a > b
  *
  * @since 1.19
@@ -183,8 +183,8 @@ static inline int eina_rw_slice_compare(const Eina_Rw_Slice a, const Eina_Rw_Sli
 /**
  * @brief Copy a read-only slice to a read-write one, similar to memcpy().
  *
- * @param dest where to write the memory.
- * @param src where to load memory.
+ * @param[in] dest where to write the memory.
+ * @param[in] src where to load memory.
  *
  * @return a new slice with the resulting write. Note that the length
  *         (@c len) will be the smallest of @a dest and @a src.
@@ -199,9 +199,9 @@ static inline Eina_Rw_Slice eina_rw_slice_copy(const Eina_Rw_Slice dest, const E
 /**
  * @brief Seek within a slice, similar to fseek().
  *
- * @param slice the containing slice to seek inside.
- * @param offset how to get to the new position.
- * @param whence SEEK_SET, SEEK_END as fseek().
+ * @param[in] slice the containing slice to seek inside.
+ * @param[in] offset how to get to the new position.
+ * @param[in] whence SEEK_SET, SEEK_END as fseek().
  * @return a new slice contained inside, it will start at the given
  *         offset and have a length that goes until the end of the @a
  *         slice. If an invalid @a whence, a zero-sized slice starting
@@ -217,9 +217,9 @@ static inline Eina_Slice eina_slice_seek(const Eina_Slice slice, ssize_t offset,
 /**
  * @brief Seek within a read-write slice, similar to fseek().
  *
- * @param rw_slice the containing slice to seek inside.
- * @param offset how to get to the new position.
- * @param whence SEEK_SET, SEEK_END as fseek().
+ * @param[in] rw_slice the containing slice to seek inside.
+ * @param[in] offset how to get to the new position.
+ * @param[in] whence SEEK_SET, SEEK_END as fseek().
  * @return a new slice contained inside, it will start at the given
  *         offset and have a length that goes until the end of the @a
  *         rw_slice. If an invalid @a whence, a zero-sized slice
@@ -236,8 +236,8 @@ static inline Eina_Rw_Slice eina_rw_slice_seek(const Eina_Rw_Slice rw_slice, ssi
 /**
  * @brief Find a character inside the slice, similar to memchr().
  *
- * @param slice the reference memory.
- * @param c the byte (character) to find.
+ * @param[in] slice the reference memory.
+ * @param[in] c the byte (character) to find.
  * @return the memory within slice or @c NULL if not found.
  *
  * @since 1.19
@@ -247,8 +247,8 @@ static inline const void *eina_slice_strchr(const Eina_Slice slice, int c);
 /**
  * @brief Find a needle inside the slice, similar to memmem().
  *
- * @param slice the reference memory.
- * @param needle what to find.
+ * @param[in] slice the reference memory.
+ * @param[in] needle what to find.
  * @return the memory within slice or @c NULL if not found.
  *
  * @since 1.19
@@ -258,8 +258,8 @@ static inline const void *eina_slice_find(const Eina_Slice slice, const Eina_Sli
 /**
  * @brief Checks if the slice starts with a prefix.
  *
- * @param slice the reference memory.
- * @param prefix the slice to check if @a slice starts with.
+ * @param[in] slice the reference memory.
+ * @param[in] prefix the slice to check if @a slice starts with.
  * @return #EINA_TRUE if @a slice starts with @a prefix, #EINA_FALSE otherwise.
  *
  * @since 1.19
@@ -269,8 +269,8 @@ static inline Eina_Bool eina_slice_startswith(const Eina_Slice slice, const Eina
 /**
  * @brief Checks if the slice ends with a suffix.
  *
- * @param slice the reference memory.
- * @param suffix the slice to check if @a slice ends with.
+ * @param[in] slice the reference memory.
+ * @param[in] suffix the slice to check if @a slice ends with.
  * @return #EINA_TRUE if @a slice ends with @a suffix, #EINA_FALSE otherwise.
  *
  * @since 1.19
@@ -280,8 +280,8 @@ static inline Eina_Bool eina_slice_endswith(const Eina_Slice slice, const Eina_S
 /**
  * @brief Find a character inside the slice, similar to memchr().
  *
- * @param rw_slice the reference memory.
- * @param c the byte (character) to find.
+ * @param[in] rw_slice the reference memory.
+ * @param[in] c the byte (character) to find.
  * @return the memory within slice or @c NULL if not found.
  *
  * @since 1.19
@@ -291,8 +291,8 @@ static inline void *eina_rw_slice_strchr(const Eina_Rw_Slice rw_slice, int c);
 /**
  * @brief Find a needle inside the slice, similar to memmem().
  *
- * @param rw_slice the reference memory.
- * @param needle what to find.
+ * @param[in] rw_slice the reference memory.
+ * @param[in] needle what to find.
  * @return the memory within slice or @c NULL if not found.
  *
  * @since 1.19
@@ -302,8 +302,8 @@ static inline void *eina_rw_slice_find(const Eina_Rw_Slice rw_slice, const Eina_
 /**
  * @brief Checks if the slice starts with a prefix.
  *
- * @param slice the reference memory.
- * @param prefix the slice to check if @a slice starts with.
+ * @param[in] slice the reference memory.
+ * @param[in] prefix the slice to check if @a slice starts with.
  * @return #EINA_TRUE if @a slice starts with @a prefix, #EINA_FALSE otherwise.
  *
  * @since 1.19
@@ -313,8 +313,8 @@ static inline Eina_Bool eina_rw_slice_startswith(const Eina_Rw_Slice slice, cons
 /**
  * @brief Checks if the slice ends with a suffix.
  *
- * @param slice the reference memory.
- * @param suffix the slice to check if @a slice ends with.
+ * @param[in] slice the reference memory.
+ * @param[in] suffix the slice to check if @a slice ends with.
  * @return #EINA_TRUE if @a slice ends with @a suffix, #EINA_FALSE otherwise.
  *
  * @since 1.19
@@ -327,7 +327,7 @@ static inline Eina_Bool eina_rw_slice_endswith(const Eina_Rw_Slice slice, const 
  * @note this is out-of the slice, the first byte after it ends and
  * must not be accessed.
  *
- * @param slice the reference memory.
+ * @param[in] slice the reference memory.
  * @return the first byte after the slice ends.
  *
  * @since 1.19
@@ -340,7 +340,7 @@ static inline const void *eina_slice_end_get(const Eina_Slice slice);
  * @note this is out-of the slice, the first byte after it ends and
  * must not be accessed.
  *
- * @param rw_slice the reference memory.
+ * @param[in] rw_slice the reference memory.
  * @return the first byte after the slice ends.
  *
  * @since 1.19
@@ -350,7 +350,7 @@ static inline void *eina_rw_slice_end_get(const Eina_Rw_Slice rw_slice);
 /**
  * @brief A null-terminated string for this slice.
  *
- * @param slice the reference memory.
+ * @param[in] slice the reference memory.
  * @return newly allocated memory or @c NULL on error
  *
  * @since 1.19
@@ -360,7 +360,7 @@ static inline char *eina_slice_strdup(const Eina_Slice slice);
 /**
  * @brief A null-terminated string for this slice.
  *
- * @param slice the reference memory.
+ * @param[in] slice the reference memory.
  * @return newly allocated memory or @c NULL on error
  *
  * @since 1.19
@@ -370,7 +370,10 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
 /**
  * @def EINA_SLICE_ARRAY(buf)
  *
- * Initializer for arrays of any kind.
+ * @brief Initializer for arrays of any kind.
+ *
+ * @param[in] buf The array to create the slice from.
+ * @return The initialized slice object.
  *
  * It is often useful for globals.
  *
@@ -398,8 +401,8 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * Declare a local (stack) array for storage at given @a length and
  * initialize an Eina_Rw_Slice called @a name.
  *
- * @param name the name of the variable to be the Eina_Rw_Slice
- * @param length the size in bytes of the storage.
+ * @param[in] name the name of the variable to be the Eina_Rw_Slice.
+ * @param[in] length the size in bytes of the storage.
  *
  * @since 1.19
  */
@@ -415,6 +418,9 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * null-terminator.
  *
  * It is often useful for globals.
+ *
+ * @param[in] buf The array to create the slice from.
+ * @return The initialized slice object.
  *
  * @note This macro is usable with both Eina_Slice or Eina_Rw_Slice.
  *
@@ -437,6 +443,9 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * @def EINA_SLICE_STR(str)
  *
  * Initializer for strings (uses strlen()).
+ *
+ * @param[in] str The string to create the slice from.
+ * @return The initialized slice object.
  *
  * @note This macro is usable with both Eina_Slice or Eina_Rw_Slice.
  *
@@ -477,8 +486,11 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
 /**
  * @def EINA_SLICE_STR_PRINT(s)
  *
- * To be used in printf()-like statements when EINA_SLICE_STR_FMT was
+ * @brief To be used in printf()-like statements when EINA_SLICE_STR_FMT was
  * used, it will print the slice as a string up to @c len.
+ *
+ * @param[in] s The slice.
+ * @return The arguments for an EINA_SLICE_STR_FMT formatted printf.
  *
  * Use with EINA_SLICE_STR_FMT.
  *
@@ -522,7 +534,8 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  *
  * @note This macro is usable with both Eina_Slice or Eina_Rw_Slice.
  *
- * @param s the slice
+ * @param[in] s The slice.
+ * @return The arguments for an EINA_SLICE_FMT formatted printf.
  *
  * @code
  * Eina_Slice s = EINA_SLICE_STR_LITERAL("hello");
@@ -545,8 +558,8 @@ static inline char *eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice);
  * @note Be aware of memory alignment! Accessing unaligned memory may
  *       not be supported in some architectures.
  *
- * @param s the slice
- * @param itr the iterator to hold each byte. Use a proper type, not
+ * @param[in] s The slice.
+ * @param[in,out] itr the iterator to hold each byte. Use a proper type, not
  *        "void*" or "const void*" as it doesn't have an intrinsic
  *        size.
  *
