@@ -5,7 +5,6 @@ cache:
   directories:
     - $HOME/cachedir
     - $HOME/.ccache
-    - $HOME/autom4te.cache
 sudo: required
 dist: trusty
 
@@ -21,11 +20,11 @@ env:
     - CXX="ccache g++"
   matrix:
     -
-    - DISTRO=Ubuntu1804
+    #- DISTRO=Ubuntu1804
     - DISTRO=Fedora28 CI_BUILD_TYPE=wayland
     - DISTRO=Fedora28 CI_BUILD_TYPE=misc
     - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
-    - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
+    #- DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
     - DISTRO=Debian91
     - DISTRO=Archlinux
 
@@ -86,29 +85,23 @@ before_script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
         docker version
         docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
-        cp $HOME/cachedir/config.cache . || true
       fi
 
   - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-ccache-stats.sh ; fi
-  - |
-       if [[ "$TRAVIS_OS_NAME" == "osx" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
-         cp $HOME/cachedir/config.cache . || true
-       fi
 
 
 script:
   - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-configure.sh "$CI_BUILD_TYPE" ; fi
   - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE" ; fi
   - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make.sh "$CI_BUILD_TYPE" ; fi
-  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE" ; fi
   #- if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-examples.sh "$CI_BUILD_TYPE" ; fi
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
-          .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
-      fi
+  #- |
+      #if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
+          #.ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
+      #fi
   #- if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-install.sh "$CI_BUILD_TYPE" ; fi
   - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-check.sh "$CI_BUILD_TYPE" ; fi
-  - if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE" ; fi
+  #- if [[ -z "$DISTCHECK_SKIPPED" ]] ; then .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE" ; fi
   #- |
       #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
         #true
@@ -122,11 +115,7 @@ before_cache:
        if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ -z "$DISTCHECK_SKIPPED" ]] ; then
          sudo chown travis:travis $HOME/.ccache
          mkdir -p $HOME/cachedir/
-         sudo cp config.cache $HOME/cachedir/
-         sudo chown travis:travis $HOME/cachedir/config.cache
-         sudo chown travis:travis $HOME/autom4te.cache
        else
-         cp config.cache $HOME/cachedir
          mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
        fi
 

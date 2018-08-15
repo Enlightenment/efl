@@ -5,11 +5,11 @@ set -e
 if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
-travis_fold make make
+travis_fold ninja ninja
 if [ "$DISTRO" != "" ] ; then
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make
+  docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c 'cd build && ninja'
 else
   export PATH="$(brew --prefix gettext)/bin:$PATH"
-  make
+  cd build && ninja
 fi
-travis_endfold make
+travis_endfold ninja

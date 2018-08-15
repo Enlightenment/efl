@@ -6,28 +6,23 @@ set -e
 
 CI_BUILD_TYPE="$1"
 
-DEFAULT_LINUX_COPTS="--prefix=/usr/ --with-tests=regular --disable-cxx-bindings --disable-dependency-tracking -C"
+#FIXME: disable cxx by default
+DEFAULT_LINUX_COPTS="--prefix=/usr -Decore_wl2=false -Decore_drm2=false -Delput=false -Dopengl=full -Decore_avahi=false -Davahi=false -Decore-imf-loaders-disabler=scim,ibus"
 
-WAYLAND_LINUX_COPTS=" --enable-wayland --enable-elput --enable-drm \
---enable-wayland-ivi-shell --enable-gl-drm --with-opengl=es --enable-egl"
+WAYLAND_LINUX_COPTS=" -Decore_wl2=true -Decore_drm2=true -Delput=true -Dopengl=es-egl"
 
-MISC_LINUX_COPTS=" --enable-harfbuzz --enable-liblz4 --enable-image-loader-webp --enable-xinput22 \
---enable-multisense --enable-lua-old --enable-xpresent --enable-hyphen \
---enable-pixman --enable-pixman-font --enable-pixman-rect --enable-pixman-line \
---enable-pixman-poly --enable-pixman-image --enable-pixman-image-scale-sample \
---enable-image-loader-generic --enable-libuv --enable-tile-rotate --enable-vnc-server \
---enable-sdl --enable-fb --enable-v4l2 --enable-cserve \
---enable-ecore-wayland --enable-ecore-drm --enable-cancel-ok --with-crypto=gnutls \
---enable-debug --disable-gstreamer1 --enable-gstreamer"
+MISC_LINUX_COPTS=" -Dharfbuzz=true  \
+-Dxpresent=true \
+-Dlibuv=true \
+-Decore_fb=true \
+-Dcrypto=gnutls
+"
 
-MISC_DISABLED_LINUX_COPTS=" --disable-neon --disable-libeeze --disable-systemd --disable-magic-debug \
---disable-valgrind --disable-gstreamer1 \
---disable-fontconfig --disable-fribidi --disable-poppler --disable-spectre --disable-libraw \
---disable-librsvg --disable-xcf --disable-libmount --disable-tslib --disable-audio \
---disable-pulseaudio --disable-avahi --disable-xinput2 --disable-xim --disable-scim \
---disable-ibus --disable-physics --disable-quick-launch --disable-elua"
+MISC_DISABLED_LINUX_COPTS=" \
+-Dgstreamer=false \
+"
 
-RELEASE_READY_LINUX_COPTS=" --with-profile=release"
+#RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
 if [ "$DISTRO" != "" ] ; then
   # Normal build test of all targets
@@ -49,18 +44,14 @@ if [ "$DISTRO" != "" ] ; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
   fi
   docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
-  travis_fold autoreconf autoreconf
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-    --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    --env LD="ld.gold" $(cat $HOME/cid) sh -c "LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv"
-  travis_endfold autoreconf
   travis_fold configure "configure $OPTS"
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+  docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
     --env LD="ld.gold" $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
   travis_endfold configure
 else
-  OSX_COPTS="--disable-cxx-bindings --with-tests=regular --disable-dependency-tracking -C"
+  #FIXME: disable cxx by default
+  OSX_COPTS="-Decore_wl2=false -Decore_drm2=false -Delput=false -Decore_x=false -Decore_cocoa=true -Dopengl=full -Dsystemd=false -Decore_avahi=false -Davahi=false -Deeze=false -Decore-imf-loaders-disabler=scim,ibus,xim"
 
   # Prepare OSX env for build
   mkdir -p ~/Library/LaunchAgents
@@ -74,9 +65,6 @@ else
 
   # Normal build test of all targets
   rm -f ~/.ccache/ccache.conf
-  travis_fold autoreconf autoreconf
-  LIBTOOLIZE_OPTIONS="--no-warn" autoreconf -iv
-  travis_endfold autoreconf
   travis_fold configure "configure $OSX_COPTS"
   .ci/configure.sh $OSX_COPTS
   travis_endfold configure
