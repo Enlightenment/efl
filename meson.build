@@ -132,7 +132,7 @@ config_h.set('EFL_BUILD', '1')
 
 subdir('header_checks')
 
-if get_option('ecore_wl2') == true or get_option('ecore_buffer') == true
+if get_option('ecore_wl2') == true
   subdir(join_paths('src', 'wayland_protocol'))
 endif
 
