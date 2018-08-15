@@ -198,10 +198,6 @@ EFL_END_TEST
 EFL_START_TEST (elm_image_evas_object_color_set)
 {
    Evas_Object *win, *image;
-   Eina_Bool ok;
-   Test_Data td;
-   Eina_File *f;
-   char path[PATH_MAX];
    int r = 128, g = 99, b = 3, a = 230;
    int rr = 0, gg = 0, bb = 0, aa = 0;
 
