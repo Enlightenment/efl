@@ -17,7 +17,6 @@ endforeach
 
 elementary_suite_src = [
   'elm_suite.c',
-  'elm_test_helper.c',
   'elm_test_atspi.c',
   'elm_test_check.c',
   'elm_test_colorselector.c',
