@@ -61,8 +61,12 @@ foreach option : options_to_check
     else
       _option = option
     endif
-    prog = find_program(_option)
-    set_variable(option+'_bin', prog.path())
+    prog = find_program(_option, required: false)
+    if prog.found()
+      set_variable(option+'_bin', prog.path())
+    else
+      set_variable(option+'_bin', '')
+    endif
   else
     set_variable(option+'_bin', val)
   endif
