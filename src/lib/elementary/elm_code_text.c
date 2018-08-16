@@ -189,7 +189,7 @@ elm_code_line_text_remove(Elm_Code_Line *line, unsigned int position, int length
    Elm_Code_File *file;
    char *removed;
 
-   if (!line)
+   if (!line || !line->length)
      return;
 
    removed = malloc(sizeof(char) * line->length - length);
