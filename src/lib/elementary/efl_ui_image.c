@@ -2128,6 +2128,9 @@ elm_image_object_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) NULL;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
+   if (!sd->img)
+     sd->img = _img_new((Evas_Object *)obj);
+
    return sd->img;
 }
 

@@ -213,6 +213,19 @@ EFL_START_TEST (elm_image_evas_object_color_set)
 }
 EFL_END_TEST
 
+EFL_START_TEST (elm_image_evas_image_get)
+{
+   Evas_Object *win, *image, *obj;
+
+   win = win_add(NULL, "image", ELM_WIN_BASIC);
+
+   image = elm_image_add(win);
+   obj = elm_image_object_get(image);
+
+   ck_assert(obj);
+}
+EFL_END_TEST
+
 EFL_START_TEST (efl_ui_image_icon)
 {
    Evas_Object *win, *image;
@@ -244,5 +257,6 @@ void elm_test_image(TCase *tc)
    tcase_add_test(tc, elm_image_async_path);
    tcase_add_test(tc, elm_image_async_mmap);
    tcase_add_test(tc, elm_image_evas_object_color_set);
+   tcase_add_test(tc, elm_image_evas_image_get);
    tcase_add_test(tc, efl_ui_image_icon);
 }
