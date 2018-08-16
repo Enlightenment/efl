@@ -869,7 +869,7 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
@@ -975,7 +975,7 @@ _efl_ui_image_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
    if (!sd->remote.copier) return;
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.binbuf) eina_binbuf_free(sd->remote.binbuf);
@@ -1114,7 +1114,7 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
@@ -1278,6 +1278,8 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_load_controller_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
    sd->load_size = sz;
+
+   if (!sd->img) return;
    _efl_ui_image_load_size_set_internal(obj, sd);
 }
 
@@ -1304,6 +1306,7 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
+   if (!sd->img) return;
    efl_orientation_set(sd->img, orient);
 
    sd->orient = orient;
@@ -1323,6 +1326,7 @@ _efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip 
    if (sd->edje) return;
    if (sd->flip == flip) return;
 
+   if (!sd->img) return;
    efl_orientation_flip_set(sd->img, flip);
 
    sd->flip = flip;
