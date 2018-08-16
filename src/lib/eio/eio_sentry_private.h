@@ -7,7 +7,7 @@ struct _Eio_Sentry_Data
 {
    Eo *object;
    Eina_Hash *targets;
-   Eina_Bool handlers_initialized;
+   Eina_Array *handlers;
 };
 
 #endif
