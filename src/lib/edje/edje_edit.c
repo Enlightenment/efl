@@ -13,6 +13,8 @@
 
 #include "edje_private.h"
 
+#include "canvas/evas_canvas.eo.h"
+
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
 #include "Edje_Edit.h"
 
@@ -289,6 +291,7 @@ _edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, con
 EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
    return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 

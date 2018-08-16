@@ -899,9 +899,7 @@ _evas_textgrid_efl_gfx_entity_scale_set(Evas_Object *eo_obj, Evas_Textgrid_Data 
 EAPI Evas_Object *
 evas_object_textgrid_add(Evas *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
    return efl_add(EVAS_TEXTGRID_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
 }
 

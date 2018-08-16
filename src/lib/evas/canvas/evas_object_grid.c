@@ -273,9 +273,7 @@ _evas_object_grid_smart_set_user(Evas_Smart_Class *sc)
 EAPI Evas_Object *
 evas_object_grid_add(Evas *evas)
 {
-   MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
    return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
 }
 
