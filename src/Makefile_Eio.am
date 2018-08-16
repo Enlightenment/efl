@@ -94,15 +94,19 @@ tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eio\" \
 @CHECK_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
-@EIO_CFLAGS@ @EFL_CFLAGS@
+@EIO_CFLAGS@ \
+@EFREET_CFLAGS@ \
+@EFL_CFLAGS@
 
 tests_eio_eio_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_EIO_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
+@USE_EFREET_LIBS@ \
 @USE_EFL_LIBS@
 
 tests_eio_eio_suite_DEPENDENCIES = \
-@USE_EIO_INTERNAL_LIBS@
+@USE_EIO_INTERNAL_LIBS@ \
+@USE_EFREET_INTERNAL_LIBS@
 
 endif

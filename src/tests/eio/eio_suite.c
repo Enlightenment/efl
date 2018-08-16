@@ -7,6 +7,7 @@
 #include "eio_suite.h"
 #include "../efl_check.h"
 #include <Eio.h>
+#include <Efreet.h>
 
 EFL_START_TEST(eio_init_test)
 EFL_END_TEST
@@ -49,6 +50,7 @@ main(int argc, char **argv)
 {
    int failed_count;
 
+   efreet_cache_disable();
    if (!_efl_test_option_disp(argc, argv, etc))
      return 0;
 
