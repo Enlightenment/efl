@@ -45,6 +45,9 @@
 
 #define FRAME_OBJ_THEME_MIN_VERSION 119
 
+Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+
 static const Elm_Win_Trap *trap = NULL;
 
 static int _paused_windows = 0;
