@@ -4968,7 +4968,11 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
              return EINA_FALSE;
           }
         elm_config_audio_mute_set(chan, !!v);
+#ifdef ENABLE_MULTISENSE
         return EINA_TRUE;
+#else
+        return EINA_FALSE;
+#endif
      }
 
    ERR("Config '%s' does not exist", name);
