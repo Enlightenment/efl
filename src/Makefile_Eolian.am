@@ -103,10 +103,6 @@ tests/eolian/data/var.eo \
 tests/eolian/data/function_types.eot \
 tests/eolian/data/import_types.eot
 
-EOLIAN_TESTS_EOS_GENERATED = \
-$(EOLIAN_TESTS_EOS:%.eo=%.eo.c)\
-$(EOLIAN_TESTS_EOS:%.eo=%.eo.h)
-
 if EFL_ENABLE_TESTS
 check_PROGRAMS += \
 tests/eolian/eolian_suite
@@ -128,7 +124,7 @@ endif
 
 tests/eolian/$(TESTS_EOLIAN_OBJNAME)eolian_suite-eolian_generated_future.$(OBJEXT): tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
-CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c $(EOLIAN_TESTS_EOS_GENERATED)
+CLEANFILES += tests/eolian/generated_future.eo.h tests/eolian/generated_future.eo.c
 
 tests_eolian_eolian_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/eolian \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
@@ -142,7 +138,6 @@ TESTS += tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@ @USE_EO_LIBS@
 tests_eolian_eolian_suite_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
-tests/eolian/$(TESTS_EOLIAN_OBJNAME)eolian_suite-eolian_suite.$(OBJEXT): $(EOLIAN_TESTS_EOS_GENERATED)
 
 endif
 
