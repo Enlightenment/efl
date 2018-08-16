@@ -54,7 +54,7 @@ EFL_START_TEST(edje_test_swallows_lifetime)
 
    fail_unless(edje_object_part_exists(ly, "swallow"));
 
-   o1 = edje_object_add(ly);
+   o1 = edje_object_add(evas);
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
 
    evas_object_del(ly);
@@ -80,7 +80,7 @@ EFL_START_TEST(edje_test_swallows_invalidate)
 
    fail_unless(edje_object_part_exists(ly, "swallow"));
 
-   o1 = edje_object_add(ly);
+   o1 = edje_object_add(evas);
    fail_if(!edje_object_part_swallow(ly, "swallow", o1));
 
    evas_object_event_callback_add(ly, EVAS_CALLBACK_DEL, edje_test_swallows_invalidate_del, o1);
