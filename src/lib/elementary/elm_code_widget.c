@@ -1975,7 +1975,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 
    for (i = existing; i < rows; i++)
      {
-        grid = evas_object_textgrid_add(pd->gridbox);
+        grid = evas_object_textgrid_add(evas_object_evas_get(pd->gridbox));
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
@@ -2383,7 +2383,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
                                   _elm_code_widget_scroller_clicked_cb, obj);
 
-   background = evas_object_rectangle_add(scroller);
+   background = evas_object_rectangle_add(evas_object_evas_get(scroller));
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);
