@@ -198,7 +198,7 @@ EFL_START_TEST(eio_test_monitor_add_add_remove_remove)
    _common_shutdown(dirname);
 }
 EFL_END_TEST
-
+#if 0
 static void _file_created_cb(void *data, int type, void *event)
 {
    ck_assert_int_eq(type, (int)EIO_MONITOR_FILE_CREATED);
@@ -727,14 +727,14 @@ EFL_START_TEST(eio_test_monitor_two_files_in_same_directory_one_removed)
    _common_shutdown(dirname);
 }
 EFL_END_TEST
-
+#endif
 
 void eio_test_monitor(TCase *tc)
 {
    tcase_add_test(tc, eio_test_monitor_add_and_remove);
    tcase_add_test(tc, eio_test_monitor_add_remove_add);
    tcase_add_test(tc, eio_test_monitor_add_add_remove_remove);
-
+#if 0
    tcase_add_test(tc, eio_test_monitor_directory_file_created_notify);
    tcase_add_test(tc, eio_test_monitor_directory_multi_file_created_notify);
    tcase_add_test(tc, eio_test_monitor_directory_file_deleted_notify);
@@ -763,4 +763,5 @@ void eio_test_monitor(TCase *tc)
    tcase_add_test(tc, eio_test_monitor_two_monitors_one_removed_no_event);
    tcase_add_test(tc, eio_test_monitor_two_files_in_same_directory);
    tcase_add_test(tc, eio_test_monitor_two_files_in_same_directory_one_removed);
+#endif
 }
