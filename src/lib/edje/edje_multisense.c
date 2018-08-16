@@ -128,7 +128,7 @@ edje_audio_channel_mute_get(Edje_Channel channel)
    return _channel_mute_states[channel];
 #else
    (void)channel;
-   return EINA_FALSE;
+   return EINA_TRUE;
 #endif
 }
 
