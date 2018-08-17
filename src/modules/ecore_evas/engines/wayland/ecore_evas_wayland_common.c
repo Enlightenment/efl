@@ -1899,12 +1899,13 @@ _ecore_evas_wayland_alpha_do(Ecore_Evas *ee, int alpha)
    if (!ee) return;
    if (ee->alpha == alpha) return;
 
+   /* alpha used for transparent as well.
+		ecore_evas_transparent_get() must be valid. */
+   ee->transparent = ee->alpha = alpha;
+
    wdata = ee->engine.data;
-   if (!wdata->sync_done)
-     {
-        ee->alpha = alpha;
-        return;
-     }
+   if (!wdata->sync_done) return;
+
    _ecore_evas_wayland_window_update(ee, wdata, alpha);
 
    _ecore_evas_wl_common_wm_rotation_protocol_set(ee);
