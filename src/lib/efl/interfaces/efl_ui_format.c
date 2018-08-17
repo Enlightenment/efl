@@ -38,7 +38,6 @@ _format_string_check(const char *fmt)
         if (itr[1] == '%')
           {
              itr++;
-             ret_type = FORMAT_TYPE_STRING;
              continue;
           }
 
@@ -131,7 +130,7 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
      }
    else if (sd->format_type == FORMAT_TYPE_STATIC)
      {
-        eina_strbuf_append(str, sd->template);
+        eina_strbuf_append_printf(str, sd->template);
      }
    else
      {
