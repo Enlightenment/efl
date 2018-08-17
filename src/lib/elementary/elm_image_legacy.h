@@ -434,7 +434,11 @@ EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
  *
  * @note Be careful to not manipulate it, as it is under control of elementary.
  *
- * @return The inlined image object.
+ * @warning It doesn't gurantee the inlined object must be a type of Evas_Object_Image.
+ *          It would be one of @c Evas_Object_Image or @c Edje_Object depending
+            on image file type.
+ *
+ * @return The inlined image object, or NULL if none exists
  *
  * @ingroup Elm_Image
  */
