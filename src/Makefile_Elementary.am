@@ -1576,7 +1576,7 @@ tests_elementary_elm_suite_CPPFLAGS = \
 	@ELEMENTARY_CFLAGS@
 
 tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
-tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
+tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 
 tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_suite.c
@@ -1595,7 +1595,7 @@ tests_elementary_efl_ui_suite_CPPFLAGS = \
 	@ELEMENTARY_CFLAGS@
 
 tests_elementary_efl_ui_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
-tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
+tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 endif
 
 if HAVE_LUA_BINDINGS
