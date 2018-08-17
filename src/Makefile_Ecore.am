@@ -286,6 +286,7 @@ tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_test_job.c \
 tests/ecore/ecore_test_args.c \
+tests/ecore/ecore_test_pipe.c \
 tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
