@@ -31,14 +31,6 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    registered_manager = m = efl_ui_focus_object_focus_manager_get(user);
    entry = user;
 
-   if (!m)
-     {
-        //delayed focusung
-        efl_key_data_set(top, "__delayed_focus_set", entry);
-        efl_event_callback_add(entry, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, user);
-        return;
-     }
-
    do {
      //check if the root of a manager is the window root, set focus to this object in the manager than
      entry = efl_ui_focus_manager_root_get(m);
@@ -51,6 +43,13 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
 
      //if there is no manager yet, delay the focus setting until this entity gets registered for one chain
      m = efl_ui_focus_object_focus_manager_get(entry);
+     if (!m)
+       {
+          //delayed focusung
+          efl_key_data_set(top, "__delayed_focus_set", entry);
+          efl_event_callback_add(entry, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, user);
+          return;
+       }
    } while (m);
 }
 
