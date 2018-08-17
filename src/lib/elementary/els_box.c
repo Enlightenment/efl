@@ -227,7 +227,7 @@ _smart_extents_non_homogeneous_calc(Evas_Object_Box_Data *priv, int w, int h, in
 static void
 _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, int h, double expand, Eina_Bool horizontal, Eina_Bool homogeneous)
 {
-   Evas_Coord minw, minh, mnw, mnh, maxw, maxh;
+   Evas_Coord minw, minh, child_mxw, child_mxh, maxw, maxh;
    Evas_Coord pad_l, pad_r, pad_t, pad_b;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
@@ -254,11 +254,11 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
              if (ay < 0) fh = 1;
 
              evas_object_size_hint_padding_get(opt->obj, &pad_l, &pad_r, &pad_t, &pad_b);
-             evas_object_size_hint_combined_min_get(opt->obj, &mnw, &mnh);
-             mnw += pad_l + pad_r;
-             mnh += pad_t + pad_b;
-             if (minh < mnh) minh = mnh;
-             if (minw < mnw) minw = mnw;
+             evas_object_size_hint_combined_min_get(opt->obj, &child_mxw, &child_mxh);
+             child_mxw += pad_l + pad_r;
+             child_mxh += pad_t + pad_b;
+             if (minh < child_mxh) minh = child_mxh;
+             if (minw < child_mxw) minw = child_mxw;
 
              evas_object_size_hint_aspect_get(opt->obj, &aspect, &asx, &asy);
              if (aspect && ((asx < 1) || (asy < 1)))
@@ -275,18 +275,18 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
                     ERR("Homogeneous box with differently-aspected items!");
                }
 
-             evas_object_size_hint_max_get(opt->obj, &mnw, &mnh);
-             if (mnh >= 0)
+             evas_object_size_hint_max_get(opt->obj, &child_mxw, &child_mxh);
+             if (child_mxh >= 0)
                {
-                  mnh += pad_t + pad_b;
-                  if (maxh == -1) maxh = mnh;
-                  else if (maxh > mnh) maxh = mnh;
+                  child_mxh += pad_t + pad_b;
+                  if (maxh == -1) maxh = child_mxh;
+                  else if (maxh > child_mxh) maxh = child_mxh;
                }
-             if (mnw >= 0)
+             if (child_mxw >= 0)
                {
-                  mnw += pad_l + pad_r;
-                  if (maxw == -1) maxw = mnw;
-                  else if (maxw > mnw) maxw = mnw;
+                  child_mxw += pad_l + pad_r;
+                  if (maxw == -1) maxw = child_mxw;
+                  else if (maxw > child_mxw) maxw = child_mxw;
                }
              if (aspect)
                {
@@ -300,11 +300,11 @@ _smart_extents_calculate(Evas_Object *box, Evas_Object_Box_Data *priv, int w, in
                        hh = ((h - (c - 1) * priv->pad.v) / c);
                        ww = w;
                     }
-                  if (_box_object_aspect_calc(&ow, &oh, mnw, mnh, maxw, maxh,
+                  if (_box_object_aspect_calc(&ow, &oh, child_mxw, child_mxh, maxw, maxh,
                     fw, fh, ww, hh, aspect, asx / (double)asy))
                     {
-                       if ((oh > mnh) && (minh < oh)) minh = oh;
-                       if ((ow > mnw) && (minw < ow)) minw = ow;
+                       if ((oh > child_mxh) && (minh < oh)) minh = oh;
+                       if ((ow > child_mxw) && (minw < ow)) minw = ow;
                     }
                }
 
