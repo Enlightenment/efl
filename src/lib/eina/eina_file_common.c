@@ -474,18 +474,16 @@ eina_file_dup(const Eina_File *f)
      {
         EINA_FILE_MAGIC_CHECK(f, NULL);
         eina_lock_take(&file->lock);
-        if (file->virtual)
+
+        // For ease of use and safety of the API, if you dup a virtualized file, we prefer to make a copy
+        if (file->virtual && !file->copied)
           {
-             // For ease of use and safety of the API, if you dup a virtualized file, we prefer to make a copy
-             if (file->global_map != (void*)(file->filename + strlen(file->filename) + 1))
-               {
-                  Eina_File *r;
+             Eina_File *r;
 
-                  r = eina_file_virtualize(file->filename, file->global_map, file->length, EINA_TRUE);
-                  eina_lock_release(&file->lock);
+             r = eina_file_virtualize(file->filename, file->global_map, file->length, EINA_TRUE);
+             eina_lock_release(&file->lock);
 
-                  return r;
-               }
+             return r;
           }
         file->refcount++;
         eina_lock_release(&file->lock);
