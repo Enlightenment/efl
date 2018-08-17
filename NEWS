@@ -471,6 +471,13 @@ Fixes:
    * elementary image: don't calc size using empty ones.
    * evas image: fix screen flickering issue at partial + image preloading
    * edje_cc: change .mo file write location to be relative to the .edj file
+   * theme: add programs for deferred naviframe push/pop signals
+   * edje: unset internal _need_imf flag on shutdown
+   * elm_panel: return instead of EINA_SAFETY_ON_FALSE_RETURN (T7265)
+   * build: fix evas static build of gl engines
+   * ecore/main: only update loop_time during loop iteration if the change is monotonic
+   * evas gl: fix missing map texture target.
+   * elm_code: fix crash on backspace and selection delete. (T7259)
 
 Changes since 1.19.0:
 ---------------------
