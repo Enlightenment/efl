@@ -52,6 +52,7 @@ class Efl.Ui.Grid (Efl.Ui.Layout.Object,
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
+      Efl.Object.invalidate;
 
       //Efl.Canvas
       Efl.Canvas.Group.group_calculate;

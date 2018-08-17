@@ -627,8 +627,9 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
    return obj;
 }
 
+
 EOLIAN static void
-_efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
+_efl_ui_grid_efl_object_invalidate(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
    _scroll_edje_object_detach(obj);
 
@@ -648,16 +649,21 @@ _efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
                           _efl_ui_grid_pan_resized_cb, obj);
    efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
                           _efl_ui_grid_content_moved_cb, obj);
-
    _grid_clear_internal(obj, pd);
 
-   efl_content_set(pd->pan, NULL);
-   efl_del(pd->content);
-   pd->content = NULL;
-   efl_del(pd->pan);
-   pd->pan = NULL;
+   if (pd->smanager) efl_del(pd->smanager);
    pd->smanager = NULL;
+   if (pd->content) efl_del(pd->content);
+   pd->content = NULL;
+   if (pd->pan) efl_del(pd->pan);
+   pd->pan = NULL;
 
+   efl_invalidate(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
+_efl_ui_grid_efl_object_destructor(Eo *obj, Efl_Ui_Grid_Data *pd)
+{
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
