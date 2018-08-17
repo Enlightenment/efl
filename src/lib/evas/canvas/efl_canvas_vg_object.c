@@ -324,9 +324,11 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    efl_event_callback_del(e, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _cleanup_reference, pd);
 
    efl_unref(pd->root);
+   pd->root = NULL;
 
    if (pd->user_entry)
      free(pd->user_entry);
+   pd->user_entry = NULL;
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
