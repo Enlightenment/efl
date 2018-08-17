@@ -778,6 +778,11 @@ _elm_list_mode_set_internal(Evas_Object *obj)
         sd->scr_minw = EINA_TRUE;
         sd->scr_minh = EINA_TRUE;
      }
+   else if (sd->mode == ELM_LIST_COMPRESS)
+     {
+        sd->scr_minw = EINA_FALSE;
+        sd->scr_minh = EINA_FALSE;
+     }
 
    elm_layout_sizing_eval(obj);
 }
