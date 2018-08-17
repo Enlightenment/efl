@@ -1558,7 +1558,7 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *oldline;
-   unsigned int row, col, oldlength, position;
+   unsigned int row, col, oldlength, position = 0;
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
@@ -1584,8 +1584,19 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
         elm_code_line_merge_up(line);
      }
+
    elm_code_widget_selection_clear(widget);
-// TODO construct and pass a change object
+
+   line = elm_code_file_line_get(code->file, row - 1);
+   if (line)
+     {
+        if (position)
+          elm_code_widget_cursor_position_set(widget, row - 1, position);
+        else
+          elm_code_widget_cursor_position_set(widget, row - 1, line->length + 1);
+     }
+
+   // TODO construct and pass a change object
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 

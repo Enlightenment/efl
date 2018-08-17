@@ -251,26 +251,32 @@ _elm_code_widget_selection_delete_do(Evas_Object *widget, Eina_Bool undo)
 {
    Elm_Code_Widget_Data *pd;
    Elm_Code_Widget_Selection_Data *selection;
+   unsigned int row, col;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
    if (!pd->selection)
      return;
+
    if (undo)
      _elm_code_widget_change_selection_add(widget);
 
    selection = elm_code_widget_selection_normalized_get(widget);
+
+   row = selection->start_line;
+   col = selection->start_col;
+
    if (selection->start_line == selection->end_line)
      _elm_code_widget_selection_delete_single(widget, pd);
    else
      _elm_code_widget_selection_delete_multi(widget, pd);
-   elm_code_widget_cursor_position_set(widget, selection->start_line, selection->start_col);
 
    free(pd->selection);
    pd->selection = NULL;
    free(selection);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+   elm_code_widget_cursor_position_set(widget, row, col);
 }
 
 EAPI void
