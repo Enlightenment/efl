@@ -309,3 +309,15 @@ option('nls',
   value: true,
   description: 'enable localization: (default=true)'
 )
+
+option('luajit',
+  type: 'boolean',
+  value: true,
+  description: 'Flag for handling lua bindings'
+)
+
+option('cxx',
+  type: 'boolean',
+  value: true,
+  description: 'Flag for handling cxx bindings'
+)
