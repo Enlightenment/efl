@@ -3872,8 +3872,6 @@ _sel_format_to_ecore_cocoa_cnp_type(Efl_Selection_Format fmt)
    if ((fmt & EFL_SELECTION_FORMAT_TEXT) ||
        (fmt & EFL_SELECTION_FORMAT_VCARD))
      type |= ECORE_COCOA_CNP_TYPE_STRING;
-   if (fmt & EFL_SELECTION_FORMAT_MARKUP)
-     type |= ECORE_COCOA_CNP_TYPE_MARKUP;
    if (fmt & EFL_SELECTION_FORMAT_HTML)
      type |= ECORE_COCOA_CNP_TYPE_HTML;
    if (fmt & EFL_SELECTION_FORMAT_IMAGE)
@@ -3927,8 +3925,6 @@ _job_pb_cb(void *data)
         ddata.format = EFL_SELECTION_FORMAT_NONE;
         if (get_type & ECORE_COCOA_CNP_TYPE_STRING)
           ddata.format |= EFL_SELECTION_FORMAT_TEXT;
-        if (get_type & ECORE_COCOA_CNP_TYPE_MARKUP)
-          ddata.format |= EFL_SELECTION_FORMAT_MARKUP;
         if (get_type & ECORE_COCOA_CNP_TYPE_IMAGE)
           ddata.format |= EFL_SELECTION_FORMAT_IMAGE;
         if (get_type & ECORE_COCOA_CNP_TYPE_HTML)
@@ -3989,7 +3985,20 @@ _cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
    evas_object_event_callback_add(sel->owner, EVAS_CALLBACK_DEL,
                                   _cocoa_sel_obj_del_cb, sel);
    ELM_SAFE_FREE(sel->data.mem, free);
-   sel->data = eina_slice_dup(data);
+
+   if (format == EFL_SELECTION_FORMAT_MARKUP)
+     {
+        //FIXME this code assumes that sel->data.mem has a \0 at the end
+        sel->data.mem = evas_textblock_text_markup_to_utf8(NULL, data.mem);
+        sel->data.len = strlen(sel->data.mem);
+        //set the new text
+        format = EFL_SELECTION_FORMAT_TEXT;
+    }
+   else
+    {
+       sel->data = eina_slice_dup(data);
+    }
+
    if (sel->data.mem)
      {
         ecore_type = _sel_format_to_ecore_cocoa_cnp_type(format);
