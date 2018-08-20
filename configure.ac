@@ -901,7 +901,7 @@ case "${build_profile}" in
      ;;
 
    release)
-     with_max_log_level="3"
+     with_max_log_level=""
      have_stringshare_usage="no"
      want_valgrind="no"
      want_debug_malloc="no"
