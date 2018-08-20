@@ -94,5 +94,19 @@ typedef const char * Eina_Vpath;
  */
 EAPI char *eina_vpath_resolve(Eina_Vpath path);
 
+/*
+ * Translate a virtual path into a normal path, and print it into str.
+ *
+ * @param str the buffer to stuff the characters into
+ * @param size the size of the buffer
+ * @param format A snprintf style format string, which will get evalulated after the vpath strings are getting replaced
+ * @param ... The arguments for the format string
+ *
+ * @return the number of characters that are written into str, on a error a value < 0 is returned.
+ *
+ * @since 1.21
+ *
+ */
+EAPI int eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...);
 #endif
 #endif

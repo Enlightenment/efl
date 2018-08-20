@@ -5,6 +5,7 @@
 #include <Eina.h>
 #include <check.h>
 #include "eina_suite.h"
+#include <pwd.h>
 
 EFL_START_TEST(eina_test_vpath_valid)
 {
@@ -20,6 +21,7 @@ EFL_START_TEST(eina_test_vpath_valid)
 
    snprintf(test, sizeof(test), "%s/bla", eina_environment_home_get());
    ck_assert_str_eq(eina_vpath_resolve("(:home:)/bla"), test);
+   ck_assert_str_eq(eina_vpath_resolve("/test/for/the/last/case"), "/test/for/the/last/case");
 
 }
 EFL_END_TEST
@@ -31,7 +33,34 @@ EFL_START_TEST(eina_test_vpath_invalid)
    ck_assert_ptr_eq(eina_vpath_resolve("(:"), NULL);
    ck_assert_ptr_eq(eina_vpath_resolve("(:home:)"), NULL);
    ck_assert_ptr_eq(eina_vpath_resolve("(:wrong_meta_key:)/"), NULL);
+}
+EFL_END_TEST
 
+
+EFL_START_TEST(eina_test_vpath_snprintf)
+{
+   char *string = "blablabla";
+   int x = 1337;
+   char buf[PATH_MAX];
+   char cmp[PATH_MAX];
+
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:home:)/%s/%d/", string, x);
+   snprintf(cmp, sizeof(cmp), "%s/%s/%d/", eina_environment_home_get(), string, x);
+   ck_assert_str_eq(buf, cmp);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_test_vpath_user)
+{
+   char buf[PATH_MAX];
+   char cmp[PATH_MAX];
+   struct passwd *pwent;
+
+   pwent = getpwuid(getuid());
+
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "~%s/foo/bar/king/kong/", pwent->pw_name);
+   snprintf(cmp, sizeof(cmp), "%s/foo/bar/king/kong/", pwent->pw_dir);
+   ck_assert_str_eq(buf, cmp);
 }
 EFL_END_TEST
 
@@ -39,4 +68,6 @@ void eina_test_vpath(TCase *tc)
 {
    tcase_add_test(tc, eina_test_vpath_invalid);
    tcase_add_test(tc, eina_test_vpath_valid);
+   tcase_add_test(tc, eina_test_vpath_snprintf);
+   tcase_add_test(tc, eina_test_vpath_user);
 }
