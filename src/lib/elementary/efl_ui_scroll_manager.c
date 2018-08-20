@@ -131,7 +131,6 @@ static void _efl_ui_scroll_manager_wanted_region_set(Evas_Object *obj);
 #define RIGHT              1
 #define UP                 2
 #define DOWN               3
-#define EVTIME             1
 //#define SCROLLDBG 1
 /* smoothness debug calls - for debugging how much smooth your app is */
 
@@ -1014,11 +1013,7 @@ _efl_ui_scroll_manager_mouse_up_event_momentum_eval(Efl_Ui_Scroll_Manager_Data *
    Evas_Coord dx, dy, ax, ay, vel;
    char sdx, sdy;
 
-#ifdef EVTIME
    t = ev->timestamp / 1000.0;
-#else
-   t = ecore_loop_time_get();
-#endif
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    ax = ev->canvas.x;
@@ -1151,12 +1146,7 @@ _efl_ui_scroll_manager_mouse_down_event_cb(void *data,
         sd->down.sy = cur.y;
         memset(&(sd->down.history[0]), 0,
                sizeof(sd->down.history[0]) * 60);
-#ifdef EVTIME
         sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-        sd->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-        sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif
         sd->down.dragged_began_timestamp = sd->down.history[0].timestamp;
         sd->down.history[0].x = ev->canvas.x;
         sd->down.history[0].y = ev->canvas.y;
@@ -1660,11 +1650,7 @@ _efl_ui_scroll_manager_post_event_move_hold_eval(Efl_Ui_Scroll_Manager_Data *sd,
               {
                  sd->down.x = ev->cur.canvas.x;
                  sd->down.y = ev->cur.canvas.y;
-#ifdef EVTIME
                  sd->down.dragged_began_timestamp = ev->timestamp / 1000.0;
-#else
-                 sd->down.dragged_began_timestamp = ecore_loop_time_get();
-#endif
               }
             // TODO 다른조건들도 can_scroll 안쪽으로 넣는다?
             if ((((_efl_ui_scroll_manager_can_scroll(sd, sd->down.hdir) || sd->bounce_horiz) && sd->down.dir_x) ||
@@ -1933,12 +1919,7 @@ _efl_ui_scroll_manager_mouse_move_event_cb(void *data,
 #endif
    memmove(&(sd->down.history[1]), &(sd->down.history[0]),
            sizeof(sd->down.history[0]) * (60 - 1));
-#ifdef EVTIME
    sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-   sd->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-   sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif
    sd->down.history[0].x = ev->cur.canvas.x;
    sd->down.history[0].y = ev->cur.canvas.y;
    sd->event_info = event_info;

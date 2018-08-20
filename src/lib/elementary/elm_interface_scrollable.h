@@ -99,7 +99,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
       struct
       {
          Evas_Coord x, y;
-         double     timestamp, localtimestamp;
+         double     timestamp;
       } history[60];
 
       struct

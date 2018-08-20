@@ -35,7 +35,7 @@ typedef struct _Efl_Ui_Scroll_Manager_Data
       struct
       {
          Evas_Coord x, y;
-         double     timestamp, localtimestamp;
+         double     timestamp;
       } history[60];
 
       struct
