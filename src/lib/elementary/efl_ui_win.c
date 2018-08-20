@@ -1031,7 +1031,6 @@ _elm_win_pre_render(Ecore_Evas *ee)
           ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
 #endif
         sd->first_draw = EINA_TRUE;
-        if (sd->shot.info) _shot_handle(sd);
      }
    if (sd->deferred_resize_job)
      {
@@ -2386,6 +2385,9 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
           }
         _elm_win_state_eval(NULL);
      }
+
+   if (sd->shot.info) _shot_handle(sd);
+
    if (!sd->first_draw) return;
    if (sd->frame_obj)
      {
