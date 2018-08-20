@@ -188,6 +188,29 @@ eina_vpath_shutdown(void)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_fetch_user_homedir(char **str, const char *name, const char *error)
+{
+  *str = NULL;
+#ifdef HAVE_GETPWENT
+  struct passwd *pwent;
+
+  pwent = getpwnam(name);
+  if (!pwent)
+    {
+       ERR("User %s not found\nThe string was: %s", name, error);
+       return EINA_FALSE;
+    }
+  *str = pwent->pw_dir;
+
+  return EINA_TRUE;
+#else
+  ERR("User fetching is disabled on this system\nThe string was: %s", error);
+  return EINA_FALSE;
+#endif
+}
+
+
 EAPI char *
 eina_vpath_resolve(const char* path)
 {
@@ -204,25 +227,17 @@ eina_vpath_resolve(const char* path)
 
    if (path[0] == '~')
      {
+        char *home = NULL;
         // ~/ <- home directory
         if (path[1] == '/')
           {
-             char buf[PATH_MAX];
-             const char *home = eina_hash_find(vpath_data, "home");
-
-             if (home)
-               {
-                  snprintf(buf, sizeof(buf), "%s%s", home, path + 1);
-                  return strdup(buf);
-               }
+             home = eina_hash_find(vpath_data, "home");
+             path ++;
           }
-#ifdef HAVE_GETPWENT
         // ~username/ <- homedir of user "username"
         else
           {
-             const char *p;
-             struct passwd pwent, *pwent2 = NULL;
-             char *name, buf[PATH_MAX], pwbuf[8129];
+             char *p, *name, buf[PATH_MAX];
 
              for (p = path + 1; *p; p++)
                {
@@ -231,16 +246,17 @@ eina_vpath_resolve(const char* path)
              name = alloca(p - path);
              strncpy(name, path + 1, p - path - 1);
              name[p - path - 1] = 0;
-             if (!getpwnam_r(name, &pwent, pwbuf, sizeof(pwbuf), &pwent2))
-               {
-                  if ((pwent2) && (pwent.pw_dir))
-                    {
-                       return strdup(buf);
-                    }
-               }
+
+             if (!_fetch_user_homedir(&home, name, path))
+               return NULL;
+             path = p;
            }
-#endif /* HAVE_GETPWENT */
-   return NULL;
+         if (home)
+           {
+              char buf[PATH_MAX];
+              snprintf(buf, sizeof(buf), "%s%s", home, path);
+              return strdup(buf);
+           }
     }
   // (:xxx:)/* ... <- meta hash table
   else if ((path[0] == '(') && (path[1] == ':'))
