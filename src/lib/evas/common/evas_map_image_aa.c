@@ -73,6 +73,10 @@ _aa_coverage_apply(Line *line, int ww, int w, DATA32 val, Eina_Bool src_alpha)
    return val;
 }
 
+/*
+ *	To understand here AA main logic,
+ *	Please refer this page: hermet.pe.kr/122?catgory=662934
+*/
 static void
 _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
 {
