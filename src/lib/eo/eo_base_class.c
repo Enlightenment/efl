@@ -827,6 +827,16 @@ _efl_object_invalidated_get(const Eo *obj_id, Efl_Object_Data *pd)
    return invalidate;
 }
 
+EOLIAN static Eina_Bool
+_efl_object_invalidating_get(const Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
+{
+   Eina_Bool invalidating;
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_TRUE);
+   invalidating = obj->is_invalidating;
+   EO_OBJ_DONE(obj_id);
+   return invalidating;
+}
+
 EOLIAN static Efl_Object *
 _efl_object_provider_find(const Eo *obj, Efl_Object_Data *pd, const Efl_Object *klass)
 {

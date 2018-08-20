@@ -129,6 +129,17 @@ abstract Efl.Object ()
             finalized: bool; [[$true if the object is invalidated, $false otherwise]]
          }
       }
+      @property invalidating {
+         [[True if the object is about to be invalidated, and the invalidation of the children is already happening.
+
+           Note this is true before the invalidate call on the object.
+         ]]
+         get {
+         }
+         values {
+            invalidating: bool; [[$true if the object is invalidating, $false otherwise]]
+         }
+      }
       provider_find @const {
         [[Searches upwards in the object tree for a provider which knows the given class/interface.
 
