@@ -175,6 +175,7 @@ eina_vpath_init(void)
    vpath_data = eina_hash_string_superfast_new((Eina_Free_Cb)eina_stringshare_del);
 
    _eina_vpath_interface_sys_init();
+   eina_xdg_env_init();
 
    _eina_vpath_log_dom = eina_log_domain_register("vpath", "cyan");
    return EINA_TRUE;

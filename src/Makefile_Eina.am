@@ -185,7 +185,8 @@ lib/eina/eina_bezier.c \
 lib/eina/eina_safepointer.c \
 lib/eina/eina_freeq.c \
 lib/eina/eina_slstr.c \
-lib/eina/eina_vpath.c
+lib/eina/eina_vpath.c \
+lib/eina/eina_vpath_xdg.c
 
 
 if HAVE_WIN32
