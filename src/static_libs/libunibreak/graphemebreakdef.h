@@ -1,10 +1,8 @@
-/* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
-
 /*
- * Word breaking in a Unicode sequence.  Designed to be used in a
+ * Grapheme breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-16 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2016 Andreas Röver <roever at users dot sf dot net>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -26,11 +24,7 @@
  * The main reference is Unicode Standard Annex 29 (UAX #29):
  *      <URL:http://unicode.org/reports/tr29>
  *
- * When this library was designed, this annex was at Revision 17, for
- * Unicode 6.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
- *
- * This library has been updated according to Revision 29, for
+ * When this library was designed, this annex was at Revision 29, for
  * Unicode 9.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
  *
@@ -39,54 +33,50 @@
  */
 
 /**
- * @file    wordbreakdef.h
+ * @file    graphemebreakdef.h
  *
  * Definitions of internal data structures, declarations of global
- * variables, and function prototypes for the word breaking algorithm.
+ * variables, and function prototypes for the grapheme breaking algorithm.
  *
- * @author  Tom Hacohen
+ * @author  Andreas Röver
  */
 
 #include "unibreakdef.h"
 
 /**
- * Word break classes.  This is a direct mapping of Table 3 of Unicode
- * Standard Annex 29, Revision 23.
+ * Word break classes.  This is a direct mapping of Table 2 of Unicode
+ * Standard Annex 29
  */
-enum WordBreakClass
+enum GraphemeBreakClass
 {
-    WBP_Undefined,
-    WBP_CR,
-    WBP_LF,
-    WBP_Newline,
-    WBP_Extend,
-    WBP_ZWJ,
-    WBP_Regional_Indicator,
-    WBP_Format,
-    WBP_Katakana,
-    WBP_Hebrew_Letter,
-    WBP_ALetter,
-    WBP_Single_Quote,
-    WBP_Double_Quote,
-    WBP_MidNumLet,
-    WBP_MidLetter,
-    WBP_MidNum,
-    WBP_Numeric,
-    WBP_ExtendNumLet,
-    WBP_E_Base,
-    WBP_E_Modifier,
-    WBP_Glue_After_Zwj,
-    WBP_E_Base_GAZ,
-    WBP_Any
+    GBP_CR,
+    GBP_LF,
+    GBP_Control,
+    GBP_Extend,
+    GBP_ZWJ,
+    GBP_Regional_Indicator,
+    GBP_Prepend,
+    GBP_SpacingMark,
+    GBP_L,
+    GBP_V,
+    GBP_T,
+    GBP_LV,
+    GBP_LVT,
+    GBP_E_Base,
+    GBP_E_Modifier,
+    GBP_Glue_After_Zwj,
+    GBP_E_Base_GAZ,
+    GBP_Other,
+    GBP_Undefined
 };
 
 /**
- * Struct for entries of word break properties.  The array of the
+ * Struct for entries of grapheme break properties.  The array of the
  * entries \e must be sorted.
  */
-struct WordBreakProperties
+struct GraphemeBreakProperties
 {
-    utf32_t start;              /**< Starting coding point */
-    utf32_t end;                /**< End coding point */
-    enum WordBreakClass prop;   /**< The word breaking property */
+    utf32_t start;                /**< Starting coding point */
+    utf32_t end;                  /**< End coding point, including */
+    enum GraphemeBreakClass prop; /**< The grapheme breaking property */
 };

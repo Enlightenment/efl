@@ -1,10 +1,8 @@
-/* vim: set expandtab tabstop=4 softtabstop=4 shiftwidth=4: */
-
 /*
- * Word breaking in a Unicode sequence.  Designed to be used in a
+ * Grapheme breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-2016 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2016 Andreas Röver <roever at users dot sf dot net>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -26,11 +24,7 @@
  * The main reference is Unicode Standard Annex 29 (UAX #29):
  *      <URL:http://unicode.org/reports/tr29>
  *
- * When this library was designed, this annex was at Revision 17, for
- * Unicode 6.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
- *
- * This library has been updated according to Revision 29, for
+ * When this library was designed, this annex was at Revision 29, for
  * Unicode 9.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
  *
@@ -39,15 +33,15 @@
  */
 
 /**
- * @file    wordbreak.h
+ * @file    graphemebreak.h
  *
- * Header file for the word breaking (segmentation) algorithm.
+ * Header file for the grapheme breaking algorithm.
  *
- * @author  Tom Hacohen
+ * @author  Andreas Röver
  */
 
-#ifndef WORDBREAK_H
-#define WORDBREAK_H
+#ifndef GRAPHEMEBREAK_H
+#define GRAPHEMEBREAK_H
 
 #include <stddef.h>
 #include "unibreakbase.h"
@@ -56,17 +50,17 @@
 extern "C" {
 #endif
 
-#define WORDBREAK_BREAK         0   /**< Break is allowed */
-#define WORDBREAK_NOBREAK       1   /**< No break is allowed */
-#define WORDBREAK_INSIDEACHAR   2   /**< A UTF-8/16 sequence is unfinished */
+#define GRAPHEMEBREAK_BREAK 0       /**< Between 2 graphemes */
+#define GRAPHEMEBREAK_NOBREAK 1     /**< Inside a grapheme */
+#define GRAPHEMEBREAK_INSIDEACHAR 2 /**< Inside a unicode character */
 
-void init_wordbreak(void);
-void set_wordbreaks_utf8(
-        const utf8_t *s, size_t len, const char* lang, char *brks);
-void set_wordbreaks_utf16(
-        const utf16_t *s, size_t len, const char* lang, char *brks);
-void set_wordbreaks_utf32(
-        const utf32_t *s, size_t len, const char* lang, char *brks);
+void init_graphemebreak(void);
+void set_graphemebreaks_utf8(const utf8_t *s, size_t len, const char *lang,
+                             char *brks);
+void set_graphemebreaks_utf16(const utf16_t *s, size_t len,
+                              const char *lang, char *brks);
+void set_graphemebreaks_utf32(const utf32_t *s, size_t len,
+                              const char *lang, char *brks);
 
 #ifdef __cplusplus
 }

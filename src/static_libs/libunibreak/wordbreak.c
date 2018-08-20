@@ -4,7 +4,7 @@
  * Word breaking in a Unicode sequence.  Designed to be used in a
  * generic text renderer.
  *
- * Copyright (C) 2013-2015 Tom Hacohen <tom at stosb dot com>
+ * Copyright (C) 2013-2016 Tom Hacohen <tom at stosb dot com>
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the author be held liable for any damages
@@ -30,9 +30,9 @@
  * Unicode 6.0.0:
  *      <URL:http://www.unicode.org/reports/tr29/tr29-17.html>
  *
- * This library has been updated according to Revision 27, for
- * Unicode 8.0.0:
- *      <URL:http://www.unicode.org/reports/tr29/tr29-27.html>
+ * This library has been updated according to Revision 29, for
+ * Unicode 9.0.0:
+ *      <URL:http://www.unicode.org/reports/tr29/tr29-29.html>
  *
  * The Unicode Terms of Use are available at
  *      <URL:http://www.unicode.org/copyright.html>
@@ -44,7 +44,6 @@
  * Implementation of the word breaking algorithm as described in Unicode
  * Standard Annex 29.
  *
- * @version 3.1, 2015/05/18
  * @author  Tom Hacohen
  */
 
@@ -149,7 +148,7 @@ static void set_brks_to(
  *
  * @param[in]  s             input string
  * @param[in]  len           length of the input
- * @param[in]  lang          language of the input
+ * @param[in]  lang          language of the input (reserved for future use)
  * @param[out] brks          pointer to the output breaking data, containing
  *                           #WORDBREAK_BREAK, #WORDBREAK_NOBREAK, or
  *                           #WORDBREAK_INSIDEACHAR
@@ -210,13 +209,7 @@ static void set_wordbreaks(
                 posLast = posCur;
                 break;
             }
-#ifndef __has_attribute
-# define __has_attribute(x) 0
-#endif
-#if __has_attribute(fallthrough)
-           __attribute__((fallthrough));
-#endif
-           /* Fall off */
+            /* Fall off */
 
         case WBP_Newline:
             /* WB3a,3b */
@@ -329,13 +322,7 @@ static void set_wordbreaks(
                 wbcSeqStart = wbcCur;
                 posLast = posCur;
             }
-#ifndef __has_attribute
-# define __has_attribute(x) 0
-#endif
-#if __has_attribute(fallthrough)
-           __attribute__((fallthrough));
-#endif
-           /* No break on purpose */
+            /* No break on purpose */
         case WBP_MidNumLet:
             if (((wbcLast == WBP_ALetter) ||
                         (wbcLast == WBP_Hebrew_Letter)) || /* WB6,7 */
@@ -511,7 +498,7 @@ static void set_wordbreaks(
  *
  * @param[in]  s     input UTF-8 string
  * @param[in]  len   length of the input
- * @param[in]  lang  language of the input
+ * @param[in]  lang  language of the input (reserved for future use)
  * @param[out] brks  pointer to the output breaking data, containing
  *                   #WORDBREAK_BREAK, #WORDBREAK_NOBREAK, or
  *                   #WORDBREAK_INSIDEACHAR
@@ -531,7 +518,7 @@ void set_wordbreaks_utf8(
  *
  * @param[in]  s     input UTF-16 string
  * @param[in]  len   length of the input
- * @param[in]  lang  language of the input
+ * @param[in]  lang  language of the input (reserved for future use)
  * @param[out] brks  pointer to the output breaking data, containing
  *                   #WORDBREAK_BREAK, #WORDBREAK_NOBREAK, or
  *                   #WORDBREAK_INSIDEACHAR
@@ -551,7 +538,7 @@ void set_wordbreaks_utf16(
  *
  * @param[in]  s     input UTF-32 string
  * @param[in]  len   length of the input
- * @param[in]  lang  language of the input
+ * @param[in]  lang  language of the input (reserved for future use)
  * @param[out] brks  pointer to the output breaking data, containing
  *                   #WORDBREAK_BREAK, #WORDBREAK_NOBREAK, or
  *                   #WORDBREAK_INSIDEACHAR

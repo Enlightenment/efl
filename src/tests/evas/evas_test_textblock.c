@@ -105,8 +105,9 @@ while (0)
 EFL_START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
+   Evas_Textblock_Cursor *cur2;
    Evas_Coord x, y, w, h;
-   size_t i, len;
+   size_t i, j, len;
    Evas_Coord nw, nh;
    Evas_BiDi_Direction dir;
    const char *buf = "This is a<br/> test.<ps/>Lets see if this works.<ps/>עוד פסקה.";
@@ -973,6 +974,27 @@ EFL_START_TEST(evas_textblock_cursor)
           }
         evas_textblock_cursor_free(cur2);
      }
+
+   /* Testing for grapheme cluster */
+   cur2 = evas_object_textblock_cursor_new(tb);
+   evas_object_textblock_text_markup_set(tb, "ഹലോ");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(cur2, 0);
+
+   i = j = 0;
+   while (evas_textblock_cursor_cluster_next(cur)) i++;
+   ck_assert_int_eq(i, 2);
+
+   while (evas_textblock_cursor_char_next(cur2)) j++;
+   ck_assert_int_eq(j, 4);
+
+   i = j = 0;
+   while (evas_textblock_cursor_cluster_prev(cur)) i++;
+   ck_assert_int_eq(i, 2);
+
+   while (evas_textblock_cursor_char_prev(cur2)) j++;
+   ck_assert_int_eq(j, 4);
+
    END_TB_TEST();
 }
 EFL_END_TEST

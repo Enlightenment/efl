@@ -193,7 +193,10 @@ static_libs/libunibreak/linebreak.h \
 static_libs/libunibreak/linebreakdef.h \
 static_libs/libunibreak/wordbreakdef.h \
 static_libs/libunibreak/wordbreak.h \
-static_libs/libunibreak/wordbreakdata.c
+static_libs/libunibreak/wordbreakdata.c \
+static_libs/libunibreak/graphemebreak.h \
+static_libs/libunibreak/graphemebreakdef.h \
+static_libs/libunibreak/graphemebreakdata.c
 
 # Linebreak
 lib_evas_libevas_la_SOURCES = \
@@ -202,7 +205,8 @@ static_libs/libunibreak/unibreakdef.c \
 static_libs/libunibreak/linebreak.c \
 static_libs/libunibreak/linebreakdata.c \
 static_libs/libunibreak/linebreakdef.c \
-static_libs/libunibreak/wordbreak.c
+static_libs/libunibreak/wordbreak.c \
+static_libs/libunibreak/graphemebreak.c
 
 # Main
 lib_evas_libevas_la_SOURCES += \

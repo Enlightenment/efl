@@ -327,6 +327,8 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Text_Cursor.cursor_copy;
       Efl.Text_Cursor.cursor_char_next;
       Efl.Text_Cursor.cursor_char_prev;
+      Efl.Text_Cursor.cursor_cluster_next;
+      Efl.Text_Cursor.cursor_cluster_prev;
       Efl.Text_Cursor.cursor_paragraph_char_first;
       Efl.Text_Cursor.cursor_paragraph_char_last;
       Efl.Text_Cursor.cursor_word_start;
@@ -339,6 +341,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Text_Cursor.cursor_paragraph_prev;
       Efl.Text_Cursor.cursor_line_jump_by;
       Efl.Text_Cursor.cursor_coord_set;
+      Efl.Text_Cursor.cursor_cluster_coord_set;
       Efl.Text_Cursor.cursor_text_insert;
       Efl.Text_Cursor.cursor_char_delete;
       Efl.Text_Annotate.annotation { set; get; }
