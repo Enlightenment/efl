@@ -70,6 +70,8 @@
 #include "eina_hash.h"
 #include "eina_stringshare.h"
 #include "eina_debug_private.h"
+#include "eina_vpath.h"
+#include "eina_internal.h"
 
 #ifdef EINA_HAVE_PTHREAD_SETNAME
 # ifndef __linux__
@@ -442,16 +444,6 @@ _opcodes_unregister_all(Eina_Debug_Session *session)
      }
 }
 
-static const char *
-_socket_home_get()
-{
-   // get possible debug daemon socket directory base
-   const char *dir = getenv("XDG_RUNTIME_DIR");
-   if (!dir) dir = eina_environment_home_get();
-   if (!dir) dir = eina_environment_tmp_get();
-   return dir;
-}
-
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #endif
@@ -514,7 +506,7 @@ eina_debug_local_connect(Eina_Bool is_master)
    //   ~/.ecore/efl_debug/0
    // or maybe
    //   /var/run/UID/.ecore/efl_debug/0
-   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", _socket_home_get(),
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/%s/%s/%i",
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
    // create the socket
    fd = socket(AF_UNIX, SOCK_STREAM, 0);

@@ -173,9 +173,10 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(module),
    S(mempool),
    S(list),
+   S(stringshare),
+   S(vpath),
    S(debug),
    S(evlog),
-   S(stringshare),
    S(error),
    S(safety_checks),
    S(magic_string),
@@ -205,7 +206,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(safepointer),
    S(slstr),
    S(promise),
-   S(vpath),
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /
