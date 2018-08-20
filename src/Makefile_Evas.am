@@ -246,8 +246,6 @@ lib/evas/canvas/evas_object_grid.c \
 lib/evas/canvas/evas_font_dir.c \
 lib/evas/canvas/evas_rectangle.c \
 lib/evas/canvas/evas_render.c \
-lib/evas/canvas/render2/evas_render2.c \
-lib/evas/canvas/render2/evas_render2.h \
 lib/evas/canvas/evas_smart.c \
 lib/evas/canvas/evas_async_events.c \
 lib/evas/canvas/evas_stats.c \
@@ -288,12 +286,9 @@ lib/evas/gesture/efl_canvas_gesture_recognizer.c \
 lib/evas/gesture/efl_canvas_gesture_recognizer_tap.c \
 lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.c \
 lib/evas/gesture/efl_canvas_gesture_manager.c \
+lib/evas/common/region.c \
+lib/evas/common/region.h \
 $(NULL)
-
-EXTRA_DIST2 += \
-lib/evas/canvas/render2/evas_render2_th_main.c \
-lib/evas/canvas/render2/region.c \
-lib/evas/canvas/render2/region.h
 
  # Vg
  lib_evas_libevas_la_SOURCES += \
@@ -486,7 +481,6 @@ lib/evas/common/evas_common_generic_cache.c
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/canvas \
--I$(top_srcdir)/src/lib/evas/canvas/render2 \
 -I$(top_srcdir)/src/lib/evas/common \
 -I$(top_srcdir)/src/lib/evas/common3d/save_load \
 -I$(top_srcdir)/src/lib/evas/cserve2 \

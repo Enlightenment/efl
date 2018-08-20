@@ -291,12 +291,9 @@ evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
    evas_object_clip_dirty_do(obj);
 }
 
-extern Eina_Bool evas_render2_use;
-
 static inline void
 evas_object_async_block(Evas_Object_Protected_Data *obj)
 {
-   if (!evas_render2_use) return ;
    if (EVAS_OBJECT_DATA_VALID(obj))
      {
         eina_lock_take(&(obj->layer->evas->lock_objects));
@@ -307,7 +304,6 @@ evas_object_async_block(Evas_Object_Protected_Data *obj)
 static inline void
 evas_canvas_async_block(Evas_Public_Data *e)
 {
-   if (!evas_render2_use) return ;
    if (e)
      {
         eina_lock_take(&(e->lock_objects));

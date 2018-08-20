@@ -52,7 +52,7 @@ SOFTWARE.
 /* pixregion.h */
 
 ////////////////////////////////////////////////////////////////////////////
-
+#include "Eina.h"
 typedef struct _Region Region;
 typedef struct _Box    Box;
 

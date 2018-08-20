@@ -10,8 +10,6 @@
 #include <sys/time.h>
 #endif
 
-#include "evas_render2.h"
-
 // FIXME: Ugly!
 #define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 #include "efl_canvas_filter_internal.eo.h"
@@ -3903,28 +3901,6 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 EOLIAN Eina_Bool
-_evas_canvas_render2(Eo *eo_e, Evas_Public_Data *e)
-{
-   Eina_Bool ret;
-
-   eina_evlog("+render2", eo_e, 0.0, NULL);
-   ret = _evas_render2(eo_e, e);
-   eina_evlog("-render2", eo_e, 0.0, NULL);
-   return ret;
-}
-
-EOLIAN Eina_List *
-_evas_canvas_render2_updates(Eo *eo_e, Evas_Public_Data *e)
-{
-   Eina_List *updates = NULL;
-
-   eina_evlog("+render2_updates", eo_e, 0.0, NULL);
-   updates = _evas_render2_updates(eo_e, e);
-   eina_evlog("-render2_updates", eo_e, 0.0, NULL);
-   return updates;
-}
-
-EOLIAN Eina_Bool
 _evas_canvas_render_async(Eo *eo_e, Evas_Public_Data *e)
 {
    Eina_Bool ret;
@@ -3947,12 +3923,8 @@ evas_render_updates_internal_wait(Evas *eo_e,
    Evas_Public_Data *e;
 
    e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   if (e->render2) return _evas_render2_updates_wait(eo_e, e);
-   else
-     {
-        if (!evas_render_updates_internal(eo_e, make_updates, do_draw, EINA_FALSE))
-          return NULL;
-     }
+   if (!evas_render_updates_internal(eo_e, make_updates, do_draw, EINA_FALSE))
+     return NULL;
 
    eina_spinlock_take(&(e->render.lock));
    EINA_LIST_FOREACH(e->outputs, l, out)
@@ -4007,20 +3979,16 @@ _evas_canvas_render(Eo *eo_e, Evas_Public_Data *e)
 EOLIAN void
 _evas_canvas_norender(Eo *eo_e, Evas_Public_Data *e)
 {
-   if (e->render2) _evas_norender2(eo_e, e);
-   else
-     {
-        Eina_List *ret;
-        Render_Updates *ru;
+   Eina_List *ret;
+   Render_Updates *ru;
 
-        evas_canvas_async_block(e);
-        //   if (!e->changed) return;
-        ret = evas_render_updates_internal_wait(eo_e, 0, 0);
-        EINA_LIST_FREE(ret, ru)
-          {
-             eina_rectangle_free(ru->area);
-             free(ru);
-          }
+   evas_canvas_async_block(e);
+   //   if (!e->changed) return;
+   ret = evas_render_updates_internal_wait(eo_e, 0, 0);
+   EINA_LIST_FREE(ret, ru)
+     {
+        eina_rectangle_free(ru->area);
+        free(ru);
      }
 }
 
@@ -4028,36 +3996,32 @@ EOLIAN void
 _evas_canvas_render_idle_flush(Eo *eo_e, Evas_Public_Data *evas)
 {
    eina_evlog("+idle_flush", eo_e, 0.0, NULL);
-   if (evas->render2) _evas_render2_idle_flush(eo_e, evas);
-   else
+   evas_canvas_async_block(evas);
+
+   evas_render_rendering_wait(evas);
+
+   evas_fonts_zero_pressure();
+
+   if (ENFN && ENFN->output_idle_flush)
      {
-        evas_canvas_async_block(evas);
+        Efl_Canvas_Output *output;
+        Eina_List *l;
 
-        evas_render_rendering_wait(evas);
-
-        evas_fonts_zero_pressure();
-
-        if (ENFN && ENFN->output_idle_flush)
-          {
-             Efl_Canvas_Output *output;
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(evas->outputs, l, output)
-               if (output->output)
-                 ENFN->output_idle_flush(ENC, output->output);
-          }
-
-        eina_inarray_flush(&evas->active_objects);
-        OBJS_ARRAY_FLUSH(&evas->render_objects);
-        OBJS_ARRAY_FLUSH(&evas->restack_objects);
-        OBJS_ARRAY_FLUSH(&evas->delete_objects);
-        OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
-        OBJS_ARRAY_FLUSH(&evas->temporary_objects);
-        eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
-        eina_array_clean(&evas->clip_changes);
-
-        evas->invalidate = EINA_TRUE;
+        EINA_LIST_FOREACH(evas->outputs, l, output)
+          if (output->output)
+            ENFN->output_idle_flush(ENC, output->output);
      }
+
+   eina_inarray_flush(&evas->active_objects);
+   OBJS_ARRAY_FLUSH(&evas->render_objects);
+   OBJS_ARRAY_FLUSH(&evas->restack_objects);
+   OBJS_ARRAY_FLUSH(&evas->delete_objects);
+   OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
+   OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+   eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
+   eina_array_clean(&evas->clip_changes);
+
+   evas->invalidate = EINA_TRUE;
    eina_evlog("-idle_flush", eo_e, 0.0, NULL);
 }
 
@@ -4065,12 +4029,8 @@ EOLIAN void
 _evas_canvas_sync(Eo *eo_e, Evas_Public_Data *e)
 {
    eina_evlog("+render_sync", eo_e, 0.0, NULL);
-   if (e->render2) _evas_render2_sync(eo_e, e);
-   else
-     {
-        evas_canvas_async_block(e);
-        evas_render_rendering_wait(e);
-     }
+   evas_canvas_async_block(e);
+   evas_render_rendering_wait(e);
    eina_evlog("-render_sync", eo_e, 0.0, NULL);
 }
 
@@ -4099,91 +4059,87 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 EOLIAN void
 _evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
 {
-   if (evas->render2) _evas_render2_dump(eo_e, evas);
-   else
+   Evas_Layer *lay;
+
+   evas_canvas_async_block(evas);
+
+   evas_all_sync();
+   evas_cache_async_freeze();
+
+   EINA_INLIST_FOREACH(evas->layers, lay)
      {
-        Evas_Layer *lay;
+        Evas_Object_Protected_Data *obj;
 
-        evas_canvas_async_block(evas);
-
-        evas_all_sync();
-        evas_cache_async_freeze();
-
-        EINA_INLIST_FOREACH(evas->layers, lay)
+        lay->walking_objects++;
+        EINA_INLIST_FOREACH(lay->objects, obj)
           {
-             Evas_Object_Protected_Data *obj;
-
-             lay->walking_objects++;
-             EINA_INLIST_FOREACH(lay->objects, obj)
+             if (obj->proxy->surface)
                {
-                  if (obj->proxy->surface)
+                  EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
                     {
-                       EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, obj->proxy, Evas_Object_Proxy_Data, proxy_write)
-                         {
-                            ENFN->image_free(ENC, proxy_write->surface);
-                            proxy_write->surface = NULL;
-                         }
-                       EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
+                       ENFN->image_free(ENC, proxy_write->surface);
+                       proxy_write->surface = NULL;
                     }
-                  if (obj->mask->surface)
-                    {
-                       EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
-                         {
-                            ENFN->image_free(ENC, mdata->surface);
-                            mdata->surface = NULL;
-                         }
-                       EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);
-                    }
-                  if ((obj->type) && (!strcmp(obj->type, "image")))
-                    evas_object_inform_call_image_unloaded(obj->object);
-                  _evas_render_dump_map_surfaces(obj->object);
+                  EINA_COW_WRITE_END(evas_object_proxy_cow, obj->proxy, proxy_write);
                }
-             lay->walking_objects--;
-             _evas_layer_flush_removes(lay);
+             if (obj->mask->surface)
+               {
+                  EINA_COW_WRITE_BEGIN(evas_object_mask_cow, obj->mask, Evas_Object_Mask_Data, mdata)
+                    {
+                       ENFN->image_free(ENC, mdata->surface);
+                       mdata->surface = NULL;
+                    }
+                  EINA_COW_WRITE_END(evas_object_mask_cow, obj->mask, mdata);
+               }
+             if ((obj->type) && (!strcmp(obj->type, "image")))
+               evas_object_inform_call_image_unloaded(obj->object);
+             _evas_render_dump_map_surfaces(obj->object);
           }
-        if (ENFN && ENFN->output_dump)
-          {
-             Efl_Canvas_Output *output;
-             Eina_List *l;
+        lay->walking_objects--;
+        _evas_layer_flush_removes(lay);
+     }
+   if (ENFN && ENFN->output_dump)
+     {
+        Efl_Canvas_Output *output;
+        Eina_List *l;
 
-             EINA_LIST_FOREACH(evas->outputs, l, output)
-               if (output->output)
-                 ENFN->output_dump(ENC, output->output);
-          }
+        EINA_LIST_FOREACH(evas->outputs, l, output)
+          if (output->output)
+            ENFN->output_dump(ENC, output->output);
+     }
 
 #define GC_ALL(Cow) \
-  if (Cow) while (eina_cow_gc(Cow))
-        GC_ALL(evas_object_proxy_cow);
-        GC_ALL(evas_object_map_cow);
-        GC_ALL(evas_object_image_pixels_cow);
-        GC_ALL(evas_object_image_load_opts_cow);
-        GC_ALL(evas_object_image_state_cow);
+if (Cow) while (eina_cow_gc(Cow))
+   GC_ALL(evas_object_proxy_cow);
+   GC_ALL(evas_object_map_cow);
+   GC_ALL(evas_object_image_pixels_cow);
+   GC_ALL(evas_object_image_load_opts_cow);
+   GC_ALL(evas_object_image_state_cow);
 
-        evas_fonts_zero_pressure();
+   evas_fonts_zero_pressure();
 
-        if (ENFN && ENFN->output_idle_flush)
-          {
-             Efl_Canvas_Output *output;
-             Eina_List *l;
+   if (ENFN && ENFN->output_idle_flush)
+     {
+        Efl_Canvas_Output *output;
+        Eina_List *l;
 
-             EINA_LIST_FOREACH(evas->outputs, l, output)
-               if (output->output)
-                 ENFN->output_idle_flush(ENC, output->output);
-          }
-
-        eina_inarray_flush(&evas->active_objects);
-        OBJS_ARRAY_FLUSH(&evas->render_objects);
-        OBJS_ARRAY_FLUSH(&evas->restack_objects);
-        OBJS_ARRAY_FLUSH(&evas->delete_objects);
-        OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
-        OBJS_ARRAY_FLUSH(&evas->temporary_objects);
-        eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
-        eina_array_clean(&evas->clip_changes);
-
-        evas->invalidate = EINA_TRUE;
-
-        evas_cache_async_thaw();
+        EINA_LIST_FOREACH(evas->outputs, l, output)
+          if (output->output)
+            ENFN->output_idle_flush(ENC, output->output);
      }
+
+   eina_inarray_flush(&evas->active_objects);
+   OBJS_ARRAY_FLUSH(&evas->render_objects);
+   OBJS_ARRAY_FLUSH(&evas->restack_objects);
+   OBJS_ARRAY_FLUSH(&evas->delete_objects);
+   OBJS_ARRAY_FLUSH(&evas->obscuring_objects);
+   OBJS_ARRAY_FLUSH(&evas->temporary_objects);
+   eina_array_foreach(&evas->clip_changes, _evas_clip_changes_free, NULL);
+   eina_array_clean(&evas->clip_changes);
+
+   evas->invalidate = EINA_TRUE;
+
+   evas_cache_async_thaw();
 }
 
 void
