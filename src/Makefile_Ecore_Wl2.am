@@ -86,6 +86,7 @@ $(install_ecorewl2enginedmabufpkgLTLIBRARIES): install-libLTLIBRARIES
 modules_ecore_wl2_engines_dmabuf_module_la_SOURCES = $(DMABUFSOURCES)
 modules_ecore_wl2_engines_dmabuf_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@
 modules_ecore_wl2_engines_dmabuf_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@ @USE_ECORE_WL2_LIBS@
+modules_ecore_wl2_engines_dmabuf_module_la_DEPENDENCIES = lib/ecore_wl2/libecore_wl2.la
 modules_ecore_wl2_engines_dmabuf_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
