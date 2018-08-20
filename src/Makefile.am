@@ -101,19 +101,7 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
-.PHONY: benchmark examples
-
-BENCHMARK_SUBDIRS = \
-benchmarks/eina \
-benchmarks/eo \
-benchmarks/evas
-DIST_SUBDIRS += $(BENCHMARK_SUBDIRS)
-
-benchmark: all
-	@for d in $(BENCHMARK_SUBDIRS); do \
-	   echo "Making benchmark in $$d"; \
-	   $(MAKE) $(AM_MAKEFLAGS) -C $$d benchmark; \
-	done
+.PHONY: examples
 
 EXAMPLES_SUBDIRS = \
 examples

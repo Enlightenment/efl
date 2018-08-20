@@ -1029,17 +1029,6 @@ EFL_EVAL_PKGS([EINA])
 
 ## Examples
 
-## Benchmarks
-
-PKG_CHECK_MODULES([GLIB],
-   [glib-2.0],
-   [have_glib="yes"],
-   [have_glib="no"])
-
-if test "x${have_glib}" = "xyes" ; then
-   GLIB_CFLAGS="${GLIB_CFLAGS} -DEINA_BENCH_HAVE_GLIB"
-fi
-
 ### Checks for header files
 
 # sys/mman.h could be provided by evil/escape/exotic so we need to set CFLAGS accordingly
@@ -5725,9 +5714,6 @@ doc/widgets/Makefile
 src/Makefile
 src/bindings/mono/efl_mono/efl_libs.cs
 src/bindings/mono/efl_mono/efl_libs.csv
-src/benchmarks/eina/Makefile
-src/benchmarks/eo/Makefile
-src/benchmarks/evas/Makefile
 src/examples/Makefile
 src/lib/eina/eina_config.h
 src/lib/efl/Efl_Config.h

@@ -96,10 +96,6 @@ script:
   - .ci/ci-make.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
   #- .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
-          .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
-      fi
   #- .ci/ci-make-install.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
