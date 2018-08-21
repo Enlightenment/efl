@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131089;
+  value "config_version" int: 131090;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -2620,6 +2620,29 @@ group "Elm_Config" struct {
               value "key" string: "KP_Down";
               value "action" string: "move";
               value "params" string: "down";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Efl.Ui.Tab_Bar";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "space";
+              value "action" string: "select";
+              value "params" string: "";
            }
         }
      }

@@ -10,10 +10,39 @@
 #include "els_box.h"
 
 #define MY_CLASS EFL_UI_TAB_BAR_CLASS
+#define MY_CLASS_NAME "Efl.Ui.Tab_Bar"
 
 static const char PART_NAME_TAB[] = "tab";
 
 static void _tab_select(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti);
+
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
+
+static const Elm_Action key_actions[] = {
+   {"select", _key_action_select},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   EFL_UI_TAB_BAR_DATA_GET(obj, sd);
+
+   if (!sd->tab_infos) return EINA_FALSE;
+
+   Tab_Info *ti;
+   Eina_List *l, *l_next;
+   EINA_LIST_FOREACH_SAFE(sd->tab_infos, l, l_next, ti)
+     {
+        if (efl_ui_focus_object_focus_get(ti->tab))
+          {
+             _tab_select(sd, ti);
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
 
 EOLIAN static void
 _efl_ui_tab_bar_current_tab_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int index)
@@ -363,5 +392,9 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
 
    return obj;
 }
+
+/* Standard widget overrides */
+
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_tab_bar, Efl_Ui_Tab_Bar_Data)
 
 #include "efl_ui_tab_bar.eo.c"
