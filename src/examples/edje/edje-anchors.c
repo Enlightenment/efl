@@ -24,7 +24,7 @@
 #define HEIGHT 400
 
 int
-main(int argc, char **argv)
+main(int argc EINA_UNUSED, char **argv)
 {
    char path[PATH_MAX] = { 0, };
 
