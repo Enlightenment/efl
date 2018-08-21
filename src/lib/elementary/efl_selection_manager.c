@@ -927,6 +927,8 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
         return ECORE_CALLBACK_PASS_ON;
      }
    sel_debug("Target is %s", ev->target);
+   if (!sel->asked) return ECORE_CALLBACK_PASS_ON;
+   sel->asked--;
 
    if (ev->selection != ECORE_X_SELECTION_XDND &&
        (!strcmp(ev->target, "TARGETS") || !strcmp(ev->target, "ATOMS")))
@@ -1288,6 +1290,7 @@ _x11_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Selection_Mana
           }
      }
 
+   sel->asked = 2;
    sel->request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
 }
 
