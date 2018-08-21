@@ -14,6 +14,7 @@ edje/codegen.edc \
 edje/color-class.edc \
 edje/drag.edc \
 edje/dynamic_multiseat.edc \
+edje/edje-anchors.edc \
 edje/edje-group.edc \
 edje/edje-nested.edc \
 edje/edje-threshold.edc \
@@ -104,6 +105,7 @@ edje/Makefile.examples
 
 EDJE_SRCS = \
 edje/animations2.c \
+edje/edje-anchors.c \
 edje/edje-animations.c \
 edje/edje-basic.c \
 edje/edje-basic2.c \
@@ -163,6 +165,7 @@ endif
 if BUILD_LOADER_PNG
 EXTRA_PROGRAMS += \
 edje/animations2 \
+edje/edje-anchors \
 edje/edje-animations \
 edje/edje-basic \
 edje/edje-basic2 \
