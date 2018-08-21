@@ -4,6 +4,9 @@ emile/emile_base64.c
 EXTRA_PROGRAMS += \
 emile/emile_base64
 
+DATA_FILES += \
+emile/Makefile.examples
+
 install-examples-emile:
 	$(MKDIR_P) $(DESTDIR)$(datadir)/emile/examples
 	cd $(srcdir) && $(install_sh_DATA) -c $(EMILE_SRCS) $(DESTDIR)$(datadir)/emile/examples
