@@ -125,15 +125,15 @@ _fields_init(Eo *obj)
                       efl_ui_range_min_max_set(efl_added, 1, 12),
                       efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
                       efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj),
-                      elm_widget_element_update(obj, efl_added, "spin_button"));
+                      efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->min = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
                      efl_ui_range_min_max_set(efl_added, 0, 59),
                      efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
                      efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
-                     efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj),
-                     elm_widget_element_update(obj, efl_added, "spin_button"));
+                     efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                     efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->ampm = efl_add(EFL_UI_BUTTON_CLASS, obj,
                       efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _field_changed_cb, obj),

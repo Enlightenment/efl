@@ -331,15 +331,3 @@ group { "efl/datepicker/spin_button";
       }
    }
 }
-
-group { "efl/datepicker/spin_button/text_button";
-   inherit: "efl/spin_button/text_button";
-}
-
-group { "efl/datepicker/spin_button/inc_button";
-   inherit: "efl/spin_button/inc_button:vertical";
-}
-
-group { "efl/datepicker/spin_button/dec_button";
-   inherit: "efl/spin_button/dec_button:vertical";
-}

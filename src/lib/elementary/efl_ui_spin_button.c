@@ -735,10 +735,71 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
      }
 }
 
+static const char *
+_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len)
+{
+   const char *pos = NULL;
+   const char *temp_str = NULL;
+
+   temp_str = cur_group + len - strlen(search);
+   if (temp_str >= cur_group)
+     {
+        if (!strcmp(temp_str, search))
+          pos = temp_str;
+     }
+
+   return pos;
+}
+
+static char *
+_efl_ui_spin_button_theme_group_get(Evas_Object *obj, Efl_Ui_Spin_Button_Data *sd)
+{
+   const char *pos = NULL;
+   const char *cur_group = elm_widget_theme_element_get(obj);
+   Eina_Strbuf *new_group = eina_strbuf_new();
+   size_t len = 0;
+
+   if (cur_group)
+     {
+        len = strlen(cur_group);
+        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len);
+        if (!pos)
+          pos = _theme_group_modify_pos_get(cur_group, "vertical", len);
+
+        // TODO: change separator when it is decided.
+        //       can skip when prev_group == cur_group
+        if (!pos)
+          {
+             eina_strbuf_append(new_group, cur_group);
+             eina_strbuf_append(new_group, "/");
+          }
+        else
+          {
+             eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
+          }
+     }
+
+   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+     eina_strbuf_append(new_group, "horizontal");
+   else
+     eina_strbuf_append(new_group, "vertical");
+
+   return eina_strbuf_release(new_group);
+}
+
+
 EOLIAN static Efl_Ui_Theme_Apply
 _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   char *group;
+
+   group = _efl_ui_spin_button_theme_group_get(obj, sd);
+   if (group)
+     {
+        elm_widget_theme_element_set(obj, group);
+        free(group);
+     }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
@@ -766,11 +827,22 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
 EOLIAN static Eo *
 _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 {
-   if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "spin_button");
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   char *group;
 
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
+   elm_widget_theme_klass_set(obj, "spin_button");
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   group = _efl_ui_spin_button_theme_group_get(obj, sd);
+   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+                                    elm_widget_theme_klass_get(obj),
+                                    group,
+                                    elm_widget_theme_style_get(obj)))
+     CRI("Failed to set layout!");
+
+   free(group);
 
    sd->first_interval = 0.85;
 
@@ -810,6 +882,20 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_spin_button_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Efl_Ui_Dir dir)
+{
+   sd->dir = dir;
+
+   efl_ui_widget_theme_apply(obj);
+}
+
+EOLIAN static Efl_Ui_Dir
+_efl_ui_spin_button_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+{
+   return sd->dir;
 }
 
 EOLIAN static void

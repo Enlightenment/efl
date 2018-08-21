@@ -10,6 +10,8 @@ struct _Efl_Ui_Spin_Button_Data
    Ecore_Timer          *spin_timer; /**< a timer for a repeated spinner value change on mouse down */
    Ecore_Timer          *longpress_timer; /**< a timer to detect long press. After lonpress timeout,
                                           start continuous change of values until mouse up */
+   Efl_Ui_Dir            dir;
+
    Eina_Bool             entry_visible : 1;
    Eina_Bool             entry_reactivate : 1;
    Eina_Bool             editable : 1;

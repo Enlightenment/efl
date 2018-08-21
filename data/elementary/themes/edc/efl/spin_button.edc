@@ -1,4 +1,4 @@
-group { "efl/spin_button";
+group { "efl/spin_button/horizontal";
    images.image: "vert_bar_inset.png" COMP;
    parts {
       rect { "clip";
@@ -53,11 +53,6 @@ group { "efl/spin_button";
          scale;
          desc { "default";
             fixed: 1 0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
-            rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
             min: 15 15;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
@@ -67,11 +62,6 @@ group { "efl/spin_button";
          scale;
          desc { "default";
             fixed: 1 0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel1.relative: 1.0 0.0;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
             align: 1.0 0.5;
             min: 15 15;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
@@ -160,47 +150,53 @@ group { "efl/spin_button";
    }
 }
 
-group { "efl/spin_button:vertical";
-   inherit: "efl/spin_button";
+group { "efl/spin_button/vertical";
+   inherit: "efl/spin_button/horizontal";
    parts {
+      image { "inset"; nomouse;
+         desc { "default";
+            min: 40 150;
+         }
+      }
       swallow { "efl.inc_button";
          scale;
          desc { "default";
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel1.relative: 1.0 0.0;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
-            align: 1.0 0.5;
-         }
-      }
-      swallow { "efl.text_button";
-         scale;
-         desc { "default";
-            vis;
-            rel1.to_y: "inset";
-            rel1.to_x: "efl.dec_button";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 1 1;
-            rel2.to_y: "inset";
-            rel2.to_x: "efl.inc_button";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -2 -2;
-         }
-         desc { "active";
-            inherit: "default";
-            hid;
+            rel.to: "inset";
+            align: 0.5 0.0;
+            min: 40 40;
+            max: 40 40;
+            fixed: 1 1;
          }
       }
       swallow { "efl.dec_button";
          scale;
          desc { "default";
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
-            rel2.relative: 0.0 1.0;
-            align: 0.0 0.5;
+            rel.to: "inset";
+            align: 0.5 1.0;
+            min: 40 40;
+            max: 40 40;
+            fixed: 1 1;
+         }
+      }
+      swallow { "efl.text_button";
+         scale;
+         desc { "default";
+            rel.to_x: "inset";
+            rel1 {
+               to_y: "efl.inc_button";
+               relative: 0.0 1.0;
+            }
+            rel2 {
+               to_y: "efl.dec_button";
+               relative: 1.0 0.0;
+            }
+            min: 0 70;
+            max: -1 70;
+            fixed: 0 1;
+         }
+         desc { "inactive";
+            inherit: "default";
+            hid;
          }
       }
    }
@@ -357,6 +353,7 @@ group { "efl/spin_button/inc_button";
 }
 
 group { "efl/spin_button/entry";
+   alias: "efl/spin_button/vertical/entry";
    inherit: "efl/text";
 }
 
@@ -386,7 +383,7 @@ group { "efl/spin_button/dec_button";
 }
 
 group { "efl/spin_button/text_button";
-   alias: "efl/spin_button/text_button:vertical";
+   alias: "efl/spin_button/vertical/text_button";
    parts {
       part { name: "bg";
          type: SPACER;
@@ -462,7 +459,7 @@ group { "efl/spin_button/text_button";
    }
 }
 
-group { "efl/spin_button/inc_button:vertical";
+group { "efl/spin_button/vertical/inc_button";
    inherit: "efl/spin_button/inc_button";
    images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_up_glow_normal.png" COMP;
@@ -487,7 +484,7 @@ group { "efl/spin_button/inc_button:vertical";
    }
 }
 
-group { "efl/spin_button/dec_button:vertical";
+group { "efl/spin_button/vertical/dec_button";
    inherit: "efl/spin_button/dec_button";
    images.image: "sym_down_light_normal.png" COMP;
    images.image: "sym_down_glow_normal.png" COMP;
