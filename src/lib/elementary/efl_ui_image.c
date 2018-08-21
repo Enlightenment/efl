@@ -85,7 +85,6 @@ _recover_status(Eo *obj, Efl_Ui_Image_Data *sd)
 
    efl_gfx_color_get(obj, &r, &g, &b, &a);
    efl_gfx_color_set(sd->img, r, g, b, a);
-
    efl_gfx_entity_visible_set(sd->img, sd->show);
 }
 
@@ -798,6 +797,13 @@ _sizing_eval_cb(void *data)
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 
+   //Retained way. Nothing does, if either way hasn't been changed.
+   if (!sd->edje)
+     {
+        efl_orientation_set(sd->img, sd->orient);
+        efl_orientation_flip_set(sd->img, sd->flip);
+     }
+
    if (sd->img)
    {
       _image_sizing_eval(sd, sd->img);
@@ -1306,9 +1312,6 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
-   if (!sd->img) return;
-   efl_orientation_set(sd->img, orient);
-
    sd->orient = orient;
    _efl_ui_image_sizing_eval(obj);
 }
@@ -1325,9 +1328,6 @@ _efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip 
 {
    if (sd->edje) return;
    if (sd->flip == flip) return;
-
-   if (!sd->img) return;
-   efl_orientation_flip_set(sd->img, flip);
 
    sd->flip = flip;
    _efl_ui_image_sizing_eval(obj);
