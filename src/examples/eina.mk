@@ -26,13 +26,17 @@ eina/eina_inlist_02.c \
 eina/eina_inlist_03.c \
 eina/eina_str_01.c \
 eina/eina_strbuf_01.c \
+eina/eina_strbuf_02.c \
 eina/eina_stringshare_01.c \
 eina/eina_tmpstr_01.c \
 eina/eina_tiler_01.c \
+eina/eina_tiler_02.c \
 eina/eina_simple_xml_parser_01.c \
+eina/eina_simple_xml_parser_02.c \
 eina/eina_value_01.c \
 eina/eina_value_02.c \
 eina/eina_value_03.c \
+eina/eina_value_04.c \
 eina/eina_inarray_01.c \
 eina/eina_inarray_02.c \
 eina/eina_inarray_03.c \
@@ -68,19 +72,23 @@ eina/eina_inlist_02 \
 eina/eina_inlist_03 \
 eina/eina_str_01 \
 eina/eina_strbuf_01 \
+eina/eina_strbuf_02 \
 eina/eina_stringshare_01 \
 eina/eina_tmpstr_01 \
 eina/eina_magic_01 \
 eina/eina_simple_xml_parser_01 \
+eina/eina_simple_xml_parser_02 \
 eina/eina_value_01 \
 eina/eina_value_02 \
 eina/eina_value_03 \
+eina/eina_value_04 \
 eina/eina_inarray_01 \
 eina/eina_inarray_02 \
 eina/eina_inarray_03 \
 eina/eina_xattr_01 \
 eina/eina_xattr_02 \
-eina/eina_tiler_01
+eina/eina_tiler_01 \
+eina/eina_tiler_02
 
 if HAVE_CSHARP
 
@@ -134,6 +142,7 @@ endif
 EINA_DATA_FILES = \
 eina/addr_book.txt \
 eina/chat.xml \
+eina/exia.xml \
 eina/Makefile.examples
 
 DATA_FILES += $(EINA_DATA_FILES)
