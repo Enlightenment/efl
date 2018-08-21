@@ -13,8 +13,6 @@
 
 #include <Eina.hh>
 
-#include "eo_concrete.hh"
-
 #include <vector>
 #include <memory>
 #include <set>

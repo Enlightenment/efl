@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <eina_optional.hh>
 
+#include <eina_eo_concrete_fwd.hh>
+
 #include "eo_ops.hh"
 
 #ifndef EFL_CXX_THROW
@@ -254,13 +256,6 @@ T downcast(U object)
      }
 }
 
-template <typename T>
-struct is_eolian_object : std::false_type {};
-template <typename T>
-struct is_eolian_object<T const> : is_eolian_object<T> {};
-template <>
-struct is_eolian_object<eo::concrete> : std::true_type {};
-    
 /// @}
 
 } } // namespace efl { namespace eo {
