@@ -74,7 +74,7 @@ static const char commands[] = \
 
 
 static Evas_Object *
-add_text(const char *text, int x, int y, int w)
+add_text(const char *text, int x, int y, int w EINA_UNUSED)
 {
    Evas_Object *o = evas_object_text_add(evas);
    evas_object_color_set(o, 0, 0, 0, 255);
@@ -214,13 +214,12 @@ void rect_update()
 }
 
 static void
-_on_key_down(void *data,
+_on_key_down(void *data EINA_UNUSED,
              Evas *evas EINA_UNUSED,
              Evas_Object *o EINA_UNUSED,
              void *einfo)
 {
   Evas_Event_Key_Down *ev;
-  int x,y;
 
   ev = (Evas_Event_Key_Down *)einfo;
 
@@ -277,13 +276,10 @@ _on_key_down(void *data,
 }
 
 int
-main(int argc, char *argv[])
+main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    Ecore_Evas *ee;
    Evas_Object *o;
-   int i;
-   Eina_Rectangle *rect;
-   Eina_Iterator *itr;
 
    printf("Usage.\nCommands:%s", commands);
 
