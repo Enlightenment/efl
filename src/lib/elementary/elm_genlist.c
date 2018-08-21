@@ -5286,6 +5286,7 @@ _item_unrealize(Elm_Gen_Item *it)
    if (!_item_cache_add(it, _content_cache_add(it, &cache)))
      {
         ELM_SAFE_FREE(VIEW(it), efl_del);
+        it->callbacks = EINA_FALSE;
         ELM_SAFE_FREE(it->spacer, evas_object_del);
         EINA_LIST_FREE(cache, c)
           {
