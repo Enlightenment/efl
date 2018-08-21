@@ -51,7 +51,8 @@ SOFTWARE.
 #include <string.h>
 
 #include "region.h"
-
+#include "Eina.h"
+#include "evas_macros.h"
 typedef struct _Region_Data  Region_Data;
 
 typedef Eina_Bool (*Overlap_Func) (Region *region, Box *r1, Box *r1end, Box *r2, Box *r2end, int y1, int y2, Eina_Bool *overlap_ret);

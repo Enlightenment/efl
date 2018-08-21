@@ -1,8 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#include "evas_render2.h"
-
 #define MY_CLASS EFL_CANVAS_RECTANGLE_CLASS
 
 /* private magic number for rectangle objects */
@@ -43,12 +41,6 @@ static int evas_object_rectangle_was_opaque(Evas_Object *eo_obj,
 					    Evas_Object_Protected_Data *obj,
 					    void *type_private_data);
 
-static void evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
-                                               Evas_Object_Protected_Data *obj,
-                                               void *type_private_data,
-                                               void *updates,
-                                               int offx,
-                                               int offy);
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void evas_object_rectangle_store(Evas_Object *eo_obj);
@@ -83,7 +75,6 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL, // render_prepare
-     evas_object_rectangle_render2_walk
 };
 
 /* the actual api call to add a rect */
@@ -115,66 +106,6 @@ evas_object_rectangle_init(Evas_Object *eo_obj)
    obj->func = &object_func;
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
-}
-
-static void
-evas_object_rectangle_render2_walk(Evas_Object *eo_obj,
-                                   Evas_Object_Protected_Data *obj,
-                                   void *type_private_data EINA_UNUSED,
-                                   void *updates, int offx, int offy)
-{
-   Eina_Bool visible_is, visible_was;
-   unsigned int col_prev, col_cur;
-
-   if (obj->clip.clipees) return;
-   visible_is = evas_object_is_visible(eo_obj, obj);
-   if (!obj->changed) goto nochange;
-
-   if ((obj->cur->clipper) && (obj->cur->cache.clip.dirty))
-     evas_object_clip_recalc(obj->cur->clipper);
-   visible_was = evas_object_was_visible(eo_obj,obj);
-   // just became visible or invisible
-   if (visible_is != visible_was)
-     {
-        region_rect_add
-          (updates,
-           obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
-           obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
-        return;
-     }
-   // general change (prev and cur clip geom change)
-   col_prev = (obj->prev->color.a << 24) | (obj->prev->color.r << 16) |
-              (obj->prev->color.g << 8)  | (obj->prev->color.b      );
-   col_cur  = (obj->cur->color.a << 24)  | (obj->cur->color.r << 16) |
-              (obj->cur->color.g << 8)   | (obj->cur->color.b      );
-   if ((col_prev != col_cur) ||
-       ((obj->cur->cache.clip.x != obj->prev->cache.clip.x) ||
-        (obj->cur->cache.clip.y != obj->prev->cache.clip.y) ||
-        (obj->cur->cache.clip.w != obj->prev->cache.clip.w) ||
-        (obj->cur->cache.clip.h != obj->prev->cache.clip.h)) ||
-       (obj->cur->render_op != obj->prev->render_op) ||
-       (obj->restack)
-      )
-     {
-        region_rect_add
-          (updates,
-           obj->prev->cache.clip.x - offx, obj->prev->cache.clip.y - offy,
-           obj->prev->cache.clip.w,        obj->prev->cache.clip.h);
-        region_rect_add
-          (updates,
-           obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
-           obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
-        return;
-     }
-nochange:
-   // object hasn't really changed
-   if ((visible_is) && (evas_object_is_opaque(eo_obj, obj)))
-     {
-        region_rect_del
-          (updates,
-           obj->cur->cache.clip.x - offx, obj->cur->cache.clip.y - offy,
-           obj->cur->cache.clip.w,        obj->cur->cache.clip.h);
-     }
 }
 
 static void
