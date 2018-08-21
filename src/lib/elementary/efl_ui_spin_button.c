@@ -887,6 +887,8 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 EOLIAN static void
 _efl_ui_spin_button_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Efl_Ui_Dir dir)
 {
+   if (sd->dir == dir) return;
+
    sd->dir = dir;
 
    efl_ui_widget_theme_apply(obj);
