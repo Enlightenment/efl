@@ -5100,6 +5100,8 @@ _item_mouse_up_cb(void *data,
    if (sd->focused_item != EO_OBJ(it))
      elm_object_item_focus_set(EO_OBJ(it), EINA_TRUE);
 
+   if (efl_invalidated_get(EO_OBJ(it))) goto deleted;
+
    if (sd->multi &&
        ((sd->multi_select_mode != ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL) ||
         (evas_key_modifier_is_set(ev->modifiers, "Control"))))
