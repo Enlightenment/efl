@@ -123,6 +123,8 @@ struct _Sel_Manager_Selection
    Efl_Selection_Action      action;
    Eina_Bool                 active : 1;
 
+   unsigned char             asked : 2;
+
    Efl_Object               *owner;
    Efl_Object               *request_obj;
    void                     *data_func_data;
