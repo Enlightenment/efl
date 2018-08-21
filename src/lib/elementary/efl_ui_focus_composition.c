@@ -14,7 +14,6 @@
 typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
-   Eina_List *adapters;
    Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
@@ -102,7 +101,6 @@ _del(void *data, const Efl_Event *ev)
 EOLIAN static void
 _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Eina_List *logical_order)
 {
-   Efl_Ui_Focus_Composition_Adapter *adapter;
    Evas_Object *elem;
    Eina_List *n;
 
@@ -114,12 +112,6 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
 
    pd->order = eina_list_free(pd->order);
    pd->order = logical_order;
-
-   //get rid of all adapter objects
-   EINA_LIST_FREE(pd->adapters, adapter)
-     {
-        efl_unref(adapter);
-     }
 
    //now build a composition_elements list
    EINA_LIST_FOREACH(logical_order, n, elem)
