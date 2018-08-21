@@ -316,6 +316,7 @@ evas/resources/images/wood.jpg \
 evas/resources/images/rocks.jpg \
 evas/resources/images/four_NM_height.tga \
 evas/resources/images/rocks_NM_height.tga \
+evas/resources/images/star.jpg \
 evas/resources/images/grid.png \
 evas/resources/images/grid_n.png \
 evas/resources/images/billboard.png \
@@ -340,14 +341,23 @@ evas/resources/models/lod/iso_sphere0.obj \
 evas/resources/models/lod/iso_sphere1.obj \
 evas/resources/models/lod/iso_sphere2.obj \
 evas/resources/models/convex_hull/column_blender_ch.ply \
+evas/resources/models/convex_hull/column_blender_ch_test.ply \
 evas/resources/models/convex_hull/column.ply \
 evas/resources/models/convex_hull/cube_blender_ch.ply \
+evas/resources/models/convex_hull/cube_blender_ch_test.ply \
 evas/resources/models/convex_hull/eagle_blender_ch.ply \
+evas/resources/models/convex_hull/eagle_blender_ch_test.ply \
 evas/resources/models/convex_hull/home_blender_ch.obj \
+evas/resources/models/convex_hull/home_blender_ch_test.ply \
 evas/resources/models/convex_hull/plain.ply \
 evas/resources/models/convex_hull/plain_blender_ch.ply \
+evas/resources/models/convex_hull/plain_blender_ch_test.ply \
+evas/resources/models/convex_hull/sonic_blender_ch.ply \
+evas/resources/models/convex_hull/sonic_blender_ch_test.ply \
 evas/resources/models/convex_hull/sphere_blender_ch.ply \
+evas/resources/models/convex_hull/sphere_blender_ch_test.ply \
 evas/resources/models/convex_hull/torus_blender_ch.ply \
+evas/resources/models/convex_hull/torus_blender_ch_test.ply \
 evas/shooter/assets/images/brick-stone_n.jpg \
 evas/shooter/assets/images/brick-stone.jpg \
 evas/shooter/assets/images/bricks_n.jpg \
@@ -380,6 +390,7 @@ evas/filters/filter_mask.lua \
 evas/filters/filter_padding.lua \
 evas/filters/filter_transform.lua \
 evas/Makefile.examples \
+evas/README \
 evas/evas-common.h
 
 DATA_FILES += $(EVAS_DATA_FILES)
