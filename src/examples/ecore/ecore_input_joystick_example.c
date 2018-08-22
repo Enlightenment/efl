@@ -5,7 +5,7 @@
 #include <Ecore_Input.h>
 
 static Eina_Bool
-_joystick_event_handler_cb(void *data, int type EINA_UNUSED, void *event)
+_joystick_event_handler_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    printf("deadzone: %d\n", ecore_input_joystick_event_axis_deadzone_get());
    Ecore_Event_Joystick *ev = event;

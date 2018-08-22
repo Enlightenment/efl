@@ -40,6 +40,7 @@ ecore/ecore_fd_handler_example \
 ecore/ecore_file_download_example \
 ecore/ecore_idler_example \
 ecore/ecore_imf_example \
+ecore/ecore_input_joystick_example \
 ecore/ecore_job_example \
 ecore/ecore_poller_example \
 ecore/ecore_promise2_example \
@@ -428,6 +429,7 @@ ecore/ecore_fd_handler_gnutls_example.c \
 ecore/ecore_file_download_example.c \
 ecore/ecore_idler_example.c \
 ecore/ecore_imf_example.c \
+ecore/ecore_input_joystick_example.c \
 ecore/ecore_job_example.c \
 ecore/ecore_pipe_gstreamer_example.c \
 ecore/ecore_pipe_simple_example.c \
