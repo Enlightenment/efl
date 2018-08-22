@@ -29,6 +29,13 @@ MISC_DISABLED_LINUX_COPTS=" --disable-neon --disable-libeeze --disable-systemd -
 
 RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
+MINGW_COPTS=" --prefix=/root/EFL/ewpi_64 --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/bin/eolian_gen \
+--with-edje-cc=/usr/bin/edje_cc --with-eet-eet=/usr/bin/eet --with-bin-elm-prefs-cc=/usr/bin/elm_prefs_cc \
+--disable-static --with-tests=regular --with-crypto=openssl --disable-gstreamer1 \
+--disable-libmount --disable-valgrind --disable-avahi --disable-spectre --disable-libraw \
+--disable-librsvg --disable-pulseaudio --disable-cxx-bindings \
+--disable-physics --disable-image-loader-tiff"
+
 patch -p1 < .ci/efl.m4.diff
 sed -i.orig 's/AC_INIT\(.*\)efl_version-[a-zA-Z0-9]\+/AC_INIT\1efl_version/g' configure.ac
 
@@ -51,16 +58,34 @@ if [ "$DISTRO" != "" ] ; then
   if [ "$1" = "release-ready" ]; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
   fi
+
+  if [ "$1" = "mingw" ]; then
+    OPTS="$OPTS $MINGW_COPTS"
+    docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
+  fi
   docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
   travis_fold autoreconf autoreconf
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-    --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    --env LD="ld.gold" $(cat $HOME/cid) sh -c "LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv"
+  if [ "$1" = "mingw" ]; then
+    docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
+    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
+      --env CPPFLAGS="-I/root/EFL/ewpi_64/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/root/EFL/ewpi_64/lib/" --env PKG_CONFIG_PATH="/root/EFL/ewpi_64/lib/pkgconfig/" \
+      $(cat $HOME/cid) sh -c "autoreconf -iv"
+  else
+    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c "LIBTOOLIZE_OPTIONS='--no-warn' autoreconf -iv"
+  fi
   travis_endfold autoreconf
   travis_fold configure "configure $OPTS"
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
-    --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
-    --env LD="ld.gold" $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
+  if [ "$1" = "mingw" ]; then
+    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
+      --env CPPFLAGS="-I/root/EFL/ewpi_64/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/root/EFL/ewpi_64/lib/" --env PKG_CONFIG_PATH="/root/EFL/ewpi_64/lib/pkgconfig/" \
+      $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
+  else
+    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
+  fi
   travis_endfold configure
 else
   OSX_COPTS="--disable-cxx-bindings --with-tests=regular --disable-dependency-tracking -C"

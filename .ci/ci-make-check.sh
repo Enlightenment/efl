@@ -5,6 +5,10 @@ if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
 
+if [ "$1" = "mingw" ] ; then
+  exit 0
+fi
+
 #T7151
 if [ "$1" = "misc" ] || [ "$1" = "misc-disabled" ] ; then
   exit 0
