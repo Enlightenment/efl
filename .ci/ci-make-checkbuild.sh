@@ -5,6 +5,9 @@ set -e
 if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
+if [ "$1" = "mingw" ] ; then
+  exit 0
+fi
 travis_fold check-build "make check-build"
 if [ "$DISTRO" != "" ] ; then
   docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make check-build
