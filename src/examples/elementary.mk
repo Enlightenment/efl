@@ -50,6 +50,7 @@ elementary/genlist_example_02.c \
 elementary/genlist_example_03.c \
 elementary/genlist_example_04.c \
 elementary/genlist_example_05.c \
+elementary/glview_example_01.c \
 elementary/hover_example_01.c \
 elementary/hoversel_example_01.c \
 elementary/icon_example_01.c \
@@ -58,6 +59,8 @@ elementary/index_example_01.c \
 elementary/index_example_02.c \
 elementary/inwin_example.c \
 elementary/label_example_01.c \
+elementary/label_example_02.c \
+elementary/label_example_03.c \
 elementary/layout_example_01.c \
 elementary/layout_example_02.c \
 elementary/layout_example_03.c \
@@ -162,6 +165,7 @@ elementary/prefs_example_03.epc
 	$(AM_V_EPB)$(ELM_PREFS_CC) $< $@
 
 ELM_DATA_FILES = \
+sky_01.jpg \
 elementary/dict.txt \
 $(ELM_EDCS) \
 $(ELM_EPCS)
@@ -260,6 +264,7 @@ elementary/genlist_example_02 \
 elementary/genlist_example_03 \
 elementary/genlist_example_04 \
 elementary/genlist_example_05 \
+elementary/glview_example_01 \
 elementary/hover_example_01 \
 elementary/hoversel_example_01 \
 elementary/icon_example_01 \
@@ -268,6 +273,8 @@ elementary/index_example_01 \
 elementary/index_example_02 \
 elementary/inwin_example \
 elementary/label_example_01 \
+elementary/label_example_02 \
+elementary/label_example_03 \
 elementary/layout_example_01 \
 elementary/layout_example_02 \
 elementary/layout_example_03 \

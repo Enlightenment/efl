@@ -50,7 +50,7 @@ _slide_stop_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
 }
 
 EAPI_MAIN int
-elm_main(int argc, char** argv)
+elm_main(int argc EINA_UNUSED, char** argv EINA_UNUSED)
 {
    Evas_Object *win, *bx, *bx1, *bx2, *style, *label, *btn;
    appdata_s *ad = (appdata_s*)calloc(1, sizeof(appdata_s));
