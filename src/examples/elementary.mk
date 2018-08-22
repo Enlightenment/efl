@@ -165,7 +165,7 @@ elementary/prefs_example_03.epc
 	$(AM_V_EPB)$(ELM_PREFS_CC) $< $@
 
 ELM_DATA_FILES = \
-sky_01.jpg \
+elementary/sky_01.jpg \
 elementary/dict.txt \
 $(ELM_EDCS) \
 $(ELM_EPCS)
