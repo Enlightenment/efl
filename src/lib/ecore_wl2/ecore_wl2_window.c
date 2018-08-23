@@ -1586,7 +1586,7 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         /* The elm mouse cursor bits do some harmless but weird stuff that
          * can hit this, silence the warning for that case only. */
         if (window->type != ECORE_WL2_WINDOW_TYPE_NONE)
-          ERR("Commit before previous commit processed");
+          WRN("Commit before previous commit processed");
      }
    if (!window->pending.configure)
      {
