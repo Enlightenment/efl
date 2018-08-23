@@ -160,8 +160,6 @@ void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, i
 /* Efl.File */
 Eina_Bool _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key);
 void _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key);
-Eina_Bool _evas_image_file_set(Eo *eo_obj, const char *file, const char *key);
-void _evas_image_file_get(const Eo *eo_obj, const char **file, const char **key);
 
 /* Efl.Image.Load */
 Efl_Gfx_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);
