@@ -796,28 +796,42 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
    /* find image by key in active mmap hash */
    SLKL(engine_lock);
    im = eina_hash_find(cache->mmap_activ, hkey);
-   if ((im) && (!im->load_failed)) goto on_ok;
-   else if ((im) && (im->load_failed))
+   if (im)
      {
-        _evas_cache_image_dirty_add(im);
-        im = NULL;
+        if (im->f != f)
+          {
+             /* as active cache find - if we match in lru and its invalid, dirty */
+             _evas_cache_image_dirty_add(im);
+             /* this image never used, so it have to be deleted */
+             _evas_cache_image_entry_delete(cache, im);
+             im = NULL;
+          }
+        else if (!im->load_failed) goto on_ok;
+        else if (im->load_failed)
+          {
+             _evas_cache_image_dirty_add(im);
+             im = NULL;
+          }
      }
 
    /* find image by key in inactive/lru hash */
    im = eina_hash_find(cache->mmap_inactiv, hkey);
-   if ((im) && (!im->load_failed))
+   if (im)
      {
-        _evas_cache_image_lru_del(im);
-        _evas_cache_image_activ_add(im);
-        goto on_ok;
-     }
-   else if ((im) && (im->load_failed))
-     {
-        /* as active cache find - if we match in lru and its invalid, dirty */
-        _evas_cache_image_dirty_add(im);
-        /* this image never used, so it have to be deleted */
-        _evas_cache_image_entry_delete(cache, im);
-        im = NULL;
+        if (im->f != f)
+          {
+             /* as active cache find - if we match in lru and its invalid, dirty */
+             _evas_cache_image_dirty_add(im);
+             /* this image never used, so it have to be deleted */
+             _evas_cache_image_entry_delete(cache, im);
+             im = NULL;
+          }
+        else if (!im->load_failed)
+          {
+             _evas_cache_image_lru_del(im);
+             _evas_cache_image_activ_add(im);
+             goto on_ok;
+          }
      }
 
    im = _evas_cache_image_entry_new(cache, hkey, NULL, f, NULL, key, lo, error);

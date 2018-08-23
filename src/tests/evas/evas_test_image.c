@@ -627,6 +627,108 @@ EFL_START_TEST(evas_object_image_partially_load_orientation)
 }
 EFL_END_TEST
 
+static int
+_file_to_memory(const char *filename, char **result)
+{
+   int size;
+   FILE *f;
+
+   f = fopen(filename, "rb");
+   if (f == NULL)
+     {
+        *result = NULL;
+        return -1;
+     }
+
+   fseek(f, 0, SEEK_END);
+   size = ftell(f);
+   fseek(f, 0, SEEK_SET);
+   *result = (char *)malloc(size + 1);
+   if ((size_t)size != fread(*result, sizeof(char), size, f))
+     {
+        free(*result);
+        return -1;
+     }
+   fclose(f);
+   (*result)[size] = 0;
+   return size;
+}
+
+EFL_START_TEST(evas_object_image_cached_data_comparision)
+{
+   int i;
+   int size, size2;
+   char *content, *content2;
+   int w, h, n_w, n_h;
+   int w2, h2, n_w2, n_h2;
+   const uint32_t *d, *n_d;
+   const uint32_t *d2, *n_d2;
+   const char *img_path, *img_path2;
+   Evas_Object *img, *img2;
+
+   Evas *e = _setup_evas();
+
+   img_path = TESTS_IMG_DIR "/Pic1.png";
+   size = _file_to_memory(img_path, &content);
+   fail_if(size < 0);
+
+   img = evas_object_image_add(e);
+   evas_object_image_memfile_set(img, content, size, "png", NULL);
+   evas_object_image_fill_set(img, 0, 0, 250, 250);
+   evas_object_resize(img, 250, 250);
+   evas_object_move(img, 0, 0);
+   evas_object_show(img);
+
+   evas_object_image_size_get(img, &w, &h);
+   d = evas_object_image_data_get(img, EINA_FALSE);
+
+   img_path2 = TESTS_IMG_DIR "/Pic4.png";
+   size2 = _file_to_memory(img_path2, &content2);
+
+   img2 = evas_object_image_add(e);
+   evas_object_image_memfile_set(img2, content2, size2, "png", NULL);
+   evas_object_image_fill_set(img2, 0, 0, 250, 250);
+   evas_object_resize(img2, 250, 250);
+   evas_object_move(img2, 250, 250);
+   evas_object_show(img2);
+
+   evas_object_image_size_get(img, &w2, &h2);
+   d2 = evas_object_image_data_get(img, EINA_FALSE);
+
+   for (i = 0; i < 100; i++)
+     {
+        evas_object_del(img);
+        evas_object_del(img2);
+
+        img = evas_object_image_add(e);
+        evas_object_image_memfile_set(img, content, size, "png", NULL);
+        evas_object_image_fill_set(img, 0, 0, 250, 250);
+        evas_object_resize(img, 250, 250);
+        evas_object_move(img, 0, 0);
+        evas_object_show(img);
+
+        evas_object_image_size_get(img, &n_w, &n_h);
+        n_d = evas_object_image_data_get(img, EINA_FALSE);
+
+        fail_if(w != n_w || h != n_h);
+        fail_if(memcmp(d, n_d, w * h * 4));
+
+        img2 = evas_object_image_add(e);
+        evas_object_image_memfile_set(img2, content2, size2, "png", NULL);
+        evas_object_image_fill_set(img2, 0, 0, 250, 250);
+        evas_object_resize(img2, 250, 250);
+        evas_object_move(img2, 250, 250);
+        evas_object_show(img2);
+
+        evas_object_image_size_get(img, &n_w2, &n_h2);
+        n_d2 = evas_object_image_data_get(img, EINA_FALSE);
+
+        fail_if(w2 != n_w2 || h2 != n_h2);
+        fail_if(memcmp(d2, n_d2, w2 * h2 * 4));
+     }
+}
+EFL_END_TEST
+
 EFL_START_TEST(evas_object_image_defaults)
 {
    Evas *e = _setup_evas();
@@ -891,6 +993,7 @@ void evas_test_image_object(TCase *tc)
    tcase_add_test(tc, evas_object_image_map_unmap);
 #endif
    tcase_add_test(tc, evas_object_image_partially_load_orientation);
+   tcase_add_test(tc, evas_object_image_cached_data_comparision);
 }
 
 
