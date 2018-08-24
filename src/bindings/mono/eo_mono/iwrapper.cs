@@ -494,7 +494,7 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
 /// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
-    /// <summary>Create a new EflException with the given.
+    /// <summary>Create a new EflException with the given message.</summary>
     public EflException(string message) : base(message)
     {
     }
