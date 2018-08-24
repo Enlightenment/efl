@@ -89,6 +89,34 @@ static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
 static Node* _next(Node *node);
 static void _prepare_node(Node *root);
 
+static Eina_Bool
+_focus_manager_active_get(Eo *obj)
+{
+   Eo *root, *manager, *comp_parent, *redirect;
+
+   if (efl_isa(obj, EFL_UI_FOCUS_MANAGER_WINDOW_ROOT_INTERFACE)) return EINA_TRUE;
+
+   root = efl_ui_focus_manager_root_get(obj);
+   manager = efl_ui_focus_object_focus_manager_get(root);
+
+   if (!manager) return EINA_FALSE;
+
+   redirect = efl_ui_focus_manager_redirect_get(manager);
+
+   if (!redirect) return EINA_FALSE;
+
+   if (efl_composite_part_is(obj))
+     comp_parent = efl_parent_get(obj); //a focus manager can be attached to something via composition
+   else
+     comp_parent = NULL;
+
+   if (redirect == obj ||
+      (redirect == comp_parent))
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
 static void
 _manager_in_chain_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
@@ -795,30 +823,31 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
    efl_ui_focus_manager_reset_history(old_manager);
 
    //adjust focus property of the most upper element
-   {
-      Node *n = NULL;
+   if (_focus_manager_active_get(obj))
+     {
+        Node *n = NULL;
 
-      n = eina_list_last_data_get(pd->focus_stack);
+        n = eina_list_last_data_get(pd->focus_stack);
 
-      if (!pd->redirect && old_manager)
-        {
-           if (n)
-             {
-                efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
-             }
-           else
-             {
-                n = _request_subchild(pd->root);
-                if (n)
-                  efl_ui_focus_manager_focus_set(obj, n->focusable);
-             }
-        }
-      else if (pd->redirect && !old_manager)
-        {
-           if (n)
-             efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
-        }
-   }
+        if (!pd->redirect && old_manager)
+          {
+             if (n)
+               {
+                  efl_ui_focus_object_focus_set(n->focusable, EINA_TRUE);
+               }
+             else
+               {
+                  n = _request_subchild(pd->root);
+                  if (n)
+                    efl_ui_focus_manager_focus_set(obj, n->focusable);
+               }
+          }
+        else if (pd->redirect && !old_manager)
+          {
+             if (n)
+               efl_ui_focus_object_focus_set(n->focusable, EINA_FALSE);
+          }
+     }
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED , old_manager);
 
