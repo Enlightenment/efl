@@ -149,5 +149,20 @@ class TestEoEvents
 
         Test.AssertEquals(sent_struct.Fstring, received_struct.Fstring);
     }
+
+    public static void event_in_init_callback()
+    {
+        int received = 0;
+        int sent = 42;
+        test.ITesting obj = new test.Testing(null, (test.ITesting t) => {
+            t.EvtWithIntEvt += (object sender, EvtWithIntEvt_Args e) => {
+                received = e.arg;
+            };
+        });
+
+        obj.EmitEventWithInt(sent);
+
+        Test.AssertEquals(sent, received);
+    }
 }
 }
