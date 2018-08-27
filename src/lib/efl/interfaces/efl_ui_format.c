@@ -130,7 +130,7 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
      }
    else if (sd->format_type == FORMAT_TYPE_STATIC)
      {
-        eina_strbuf_append_printf(str, sd->template);
+        eina_strbuf_append_printf(str, "%s", sd->template);
      }
    else
      {
