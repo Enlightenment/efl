@@ -661,7 +661,7 @@ _elm_unneed_elocation(void)
 #ifdef ELM_ELOCATION
    if (!_elm_need_elocation) return;
    _elm_need_elocation = EINA_FALSE;
-   eldbus_shutdown();
+   elocation_shutdown();
 #endif
 }
 
