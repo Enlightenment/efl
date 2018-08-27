@@ -314,11 +314,11 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
                               EINA_INLIST_GET(ie->targets));
         if (!ie->flags.delete_me)
           {
-             if (tmp->simple_cb)
+             if (tmp->preloaded_cb)
                {
                   if (!tmp->delete_me)
                     {
-                       tmp->simple_cb(tmp->simple_data);
+                       tmp->preloaded_cb(tmp->preloaded_data);
                     }
                }
              else

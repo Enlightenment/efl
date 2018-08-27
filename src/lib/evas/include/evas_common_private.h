@@ -561,8 +561,8 @@ struct _Evas_Cache_Target
    EINA_INLIST;
    const Eo *target;
    void *data;
-   void (*simple_cb) (void *data);
-   void *simple_data;
+   void (*preloaded_cb) (void *data); //Call when preloading done.
+   void *preloaded_data;
    Eina_Bool delete_me;
 };
 

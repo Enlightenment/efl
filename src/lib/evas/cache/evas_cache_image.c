@@ -415,11 +415,11 @@ _evas_cache_image_preloaded_notify(Image_Entry *ie)
         ie->targets = (Evas_Cache_Target *)
           eina_inlist_remove(EINA_INLIST_GET(ie->targets),
                              EINA_INLIST_GET(ie->targets));
-        if (tmp->simple_cb)
+        if (tmp->preloaded_cb)
           {
              if (!tmp->delete_me)
                {
-                  tmp->simple_cb(tmp->simple_data);
+                  tmp->preloaded_cb(tmp->preloaded_data);
                }
           }
         else
