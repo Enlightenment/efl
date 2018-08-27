@@ -132,7 +132,7 @@ static const Efl_Test_Case etc_init[] = {
   { NULL, NULL }
 };
 
-#define BUFFER_RENDER_INTERVAL 0.05
+#define BUFFER_RENDER_INTERVAL 0.002
 
 static Eina_Bool
 _win_manual_render(void *data)
@@ -144,7 +144,7 @@ _win_manual_render(void *data)
 static void
 _win_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   evas_object_data_set(obj, "timer", ecore_timer_add(0.05, _win_manual_render, obj));
+   evas_object_data_set(obj, "timer", ecore_timer_add(BUFFER_RENDER_INTERVAL, _win_manual_render, obj));
 }
 
 static void
@@ -159,7 +159,7 @@ _elm_suite_win_create()
    Evas_Object *win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
    if (!buffer) return win;
    ecore_evas_manual_render_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), EINA_TRUE);
-   edje_frametime_set(0.05);
+   edje_frametime_set(BUFFER_RENDER_INTERVAL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_SHOW, _win_show, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_HIDE, _win_hide, NULL);
    return win;
