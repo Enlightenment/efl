@@ -1,4 +1,4 @@
-class Efl.Ui.Popup_Alert_Scroll_Part (Efl.Ui.Layout.Part_Content, Efl.Ui.Layout.Part_Text)
+class Efl.Ui.Popup_Alert_Scroll_Part (Efl.Ui.Layout.Part, Efl.Content, Efl.Text)
 {
    [[Efl UI Popup Alert Scroll internal part class]]
    data: null;
