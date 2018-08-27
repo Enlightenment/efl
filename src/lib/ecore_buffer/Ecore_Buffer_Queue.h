@@ -1,6 +1,9 @@
 #ifndef _ECORE_BUFFER_QUEUE_H_
 #define _ECORE_BUFFER_QUEUE_H_
 
+#include <Eina.h>
+#include <Ecore_Buffer.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -31,8 +34,6 @@
 extern "C" {
 #endif
 
-#include <Eina.h>
-#include "Ecore_Buffer.h"
 
 /**
  * @defgroup Ecore_Buffer_Queue_Group Ecore Buffer Queue functions
