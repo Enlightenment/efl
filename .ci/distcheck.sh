@@ -70,10 +70,11 @@ travis_endfold check-build
 travis_fold check-TESTS check-TESTS
 set +e
 export EINA_LOG_BACKTRACE="0"
-for tries in 1 2 3 ; do
+NUM_TRIES=5
+for tries in $(seq 1 ${NUM_TRIES}); do
   make ${AM_MAKEFLAGS} -C src/ -j1 check-TESTS && break
   cat src/test-suite.log
-  if [ $tries != 3 ] ; then echo "tests failed, trying again!" ; continue ; fi
+  if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; continue ; fi
   exit 1
 done
 travis_endfold check-TESTS

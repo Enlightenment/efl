@@ -10,12 +10,14 @@ if [ "$1" = "misc" ] || [ "$1" = "misc-disabled" ] ; then
   exit 0
 fi
 
+NUM_TRIES=5
+
 travis_fold check "make check-TESTS"
 if [ "$DISTRO" != "" ] ; then
-  for tries in 1 2 3 ; do
+  for tries in $(seq 1 ${NUM_TRIES}); do
     (docker exec --env EINA_LOG_BACKTRACE="0" --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make -j2 -C src/ check-TESTS) && break
     docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) cat src/test-suite.log
-    if [ $tries != 3 ] ; then echo "tests failed, trying again!" ; fi
+    if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
     false
   done
 #else
