@@ -329,8 +329,6 @@ _internal_enable_set(Eo *obj, Elm_Mapbuf_Data *sd, Eina_Bool enabled)
    if (sd->enabled == enabled) return;
    sd->enabled = enabled;
 
-   if (sd->content) evas_object_static_clip_set(sd->content, sd->enabled);
-
    if (!sd->enabled && sd->content)
      {
         evas_object_map_set(sd->content, NULL);
