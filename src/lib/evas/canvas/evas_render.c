@@ -4057,7 +4057,7 @@ _evas_render_dump_map_surfaces(Evas_Object *eo_obj)
 }
 
 EOLIAN void
-_evas_canvas_render_dump(Eo *eo_e, Evas_Public_Data *evas)
+_evas_canvas_render_dump(Eo *eo_e EINA_UNUSED, Evas_Public_Data *evas)
 {
    Evas_Layer *lay;
 
