@@ -2260,7 +2260,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   double t, at, dt, p, r;
+   double t, dt, p;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord x, y, dx, dy, px, py, maxx, maxy, minx, miny;
    Eina_Bool no_bounce_x_end = EINA_FALSE, no_bounce_y_end = EINA_FALSE;
@@ -2784,9 +2784,8 @@ _elm_scroll_mouse_up_event_cb(void *data,
                        if ((_elm_config->thumbscroll_momentum_friction > 0.0) &&
                            (vel > _elm_config->thumbscroll_momentum_threshold))
                          {
-                            Evas_Coord max_d;
                             int minx, miny, mx, my, px, py;
-                            double tt = 0.0, dtt = 0.0;
+                            double dtt = 0.0;
 
                             elm_obj_pan_pos_min_get
                                   (sid->pan_obj, &minx, &miny);
