@@ -112,9 +112,11 @@ struct _Elm_Scrollable_Smart_Interface_Data
       double          anim_start;
       double          anim_start2;
       double          anim_start3;
+      double          anim_dur;
+
       double          onhold_vx, onhold_vy, onhold_tlast,
                       onhold_vxe, onhold_vye;
-      double          extra_time;
+
       double          last_time_x_wheel;
       double          last_time_y_wheel;
 

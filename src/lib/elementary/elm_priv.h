@@ -221,14 +221,21 @@ struct _Elm_Config_Flags
    Eina_Bool thumbscroll_threshold : 1;
    Eina_Bool thumbscroll_hold_threshold : 1;
    Eina_Bool thumbscroll_momentum_threshold : 1;
-   Eina_Bool thumbscroll_flick_distance_tolerance : 1;
-   Eina_Bool thumbscroll_friction : 1;
-   Eina_Bool thumbscroll_min_friction : 1;
-   Eina_Bool thumbscroll_friction_standard : 1;
    Eina_Bool thumbscroll_bounce_friction : 1;
    Eina_Bool thumbscroll_acceleration_threshold : 1;
    Eina_Bool thumbscroll_acceleration_time_limit : 1;
    Eina_Bool thumbscroll_acceleration_weight : 1;
+   //new
+   Eina_Bool thumbscroll_momentum_friction : 1;
+   Eina_Bool thumbscroll_momentum_distance_max : 1;
+   Eina_Bool thumbscroll_momentum_animation_duration_min_limit : 1;
+   Eina_Bool thumbscroll_momentum_animation_duration_max_limit : 1;
+   //deprecated
+   Eina_Bool thumbscroll_flick_distance_tolerance : 1;
+   Eina_Bool thumbscroll_friction : 1;
+   Eina_Bool thumbscroll_min_friction : 1;
+   Eina_Bool thumbscroll_friction_standard : 1;
+   //
    Eina_Bool page_scroll_friction : 1;
    Eina_Bool bring_in_scroll_friction : 1;
    Eina_Bool zoom_friction : 1;
@@ -354,14 +361,21 @@ struct _Elm_Config
    int           thumbscroll_threshold;
    int           thumbscroll_hold_threshold;
    double        thumbscroll_momentum_threshold;
-   int           thumbscroll_flick_distance_tolerance;
-   double        thumbscroll_friction;
-   double        thumbscroll_min_friction;
-   double        thumbscroll_friction_standard;
    double        thumbscroll_bounce_friction;
    double        thumbscroll_acceleration_threshold;
    double        thumbscroll_acceleration_time_limit;
    double        thumbscroll_acceleration_weight;
+   //
+   int           thumbscroll_momentum_distance_max;
+   double        thumbscroll_momentum_friction;
+   double        thumbscroll_momentum_animation_duration_min_limit;
+   double        thumbscroll_momentum_animation_duration_max_limit;
+   //deprecated
+   int           thumbscroll_flick_distance_tolerance;
+   double        thumbscroll_friction;
+   double        thumbscroll_min_friction;
+   double        thumbscroll_friction_standard;
+   //
    double        page_scroll_friction;
    double        bring_in_scroll_friction;
    double        zoom_friction;

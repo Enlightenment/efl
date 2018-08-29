@@ -9,8 +9,12 @@ group "Elm_Config" struct {
   value "thumbscroll_momentum_threshold" double: 100.0;
   value "thumbscroll_flick_distance_tolerance" int: 1000;
   value "thumbscroll_friction" double: 1.0;
+  value "thumbscroll_momentum_animation_duration_min_limit" double: 0.3;
+  value "thumbscroll_momentum_animation_duration_max_limit" double: 1.3;
+  // will not be used
   value "thumbscroll_min_friction" double: 1.0;
   value "thumbscroll_friction_standard" double: 2000.0;
+  //
   value "thumbscroll_bounce_friction" double: 0.5;
   value "thumbscroll_bounce_enable" uchar: 0;
   value "thumbscroll_acceleration_threshold" double: 500.0;

@@ -399,24 +399,34 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, web_backend, T_STRING);
    ELM_CONFIG_VAL(D, T, accel_override, T_UCHAR);
    ELM_CONFIG_VAL(D, T, vsync, T_UCHAR);
+   //
    ELM_CONFIG_VAL(D, T, thumbscroll_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_threshold, T_INT);
    ELM_CONFIG_VAL(D, T, thumbscroll_hold_threshold, T_INT);
-   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_threshold, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, thumbscroll_flick_distance_tolerance, T_INT);
-   ELM_CONFIG_VAL(D, T, thumbscroll_friction, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, thumbscroll_min_friction, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, thumbscroll_friction_standard, T_DOUBLE);
+   // bounce
    ELM_CONFIG_VAL(D, T, thumbscroll_bounce_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, thumbscroll_border_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_sensitivity_friction, T_DOUBLE);
+   // momeuntum
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_threshold, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_distance_max, T_INT);
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_animation_duration_min_limit, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_momentum_animation_duration_max_limit, T_DOUBLE);
+   // acceleration
    ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_threshold, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_time_limit, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, thumbscroll_acceleration_weight, T_DOUBLE);
+   //deprecated
+   ELM_CONFIG_VAL(D, T, thumbscroll_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_min_friction, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_friction_standard, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, thumbscroll_flick_distance_tolerance, T_INT);
+   //
    ELM_CONFIG_VAL(D, T, page_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, bring_in_scroll_friction, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, zoom_friction, T_DOUBLE);
-   ELM_CONFIG_VAL(D, T, thumbscroll_bounce_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_smooth_start_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_animation_disable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, scroll_accel_factor, T_DOUBLE);
@@ -1742,7 +1752,9 @@ _config_load(void)
    _elm_config->thumbscroll_hold_threshold = 24;
    _elm_config->thumbscroll_momentum_threshold = 100.0;
    _elm_config->thumbscroll_flick_distance_tolerance = 1000;
+   _elm_config->thumbscroll_momentum_distance_max = 1000;
    _elm_config->thumbscroll_friction = 1.0;
+   _elm_config->thumbscroll_momentum_friction = 1.0;
    _elm_config->thumbscroll_min_friction = 0.5;
    _elm_config->thumbscroll_friction_standard = 1000.0;
    _elm_config->thumbscroll_bounce_friction = 0.5;
@@ -1750,6 +1762,8 @@ _config_load(void)
    _elm_config->thumbscroll_acceleration_threshold = 500.0;
    _elm_config->thumbscroll_acceleration_time_limit = 0.7;
    _elm_config->thumbscroll_acceleration_weight = 1.5;
+   _elm_config->thumbscroll_momentum_animation_duration_min_limit = 0.3;
+   _elm_config->thumbscroll_momentum_animation_duration_max_limit = 1.5;
    _elm_config->page_scroll_friction = 0.5;
    _elm_config->bring_in_scroll_friction = 0.5;
    _elm_config->zoom_friction = 0.5;
@@ -1896,13 +1910,19 @@ _elm_config_reload_do(void)
         KEEP_VAL(thumbscroll_hold_threshold);
         KEEP_VAL(thumbscroll_momentum_threshold);
         KEEP_VAL(thumbscroll_flick_distance_tolerance);
+        KEEP_VAL(thumbscroll_momentum_distance_max);
         KEEP_VAL(thumbscroll_friction);
+        KEEP_VAL(thumbscroll_momentum_friction);
         KEEP_VAL(thumbscroll_min_friction);
         KEEP_VAL(thumbscroll_friction_standard);
         KEEP_VAL(thumbscroll_bounce_friction);
         KEEP_VAL(thumbscroll_acceleration_threshold);
         KEEP_VAL(thumbscroll_acceleration_time_limit);
         KEEP_VAL(thumbscroll_acceleration_weight);
+
+        KEEP_VAL(thumbscroll_momentum_animation_duration_min_limit);
+        KEEP_VAL(thumbscroll_momentum_animation_duration_max_limit);
+
         KEEP_VAL(page_scroll_friction);
         KEEP_VAL(bring_in_scroll_friction);
         KEEP_VAL(zoom_friction);
@@ -2557,8 +2577,12 @@ _env_get(void)
    if (s) _elm_config->thumbscroll_momentum_threshold = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_FLICK_DISTANCE_TOLERANCE");
    if (s) _elm_config->thumbscroll_flick_distance_tolerance = atoi(s);
+   s = getenv("ELM_THUMBSCROLL_MOMENTUM_DISTANCE_MAX");
+   if (s) _elm_config->thumbscroll_momentum_distance_max = atoi(s);
    s = getenv("ELM_THUMBSCROLL_FRICTION");
    if (s) _elm_config->thumbscroll_friction = _elm_atof(s);
+   s = getenv("ELM_THUMBSCROLL_MOMENTUM_FRICTION");
+   if (s) _elm_config->thumbscroll_momentum_friction = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_MIN_FRICTION");
    if (s) _elm_config->thumbscroll_min_friction = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_FRICTION_STANDARD");
@@ -3675,6 +3699,19 @@ elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance
    _elm_config->thumbscroll_flick_distance_tolerance = distance;
 }
 
+EAPI unsigned int
+elm_config_scroll_thumbscroll_momentum_distance_max_get(void)
+{
+   return _elm_config->thumbscroll_momentum_distance_max;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_momentum_distance_max_set(unsigned int distance)
+{
+   _elm_config->priv.thumbscroll_momentum_distance_max = EINA_TRUE;
+   _elm_config->thumbscroll_momentum_distance_max = distance;
+}
+
 EAPI double
 elm_config_scroll_thumbscroll_friction_get(void)
 {
@@ -3686,6 +3723,19 @@ elm_config_scroll_thumbscroll_friction_set(double friction)
 {
    _elm_config->priv.thumbscroll_friction = EINA_TRUE;
    _elm_config->thumbscroll_friction = friction;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_momentum_friction_get(void)
+{
+   return _elm_config->thumbscroll_momentum_friction;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_momentum_friction_set(double friction)
+{
+   _elm_config->priv.thumbscroll_momentum_friction = EINA_TRUE;
+   _elm_config->thumbscroll_momentum_friction = friction;
 }
 
 EAPI double
@@ -3865,6 +3915,32 @@ elm_config_scroll_thumbscroll_acceleration_weight_set(double weight)
 {
    _elm_config->priv.thumbscroll_acceleration_weight = EINA_TRUE;
    _elm_config->thumbscroll_acceleration_weight = weight;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_get(void)
+{
+   return _elm_config->thumbscroll_momentum_animation_duration_min_limit;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_set(double min)
+{
+   _elm_config->priv.thumbscroll_momentum_animation_duration_min_limit = EINA_TRUE;
+   _elm_config->thumbscroll_momentum_animation_duration_min_limit = min;
+}
+
+EAPI double
+elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get(void)
+{
+   return _elm_config->thumbscroll_momentum_animation_duration_max_limit;
+}
+
+EAPI void
+elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_set(double max)
+{
+   _elm_config->priv.thumbscroll_momentum_animation_duration_max_limit = EINA_TRUE;
+   _elm_config->thumbscroll_momentum_animation_duration_max_limit = max;
 }
 
 EAPI Elm_Focus_Autoscroll_Mode
@@ -4888,7 +4964,9 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETI(scroll_thumbscroll_hold_threshold);
    CONFIG_SETD(scroll_thumbscroll_momentum_threshold);
    CONFIG_SETI(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_SETI(scroll_thumbscroll_momentum_distance_max);
    CONFIG_SETD(scroll_thumbscroll_friction);
+   CONFIG_SETD(scroll_thumbscroll_momentum_friction);
    CONFIG_SETD(scroll_thumbscroll_min_friction);
    CONFIG_SETD(scroll_thumbscroll_friction_standard);
    CONFIG_SETD(scroll_thumbscroll_border_friction);
@@ -4901,6 +4979,10 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETD(scroll_thumbscroll_acceleration_threshold);
    CONFIG_SETD(scroll_thumbscroll_acceleration_time_limit);
    CONFIG_SETD(scroll_thumbscroll_acceleration_weight);
+
+   CONFIG_SETD(scroll_thumbscroll_momentum_animation_duration_min_limit);
+   CONFIG_SETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
+
    CONFIG_SETE(focus_autoscroll_mode);
    CONFIG_SETE(slider_indicator_visible_mode);
    CONFIG_SETD(longpress_timeout);
@@ -5026,7 +5108,9 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETI(scroll_thumbscroll_hold_threshold);
    CONFIG_GETD(scroll_thumbscroll_momentum_threshold);
    CONFIG_GETI(scroll_thumbscroll_flick_distance_tolerance);
+   CONFIG_GETI(scroll_thumbscroll_momentum_distance_max);
    CONFIG_GETD(scroll_thumbscroll_friction);
+   CONFIG_GETD(scroll_thumbscroll_momentum_friction);
    CONFIG_GETD(scroll_thumbscroll_min_friction);
    CONFIG_GETD(scroll_thumbscroll_friction_standard);
    CONFIG_GETD(scroll_thumbscroll_border_friction);
@@ -5039,6 +5123,10 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETD(scroll_thumbscroll_acceleration_threshold);
    CONFIG_GETD(scroll_thumbscroll_acceleration_time_limit);
    CONFIG_GETD(scroll_thumbscroll_acceleration_weight);
+
+   CONFIG_GETD(scroll_thumbscroll_momentum_animation_duration_min_limit);
+   CONFIG_GETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
+
    CONFIG_GETE(focus_autoscroll_mode);
    CONFIG_GETE(slider_indicator_visible_mode);
    CONFIG_GETD(longpress_timeout);

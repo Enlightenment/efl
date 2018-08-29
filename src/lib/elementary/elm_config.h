@@ -463,7 +463,7 @@ EAPI void         elm_config_scroll_thumbscroll_momentum_threshold_set(double th
  *
  * @ingroup Elm_Scrolling
  */
-EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void);
+EAPI unsigned int elm_config_scroll_thumbscroll_momentum_distance_max_get(void);
 
 /**
  * Set the number of pixels the maximum distance which can be flicked.
@@ -472,75 +472,31 @@ EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(voi
  *
  * @param distance the thumb scroll maximum flick distance
  *
- * @see elm_config_thumbscroll_flick_distance_tolerance_get()
+ * @see elm_config_thumbscroll_momentum_distance_max_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance);
+EAPI void         elm_config_scroll_thumbscroll_momentum_distance_max_set(unsigned int distance);
 
 /**
- * Get the amount of inertia a scroller will impose at self scrolling
- * animations.
+ * Get the scale ratio of geometric sequence as a kind of inertia a scroller
+ * will impose at self scrolling animations.
  *
  * @return the thumb scroll friction
  *
  * @ingroup Elm_Scrolling
  */
-EAPI double       elm_config_scroll_thumbscroll_friction_get(void);
+EAPI double       elm_config_scroll_thumbscroll_momentum_friction_get(void);
 
 /**
- * Set the amount of inertia a scroller will impose at self scrolling
- * animations.
+ * Set the scale ratio of geometric sequence as a kind of inertia a scroller
+ * will impose at self scrolling animations.
  *
  * @param friction the thumb scroll friction
  *
- * @see elm_config_thumbscroll_friction_get()
+ * @see elm_config_thumbscroll_momentum_friction_get()
  * @ingroup Elm_Scrolling
  */
-EAPI void         elm_config_scroll_thumbscroll_friction_set(double friction);
-
-/**
- * Get the min amount of inertia a scroller will impose at self scrolling
- * animations.
- *
- * @return the thumb scroll min friction
- *
- * @ingroup Elm_Scrolling
- */
-EAPI double       elm_config_scroll_thumbscroll_min_friction_get(void);
-
-/**
- * Set the min amount of inertia a scroller will impose at self scrolling
- * animations.
- *
- * @param friction the thumb scroll min friction
- *
- * @see elm_config_thumbscroll_min_friction_get()
- * @ingroup Elm_Scrolling
- */
-EAPI void         elm_config_scroll_thumbscroll_min_friction_set(double friction);
-
-/**
- * Get the standard velocity of the scroller. The scroll animation time is
- * same with thumbscroll friction, if the velocity is same with standard
- * velocity.
- *
- * @return the thumb scroll friction
- *
- * @ingroup Elm_Scrolling
- */
-EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
-
-/**
- * Set the standard velocity of the scroller. The scroll animation time is
- * same with thumbscroll friction, if the velocity is same with standard
- * velocity.
- *
- * @param standard the thumb scroll friction standard
- *
- * @see elm_config_thumbscroll_friction_standard_get()
- * @ingroup Elm_Scrolling
- */
-EAPI void         elm_config_scroll_thumbscroll_friction_standard_set(double standard);
+EAPI void         elm_config_scroll_thumbscroll_momentum_friction_set(double friction);
 
 /**
  * Get the amount of lag between your actual mouse cursor dragging
@@ -794,6 +750,148 @@ EAPI double       elm_config_scroll_thumbscroll_acceleration_weight_get(void);
  * @ingroup Elm_Scrolling
  */
 EAPI void         elm_config_scroll_thumbscroll_acceleration_weight_set(double weight);
+
+/**
+ * Get the min limit for the momentum animation duration(unit:second)
+ *
+ * @return the thumb scroll momentum animation duration min limit
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_get(void);
+
+/**
+ * Set the min limit for the momentum animation duration(unit:second)
+ *
+ * @param the thumb scroll momentum animation duration min limit
+ *
+ * @see elm_config_scroll_thumbscroll_acceleration_weight_set()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_min_limit_set(double min);
+
+/**
+ * Get the max limit for the momentum animation duration(unit:second)
+ *
+ * @return the thumb scroll momentum animation duration max limit
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get(void);
+
+/**
+ * Set the max limit for the momentum animation duration(unit:second)
+ *
+ * @param the thumb scroll momentum animation duration max limit
+ *
+ * @see elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_get()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_momentum_animation_duration_max_limit_set(double max);
+
+/**
+ * Get the min amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @return the thumb scroll min friction
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_min_friction_get(void);
+
+/**
+ * Set the min amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @param friction the thumb scroll min friction
+ *
+ * @deprecated
+ *
+ * @see elm_config_thumbscroll_min_friction_get()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_min_friction_set(double friction);
+
+/**
+ * Get the standard velocity of the scroller. The scroll animation time is
+ * same with thumbscroll friction, if the velocity is same with standard
+ * velocity.
+ *
+ * @return the thumb scroll friction
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_friction_standard_get(void);
+
+/**
+ * Set the standard velocity of the scroller. The scroll animation time is
+ * same with thumbscroll friction, if the velocity is same with standard
+ * velocity.
+ *
+ * @param standard the thumb scroll friction standard
+ *
+ * @deprecated
+ *
+ * @see elm_config_thumbscroll_friction_standard_get()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_friction_standard_set(double standard);
+
+/**
+ * Get the number of pixels the maximum distance which can be flicked.
+ * If it is flicked more than this,
+ * the flick distance is same with maximum distance.
+ *
+ * @return the thumb scroll maximum flick distance
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI unsigned int elm_config_scroll_thumbscroll_flick_distance_tolerance_get(void);
+
+/**
+ * Set the number of pixels the maximum distance which can be flicked.
+ * If it is flicked more than this,
+ * the flick distance is same with maximum distance.
+ *
+ * @param distance the thumb scroll maximum flick distance
+ *
+ * @deprecated
+ *
+ * @see elm_config_thumbscroll_flick_distance_tolerance_get()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_flick_distance_tolerance_set(unsigned int distance);
+
+/**
+ * Get the amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @return the thumb scroll friction
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Scrolling
+ */
+EAPI double       elm_config_scroll_thumbscroll_friction_get(void);
+
+/**
+ * Set the amount of inertia a scroller will impose at self scrolling
+ * animations.
+ *
+ * @param friction the thumb scroll friction
+ *
+ * @deprecated
+ *
+ * @see elm_config_thumbscroll_friction_get()
+ * @ingroup Elm_Scrolling
+ */
+EAPI void         elm_config_scroll_thumbscroll_friction_set(double friction);
 
 /**
  * Get focus auto scroll mode.
