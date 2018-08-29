@@ -102,11 +102,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
          double     timestamp;
       } history[60];
 
-      struct
-      {
-         double tadd, dxsum, dysum;
-         double est_timestamp_diff;
-      } hist;
+      double est_timestamp_diff;
 
       double          dragged_began_timestamp;
       double          anim_start;

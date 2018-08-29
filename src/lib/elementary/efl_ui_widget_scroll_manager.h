@@ -38,11 +38,7 @@ typedef struct _Efl_Ui_Scroll_Manager_Data
          double     timestamp;
       } history[60];
 
-      struct
-      {
-         double tadd, dxsum, dysum;
-         double est_timestamp_diff;
-      } hist;
+      double est_timestamp_diff;
 
       double          onhold_vx, onhold_vy;
       double          onhold_vxe, onhold_vye;

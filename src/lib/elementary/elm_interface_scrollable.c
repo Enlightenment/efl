@@ -3017,11 +3017,8 @@ _elm_scroll_mouse_down_event_cb(void *data,
      }
    if (ev->button == 1)
      {
-        sid->down.hist.est_timestamp_diff =
+        sid->down.est_timestamp_diff =
           ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
-        sid->down.hist.tadd = 0.0;
-        sid->down.hist.dxsum = 0.0;
-        sid->down.hist.dysum = 0.0;
         sid->down.now = EINA_TRUE;
         sid->down.dragged = EINA_FALSE;
         sid->down.dir_x = EINA_FALSE;
@@ -3256,7 +3253,7 @@ _elm_scroll_hold_enterer(void *data)
              double t;
           } pos[100];
 
-        tdiff = sid->down.hist.est_timestamp_diff;
+        tdiff = sid->down.est_timestamp_diff;
         tnow = ecore_loop_time_get();
         twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
