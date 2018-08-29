@@ -979,8 +979,9 @@ _evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
 EAPI Evas_Object *
 evas_object_table_add(Evas *evas)
 {
+   evas = evas_find(evas);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

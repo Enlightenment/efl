@@ -232,8 +232,9 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
+   evas = evas_find(evas);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

@@ -376,8 +376,9 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj EINA_UNUSED,
 EAPI Evas_Object *
 evas_object_text_add(Evas *e)
 {
+   e = evas_find(e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(EVAS_TEXT_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(EVAS_TEXT_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *

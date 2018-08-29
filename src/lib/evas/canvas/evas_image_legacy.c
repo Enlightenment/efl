@@ -25,8 +25,9 @@ struct _Evas_Image_Legacy_Pixels_Entry
 EAPI Evas_Object *
 evas_object_image_add(Evas *eo_e)
 {
+   eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(EVAS_IMAGE_CLASS, evas_find(eo_e),
+   return efl_add(EVAS_IMAGE_CLASS, eo_e,
                  efl_gfx_fill_auto_set(efl_added, EINA_FALSE),
                  efl_canvas_object_legacy_ctor(efl_added));
 }
@@ -34,8 +35,9 @@ evas_object_image_add(Evas *eo_e)
 EAPI Evas_Object *
 evas_object_image_filled_add(Evas *eo_e)
 {
+   eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(EVAS_IMAGE_CLASS, evas_find(eo_e),
+   return efl_add(EVAS_IMAGE_CLASS, eo_e,
                  efl_canvas_object_legacy_ctor(efl_added));
 }
 

@@ -124,9 +124,10 @@ _evas_vg_resize(void *data, const Efl_Event *ev)
 EAPI Evas_Object *
 evas_object_vg_add(Evas *e)
 {
+   e = evas_find(e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
    // TODO: Ask backend to return the main Ector_Surface
-   return efl_add(MY_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
+   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Efl_VG *
