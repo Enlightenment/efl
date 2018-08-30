@@ -2343,7 +2343,7 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
         return;
      }
 #endif
-   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+   evas_cache_image_preload_data(&im->cache_entry, target);
 }
 
 static void

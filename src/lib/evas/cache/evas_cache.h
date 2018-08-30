@@ -161,8 +161,7 @@ EAPI Engine_Image_Entry*      evas_cache_engine_image_size_set(Engine_Image_Entr
 
 EAPI void                     evas_cache_engine_image_load_data(Engine_Image_Entry *eim);
 
-EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
-                                                            Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data);
+EAPI void                     evas_cache_image_preload_data(Image_Entry *im, const Eo *target);
 EAPI void                     evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target);
 
 EAPI int                      evas_cache_async_frozen_get(void);

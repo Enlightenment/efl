@@ -1138,7 +1138,7 @@ eng_image_data_preload_request(void *engine EINA_UNUSED, void *image, const Eo *
      evas_cache2_image_preload_data(&im->cache_entry, target);
    else
 #endif
-     evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+     evas_cache_image_preload_data(&im->cache_entry, target);
 }
 
 static void

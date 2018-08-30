@@ -28,8 +28,6 @@ struct _Evas_Cache_Preload
 static SLK(engine_lock);
 static int _evas_cache_mutex_init = 0;
 
-static const Image_Entry_Task dummy_task = { NULL, NULL, NULL };
-
 static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target);
 
 #define FREESTRC(Var)             \
@@ -168,8 +166,6 @@ _evas_cache_image_lru_nodata_del(Image_Entry *im)
 static void
 _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 {
-   Image_Entry_Task *task;
-
    if (!ie) return;
    if (!ie->cache) return;
 ////   SLKL(ie->lock);
@@ -182,10 +178,6 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
         _evas_cache_image_entry_preload_remove(ie, NULL);
         return;
      }
-
-   EINA_LIST_FREE(ie->tasks, task)
-     if (task != &dummy_task) free(task);
-
    _evas_cache_image_dirty_del(ie);
    _evas_cache_image_activ_del(ie);
    _evas_cache_image_lru_del(ie);
@@ -201,7 +193,6 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 
    SLKD(ie->lock);
    SLKD(ie->lock_cancel);
-   SLKD(ie->lock_task);
    cache->func.dealloc(ie);
 }
 
@@ -281,7 +272,6 @@ _evas_cache_image_entry_new(Evas_Cache_Image *cache,
 
    SLKI(ie->lock);
    SLKI(ie->lock_cancel);
-   SLKI(ie->lock_task);
 
    if (lo)
      {
@@ -346,7 +336,6 @@ _evas_cache_image_async_heavy(void *data)
 {
    Evas_Cache_Image *cache;
    Image_Entry *current;
-   Image_Entry_Task *task;
    int error;
    int pchannel;
 
@@ -376,20 +365,7 @@ _evas_cache_image_async_heavy(void *data)
                                                    current->w, current->h);
           }
         else
-          {
-             current->flags.loaded = 1;
-
-             SLKL(current->lock_task);
-             EINA_LIST_FREE(current->tasks, task)
-               {
-                  if (task != &dummy_task)
-                    {
-                       task->cb((void *) task->engine_data, current, (void *) task->custom_data);
-                       free(task);
-                    }
-               }
-             SLKU(current->lock_task);
-          }
+          current->flags.loaded = 1;
      }
    current->channel = pchannel;
    // check the unload cancel flag
@@ -434,7 +410,6 @@ static void
 _evas_cache_image_async_end(void *data)
 {
    Image_Entry *ie = (Image_Entry *)data;
-   Image_Entry_Task *task;
 
    if (!ie->cache) return;
    evas_cache_image_ref(ie);
@@ -447,9 +422,6 @@ _evas_cache_image_async_end(void *data)
    ie->flags.preload_pending = 0;
 
    _evas_cache_image_preloaded_notify(ie);
-
-   EINA_LIST_FREE(ie->tasks, task)
-     if (task != &dummy_task) free(task);
    evas_cache_image_drop(ie);
 }
 
@@ -474,7 +446,6 @@ _evas_cache_image_async_cancel(void *data)
         evas_cache_image_drop(ie);
         return;
      }
-   SLKL(ie->lock_task);
    if (ie->targets)
      {
         ie->cache->preload = eina_list_append(ie->cache->preload, ie);
@@ -485,7 +456,6 @@ _evas_cache_image_async_cancel(void *data)
                                               _evas_cache_image_async_cancel,
                                               ie);
      }
-   SLKU(ie->lock_task);
    if (ie->references == 0)
      {
         SLKL(engine_lock);
@@ -501,11 +471,9 @@ _evas_cache_image_async_cancel(void *data)
 // note - preload_add assumes a target is ONLY added ONCE to the image
 // entry. make sure you only add once, or remove first, then add
 static int
-_evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
-                                    Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
+_evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target)
 {
    Evas_Cache_Target *tg;
-   Image_Entry_Task *task;
 
    if (!ie->cache) return 0;
    evas_cache_image_ref(ie);
@@ -519,28 +487,8 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target,
    if (!tg) return 0;
    tg->target = target;
 
-   if (func == NULL && engine_data == NULL && custom_data == NULL)
-     {
-        task = (Image_Entry_Task*) &dummy_task;
-     }
-   else
-     {
-        task = malloc(sizeof (Image_Entry_Task));
-        if (!task)
-          {
-             free(tg);
-             return 0;
-          }
-        task->cb = func;
-        task->engine_data = engine_data;
-        task->custom_data = custom_data;
-     }
-
    ie->targets = (Evas_Cache_Target *)
       eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
-   SLKL(ie->lock_task);
-   ie->tasks = eina_list_append(ie->tasks, task);
-   SLKU(ie->lock_task);
 
    if (!ie->preload)
      {
@@ -560,15 +508,11 @@ static void
 _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
 {
    Evas_Cache_Target *tg;
-   Eina_List *l;
-   Image_Entry_Task *task;
 
    if (!ie->cache) return;
 //   evas_cache_image_ref(ie);
    if (target)
      {
-        SLKL(ie->lock_task);
-        l = ie->tasks;
         EINA_INLIST_FOREACH(ie->targets, tg)
           {
              if (tg->target == target)
@@ -578,16 +522,10 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
                      eina_inlist_remove(EINA_INLIST_GET(ie->targets),
                                         EINA_INLIST_GET(tg));
 
-                  task = eina_list_data_get(l);
-                  ie->tasks = eina_list_remove_list(ie->tasks, l);
-                  if (task != &dummy_task) free(task);
                   free(tg);
                   break;
                }
-
-             l = eina_list_next(l);
           }
-        SLKU(ie->lock_task);
      }
    else
      {
@@ -599,11 +537,6 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
                                    EINA_INLIST_GET(tg));
              free(tg);
           }
-
-        SLKL(ie->lock_task);
-        EINA_LIST_FREE(ie->tasks, task)
-          if (task != &dummy_task) free(task);
-        SLKU(ie->lock_task);
      }
 
    if ((!ie->targets) && (ie->preload) && (!ie->flags.pending))
@@ -1321,8 +1254,7 @@ evas_cache_image_is_loaded(Image_Entry *im)
 }
 
 EAPI void
-evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
-                              Evas_Engine_Thread_Task_Cb func, const void *engine_data, const void *custom_data)
+evas_cache_image_preload_data(Image_Entry *im, const Eo *target)
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
@@ -1338,7 +1270,7 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target,
         return;
      }
    im->flags.loaded = 0;
-   if (!_evas_cache_image_entry_preload_add(im, target, func, engine_data, custom_data))
+   if (!_evas_cache_image_entry_preload_add(im, target))
      evas_object_inform_call_image_preloaded((Evas_Object*) target);
    evas_cache_image_drop(im);
 }
