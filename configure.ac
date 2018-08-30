@@ -2956,44 +2956,6 @@ AC_CHECK_LIB([m], [lround],
 )
 
 
-# Evas cserve2
-
-AC_ARG_ENABLE([cserve],
-   [AS_HELP_STRING([--enable-cserve],[enable shared cache server (cserve2). @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_cserve2="yes"
-    else
-       want_evas_cserve2="no"
-       CFOPT_WARNING="xyes"
-    fi
-   ],
-   [want_evas_cserve2="yes"])
-
-if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
-   EFL_ADD_LIBS([EVAS], [${requirements_libs_shm}])
-fi
-
-# cserve2 only works on Linux so far.
-
-if test "x${efl_func_shm_open}" = "xno" ; then
-   want_evas_cserve2="no"
-fi
-
-if test "x${want_evas_cserve2}" = "xyes"; then
-   if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
-      want_evas_cserve2="no"
-   else
-      EVAS_CSERVE2_SLAVE_LIBS="${EFLALL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_shm}"
-      AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
-   fi
-fi
-
-AC_DEFINE_IF([EVAS_CSERVE2],
-   [test "x${want_evas_cserve2}" = "xyes"],
-   [1], [Shared cache server.])
-AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
-
 ### Configuration
 
 ## Tile rotation
@@ -3031,7 +2993,6 @@ esac
 EFL_ADD_FEATURE([EVAS], [fontconfig])
 EFL_ADD_FEATURE([EVAS], [fribidi])
 EFL_ADD_FEATURE([EVAS], [harfbuzz])
-EFL_ADD_FEATURE([EVAS], [cserve], [${want_evas_cserve2}])
 EFL_ADD_FEATURE([EVAS], [tile-rotate])
 EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 EFL_ADD_FEATURE([EVAS], [hyphen])
@@ -6118,14 +6079,6 @@ if test -n "$CFOPT_WARNING"; then
     echo "You disabled Gstreamer 1.x support. You likely don't want to do"
     echo "this as it will heavily limit your media support options and render"
     echo "some functionality as useless, leading to visible application bugs."
-    echo "_____________________________________________________________________"
-  fi
-  if test "x${want_evas_cserve2}" = "xno"; then
-    echo "_____________________________________________________________________"
-    echo "Evas Cserve is built and on by default and no testing is done"
-    echo "for the old non-cserve2 code paths, so by disabling this you"
-    echo "may be introducing bugs. Be aware of this and be prepared to"
-    echo "deal with the bugs as a result of this."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_audio}" = "xno"; then
