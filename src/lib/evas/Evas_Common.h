@@ -424,6 +424,8 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  */
 
 /**
+ * @deprecated This function now returns NULL as cserve2 support has been removed
+ *
  * Get the path for the cserve binary to execute
  *
  * There is little need for anyone except a desktop environment to call this.
@@ -435,6 +437,7 @@ typedef void      (*Evas_Async_Events_Put_Cb)(void *target, Evas_Callback_Type t
  *
  * @since 1.8
  */
+EINA_DEPRECATED
 EAPI const char *evas_cserve_path_get(void);
 
 /**

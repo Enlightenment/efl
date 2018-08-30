@@ -821,45 +821,9 @@ _evas_module_datadir_get(void)
    return eina_prefix_data_get(pfx);
 }
 
+/* deprecated */
 EAPI const char *
 evas_cserve_path_get(void)
 {
-   static char buf[PATH_MAX];
-   const char *lib;
-   Eina_Bool shutdown = EINA_FALSE;
-
-   if (!pfx)
-     {
-        shutdown = EINA_TRUE;
-        eina_init();
-        pfx = eina_prefix_new
-          (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
-              PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
-              PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
-        if (!pfx)
-          {
-             eina_shutdown();
-             return NULL;
-          }
-     }
-   lib = eina_prefix_lib_get(pfx);
-   if (!lib)
-     {
-        if (shutdown)
-          {
-             eina_prefix_free(pfx);
-             pfx = NULL;
-             eina_shutdown();
-          }
-        return NULL;
-     }
-   snprintf(buf, sizeof(buf), "%s/evas/cserve2/bin/%s/evas_cserve2",
-            lib, MODULE_ARCH);
-   if (shutdown)
-     {
-        eina_prefix_free(pfx);
-        pfx = NULL;
-        eina_shutdown();
-     }
-   return buf;
+   return NULL;
 }
