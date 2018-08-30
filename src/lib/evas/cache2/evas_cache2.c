@@ -314,18 +314,9 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
                               EINA_INLIST_GET(ie->targets));
         if (!ie->flags.delete_me)
           {
-             if (tmp->preloaded_cb)
-               {
-                  if (!tmp->delete_me)
-                    {
-                       tmp->preloaded_cb(tmp->preloaded_data);
-                    }
-               }
-             else
-               {
-                  evas_object_inform_call_image_preloaded
-                    ((Evas_Object *)tmp->target);
-               }
+             if (!tmp->delete_me && tmp->preloaded_cb)
+               tmp->preloaded_cb(tmp->preloaded_data);
+             evas_object_inform_call_image_preloaded((Evas_Object *)tmp->target);
           }
         free(tmp);
      }
@@ -335,7 +326,7 @@ _evas_cache2_image_preloaded_cb(void *data, Eina_Bool success)
 }
 
 static Eina_Bool
-_evas_cache2_image_entry_preload_add(Image_Entry *ie, const void *target)
+_evas_cache2_image_entry_preload_add(Image_Entry *ie, const void *target, void (*preloaded_cb)(void *), void *preloaded_data)
 {
    Evas_Cache_Target *tg;
 
@@ -347,6 +338,9 @@ _evas_cache2_image_entry_preload_add(Image_Entry *ie, const void *target)
      return EINA_TRUE;
 
    tg->target = target;
+   tg->preloaded_cb = preloaded_cb;
+   tg->preloaded_data = preloaded_data;
+
    ie->targets = (Evas_Cache_Target *)
       eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
 
@@ -1063,7 +1057,7 @@ evas_cache2_image_unload_data(Image_Entry *im)
 }
 
 EAPI void
-evas_cache2_image_preload_data(Image_Entry *im, const void *target)
+evas_cache2_image_preload_data(Image_Entry *im, const void *target, void (*preloaded_cb)(void *), void *preloaded_data)
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
@@ -1073,7 +1067,7 @@ evas_cache2_image_preload_data(Image_Entry *im, const void *target)
         return;
      }
 
-   if (!_evas_cache2_image_entry_preload_add(im, target))
+   if (!_evas_cache2_image_entry_preload_add(im, target, preloaded_cb, preloaded_data))
      evas_object_inform_call_image_preloaded((Evas_Object *)target);
 }
 

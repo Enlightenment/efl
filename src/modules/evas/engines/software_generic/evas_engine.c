@@ -2339,11 +2339,11 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
      {
-        evas_cache2_image_preload_data(&im->cache_entry, target);
+        evas_cache2_image_preload_data(&im->cache_entry, target, NULL, NULL);
         return;
      }
 #endif
-   evas_cache_image_preload_data(&im->cache_entry, target);
+   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL);
 }
 
 static void

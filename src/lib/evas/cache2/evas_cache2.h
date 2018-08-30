@@ -65,7 +65,7 @@ EAPI void evas_cache2_image_ref(Image_Entry *im);
 EAPI void evas_cache2_image_close(Image_Entry *im);
 EAPI int evas_cache2_image_load_data(Image_Entry *ie);
 EAPI void evas_cache2_image_unload_data(Image_Entry *im);
-EAPI void evas_cache2_image_preload_data(Image_Entry *im, const void *target);
+EAPI void evas_cache2_image_preload_data(Image_Entry *im, const void *target, void (*preloaded_cb)(void *data), void *data);
 EAPI void evas_cache2_image_preload_cancel(Image_Entry *im, const void *target);
 EAPI void evas_cache2_image_cache_key_create(char *hkey, const char *path, size_t pathlen, const char *key, size_t keylen, const Evas_Image_Load_Opts *lo);
 

@@ -391,17 +391,9 @@ _evas_cache_image_preloaded_notify(Image_Entry *ie)
         ie->targets = (Evas_Cache_Target *)
           eina_inlist_remove(EINA_INLIST_GET(ie->targets),
                              EINA_INLIST_GET(ie->targets));
-        if (tmp->preloaded_cb)
-          {
-             if (!tmp->delete_me)
-               {
-                  tmp->preloaded_cb(tmp->preloaded_data);
-               }
-          }
-        else
-          {
-             evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
-          }
+        if (!tmp->delete_me && tmp->preloaded_cb)
+          tmp->preloaded_cb(tmp->preloaded_data);
+        evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
         free(tmp);
      }
 }
@@ -471,7 +463,7 @@ _evas_cache_image_async_cancel(void *data)
 // note - preload_add assumes a target is ONLY added ONCE to the image
 // entry. make sure you only add once, or remove first, then add
 static int
-_evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target)
+_evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target, void (*preloaded_cb)(void *), void *preloaded_data)
 {
    Evas_Cache_Target *tg;
 
@@ -486,6 +478,8 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target)
    tg = calloc(1, sizeof(Evas_Cache_Target));
    if (!tg) return 0;
    tg->target = target;
+   tg->preloaded_cb = preloaded_cb;
+   tg->preloaded_data = preloaded_data;
 
    ie->targets = (Evas_Cache_Target *)
       eina_inlist_append(EINA_INLIST_GET(ie->targets), EINA_INLIST_GET(tg));
@@ -1254,7 +1248,7 @@ evas_cache_image_is_loaded(Image_Entry *im)
 }
 
 EAPI void
-evas_cache_image_preload_data(Image_Entry *im, const Eo *target)
+evas_cache_image_preload_data(Image_Entry *im, const Eo *target, void (*preloaded_cb)(void *), void *preloaded_data)
 {
    RGBA_Image *img = (RGBA_Image *)im;
 
@@ -1270,7 +1264,7 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target)
         return;
      }
    im->flags.loaded = 0;
-   if (!_evas_cache_image_entry_preload_add(im, target))
+   if (!_evas_cache_image_entry_preload_add(im, target, preloaded_cb, preloaded_data))
      evas_object_inform_call_image_preloaded((Evas_Object*) target);
    evas_cache_image_drop(im);
 }

@@ -150,8 +150,8 @@ _evas_gl_cspace_list_fill(Evas_Engine_GL_Context *gc)
    CS_APPEND(EVAS_COLORSPACE_ARGB8888);
 }
 
-static void
-preload_done(void *data)
+void
+evas_gl_common_image_preload_done(void *data)
 {
    Evas_GL_Image *im = data;
 
@@ -192,26 +192,9 @@ found_cspace:
         im->w = im->im->cache_entry.w;
         im->h = im->im->cache_entry.h;
      }
-   evas_gl_common_image_preload_unwatch(im);
 }
 
-void
-evas_gl_common_image_preload_watch(Evas_GL_Image *im)
-{
-   Evas_Cache_Target *tg;
-
-   if (!im->im) return;
-   tg = calloc(1, sizeof(Evas_Cache_Target));
-   if (tg)
-     {
-        tg->preloaded_cb = preload_done;
-        tg->preloaded_data = im;
-        im->im->cache_entry.targets =  (Evas_Cache_Target *)
-          eina_inlist_append(EINA_INLIST_GET(im->im->cache_entry.targets),
-                             EINA_INLIST_GET(tg));
-     }
-}
-
+//FIXME: This is a hacky way. Need an proper interface...
 void
 evas_gl_common_image_preload_unwatch(Evas_GL_Image *im)
 {
@@ -221,7 +204,7 @@ evas_gl_common_image_preload_unwatch(Evas_GL_Image *im)
    if (!im->im) return;
    EINA_INLIST_FOREACH_SAFE(im->im->cache_entry.targets, l2, tg)
      {
-        if ((tg->preloaded_cb != preload_done) || (tg->preloaded_data != im))
+        if ((tg->preloaded_cb != evas_gl_common_image_preload_done) || (tg->preloaded_data != im))
           continue;
         tg->delete_me = EINA_TRUE;
         break;
