@@ -1701,6 +1701,7 @@ _efl_ui_layout_object_efl_layout_group_part_exist_get(const Eo *obj, Efl_Ui_Layo
 static void
 _elm_layout_sizing_eval(Eo *obj, Efl_Ui_Layout_Object_Data *sd)
 {
+   if (!efl_finalized_get(obj)) return;
    if (sd->frozen) return;
    if (sd->needs_size_calc) return;
    sd->needs_size_calc = EINA_TRUE;
