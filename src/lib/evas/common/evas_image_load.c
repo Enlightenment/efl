@@ -9,9 +9,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 struct ext_loader_s
 {
@@ -274,11 +271,6 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    struct evas_image_foreach_loader_data fdata;
    Eina_Bool             skip;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     CRI("This function shouldn't be called anymore!");
-#endif
-
    skip = ie->load_opts.skip_head;
    if (ie->f)
      {
@@ -405,11 +397,6 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    unsigned int i;
 
    if ((ie->flags.loaded) && (!ie->animated.animated)) return EVAS_LOAD_ERROR_GENERIC;
-
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     CRI("This function shouldn't be called anymore!");
-#endif
 
    if (!ie->info.module)
      {

@@ -8,10 +8,6 @@
 #include "evas_font_ot.h"
 #include "draw.h"
 
-#ifdef EVAS_CSERVE2
-#include "../cserve2/evas_cs2_private.h"
-#endif
-
 struct _Evas_Glyph
 {
    RGBA_Font_Glyph *fg;
@@ -36,26 +32,12 @@ _evas_font_image_new(RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace)
    src_w = fg->glyph_out->bitmap.width;
    src_h = fg->glyph_out->bitmap.rows;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        Evas_Cache2 *cache = evas_common_image_cache2_get();
-        return evas_cache2_image_data(cache, src_w, src_h, image_data, alpha, cspace);
-     }
-#endif
    return evas_cache_image_data(evas_common_image_cache_get(), src_w, src_h, image_data, alpha, cspace);
 }
 
 static void
 _evas_font_image_free(void *image)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
-     {
-        evas_cache2_image_close(image);
-        return;
-     }
-#endif
    evas_cache_image_drop(image);
 }
 
@@ -73,10 +55,6 @@ _evas_font_image_draw(void *context, void *surface, void *image, RGBA_Font_Glyph
 #ifdef BUILD_PIPE_RENDER
    if ((eina_cpu_count() > 1))
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_load_data(&im->cache_entry);
-#endif
         evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im),
                                                   surface, context, smooth,
                                                   0, 0, src_w, src_h,
@@ -203,19 +181,6 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 void
 evas_common_font_glyphs_ref(Evas_Glyph_Array *array)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && !array->refcount)
-     {
-        Eina_Iterator *iter;
-        Evas_Glyph *glyph;
-
-        iter = eina_inarray_iterator_new(array->array);
-        EINA_ITERATOR_FOREACH(iter, glyph)
-          evas_cserve2_font_glyph_ref(glyph->fg->glyph_out, EINA_TRUE);
-        eina_iterator_free(iter);
-     }
-#endif
-
    array->refcount++;
 }
 
@@ -223,19 +188,6 @@ void
 evas_common_font_glyphs_unref(Evas_Glyph_Array *array)
 {
    if (--array->refcount) return;
-
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        Eina_Iterator *iter;
-        Evas_Glyph *glyph;
-
-        iter = eina_inarray_iterator_new(array->array);
-        EINA_ITERATOR_FOREACH(iter, glyph)
-          evas_cserve2_font_glyph_ref(glyph->fg->glyph_out, EINA_FALSE);
-        eina_iterator_free(iter);
-     }
-#endif
 
    eina_inarray_free(array->array);
    evas_common_font_int_unref(array->fi);
@@ -278,18 +230,6 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    if (text_props->len < unit) unit = text_props->len;
    if (text_props->glyphs && text_props->glyphs->refcount == 1)
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          {
-             Eina_Iterator *iter;
-             Evas_Glyph *glyph;
-
-             iter = eina_inarray_iterator_new(text_props->glyphs->array);
-             EINA_ITERATOR_FOREACH(iter, glyph)
-               evas_cserve2_font_glyph_ref(glyph->fg->glyph_out, EINA_FALSE);
-             eina_iterator_free(iter);
-          }
-#endif
         glyphs = text_props->glyphs->array;
         glyphs->len = 0;
         reused_glyphs = EINA_TRUE;
@@ -325,11 +265,6 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
              fg = NULL;
              goto error;
           }
-
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cserve2_font_glyph_ref(fg->glyph_out, EINA_TRUE);
-#endif
 
         glyph = eina_inarray_grow(glyphs, 1);
         if (!glyph) goto error;

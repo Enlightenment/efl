@@ -21,9 +21,6 @@ EAPI void              evas_common_image_set_alpha_sparse          (Image_Entry 
 /* EAPI RGBA_Image   *evas_common_image_create            (int w, int h); */
 EAPI RGBA_Image       *evas_common_image_new                       (unsigned int w, unsigned int h, unsigned int alpha);
 EAPI Evas_Cache_Image *evas_common_image_cache_get                 (void);
-#ifdef EVAS_CSERVE2
-EAPI Evas_Cache2      *evas_common_image_cache2_get                 (void);
-#endif
 
 EAPI void              evas_common_image_set_cache                 (unsigned int size);
 EAPI int               evas_common_image_get_cache                 (void);

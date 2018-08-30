@@ -8,9 +8,6 @@
 
 #include <assert.h>
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_image_private.h"
@@ -663,14 +660,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-               evas_cache2_image_load_data(&im->cache_entry);
-             else
-#endif
-               evas_cache_image_load_data(&im->cache_entry);
-          }
+          evas_cache_image_load_data(&im->cache_entry);
 	evas_common_image_colorspace_normalize(im);
 
 //        noscales++;
@@ -692,14 +682,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
    if (!sci)
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_load_data(&im->cache_entry);
-             else
-#endif
-               evas_cache_image_load_data(&im->cache_entry);
-          }
+          evas_cache_image_load_data(&im->cache_entry);
 	evas_common_image_colorspace_normalize(im);
 
 //        misses++;
@@ -762,25 +745,6 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           }
      }
 
-#ifdef EVAS_CSERVE2
-   if (sci->populate_me && (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-       && evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     {
-        RGBA_Image *im2 = (RGBA_Image *) evas_cache2_image_scale_load
-          (&im->cache_entry, src_region_x, src_region_y,
-           src_region_w, src_region_h, dst_region_w, dst_region_h, smooth);
-        SLKL(cache_lock);
-        if (im2 != im)
-          {
-             sci->im = im2;
-             sci->populate_me = 0;
-             cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
-             didpop = 1;
-          }
-        SLKU(cache_lock);
-     }
-#endif
-
    if (sci->populate_me)
      {
 //        INF("##! populate!");
@@ -807,14 +771,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 
              SLKL(cache_lock);
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-               {
-#ifdef EVAS_CSERVE2
-                  if (evas_cserve2_use_get())
-                    evas_cache2_image_load_data(&im->cache_entry);
-                  else
-#endif
-                    evas_cache_image_load_data(&im->cache_entry);
-               }
+               evas_cache_image_load_data(&im->cache_entry);
              SLKU(cache_lock);
 
              SLKL(im->cache.lock);
@@ -913,24 +870,15 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
           {
              if ((dounload) ||
                  ((im->cache_entry.flags.loaded) &&
-                     ((!im->cs.no_free)
-#ifdef EVAS_CSERVE2
-                      || (ie->data1)
-#endif
-                     )  &&
+                     ((!im->cs.no_free))  &&
                      (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)))
                {
                   if ((dounload) || (im->cache.orig_usage <
                                      (im->cache.newest_usage / 20)))
                     {
                        //FIXME: imagedataunload - inform owners
-#ifdef EVAS_CSERVE2
-                       if (evas_cserve2_use_get())
-                         evas_cache2_image_unload_data(&im->cache_entry);
-                       else
-#endif
-                         /* FIXME: must be the _cache version, no? */
-                         evas_common_rgba_image_unload(&im->cache_entry);
+                       /* FIXME: must be the _cache version, no? */
+                       evas_common_rgba_image_unload(&im->cache_entry);
                     }
                }
           }
@@ -939,14 +887,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
      {
         SLKU(im->cache.lock);
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_load_data(&im->cache_entry);
-             else
-#endif
-               evas_cache_image_load_data(&im->cache_entry);
-          }
+          evas_cache_image_load_data(&im->cache_entry);
 	evas_common_image_colorspace_normalize(im);
 //        misses++;
         if (im->image.data)
@@ -973,14 +914,7 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
    RGBA_Image *im = (RGBA_Image *)ie;
 
    if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-     {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_load_data(&im->cache_entry);
-        else
-#endif
-          evas_cache_image_load_data(&im->cache_entry);
-     }
+     evas_cache_image_load_data(&im->cache_entry);
    evas_common_image_colorspace_normalize(im);
    if (im->image.data)
      {

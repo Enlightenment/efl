@@ -24,10 +24,6 @@
 //#define SURFDBG 1
 
 static Evas_Cache_Image *eci = NULL;
-#ifdef EVAS_CSERVE2
-#define EVAS_CSERVE2_SCALE_CACHE_SIZE (4 * 1024 * 1024)
-static Evas_Cache2 *eci2 = NULL;
-#endif
 static int reference = 0;
 static int evas_image_no_mmap = -1;
 
@@ -80,23 +76,6 @@ static const Evas_Cache_Image_Func _evas_common_image_func =
   _evas_common_rgba_image_ram_usage,
   NULL // _evas_common_rgba_image_debug
 };
-
-#ifdef EVAS_CSERVE2
-static const Evas_Cache2_Image_Func _evas_common_image_func2 =
-{
-  _evas_common_rgba_image_surface_alloc,
-  _evas_common_rgba_image_surface_delete,
-  _evas_common_rgba_image_surface_pixels,
-  NULL, // _evas_common_rgba_image_dirty_region,
-  NULL, // _evas_common_rgba_image_dirty,
-  evas_common_rgba_image_size_set,
-  evas_common_rgba_image_from_copied_data,
-  evas_common_rgba_image_from_data,
-  NULL, // evas_common_rgba_image_colorspace_set,
-  _evas_common_rgba_image_ram_usage,
-  NULL // _evas_common_rgba_image_debug
-};
-#endif
 
 EAPI int
 _evas_common_rgba_image_surface_size(unsigned int w, unsigned int h,
@@ -455,9 +434,6 @@ EAPI void
 evas_common_image_init(void)
 {
    if (!eci) eci = evas_cache_image_init(&_evas_common_image_func);
-#ifdef EVAS_CSERVE2
-   if (!eci2) eci2 = evas_cache2_init(&_evas_common_image_func2);
-#endif
    reference++;
 
    evas_common_scalecache_init();
@@ -486,10 +462,6 @@ evas_common_image_shutdown(void)
 // ENABLE IT AGAIN, hope it is fixed. Gustavo @ January 22nd, 2009.
        evas_cache_image_shutdown(eci);
        eci = NULL;
-#ifdef EVAS_CSERVE2
-       evas_cache2_shutdown(eci2);
-       eci2 = NULL;
-#endif
      }
    evas_common_scalecache_shutdown();
 }
@@ -534,11 +506,6 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
      }
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);
    if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);
-#ifdef EVAS_CSERVE2
-   if (ie->data1)
-       ERR("Shouldn't reach this point since we are using cache2: '%s' '%s'",
-           ie->file, ie->key);
-#endif
 
    if (ie->animated.frames)
      {
@@ -574,15 +541,6 @@ evas_common_rgba_image_unload_real(Image_Entry *ie)
         if (!im->cs.no_free) free(im->cs.data);
      }
    im->cs.data = NULL;
-
-#ifdef EVAS_CSERVE2
-   if (ie->data1)
-     {
-        ERR("Shouldn't reach this point since we are using cache2.");
-        ie->flags.preload_done = 0;
-        return;
-     }
-#endif
 
    if (im->image.data && !im->image.no_free)
      {
@@ -733,9 +691,6 @@ _evas_common_rgba_image_surface_alloc(Image_Entry *ie,
    RGBA_Image *im = (RGBA_Image *) ie;
    int l = 0, r = 0, t = 0, b = 0;
 
-#ifdef EVAS_CSERVE2
-   if (ie->data1) return 0;
-#endif
    if (im->image.no_free) return 0;
 
    if (im->image.data)
@@ -848,9 +803,6 @@ _evas_common_rgba_image_dirty_region(Image_Entry* ie,
 {
    RGBA_Image   *im = (RGBA_Image *) ie;
 
-#ifdef EVAS_CSERVE2
-   if (ie->data1) ERR("Shouldn't reach this point since we are using cache2.");
-#endif
    im->flags |= RGBA_IMAGE_IS_DIRTY;
    evas_common_rgba_image_scalecache_dirty(&im->cache_entry);
 }
@@ -871,17 +823,9 @@ _evas_common_rgba_image_dirty(Image_Entry *ie_dst, const Image_Entry *ie_src)
                                                   src->cache_entry.w,
                                                   src->cache_entry.h))
           {
-#ifdef EVAS_CSERVE2
-             if (ie_src->data1)
-               ERR("Shouldn't reach this point since we are using cache2.");
-#endif
              return 1;
           }
      }
-#ifdef EVAS_CSERVE2
-   if (ie_src->data1)
-     ERR("Shouldn't reach this point since we are using cache2.");
-#endif
    evas_common_image_colorspace_normalize(src);
    evas_common_image_colorspace_normalize(dst);
    return 0;
@@ -899,11 +843,7 @@ _evas_common_rgba_image_ram_usage(Image_Entry *ie)
 
    if (im->image.data)
      {
-#ifdef EVAS_CSERVE2
-        if ((!im->image.no_free) || (ie->data1))
-#else
         if ((!im->image.no_free))
-#endif
           size += im->cache_entry.w * im->cache_entry.h * sizeof(DATA32);
      }
    size += evas_common_rgba_image_scalecache_usage_get(&im->cache_entry);
@@ -973,10 +913,6 @@ evas_common_image_colorspace_normalize(RGBA_Image *im)
       case EVAS_COLORSPACE_AGRY88:
         if (im->image.data != im->cs.data)
           {
-#ifdef EVAS_CSERVE2
-             if (((Image_Entry *)im)->data1)
-               ERR("Shouldn't reach this point since we are using cache2.");
-#endif
              if (!im->image.no_free)
                {
                   evas_common_rgba_image_surface_munmap
@@ -1060,10 +996,6 @@ evas_common_image_set_cache(unsigned int size)
 {
    if (eci)
      evas_cache_image_set(eci, size);
-#ifdef EVAS_CSERVE2
-   if (eci2)
-     evas_cache2_limit_set(eci2, size + EVAS_CSERVE2_SCALE_CACHE_SIZE);
-#endif
 }
 
 EAPI int
@@ -1095,14 +1027,6 @@ evas_common_image_cache_get(void)
 {
    return eci;
 }
-
-#ifdef EVAS_CSERVE2
-EAPI Evas_Cache2*
-evas_common_image_cache2_get(void)
-{
-   return eci2;
-}
-#endif
 
 EAPI RGBA_Image *
 evas_common_image_line_buffer_obtain(int len)
