@@ -7,10 +7,6 @@
 # include <dlfcn.h>
 #endif
 
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
-
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
