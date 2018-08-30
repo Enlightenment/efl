@@ -89,7 +89,7 @@ interface Efl.Net.Server {
 
               Whenever changed, this property will only apply to new
               connections, that is, if the current connection count
-              alredy exceeds the limit, no connections will be closed.
+              already exceeds the limit, no connections will be closed.
             ]]
             values {
                 limit: uint; [[Number of allowed client connections]]

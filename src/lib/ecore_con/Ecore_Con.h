@@ -1158,14 +1158,14 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  * applications that want to connect to that path without replicating
  * its logic.
  *
- * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will conect to
+ * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will connect to
  *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
  *     if that is not set, then from HOME, even if this is not set, then from
  *     TMPDIR. If none is set, then path would be /tmp. From this path the
  *     function would connect to socket at "[path]/.ecore/[name]/[port]". If
- *     port is negetive, then to socket at "[path]/.ecore/[name]".
+ *     port is negative, then to socket at "[path]/.ecore/[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will connect to
- *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     Unix socket at "/tmp/.ecore_service|[name]|[port]". If port is negative,
  *     then to Unix socket at "/tmp/.ecore_service|[name]".
  *
  * @param  is_system  If #EINA_TRUE, will be a system wide socket
@@ -1205,10 +1205,10 @@ EAPI char *ecore_con_local_path_new(Eina_Bool is_system, const char *name, int p
  *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
  *     if that is not set, then from HOME, even if this is not set, then from
  *     TMPDIR. If none is set, then path would be /tmp. From this path socket
- *     would be created as "[path]/.ecore/[name]/[port]". If port is negetive,
+ *     would be created as "[path]/.ecore/[name]/[port]". If port is negative,
  *     then "[path]/.ecore/[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_SYSTEM, the server will listen
- *     on Unix socket "/tmp/.ecore_service|[name]|[port]". If port is negetive,
+ *     on Unix socket "/tmp/.ecore_service|[name]|[port]". If port is negative,
  *     then "/tmp/.ecore_service|[name]".
  * @li If @a type is @c ECORE_CON_LOCAL_ABSTRACT, then port number is not
  *     considered while creating the socket.
@@ -2300,7 +2300,7 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
  * If not specified, libcurl will default to using port 1080 for proxies.
  *
  * @param url_con Connection object that will use the proxy.
- * @param proxy Porxy string or @c NULL to disable
+ * @param proxy Proxy string or @c NULL to disable
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  * @since 1.2

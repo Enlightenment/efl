@@ -2969,7 +2969,7 @@ EAPI Eina_Bool edje_object_part_exists(const Evas_Object *obj, const char *part)
  *
  * @brief Functions that deal with 3D projection of an 2D object.
  *
- * Perspective is a graphical tool that makes objets represented in 2D
+ * Perspective is a graphical tool that makes objects represented in 2D
  * look like they have a 3D appearance.
  *
  * Edje allows us to use perspective on any edje object. This group of

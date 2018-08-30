@@ -1,6 +1,6 @@
 mixin Efl.Ui.Focus.Manager_Sub (Efl.Interface, Efl.Ui.Focus.Manager, Efl.Object)
 {
-    [[A class that automatically registeres its border elements in the parent manager
+    [[A class that automatically registers its border elements in the parent manager
 
       This sub manager will register its border elements on the parent manager.
       The parent manager is found with the @Efl.Ui.Focus.Object interface of the

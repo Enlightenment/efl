@@ -14,7 +14,7 @@ class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
             ]]
          }
          values {
-            max_size: Eina.Size2D; [[A 2D max size in pixel uinits.]]
+            max_size: Eina.Size2D; [[A 2D max size in pixel units.]]
          }
       }
    }

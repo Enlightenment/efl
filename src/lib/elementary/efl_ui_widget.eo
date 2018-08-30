@@ -545,7 +545,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
             @in current_state : Efl.Ui.Widget_Focus_State;
                [[The focus manager to register with.]]
             @inout configured_state : Efl.Ui.Widget_Focus_State;
-               [[The evalulated Focus state that should be used.]]
+               [[The evaluated Focus state that should be used.]]
             @in redirect : Efl.Ui.Widget;
                [[A redirect that will be set by the elm.widget implementation.]]
          }

@@ -4,7 +4,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
     [[Copy from an @Efl.Io.Reader source to @Efl.Io.Writer destination.
 
       During usage it will keep reference to @.source and
-      @.destination objects, automatically relasing them on
+      @.destination objects, automatically releasing them on
       destruction.
 
       By default the read-write process is done based on fixed-size

@@ -693,9 +693,9 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+            @in modifiers: Efl.Input.Modifier; [[A combination of modifier keys
                  that must be present to trigger the event. Not supported yet.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
                  keys that must not be present to trigger the event. Not supported yet.]]
             @in priority: int; [[Not supported yet.]]
             @in grab_mode: Efl.Ui.Win_Keygrab_Mode; [[Describes how the key should
@@ -711,9 +711,9 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
          return: bool; [[$true on success, $false otherwise]]
          params {
             @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+            @in modifiers: Efl.Input.Modifier; [[A combination of modifier keys
                  that must be present to trigger the event. Not supported yet.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier keys
+            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier keys
                  that must not be present to trigger the event. Not supported yet.]]
          }
          legacy: null;

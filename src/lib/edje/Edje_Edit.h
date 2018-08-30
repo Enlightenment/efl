@@ -1105,7 +1105,7 @@ EAPI Eina_Bool edje_edit_color_class_del(Evas_Object *obj, const char *name);
 /**
  * @brief Gets all the colors that compose the class.
  *
- * You can pass NULL to colors you are not intrested in.
+ * You can pass NULL to colors you are not interested in.
  *
  * @param obj Object being edited.
  * @param class_name Color class to fetch values.

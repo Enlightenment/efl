@@ -1,7 +1,7 @@
 enum Efl.Access.Type
 {
    [[Type of accessibility object]]
-   regular, [[default accessibile object]]
+   regular, [[default accessible object]]
    disabled, [[skip object and its children in accessibility hierarchy]]
    skipped [[skip object in accessibility hierarchy]]
 }

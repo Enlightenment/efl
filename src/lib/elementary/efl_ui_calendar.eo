@@ -8,7 +8,7 @@ enum Efl.Ui.Calendar_Weekday
    ]]
    sunday, [[Sunday weekday]]
    monday, [[Monday weekday]]
-   tuesday, [[Tusday weekday]]
+   tuesday, [[Tuesday weekday]]
    wednesday, [[Wednesday weekday]]
    thursday, [[Thursday weekday]]
    friday, [[Friday weekday]]
@@ -55,7 +55,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Acces
             ]]
          }
          values {
-            min: Efl.Time; [[Time structure containing the minmum date.]]
+            min: Efl.Time; [[Time structure containing the minimum date.]]
          }
       }
       @property date_max {

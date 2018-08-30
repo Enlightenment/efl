@@ -63,7 +63,7 @@ class Efl.Loop (Efl.Task)
          set {}
          get {}
          values {
-           timepoint: double; [[Time in seconds since process specfic start point]]
+           timepoint: double; [[Time in seconds since process specific start point]]
          }
       }
       idle {

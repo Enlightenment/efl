@@ -32,7 +32,7 @@ enum Elm.Calendar.Weekday
    legacy: elm_day;
    sunday, [[Sunday weekday]]
    monday, [[Monday weekday]]
-   tuesday, [[Tusday weekday]]
+   tuesday, [[Tuesday weekday]]
    wednesday, [[Wednesday weekday]]
    thursday, [[Thursday weekday]]
    friday, [[Friday weekday]]

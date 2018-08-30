@@ -1835,7 +1835,7 @@ typedef enum _Edje_Tween_Mode
    EDJE_TWEEN_MODE_DECELERATE        = 4,        /**< Decelerate tween mode value */
    EDJE_TWEEN_MODE_ACCELERATE_FACTOR = 5,        /**< Accelerate factor tween mode value */
    EDJE_TWEEN_MODE_DECELERATE_FACTOR = 6,        /**< Decelerate factor tween mode value */
-   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,        /**< Sinusoidal factgor tween mode value */
+   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,        /**< Sinusoidal factor tween mode value */
    EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,        /**< Divisor iterp tween mode value */
    EDJE_TWEEN_MODE_BOUNCE            = 9,        /**< Bounce tween mode value */
    EDJE_TWEEN_MODE_SPRING            = 10,       /**< Spring tween mode value */
@@ -1863,7 +1863,7 @@ typedef enum _Edje_Action_Type
    EDJE_ACTION_TYPE_SCRIPT                   = 7,  /**< Script action value */
    EDJE_ACTION_TYPE_FOCUS_SET                = 8,  /**< Focus set action value */
    EDJE_ACTION_TYPE_RESERVED00               = 9,  /**< Reversed do action value */
-   EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10, /**< Forcus object action value */
+   EDJE_ACTION_TYPE_FOCUS_OBJECT             = 10, /**< Focus object action value */
    EDJE_ACTION_TYPE_PARAM_COPY               = 11, /**< Param copy action value */
    EDJE_ACTION_TYPE_PARAM_SET                = 12, /**< Param set action value */
    EDJE_ACTION_TYPE_SOUND_SAMPLE             = 13, /**< @since 1.1 @brief Sound sample action value */
@@ -2027,7 +2027,7 @@ EAPI void         edje_message_signal_process             (void);
  *
  * @brief Functions to manipulate audio abilities in edje.
  *
- * Perspective is a graphical tool that makes objets represented in 2D
+ * Perspective is a graphical tool that makes objects represented in 2D
  * look like they have a 3D appearance.
  *
  * Edje allows us to use perspective on any edje object. This group of

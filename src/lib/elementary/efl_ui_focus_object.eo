@@ -58,7 +58,7 @@ mixin Efl.Ui.Focus.Object
             [[Tells the object that its children will be queried soon by the given manager.
               The call will be a NOP if there is already a active preprare_logical call on this object
 
-              Deleting manager items in this call will result in undefied behaviour and may cause your system to crash.
+              Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
             ]]
         }
         prepare_logical_none_recursive @protected {

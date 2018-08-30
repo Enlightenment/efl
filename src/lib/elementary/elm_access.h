@@ -258,9 +258,9 @@ EAPI void elm_access_action_cb_set(Evas_Object *obj, const Elm_Access_Action_Typ
  * @brief Set the next access object for highlight.
  * @since 1.8
  *
- * @param obj  The object is previous access object of next for hilight.
+ * @param obj  The object is previous access object of next for highlight.
  * @param dir  Access direction same as Focus direction
- * @param next The object is next access object of obj for hilight.
+ * @param next The object is next access object of obj for highlight.
  *
  * Currently focus chain is used for access highlight chain. Use this API to
  * customize highlight chain. If highlight chain is already established, you can

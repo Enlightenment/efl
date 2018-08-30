@@ -115,7 +115,7 @@ typedef void (*Ecore_Buffer_Consumer_Provider_Add_Cb) (Ecore_Buffer_Consumer *co
 /**
  * @typedef Ecore_Buffer_Consumer_Provider_Del_Cb
  *
- * @brief Called whenever a Ecore_Buffer_Provider disonnected.
+ * @brief Called whenever a Ecore_Buffer_Provider disconnected.
  *
  * @since 1.15
  *
