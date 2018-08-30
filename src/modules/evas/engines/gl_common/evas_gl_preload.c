@@ -1,9 +1,5 @@
 #include "evas_gl_private.h"
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
-
 static Eina_Thread async_loader_thread;
 static Eina_Condition async_loader_cond;
 static Eina_Lock async_loader_lock;
@@ -56,11 +52,6 @@ evas_gl_preload_pop(Evas_GL_Texture *tex)
         if (running) evas_gl_preload_render_lock(tmp_cb, tmp_data);
 
         evas_gl_common_texture_free(current->tex, EINA_FALSE);
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&current->im->cache_entry))
-          evas_cache2_image_close(&current->im->cache_entry);
-        else
-#endif
         evas_cache_image_drop(&current->im->cache_entry);
         free(current);
 
@@ -75,12 +66,7 @@ evas_gl_preload_pop(Evas_GL_Texture *tex)
           async_loader_tex = eina_list_remove_list(async_loader_tex, l);
 
           evas_gl_common_texture_free(async->tex, EINA_FALSE);
-#ifdef EVAS_CSERVE2
-          if (evas_cache2_image_cached(&async->im->cache_entry))
-            evas_cache2_image_close(&async->im->cache_entry);
-          else
-#endif
-            evas_cache_image_drop(&async->im->cache_entry);
+          evas_cache_image_drop(&async->im->cache_entry);
           free(async);
 
           break;
@@ -122,11 +108,6 @@ _evas_gl_preload_main_loop_wakeup(void)
 
              evas_gl_common_texture_free(async->tex, EINA_FALSE);
           }
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&async->im->cache_entry))
-          evas_cache2_image_close(&async->im->cache_entry);
-        else
-#endif
         evas_cache_image_drop(&async->im->cache_entry);
         free(async);
      }
