@@ -2,9 +2,6 @@
 #include "evas_private.h"
 #include <math.h>
 #include <assert.h>
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 #ifdef EVAS_RENDER_DEBUG_TIMING
 #include <sys/time.h>
@@ -2741,12 +2738,7 @@ _drop_scie_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_U
 static Eina_Bool
 _drop_image_cache_ref(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(data))
-     evas_cache2_image_close((Image_Entry *)data);
-   else
-#endif
-     evas_cache_image_drop((Image_Entry *)data);
+   evas_cache_image_drop((Image_Entry *)data);
 
    return EINA_TRUE;
 }
@@ -3187,11 +3179,6 @@ evas_render_updates_internal(Evas *eo_e,
      }
 #ifdef EVAS_RENDER_DEBUG_TIMING
    double start_time = _time_get();
-#endif
-
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-      evas_cserve2_dispatch();
 #endif
 
    evas_render_pre(eo_e, evas);

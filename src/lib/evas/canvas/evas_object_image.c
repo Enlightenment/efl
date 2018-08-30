@@ -1401,11 +1401,6 @@ _draw_image(Evas_Object_Protected_Data *obj,
                                   smooth, do_async);
    if (do_async && async_unref)
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_ref((Image_Entry *)image);
-        else
-#endif
         evas_cache_image_ref((Image_Entry *)image);
 
         evas_unref_queue_image_put(obj->layer->evas, image);
@@ -1427,11 +1422,6 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
                                       do_async);
    if (do_async && async_unref)
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_ref((Image_Entry *)image);
-        else
-#endif
         evas_cache_image_ref((Image_Entry *)image);
 
         evas_unref_queue_image_put(obj->layer->evas, image);

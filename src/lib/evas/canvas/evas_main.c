@@ -4,9 +4,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 #include "evas_image_private.h"
 #include "evas_polygon_private.h"
@@ -70,18 +67,6 @@ evas_init(void)
 
    evas_module_init();
    EINA_SAFETY_ON_FALSE_GOTO(evas_async_events_init(), shutdown_module);
-#ifdef EVAS_CSERVE2
-   int cs2 = 0;
-   {
-      const char *env;
-      env = getenv("EVAS_CSERVE2");
-      if (env && atoi(env))
-        {
-           cs2 = evas_cserve2_init();
-           EINA_SAFETY_ON_FALSE_GOTO(cs2, shutdown_async_events);
-        }
-   }
-#endif
    _evas_preload_thread_init();
    evas_filter_init();
    evas_cache_vg_init();
@@ -102,11 +87,6 @@ evas_init(void)
  shutdown_filter:
    evas_filter_shutdown();
    _evas_preload_thread_shutdown();
-#ifdef EVAS_CSERVE2
-   if (cs2) evas_cserve2_shutdown();
-shutdown_async_events:
-   evas_async_events_shutdown();
-#endif
 shutdown_module:
    evas_module_shutdown();
 shutdown_ecore:
@@ -145,10 +125,6 @@ evas_shutdown(void)
 
    evas_focus_shutdown();
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cserve2_shutdown();
-#endif
    evas_cache_vg_shutdown();
 
    evas_font_path_global_clear();

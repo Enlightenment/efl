@@ -18,9 +18,6 @@
 #include <math.h>
 
 #include "evas_private.h"
-#ifdef EVAS_CSERVE2
-#include "../cserve2/evas_cs2_private.h"
-#endif
 #include "../common/evas_convert_color.h"
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
