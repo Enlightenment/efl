@@ -1,7 +1,4 @@
 #include "evas_engine.h"
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
 
 /* FIXME: We NEED to get the color map from the VT and use that for the mask */
 #define RED_MASK 0xff0000
@@ -107,12 +104,7 @@ _outbuf_free(Outbuf *ob)
 
         rect = img->extended_info;
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_close(&img->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&img->cache_entry);
+        evas_cache_image_drop(&img->cache_entry);
 
         eina_rectangle_free(rect);
      }
@@ -319,12 +311,7 @@ _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *
    if (!(rect = eina_rectangle_new(x, y, w, h)))
      return NULL;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     img = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
-   else
-#endif
-     img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+   img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
 
    if (!img)
      {
@@ -334,12 +321,7 @@ _outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, int *
 
    img->cache_entry.flags.alpha = ob->alpha;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cache2_image_surface_alloc(&img->cache_entry, w, h);
-   else
-#endif
-     evas_cache_image_surface_alloc(&img->cache_entry, w, h);
+   evas_cache_image_surface_alloc(&img->cache_entry, w, h);
 
    img->extended_info = rect;
 
@@ -552,12 +534,7 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
 
         eina_rectangle_free(rect);
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_close(&img->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&img->cache_entry);
+        evas_cache_image_drop(&img->cache_entry);
 
         i++;
      }
