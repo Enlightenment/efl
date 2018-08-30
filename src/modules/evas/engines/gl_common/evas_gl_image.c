@@ -921,7 +921,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
                    evas_gl_common_texture_update(im->tex, im->im);
                    evas_cache_image_unload_data(ie);
                 }
-             ie->flags.updated_data = 0;
           }
         else if (!im->tex && !ie->load_error)
           {
@@ -940,6 +939,7 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
                   evas_cache_image_unload_data(ie);
                }
           }
+        ie->flags.updated_data = EINA_FALSE;
         im->dirty = 0;
         break;
       case EVAS_COLORSPACE_ETC1_ALPHA:
