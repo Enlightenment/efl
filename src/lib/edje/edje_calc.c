@@ -1,6 +1,5 @@
 #define EFL_GFX_FILTER_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
-#define EVAS_VG_BETA
 
 #include "edje_private.h"
 
