@@ -1558,6 +1558,7 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *oldline;
+   Eina_Bool cursor_move = EINA_TRUE;
    unsigned int row, col, oldlength, position = 0;
 
    code = elm_obj_code_widget_code_get(widget);
@@ -1569,6 +1570,9 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
         elm_code_widget_selection_start(widget, row, col);
         elm_code_widget_selection_end(widget, row + 1, 0);
         _elm_code_widget_change_selection_add(widget);
+
+        if (col >= line->length)
+          cursor_move = EINA_FALSE;
 
         elm_code_line_merge_down(line);
      }
@@ -1588,7 +1592,7 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
    elm_code_widget_selection_clear(widget);
 
    line = elm_code_file_line_get(code->file, row - 1);
-   if (line)
+   if (line && cursor_move)
      {
         if (position)
           elm_code_widget_cursor_position_set(widget, row - 1, position);
