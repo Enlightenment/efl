@@ -32,7 +32,7 @@ main(void)
    char *engine_name;
 
    /* Initialize Evas.  This will startup other dependencies such as
-    * eina, eet, ecore, etc. and initalizes various internal things
+    * eina, eet, ecore, etc. and initializes various internal things
     * (threads, filters, etc.) */
    evas_init();
 

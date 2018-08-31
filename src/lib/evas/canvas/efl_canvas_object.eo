@@ -487,9 +487,9 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
          return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
             @in keyname: string @nonull; [[The key to request events for.]]
-            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+            @in modifiers: Efl.Input.Modifier; [[A combination of modifier
                               keys that must be present to trigger the event.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
                           keys that must not be present to trigger the event.]]
             @in exclusive: bool; [[Request that the $obj is the only object
                                    receiving the $keyname events.]]

@@ -99,7 +99,7 @@ EAPI char *eina_vpath_resolve(Eina_Vpath path);
  *
  * @param str the buffer to stuff the characters into
  * @param size the size of the buffer
- * @param format A snprintf style format string, which will get evalulated after the vpath strings are getting replaced
+ * @param format A snprintf style format string, which will get evaluated after the vpath strings are getting replaced
  * @param ... The arguments for the format string
  *
  * @return the number of characters that are written into str, on a error a value < 0 is returned.

@@ -299,7 +299,7 @@ _transit_del(Elm_Transit *transit)
    free(transit);
 }
 
-//If the transit is deleted then EINA_FALSE is retruned.
+//If the transit is deleted then EINA_FALSE is returned.
 static Eina_Bool
 _transit_animate_op(Elm_Transit *transit, double progress)
 {

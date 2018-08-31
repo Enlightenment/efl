@@ -1721,7 +1721,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_actions_get(Ecore_Wl2_Offer *offer);
  *
  * @param offer Offer object to use
  * @param actions A or´ed value of mutliple Ecore_Wl2_Drag_Action values
- * @param action the preffered action out of the actions
+ * @param action the preferred action out of the actions
  *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
@@ -1733,7 +1733,7 @@ EAPI void ecore_wl2_offer_actions_set(Ecore_Wl2_Offer *offer, Ecore_Wl2_Drag_Act
  *
  * @param offer Offer object to use
  *
- * @return the prefered action
+ * @return the preferred action
  *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19

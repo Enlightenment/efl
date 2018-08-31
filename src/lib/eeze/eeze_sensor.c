@@ -152,7 +152,7 @@ eeze_sensor_modules_unload(void)
 }
 
 /* This function is offered to the modules to register itself after they have
- * been loaded in initialized. They stay in the hash funtion until they
+ * been loaded in initialized. They stay in the hash function until they
  * unregister themself.
  */
 EAPI Eina_Bool

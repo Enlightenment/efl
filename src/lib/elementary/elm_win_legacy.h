@@ -290,7 +290,7 @@ EAPI void                  elm_win_norender_push(Evas_Object *obj);
 EAPI void                  elm_win_norender_pop(Evas_Object *obj);
 
 /**
- * The retruns how many times norender has been pushed on the window
+ * The returns how many times norender has been pushed on the window
  * @param obj The window object
  * @return The number of times norender has been pushed
  *

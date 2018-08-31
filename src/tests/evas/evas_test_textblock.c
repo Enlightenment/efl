@@ -4065,7 +4065,7 @@ EFL_START_TEST(evas_textblock_obstacle)
       "This is an example text to demonstrate the textblock object"
       " with obstacle objects support."
       " Any evas object <item size=72x16></item>can register itself as an obstacle to the textblock"
-      " object. Upon registring, it affects the layout of the text in"
+      " object. Upon registering, it affects the layout of the text in"
       " certain situations. Usually, when the obstacle shows above the text"
       " area, it will cause the layout of the text to split and move"
       " parts of it, so that all text area is apparent.";

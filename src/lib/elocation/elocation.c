@@ -1212,7 +1212,7 @@ elocation_address_free(Elocation_Address *address_shadow)
      }
 }
 
-/* Public API funtion to initialize the elocation library */
+/* Public API function to initialize the elocation library */
 EAPI Eina_Bool
 elocation_init(void)
 {

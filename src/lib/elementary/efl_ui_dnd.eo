@@ -32,7 +32,7 @@ mixin Efl.Ui.Dnd {
          }
       }
       drop_target_add {
-         [[Make the current object as drop targert.
+         [[Make the current object as drop target.
            There are four events emitted:
             - EFL_UI_DND_EVENT_DRAG_ENTER
             - EFL_UI_DND_EVENT_DRAG_LEAVE

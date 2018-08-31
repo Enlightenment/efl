@@ -25,7 +25,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
           reported as data when it's read from @.source).
 
         - The "line" event is only emitted when @.line_delimiter is
-          set and not empty. It's simiar to "data".
+          set and not empty. It's similar to "data".
 
         - The "done" event is emitted if @.source is
           @Efl.Io.Reader.eos $true and all data was written to

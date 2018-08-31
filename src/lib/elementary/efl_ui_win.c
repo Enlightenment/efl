@@ -202,7 +202,7 @@ struct _Efl_Ui_Win_Data
       int         *rots; /* indicates available rotations */
       unsigned int count; /* number of elements in available rotations */
       Eina_Bool    wm_supported : 1; /* set true when the window manager support window rotation */
-      Eina_Bool    use : 1; /* set ture when application use window manager rotation. */
+      Eina_Bool    use : 1; /* set true when application use window manager rotation. */
    } wm_rot;
 
    void *trap_data;

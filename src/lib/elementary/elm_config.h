@@ -186,7 +186,7 @@ EAPI void        elm_config_profile_save(const char *profile);
  * @p derive_options string.
  *
  * At this point it is not expected that anyone would generally use this API
- * except if you are a destktop environment and so the user base of this API
+ * except if you are a desktop environment and so the user base of this API
  * will be enlightenment itself.
  *
  * @param profile The new profile's name
@@ -207,7 +207,7 @@ EAPI void        elm_config_profile_derived_add(const char *profile, const char 
  * from the current profile.
  *
  * At this point it is not expected that anyone would generally use this API
- * except if you are a destktop environment and so the user base of this API
+ * except if you are a desktop environment and so the user base of this API
  * will be enlightenment itself.
  *
  * @param profile The profile's name that is to be deleted
@@ -968,7 +968,7 @@ EAPI double       elm_config_longpress_timeout_get(void);
 /**
  * Set the duration for occurring long press event.
  *
- * @param lonpress_timeout Timeout for long press event
+ * @param longpress_timeout Timeout for long press event
  * @ingroup Longpress
  */
 EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
@@ -981,7 +981,7 @@ EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
  * canvas windows in the event the native display system does not provide one
  * or the native one is not wanted.
  *
- * @param lonpress_timeout Timeout for long press event
+ * @param longpress_timeout Timeout for long press event
  * @ingroup Softcursor
  *
  * @see elm_config_softcursor_mode_get()

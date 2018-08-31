@@ -9,7 +9,7 @@ enum Efl.Text_Cursor_Get_Type {
    selection_begin, [[Selection begin cursor state]]
    selection_end,   [[Selection end cursor state]]
    preedit_start,   [[Pre-edit start cursor state]]
-   preedit_end,     [[Pre-edit end cursor starge]]
+   preedit_end,     [[Pre-edit end cursor state]]
    user,            [[User cursor state]]
    user_extra       [[User extra cursor state]]
 }

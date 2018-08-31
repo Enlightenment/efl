@@ -1895,10 +1895,10 @@ elm_widget_tree_unfocusable_get(const Eo *obj)
  *
  * Get the list of focusable child objects.
  *
- * This function retruns list of child objects which can get focus.
+ * This function returns list of child objects which can get focus.
  *
  * @param obj The parent widget
- * @retrun list of focusable child objects.
+ * @return list of focusable child objects.
  *
  * @ingroup Widget
  */
