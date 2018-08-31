@@ -2640,8 +2640,8 @@ _elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int
    sign_dx = (dx > 0) - (dx < 0);
    sign_dy = (dy > 0) - (dy < 0);
 
-   if(vx) sign_vx = (vx > 0) - (vx < 0);
-   if(vy) sign_vy = (vy > 0) - (vy < 0);
+   if (vx) sign_vx = (*vx > 0) - (*vx < 0);
+   if (vy) sign_vy = (*vy > 0) - (*vy < 0);
 
    // scale factor must be below 1.0
    if ( r >=  1 ) r = 0.99;
