@@ -2604,8 +2604,8 @@ _elm_scroll_running_momentum_speed_get(Elm_Scrollable_Smart_Interface_Data *sid,
    // if momentum animation is not running now
    if ( p > 1.0 || p < 0)
      {
-        if(vx) *vx = 0;
-        if(vy) *vx = 0;
+        if (vx) *vx = 0;
+        if (vy) *vx = 0;
         return EINA_FALSE;
      }
 
@@ -2614,8 +2614,8 @@ _elm_scroll_running_momentum_speed_get(Elm_Scrollable_Smart_Interface_Data *sid,
    remain_y = sid->down.dy -  sid->down.dy * p;
    remain_dur = sid->down.anim_dur -  sid->down.anim_dur * p;
 
-   if(vx) *vx = remain_x / remain_dur;
-   if(vy) *vy = remain_y / remain_dur;
+   if (vx) *vx = remain_x / remain_dur;
+   if (vy) *vy = remain_y / remain_dur;
 
    return EINA_TRUE;
 }
@@ -2646,8 +2646,8 @@ _elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int
    // scale factor must be below 1.0
    if ( r >=  1 ) r = 0.99;
 
-   if(vx && sign_dx == sign_vx) vel_x = *vx;
-   if(vy && sign_dy == sign_vy) vel_y = *vy;
+   if (vx && (sign_dx == sign_vx)) vel_x = *vx;
+   if (vy && (sign_dy == sign_vy)) vel_y = *vy;
 
    // calculate time based velecity (unit : px/second)
    vel_x += dx / dt;
@@ -2683,14 +2683,14 @@ _elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int
    distance_x *= sign_dx;
    distance_y *= sign_dy;
 
-   if(dist_x) *dist_x = distance_x;
-   if(dist_y) *dist_y = distance_y;
+   if (dist_x) *dist_x = distance_x;
+   if (dist_y) *dist_y = distance_y;
 
-   if(vx) *vx = vel_x;
-   if(vy) *vy = vel_y;
+   if (vx) *vx = vel_x;
+   if (vy) *vy = vel_y;
 
    // convert to time based animation duration
-   if(dur) *dur = CLAMP((n / 60.0), _elm_config->thumbscroll_momentum_animation_duration_min_limit, _elm_config->thumbscroll_momentum_animation_duration_max_limit);
+   if (dur) *dur = CLAMP((n / 60.0), _elm_config->thumbscroll_momentum_animation_duration_min_limit, _elm_config->thumbscroll_momentum_animation_duration_max_limit);
 
    return EINA_TRUE;
 }
@@ -4795,12 +4795,12 @@ _elm_interface_scrollable_content_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_S
    sid->loop_h = loop_h;
    sid->loop_v = loop_v;
 
-   if(sid->loop_h)
+   if (sid->loop_h)
      edje_object_signal_emit(sid->edje_obj, "elm,loop_x,set", "elm");
    else
      edje_object_signal_emit(sid->edje_obj, "elm,loop_x,unset", "elm");
 
-   if(sid->loop_v)
+   if (sid->loop_v)
      edje_object_signal_emit(sid->edje_obj, "elm,loop_y,set", "elm");
    else
      edje_object_signal_emit(sid->edje_obj, "elm,loop_y,unset", "elm");
