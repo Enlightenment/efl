@@ -3642,7 +3642,7 @@ void _test_testing_set_value_ptr(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Ein
         free(pd->stored_value);
     }
 
-    pd->stored_value = malloc(sizeof(Eina_Value));
+    pd->stored_value = eina_value_new(EINA_VALUE_TYPE_INT);
 
     eina_value_copy(value, pd->stored_value);
 }
@@ -3662,7 +3662,7 @@ void _test_testing_set_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd, Eina_Va
     if (pd->stored_value) {
         eina_value_free(pd->stored_value);
     } else {
-        pd->stored_value = malloc(sizeof(Eina_Value));
+        pd->stored_value = eina_value_new(EINA_VALUE_TYPE_INT);
     }
     eina_value_copy(&value, pd->stored_value);
 }
@@ -3688,7 +3688,7 @@ void _test_testing_clear_value(EINA_UNUSED Eo *obj, Test_Testing_Data *pd)
 {
     if (pd->stored_value) {
         eina_value_free(pd->stored_value);
-        free(pd->stored_value);
+        pd->stored_value = NULL;
     }
 }
 

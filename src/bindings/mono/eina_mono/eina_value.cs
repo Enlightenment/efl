@@ -39,6 +39,12 @@ struct Value_List
 static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.Eina)]
+    internal static extern IntPtr eina_value_new(IntPtr type);
+
+    [DllImport(efl.Libs.Eina)]
+    internal static extern void eina_value_free(IntPtr type);
+
+    [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_convert(IntPtr handle, IntPtr convert);
 
@@ -392,6 +398,11 @@ public struct Value_Native
 {
     public IntPtr Type;
     public IntPtr Value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
+
+    public string ToString()
+    {
+        return $"Value_Native<Type:0x{Type.ToInt64():x}, Value:0x{Value.ToInt64():x}>";
+    }
 }
 
 
@@ -705,9 +716,19 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
+    private static IntPtr Alloc()
+    {
+        return eina_value_new(type_int32());
+    }
+
+    private static void Free(IntPtr ptr)
+    {
+        eina_value_free(ptr);
+    }
+
     // Constructor to be used by the "FromContainerDesc" methods.
     private Value() {
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
     }
 
@@ -722,7 +743,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (type.IsContainer())
             throw new ArgumentException("To use container types you must provide a subtype");
 
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         if (this.Handle == IntPtr.Zero)
             throw new OutOfMemoryException("Failed to allocate memory for eina.Value");
 
@@ -739,7 +760,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!containerType.IsContainer())
             throw new ArgumentException("First type must be a container type.");
 
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
 
         Setup(containerType, subtype, step);
@@ -748,27 +769,30 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
     public Value(Value_Native value)
     {
-        IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+        IntPtr tmp = IntPtr.Zero;
         try {
-            Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
+            this.Handle = Alloc();
             if (value.Type == IntPtr.Zero) // Got an EINA_VALUE_EMPTY by value.
-            {
-                this.Handle = tmp;
-                tmp = IntPtr.Zero;
-            }
+                MemoryNative.Memset(this.Handle, 0, Marshal.SizeOf(typeof(Value_Native)));
             else
             {
-                this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+                // We allocate this intermediate Value_Native using malloc to allow freeing with
+                // free(), avoiding a call to eina_value_flush that would wipe the underlying value contents
+                // for pointer types like string.
+                tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+                Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
+                this.Handle = Alloc();
 
                 // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
                 if (!eina_value_copy(tmp, this.Handle))
                     throw new System.InvalidOperationException("Failed to copy value to managed memory.");
             }
         } catch {
-            MemoryNative.Free(this.Handle);
+            Free(this.Handle);
             throw;
         } finally {
-            MemoryNative.Free(tmp);
+            if (tmp != IntPtr.Zero)
+                MemoryNative.Free(tmp);
         }
 
         this.Ownership = Ownership.Managed;
@@ -834,10 +858,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
 
         if (!Disposed && (Handle != IntPtr.Zero)) {
-            if (!Flushed && !Empty)
-                eina_value_flush_wrapper(this.Handle);
-
-            MemoryNative.Free(this.Handle);
+            // No need to call flush as eina_value_free already calls it for us.
+            Free(this.Handle);
         }
         Disposed = true;
     }
