@@ -314,7 +314,7 @@ _ecore_event_message_handler_efl_object_destructor(Eo *obj, Ecore_Event_Message_
           {
              free(h);
           }
-        for (i = 0; i <= pd->event_type_count; i++)
+        for (i = 1; i <= pd->event_type_count; i++)
           {
              EINA_INLIST_FREE(pd->handlers[i], h)
                {
