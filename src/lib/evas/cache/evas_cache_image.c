@@ -28,7 +28,7 @@ struct _Evas_Cache_Preload
 static SLK(engine_lock);
 static int _evas_cache_mutex_init = 0;
 
-static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target);
+static void _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target, Eina_Bool force);
 
 #define FREESTRC(Var)             \
    if (Var)                       \
@@ -71,7 +71,7 @@ _evas_cache_image_dirty_del(Image_Entry *im)
    if (!im->cache) return;
    im->flags.dirty = 0;
    im->flags.cached = 0;
-   im->cache->dirty = eina_inlist_remove(im->cache->dirty, EINA_INLIST_GET(im));  
+   im->cache->dirty = eina_inlist_remove(im->cache->dirty, EINA_INLIST_GET(im));
 }
 
 static void
@@ -175,7 +175,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    if (ie->preload)
      {
         ie->flags.delete_me = 1;
-        _evas_cache_image_entry_preload_remove(ie, NULL);
+        _evas_cache_image_entry_preload_remove(ie, NULL, EINA_TRUE);
         return;
      }
    _evas_cache_image_dirty_del(ie);
@@ -364,8 +364,6 @@ _evas_cache_image_async_heavy(void *data)
              _evas_cache_image_entry_surface_alloc(cache, current,
                                                    current->w, current->h);
           }
-        else
-          current->flags.loaded = 1;
      }
    current->channel = pchannel;
    // check the unload cancel flag
@@ -393,7 +391,8 @@ _evas_cache_image_preloaded_notify(Image_Entry *ie)
                              EINA_INLIST_GET(ie->targets));
         if (!tmp->delete_me && tmp->preloaded_cb)
           tmp->preloaded_cb(tmp->preloaded_data);
-        evas_object_inform_call_image_preloaded((Evas_Object*) tmp->target);
+        if (!tmp->preload_cancel)
+          evas_object_inform_call_image_preloaded((Eo*) tmp->target);
         free(tmp);
      }
 }
@@ -410,8 +409,8 @@ _evas_cache_image_async_end(void *data)
    ie->preload = NULL;
    ie->flags.preload_done = ie->flags.loaded;
    ie->flags.updated_data = 1;
-
    ie->flags.preload_pending = 0;
+   ie->flags.loaded = EINA_TRUE;
 
    _evas_cache_image_preloaded_notify(ie);
    evas_cache_image_drop(ie);
@@ -438,16 +437,6 @@ _evas_cache_image_async_cancel(void *data)
         evas_cache_image_drop(ie);
         return;
      }
-   if (ie->targets)
-     {
-        ie->cache->preload = eina_list_append(ie->cache->preload, ie);
-        ie->flags.pending = 0;
-        ie->flags.preload_pending = 1;
-        ie->preload = evas_preload_thread_run(_evas_cache_image_async_heavy,
-                                              _evas_cache_image_async_end,
-                                              _evas_cache_image_async_cancel,
-                                              ie);
-     }
    if (ie->references == 0)
      {
         SLKL(engine_lock);
@@ -456,6 +445,21 @@ _evas_cache_image_async_cancel(void *data)
         cache = ie->cache;
      }
    if (ie->flags.loaded) _evas_cache_image_async_end(ie);
+   //On Cancelling, they need to draw image directly.
+   else
+     {
+        while (ie->targets)
+          {
+             Evas_Cache_Target *tg = ie->targets;
+             ie->targets = (Evas_Cache_Target *)
+                eina_inlist_remove(EINA_INLIST_GET(ie->targets),
+                                   EINA_INLIST_GET(tg));
+             //FIXME: What/When they properly get a notification? Call in advance for compatibility.
+             evas_object_inform_call_image_preloaded((Eo*) tg->target);
+             free(tg);
+          }
+     }
+
    evas_cache_image_drop(ie);
    if (cache) evas_cache_image_flush(cache);
 }
@@ -498,8 +502,10 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target, void (*pr
    return 1;
 }
 
+/* force: remove preload forcely. If one object cancel preload and draw image direcltly,
+ * all other targets of that preload will be affected this as well. */
 static void
-_evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
+_evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target, Eina_Bool force)
 {
    Evas_Cache_Target *tg;
 
@@ -511,12 +517,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
           {
              if (tg->target == target)
                {
-                  // FIXME: No callback when we cancel only for one target ?
-                  ie->targets = (Evas_Cache_Target *)
-                     eina_inlist_remove(EINA_INLIST_GET(ie->targets),
-                                        EINA_INLIST_GET(tg));
-
-                  free(tg);
+                  tg->preload_cancel = EINA_TRUE;
                   break;
                }
           }
@@ -533,7 +534,7 @@ _evas_cache_image_entry_preload_remove(Image_Entry *ie, const Eo *target)
           }
      }
 
-   if ((!ie->targets) && (ie->preload) && (!ie->flags.pending))
+   if ((!ie->targets || force) && (ie->preload && !ie->flags.pending))
      {
         ie->cache->preload = eina_list_remove(ie->cache->preload, ie);
         ie->cache->pending = eina_list_append(ie->cache->pending, ie);
@@ -614,7 +615,7 @@ evas_cache_image_shutdown(Evas_Cache_Image *cache)
      {
         /* By doing that we are protecting us from destroying image when the cache is no longer available. */
         im->flags.delete_me = 1;
-        _evas_cache_image_entry_preload_remove(im, NULL);
+        _evas_cache_image_entry_preload_remove(im, NULL, EINA_TRUE);
      }
    evas_async_events_process();
 
@@ -863,7 +864,7 @@ evas_cache_image_drop(Image_Entry *im)
      {
         if (im->preload)
           {
-             _evas_cache_image_entry_preload_remove(im, NULL);
+             _evas_cache_image_entry_preload_remove(im, NULL, EINA_TRUE);
              return;
           }
         if ((im->flags.dirty) || (im->load_failed))
@@ -1170,7 +1171,7 @@ evas_cache_image_unload_data(Image_Entry *im)
         evas_cache_image_drop(im);
         return;
      }
-   evas_cache_image_preload_cancel(im, NULL);
+   evas_cache_image_preload_cancel(im, NULL, EINA_TRUE);
 
    if (SLKT(im->lock) == EINA_FALSE) /* can't get image lock - busy async load */
      {
@@ -1270,11 +1271,11 @@ evas_cache_image_preload_data(Image_Entry *im, const Eo *target, void (*preloade
 }
 
 EAPI void
-evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target)
+evas_cache_image_preload_cancel(Image_Entry *im, const Eo *target, Eina_Bool force)
 {
    if (!target) return;
    evas_cache_image_ref(im);
-   _evas_cache_image_entry_preload_remove(im, target);
+   _evas_cache_image_entry_preload_remove(im, target, force);
    evas_cache_image_drop(im);
 }
 

@@ -1,3 +1,4 @@
+
 #include "evas_image_private.h"
 
 #define MY_CLASS      EFL_CANVAS_IMAGE_INTERNAL_CLASS
@@ -78,8 +79,7 @@ static const Evas_Object_Func object_func =
    evas_object_image_has_opaque_rect,
    evas_object_image_get_opaque_rect,
    evas_object_image_can_map,
-   evas_object_image_render_prepare,   // render_prepare
-   NULL
+   evas_object_image_render_prepare   // render_prepare
 };
 
 static const Evas_Object_Image_Load_Opts default_load_opts = {
@@ -163,10 +163,10 @@ _evas_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_I
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
      }
 
-   if ((o->preloading) && (o->engine_data))
+   if ((o->preload & EVAS_IMAGE_PRELOADING) && (o->engine_data))
      {
-        o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_FALSE);
      }
    if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
    if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
@@ -278,10 +278,10 @@ _evas_image_init_set(const Eina_File *f, const char *key,
 
    if (o->engine_data)
      {
-        if (o->preloading)
+        if (o->preload & EVAS_IMAGE_PRELOADING)
           {
-             o->preloading = EINA_FALSE;
-             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+             o->preload = EVAS_IMAGE_PRELOAD_NONE;
+             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_FALSE);
           }
         ENFN->image_free(ENC, o->engine_data);
      }
@@ -376,10 +376,10 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
 
    if (o->cur->orient == orient) return;
 
-   if ((o->preloading) && (o->engine_data))
+   if ((o->preload & EVAS_IMAGE_PRELOADING) && (o->engine_data))
      {
-        o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_TRUE);
      }
 
    if (o->engine_data)
@@ -777,10 +777,10 @@ _efl_canvas_image_internal_efl_gfx_buffer_alpha_set(Eo *eo_obj, Evas_Image_Data 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    evas_object_async_block(obj);
-   if ((o->preloading) && (o->engine_data))
+   if ((o->preload & EVAS_IMAGE_PRELOADING) && (o->engine_data))
      {
-        o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_TRUE);
      }
 
    has_alpha = !!has_alpha;
@@ -1126,10 +1126,10 @@ _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
      }
    if (o->engine_data)
      {
-        if (o->preloading)
+        if (o->preload & EVAS_IMAGE_PRELOADING)
           {
-             o->preloading = EINA_FALSE;
-             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+             o->preload = EVAS_IMAGE_PRELOAD_NONE;
+             ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_FALSE);
           }
         ENFN->image_free(ENC, o->engine_data);
      }
@@ -1237,12 +1237,17 @@ _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         }
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
         o->changed = EINA_TRUE;
-        o->preloaded = EINA_TRUE;
+        o->preload = EVAS_IMAGE_PRELOADED;
         if (resize_call) evas_object_inform_call_image_resize(eo_obj);
         evas_object_change(eo_obj, obj);
+
+        //preloading error check
+        if (ENFN->image_load_error_get)
+          o->load_error = ENFN->image_load_error_get(ENC, o->engine_data);
      }
    else
      {
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
         o->load_error = EVAS_LOAD_ERROR_GENERIC;
      }
 }
@@ -1348,10 +1353,10 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      {
         if (o->engine_data && ENC)
           {
-             if (o->preloading)
+             if (o->preload & EVAS_IMAGE_PRELOADING)
                {
-                  o->preloading = EINA_FALSE;
-                  ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+                  o->preload = EVAS_IMAGE_PRELOAD_NONE;
+                  ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_FALSE);
                }
              ENFN->image_free(ENC, o->engine_data);
           }
@@ -1743,7 +1748,7 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
    Evas_Image_Data *o = type_private_data;
 
    /* image is not ready yet, skip rendering. Leave it to next frame */
-   if (o->preloading) return;
+   if (o->preload == EVAS_IMAGE_PRELOADING) return;
 
    if ((o->cur->fill.w < 1) || (o->cur->fill.h < 1))
      return;  /* no error message, already printed in pre_render */
@@ -2245,8 +2250,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    Eina_Bool changed_prep = EINA_TRUE;
 
    /* image is not ready yet, skip rendering. Leave it to next frame */
-   if (o->preloading) return;
-
+   if (o->preload & EVAS_IMAGE_PRELOADING) return;
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
@@ -2376,10 +2380,10 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
              goto done;
           }
         //pre-loading is finished
-        if (o->preloaded)
+        if (o->preload == EVAS_IMAGE_PRELOADED)
           {
              evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
-             o->preloaded = EINA_FALSE;
+             o->preload = EVAS_IMAGE_PRELOAD_NONE;
              goto done;
           }
      }
@@ -3383,23 +3387,7 @@ Eina_Bool
 _evas_object_image_preloading_get(const Evas_Object *eo_obj)
 {
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   return o->preloading;
-}
-
-void
-_evas_object_image_preloading_set(Evas_Object *eo_obj, Eina_Bool preloading)
-{
-   Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   o->preloading = preloading;
-}
-
-void
-_evas_object_image_preloading_check(Evas_Object *eo_obj)
-{
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Evas_Image_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (ENFN->image_load_error_get)
-     o->load_error = ENFN->image_load_error_get(ENC, o->engine_data);
+   return o->preload;
 }
 
 Evas_Object *

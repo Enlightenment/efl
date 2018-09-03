@@ -2214,13 +2214,13 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
 }
 
 static void
-eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target, Eina_Bool force)
 {
    RGBA_Image *im = image;
 
    if (!im) return;
 
-   evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_cache_image_preload_cancel(&im->cache_entry, target, force);
 }
 
 static void

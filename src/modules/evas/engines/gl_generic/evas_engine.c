@@ -1120,7 +1120,7 @@ eng_image_data_preload_request(void *engine EINA_UNUSED, void *image, const Eo *
 }
 
 static void
-eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *target, Eina_Bool force)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;
@@ -1131,7 +1131,7 @@ eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *t
    if (!im) return;
 
    evas_gl_common_image_preload_unwatch(gim);
-   evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_cache_image_preload_cancel(&im->cache_entry, target, force);
 //   if (gim->tex) evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
 }
 

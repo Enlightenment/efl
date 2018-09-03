@@ -793,7 +793,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
      }
    else
  */
-
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -811,13 +810,15 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              evas_gl_common_texture_update(im->tex, im->im);
              evas_cache_image_unload_data(ie);
           }
-        else if (!im->tex && !ie->load_error)
+        else if (!im->tex &&
+                 ((ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_NONE) ||
+                  (ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED)))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
              evas_cache_image_unload_data(ie);
           }
@@ -827,13 +828,15 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
       case EVAS_COLORSPACE_ETC1_ALPHA:
         if ((im->tex) && (im->dirty))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
              evas_cache_image_unload_data(ie);
           }
-        else if (!im->tex && !ie->load_error)
+        else if (!im->tex &&
+                 ((ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_NONE) ||
+                  (ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED)))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
              evas_cache_image_unload_data(ie);
           }

@@ -1346,7 +1346,7 @@ struct _Evas_Func
    void *(*image_data_put)                 (void *engine, void *image, DATA32 *image_data);
    Eina_Bool (*image_data_direct_get)      (void *engine, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace, Eina_Bool load);
    void  (*image_data_preload_request)     (void *engine, void *image, const Eo *target);
-   void  (*image_data_preload_cancel)      (void *engine, void *image, const Eo *target);
+   void  (*image_data_preload_cancel)      (void *engine, void *image, const Eo *target, Eina_Bool force);
    void *(*image_alpha_set)                (void *engine, void *image, int has_alpha);
    int  (*image_alpha_get)                 (void *engine, void *image);
    void *(*image_orient_set)               (void *engine, void *image, Evas_Image_Orient orient);
@@ -1598,8 +1598,6 @@ const Evas_Smart_Cb_Description *evas_smart_cb_description_find(const Evas_Smart
 
 Evas_Object *_evas_object_image_source_get(Evas_Object *obj);
 Eina_Bool _evas_object_image_preloading_get(const Evas_Object *obj);
-void _evas_object_image_preloading_set(Evas_Object *obj, Eina_Bool preloading);
-void _evas_object_image_preloading_check(Evas_Object *obj);
 Evas_Object *_evas_object_image_video_parent_get(Evas_Object *obj);
 void _evas_object_image_video_overlay_show(Evas_Object *obj);
 void _evas_object_image_video_overlay_hide(Evas_Object *obj);
