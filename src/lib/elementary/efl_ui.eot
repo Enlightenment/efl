@@ -44,7 +44,7 @@ enum Efl.Ui.Focus.Move_Policy
 
 enum Efl.Ui.Slider_Indicator_Visible_Mode
 {
-   [[Slider's indicator visiblity mode.
+   [[Slider's indicator visibility mode.
 
      @since 1.13
    ]]

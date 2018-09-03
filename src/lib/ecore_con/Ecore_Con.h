@@ -1246,7 +1246,7 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  * @return A new Ecore_Con_Server.
  *
  * The socket to which the connection is made depends on the connection type:
- * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will conect to
+ * @li If @a type is @c ECORE_CON_LOCAL_USER, the server will connect to
  *     the Unix socket. The path to the socket is taken from XDG_RUNTIME_DIR,
  *     if that is not set, then from HOME, even if this is not set, then from
  *     TMPDIR. If none is set, then path would be /tmp. From this path the
