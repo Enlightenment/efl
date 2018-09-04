@@ -184,7 +184,7 @@ EFL_START_TEST (elm_code_indent_tab_matching_braces)
    elm_code_free(code);
    elm_shutdown();
 }
-END_TEST
+EFL_END_TEST
 
 EFL_START_TEST (elm_code_indent_startswith_keyword)
 {

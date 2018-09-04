@@ -10,6 +10,8 @@
 #include <Efreet.h>
 
 EFL_START_TEST(eio_init_test)
+{
+}
 EFL_END_TEST
 
 static void

@@ -207,10 +207,12 @@ _timing_end(void)
 
 # define EFL_START_TEST(TEST_NAME) \
   START_TEST(TEST_NAME) \
+  { \
   _timing_start();
 
 # define EFL_END_TEST \
   _timing_end(); \
+  } \
   END_TEST
 
 #else
