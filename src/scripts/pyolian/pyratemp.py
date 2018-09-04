@@ -846,6 +846,8 @@ class EvalPseudoSandbox:
         "complex"   : builtins.complex,
         "dict"      : builtins.dict,
         "enumerate" : builtins.enumerate,
+        "filter"    : builtins.filter,
+        "next"      : builtins.next,
         "float"     : builtins.float,
         "int"       : builtins.int,
         "list"      : builtins.list,
