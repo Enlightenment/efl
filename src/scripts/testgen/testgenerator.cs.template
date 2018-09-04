@@ -1,0 +1,113 @@
+<!--(macro m_show)-->
+ <!--(if mshow)-->
+${mshow}$#!
+ <!--(end)-->
+<!--(end)-->
+<!--(macro def_obj)-->${name_helpers.class_managed_name(param.type.class_)}$ arg_${param.name}$ = null;<!--(end)-->
+<!--(macro def_param)-->
+ <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${suite.type_convert(param.type)}$ arg_${param.name}$ = default(${suite.type_convert(param.type)}$);<!--(end)-->
+<!--(end)-->
+<!--(macro def_params)-->
+ <!--(for p in parameters)-->
+       ${def_param(param=p)}$
+ <!--(end)-->
+<!--(end)-->
+<!--(macro meth_target)-->
+ <!--(if func.is_class)-->${name_helpers.class_managed_name(cls)}$<!--(else)-->obj<!--(end)-->
+<!--(end)-->
+using System;
+
+namespace TestSuite
+{
+<!--(if suite.custom)-->${suite.custom}$<!--(end)-->
+<!--(for cls in suite)-->
+/**************** TEST CASE ${cls.c_macro}$ ****************/
+class Test${cls.name.replace('.','')}$
+{
+
+    ${name_helpers.class_managed_name(cls)}$ obj;
+${m_show(mshow=cls.custom)}$#!
+
+    public void SetUp()
+    {
+${m_show(mshow=suite.init)}$#!
+ <!--(if cls.init)-->
+${cls.init}$
+ <!--(else)-->
+        obj = new ${name_helpers.class_managed_name(cls)}$(null${suite.constructor_params(cls)}$);
+ <!--(end)-->
+    }
+
+    public void TearDown()
+    {
+${m_show(mshow=suite.shutdown)}$#!
+ <!--(if cls.shutdown)-->
+${cls.shutdown}$
+ <!--(else)-->
+       obj.Dispose();
+       obj = null;
+ <!--(end)-->
+    }
+
+    public void smoke()
+    {
+    }
+
+#!  METHODS
+ <!--(for func in cls.methods)-->
+    public void ${func.name}$()
+    {
+   <!--(if len(list(func.parameters)) > 0)-->
+${def_params(parameters=func.parameters)}$
+   <!--(end)-->
+${m_show(mshow=func.arg_init)}$#!
+${m_show(mshow=func.init)}$#!
+        <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
+${m_show(mshow=func.arg_shutdown)}$#!
+${m_show(mshow=func.shutdown)}$#!
+    }
+
+ <!--(end)-->
+#!  PROPERTIES FUNCTION GET
+ <!--(for func in cls.properties)-->
+  <!--(if func.has_getter)-->
+    public void ${func.name}$_pget()
+    {
+   <!--(if func.getter_return_type or len(list(func.getter_values)) > 1)-->
+${def_params(parameters=func.getter_values)}$
+   <!--(end)-->
+   <!--(if len(list(func.getter_keys)) > 0)-->
+${def_params(parameters=func.getter_keys)}$
+   <!--(end)-->
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+   <!--(if not func.getter_return_type and len(list(func.getter_values)) == 1)-->
+        var arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+   <!--(else)-->
+        <!--(if func.getter_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+   <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+    }
+
+  <!--(end)-->
+#!  PROPERTIES FUNCTION SET
+  <!--(if func.has_setter)-->
+    public void ${func.name}$_pset()
+    {
+${def_params(parameters=func.setter_values)}$
+   <!--(if len(list(func.setter_keys)) > 0)-->
+${def_params(parameters=func.setter_keys)}$
+   <!--(end)-->
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+        ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+${m_show(mshow=func.arg_set_shutdown)}$#!
+${m_show(mshow=func.set_shutdown)}$#!
+    }
+
+  <!--(end)-->
+ <!--(end)-->
+}
+<!--(end)-->
+}
