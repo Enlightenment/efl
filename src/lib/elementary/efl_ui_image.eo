@@ -107,7 +107,6 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
-      //Efl.Canvas.Layout_Group.group_data { get; }
       Efl.Layout.Calc.calc_size_min;
       Efl.Layout.Calc.calc_force;
       Efl.Canvas.Object.clip { set; }

@@ -13,16 +13,4 @@ class Efl.Ui.Image_Zoomable_Pan (Efl.Ui.Pan)
       Efl.Ui.Pan.pan_position_min { get; }
       Efl.Ui.Pan.pan_position_max { get; }
    }
-   events {
-      /* FIXME: Nobody is emitting these
-      load; [[Called when load started]]
-      loaded; [[Called when load finished]]
-      load,detail; [[Called when load details started]]
-      loaded,detail; [[Called when load details finished]]
-      download,start; [[Called when download started]]
-      download,progress; [[Called with download progress updates]]
-      download,done; [[Called when download finished]]
-      download,error; [[Called when download failed with an error]]
-      */
-   }
 }

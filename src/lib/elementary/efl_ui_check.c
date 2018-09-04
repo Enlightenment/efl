@@ -306,12 +306,6 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
 }
 
 EOLIAN static void
-_efl_ui_check_efl_ui_nstate_count_set(Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED, int nstate EINA_UNUSED)
-{
-   //NOP;
-}
-
-EOLIAN static void
 _efl_ui_check_efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED, int state)
 {
    Eina_Bool _state = !!state;

@@ -812,7 +812,6 @@ class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Acces
       Efl.Canvas.Scene.object_top_at_xy_get;
       Efl.Canvas.Scene.objects_in_rectangle_get;
       Efl.Canvas.Scene.object_top_in_rectangle_get;
-      //Efl.Canvas.seats;
       Efl.Canvas.Scene.device { get; }
       Efl.Canvas.Scene.seat { get; }
       Efl.Content.content { get; set; }

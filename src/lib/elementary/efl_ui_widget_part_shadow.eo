@@ -1,4 +1,4 @@
-class Efl.Ui.Widget_Part_Shadow (Efl.Ui.Widget_Part, Efl.Gfx.Entity, Efl.Gfx.Color,
+class Efl.Ui.Widget_Part_Shadow (Efl.Ui.Widget_Part, Efl.Gfx.Color,
                                  Efl.Gfx.Blur, Efl.Gfx.Filter)
 {
    [[A drop-shadow or glow effect around any widget.

@@ -1,5 +1,5 @@
 class Efl.Ui.Button (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
-                     Efl.Text, Efl.Text_Markup, Efl.Content,
+                     Efl.Text, Efl.Content,
                      Efl.Access.Widget.Action, Efl.Ui.Translatable)
 {
    [[Push-button widget

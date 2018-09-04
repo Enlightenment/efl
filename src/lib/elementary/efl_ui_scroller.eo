@@ -1,8 +1,7 @@
 class Efl.Ui.Scroller (Efl.Ui.Layout.Object,
                        Efl.Ui.Scrollable_Interactive,
                        Efl.Ui.Scrollbar,
-                       Efl.Content,
-                       Efl.Ui.Drag)
+                       Efl.Content)
 {
    [[Efl ui scroller class]]
    implements {
