@@ -1117,7 +1117,6 @@ _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, F
 void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
 {
-   Evas_Coord ex = 0, ey = 0;
    /* check whether this part is dragable at all */
    if (!ep->drag) return;
    if (ep->drag->down.count > 0) return;
@@ -1127,8 +1126,6 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   if (ep->object)
-     evas_object_geometry_get(ep->object, &ex, &ey, NULL, NULL);
 
    if (NEQ(ep->drag->x, x) || ep->drag->tmp.x)
      {
