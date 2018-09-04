@@ -114,6 +114,8 @@ tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_bin
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_address_of.$(OBJEXT): tests/eolian_cxx/a.eo.hh tests/eolian_cxx/b.eo.hh tests/eolian_cxx/c.eo.hh tests/eolian_cxx/d.eo.hh tests/eolian_cxx/a.eo.h tests/eolian_cxx/b.eo.h tests/eolian_cxx/c.eo.h tests/eolian_cxx/d.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_cyclic.$(OBJEXT): tests/eolian_cxx/cyclic1.eo.hh tests/eolian_cxx/cyclic2.eo.hh tests/eolian_cxx/cyclic1.eo.c tests/eolian_cxx/cyclic2.eo.c tests/eolian_cxx/cyclic1.eo.h tests/eolian_cxx/cyclic2.eo.h
 
+tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_wrapper.$(OBJEXT): tests/eolian_cxx/a.eo.h tests/eolian_cxx/a.eo.c tests/eolian_cxx/a.eo.hh
+
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-simple.$(OBJEXT): tests/eolian_cxx/simple.eo.c tests/eolian_cxx/simple.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-generic.$(OBJEXT): tests/eolian_cxx/generic.eo.c tests/eolian_cxx/generic.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-a.$(OBJEXT): tests/eolian_cxx/a.eo.c tests/eolian_cxx/a.eo.h
