@@ -1,0 +1,179 @@
+<!--(macro m_show)-->
+ <!--(if mshow)-->
+${mshow}$#!
+ <!--(end)-->
+<!--(end)-->
+<!--(macro init)-->
+   Eo *parent = NULL;
+   Eo *obj = NULL;
+
+  <!--(if exists("mfunc") and mfunc!= None)-->
+${mfunc}$
+  <!--(elif exists("mcls") and mcls!= None)-->
+${mcls}$
+  <!--(else)-->
+   obj = efl_add_ref(${cls.c_name}$, parent);
+   fail_if(!obj, "ERROR: Cannot init ${cls.name}$!\n");
+  <!--(end)-->
+<!--(end)-->
+<!--(macro shutdown)-->
+   /** shutdown **/
+  <!--(if exists("mfunc") and mfunc != None)-->
+${mfunc}$
+  <!--(elif exists("mcls") and mcls != None)-->
+${mcls}$
+  <!--(end)-->
+   efl_unref(obj);
+<!--(end)-->
+<!--(macro arg_default)-->
+ <!--(if arg.type.name == "__builtin_free_cb" or arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(elif arg.type.name in ['Eina.Slice', 'Eina.Rw_Slice', 'Eina.Position2D', 'Eina.Rect', 'Eina.Vector2'] )-->{}<!--(else)-->0<!--(end)-->;
+<!--(end)-->
+<!--(macro args_declaration)-->
+  <!--(for arg in args)-->
+    <!--(if arg.type.typedecl and arg.type.typedecl.type == arg.type.typedecl.type.FUNCTION_POINTER)-->
+   void * arg_${arg.name}$_data = NULL;
+   ${arg.type.c_type_return}$ arg_${arg.name}$ = NULL;
+   Eina_Free_Cb arg_${arg.name}$_free_cb = NULL;
+    <!--(else)-->
+   ${arg.type.c_type_return}$ arg_${arg.name}$ = ${arg_default(arg=arg)}$
+    <!--(end)-->
+  <!--(end)-->
+<!--(end)-->
+<!--(macro print_arg)-->
+ <!--(if arg.type.typedecl and arg.type.typedecl.type == arg.type.typedecl.type.FUNCTION_POINTER)-->
+arg_${arg.name}$_data, arg_${arg.name}$, arg_${arg.name}$_free_cb
+ <!--(else)-->
+   <!--(if arg.direction == arg.direction.OUT)-->&<!--(end)-->arg_${arg.name}$
+ <!--(end)-->
+<!--(end)-->
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <check.h>
+#include "efl_check.h"
+${m_show(mshow=suite.custom)}$#!
+#include <Elementary.h>
+
+<!--(for cls in suite)-->
+void ${cls.myfullname}$_test(TCase *tc);
+<!--(end)-->
+
+static const Efl_Test_Case etc[] = {
+<!--(for cls in suite)-->
+  { "${suite.name.capitalize()}$ ${suite.testname.capitalize()}$ ${cls.myname.capitalize()}$", ${cls.myfullname}$_test },
+<!--(end)-->
+  { NULL, NULL }
+};
+
+<!--(for cls in suite)-->
+
+/**************** TEST CASE ${cls.c_name}$ ****************/
+${m_show(mshow=cls.custom)}$#!
+
+START_TEST(${cls.myfullname}$_smoke)
+{
+${init(mcls=cls.init)}$
+${shutdown(mcls=cls.shutdown)}$
+}
+END_TEST
+
+ <!--(for func in cls.methods)-->
+START_TEST(${cls.myfullname}$_${func.full_c_method_name}$)
+{
+${args_declaration(args=func.parameters)}$${init(mcls=cls.init,mfunc=func.init)}$
+${m_show(mshow=func.arg_init)}$#!
+   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(obj<!--(for arg in func.parameters)-->,${print_arg(arg=arg)}$<!--(end)-->);
+   <!--(if func.method_return_type)-->(void)r;<!--(end)-->
+${m_show(mshow=func.arg_shutdown)}$#!
+${shutdown(mcls=cls.shutdown,mfunc=func.shutdown)}$
+}
+END_TEST
+
+ <!--(end)-->
+
+ <!--(for func in cls.properties)-->
+  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+START_TEST(${cls.myfullname}$_${func.full_c_getter_name}$)
+{
+    <!--(if len(list(func.getter_values)) > 1)-->
+${args_declaration(args=func.getter_values)}$
+    <!--(end)-->
+${args_declaration(args=func.getter_keys)}$${init(mcls=cls.init,mfunc=func.get_init)}$
+${m_show(mshow=func.arg_get_init)}$#!
+   <!--(if len(list(func.getter_values)) == 1)-->
+   ${list(func.getter_values)[0].type.c_type_return}$ r = ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   (void)r;
+   <!--(else)-->
+   ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${shutdown(mcustom=cls.shutdown,mfunc=func.get_shutdown)}$
+}
+END_TEST
+
+  <!--(end)-->
+  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+START_TEST(${cls.myfullname}$_${func.full_c_setter_name}$)
+{
+${args_declaration(args=func.setter_keys)}$${args_declaration(args=func.setter_values)}$${init(mcls=cls.init,mfunc=func.set_init)}$
+${m_show(mshow=func.arg_set_init)}$#!
+   ${func.full_c_setter_name}$(obj<!--(for arg in func.setter_keys)-->, arg_${arg.name}$<!--(end)--><!--(for arg in func.setter_values)-->, arg_${arg.name}$<!--(end)-->);
+${m_show(mshow=func.arg_set_shutdown)}$#!
+${shutdown(mcls=cls.shutdown,mfunc=func.set_shutdown)}$
+}
+END_TEST
+
+  <!--(end)-->
+ <!--(end)-->
+void ${cls.myfullname}$_test(TCase *tc)
+{
+   tcase_add_test(tc, ${cls.myfullname}$_smoke);
+   <!--(for func in cls.methods)-->
+   tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_method_name}$);
+   <!--(end)-->
+   <!--(for func in cls.properties)-->
+    <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+   tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_getter_name}$);
+    <!--(end)-->
+    <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+   tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_setter_name}$);
+    <!--(end)-->
+   <!--(end)-->
+}
+<!--(end)-->
+
+SUITE_INIT(${suite.name}$)
+{
+   fail_if(!eina_init(), "ERROR: Cannot init Eina!\n");
+   fail_if(!ecore_init(), "ERROR: Cannot init Ecore!\n");
+   fail_if(!efl_object_init(), "ERROR: Cannot init EO!\n");
+${m_show(mshow=suite.init)}$#!
+}
+
+SUITE_SHUTDOWN(${suite.name}$)
+{
+${m_show(mshow=suite.shutdown)}$#!
+   ecore_shutdown();
+   eina_shutdown();
+}
+
+int
+main(int argc, char **argv)
+{
+   int failed_count;
+
+   if (!_efl_test_option_disp(argc, argv, etc))
+     return 0;
+
+#ifdef NEED_RUN_IN_TREE
+   putenv("EFL_RUN_IN_TREE=1");
+#endif
+
+   failed_count = _efl_suite_build_and_run(argc - 1, (const char **)argv + 1,
+                                           "${suite.fullname}$", etc, SUITE_INIT_FN(${suite.name}$), SUITE_SHUTDOWN_FN(${suite.name}$));
+
+   return (failed_count == 0) ? 0 : 255;
+}
+
