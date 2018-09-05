@@ -1,4 +1,5 @@
-class Efl.Canvas.Layout_Part_External (Efl.Canvas.Layout_Part, Efl.Content)
+class Efl.Canvas.Layout_Part_External (Efl.Canvas.Layout_Part, Efl.Content,
+                                       Efl.Canvas.Object)
 {
    [[Class representing an external part in Edje layouts.
 
