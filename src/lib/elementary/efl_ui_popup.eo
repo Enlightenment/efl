@@ -49,7 +49,7 @@ class Efl.Ui.Popup(Efl.Ui.Layout.Object, Efl.Content)
       }
    }
    parts {
-      backwall: Efl.Ui.Popup_Part; [[A backwall behind the popup.]]
+      backwall: Efl.Ui.Popup_Part_Backwall; [[A backwall behind the popup.]]
    }
    implements {
       Efl.Object.constructor;

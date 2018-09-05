@@ -42,7 +42,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_popup.eo \
-	lib/elementary/efl_ui_popup_part.eo \
+	lib/elementary/efl_ui_popup_part_backwall.eo \
 	lib/elementary/efl_ui_popup_alert.eo \
 	lib/elementary/efl_ui_popup_alert_part.eo \
 	lib/elementary/efl_ui_popup_alert_scroll.eo \
