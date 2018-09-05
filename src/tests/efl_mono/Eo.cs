@@ -246,4 +246,24 @@ class TestEoAccessors
     }
 }
 
+class TestEoFinalize
+{
+    public sealed class Inherit : efl.ObjectInherit
+    {
+        public bool finalizeCalled = false;
+        public override efl.IObject FinalizeAdd()
+        {
+            finalizeCalled = true;
+            return this;
+        }
+    }
+
+
+    public static void finalize_call()
+    {
+        Inherit inherit = new Inherit();
+        Test.Assert(inherit.finalizeCalled);
+    }
+}
+
 }
