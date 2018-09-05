@@ -934,6 +934,7 @@ _popup_menu_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (pd->hoversel) evas_object_del(pd->hoversel);
 
    pd->hoversel = elm_hoversel_add(obj);
+   elm_object_tree_focus_allow_set(pd->hoversel, EINA_FALSE);
    elm_widget_sub_object_add(obj, pd->hoversel);
    top = elm_widget_top_get(obj);
 
