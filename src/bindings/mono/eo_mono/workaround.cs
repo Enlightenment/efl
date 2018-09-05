@@ -83,6 +83,14 @@ public struct Event_Description {
 
     public Event_Description(string name)
     {
+        this.Name = GetNative(name);
+        this.Unfreezable = false;
+        this.Legacy_is = false;
+        this.Restart = false;
+    }
+
+    public static IntPtr GetNative(string name)
+    {
         if (!descriptions.ContainsKey(name))
         {
             IntPtr data = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, name);
@@ -93,11 +101,7 @@ public struct Event_Description {
             }
             descriptions.Add(name, data);
         }
-
-        this.Name = descriptions[name];
-        this.Unfreezable = false;
-        this.Legacy_is = false;
-        this.Restart = false;
+        return descriptions[name];
     }
 };
 

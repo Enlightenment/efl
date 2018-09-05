@@ -165,4 +165,29 @@ class TestEoEvents
         Test.AssertEquals(sent, received);
     }
 }
+
+class TestEventAddRemove
+{
+    public static void test_add_remove_event()
+    {
+        test.ITesting obj = new test.Testing();
+        bool called = true;
+
+        EventHandler<test.Testing.EvtWithIntEvt_Args> evtCb = (object sender, EvtWithIntEvt_Args e) => {
+            called = true;
+        };
+
+        obj.EvtWithIntEvt += evtCb;
+        obj.EmitEventWithInt(42);
+        Test.Assert(called);
+
+        called = false;
+        obj.EvtWithIntEvt -= evtCb;
+        obj.EmitEventWithInt(42);
+        Test.Assert(!called);
+
+
+
+    }
+}
 }

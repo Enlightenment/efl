@@ -59,7 +59,7 @@ public class Globals {
               System.IntPtr data);
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
               System.IntPtr obj,
-              efl.Event_Description desc,
+              IntPtr desc,
               efl.Event_Cb cb,
               System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
