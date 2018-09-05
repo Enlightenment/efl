@@ -1,0 +1,309 @@
+
+if EFL_ENABLE_TESTS
+
+#AM_TESTS_ENVIRONMENT += EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'; export EOLIAN_SO_DIR;
+#gen_eolian_dir = EOLIAN_SO_DIR='$(top_builddir)/src/lib/eolian/.libs/'
+TEST_GEN = $(top_srcdir)/src/scripts/testgen/testgen.py
+
+#### ecore ####
+#ecore_automated_source = tests/automated/ecore_suite_automated.c
+#ecore_automated_suite = $(top_builddir)/src/$(ecore_automated_source)
+#$(ecore_automated_source):
+#	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(ecore_eolian_files)
+#
+#check_PROGRAMS += tests/automated/ecore_suite_automated
+#TESTS += tests/automated/ecore_suite_automated
+#
+#tests_automated_ecore_suite_automated_SOURCE = $(ecore_automated_source)
+#tests_automated_ecore_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS) \
+#-I$(top_srcdir)/src/tests \
+#@ELEMENTARY_CFLAGS@
+#tests_automated_ecore_suite_automated_LDADD = $(tests_ecore_ecore_suite_LDADD) @USE_ELEMENTARY_LIBS@
+
+#### ecore_audio ####
+ecore_audio_automated_source = tests/automated/ecore_audio_suite_automated.c
+ecore_audio_automated_suite = $(top_builddir)/src/$(ecore_audio_automated_source)
+$(ecore_audio_automated_source):
+	$(TEST_GEN) automated ecore_audio $(top_builddir)/src/$@ $(ecore_audio_eolian_files)
+
+check_PROGRAMS += tests/automated/ecore_audio_suite_automated
+TESTS += tests/automated/ecore_audio_suite_automated
+
+tests_automated_ecore_audio_suite_automated_SOURCE = $(ecore_audio_automated_source)
+tests_automated_ecore_audio_suite_automated_CPPFLAGS = $(tests_ecore_ecore_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ECORE_AUDIO_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
+@ELEMENTARY_CFLAGS@
+tests_automated_ecore_audio_suite_automated_LDADD = $(tests_ecore_ecore_suite_LDADD) @USE_ELEMENTARY_LIBS@
+
+#### ecore_con ####
+#ecore_con_automated_source = tests/automated/ecore_con_suite_automated.c
+#ecore_con_automated_suite = $(top_builddir)/src/$(ecore_con_automated_source)
+#$(ecore_con_automated_source):
+#	$(TEST_GEN) automated ecore_con $(top_builddir)/src/$@ $(ecore_eolian_files)
+#
+#check_PROGRAMS += tests/automated/ecore_con_suite_automated
+#TESTS += tests/automated/ecore_con_suite_automated
+#
+#tests_automated_ecore_con_suite_automated_SOURCE = $(ecore_automated_source)
+#tests_automated_ecore_con_suite_automated_CPPFLAGS = $(tests_ecore_con_ecore_con_suite_CPPFLAGS) \
+#-I$(top_srcdir)/src/tests \
+#@ELEMENTARY_CFLAGS@
+#tests_automated_ecore_con_suite_automated_LDADD = $(tests_ecore_con_ecore_con_suite_LDADD) @USE_ELEMENTARY_LIBS@
+#tests_automated_ecore_con_suite_automated_DEPENDENCIES = $(tests_ecore_con_ecore_con_suite_DEPENDENCIES)
+
+#### ector ####
+ector_automated_source = tests/automated/ector_suite_automated.c
+ector_automated_suite = $(top_builddir)/src/$(ector_automated_source)
+$(ector_automated_source):
+#	$(TEST_GEN) automated ector $(top_builddir)/src/$@ $(ector_eolian_files_generic)
+	$(TEST_GEN) automated ector $(top_builddir)/src/$@ $(ector_eolian_files)
+
+check_PROGRAMS += tests/automated/ector_suite_automated
+TESTS += tests/automated/ector_suite_automated
+
+tests_automated_ector_suite_automated_SOURCE = $(ector_automated_source)
+tests_automated_ector_suite_automated_CPPFLAGS = $(tests_ector_suite_ector_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_ector_suite_automated_LDADD = $(tests_ector_suite_ector_suite_LDADD) @USE_ECORE_LIBS@
+tests_automated_ector_suite_automated_DEPENDENCIES = @USE_ECTOR_INTERNAL_LIBS@
+
+#### edje ####
+edje_automated_source = tests/automated/edje_suite_automated.c
+edje_automated_suite = $(top_builddir)/src/$(edje_automated_source)
+$(edje_automated_source):
+	$(TEST_GEN) automated edje $(top_builddir)/src/$@ $(edje_eolian_files)
+
+check_PROGRAMS += tests/automated/edje_suite_automated
+TESTS += tests/automated/edje_suite_automated
+
+tests_automated_edje_suite_automated_SOURCE = $(edje_automated_source)
+tests_automated_edje_suite_automated_CPPFLAGS = $(tests_edje_edje_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_edje_suite_automated_LDADD = $(tests_edje_edje_suite_LDADD) @USE_ECORE_LIBS@
+tests_automated_edje_suite_automated_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@
+
+#### efl ####
+efl_automated_source = tests/automated/efl_suite_automated.c
+efl_automated_suite = $(top_builddir)/src/$(efl_automated_source)
+$(efl_automated_source):
+	$(TEST_GEN) automated efl $(top_builddir)/src/$@ $(efl_eolian_files)
+
+check_PROGRAMS += tests/automated/efl_suite_automated
+TESTS += tests/automated/efl_suite_automated
+
+tests_automated_efl_suite_automated_SOURCE = $(efl_automated_source)
+tests_automated_efl_suite_automated_CPPFLAGS = $(tests_efl_efl_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_efl_suite_automated_LDADD = \
+@CHECK_LIBS@ \
+@EFL_LIBS@ \
+@USE_EFL_LIBS@ \
+@USE_ECORE_LIBS@
+tests_automated_efl_suite_automated_DEPENDENCIES = \
+@USE_EFL_INTERNAL_LIBS@ \
+@USE_ECORE_INTERNAL_LIBS@
+
+
+##### eio ####
+eio_automated_source = tests/automated/eio_suite_automated.c
+eio_automated_suite = $(top_builddir)/src/$(eio_automated_source)
+$(eio_automated_source):
+	$(TEST_GEN) automated eio $(top_builddir)/src/$@ $(eio_eolian_files)
+
+check_PROGRAMS += tests/automated/eio_suite_automated
+TESTS += tests/automated/eio_suite_automated
+
+tests_automated_eio_suite_automated_SOURCE = $(eio_automated_source)
+tests_automated_eio_suite_automated_CPPFLAGS = $(tests_eio_eio_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_eio_suite_automated_LDADD = $(tests_eio_eio_suite_LDADD) \
+@USE_ECORE_LIBS@
+tests_automated_eio_suite_automated_DEPENDENCIES = \
+@USE_EIO_INTERNAL_LIBS@
+
+#### eldbus ####
+eldbus_automated_source = tests/automated/eldbus_suite_automated.c
+eldbus_automated_suite = $(top_builddir)/src/$(eldbus_automated_source)
+$(eldbus_automated_source):
+	$(TEST_GEN) automated eldbus $(top_builddir)/src/$@ $(eldbus_eolian_files)
+
+check_PROGRAMS += tests/automated/eldbus_suite_automated
+TESTS += tests/automated/eldbus_suite_automated
+
+tests_automated_eldbus_suite_automated_SOURCE = $(eldbus_automated_source)
+tests_automated_eldbus_suite_automated_CPPFLAGS = $(tests_eldbus_eldbus_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_eldbus_suite_automated_LDADD = $(tests_eldbus_eldbus_suite_LDADD) \
+@USE_ECORE_LIBS@
+tests_automated_eldbus_suite_automated_DEPENDENCIES = @USE_ELDBUS_INTERNAL_LIBS@
+
+#### emotion ####
+emotion_automated_source = tests/automated/emotion_suite_automated.c
+emotion_automated_suite = $(top_builddir)/src/$(emotion_automated_source)
+$(emotion_automated_source):
+	$(TEST_GEN) automated emotion $(top_builddir)/src/$@ $(emotion_eolian_files)
+
+check_PROGRAMS += tests/automated/emotion_suite_automated
+TESTS += tests/automated/emotion_suite_automated
+
+tests_automated_emotion_suite_automated_SOURCE = $(emotion_automated_source)
+tests_automated_emotion_suite_automated_CPPFLAGS = $(tests_emotion_emotion_test_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/automated\" \
+@ELEMENTARY_CFLAGS@
+tests_automated_emotion_suite_automated_LDADD = $(tests_emotion_emotion_test_LDADD) \
+@USE_ECORE_LIBS@ \
+@USE_EO_LIBS@ \
+@CHECK_LIBS@
+tests_automated_emotion_suite_automated_DEPENDENCIES = $(tests_emotion_emotion_test_DEPENDENCIES) \
+@USE_EO_INTERNAL_LIBS@
+
+#### eo ####
+eo_automated_source = tests/automated/eo_suite_automated.c
+eo_automated_suite = $(top_builddir)/src/$(eo_automated_source)
+$(eo_automated_source):
+	$(TEST_GEN) automated eo $(top_builddir)/src/$@ $(eo_eolian_files)
+
+check_PROGRAMS += tests/automated/eo_suite_automated
+TESTS += tests/automated/eo_suite_automated
+
+tests_automated_eo_suite_automated_SOURCE = $(eo_automated_source)
+tests_automated_eo_suite_automated_CPPFLAGS = $(tests_eo_eo_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+@ELEMENTARY_CFLAGS@
+tests_automated_eo_suite_automated_LDADD = $(tests_eo_eo_suite_LDADD) \
+@USE_ECORE_LIBS@
+tests_automated_eo_suite_automated_DEPENDENCIES = $(tests_eo_eo_suite_DEPENDENCIES)
+
+#### evas ####
+evas_automated_source = tests/automated/evas_suite_automated.c
+evas_automated_suite = $(top_builddir)/src/$(evas_automated_source)
+$(evas_automated_source):
+	$(TEST_GEN) automated evas $(top_builddir)/src/$@ $(evas_eolian_files)
+
+check_PROGRAMS += tests/automated/evas_suite_automated
+TESTS += tests/automated/evas_suite_automated
+
+tests_automated_evas_suite_automated_SOURCE = $(evas_automated_source)
+tests_automated_evas_suite_automated_CPPFLAGS = $(tests_evas_evas_suite_CPPFLAGS) \
+-I$(top_srcdir)/src/tests \
+-I$(top_srcdir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/lib/evas/include \
+@ELEMENTARY_CFLAGS@
+tests_automated_evas_suite_automated_LDADD = $(tests_evas_evas_suite_LDADD) \
+@USE_ECORE_LIBS@
+tests_automated_evas_suite_automated_DEPENDENCIES = $(tests_evas_evas_suite_DEPENDENCIES)
+
+
+if HAVE_CSHARP
+#### EFL MONO ####
+
+tests_efl_mono_base = \
+     tests/efl_mono/Main.cs \
+     tests/efl_mono/TestUtils.cs
+
+## Mono Ecore ##
+
+mono_ecore_automated_source = tests/automated/ecore_suite_automated.cs
+mono_ecore_automated_bin = tests/automated/efl_mono_ecore$(EXEEXT)
+
+check_PROGRAMS += $(mono_ecore_automated_bin)
+TESTS += $(mono_ecore_automated_bin)
+
+tests_automated_efl_mono_ecore_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_ecore_automated_source)
+
+tests/automated/efl_mono_ecore$(EXEEXT): $(tests_automated_efl_mono_ecore_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_ecore_automated_source):
+	$(TEST_GEN) automated ecore $(top_builddir)/src/$@ $(filter-out $(ecore_eolian_blacklisted_files:%.eo.cs=%.eo),$(ecore_eolian_files_public))
+
+## Mono Eo ##
+
+mono_eo_automated_source = tests/automated/eo_suite_automated.cs
+mono_eo_automated_bin = tests/automated/efl_mono_eo$(EXEEXT)
+
+check_PROGRAMS += $(mono_eo_automated_bin)
+TESTS += $(mono_eo_automated_bin)
+
+tests_automated_efl_mono_eo_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_eo_automated_source)
+
+tests/automated/efl_mono_eo$(EXEEXT): $(tests_automated_efl_mono_eo_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_eo_automated_source):
+	$(TEST_GEN) automated eo $(top_builddir)/src/$@ $(filter-out $(eo_eolian_blacklisted_files:%.eo.cs=%.eo),$(eo_eolian_files))
+
+## Mono Efl ##
+
+mono_efl_automated_source = tests/automated/efl_suite_automated.cs
+mono_efl_automated_bin = tests/automated/efl_mono_efl$(EXEEXT)
+
+check_PROGRAMS += $(mono_efl_automated_bin)
+TESTS += $(mono_efl_automated_bin)
+
+tests_automated_efl_mono_efl_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_efl_automated_source)
+
+tests/automated/efl_mono_efl$(EXEEXT): $(tests_automated_efl_mono_efl_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_efl_automated_source):
+	$(TEST_GEN) automated efl $(top_builddir)/src/$@ $(filter-out $(efl_eolian_blacklisted_files:%.eo.cs=%.eo),$(efl_eolian_files))
+
+## Mono Edje ##
+
+mono_edje_automated_source = tests/automated/edje_suite_automated.cs
+mono_edje_automated_bin = tests/automated/efl_mono_edje$(EXEEXT)
+
+check_PROGRAMS += $(mono_edje_automated_bin)
+TESTS += $(mono_edje_automated_bin)
+
+tests_automated_efl_mono_edje_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_edje_automated_source)
+
+tests/automated/efl_mono_edje$(EXEEXT): $(tests_automated_efl_mono_edje_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_edje_automated_source):
+	$(TEST_GEN) automated edje $(top_builddir)/src/$@ $(filter-out $(edje_eolian_blacklisted_files:%.eo.cs=%.eo),$(edje_eolian_files))
+
+## Mono Elementary ##
+
+mono_elementary_automated_source = tests/automated/elementary_suite_automated.cs
+mono_elementary_automated_bin = tests/automated/efl_mono_elementary$(EXEEXT)
+
+check_PROGRAMS += $(mono_elementary_automated_bin)
+TESTS += $(mono_elementary_automated_bin)
+
+tests_automated_efl_mono_elementary_SOURCE = \
+   $(tests_efl_mono_base) \
+   $(mono_elementary_automated_source)
+
+tests/automated/efl_mono_elementary$(EXEEXT): $(tests_automated_efl_mono_elementary_SOURCE) lib/efl_mono/libefl_mono.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+$(mono_elementary_automated_source):
+	$(TEST_GEN) automated elementary $(top_builddir)/src/$@ $(filter-out $(elementary_eolian_blacklisted_files:%.eo.cs=%.eo),$(elm_public_eolian_files))
+
+
+endif
+endif
