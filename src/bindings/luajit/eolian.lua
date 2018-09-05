@@ -1663,25 +1663,21 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
             local reft = M.object_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])
-            elseif tp == reft.FUNC then
+            elseif tp == reft.FUNCTION then
                 return tp, ffi.cast("const Eolian_Class *", stor[0]),
                            ffi.cast("const Eolian_Function *", stor[1])
             elseif tp == reft.EVENT then
                 return tp, ffi.cast("const Eolian_Class *", stor[0]),
                            ffi.cast("const Eolian_Event *", stor[1])
-            elseif tp == reft.ALIAS then
-                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
-            elseif tp == reft.STRUCT then
+            elseif tp == reft.TYPEDECL then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
             elseif tp == reft.STRUCT_FIELD then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
                            ffi.cast("const Eolian_Struct_Type_Field *", stor[1])
-            elseif tp == reft.ENUM then
-                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
             elseif tp == reft.ENUM_FIELD then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
                            ffi.cast("const Eolian_Enum_Type_Field *", stor[1])
-            elseif tp == reft.VAR then
+            elseif tp == reft.VARIABLE then
                 return tp, ffi.cast("const Eolian_Variable *", stor[0])
             else
                 return reft.UNKNOWN
