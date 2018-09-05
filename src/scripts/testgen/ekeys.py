@@ -159,7 +159,7 @@ class EMonoKeys(EKeys):
         ]
 
     def escape_keyword(self, key):
-        return key in self.keywords and "kw_{}".format(key) or key
+        return "kw_{}".format(key) if key in self.keywords else key
 
     def direction_get(self, name):
         if name == "INOUT":
@@ -168,22 +168,23 @@ class EMonoKeys(EKeys):
             return "out "
         return None
 
-    def klass_name(self, eo_name):
-        names = eo_name.split(".")
-        namespaces = [self.escape_keyword(x.lower()) for x in names[:-1]]
-        k_name = names[-1]
+    def klass_name(self, eotype):
+        *namespaces, name = eotype.name.split(".")
+        namespaces = [self.escape_keyword(x.lower()) for x in namespaces]
+        is_interface = eotype.type == eotype.type.CLASS
+        k_name = ('I' if is_interface else '') + name
         return ".".join(namespaces + [k_name])
 
     def type_convert(self, eotype):
         if eotype.type == eotype.type.VOID:
             return "System.IntPtr"
 
-        new_type = self.dicttypes.get(eotype.name, self.klass_name(eotype.name))
+        new_type = self.dicttypes.get(eotype.name, self.klass_name(eotype))
         if new_type != "int" and eotype.base_type:
             new_type = "{}<{}>".format(
                 new_type,
                 self.dicttypes.get(
-                    eotype.base_type.name, self.klass_name(eotype.base_type.name)
+                    eotype.base_type.name, self.klass_name(eotype.base_type)
                 ),
             )
 
@@ -193,25 +194,20 @@ class EMonoKeys(EKeys):
         r = super().print_arg(eoarg)
         prefix = self.direction_get(eoarg.direction.name) or None
 
-        if prefix == "out" and (
-            eoarg.type.name == "Eina.Slice" or eoarg.type.name == "Eina.Rw_Slice"
-        ):
+        if prefix == "out" and (eoarg.type.name in ("Eina.Slice", "Eina.Rw_Slice")):
             prefix = "ref"
 
-        if (
-            not prefix
-            and eoarg.type.is_ptr
-            and eoarg.type.type == eoarg.type.type.REGULAR
-            and eoarg.type.typedecl
-            and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT
-        ):
+        if (not prefix
+                and eoarg.type.is_ptr
+                and eoarg.type.type == eoarg.type.type.REGULAR
+                and eoarg.type.typedecl
+                and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT):
             prefix = "ref"
 
-        return prefix and " ".join([prefix, r]) or r
+        return " ".join([prefix, r]) if prefix else r
 
 
 def GetKey(ext):
     if ext == ".cs":
         return EMonoKeys(ext)
-    else:
-        return EKeys(ext)
+    return EKeys(ext)

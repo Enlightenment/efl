@@ -4,7 +4,6 @@
 import os
 import sys
 import datetime
-from copy import copy
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
