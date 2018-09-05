@@ -87,7 +87,7 @@ local not_verbs = {
 
 local get_class_name = function(cls)
    local words = {}
-   local klass = cls:full_name_get()
+   local klass = cls:name_get()
    for word in string.gmatch(klass, "%a+") do
       words[#words+1] = word
    end
@@ -107,20 +107,20 @@ get_mono_type = function(tp)
     tpdecl = tp:typedecl_get()
 
     if tpt == tp.REGULAR then
-       if tp:full_name_get() == "string" then
+       if tp:name_get() == "string" then
           return "System.String"
-       elseif tp:full_name_get() == "list" then
+       elseif tp:name_get() == "list" then
           ntp = tp:base_type_get()
           --assert(btp ~= nil)
           --ntp = btp:next_type_get()
           return "eina.List<" .. get_mono_type(ntp) .. ">"
        elseif tpdecl then
-          --print("typedecl type is ", tp:full_name_get())
+          --print("typedecl type is ", tp:name_get())
           tpt = tpdecl:type_get()
-          return get_class_name(tp) --tp:full_name_get()
+          return get_class_name(tp) --tp:name_get()
        else
-          --print("regular type is ", tp:full_name_get())
-          return tp:full_name_get()
+          --print("regular type is ", tp:name_get())
+          return tp:name_get()
        end
     elseif tpt == tp.CLASS then
        return get_class_name(tp)
@@ -189,7 +189,7 @@ local find_parent_impl
 find_parent_impl = function(fulln, cl)
     for i, pcl in ipairs(cl:inherits_get()) do
         for j, impl in ipairs(pcl:implements_get()) do
-            if impl:full_name_get() == fulln then
+            if impl:name_get() == fulln then
             --if get_class_name(impl) == fulln then
                 return impl, pcl
             end
@@ -224,7 +224,7 @@ local write_description = function(f, impl, func, cl)
     local doc = impl:doc_get(func.METHOD, true)
     local docf = impl:fallback_doc_get(true)
     if over and (not doc:exists() and (not docf or not docf:exists())) then
-        bdoc = find_parent_briefdoc(impl:full_name_get(), cl)
+        bdoc = find_parent_briefdoc(impl:name_get(), cl)
     else
         bdoc = doc:brief_get(docf)
     end
@@ -338,7 +338,7 @@ local gen_func_mono_sig = function(f, ftype)
         pars[#pars + 1] = gen_mono_param(par)
     end
     for i, par in ipairs(vals) do
-        print('parameter is value for get, so out')
+        --print('parameter is value for get, so out')
         pars[#pars + 1] = gen_mono_param(par, true)
     end
 
@@ -382,7 +382,7 @@ local build_functable = function(f, tcl, tbl)
     table.sort(nt, function(v1, v2)
         local cl1, cl2 = v1[0], v2[0]
         if cl1 ~= cl2 then
-            return cl1:full_name_get() < cl2:full_name_get()
+            return cl1:name_get() < cl2:name_get()
         end
 
         local f1, f2 = v1[1], v2[1]
@@ -435,7 +435,7 @@ M.build_inherits = function(cl, t, lvl)
         cln = ":" .. 'develop:api' .. ":"
            .. table.concat(cln, ":")
         lbuf:write_raw("[[", cln, "|", get_class_name(cl), "]]")
-        --lbuf:write_link(cl:nspaces_get(true), cl:full_name_get())
+        --lbuf:write_link(cl:nspaces_get(true), cl:name_get())
         lbuf:write_raw(" ")
         lbuf:write_i("(" .. cl:type_str_get() .. ")")
  
@@ -487,7 +487,7 @@ M.write_inherit_functable = function(f, tcl, tbl)
         if cl ~= prevcl then
             prevcl = cl
             f:write_raw("^ ")
-            f:write_link(cl:nspaces_get(true), cl:full_name_get())
+            f:write_link(cl:nspaces_get(true), cl:name_get())
             f:write_raw(" ^^^")
             f:write_nl()
         end
@@ -535,7 +535,7 @@ M.write_functable = function(f, tcl, tbl)
             -- but we get latest doc every time so it's ok for now
             local llbuf = writer.Buffer()
             llbuf:write_raw(" [Overridden from ")
-            llbuf:write_link(ocl:nspaces_get(true), ocl:full_name_get())
+            llbuf:write_link(ocl:nspaces_get(true), ocl:name_get())
             llbuf:write_raw("]")
             f:write_i(llbuf:finish())
         end
@@ -562,12 +562,12 @@ end
 
 M.build_class = function(cl)
     local cln = cl:nspaces_get()
-    local fulln = cl:full_name_get()
+    local fulln = cl:name_get()
     --table.insert(cln, "mono")
     cln[#cln] = cln[#cln] .. "_mono"
     --printgen("Generating (MONO) class: " .. fulln .. " in ns ", unpack(cln))
     local f = writer.Writer(cln, fulln .. " (mono)")
-    f:write_h(cl:full_name_get() .. " (" .. cl:type_str_get() .. ")", 1)
+    f:write_h(cl:name_get() .. " (" .. cl:type_str_get() .. ")", 1)
 
     f:write_h("Description", 2)
     f:write_raw(cl:doc_get():full_get(nil, true))

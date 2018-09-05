@@ -44,11 +44,11 @@ M.Node = util.Object:clone {
     end,
 
     name_get = function(self)
-        return self.obj:name_get()
+        return self._obj:name_get()
     end,
 
     short_name_get = function(self)
-        return self.obj:short_name_get()
+        return self._obj:short_name_get()
     end,
 
     namespaces_get = function(self)
@@ -107,6 +107,11 @@ local add_since = function(str, since)
 end
 
 M.Doc = Node:clone {
+    -- duplicate ctor to disable assertion
+    __ctor = function(self, obj)
+        self._obj = obj
+    end,
+
     summary_get = function(self)
         if not self._obj then
             return nil
@@ -1349,26 +1354,24 @@ M.DocTokenizer = util.Object:clone {
     ref_resolve = function(self, root)
         -- FIXME: unit
         local tp, d1, d2 = self.tok:ref_resolve(eos)
-        local reft = eolian.doc_ref_type
+        local reft = eolian.object_type
         local ret = {}
-        if tp == reft.CLASS or tp == reft.FUNC or tp == reft.EVENT then
+        if tp == reft.CLASS or tp == reft.FUNCTION or tp == reft.EVENT then
             if not class_type_str[d1:type_get()] then
                 error("unknown class type for class '"
                       .. d1:name_get() .. "'")
             end
-        elseif tp == reft.ALIAS then
-        elseif tp == reft.STRUCT or tp == reft.STRUCT_FIELD then
+        elseif tp == reft.TYPEDECL then
+        elseif tp == reft.ENUM_FIELD or tp == reft.STRUCT_FIELD then
             -- TODO: point to field
-        elseif tp == reft.ENUM or tp == reft.ENUM_FIELD  then
-            -- TODO: point to field
-        elseif tp == reft.VAR then
+        elseif tp == reft.VARIABLE then
         else
             error("invalid reference '" .. self:text_get() .. "'")
         end
         for tok in d1:name_get():gmatch("[^%.]+") do
             ret[#ret + 1] = tok:lower()
         end
-        if tp == reft.FUNC then
+        if tp == reft.FUNCTION then
             ret[#ret + 1] = func_type_str[d2:type_get()]
             ret[#ret + 1] = d2:name_get():lower()
         elseif tp == reft.EVENT then
