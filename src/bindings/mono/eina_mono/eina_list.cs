@@ -299,9 +299,10 @@ public class List<T> : IEnumerable<T>, IDisposable
         return NativeToManaged<T>(ele);
     }
 
-    public void Reverse()
+    public List<T> Reverse()
     {
         Handle = eina_list_reverse(Handle);
+        return this;
     }
 
     public void Shuffle()
