@@ -92,7 +92,11 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
                             if ((sel_lost->request) &&
                                 (sel_lost->type == type))
                               {
-                                 eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                                 if (sel_lost->promise)
+                                   {
+                                      eina_promise_resolve(sel_lost->promise,
+                                            eina_value_uint_init(sel_lost->type));
+                                   }
                                  seat_sel2->sel_lost_list = eina_list_remove(seat_sel2->sel_lost_list, sel_lost);
                                  free(sel_lost);
                               }
@@ -137,7 +141,11 @@ _owner_change_check(Efl_Selection_Manager *manager, Efl_Object *owner,
              if ((sel_lost->request == sel->owner) &&
                  (sel_lost->type == type))
                {
-                  eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                  if (sel_lost->promise)
+                    {
+                       eina_promise_resolve(sel_lost->promise,
+                             eina_value_uint_init(sel_lost->type));
+                    }
                   seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
                   free(sel_lost);
                }
@@ -227,8 +235,10 @@ static void
 _sel_manager_promise_cancel(void *data, const Eina_Promise *dead_future EINA_UNUSED)
 {
    Sel_Manager_Selection_Lost *sel_lost = data;
-   //FIXME: remove from sel_lost_list in seat_sel
-   free(sel_lost);
+   //FIXME: remove from sel_lost_list in seat_sel:w
+   // FIXME: quick an dirty fix: allows to skip the promise_resolve when there
+   // is a cleanup to all the sel_lost promises.
+   sel_lost->promise = NULL;
 }
 
 static inline Eina_Future *
@@ -1055,7 +1065,10 @@ _x11_selection_clear(void *data, int type EINA_UNUSED, void *event)
             (sel_lost->type == i))
           {
              sel_debug("resolve the promise: %p", sel_lost->promise);
-             eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+             if (sel_lost->promise)
+               {
+                  eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+               }
              seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
              free(sel_lost);
           }
@@ -1240,6 +1253,7 @@ _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *o
    if (seat_sel->xwin == xwin)
      same_win = EINA_TRUE;
    _owner_change_check(pd->sel_man, owner, seat_sel, sel, type, same_win);
+   seat_sel->xwin = xwin;
 
    sel->owner = owner;
    free(sel->data.mem);
@@ -2551,7 +2565,10 @@ _wl_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
              if ((sel_lost->request == sel->owner) &&
                  (sel_lost->type == type))
                {
-                  eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                  if (sel_lost->promise)
+                    {
+                       eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                    }
                   seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
                   free(sel_lost);
                }
@@ -3969,7 +3986,11 @@ _cocoa_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
         if ((sel_lost->request == sel->owner) &&
             (sel_lost->type == type))
           {
-             eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+             if (sel_lost->promise)
+               {
+                  eina_promise_resolve(sel_lost->promise,
+                        eina_value_uint_init(sel_lost->type));
+               }
              seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
              free(sel_lost);
           }
@@ -4211,7 +4232,11 @@ _win32_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd,
              if ((sel_lost->request == sel->owner) &&
                  (sel_lost->type == type))
                {
-                  eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                  if (sel_lost->promise)
+                    {
+                       eina_promise_resolve(sel_lost->promise,
+                             eina_value_uint_init(sel_lost->type));
+                    }
                   seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
                   free(sel_lost);
                }
@@ -4808,7 +4833,11 @@ _efl_selection_manager_selection_clear(Eo *obj, Efl_Selection_Manager_Data *pd,
                   if ((sel_lost->request == sel->owner) &&
                       (sel_lost->type == type))
                     {
-                       eina_promise_resolve(sel_lost->promise, eina_value_uint_init(sel_lost->type));
+                       if (sel_lost->promise)
+                         {
+                            eina_promise_resolve(sel_lost->promise,
+                                  eina_value_uint_init(sel_lost->type));
+                         }
                        seat_sel->sel_lost_list = eina_list_remove(seat_sel->sel_lost_list, sel_lost);
                        free(sel_lost);
                     }
