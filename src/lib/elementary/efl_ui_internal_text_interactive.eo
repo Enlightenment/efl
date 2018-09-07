@@ -10,5 +10,6 @@ class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Text_Interactive)
       Efl.Text_Interactive.selection_allowed { get; set; }
       Efl.Text_Interactive.selection_cursors { get; }
       Efl.Text_Interactive.editable { get; set; }
+      Efl.Text_Interactive.select_none;
    }
 }

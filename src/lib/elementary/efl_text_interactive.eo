@@ -43,6 +43,9 @@ interface Efl.Text_Interactive (Efl.Text, Efl.Text_Font,
             if not, the entry is read-only and no user input is allowed.]]
          }
       }
+      select_none {
+         [[Clears the selection.]]
+      }
    }
    events {
       selection,changed: void; [[The selection on the object has changed. Query using @.selection_cursors]]
