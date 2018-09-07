@@ -517,10 +517,8 @@ _sel_init(Evas_Textblock_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interac
    if (en->have_selection)
       return;
 
-   efl_event_freeze(o);
    evas_textblock_cursor_copy(c, en->sel_start);
    evas_textblock_cursor_copy(c, en->sel_end);
-   efl_event_thaw(o);
 
    en->have_selection = EINA_FALSE;
    if (en->selection)
