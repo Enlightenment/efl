@@ -155,6 +155,7 @@ elm_public_eolian_files += \
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_ui_internal_text_scroller.eo \
 	lib/elementary/efl_ui_focus_composition_adapter.eo \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
@@ -715,6 +716,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_flip.c \
 	lib/elementary/efl_ui_internal_text_interactive.c \
 	lib/elementary/efl_ui_internal_text_interactive.h \
+	lib/elementary/efl_ui_internal_text_scroller.c \
+	lib/elementary/efl_ui_internal_text_scroller.h \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/efl_ui_frame.c \
