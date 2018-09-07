@@ -1422,8 +1422,17 @@ _efl_ui_internal_text_interactive_efl_text_interactive_selection_allowed_get(con
 EOLIAN static void
 _efl_ui_internal_text_interactive_efl_text_interactive_selection_cursors_get(const Eo *obj EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *pd, Efl_Text_Cursor_Cursor **start, Evas_Textblock_Cursor **end)
 {
-   if (start) *start = pd->sel_start;
-   if (end) *end = pd->sel_end;
+   if (efl_text_cursor_position_get(obj, pd->sel_start) >
+         efl_text_cursor_position_get(obj, pd->sel_end))
+     {
+        if (start) *start = pd->sel_end;
+        if (end) *end = pd->sel_start;
+     }
+   else
+     {
+        if (start) *start = pd->sel_start;
+        if (end) *end = pd->sel_end;
+     }
 }
 
 EOLIAN static void
