@@ -1,0 +1,45 @@
+enum Efl.Ui.Text_Scroller_Mode
+{
+   default = 0,
+   singleline = 0,
+   multiline = 1,
+}
+
+class Efl.Ui.Internal_Text_Scroller (Efl.Ui.Scroller)
+{
+   [[Efl ui text scroller class]]
+   methods {
+      @property text_object {
+         [[The Efl.Canvas.Text content of this scroller]]
+         set {
+            [[Sets the given text object as the content of this scroller]]
+         }
+         values {
+            text_obj: Efl.Canvas.Text @nullable;
+         }
+      }
+      @property scroller_mode {
+         [[Mode of operation for the scroller]]
+         set {
+            [[Sets mode to either default (singleline) or multiline]]
+         }
+         values {
+            mode: Efl.Ui.Text_Scroller_Mode;
+         }
+      }
+      @property viewport_clip {
+         [[The viewport's clip object]]
+         get {
+            [[Gets viewport's clip object]]
+         }
+         values {
+            clip: Efl.Object;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+   }
+}
