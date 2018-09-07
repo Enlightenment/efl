@@ -4559,7 +4559,7 @@ EFL_START_TEST(efl_canvas_text_simple)
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_canvas_text_cursor)
+EFL_START_TEST(efl_text)
 {
    START_TB_TEST();
 
@@ -4592,6 +4592,26 @@ EFL_START_TEST(efl_canvas_text_cursor)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_text_cursor)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+   int pos;
+
+   const char *buf = "abcdefghij";
+   efl_text_set(txt, buf);
+   fail_if(strcmp(efl_text_get(txt), buf));
+
+   efl_text_cursor_line_jump_by(txt, cur, -1);
+   pos = efl_text_cursor_position_get(txt, cur);
+   ck_assert_int_eq(pos, 0);
+   efl_text_cursor_line_jump_by(txt, cur, 1);
+   pos = efl_text_cursor_position_get(txt, cur);
+   ck_assert_int_eq(pos, 10);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4621,6 +4641,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
    tcase_add_test(tc, efl_canvas_text_simple);
+   tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
 }
 
