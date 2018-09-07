@@ -7,10 +7,7 @@ typedef struct _Efl_Canvas_Vg_Node_Data             Efl_Canvas_Vg_Node_Data;
 typedef struct _Efl_Canvas_Vg_Container_Data        Efl_Canvas_Vg_Container_Data;
 typedef struct _Efl_Canvas_Vg_Gradient_Data         Efl_Canvas_Vg_Gradient_Data;
 typedef struct _Efl_Canvas_Vg_Interpolation         Efl_Canvas_Vg_Interpolation;
-
-
-typedef struct _Efl_Canvas_Vg_Object_Data           Efl_Canvas_Vg_Object_Data;
-
+typedef struct _Efl_Canvas_Vg_Data                  Efl_Canvas_Vg_Data;
 typedef struct _Evas_Cache_Vg_Entry          Evas_Cache_Vg_Entry;
 typedef struct _Evas_Cache_Vg                Evas_Cache_Vg;
 
@@ -39,7 +36,7 @@ typedef struct _User_Vg_Entry
    Efl_VG               *root;
 }User_Vg_Entry; // holds the vg tree info set by the user
 
-struct _Efl_Canvas_Vg_Object_Data
+struct _Efl_Canvas_Vg_Data
 {
    void                     *engine_data;
    Efl_VG                   *root;

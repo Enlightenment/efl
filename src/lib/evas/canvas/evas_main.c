@@ -1025,7 +1025,7 @@ _image_data_regenerate(Evas_Object *eo_obj)
    CHECK(EFL_CANVAS_IMAGE_INTERNAL_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_IMAGE_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
    else CHECK(EFL_CANVAS_SCENE3D_CLASS, Evas_Image_Data, _image_image_data_regenerate(eo_obj, obj, data))
-   //else CHECK(EFL_CANVAS_VG_OBJECT_CLASS, Efl_Canvas_Vg_Object_Data,)
+   //else CHECK(EFL_CANVAS_VG_OBJECT_CLASS, Efl_Canvas_Vg_Data,)
    //else CHECK(EFL_CANVAS_POLYGON_CLASS, Efl_Canvas_Polygon_Data,)
    //else CHECK(EVAS_CANVAS3D_TEXTURE_CLASS, Evas_Canvas3D_Texture_Data,
 }

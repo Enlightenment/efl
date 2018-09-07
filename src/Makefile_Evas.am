@@ -19,7 +19,7 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/evas_canvas3d_node.eo\
 	lib/evas/canvas/evas_canvas3d_scene.eo\
 	lib/evas/canvas/evas_canvas3d_object.eo \
-	lib/evas/canvas/efl_canvas_vg_object.eo \
+	lib/evas/canvas/efl_canvas_vg.eo \
 	lib/evas/canvas/efl_canvas_vg_node.eo \
 	lib/evas/canvas/efl_canvas_vg_container.eo \
 	lib/evas/canvas/efl_canvas_vg_shape.eo \
@@ -359,7 +359,7 @@ lib/evas/common3d/primitives/primitive_common.c
 
 # Evas_VG
 lib_evas_libevas_la_SOURCES += \
-lib/evas/canvas/efl_canvas_vg_object.c \
+lib/evas/canvas/efl_canvas_vg.c \
 lib/evas/canvas/evas_vg_node.c \
 lib/evas/canvas/evas_vg_container.c \
 lib/evas/canvas/evas_vg_gradient.c \
