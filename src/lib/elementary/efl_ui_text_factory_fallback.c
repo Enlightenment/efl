@@ -29,8 +29,6 @@ EOLIAN static void
 _efl_ui_text_factory_fallback_efl_object_destructor(Eo *obj,
      Efl_Ui_Text_Factory_Fallback_Data *pd EINA_UNUSED)
 {
-   efl_del(pd->emoticon_factory);
-   efl_del(pd->image_factory);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

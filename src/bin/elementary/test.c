@@ -339,8 +339,8 @@ void test_code_diff(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_text_inputfield(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
-void test_efl_ui_text_async(void *data, Evas_Object *obj, void *event_info);
 void test_ui_text_item_factory(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
@@ -860,8 +860,8 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
    ADD_TEST(NULL, "Entries", "Entry Password", test_entry_password);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Input Field", test_efl_ui_text_inputfield);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
    ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 

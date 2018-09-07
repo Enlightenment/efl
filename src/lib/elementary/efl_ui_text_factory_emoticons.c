@@ -22,13 +22,12 @@ EOLIAN static Efl_Canvas_Object
       const char *key)
 {
    Eo *o;
-   const char *style = elm_widget_style_get(object);
 
-   o = edje_object_add(evas_object_evas_get(object));
-   if (!_elm_theme_object_set
-         (object, o, "text", key, style))
-     _elm_theme_object_set
-       (object, o, "text/emoticon", "wtf", style);
+   o = efl_add(EFL_CANVAS_LAYOUT_CLASS, object);
+   if (!elm_widget_element_update(object, o, key))
+     {
+        elm_widget_element_update(object, o, "wtf");
+     }
    return o;
 }
 
