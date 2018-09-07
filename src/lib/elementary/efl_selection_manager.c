@@ -227,7 +227,8 @@ static void
 _sel_manager_promise_cancel(void *data, const Eina_Promise *dead_future EINA_UNUSED)
 {
    Sel_Manager_Selection_Lost *sel_lost = data;
-   //FIXME: remove from sel_lost_list in seat_sel
+   sel_lost->seat_sel->sel_lost_list = eina_list_remove(
+         sel_lost->seat_sel->sel_lost_list, sel_lost);
    free(sel_lost);
 }
 
@@ -243,6 +244,7 @@ _update_sel_lost_list(Efl_Object *obj, Efl_Selection_Type type,
      return NULL;
    sel_lost->request = obj;
    sel_lost->type = type;
+   sel_lost->seat_sel = seat_sel;
    seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
 
    p = eina_promise_new(efl_loop_future_scheduler_get(obj),
@@ -1240,6 +1242,7 @@ _x11_efl_sel_manager_selection_set(Efl_Selection_Manager_Data *pd, Efl_Object *o
    if (seat_sel->xwin == xwin)
      same_win = EINA_TRUE;
    _owner_change_check(pd->sel_man, owner, seat_sel, sel, type, same_win);
+   seat_sel->xwin = xwin;
 
    sel->owner = owner;
    free(sel->data.mem);

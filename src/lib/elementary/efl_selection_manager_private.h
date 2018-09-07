@@ -141,6 +141,7 @@ struct _Sel_Manager_Selection_Lost
     Efl_Object *request;
     Eina_Promise *promise;
     Efl_Selection_Type type;
+    Sel_Manager_Seat_Selection *seat_sel;
 };
 
 struct _Sel_Manager_Seat_Selection
