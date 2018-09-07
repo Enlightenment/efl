@@ -509,8 +509,6 @@ static void
 _sel_cursor_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *obj = data;
-
-   efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -563,6 +561,7 @@ _sel_extend(Evas_Textblock_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Inter
         free(en->selection);
         en->selection = NULL;
      }
+   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -577,8 +576,8 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
    if (en->have_selection)
      {
         en->have_selection = EINA_FALSE;
-
         efl_text_cursor_copy(o, en->sel_start, en->sel_end);
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
      }
 }
 
