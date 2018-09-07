@@ -583,6 +583,13 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
 }
 
 static void
+_efl_ui_internal_text_interactive_efl_text_interactive_select_none(
+      Eo *obj, Efl_Ui_Internal_Text_Interactive_Data *en)
+{
+   _sel_clear(obj, en);
+}
+
+static void
 _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_Cursor *cur2)
 {
    size_t start, end;
