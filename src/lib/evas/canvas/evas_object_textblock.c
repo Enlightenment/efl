@@ -10325,7 +10325,10 @@ EAPI void
 evas_textblock_cursor_copy(const Evas_Textblock_Cursor *cur_src, Efl_Text_Cursor_Cursor *cur_dest)
 {
    if (!cur_src || !cur_dest) return;
-   efl_text_cursor_copy(cur_src->obj, cur_dest, cur_src);
+   if (!efl_text_cursor_equal(cur_src->obj, cur_dest, cur_src))
+     {
+        _evas_textblock_cursor_copy(cur_dest, cur_src);
+     }
 }
 
 static void
