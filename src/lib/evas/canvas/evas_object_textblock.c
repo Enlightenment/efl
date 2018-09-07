@@ -10207,11 +10207,19 @@ _efl_canvas_text_efl_text_cursor_cursor_line_jump_by(Eo *eo_obj EINA_UNUSED, Efl
 {
    ASYNC_BLOCK;
    int ln;
-
-   ln = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL) + by;
    Evas_Coord cx, cw;
    Evas_Coord lx, ly, lw, lh;
    int last;
+   Evas_Object_Textblock_Node_Text *pnode;
+   size_t ppos;
+
+
+   ln = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL) + by;
+
+   if (!cur) return;
+
+   pnode = cur->node;
+   ppos = cur->pos;
 
    evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    cx += (cw / 2);
@@ -10221,33 +10229,40 @@ _efl_canvas_text_efl_text_cursor_cursor_line_jump_by(Eo *eo_obj EINA_UNUSED, Efl
    if (ln < 0)
      {
         evas_textblock_cursor_paragraph_first(cur);
-        return;
      }
-   if (ln > last)
+
+   else if (ln > last)
      {
         evas_textblock_cursor_paragraph_last(cur);
-        return;
      }
 
-   if (!evas_object_textblock_line_number_geometry_get(cur->obj, ln, &lx, &ly, &lw, &lh))
-     return;
-   if (evas_textblock_cursor_char_coord_set(cur, cx, ly + (lh / 2)))
-     return;
-   evas_textblock_cursor_line_set(cur, ln);
-   if (cx < (lx + (lw / 2)))
-     {
-        if (ln == last) evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_line_char_first(cur);
-     }
    else
      {
-        if (ln == last)
-	   evas_textblock_cursor_paragraph_last(cur);
-        else
-	   evas_textblock_cursor_line_char_last(cur);
+        if (evas_object_textblock_line_number_geometry_get(cur->obj,
+                 ln, &lx, &ly, &lw, &lh) &&
+              (!evas_textblock_cursor_char_coord_set(cur, cx, ly + (lh / 2))))
+          {
+             evas_textblock_cursor_line_set(cur, ln);
+             if (cx < (lx + (lw / 2)))
+               {
+                  if (ln == last) evas_textblock_cursor_paragraph_last(cur);
+                  evas_textblock_cursor_line_char_first(cur);
+               }
+             else
+               {
+                  if (ln == last)
+                     evas_textblock_cursor_paragraph_last(cur);
+                  else
+                     evas_textblock_cursor_line_char_last(cur);
+               }
+          }
      }
 
-   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+   if ((pnode != cur->node) || (ppos != cur->pos))
+     {
+        efl_event_callback_legacy_call(eo_obj,
+              EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+     }
 }
 
 EAPI int
