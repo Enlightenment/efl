@@ -84,9 +84,10 @@
  */
 typedef const char * Eina_Vpath;
 
-/*
+/**
  * Translate a virtual path into a normal path.
  *
+ * @param[in] path The path.
  * @return NULL if failed, or a full normal string file path that is resolved
  *
  * @since 1.21
@@ -94,13 +95,13 @@ typedef const char * Eina_Vpath;
  */
 EAPI char *eina_vpath_resolve(Eina_Vpath path);
 
-/*
+/**
  * Translate a virtual path into a normal path, and print it into str.
  *
- * @param str the buffer to stuff the characters into
- * @param size the size of the buffer
- * @param format A snprintf style format string, which will get evaluated after the vpath strings are getting replaced
- * @param ... The arguments for the format string
+ * @param[out] str the buffer to stuff the characters into
+ * @param[in] size the size of the buffer
+ * @param[in] format A snprintf style format string, which will get evaluated after the vpath strings are getting replaced
+ * @param[in] ... The arguments for the format string
  *
  * @return the number of characters that are written into str, on a error a value < 0 is returned.
  *

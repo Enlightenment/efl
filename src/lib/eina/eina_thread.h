@@ -77,8 +77,8 @@ EAPI Eina_Thread eina_thread_self(void) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Checks if two thread identifiers are the same.
- * @param t1 first thread identifier to compare.
- * @param t2 second thread identifier to compare.
+ * @param[in] t1 first thread identifier to compare.
+ * @param[in] t2 second thread identifier to compare.
  * @return #EINA_TRUE if they are equal, #EINA_FALSE otherwise.
  * @since 1.8
  */
@@ -88,10 +88,10 @@ EAPI Eina_Bool eina_thread_equal(Eina_Thread t1, Eina_Thread t2) EINA_WARN_UNUSE
  * @brief Creates a new thread, setting its priority and affinity.
  *
  * @param[out] t where to return the thread identifier. Must @b not be @c NULL.
- * @param prio thread priority to use, usually EINA_THREAD_BACKGROUND
- * @param affinity thread affinity to use. To not set affinity use @c -1.
- * @param func function to run in the thread. Must @b not be @c NULL.
- * @param data context data to provide to @a func as first argument.
+ * @param[in] prio thread priority to use, usually EINA_THREAD_BACKGROUND
+ * @param[in] affinity thread affinity to use. To not set affinity use @c -1.
+ * @param[in] func function to run in the thread. Must @b not be @c NULL.
+ * @param[in] data context data to provide to @a func as first argument.
  * @return #EINA_TRUE if thread was created, #EINA_FALSE on errors.
  * @since 1.8
  */
@@ -121,7 +121,7 @@ EAPI extern const void *EINA_THREAD_JOIN_CANCELED;
  * and may be @c NULL on errors. See @ref Eina_Error_Group to identify
  * problems.
  *
- * @param t thread identifier to wait.
+ * @param[in] t thread identifier to wait.
  * @return value returned by @a t creation function @c func() or
  *         @c NULL on errors. Check error with @ref Eina_Error_Group.
  *         If the thread was canceled, it will return
@@ -139,8 +139,8 @@ EAPI void *eina_thread_join(Eina_Thread t);
  * for debugging to name a thread so external tools can display a
  * meaningful name attached to the thread.
  *
- * @param t thread to set the name of
- * @param name a string to name the thread - this cannot be NULL
+ * @param[in] t thread to set the name of
+ * @param[in] name a string to name the thread - this cannot be NULL
  * @return EINA_TRUE if it succeeds in setting the name or EINA_FALSE
  *         otherwise.
  * @since 1.16
@@ -160,7 +160,7 @@ EAPI Eina_Bool eina_thread_name_set(Eina_Thread t, const char *name);
  * A thread that was canceled will return EINA_THREAD_JOIN_CANCELED
  * when eina_thread_join() is called.
  *
- * @param t Thread to cancel.
+ * @param[in] t Thread to cancel.
  *
  * @return EINA_FALSE if thread was not running, EINA_TRUE
  *         otherwise. Note that if a thread is not cancellable and it
@@ -189,10 +189,10 @@ EAPI Eina_Bool eina_thread_cancel(Eina_Thread t);
  * or the helper function eina_thread_cancellable_run() which does the
  * pair for you.
  *
- * @param cancellable If EINA_TRUE, this thread will be accept
+ * @param[in] cancellable If EINA_TRUE, this thread will be accept
  *        cancellation requests. If EINA_FALSE -- the default, it will
  *        ignore cancellation requests.
- * @param was_cancellable If non-NULL, will return the previous state,
+ * @param[in] was_cancellable If non-NULL, will return the previous state,
  *        shall you want to restore.
  *
  * @return EINA_TRUE if it succeeds in setting the cancellable state
@@ -246,8 +246,8 @@ EAPI void eina_thread_cancel_checkpoint(void);
  *       @b not be executed! To avoid problems prefer to use
  *       eina_thread_cancellable_run()!
  *
- * @param cleanup The function to execute on cancellation.
- * @param data The context to give to cleanup function.
+ * @param[in] cleanup The function to execute on cancellation.
+ * @param[in] data The context to give to cleanup function.
  *
  * @see eina_thread_cancellable_run()
  *
@@ -276,7 +276,7 @@ EAPI void eina_thread_cancel_checkpoint(void);
  *       @b not be executed even if exec_cleanup is EINA_TRUE! To
  *       avoid problems prefer to use eina_thread_cancellable_run()!
  *
- * @param exec_cleanup if EINA_TRUE, the function registered with
+ * @param[in] exec_cleanup if EINA_TRUE, the function registered with
  *        EINA_THREAD_CLEANUP_PUSH() will be executed.
  *
  * @see eina_thread_cancellable_run()
@@ -320,16 +320,16 @@ typedef void *(*Eina_Thread_Cancellable_Run_Cb)(void *data);
  *    return ret;
  * @endcode
  *
- * @param cb a cancellable callback to possibly run. The callback @b
+ * @param[in] cb a cancellable callback to possibly run. The callback @b
  *        may not be executed if the thread had a pending cancellation
  *        request. During its execution the callback may be canceled
  *        at explicit cancellation points using
  *        eina_thread_cancel_checkpoint(), as well as some syscalls
  *        defined in man:pthreads(7).
- * @param cleanup_cb a cleanup callback to be executed regardless of
+ * @param[in] cleanup_cb a cleanup callback to be executed regardless of
  *        the thread being canceled or not. This function will be
  *        executed even if @a cb wasn't.
- * @param data context to give to both @a cb and @a cleanup_cb.
+ * @param[in] data context to give to both @a cb and @a cleanup_cb.
  *
  * @return the return value of @a cb. If the thread was canceled,
  *         this function will not return.

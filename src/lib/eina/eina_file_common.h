@@ -269,8 +269,8 @@ extern int _eina_file_log_dom;
 /**
  * @brief Map the entire contents of a virtual file to a buffer.
  *
- * @param file The virtual file to map in memory
- *
+ * @param[in] file The virtual file to map in memory
+ * @return The buffer
  */
 void *eina_file_virtual_map_all(Eina_File *file);
 
@@ -280,7 +280,7 @@ void *eina_file_virtual_map_all(Eina_File *file);
  * @param[in,out] file The virtual file to map in memory
  * @param[in] offset The offset inside the file to start mapping
  * @param[in] length The length of the region to map
- *
+ * @return The buffer
  */
 void *eina_file_virtual_map_new(Eina_File *file,
                                 unsigned long int offset, unsigned long int length);

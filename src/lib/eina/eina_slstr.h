@@ -36,7 +36,7 @@ typedef const char Eina_Slstr;
 /**
  * @brief Create a new short lived string by duplicating another string.
  *
- * @param string An existing string, it will be copied.
+ * @param[in] string An existing string, it will be copied.
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:
@@ -54,7 +54,7 @@ eina_slstr_copy_new(const char *string);
 /**
  * @brief Create a new short lived string by taking ownership of a string.
  *
- * @param string An existing string. It will not be duplicated.
+ * @param[in] string An existing string. It will not be duplicated.
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:
@@ -71,7 +71,7 @@ eina_slstr_steal_new(char *string);
 /**
  * @brief Create a new short lived string by taking ownership of a stringshare.
  *
- * @param string An existing stringshare, one reference belongs to this slstr.
+ * @param[in] string An existing stringshare, one reference belongs to this slstr.
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:
@@ -88,7 +88,7 @@ eina_slstr_stringshare_new(Eina_Stringshare *string);
 /**
  * @brief Create a new short lived string by taking ownership of a tmpstr.
  *
- * @param string An existing tmpstr, it will be freed later.
+ * @param[in] string An existing tmpstr, it will be freed later.
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:
@@ -105,7 +105,7 @@ eina_slstr_tmpstr_new(Eina_Tmpstr *string);
 /**
  * @brief Create a new short lived string by taking ownership of a strbuf.
  *
- * @param string An existing strbuf, that will be released (i.e.. steal + free).
+ * @param[in] string An existing strbuf, that will be released (i.e.. steal + free).
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:
@@ -126,8 +126,8 @@ eina_slstr_strbuf_new(Eina_Strbuf *string);
 /**
  * @brief Create a new short lived string using sprintf.
  *
- * @param fmt Format string for printf
- * @param args List of format parameters for printf
+ * @param[in] fmt Format string for printf
+ * @param[in] args List of format parameters for printf
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * @since 1.19
@@ -138,8 +138,8 @@ eina_slstr_vasprintf_new(const char *fmt, va_list args);
 /**
  * @brief Create a new short lived string using sprintf.
  *
- * @param fmt Format string for printf
- * @param args List of format parameters for printf
+ * @param[in] fmt Format string for printf
+ * @param[in] args List of format parameters for printf
  * @return A new Eina_Slstr or NULL if out of memory.
  *
  * Usage example:

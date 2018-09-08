@@ -421,7 +421,7 @@ EAPI void eina_matrix3_identity(Eina_Matrix3 *t);
 /**
  * @brief Calculates the determinant of the given matrix.
  *
- * @param m[in] The matrix.
+ * @param[in] m The matrix.
  * @return The determinant.
  *
  * This function returns the determinant of the matrix @p m. No check

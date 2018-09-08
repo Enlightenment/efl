@@ -178,8 +178,8 @@ typedef const char Eina_Stringshare;
  * @brief Retrieves an instance of a string with a specific size for use in a
  * program.
  *
- * @param   str The string to retrieve an instance of.
- * @param   slen The string size (<= strlen(str)).
+ * @param[in] str The string to retrieve an instance of.
+ * @param[in] slen The string size (<= strlen(str)).
  * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
@@ -199,7 +199,7 @@ EAPI Eina_Stringshare  *eina_stringshare_add_length(const char *str, unsigned in
 /**
  * @brief Retrieves an instance of a string for use in a program.
  *
- * @param   str The NULL-terminated string to retrieve an instance of.
+ * @param[in] str The NULL-terminated string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
@@ -220,7 +220,7 @@ EAPI Eina_Stringshare  *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_R
  * @brief Retrieves an instance of a string for use in a program
  * from a format string.
  *
- * @param   fmt The NULL-terminated format string to retrieve an instance of.
+ * @param[in] fmt The NULL-terminated format string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
@@ -241,8 +241,8 @@ EAPI Eina_Stringshare  *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_
  * @brief Retrieves an instance of a string for use in a program
  * from a format string.
  *
- * @param   fmt The NULL-terminated format string to retrieve an instance of.
- * @param   args The va_args for @p fmt
+ * @param[in] fmt The NULL-terminated format string to retrieve an instance of.
+ * @param[in] args The va_args for @p fmt
  * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
@@ -262,8 +262,9 @@ EAPI Eina_Stringshare  *eina_stringshare_vprintf(const char *fmt, va_list args) 
 /**
  * @brief Retrieves an instance of a string for use in a program
  * from a format string with size limitation.
- * @param   len The length of the format string to use
- * @param   fmt The format string to retrieve an instance of.
+ *
+ * @param[in] len The length of the format string to use
+ * @param[in] fmt The format string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success,
  *          @c NULL on failure.
  *
@@ -282,7 +283,7 @@ EAPI Eina_Stringshare  *eina_stringshare_nprintf(unsigned int len, const char *f
 /**
  * Increment references of the given shared string.
  *
- * @param str The shared string.
+ * @param[in,out] str The shared string.
  * @return    A pointer to an instance of the string on success,
  *            @c NULL on failure.
  *
@@ -298,7 +299,7 @@ EAPI Eina_Stringshare  *eina_stringshare_ref(Eina_Stringshare *str);
 /**
  * @brief Notes that the given string has lost an instance.
  *
- * @param str String the given string.
+ * @param[in,out] str String the given string.
  *
  * This function decreases the reference counter associated to @p str
  * if it exists. If that counter reaches 0, the memory associated to
@@ -313,7 +314,7 @@ EAPI void               eina_stringshare_del(Eina_Stringshare *str);
 /**
  * @brief Notes that the given string @b must be shared.
  *
- * @param str The shared string to know the length. It is safe to
+ * @param[in] str The shared string to know the length. It is safe to
  *        give @c NULL, in that case @c 0 is returned.
  * @return The length of a shared string.
  *

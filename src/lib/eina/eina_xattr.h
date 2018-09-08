@@ -53,7 +53,7 @@ struct _Eina_Xattr
 /**
  * @brief Gets an iterator that lists all extended attribute of a file.
  *
- * @param file The filename to retrieve the extended attribute list from.
+ * @param[in] file The filename to retrieve the extended attribute list from.
  * @return an iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
@@ -66,7 +66,7 @@ EAPI Eina_Iterator *eina_xattr_ls(const char *file) EINA_ARG_NONNULL(1) EINA_WAR
 /**
  * @brief Gets an iterator that list all extended attribute value related to a fd.
  *
- * @param file The filename to retrieve the extended attribute list from.
+ * @param[in] file The filename to retrieve the extended attribute list from.
  * @return An iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
@@ -79,7 +79,7 @@ EAPI Eina_Iterator *eina_xattr_value_ls(const char *file) EINA_ARG_NONNULL(1) EI
 /**
  * @brief Gets an iterator that list all extended attribute related to a fd.
  *
- * @param fd The file descriptor to retrieve the extended attribute list from.
+ * @param[in] fd The file descriptor to retrieve the extended attribute list from.
  * @return an iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
@@ -92,7 +92,7 @@ EAPI Eina_Iterator *eina_xattr_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Gets an iterator that list all extended attribute value related to a fd.
  *
- * @param fd The file descriptor to retrieve the extended attribute list from.
+ * @param[in] fd The file descriptor to retrieve the extended attribute list from.
  * @return An iterator.
  *
  * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
@@ -105,8 +105,8 @@ EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd) EINA_WARN_UNUSED_RESULT;
 /**
  * @brief Copies the extended attribute from one file to another.
  *
- * @param src source file to use as input.
- * @param dst destination file to use as output.
+ * @param[in] src source file to use as input.
+ * @param[in] dst destination file to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @see eina_xattr_fd_copy()
@@ -118,8 +118,8 @@ EAPI Eina_Bool eina_xattr_copy(const char *src, const char *dst) EINA_ARG_NONNUL
 /**
  * @brief Copies the extended attribute from one file descriptor to another.
  *
- * @param src source file descriptor to use as input.
- * @param dst destination file descriptor to use as output.
+ * @param[in] src source file descriptor to use as input.
+ * @param[in] dst destination file descriptor to use as output.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @see eina_xattr_copy()
@@ -131,9 +131,9 @@ EAPI Eina_Bool eina_xattr_fd_copy(int src, int dst);
 /**
  * @brief Retrieves an extended attribute from a file.
  *
- * @param file The file to retrieve the extended attribute from.
- * @param attribute The extended attribute name to retrieve.
- * @param size The size of the retrieved extended attribute.
+ * @param[in] file The file to retrieve the extended attribute from.
+ * @param[in] attribute The extended attribute name to retrieve.
+ * @param[out] size The size of the retrieved extended attribute.
  * @return the allocated data that hold the extended attribute value.
  *
  * It will return @c NULL and *size will be @c 0 if it fails.
@@ -145,9 +145,9 @@ EAPI void *eina_xattr_get(const char *file, const char *attribute, ssize_t *size
 /**
  * @brief Retrieves an extended attribute from a file descriptor.
  *
- * @param fd The file descriptor to retrieve the extended attribute from.
- * @param attribute The extended attribute name to retrieve.
- * @param size The size of the retrieved extended attribute.
+ * @param[in] fd The file descriptor to retrieve the extended attribute from.
+ * @param[in] attribute The extended attribute name to retrieve.
+ * @param[out] size The size of the retrieved extended attribute.
  * @return the allocated data that hold the extended attribute value.
  *
  * It will return @c NULL and *size will be @c 0 if it fails.
@@ -159,11 +159,11 @@ EAPI void *eina_xattr_fd_get(int fd, const char *attribute, ssize_t *size) EINA_
 /**
  * @brief Sets an extended attribute on a file.
  *
- * @param file The file to set the extended attribute to.
- * @param attribute The attribute to set.
- * @param data The data to set.
- * @param length The length of the data to set.
- * @param flags Define the set policy.
+ * @param[in] file The file to set the extended attribute to.
+ * @param[in] attribute The attribute to set.
+ * @param[in] data The data to set.
+ * @param[in] length The length of the data to set.
+ * @param[in] flags Define the set policy.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
@@ -173,11 +173,11 @@ EAPI Eina_Bool eina_xattr_set(const char *file, const char *attribute, const voi
 /**
  * @brief Sets an extended attribute on a file descriptor.
  *
- * @param fd The file descriptor to set the extended attribute to.
- * @param attribute The attribute to set.
- * @param data The data to set.
- * @param length The length of the data to set.
- * @param flags Define the set policy.
+ * @param[in] fd The file descriptor to set the extended attribute to.
+ * @param[in] attribute The attribute to set.
+ * @param[in] data The data to set.
+ * @param[in] length The length of the data to set.
+ * @param[in] flags Define the set policy.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.8
@@ -188,8 +188,8 @@ EAPI Eina_Bool eina_xattr_fd_set(int fd, const char *attribute, const void *data
 /**
  * @brief Deletes (removes) an extended attribute from a file.
  *
- * @param file The file to del the extended attribute from.
- * @param attribute The attribute to del.
+ * @param[in] file The file to del the extended attribute from.
+ * @param[in] attribute The attribute to del.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.8
@@ -199,8 +199,8 @@ EAPI Eina_Bool eina_xattr_del(const char *file, const char *attribute) EINA_ARG_
 /**
  * @brief Deletes (removes) an extended attribute from a file descriptor.
  *
- * @param fd The file descriptor to del the extended attribute from.
- * @param attribute The attribute to del.
+ * @param[in] fd The file descriptor to del the extended attribute from.
+ * @param[in] attribute The attribute to del.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.8
@@ -210,10 +210,10 @@ EAPI Eina_Bool eina_xattr_fd_del(int fd, const char *attribute) EINA_ARG_NONNULL
 /**
  * @brief Sets a string as a extended attribute properties.
  *
- * @param file The file to set the string to.
- * @param attribute The attribute to set.
- * @param data The NULL-terminated string to set.
- * @param flags Define the set policy.
+ * @param[in] file The file to set the string to.
+ * @param[in] attribute The attribute to set.
+ * @param[in] data The NULL-terminated string to set.
+ * @param[in] flags Define the set policy.
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
  * @since 1.1
@@ -223,8 +223,8 @@ EAPI Eina_Bool eina_xattr_string_set(const char *file, const char *attribute, co
 /**
  * @brief Gets a string from an extended attribute properties.
  *
- * @param file The file to get the string from.
- * @param attribute The attribute to get.
+ * @param[in] file The file to get the string from.
+ * @param[in] attribute The attribute to get.
  * @return A valid string on success, @c NULL otherwise.
  *
  * This call check that the string is properly NULL-terminated before returning it.
@@ -236,10 +236,10 @@ EAPI char *eina_xattr_string_get(const char *file, const char *attribute);
 /**
  * @brief Sets a double as a extended attribute properties.
  *
- * @param file The file to set the double to.
- * @param attribute The attribute to set.
- * @param value The NULL-terminated double to set.
- * @param flags Define the set policy.
+ * @param[in] file The file to set the double to.
+ * @param[in] attribute The attribute to set.
+ * @param[in] value The NULL-terminated double to set.
+ * @param[in] flags Define the set policy.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
@@ -249,9 +249,9 @@ EAPI Eina_Bool eina_xattr_double_set(const char *file, const char *attribute, do
 /**
  * @brief Gets a double from an extended attribute properties.
  *
- * @param file The file to get the string from.
- * @param attribute The attribute to get.
- * @param value Where to put the extracted value
+ * @param[in] file The file to get the string from.
+ * @param[in] attribute The attribute to get.
+ * @param[out] value Where to put the extracted value
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This call check that the double is correctly set.
@@ -263,10 +263,10 @@ EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, do
 /**
  * @brief Sets an int as a extended attribute properties.
  *
- * @param file The file to set the int to.
- * @param attribute The attribute to set.
- * @param value The NULL-terminated int to set.
- * @param flags Define the set policy.
+ * @param[in] file The file to set the int to.
+ * @param[in] attribute The attribute to set.
+ * @param[in] value The NULL-terminated int to set.
+ * @param[in] flags Define the set policy.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
@@ -276,9 +276,9 @@ EAPI Eina_Bool eina_xattr_int_set(const char *file, const char *attribute, int v
 /**
  * @brief Gets a int from an extended attribute properties.
  *
- * @param file The file to get the string from.
- * @param attribute The attribute to get.
- * @param value Where to put the extracted value
+ * @param[in] file The file to get the string from.
+ * @param[in] attribute The attribute to get.
+ * @param[out] value Where to put the extracted value
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This call check that the int is correctly set.

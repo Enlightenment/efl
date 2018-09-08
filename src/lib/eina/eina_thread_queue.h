@@ -83,7 +83,7 @@ eina_thread_queue_new(void);
  * on messages or sending them. Any pending messages will be freed without
  * being processed by a listener.
  *
- * @param thq The thread queue to free
+ * @param[in] thq The thread queue to free
  *
  * @since 1.11
  */
@@ -93,9 +93,9 @@ eina_thread_queue_free(Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 /**
  * @brief Allocates a message to send down a thread queue.
  *
- * @param thq The thread queue to allocate the message on
- * @param size The size, in bytes, of the message, including standard header
- * @param allocref A pointer to store a general reference handle for the message
+ * @param[in,out] thq The thread queue to allocate the message on
+ * @param[in] size The size, in bytes, of the message, including standard header
+ * @param[out] allocref A pointer to store a general reference handle for the message
  * @return A pointer to the message data to fill in
  *
  * This allocates space for a new message on the message queue, but does not
@@ -112,8 +112,8 @@ eina_thread_queue_send(Eina_Thread_Queue *thq, int size, void **allocref) EINA_A
 /**
  * @brief Finishes sending the allocated message.
  *
- * @param thq The thread queue the message was placed on
- * @param allocref The allocref returned by eina_thread_queue_send()
+ * @param[in,out] thq The thread queue the message was placed on
+ * @param[in,out] allocref The allocref returned by eina_thread_queue_send()
  *
  * This completes the send and triggers the thread queue to wake up any
  * listeners.
@@ -126,8 +126,8 @@ eina_thread_queue_send_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NON
 /**
  * @brief Fetches a message from a thread queue.
  *
- * @param thq The thread queue to fetch the message from
- * @param allocref A pointer to store a general reference handle for the message
+ * @param[in,out] thq The thread queue to fetch the message from
+ * @param[out] allocref A pointer to store a general reference handle for the message
  * @return A pointer to the message data
  *
  * This will fetch the next message to read from the thread queue and return
@@ -146,8 +146,8 @@ eina_thread_queue_wait(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL
 /**
  * @brief Finishes fetching a message from a thread queue.
  *
- * @param thq The thread queue the message was fetched from
- * @param allocref The allocref returned by eina_thread_queue_wait()
+ * @param[in,out] thq The thread queue the message was fetched from
+ * @param[in,out] allocref The allocref returned by eina_thread_queue_wait()
  *
  * This should be used after eina_thread_queue_wait() or
  * eina_thread_queue_poll() to indicate the caller is done with the message.
@@ -160,8 +160,8 @@ eina_thread_queue_wait_done(Eina_Thread_Queue *thq, void *allocref) EINA_ARG_NON
 /**
  * @brief Fetches a message from a thread queue, but return immediately if there is none with NULL.
  *
- * @param thq The thread queue to fetch the message from
- * @param allocref A pointer to store a general reference handle for the message
+ * @param[in,out] thq The thread queue to fetch the message from
+ * @param[out] allocref A pointer to store a general reference handle for the message
  * @return A pointer to the message data
  *
  * This is the same as eina_thread_queue_wait(), but if no messages are
@@ -178,7 +178,7 @@ eina_thread_queue_poll(Eina_Thread_Queue *thq, void **allocref) EINA_ARG_NONNULL
 /**
  * @brief Gets the number of messages on a queue as yet unfetched.
  *
- * @param thq The thread queue to query for pending count
+ * @param[in] thq The thread queue to query for pending count
  * @return The number of messages waiting to be fetched
  *
  * This returns the number of messages waiting to be fetched with
@@ -192,8 +192,8 @@ eina_thread_queue_pending_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 /**
  * @brief Sets the parent of a thread queue (make this one a child).
  *
- * @param thq The thread queue to alter the parent of
- * @param thq_parent The new parent to set
+ * @param[in,out] thq The thread queue to alter the parent of
+ * @param[in] thq_parent The new parent to set
  *
  * This sets the parent queue where messages will be reported to. This is
  * how you can listen to multiple queues at once - set multiple queues to
@@ -209,7 +209,7 @@ eina_thread_queue_parent_set(Eina_Thread_Queue *thq, Eina_Thread_Queue *thq_pare
 /**
  * @brief Gets the parent of a thread queue.
  *
- * @param thq The thread queue to get the parent of
+ * @param[in] thq The thread queue to get the parent of
  * @return The parent thread queue
  *
  * This gets the parent set by eina_thread_queue_parent_get(). If no parent
@@ -225,8 +225,8 @@ eina_thread_queue_parent_get(const Eina_Thread_Queue *thq) EINA_ARG_NONNULL(1);
 /**
  * @brief Sets a file descriptor to write a byte to on a message send.
  *
- * @param thq The thread queue to set the file descriptor of
- * @param fd The fd to set, or -1 to unset it
+ * @param[in,out] thq The thread queue to set the file descriptor of
+ * @param[in] fd The fd to set, or -1 to unset it
  *
  * This sets a file descriptor to write to when a message is written to the
  * thread queue. This can be used to glue a thread queue to something like
@@ -245,7 +245,7 @@ eina_thread_queue_fd_set(Eina_Thread_Queue *thq, int fd) EINA_ARG_NONNULL(1);
 /**
  * @brief Gets the file descriptor written to on message sends.
  *
- * @param thq The thread queue to get the file descriptor of
+ * @param[in] thq The thread queue to get the file descriptor of
  * @return The file descriptor set (or -1 if none is set).
  *
  * This returns the file descriptor set by eina_thread_queue_fd_set() and

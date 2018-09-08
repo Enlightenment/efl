@@ -149,7 +149,7 @@ struct _Eina_Future_Scheduler {
     *
     * @note Must not be @c NULL.
     *
-    * @param entry The scheduled event to cancel
+    * @param[in,out] entry The scheduled event to cancel
     */
    void (*recall)(Eina_Future_Schedule_Entry *entry);
 };
@@ -1196,7 +1196,7 @@ EAPI Eina_Future_Desc eina_future_cb_console_from_desc(const Eina_Future_Cb_Cons
  * next future in the chain.
  *
  * @param[in] err The error to be ignored.
- * @param A future descriptor to be used with eina_future_then() or eina_future_chain()
+ * @return A future descriptor to be used with eina_future_then() or eina_future_chain()
  */
 EAPI Eina_Future_Desc eina_future_cb_ignore_error(Eina_Error err);
 

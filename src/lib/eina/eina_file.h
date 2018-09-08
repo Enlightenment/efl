@@ -288,7 +288,7 @@ EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG
  *          only fetched when advancing the iterator, which means there is very little
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  * @return An #Eina_Iterator that walks over the files and directories
  *         in @p dir. On failure, it returns @c NULL.
  *
@@ -309,7 +309,7 @@ EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_A
  *          dir is only fetched when advancing the iterator, which means there is
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  *
  * @return An #Eina_Iterator that walks over the files and
  *         directories in @p dir. On failure, it returns @c NULL.
@@ -409,7 +409,7 @@ EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) E
  *          @p dir is only fetched when advancing the iterator, which means there is
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  *
  * @return An Eina_Iterator that walks over the files and
  *         directories in @p dir. On failure, it returns @c NULL.

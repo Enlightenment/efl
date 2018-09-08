@@ -85,9 +85,9 @@
 /**
  * @brief Copies a c-string to another.
  *
- * @param dst The destination string.
- * @param src The source string.
- * @param siz The size of the destination string.
+ * @param[out] dst The destination string.
+ * @param[in] src The source string.
+ * @param[in] siz The size of the destination string.
  * @return The length of the source string.
  *
  * This function copies up to @p siz - 1 characters from the
@@ -105,9 +105,9 @@ EAPI size_t          eina_strlcpy(char *dst, const char *src, size_t siz) EINA_A
 /**
  * @brief Appends a c-string.
  *
- * @param dst The destination string.
- * @param src The source string.
- * @param siz The size of the destination string.
+ * @param[out] dst The destination string.
+ * @param[in] src The source string.
+ * @param[in] siz The size of the destination string.
  * @return The length of the source string plus MIN(siz, strlen(initial dst))
  *
  * This function appends @p src to @p dst of size @p siz (unlike
@@ -123,8 +123,8 @@ EAPI size_t          eina_strlcat(char *dst, const char *src, size_t siz) EINA_A
 /**
  * @brief Checks if the given string has the given prefix.
  *
- * @param str The string to work with.
- * @param prefix The prefix to check for.
+ * @param[in] str The string to work with.
+ * @param[in] prefix The prefix to check for.
  * @return #EINA_TRUE if the string has the given prefix, #EINA_FALSE otherwise.
  *
  * This function returns #EINA_TRUE if @p str has the prefix
@@ -136,8 +136,8 @@ EAPI Eina_Bool       eina_str_has_prefix(const char *str, const char *prefix) EI
 /**
  * @brief Checks if the given string has the given suffix.
  *
- * @param str The string to work with.
- * @param suffix The suffix to check for.
+ * @param[in] str The string to work with.
+ * @param[in] suffix The suffix to check for.
  * @return #EINA_TRUE if the string has the given suffix, #EINA_FALSE otherwise.
  *
  * This function returns #EINA_TRUE if @p str has the suffix
@@ -149,8 +149,8 @@ EAPI Eina_Bool       eina_str_has_suffix(const char *str, const char *suffix) EI
 /**
  * @brief Checks if the given string has the given extension.
  *
- * @param str The string to work with.
- * @param ext The  extension to check for.
+ * @param[in] str The string to work with.
+ * @param[in] ext The  extension to check for.
  * @return #EINA_TRUE if the string has the given extension, #EINA_FALSE otherwise.
  *
  * This function does the same as eina_str_has_suffix(), except it's case
@@ -161,9 +161,9 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
 /**
  * @brief Splits a string using a delimiter.
  *
- * @param string The string to split.
- * @param delimiter The string which specifies the places at which to split the string.
- * @param max_tokens The maximum number of strings to split string into, or a number less
+ * @param[in] string The string to split.
+ * @param[in] delimiter The string which specifies the places at which to split the string.
+ * @param[in] max_tokens The maximum number of strings to split string into, or a number less
  *                   than 1 to split as many times as possible. This parameter
  *                   IGNORES the added @c NULL terminator.
  * @return A newly-allocated NULL-terminated array of strings or @c NULL if it
@@ -187,12 +187,12 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
 /**
  * @brief Splits a string using a delimiter and returns number of elements.
  *
- * @param string The string to split.
- * @param delimiter The string which specifies the places at which to split the string.
- * @param max_tokens The maximum number of strings to split string into, or a number less
+ * @param[in] string The string to split.
+ * @param[in] delimiter The string which specifies the places at which to split the string.
+ * @param[in] max_tokens The maximum number of strings to split string into, or a number less
  *                   than 1 to split as many times as possible. This parameter
  *                   IGNORES the added @c NULL terminator.
- * @param elements Where to return the number of elements in returned
+ * @param[out] elements Where to return the number of elements in returned
  *        array. This array is guaranteed to be no greater than @p max_tokens, and
  *        it will NOT count the @c NULL terminator element.
  * @return A newly-allocated NULL-terminated array of strings or @c NULL if it
@@ -221,13 +221,13 @@ EAPI char          **eina_str_split_full(const char *string, const char *delimit
 /**
  * @brief Joins two strings of known length.
  *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param sep The separator character to use.
- * @param a First string to use, before @p sep.
- * @param a_len Length of @p a.
- * @param b Second string to use, after @p sep.
- * @param b_len Length of @p b.
+ * @param[out] dst The buffer to store the result.
+ * @param[in] size Size (in byte) of the buffer.
+ * @param[in] sep The separator character to use.
+ * @param[in] a First string to use, before @p sep.
+ * @param[in] a_len Length of @p a.
+ * @param[in] b Second string to use, after @p sep.
+ * @param[in] b_len Length of @p b.
  * @return The number of characters printed.
  *
  * This function joins the strings @p a and @p b (in that order) and
@@ -250,9 +250,9 @@ EAPI size_t          eina_str_join_len(char *dst, size_t size, char sep, const c
 /**
  * @brief Uses Iconv to convert a text string from one encoding to another.
  *
- * @param enc_from Encoding to convert from.
- * @param enc_to Encoding to convert to.
- * @param text The text to convert.
+ * @param[in] enc_from Encoding to convert from.
+ * @param[in] enc_to Encoding to convert to.
+ * @param[in] text The text to convert.
  * @return The converted text.
  *
  * This function converts @p text, encoded in @p enc_from. On success,
@@ -269,11 +269,11 @@ EAPI char           *eina_str_convert(const char *enc_from, const char *enc_to, 
 /**
  * @brief Uses Iconv to convert a text string from one encoding to another.
  *
- * @param enc_from Encoding to convert from.
- * @param enc_to Encoding to convert to.
- * @param text The text to convert.
- * @param len The size in bytes of the text to convert.
- * @param retlen The size in bytes of the converted text.
+ * @param[in] enc_from Encoding to convert from.
+ * @param[in] enc_to Encoding to convert to.
+ * @param[in] text The text to convert.
+ * @param[in] len The size in bytes of the text to convert.
+ * @param[in] retlen The size in bytes of the converted text.
  * @return The converted text.
  *
  * This function converts @p text, encoded in @p enc_from. On success,
@@ -290,7 +290,7 @@ EAPI char           *eina_str_convert_len(const char *enc_from, const char *enc_
 /**
  * @brief Escapes slashes, spaces and apostrophes in strings.
  *
- * @param str The string to escape.
+ * @param[in] str The string to escape.
  * @return The escaped string.
  *
  * Escaping is done by adding a slash "\" before any occurrence of slashes "\"
@@ -305,7 +305,7 @@ EAPI char           *eina_str_escape(const char *str) EINA_WARN_UNUSED_RESULT EI
 /**
  * @brief Lowercases all the characters in range [A-Z] in the given string.
  *
- * @param str The string to lowercase.
+ * @param[in,out] str The string to lowercase.
  *
  * This function modifies the original string, changing all characters
  * in [A-Z] to lowercase. If @p str is @c NULL or is an empty string,
@@ -316,7 +316,7 @@ EAPI void            eina_str_tolower(char **str);
 /**
  * @brief Uppercases all the characters in range [a-z] in the given string.
  *
- * @param str The string to uppercase.
+ * @param[in,out] str The string to uppercase.
  *
  * This function modifies the original string, changing all characters
  * in [a-z] to uppercase. If @p str is @c NULL or is an empty string,
@@ -330,10 +330,10 @@ static inline size_t eina_str_join(char *dst, size_t size, char sep, const char 
  * @def eina_str_join_static(dst, sep, a, b)
  * @brief Joins two static strings and store the result in a static buffer.
  *
- * @param dst The buffer to store the result.
- * @param sep The separator character to use.
- * @param a First string to use, before @p sep.
- * @param b Second string to use, after @p sep.
+ * @param[out] dst The buffer to store the result.
+ * @param[in] sep The separator character to use.
+ * @param[in] a First string to use, before @p sep.
+ * @param[in] b Second string to use, after @p sep.
  * @return The number of characters printed.
  *
  * This function is similar to eina_str_join_len(), but will assume
@@ -348,9 +348,9 @@ static inline size_t eina_strlen_bounded(const char *str, size_t maxlen) EINA_PU
 
 /**
  * @brief Memory duplication function with optional termination for strings
- * @param mem The memory to copy
- * @param size The size of @p mem
- * @param terminate If true, the returned memory will be nul terminated with '\0'
+ * @param[in] mem The memory to copy
+ * @param[in] size The size of @p mem
+ * @param[in] terminate If true, the returned memory will be nul terminated with '\0'
  * @return The copied memory, must be freed
  * @since 1.13
  */
@@ -359,8 +359,8 @@ EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool termi
 /**
  * @brief Creates and update the buffer based on strftime output.
  *
- * @param tm Pointer to a tm structure needed by strftime.
- * @param format String containing format specifiers needed by strftime.
+ * @param[in] tm Pointer to a tm structure needed by strftime.
+ * @param[in] format String containing format specifiers needed by strftime.
  * @return Updated buffer based on strftime output
  *
  * This will create a buffer of exact required size based on strftime output
