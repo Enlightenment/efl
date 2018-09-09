@@ -167,16 +167,25 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    Eina_List *item;
    Elm_Code *code;
    Elm_Code_Line *line_item;
+   FILE *out;
    const char *path, *content, *crchars;
    char *tmp;
    unsigned int length;
    short crlength;
-   FILE *out;
+   struct stat st;
+   mode_t mode;
+   Eina_Bool have_mode = EINA_FALSE;
 
    code = file->parent;
    path = elm_code_file_path_get(file);
    tmp = _elm_code_file_tmp_path_get(file);
    crchars = elm_code_file_line_ending_chars_get(file, &crlength);
+
+   if (stat(path, &st) != -1)
+     {
+        mode = st.st_mode;
+        have_mode = EINA_TRUE;
+     }
 
    out = fopen(tmp, "w");
    if (out == NULL)
@@ -201,6 +210,9 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
 
    ecore_file_mv(tmp, path);
    free(tmp);
+
+   if (have_mode)
+     chmod(path, mode);
 
    if (file->parent)
      {
