@@ -157,7 +157,7 @@ enum Efl.Ui.Win_Move_Resize_Mode
 class Efl.Ui.Win (Efl.Ui.Widget, Efl.Canvas.Scene, Efl.Canvas.Pointer, Efl.Access.Window,
                   Efl.Access.Component, Efl.Access.Widget.Action,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
-                  Efl.Gfx.Size_Hint, Efl.Text, Efl.Config_Global, Efl.Part,
+                  Efl.Gfx.Size_Hint, Efl.Text, Efl.Config, Efl.Part,
                   Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root)
 {
    [[Efl UI window class]]
