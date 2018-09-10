@@ -74,7 +74,7 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
-DMABUFSOURCES = lib/ecore_wl2/ecore_wl2_surface_module_dmabuf.c
+DMABUFSOURCES = modules/ecore_wl2/engines/dmabuf/ecore_wl2_surface_module_dmabuf.c
 ecorewl2enginedmabufpkgdir = $(libdir)/ecore_wl2/engines/dmabuf/$(MODULE_ARCH)
 ecorewl2enginedmabufpkg_LTLIBRARIES = modules/ecore_wl2/engines/dmabuf/module.la
 
