@@ -101,14 +101,14 @@ _repeat_event_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    efl_ui_popup_data *p_data = data;
    if (!p_data->efl_ui_popup) return;
-   if (!efl_canvas_object_repeat_events_get(efl_part(p_data->efl_ui_popup, "backwall")))
+   if (!efl_ui_popup_part_backwall_repeat_events_get(efl_part(p_data->efl_ui_popup, "backwall")))
      {
-        efl_canvas_object_repeat_events_set(efl_part(p_data->efl_ui_popup, "backwall"), EINA_TRUE);
+        efl_ui_popup_part_backwall_repeat_events_set(efl_part(p_data->efl_ui_popup, "backwall"), EINA_TRUE);
         efl_text_set(ev->object, "Repeat Event UnSet");
      }
    else
      {
-        efl_canvas_object_repeat_events_set(efl_part(p_data->efl_ui_popup, "backwall"), EINA_FALSE);
+        efl_ui_popup_part_backwall_repeat_events_set(efl_part(p_data->efl_ui_popup, "backwall"), EINA_FALSE);
         efl_text_set(ev->object, "Repeat Event Set");
      }
 }
@@ -1014,7 +1014,7 @@ test_ui_popup_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    Eo *efl_ui_popup = efl_add(EFL_UI_POPUP_ANCHOR_CLASS, win);
 
-   efl_canvas_object_repeat_events_set(efl_part(efl_ui_popup, "backwall"), EINA_TRUE);
+   efl_ui_popup_part_backwall_repeat_events_set(efl_part(efl_ui_popup, "backwall"), EINA_TRUE);
 
    //Default align priority order is top, left, right, bottom, center.
    efl_ui_popup_anchor_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,

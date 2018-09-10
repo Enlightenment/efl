@@ -1,9 +1,30 @@
-class Efl.Ui.Popup_Part_Backwall (Efl.Ui.Layout.Part, Efl.Canvas.Object, Efl.File)
+class Efl.Ui.Popup_Part_Backwall (Efl.Ui.Layout.Part, Efl.File)
 {
    [[Efl UI Popup internal part backwall class]]
    data: null;
+   methods {
+      @property repeat_events {
+         set {
+            [[Set whether backwall is to repeat events.
+
+              If $repeat is $true, it will make events on $obj to also be
+              repeated for the next lower object in the objects' stack (see
+              \@ref evas_object_below_get).
+
+              If $repeat is $false, events occurring on $obj will be
+              processed only on it.
+            ]]
+         }
+         get {
+            [[Determine whether backwall is set to repeat events.]]
+         }
+         values {
+            repeat: bool; [[Whether $obj is to repeat events ($true) or
+                            not ($false).]]
+         }
+      }
+   }
    implements {
-      Efl.Canvas.Object.repeat_events { set; get; }
       Efl.File.file { set; }
    }
 }
