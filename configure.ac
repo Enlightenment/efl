@@ -664,6 +664,8 @@ case $host_cpu in
     ;;
 esac
 
+AM_CONDITIONAL([BUILD_NEON], [test "${build_cpu_neon}" = "yes"])
+
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
 AC_SUBST([NEON_CFLAGS])

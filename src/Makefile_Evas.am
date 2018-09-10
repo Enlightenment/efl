@@ -609,6 +609,12 @@ lib/evas/common/evas_op_copy/op_copy_pixel_mask_.c \
 lib/evas/common/evas_op_copy/op_copy_pixel_mask_i386.c \
 lib/evas/common/evas_op_copy/op_copy_pixel_mask_neon.c
 
+if BUILD_NEON
+
+EXTRA_DIST2 += \
+lib/evas/common/evas_op_copy/op_copy_neon.S
+endif
+
 # evas_op_mask
 
 EXTRA_DIST2 += \
