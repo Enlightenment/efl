@@ -3186,11 +3186,11 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_svg);
 
         efl_file_set(ep->object, ed->file->path, src_key);
-        src_root = efl_canvas_vg_root_node_get(ep->object);
+        src_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(src_root);
 
         efl_file_set(ep->object, ed->file->path, dest_key);
-        dest_root = efl_canvas_vg_root_node_get(ep->object);
+        dest_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(dest_root);
 
         root = efl_duplicate(src_root);
@@ -3199,7 +3199,7 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
           {
              ERR("Can't interpolate check the svg file");
           }
-        efl_canvas_vg_root_node_set(ep->object, root);
+        efl_canvas_vg_object_root_node_set(ep->object, root);
         efl_unref(src_root);
         efl_unref(dest_root);
      }

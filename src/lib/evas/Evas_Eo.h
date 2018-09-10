@@ -434,7 +434,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
  *
  * @{
  */
-#include "canvas/efl_canvas_vg.eo.h"
+#include "canvas/efl_canvas_vg_object.eo.h"
 /**
  * @}
  */

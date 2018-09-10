@@ -214,7 +214,7 @@ _efl_canvas_vg_node_parent_checked_get(Eo *obj,
 
    if (efl_isa(*parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      *cd = efl_data_scope_get(*parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-   else if (efl_isa(*parent, EFL_CANVAS_VG_CLASS))
+   else if (efl_isa(*parent, EFL_CANVAS_VG_OBJECT_CLASS))
      *parent = NULL;
    else if (*parent)
      {
@@ -343,7 +343,7 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 
    if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
      cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-   else if (efl_isa(parent, EFL_CANVAS_VG_CLASS))
+   else if (efl_isa(parent, EFL_CANVAS_VG_OBJECT_CLASS))
      parent_container = EINA_FALSE;
    else if (parent)
      {
