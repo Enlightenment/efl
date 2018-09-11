@@ -48,11 +48,6 @@ def cleanup_db():
 
 atexit.register(cleanup_db)
 
-"""
-It will find methods and functions with owned return and without other params
-"""
-
-
 class Template(pyratemp.Template):
     def __init__(
         self,
@@ -101,18 +96,18 @@ class Template(pyratemp.Template):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Pyolian search owned functions.")
-    parser.add_argument("testname", help="The Test Name to use. (REQUIRED)")
-    parser.add_argument("suitename", help="The Suite Name to use. (REQUIRED)")
-    parser.add_argument("filename", help="Build file dest. (REQUIRED)")
-    parser.add_argument("eofiles", nargs="*", help="The Eolian File to use.")
+    parser = argparse.ArgumentParser(description="Eolian Test Generator.")
+    parser.add_argument("testname", help="The Test Name used to find custom and template files. (REQUIRED)")
+    parser.add_argument("suitename", help="The Suite Name used to find custom files. (REQUIRED)")
+    parser.add_argument("filename", help="Generated test file destination. (REQUIRED)")
+    parser.add_argument("eofiles", nargs="*", help="The Eolian Files to use.")
 
     args = parser.parse_args()
 
     testdir = os.path.join(root_path, "src", "tests", args.testname)
 
     suite = SuiteGen(args.suitename, args.testname, args.filename, testdir)
-    suite.load(eolian_db, args.eofiles)
+    suite.loadFiles(eolian_db, args.eofiles)
 
     t = Template(suite.template)
     #    try:

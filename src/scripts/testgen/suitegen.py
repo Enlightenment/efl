@@ -2,7 +2,6 @@ import itertools
 import os
 from testgen.ekeys import GetKey
 
-
 class BaseItem:
     def __init__(self, path, keys, prefix=""):
         self.path = path
@@ -11,14 +10,13 @@ class BaseItem:
 
     def __getattr__(self, attr):
         if not attr.split("_")[-1] in self.keys.keyloads:
-            raise AttributeError
+            raise AttributeError("Error getting {}".format(attr))
 
         filename = os.path.join(self.path, self.prefix + attr) + self.keys.ext
         if os.path.isfile(filename):
             with open(filename, "r") as f:
                 return f.read()
         return None
-
 
 class ComItem(BaseItem):
     def __init__(self, comp, path, keys):
@@ -30,10 +28,8 @@ class ComItem(BaseItem):
             return getattr(self.comp, attr)
         return super().__getattr__(attr)
 
-
 class FuncItem(ComItem):
     def __init__(self, comp, path, keys):
-        print(comp.name)
         super().__init__(comp, os.path.join(path, comp.name), keys)
 
     @property
@@ -42,7 +38,6 @@ class FuncItem(ComItem):
         if names[-1] in self.keys.verbs:
             names.insert(0, names.pop())
         return "".join([name.capitalize() for name in names])
-
 
 class ClassItem(ComItem):
     def __init__(self, comp, path, keys):
@@ -71,14 +66,13 @@ class ClassItem(ComItem):
     def __iter__(self):
         return itertools.chain(self.methods, self.properties)
 
-
 class SuiteGen(BaseItem):
     def __init__(self, name, testname, filename, path, template=None):
         keys = GetKey(os.path.splitext(filename)[1])
         super().__init__(path, keys, name + "_")
         self.name = name
         self.testname = testname
-        self.fullname = "{}_{}".format(name, testname)
+        self.fullname = "_".join([name, testname]) if testname else name
         self.filename = filename
         self.template = template
         self.clslist = []
@@ -98,13 +92,15 @@ class SuiteGen(BaseItem):
     def print_arg(self, eoarg):
         return self.keys.print_arg(eoarg)
 
-    def load(self, eolian_db, eofiles):
+    def loadFiles(self, eolian_db, eofiles):
         self.clslist.clear()
         for eofile in eofiles:
             eocls = eolian_db.class_by_file_get(os.path.basename(eofile))
             if not eocls or eocls.type != eocls.type.REGULAR:
                 continue
+            self.loadObj(eocls)
 
-            cls = ClassItem(eocls, self.path, self.keys)
-            cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
-            self.clslist.append(cls)
+    def loadObj(self, eocls):
+        cls = ClassItem(eocls, self.path, self.keys)
+        cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
+        self.clslist.append(cls)
