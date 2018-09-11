@@ -94,7 +94,7 @@ END_TEST
  <!--(end)-->
 
  <!--(for func in cls.properties)-->
-  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+  <!--(if func.has_getter)-->
 START_TEST(${cls.myfullname}$_${func.full_c_getter_name}$)
 {
     <!--(if len(list(func.getter_values)) > 1)-->
@@ -114,7 +114,7 @@ ${shutdown(mcustom=cls.shutdown,mfunc=func.get_shutdown)}$
 END_TEST
 
   <!--(end)-->
-  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+  <!--(if func.has_setter)-->
 START_TEST(${cls.myfullname}$_${func.full_c_setter_name}$)
 {
 ${args_declaration(args=func.setter_keys)}$${args_declaration(args=func.setter_values)}$${init(mcls=cls.init,mfunc=func.set_init)}$
@@ -134,10 +134,10 @@ void ${cls.myfullname}$_test(TCase *tc)
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_method_name}$);
    <!--(end)-->
    <!--(for func in cls.properties)-->
-    <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+    <!--(if func.has_getter)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_getter_name}$);
     <!--(end)-->
-    <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+    <!--(if func.has_setter)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_setter_name}$);
     <!--(end)-->
    <!--(end)-->

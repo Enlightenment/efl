@@ -2,6 +2,7 @@ import itertools
 import os
 from testgen.ekeys import GetKey
 
+
 class BaseItem:
     def __init__(self, path, keys, prefix=""):
         self.path = path
@@ -18,6 +19,7 @@ class BaseItem:
                 return f.read()
         return None
 
+
 class ComItem(BaseItem):
     def __init__(self, comp, path, keys):
         super().__init__(path, keys)
@@ -28,9 +30,21 @@ class ComItem(BaseItem):
             return getattr(self.comp, attr)
         return super().__getattr__(attr)
 
+
 class FuncItem(ComItem):
     def __init__(self, comp, path, keys):
         super().__init__(comp, os.path.join(path, comp.name), keys)
+
+        self.has_getter = (
+            comp.getter_scope == comp.getter_scope.PUBLIC
+            and comp.full_c_getter_name not in self.keys.blacklist
+            and not os.path.isfile("{}_get".format(os.path.join(path, comp.name)))
+        )
+        self.has_setter = (
+            comp.setter_scope == comp.setter_scope.PUBLIC
+            and comp.full_c_setter_name not in self.keys.blacklist
+            and not os.path.isfile("{}_set".format(os.path.join(path, comp.name)))
+        )
 
     @property
     def format_name(self):
@@ -38,6 +52,7 @@ class FuncItem(ComItem):
         if names[-1] in self.keys.verbs:
             names.insert(0, names.pop())
         return "".join([name.capitalize() for name in names])
+
 
 class ClassItem(ComItem):
     def __init__(self, comp, path, keys):
@@ -48,23 +63,37 @@ class ClassItem(ComItem):
             FuncItem(m, self.path, keys)
             for m in self.comp.methods
             if m.full_c_method_name not in self.keys.blacklist
+            and not os.path.isfile(os.path.join(self.path, m.name))
         ]
 
-        self.properties = [
+        self._properties = [
             FuncItem(p, self.path, keys)
             for p in self.comp.properties
-            if (
-                p.getter_scope == p.getter_scope.PUBLIC
-                and p.full_c_getter_name not in self.keys.blacklist
-            )
-            or (
-                p.setter_scope == p.setter_scope.PUBLIC
-                and p.full_c_setter_name not in self.keys.blacklist
-            )
+            if p.full_c_method_name not in self.keys.blacklist
+            and not os.path.isfile(os.path.join(self.path, p.name))
         ]
+
+    @property
+    def properties(self):
+        return itertools.filterfalse(
+            lambda p: not (p.has_setter or p.has_getter), self._properties
+        )
+
+    @property
+    def properties_get(self):
+        return itertools.filterfalse(
+            lambda p: not p.has_getter, self._properties
+        )
+
+    @property
+    def properties_set(self):
+        return itertools.filterfalse(
+            lambda p: not p.has_setter, self._properties
+        )
 
     def __iter__(self):
         return itertools.chain(self.methods, self.properties)
+
 
 class SuiteGen(BaseItem):
     def __init__(self, name, testname, filename, path, template=None):
@@ -102,5 +131,8 @@ class SuiteGen(BaseItem):
 
     def loadObj(self, eocls):
         cls = ClassItem(eocls, self.path, self.keys)
-        cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
-        self.clslist.append(cls)
+        if not os.path.isfile(cls.path):
+            cls.myfullname = "{}_{}".format(self.fullname, cls.myname)
+            self.clslist.append(cls)
+        else:
+            print("removing {} Class from generated list".format(cls.name))
