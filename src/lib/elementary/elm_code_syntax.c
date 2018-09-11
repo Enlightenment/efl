@@ -143,7 +143,7 @@ elm_code_syntax_for_mime_get(const char *mime)
      return &_elm_code_syntax_c;
    if (!strcmp("text/rust", mime))
      return &_elm_code_syntax_rust;
-   if (!strcmp("text/x-python", mime))
+   if (!strcmp("text/x-python", mime) || !strcmp("text/x-python3", mime))
      return &_elm_code_syntax_py;
    if (!strcmp("text/x-eolian", mime))
      return &_elm_code_syntax_eo;
