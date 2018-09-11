@@ -70,7 +70,7 @@ ${m_show(mshow=func.shutdown)}$#!
  <!--(end)-->
 #!  PROPERTIES FUNCTION GET
  <!--(for func in cls.properties)-->
-  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+  <!--(if func.has_getter)-->
     public void ${func.name}$_pget()
     {
    <!--(if len(list(func.getter_values)) > 1)-->
@@ -92,7 +92,7 @@ ${m_show(mshow=func.get_shutdown)}$#!
 
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
-  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+  <!--(if func.has_setter)-->
     public void ${func.name}$_pset()
     {
 ${def_params(parameters=func.setter_values)}$
