@@ -836,6 +836,21 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestValueCopy() {
+        eina.Value v2 = null;
+        int raw_val = 42;
+
+        using (eina.Value v = new eina.Value(eina.ValueType.Int32)) {
+            Test.Assert(v.Set(raw_val));
+
+            v2 = new eina.Value(v);
+        }
+
+        int rec_val;
+        Test.Assert(v2.Get(out rec_val));
+        Test.AssertEquals(raw_val, rec_val);
+    }
+
     // FIXME Add remaining list tests
 
     /* public static void TestValueHash() { */

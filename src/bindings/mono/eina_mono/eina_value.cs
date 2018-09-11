@@ -766,6 +766,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         Setup(containerType, subtype, step);
     }
 
+    /// <summary>Deep copies the given eina Value</summary>
+    public Value(Value v)
+    {
+        Handle = Alloc();
+        if (!eina_value_copy(v.Handle, this.Handle))
+            throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+
+        Disposed = false;
+        Flushed = false;
+        Ownership = Ownership.Managed;
+    }
+
     /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
     public Value(Value_Native value)
     {
