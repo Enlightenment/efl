@@ -3206,6 +3206,12 @@ _key_event_dispatch(Evas_Public_Data *e, void *event_info,
    Evas_Object_Protected_Data *focused_obj =
      efl_data_scope_get(focused, EFL_CANVAS_OBJECT_CLASS);
 
+   if (!focused_obj)
+     {
+        WRN("No element focused");
+        return;
+     }
+
    if (!e->is_frozen && !evas_event_freezes_through(focused, focused_obj))
      {
         evas_object_event_callback_call(focused, focused_obj,
