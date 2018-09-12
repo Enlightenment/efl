@@ -26,7 +26,9 @@ static_libs/libdrm/exynos_drmif.h \
 static_libs/libdrm/i915_drm.h \
 static_libs/libdrm/intel_bufmgr.h \
 static_libs/libdrm/vc4_drm.h \
-static_libs/libdrm/LICENSE
+static_libs/libdrm/LICENSE \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 
 nodist_lib_ecore_wl2_libecore_wl2_la_SOURCES = \
@@ -51,6 +53,8 @@ lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_WL2_CFLAGS@ \
 -I$(top_srcdir)/src/static_libs/libdrm \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DMODULE_ARCH=\"$(MODULE_ARCH)\"
 lib_ecore_wl2_libecore_wl2_la_LIBADD = @ECORE_WL2_LIBS@
 lib_ecore_wl2_libecore_wl2_la_DEPENDENCIES = @ECORE_WL2_INTERNAL_LIBS@
