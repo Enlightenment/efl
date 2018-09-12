@@ -355,6 +355,7 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Text_Annotate.cursor_item_insert;
       Efl.Text_Markup.markup { set; get; }
       Efl.Text_Markup.cursor_markup_insert;
+      Efl.Text_Markup.markup_range { get;}
       Efl.Gfx.Entity.scale { set; }
    }
    events {

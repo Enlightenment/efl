@@ -4612,6 +4612,35 @@ EFL_START_TEST(efl_canvas_text_cursor)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(efl_canvas_text_markup)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+   Efl_Text_Cursor_Cursor *start, *end;
+   char *res;
+
+   start = efl_text_cursor_new(txt);
+   end   = efl_text_cursor_new(txt);
+
+   efl_text_set(txt, "\n\n\n");
+
+   efl_text_cursor_position_set(txt, start, 1);
+   efl_text_cursor_position_set(txt, end, 2);
+   res = efl_text_markup_range_get(txt, start, end);
+   ck_assert_str_eq(res, "<br>");
+   free(res);
+
+   efl_text_set(txt, "a\u2029bc\ndef\n\u2029");
+   efl_text_cursor_position_set(txt, start, 2);
+   efl_text_cursor_position_set(txt, end, 5);
+   res = efl_text_markup_range_get(txt, start, end);
+   ck_assert_str_eq(res, "bc<br>");
+   free(res);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4643,5 +4672,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_canvas_text_simple);
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
+   tcase_add_test(tc, efl_canvas_text_markup);
 }
 

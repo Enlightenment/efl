@@ -10,6 +10,17 @@ interface Efl.Text_Markup(Efl.Text_Cursor) {
             markup: string; [[The markup-text representation set to this text.]]
          }
       }
+      @property markup_range {
+         [[Markup of a given range in the text]]
+         values {
+            markup: mstring @owned; [[The markup-text representation set to
+            this text of a given range]]
+         }
+         keys {
+            start: ptr(Efl.Text_Cursor_Cursor);
+            end: ptr(Efl.Text_Cursor_Cursor);
+         }
+      }
       cursor_markup_insert {
          [[Inserts a markup text to the text object in a given cursor position]]
          params {
