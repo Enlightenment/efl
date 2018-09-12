@@ -34,17 +34,13 @@ class ComItem(BaseItem):
 class FuncItem(ComItem):
     def __init__(self, comp, path, keys):
         super().__init__(comp, os.path.join(path, comp.name), keys)
-
-        self.has_getter = (
-            comp.getter_scope == comp.getter_scope.PUBLIC
-            and comp.full_c_getter_name not in self.keys.blacklist
-            and not os.path.isfile("{}_get".format(os.path.join(path, comp.name)))
+        has = (
+            lambda f, p, s, bl: f.getter_scope == f.getter_scope.PUBLIC
+            and f.full_c_getter_name not in bl
+            and not os.path.isfile("{}_{}".format(os.path.join(p, f.name), s))
         )
-        self.has_setter = (
-            comp.setter_scope == comp.setter_scope.PUBLIC
-            and comp.full_c_setter_name not in self.keys.blacklist
-            and not os.path.isfile("{}_set".format(os.path.join(path, comp.name)))
-        )
+        self.has_getter = has(comp, path, "get", keys.blacklist)
+        self.has_setter = has(comp, path, "set", keys.blacklist)
 
     @property
     def format_name(self):
@@ -59,37 +55,35 @@ class ClassItem(ComItem):
         self.myname = os.path.splitext(comp.file)[0]
         super().__init__(comp, os.path.join(path, self.myname), keys)
 
+        mfilter = (
+            lambda f: f.full_c_method_name not in self.keys.blacklist
+            and not os.path.isfile(os.path.join(self.path, f.name))
+        )
+
         self.methods = [
-            FuncItem(m, self.path, keys)
-            for m in self.comp.methods
-            if m.full_c_method_name not in self.keys.blacklist
-            and not os.path.isfile(os.path.join(self.path, m.name))
+            FuncItem(m, self.path, keys) for m in filter(mfilter, self.comp.methods)
+        ]
+        self._properties = [
+            FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
         ]
 
-        self._properties = [
-            FuncItem(p, self.path, keys)
-            for p in self.comp.properties
-            if p.full_c_method_name not in self.keys.blacklist
-            and not os.path.isfile(os.path.join(self.path, p.name))
-        ]
+        for eoclass in comp.inherits_full:
+            for f in filter(mfilter, eoclass.methods):
+                self.methods.append(FuncItem(f, self.path, keys))
+            for f in filter(mfilter, eoclass.properties):
+                self._properties.append(FuncItem(f, self.path, keys))
 
     @property
     def properties(self):
-        return itertools.filterfalse(
-            lambda p: not (p.has_setter or p.has_getter), self._properties
-        )
+        return filter(lambda p: p.has_setter or p.has_getter, self._properties)
 
     @property
     def properties_get(self):
-        return itertools.filterfalse(
-            lambda p: not p.has_getter, self._properties
-        )
+        return filter(lambda p: p.has_getter, self._properties)
 
     @property
     def properties_set(self):
-        return itertools.filterfalse(
-            lambda p: not p.has_setter, self._properties
-        )
+        return filter(lambda p: p.has_setter, self._properties)
 
     def __iter__(self):
         return itertools.chain(self.methods, self.properties)
