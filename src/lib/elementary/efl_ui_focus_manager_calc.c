@@ -442,11 +442,11 @@ _object_del_cb(void *data, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(regular_node,
     {EFL_GFX_ENTITY_EVENT_RESIZE, _node_new_geometry_cb},
     {EFL_GFX_ENTITY_EVENT_MOVE, _node_new_geometry_cb},
-    {EFL_EVENT_DEL, _object_del_cb},
+    {EFL_EVENT_INVALIDATE, _object_del_cb},
 );
 
 EFL_CALLBACKS_ARRAY_DEFINE(logical_node,
-    {EFL_EVENT_DEL, _object_del_cb},
+    {EFL_EVENT_INVALIDATE, _object_del_cb},
 );
 
 
