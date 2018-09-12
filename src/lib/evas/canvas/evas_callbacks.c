@@ -503,7 +503,7 @@ evas_object_event_callback_del(Evas_Object *eo_obj, Evas_Callback_Type type, Eva
    Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   if (!eo_obj) return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
 
    obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -533,7 +533,7 @@ evas_object_event_callback_del_full(Evas_Object *eo_obj, Evas_Callback_Type type
    Evas_Object_Protected_Data *obj;
    Evas_Event_Cb_Wrapper_Info *info;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(eo_obj, NULL);
+   if (!eo_obj) return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
 
    obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
