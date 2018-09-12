@@ -1,6 +1,15 @@
 ==========
-EFL 1.21.0
+EFL 1.21.1
 ==========
+
+Changes since 1.21.0:
+---------------------
+
+Fixes:
+
+   * ecore_wl2_dmabuf: Link with ecore_wl2 (T7327)
+   * ecore_wl2_dmabuf: Depend on ecore_wl2 (T7327)
+   * efl selection manager - avoid multiple selection get callbacks for req
 
 Changes since 1.20.0:
 ---------------------
