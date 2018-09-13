@@ -5,12 +5,12 @@ evas_object_above_get_internal(const Evas_Object_Protected_Data *obj)
      return (Evas_Object_Protected_Data *)((EINA_INLIST_GET(obj))->next);
    else
      {
-        if ((EINA_INLIST_GET(obj->layer))->next)
-          {
-             Evas_Layer *l;
+        Evas_Layer *l = (Evas_Layer *)(EINA_INLIST_GET(obj->layer))->next;
 
-             l = (Evas_Layer *)((EINA_INLIST_GET(obj->layer))->next);
-             return l->objects;
+        for (; l; l = (Evas_Layer *)(EINA_INLIST_GET(l))->next)
+          {
+             if (l->objects)
+               return l->objects;
           }
      }
    return NULL;
