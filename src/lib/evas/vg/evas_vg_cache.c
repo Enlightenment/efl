@@ -316,6 +316,12 @@ evas_cache_vg_entry_find(const char *file, const char *key,
    if (!se)
      {
         se = calloc(1, sizeof(Evas_Cache_Vg_Entry));
+        if (!se)
+          {
+             CRI("Failed to alloc Vg_Cache_Entry");
+             eina_strbuf_free(hash_key);
+             return NULL;
+          }
         se->file = eina_stringshare_add(file);
         se->key = eina_stringshare_add(key);
         se->w = w;
