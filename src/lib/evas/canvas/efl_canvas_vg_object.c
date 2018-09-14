@@ -160,8 +160,14 @@ _efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_
    if (root_node)
      {
         if (!pd->user_entry)
-          pd->user_entry = malloc(sizeof(User_Vg_Entry));
-
+          {
+             pd->user_entry = malloc(sizeof(User_Vg_Entry));
+             if (!pd->user_entry)
+               {
+                  ERR("Failed to alloc user entry data while setting root node");
+                  return;
+               }
+          }
         pd->user_entry->w = pd->user_entry->h = 0;
         pd->user_entry->root = root_node;
 
