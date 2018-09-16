@@ -4972,14 +4972,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table *)chosen_desc);
              break;
 
-           case EDJE_PART_TYPE_TEXTBLOCK:
-             _edje_textblock_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text *)chosen_desc);
-             break;
-
            case EDJE_PART_TYPE_VECTOR:
              _edje_svg_recalc_apply(ed, ep, pf, (Edje_Part_Description_Vector *)chosen_desc, pos);
              break;
 
+           case EDJE_PART_TYPE_TEXTBLOCK:
            case EDJE_PART_TYPE_EXTERNAL:
            case EDJE_PART_TYPE_RECTANGLE:
            case EDJE_PART_TYPE_SWALLOW:

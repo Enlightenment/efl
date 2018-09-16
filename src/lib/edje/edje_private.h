@@ -2575,11 +2575,6 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje_Calc_Params *params,
                                    int *minw, int *minh,
                                    int *maxw, int *maxh);
-void
-_edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
-                             Edje_Calc_Params *params,
-                             Edje_Part_Description_Text *chosen_desc);
-
 
 Edje_Real_Part   *_edje_real_part_get(const Edje *ed, const char *part);
 Edje_Real_Part   *_edje_real_part_recursive_get(Edje **ed, const char *part);
