@@ -1518,7 +1518,8 @@ _emotion_frame_new(Evas_Object *obj)
    Efl_Canvas_Video_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->anim) sd->anim = ecore_animator_add(_emotion_frame_anim, obj);
+   if (!sd->anim)
+     sd->anim = ecore_evas_animator_add(obj, _emotion_frame_anim, obj);
 }
 
 EAPI void
