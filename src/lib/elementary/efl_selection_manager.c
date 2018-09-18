@@ -1350,7 +1350,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
              if (!seat_sel->accept)
                {  /* Commit animation when drag cancelled */
                   /* Record final position of dragwin, then do animation */
-                  ecore_animator_timeline_add(0.3,
+                  ecore_evas_animator_timeline_add(seat_sel->drag_win, 0.3,
                         _drag_cancel_animate, seat_sel);
                }
              else
@@ -2748,7 +2748,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
           {
              /* Commit animation when drag cancelled */
              /* Record final position of dragwin, then do animation */
-             ecore_animator_timeline_add(0.3, _drag_cancel_animate, seat_sel);
+             ecore_evas_animator_timeline_add(seat_sel->drag_win, 0.3, _drag_cancel_animate, seat_sel);
           }
         else
           {
@@ -4493,7 +4493,7 @@ _drag_anim_start(Sel_Manager_Drag_Container *dc)
         evas_object_del(final_icon);
         evas_object_del(temp_win);
      }
-   dc->animator = ecore_animator_timeline_add(dc->anim_duration, _drag_anim_play, dc);
+   dc->animator = ecore_evas_animator_timeline_add(dc->e, dc->anim_duration, _drag_anim_play, dc);
 }
 
 static Eina_Bool
