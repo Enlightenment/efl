@@ -3196,6 +3196,47 @@ _ecore_evas_animator_fallback(void *data)
 }
 
 static void
+_ticking_start(Ecore_Evas *ee)
+{
+  if (!ee->animator_count)
+    INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
+
+  if (ee->engine.func->fn_animator_register &&
+      ee->engine.func->fn_animator_unregister)
+     {
+        // Backend support per window vsync
+        ecore_evas_tick_begin(ee);
+     }
+  else
+    {
+       // Backend doesn't support per window vsync, fallback to generic support
+       if (ee->animator_count++ > 0) return;
+       ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
+    }
+}
+
+static void
+_ticking_stop(Ecore_Evas *ee)
+{
+   if (ee->animator_count == 1)
+      INF("Unsetting up animator for %p from '%s' titled '%s'.", ee->evas, ee->driver, ee->prop.title);
+
+   if (ee->engine.func->fn_animator_register &&
+       ee->engine.func->fn_animator_unregister)
+     {
+        // Backend support per window vsync
+        ecore_evas_tick_end(ee);
+     }
+   else
+     {
+        // Backend doesn't support per window vsync, fallback to generic support
+        if (--ee->animator_count > 0) return;
+        ecore_animator_del(ee->anim);
+        ee->anim = NULL;
+     }
+}
+
+static void
 _check_animator_event_catcher_add(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item_Full *array = event->info;
@@ -3206,21 +3247,7 @@ _check_animator_event_catcher_add(void *data, const Efl_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if (!ee->animator_count)
-               INF("Setting up animator for %p from '%s' with title '%s'.", ee->evas, ee->driver, ee->prop.title);
-
-             if (ee->engine.func->fn_animator_register &&
-                 ee->engine.func->fn_animator_unregister)
-               {
-                  // Backend support per window vsync
-                  ecore_evas_tick_begin(ee);
-               }
-             else
-               {
-                  // Backend doesn't support per window vsync, fallback to generic support
-                  if (ee->animator_count++ > 0) return;
-                  ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
-               }
+             _ticking_start(ee);
 
              // No need to walk more than once per array as you can not del
              // a partial array
@@ -3240,22 +3267,7 @@ _check_animator_event_catcher_del(void *data, const Efl_Event *event)
      {
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
-             if (ee->animator_count == 1)
-               INF("Unsetting up animator for %p from '%s' titled '%s'.", ee->evas, ee->driver, ee->prop.title);
-
-             if (ee->engine.func->fn_animator_register &&
-                 ee->engine.func->fn_animator_unregister)
-               {
-                  // Backend support per window vsync
-                  ecore_evas_tick_end(ee);
-               }
-             else
-               {
-                  // Backend doesn't support per window vsync, fallback to generic support
-                  if (--ee->animator_count > 0) return;
-                  ecore_animator_del(ee->anim);
-                  ee->anim = NULL;
-               }
+             _ticking_stop(ee);
              return;
           }
      }
