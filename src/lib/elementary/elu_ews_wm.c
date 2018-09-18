@@ -283,7 +283,7 @@ _elm_ews_border_sig_move_start(void *data, Evas_Object *o EINA_UNUSED, const cha
    _ews_border_mover_off.x = x - ox;
    _ews_border_mover_off.y = y - oy;
    _ews_border_mover_obj = bs_o;
-   _ews_border_mover = ecore_animator_add(_elm_ews_border_mover, ee);
+   _ews_border_mover = ecore_evas_animator_add(bs_o, _elm_ews_border_mover, ee);
 }
 
 static void
