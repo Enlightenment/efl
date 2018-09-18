@@ -1636,7 +1636,7 @@ _up_cb(void *data,
    else sd->next_state = !sd->state;
    tm *= 1.0; // FIXME: config for anim time
    ecore_animator_del(sd->animator);
-   sd->animator = ecore_animator_timeline_add(tm, _event_anim, sd);
+   sd->animator = ecore_evas_animator_timeline_add(fl, tm, _event_anim, sd);
    sd->len = tm;
    sd->start = ecore_loop_time_get();
    sd->manual = EINA_TRUE;
@@ -1897,7 +1897,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
                 Eina_Bool front,
                 Elm_Flip_Mode mode)
 {
-   if (!sd->animator) sd->animator = ecore_animator_add(_animate, obj);
+   if (!sd->animator) sd->animator = ecore_evas_animator_add(obj, _animate, obj);
 
    sd->mode = mode;
    sd->start = ecore_loop_time_get();
