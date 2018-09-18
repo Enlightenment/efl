@@ -728,7 +728,7 @@ EAPI void eina_future_cb_easy_desc_flush(Eina_Future_Cb_Easy_Desc *desc);
  *    {
  *       Eina_Error err;
  *       eina_value_get(&v, &err);
- *       fprintf(stderr, "Could get the file data. Reason: %s\n", eina_error_msg_get(err));
+ *       fprintf(stderr, "Could not get the file data. Reason: %s\n", eina_error_msg_get(err));
  *       ecore_main_loop_quit();
  *       return v;
  *    }
