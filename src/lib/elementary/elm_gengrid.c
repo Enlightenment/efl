@@ -2015,8 +2015,8 @@ _item_place(Elm_Gen_Item *it,
                                    item->moving_effect_start_time =
                                      ecore_loop_time_get();
                                    item->item_reorder_move_animator =
-                                     ecore_animator_add
-                                       (_reorder_item_move_animator_cb, it);
+                                     ecore_evas_animator_add
+                                       (it->item->wsd->obj, _reorder_item_move_animator_cb, it);
                                    return;
                                 }
                          }
@@ -2996,7 +2996,7 @@ _swap_items(Elm_Object_Item *eo_it1, Elm_Object_Item *eo_it2, Elm_Focus_Directio
      (sd->obj, ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_START, EO_OBJ(sd->reorder.it1));
    elm_gengrid_item_bring_in(eo_it2, ELM_GENGRID_ITEM_SCROLLTO_IN);
    //TODO: Add elm config for time
-   ecore_animator_timeline_add(0.3, _item_move_cb, sd);
+   ecore_evas_animator_timeline_add(sd->obj, 0.3, _item_move_cb, sd);
 }
 
 static Eina_Bool
