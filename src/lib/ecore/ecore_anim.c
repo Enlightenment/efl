@@ -43,22 +43,6 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Animator
-{
-   EINA_INLIST;
-
-   Ecore_Task_Cb     func;
-   void             *data;
-
-   double            start, run;
-   Ecore_Timeline_Cb run_func;
-   void             *run_data;
-
-   Eina_Bool         delete_me : 1;
-   Eina_Bool         suspended : 1;
-   Eina_Bool         just_added : 1;
-};
-
 static int _ecore_anim_log_dom = -1;
 
 #ifdef ERR

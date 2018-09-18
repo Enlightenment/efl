@@ -209,6 +209,21 @@ struct _Efl_Appthread_Data
    void *thdat;
 };
 
+struct _Ecore_Animator
+{
+   EINA_INLIST;
+
+   Ecore_Task_Cb     func;
+   void             *data;
+
+   double            start, run;
+   Ecore_Timeline_Cb run_func;
+   void             *run_data;
+
+   Eina_Bool         delete_me : 1;
+   Eina_Bool         suspended : 1;
+   Eina_Bool         just_added : 1;
+};
 
 #define EVAS_FRAME_QUEUING        1 /* for test */
 
