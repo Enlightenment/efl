@@ -156,7 +156,7 @@ _start(Eo *eo_obj, Efl_Canvas_Animation_Player_Data *pd)
                            NULL);
    efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_STARTED, NULL);
 
-   pd->animator = ecore_animator_add(_animator_cb, eo_obj);
+   pd->animator = ecore_evas_animator_add(pd->target, _animator_cb, eo_obj);
 
    _animator_cb(eo_obj);
 }
@@ -247,7 +247,7 @@ _efl_canvas_animation_player_efl_player_play_set(Eo *eo_obj,
         if (pd->start_delay_timer) return;
 
         pd->time.prev = ecore_loop_time_get();
-        pd->animator = ecore_animator_add(_animator_cb, eo_obj);
+        pd->animator = ecore_evas_animator_add(pd->target, _animator_cb, eo_obj);
 
         _animator_cb(eo_obj);
      }
