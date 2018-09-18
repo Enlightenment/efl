@@ -189,18 +189,18 @@ static inline unsigned int eina_f32p32_fracc_get(Eina_F32p32 v);
 #define eina_fp32p32_llabs(a) ((a < 0) ? -(a) : (a))
 
 /**
- * @brief Calculates the cosinus of a floating point number
+ * @brief Calculates the cosine of a floating point number
  *
- * @param[in] a The angle in radians to calculate the cosinus from.
- * @return The cosinus value of the angle @p a
+ * @param[in] a The angle in radians to calculate the cosine from.
+ * @return The cosine of the angle @p a
  */
 EAPI Eina_F32p32           eina_f32p32_cos(Eina_F32p32 a);
 
 /**
- * @brief Calculates the sinus of a floating point number
+ * @brief Calculates the sine of a floating point number
  *
- * @param[in] a The angle in radians to calculate the sinus from.
- * @return The cosinus value of the angle @p a
+ * @param[in] a The angle in radians to calculate the sine from.
+ * @return The cosine of the angle @p a
  */
 EAPI Eina_F32p32           eina_f32p32_sin(Eina_F32p32 a);
 
