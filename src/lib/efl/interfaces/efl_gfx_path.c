@@ -1235,7 +1235,7 @@ process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count
       case 'q':
       case 't':
         {
-           for(i=0; i<count; i += 2)
+           for(i = 0; i < count - 1; i += 2)
              {
                 arr[i] = arr[i] + *cur_x;
                 arr[i+1] = arr[i+1] + *cur_y;
