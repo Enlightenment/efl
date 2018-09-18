@@ -834,14 +834,25 @@ elm_transit_go(Elm_Transit *transit)
 
    ELM_SAFE_FREE(transit->go_in_timer, ecore_timer_del);
 
+   Ecore_Evas *ee, *first_ee = NULL;
    Eina_List *elist;
-   Evas_Object *obj;
+   Evas_Object *obj, *first = NULL;
+   Eina_Bool same = EINA_TRUE;
 
    ELM_SAFE_FREE(transit->animator, ecore_animator_del);
 
+   if (transit->objs)
+     {
+        first = eina_list_data_get(transit->objs);
+        first_ee = ecore_evas_ecore_evas_get(evas_object_evas_get(first));
+     }
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-     _transit_obj_data_save(obj);
-
+     {
+        _transit_obj_data_save(obj);
+        ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        if (ee != first_ee)
+          same = EINA_FALSE;
+     }
    if (!transit->event_enabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
@@ -853,8 +864,13 @@ elm_transit_go(Elm_Transit *transit)
    transit->total_revert_time = 0;
    transit->revert_mode = EINA_FALSE;
    transit->time.begin = ecore_loop_time_get();
-   transit->animator = ecore_animator_add(_transit_animate_cb, transit);
 
+   if (!same || !first)
+     transit->animator = ecore_animator_add(_transit_animate_cb, transit);
+   else
+     transit->animator = ecore_evas_animator_add(first,
+                                                 _transit_animate_cb,
+                                                 transit);
    _transit_animate_cb(transit);
 }
 
