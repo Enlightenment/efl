@@ -258,7 +258,7 @@ _transition_layout_animation_start(Evas_Object *obj,
      (obj, ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
 
    if (!layout_data->animator)
-     layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
+     layout_data->animator = ecore_evas_animator_add(obj, transition_animation_cb, obj);
 
    layout_data->animation_ended = EINA_FALSE;
 
