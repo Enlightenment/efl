@@ -391,4 +391,9 @@ EAPI void *ecore_job_del(Ecore_Job *obj);
  * @}
  */
 
+#ifdef EFL_BETA_API_SUPPORT
+EAPI Ecore_Animator *ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data);
+EAPI Ecore_Animator *ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data);
+#endif /* EFL_BETA_API_SUPPORT */
+
 #endif

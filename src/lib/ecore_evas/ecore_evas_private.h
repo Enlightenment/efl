@@ -333,6 +333,13 @@ struct _Ecore_Evas
    unsigned int animator_count;
 
    struct {
+      Eina_Inlist *active;
+      Eina_Inlist *deleted;
+      Eina_Inlist *suspended;
+      Eina_Inlist *run_list;
+   } ee_anim;
+
+   struct {
       unsigned char avoid_damage;
       unsigned char resize_shape : 1;
       unsigned char shaped : 1;

@@ -44,6 +44,7 @@
 #include "ecore_private.h"
 
 static int _ecore_anim_log_dom = -1;
+static Eina_Bool _ee_animators_setup = EINA_FALSE;
 
 #ifdef ERR
 # undef ERR
@@ -97,6 +98,8 @@ static Eina_Bool     tick_skip = EINA_FALSE;
 #ifndef _WIN32
 extern volatile int exit_signal_received;
 #endif
+
+static Ecore_Evas_Object_Animator_Interface _anim_iface;
 
 static void
 _tick_send(signed char val)
@@ -815,6 +818,8 @@ ecore_animator_del(Ecore_Animator *animator)
    if (!animator) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
+   if (animator->ee) return _anim_iface.del(animator);
+
    if (animator->delete_me)
      {
         data = animator->data;
@@ -855,28 +860,36 @@ EAPI void
 ecore_animator_freeze(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!animator) return ;
-   if (animator->delete_me) return ;
-   if (!animator->suspended)
+   if (!animator) return;
+   if (animator->delete_me) return;
+   if (animator->suspended) return;
+
+   if (animator->ee)
      {
-        animator->suspended = EINA_TRUE;
-        animators_suspended++;
-        if (!_have_animators()) _end_tick();
+        _anim_iface.freeze(animator);
+        return;
      }
+   animator->suspended = EINA_TRUE;
+   animators_suspended++;
+   if (!_have_animators()) _end_tick();
 }
 
 EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!animator) return ;
+   if (!animator) return;
    if (animator->delete_me) return;
-   if (animator->suspended)
+   if (!animator->suspended) return;
+
+   if (animator->ee)
      {
-        animator->suspended = EINA_FALSE;
-        animators_suspended--;
-        if (_have_animators()) _begin_tick();
+        _anim_iface.thaw(animator);
+        return;
      }
+   animator->suspended = EINA_FALSE;
+   animators_suspended--;
+   if (_have_animators()) _begin_tick();
 }
 
 EAPI void
@@ -1029,4 +1042,37 @@ _ecore_animator_init(void)
      {
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
      }
+}
+
+void
+ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *iface)
+{
+   _anim_iface = *iface;
+   _ee_animators_setup = EINA_TRUE;
+}
+
+Ecore_Animator *
+ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data)
+{
+   Ecore_Animator *anim = NULL;
+
+   if (_ee_animators_setup)
+     anim = _anim_iface.timeline_add(evo, runtime, func, data);
+
+   if (anim) return anim;
+
+   return ecore_animator_timeline_add(runtime, func, data);
+}
+
+Ecore_Animator *
+ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data)
+{
+   Ecore_Animator *anim = NULL;
+
+   if (_ee_animators_setup)
+     anim = _anim_iface.add(evo, func, data);
+
+   if (anim) return anim;
+
+   return ecore_animator_add(func, data);
 }

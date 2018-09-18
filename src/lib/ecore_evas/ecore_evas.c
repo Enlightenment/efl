@@ -39,6 +39,8 @@
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"
 
+#include "ecore_private.h"
+
 #ifndef O_BINARY
 # define O_BINARY 0
 #endif
@@ -70,6 +72,14 @@ static const Efl_Event_Description *_event_description_get(Efl_Pointer_Action ac
 
 //RENDER_SYNC
 static int _ecore_evas_render_sync = 1;
+
+static void _ecore_evas_animator_flush(Ecore_Evas *ee);
+
+static Ecore_Animator *_ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data);
+static Ecore_Animator *_ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data);
+static void _ecore_evas_animator_freeze(Ecore_Animator *animator);
+static void _ecore_evas_animator_thaw(Ecore_Animator *animator);
+static void *_ecore_evas_animator_del(Ecore_Animator *animator);
 
 static void
 _ecore_evas_focus_out_dispatch(Ecore_Evas *ee, Efl_Input_Device *seat)
@@ -215,6 +225,9 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
      }
    EINA_INLIST_FOREACH(ecore_evases, ee)
      {
+        if (ee->ee_anim.deleted)
+          _ecore_evas_animator_flush(ee);
+
         if (ee->draw_block) continue;
 
         if (ee->manual_render)
@@ -588,6 +601,8 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 EAPI int
 ecore_evas_init(void)
 {
+   Ecore_Evas_Object_Animator_Interface iface;
+
    if (++_ecore_evas_init_count != 1)
      return _ecore_evas_init_count;
 
@@ -629,6 +644,14 @@ ecore_evas_init(void)
      _ecore_evas_app_comp_sync = EINA_FALSE;
    else if (getenv("ECORE_EVAS_COMP_SYNC"))
      _ecore_evas_app_comp_sync = EINA_TRUE;
+
+   iface.add = _ecore_evas_animator_add;
+   iface.timeline_add = _ecore_evas_animator_timeline_add;
+   iface.freeze = _ecore_evas_animator_freeze;
+   iface.thaw = _ecore_evas_animator_thaw;
+   iface.del = _ecore_evas_animator_del;
+   ecore_evas_object_animator_init(&iface);
+
    return _ecore_evas_init_count;
 
  shutdown_ecore:
@@ -3041,6 +3064,54 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
 }
 
+static void
+_ecore_evas_animator_detach(Ecore_Animator *a)
+{
+   Ecore_Evas *ee;
+   Eina_Inlist *tmp;
+
+   if (a->delete_me) return;
+
+   tmp = EINA_INLIST_GET(a);
+
+   ee = a->ee;
+   if (a->suspended)
+     ee->ee_anim.suspended = eina_inlist_remove(ee->ee_anim.suspended, EINA_INLIST_GET(a));
+   else if ((!tmp->next) && (!tmp->prev) && (EINA_INLIST_GET(a) != ee->ee_anim.active))
+     return;
+   else
+     ee->ee_anim.active = eina_inlist_remove(ee->ee_anim.active, EINA_INLIST_GET(a));
+
+   a->suspended = EINA_FALSE;
+}
+
+static void
+_ecore_evas_animators_do(Ecore_Evas *ee)
+{
+   ee->ee_anim.run_list = ee->ee_anim.active;
+   ee->ee_anim.active = NULL;
+
+   while (ee->ee_anim.run_list)
+     {
+        Ecore_Animator *animator;
+
+        animator = EINA_INLIST_CONTAINER_GET(ee->ee_anim.run_list, Ecore_Animator);
+        ee->ee_anim.run_list = eina_inlist_remove(ee->ee_anim.run_list, EINA_INLIST_GET(animator));
+
+        if (!_ecore_call_task_cb(animator->func, animator->data) || animator->delete_me)
+          {
+             if (animator->delete_me) continue;
+
+             animator->delete_me = EINA_TRUE;
+             ee->ee_anim.deleted = eina_inlist_append(ee->ee_anim.deleted, EINA_INLIST_GET(animator));
+          }
+        else
+          {
+             ee->ee_anim.active = eina_inlist_append(ee->ee_anim.active, EINA_INLIST_GET(animator));
+          }
+     }
+}
+
 EAPI void
 ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_time)
 {
@@ -3062,6 +3133,8 @@ ecore_evas_animator_tick(Ecore_Evas *ee, Eina_Rectangle *viewport, double loop_t
    ee->animator_ran = EINA_TRUE;
    efl_event_callback_call(ee->evas, EFL_EVENT_ANIMATOR_TICK, &a);
 
+   if (ee->ee_anim.active)
+     _ecore_evas_animators_do(ee);
    // FIXME: We do not support partial animator in the subcanvas
    EINA_LIST_FOREACH(ee->sub_ecore_evas, l, subee)
      {
@@ -5192,4 +5265,151 @@ ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window)
 
    if (single_window)
      evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+}
+
+static Ecore_Animator *
+_ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data)
+{
+   Ecore_Evas *ee;
+   Ecore_Animator *animator;
+
+   if (EINA_UNLIKELY(!eina_main_loop_is()))
+     EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+
+   if (!func)
+     {
+        ERR("callback function must be set up for an Ecore_Animator object.");
+        return NULL;
+     }
+
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(evo));
+   if (!ee) return NULL;
+
+   /* If we don't have back-end specific ticks, fallback to old animators */
+   if (!ee->engine.func->fn_animator_register) return NULL;
+
+   animator = calloc(1, sizeof(Ecore_Animator));
+   if (!animator) return NULL;
+
+   animator->func = func;
+   animator->data = (void *)data;
+   animator->ee = ee;
+   ee->ee_anim.active = eina_inlist_append(ee->ee_anim.active, EINA_INLIST_GET(animator));
+   _ticking_start(ee);
+
+   return animator;
+}
+
+static Eina_Bool
+_ecore_evas_animator_run(void *data)
+{
+   Ecore_Animator *animator = data;
+   double pos = 0.0, t;
+   Eina_Bool run_ret;
+
+   t = ecore_loop_time_get();
+   if (animator->run > 0.0)
+     {
+        pos = (t - animator->start) / animator->run;
+        if (pos > 1.0) pos = 1.0;
+        else if (pos < 0.0)
+          pos = 0.0;
+     }
+   run_ret = animator->run_func(animator->run_data, pos);
+   if (eina_dbl_exact(pos, 1.0)) run_ret = EINA_FALSE;
+   return run_ret;
+}
+
+static Ecore_Animator *
+_ecore_evas_animator_timeline_add(void             *evo,
+                                  double            runtime,
+                                  Ecore_Timeline_Cb func,
+                                  const void       *data)
+{
+   Ecore_Animator *animator;
+
+   if (runtime <= 0.0) runtime = 0.0;
+
+   animator = _ecore_evas_animator_add(evo, _ecore_evas_animator_run, NULL);
+   if (!animator) return NULL;
+
+   animator->data = animator;
+   animator->run_func = func;
+   animator->run_data = (void *)data;
+   animator->start = ecore_loop_time_get();
+   animator->run = runtime;
+
+   return animator;
+}
+
+static void *
+_ecore_evas_animator_del(Ecore_Animator *in)
+{
+   Ecore_Animator *animator = in;
+   Ecore_Evas *ee;
+   void *data = NULL;
+
+   if (animator->delete_me)
+     return animator->data;
+   ee = animator->ee;
+
+   _ecore_evas_animator_detach(animator);
+
+   ee->ee_anim.deleted = eina_inlist_append(ee->ee_anim.deleted, EINA_INLIST_GET(animator));
+   animator->delete_me = EINA_TRUE;
+
+   if (animator->run_func)
+     data = animator->run_data;
+   else
+     data = animator->data;
+
+   _ticking_stop(ee);
+   return data;
+}
+
+static void
+_ecore_evas_animator_flush(Ecore_Evas *ee)
+{
+   Ecore_Animator *l;
+
+   EINA_INLIST_FREE(ee->ee_anim.deleted, l)
+     {
+        ee->ee_anim.deleted = eina_inlist_remove(ee->ee_anim.deleted, EINA_INLIST_GET(l));
+        free(l);
+     }
+}
+
+void
+_ecore_evas_animator_freeze(Ecore_Animator *in)
+{
+   Ecore_Animator *animator = in;
+   Ecore_Evas *ee;
+
+   ee = animator->ee;
+   _ecore_evas_animator_detach(animator);
+
+   ee->ee_anim.suspended = eina_inlist_append(ee->ee_anim.suspended, EINA_INLIST_GET(animator));
+
+   animator->suspended = EINA_TRUE;
+   _ticking_stop(ee);
+}
+
+void
+_ecore_evas_animator_thaw(Ecore_Animator *in)
+{
+   Ecore_Animator *animator = in;
+   Ecore_Evas *ee;
+
+   EINA_MAIN_LOOP_CHECK_RETURN;
+   if (!animator) return;
+   if (animator->delete_me) return;
+   if (!animator->suspended) return;
+
+   ee = animator->ee;
+   ee->ee_anim.suspended = eina_inlist_remove(ee->ee_anim.suspended,
+                                              EINA_INLIST_GET(animator));
+   animator->suspended = EINA_FALSE;
+   ee->ee_anim.active = eina_inlist_append(ee->ee_anim.active,
+                                           EINA_INLIST_GET(animator));
+   _ticking_start(ee);
 }
