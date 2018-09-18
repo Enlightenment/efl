@@ -95,7 +95,7 @@ EAPI void eina_cow_free(Eina_Cow *cow, const Eina_Cow_Data **data);
  * @param[in,out] cow The pool the pointer came from.
  * @param[in] src The pointer you want to write to.
  *
- * NOTE: this function is not thread safe, be careful.
+ * @note This function is not thread safe.
  */
 EAPI void *eina_cow_write(Eina_Cow *cow,
 			  const Eina_Cow_Data * const *src) EINA_WARN_UNUSED_RESULT;
@@ -108,7 +108,7 @@ EAPI void *eina_cow_write(Eina_Cow *cow,
  * @param[in] data The pointer to which data was written to.
  * @param[in] needed_gc Does this pool need to be garbage collected?
  *
- * NOTE: this function is not thread safe, be careful.
+ * @note This function is not thread safe.
  */
 EAPI void eina_cow_done(Eina_Cow *cow,
 			const Eina_Cow_Data * const *dst,
@@ -145,9 +145,10 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
  * @param[in] Read The const pointer to get a writable handler from.
  * @param[in] Write_Type The type of the pointer you want to write to.
  * @param[in] Write The name of the variable where to put the writeable pointer to.
+ *
  * @since 1.8.0
  *
- * Be careful: this macro opens a C scope that is expected to be closed by
+ * @note This macro opens a C scope that is expected to be closed by
  * EINA_COW_WRITE_END().
  */
 #define EINA_COW_WRITE_BEGIN(Cow, Read, Write_Type, Write)		\
@@ -160,12 +161,14 @@ EAPI Eina_Bool eina_cow_gc(Eina_Cow *cow);
 /**
  * @def EINA_COW_WRITE_END
  * @brief Definition for the macro to close the writeable pointer.
+ *
  * @param[in,out] Cow The Eina_Cow where the const pointer came from.
  * @param[in] Read The const pointer to get a writable handler from.
  * @param[in] Write The name of the variable where to put the writeable pointer to.
+ *
  * @since 1.8.0
  *
- * Be careful: this macro close the scope opened by EINA_COW_WRITE_BEGIN().
+ * @note This macro closes the scope opened by EINA_COW_WRITE_BEGIN().
  */
 #define EINA_COW_WRITE_END(Cow, Read, Write)				\
       eina_cow_done(Cow, ((const Eina_Cow_Data**)&(Read)), Write,	\
