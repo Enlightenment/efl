@@ -2462,7 +2462,7 @@ _item_block_position(Item_Block *itb, const int blk_idx)
                               {
                                  it->item->move_effect_enabled = EINA_TRUE;
                                  sd->reorder_move_animator =
-                                   ecore_animator_add(
+                                   ecore_evas_animator_add(e,
                                      _reorder_move_animator_cb, it);
                               }
                          }
