@@ -299,7 +299,7 @@ _drag_button_up_cb(void *data,
           (obj, EFL_UI_EVENT_SELECTED, (char *)center);
 
         ecore_animator_del(sd->button_animator);
-        sd->button_animator = ecore_animator_add(_button_animator, obj);
+        sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 
         return;
      }
@@ -359,7 +359,7 @@ _drag_button_up_cb(void *data,
           sd->final_position = 0;
      }
    ecore_animator_del(sd->button_animator);
-   sd->button_animator = ecore_animator_add(_button_animator, obj);
+   sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 }
 
 static void
@@ -433,7 +433,7 @@ _track_move_cb(void *data,
           }
      }
    ecore_animator_del(sd->button_animator);
-   sd->button_animator = ecore_animator_add(_button_animator, obj);
+   sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 }
 
 static void
