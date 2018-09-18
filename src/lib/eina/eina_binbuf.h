@@ -59,13 +59,13 @@ EAPI Eina_Binbuf *eina_binbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  *
  * This function creates a new binary string buffer. The passed string
  * is used directly as the buffer, it's effectively the inverse of
- * eina_binbuf_string_steal(). To free the resources, use
- * eina_binbuf_free().
+ * eina_binbuf_string_steal().
  *
- * This routine will not touch the buffer if @p ro is set to
- * #EINA_TRUE, but it will also not copy it. If @p ro is set to
- * #EINA_TRUE any change operation will create a fresh new memory
- * buffer, copy the old data there and modify that one instead.
+ * If @p ro is #EINA_TRUE, then @p str will be treated as read-only.
+ * Other routines using this buffer that would normally modify the
+ * string, will instead create a separate copy to modify and return.
+ *
+ * To free the resources, use eina_binbuf_free().
  *
  * @see eina_binbuf_manage_new()
  * @see eina_binbuf_manage_new_length()
@@ -98,12 +98,13 @@ EAPI Eina_Binbuf *eina_binbuf_manage_new_length(unsigned char *str, size_t lengt
  * @param[in] length The length of the string.
  * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer.  The passed string is used
- * directly as the buffer, it's effectively the inverse of
- * eina_binbuf_string_steal().  The passed string will not be touched.
- * It will not touch the internal buffer.  Any changing operation will
- * create a fresh new memory, copy old data there and starting modifying
- * that one.  To free the resources, use eina_binbuf_free().
+ * This function creates a new read-only string buffer.  The passed
+ * string is used directly as the buffer, it's effectively the inverse
+ * of eina_binbuf_string_steal().  Other routines using this buffer that
+ * would normally modify the string, will instead create a separate copy
+ * to modify and return.
+ *
+ * To free the resources, use eina_binbuf_free().
  *
  * @see eina_binbuf_manage_new()
  *
