@@ -655,9 +655,6 @@ _calc_job(void *data)
 
         sd->nmax = nmax;
         evas_object_smart_changed(sd->pan_obj);
-
-        if (sd->show_region || sd->bring_in)
-          _item_show_region(sd);
      }
    sd->calc_job = NULL;
 }
@@ -2232,6 +2229,8 @@ _elm_gengrid_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Elm_Gengr
           }
         sd->move_effect_enabled = EINA_FALSE;
      }
+   if (sd->show_region || sd->bring_in)
+     _item_show_region(sd);
 
    efl_event_callback_legacy_call
      (psd->wobj, ELM_INTERFACE_SCROLLABLE_EVENT_CHANGED, NULL);
