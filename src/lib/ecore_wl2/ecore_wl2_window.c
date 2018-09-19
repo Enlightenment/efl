@@ -999,7 +999,7 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
 
    eina_stringshare_replace(&window->title, title);
    if (!window->title) return;
-   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
+   if (!window->xdg_toplevel && !window->zxdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_title(window->xdg_toplevel, window->title);
@@ -1015,7 +1015,7 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 
    eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
-   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
+   if (!window->xdg_toplevel && !window->zxdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
