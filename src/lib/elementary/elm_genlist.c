@@ -639,6 +639,7 @@ _item_scroll(Elm_Genlist_Data *sd)
    dh = oh;
 
    if (dw < 1) return;
+   if (ow < 1 || oh < 1) return;
 
    switch (sd->scroll_to_type)
      {
@@ -7191,7 +7192,10 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
         if ((it->item->queued) || (!it->item->mincalcd) || (sd->queue))
           deferred_show = EINA_TRUE;
      }
-   else if (it->item->block->w < 1) deferred_show = EINA_TRUE;
+   if (it->item->block->w < 1) deferred_show = EINA_TRUE;
+
+   evas_object_geometry_get(sd->pan_obj, NULL, NULL, w, h);
+   if (*w < 1 || *h < 1) deferred_show = EINA_TRUE;
 
    if (deferred_show)
      {
@@ -7213,7 +7217,6 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
         sd->show_item = NULL;
      }
 
-   evas_object_geometry_get(sd->pan_obj, NULL, NULL, w, h);
    switch (type)
      {
       case ELM_GENLIST_ITEM_SCROLLTO_IN:
