@@ -651,6 +651,10 @@ _item_scroll(Elm_Genlist_Data *sd)
         dy += ((it->item->h / 2) - (oh / 2));
         break;
 
+      case ELM_GENLIST_ITEM_SCROLLTO_BOTTOM:
+        dy += (it->item->h - oh);
+        break;
+
       case ELM_GENLIST_ITEM_SCROLLTO_IN:
       default:
         if ((sd->expanded_item) &&
