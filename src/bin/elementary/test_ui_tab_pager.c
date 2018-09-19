@@ -165,7 +165,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    efl_ui_pager_current_page_set(tp, 0);
 
-   ad = calloc(1, sizeof(ad));
+   ad = (App_Data*)calloc(1, sizeof(App_Data));
    ad->navi = navi;
    ad->tab_pager = tp;
 
