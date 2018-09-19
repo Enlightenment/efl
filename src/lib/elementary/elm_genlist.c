@@ -4787,7 +4787,6 @@ _queue_process(Elm_Genlist_Data *sd)
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
      }
-   if (!sd->queue) _item_scroll(sd);
    return n;
 }
 
