@@ -1,6 +1,7 @@
 import itertools
 import os
-from testgen.ekeys import GetKey
+from pyolian.eolian import Eolian_Function_Type, Eolian_Class_Type
+from .ekeys import GetKey, Function_List_Type
 
 
 class BaseItem:
@@ -34,13 +35,17 @@ class ComItem(BaseItem):
 class FuncItem(ComItem):
     def __init__(self, comp, path, keys):
         super().__init__(comp, os.path.join(path, comp.name), keys)
-        has = (
-            lambda f, p, s, bl: f.getter_scope == f.getter_scope.PUBLIC
-            and f.full_c_getter_name not in bl
-            and not os.path.isfile("{}_{}".format(os.path.join(p, f.name), s))
+
+        self.has_getter = (
+            comp.type in (Eolian_Function_Type.PROP_GET, Eolian_Function_Type.PROPERTY)
+            and comp.full_c_getter_name not in keys.blacklist
+            and not os.path.isfile("{}_get".format(os.path.join(path, comp.name)))
         )
-        self.has_getter = has(comp, path, "get", keys.blacklist)
-        self.has_setter = has(comp, path, "set", keys.blacklist)
+        self.has_setter = (
+            comp.type in (Eolian_Function_Type.PROP_SET, Eolian_Function_Type.PROPERTY)
+            and comp.full_c_setter_name not in keys.blacklist
+            and not os.path.isfile("{}_set".format(os.path.join(path, comp.name)))
+        )
 
     @property
     def format_name(self):
@@ -67,11 +72,30 @@ class ClassItem(ComItem):
             FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
         ]
 
-        for eoclass in comp.inherits_full:
-            for f in filter(mfilter, eoclass.methods):
-                self.methods.append(FuncItem(f, self.path, keys))
-            for f in filter(mfilter, eoclass.properties):
-                self._properties.append(FuncItem(f, self.path, keys))
+        if self.keys.funclist in (
+            Function_List_Type.INHERITIS,
+            Function_List_Type.INHERITIS_FULL,
+        ):
+            for eoclass in (
+                eoclass.inherits
+                if self.keys.funclist == Function_List_Type.INHERITIS
+                else eoclass.inherits_full
+            ):
+                for f in filter(mfilter, eoclass.methods):
+                    self.methods.append(FuncItem(f, self.path, keys))
+                for f in filter(mfilter, eoclass.properties):
+                    self._properties.append(FuncItem(f, self.path, keys))
+        elif self.keys.funclist == Function_List_Type.CLASS_IMPLEMENTS:
+            for imp in comp.implements:
+                f = imp.function
+                if f.type == Eolian_Function_Type.METHOD and mfilter(f):
+                    self.methods.append(FuncItem(f, self.path, keys))
+                if f.type in (
+                    Eolian_Function_Type.PROPERTY,
+                    Eolian_Function_Type.PROP_GET,
+                    Eolian_Function_Type.PROP_SET,
+                ) and mfilter(f):
+                    self._properties.append(FuncItem(f, self.path, keys))
 
     @property
     def properties(self):
@@ -119,7 +143,7 @@ class SuiteGen(BaseItem):
         self.clslist.clear()
         for eofile in eofiles:
             eocls = eolian_db.class_by_file_get(os.path.basename(eofile))
-            if not eocls or eocls.type != eocls.type.REGULAR:
+            if not eocls or eocls.type != Eolian_Class_Type.REGULAR:
                 continue
             self.loadObj(eocls)
 
