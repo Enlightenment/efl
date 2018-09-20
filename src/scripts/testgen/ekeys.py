@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # encoding: utf-8
 
+class Function_List_Type:
+    INHERITIS = 1
+    INHERITIS_FULL = 2
+    CLASS_IMPLEMENTS = 3
+    CLASS_ONLY = 4
 
 class EKeys:
     def __init__(self, ext):
@@ -10,6 +15,7 @@ class EKeys:
         self.verbs = []
         self.blacklist = []
         self.keyloads = ["init", "shutdown", "custom"]
+        self.funclist = Function_List_Type.CLASS_IMPLEMENTS
 
     def type_convert(self, eotype):
         return eotype.name
