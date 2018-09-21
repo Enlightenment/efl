@@ -654,12 +654,18 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if ((py + cy) > (ch / 2)) ty = cy + py - 1 - th;
         else ty = cy + py + 1;
      }
-   if (ow > 1) rel_x = (double)((ox + (ow / 2)) - ((tx - cx) + (tw / 2))) /
-     (double)(ow / 2);
-   else rel_x = 0.0;
-   if (oh > 1) rel_y = (double)((oy + (oh / 2)) - ((ty - cy) + (th / 2))) /
-     (double)(oh / 2);
-   else rel_y = 0.0;
+
+   if (inside_eventarea)
+     {
+        rel_x = (px - (tx - cx)) / (double)tw;
+        rel_y = (py - (ty - cy)) / (double)th;
+     }
+   else
+     {
+        rel_x = (ox + (ow / 2) - (tx - cx)) / (double)tw;
+        rel_y = (oy + (oh / 2) - (ty - cy)) / (double)th;
+     }
+
    tx += basex;
    ty += basey;
    // XXX: if this is a window for toolkit this relies on abs positioning
