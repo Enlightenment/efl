@@ -3,9 +3,9 @@
      id="defs4">
     <radialGradient
        id="radialGradient1"
-       r="20"
-       cx="30"
-       cy="30"
+       r="0.2"
+       cx="0.3"
+       cy="0.3"
        spreadMethod="reflect">
       <stop
          style="stop-color:#ff0000;stop-opacity:1;"
