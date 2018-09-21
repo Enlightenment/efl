@@ -165,7 +165,7 @@ interface Efl.Ui.Focus.Manager {
         flush,pre: void; [[Emitted once the graph calculationg will be performed]]
         coords,dirty: void; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
-        focused : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
+        focus,changed : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]
     }
 }

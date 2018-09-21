@@ -1680,8 +1680,8 @@ _legacy_focused(void *data, const Efl_Event *ev)
 static void
 _legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
+   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _legacy_focused, ev->object);
+   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _legacy_focused, ev->object);
 }
 
 EOLIAN static Eo *
