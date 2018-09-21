@@ -17,3 +17,6 @@ uninstall-local-ecoreavahi:
 
 INSTALL_EXAMPLES += install-examples-ecoreavahi
 UNINSTALL_EXAMPLES += uninstall-local-ecoreavahi
+
+LDADD += @AVAHI_CLIENT_LIBS@
+
