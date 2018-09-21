@@ -846,6 +846,8 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
  * @param[in] file The path to the EDJ file to load @p from
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
  */
 EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const char *group);
 
@@ -866,6 +868,8 @@ EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const ch
  * @param[out] file The path to the EDJ file to load @p from
  * @param[out] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
  */
 EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const char **group);
 
@@ -895,12 +899,14 @@ EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const 
  *
  * @see edje_object_add()
  * @see edje_object_file_get()
- * @see edje_object_mmap_set()
  * @since 1.8
  *
  * @param[in] file The Eina.File pointing to the EDJ file to load @p from
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
+ *
  */
 EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 

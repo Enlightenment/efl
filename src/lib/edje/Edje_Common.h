@@ -13,9 +13,16 @@ typedef struct _Edje_Version
    int major; /**< The major number of Edje version. */
    int minor; /**< The minor number of Edje version. */
    int micro; /**< The micro number of Edje version. */
-   int revision; /**< The revision of Edje version) */
+   int revision; /**< The revision of Edje version. */
 } Edje_Version;
 
+/**
+ * @internal
+ * @ingroup Edje_General_Group
+ *
+ * Current Edje Version info
+ *
+ */
 EAPI extern Edje_Version *edje_version;
 
 #ifndef _EDJE_OBJECT_EO_CLASS_TYPE
