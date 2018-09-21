@@ -612,10 +612,10 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
 
              efl_gfx_path_bounds_get(grad_obj, &grad_geom);
 
-             double cy = grad_geom.h / 2 + grad_geom.y;
-             double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;
-             double cx = grad_geom.w / 2 + grad_geom.x;
-             double cx_scaled = (grad_geom.w / 2) * scale_reversed_X;
+             double cy = (grad_geom.h / 2.0) + grad_geom.y;
+             double cy_scaled = (grad_geom.h / 2.0) * scale_reversed_Y;
+             double cx = (grad_geom.w / 2.0) + grad_geom.x;
+             double cx_scaled = (grad_geom.w / 2.0) * scale_reversed_X;
 
              /* matrix tranformation of gradient figure:
               * 0. we remember size of gradient and it's center point
