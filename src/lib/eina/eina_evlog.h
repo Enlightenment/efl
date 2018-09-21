@@ -23,10 +23,10 @@
  * @addtogroup Eina_Evlog Event Log Debugging
  * @ingroup Eina
  *
- * @brief These functions are use internally by EFL in general for profiling.
- * This API is not considered stable or intended for use outside of EFL
- * itself at this stage, so do not use this unless you wish to keep up. The
- * format of debug logs may and likely will change as this feature matures.
+ * @brief These functions are used internally by EFL in general for
+ * profiling.  This API is not considered stable or intended for use
+ * outside of EFL itself at this stage. The format of debug logs may and
+ * likely will change as this feature matures.
  *
  * @{
  *
@@ -56,7 +56,7 @@ struct _Eina_Evlog_Buf
 };
 
 /**
- * @brief Logs an event in our event log for profiling data.
+ * @brief Logs an event for profiling data.
  *
  * Log some interesting event inside of EFL, e.g. a wakeup (and why etc.).
  * The @p event string must always be provided and be of the form:

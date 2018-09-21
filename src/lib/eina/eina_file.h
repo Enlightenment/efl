@@ -75,7 +75,7 @@
  *          out file size and type.
  *
  * @warning All functions in this group are @b blocking, which means they may
- *          take a long time to return, use them carefully.
+ *          take a long time to return; use them carefully.
  *
  * See an example @ref eina_file_example_01_page "here".
  *

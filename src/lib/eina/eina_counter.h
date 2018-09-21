@@ -32,7 +32,7 @@
  * counter, use eina_counter_new(). To free it, use
  * eina_counter_free().
  *
- * To time a part of a code, call eina_counter_start() just before it,
+ * To time a code sequence, call eina_counter_start() just before it,
  * and eina_counter_stop() just after it. Each time you start timing
  * a code, a clock is added to a list. You can give the number of that
  * clock with the second argument of eina_counter_stop(). To send all
