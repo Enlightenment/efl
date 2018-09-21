@@ -183,17 +183,17 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    _evas_cache_image_lru_del(ie);
    _evas_cache_image_lru_nodata_del(ie);
 
-   cache->func.destructor(ie);
+   if ((cache) && (cache->func.destructor)) cache->func.destructor(ie);
    FREESTRC(ie->cache_key);
    FREESTRC(ie->file);
    FREESTRC(ie->key);
    if (ie->f && ie->flags.given_mmap) eina_file_close(ie->f);
    ie->cache = NULL;
-   cache->func.surface_delete(ie);
+   if ((cache) && (cache->func.surface_delete)) cache->func.surface_delete(ie);
 
    SLKD(ie->lock);
    SLKD(ie->lock_cancel);
-   cache->func.dealloc(ie);
+   if ((cache) && (cache->func.dealloc)) cache->func.dealloc(ie);
 }
 
 #if 0
