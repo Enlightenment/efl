@@ -160,12 +160,16 @@ _eina_vpath_interface_sys_init(void)
    // $HOME / ~/ etc.
    home = eina_environment_home_get();
    if (!home)
-     home = _fallback_home_dir();
+     {
+        home = _fallback_home_dir();
+        _eina_vpath_data_add("home", home);
+        free(home);
+     }
+   else
+     _eina_vpath_data_add("home", home);
 
    // tmp dir - system wide
    tmp = eina_environment_tmp_get();
-
-   _eina_vpath_data_add("home", home);
    _eina_vpath_data_add("tmp", tmp);
 }
 
