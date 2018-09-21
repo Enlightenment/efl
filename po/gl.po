@@ -2,12 +2,12 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
-#: src/lib/elementary/elm_config.c:4164
+#: src/lib/elementary/elm_config.c:4240
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-08-09 11:50+0200\n"
+"POT-Creation-Date: 2018-09-21 12:35+0100\n"
 "PO-Revision-Date: 2014-05-24 08:39+0000\n"
 "Last-Translator: Kaptan <khanyux@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -250,18 +250,18 @@ msgstr "Cartafol persoal"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2108
+#: src/lib/elementary/elc_fileselector.c:2103
 msgid "OK"
 msgstr "Aceptar"
 
-#: src/lib/elementary/elc_fileselector.c:2118
+#: src/lib/elementary/elc_fileselector.c:2113
 #: src/lib/elementary/elm_entry.c:1734 src/lib/elementary/elm_entry.c:1759
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
-#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1511
-#: src/lib/elementary/elm_genlist.c:1759 src/lib/elementary/elm_list.c:2180
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1508
+#: src/lib/elementary/elm_genlist.c:1764 src/lib/elementary/elm_list.c:2185
 #: src/lib/elementary/efl_ui_radio.c:201
 #: src/lib/elementary/elm_segment_control.c:529
 #: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
@@ -284,22 +284,22 @@ msgstr "elemento de entrada de botón múltiplo"
 msgid "multi button entry"
 msgstr "entrada de botón múltiplo"
 
-#: src/lib/elementary/elc_naviframe.c:435
-#: src/lib/elementary/elc_naviframe.c:463
+#: src/lib/elementary/elc_naviframe.c:408
+#: src/lib/elementary/elc_naviframe.c:436
 msgid "Title"
 msgstr "Título"
 
-#: src/lib/elementary/elc_naviframe.c:442
+#: src/lib/elementary/elc_naviframe.c:415
 #, fuzzy
 msgid "Subtitle"
 msgstr "subtítulo"
 
-#: src/lib/elementary/elc_naviframe.c:1029
-#: src/lib/elementary/elc_naviframe.c:1247
+#: src/lib/elementary/elc_naviframe.c:968
+#: src/lib/elementary/elc_naviframe.c:1186
 msgid "Back"
 msgstr "Atrás"
 
-#: src/lib/elementary/elc_naviframe.c:1345
+#: src/lib/elementary/elc_naviframe.c:1356
 msgid "Next"
 msgstr "Seguinte"
 
@@ -386,7 +386,7 @@ msgstr "Estado: Desconectado"
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elementary/efl_ui_check.c:355
+#: src/lib/elementary/efl_ui_check.c:349
 msgid "Check"
 msgstr "Comprobar"
 
@@ -436,7 +436,7 @@ msgstr "Paleta de selección de cor"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4187
+#: src/lib/elementary/elm_config.c:4263
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -468,7 +468,7 @@ msgstr "Seleccionar"
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elementary/elm_gengrid.c:1541
+#: src/lib/elementary/elm_gengrid.c:1538
 msgid "Gengrid Item"
 msgstr "Grella xenérica"
 
@@ -484,23 +484,23 @@ msgstr "Elemento do índice"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: src/lib/elementary/elm_panel.c:85
+#: src/lib/elementary/elm_panel.c:84
 msgid "state: opened"
 msgstr "Estado: aberto"
 
-#: src/lib/elementary/elm_panel.c:86
+#: src/lib/elementary/elm_panel.c:85
 msgid "state: closed"
 msgstr "Estado: pechado"
 
-#: src/lib/elementary/elm_panel.c:128
+#: src/lib/elementary/elm_panel.c:127
 msgid "A panel is open"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:130
+#: src/lib/elementary/elm_panel.c:129
 msgid "Double tap to close panel menu"
 msgstr ""
 
-#: src/lib/elementary/elm_panel.c:182
+#: src/lib/elementary/elm_panel.c:181
 msgid "panel button"
 msgstr "botón do panel"
 
