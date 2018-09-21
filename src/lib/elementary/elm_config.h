@@ -1003,7 +1003,7 @@ EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
  * canvas windows in the event the native display system does not provide one
  * or the native one is not wanted.
  *
- * @param longpress_timeout Timeout for long press event
+ * @param mode The mode for software cursors
  * @ingroup Softcursor
  *
  * @see elm_config_softcursor_mode_get()
