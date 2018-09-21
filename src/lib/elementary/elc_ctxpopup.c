@@ -1060,7 +1060,9 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 
    //Background
    priv->bg = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default");
+   if (!elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
+     CRI("ctxpopup(%p) failed to set theme [efl/ctxpopup/bg/default]!", obj);
+
    edje_object_signal_callback_add
      (priv->bg, "elm,action,click", "*", _bg_clicked_cb, obj);
    evas_object_smart_member_add(priv->bg, obj);
