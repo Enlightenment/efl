@@ -1111,6 +1111,7 @@ static Node*
 _next(Node *node)
 {
    Node *n;
+   if (!node) return NULL;
 
    //Case 1 we are having children
    //But only enter the children if it does NOT have a redirect manager
@@ -1295,6 +1296,7 @@ _request_subchild(Node *node)
 {
    //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
    Node *target = NULL;
+   if (!node) return target;
 
    if (node->tree.children)
      {
