@@ -2165,12 +2165,16 @@ _efl_ui_layout_object_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_L
      }
 
    // Update display right away if possible
-   if (!pd->connect.model) return ;
+   if (pd->connect.model)
+     {
+        if (hash == pd->connect.signals)
+          _efl_ui_layout_view_model_signal_update(pd, data, sprop);
+        else
+          _efl_ui_layout_view_model_property_update(pd, data, sprop);
+     }
 
-   if (hash == pd->connect.signals)
-     _efl_ui_layout_view_model_signal_update(pd, data, sprop);
-   else
-     _efl_ui_layout_view_model_property_update(pd, data, sprop);
+   if (!sprop)
+     free(data);
 }
 
 EOLIAN static void
