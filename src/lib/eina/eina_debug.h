@@ -61,7 +61,7 @@ typedef struct _Eina_Debug_Session Eina_Debug_Session;
  * @param[in] buffer the packet payload data. It doesn't contain any transport information.
  * @param[in] size the packet payload size
  *
- * return true on success, false if the connection seems compromised
+ * @return True on success, false if the connection seems compromised.
  */
 typedef Eina_Bool (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void *buffer, int size);
 
@@ -91,7 +91,7 @@ typedef void (*Eina_Debug_Opcode_Status_Cb)(void *data, Eina_Bool status);
  *
  * The given packet is the entire data received, including the header.
  *
- * return the return result of the invoked callback
+ * @return The return result of the invoked callback.
  */
 typedef Eina_Bool (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, void *buffer);
 
@@ -169,7 +169,7 @@ EAPI void eina_debug_disable(void);
  *
  * @param[in] is_master true if the application is a debugger. EINA_FALSE otherwise.
  *
- * @return the session on success or NULL otherwise
+ * @return The session on success or NULL otherwise.
  */
 EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
 
@@ -180,7 +180,7 @@ EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
  *
  * @param[in] port the port to connect to
  *
- * @return the session on success or NULL otherwise
+ * @return The session on success or NULL otherwise.
  */
 EAPI Eina_Debug_Session *eina_debug_remote_connect(int port);
 
@@ -208,7 +208,7 @@ EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina
  *
  * @param[in,out] session the session
  *
- * @return the session dispatcher
+ * @return The session dispatcher.
  */
 EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *session);
 
@@ -222,7 +222,7 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
  * @param[in,out] session the session
  * @param[in] buffer the packet
  *
- * return true on success, false if the connection seems compromised
+ * @return True on success, false if the connection seems compromised.
  */
 EAPI Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
 
@@ -239,7 +239,7 @@ EAPI void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
  *
  * @param[in,out] session the session
  *
- * @return the data of the session
+ * @return The data of the session.
  */
 EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
 
@@ -272,7 +272,7 @@ EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
  * @param[in] data payload to send
  * @param[in] size payload size
  *
- * @return the number of sent bytes
+ * @return The number of sent bytes.
  */
 EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
 
@@ -283,7 +283,7 @@ EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int o
  * @param[in] cb callback to call when the timeout is reached
  * @param[in] data user data
  *
- * @return the timer handle, NULL on error
+ * @return The timer handle, NULL on error.
  */
 EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
 
