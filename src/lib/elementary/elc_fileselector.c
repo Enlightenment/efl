@@ -1951,19 +1951,14 @@ _elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _from_efl_event_call(Elm_Fileselector *fs, const Efl_Event_Description *evt_desc, Efl_Model *model)
 {
-   Legacy_Event_Path_Then_Data *evt_data;
    Eina_Value *fetch;
    char *path;
-
-   evt_data = calloc(1, sizeof(Legacy_Event_Path_Then_Data));
-   evt_data->eo_obj = fs;
-   evt_data->evt_desc = evt_desc;
 
    // Call legacy smart callback with path
    fetch = efl_model_property_get(model, "path");
    path = eina_value_to_string(fetch);
 
-   _event_to_legacy_call(evt_data->eo_obj, evt_data->evt_desc, path);
+   _event_to_legacy_call(fs, evt_desc, path);
 
    // Call Eo event with model
    return efl_event_callback_call(fs, evt_desc, model);
