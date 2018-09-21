@@ -4257,6 +4257,7 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
 EOLIAN static Eo *
 _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 {
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
    sd->content_item_map = eina_hash_pointer_new(NULL);
    sd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_GEN_CLASS, obj,
     efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),

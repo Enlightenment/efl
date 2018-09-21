@@ -2981,6 +2981,7 @@ _elm_toolbar_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_
 EOLIAN static Eo *
 _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
 {
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

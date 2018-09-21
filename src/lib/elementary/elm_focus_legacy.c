@@ -340,3 +340,43 @@ elm_object_focus_set(Evas_Object *obj,
         evas_object_focus_set(obj, focus);
      }
 }
+
+//legacy helpers that are used in code
+typedef struct {
+  Eina_Bool focused;
+  Eo *emittee;
+} Legacy_Manager_Focus_State;
+
+static void
+_focus_manager_focused(void *data, const Efl_Event *ev)
+{
+   Legacy_Manager_Focus_State *state = data;
+   Eina_Bool currently_focused = !!efl_ui_focus_manager_focus_get(ev->object);
+
+   if (currently_focused == state->focused) return;
+
+   if (currently_focused)
+     evas_object_smart_callback_call(state->emittee, "focused", NULL);
+   else
+     evas_object_smart_callback_call(state->emittee, "unfocused", NULL);
+
+   state->focused = currently_focused;
+}
+
+static void
+_focus_manager_del(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   free(data);
+}
+
+void
+legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Manager *emittee)
+{
+   Legacy_Manager_Focus_State *state = calloc(1, sizeof(Legacy_Manager_Focus_State));
+
+   state->emittee = emittee;
+   state->focused = EINA_FALSE;
+
+   efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focus_manager_focused, state);
+   efl_event_callback_add(manager, EFL_EVENT_DEL, _focus_manager_del, state);
+}
