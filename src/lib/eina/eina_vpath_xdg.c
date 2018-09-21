@@ -15,10 +15,10 @@ eina_xdg_env_init(void)
 {
    char buf[PATH_MAX];
    char *s;
-   const char *home;
+   char home[PATH_MAX];
    Eina_Vpath_Interface_User user;
 
-   home = eina_vpath_resolve("(:home:)/");
+   eina_vpath_resolve_snprintf(home, sizeof(home), "(:home:)/");
 
    memset(&user, 0, sizeof(Eina_Vpath_Interface_User));
 
