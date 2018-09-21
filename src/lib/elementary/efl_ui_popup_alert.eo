@@ -23,6 +23,7 @@ class Efl.Ui.Popup_Alert(Efl.Ui.Popup)
          }
          values {
             text: string; [[Alert string on button]]
+            icon: Efl.Object; [[Alert icon on button]]
          }
       }
    }

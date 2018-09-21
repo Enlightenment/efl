@@ -368,9 +368,9 @@ test_ui_popup_alert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, efl_ui_popup_alert_clicked_cb, NULL);
 }
@@ -390,9 +390,9 @@ _alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_content_set(efl_ui_popup, layout);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
 
@@ -414,9 +414,9 @@ _alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_content_set(efl_ui_popup, layout);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    //This is beta API for now. So EFL_UI_POPUP_ALERT_SCROLL_BETA should be defined.
    efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(320, -1));
@@ -440,9 +440,9 @@ _alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_content_set(efl_ui_popup, layout);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    //This is beta API for now. So EFL_UI_POPUP_ALERT_SCROLL_BETA should be defined.
    efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 320));
@@ -466,9 +466,9 @@ _alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_content_set(efl_ui_popup, layout);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    //This is beta API for now. So EFL_UI_POPUP_ALERT_SCROLL_BETA should be defined.
    efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(320, 320));
@@ -492,9 +492,9 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_content_set(efl_ui_popup, layout);
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    //This is beta API for now. So EFL_UI_POPUP_ALERT_SCROLL_BETA should be defined.
    efl_ui_popup_alert_scroll_expandable_set(efl_ui_popup, EINA_SIZE2D(80, 80));
@@ -571,9 +571,9 @@ _alert_text_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, "This is Text Popup");
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_size_set(efl_ui_popup, EINA_SIZE2D(200, 200));
 
@@ -594,9 +594,9 @@ _alert_text_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
 
@@ -615,9 +615,9 @@ _alert_text_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, "This is Text Popup");
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_event_callback_add(efl_ui_popup, EFL_UI_POPUP_ALERT_EVENT_BUTTON_CLICKED, efl_ui_popup_alert_text_clicked_cb, NULL);
 }
@@ -633,9 +633,9 @@ _alert_text_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, "This is Text Popup");
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(300, -1));
 
@@ -651,9 +651,9 @@ _alert_text_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, "This is Text Popup");
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 300));
 
@@ -673,9 +673,9 @@ _alert_text_case6_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(300, 300));
 
@@ -700,9 +700,9 @@ _alert_text_case7_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(300, -1));
 
@@ -723,9 +723,9 @@ _alert_text_case8_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 300));
 
@@ -748,9 +748,9 @@ _alert_text_case9_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(10, 10));
 
@@ -773,9 +773,9 @@ _alert_text_case10_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(150, 150));
 
@@ -798,9 +798,9 @@ _alert_text_case11_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(150, -1));
 
@@ -823,9 +823,9 @@ _alert_text_case12_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(300, -1));
 
@@ -848,9 +848,9 @@ _alert_text_case13_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 150));
 
@@ -873,9 +873,9 @@ _alert_text_case14_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
    efl_text_set(efl_ui_popup, eina_strbuf_string_get(message_buf));
 
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No");
-   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel");
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_popup_alert_button_set(efl_ui_popup, EFL_UI_POPUP_ALERT_BUTTON_USER, "Cancel", NULL);
 
    efl_ui_popup_alert_text_expandable_set(efl_ui_popup, EINA_SIZE2D(-1, 300));
 

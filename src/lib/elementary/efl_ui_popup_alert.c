@@ -98,7 +98,7 @@ _user_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popup_Alert_Button type, const char *text)
+_efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popup_Alert_Button type, const char *text, Eo *icon)
 {
    int i;
    Eo *cur_content;
@@ -133,6 +133,7 @@ _efl_ui_popup_alert_button_set(Eo *obj, Efl_Ui_Popup_Alert_Data *pd, Efl_Ui_Popu
           }
      }
    efl_text_set(pd->button[type], text);
+   efl_content_set(pd->button[type], icon);
 
    cur_content = efl_content_get(efl_part(obj, "efl.buttons"));
    if (cur_content)
