@@ -134,7 +134,7 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
 
-   EO_OBJ_POINTER(obj_id, obj);
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
 
    // Finally invalidate itself if it wasn't done already
    // I am not sure this is a good idea, but it force the
