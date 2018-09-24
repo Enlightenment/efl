@@ -319,9 +319,6 @@ static void efreet_menu_path_set(Efreet_Menu_Internal *internal, const char *pat
 static int efreet_menu_save_menu(Efreet_Menu *menu, FILE *f, int indent);
 static int efreet_menu_save_indent(FILE *f, int indent);
 
-static void _efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread);
-static void _efreet_menu_async_end_cb(void *data, Ecore_Thread *thread);
-
 int
 efreet_menu_init(void)
 {
@@ -530,43 +527,11 @@ efreet_menu_file_set(const char *file)
 
 /* deprecated */
 EFREET_DEPRECATED_API EAPI void
-efreet_menu_async_get(Efreet_Menu_Cb func, const void *data)
+efreet_menu_async_get(Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
-    char menu[PATH_MAX];
-    const char *dir;
-    Eina_List *config_dirs, *l;
-
     ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
 
     return;
-
-
-    if (!func) return;
-
-#ifndef STRICT_SPEC
-    /* prefer user set menu */
-    if (efreet_menu_file)
-    {
-        if (ecore_file_exists(efreet_menu_file))
-            efreet_menu_async_parse(efreet_menu_file, func, data);
-    }
-#endif
-
-    /* check the users config directory first */
-    snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                        efreet_config_home_get(), efreet_menu_prefix);
-    if (ecore_file_exists(menu))
-        efreet_menu_async_parse(menu, func, data);
-
-    /* fallback to the XDG_CONFIG_DIRS */
-    config_dirs = efreet_config_dirs_get();
-    EINA_LIST_FOREACH(config_dirs, l, dir)
-    {
-        snprintf(menu, sizeof(menu), "%s/menus/%sapplications.menu",
-                                    dir, efreet_menu_prefix);
-        if (ecore_file_exists(menu))
-            efreet_menu_async_parse(menu, func, data);
-    }
 }
 
 EAPI Efreet_Menu *
@@ -606,18 +571,11 @@ efreet_menu_get(void)
 
 /* deprecated */
 EFREET_DEPRECATED_API EAPI void
-efreet_menu_async_parse(const char *path, Efreet_Menu_Cb func, const void *data)
+efreet_menu_async_parse(const char *path EINA_UNUSED, Efreet_Menu_Cb func EINA_UNUSED, const void *data EINA_UNUSED)
 {
-    Efreet_Menu_Async *async;
-
     ERR("%s is deprecated and shouldn't be called", __FUNCTION__);
 
     return;
-    async = NEW(Efreet_Menu_Async, 1);
-    async->func = func;
-    async->data = (void*)data;
-    async->path = eina_stringshare_add(path);
-    ecore_thread_run(_efreet_menu_async_parse_cb, _efreet_menu_async_end_cb, NULL, async);
 }
 
 EAPI Efreet_Menu *
@@ -3925,20 +3883,3 @@ efreet_menu_save_indent(FILE *f, int indent)
     return 1;
 }
 
-static void
-_efreet_menu_async_parse_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-    Efreet_Menu_Async *async = data;
-
-    async->menu = efreet_menu_parse(async->path);
-}
-
-static void
-_efreet_menu_async_end_cb(void *data, Ecore_Thread *thread EINA_UNUSED)
-{
-    Efreet_Menu_Async *async = data;
-
-    async->func(async->data, async->menu);
-    eina_stringshare_del(async->path);
-    free(async);
-}
