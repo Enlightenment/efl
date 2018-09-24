@@ -218,7 +218,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_text_cursor_position_set(en, cur, 2);
    efl_text_cursor_item_insert(en, cur, "emoticon/happy", "size=32x32");
    efl_text_cursor_position_set(en, cur, 50);
-   sprintf(buf, "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
    efl_text_cursor_item_insert(en, cur, buf, "size=32x32");
 
    efl_text_cursor_position_set(en, main_cur, 5);
@@ -416,18 +416,18 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
       efl_add(EFL_UI_TEXT_FACTORY_EMOTICONS_CLASS, en);
 
    // Test assigning file path source
-   sprintf(buf, "%s/images/sky_01.jpg", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
    efl_ui_text_factory_images_matches_add(factories[FACTORY_IMAGE].item_factory,
          images[0], buf, NULL);
-   sprintf(buf, "%s/images/logo.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    efl_ui_text_factory_images_matches_add(factories[FACTORY_IMAGE].item_factory,
          images[1], buf, NULL);
-   sprintf(buf, "%s/images/mystrale.jpg", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", elm_app_data_dir_get());
    efl_ui_text_factory_images_matches_add(factories[FACTORY_IMAGE].item_factory,
          images[2], buf, NULL);
 
    // Open EET source w/ key
-   sprintf(buf, "%s/images/image_items.eet", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/image_items.eet", elm_app_data_dir_get());
    f = eina_file_open(buf, EINA_FALSE);
    if (f)
      {
@@ -460,7 +460,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    efl_text_cursor_item_insert(en, cur, "emoticon/happy", "size=32x32");
    efl_text_cursor_position_set(en, cur, 50);
 
-   sprintf(buf, "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "file://%s/images/sky_01.jpg", elm_app_data_dir_get());
    efl_text_cursor_item_insert(en, cur, buf, "size=32x32");
    efl_text_cursor_position_set(en, main_cur, 5);
 
