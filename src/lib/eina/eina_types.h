@@ -92,6 +92,24 @@
 
 #include "eina_config.h"
 
+#ifndef __WORDSIZE
+# if defined(__OPENBSD__) && (INTPTR_MAX == INT32_MAX)
+#  define __WORDSIZE 32
+# else
+#  define __WORDSIZE 64
+# endif
+#endif
+
+/* Do not turn the following #define as meaning EFL64. We are only
+   interested to know if sizeof (void*) == 64bits or not. Those means
+   something else.
+
+   defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64)
+ */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64) || defined(__ppc64__)
+# define EFL64
+#endif
+
 #ifdef EINA_UNUSED
 # undef EINA_UNUSED
 #endif
