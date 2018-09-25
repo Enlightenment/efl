@@ -10,28 +10,11 @@
 #define MY_CLASS EFL_SELECTION_MIXIN
 #define MY_CLASS_NAME "Efl.Selection"
 
-static inline Eo*
-_selection_manager_get(Eo *obj)
-{
-   Eo *top = elm_widget_top_get(obj);
-   if (!top)
-     {
-        top = obj;
-     }
-   Eo *sel_man = efl_key_data_get(top, "__selection_manager");
-   if (!sel_man)
-     {
-        sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, top);
-        efl_key_data_set(top, "__selection_manager", sel_man);
-     }
-   return sel_man;
-}
-
 EOLIAN static void
 _efl_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format,
                                      void *data_func_data, Efl_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_selection_get(sel_man, obj, type, format,
                                        data_func_data, data_func,
                                        data_func_free_cb, seat);
@@ -40,21 +23,21 @@ _efl_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type t
 EOLIAN static Eina_Future *
 _efl_selection_selection_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    return efl_selection_manager_selection_set(sel_man, obj, type, format, data, seat);
 }
 
 EOLIAN static void
 _efl_selection_selection_clear(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_selection_clear(sel_man, obj, type, seat);
 }
 
 EOLIAN static Eina_Bool
 _efl_selection_has_owner(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
 {
-    Eo *sel_man = _selection_manager_get(obj);
+    Eo *sel_man = _efl_ui_selection_manager_get(obj);
     return efl_selection_manager_selection_has_owner(sel_man, obj, type, seat);
 }
 
@@ -227,13 +210,13 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
                       Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
    int seatid = 1;
-   Eo *sel_man = _selection_manager_get((Evas_Object *)obj);
+   Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
    Cnp_Data_Cb_Wrapper *wdata = calloc(1, sizeof(Cnp_Data_Cb_Wrapper));
 
    if (!wdata) return EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   
+
    seatid = _wl_default_seat_id_get((Evas_Object *)obj);
 #endif
    wdata->udata = udata;
@@ -251,7 +234,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
    int seatid = 1;
    Eina_Future *f;
    Sel_Lost_Data *ldata;
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    Eina_Slice data;
 
    ldata = calloc(1, sizeof(Sel_Lost_Data));
@@ -275,7 +258,7 @@ EAPI Eina_Bool
 elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type type)
 {
    int seatid = 1;
-   Eo *sel_man = _selection_manager_get((Evas_Object *)obj);
+   Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
@@ -307,7 +290,7 @@ EAPI Eina_Bool
 elm_selection_selection_has_owner(Evas_Object *obj)
 {
    int seatid = 1;
-   Eo *sel_man = _selection_manager_get((Evas_Object *)obj);
+   Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
@@ -321,7 +304,7 @@ EAPI Eina_Bool
 elm_cnp_clipboard_selection_has_owner(Evas_Object *obj)
 {
    int seatid = 1;
-   Eo *sel_man = _selection_manager_get((Evas_Object *)obj);
+   Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);

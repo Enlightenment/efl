@@ -549,6 +549,10 @@ void                 _elm_prefs_shutdown(void);
 void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
 
+/* init functions for dnd and cnp */
+Eo*                  _efl_ui_selection_manager_get(Eo *obj);
+void                 _efl_ui_dnd_shutdown(void);
+
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
 void                 _elm_ews_wm_rescale(Elm_Theme *th,

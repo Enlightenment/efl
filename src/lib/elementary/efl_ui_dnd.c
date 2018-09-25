@@ -21,8 +21,8 @@ struct _Efl_Ui_Dnd_Container_Data
 
 extern int _wl_default_seat_id_get(Evas_Object *obj);
 
-static inline Eo *
-_selection_manager_get(Eo *obj)
+Eo*
+_efl_ui_selection_manager_get(Eo *obj)
 {
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return NULL;
    Eo *app = efl_app_get();
@@ -35,12 +35,21 @@ _selection_manager_get(Eo *obj)
    return sel_man;
 }
 
+void
+_efl_ui_dnd_shutdown(void)
+{
+   Eo *app = efl_app_get();
+   Eo *sel_man = efl_key_data_get(app, "__selection_manager");
+
+   efl_del(sel_man);
+}
+
 EOLIAN static void
 _efl_ui_dnd_drag_start(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, Eina_Slice data,
                        Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
                        unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_drag_start(sel_man, obj, format, data, action,
                                     icon_func_data, icon_func, icon_func_free_cb,
                                     seat);
@@ -49,14 +58,14 @@ _efl_ui_dnd_drag_start(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format forma
 EOLIAN static void
 _efl_ui_dnd_drag_cancel(Eo *obj, void *pd EINA_UNUSED, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_drag_cancel(sel_man, obj, seat);
 }
 
 EOLIAN static void
 _efl_ui_dnd_drag_action_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Action action, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_drag_action_set(sel_man, obj, action, seat);
 }
 
@@ -64,14 +73,14 @@ _efl_ui_dnd_drag_action_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Action 
 EOLIAN static void
 _efl_ui_dnd_drop_target_add(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_drop_target_add(sel_man, obj, format, seat);
 }
 
 EOLIAN static void
 _efl_ui_dnd_drop_target_del(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_drop_target_del(sel_man, obj, format, seat);
 }
 
@@ -97,7 +106,7 @@ _efl_ui_dnd_container_drag_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd,
 {
    double drag_delay_time = pd->drag_delay_time;
    double anim_time = elm_config_drag_anim_duration_get();
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_container_drag_item_add(sel_man, obj, drag_delay_time, anim_time,
                                                  data_func_data, data_func, data_func_free_cb,
                                                  item_func_data, item_func, item_func_free_cb,
@@ -109,7 +118,7 @@ _efl_ui_dnd_container_drag_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd,
 static void
 _efl_ui_dnd_container_drag_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_UNUSED, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_container_drag_item_del(sel_man, obj, seat);
 }
 EOLIAN static void
@@ -118,14 +127,14 @@ _efl_ui_dnd_container_drop_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_
                                     void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
                                     unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_container_drop_item_add(sel_man, obj, format, item_func_data, item_func, item_func_free_cb, seat);
 }
 
 EOLIAN static void
 _efl_ui_dnd_container_drop_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_UNUSED, unsigned int seat)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    efl_selection_manager_container_drop_item_del(sel_man, obj, seat);
 }
 
@@ -304,7 +313,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
                Elm_Drag_State drag_done_cb, void *drag_done_data)
 {
    if (!data) return EINA_FALSE;
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
    Eina_Slice sl;
    Dnd_Drag_Pos *pos = calloc(1, sizeof(Dnd_Drag_Pos));
@@ -353,7 +362,7 @@ on_error:
 EAPI Eina_Bool
 elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
@@ -367,7 +376,7 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 EAPI Eina_Bool
 elm_drag_cancel(Evas_Object *obj)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
@@ -411,7 +420,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_Pos pos_cb, void *pos_data,
                     Elm_Drop_Cb drop_cb, void *drop_data)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
    Dnd_Drag_State *enter, *leave;
    Dnd_Drag_Pos *pos;
@@ -473,7 +482,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
                     Elm_Drag_Pos pos_cb, void *pos_data,
                     Elm_Drop_Cb drop_cb, void *drop_data)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
    //Eina_List *l, *l2;
    Eina_List *drop_list;
@@ -628,7 +637,7 @@ elm_drop_item_container_add(Evas_Object *obj,
                             Elm_Drag_Item_Container_Pos pos_cb, void *pos_data,
                             Elm_Drop_Item_Container_Cb drop_cb, void *drop_data)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
    Dnd_Drag_State *enter = NULL, *leave = NULL;
    Dnd_Cont_Drag_Pos *pos = NULL;
@@ -690,7 +699,7 @@ on_error:
 EAPI Eina_Bool
 elm_drop_item_container_del(Evas_Object *obj)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
@@ -791,7 +800,7 @@ EAPI Eina_Bool
 elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
                             Elm_Xy_Item_Get_Cb item_get_cb, Elm_Item_Container_Data_Get_Cb data_get_cb)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
    Eina_List *di_list;
    Item_Container_Drag_Info *di;
@@ -820,7 +829,7 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
 EAPI Eina_Bool
 elm_drag_item_container_del(Evas_Object *obj)
 {
-   Eo *sel_man = _selection_manager_get(obj);
+   Eo *sel_man = _efl_ui_selection_manager_get(obj);
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2

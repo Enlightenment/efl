@@ -866,6 +866,7 @@ elm_quicklaunch_sub_shutdown(void)
         _elm_module_shutdown();
         if (_elm_prefs_initted)
           _elm_prefs_shutdown();
+        _efl_ui_dnd_shutdown();
         elm_color_class_shutdown();
      }
 
