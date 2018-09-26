@@ -17,23 +17,23 @@ mixin Efl.Ui.Focus.Object
             }
         }
         @property focus {
-            [[This is called by the manager and should never be called by
-              anyone else.
-
-             It can be used by configuring a focus object to adapt to
-             any changes that are required.
-
-             The function emits the focus state events, if focus is
-             different to the previous state.
-            ]]
             get {
-
+              [[Returns whether the widget is currently focused or not.]]
             }
             set @protected {
+              [[This is called by the manager and should never be called by
+                anyone else.
+
+                It can be used by configuring a focus object to adapt to
+                any changes that are required.
+
+                The function emits the focus state events, if focus is
+                different to the previous state.
+            ]]
 
             }
             values {
-                focus : bool; [[The state in which the object should be put]]
+                focus : bool; [[The focused state of the object]]
             }
         }
         @property focus_manager {
