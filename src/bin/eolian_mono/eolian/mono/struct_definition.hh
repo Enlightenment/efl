@@ -115,11 +115,12 @@ struct struct_internal_definition_generator
                               || regular->base_type == "stringshare"
                               || regular->base_type == "any_value_ptr")))
             {
-               if (!as_generator(" internal System.IntPtr " << string << ";\n")
-                   .generate(sink, field_name, context))
+               if (!as_generator("///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 << "public System.IntPtr " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
                  return false;
             }
-          else if (!as_generator(eolian_mono::marshall_annotation(false) << " internal " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+          else if (!as_generator(eolian_mono::marshall_annotation(false) << " public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
             return false;
        }
@@ -368,9 +369,10 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "public static class " << string << "_StructConversion\n{\n"
+          "/// <summary>Conversion class for struct " << struct_.cxx_name << "</summary>\n"
+          "public static class " << struct_.cxx_name << "_StructConversion\n{\n"
          )
-         .generate(sink, struct_.cxx_name, context))
+         .generate(sink, nullptr, context))
        return false;
 
      // to internal

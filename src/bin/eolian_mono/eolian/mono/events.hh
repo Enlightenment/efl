@@ -211,7 +211,7 @@ struct event_definition_generator
             << scope_tab << scope_tab << "}\n"
             << scope_tab << scope_tab << "if (evt != null) { evt(this, e); }\n"
             << scope_tab << "}\n"
-            << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event evt)\n"
+            << scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref efl.Event_StructInternal evt)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << event_args
             << scope_tab << scope_tab << "try {\n"

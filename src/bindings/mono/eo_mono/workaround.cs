@@ -106,7 +106,7 @@ public struct Event_Description {
 };
 
 
-public delegate void Event_Cb(System.IntPtr data, ref Event evt);
+public delegate void Event_Cb(System.IntPtr data, ref Event_StructInternal evt);
 #pragma warning disable 0169
 public struct Dbg_Info {
     IntPtr name;
