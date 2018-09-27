@@ -2130,7 +2130,7 @@ eina_value_object_get(Eina_Value *v)
    if (eina_value_type_get(v) != EINA_VALUE_TYPE_OBJECT)
      return NULL;
 
-   eina_value_pget(v, &r);
+   if (!eina_value_pget(v, &r)) return NULL;
    return r;
 }
 
