@@ -428,7 +428,8 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
              return NULL;
           }
         pd->fd.in = pipe_stdin[1];
-        fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
+        if (fcntl(pd->fd.in, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
         pd->fd.in_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
@@ -446,7 +447,8 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
              return NULL;
           }
         pd->fd.out = pipe_stdout[0];
-        fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
+        if (fcntl(pd->fd.out, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
         pd->fd.out_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
