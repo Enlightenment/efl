@@ -2283,8 +2283,38 @@ EAPI Eina_Bool         ecore_con_url_cookies_jar_file_set(Ecore_Con_Url *url_con
  */
 EAPI void              ecore_con_url_cookies_jar_write(Ecore_Con_Url *url_con);
 
+/**
+ * Toggle libcurl's verify peer's certificate option.
+ *
+ * If @p verify is @c EINA_TRUE, libcurl will verify
+ * the authenticity of the peer's certificate, otherwise
+ * it will not. Default behavior of libcurl is to check
+ * peer's certificate.
+ *
+ * @param url_con Ecore_Con_Url instance which will be acted upon.
+ * @param verify Whether or not libcurl will check peer's certificate.
+ * @since 1.1.0
+ */
 EAPI void              ecore_con_url_ssl_verify_peer_set(Ecore_Con_Url *url_con,
                                                          Eina_Bool verify);
+/**
+ * Set a custom CA to trust for SSL/TLS connections.
+ *
+ * Specify the path of a file (in PEM format) containing one or more
+ * CA certificate(s) to use for the validation of the server certificate.
+ *
+ * This function can also disable CA validation if @p ca_path is @c NULL.
+ * However, the server certificate still needs to be valid for the connection
+ * to succeed (i.e., the certificate must concern the server the
+ * connection is made to).
+ *
+ * @param url_con Connection object that will use the custom CA.
+ * @param ca_path Path to a CA certificate(s) file or @c NULL to disable
+ *                CA validation.
+ *
+ * @return  @c 0 on success. When cURL is used, non-zero return values
+ *          are equal to cURL error codes.
+ */
 EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
                                                 const char *ca_path);
 
