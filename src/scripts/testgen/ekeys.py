@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # encoding: utf-8
+from enum import IntEnum
 
-class Function_List_Type:
+class Function_List_Type(IntEnum):
     INHERITIS = 1
     INHERITIS_FULL = 2
     CLASS_IMPLEMENTS = 3

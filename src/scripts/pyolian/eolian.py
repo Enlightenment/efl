@@ -938,7 +938,7 @@ class Function(Object):
         return Type(c_type) if c_type else None
 
     def return_default_value(self, ftye):
-        c_expr = lib.eolian_function_return_default_value_get(sel._obj, ftype)
+        c_expr = lib.eolian_function_return_default_value_get(self._obj, ftype)
         return Expression(c_expr) if c_expr else None
 
     def return_documentation(self, ftype):

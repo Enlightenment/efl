@@ -47,6 +47,50 @@ class FuncItem(ComItem):
             and not os.path.isfile("{}_set".format(os.path.join(path, comp.name)))
         )
 
+        self.is_enum = (
+            lambda arg: arg.type
+            and arg.type.typedecl
+            and arg.type.typedecl.type == arg.type.typedecl.type.ENUM
+        )
+        self.is_number = lambda arg: arg.type and arg.type.builtin_type in (
+            arg.type.builtin_type.INT,
+            arg.type.builtin_type.UINT,
+            arg.type.builtin_type.LONG,
+            arg.type.builtin_type.ULONG,
+            arg.type.builtin_type.LLONG,
+            arg.type.builtin_type.ULLONG,
+            arg.type.builtin_type.INT8,
+            arg.type.builtin_type.UINT8,
+            arg.type.builtin_type.INT16,
+            arg.type.builtin_type.UINT16,
+            arg.type.builtin_type.INT32,
+            arg.type.builtin_type.UINT32,
+            arg.type.builtin_type.INT64,
+            arg.type.builtin_type.UINT64,
+            arg.type.builtin_type.INT128,
+            arg.type.builtin_type.UINT128,
+        )
+
+        """
+        g = list(self.getter_args)
+        s = list(self.setter_args)
+
+        if not len(s) == len(g):
+            print(
+                "Function {} as {} getters, {} setters:\n{}\n{}\n".format(
+                    comp.full_c_method_name, len(g), len(s), g, s
+                )
+            )
+        """
+
+    @property
+    def getter_args(self):
+        return itertools.chain(self.getter_values, self.getter_keys)
+
+    @property
+    def setter_args(self):
+        return itertools.chain(self.setter_values, self.setter_keys)
+
     @property
     def format_name(self):
         names = self.comp.name.split("_")
