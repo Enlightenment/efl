@@ -461,6 +461,12 @@ lib/evas/common/evas_font_ot.h \
 lib/evas/common/evas_font_draw.h \
 lib/evas/common/evas_common_generic_cache.c
 
+if BUILD_NEON
+if !BUILD_NEON_INTRINSICS
+lib_evas_libevas_la_SOURCES += \
+lib/evas/common/evas_op_copy/op_copy_neon.S
+endif
+endif
 
 lib_evas_libevas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/canvas \

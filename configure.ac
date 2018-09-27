@@ -657,6 +657,7 @@ case $host_cpu in
            AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
            AC_DEFINE([BUILD_NEON_INTRINSICS], [1], [Build NEON Intrinsics])
            build_cpu_neon="yes"
+           build_cpu_neon_intrinsics="yes"
        	 ],[
 	   AC_MSG_RESULT([no])
            build_cpu_neon="no"
@@ -666,6 +667,7 @@ case $host_cpu in
 esac
 
 AM_CONDITIONAL([BUILD_NEON], [test "${build_cpu_neon}" = "yes"])
+AM_CONDITIONAL([BUILD_NEON_INTRINSICS], [test "${build_cpu_neon_intrinsics}" = "yes"])
 
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
