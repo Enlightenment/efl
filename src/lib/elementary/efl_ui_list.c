@@ -35,14 +35,14 @@ _item_scroll_internal(Eo *obj,
    vpos = efl_ui_scrollable_content_pos_get(pd->smanager);
 
    ipos.x = view.x;
-   ipos.w = ipos.w;
+   ipos.w = view.w;
 
    // FIXME: align case will not correctly show in the position because of
    //        bar size calculation. there are no certain way to know the scroll calcuation finished.
    if (EINA_DBL_EQ(align, -1.0))
      {
         ipos.y = ipos.y + vpos.y - view.y;
-        ipos.h = ipos.h;
+        ipos.h = view.h;
      }
    else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
             (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
