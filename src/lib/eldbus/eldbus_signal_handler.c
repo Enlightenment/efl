@@ -114,9 +114,6 @@ eldbus_signal_handler_match_extra_vset(Eldbus_Signal_Handler *sh, va_list ap)
                       eina_strbuf_string_get(sh->match), NULL);
    return EINA_TRUE;
 
-   ERR("Error setting new match.");
-   return EINA_FALSE;
-
 error:
    dbus_bus_add_match(sh->conn->dbus_conn,
                       eina_strbuf_string_get(sh->match), NULL);
