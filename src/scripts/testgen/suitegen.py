@@ -71,18 +71,6 @@ class FuncItem(ComItem):
             arg.type.builtin_type.UINT128,
         )
 
-        """
-        g = list(self.getter_args)
-        s = list(self.setter_args)
-
-        if not len(s) == len(g):
-            print(
-                "Function {} as {} getters, {} setters:\n{}\n{}\n".format(
-                    comp.full_c_method_name, len(g), len(s), g, s
-                )
-            )
-        """
-
     @property
     def getter_args(self):
         return itertools.chain(self.getter_values, self.getter_keys)
@@ -97,6 +85,13 @@ class FuncItem(ComItem):
         if names[-1] in self.keys.verbs:
             names.insert(0, names.pop())
         return "".join([name.capitalize() for name in names])
+
+
+class EventItem(ComItem):
+    def __init__(self, comp, path, keys):
+        self.myname = comp.name.replace(",", "_")
+        super().__init__(comp, os.path.join(path, self.myname), keys)
+        self.format_name = self.keys.event_convert(self.name)
 
 
 class ClassItem(ComItem):
@@ -115,6 +110,7 @@ class ClassItem(ComItem):
         self._properties = [
             FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
         ]
+        self.events = [EventItem(s, self.path, keys) for s in self.comp.events]
 
         if self.keys.funclist in (
             Function_List_Type.INHERITIS,

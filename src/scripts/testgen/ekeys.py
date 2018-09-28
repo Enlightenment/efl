@@ -2,11 +2,13 @@
 # encoding: utf-8
 from enum import IntEnum
 
+
 class Function_List_Type(IntEnum):
     INHERITIS = 1
     INHERITIS_FULL = 2
     CLASS_IMPLEMENTS = 3
     CLASS_ONLY = 4
+
 
 class EKeys:
     def __init__(self, ext):
@@ -20,6 +22,9 @@ class EKeys:
 
     def type_convert(self, eotype):
         return eotype.name
+
+    def event_convert(self, event):
+        return event.c_name
 
     def print_arg(self, eoarg):
         return "arg_{}".format(eoarg.name)
@@ -169,7 +174,7 @@ class EMonoKeys(EKeys):
         *namespaces, name = eotype.name.split(".")
         namespaces = [self.escape_keyword(x.lower()) for x in namespaces]
         is_interface = eotype.type == eotype.type.CLASS
-        k_name = ('I' if is_interface else '') + name
+        k_name = ("I" if is_interface else "") + name
         return ".".join(namespaces + [k_name])
 
     def type_convert(self, eotype):
@@ -187,6 +192,9 @@ class EMonoKeys(EKeys):
 
         return new_type
 
+    def event_convert(self, name):
+        return "{}Evt".format("".join([i.capitalize() for i in name.split(",")]))
+
     def print_arg(self, eoarg):
         r = super().print_arg(eoarg)
         prefix = self.direction_get(eoarg.direction.name) or None
@@ -194,11 +202,13 @@ class EMonoKeys(EKeys):
         if prefix == "out" and (eoarg.type.name in ("Eina.Slice", "Eina.Rw_Slice")):
             prefix = "ref"
 
-        if (not prefix
-                and eoarg.type.is_ptr
-                and eoarg.type.type == eoarg.type.type.REGULAR
-                and eoarg.type.typedecl
-                and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT):
+        if (
+            not prefix
+            and eoarg.type.is_ptr
+            and eoarg.type.type == eoarg.type.type.REGULAR
+            and eoarg.type.typedecl
+            and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT
+        ):
             prefix = "ref"
 
         return " ".join([prefix, r]) if prefix else r
