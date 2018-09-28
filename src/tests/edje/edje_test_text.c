@@ -105,6 +105,8 @@ EFL_START_TEST(edje_test_textblock)
 
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_textblock.edj"), "test_textblock"));
+   txt = edje_object_part_text_get(obj, "text");
+   fail_if(!txt || strcmp(txt, "Bye"));
    edje_object_part_text_set(obj, "text", buf);
    txt = edje_object_part_text_get(obj, "text");
    fail_if(!txt || strcmp(txt, buf));
