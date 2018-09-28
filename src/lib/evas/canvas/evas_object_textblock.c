@@ -6959,13 +6959,13 @@ evas_textblock_style_free(Evas_Textblock_Style *ts)
 static void
 _evas_textblock_update_format_nodes_from_style_tag(Efl_Canvas_Text_Data *o)
 {
-   Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
-
    if (!o)
      {
         ERR("The given address Efl_Canvas_Text_Data is NULL");
         return;
      }
+
+   Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
 
    while (fnode)
      {
