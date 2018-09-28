@@ -2605,7 +2605,7 @@ _elm_scroll_running_momentum_speed_get(Elm_Scrollable_Smart_Interface_Data *sid,
    if ( p > 1.0 || p < 0)
      {
         if (vx) *vx = 0;
-        if (vy) *vx = 0;
+        if (vy) *vy = 0;
         return EINA_FALSE;
      }
 
