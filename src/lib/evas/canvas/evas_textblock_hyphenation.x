@@ -150,7 +150,7 @@ _layout_wrap_hyphens_get(const Eina_Unicode *text, const char *lang,
 
    /* Convert UTF-32 encoded text to the other encoding
     * which is described in hyphen dictionary. */
-   if (dict->cset && strcmp(dict->cset, "UTF-32"))
+   if (strcmp(dict->cset, "UTF-32"))
      {
         converted_text = eina_str_convert_len("UTF-32", dict->cset,
                                               (char *)(text + word_start),
