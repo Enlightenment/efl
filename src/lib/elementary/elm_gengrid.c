@@ -4237,15 +4237,25 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
 {
    ELM_GENGRID_DATA_GET(data, pd);
    Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
-   Elm_Widget_Item *item;
-
-   if (!focused) return;
+   Elm_Widget_Item *item = NULL, *old_item = NULL;
 
    item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
+   old_item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, ev->info);
 
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(item, ELM_GENGRID_ITEM_CLASS));
+   if (old_item)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(old_item, ELM_GENGRID_ITEM_CLASS));
+        _elm_gengrid_item_unfocused(old_item);
+        pd->last_focused_item = NULL;
+     }
 
-   _elm_gengrid_item_focused(item);
+   if (item)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_isa(item, ELM_GENGRID_ITEM_CLASS));
+        _elm_gengrid_item_focused(item);
+        pd->last_focused_item = item;
+     }
+
    _all_items_deselect(pd);
    if (!_elm_config->item_select_on_focus_disable)
      {
