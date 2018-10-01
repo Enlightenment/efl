@@ -52,7 +52,13 @@ _grid_realized_cb(void *data, const Efl_Event *ev)
    is_group = (itc && itc->item_style && !strcmp(itc->item_style, "group_index"));
 
    if (!elm_object_item_disabled_get(data) && !is_group)
-     efl_ui_focus_object_prepare_logical(data);
+     {
+        Elm_Widget_Item_Data *wpd = efl_data_scope_get(data, ELM_WIDGET_ITEM_CLASS);
+
+        //first prepare the container
+        efl_ui_focus_object_prepare_logical(wpd->widget);
+        efl_ui_focus_object_prepare_logical(data);
+     }
 }
 
 static void
