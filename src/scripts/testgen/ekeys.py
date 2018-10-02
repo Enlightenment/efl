@@ -18,6 +18,7 @@ class EKeys:
         self.verbs = []
         self.blacklist = []
         self.keyloads = ["init", "shutdown", "custom"]
+        self.implementsbl = ["construtor", "destructor", "finalize"]
         self.funclist = Function_List_Type.CLASS_IMPLEMENTS
 
     def type_convert(self, eotype):
@@ -28,6 +29,9 @@ class EKeys:
 
     def print_arg(self, eoarg):
         return "arg_{}".format(eoarg.name)
+
+    def format_name(self, func):
+        return self.name
 
 
 class EMonoKeys(EKeys):
@@ -161,13 +165,14 @@ class EMonoKeys(EKeys):
         ]
 
     def escape_keyword(self, key):
-        return "kw_{}".format(key) if key in self.keywords else key
+        key = "kw_{}".format(key) if key.lower() in self.keywords else key
+        return "{}Add".format(key) if key == "Finalize" else key
 
-    def direction_get(self, name):
-        if name == "INOUT":
-            return "ref "
-        elif name == "OUT":
-            return "out "
+    def direction_get(self, direction):
+        if direction == direction.INOUT:
+            return "ref"
+        if direction == direction.OUT:
+            return "out"
         return None
 
     def klass_name(self, eotype):
@@ -192,12 +197,12 @@ class EMonoKeys(EKeys):
 
         return new_type
 
-    def event_convert(self, name):
-        return "{}Evt".format("".join([i.capitalize() for i in name.split(",")]))
+    def event_convert(self, event):
+        return "{}Evt".format("".join([i.capitalize() for i in event.name.split(",")]))
 
     def print_arg(self, eoarg):
         r = super().print_arg(eoarg)
-        prefix = self.direction_get(eoarg.direction.name) or None
+        prefix = self.direction_get(eoarg.direction) or None
 
         if prefix == "out" and (eoarg.type.name in ("Eina.Slice", "Eina.Rw_Slice")):
             prefix = "ref"
@@ -212,6 +217,20 @@ class EMonoKeys(EKeys):
             prefix = "ref"
 
         return " ".join([prefix, r]) if prefix else r
+
+    def format_name(self, func):
+        names = func.comp.name.split("_")
+
+        if func.type == func.type.METHOD and names[-1] in self.verbs:
+            names.insert(0, names.pop())
+
+        fname = "".join([name.capitalize() for name in names])
+
+        if func.type == func.type.METHOD:
+            fname = self.escape_keyword(fname)
+            fname = "Do{}".format(fname) if fname == func.class_.short_name else fname
+
+        return fname
 
 
 def GetKey(ext):

@@ -73,7 +73,7 @@ ${m_show(mshow=func.shutdown)}$#!
   <!--(if func.has_getter)-->
     public void ${func.name}$_pget()
     {
-   <!--(if len(list(func.getter_values)) > 1)-->
+   <!--(if func.getter_return_type or len(list(func.getter_values)) > 1)-->
 ${def_params(parameters=func.getter_values)}$
    <!--(end)-->
    <!--(if len(list(func.getter_keys)) > 0)-->
@@ -81,10 +81,10 @@ ${def_params(parameters=func.getter_keys)}$
    <!--(end)-->
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
-   <!--(if len(list(func.getter_values)) == 1)-->
+   <!--(if not func.getter_return_type and len(list(func.getter_values)) == 1)-->
         var arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
    <!--(else)-->
-        ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+        <!--(if func.getter_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
    <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!

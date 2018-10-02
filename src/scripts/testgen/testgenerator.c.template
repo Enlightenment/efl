@@ -26,16 +26,16 @@ ${mcls}$
    efl_unref(obj);
 <!--(end)-->
 <!--(macro arg_default)-->
- <!--(if arg.type.name == "__builtin_free_cb" or arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(elif arg.type.name in ['Eina.Slice', 'Eina.Rw_Slice', 'Eina.Position2D', 'Eina.Rect', 'Eina.Vector2'] )-->{}<!--(else)-->0<!--(end)-->;
+ <!--(if arg.type.name == "__builtin_free_cb" or arg.type.is_ptr or arg.type.type == arg.type.type.CLASS or arg.type.builtin_type == arg.type.builtin_type.STRING)-->NULL<!--(elif arg.type.builtin_type == arg.type.builtin_type.ANY_VALUE)-->EINA_VALUE_EMPTY<!--(elif arg.type.typedecl and arg.type.typedecl.type == arg.type.typedecl.type.STRUCT )-->{}<!--(else)-->0<!--(end)-->;
 <!--(end)-->
 <!--(macro args_declaration)-->
   <!--(for arg in args)-->
     <!--(if arg.type.typedecl and arg.type.typedecl.type == arg.type.typedecl.type.FUNCTION_POINTER)-->
    void * arg_${arg.name}$_data = NULL;
-   ${arg.type.c_type_return}$ arg_${arg.name}$ = NULL;
+   ${arg.type.c_type_param}$ arg_${arg.name}$ = NULL;
    Eina_Free_Cb arg_${arg.name}$_free_cb = NULL;
     <!--(else)-->
-   ${arg.type.c_type_return}$ arg_${arg.name}$ = ${arg_default(arg=arg)}$
+   ${arg.type.c_type_param}$ arg_${arg.name}$ = ${arg_default(arg=arg)}$
     <!--(end)-->
   <!--(end)-->
 <!--(end)-->
@@ -43,7 +43,7 @@ ${mcls}$
  <!--(if arg.type.typedecl and arg.type.typedecl.type == arg.type.typedecl.type.FUNCTION_POINTER)-->
 arg_${arg.name}$_data, arg_${arg.name}$, arg_${arg.name}$_free_cb
  <!--(else)-->
-   <!--(if arg.direction == arg.direction.OUT)-->&<!--(end)-->arg_${arg.name}$
+   <!--(if arg.direction in (arg.direction.OUT, arg.direction.INOUT))-->&<!--(end)-->arg_${arg.name}$
  <!--(end)-->
 <!--(end)-->
 
@@ -106,10 +106,10 @@ ${m_show(mshow=func.arg_get_init)}$#!
    ${list(func.getter_values)[0].type.c_type_return}$ r = ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
    (void)r;
    <!--(else)-->
-   ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_values)-->, &arg_${arg.name}$<!--(end)--><!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)-->);
+   ${func.full_c_getter_name}$(obj<!--(for arg in func.getter_keys)-->, arg_${arg.name}$<!--(end)--><!--(for arg in func.getter_values)-->, &arg_${arg.name}$<!--(end)-->);
    <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
-${shutdown(mcustom=cls.shutdown,mfunc=func.get_shutdown)}$
+${shutdown(mcls=cls.shutdown,mfunc=func.get_shutdown)}$
 }
 END_TEST
 
@@ -133,13 +133,11 @@ void ${cls.myfullname}$_test(TCase *tc)
    <!--(for func in cls.methods)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_method_name}$);
    <!--(end)-->
-   <!--(for func in cls.properties)-->
-    <!--(if func.has_getter)-->
+   <!--(for func in cls.properties_get)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_getter_name}$);
-    <!--(end)-->
-    <!--(if func.has_setter)-->
+   <!--(end)-->
+   <!--(for func in cls.properties_set)-->
    tcase_add_test(tc, ${cls.myfullname}$_${func.full_c_setter_name}$);
-    <!--(end)-->
    <!--(end)-->
 }
 <!--(end)-->

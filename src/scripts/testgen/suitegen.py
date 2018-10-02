@@ -81,17 +81,14 @@ class FuncItem(ComItem):
 
     @property
     def format_name(self):
-        names = self.comp.name.split("_")
-        if names[-1] in self.keys.verbs:
-            names.insert(0, names.pop())
-        return "".join([name.capitalize() for name in names])
+        return self.keys.format_name(self)
 
 
 class EventItem(ComItem):
     def __init__(self, comp, path, keys):
         self.myname = comp.name.replace(",", "_")
         super().__init__(comp, os.path.join(path, self.myname), keys)
-        self.format_name = self.keys.event_convert(self.name)
+        self.format_name = self.keys.event_convert(self)
 
 
 class ClassItem(ComItem):
@@ -126,7 +123,11 @@ class ClassItem(ComItem):
                 for f in filter(mfilter, eoclass.properties):
                     self._properties.append(FuncItem(f, self.path, keys))
         elif self.keys.funclist == Function_List_Type.CLASS_IMPLEMENTS:
-            for imp in comp.implements:
+            for imp in filter(
+                lambda i: not i.namespace == self.name
+                and not i.short_name.lower() in self.keys.implementsbl,
+                comp.implements,
+            ):  # FIXME implements list
                 f = imp.function
                 if f.type == Eolian_Function_Type.METHOD and mfilter(f):
                     self.methods.append(FuncItem(f, self.path, keys))
