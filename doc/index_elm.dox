@@ -204,7 +204,7 @@
  * @image html img/widget/radio/preview-00.png
  * @image latex img/widget/radio/preview-00.eps
  * @li @ref Elm_Route
- * @li @ref Elm_SegmentControl
+ * @li @ref Elm_Segment_Control
  *
  * @image html img/widget/segment_control/preview-00.png
  * @image latex img/widget/segment_control/preview-00.eps
