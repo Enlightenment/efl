@@ -91,6 +91,7 @@ ecore_cocoa_shutdown(void)
 
    eina_log_domain_unregister(_ecore_cocoa_log_domain);
    ecore_event_shutdown();
+   ecore_shutdown();
 
    return _ecore_cocoa_init_count;
 }
