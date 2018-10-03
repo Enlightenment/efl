@@ -267,6 +267,15 @@ foreach package : subprojects
         libraries : tmp_pub_deps,
         requires : package[8],
       )
+      if package_name == 'ethumb_client'
+        pkgconfig.generate(tmp_lib,
+          name : package_name,
+          subdirs : package_version_name,
+          version : version_major + '.' + version_minor,
+          libraries : tmp_pub_deps,
+          requires : package[8],
+        )
+      endif
     endif
   else
     message(package_name+' disabled!')
