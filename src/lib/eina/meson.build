@@ -193,15 +193,7 @@ endif
 
 eina_config = configuration_data()
 
-if get_option('buildtype') == 'plain'
-     with_max_log_level=-1
-     stringshare_usage=false
-     use_valgrind=true
-     debug_malloc=false
-     debug_threads=false
-     default_mempool=false
-     want_cow_magic=false
-elif get_option('buildtype') == 'debug'
+if get_option('buildtype') == 'debug'
      with_max_log_level=-1
      stringshare_usage=true
      use_valgrind=true
@@ -213,6 +205,14 @@ elif get_option('buildtype') == 'release'
      with_max_log_level=3
      stringshare_usage=false
      use_valgrind=false
+     debug_malloc=false
+     debug_threads=false
+     default_mempool=false
+     want_cow_magic=false
+ else
+     with_max_log_level=-1
+     stringshare_usage=false
+     use_valgrind=true
      debug_malloc=false
      debug_threads=false
      default_mempool=false
