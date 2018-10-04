@@ -21,7 +21,7 @@ public class Example
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
-        popup.SetButton(efl.ui.Popup_Alert_Button.Positive, "Ok");
+        popup.SetButton(efl.ui.Popup_Alert_Button.Positive, "Ok", null);
         popup.SetSize(new eina.Size2D(150, 30));
         popup.ButtonClickedEvt += (object sender, efl.ui.Popup_Alert.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);

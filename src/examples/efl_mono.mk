@@ -14,7 +14,8 @@ COMMON_FLAGS = \
 @EO_CFLAGS@ @EO_LDFLAGS@ \
 -L$(top_builddir)/src/lib/eo/.libs -leo \
 @EFL_CFLAGS@ @EFL_LDFLAGS@ \
--L$(top_builddir)/src/lib/efl/.libs -lefl
+-L$(top_builddir)/src/lib/efl/.libs -lefl \
+-I$(abs_top_builddir)/src/examples/efl_mono
 
 if HAVE_WIN32
 COMMON_FLAGS += \
@@ -49,11 +50,11 @@ efl_mono/example_numberwrapper.eo.cs: efl_mono/example_numberwrapper.eo
 
 efl_mono_EoInherit01_SOURCES = efl_mono/EoInherit01.cs
 #efl_mono_EoInherit01_files = $(EoInherit01_exe_srcs) efl_mono/example_numberwrapper.eo.cs
-efl_mono/EoInherit01$(EXEEXT): $(EoInherit01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll libexample_numberwrapper.la EoInherit01$(EXEEXT).config example_numberwrapper.eo.cs
+efl_mono/EoInherit01$(EXEEXT): $(efl_mono_EoInherit01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll efl_mono/libexample_numberwrapper.la efl_mono/EoInherit01$(EXEEXT).config efl_mono/example_numberwrapper.eo.cs
 	@rm -f $@
 	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-efl_mono/EoInherit01.csproj: $(EoInherit01_SOURCES) $(am_dirstamp) efl_mono/libexample_numberwrapper.la
+efl_mono/EoInherit01.csproj: $(efl_mono_EoInherit01_SOURCES) $(am_dirstamp) efl_mono/libexample_numberwrapper.la
 	@rm -f $@
 	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a efl_mono/EoInherit01$(EXEEXT) -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/efl_mono/%.cs,$(filter %.cs, $(^)))
 
@@ -69,11 +70,11 @@ efl_mono/EoInherit01$(EXEEXT).config:
 	echo "</configuration>" >> $@
 
 efl_mono_FunctionPointer01_SOURCES = efl_mono/FunctionPointer01.cs
-efl_mono/FunctionPointer01$(EXEEXT): $(FunctionPointer01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll efl_mono/libexample_numberwrapper.la efl_mono/example_numberwrapper.eo.cs
+efl_mono/FunctionPointer01$(EXEEXT): $(efl_mono_FunctionPointer01_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll efl_mono/libexample_numberwrapper.la efl_mono/example_numberwrapper.eo.cs
 	@rm -f $@
 	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
 
-efl_mono/FunctionPointer01.csproj: $(FunctionPointer01_SOURCES) $(am_dirstamp) efl_mono/libexample_numberwrapper.la
+efl_mono/FunctionPointer01.csproj: $(efl_mono_FunctionPointer01_SOURCES) $(am_dirstamp) efl_mono/libexample_numberwrapper.la
 	@rm -f $@
 	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a efl_mono/FunctionPointer01$(EXEEXT) -r libefl_mono.dll -t exe $(patsubst %.cs,src/examples/efl_mono/%.cs,$(filter %.cs, $(^)))
 
