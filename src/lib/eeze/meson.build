@@ -1,4 +1,4 @@
-eeze_deps = []
+eeze_deps = [buildsystem]
 eeze_pub_deps = [eina, efl]
 pub_eo_file_target = []
 
