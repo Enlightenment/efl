@@ -125,6 +125,9 @@ run(options_type const& opts)
          }
      }()};
 
+   if (!as_generator("#pragma warning disable CS1591\n").generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
+     throw std::runtime_error("Failed to generate pragma to disable missing docs");
+
    if (!as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
