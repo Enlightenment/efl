@@ -1,7 +1,7 @@
 ecore_con_deps = []
 ecore_con_pub_deps = [eina, eo, efl, ecore]
 
-if target_machine.system() == 'windows' or target_machine.system() == 'cygwin'
+if sys_windows == true
   ipv6 = cc.compiles('''
     #include <ws2tcpip.h>
     struct ipv6_mreq tmp;
@@ -68,7 +68,7 @@ pub_eo_files = [
   'efl_net_ip_address.eo',
 ]
 
-if target_machine.system() == 'windows'
+if sys_windows == true
 pub_eo_files += [
   'efl_net_socket_windows.eo',
   'efl_net_dialer_windows.eo',
@@ -160,7 +160,7 @@ ecore_con_src = [
   'efl_net_ip_address.c'
 ]
 
-if target_machine.system() == 'windows'
+if sys_windows == true
   ecore_con_src += [
     'efl_net_socket_windows.c',
     'efl_net_dialer_windows.c',

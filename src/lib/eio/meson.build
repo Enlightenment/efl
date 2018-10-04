@@ -50,14 +50,14 @@ eio_src = [
 
 linker_args = []
 
-if target_machine.system() == 'windows'
+if sys_windows == true
   eio_src += ['eio_monitor_win32.c']
-elif target_machine.system() == 'darwin'
+elif sys_osx == true
   eio_src += ['eio_monitor_cocoa.c']
   linker_args = [['-framework', 'CoreServices']]
-elif cc.has_header('sys/inotify.h')
+elif sys_linux == true
   eio_src += ['eio_monitor_inotify.c']
-elif target_machine.system() == 'bsd'
+elif sys_bsd == true
   eio_src += ['eio_monitor_kevent.c']
 endif
 

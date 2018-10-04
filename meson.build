@@ -108,15 +108,20 @@ bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
 linux = ['linux']
 osx = ['darwin']
 
-if linux.contains(target_machine.system()) or bsd.contains(target_machine.system())
+sys_linux = linux.contains(target_machine.system())
+sys_bsd = bsd.contains(target_machine.system())
+sys_windows = windows.contains(target_machine.system())
+sys_osx = osx.contains(target_machine.system())
+
+if sys_linux == true or sys_bsd == true
   sys_lib_extension = 'so'
   sys_exe_extension = ''
   sys_mod_extension = 'so'
-elif windows.contains(target_machine.system())
+elif sys_windows == true
   sys_lib_extension = 'dll'
   sys_exe_extension = 'exe'
   sys_mod_extension = 'dll'
-elif osx.contains(target_machine.system())
+elif sys_osx == true
   sys_lib_extension = 'dylib'
   sys_exe_extension = ''
   sys_mod_extension = 'dylib'

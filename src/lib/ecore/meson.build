@@ -165,7 +165,7 @@ ecore_src = [
   'ecore_main_common.h'
 ]
 
-if target_machine.system() == 'windows'
+if sys_windows == true
   #nothing for now ... needs testing
 else
   ecore_src += ['ecore_signal.c', 'ecore_exe_posix.c']

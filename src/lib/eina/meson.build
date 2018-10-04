@@ -185,7 +185,7 @@ sources = [
 'eina_vpath_xdg.c'
 ]
 
-if target_machine.system() == 'cygwin'
+if sys_windows == true
   sources += 'eina_file_win32.c'
 else
   sources += 'eina_file.c'
@@ -273,7 +273,7 @@ if cc.has_header_symbol('pthread.h', 'pthread_barrier_init')
    eina_config.set('EINA_HAVE_PTHREAD_BARRIER', '1')
 endif
 
-if target_machine.system() == 'linux'
+if sys_linux == true
    pthread_np_header_file = 'pthread.h'
    pthread_setname_np_api = 'pthread_setname_np'
    pthread_args = '-D_GNU_SOURCE'
@@ -335,7 +335,7 @@ if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
    eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
 endif
 
-if target_machine.system() == 'darwin'
+if sys_osx == true
    if cc.has_header_symbol('libkern/OSAtomic.h', 'OSSpinLockTry')
      eina_config.set('EINA_HAVE_OSX_SPINLOCK', 1)
    endif

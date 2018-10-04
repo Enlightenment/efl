@@ -9,7 +9,7 @@ ecore_file_src = [
   'ecore_file_private.h'
 ]
 
-if target_machine.system() == 'windows'
+if sys_windows == true
   ecore_file_src += [ 'ecore_file_monitor_win32.c']
 elif cc.has_header('sys/inotify.h')
   ecore_file_src += [ 'ecore_file_monitor_inotify.c']
