@@ -358,7 +358,8 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
 
    if (eina_streq(style, "default")) return EFL_UI_THEME_APPLY_FAILED;
    // Use the elementary default style.
-   return _elm_theme_set(th, o, clas, group, "default", is_legacy);
+   return (EFL_UI_THEME_APPLY_DEFAULT &
+           _elm_theme_set(th, o, clas, group, "default", is_legacy));
 }
 
 Eina_Bool
