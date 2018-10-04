@@ -399,7 +399,7 @@ public struct Value_Native
     public IntPtr Type;
     public IntPtr Value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
 
-    public string ToString()
+    public override string ToString()
     {
         return $"Value_Native<Type:0x{Type.ToInt64():x}, Value:0x{Value.ToInt64():x}>";
     }
