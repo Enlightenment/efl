@@ -52,9 +52,14 @@ endif
 
 options_to_check = ['eject', 'mount', 'unmount']
 
-eeze_deps += dependency('libudev',
+udev = dependency('libudev',
   version: ['>=148']
 )
+eeze_deps += udev
+
+if udev.version() < '199'
+   config_h.set('OLD_LIBUDEV', '1')
+endif
 
 foreach option : options_to_check
   val = get_option(option+'-path')
