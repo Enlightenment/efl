@@ -7195,7 +7195,7 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
         if ((it->item->queued) || (!it->item->mincalcd) || (sd->queue))
           deferred_show = EINA_TRUE;
      }
-   if (it->item->block->w < 1) deferred_show = EINA_TRUE;
+   if ((it->item->block) && (it->item->block->w < 1)) deferred_show = EINA_TRUE;
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, w, h);
    if (*w < 1 || *h < 1) deferred_show = EINA_TRUE;
