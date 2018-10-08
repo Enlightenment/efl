@@ -1346,8 +1346,8 @@ _ecore_con_server_dialer_error(void *data, const Efl_Event *event)
 
    WRN("error reaching server %s: %s", efl_net_dialer_address_dial_get(svr->dialer), eina_error_msg_get(*perr));
 
-   _ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr));
-   _ecore_con_server_dialer_close(svr);
+   if (_ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr)))
+     _ecore_con_server_dialer_close(svr);
 }
 
 static void
