@@ -1,4 +1,4 @@
-eina_deps = []
+eina_deps = [dl]
 eina_pub_deps = [thread_dep]
 
 public_sub_headers = [
