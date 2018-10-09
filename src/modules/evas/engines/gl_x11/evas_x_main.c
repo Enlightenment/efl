@@ -1439,11 +1439,8 @@ eng_outbuf_swap_mode(Outbuf *ob)
         unsigned int age = 0;
 
         if (glsym_glXQueryDrawable)
-          {
-             if (glsym_glXQueryDrawable(ob->disp, ob->glxwin,
-                                        GLX_BACK_BUFFER_AGE_EXT, &age) < 1)
-               age = 0;
-          }
+          glsym_glXQueryDrawable(ob->disp, ob->glxwin,
+                                 GLX_BACK_BUFFER_AGE_EXT, &age);
 #endif
         measure(1, "query age");
         if (age == 1) swap_mode = MODE_COPY;
