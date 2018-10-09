@@ -420,7 +420,27 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
 
    int curl = 0;
 
-   const char *group = eolian_class_name_get(eolian_function_class_get(fid));
+   const char *group = NULL;
+   char legacy_group_name[1024];
+   if (use_legacy)
+     {
+        // Generate legacy doxygen group name
+        const char *prefix =
+          eolian_class_legacy_prefix_get(eolian_function_class_get(fid));
+        unsigned int i;
+        snprintf(legacy_group_name, sizeof(legacy_group_name),
+                 "%s_Group", prefix);
+        for (i = 0; i < strlen(legacy_group_name); i++)
+          {
+             if ((i == 0) || (legacy_group_name[i - 1] == '_'))
+               legacy_group_name[i] = toupper(legacy_group_name[i]);
+          }
+        group = legacy_group_name;
+     }
+   else
+     {
+        group = eolian_class_name_get(eolian_function_class_get(fid));
+     }
 
    const Eolian_Implement *fimp = eolian_function_implement_get(fid);
 
