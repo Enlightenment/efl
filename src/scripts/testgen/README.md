@@ -102,6 +102,13 @@ Funtions Tests
      |-> arg_set_shutdown.c #free arguments
      |-> set_shutdown.c     #how to free the object (replace default)
 
+Event Tests
+- Tests Events custom files
+ * `src/test/<testname>/<class_name>/<event_name>/`
+     |-> init.cs            #add how to initialize the objects
+     |-> custom.cs          #add customizations in callback
+     |-> shutdown.cs        #add shutdown or any method to call the event
+
 to make some custom files you only need a code using:
  `parent`     -> default name of parent object defined as `Eo *`
  `obj`        -> default name of current object
