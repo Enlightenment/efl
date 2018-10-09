@@ -361,7 +361,8 @@ _evas_cache_image_async_heavy(void *data)
    cache = current->cache;
 
    if ((!current->flags.loaded) &&
-       current->info.loader->threadable)
+       (current->info.loader) &&
+       (current->info.loader->threadable))
      {
         evas_module_task_register(evas_cache_image_cancelled, current);
         error = cache->func.load(current);
