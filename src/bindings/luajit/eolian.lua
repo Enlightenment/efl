@@ -524,6 +524,10 @@ local gen_wrap = function(t)
 end
 
 local object_idx, wrap_object = gen_wrap {
+    object_get = function(self)
+        return cast_obj(self)
+    end,
+
     type_get = function(self)
         return tonumber(eolian.eolian_object_type_get(cast_obj(self)))
     end,
