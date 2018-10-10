@@ -948,7 +948,7 @@ _efl_ui_layout_object_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Layo
 {
    // Don't do anything else than call forward here
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   return efl_layout_signal_callback_add(wd->resize_obj, emission, source, func, data);
+   return efl_layout_signal_callback_del(wd->resize_obj, emission, source, func, data);
 }
 
 // TODO:
