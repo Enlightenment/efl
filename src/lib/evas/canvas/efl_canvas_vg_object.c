@@ -5,7 +5,7 @@
 
 #define MY_CLASS EFL_CANVAS_VG_OBJECT_CLASS
 
-/* private magic number for rectangle objects */
+/* private magic number for vector objects */
 static const char o_type[] = "vectors";
 
 const char *o_vg_type = o_type;
