@@ -85,7 +85,7 @@ _ecore_wl2_surface_modules_init(void)
 
              if (!eina_module_load(local_module))
                {
-                  ERR("Cannot load module %s", local_module->file);
+                  ERR("Cannot load module %s", path);
                   eina_module_free(local_module);
                   local_module = NULL;
                   return EINA_FALSE;
