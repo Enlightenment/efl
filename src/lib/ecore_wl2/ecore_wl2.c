@@ -82,7 +82,14 @@ _ecore_wl2_surface_modules_init(void)
           {
              Eina_Module *local_module = eina_module_new(path);
              EINA_SAFETY_ON_NULL_RETURN_VAL(local_module, EINA_FALSE);
-             EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_module_load(local_module), EINA_FALSE);
+
+             if (!eina_module_load(local_module))
+               {
+                  ERR("Cannot load module %s", local_module->file);
+                  eina_module_free(local_module);
+                  local_module = NULL;
+                  return EINA_FALSE;
+               }
              return EINA_TRUE;
           }
      }
