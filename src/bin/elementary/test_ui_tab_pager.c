@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-#define TAB_PAGE_NUM 5
 #define TAB_LABEL_COUNT 15
 #define TAB_ICON_COUNT 9
 
@@ -22,6 +21,9 @@ typedef struct _Tab_Change_Data {
    Eo *label_check;
    Eo *icon_check;
 } Tab_Change_Data;
+
+static int tab_label_count;
+static int tab_icon_count;
 
 static void _current_cb(void *data, Evas_Object *obj, void *event_info);
 static void _pack_cb(void *data, Evas_Object *obj, void *event_info);
@@ -44,14 +46,14 @@ static char *tab_icons[] = {
 
 static char *tab_label_get()
 {
-	int index = rand() % (TAB_LABEL_COUNT - 1);
-	return tab_labels[index];
+	if (tab_label_count == TAB_LABEL_COUNT) tab_label_count = 0;
+	return tab_labels[tab_label_count++];
 }
 
 static char *tab_icon_get()
 {
-	int index = rand() % (TAB_ICON_COUNT - 1);
-	return tab_icons[index];
+	if (tab_icon_count == TAB_ICON_COUNT) tab_icon_count = 0;
+	return tab_icons[tab_icon_count++];
 }
 
 static void
@@ -156,6 +158,9 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    tran = efl_add(EFL_PAGE_TRANSITION_SCROLL_CLASS, tp)
    efl_ui_pager_transition_set(tp, tran);
 */
+
+   tab_label_count = 0;
+   tab_icon_count = 0;
 
    for (i = 0 ; i < 3 ; i ++)
    {
