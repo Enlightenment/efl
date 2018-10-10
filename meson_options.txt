@@ -294,13 +294,13 @@ option('elua',
 
 option('wl-deprecated',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Flag for handling deprecated wayland support in efl'
 )
 
 option('drm-deprecated',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Flag for handling deprecated drm support in efl'
 )
 
