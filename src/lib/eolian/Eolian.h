@@ -909,9 +909,25 @@ EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
  *
  * @param[in] unit The unit.
  *
+ * @see eolian_unit_file_path_get
+ *
  * @ingroup Eolian
  */
 EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get the full file path a unit is associated with.
+ *
+ * This will be `NULL` if not associated with a file (like the master unit
+ * within `Eolian_State`).
+ *
+ * @param[in] unit The unit.
+ *
+ * @see eolian_unit_file_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an object in a unit by name.
