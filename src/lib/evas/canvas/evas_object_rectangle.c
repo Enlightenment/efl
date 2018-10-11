@@ -30,8 +30,6 @@ static void evas_object_rectangle_render_post(Evas_Object *eo_obj,
 					      Evas_Object_Protected_Data *obj,
 					      void *type_private_data);
 
-static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_rectangle_is_opaque(Evas_Object *eo_obj,
@@ -58,12 +56,8 @@ static const Evas_Object_Func object_func =
      evas_object_rectangle_render,
      evas_object_rectangle_render_pre,
      evas_object_rectangle_render_post,
-     evas_object_rectangle_id_get,
-     evas_object_rectangle_visual_id_get,
      evas_object_rectangle_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
      NULL,
      NULL,
      evas_object_rectangle_is_opaque,
@@ -301,20 +295,6 @@ evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    if (obj->prev->render_op != EVAS_RENDER_BLEND)
 	return 0;
    return (obj->prev->cache.clip.a == 255) ? 1 : 0;
-}
-
-static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Rectangle_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_RECTANGLE;
-}
-
-static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Rectangle_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj)

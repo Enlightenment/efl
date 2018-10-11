@@ -695,8 +695,6 @@ static void evas_object_textblock_render_post(Evas_Object *eo_obj,
 					      void *type_private_data);
 static Evas_Object_Textblock_Node_Text *_evas_textblock_node_text_new(void);
 
-static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_textblock_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_textblock_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_textblock_is_opaque(Evas_Object *eo_obj,
@@ -716,12 +714,8 @@ static const Evas_Object_Func object_func =
      evas_object_textblock_render,
      evas_object_textblock_render_pre,
      evas_object_textblock_render_post,
-     evas_object_textblock_id_get,
-     evas_object_textblock_visual_id_get,
      evas_object_textblock_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
      NULL,
      NULL,
      evas_object_textblock_is_opaque,
@@ -14867,20 +14861,6 @@ evas_object_textblock_render_post(Evas_Object *eo_obj EINA_UNUSED,
 /*   o->prev = o->cur; */
    EINA_SAFETY_ON_NULL_RETURN(o);
    _filter_output_cache_prune(obj, o);
-}
-
-static unsigned int evas_object_textblock_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_TEXTBLOCK;
-}
-
-static unsigned int evas_object_textblock_visual_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_CUSTOM;
 }
 
 static void *evas_object_textblock_engine_data_get(Evas_Object *eo_obj)

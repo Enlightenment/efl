@@ -103,8 +103,6 @@ static void evas_object_text_render_post(Evas_Object *eo_obj,
 					 Evas_Object_Protected_Data *obj,
 					 void *type_private_data);
 
-static unsigned int evas_object_text_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_text_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_text_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_text_is_opaque(Evas_Object *eo_obj,
@@ -123,12 +121,8 @@ static const Evas_Object_Func object_func =
      evas_object_text_render,
      evas_object_text_render_pre,
      evas_object_text_render_post,
-     evas_object_text_id_get,
-     evas_object_text_visual_id_get,
      evas_object_text_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
      NULL,
      NULL,
      evas_object_text_is_opaque,
@@ -2163,22 +2157,6 @@ evas_object_text_render_post(Evas_Object *eo_obj EINA_UNUSED,
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
-}
-
-static unsigned int
-evas_object_text_id_get(Evas_Object *eo_obj)
-{
-   Evas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_TEXT;
-}
-
-static unsigned int
-evas_object_text_visual_id_get(Evas_Object *eo_obj)
-{
-   Evas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SHAPE;
 }
 
 static void *

@@ -509,19 +509,8 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 
 #define MAGIC_EVAS                 0x70777770
 #define MAGIC_OBJ                  0x71737723
-#define MAGIC_OBJ_RECTANGLE        0x76748772
-#define MAGIC_OBJ_LINE             0x7a27f839
-#define MAGIC_OBJ_POLYGON          0x7bb7577e
-#define MAGIC_OBJ_IMAGE            0x747ad76c
-#define MAGIC_OBJ_TEXT             0x77757721
-#define MAGIC_OBJ_SMART            0x78c7c73f
-#define MAGIC_OBJ_TEXTBLOCK        0x71737744
-#define MAGIC_OBJ_TEXTGRID         0x7377a7ca
 #define MAGIC_SMART                0x7c6977c5
 #define MAGIC_OBJ_SHAPE            0x747297f7
-#define MAGIC_OBJ_CONTAINER        0x71877776
-#define MAGIC_OBJ_VG               0x77817EE7
-#define MAGIC_OBJ_CUSTOM           0x7b7857ab
 #define MAGIC_EVAS_GL              0x77976718
 #define MAGIC_MAP                  0x7575177d
 #define MAGIC_DEV                  0x7d773738
@@ -1246,12 +1235,7 @@ struct _Evas_Object_Func
    void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
    void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 
-   unsigned int  (*type_id_get) (Evas_Object *obj);
-   unsigned int  (*visual_id_get) (Evas_Object *obj);
    void *(*engine_data_get) (Evas_Object *obj);
-
-   void (*store) (Evas_Object *obj);
-   void (*unstore) (Evas_Object *obj);
 
    int  (*is_visible) (Evas_Object *obj);
    int  (*was_visible) (Evas_Object *obj);
@@ -1583,8 +1567,6 @@ void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Dat
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 void evas_debug_error(void);
 void evas_debug_input_null(void);
-void evas_debug_magic_null(void);
-void evas_debug_magic_wrong(DATA32 expected, DATA32 supplied);
 void evas_debug_generic(const char *str);
 const char *evas_debug_magic_string_get(DATA32 magic);
 void evas_render_update_del(Evas_Public_Data *e, int x, int y, int w, int h);

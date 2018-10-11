@@ -91,8 +91,6 @@ static void evas_object_smart_render_post(Evas_Object *eo_obj,
 					  Evas_Object_Protected_Data *obj,
 					  void *type_private_data);
 
-static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_smart_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj);
 static void _efl_canvas_group_group_paragraph_direction_set_internal(Eo *eo_obj,
                                                                 Evas_BiDi_Direction dir);
@@ -104,12 +102,8 @@ static const Evas_Object_Func object_func =
    evas_object_smart_render,
    evas_object_smart_render_pre,
    evas_object_smart_render_post,
-   evas_object_smart_id_get,
-   evas_object_smart_visual_id_get,
    evas_object_smart_engine_data_get,
    /* these are optional. NULL = nothing */
-   NULL,
-   NULL,
    NULL,
    NULL,
    NULL,
@@ -1735,20 +1729,6 @@ evas_object_smart_render_post(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prote
    Evas_Smart_Data *o = type_private_data;
    evas_object_cur_prev(obj);
    o->prev = o->cur;
-}
-
-static unsigned int evas_object_smart_id_get(Evas_Object *eo_obj)
-{
-   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SMART;
-}
-
-static unsigned int evas_object_smart_visual_id_get(Evas_Object *eo_obj)
-{
-   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_CONTAINER;
 }
 
 static void *evas_object_smart_engine_data_get(Evas_Object *eo_obj)

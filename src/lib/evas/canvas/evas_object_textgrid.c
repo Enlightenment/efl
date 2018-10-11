@@ -20,8 +20,6 @@ typedef struct _Evas_Object_Textgrid_Line  Evas_Object_Textgrid_Line;
 
 struct _Evas_Textgrid_Data
 {
-   DATA32                         magic;
-
    struct {
       int                         w, h;
       int                         char_width;
@@ -102,8 +100,6 @@ static void evas_object_textgrid_render_post(Evas_Object *eo_obj,
 					     Evas_Object_Protected_Data *obj,
 					     void *type_private_data);
 
-static unsigned int evas_object_textgrid_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_textgrid_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_textgrid_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_textgrid_is_opaque(Evas_Object *eo_obj,
@@ -120,12 +116,8 @@ static const Evas_Object_Func object_func =
    evas_object_textgrid_render,
    evas_object_textgrid_render_pre,
    evas_object_textgrid_render_post,
-   evas_object_textgrid_id_get,
-   evas_object_textgrid_visual_id_get,
    evas_object_textgrid_engine_data_get,
    /* these are optional. NULL = nothing */
-   NULL,
-   NULL,
    NULL,
    NULL,
    evas_object_textgrid_is_opaque,
@@ -136,8 +128,7 @@ static const Evas_Object_Func object_func =
    NULL,
    NULL,
    NULL,
-   NULL, // render_prepare
-   NULL
+   NULL // render_prepare
 };
 
 /* all nice and private */
@@ -151,7 +142,6 @@ evas_object_textgrid_init(Evas_Object *eo_obj)
    obj->type = o_type;
 
    Evas_Textgrid_Data *o = obj->private_data;
-   o->magic = MAGIC_OBJ_TEXTGRID;
    o->prev.bitmap_scalable = o->cur.bitmap_scalable = EFL_TEXT_FONT_BITMAP_SCALABLE_COLOR;
    o->prev = o->cur;
    eina_array_step_set(&o->cur.palette_standard, sizeof (Eina_Array), 16);
@@ -230,8 +220,6 @@ evas_object_textgrid_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj E
    while ((c = eina_array_pop(&o->cur.palette_extended)))
      free(c);
    eina_array_flush(&o->cur.palette_extended);
-
-   o->magic = 0;
 }
 
 EOLIAN static void
@@ -825,22 +813,6 @@ evas_object_textgrid_render_post(Evas_Object *eo_obj EINA_UNUSED,
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
    o->prev = o->cur;
-}
-
-static unsigned int
-evas_object_textgrid_id_get(Evas_Object *eo_obj)
-{
-   Evas_Textgrid_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_TEXTGRID;
-}
-
-static unsigned int
-evas_object_textgrid_visual_id_get(Evas_Object *eo_obj)
-{
-   Evas_Textgrid_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SHAPE;
 }
 
 static void *
