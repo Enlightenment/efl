@@ -168,8 +168,6 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
 {
    if (!ie) return;
    if (!ie->cache) return;
-////   SLKL(ie->lock);
-////   SLKU(ie->lock);
    if ((cache) && (cache->func.debug)) cache->func.debug("deleting", ie);
    if (ie->flags.delete_me == 1) return;
    if (ie->preload)
@@ -480,7 +478,11 @@ _evas_cache_image_entry_preload_add(Image_Entry *ie, const Eo *target, void (*pr
      }
 
    tg = calloc(1, sizeof(Evas_Cache_Target));
-   if (!tg) return 0;
+   if (!tg)
+     {
+        evas_cache_image_drop(ie);
+        return 0;
+     }
    tg->target = target;
    tg->preloaded_cb = preloaded_cb;
    tg->preloaded_data = preloaded_data;
@@ -826,9 +828,7 @@ evas_cache_image_mmap_request(Evas_Cache_Image *cache,
 
  on_ok:
    *error = EVAS_LOAD_ERROR_NONE;
-////   SLKL(im->lock);
    im->references++;
-////   SLKU(im->lock);
    SLKU(engine_lock);
    return im;
 }
@@ -837,9 +837,7 @@ EAPI void
 evas_cache_image_ref(Image_Entry *im)
 {
    SLKL(engine_lock);
-////   SLKL(im->lock);
    im->references++;
-////   SLKU(im->lock);
    SLKU(engine_lock);
 }
 
@@ -851,11 +849,9 @@ evas_cache_image_drop(Image_Entry *im)
 
    if (!im->cache) return;
    SLKL(engine_lock);
-////   SLKL(im->lock);
    im->references--;
    if (im->references < 0) im->references = 0;
    references = im->references;
-////   SLKU(im->lock);
    SLKU(engine_lock);
 
    cache = im->cache;
@@ -864,7 +860,9 @@ evas_cache_image_drop(Image_Entry *im)
      {
         if (im->preload)
           {
+             SLKL(engine_lock);
              _evas_cache_image_entry_preload_remove(im, NULL, EINA_TRUE);
+             SLKU(engine_lock);
              return;
           }
         if ((im->flags.dirty) || (im->load_failed))
@@ -1089,7 +1087,6 @@ evas_cache_image_size_set(Image_Entry *im, unsigned int w, unsigned int h)
    if (error != 0) goto on_error;
    im2->references = 1;
    im2->flags.loaded = EINA_TRUE;
-   evas_cache_image_drop(im);
    if (cache->func.debug) cache->func.debug("size_set", im2);
    evas_cache_image_drop(im);
    return im2;
@@ -1098,7 +1095,6 @@ on_error:
    SLKL(engine_lock);
    if (im2) _evas_cache_image_entry_delete(cache, im2);
    SLKU(engine_lock);
-   evas_cache_image_drop(im);
    evas_cache_image_drop(im);
    return NULL;
 }
