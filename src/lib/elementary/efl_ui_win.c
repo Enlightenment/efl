@@ -1008,12 +1008,6 @@ _elm_win_pre_render(Ecore_Evas *ee)
         _elm_win_frame_style_update(sd, 1, 1);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
 
-        /* set this to handle ecore-evas engine code which incorrectly
-         * assumes that a client resize call is the same as a server resize
-         * event, or which has no server event
-         */
-        sd->deferred_resize_job = EINA_TRUE;
-
         if (sd->frame_obj)
           {
              /* force initial sizing on frame to enable sizing of content */
@@ -1031,6 +1025,11 @@ _elm_win_pre_render(Ecore_Evas *ee)
           ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
 #endif
         sd->first_draw = EINA_TRUE;
+        /* set this to handle ecore-evas engine code which incorrectly
+         * assumes that a client resize call is the same as a server resize
+         * event, or which has no server event
+         */
+        sd->deferred_resize_job = EINA_TRUE;
      }
    if (sd->deferred_resize_job)
      {
