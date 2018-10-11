@@ -5,7 +5,7 @@ engine_src = files([
   'evas_outbuf.c',
 ])
 
-engine_deps = [ecore_drm2, libdrm, gl_deps]
+engine_deps = [ecore_drm2, libdrm, gl_deps, dependency('gbm')]
 
 if get_option('evas-modules') == 'shared' and not evas_force_static.contains(engine)
   shared_module(mod_full_name, engine_src,
