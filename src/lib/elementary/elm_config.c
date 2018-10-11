@@ -4291,6 +4291,9 @@ _elm_config_sub_shutdown(void)
 {
    ecore_event_type_flush(ELM_EVENT_CONFIG_ALL_CHANGED);
 
+#ifdef HAVE_ELEMENTARY_COCOA
+   ecore_cocoa_shutdown();
+#endif
 #ifdef HAVE_ELEMENTARY_WIN32
    ecore_win32_shutdown();
 #endif
