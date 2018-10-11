@@ -450,6 +450,8 @@ _efl_ui_progressbar_pulse_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar
 EOLIAN static void
 _efl_ui_progressbar_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Efl_Ui_Dir dir)
 {
+   if (sd->dir == dir) return;
+
    sd->dir = dir;
 
    efl_ui_widget_theme_apply(obj);
