@@ -4223,18 +4223,16 @@ _status_config_full(Evas_Object *win,
 
    tb_it = elm_toolbar_item_append(tb, "preferences-desktop-display",
                                    "Sizing", _cf_sizing, win);
-   if (!eina_streq(getenv("DESKTOP"), "Enlightenment"))
-     elm_toolbar_item_append(tb, "preferences-desktop-theme",
-                             "Theme", _cf_themes, win);
+   elm_toolbar_item_append(tb, "preferences-desktop-theme",
+                           "Theme", _cf_themes, win);
    elm_toolbar_item_append(tb, "preferences-color",
                            "Icons", _cf_icons, win);
    elm_toolbar_item_append(tb, "preferences-desktop-font",
                            "Fonts", _cf_fonts, win);
    elm_toolbar_item_append(tb, "preferences-desktop-multimedia",
                            "Audio", _cf_audio, win);
-   if (!eina_streq(getenv("DESKTOP"), "Enlightenment"))
-     elm_toolbar_item_append(tb, "preferences-profile",
-                             "Profiles", _cf_profiles, win);
+   elm_toolbar_item_append(tb, "preferences-profile",
+                           "Profiles", _cf_profiles, win);
    elm_toolbar_item_append(tb, NULL, "Scrolling", _cf_scrolling, win);
    elm_toolbar_item_append(tb, NULL, "Rendering", _cf_rendering, win);
    elm_toolbar_item_append(tb, NULL, "Caches", _cf_caches, win);
