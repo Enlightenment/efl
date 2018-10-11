@@ -1226,6 +1226,16 @@ eolian_unit_file_get(const Eolian_Unit *unit)
    return unit->file;
 }
 
+EAPI const char *
+eolian_unit_file_path_get(const Eolian_Unit *unit)
+{
+   if (!unit || !unit->file) return NULL;
+   Eina_Bool is_eo = eina_str_has_suffix(unit->file, EO_SUFFIX);
+   return eina_hash_find(is_eo
+     ? unit->state->filenames_eo
+     : unit->state->filenames_eot, unit->file);
+}
+
 EAPI const Eolian_Object *
 eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name)
 {
