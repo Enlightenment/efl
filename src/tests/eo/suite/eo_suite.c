@@ -4,7 +4,11 @@
 
 #include "eo_suite.h"
 #include "../../efl_check.h"
+#include <eo_private.h>
 #include <Eo.h>
+#include <Eina.h>
+
+int _eo_log_dom = -1;
 
 static const Efl_Test_Case etc[] = {
   { "Eo init", eo_test_init },
@@ -22,10 +26,12 @@ static const Efl_Test_Case etc[] = {
 SUITE_INIT(efl_object)
 {
    ck_assert_int_eq(efl_object_init(), 1);
+   _eo_log_dom = eina_log_domain_register("eo-log", EINA_COLOR_LIGHTBLUE);
 }
 
 SUITE_SHUTDOWN(efl_object)
 {
+   eina_log_domain_unregister(_eo_log_dom);
    ck_assert_int_eq(efl_object_shutdown(), 0);
 }
 
