@@ -92,7 +92,7 @@ _image_preload_internal(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool cancel)
      }
    else
      {
-        if (o->preload == EVAS_IMAGE_PRELOAD_NONE)
+        if (o->preload != EVAS_IMAGE_PRELOADING)
           {
              o->preload = EVAS_IMAGE_PRELOADING;
              ENFN->image_data_preload_request(ENC, o->engine_data, eo_obj);
