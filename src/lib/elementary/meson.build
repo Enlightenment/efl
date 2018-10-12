@@ -105,6 +105,7 @@ pub_legacy_eo_files = [
   'elm_slideshow_item.eo',
   'elm_table.eo',
   'elm_thumb.eo',
+  'efl_ui_textpath_legacy.eo',
   'efl_ui_view_list_precise_layouter.eo'
 ]
 
