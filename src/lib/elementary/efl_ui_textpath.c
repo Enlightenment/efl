@@ -758,3 +758,32 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Dat
       EFL_CANVAS_GROUP_ADD_OPS(efl_ui_textpath)
 
 #include "efl_ui_textpath.eo.c"
+
+#include "efl_ui_textpath_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_textpath"
+/* Legacy APIs */
+
+static void
+_efl_ui_textpath_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_textpath_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_TEXTPATH_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_textpath_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_textpath_legacy.eo.c"
+
