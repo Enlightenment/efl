@@ -145,7 +145,7 @@ _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+   parent = efl_access_object_access_parent_get(obj);
    if (!parent) return -1;
 
    children = efl_access_object_access_children_get(parent);
@@ -168,13 +168,24 @@ _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd
 
 
 EOLIAN static Efl_Object *
-_efl_access_object_efl_object_provider_find(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED, const Efl_Object *klass)
+_efl_access_object_access_parent_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
-   if (efl_isa(obj, klass))
-     {
-        return (Eo*)obj;
-     }
-   return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN), klass);
+   Eo *parent = (Eo*)obj;
+
+   do {
+        parent = efl_parent_get(parent);
+        if (efl_isa(parent, EFL_ACCESS_OBJECT_MIXIN))
+          return parent;
+   } while (parent);
+
+   return NULL;
+}
+
+EOLIAN static void
+_efl_access_object_access_parent_set(Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED, Efl_Access_Object *parent EINA_UNUSED)
+{
+   WRN("The %s object does not implement the \"accessible_parent_set\" function.",
+      efl_class_name_get(efl_class_get(obj)));
 }
 
 EOLIAN Eina_List*

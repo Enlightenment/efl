@@ -269,6 +269,16 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
             role: Efl.Access.Role; [[Accessible role]]
          }
       }
+      @property access_parent @protected @beta {
+         [[Gets object's accessible parent.]]
+         get {
+         }
+         set {
+         }
+         values {
+            parent: Efl.Access.Object; [[Accessible parent]]
+         }
+      }
       @property access_children @protected @beta {
          [[Gets object's accessible children.]]
          get {
@@ -433,7 +443,6 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
    implements {
       Efl.Object.destructor;
       Efl.Object.invalidate;
-      Efl.Object.provider_find;
    }
    events {
       property,changed: string; [[Called when property has changed]]
