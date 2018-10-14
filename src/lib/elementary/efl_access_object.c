@@ -130,7 +130,6 @@ struct _Efl_Access_Object_Data
    const char    *translation_domain;
    Efl_Access_Role role;
    Efl_Access_Reading_Info_Type reading_info;
-   Efl_Access_Type type: 2;
 };
 
 typedef struct _Efl_Access_Object_Data Efl_Access_Object_Data;
@@ -173,12 +172,7 @@ _efl_access_object_efl_object_provider_find(const Eo *obj, Efl_Access_Object_Dat
 {
    if (efl_isa(obj, klass))
      {
-        if (klass == EFL_ACCESS_OBJECT_MIXIN)
-          {
-             Efl_Access_Type type = efl_access_object_access_type_get(obj);
-             if (type != EFL_ACCESS_TYPE_SKIPPED) return (Eo*)obj;
-          }
-        else return (Eo*)obj;
+        return (Eo*)obj;
      }
    return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN), klass);
 }
@@ -399,24 +393,11 @@ _efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *a
 {
    Eina_List *l;
    Efl_Access_Event_Handler *hdl;
-   Efl_Access_Type type;
 
    if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_OBJECT_MIXIN))
      {
         CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
         return;
-     }
-
-   type = efl_access_object_access_type_get(accessible);
-   if (type != EFL_ACCESS_TYPE_REGULAR)
-     return;
-
-   if (event == EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED)
-     {
-        Efl_Access_Event_Children_Changed_Data *event_data = event_info;
-        type = efl_access_object_access_type_get(event_data->child);
-        if (type != EFL_ACCESS_TYPE_REGULAR)
-          return;
      }
 
    Efl_Event ev;
@@ -595,35 +576,6 @@ _efl_access_object_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UN
      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
 
    return root;
-}
-
-EOLIAN Efl_Access_Type
-_efl_access_object_access_type_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
-{
-   return pd->type;
-}
-
-EOLIAN void
-_efl_access_object_access_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Type val)
-{
-   Efl_Access_Object *parent;
-   if (val == pd->type)
-     return;
-
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
-
-   switch (val)
-     {
-      case EFL_ACCESS_TYPE_DISABLED:
-      case EFL_ACCESS_TYPE_SKIPPED:
-         if (parent) efl_access_children_changed_del_signal_emit(parent, obj);
-         efl_access_removed(obj);
-         break;
-      case EFL_ACCESS_TYPE_REGULAR:
-         if (parent) efl_access_children_changed_added_signal_emit(parent, obj);
-         efl_access_added(obj);
-     }
-   pd->type = val;
 }
 
 EOLIAN void

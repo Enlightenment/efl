@@ -759,8 +759,6 @@ _item_new(Elm_Multibuttonentry_Data *sd,
    ELM_MULTIBUTTONENTRY_ITEM_DATA_GET(eo_item, item);
    VIEW_SET(item, elm_layout_add(obj));
 
-   efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_DISABLED);
-
    if (!elm_layout_theme_set(VIEW(item), "multibuttonentry", PART_NAME_BUTTON,
                              elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
