@@ -639,6 +639,8 @@ elementary_pub_headers = [
   'elm_thumb.h',
   'elm_thumb_common.h',
   'elm_thumb_legacy.h',
+  'elm_textpath.h',
+  'elm_textpath_legacy.h',
   'elm_toolbar.h',
   'elm_toolbar_common.h',
   'elm_toolbar_eo.h',
