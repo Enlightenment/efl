@@ -222,6 +222,7 @@ _efl_ui_scroller_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNUS
    efl_ui_scrollbar_bar_position_get(sd->smanager, &posx, &posy);
    edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
    edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vbar", 0.0, posy);
+   edje_object_signal_emit(wd->resize_obj, "efl,action,scroll", "efl");
 }
 
 static void
