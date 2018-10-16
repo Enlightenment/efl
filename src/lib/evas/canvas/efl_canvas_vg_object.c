@@ -314,6 +314,7 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    Evas *e = evas_object_evas_get(eo_obj);
 
    efl_event_callback_del(e, EFL_CANVAS_SCENE_EVENT_RENDER_POST, _cleanup_reference, pd);
+   eina_array_flush(&pd->cleanup);
 
    efl_unref(pd->root);
    pd->root = NULL;
