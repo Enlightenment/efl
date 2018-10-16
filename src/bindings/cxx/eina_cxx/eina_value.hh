@@ -702,7 +702,7 @@ struct value : value_view
     * @brief Copy Constructor. Create an generic value storage holding the same value of @p other.
     * @param other Another <tt>eina::value</tt> object.
     */
-   value(value_view const& other)
+   value(value const& other)
      : value_view(_eina_value_traits<char>::create())
    {
      if(!eina_value_copy(other.native_handle(), _raw))
