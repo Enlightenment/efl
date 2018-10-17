@@ -321,3 +321,9 @@ option('cxx',
   value: true,
   description: 'Flag for handling cxx bindings'
 )
+
+option('mono',
+  type: 'boolean',
+  value: true,
+  description: 'Flag for handling c# bindings'
+)

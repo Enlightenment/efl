@@ -1,4 +1,4 @@
-project('efl', ['c','cpp'],
+project('efl', ['c','cpp', 'cs'],
   version: '1.21.99',
   default_options : ['buildtype=plain'],
   meson_version : '>=0.46'
@@ -313,7 +313,7 @@ subdir(join_paths('src', 'bin', 'efl'))
 subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
 
-bindings = ['luajit', 'cxx']
+bindings = ['luajit', 'cxx', 'mono']
 
 foreach binding : bindings
   if get_option(binding)
