@@ -1136,6 +1136,7 @@ bin/elementary/elm_prefs_cc_handlers.c
 bin_elementary_elm_prefs_cc_LDADD = @USE_ELEMENTARY_LIBS@
 bin_elementary_elm_prefs_cc_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 bin_elementary_elm_prefs_cc_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib/elementary \
 -I$(top_builddir)/src/lib/elementary \
@@ -1566,6 +1567,7 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_sub.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \

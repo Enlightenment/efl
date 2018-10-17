@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERNAL_API_ARGESFSDFEFC
+
 #define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_OBJECT_PROTECTED
 
