@@ -829,7 +829,7 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
              continue;
           }
         if (((obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
-             (obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) ||
+             (obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
             (obj_pdata->mouse_grabbed > 0))
           {
              obj_pdata->mouse_grabbed--;
@@ -1044,7 +1044,7 @@ _evas_event_source_multi_up_events(Evas_Object_Protected_Data *obj, Evas_Public_
           }
 
         if (((obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
-             (obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) ||
+             (obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
             (obj_pdata->mouse_grabbed > 0))
           {
              obj_pdata->mouse_grabbed--;
