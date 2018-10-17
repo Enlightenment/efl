@@ -90,6 +90,8 @@ _ecore_wl2_surface_modules_init(void)
                   local_module = NULL;
                   return EINA_FALSE;
                }
+             eina_module_free(local_module);
+             local_module = NULL;
              return EINA_TRUE;
           }
      }
