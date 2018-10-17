@@ -7,5 +7,6 @@ abstract Efl.Canvas.Vg.Gradient (Efl.Canvas.Vg.Node, Efl.Gfx.Gradient)
       Efl.Gfx.Gradient.spread { get; set; }
       Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
+      Efl.Object.destructor;
    }
 }

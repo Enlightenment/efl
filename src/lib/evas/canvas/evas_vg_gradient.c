@@ -96,6 +96,15 @@ _efl_canvas_vg_gradient_efl_gfx_path_interpolate(Eo *obj,
    return EINA_TRUE;
 }
 
+static void
+_efl_canvas_vg_gradient_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Gradient_Data *pd)
+{
+   if (pd->colors) free(pd->colors);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+
 EOLIAN static Efl_VG *
 _efl_canvas_vg_gradient_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Gradient_Data *pd)
 
