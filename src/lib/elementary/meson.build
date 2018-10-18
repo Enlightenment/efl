@@ -886,6 +886,7 @@ config_h.set_quoted('ICON_DIR', join_paths(dir_lib, 'icons'))
 
 elm_options.set('ELM_UNIX', '1')
 elm_options.set('ELM_ELOCATION', '1')
+elm_options.set('ELM_EFREET', '1')
 
 if config_h.has('HAVE_ALLOCA_H')
   elm_options.set('ELM_ALLOCA_H', '1')
