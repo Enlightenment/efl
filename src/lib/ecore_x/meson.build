@@ -122,6 +122,15 @@ cc.has_header_symbol('X11/XKBlib.h', 'XkbSetDetectableAutoRepeat',
 )
 config_h.set('ECORE_XKB', '1')
 
+lib = cc.find_library('Xcursor',
+  required: true
+)
+cc.has_header_symbol('X11/Xcursor/Xcursor.h', 'XcursorSupportsARGB',
+  dependencies : [x11, xcb]
+  )
+config_h.set('ECORE_XCURSOR', '1')
+ecore_x_deps += lib
+
 ecore_x_lib = library('ecore_x',
     ecore_x_src, pub_eo_file_target,
     dependencies: ecore_x_pub_deps + ecore_x_deps,
