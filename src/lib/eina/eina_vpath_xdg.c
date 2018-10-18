@@ -13,7 +13,6 @@
 void
 eina_xdg_env_init(void)
 {
-   char buf[PATH_MAX];
    char *s;
    char home[PATH_MAX];
    Eina_Vpath_Interface_User user;
@@ -24,16 +23,18 @@ eina_xdg_env_init(void)
 
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
 #  define ENV_HOME_SET(_env, _dir, _meta) \
+   char _meta [PATH_MAX]; \
    if ((getuid() != geteuid()) || (!(s = getenv(_env)))) { \
-      snprintf(buf, sizeof(buf), "%s/"_dir, home); \
-      s = buf; \
+      snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
+      s = _meta; \
    } \
    (&user)->_meta = s;
 #else
 #  define ENV_HOME_SET(_env, _dir, _meta) \
+   char _meta [PATH_MAX]; \
    if (!(s = getenv(_env))) { \
-      snprintf(buf, sizeof(buf), "%s/"_dir, home); \
-      s = buf; \
+      snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
+      s = _meta; \
    } \
    (&user)->_meta = s;
 #endif
