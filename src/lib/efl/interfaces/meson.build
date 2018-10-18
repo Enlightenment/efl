@@ -107,8 +107,6 @@ foreach eo_file : pub_eo_files
                            '-gch', '@INPUT@'])
 endforeach
 
-pub_eo_files += pub_legacy_eo_files
-
 pub_eo_types_files = [
   'efl_gfx_types.eot',
   'efl_ui_types.eot',
@@ -128,13 +126,7 @@ foreach eo_file : pub_eo_types_files
                            '-gh', '@INPUT@'])
 endforeach
 
-install_data(pub_eo_files + pub_legacy_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
-
-efl_interfaces_eo_files = pub_eo_files
-
-pub_eo_files = []
+pub_eo_files = files(pub_eo_files + pub_legacy_eo_files + pub_eo_types_files)
 
 efl_src += files([
   'efl_interfaces_main.c',

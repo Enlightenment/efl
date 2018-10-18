@@ -77,8 +77,6 @@ pub_eo_files = [
   'efl_canvas_text.eo'
 ]
 
-evas_canvas_eo_files = pub_eo_files
-
 pub_evas_eo_files += files(pub_eo_files)
 
 foreach eo_file : pub_eo_files

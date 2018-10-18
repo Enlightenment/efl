@@ -58,7 +58,6 @@ dir_lib       = join_paths(dir_prefix, get_option('libdir'))
 
 #local paths
 local_lib = join_paths('src', 'lib')
-local_bindings = join_paths('src', 'bindings')
 local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
 local_tests = join_paths('src', 'tests')
@@ -66,15 +65,18 @@ local_benchmark = join_paths('src', 'benchmarks')
 local_examples = join_paths('src', 'examples')
 local_scripts = join_paths('src', 'scripts')
 
-foreach lang : ['c', 'objc', 'cpp']
-  add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
-  add_global_arguments('-D_GNU_SOURCE=1', language: lang)
-  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
-  add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
-  add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
-  add_global_arguments('-DEFL_BUILD=1', language: lang)
-  add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
-endforeach
+add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
+add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
+add_global_arguments('-fPIC', language: 'c')
+
+add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'c')
+add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'c')
+add_global_arguments('-DNEED_RUN_IN_TREE=1', language: 'c')
+add_global_arguments('-DEFL_BUILD=1', language: 'c')
+add_global_arguments('-DEFL_BUILD=1', language: 'objc')
+add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'objc')
+add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'objc')
+add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: 'c')
 
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', version_name)
@@ -95,6 +97,7 @@ config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
+config_h.set('NEED_RUN_IN_TREE', '1')
 
 config_dir = [include_directories('.')]
 eolian_include_directories = []
@@ -228,7 +231,6 @@ foreach package : subprojects
     #ensure that we really dont copy the eo file targets from a previous library
     pub_eo_file_target = []
     priv_eo_file_target = []
-    pub_eo_files = []
 
     foreach static_lib : package[9]
       if get_variable(static_lib, tmp_empty) == tmp_empty
@@ -237,8 +239,7 @@ foreach package : subprojects
     endforeach
 
     if (package[3])
-      subdir(join_paths(local_lib, package_name))
-      set_variable(package_name + '_eo_files', pub_eo_files)
+       subdir(join_paths(local_lib, package_name))
     endif
     if (package[2])
        subdir(join_paths(local_module, package_name))
@@ -293,14 +294,7 @@ subdir(join_paths('src', 'bin', 'efl'))
 subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
 
-bindings = ['luajit', 'cxx']
-
-foreach binding : bindings
-  if get_option(binding)
-    subdir(join_paths('src', 'bindings', binding))
-  endif
-endforeach
-
+subdir(join_paths('src', 'bindings', 'luajit'))
 subdir(join_paths('src', 'edje_external'))
 
 

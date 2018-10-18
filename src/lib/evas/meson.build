@@ -173,5 +173,3 @@ install_headers(evas_header_src,
 )
 
 automatic_pkgfile = false
-pub_eo_files = []
-evas_eo_subdirs = ['canvas', 'gesture']

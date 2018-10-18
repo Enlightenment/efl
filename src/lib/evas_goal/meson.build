@@ -7,11 +7,9 @@ evas_lib = library('evas',
     version : meson.project_version()
 )
 
-evas_pub_deps = [eina, ecore, ector, emile, evas_pre]
-
 evas = declare_dependency(
    link_with : [evas_lib],
-   dependencies : evas_pub_deps,
+   dependencies : [eina, ecore, ector, emile, evas_pre],
    include_directories : evas_include_directories
 )
 

@@ -24,8 +24,10 @@ efl = declare_dependency(
   sources : pub_eo_file_target
 )
 
+install_data(pub_eo_files,
+  install_dir: join_paths(eolian_include_dir, package_version_name)
+)
+
 install_headers(efl_header_src,
   install_dir : dir_package_include,
 )
-
-efl_eo_subdirs = ['interfaces']
