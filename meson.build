@@ -313,7 +313,14 @@ subdir(join_paths('src', 'bin', 'efl'))
 subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
 
-subdir(join_paths('src', 'bindings', 'luajit'))
+bindings = ['luajit', 'cxx']
+
+foreach binding : bindings
+  if get_option(binding)
+    subdir(join_paths('src', 'bindings', binding))
+  endif
+endforeach
+
 subdir(join_paths('src', 'edje_external'))
 
 
