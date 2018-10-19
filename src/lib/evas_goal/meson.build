@@ -7,9 +7,11 @@ evas_lib = library('evas',
     version : meson.project_version()
 )
 
+evas_pub_deps = [eina, ecore, ector, emile, evas_pre]
+
 evas = declare_dependency(
    link_with : [evas_lib],
-   dependencies : [eina, ecore, ector, emile, evas_pre],
+   dependencies : evas_pub_deps,
    include_directories : evas_include_directories
 )
 
@@ -19,11 +21,16 @@ evas_bin = declare_dependency(
    include_directories : evas_include_directories
 )
 
+tmp_package_subdirs = []
 automatic_pkgfile = false
+
+foreach subdir : evas_header_subdirs
+  tmp_package_subdirs += join_paths('evas-'+version_major, subdir)
+endforeach
 
 pkgconfig.generate(evas_lib,
   name : 'evas',
-  subdirs : 'evas-'+version_major,
+  subdirs : ['evas-'+version_major] + tmp_package_subdirs,
   version : version_major + '.' + version_minor,
   libraries : [eina, ecore, ector, emile, dependency('luajit')],
 )

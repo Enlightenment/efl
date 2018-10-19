@@ -9,6 +9,7 @@ efl_header_src = [
 efl_src = []
 
 subdir('interfaces')
+package_header_subdirs += 'interfaces'
 
 efl_lib = library('efl',
     efl_src, pub_eo_file_target,
@@ -24,10 +25,8 @@ efl = declare_dependency(
   sources : pub_eo_file_target
 )
 
-install_data(pub_eo_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
-
 install_headers(efl_header_src,
   install_dir : dir_package_include,
 )
+
+package_eo_subdirs += ['interfaces']

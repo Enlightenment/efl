@@ -58,6 +58,7 @@ dir_lib       = join_paths(dir_prefix, get_option('libdir'))
 
 #local paths
 local_lib = join_paths('src', 'lib')
+local_bindings = join_paths('src', 'bindings')
 local_bin = join_paths('src', 'bin')
 local_module = join_paths('src', 'modules')
 local_tests = join_paths('src', 'tests')
@@ -65,18 +66,15 @@ local_benchmark = join_paths('src', 'benchmarks')
 local_examples = join_paths('src', 'examples')
 local_scripts = join_paths('src', 'scripts')
 
-add_global_arguments('-DHAVE_CONFIG_H=1', language: 'c')
-add_global_arguments('-D_GNU_SOURCE=1', language: 'c')
-add_global_arguments('-fPIC', language: 'c')
-
-add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'c')
-add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'c')
-add_global_arguments('-DNEED_RUN_IN_TREE=1', language: 'c')
-add_global_arguments('-DEFL_BUILD=1', language: 'c')
-add_global_arguments('-DEFL_BUILD=1', language: 'objc')
-add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: 'objc')
-add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: 'objc')
-add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: 'c')
+foreach lang : ['c', 'objc', 'cpp']
+  add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
+  add_global_arguments('-D_GNU_SOURCE=1', language: lang)
+  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
+  add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
+  add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
+  add_global_arguments('-DEFL_BUILD=1', language: lang)
+  add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
+endforeach
 
 config_h = configuration_data()
 config_h.set_quoted('MODULE_ARCH', version_name)
@@ -97,7 +95,6 @@ config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
-config_h.set('NEED_RUN_IN_TREE', '1')
 
 config_dir = [include_directories('.')]
 eolian_include_directories = []
@@ -229,7 +226,20 @@ foreach package : subprojects
     dir_package_modules = join_paths(dir_lib, package_name, 'modules')
 
     #ensure that we really dont copy the eo file targets from a previous library
+    #Those are the variables that can be used to reflect the libraries speical handlings
+    # -> at the end is used to indicate where to find this variable outside of this for loop
+
+    #public eo and eot files - which probebly have to be used later for bindings
+    pub_eo_files = []           # -> package_name + '_eo_files'
+    pub_eo_types_files = []     # -> package_name + '_eot_files'
+    #All subdirs where eo files that are listed in the pub_* variables can be found
+    #For every element != '' a variable called package_name + '_' + subir + '_eot_files' and package_name + '_' + subir + '_eo_files' must exist.
+    package_eo_subdirs = ['']     # -> package_name + '_eo_subdirs'
+    #All subdirs that should be included in order to include every requried header
+    package_header_subdirs = [] # -> package_name + '_include_subdirs'
+    #eo file targets, this list of targets can be used to ensure the files are created before accessed
     pub_eo_file_target = []
+    #private eo files target - never use this :)
     priv_eo_file_target = []
 
     foreach static_lib : package[9]
@@ -239,7 +249,11 @@ foreach package : subprojects
     endforeach
 
     if (package[3])
-       subdir(join_paths(local_lib, package_name))
+      subdir(join_paths(local_lib, package_name))
+      set_variable(package_name + '_eo_files', pub_eo_files)
+      set_variable(package_name + '_eot_files', pub_eo_types_files)
+      set_variable(package_name + '_header_subdirs', package_header_subdirs)
+      set_variable(package_name + '_eo_subdirs', package_eo_subdirs)
     endif
     if (package[2])
        subdir(join_paths(local_module, package_name))
@@ -264,10 +278,15 @@ foreach package : subprojects
       tmp_lib = get_variable(package_name+'_lib')
       tmp_deps = get_variable(package_name+'_deps')
       tmp_pub_deps = get_variable(package_name+'_pub_deps')
+      tmp_package_subdirs = []
+
+      foreach subdir : package_header_subdirs
+        tmp_package_subdirs += join_paths(package_version_name, subdir)
+      endforeach
 
       pkgconfig.generate(tmp_lib,
         name : '-'.join(package_name.split('_')),
-        subdirs : package_version_name,
+        subdirs : [package_version_name] + tmp_package_subdirs,
         version : version_major + '.' + version_minor,
         libraries : tmp_pub_deps,
         requires : package[8],
@@ -275,7 +294,7 @@ foreach package : subprojects
       if package_name == 'ethumb_client'
         pkgconfig.generate(tmp_lib,
           name : package_name,
-          subdirs : package_version_name,
+          subdirs : [package_version_name] + tmp_package_subdirs,
           version : version_major + '.' + version_minor,
           libraries : tmp_pub_deps,
           requires : package[8],

@@ -79,6 +79,8 @@ pub_eo_files = [
   'efl_canvas_text.eo'
 ]
 
+evas_canvas_eo_files = pub_eo_files
+
 pub_evas_eo_files += files(pub_eo_files)
 
 foreach eo_file : pub_eo_files
@@ -110,6 +112,8 @@ pub_eo_types_files = [
     'evas_canvas3d_types.eot',
     'efl_canvas_animation_types.eot'
 ]
+
+evas_canvas_eot_files = pub_eo_types_files
 
 foreach eo_file : pub_eo_types_files
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
@@ -217,3 +221,5 @@ evas_include_directories += include_directories('.')
 install_headers('evas_textblock_legacy.h',
   install_dir : join_paths(dir_package_include, 'canvas'),
 )
+
+pub_eo_types_files = []
