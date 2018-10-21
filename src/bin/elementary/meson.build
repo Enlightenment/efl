@@ -163,7 +163,8 @@ elementary_test = executable('elementary_test',
           '-Delementary_test_BIN_DIR="'+dir_bin+'"',
           '-Delementary_test_LIB_DIR="'+dir_lib+'"',
           '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
-        ]
+        ],
+        link_args: '-rdynamic'
 )
 
 elementary_config_src = [
@@ -175,6 +176,7 @@ elementary_config = executable('elementary_config',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
+        link_args: '-rdynamic'
 )
 
 elementary_quicklaunch_src = [
@@ -186,6 +188,7 @@ elementary_quicklaunch = executable('elementary_quicklaunch',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
+        link_args: '-rdynamic'
 )
 
 elementary_codegen_src = [
@@ -197,6 +200,7 @@ elementary_codegen = executable('elementary_codegen',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
+        link_args: '-rdynamic'
 )
 
 elm_prefs_cc_src = [
@@ -214,6 +218,7 @@ elm_prefs_cc = executable('elm_prefs_cc',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
+        link_args: '-rdynamic'
 )
 
 elementary_run_src = [
@@ -225,4 +230,5 @@ elementary_run = executable('elementary_run',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
+        link_args: '-rdynamic'
 )
