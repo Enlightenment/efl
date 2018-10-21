@@ -12,15 +12,25 @@ pub_eo_file_target = []
 foreach eo_file : pub_legacy_eo_files
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
     input : eo_file,
-    output : [eo_file + '.h', eo_file + '.legacy.h',],
+    output : [eo_file + '.h'],
+    depfile : eo_file + '.d',
     install : true,
     install_dir : dir_package_include,
     command : [eolian_gen, '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
+                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-gchd', '@INPUT@'])
+  pub_eo_file_target += custom_target('eolian_gen_legacy_' + eo_file,
+    input : eo_file,
+    output : [eo_file + '.legacy.h'],
+    depfile : eo_file + '.legacy.d',
+    install : true,
+    install_dir : dir_package_include,
+    command : [eolian_gen, '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-gchl', '@INPUT@'])
-
+                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.d'),
+                           '-gld', '@INPUT@'])
 endforeach
 
 pub_eo_files = [
@@ -72,12 +82,14 @@ foreach eo_file : pub_eo_files
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
     input : eo_file,
     output : [eo_file + '.h'],
+    depfile : eo_file + '.d',
     install : true,
     install_dir : dir_package_include,
     command : [eolian_gen, '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
-                           '-gch', '@INPUT@'])
+                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-gchd', '@INPUT@'])
 endforeach
 
 # special handling, because this is already eo API and legacy API
