@@ -5,6 +5,6 @@ eet_bin = executable('eet',
 )
 
 install_data(['diffeet','vieet'],
-  install_mode: 'rwxr--r--',
+  install_mode: 'rwxr-xr-x',
   install_dir : dir_bin
 )
