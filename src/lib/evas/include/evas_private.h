@@ -1260,6 +1260,7 @@ struct _Evas_Object_Func
 // preparation - may include rendering content to buffer or loading data
 // from disk or uploading to texture etc.
    void (*render_prepare) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Eina_Bool do_async);
+   int (*is_on_plane) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 };
 
 struct _Evas_Func
