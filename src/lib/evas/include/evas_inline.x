@@ -126,6 +126,14 @@ evas_object_is_on_plane(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static inline int
+evas_object_plane_changed(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   if (obj->func->plane_changed)
+     return obj->func->plane_changed(eo_obj, obj, obj->private_data);
+   return 0;
+}
+
+static inline int
 evas_event_freezes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->freeze_events) return 1;

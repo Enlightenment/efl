@@ -1261,6 +1261,7 @@ struct _Evas_Object_Func
 // from disk or uploading to texture etc.
    void (*render_prepare) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Eina_Bool do_async);
    int (*is_on_plane) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
+   int (*plane_changed) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *type_private_data);
 };
 
 struct _Evas_Func
