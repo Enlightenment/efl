@@ -1240,6 +1240,7 @@ _evas_render_phase1_process(Phase1_Context *p1ctx)
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
+             if (evas_object_is_on_plane(obj->object, obj)) continue;
              clean_them |= _evas_render_phase1_object_process
                 (p1ctx, obj, EINA_FALSE, EINA_FALSE, EINA_FALSE, 2);
           }
