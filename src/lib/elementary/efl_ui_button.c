@@ -417,6 +417,7 @@ EOLIAN static Eo *
 _efl_ui_button_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
+   legacy_object_focus_handle(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    return obj;
 }

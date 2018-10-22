@@ -883,5 +883,22 @@ efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
      }
 }
 
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the passed manager object is active, "focused" is emitted, if it gets inactive "unfocused" is emitted
+ */
 void legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Manager *emittee);
+
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the children of the passed object are getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
+ */
+void legacy_child_focus_handle(Efl_Ui_Focus_Object *object);
+
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the passed object is getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
+ */
+void legacy_object_focus_handle(Efl_Ui_Focus_Object *object);
+
 #endif

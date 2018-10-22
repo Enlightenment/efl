@@ -5345,15 +5345,6 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 #endif
 }
 
-static void
-_focus_event_changed(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   if (efl_ui_focus_object_focus_get(event->object))
-     evas_object_smart_callback_call(event->object, "focused", NULL);
-   else
-     evas_object_smart_callback_call(event->object, "unfocused", NULL);
-}
-
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
@@ -5369,8 +5360,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    sd->on_create = EINA_FALSE;
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
-
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_event_changed, NULL);
 
    return obj;
 }

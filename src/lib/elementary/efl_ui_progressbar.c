@@ -795,6 +795,7 @@ _efl_ui_progressbar_legacy_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, EFL_UI_PROGRESSBAR_LEGACY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   legacy_object_focus_handle(obj);
    return obj;
 }
 

@@ -4127,6 +4127,7 @@ _elm_entry_efl_object_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+   legacy_object_focus_handle(obj);
 
    return obj;
 }

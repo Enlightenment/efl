@@ -362,6 +362,13 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
 }
 
+EOLIAN static Efl_Object*
+_elm_glview_efl_object_constructor(Eo *obj, Elm_Glview_Data *pd)
+{
+   legacy_object_focus_handle(obj);
+   return efl_constructor(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Eo *
 _elm_glview_efl_object_finalize(Eo *obj, Elm_Glview_Data *sd)
 {

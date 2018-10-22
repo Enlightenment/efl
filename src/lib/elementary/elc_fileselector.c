@@ -1940,6 +1940,7 @@ EOLIAN static Eo *
 _elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   legacy_child_focus_handle(obj);
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);

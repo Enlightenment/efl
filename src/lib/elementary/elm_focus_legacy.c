@@ -380,3 +380,60 @@ legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager,
    efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focus_manager_focused, state);
    efl_event_callback_add(manager, EFL_EVENT_DEL, _focus_manager_del, state);
 }
+
+typedef struct {
+  Eina_Bool focused;
+  Efl_Ui_Focus_Manager *registered_manager;
+  Eo *emittee;
+} Legacy_Object_Focus_State;
+
+static void
+_manager_focus_changed(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Legacy_Object_Focus_State *state = data;
+   Eina_Bool currently_focused = efl_ui_focus_object_child_focus_get(state->emittee);
+
+   if (currently_focused == state->focused) return;
+
+   if (currently_focused)
+     evas_object_smart_callback_call(state->emittee, "focused", NULL);
+   else
+     evas_object_smart_callback_call(state->emittee, "unfocused", NULL);
+   state->focused = currently_focused;
+}
+
+static void
+_manager_focus_object_changed(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Legacy_Object_Focus_State *state = data;
+   if (state->registered_manager)
+     efl_event_callback_del(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+   state->registered_manager = efl_ui_focus_object_focus_manager_get(state->emittee);
+   if (state->registered_manager)
+     efl_event_callback_add(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+}
+
+void
+legacy_child_focus_handle(Efl_Ui_Focus_Object *object)
+{
+   Legacy_Object_Focus_State *state = calloc(1, sizeof(Legacy_Object_Focus_State));
+   state->emittee = object;
+
+   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_focus_object_changed, state);
+   efl_event_callback_add(object, EFL_EVENT_DEL, _focus_manager_del, state);
+}
+
+static void
+_focus_event_changed(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   if (efl_ui_focus_object_focus_get(event->object))
+     evas_object_smart_callback_call(event->object, "focused", NULL);
+   else
+     evas_object_smart_callback_call(event->object, "unfocused", NULL);
+}
+
+void
+legacy_object_focus_handle(Efl_Ui_Focus_Object *object)
+{
+   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_event_changed, NULL);
+}

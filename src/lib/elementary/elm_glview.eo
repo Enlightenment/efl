@@ -188,6 +188,7 @@ class Elm.Glview (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy)
    }
    implements {
       class.constructor;
+      Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Gfx.Entity.size { set; }
       Efl.Ui.Focus.Object.on_focus_update;
