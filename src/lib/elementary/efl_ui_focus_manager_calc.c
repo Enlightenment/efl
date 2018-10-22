@@ -400,12 +400,7 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 static void
 dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   if (!node->on_list) return;
-
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
-
-   pd->dirty = eina_list_remove(pd->dirty, node);
-   node->on_list = EINA_FALSE;
 
    dirty_flush_node(obj, pd, node);
 }
