@@ -87,6 +87,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
                       Elm_Toolbar_Data *sd,
                       Evas_Coord *iw,
                       Evas_Coord vw,
+                      Eina_Bool usage_bx_more,
                       Eina_Bool *more)
 {
    Elm_Toolbar_Item_Data *it, *prev;
@@ -125,11 +126,22 @@ _items_visibility_fix(Elm_Toolbar *obj,
              evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
              if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
              else *iw += ciw;
-             it->prio.visible = (*iw <= vw);
+             //expand is the case where the bx_more stuff is used and the prio.visible is completly ignored.
+             //if this is the case - then every item in there is just visible in the box - nothing (beside the items in the other box is hidden)
+             if (!usage_bx_more)
+               {
+                  it->prio.visible = (*iw <= vw);
+                  if (!it->prio.visible)
+                    *more = EINA_TRUE;
+               }
+             else
+               {
+                  it->prio.visible = EINA_TRUE;
+               }
+
              it->in_box = sd->bx;
              if (!it->separator) count++;
-             if (!it->prio.visible)
-               *more = EINA_TRUE;
+
           }
         else
           {
@@ -386,12 +398,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, EINA_FALSE, &more);
           }
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
@@ -467,12 +479,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, EINA_FALSE, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
@@ -510,9 +522,9 @@ _resize_job(void *data)
           w = (vw >= mw) ? vw : mw;
 
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-          _items_visibility_fix(obj, sd, &ih, vh, &more);
+          _items_visibility_fix(obj, sd, &ih, vh, EINA_TRUE, &more);
         else
-          _items_visibility_fix(obj, sd, &iw, vw, &more);
+          _items_visibility_fix(obj, sd, &iw, vw, EINA_TRUE, &more);
 
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more, EINA_FALSE);
