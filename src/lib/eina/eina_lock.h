@@ -642,12 +642,12 @@ static inline void eina_spinlock_free(Eina_Spinlock *spinlock);
  * @brief Definition for the macro that doesn't do anything unless @c EINA_HAVE_DEBUG_THREADS is defined.
  * @param[in] val The value to be returned
  */
-# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)
+# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val) do {} while(0)
 /**
  * @def EINA_MAIN_LOOP_CHECK_RETURN
  * @brief Definition for the macro that doesn't do anything unless @c EINA_HAVE_DEBUG_THREADS is defined.
  */
-# define EINA_MAIN_LOOP_CHECK_RETURN
+# define EINA_MAIN_LOOP_CHECK_RETURN do {} while(0)
 #endif
 
 /**
