@@ -3136,6 +3136,52 @@ _evas_overlay_output_find(Efl_Canvas_Output *output,
    return EVAS_3STATE_INSIDE;
 }
 
+static void
+_evas_planes(Evas_Public_Data *evas)
+{
+   Evas_Active_Entry *ao;
+
+   /* check if individual image objects can be dropped into hardware planes */
+   if (ENFN->image_plane_assign)
+     EINA_INARRAY_FOREACH(&evas->active_objects, ao)
+       {
+          Evas_Object_Protected_Data *obj2;
+          Evas_Object *eo_obj2;
+          Efl_Canvas_Output *output;
+          Evas_3State state;
+          Eina_List *lo;
+
+          obj2 = ao->obj;
+          eo_obj2 = obj2->object;
+
+          if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
+
+          /* Find the output the object was in */
+          EINA_LIST_FOREACH(evas->outputs, lo, output)
+            {
+               if (!output->output) continue ;
+               if (!eina_list_data_find(output->planes, obj2)) continue;
+               _evas_object_image_plane_release(eo_obj2, obj2, output);
+               break;
+            }
+
+         if (evas_object_is_visible(eo_obj2, obj2))
+           EINA_LIST_FOREACH(evas->outputs, lo, output)
+            {
+               /* A video object can only be in one output at a time, check that first */
+               state = _evas_overlay_output_find(output, obj2);
+               if (state == EVAS_3STATE_OUTSIDE) continue;
+
+               if (!_evas_render_can_use_overlay(evas, eo_obj2, output))
+                 {
+                    /* This may free up things temporarily allocated by
+                     * _can_use_overlay() testing in the engine */
+                    _evas_object_image_plane_release(eo_obj2, obj2, output);
+                 } else break;
+            }
+       }
+}
+
 static Eina_Bool
 evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
@@ -3155,7 +3201,6 @@ evas_render_updates_internal(Evas *eo_e,
    unsigned int i;
    Phase1_Context p1ctx;
    int redraw_all = 0;
-   Evas_Active_Entry *ao;
    Evas_Render_Mode render_mode = !do_async ?
      EVAS_RENDER_MODE_SYNC :
      EVAS_RENDER_MODE_ASYNC_INIT;
@@ -3368,44 +3413,7 @@ evas_render_updates_internal(Evas *eo_e,
              else
                _evas_object_image_video_overlay_hide(eo_obj);
           }
-
-        /* check if individual image objects can be dropped into hardware planes */
-        if (ENFN->image_plane_assign)
-          EINA_INARRAY_FOREACH(&evas->active_objects, ao)
-            {
-               Evas_Object_Protected_Data *obj2;
-               Evas_Object *eo_obj2;
-               Efl_Canvas_Output *output;
-               Evas_3State state;
-               Eina_List *lo;
-
-               obj2 = ao->obj;
-               eo_obj2 = obj2->object;
-
-               if (!efl_isa(eo_obj2, EFL_CANVAS_IMAGE_INTERNAL_CLASS)) continue;
-
-               if (evas_object_image_video_surface_get(eo_obj2)) continue;
-
-               /* Find the output the object was in */
-               EINA_LIST_FOREACH(e->outputs, lo, output)
-                 {
-                    if (!output->output) continue ;
-                    if (!eina_list_data_find(output->planes, obj2)) continue ;
-                    _evas_object_image_plane_release(eo_obj2, obj2, output);
-                    break;
-                 }
-
-               /* A video object can only be in one output at a time, check that first */
-               state = _evas_overlay_output_find(out, obj2);
-               if (state == EVAS_3STATE_OUTSIDE) continue ;
-
-               if (!_evas_render_can_use_overlay(e, eo_obj2, out))
-                 {
-                    /* This may free up things temporarily allocated by
-                     * _can_use_overlay() testing in the engine */
-                    _evas_object_image_plane_release(eo_obj2, obj2, out);
-                 }
-            }
+        _evas_planes(e);
         eina_evlog("-render_phase7", eo_e, 0.0, NULL);
 
         /* phase 8. go thru each update rect and render objects in it*/
