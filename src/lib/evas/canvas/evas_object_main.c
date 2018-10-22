@@ -839,6 +839,18 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
    if (!obj->layer) return;
 
    if (obj->is_smart) goto end;
+
+   if (evas_object_is_on_plane(eo_obj, obj))
+     {
+        /* We need some damage to occur if only planes are being updated,
+           or nothing will provoke a page flip.
+         */
+        obj->layer->evas->engine.func->output_redraws_rect_add(ENC,
+                                                                 0, 0, 1, 1);
+        /* Force a pixels get callback for E's benefit :( */
+        evas_object_pixels_get_force(eo_obj, obj);
+        goto end;
+     }
    /* FIXME: was_v isn't used... why? */
    if (!obj->clip.clipees)
      {
