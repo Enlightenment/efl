@@ -3179,6 +3179,28 @@ _evas_planes(Evas_Public_Data *evas)
                     _evas_object_image_plane_release(eo_obj2, obj2, output);
                  } else break;
             }
+          if (evas_object_plane_changed(eo_obj2, obj2))
+            {
+               /* Since we're lifting this object out of the scene graph
+                * (or putting it back), we need to force redraw of the space
+                * under it.
+                */
+               _evas_canvas_damage_rectangle_add(NULL, evas,
+                                                 obj2->cur->geometry.x,
+                                                 obj2->cur->geometry.y,
+                                                 obj2->cur->geometry.w,
+                                                 obj2->cur->geometry.h);
+
+               /* We also need to clean its previously drawn position
+                * but only if we're removing it */
+               if (evas_object_is_on_plane(eo_obj2, obj2))
+                 _evas_canvas_damage_rectangle_add(NULL, evas,
+                                                   obj2->prev->geometry.x,
+                                                   obj2->prev->geometry.y,
+                                                   obj2->prev->geometry.w,
+                                                   obj2->prev->geometry.h);
+
+            }
        }
 }
 
