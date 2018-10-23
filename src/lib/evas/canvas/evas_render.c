@@ -1341,9 +1341,9 @@ pending_change(void *data, void *gdata EINA_UNUSED)
    if (obj->pre_render_done)
      {
         RD(0, "  OBJ %s pending change %i -> 0, pre %i\n", RDNAME(obj), obj->changed, obj->pre_render_done);
+        evas_object_change_reset(obj);
         obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_FALSE;
-        evas_object_change_reset(obj);
      }
    else if (!_evas_render_can_render(eo_obj, obj) &&
             (!obj->is_active) && (!obj->render_pre) &&
@@ -1351,6 +1351,8 @@ pending_change(void *data, void *gdata EINA_UNUSED)
      {
         evas_object_change_reset(obj);
      }
+
+   //FIXME: after evas_object_change_reset(), obj->changed is always false...
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
@@ -3593,9 +3595,9 @@ evas_render_updates_internal(Evas *eo_e,
         if ((clean_them) || (obj->changed && do_draw))
           {
              RD(0, "    OBJ %s render_post()\n", RDNAME(obj));
-             obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(obj);
+             obj->func->render_post(eo_obj, obj, obj->private_data);
           }
      }
 
@@ -3645,9 +3647,9 @@ evas_render_updates_internal(Evas *eo_e,
         obj->pre_render_done = EINA_FALSE;
         if ((obj->changed) && (do_draw))
           {
-             obj->func->render_post(eo_obj, obj, obj->private_data);
              obj->restack = EINA_FALSE;
              evas_object_change_reset(obj);
+             obj->func->render_post(eo_obj, obj, obj->private_data);
           }
      }
    eina_evlog("-render_post_reset", eo_e, 0.0, NULL);

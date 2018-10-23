@@ -2691,6 +2691,9 @@ evas_object_image_render_post(Evas_Object *eo_obj EINA_UNUSED,
    evas_object_cur_prev(obj);
    eina_cow_memcpy(evas_object_image_state_cow, (const Eina_Cow_Data **)&o->prev, o->cur);
    /* FIXME: copy strings across */
+
+   //Somehow(preloading cancelled) image has been changed, need to redraw.
+   if (o->changed) evas_object_change(eo_obj, obj);
 }
 
 static void *
