@@ -419,6 +419,22 @@ EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, i
 EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *transit);
 
 /**
+ * Get current transit repeated count.
+ *
+ * @see elm_transit_repeat_times_set()
+ *
+ * @param transit The Transit object.
+ * @return Current repeated count. If @p transit is NULL
+ * 0 is returned
+ *
+ * @warning Return value is only valid when repeat times is set.
+ * @since 1.22
+ *
+ * @ingroup Elm_Transit
+ */
+EAPI int                    elm_transit_current_repeat_times_get(const Elm_Transit *transit);
+
+/**
  * Set the transit animation acceleration type.
  *
  * This function sets the tween mode of the transit that can be:

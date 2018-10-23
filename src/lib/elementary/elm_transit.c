@@ -740,6 +740,13 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 }
 
 EAPI int
+elm_transit_current_repeat_times_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
+   return transit->repeat.current;
+}
+
+EAPI int
 elm_transit_repeat_times_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
