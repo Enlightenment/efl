@@ -63,7 +63,29 @@ efl_mono_suite = executable('efl-mono-suite',
   link_with : [efl_mono, efl_mono_test],
 )
 
+env = environment()
+env.set('MONO_PATH', efl_mono_test_suite_path )
+
+config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
+load_lib = ''
+
+foreach config : config_libs
+  lib = get_variable(config+'_lib')
+  path = lib.full_path().split('/')
+  repaired_path = ''
+  prev = ''
+
+  foreach p : path
+    repaired_path += prev
+    prev = p+'/'
+  endforeach
+
+  load_lib += repaired_path+':'
+endforeach
+
+env.set('LD_LIBRARY_PATH', load_lib)
+
 test('efl-mono-suite',
   efl_mono_suite,
-  env : ['MONO_PATH='+efl_mono_test_suite_path]
+  env : env
 )
