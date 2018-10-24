@@ -1225,9 +1225,8 @@ _efl_canvas_group_group_change(Eo *eo_obj, Evas_Smart_Data *o EINA_UNUSED)
 }
 
 Eina_Bool
-evas_object_smart_changed_get(Evas_Object *eo_obj)
+evas_object_smart_changed_get(Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Bool has_map = EINA_FALSE;
 
    /* If object is invisible, it's meaningless to figure out changed state
@@ -1263,8 +1262,8 @@ evas_object_smart_changed_get(Evas_Object *eo_obj)
      {
         Evas_Object_Protected_Data *o2;
 
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
-          if (evas_object_smart_changed_get(o2->object)) return EINA_TRUE;
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj->object), o2)
+          if (evas_object_smart_changed_get(o2)) return EINA_TRUE;
      }
 
    return EINA_FALSE;
