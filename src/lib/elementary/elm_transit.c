@@ -797,11 +797,6 @@ EAPI void
 elm_transit_duration_set(Elm_Transit *transit, double duration)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   if (transit->animator)
-     {
-        WRN("elm_transit does not allow one to set the duration time in operating! : transit=%p", transit);
-        return;
-     }
    transit->time.duration = duration;
 }
 
