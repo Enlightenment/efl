@@ -312,7 +312,7 @@ option('nls',
 
 option('luajit',
   type: 'boolean',
-  value: true,
+  value: false,
   description: 'Flag for handling lua bindings'
 )
 
@@ -324,6 +324,6 @@ option('cxx',
 
 option('mono',
   type: 'boolean',
-  value: true,
+  value: false,
   description: 'Flag for handling c# bindings'
 )
