@@ -1004,8 +1004,8 @@ _elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
    Efl_Event event = {};
-   event.object = sd->win;
    sd->win = elm_widget_top_get(obj);
+   event.object = sd->win;
    _on_indicator_mode_changed(obj, &event);
    _on_rotation_changed(obj, &event);
 
