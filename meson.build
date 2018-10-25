@@ -1,4 +1,4 @@
-project('efl', ['c','cpp', 'cs'],
+project('efl', ['c','cpp'],
   version: '1.21.99',
   default_options : ['buildtype=plain'],
   meson_version : '>=0.46'

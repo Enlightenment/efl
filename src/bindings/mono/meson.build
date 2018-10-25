@@ -1,3 +1,5 @@
+add_languages('cs')
+
 mono_sublibs = [
   ['Eina',        true, ], #
   ['Eolian',      true, ], #
