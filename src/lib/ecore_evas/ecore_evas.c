@@ -5273,8 +5273,7 @@ _ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data)
    Ecore_Evas *ee;
    Ecore_Animator *animator;
 
-   if (EINA_UNLIKELY(!eina_main_loop_is()))
-     EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    if (!func)
      {

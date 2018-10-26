@@ -513,10 +513,7 @@ _ecore_animator_add(Ecore_Task_Cb func,
 {
    Ecore_Animator *animator;
 
-   if (EINA_UNLIKELY(!eina_main_loop_is()))
-     {
-        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-     }
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    if (!func)
      {
