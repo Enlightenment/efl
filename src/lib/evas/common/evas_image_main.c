@@ -840,6 +840,7 @@ _evas_common_rgba_image_ram_usage(Image_Entry *ie)
    if (ie->cache_key) size += strlen(ie->cache_key);
    if (ie->file) size += strlen(ie->file);
    if (ie->key) size += strlen(ie->key);
+   if (ie->f && eina_file_virtual(ie->f)) size += eina_file_size_get(ie->f);
 
    if (im->image.data)
      {
