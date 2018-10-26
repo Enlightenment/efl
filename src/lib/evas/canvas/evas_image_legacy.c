@@ -984,7 +984,11 @@ evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
    EVAS_IMAGE_LEGACY_API(eo_obj, 0);
 
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   return (!o->video_surface ? 0 : o->pixels->video_caps);
+
+   /* The generic hardware plane code calls this function on
+    * non-video surfaces, return stacking check for those to
+    * allow them to use common video surface code */
+   return (!o->video_surface ? EVAS_VIDEO_SURFACE_STACKING_CHECK : o->pixels->video_caps);
 }
 
 /* deprecated */
