@@ -1427,6 +1427,14 @@ evas_draw_image_map_async_check(Evas_Object_Protected_Data *obj,
      }
 }
 
+void
+evas_object_pixels_get_force(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   Evas_Image_Data *o = obj->private_data;
+
+   o->pixels->func.get_pixels(o->pixels->func.get_pixels_data, eo_obj);
+}
+
 static void *
 evas_process_dirty_pixels(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
                           void *engine, void *output, void *surface, void *pixels)
@@ -1775,14 +1783,11 @@ evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, v
 
    if (o->plane)
      {
-        int imagew, imageh, uvw, uvh;
-
         /* We must call pixels get because enlightenment uses it for internal
          * bookkeeping and won't send frame callbacks to wayland clients if we
          * don't
          */
-        _evas_image_pixels_get(eo_obj, obj, engine, output, context, surface, x, y,
-                               &imagew, &imageh, &uvw, &uvh, EINA_FALSE, EINA_FALSE);
+        evas_object_pixels_get_force(eo_obj, obj);
 #if 0
         Evas_Native_Surface *ns;
 
