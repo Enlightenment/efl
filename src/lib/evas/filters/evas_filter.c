@@ -41,6 +41,10 @@ static void _filter_buffer_unlock_all(Evas_Filter_Context *ctx);
 #define _free(ptr) free(ptr)
 //eina_freeq_ptr_main_add(ptr, NULL, sizeof(*ptr))
 
+
+/* FIXME: This code is come from a log by
+   CRI<14853>:eo lib/eo/eo.c:1894 efl_unref() Calling efl_unref instead of efl_del or efl_parent_set(NULL).
+   Temporary fallback in place triggered." When u get correct method, please fix this. */
 static void
 _buffer_del(Eo *buffer)
 {
