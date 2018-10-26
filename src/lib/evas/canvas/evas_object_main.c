@@ -2033,7 +2033,7 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if ((!obj->is_smart) ||
-                 ((obj->map->cur.map) && (obj->map->cur.map->count == 4) && (obj->map->cur.usemap)))
+                 ((obj->map->cur.map) && (obj->map->cur.usemap)))
                {
                   Evas_Object_Pointer_Data *obj_pdata;
                   Eina_Bool mouse_grabbed = EINA_FALSE;

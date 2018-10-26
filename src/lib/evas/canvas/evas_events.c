@@ -252,8 +252,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
                if (!evas_object_is_inside(clip->object, clip, x, y))
                  return in;
 
-             if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
-                 (obj->map->cur.map->count == 4))
+             if ((obj->map->cur.usemap) && (obj->map->cur.map))
                {
                   inside = evas_object_is_in_output_rect(eo_obj, obj, x, y, 1, 1);
                   if (inside)
@@ -335,8 +334,7 @@ _evas_event_object_list_raw_in_get_single(Evas *eo_e, Evas_Object_Protected_Data
 
              if (inside)
                {
-                  if ((obj->map->cur.usemap) && (obj->map->cur.map) &&
-                      (obj->map->cur.map->count == 4))
+                  if ((obj->map->cur.usemap) && (obj->map->cur.map))
                     {
                        if (!evas_map_coords_get(obj->map->cur.map, x, y,
                                                 &(obj->map->cur.map->mx),
