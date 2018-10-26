@@ -1192,6 +1192,7 @@ _elm_naviframe_item_efl_object_invalidate(Eo *eo_item, Elm_Naviframe_Item_Data *
    Elm_Naviframe_Item_Data *prev_it = NULL;
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Eina_Inlist *l;
+   Eina_Bool top;
 
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
    if (it->title_prev_btn)
@@ -1227,9 +1228,10 @@ _elm_naviframe_item_efl_object_invalidate(Eo *eo_item, Elm_Naviframe_Item_Data *
    if (evas_object_data_get(VIEW(it), "out_of_list"))
      goto end;
 
+   top = (eo_item == elm_naviframe_top_item_get(WIDGET(it)));
    sd->stack = eina_inlist_remove(sd->stack, EINA_INLIST_GET(it));
 
-   if ((elm_naviframe_top_item_get(WIDGET(it)) == eo_item) && !sd->on_deletion) /* must raise another one */
+   if (top && !sd->on_deletion) /* must raise another one */
      {
         if (sd->stack && sd->stack->last)
           prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last,
