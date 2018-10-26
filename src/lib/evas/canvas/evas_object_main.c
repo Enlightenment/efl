@@ -2036,14 +2036,24 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
                  ((obj->map->cur.map) && (obj->map->cur.map->count == 4) && (obj->map->cur.usemap)))
                {
                   Evas_Object_Pointer_Data *obj_pdata;
-
+                  Eina_Bool mouse_grabbed = EINA_FALSE;
                   EINA_INLIST_FOREACH(obj->events->pointer_grabs, obj_pdata)
                     {
-                       if (!obj_pdata->mouse_grabbed &&
-                           evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->seat->x,
-                                                         obj_pdata->evas_pdata->seat->y,
-                                                         1, 1))
-                         _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
+                       if (obj_pdata->mouse_grabbed > 0)
+                         {
+                            mouse_grabbed = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!mouse_grabbed)
+                    {
+                       EINA_INLIST_FOREACH(obj->events->pointer_grabs, obj_pdata)
+                         {
+                            if (evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->seat->x,
+                                                              obj_pdata->evas_pdata->seat->y,
+                                                              1, 1))
+                              _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
+                         }
                     }
 /* this is at odds to handling events when an obj is moved out of the mouse
  * ore resized out or clipped out. if mouse is grabbed - regardless of
