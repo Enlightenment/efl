@@ -752,6 +752,7 @@ _evas_render_phase1_object_restack_handle(Phase1_Context *p1ctx,
      {
         OBJ_ARRAY_PUSH(&(p1ctx->e->pending_objects), obj);
         obj->changed = EINA_TRUE;
+        obj->in_pending_objects = EINA_TRUE;
      }
    obj->restack = EINA_TRUE;
 }
@@ -1353,7 +1354,9 @@ pending_change(void *data, void *gdata EINA_UNUSED)
      }
 
    //FIXME: after evas_object_change_reset(), obj->changed is always false...
-   return obj->changed ? EINA_TRUE : EINA_FALSE;
+   Eina_Bool val = obj->changed ? EINA_TRUE : EINA_FALSE;
+   obj->in_pending_objects = val;
+   return val;
 }
 
 static Eina_Bool
@@ -3636,6 +3639,7 @@ evas_render_updates_internal(Evas *eo_e,
                                               EFL_CANVAS_OBJECT_CLASS);
              evas_object_change(obj->smart.parent, smart_parent);
           }
+        obj->changed = EINA_TRUE;
      }
    eina_evlog("-render_post_change", eo_e, 0.0, NULL);
 
@@ -4161,8 +4165,9 @@ evas_render_object_recalc(Evas_Object_Protected_Data *obj)
 
        e = obj->layer->evas;
        if ((!e) || (e->cleanup)) return;
-       OBJ_ARRAY_PUSH(&e->pending_objects, obj);
-       obj->changed = EINA_TRUE;
+       if (!obj->in_pending_objects)
+         OBJ_ARRAY_PUSH(&e->pending_objects, obj);
+       obj->in_pending_objects = obj->changed = EINA_TRUE;
      }
 }
 

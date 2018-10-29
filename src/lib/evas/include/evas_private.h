@@ -1146,6 +1146,7 @@ struct _Evas_Object_Protected_Data
 
    Eina_Bool                   is_active : 1;
    Eina_Bool                   changed : 1;
+   Eina_Bool                   in_pending_objects : 1;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_smart : 1;
    Eina_Bool                   is_event_parent : 1;
