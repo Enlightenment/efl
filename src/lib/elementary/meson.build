@@ -970,3 +970,5 @@ install_headers(elementary_header_src,
 )
 
 elementary_config_dir = include_directories('.')
+
+package_pc_variables = ['themes='+join_paths(dir_data, package_name, 'themes')]

@@ -241,6 +241,8 @@ foreach package : subprojects
     pub_eo_file_target = []
     #private eo files target - never use this :)
     priv_eo_file_target = []
+    #use this variable to store custom variables in that should be placed in the .pc file
+    package_pc_variables = []
 
     foreach static_lib : package[9]
       if get_variable(static_lib, tmp_empty) == tmp_empty
@@ -290,6 +292,7 @@ foreach package : subprojects
         version : version_major + '.' + version_minor,
         libraries : tmp_pub_deps,
         requires : package[8],
+        variables : package_pc_variables
       )
       if package_name == 'ethumb_client'
         pkgconfig.generate(tmp_lib,
