@@ -384,3 +384,6 @@ configure_file(
   configuration: config_h,
   install_dir : join_paths(dir_include,'elementary-'+version_major)
 )
+
+subdir(join_paths('systemd-services'))
+subdir(join_paths('dbus-services'))
