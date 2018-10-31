@@ -1,0 +1,12 @@
+class Efl.Ui.Tree_View_Pan (Efl.Ui.Pan)
+{
+   [[Elementary Efl_Ui_Tree_View pan class]]
+   implements {
+      Efl.Object.destructor;
+      Efl.Ui.Pan.content_size { get; }
+      Efl.Ui.Pan.pan_position { get; set; }
+      Efl.Ui.Pan.pan_position_min { get; }
+      Efl.Ui.Pan.pan_position_max { get; }
+      Efl.Canvas.Group.group_calculate;
+   }
+}

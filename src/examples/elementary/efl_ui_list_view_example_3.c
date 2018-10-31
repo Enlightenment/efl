@@ -66,7 +66,7 @@ _focused(void *data, const Efl_Event *event)
 }
 
 static void
-_bt_add_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_add_clicked(void *data, Evas_Object *obj, void *event_info)
 {
    Priv_Data *priv = (Priv_Data*)data;
    Eina_Value vtext, value;
@@ -90,7 +90,7 @@ _bt_add_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 }
 
 static void
-_bt_del_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_del_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Priv_Data *priv = (Priv_Data*)data;
    Eo *child = NULL;
@@ -110,35 +110,35 @@ _bt_del_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 }
 
 static void
-_bt_none_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_none_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
    efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_NONE);
 }
 
 static void
-_bt_donly_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_donly_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
    efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 }
 
 static void
-_bt_default_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_default_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
    efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DEFAULT);
 }
 
 static void
-_bt_set_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_set_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Priv_Data *priv = data;
    efl_ui_view_model_set(priv->list2, priv->model);
 }
 
 static void
-_bt_unset_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_unset_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
    efl_ui_view_model_set(li, NULL);
@@ -201,7 +201,7 @@ _make_model()
 }
 
 EAPI_MAIN int
-elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+elm_main(int argc, char **argv)
 {
    Priv_Data *priv;
    Evas_Object *win, *bx, *vbx, *bt;

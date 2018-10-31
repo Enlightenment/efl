@@ -22,7 +22,7 @@ const char *styles[] = {
 char edj_path[PATH_MAX];
 
 static void
-_realized_cb(void *data EINA_UNUSED, const Efl_Event *event)
+_realized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_List_View_Item_Event *ie = event->info;
    if (!ie->layout) return;
@@ -69,7 +69,7 @@ _make_model(Evas_Object *win)
 }
 
 EAPI_MAIN int
-elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
+elm_main(int argc, char **argv)
 {
    Efl_Ui_Factory *factory;
    Evas_Object *win, *li;

@@ -1,0 +1,33 @@
+import elm_general;
+
+struct Efl.Ui.Tree_Factory_Item_Event
+{
+   model: Efl.Model;
+   expandable: bool;
+}
+
+class Efl.Ui.Tree_Factory (Efl.Ui.Layout_Factory)
+{
+   [[Efl Ui Tree Factory class]]
+   methods {
+      @property expandable_style {
+         [[Style used to expandable itens]]
+         set {}
+         values {
+            style: string; [[The style to use.]]
+         }
+      }
+   }
+   events {
+      item,create : Efl.Ui.Tree_Factory_Item_Event;
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Ui.Factory.create;
+      Efl.Ui.Factory.release;
+      Efl.Ui.Factory.model_connect;
+      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Layout_Factory.theme_config;
+   }
+}

@@ -1,0 +1,63 @@
+import efl_ui_tree_view_model;
+
+class Efl.Ui.Tree_View_Seg_Array (Efl.Object)
+{
+   methods {
+      @property shallow_accessor {
+         get {
+            [[ Get a Seg_Array List items accessor ]]
+         }
+         values {
+             acc: accessor<ptr(Efl.Ui.Tree_View_Item)>;
+         }
+      }
+      @property linearized_accessor {
+         get {
+            [[ Get a Seg_Array List items accessor ]]
+         }
+         values {
+             acc: accessor<ptr(Efl.Ui.Tree_View_Item)>;
+         }
+      }
+      @property node_accessor {
+         get {
+            [[ Get a Seg_Array node accessor ]]
+         }
+         values {
+             acc: accessor<ptr(Efl.Ui.Tree_View_Seg_Array_Node)>;
+         }
+      }
+      count {
+         [[ Get the number of items in Seg_Array tree ]]
+         return: int;
+      }
+      setup {
+         [[ Configure a step of Seg_Array tree, this is the max node size ]]
+          params {
+              @in initial_step_size: int;
+          }
+      }
+      flush {
+         [[ flush the Seg_Array tree ]]
+      }
+      insert {
+         [[ Insert a new model in Seg_Array tree at index position ]]
+          params {
+              @in parent: ptr(Efl.Ui.Tree_View_Item);
+              @in index: int;
+              @in model: Efl.Model;
+          }
+      }
+      remove {
+         [[ Remove the item at index position in Seg_Array tree ]]
+          params {
+              @in index: int;
+          }
+          return: ptr(Efl.Ui.Tree_View_Item) @owned;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}
