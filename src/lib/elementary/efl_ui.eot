@@ -1,6 +1,6 @@
 /* Efl.Ui enum and struct types */
 
-enum Efl.Ui.Theme.Apply
+enum Efl.Ui.Theme_Apply
 {
    [[Return error code when setting the style on a widget.]]
    failed = 0,  [[Failed to apply theme. The widget may become unusable.]]

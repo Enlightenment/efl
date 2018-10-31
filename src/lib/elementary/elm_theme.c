@@ -7,6 +7,10 @@
 #include "elm_priv.h"
 #include "elm_icon.eo.h"
 
+#include "efl_ui_theme.eo.h"
+
+static Efl_Ui_Theme *theme_default_eo = NULL; //Eo handle for efl_ui_theme_default_get()
+
 static Elm_Theme theme_default =
 {
   NULL, NULL, NULL,
@@ -1019,3 +1023,65 @@ elm_theme_user_dir_get(void)
 
    return path;
 }
+
+EOLIAN static Eo *
+_efl_ui_theme_efl_object_constructor(Eo *obj, Efl_Ui_Theme_Data *pd)
+{
+   pd->th = elm_theme_new();
+
+   obj = efl_constructor(efl_super(obj, EFL_UI_THEME_CLASS));
+
+   return obj;
+}
+
+EOLIAN static void
+_efl_ui_theme_efl_object_destructor(Eo *obj, Efl_Ui_Theme_Data *pd)
+{
+   elm_theme_free(pd->th);
+
+   efl_destructor(efl_super(obj, EFL_UI_THEME_CLASS));
+}
+
+EOLIAN static Efl_Ui_Theme *
+_efl_ui_theme_default_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   if (!theme_default_eo)
+     {
+        //Construct Efl_Ui_Theme object for default theme
+        theme_default_eo = efl_add(EFL_UI_THEME_CLASS, efl_main_loop_get());
+        Efl_Ui_Theme_Data *td = efl_data_scope_get(theme_default_eo, EFL_UI_THEME_CLASS);
+
+        //Free automatically allocated Elm_Theme handle
+        elm_theme_free(td->th);
+
+        //Assign default Elm_Theme to Efl_Ui_Theme object data
+        td->th = &(theme_default);
+     }
+   return theme_default_eo;
+}
+
+EOLIAN static void
+_efl_ui_theme_extension_add(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
+{
+   elm_theme_extension_add(pd->th, item);
+}
+
+EOLIAN static void
+_efl_ui_theme_extension_del(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
+{
+   elm_theme_extension_del(pd->th, item);
+}
+
+EOLIAN static void
+_efl_ui_theme_overlay_add(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
+{
+   elm_theme_overlay_add(pd->th, item);
+}
+
+EOLIAN static void
+_efl_ui_theme_overlay_del(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
+{
+   elm_theme_overlay_del(pd->th, item);
+}
+
+#include "efl_ui_theme.eo.c"

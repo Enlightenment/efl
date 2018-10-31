@@ -108,6 +108,7 @@ typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
 typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
 typedef struct _Elm_Config_Binding_Modifier  Elm_Config_Binding_Modifier;
 typedef struct _Elm_Module               Elm_Module;
+typedef struct _Efl_Ui_Theme_Data        Efl_Ui_Theme_Data;
 
 struct _Edje_Signal_Data
 {
@@ -149,6 +150,11 @@ struct _Elm_Theme
    Eina_List *overlay_items;
    Eina_List *theme_items;
    Eina_List *extension_items;
+};
+
+struct _Efl_Ui_Theme_Data
+{
+   Elm_Theme *th;
 };
 
 /* increment this whenever we change config enough that you need new

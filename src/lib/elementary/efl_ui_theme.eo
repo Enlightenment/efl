@@ -1,0 +1,66 @@
+class Efl.Ui.Theme (Efl.Object)
+{
+   [[Efl Ui Theme class]]
+   eo_prefix: efl_ui_theme;
+   data: Efl_Ui_Theme_Data;
+   methods {
+      default_get @class {
+         [[Returns the default theme.
+           This returns the internal default theme setup handle that all widgets
+           use implicitly unless a specific theme is set. This is also often use
+           as a shorthand of NULL.
+         ]]
+         return: Efl.Ui.Theme; [[The default theme handle]]
+      }
+      extension_add {
+         [[Appends a theme extension to the list of extensions.
+           This is intended when an application needs more styles of widgets or new
+           widget themes that the default does not provide (or may not provide). The
+           application has "extended" usage by coming up with new custom style names
+           for widgets for specific uses, but as these are not "standard", they are
+           not guaranteed to be provided by a default theme. This means the
+           application is required to provide these extra elements itself in specific
+           Edje files. This call adds one of those Edje files to the theme search
+           path to be search after the default theme. The use of this call is
+           encouraged when default styles do not meet the needs of the application.
+           Use this call instead of elm_theme_overlay_add() for almost all cases.
+         ]]
+         params {
+            item: string; [[The Edje file path to be used]]
+         }
+      }
+      extension_del {
+         [[Deletes a theme extension from the list of extensions.
+         ]]
+         params {
+            item: string; [[The Edje file path not to be used]]
+         }
+      }
+      overlay_add {
+         [[Prepends a theme overlay to the list of overlays.
+           Use this if your application needs to provide some custom overlay theme
+           (An Edje file that replaces some default styles of widgets) where adding
+           new styles, or changing system theme configuration is not possible. Do
+           NOT use this instead of a proper system theme configuration. Use proper
+           configuration files, profiles, environment variables etc. to set a theme
+           so that the theme can be altered by simple configuration by a user. Using
+           this call to achieve that effect is abusing the API and will create lots
+           of trouble.
+         ]]
+         params {
+            item: string; [[The Edje file path to be used]]
+         }
+      }
+      overlay_del {
+         [[Delete a theme overlay from the list of overlays.
+         ]]
+         params {
+            item: string; [[The Edje file path not to be used]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

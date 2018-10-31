@@ -78,9 +78,9 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
          ]]
          set @protected {
             [[Can only be called during construction, before finalize.]]
-            return: Efl.Ui.Theme.Apply(0);
+            return: Efl.Ui.Theme_Apply(0);
                [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme.Apply for more information.]]
+                 the values of @Efl.Ui.Theme_Apply for more information.]]
          }
          get {
             [[Returns the current style of a widget.]]
@@ -310,7 +310,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
            Note: even widgets not based on layouts may override this method
            to handle widget updates (scale, mirrored mode, etc...).
          ]]
-         return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
+         return: Efl.Ui.Theme_Apply; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
 

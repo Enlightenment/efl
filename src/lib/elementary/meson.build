@@ -239,6 +239,7 @@ pub_eo_files = [
   'efl_access_widget_action.eo',
   'efl_access_window.eo',
   'efl_config_global.eo',
+  'efl_ui_theme.eo',
   'elm_code_widget.eo',
   'efl_selection.eo',
   'efl_ui_dnd.eo',
