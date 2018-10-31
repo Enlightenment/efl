@@ -8,6 +8,11 @@ class Ctor_Dtor (Base) {
       }
       custom_constructor_2 {
       }
+      custom_constructor_3 {
+         params {
+            @in z: int;
+         }
+      }
    }
    implements {
       class.constructor;
@@ -18,5 +23,6 @@ class Ctor_Dtor (Base) {
    constructors {
       .custom_constructor_1;
       .custom_constructor_2 @optional;
+      .custom_constructor_3 @ctor_param;
    }
 }

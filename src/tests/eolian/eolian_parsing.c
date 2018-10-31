@@ -272,6 +272,7 @@ EFL_START_TEST(eolian_ctor_dtor)
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
+   fail_if(!(eina_iterator_next(iter, (void**)&impl)));
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
@@ -304,6 +305,14 @@ EFL_START_TEST(eolian_ctor_dtor)
    fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
    fail_if(impl_class != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "custom_constructor_2"));
+   fail_if(!eolian_function_is_constructor(impl_func, class));
+   fail_if(eolian_function_is_constructor(impl_func, base));
+   fail_if(!(eina_iterator_next(iter, (void**)&ctor)));
+   fail_if(!eolian_constructor_is_ctor_param(ctor));
+   fail_if(!(impl_class = eolian_constructor_class_get(ctor)));
+   fail_if(!(impl_func = eolian_constructor_function_get(ctor)));
+   fail_if(impl_class != class);
+   fail_if(strcmp(eolian_function_name_get(impl_func), "custom_constructor_3"));
    fail_if(!eolian_function_is_constructor(impl_func, class));
    fail_if(eolian_function_is_constructor(impl_func, base));
    fail_if(eina_iterator_next(iter, &dummy));

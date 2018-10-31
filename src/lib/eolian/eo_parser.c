@@ -1655,10 +1655,17 @@ parse_constructor(Eo_Lexer *ls)
                                                   ls->klass->base.name,
                                                   ls->t.value.s);
         eo_lexer_get(ls);
-        if (ls->t.kw == KW_at_optional)
+        while (ls->t.kw == KW_at_optional || ls->t.kw == KW_at_ctor_param)
           {
+             if (ls->t.kw == KW_at_optional)
+               {
+                  ctor->is_optional = EINA_TRUE;
+               }
+             if (ls->t.kw == KW_at_ctor_param)
+               {
+                  ctor->is_ctor_param = EINA_TRUE;
+               }
              eo_lexer_get(ls);
-             ctor->is_optional = EINA_TRUE;
           }
         check_next(ls, ';');
         return;
@@ -1679,10 +1686,17 @@ parse_constructor(Eo_Lexer *ls)
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
      }
-   if (ls->t.kw == KW_at_optional)
+   while (ls->t.kw == KW_at_optional || ls->t.kw == KW_at_ctor_param)
      {
+        if (ls->t.kw == KW_at_optional)
+          {
+             ctor->is_optional = EINA_TRUE;
+          }
+        if (ls->t.kw == KW_at_ctor_param)
+          {
+             ctor->is_ctor_param = EINA_TRUE;
+          }
         eo_lexer_get(ls);
-        ctor->is_optional = EINA_TRUE;
      }
    check_next(ls, ';');
    ctor->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));

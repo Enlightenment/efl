@@ -60,7 +60,7 @@ enum Tokens
     KW(function), \
     KW(__undefined_type), \
     \
-    KW(true), KW(false), KW(null)
+    KW(true), KW(false), KW(null), KWAT(ctor_param)
 
 /* "regular" keyword and @ prefixed keyword */
 #define KW(x) KW_##x

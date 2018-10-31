@@ -1989,6 +1989,16 @@ EAPI const Eolian_Function *eolian_constructor_function_get(const Eolian_Constru
 EAPI Eina_Bool eolian_constructor_is_optional(const Eolian_Constructor *ctor);
 
 /*
+ * @brief Checks if a constructor is tagged as a constructor parameter.
+ *
+ * @param[in] ctor the handle of the constructor
+ * @return EINA_TRUE if a constructor parameter, EINA_FALSE if not (or if input is NULL).
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_constructor_is_ctor_param(const Eolian_Constructor *ctor);
+
+/*
  * @brief Get an iterator to the constructing functions defined in a class.
  *
  * @param[in] klass the class.
