@@ -842,10 +842,13 @@ _elm_code_widget_line_status_toggle(Elm_Code_Widget *widget EINA_UNUSED, Elm_Cod
         elm_box_pack_after(pd->gridbox, status, grid);
         evas_object_data_set(grid, "status", status);
 
-        text = malloc((strlen(template) + strlen(line->status_text) + 1) * sizeof(char));
-        sprintf(text, template, line->status_text);
-        elm_object_text_set(status, text);
-        free(text);
+        if (line->status_text)
+          {
+             text = malloc((strlen(template) + strlen(line->status_text) + 1) * sizeof(char));
+             sprintf(text, template, line->status_text);
+             elm_object_text_set(status, text);
+             free(text);
+          }
      }
 }
 
