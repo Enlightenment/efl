@@ -143,13 +143,15 @@ struct _Elm_Theme
    Elm_Theme  *ref_theme;
    Eina_List  *referrers;
    const char *theme;
-   int         ref;
+   int         ref; //This is not used. efl_ref(obj) is used instead of this.
    Eina_Hash  *cache_style_load_failed;
 
    /* these only exist to preserve compat with bad elm_theme_XYZ_list_get() api */
    Eina_List *overlay_items;
    Eina_List *theme_items;
    Eina_List *extension_items;
+
+   Eo *obj; //This is for the Efl_Ui_Theme object.
 };
 
 struct _Efl_Ui_Theme_Data

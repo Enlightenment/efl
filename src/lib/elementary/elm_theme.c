@@ -491,28 +491,38 @@ _elm_theme_shutdown(void)
      }
 }
 
-EAPI Elm_Theme *
-elm_theme_new(void)
+static Elm_Theme *
+_elm_theme_new_internal(Eo *obj)
 {
    Elm_Theme *th = calloc(1, sizeof(Elm_Theme));
    if (!th) return NULL;
-   th->ref = 1;
    _elm_theme_file_item_add(&th->themes, "default", EINA_FALSE, EINA_TRUE);
    themes = eina_list_append(themes, th);
+   th->obj = obj;
    return th;
+}
+
+EAPI Elm_Theme *
+elm_theme_new(void)
+{
+   Eo *obj = efl_add(EFL_UI_THEME_CLASS, efl_main_loop_get());
+   Efl_Ui_Theme_Data *td = efl_data_scope_get(obj, EFL_UI_THEME_CLASS);
+   return td->th;
+}
+
+static void
+_elm_theme_free_internal(Elm_Theme *th)
+{
+   _elm_theme_clear(th);
+   themes = eina_list_remove(themes, th);
+   free(th);
 }
 
 EAPI void
 elm_theme_free(Elm_Theme *th)
 {
    EINA_SAFETY_ON_NULL_RETURN(th);
-   th->ref--;
-   if (th->ref < 1)
-     {
-        _elm_theme_clear(th);
-        themes = eina_list_remove(themes, th);
-        free(th);
-     }
+   efl_unref(th->obj);
 }
 
 static void
@@ -540,7 +550,7 @@ elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
         thdst->ref_theme = th->ref_theme;
         thdst->ref_theme->referrers =
            eina_list_append(thdst->ref_theme->referrers, thdst);
-        thdst->ref_theme->ref++;
+        efl_ref(thdst->ref_theme->obj);
      }
    elm_theme_files_copy(&thdst->overlay, &th->overlay);
    elm_theme_files_copy(&thdst->themes, &th->themes);
@@ -560,7 +570,7 @@ elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
    if (thref)
      {
         thref->referrers = eina_list_append(thref->referrers, th);
-        thref->ref++;
+        efl_ref(thref->obj);
      }
    th->ref_theme = thref;
    elm_theme_flush(th);
@@ -579,24 +589,36 @@ elm_theme_default_get(void)
    return &theme_default;
 }
 
-EAPI void
-elm_theme_overlay_add(Elm_Theme *th, const char *item)
+static void
+_elm_theme_overlay_add_internal(Elm_Theme *th, const char *item)
 {
    if (!item) return;
-   if (!th) th = &(theme_default);
    th->overlay_items = eina_list_free(th->overlay_items);
    _elm_theme_file_item_add(&th->overlay, item, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
 EAPI void
-elm_theme_overlay_del(Elm_Theme *th, const char *item)
+elm_theme_overlay_add(Elm_Theme *th, const char *item)
+{
+   if (!th) th = &(theme_default);
+   efl_ui_theme_overlay_add(th->obj, item);
+}
+
+static void
+_elm_theme_overlay_del_internal(Elm_Theme *th, const char *item)
 {
    if (!item) return;
-   if (!th) th = &(theme_default);
    th->overlay_items = eina_list_free(th->overlay_items);
    _elm_theme_file_item_del(&th->overlay, item);
    elm_theme_flush(th);
+}
+
+EAPI void
+elm_theme_overlay_del(Elm_Theme *th, const char *item)
+{
+   if (!th) th = &(theme_default);
+   efl_ui_theme_overlay_del(th->obj, item);
 }
 
 EAPI void
@@ -634,24 +656,36 @@ elm_theme_overlay_list_get(const Elm_Theme *th)
    return th->overlay_items;
 }
 
-EAPI void
-elm_theme_extension_add(Elm_Theme *th, const char *item)
+static void
+_elm_theme_extension_add_internal(Elm_Theme *th, const char *item)
 {
    if (!item) return;
-   if (!th) th = &(theme_default);
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_file_item_add(&th->extension, item, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
 }
 
 EAPI void
-elm_theme_extension_del(Elm_Theme *th, const char *item)
+elm_theme_extension_add(Elm_Theme *th, const char *item)
+{
+   if (!th) th = &(theme_default);
+   efl_ui_theme_extension_add(th->obj, item);
+}
+
+static void
+_elm_theme_extension_del_internal(Elm_Theme *th, const char *item)
 {
    if (!item) return;
-   if (!th) th = &(theme_default);
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_file_item_del(&th->extension, item);
    elm_theme_flush(th);
+}
+
+EAPI void
+elm_theme_extension_del(Elm_Theme *th, const char *item)
+{
+   if (!th) th = &(theme_default);
+   efl_ui_theme_extension_del(th->obj, item);
 }
 
 EAPI void
@@ -1027,9 +1061,11 @@ elm_theme_user_dir_get(void)
 EOLIAN static Eo *
 _efl_ui_theme_efl_object_constructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 {
-   pd->th = elm_theme_new();
+   ERR("[CJH] Begin obj(%p)", obj);
+   pd->th = _elm_theme_new_internal(obj);
 
    obj = efl_constructor(efl_super(obj, EFL_UI_THEME_CLASS));
+   ERR("[CJH] End obj(%p)", obj);
 
    return obj;
 }
@@ -1037,7 +1073,7 @@ _efl_ui_theme_efl_object_constructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 EOLIAN static void
 _efl_ui_theme_efl_object_destructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 {
-   elm_theme_free(pd->th);
+   _elm_theme_free_internal(pd->th);
 
    efl_destructor(efl_super(obj, EFL_UI_THEME_CLASS));
 }
@@ -1052,10 +1088,10 @@ _efl_ui_theme_default_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
         Efl_Ui_Theme_Data *td = efl_data_scope_get(theme_default_eo, EFL_UI_THEME_CLASS);
 
         //Free automatically allocated Elm_Theme handle
-        elm_theme_free(td->th);
+        _elm_theme_free_internal(td->th);
 
         //Assign default Elm_Theme to Efl_Ui_Theme object data
-        td->th = &(theme_default);
+        td->th = elm_theme_default_get();
      }
    return theme_default_eo;
 }
@@ -1063,25 +1099,25 @@ _efl_ui_theme_default_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_theme_extension_add(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
 {
-   elm_theme_extension_add(pd->th, item);
+   _elm_theme_extension_add_internal(pd->th, item);
 }
 
 EOLIAN static void
 _efl_ui_theme_extension_del(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
 {
-   elm_theme_extension_del(pd->th, item);
+   _elm_theme_extension_del_internal(pd->th, item);
 }
 
 EOLIAN static void
 _efl_ui_theme_overlay_add(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
 {
-   elm_theme_overlay_add(pd->th, item);
+   _elm_theme_overlay_add_internal(pd->th, item);
 }
 
 EOLIAN static void
 _efl_ui_theme_overlay_del(Eo *obj EINA_UNUSED, Efl_Ui_Theme_Data *pd, const char *item)
 {
-   elm_theme_overlay_del(pd->th, item);
+   _elm_theme_overlay_del_internal(pd->th, item);
 }
 
 #include "efl_ui_theme.eo.c"
