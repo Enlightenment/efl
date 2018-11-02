@@ -390,3 +390,20 @@ configure_file(
 
 subdir(join_paths('systemd-services'))
 subdir(join_paths('dbus-services'))
+
+#output the three new efl-* .pc files
+efl_20_pc_files = [
+  ['efl-ui', ['elementary']],
+  ['efl-core', ['ecore', 'efl', 'emile']],
+  ['efl-net', ['ecore', 'ecore-con', 'emile']],
+]
+
+foreach pc_file : efl_20_pc_files
+  name = pc_file[0]
+  libraries = pc_file[1]
+  pkgconfig.generate(
+    name : '-'.join(name.split('_')),
+    description: name+' configutation file',
+    requires : libraries,
+  )
+endforeach
