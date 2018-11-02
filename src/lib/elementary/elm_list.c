@@ -2502,6 +2502,7 @@ _elm_list_efl_object_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
 
    return obj;
 }
@@ -3195,6 +3196,12 @@ _elm_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_List_Data
         return EINA_TRUE;
      }
    return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_list_efl_ui_widget_focus_state_apply(Eo *obj, Elm_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+{
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 /* Standard widget overrides */

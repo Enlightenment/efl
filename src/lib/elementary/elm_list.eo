@@ -406,6 +406,7 @@ class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focused_item { get; }
+      Efl.Ui.Widget.focus_state_apply;
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.policy { set; }
       Efl.Access.Widget.Action.elm_actions { get; }
