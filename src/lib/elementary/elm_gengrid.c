@@ -4195,41 +4195,48 @@ elm_gengrid_add(Evas_Object *parent)
 }
 
 EOLIAN static void
-_elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry EINA_UNUSED)
+_elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *entry)
 {
    Elm_Object_Item *eo_it = NULL;
 
-   if (pd->last_focused_item)
-     eo_it = pd->last_focused_item;
-   else if (pd->last_selected_item)
-     eo_it = pd->last_selected_item;
-   else if (_elm_config->first_item_focus_on_first_focus_in)
+   if (!pd->items)
      {
-        if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-          {
-             eo_it = elm_gengrid_first_item_get(obj);
-          }
-        else if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
-          {
-             eo_it = elm_gengrid_last_item_get(obj);
-          }
-     }
-
-   eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
-
-   if (eo_it)
-     {
-        if (!_elm_config->item_select_on_focus_disable &&
-            eo_it != pd->last_selected_item)
-          elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
-        else
-          efl_ui_focus_manager_focus_set(obj, eo_it);
+        efl_ui_focus_manager_setup_on_first_touch(efl_super(obj, MY_CLASS), direction, entry);
      }
    else
      {
-        //Just set evas focus on the gengrid itself, events will pass on and some element will be taken
-        evas_object_focus_set(obj, EINA_TRUE);
-     }
+        if (pd->last_focused_item)
+          eo_it = pd->last_focused_item;
+        else if (pd->last_selected_item)
+          eo_it = pd->last_selected_item;
+        else if (_elm_config->first_item_focus_on_first_focus_in)
+          {
+             if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
+               {
+                  eo_it = elm_gengrid_first_item_get(obj);
+               }
+             else if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+               {
+                  eo_it = elm_gengrid_last_item_get(obj);
+               }
+          }
+
+        eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
+
+        if (eo_it)
+          {
+             if (!_elm_config->item_select_on_focus_disable &&
+                 eo_it != pd->last_selected_item)
+               elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
+             else
+               efl_ui_focus_manager_focus_set(obj, eo_it);
+          }
+        else
+          {
+             //Just set evas focus on the gengrid itself, events will pass on and some element will be taken
+             evas_object_focus_set(obj, EINA_TRUE);
+          }
+      }
 }
 
 static void

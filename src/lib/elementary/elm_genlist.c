@@ -3396,44 +3396,51 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
    Elm_Object_Item *eo_it = NULL;
    Eina_Bool is_sel = EINA_FALSE;
 
-   if (sd->last_focused_item)
-     eo_it = sd->last_focused_item;
-   else if (sd->last_selected_item)
-     eo_it = sd->last_selected_item;
-   else if (_elm_config->first_item_focus_on_first_focus_in)
+   if (!sd->items)
      {
-        eo_it = elm_genlist_first_item_get(obj);
-        is_sel = EINA_TRUE;
-     }
-
-   while (eo_it)
-     {
-        ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
-        if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
-          break;
-        eo_it = EO_OBJ(ELM_GEN_ITEM_NEXT(it));
-     }
-
-   if (eo_it)
-     {
-        eo_it = _elm_genlist_nearest_visible_item_get(obj, eo_it);
-        if (eo_it)
-          {
-             if (!_elm_config->item_select_on_focus_disable && is_sel)
-               elm_genlist_item_selected_set(eo_it, EINA_TRUE);
-             else
-               elm_object_item_focus_set(eo_it, EINA_TRUE);
-            _elm_widget_focus_highlight_start(obj);
-            //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
-            if (efl_ui_focus_manager_request_subchild(obj, eo_it))
-              efl_ui_focus_manager_focus_set(obj, eo_it);
-          }
+        efl_ui_focus_manager_setup_on_first_touch(efl_super(obj, MY_CLASS), direction, entry);
      }
    else
      {
-        //Just set evas focus on the genlist itself, events will pass on and a other element will be taken
-        evas_object_focus_set(obj, EINA_TRUE);
-     }
+        if (sd->last_focused_item)
+          eo_it = sd->last_focused_item;
+        else if (sd->last_selected_item)
+          eo_it = sd->last_selected_item;
+        else if (_elm_config->first_item_focus_on_first_focus_in)
+          {
+             eo_it = elm_genlist_first_item_get(obj);
+             is_sel = EINA_TRUE;
+          }
+
+        while (eo_it)
+          {
+             ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
+             if ((!_is_no_select(it)) && (!elm_object_item_disabled_get(eo_it)))
+               break;
+             eo_it = EO_OBJ(ELM_GEN_ITEM_NEXT(it));
+          }
+
+        if (eo_it)
+          {
+             eo_it = _elm_genlist_nearest_visible_item_get(obj, eo_it);
+             if (eo_it)
+               {
+                  if (!_elm_config->item_select_on_focus_disable && is_sel)
+                    elm_genlist_item_selected_set(eo_it, EINA_TRUE);
+                  else
+                    elm_object_item_focus_set(eo_it, EINA_TRUE);
+                 _elm_widget_focus_highlight_start(obj);
+                 //set it again in the manager, there might be the case that the manager focus history and internal item foused logic are in different states
+                 if (efl_ui_focus_manager_request_subchild(obj, eo_it))
+                   efl_ui_focus_manager_focus_set(obj, eo_it);
+               }
+          }
+        else
+          {
+             //Just set evas focus on the genlist itself, events will pass on and a other element will be taken
+             evas_object_focus_set(obj, EINA_TRUE);
+          }
+      }
 }
 
 EOLIAN static Eina_Bool
@@ -5900,7 +5907,7 @@ _genlist_element_focused(void *data, const Efl_Event *ev)
    Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
    Elm_Widget_Item *item;
 
-   if (!focused) return;
+   if (!focused || focused == data) return;
 
    item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
 
