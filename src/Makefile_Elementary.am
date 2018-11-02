@@ -1577,7 +1577,8 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
 	tests/elementary/elm_test_focus_sub.c \
-	tests/elementary/efl_ui_test_grid.c
+	tests/elementary/efl_ui_test_grid.c \
+	tests/elementary/elm_test_widget_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \

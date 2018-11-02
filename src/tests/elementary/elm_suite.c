@@ -89,6 +89,7 @@ static const Efl_Test_Case etc[] = {
   { "elm_code_widget_undo", elm_code_test_widget_undo },
   { "elm_focus", elm_test_focus},
   { "elm_focus_sub", elm_test_focus_sub},
+  { "elm_widget_focus", elm_test_widget_focus},
 /* FIXME : This test must move efl_ui_suite when it ready *
  * EFL_UI_TEST BEGIN */
   { "efl_ui_grid", efl_ui_test_grid},

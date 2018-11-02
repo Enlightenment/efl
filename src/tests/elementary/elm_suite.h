@@ -83,6 +83,7 @@ void elm_test_spinner(TCase *tc);
 void elm_test_plug(TCase *tc);
 void elm_test_focus(TCase *tc);
 void elm_test_focus_sub(TCase *tc);
+void elm_test_widget_focus(TCase *tc);
 /* FIXME : This test must move efl_ui_suite when it ready *
  * EFL_UI_TEST BEGIN */
 void efl_ui_test_grid(TCase *tc);
