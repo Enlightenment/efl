@@ -9,12 +9,12 @@
 
 #include "efl_ui_theme.eo.h"
 
-static Efl_Ui_Theme *theme_default_eo = NULL; //Eo handle for efl_ui_theme_default_get()
-
 static Elm_Theme theme_default =
 {
   NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, 1, NULL
+  NULL, NULL, NULL, NULL, NULL, 1, NULL,
+  NULL, NULL, NULL,
+  NULL
 };
 
 static Eina_List *themes = NULL;
@@ -332,7 +332,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    const char *style_sep = ":";
 
    if ((!clas) || !o) return EFL_UI_THEME_APPLY_FAILED;
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (is_legacy)
      snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, (group) ? group : "base", (style) ? style : "default");
    else
@@ -383,7 +383,7 @@ _elm_theme_icon_set(Elm_Theme *th,
         return EINA_TRUE;
      }
 
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/%s", group, style);
    file = _elm_theme_group_file_find(th, buf2);
    if (file)
@@ -409,7 +409,7 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    Eina_List *names = NULL;
    const char *p, *pe;
 
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (theme)
      {
         Eina_Strbuf *buf;
@@ -483,7 +483,7 @@ void
 _elm_theme_shutdown(void)
 {
    Elm_Theme *th;
-   _elm_theme_clear(&(theme_default));
+   _elm_theme_clear(elm_theme_default_get());
    EINA_LIST_FREE(themes, th)
      {
         _elm_theme_clear(th);
@@ -522,6 +522,9 @@ EAPI void
 elm_theme_free(Elm_Theme *th)
 {
    EINA_SAFETY_ON_NULL_RETURN(th);
+
+   if (th == elm_theme_default_get()) return;
+
    efl_unref(th->obj);
 }
 
@@ -542,8 +545,8 @@ elm_theme_files_copy(Eina_Inlist **dst, Eina_Inlist **src)
 EAPI void
 elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
 {
-   if (!th) th = &(theme_default);
-   if (!thdst) thdst = &(theme_default);
+   if (!th) th = elm_theme_default_get();
+   if (!thdst) thdst = elm_theme_default_get();
    _elm_theme_clear(thdst);
    if (th->ref_theme)
      {
@@ -563,8 +566,8 @@ elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst)
 EAPI void
 elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
 {
-   if (!th) th = &(theme_default);
-   if (!thref) thref = &(theme_default);
+   if (!th) th = elm_theme_default_get();
+   if (!thref) thref = elm_theme_default_get();
    if (th->ref_theme == thref) return;
    _elm_theme_clear(th);
    if (thref)
@@ -579,13 +582,15 @@ elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref)
 EAPI Elm_Theme *
 elm_theme_ref_get(const Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    return th->ref_theme;
 }
 
 EAPI Elm_Theme *
 elm_theme_default_get(void)
 {
+   if (!theme_default.obj)
+     efl_ui_theme_default_get(NULL);
    return &theme_default;
 }
 
@@ -601,7 +606,7 @@ _elm_theme_overlay_add_internal(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_overlay_add(Elm_Theme *th, const char *item)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    efl_ui_theme_overlay_add(th->obj, item);
 }
 
@@ -617,7 +622,7 @@ _elm_theme_overlay_del_internal(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_overlay_del(Elm_Theme *th, const char *item)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    efl_ui_theme_overlay_del(th->obj, item);
 }
 
@@ -626,7 +631,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
    Eina_File *file = eina_file_dup(f);
 
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    th->overlay_items = eina_list_free(th->overlay_items);
    _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);
@@ -636,7 +641,7 @@ EAPI void
 elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
    if (!f) return;
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    th->overlay_items = eina_list_free(th->overlay_items);
    _elm_theme_file_mmap_del(&th->overlay, f);
    elm_theme_flush(th);
@@ -645,7 +650,7 @@ elm_theme_overlay_mmap_del(Elm_Theme *th, const Eina_File *f)
 EAPI const Eina_List *
 elm_theme_overlay_list_get(const Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (!th->overlay_items)
      {
         Elm_Theme_File *etf;
@@ -668,7 +673,7 @@ _elm_theme_extension_add_internal(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    efl_ui_theme_extension_add(th->obj, item);
 }
 
@@ -684,7 +689,7 @@ _elm_theme_extension_del_internal(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_extension_del(Elm_Theme *th, const char *item)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    efl_ui_theme_extension_del(th->obj, item);
 }
 
@@ -694,7 +699,7 @@ elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
    Eina_File *file = eina_file_dup(f);
 
    if (!f) return;
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_item_finalize(&th->extension, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
@@ -704,7 +709,7 @@ EAPI void
 elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f)
 {
    if (!f) return;
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_file_mmap_del(&th->extension, f);
    elm_theme_flush(th);
@@ -713,7 +718,7 @@ elm_theme_extension_mmap_del(Elm_Theme *th, const Eina_File *f)
 EAPI const Eina_List *
 elm_theme_extension_list_get(const Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (!th->extension_items)
      {
         Elm_Theme_File *etf;
@@ -727,18 +732,18 @@ elm_theme_extension_list_get(const Elm_Theme *th)
 EAPI void
 elm_theme_set(Elm_Theme *th, const char *theme)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    _elm_theme_parse(th, theme);
    ELM_SAFE_FREE(th->theme, eina_stringshare_del);
    elm_theme_flush(th);
-   if (th == &(theme_default))
+   if (th == elm_theme_default_get())
      eina_stringshare_replace(&_elm_config->theme, theme);
 }
 
 EAPI const char *
 elm_theme_get(Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (!th->theme)
      {
         Eina_Strbuf *buf;
@@ -769,7 +774,7 @@ elm_theme_get(Elm_Theme *th)
 EAPI const Eina_List *
 elm_theme_list_get(const Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (!th->theme_items)
      {
         Elm_Theme_File *etf;
@@ -832,7 +837,7 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
 EAPI void
 elm_theme_flush(Elm_Theme *th)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    if (th->cache) eina_hash_free(th->cache);
    th->cache = eina_hash_string_superfast_new(EINA_FREE_CB(eina_file_close));
    if (th->cache_data) eina_hash_free(th->cache_data);
@@ -860,7 +865,7 @@ elm_theme_full_flush(void)
      {
         elm_theme_flush(th);
      }
-   elm_theme_flush(&(theme_default));
+   elm_theme_flush(elm_theme_default_get());
 }
 
 EAPI Eina_List *
@@ -952,7 +957,7 @@ elm_object_theme_get(const Evas_Object *obj)
 EAPI const char *
 elm_theme_data_get(Elm_Theme *th, const char *key)
 {
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
    return _elm_theme_data_find(th, key);
 }
 
@@ -961,7 +966,7 @@ elm_theme_group_path_find(Elm_Theme *th, const char *group)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
    Eina_File *th_file = NULL;
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
 
    th_file = _elm_theme_group_file_find(th, group);
    if (th_file)
@@ -1010,7 +1015,7 @@ elm_theme_group_base_list(Elm_Theme *th, const char *base)
    int len;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(base, NULL);
-   if (!th) th = &(theme_default);
+   if (!th) th = elm_theme_default_get();
 
    // XXX: look results up in a hash for speed
    len = strlen(base);
@@ -1061,11 +1066,9 @@ elm_theme_user_dir_get(void)
 EOLIAN static Eo *
 _efl_ui_theme_efl_object_constructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 {
-   ERR("[CJH] Begin obj(%p)", obj);
-   pd->th = _elm_theme_new_internal(obj);
-
    obj = efl_constructor(efl_super(obj, EFL_UI_THEME_CLASS));
-   ERR("[CJH] End obj(%p)", obj);
+
+   pd->th = _elm_theme_new_internal(obj);
 
    return obj;
 }
@@ -1081,19 +1084,20 @@ _efl_ui_theme_efl_object_destructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 EOLIAN static Efl_Ui_Theme *
 _efl_ui_theme_default_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   if (!theme_default_eo)
+   if (!(theme_default.obj))
      {
         //Construct Efl_Ui_Theme object for default theme
-        theme_default_eo = efl_add(EFL_UI_THEME_CLASS, efl_main_loop_get());
-        Efl_Ui_Theme_Data *td = efl_data_scope_get(theme_default_eo, EFL_UI_THEME_CLASS);
+        Eo *theme_obj = efl_add(EFL_UI_THEME_CLASS, efl_main_loop_get());
+        Efl_Ui_Theme_Data *td = efl_data_scope_get(theme_obj, EFL_UI_THEME_CLASS);
 
         //Free automatically allocated Elm_Theme handle
         _elm_theme_free_internal(td->th);
 
-        //Assign default Elm_Theme to Efl_Ui_Theme object data
+        //Assign default Elm_Theme and Efl_Ui_Theme object
         td->th = elm_theme_default_get();
+        theme_default.obj = theme_obj;
      }
-   return theme_default_eo;
+   return theme_default.obj;
 }
 
 EOLIAN static void
