@@ -2362,17 +2362,15 @@ generic/evas/common/timeout.c
 generic_evas_pdf_evas_image_loader_pdf_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
-@POPPLER_CFLAGS@
+@POPPLER_CFLAGS@ \
+@EINA_CFLAGS@
 generic_evas_pdf_evas_image_loader_pdf_CXXFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
-@POPPLER_CFLAGS@
+@POPPLER_CFLAGS@ \
+@EINA_CFLAGS@
 generic_evas_pdf_evas_image_loader_pdf_LDADD = @USE_EINA_LIBS@ @POPPLER_LIBS@ @SHM_LIBS@
 generic_evas_pdf_evas_image_loader_pdf_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
@@ -2414,9 +2412,8 @@ generic_evas_ps_evas_image_loader_ps_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 generic_evas_ps_evas_image_loader_ps_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/generic/evas/common
+-I$(top_srcdir)/src/generic/evas/common \
+@EINA_CFLAGS@
 
 endif
 
@@ -2433,10 +2430,9 @@ generic_evas_raw_evas_image_loader_raw_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 generic_evas_raw_evas_image_loader_raw_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
-@LIBRAW_CFLAGS@
+@LIBRAW_CFLAGS@ \
+@EINA_CFLAGS@
 
 EFL_INSTALL_EXEC_HOOK += \
 mkdir -p $(DESTDIR)$(libdir)/evas/utils; \
@@ -2473,10 +2469,9 @@ generic/evas/common/timeout.c
 generic_evas_svg_evas_image_loader_svg_CFLAGS = \
 -I$(top_srcdir)/src/lib/efl \
 -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 -I$(top_srcdir)/src/generic/evas/common \
-@RSVG_CFLAGS@
+@RSVG_CFLAGS@ \
+@EINA_CFLAGS@
 generic_evas_svg_evas_image_loader_svg_LDADD = @USE_EINA_LIBS@ @RSVG_LIBS@ @SHM_LIBS@ -lm
 generic_evas_svg_evas_image_loader_svg_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
@@ -2501,9 +2496,8 @@ generic/evas/common/timeout.c
 generic_evas_xcf_evas_image_loader_xcf_CFLAGS = \
 @EVAS_CFLAGS@ \
 -I$(top_srcdir)/src/lib/efl \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/generic/evas/common
+-I$(top_srcdir)/src/generic/evas/common \
+@EINA_CFLAGS@
 generic_evas_xcf_evas_image_loader_xcf_LDADD = @USE_EINA_LIBS@ @SHM_LIBS@ -lm -lz
 generic_evas_xcf_evas_image_loader_xcf_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 EFL_INSTALL_EXEC_HOOK += \
@@ -2581,10 +2575,9 @@ generic_evas_gst_evas_image_loader_gst_SOURCES = \
 generic_evas_gst_evas_image_loader_gst_CFLAGS = \
   -I$(top_srcdir)/src/lib/efl \
   -I$(top_builddir)/src/lib/efl \
-  -I$(top_srcdir)/src/lib/eina \
-  -I$(top_builddir)/src/lib/eina \
   -I$(top_srcdir)/src/generic/evas/common \
-  @EMOTION_MODULE_GSTREAMER_CFLAGS@
+  @EMOTION_MODULE_GSTREAMER_CFLAGS@ \
+  @EINA_CFLAGS@
 generic_evas_gst_evas_image_loader_gst_LDADD = \
   @USE_EINA_LIBS@ @SHM_LIBS@ -lm @EMOTION_MODULE_GSTREAMER_LIBS@
 generic_evas_gst_evas_image_loader_gst_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
@@ -2599,10 +2592,9 @@ generic_evas_gst_evas_image_loader_gst_SOURCES = \
 generic_evas_gst_evas_image_loader_gst_CFLAGS = \
   -I$(top_srcdir)/src/lib/efl \
   -I$(top_builddir)/src/lib/efl \
-  -I$(top_srcdir)/src/lib/eina \
-  -I$(top_builddir)/src/lib/eina \
   -I$(top_srcdir)/src/generic/evas/common \
-  @EMOTION_MODULE_GSTREAMER1_CFLAGS@
+  @EMOTION_MODULE_GSTREAMER1_CFLAGS@ \
+  @EINA_CFLAGS@
 generic_evas_gst_evas_image_loader_gst_LDADD = \
   @USE_EINA_LIBS@ @SHM_LIBS@ -lm @EMOTION_MODULE_GSTREAMER1_LIBS@
 generic_evas_gst_evas_image_loader_gst_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@

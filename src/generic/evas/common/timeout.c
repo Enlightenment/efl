@@ -6,7 +6,7 @@
 unsigned int
 _timeout(void *arg)
 {
-   int s (int)arg;
+   int s = (int)(uintptr_t)arg;
    Sleep(s * 1000);
    _Exit(-1);
    _endthreadex(0);
@@ -17,7 +17,7 @@ void
 timeout_init(int seconds)
 {
    unsigned int id;
-   _beginthreadex( NULL, 0, _timeout, (void *)seconds, 0, &id);
+   _beginthreadex( NULL, 0, _timeout, (void *)(uintptr_t)seconds, 0, &id);
 }
 #else
 # include <unistd.h>
