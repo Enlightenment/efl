@@ -2064,6 +2064,16 @@ eolian_event_name_get(const Eolian_Event *event)
 EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
 
 /*
+ * @brief Get the class of an event.
+ *
+ * @param[in] event the event handle
+ * @return the class or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_event_class_get(const Eolian_Event *event);
+
+/*
  * @brief Get the documentation of an event.
  *
  * @param[in] event the event handle

@@ -378,6 +378,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
     const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
+    const Eolian_Class *eolian_event_class_get(const Eolian_Event *event);
     const Eolian_Documentation *eolian_event_documentation_get(const Eolian_Event *event);
     Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
     Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
@@ -1255,6 +1256,12 @@ ffi.metatype("Eolian_Event", {
     __index = wrap_object {
         type_get = function(self)
             local v = eolian.eolian_event_type_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
+        class_get = function(self)
+            local v = eolian.eolian_event_class_get(self)
             if v == nil then return nil end
             return v
         end,
