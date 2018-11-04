@@ -4,6 +4,7 @@ priv_eo_files = [
 
 eolian_test_src = [
 'eolian_parsing.c',
+'eolian_aux.c',
 'eolian_generation.c',
 'eolian_generated_future.c',
 'eolian_suite.c',

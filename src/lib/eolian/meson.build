@@ -31,7 +31,8 @@ eolian_src = [
 'database_expr_api.c',
 'database_var.c',
 'database_var_api.c',
-'database_validate.c'
+'database_validate.c',
+'eolian_aux.c'
 ]
 
 eolian_lib = library('eolian', eolian_src,
@@ -50,6 +51,11 @@ eolian = declare_dependency(
 
 eolian_include_dir = join_paths(dir_data, 'eolian', 'include')
 
-install_headers('Eolian.h',
+eolian_header_src = [
+'Eolian.h',
+'Eolian_Aux.h'
+]
+
+install_headers(eolian_header_src,
    install_dir : dir_package_include
 )

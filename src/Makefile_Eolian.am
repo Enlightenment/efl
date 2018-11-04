@@ -4,7 +4,7 @@
 lib_LTLIBRARIES += lib/eolian/libeolian.la
 
 installed_eolianmainheadersdir = $(includedir)/eolian-@VMAJ@
-dist_installed_eolianmainheaders_DATA = lib/eolian/Eolian.h
+dist_installed_eolianmainheaders_DATA = lib/eolian/Eolian.h lib/eolian/Eolian_Aux.h
 
 lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eo_lexer.c \
@@ -36,7 +36,8 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/database_var.c \
                                   lib/eolian/database_var_api.c \
                                   lib/eolian/database_validate.c \
-                                  lib/eolian/database_check.c
+                                  lib/eolian/database_check.c \
+                                  lib/eolian/eolian_aux.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"
@@ -109,6 +110,7 @@ tests/eolian/eolian_suite
 
 tests_eolian_eolian_suite_SOURCES = \
 tests/eolian/eolian_parsing.c \
+tests/eolian/eolian_aux.c \
 tests/eolian/eolian_static.c \
 tests/eolian/eolian_generation.c \
 tests/eolian/eolian_generated_future.c \
