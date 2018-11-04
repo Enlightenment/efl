@@ -290,6 +290,7 @@ struct _Eolian_Implement
 {
    Eolian_Object base;
    const Eolian_Class *klass;
+   const Eolian_Class *implklass;
    const Eolian_Function *foo_id;
    Eolian_Documentation *common_doc;
    Eolian_Documentation *get_doc;

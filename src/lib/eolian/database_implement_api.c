@@ -12,6 +12,13 @@ eolian_implement_class_get(const Eolian_Implement *impl)
    return impl->klass;
 }
 
+EAPI const Eolian_Class *
+eolian_implement_implementing_class_get(const Eolian_Implement *impl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(impl, NULL);
+   return impl->implklass;
+}
+
 EAPI const Eolian_Function *
 eolian_implement_function_get(const Eolian_Implement *impl,
                               Eolian_Function_Type   *func_type)

@@ -196,6 +196,7 @@ EFL_START_TEST(eolian_override)
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);
+   fail_if(eolian_implement_implementing_class_get(impl) != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "b"));
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl))); /* skip c */
@@ -208,6 +209,7 @@ EFL_START_TEST(eolian_override)
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != class);
+   fail_if(eolian_implement_implementing_class_get(impl) != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "bar"));
 
    fail_if(!(eina_iterator_next(iter, (void**)&impl)));
@@ -217,6 +219,7 @@ EFL_START_TEST(eolian_override)
    fail_if(!(impl_class = eolian_implement_class_get(impl)));
    fail_if(!(impl_func = eolian_implement_function_get(impl, NULL)));
    fail_if(impl_class != base);
+   fail_if(eolian_implement_implementing_class_get(impl) != class);
    fail_if(strcmp(eolian_function_name_get(impl_func), "constructor"));
 
    eina_iterator_free(iter);

@@ -1183,7 +1183,7 @@ parse_property(Eo_Lexer *ls)
    prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(prop->base, ls, ls->line_number, ls->column, FUNCTION);
    impl = calloc(1, sizeof(Eolian_Implement));
-   impl->klass = ls->klass;
+   impl->klass = impl->implklass = ls->klass;
    impl->foo_id = prop;
    FILL_BASE(impl->base, ls, ls->line_number, ls->column, IMPLEMENT);
    prop->impl = impl;
@@ -1347,7 +1347,7 @@ parse_method(Eo_Lexer *ls)
    meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(meth->base, ls, ls->line_number, ls->column, FUNCTION);
    impl = calloc(1, sizeof(Eolian_Implement));
-   impl->klass = ls->klass;
+   impl->klass = impl->implklass = ls->klass;
    impl->foo_id = meth;
    FILL_BASE(impl->base, ls, ls->line_number, ls->column, IMPLEMENT);
    meth->impl = impl;

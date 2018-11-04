@@ -363,6 +363,7 @@ ffi.cdef [[
     Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
+    const Eolian_Class *eolian_implement_implementing_class_get(const Eolian_Implement *impl);
     const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
     const Eolian_Documentation *eolian_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type f_type);
     Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype);
@@ -1185,6 +1186,12 @@ ffi.metatype("Eolian_Implement", {
     __index = wrap_object {
         class_get = function(self)
             local v = eolian.eolian_implement_class_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
+        implementing_class_get = function(self)
+            local v = eolian.eolian_implement_implementing_class_get(self)
             if v == nil then return nil end
             return v
         end,

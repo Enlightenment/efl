@@ -1840,12 +1840,34 @@ eolian_implement_name_get(const Eolian_Implement *impl)
 /*
  * @brief Get the class of an overriding function (implement).
  *
+ * This is always the class specified in the implement name, i.e. if a class
+ * B overrides a method from a class A, the returned class will be A. There
+ * is another API to get the overriding class.
+ *
  * @param[in] impl the handle of the implement
  * @return the class handle or NULL.
+ *
+ * @see eolian_implement_implementing_class_get
  *
  * @ingroup Eolian
  */
 EAPI const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
+
+/*
+ * @brief Get the implementing class of an overriding function (implement).
+ *
+ * This is always the class that is implementing the function, override or
+ * not. That is, if class B overrides a method from class A, this will return
+ * the B class. There is another API to get the original class.
+ *
+ * @param[in] impl the handle of the implement
+ * @return the class handle or NULL.
+ *
+ * @see eolian_implement_class_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_implement_implementing_class_get(const Eolian_Implement *impl);
 
 /*
  * @brief Get the function of an implement.
