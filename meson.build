@@ -153,6 +153,7 @@ subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['eina'             ,[]                    , false,  true,  true,  true,  true,  true, [], []],
 ['eolian'           ,[]                    , false,  true,  true, false,  true, false, ['eina'], []],
+['eolian_aux'       ,[]                    , false,  true, false, false,  true, false, ['eolian'], []],
 ['eo'               ,[]                    , false,  true, false,  true,  true, false, ['eina'], []],
 ['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],
 ['emile'            ,[]                    , false,  true, false, false,  true,  true, ['eina', 'efl'], ['lz4', 'rg_etc']],
