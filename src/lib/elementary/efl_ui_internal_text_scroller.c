@@ -17,6 +17,8 @@
 #include "elm_widget_layout.h"
 #include "efl_ui_widget_scroller.h"
 
+#include "efl_ui_internal_text_scroller.h"
+
 #define EFL_UI_SCROLLER_DATA_GET(o, sd) \
   Efl_Ui_Scroller_Data * sd = efl_data_scope_safe_get(o, EFL_UI_SCROLLER_CLASS)
 

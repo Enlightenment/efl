@@ -197,6 +197,7 @@ struct _Selection_Loss_Data
 #define MY_CLASS_NAME_LEGACY "elm_entry"
 
 #include "efl_ui_internal_text_interactive.h"
+#include "efl_ui_internal_text_scroller.h"
 
 /* Maximum chunk size to be inserted to the entry at once
  * FIXME: This size is arbitrary, should probably choose a better size.
