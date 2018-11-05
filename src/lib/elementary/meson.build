@@ -106,7 +106,7 @@ pub_legacy_eo_files = [
   'elm_table.eo',
   'elm_thumb.eo',
   'efl_ui_textpath_legacy.eo',
-  'efl_ui_view_list_precise_layouter.eo'
+  'efl_ui_list_view_precise_layouter.eo'
 ]
 
 pub_eo_file_target = []
@@ -205,11 +205,11 @@ pub_eo_files = [
   'efl_ui_layout_part_table.eo',
   'efl_ui_layout_part_bg.eo',
   'efl_ui_layout_part_legacy.eo',
-  'efl_ui_view_list.eo',
-  'efl_ui_view_list_model.eo',
-  'efl_ui_view_list_pan.eo',
-  'efl_ui_view_list_segarray.eo',
-  'efl_ui_view_list_relayout.eo',
+  'efl_ui_list_view.eo',
+  'efl_ui_list_view_model.eo',
+  'efl_ui_list_view_pan.eo',
+  'efl_ui_list_view_seg_array.eo',
+  'efl_ui_list_view_relayout.eo',
   'efl_ui_item.eo',
   'efl_ui_list_item.eo',
   'efl_ui_list_default_item_part_icon.eo',
@@ -304,7 +304,7 @@ endforeach
 pub_eo_types_files = [
   'elm_general.eot',
   'efl_ui.eot',
-  'efl_ui_view_list_types.eot',
+  'efl_ui_list_view_types.eot',
   'efl_selection_types.eot',
   'efl_ui_dnd_types.eot'
 ]
@@ -440,8 +440,8 @@ elementary_headers_unstable = [
   'efl_ui_item_private.h',
   'efl_ui_list_item_private.h',
   'efl_ui_list_private.h',
-  'efl_ui_view_list_private.h',
-  'efl_ui_view_list_segarray.h',
+  'efl_ui_list_view_private.h',
+  'efl_ui_list_view_seg_array.h',
   'elm_widget_web.h',
   'efl_ui_clock.h',
   'elm_code.h',
@@ -864,9 +864,9 @@ elementary_src = [
   'efl_ui_list_default_item.c',
   'efl_ui_list_empty_item.c',
   'efl_ui_list.c',
-  'efl_ui_view_list.c',
-  'efl_ui_view_list_precise_layouter.c',
-  'efl_ui_view_list_segarray.c',
+  'efl_ui_list_view.c',
+  'efl_ui_list_view_precise_layouter.c',
+  'efl_ui_list_view_seg_array.c',
   'efl_ui_layout_factory.c',
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',

@@ -1,6 +1,6 @@
-class Efl.Ui.View_List_Pan (Efl.Ui.Pan)
+class Efl.Ui.List_View_Pan (Efl.Ui.Pan)
 {
-   [[Elementary Efl_Ui_View_List pan class]]
+   [[Elementary Efl_Ui_List_View pan class]]
    implements {
       Efl.Object.destructor;
       Efl.Ui.Pan.content_size { get; }

@@ -78,11 +78,11 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_layout_part_table.eo \
 	lib/elementary/efl_ui_layout_part_bg.eo \
 	lib/elementary/efl_ui_layout_part_legacy.eo \
-	lib/elementary/efl_ui_view_list.eo \
-	lib/elementary/efl_ui_view_list_model.eo \
-	lib/elementary/efl_ui_view_list_pan.eo \
-	lib/elementary/efl_ui_view_list_segarray.eo \
-	lib/elementary/efl_ui_view_list_relayout.eo \
+	lib/elementary/efl_ui_list_view.eo \
+	lib/elementary/efl_ui_list_view_model.eo \
+	lib/elementary/efl_ui_list_view_pan.eo \
+	lib/elementary/efl_ui_list_view_seg_array.eo \
+	lib/elementary/efl_ui_list_view_relayout.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
 	lib/elementary/efl_ui_list_default_item_part_icon.eo \
@@ -276,13 +276,13 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
-	lib/elementary/efl_ui_view_list_precise_layouter.eo \
+	lib/elementary/efl_ui_list_view_precise_layouter.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot \
 	lib/elementary/efl_ui.eot \
-	lib/elementary/efl_ui_view_list_types.eot \
+	lib/elementary/efl_ui_list_view_types.eot \
 	lib/elementary/efl_selection_types.eot \
 	lib/elementary/efl_ui_dnd_types.eot
 
@@ -414,8 +414,8 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_item_private.h \
 	lib/elementary/efl_ui_list_item_private.h \
 	lib/elementary/efl_ui_list_private.h \
-	lib/elementary/efl_ui_view_list_private.h \
-	lib/elementary/efl_ui_view_list_segarray.h \
+	lib/elementary/efl_ui_list_view_private.h \
+	lib/elementary/efl_ui_list_view_seg_array.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -842,9 +842,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_default_item.c \
 	lib/elementary/efl_ui_list_empty_item.c \
 	lib/elementary/efl_ui_list.c \
-	lib/elementary/efl_ui_view_list.c \
-	lib/elementary/efl_ui_view_list_precise_layouter.c \
-	lib/elementary/efl_ui_view_list_segarray.c \
+	lib/elementary/efl_ui_list_view.c \
+	lib/elementary/efl_ui_list_view_precise_layouter.c \
+	lib/elementary/efl_ui_list_view_seg_array.c \
 	lib/elementary/efl_ui_layout_factory.c \
 	lib/elementary/efl_ui_scroller.c \
 	lib/elementary/efl_ui_scroll_manager.c \

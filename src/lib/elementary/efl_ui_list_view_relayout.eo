@@ -1,11 +1,11 @@
-interface Efl.Ui.View_List_Relayout (Efl.Interface)
+interface Efl.Ui.List_View_Relayout (Efl.Interface)
 {
    methods {
       layout_do {
          params {
-            modeler: Efl.Ui.View_List_Model;
+            modeler: Efl.Ui.List_View_Model;
             first: int;
-            children: Efl.Ui.View_List_SegArray;
+            children: Efl.Ui.List_View_Seg_Array;
          }
       }
       @property model {

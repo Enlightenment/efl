@@ -120,9 +120,9 @@ elementary/efl_thread_4.c \
 elementary/efl_thread_5.c \
 elementary/efl_thread_6.c \
 elementary/efl_ui_list_example_1.c \
-elementary/efl_ui_view_list_example_1.c \
-elementary/efl_ui_view_list_example_2.c \
-elementary/efl_ui_view_list_example_3.c
+elementary/efl_ui_list_view_example_1.c \
+elementary/efl_ui_list_view_example_2.c \
+elementary/efl_ui_list_view_example_3.c
 
 ELM_SRCS += \
 elementary/bg_cxx_example_01.cc \
@@ -153,7 +153,7 @@ elementary/evas3d_map_example.edc \
 elementary/theme_example.edc \
 elementary/layout_example.edc \
 elementary/codegen_example.edc \
-elementary/efl_ui_view_list_example.edc \
+elementary/efl_ui_list_view_example.edc \
 elementary/prefs_example_03.edc
 
 ELM_EPCS = \
@@ -334,9 +334,9 @@ elementary/efl_thread_4 \
 elementary/efl_thread_5 \
 elementary/efl_thread_6 \
 elementary/efl_ui_list_example_1 \
-elementary/efl_ui_view_list_example_1 \
-elementary/efl_ui_view_list_example_2 \
-elementary/efl_ui_view_list_example_3
+elementary/efl_ui_list_view_example_1 \
+elementary/efl_ui_list_view_example_2 \
+elementary/efl_ui_list_view_example_3
 #benchmark3d
 #sphere-hunter
 

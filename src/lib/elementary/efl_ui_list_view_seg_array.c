@@ -5,15 +5,15 @@
 #include <Efl.h>
 #include <assert.h>
 
-#define MY_CLASS EFL_UI_VIEW_LIST_SEGARRAY_CLASS
-#define MY_CLASS_NAME "Efl.Ui.View.List.SegArray"
+#define MY_CLASS EFL_UI_LIST_VIEW_SEG_ARRAY_CLASS
+#define MY_CLASS_NAME "Efl.Ui.List_View_Seg_Array"
 
-#include "efl_ui_view_list_private.h"
-#include "efl_ui_view_list_segarray.h"
+#include "efl_ui_list_view_private.h"
+#include "efl_ui_list_view_seg_array.h"
 
 static int _search_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length EINA_UNUSED, void* data EINA_UNUSED)
 {
-  Efl_Ui_View_List_SegArray_Node const* node = (void const*)rbtree;
+  Efl_Ui_List_View_Seg_Array_Node const* node = (void const*)rbtree;
   int index = *(int*)key;
   if(index < node->first)
     {
@@ -31,7 +31,7 @@ static int _search_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int len
 
 static int _insert_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int length EINA_UNUSED, void* data EINA_UNUSED)
 {
-  Efl_Ui_View_List_SegArray_Node const* node = (void const*)rbtree;
+  Efl_Ui_List_View_Seg_Array_Node const* node = (void const*)rbtree;
   int index = *(int*)key;
   if(index < node->first)
     {
@@ -47,8 +47,8 @@ static int _insert_lookup_cb(Eina_Rbtree const* rbtree, const void* key, int len
     }
 }
 
-static Eina_Rbtree_Direction _rbtree_compare(Efl_Ui_View_List_SegArray_Node const* left,
-                                             Efl_Ui_View_List_SegArray_Node const* right, void* data EINA_UNUSED)
+static Eina_Rbtree_Direction _rbtree_compare(Efl_Ui_List_View_Seg_Array_Node const* left,
+                                             Efl_Ui_List_View_Seg_Array_Node const* right, void* data EINA_UNUSED)
 {
   if(left->first < right->first)
     return EINA_RBTREE_LEFT;
@@ -58,7 +58,7 @@ static Eina_Rbtree_Direction _rbtree_compare(Efl_Ui_View_List_SegArray_Node cons
 
 
 static void
-_free_node(Efl_Ui_View_List_SegArray_Node* node, void* data EINA_UNUSED)
+_free_node(Efl_Ui_List_View_Seg_Array_Node* node, void* data EINA_UNUSED)
 {
    int i = 0;
 
@@ -71,11 +71,11 @@ _free_node(Efl_Ui_View_List_SegArray_Node* node, void* data EINA_UNUSED)
    free(node);
 }
 
-static Efl_Ui_View_List_SegArray_Node*
-_alloc_node(Efl_Ui_View_List_SegArray_Data* pd, int first)
+static Efl_Ui_List_View_Seg_Array_Node*
+_alloc_node(Efl_Ui_List_View_Seg_Array_Data* pd, int first)
 {
-   Efl_Ui_View_List_SegArray_Node* node;
-   node = calloc(1, sizeof(Efl_Ui_View_List_SegArray_Node) + pd->step_size*sizeof(Efl_Ui_View_List_LayoutItem*));
+   Efl_Ui_List_View_Seg_Array_Node* node;
+   node = calloc(1, sizeof(Efl_Ui_List_View_Seg_Array_Node) + pd->step_size*sizeof(Efl_Ui_List_View_Layout_Item*));
    node->first = first;
    node->max = pd->step_size;
    pd->root = (void*)eina_rbtree_inline_insert(EINA_RBTREE_GET(pd->root), EINA_RBTREE_GET(node),
@@ -85,7 +85,7 @@ _alloc_node(Efl_Ui_View_List_SegArray_Data* pd, int first)
 }
 
 EOLIAN static void
-_efl_ui_view_list_segarray_flush(Eo* obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data *pd)
+_efl_ui_list_view_seg_array_flush(Eo* obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data *pd)
 {
    if (pd->root)
      eina_rbtree_delete(EINA_RBTREE_GET(pd->root), EINA_RBTREE_FREE_CB(_free_node), NULL);
@@ -95,26 +95,26 @@ _efl_ui_view_list_segarray_flush(Eo* obj EINA_UNUSED, Efl_Ui_View_List_SegArray_
    pd->count = 0;
 }
 
-static Efl_Ui_View_List_LayoutItem* _create_item_partial(Efl_Model* model)
+static Efl_Ui_List_View_Layout_Item* _create_item_partial(Efl_Model* model)
 {
-   Efl_Ui_View_List_LayoutItem* item = calloc(1, sizeof(Efl_Ui_View_List_LayoutItem));
+   Efl_Ui_List_View_Layout_Item* item = calloc(1, sizeof(Efl_Ui_List_View_Layout_Item));
    item->children = model;
    return item;
 }
 
-static Efl_Ui_View_List_LayoutItem* _create_item(Efl_Model* model, Efl_Ui_View_List_SegArray_Node* node, unsigned int index)
+static Efl_Ui_List_View_Layout_Item* _create_item(Efl_Model* model, Efl_Ui_List_View_Seg_Array_Node* node, unsigned int index)
 {
-   Efl_Ui_View_List_LayoutItem* item =  _create_item_partial(model);
+   Efl_Ui_List_View_Layout_Item* item =  _create_item_partial(model);
    item->index_offset = index - node->first;
    item->tree_node = node;
    return item;
 }
 
-EOLIAN static Efl_Ui_View_List_LayoutItem*
-_efl_ui_view_list_segarray_remove(Eo* obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data *pd, int index)
+EOLIAN static Efl_Ui_List_View_Layout_Item*
+_efl_ui_list_view_seg_array_remove(Eo* obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data *pd, int index)
 {
-   Efl_Ui_View_List_SegArray_Node *node;
-   Efl_Ui_View_List_LayoutItem *item, *rt;
+   Efl_Ui_List_View_Seg_Array_Node *node;
+   Efl_Ui_List_View_Layout_Item *item, *rt;
    Eina_Iterator* iterator;
    int offset;
 
@@ -146,7 +146,7 @@ _efl_ui_view_list_segarray_remove(Eo* obj EINA_UNUSED, Efl_Ui_View_List_SegArray
 }
 
 static void
-_efl_ui_view_list_segarray_insert_at_node(Efl_Ui_View_List_SegArray_Data* pd, int index, Efl_Ui_View_List_LayoutItem* item, Efl_Ui_View_List_SegArray_Node* node)
+_efl_ui_list_view_seg_array_insert_at_node(Efl_Ui_List_View_Seg_Array_Data* pd, int index, Efl_Ui_List_View_Layout_Item* item, Efl_Ui_List_View_Seg_Array_Node* node)
 {
    Eina_Iterator* iterator;
    int pos;
@@ -194,10 +194,10 @@ _efl_ui_view_list_segarray_insert_at_node(Efl_Ui_View_List_SegArray_Data* pd, in
 
 
 EOLIAN static void
-_efl_ui_view_list_segarray_insert(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd, int index, Efl_Model* model)
+_efl_ui_list_view_seg_array_insert(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data* pd, int index, Efl_Model* model)
 {
-  Efl_Ui_View_List_SegArray_Node* node, *next;
-  Efl_Ui_View_List_LayoutItem* item;
+  Efl_Ui_List_View_Seg_Array_Node* node, *next;
+  Efl_Ui_List_View_Layout_Item* item;
 
   item = _create_item_partial(model);
 
@@ -207,34 +207,34 @@ _efl_ui_view_list_segarray_insert(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray
     {
       next = (void*)EINA_RBTREE_GET(node)->son[EINA_RBTREE_LEFT];
       if(next && next->first <= index)
-        _efl_ui_view_list_segarray_insert_at_node(pd, index, item, next);
+        _efl_ui_list_view_seg_array_insert_at_node(pd, index, item, next);
       else
-        _efl_ui_view_list_segarray_insert_at_node(pd, index, item, node);
+        _efl_ui_list_view_seg_array_insert_at_node(pd, index, item, node);
     }
   else
-    _efl_ui_view_list_segarray_insert_at_node(pd, index, item, NULL);
+    _efl_ui_list_view_seg_array_insert_at_node(pd, index, item, NULL);
 }
 
 static void
-efl_ui_view_list_segarray_insert_object(Efl_Ui_View_List_SegArray_Data *segarray, unsigned int index, Efl_Model *children)
+efl_ui_list_view_seg_array_insert_object(Efl_Ui_List_View_Seg_Array_Data *seg_array, unsigned int index, Efl_Model *children)
 {
-   Efl_Ui_View_List_SegArray_Node *node;
+   Efl_Ui_List_View_Seg_Array_Node *node;
 
-   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(segarray->root),
+   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(seg_array->root),
                                            &index, sizeof(index), &_insert_lookup_cb, NULL);
    if (!node)
      {
-        node = _alloc_node(segarray, index);
+        node = _alloc_node(seg_array, index);
      }
 
    assert(node->length < node->max);
    node->pointers[node->length] = _create_item(children, node, index);
    node->length++;
-   segarray->count++;
+   seg_array->count++;
 }
 
 EOLIAN static void
-_efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data *segarray, int first, Eina_Value v)
+_efl_ui_list_view_seg_array_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data *seg_array, int first, Eina_Value v)
 {
    Efl_Model *children;
    unsigned int i, len;
@@ -242,7 +242,7 @@ _efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Se
    if (eina_value_type_get(&v) == EINA_VALUE_TYPE_OBJECT)
      {
         children = eina_value_object_get(&v);
-        efl_ui_view_list_segarray_insert_object(segarray, first, children);
+        efl_ui_list_view_seg_array_insert_object(seg_array, first, children);
      }
    else if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ARRAY)
      {
@@ -250,7 +250,7 @@ _efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Se
           {
              unsigned int idx = first + i;
 
-             efl_ui_view_list_segarray_insert_object(segarray, idx, children);
+             efl_ui_list_view_seg_array_insert_object(seg_array, idx, children);
           }
      }
    else
@@ -260,28 +260,28 @@ _efl_ui_view_list_segarray_insert_value(Eo *obj EINA_UNUSED, Efl_Ui_View_List_Se
 }
 
 EOLIAN static int
-_efl_ui_view_list_segarray_count(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
+_efl_ui_list_view_seg_array_count(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data* pd)
 {
    return pd->count;
 }
 
-typedef struct _Efl_Ui_View_List_Segarray_Eina_Accessor
+typedef struct _Efl_Ui_List_View_Segarray_Eina_Accessor
 {
    Eina_Accessor vtable;
-   Efl_Ui_View_List_SegArray_Data* segarray;
-} Efl_Ui_View_List_Segarray_Eina_Accessor;
+   Efl_Ui_List_View_Seg_Array_Data* seg_array;
+} Efl_Ui_List_View_Segarray_Eina_Accessor;
 
 static Eina_Bool
-_efl_ui_view_list_segarray_accessor_get_at(Efl_Ui_View_List_Segarray_Eina_Accessor* acc,
+_efl_ui_list_view_seg_array_accessor_get_at(Efl_Ui_List_View_Segarray_Eina_Accessor* acc,
                                       int idx, void** data)
 {
-   Efl_Ui_View_List_SegArray_Node* node;
-   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(acc->segarray->root),
+   Efl_Ui_List_View_Seg_Array_Node* node;
+   node = (void*)eina_rbtree_inline_lookup(EINA_RBTREE_GET(acc->seg_array->root),
                                            &idx, sizeof(idx), &_search_lookup_cb, NULL);
    if (node && (node->first <= idx && node->first + node->length > idx))
      {
          int i = idx - node->first;
-         Efl_Ui_View_List_LayoutItem* item = node->pointers[i];
+         Efl_Ui_List_View_Layout_Item* item = node->pointers[i];
          *data = item;
          return EINA_TRUE;
      }
@@ -289,13 +289,13 @@ _efl_ui_view_list_segarray_accessor_get_at(Efl_Ui_View_List_Segarray_Eina_Access
 }
 
 EOLIAN static void
-_efl_ui_view_list_segarray_setup(Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data *pd, int size)
+_efl_ui_list_view_seg_array_setup(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data *pd, int size)
 {
    pd->step_size = size;
 }
 
 EOLIAN static Eo *
-_efl_ui_view_list_segarray_efl_object_constructor(Eo *obj, Efl_Ui_View_List_SegArray_Data *pd EINA_UNUSED)
+_efl_ui_list_view_seg_array_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Seg_Array_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
@@ -303,7 +303,7 @@ _efl_ui_view_list_segarray_efl_object_constructor(Eo *obj, Efl_Ui_View_List_SegA
 }
 
 EOLIAN static void
-_efl_ui_view_list_segarray_efl_object_destructor(Eo *obj, Efl_Ui_View_List_SegArray_Data *pd)
+_efl_ui_list_view_seg_array_efl_object_destructor(Eo *obj, Efl_Ui_List_View_Seg_Array_Data *pd)
 {
    if (pd->root)
      eina_rbtree_delete(EINA_RBTREE_GET(pd->root), EINA_RBTREE_FREE_CB(_free_node), NULL);
@@ -313,68 +313,68 @@ _efl_ui_view_list_segarray_efl_object_destructor(Eo *obj, Efl_Ui_View_List_SegAr
 }
 
 static void*
-_efl_ui_view_list_segarray_accessor_get_container(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_accessor_get_container(Efl_Ui_List_View_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
   return NULL;
 }
 
 static void
-_efl_ui_view_list_segarray_accessor_free(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_accessor_free(Efl_Ui_List_View_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
    free(acc);
 }
 
 static Eina_Bool
-_efl_ui_view_list_segarray_accessor_lock(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_accessor_lock(Efl_Ui_List_View_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_efl_ui_view_list_segarray_accessor_unlock(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_accessor_unlock(Efl_Ui_List_View_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Accessor*
-_efl_ui_view_list_segarray_accessor_clone(Efl_Ui_View_List_Segarray_Eina_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_accessor_clone(Efl_Ui_List_View_Segarray_Eina_Accessor* acc EINA_UNUSED)
 {
    return &acc->vtable;
 }
 
 static void
-_efl_ui_view_list_segarray_accessor_setup(Efl_Ui_View_List_Segarray_Eina_Accessor* acc, Efl_Ui_View_List_SegArray_Data* segarray)
+_efl_ui_list_view_seg_array_accessor_setup(Efl_Ui_List_View_Segarray_Eina_Accessor* acc, Efl_Ui_List_View_Seg_Array_Data* seg_array)
 {
    EINA_MAGIC_SET(&acc->vtable, EINA_MAGIC_ACCESSOR);
    acc->vtable.version = EINA_ACCESSOR_VERSION;
-   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_view_list_segarray_accessor_get_at);
-   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_view_list_segarray_accessor_get_container);
-   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_view_list_segarray_accessor_free);
-   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_view_list_segarray_accessor_lock);
-   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_view_list_segarray_accessor_unlock);
-   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_view_list_segarray_accessor_clone);
-   acc->segarray = segarray;
+   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_view_seg_array_accessor_get_at);
+   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_list_view_seg_array_accessor_get_container);
+   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_list_view_seg_array_accessor_free);
+   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_list_view_seg_array_accessor_lock);
+   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_list_view_seg_array_accessor_unlock);
+   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_list_view_seg_array_accessor_clone);
+   acc->seg_array = seg_array;
 }
 
 EOLIAN static Eina_Accessor*
-_efl_ui_view_list_segarray_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
+_efl_ui_list_view_seg_array_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data* pd)
 {
-   Efl_Ui_View_List_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_View_List_Segarray_Eina_Accessor));
-   _efl_ui_view_list_segarray_accessor_setup(acc, pd);
+   Efl_Ui_List_View_Segarray_Eina_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_View_Segarray_Eina_Accessor));
+   _efl_ui_list_view_seg_array_accessor_setup(acc, pd);
    return &acc->vtable;
 }
 
-typedef struct _Efl_Ui_View_List_Segarray_Node_Accessor
+typedef struct _Efl_Ui_List_View_Segarray_Node_Accessor
 {
    Eina_Accessor vtable;
-   Efl_Ui_View_List_SegArray_Data* segarray;
+   Efl_Ui_List_View_Seg_Array_Data* seg_array;
    Eina_Iterator* pre_iterator;
-   Efl_Ui_View_List_SegArray_Node* current_node;
+   Efl_Ui_List_View_Seg_Array_Node* current_node;
    int current_index;
-} Efl_Ui_View_List_Segarray_Node_Accessor;
+} Efl_Ui_List_View_Segarray_Node_Accessor;
 
 static Eina_Bool
-_efl_ui_view_list_segarray_node_accessor_get_at(Efl_Ui_View_List_Segarray_Node_Accessor* acc,
+_efl_ui_list_view_seg_array_node_accessor_get_at(Efl_Ui_List_View_Segarray_Node_Accessor* acc,
                                       int idx, void** data)
 {
    if(idx == acc->current_index && acc->current_node)
@@ -392,7 +392,7 @@ _efl_ui_view_list_segarray_node_accessor_get_at(Efl_Ui_View_List_Segarray_Node_A
          }
 
        if(!acc->pre_iterator)
-         acc->pre_iterator = eina_rbtree_iterator_infix((void*)acc->segarray->root);
+         acc->pre_iterator = eina_rbtree_iterator_infix((void*)acc->seg_array->root);
 
        for(;acc->current_index != idx;++acc->current_index)
          {
@@ -409,13 +409,13 @@ _efl_ui_view_list_segarray_node_accessor_get_at(Efl_Ui_View_List_Segarray_Node_A
 }
 
 static void*
-_efl_ui_view_list_segarray_node_accessor_get_container(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_node_accessor_get_container(Efl_Ui_List_View_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
   return NULL;
 }
 
 static void
-_efl_ui_view_list_segarray_node_accessor_free(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_node_accessor_free(Efl_Ui_List_View_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
    if (acc->pre_iterator)
      eina_iterator_free(acc->pre_iterator);
@@ -423,52 +423,52 @@ _efl_ui_view_list_segarray_node_accessor_free(Efl_Ui_View_List_Segarray_Node_Acc
 }
 
 static Eina_Bool
-_efl_ui_view_list_segarray_node_accessor_lock(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_node_accessor_lock(Efl_Ui_List_View_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Bool
-_efl_ui_view_list_segarray_node_accessor_unlock(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_node_accessor_unlock(Efl_Ui_List_View_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
 static Eina_Accessor*
-_efl_ui_view_list_segarray_node_accessor_clone(Efl_Ui_View_List_Segarray_Node_Accessor* acc EINA_UNUSED)
+_efl_ui_list_view_seg_array_node_accessor_clone(Efl_Ui_List_View_Segarray_Node_Accessor* acc EINA_UNUSED)
 {
    return &acc->vtable;
 }
 
 static void
-_efl_ui_view_list_segarray_node_accessor_setup(Efl_Ui_View_List_Segarray_Node_Accessor* acc, Efl_Ui_View_List_SegArray_Data* segarray)
+_efl_ui_list_view_seg_array_node_accessor_setup(Efl_Ui_List_View_Segarray_Node_Accessor* acc, Efl_Ui_List_View_Seg_Array_Data* seg_array)
 {
    EINA_MAGIC_SET(&acc->vtable, EINA_MAGIC_ACCESSOR);
    acc->vtable.version = EINA_ACCESSOR_VERSION;
-   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_view_list_segarray_node_accessor_get_at);
-   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_view_list_segarray_node_accessor_get_container);
-   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_view_list_segarray_node_accessor_free);
-   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_view_list_segarray_node_accessor_lock);
-   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_view_list_segarray_node_accessor_unlock);
-   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_view_list_segarray_node_accessor_clone);
-   acc->segarray = segarray;
+   acc->vtable.get_at = FUNC_ACCESSOR_GET_AT(_efl_ui_list_view_seg_array_node_accessor_get_at);
+   acc->vtable.get_container = FUNC_ACCESSOR_GET_CONTAINER(_efl_ui_list_view_seg_array_node_accessor_get_container);
+   acc->vtable.free = FUNC_ACCESSOR_FREE(_efl_ui_list_view_seg_array_node_accessor_free);
+   acc->vtable.lock = FUNC_ACCESSOR_LOCK(_efl_ui_list_view_seg_array_node_accessor_lock);
+   acc->vtable.unlock = FUNC_ACCESSOR_LOCK(_efl_ui_list_view_seg_array_node_accessor_unlock);
+   acc->vtable.clone = FUNC_ACCESSOR_CLONE(_efl_ui_list_view_seg_array_node_accessor_clone);
+   acc->seg_array = seg_array;
    acc->pre_iterator = NULL;
    acc->current_index = -1;
    acc->current_node = NULL;
 }
 
 EOLIAN static Eina_Accessor*
-_efl_ui_view_list_segarray_node_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_List_SegArray_Data* pd)
+_efl_ui_list_view_seg_array_node_accessor_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Seg_Array_Data* pd)
 {
-   Efl_Ui_View_List_Segarray_Node_Accessor* acc = calloc(1, sizeof(Efl_Ui_View_List_Segarray_Node_Accessor));
-   _efl_ui_view_list_segarray_node_accessor_setup(acc, pd);
+   Efl_Ui_List_View_Segarray_Node_Accessor* acc = calloc(1, sizeof(Efl_Ui_List_View_Segarray_Node_Accessor));
+   _efl_ui_list_view_seg_array_node_accessor_setup(acc, pd);
    return &acc->vtable;
 }
 
-int efl_ui_view_list_item_index_get(Efl_Ui_View_List_LayoutItem* item)
+int efl_ui_list_view_item_index_get(Efl_Ui_List_View_Layout_Item* item)
 {
-  Efl_Ui_View_List_SegArray_Node* node = item->tree_node;
+  Efl_Ui_List_View_Seg_Array_Node* node = item->tree_node;
   return item->index_offset + node->first;
 }
 
-#include "efl_ui_view_list_segarray.eo.c"
+#include "efl_ui_list_view_seg_array.eo.c"

@@ -1,6 +1,6 @@
-import efl_ui_view_list_types;
+import efl_ui_list_view_types;
 
-interface Efl.Ui.View_List_Model (Efl.Interface)
+interface Efl.Ui.List_View_Model (Efl.Interface)
 {
    methods {
       @property load_range {
@@ -12,13 +12,13 @@ interface Efl.Ui.View_List_Model (Efl.Interface)
       }
       realize {
          params {
-            item: ptr(Efl.Ui.View.List.LayoutItem);
+            item: ptr(Efl.Ui.List_View_Layout_Item);
          }
-         return: ptr(Efl.Ui.View.List.LayoutItem);
+         return: ptr(Efl.Ui.List_View_Layout_Item);
       }
       unrealize {
          params {
-            item: ptr(Efl.Ui.View.List.LayoutItem);
+            item: ptr(Efl.Ui.List_View_Layout_Item);
          }
       }
       // @property visible_range {

@@ -1,19 +1,19 @@
 import elm_general;
 
-struct Efl.Ui.View_List_Item_Event
+struct Efl.Ui.List_View_Item_Event
 {
    layout: Efl.Ui.Layout.Object;
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.View_List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
+class Efl.Ui.List_View (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.View_List_Model, Efl.Ui.Widget_Focus_Manager)
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager)
 {
    methods {
       @property relayout {
          values {
-            object: Efl.Ui.View_List_Relayout;
+            object: Efl.Ui.List_View_Relayout;
          }
       }
       @property homogeneous {
@@ -50,14 +50,14 @@ class Efl.Ui.View_List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable_Int
       }
    }
    events {
-      item,realized : Efl.Ui.View_List_Item_Event;
-      item,unrealized : Efl.Ui.View_List_Item_Event;
-      item,focused : Efl.Ui.View_List_Item_Event;
-      item,unfocused : Efl.Ui.View_List_Item_Event;
-      item,highlighted : Efl.Ui.View_List_Item_Event;
-      item,unhighlighted : Efl.Ui.View_List_Item_Event;
-      item,selected : Efl.Ui.View_List_Item_Event;
-      item,unselected : Efl.Ui.View_List_Item_Event;
+      item,realized : Efl.Ui.List_View_Item_Event;
+      item,unrealized : Efl.Ui.List_View_Item_Event;
+      item,focused : Efl.Ui.List_View_Item_Event;
+      item,unfocused : Efl.Ui.List_View_Item_Event;
+      item,highlighted : Efl.Ui.List_View_Item_Event;
+      item,unhighlighted : Efl.Ui.List_View_Item_Event;
+      item,selected : Efl.Ui.List_View_Item_Event;
+      item,unselected : Efl.Ui.List_View_Item_Event;
    }
 
    implements {
@@ -70,11 +70,11 @@ class Efl.Ui.View_List (Efl.Ui.Layout.Object, Efl.Ui.View, Efl.Ui.Scrollable_Int
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
 
-      Efl.Ui.View_List_Model.load_range { set;}
-      Efl.Ui.View_List_Model.realize;
-      Efl.Ui.View_List_Model.unrealize;
-      Efl.Ui.View_List_Model.model_size { get; }
-      Efl.Ui.View_List_Model.min_size { get; set; }
+      Efl.Ui.List_View_Model.load_range { set;}
+      Efl.Ui.List_View_Model.realize;
+      Efl.Ui.List_View_Model.unrealize;
+      Efl.Ui.List_View_Model.model_size { get; }
+      Efl.Ui.List_View_Model.min_size { get; set; }
 
       // Widget
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;

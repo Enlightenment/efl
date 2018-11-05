@@ -1,4 +1,4 @@
-// gcc -o efl_ui_view_list_example_3 efl_ui_view_list_example_3.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_list_view_example_3 efl_ui_list_view_example_3.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -113,21 +113,21 @@ static void
 _bt_none_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_view_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_NONE);
+   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_NONE);
 }
 
 static void
 _bt_donly_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_view_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 }
 
 static void
 _bt_default_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_view_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DEFAULT);
+   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DEFAULT);
 }
 
 static void
@@ -146,7 +146,7 @@ _bt_unset_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 static void
 _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Ui_View_List_Item_Event *ie = event->info;
+   Efl_Ui_List_View_Item_Event *ie = event->info;
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -157,7 +157,7 @@ _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 static void
 _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Ui_View_List_Item_Event *ie = event->info;
+   Efl_Ui_List_View_Item_Event *ie = event->info;
    printf("relized 2\n");
 
    elm_object_focus_allow_set(ie->layout, EINA_TRUE);
@@ -210,7 +210,7 @@ elm_main(int argc, char **argv)
    priv = alloca(sizeof(Priv_Data));
    memset(priv, 0, sizeof(Priv_Data));
 
-   win = elm_win_util_standard_add("viewlist", "Viewlist");
+   win = elm_win_util_standard_add("list_view3", "List_View3");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -225,22 +225,22 @@ elm_main(int argc, char **argv)
    efl_ui_model_connect(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
-   priv->list1 = efl_add(EFL_UI_VIEW_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
-   efl_event_callback_add(priv->list1, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
+   priv->list1 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
+   efl_event_callback_add(priv->list1, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
    evas_object_size_hint_weight_set(priv->list1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list1, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, priv->list1);
-   efl_ui_view_list_layout_factory_set(priv->list1, factory);
+   efl_ui_list_view_layout_factory_set(priv->list1, factory);
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_model_connect(factory, "efl.text", "filename");
    efl_ui_model_connect(factory, "signal/efl,state,%v", "selected");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
-   priv->list2 = efl_add(EFL_UI_VIEW_LIST_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
-   efl_event_callback_add(priv->list2, EFL_UI_VIEW_LIST_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
+   priv->list2 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
+   efl_event_callback_add(priv->list2, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
    evas_object_size_hint_weight_set(priv->list2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_view_list_layout_factory_set(priv->list2, factory);
+   efl_ui_list_view_layout_factory_set(priv->list2, factory);
 
    vbx = elm_box_add(win);
    elm_box_pack_end(bx, vbx);

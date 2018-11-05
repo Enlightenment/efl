@@ -1,4 +1,4 @@
-// gcc -o efl_ui_view_list_example_2 efl_ui_view_list_example_2.c `pkg-config --cflags --libs elementary`
+// gcc -o efl_ui_list_view_example_2 efl_ui_list_view_example_2.c `pkg-config --cflags --libs elementary`
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -23,7 +23,7 @@ elm_main(int argc, char **argv)
    Eo *model, *li;
    char *dirname;
 
-   win = elm_win_util_standard_add("viewlist", "Viewlist");
+   win = elm_win_util_standard_add("list_view2", "List_View2");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    elm_win_autodel_set(win, EINA_TRUE);
@@ -36,8 +36,8 @@ elm_main(int argc, char **argv)
    efl_ui_model_connect(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
-   li = efl_add(EFL_UI_VIEW_LIST_CLASS, win);
-   efl_ui_view_list_layout_factory_set(li, factory);
+   li = efl_add(EFL_UI_LIST_VIEW_CLASS, win);
+   efl_ui_list_view_layout_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
 
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
