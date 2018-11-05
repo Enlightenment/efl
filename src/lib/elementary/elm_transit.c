@@ -50,6 +50,8 @@ struct _Elm_Transit
         double current;
         double revert_start;
         double revert_elapsed;
+        double revert_paused;
+        double revert_delayed;
      } time;
    struct
      {
@@ -334,12 +336,14 @@ _transit_animate_cb(void *data)
    double elapsed_time, duration, revert_progress;
 
    transit->time.current = ecore_loop_time_get();
-   elapsed_time = transit->time.current - transit->time.begin - 2 * transit->total_revert_time;
-   duration = transit->time.duration + transit->time.delayed;
+   elapsed_time = (transit->time.current - transit->time.begin - transit->time.delayed)
+      - (2 * transit->total_revert_time);
+   duration = transit->time.duration;
    if (elapsed_time > duration)
      elapsed_time = duration;
 
    transit->progress = elapsed_time / duration;
+
    if (transit->revert_mode && transit->revert_begin_progress == 0)
      {
         transit->revert_begin_progress = transit->progress;
@@ -348,7 +352,8 @@ _transit_animate_cb(void *data)
 
    if (transit->revert_mode)
      {
-        transit->time.revert_elapsed = transit->time.current - transit->time.revert_start;
+        transit->time.revert_elapsed =
+           (transit->time.current - transit->time.revert_start - transit->time.revert_delayed);
         revert_progress = transit->time.revert_elapsed / duration;
         transit->progress = transit->revert_begin_progress - revert_progress;
      }
@@ -405,7 +410,7 @@ _transit_animate_cb(void *data)
    /* Reverse? */
    if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
 
-   if (transit->time.duration > 0)
+   if (duration > 0)
      {
         if (!_transit_animate_op(transit, transit->progress))
           return ECORE_CALLBACK_CANCEL;
@@ -415,6 +420,7 @@ _transit_animate_cb(void *data)
      {
         transit->revert_mode = EINA_FALSE;
         transit->time.begin = ecore_loop_time_get();
+        transit->time.revert_delayed = 0;
         transit->total_revert_time = 0;
         if ((transit->repeat.count >= 0) &&
             (transit->repeat.current == transit->repeat.count) &&
@@ -450,6 +456,7 @@ _transit_animate_cb(void *data)
    else transit->repeat.reverse = EINA_TRUE;
 
    transit->time.begin = ecore_loop_time_get();
+   transit->time.delayed = 0;
    transit->total_revert_time = 0;
 
    return ECORE_CALLBACK_RENEW;
@@ -561,7 +568,6 @@ elm_transit_add(void)
 
    transit->v[0] = 1.0;
    transit->v[1] = 0.0;
-   transit->revert_mode = EINA_FALSE;
    transit->smooth = EINA_TRUE;
 
    return transit;
@@ -863,6 +869,8 @@ elm_transit_go(Elm_Transit *transit)
 
    transit->time.paused = 0;
    transit->time.delayed = 0;
+   transit->time.revert_paused = 0;
+   transit->time.revert_delayed = 0;
    transit->total_revert_time = 0;
    transit->revert_mode = EINA_FALSE;
    transit->time.begin = ecore_loop_time_get();
@@ -894,18 +902,34 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
 
    if (paused)
      {
-        if (transit->time.paused > 0)
-          return;
+        if (transit->revert_mode)
+          {
+             if (transit->time.revert_paused > 0)return;
+             transit->time.revert_paused = ecore_loop_time_get();
+          }
+        else
+          {
+             if (transit->time.paused > 0)return;
+             transit->time.paused = ecore_loop_time_get();
+          }
         ecore_animator_freeze(transit->animator);
-        transit->time.paused = ecore_loop_time_get();
      }
    else
      {
-        if (transit->time.paused == 0)
-          return;
-        ecore_animator_thaw(transit->animator);
-        transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
-        transit->time.paused = 0;
+        if (transit->revert_mode)
+          {
+             if (transit->time.revert_paused == 0) return;
+             ecore_animator_thaw(transit->animator);
+             transit->time.revert_delayed += (ecore_loop_time_get() - transit->time.revert_paused);
+             transit->time.revert_paused = 0;
+          }
+        else
+          {
+             if (transit->time.paused == 0) return;
+             ecore_animator_thaw(transit->animator);
+             transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
+             transit->time.paused = 0;
+          }
      }
 }
 
