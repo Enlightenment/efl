@@ -674,6 +674,25 @@ EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit);
  */
 EAPI double                 elm_transit_progress_value_get(const Elm_Transit *transit);
 
+
+/**
+ * Set current time progression of the animation.
+ *
+ * Intervene current progress instantly when it requires to jump onto a specific frame position.
+ *
+ * @note @p transit can not be NULL
+ *
+ * @param transit The transit object.
+ * @param progress The time progression value. The value must be in range of (0.0 ~ 1.0).
+ *
+ * @see elm_transit_progress_value_get()
+ *
+ * @since 1.22
+ *
+ * @ingroup Elm_Transit
+ */
+EAPI void                   elm_transit_progress_value_set(Elm_Transit *transit, double progress);
+
 /**
  * Makes the chain relationship between two transits.
  *

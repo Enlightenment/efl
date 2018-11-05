@@ -60,7 +60,10 @@ struct _Elm_Transit
         Eina_Bool reverse;
      } repeat;
    double progress;
-   double revert_begin_progress, revert_duration, total_revert_time;
+   double inter_progress;
+   double revert_begin_progress;
+   double revert_duration;
+   double total_revert_time;
    unsigned int effects_pending_del;
    int walking;
    double v[4];
@@ -339,9 +342,6 @@ _transit_animate_cb(void *data)
    elapsed_time = (transit->time.current - transit->time.begin - transit->time.delayed)
       - (2 * transit->total_revert_time);
    duration = transit->time.duration;
-   if (elapsed_time > duration)
-     elapsed_time = duration;
-
    transit->progress = elapsed_time / duration;
 
    if (transit->revert_mode && transit->revert_begin_progress == 0)
@@ -357,6 +357,9 @@ _transit_animate_cb(void *data)
         revert_progress = transit->time.revert_elapsed / duration;
         transit->progress = transit->revert_begin_progress - revert_progress;
      }
+
+   /* Intervention Progress */
+   transit->progress += transit->inter_progress;
 
    switch (transit->tween_mode)
      {
@@ -410,11 +413,8 @@ _transit_animate_cb(void *data)
    /* Reverse? */
    if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
 
-   if (duration > 0)
-     {
-        if (!_transit_animate_op(transit, transit->progress))
-          return ECORE_CALLBACK_CANCEL;
-     }
+   if (!_transit_animate_op(transit, transit->progress))
+     return ECORE_CALLBACK_CANCEL;
 
    if (transit->revert_mode && (transit->progress <= 0 || transit->progress >= 1))
      {
@@ -422,6 +422,7 @@ _transit_animate_cb(void *data)
         transit->time.begin = ecore_loop_time_get();
         transit->time.revert_delayed = 0;
         transit->total_revert_time = 0;
+        transit->inter_progress = 0;
         if ((transit->repeat.count >= 0) &&
             (transit->repeat.current == transit->repeat.count) &&
             ((!transit->auto_reverse) || transit->repeat.reverse))
@@ -435,7 +436,9 @@ _transit_animate_cb(void *data)
      }
 
    /* Not end. Keep going. */
-   if (elapsed_time < duration || transit->revert_mode) return ECORE_CALLBACK_RENEW;
+   if ((!transit->repeat.reverse && transit->progress < 1) ||
+        (transit->repeat.reverse && transit->progress > 0) ||
+        transit->revert_mode) return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
    if ((transit->repeat.count >= 0) &&
@@ -458,6 +461,7 @@ _transit_animate_cb(void *data)
    transit->time.begin = ecore_loop_time_get();
    transit->time.delayed = 0;
    transit->total_revert_time = 0;
+   transit->inter_progress = 0;
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -942,6 +946,17 @@ elm_transit_paused_get(const Elm_Transit *transit)
      return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+EAPI void
+elm_transit_progress_value_set(Elm_Transit *transit, double progress)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+
+   if (progress < 0) progress = 0;
+   else if (progress > 1) progress = 1;
+
+   transit->inter_progress = (progress - transit->progress);
 }
 
 EAPI double
