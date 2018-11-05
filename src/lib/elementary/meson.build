@@ -324,6 +324,7 @@ endforeach
 
 priv_eo_files = [
   'efl_ui_internal_text_interactive.eo',
+  'efl_ui_internal_text_scroller.eo',
   'efl_ui_focus_composition_adapter.eo',
   'efl_ui_focus_parent_provider.eo',
   'efl_ui_focus_parent_provider_standard.eo',
@@ -741,6 +742,8 @@ elementary_src = [
   'efl_ui_flip.c',
   'efl_ui_internal_text_interactive.c',
   'efl_ui_internal_text_interactive.h',
+  'efl_ui_internal_text_scroller.c',
+  'efl_ui_internal_text_scroller.h',
   'elm_flipselector.c',
   'elm_font.c',
   'efl_ui_frame.c',
