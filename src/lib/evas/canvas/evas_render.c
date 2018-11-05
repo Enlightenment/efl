@@ -780,10 +780,11 @@ _evas_render_phase1_object_mapped(Phase1_Context *p1ctx,
    Evas_Object *eo_obj = obj->object;
 
    RD(level, "  obj mapped\n");
+   if (!obj_changed) return;
+
    if (!hmap && obj->cur->clipper)
      // Fix some bad clipping issues before an evas map animation starts
      _evas_render_phase1_object_map_clipper_fix(eo_obj, obj);
-   if (!obj_changed) return;
 
    _evas_render_object_map_change_update(p1ctx->e, obj, EINA_TRUE, hmap, &(p1ctx->redraw_all));
    if (!((is_active) &&
