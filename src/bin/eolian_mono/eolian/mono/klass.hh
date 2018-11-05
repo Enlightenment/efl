@@ -48,7 +48,7 @@ template <typename OutputIterator, typename Context>
 static bool generate_equals_method(OutputIterator sink, Context const &context)
 {
    return as_generator(
-       scope_tab << "///<summary>Verifies if the given object is equals to this.</summary>\n" 
+       scope_tab << "///<summary>Verifies if the given object is equal to this one.</summary>\n" 
        << scope_tab << "public override bool Equals(object obj)\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "var other = obj as efl.IObject;\n"
@@ -61,7 +61,7 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "return this.raw_handle.ToInt32();\n"
        << scope_tab << "}\n"
-       << scope_tab << "///<summary>How native pointer in string representation.</summary>\n"
+       << scope_tab << "///<summary>Turns the native pointer into a string representation.</summary>\n"
        << scope_tab << "public override String ToString()\n"
        << scope_tab << "{\n"
        << scope_tab << scope_tab << "return $\"{this.GetType().Name}@[{this.raw_handle.ToInt32():x}]\";\n"
@@ -183,7 +183,7 @@ struct klass
              << scope_tab << "}\n"
              << scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
              << scope_tab << "public delegate void ConstructingMethod(" << interface_name << " obj);\n"
-             << scope_tab << "///<summary>Returns the pointer the unerlying Eo class object. Used internally on class methods.</summary>\n"
+             << scope_tab << "///<summary>Returns the pointer the underlying Eo class object. Used internally on class methods.</summary>\n"
              << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] public static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
