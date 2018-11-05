@@ -7892,7 +7892,7 @@ _efl_canvas_text_efl_text_markup_cursor_markup_insert(Eo *eo_obj,
 {
    ASYNC_BLOCK;
    _evas_object_textblock_text_markup_prepend(eo_obj, cur, markup);
-   //efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
 /**
