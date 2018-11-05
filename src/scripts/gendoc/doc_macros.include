@@ -256,7 +256,7 @@ interface#!
 |${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.name}$ #!
 |${BEST_SUMMARY(obj=par)}$ ${BEST_DESCRIPTION(obj=par)}$|
    <!--(else)-->
-**This function do not accept any parameter.**
+**This function does not accept any parameter.**
    <!--(end)-->
 
    <!--(if func.method_return_type)-->
@@ -264,7 +264,7 @@ ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
 ^ return ^ description ^
 |**${func.method_return_type.name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
    <!--(else)-->
-**This function do not return anything.**
+**This function does not return anything.**
    <!--(end)-->
 
 <!--(end)-->

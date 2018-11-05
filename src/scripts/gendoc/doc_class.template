@@ -72,7 +72,7 @@ ${IMPLEMENT_FULL(impl=impl, cls=cls)}$
 \\
   <!--(end)-->
 <!--(else)-->
-No Methods defined in this class.
+No methods defined in this class.
 <!--(end)-->
 
 ===== Inherited members =====
