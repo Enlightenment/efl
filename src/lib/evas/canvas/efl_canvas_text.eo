@@ -294,7 +294,6 @@ class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
       Efl.Text_Style.underline_dashed_color { get; set; }
       Efl.Text_Style.underline_dashed_width { get; set; }
       Efl.Text_Style.underline_dashed_gap { get; set; }
-      Efl.Text_Style.underline2_type { get; set; }
       Efl.Text_Style.underline2_color { get; set; }
       Efl.Text_Style.strikethrough_type { get; set; }
       Efl.Text_Style.strikethrough_color { get; set; }

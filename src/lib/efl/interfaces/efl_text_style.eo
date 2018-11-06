@@ -153,15 +153,6 @@ interface Efl.Text_Style {
          }
       }
 
-      @property underline2_type
-      {
-         [[Type of underline2 style]]
-         values
-         {
-            type: Efl.Text_Style_Underline_Type; [[Underline type]]
-         }
-      }
-
       @property underline2_color
       {
          [[Color of underline2 style]]
