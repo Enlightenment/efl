@@ -1964,7 +1964,9 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Data *pd, const char *sign
 {
    Eina_Value *v = NULL;
    Eina_Strbuf *buf;
-   char *value;
+   char *value = NULL;
+   Eina_Bool eval = EINA_FALSE;
+   Eina_Bool is_bool = EINA_FALSE;
 
    v = efl_model_property_get(pd->connect.model, fetch);
    if (!v) return;
@@ -1978,26 +1980,55 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Data *pd, const char *sign
         return;
      }
 
-   // FIXME: previous implementation would just do that for signal/part == "selected"
-   if (eina_value_type_get(v) == EINA_VALUE_TYPE_UCHAR)
+   is_bool = (eina_value_type_get(v) == EINA_VALUE_TYPE_BOOL);
+   if (is_bool)
      {
-        Eina_Bool bl;
-
-        eina_value_bool_get(v, &bl);
-        if (bl) value = strdup("selected");
-        else value = strdup("unselected");
+        eina_value_bool_get(v, &eval);
      }
-   else
-     {
-        value = eina_value_to_string(v);
-     }
+   value = eina_value_to_string(v);
 
    buf = eina_strbuf_new();
    // FIXME: is it really the form of signal we want to send ?
-   eina_strbuf_append_printf(buf, "%s%s", signal, value);
+   const char *ini = signal;
+   for (;;)
+     {
+        const char *last = ini;
+        ini = strstr(last, "%{");
+        if (!ini)
+          {
+             eina_strbuf_append(buf, last);
+             break;
+          }
+        if (!is_bool)
+          {
+             ERR("Using signal connection `%%{;}' with a property that is not boolean. Signal: `%s'; Property: `%s'.", signal, fetch);
+             goto on_error;
+          }
+        eina_strbuf_append_length(buf, last, (size_t)(ini-last));
+        const char *sep = strchr(ini+2, ';');
+        if (!sep)
+          {
+             ERR("Could not find separator `;'.");
+             goto on_error;
+          }
+        const char *fin = strchr(sep+1, '}');
+        if (!fin)
+          {
+             ERR("Could not find terminator `}'.");
+             goto on_error;
+          }
+        if (eval)
+          eina_strbuf_append_length(buf, ini+2, (size_t)(sep-(ini+2)));
+        else
+          eina_strbuf_append_length(buf, sep+1, (size_t)(fin-(sep+1)));
+        ini = fin+1;
+     }
+   eina_strbuf_replace_all(buf, "%v", value);
+
    elm_layout_signal_emit(pd->obj, eina_strbuf_string_get(buf),
                           elm_widget_is_legacy(pd->obj) ? "elm" : "efl");
 
+on_error:
    eina_strbuf_free(buf);
    eina_value_free(v);
    free(value);
