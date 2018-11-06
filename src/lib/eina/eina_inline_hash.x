@@ -140,14 +140,17 @@ eina_hash_murmur3(const char *key, int len)
      {
       case 3:
          k1 ^= tail[2] << 16;
+         EINA_FALLTHROUGH;
       case 2:
          k1 ^= tail[1] << 8;
+         EINA_FALLTHROUGH;
       case 1:
          k1 ^= tail[0];
          k1 *= c1;
          k1 = _rotl32(k1, 16);
          k1 *= c2;
          h1 ^= k1;
+         EINA_FALLTHROUGH;
       default:
          break;
      }
