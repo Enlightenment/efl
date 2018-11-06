@@ -1411,7 +1411,7 @@ _eina_future_cb_ignore_error(void *data, const Eina_Value value,
 EAPI Eina_Future_Desc
 eina_future_cb_ignore_error(Eina_Error err)
 {
-   return (Eina_Future_Desc){ _eina_future_cb_ignore_error, (void *)(long)err };
+   return (Eina_Future_Desc){ _eina_future_cb_ignore_error, (void *)(long)err, NULL };
 }
 
 EAPI void
