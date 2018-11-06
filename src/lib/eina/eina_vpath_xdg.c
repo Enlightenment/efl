@@ -23,7 +23,7 @@ eina_xdg_env_init(void)
 
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
 #  define ENV_HOME_SET(_env, _dir, _meta) \
-   char _meta [PATH_MAX]; \
+   char _meta [PATH_MAX + 128]; \
    if ((getuid() != geteuid()) || (!(s = getenv(_env)))) { \
       snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
       s = _meta; \
@@ -31,7 +31,7 @@ eina_xdg_env_init(void)
    (&user)->_meta = s;
 #else
 #  define ENV_HOME_SET(_env, _dir, _meta) \
-   char _meta [PATH_MAX]; \
+   char _meta [PATH_MAX + 128]; \
    if (!(s = getenv(_env))) { \
       snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
       s = _meta; \
