@@ -30,7 +30,7 @@
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
-   char  buf[256];
+   char  buf[256 + 128];
    char tbuf[256];
    eo_lexer_token_to_str(token, tbuf);
    snprintf(buf, sizeof(buf), "'%s' expected", tbuf);
