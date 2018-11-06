@@ -161,9 +161,9 @@ _eina_vpath_interface_sys_init(void)
    home = eina_environment_home_get();
    if (!home)
      {
-        home = _fallback_home_dir();
-        _eina_vpath_data_add("home", home);
-        free(home);
+        char *home2 = _fallback_home_dir();
+        _eina_vpath_data_add("home", home2);
+        free(home2);
      }
    else
      _eina_vpath_data_add("home", home);
