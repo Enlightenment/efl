@@ -435,9 +435,10 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 
    list->accounting->count--;
    if (list->accounting->count == 0)
-             evas_mempool_free(&_evas_list_accounting_mempool, list->accounting);
-
-             evas_mempool_free(&_evas_list_mempool,            remove_list);
+     {
+        evas_mempool_free(&_evas_list_accounting_mempool, list->accounting);
+     }
+   evas_mempool_free(&_evas_list_mempool,            remove_list);
    return return_l;
 }
 
