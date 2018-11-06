@@ -42,6 +42,12 @@
 // Hash function for a byte array.
 uint64_t CityHash64(const char *buf, size_t len);
 
+static int
+city_hash(const char *buf, int len)
+{
+   return (int)CityHash64(buf, len);
+}
+
 static unsigned int
 _eina_string_key_length(const char *key)
 {
@@ -200,7 +206,7 @@ eina_bench_lookup_cityhash(int request)
 
    hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
                         EINA_KEY_CMP(_eina_string_key_cmp),
-                        EINA_KEY_HASH(CityHash64),
+                        EINA_KEY_HASH(city_hash),
                         free,
                         8);
 
