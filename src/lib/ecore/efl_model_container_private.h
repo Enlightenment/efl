@@ -1,5 +1,5 @@
-#ifndef EFL_MODEL_PRIVATE_H__
-# define EFL_MODEL_PRIVATE_H__
+#ifndef EFL_MODEL_CONTAINER_PRIVATE_H__
+#define EFL_MODEL_CONTAINER_PRIVATE_H__
 
 typedef struct _Child_Property_Data Child_Property_Data;
 struct _Child_Property_Data
