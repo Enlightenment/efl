@@ -139,11 +139,13 @@ _eolian_decl_name_get(Eolian_Object *obj)
            default:
              break;
           }
+        goto end;
       case EOLIAN_OBJECT_VARIABLE:
         return "variable";
       default:
         break;
      }
+end:
    return "unknown";
 }
 
