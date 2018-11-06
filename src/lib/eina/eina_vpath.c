@@ -231,7 +231,6 @@ eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
 {
    va_list args;
    char *path;
-   int len;
    // XXX: implement parse of path then look up in hash if not just create
    // object where path and result are the same and return that with
    // path set and result set to resolved path - return obj handler calls
@@ -244,7 +243,7 @@ eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
    path = alloca(size + 1);
 
    va_start(args, format);
-   len = vsnprintf(path, size, format, args);
+   vsnprintf(path, size, format, args);
    va_end(args);
 
    if (path[0] == '~')
