@@ -9,6 +9,7 @@
 
 #include "efl_model_composite_selection.eo.h"
 #include "efl_model_accessor_view_private.h"
+#include "efl_model_composite_private.h"
 
 typedef struct _Efl_Model_Composite_Selection_Data Efl_Model_Composite_Selection_Data;
 typedef struct _Efl_Model_Composite_Selection_Children_Data Efl_Model_Composite_Selection_Children_Data;
@@ -186,6 +187,17 @@ _unselect_slice_then(void *data EINA_UNUSED,
    return v;
 }
 
+static Eina_Iterator *
+_efl_model_composite_selection_efl_model_properties_get(const Eo *obj,
+                                                        Efl_Model_Composite_Selection_Data *pd EINA_UNUSED)
+{
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_SELECTION_CLASS,
+                                        NULL,
+                                        "selected", "exclusive");
+   return props;
+}
+
 static Eina_Future *
 _efl_model_composite_selection_efl_model_property_set(Eo *obj,
                                                       Efl_Model_Composite_Selection_Data *pd,
@@ -196,12 +208,17 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
    if (!strcmp("exclusive", property))
      {
         Eina_Bool exclusive = pd->exclusive;
+        Eina_Bool changed;
 
         vf = eina_value_bool_init(exclusive);
         eina_value_convert(value, &vf);
         eina_value_bool_get(&vf, &exclusive);
 
+        changed = (!pd->exclusive != !exclusive);
         pd->exclusive = !!exclusive;
+
+        if (changed)
+          efl_model_properties_changed(obj, "exclusive");
 
         return eina_future_resolved(efl_loop_future_scheduler_get(obj), vf);
      }
@@ -289,6 +306,17 @@ _untangle_array(void *data,
    // Only return the commit change, not the result of the unselect
    eina_value_array_get(&v, 0, &va);
    return va;
+}
+
+static Eina_Iterator *
+_efl_model_composite_selection_children_efl_model_properties_get(const Eo *obj,
+                                                                 Efl_Model_Composite_Selection_Children_Data *pd EINA_UNUSED)
+{
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS,
+                                        NULL,
+                                        "selected");
+   return props;
 }
 
 static Eina_Future *

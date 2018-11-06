@@ -5,6 +5,7 @@ class Efl.Model_Composite_Selection (Efl.Model_Composite_Boolean)
       Efl.Object.constructor;
       Efl.Model.children_slice_get;
       Efl.Model.property { get; set; }
+      Efl.Model.properties { get; }
    }
    events {
       /* FIXME: The object is emitted in the event_info. This is redundant. */

@@ -126,6 +126,7 @@ lib/ecore/efl_model_container_private.h \
 lib/ecore/efl_model_composite.c \
 lib/ecore/efl_model_composite_boolean.c \
 lib/ecore/efl_model_composite_selection.c \
+lib/ecore/efl_model_composite_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
 lib/ecore/efl_linear_interpolator.c \
