@@ -13,6 +13,7 @@ static const Efl_Test_Case etc[] = {
   { "Signal", edje_test_signal },
   { "Swallow", edje_test_swallow },
   { "Text", edje_test_text },
+  { "Edje Text", edje_test_text },
   { NULL, NULL }
 };
 

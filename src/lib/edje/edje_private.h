@@ -1974,6 +1974,7 @@ struct _Edje_Real_Part_Text
    const char            *style; // 4
    Edje_Position          offset; // 8
    short                  size; // 2
+   Efl_Canvas_Layout_Part_Text_Expand expand;
    struct {
       unsigned char       fit_x, fit_y; // 2
       short               in_size; // 2
@@ -2252,6 +2253,58 @@ struct _Edje_Patterns
    unsigned int    finals[];
 };
 
+typedef enum
+{
+  EDJE_PART_TEXT_PROP_NONE =                   0, // never used
+  EDJE_PART_TEXT_PROP_BACKING_TYPE =           1,
+  EDJE_PART_TEXT_PROP_COLOR_BACKING =          1 << 2,
+  EDJE_PART_TEXT_PROP_COLOR_GLOW =             1 << 3,
+  EDJE_PART_TEXT_PROP_COLOR_GLOW2 =            1 << 4,
+  EDJE_PART_TEXT_PROP_COLOR_NORMAL =           1 << 5,
+  EDJE_PART_TEXT_PROP_COLOR_OUTLINE =          1 << 6,
+  EDJE_PART_TEXT_PROP_COLOR_SHADOW =           1 << 7,
+  EDJE_PART_TEXT_PROP_COLOR_STRIKETHROUGH =    1 << 8,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE =        1 << 9,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE2 =       1 << 10,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE_DASHED = 1 << 11,
+  EDJE_PART_TEXT_PROP_EFFECT_TYPE =            1 << 12,
+  EDJE_PART_TEXT_PROP_ELLIPSIS =               1 << 13,
+  EDJE_PART_TEXT_PROP_FONT =                   1 << 14,
+  EDJE_PART_TEXT_PROP_SHADOW_DIRECTION   =     1 << 15,
+  EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE =     1 << 16,
+  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_GAP =   1 << 17,
+  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_WIDTH = 1 << 18,
+  EDJE_PART_TEXT_PROP_UNDERLINE_TYPE =         1 << 19,
+  EDJE_PART_TEXT_PROP_UNDERLINE_HEIGHT =       1 << 20,
+  EDJE_PART_TEXT_PROP_WRAP =                   1 << 21
+} Edje_Part_Text_Prop_Type;
+
+typedef struct
+{
+  Edje_Part_Text_Prop_Type type;
+  union
+  {
+    int ni; // number integer
+    int nd; // number double
+    Efl_Text_Format_Wrap wrap;
+    Efl_Text_Style_Backing_Type backing;
+    Efl_Text_Style_Underline_Type underline;
+    struct
+    {
+      unsigned char r, g, b, a;
+    } color;
+    struct
+    {
+      const char *font;
+      Efl_Font_Size size;
+    } font;
+    Efl_Text_Style_Effect_Type effect;
+    Efl_Text_Style_Shadow_Direction shadow;
+    Efl_Text_Style_Strikethrough_Type strikethrough_type;
+    Efl_Text_Style_Underline_Type underline_type;
+  } val;
+} Edje_Part_Text_Prop;
+
 typedef enum _Edje_User_Defined_Type
 {
    EDJE_USER_SWALLOW,
@@ -2261,7 +2314,9 @@ typedef enum _Edje_User_Defined_Type
    EDJE_USER_DRAG_STEP,
    EDJE_USER_DRAG_PAGE,
    EDJE_USER_DRAG_VALUE,
-   EDJE_USER_DRAG_SIZE
+   EDJE_USER_DRAG_SIZE,
+   EDJE_USER_TEXT_STYLE,
+   EDJE_USER_TEXT_EXPAND,
 } Edje_User_Defined_Type;
 
 typedef struct _Edje_User_Defined Edje_User_Defined;
@@ -2296,6 +2351,13 @@ struct _Edje_User_Defined
       struct {
          double w, h;
       } drag_size;
+      struct {
+        Eina_List *props;
+        Edje_Part_Text_Prop_Type types;
+      } text_style;
+      struct {
+        Efl_Canvas_Layout_Part_Text_Expand expand;
+      } text_expand;
    } u;
 };
 
@@ -2968,8 +3030,14 @@ Eina_Bool _edje_multisense_internal_vibration_sample_play(Edje *ed, const char *
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 
+Edje_User_Defined * _edje_user_definition_fetch(Edje *ed, const char *part, Edje_User_Defined_Type type);
+Edje_User_Defined * _edje_user_text_style_definition_fetch(Edje *ed, const char *part);
+Edje_User_Defined * _edje_user_text_expand_definition_fetch(Edje *ed, const char *part);
 void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);
 void _edje_user_definition_free(Edje_User_Defined *eud);
+
+void _canvas_layout_user_text_apply(Edje_User_Defined *eud, Eo *obj, Edje_Part_Text_Prop *prop);
+void _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud);
 
 extern Efl_Observable *_edje_color_class_member;
 extern Efl_Observable *_edje_text_class_member;

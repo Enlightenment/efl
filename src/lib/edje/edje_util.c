@@ -136,6 +136,16 @@ _edje_user_definition_free(Edje_User_Defined *eud)
         if (rp) _edje_child_remove(eud->ed, rp, child);
         break;
 
+      case EDJE_USER_TEXT_STYLE:
+      {
+         Edje_Part_Text_Prop *prop;
+         EINA_LIST_FREE(eud->u.text_style.props, prop)
+           {
+              free(prop);
+           }
+         break;
+      }
+
       case EDJE_USER_STRING:
       case EDJE_USER_DRAG_STEP:
       case EDJE_USER_DRAG_PAGE:
@@ -1991,6 +2001,71 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
 {
    return _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
                                                  EINA_FALSE, EINA_TRUE);
+}
+
+Edje_User_Defined *
+_edje_user_definition_fetch(Edje *ed,
+                             const char *part, Edje_User_Defined_Type type)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == type && !strcmp(eud->part, part))
+          {
+             return eud;
+          }
+     }
+   eud = _edje_user_definition_new(type, part, ed);
+   return eud;
+}
+
+Edje_User_Defined *
+_edje_user_text_style_definition_fetch(Edje *ed, const char *part)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == EDJE_USER_TEXT_STYLE && !strcmp(eud->part, part))
+          {
+             break;
+          }
+     }
+
+   if (!eud)
+     {
+        eud = _edje_user_definition_new(EDJE_USER_TEXT_STYLE, part, ed);
+        eud->u.text_style.types = EDJE_PART_TEXT_PROP_NONE;
+        eud->u.text_style.props = NULL;
+     }
+
+   return eud;
+}
+
+Edje_User_Defined *
+_edje_user_text_expand_definition_fetch(Edje *ed, const char *part)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == EDJE_USER_TEXT_EXPAND && !strcmp(eud->part, part))
+          {
+             break;
+          }
+     }
+
+   if (!eud)
+     {
+        eud = _edje_user_definition_new(EDJE_USER_TEXT_EXPAND, part, ed);
+        eud->u.text_expand.expand = EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_NONE;
+     }
+
+   return eud;
 }
 
 void
