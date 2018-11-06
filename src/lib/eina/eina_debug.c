@@ -496,9 +496,9 @@ EAPI Eina_Debug_Session *
 eina_debug_local_connect(Eina_Bool is_master)
 {
 #ifndef _WIN32
-   char buf[4096];
    int fd, socket_unix_len, curstate = 0;
    struct sockaddr_un socket_unix;
+   char buf[sizeof(socket_unix.sun_path)];
 
    if (is_master) return eina_debug_remote_connect(REMOTE_SERVER_PORT);
 
@@ -520,7 +520,8 @@ eina_debug_local_connect(Eina_Bool is_master)
    // sa that it's a unix socket and where the path is
    memset(&socket_unix, 0, sizeof(socket_unix));
    socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
+   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   socket_unix.sun_path[sizeof(socket_unix.sun_path) - 1] = 0;
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    // actually connect to efl_debugd service
    if (connect(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
