@@ -38,6 +38,7 @@ static Eina_Hash *_evas_gl_visuals = NULL;
 
 static int win_count = 0;
 static Eina_Bool initted = EINA_FALSE;
+static unsigned char gl_context_valid = 0;
 
 #if 0
 static double
@@ -737,17 +738,19 @@ eng_window_use(Outbuf *gw)
    if ((gw) && (!gw->gl_context)) return;
 
 #ifdef GL_GLES
-   if (xwin)
+   if ((xwin) && (!gl_context_valid))
      {
         if ((evas_eglGetCurrentDisplay() != xwin->egl_disp) ||
             (evas_eglGetCurrentContext() != xwin->egl_context))
           force_use = EINA_TRUE;
+        gl_context_valid = 1;
      }
 #else
-   if (xwin)
+   if ((xwin) && (!gl_context_valid))
      {
         if (glXGetCurrentContext() != xwin->context)
            force_use = EINA_TRUE;
+        gl_context_valid = 1;
      }
 #endif
    if ((xwin != gw) || (force_use))
@@ -1711,6 +1714,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
 
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+   gl_context_valid = 0;
 }
 
 Evas_Engine_GL_Context *

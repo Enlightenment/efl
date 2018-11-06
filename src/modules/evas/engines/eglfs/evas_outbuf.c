@@ -8,6 +8,7 @@
 static hwc_layer_1_t *fblayer;
 static hwc_composer_device_1_t *hwcDevicePtr;
 static hwc_display_contents_1_t **mList;
+static unsigned char gl_context_valid = 0;
 
 void present(void *user_data, struct ANativeWindow *window,
 	                                   struct ANativeWindowBuffer *buffer)
@@ -459,10 +460,11 @@ evas_outbuf_use(Outbuf *ob)
 
    glsym_evas_gl_preload_render_lock(_evas_outbuf_make_current, ob);
 
-   if (_evas_eglfs_window)
+   if ((_evas_eglfs_window) && (!gl_context_valid))
      {
         if (eglGetCurrentContext() != _evas_eglfs_window->egl.context[0])
           force = EINA_TRUE;
+        gl_context_valid = 1;
      }
 
    if ((_evas_eglfs_window != ob) || (force))
@@ -637,6 +639,7 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_
 
 end:
    glsym_evas_gl_preload_render_unlock(_evas_outbuf_make_current, ob);
+   gl_context_valid = 0;
 }
 
 Evas_Engine_GL_Context *
