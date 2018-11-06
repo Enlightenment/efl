@@ -20,8 +20,16 @@ struct _Efl_Model_Composite_Data
 static void
 _efl_model_composite_efl_object_destructor(Eo *obj, Efl_Model_Composite_Data *pd)
 {
-   efl_unref(pd->source);
-   pd->source = NULL;
+   if (pd->source)
+     {
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILD_ADDED, obj);
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILD_REMOVED, obj);
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
+
+        efl_unref(pd->source);
+        pd->source = NULL;
+     }
 
    efl_destructor(efl_super(obj, EFL_MODEL_COMPOSITE_CLASS));
 }
@@ -47,6 +55,11 @@ _efl_model_composite_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Model_Compos
         return ;
      }
    pd->source = efl_ref(model);
+
+   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILD_ADDED, obj);
+   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, obj);
+   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
+   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
 }
 
 static Efl_Model *
