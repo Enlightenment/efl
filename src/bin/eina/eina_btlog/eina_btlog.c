@@ -389,7 +389,7 @@ main(int argc, char **argv)
            .func = _addr2line,
            .prog = "addr2line"
         },
-        { NULL, NULL, NULL } /* Sentinel */
+        { NULL, NULL, NULL, NULL } /* Sentinel */
    };
 
    eina_init();
