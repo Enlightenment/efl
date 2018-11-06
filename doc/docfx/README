@@ -1,0 +1,28 @@
+EFL DocFX SUPPORT
+-----------------
+
+DocFX (https://dotnet.github.io/docfx/) generates documentation HTML pages
+directly from source code and Markdown files for C# projects.
+
+Although significantly slow, it is a simple alternative while our own
+documentation generator for C# is being written.
+
+The scripts in this folder create a documentation site which contains the API
+reference guide and articles with tutorials and guides.
+The API guide is generated from the EFL mono sources, which are generated as
+part of the normal build process.
+The articles are fetched from the EFL www-content repository and adapted to
+DocFX syntax.
+
+USAGE
+-----
+
+First off, build EFL with C# support enabled so the C# sources are generated
+(you will need to have mono 5 installed for this).
+Then, from this folder, run the `setup.sh` script to download and extract the
+DocFX binaries to the `bin` folder, fetch the articles from the `www-content`
+repository and adapt them to the DocFX syntax.
+Finally, run the `gendoc.sh` script (also from this folder) to produce the HTML
+files. First run can take a long time (from 10' to 1h), subsequent runs use
+cached results and take about 5 minutes.
+
