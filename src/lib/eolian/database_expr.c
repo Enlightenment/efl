@@ -107,7 +107,7 @@ static Eina_Bool
 expr_type_mismatch_error(const Eolian_Expression *lhs,
                          const Eolian_Expression *rhs)
 {
-   char buf[512];
+   char buf[512 + 128];
    char tbuf[256];
    char ebuf[256];
    mask_to_str(expr_type_to_mask(lhs), tbuf);

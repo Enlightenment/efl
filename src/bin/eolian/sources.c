@@ -1096,7 +1096,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
    if (!impl_same_class)
      eo_gen_class_names_get(eolian_implement_class_get(impl), NULL, NULL, &ocnamel);
 
-   char fname[256], iname[256];
+   char fname[256 + 128], iname[256];
    if (!impl_same_class)
      snprintf(iname, sizeof(iname), "%s_%s", cnamel, ocnamel);
    else
