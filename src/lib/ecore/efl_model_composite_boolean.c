@@ -5,6 +5,7 @@
 #include <Efl_Core.h>
 
 #include "efl_model_composite_boolean_children.eo.h"
+#include "efl_model_composite_private.h"
 
 typedef struct _Efl_Model_Composite_Boolean_Data Efl_Model_Composite_Boolean_Data;
 typedef struct _Efl_Model_Composite_Boolean_Children_Data Efl_Model_Composite_Boolean_Children_Data;
@@ -71,16 +72,11 @@ static Eina_Iterator *
 _efl_model_composite_boolean_children_efl_model_properties_get(const Eo *obj,
                                                                Efl_Model_Composite_Boolean_Children_Data *pd)
 {
-   Eina_Iterator *its;
-   Eina_Iterator *itr;
-
-   its = efl_model_properties_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS));
-   itr = eina_hash_iterator_key_new(pd->parent->values);
-
-   if (!its) return itr;
-   if (!itr) return its;
-
-   return eina_multi_iterator_new(its, itr);
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS,
+                                        eina_hash_iterator_key_new(pd->parent->values),
+                                        "child.index");
+   return props;
 }
 
 static Eina_Value *
@@ -109,9 +105,9 @@ _efl_model_composite_boolean_children_efl_model_property_get(const Eo *obj,
    if ((pd->index >> 3) >= v->buffer_count)
      flag = v->default_value;
    else
-     flag = v->buffer[pd->index >> 3] & (1 << pd->index & 0x7);
+     flag = v->buffer[pd->index >> 3] & (((unsigned char)1) << (pd->index & 0x7));
 
-   return eina_value_uchar_new(!!flag);
+   return eina_value_bool_new(!!flag);
 }
 
 static Eina_Future *
@@ -139,7 +135,7 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
      return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS),
                                    property, value);
 
-   eina_value_setup(&b, EINA_VALUE_TYPE_UCHAR);
+   eina_value_setup(&b, EINA_VALUE_TYPE_BOOL);
    if (!eina_value_convert(value, &b))
      return eina_future_rejected(efl_loop_future_scheduler_get(obj),
                                  EFL_MODEL_ERROR_UNKNOWN);
@@ -165,12 +161,16 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
 
    // It is assumed that during slice get the buffer is properly sized
    if (flag)
-     v->buffer[pd->index >> 3] |= 1 << (pd->index & 0x7);
+     v->buffer[pd->index >> 3] |= ((unsigned char)1) << (pd->index & 0x7);
    else
-     v->buffer[pd->index >> 3] &= ~(1 << (pd->index & 0x7));
+     v->buffer[pd->index >> 3] &= ~(((unsigned char)1) << (pd->index & 0x7));
 
+   // Calling "properties,changed" event
+   efl_model_properties_changed(obj, property);
+
+   // Return fulfilled future
    return eina_future_resolved(efl_loop_future_scheduler_get(obj),
-                               eina_value_uchar_init(!!flag));
+                               eina_value_bool_init(!!flag));
 }
 
 /**************** efl_model_composite_boolean **************/
@@ -225,6 +225,8 @@ _boolean_value_free(void *data)
    free(value->buffer);
    value->buffer = NULL;
    value->buffer_count = 0;
+
+   free(value);
 }
 
 static Eo *

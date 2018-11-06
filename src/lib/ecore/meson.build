@@ -153,6 +153,7 @@ ecore_src = [
   'efl_model_composite.c',
   'efl_model_composite_boolean.c',
   'efl_model_composite_selection.c',
+  'efl_model_composite_private.h',
   'efl_model_accessor_view.c',
   'efl_model_accessor_view_private.h',
   'efl_linear_interpolator.c',
