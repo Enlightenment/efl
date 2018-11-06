@@ -3,5 +3,7 @@ class Efl.Model_Composite_Selection_Children (Efl.Model_Composite_Boolean_Childr
    [[Efl model composite selection children class]]
    implements {
       Efl.Model.property { set; }
+      Efl.Model.properties { get; }
    }
+   /* FIXME: emitting Efl.Model_Composite_Selection.Selected. Use a default selection event! */
 }
