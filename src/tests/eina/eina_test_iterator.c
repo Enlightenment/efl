@@ -453,7 +453,7 @@ struct _Eina_Rbtree_Int
 };
 
 static Eina_Rbtree_Direction
-eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right)
+eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right, void *data EINA_UNUSED)
 {
    fail_if(!left);
    fail_if(!right);
