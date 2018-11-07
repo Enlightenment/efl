@@ -85,7 +85,7 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
           error_expected(ls, what);
         else
           {
-             char  buf[256];
+             char  buf[256 + 256 + 128];
              char tbuf[256];
              char vbuf[256];
              eo_lexer_token_to_str(what, tbuf);
@@ -152,7 +152,7 @@ end:
 static void
 redef_error(Eo_Lexer *ls, Eolian_Object *obj, Eolian_Object *nobj)
 {
-   char buf[256], fbuf[256] = { '\0' };
+   char buf[256 + 128], fbuf[256] = { '\0' };
    if (ls->filename != obj->file)
      snprintf(fbuf, sizeof(fbuf), "%s:%d:%d", obj->file, obj->line, obj->column);
    else
