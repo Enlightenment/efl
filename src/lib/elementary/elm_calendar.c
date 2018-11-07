@@ -464,7 +464,7 @@ _populate(Evas_Object *obj)
 {
    int maxdays, adjusted_wday, prev_month_maxdays, day, mon, yr, i;
    Elm_Calendar_Mark *mark;
-   char part[16], day_s[3];
+   char part[16], day_s[16];
    struct tm first_day;
    Eina_List *l;
    Eina_Bool last_row = EINA_TRUE;
