@@ -96,6 +96,21 @@ config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
 
+## have to get compiler again for this to work
+compiler = meson.get_compiler('c')
+code = '''#define _GNU_SOURCE 1
+#include <unistd.h>
+#include <stdio.h>
+
+extern char **environ;
+
+void func(void) { printf("%p\n", environ); }
+'''
+if compiler.compiles(code, args : '-lc', name : 'environ check') == true
+  config_h.set10('HAVE_ENVIRON', true)
+endif
+
+
 config_dir = [include_directories('.')]
 eolian_include_directories = []
 
