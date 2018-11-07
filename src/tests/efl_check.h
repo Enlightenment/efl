@@ -289,7 +289,7 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    int can_fork = 0;
    Eina_Bool timeout_reached = EINA_FALSE;
 #ifdef ENABLE_TIMING_INFO
-   double tstart, tcstart;
+   double tstart = 0.0, tcstart = 0.0;
    int timing = _timing_enabled();
 
    if (timing)
