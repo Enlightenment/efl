@@ -183,6 +183,7 @@ main(int argc, char **argv)
    struct sigaction action;
    const char *domain;
    int ret = 0;
+   size_t len;
 
    if (!eina_init())
      {
@@ -237,7 +238,14 @@ main(int argc, char **argv)
         exit(-1);
      }
    socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   len = strlen(buf);
+   if (len > sizeof(socket_unix.sun_path))
+     {
+        CRI("socket path '%s' is too long for buffer", buf);
+        exit(-1);
+     }
+   memcpy(socket_unix.sun_path, buf, len);
+   if (len < sizeof(socket_unix.sun_path)) socket_unix.sun_path[len] = 0;
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
