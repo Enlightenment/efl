@@ -517,7 +517,8 @@ _elm_naviframe_item_elm_widget_item_part_text_set(Eo *eo_it,
      strncat(buf, nit->title_label, sizeof(buf) - 1);
    if (nit->subtitle_label)
      {
-        if (nit->title_label) strncat(buf, " ", 1);
+        if ((nit->title_label) && (strlen(buf) < (sizeof(buf) - 2)))
+          strcat(buf, " ");
         strncat(buf, nit->subtitle_label, sizeof(buf) - strlen(buf) - 2);
      }
    efl_access_object_i18n_name_set(eo_it, buf);
