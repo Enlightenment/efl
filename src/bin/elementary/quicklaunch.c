@@ -132,7 +132,9 @@ handle_run(int fd, unsigned long bytes)
      }
 
    argv = alloca(argc * sizeof(char *));
+#ifdef HAVE_ENVIRON
    if (envnum > 0) envir = alloca(envnum * sizeof(char *));
+#endif
    off = ((unsigned long *)(buf))[2 + argc + envnum] - sizeof(unsigned long);
    cwd = (char *)(buf + off);
 
