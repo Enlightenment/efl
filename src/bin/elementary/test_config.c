@@ -84,10 +84,12 @@ _profile_update(Evas_Object *win)
      {
         for (i = 0; i < n; i++)
           {
-             if (i >= 1) strncat(buf, ", ", 2);
-             strncat(buf, profiles[i], strlen(profiles[i]) + 1);
+             if (strlen(buf) >= (sizeof(buf) - 3)) break;
+             if (i >= 1) strcat(buf, ", ");
+             if (strlen(buf) >= (sizeof(buf) - 1 - strlen(profiles[i]))) break;
+             strcat(buf, profiles[i]);
           }
-        strncat(buf, "</b>", 4);
+        if (strlen(buf) < (sizeof(buf) - 5)) strcat(buf, "</b>");
      }
    elm_object_text_set(lb, buf);
 }
