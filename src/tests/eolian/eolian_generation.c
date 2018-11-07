@@ -76,7 +76,11 @@ static void
 _remove_ref(const char *base, const char *ext)
 {
    char ifnbuf[PATH_MAX];
-   snprintf(ifnbuf, sizeof(ifnbuf), "%s.%s", base, ext);
+   if (snprintf(ifnbuf, sizeof(ifnbuf), "%s.%s", base, ext) > PATH_MAX)
+     {
+        printf("remove ref too long for buffer\n");
+        abort();
+     }
    remove(ifnbuf);
 }
 
@@ -84,15 +88,19 @@ static int
 _eolian_gen_execute(const char *eo_filename, const char *options, const char *output_filename)
 {
    char command[PATH_MAX];
-   snprintf(command, PATH_MAX,
-         EOLIAN_GEN" %s -S -I \""TESTS_SRC_DIR"/data\" -o %s %s",
-         options, output_filename, eo_filename);
+   if (snprintf(command, PATH_MAX,
+                EOLIAN_GEN" %s -S -I \""TESTS_SRC_DIR"/data\" -o %s %s",
+                options, output_filename, eo_filename) > PATH_MAX)
+     {
+        printf("eolian gen command too long for buffer\n");
+        abort();
+     }
    return system(command);
 }
 
 EFL_START_TEST(eolian_dev_impl_code)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_object_impl",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "c");
@@ -108,7 +116,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_types_generation)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_typedef",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
@@ -127,7 +135,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_default_values_generation)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
@@ -138,7 +146,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_override_generation)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_override",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
@@ -149,7 +157,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_functions_descriptions)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_class_simple",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
@@ -163,7 +171,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_import)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_import_types",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eot.h");
@@ -174,7 +182,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_docs)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_docs",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
@@ -190,7 +198,7 @@ EFL_START_TEST(eolian_function_pointers)
 {
 
    // .eot
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_function_pointers",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eot.h");
@@ -219,7 +227,7 @@ EFL_END_TEST
 
 EFL_START_TEST(owning)
 {
-   char output_filepath[PATH_MAX] = "";
+   char output_filepath[PATH_MAX + 128] = "";
    snprintf(output_filepath, PATH_MAX, "%s/eolian_owning",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
