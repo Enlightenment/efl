@@ -6,7 +6,7 @@ eolian_aux_test_src = [
 
 eolian_aux_suite = executable('eolian_aux_suite',
   eolian_aux_test_src,
-  dependencies: [eolian, check],
+  dependencies: [eolian, eolian_aux, check],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']

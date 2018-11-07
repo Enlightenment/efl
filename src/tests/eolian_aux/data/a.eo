@@ -1,0 +1,12 @@
+class A(C) {
+    methods {
+        baz {}
+    }
+    events {
+        test2: void;
+    }
+    implements {
+        C.foo;
+        C.bar;
+    }
+}
