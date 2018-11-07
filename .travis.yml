@@ -24,6 +24,16 @@ jobs:
       - os: linux
       - DISTRO=Fedora28
       - CI_BUILD_TYPE=options-enabled
+      - BUILDSYSTEM=ninja
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-disabled
+      - BUILDSYSTEM=ninja
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-enabled
     - env:
       - os: linux
       - DISTRO=Fedora28
@@ -45,6 +55,22 @@ jobs:
       env:
         - os: linux
         - DISTRO=Debian91
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Ubuntu1804
+        - BUILDSYSTEM=ninja
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Fedora28
+        - CI_BUILD_TYPE=release-ready
+        - BUILDSYSTEM=ninja
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Debian91
+        - BUILDSYSTEM=ninja
   exclude:
     - os: linux
 

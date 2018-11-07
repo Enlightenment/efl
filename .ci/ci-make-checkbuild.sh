@@ -9,10 +9,14 @@ if [ "$1" = "mingw" ] ; then
   exit 0
 fi
 travis_fold check-build "make check-build"
-if [ "$DISTRO" != "" ] ; then
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make check-build
+if [ "$BUILDSYSTEM" = "ninja" ] ; then
+  echo "Nothing to do here"
 else
-  export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
-  make check-build
+  if [ "$DISTRO" != "" ] ; then
+    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make check-build
+  else
+    export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
+    make check-build
+  fi
 fi
 travis_endfold check-build
