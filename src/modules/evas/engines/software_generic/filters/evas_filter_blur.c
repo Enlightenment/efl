@@ -75,7 +75,9 @@ _box_blur_horiz_rgba(const uint32_t *src, int src_stride,
 #endif
    _box_blur_rgba_horiz_step(src, src_stride, dst, dst_stride, radii, region);
 
+#if defined(BUILD_SSE3) || defined(BUILD_MMX) || defined(BUILD_NEON)
 end:
+#endif
    DEBUG_TIME_END();
 }
 
@@ -109,7 +111,9 @@ _box_blur_vert_rgba(const uint32_t *src, int src_stride,
 #endif
    _box_blur_rgba_vert_step(src, src_stride, dst, dst_stride, radii, region);
 
+#if defined(BUILD_SSE3) || defined(BUILD_MMX) || defined(BUILD_NEON)
 end:
+#endif
    DEBUG_TIME_END();
 }
 
@@ -154,7 +158,9 @@ _box_blur_horiz_alpha(const uint8_t *src, int src_stride,
 #endif
    _box_blur_alpha_horiz_step(src, src_stride, dst, dst_stride, radii, region);
 
+#if defined(BUILD_SSE3) || defined(BUILD_MMX) || defined(BUILD_NEON)
 end:
+#endif
    DEBUG_TIME_END();
 }
 
@@ -188,7 +194,9 @@ _box_blur_vert_alpha(const uint8_t *src, int src_stride,
 #endif
    _box_blur_alpha_vert_step(src, src_stride, dst, dst_stride, radii, region);
 
+#if defined(BUILD_SSE3) || defined(BUILD_MMX) || defined(BUILD_NEON)
 end:
+#endif
    DEBUG_TIME_END();
 }
 
