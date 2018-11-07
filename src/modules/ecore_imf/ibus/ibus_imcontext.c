@@ -103,6 +103,8 @@ _ecore_imf_ibus_window_to_screen_geometry_get(Ecore_X_Window client_win,
    int win_x, win_y;
    int sum_x = 0, sum_y = 0;
 
+   if (!ecore_x_display_get()) goto end;
+
    root_window = ecore_x_window_root_get(client_win);
    win = client_win;
 
@@ -114,6 +116,7 @@ _ecore_imf_ibus_window_to_screen_geometry_get(Ecore_X_Window client_win,
         win = ecore_x_window_parent_get(win);
      }
 
+end:
    if (x)
      *x = sum_x;
    if (y)
@@ -171,6 +174,7 @@ _ecore_imf_ibus_key_event_put(int keysym, int keycode, int state)
    Window winFocus = 0;
    int revert = RevertToParent;
 
+   if (!ecore_x_display_get()) return;
    XGetInputFocus(ecore_x_display_get(), &winFocus, &revert);
 
    XKeyEvent event;
@@ -393,6 +397,7 @@ ecore_imf_context_ibus_filter_event(Ecore_IMF_Context *ctx,
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ibusimcontext, EINA_FALSE);
 
+   if (!ecore_x_display_get()) return EINA_FALSE;
    if (type != ECORE_IMF_EVENT_KEY_UP && type != ECORE_IMF_EVENT_KEY_DOWN)
      return EINA_FALSE;
 
@@ -744,7 +749,7 @@ static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
 
    event.display     = display;
    event.window      = win;
-   event.root        = ecore_x_window_root_get(win);
+   event.root        = display ? ecore_x_window_root_get(win) : 0;
    event.subwindow   = None;
    event.time        = 0;
    event.x           = 1;
@@ -754,7 +759,7 @@ static XKeyEvent _ecore_imf_ibus_x_key_event_generate(Window win,
    event.same_screen = EINA_TRUE;
    if (keycode == -1)
      {
-        event.keycode     = XKeysymToKeycode(display, keysym);
+        event.keycode     = display ? XKeysymToKeycode(display, keysym) : 0;
         event.state       = 0;
      }
    else
