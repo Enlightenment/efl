@@ -277,7 +277,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
                       file_in, line - 1, l + 1);
                   exit(-1);
                }
-             strncpy(tmpstr, p, l);
+             memcpy(tmpstr, p, l);
              tmpstr[l] = 0;
              if (l >= (int)sizeof(fl))
                {
