@@ -24,9 +24,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define EINA_MAGIC_DEBUG
-
 #include <Eina.h>
+#ifdef EINA_MAGIC_DEBUG
+
 #include "eina_safety_checks.h"
 
 #include "eina_suite.h"
@@ -190,9 +190,12 @@ EFL_START_TEST(eina_magic_simple)
 
 }
 EFL_END_TEST
+#endif
 
 void eina_test_magic(TCase *tc)
 {
+#ifdef EINA_MAGIC_DEBUG
    tcase_add_test(tc, eina_magic_simple);
+#endif
 }
 
