@@ -2959,7 +2959,7 @@ _eet_data_dump_encode(int             parent_type,
    Eet_Data_Chunk *chnk = NULL;
    Eet_Data_Stream *ds;
    void *cdata, *data;
-   int csize, size;
+   int csize, size = 0;
    int count;
    int child_type;
    Eet_Node *n;
