@@ -82,6 +82,18 @@ evas_src += files([
   'region.h'
 ])
 
+if cpu_sse3 == true
+  evas_src_opt +=  files([
+    'evas_op_blend/op_blend_master_sse3.c'
+  ])
+endif
+
+if cpu_neon == true and cpu_neon_intrinsics == false
+  evas_src_opt +=  files([
+    'evas_op_copy/op_copy_neon.S'
+  ])
+endif
+
 #subdir('evas_op_blend')
 #subdir('evas_op_sub')
 subdir('language')

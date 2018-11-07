@@ -108,6 +108,8 @@ evas_src = [
    'main.c'
 ]
 
+evas_src_opt = [ ]
+
 evas_src += vg_common_src
 
 evas_deps += dependency('freetype2')
@@ -177,9 +179,25 @@ evas_pre = declare_dependency(
   dependencies: [eina, eo, ector, emile, evas_deps, m],
 )
 
+evas_link = [ ]
+
+if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
+  evas_opt = static_library('evas_opt',
+    sources: evas_src_opt,
+    include_directories:
+      [ include_directories('../../..') ] +
+      evas_include_directories +
+      [vg_common_inc_dir],
+    c_args: evas_opt_c_args,
+    dependencies: [eina, eo, ector, emile, evas_deps, m],
+  )
+  evas_link += [ evas_opt ]
+endif
+
 evas_pre_lib_dep = declare_dependency(
   include_directories: evas_include_directories + [vg_common_inc_dir],
   sources : [evas_src, pub_eo_file_target],
+  link_with: evas_link,
   dependencies: [evas_deps, m, draw, valgrind, libunibreak]
 )
 

@@ -1,8 +1,8 @@
 #include "evas_common_private.h"
 #ifdef BUILD_NEON
-#ifdef BUILD_NEON_INTRINSICS
-#include <arm_neon.h>
-#endif
+# ifdef BUILD_NEON_INTRINSICS
+#  include <arm_neon.h>
+# endif
 #endif
 
 static int cpu_feature_mask = 0;
@@ -15,20 +15,22 @@ static int cpu_feature_mask = 0;
 #  endif
 # endif
 #endif
+
 #ifdef __SPARC__
 #   define NEED_FEATURE_TEST
 #endif
+
 #if defined(__ARM_ARCH__)
 # ifdef BUILD_NEON
-#   define NEED_FEATURE_TEST
+#  define NEED_FEATURE_TEST
 # endif
 #endif
 
 #ifdef NEED_FEATURE_TEST
-#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
-#include <signal.h>
-#include <setjmp.h>
-#include <errno.h>
+# ifdef HAVE_SIGLONGJMP
+#  include <signal.h>
+#  include <setjmp.h>
+#  include <errno.h>
 
 static sigjmp_buf detect_buf;
 static void evas_common_cpu_catch_ill(int sig);
@@ -45,30 +47,30 @@ evas_common_cpu_catch_segv(int sig EINA_UNUSED)
 {
    siglongjmp(detect_buf, 1);
 }
-#endif
+# endif
 
-#ifdef BUILD_ALTIVEC
+# ifdef BUILD_ALTIVEC
 void
 evas_common_cpu_altivec_test(void)
 {
-#ifdef __POWERPC__
-#ifdef __VEC__
+#  ifdef __POWERPC__
+#   ifdef __VEC__
    vector unsigned int zero;
 
    zero = vec_splat_u32(0);
-#endif /* __VEC__ */
-#endif /* __POWERPC__ */
+#   endif /* __VEC__ */
+#  endif /* __POWERPC__ */
 }
-#endif /* BUILD_ALTIVEC */
+# endif /* BUILD_ALTIVEC */
 
 void
 evas_common_cpu_neon_test(void)
 {
 //#if defined(__ARM_ARCH__) && (__ARM_ARCH__ >= 70)
-#ifdef BUILD_NEON
-#ifdef BUILD_NEON_INTRINSICS
+# ifdef BUILD_NEON
+#  ifdef BUILD_NEON_INTRINSICS
    volatile uint32x4_t temp = vdupq_n_u32(0x1);
-#else
+#  else
    asm volatile (
 		".fpu neon	     \n\t"
                  "vqadd.u8 d0, d1, d0\n"
@@ -77,18 +79,32 @@ evas_common_cpu_neon_test(void)
                  : /* Clobbered */
                  "d0", "d1"
                  );
-#endif
-#endif
+#  endif
+# endif
 //#endif
 }
 
 void
 evas_common_cpu_vis_test(void)
 {
-#ifdef __SPARC__
-#endif /* __SPARC__ */
+# ifdef __SPARC__
+# endif /* __SPARC__ */
 }
 #endif /* NEED_FEATURE_TEST */
+
+
+#if defined(BUILD_MMX) || defined(BUILD_SSE3)
+# define NEED_CPU_CHECK
+#endif
+
+#ifdef NEED_FEATURE_TEST
+# ifndef HAVE_SIGLONGJMP
+#  undef NEED_CPU_CHECK
+#  define NEED_CPU_CHECK
+# endif
+#endif
+
+#ifdef NEED_CPU_CHECK
 static Eina_Bool
 _cpu_check(Eina_Cpu_Features f)
 {
@@ -97,13 +113,13 @@ _cpu_check(Eina_Cpu_Features f)
    features = eina_cpu_features_get();
    return (features & f) == f;
 }
-
+#endif
 
 #ifdef NEED_FEATURE_TEST
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
-#if defined (HAVE_STRUCT_SIGACTION) && defined (HAVE_SIGLONGJMP)
+# ifdef HAVE_SIGLONGJMP
    int enabled = 1;
    struct sigaction act, oact, oact2;
 
@@ -119,9 +135,9 @@ evas_common_cpu_feature_test(void (*feature)(void))
 
    if (sigsetjmp(detect_buf, 1))
      {
-	sigaction(SIGILL, &oact, NULL);
-	sigaction(SIGSEGV, &oact2, NULL);
-	return 0;
+        sigaction(SIGILL, &oact, NULL);
+        sigaction(SIGSEGV, &oact2, NULL);
+        return 0;
      }
 
    feature();
@@ -129,16 +145,28 @@ evas_common_cpu_feature_test(void (*feature)(void))
    sigaction(SIGILL, &oact, NULL);
    sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
-#else
+# else
+#  ifdef BUILD_MMX
    if (feature == evas_common_cpu_mmx_test)
      return _cpu_check(EINA_CPU_MMX);
    /* no mmx2 support in eina */
    if (feature == evas_common_cpu_sse_test)
      return _cpu_check(EINA_CPU_SSE);
+#  endif
+#  ifdef BUILD_SSE3
    if (feature == evas_common_cpu_sse3_test)
      return _cpu_check(EINA_CPU_SSE3);
+#  endif
+#  ifdef BUILD_ALTIVEC
+   if (feature == evas_common_cpu_altivec_test)
+     return _cpu_check(CPU_FEATURE_ALTIVEC);
+#  endif
+#  ifdef BUILD_NEON
+   if (feature == evas_common_cpu_neon_test)
+     return _cpu_check(EINA_CPU_NEON);
+#  endif
    return 0;
-#endif
+# endif
 }
 #endif
 
@@ -169,6 +197,7 @@ evas_common_cpu_init(void)
      cpu_feature_mask |= _cpu_check(EINA_CPU_SSE3) * CPU_FEATURE_SSE3;
 # endif /* BUILD_SSE3 */
 #endif /* BUILD_MMX */
+
 #ifdef BUILD_ALTIVEC
 # ifdef __POWERPC__
 #  ifdef __VEC__
@@ -183,6 +212,7 @@ evas_common_cpu_init(void)
 #  endif /* __VEC__ */
 # endif /* __POWERPC__ */
 #endif /* BUILD_ALTIVEC */
+
 #ifdef __SPARC__
    if (getenv("EVAS_CPU_NO_VIS"))
      cpu_feature_mask &= ~CPU_FEATURE_VIS;
@@ -193,6 +223,7 @@ evas_common_cpu_init(void)
         evas_common_cpu_end_opt();
      }
 #endif /* __SPARC__ */
+
 #if defined(__ARM_ARCH__)
 # ifdef BUILD_NEON
    if (getenv("EVAS_CPU_NO_NEON"))
@@ -200,16 +231,23 @@ evas_common_cpu_init(void)
    else
      {
         /* On linux eina_cpu sets this up with getauxval() */
-#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+#  if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
         cpu_feature_mask |= CPU_FEATURE_NEON *
           !!(eina_cpu_features_get() & EINA_CPU_NEON);
-#else
+#  else
         cpu_feature_mask |= CPU_FEATURE_NEON *
           evas_common_cpu_feature_test(evas_common_cpu_neon_test);
         evas_common_cpu_end_opt();
-#endif
+#  endif
      }
 # endif
+#endif
+
+#if defined(__aarch64__)
+   if (getenv("EVAS_CPU_NO_NEON"))
+     cpu_feature_mask &= ~CPU_FEATURE_NEON;
+   else
+     cpu_feature_mask |= CPU_FEATURE_NEON;
 #endif
 }
 

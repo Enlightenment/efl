@@ -49,7 +49,7 @@ option('drm',
 option('cocoa',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling drm support in efl'
+  description : 'Flag for handling apple cocoa support in efl'
 )
 
 option('physics',
@@ -327,3 +327,28 @@ option('mono',
   value: false,
   description: 'Flag for handling c# bindings'
 )
+
+option('cpu-mmx',
+  type: 'boolean',
+  value: true,
+  description: 'Build MMX support when building for intel'
+)
+
+option('cpu-sse3',
+  type: 'boolean',
+  value: true,
+  description: 'Build SSE3 support when building for intel'
+)
+
+option('cpu-neon',
+  type: 'boolean',
+  value: true,
+  description: 'Build NEON support when building for ARM'
+)
+
+option('cpu-altivec',
+  type: 'boolean',
+  value: true,
+  description: 'Build ALTIVEC support when building for PPC/POWER'
+)
+

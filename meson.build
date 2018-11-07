@@ -1,7 +1,7 @@
 project('efl', ['c','cpp'],
   version: '1.21.99',
   default_options : ['buildtype=plain'],
-  meson_version : '>=0.46'
+  meson_version : '>=0.47'
 )
 
 if target_machine.system() == 'darwin'
@@ -110,6 +110,59 @@ if compiler.compiles(code, args : '-lc', name : 'environ check') == true
   config_h.set10('HAVE_ENVIRON', true)
 endif
 
+## or should this be target_machine?
+cpu_mmx = false
+cpu_sse3 = false
+cpu_neon = false
+cpu_neon_intrinsics = false
+cpu_altivec = false
+evas_opt_c_args = [ ]
+machine_c_args = [ ]
+compiler = meson.get_compiler('c')
+if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
+  if compiler.check_header('immintrin.h') == true
+    if (get_option('cpu-mmx') == true)
+      config_h.set10('BUILD_MMX', true)
+      cpu_mmx = true
+      message('x86 build - MMX enabled')
+      if (get_option('cpu-sse3') == true)
+        config_h.set10('BUILD_SSE3', true)
+        evas_opt_c_args += [ '-msse3' ]
+        cpu_sse3 = true
+        message('x86 build - SSE3 enabled')
+      endif
+    endif
+  endif
+elif host_machine.cpu_family() == 'arm'
+  if compiler.check_header('arm_neon.h') == true
+    if (get_option('cpu-neon') == true)
+      config_h.set10('BUILD_NEON', true)
+      machine_c_args += ['-mfpu=neon', '-ftree-vectorize']
+      cpu_neon = true
+      message('ARM build - NEON enabled')
+    endif
+  endif
+elif host_machine.cpu_family() == 'aarch64'
+  if compiler.check_header('arm_neon.h') == true
+    if (get_option('cpu-neon') == true)
+      config_h.set10('BUILD_NEON', true)
+      config_h.set10('BUILD_NEON_INTRINSICS', true)
+      machine_c_args += ['-ftree-vectorize']
+      cpu_neon = true
+      cpu_neon_intrinsics = true
+      message('ARM64 build - NEON + intrinsics enabled')
+    endif
+  endif
+elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
+  if compiler.check_header('altivec.h') == true
+    if (get_option('cpu-akltivec') == true)
+      config_h.set10('BUILD_ALTIVEC', true)
+      machine_c_args += [ '-maltivec' ]
+      cpu_altivec = true
+      message('PPC/POWER build - ALTIVEC enabled')
+    endif
+  endif
+endif
 
 config_dir = [include_directories('.')]
 eolian_include_directories = []
@@ -231,7 +284,8 @@ foreach package : subprojects
   package_version_name = '-'.join(package_name.split('_')) + '-' + version_major
   package_c_args = [
     '-DPACKAGE_DATA_DIR="'+ join_paths(dir_data, package_name)+'"',
-    '-DNEED_RUN_IN_TREE=1'
+    '-DNEED_RUN_IN_TREE=1',
+    machine_c_args
   ]
   automatic_pkgfile = true
   if package[1].length() == 0 or get_option(package[1][0])

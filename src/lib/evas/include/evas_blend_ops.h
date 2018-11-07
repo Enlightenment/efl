@@ -258,6 +258,10 @@ static __m128i RGB_MASK_SSE3;
 
 static __m128i ALPHA_SSE3;
 
+#ifndef EFL_ALWAYS_INLINE
+# define EFL_ALWAYS_INLINE inline
+#endif
+
 static EFL_ALWAYS_INLINE __m128i
 mul_256_sse3(__m128i a, __m128i c) {
 
