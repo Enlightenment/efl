@@ -132,7 +132,12 @@ endif
 
 if (get_option('hyphen'))
    config_h.set('HAVE_HYPHEN', '1')
-   evas_deps += dependency('hyphen')
+   hyphen = dependency('hyphen', required : false)
+   if hyphen.found() == false
+     evas_deps += cc.find_library('hyphen')
+   endif
+   evas_deps += hyphen
+   config_h.set_quoted('EVAS_DICTS_HYPHEN_DIR', '/usr/share/hyphen')
 endif
 
 subdir('include')
