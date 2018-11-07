@@ -316,7 +316,7 @@ static void
 _populate(Evas_Object *obj)
 {
    int maxdays, prev_month_maxdays, day, mon, yr, i;
-   char part[16], day_s[3];
+   char part[16], day_s[16];
    struct tm first_day;
 
    EFL_UI_CALENDAR_DATA_GET(obj, sd);
