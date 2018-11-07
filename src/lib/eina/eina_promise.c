@@ -686,7 +686,7 @@ eina_future_as_value(Eina_Future *f)
    EINA_FUTURE_CHECK_RETURN_VAL(f, v);
    p = eina_promise_new(_scheduler_get(f), _dummy_cancel, NULL);
    EINA_SAFETY_ON_NULL_GOTO(p, err_promise);
-   r_future = eina_future_then(f, _future_proxy, p);
+   r_future = eina_future_then(f, _future_proxy, p, NULL);
    //If eina_future_then() fails f will be cancelled
    EINA_SAFETY_ON_NULL_GOTO(r_future, err_future);
 
@@ -1305,7 +1305,7 @@ promise_proxy_of_future_array_create(Eina_Future *array[],
 
    for (i = 0; i < ctx->futures_len; i++)
      {
-        ctx->futures[i] = eina_future_then(array[i], future_cb, ctx);
+        ctx->futures[i] = eina_future_then(array[i], future_cb, ctx, NULL);
         //Futures will be cancelled by the caller...
         EINA_SAFETY_ON_NULL_GOTO(ctx->futures[i], err_then);
      }

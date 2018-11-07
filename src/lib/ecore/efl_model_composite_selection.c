@@ -131,8 +131,8 @@ _check_child_change(Efl_Model *child, Eina_Bool value)
    else
      {
         r = efl_model_property_set(child, "selected", eina_value_bool_new(!!value));
-        r = eina_future_then(r, _commit_change, child);
-	r = eina_future_then(r, _clear_child, child);
+        r = eina_future_then(r, _commit_change, child, NULL);
+	r = eina_future_then(r, _clear_child, child, NULL);
      }
 
    return r;
@@ -218,9 +218,9 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
         if (!success)
           return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-        return efl_future_Eina_FutureXXX_then(obj,
-                                              eina_future_then(efl_model_children_slice_get(obj, l, 1),
-                                                               _select_slice_then, obj));
+        return efl_future_Eina_FutureXXX_then
+          (obj, eina_future_then(efl_model_children_slice_get(obj, l, 1),
+                                 _select_slice_then, obj, NULL));
      }
 
    return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_SELECTION_CLASS), property, value);
@@ -281,7 +281,7 @@ _untangle_array(void *data,
                                    "selected", eina_value_bool_new(EINA_FALSE));
         // Once this is done, we need to repropagate the error
         eina_value_error_get(&v, error);
-        f = eina_future_then(f, _regenerate_error, error);
+        f = eina_future_then(f, _regenerate_error, error, NULL);
 
         return eina_future_as_value(f);
      }
@@ -380,14 +380,14 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
              // There was, need to unselect the previous one along setting the new value
              chain = eina_future_all(chain,
                                      eina_future_then(efl_model_children_slice_get(efl_parent_get(obj), selected, 1),
-                                                      _unselect_slice_then, NULL));
+                                                      _unselect_slice_then, NULL, NULL));
 
-             chain = eina_future_then(chain, _untangle_array, obj);
+             chain = eina_future_then(chain, _untangle_array, obj, NULL);
           }
      }
 
  commit_change:
-   chain = eina_future_then(chain, _commit_change, obj);
+   chain = eina_future_then(chain, _commit_change, obj, NULL);
 
    return efl_future_Eina_FutureXXX_then(obj, chain);
 }
@@ -448,7 +448,7 @@ _efl_model_composite_selection_efl_model_children_slice_get(Eo *obj,
    // NOTE: We do jump on purpose EFL_MODEL_COMPOSITE_BOOLEAN_CLASS here
    f = efl_model_children_slice_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS),
                                     start, count);
-   f = eina_future_then(f, _slice_get, req);
+   f = eina_future_then(f, _slice_get, req, NULL);
 
    return efl_future_Eina_FutureXXX_then(obj, f);
 }

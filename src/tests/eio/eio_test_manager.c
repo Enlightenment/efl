@@ -174,7 +174,7 @@ _test_ls(Eina_Future *(*func)(const Eo *obj, const char *path, Eina_Bool recursi
    f = func(job, test_dirname, EINA_FALSE, &main_files, _progress_cb, NULL);
    fail_if(!f);
    test_count = expected_test_count;
-   eina_future_then(f, &_done_cb, &main_files);
+   eina_future_then(f, &_done_cb, &main_files, NULL);
 
    ecore_main_loop_begin();
 
@@ -183,7 +183,7 @@ _test_ls(Eina_Future *(*func)(const Eo *obj, const char *path, Eina_Bool recursi
 
    f = func(job, test_dirname, EINA_TRUE, &main_files, _progress_cb, NULL);
    test_count = expected_test_count + 4;
-   eina_future_then(f, &_done_cb, &main_files);
+   eina_future_then(f, &_done_cb, &main_files, NULL);
 
    ecore_main_loop_begin();
 
@@ -214,12 +214,12 @@ EFL_START_TEST(efl_io_manager_test_stat)
 
    // Start testing
    f = efl_io_manager_stat(job, nested_dirname);
-   eina_future_then(f, _stat_done_cb, &is_dir);
+   eina_future_then(f, _stat_done_cb, &is_dir, NULL);
    ecore_main_loop_begin();
 
    is_dir = EINA_FALSE;
    f = efl_io_manager_stat(job, nested_filename);
-   eina_future_then(f, _stat_done_cb, &is_dir);
+   eina_future_then(f, _stat_done_cb, &is_dir, NULL);
    ecore_main_loop_begin();
 
    // Cleanup
@@ -256,7 +256,7 @@ EFL_START_TEST(efl_io_manager_test_ls)
 
    f = efl_io_manager_ls(job, test_dirname, &main_files, _access_cb, NULL);
    test_count = 6;
-   eina_future_then(f, _future_cb, &main_files);
+   eina_future_then(f, _future_cb, &main_files, NULL);
 
    ecore_main_loop_begin();
 
@@ -299,7 +299,7 @@ EFL_START_TEST(efl_io_manager_test_open)
    job = efl_add(EFL_IO_MANAGER_CLASS, efl_main_loop_get());
 
    f = efl_io_manager_open(job, nested_filename, EINA_FALSE);
-   eina_future_then(f, _open_done_cb, &opened_file);
+   eina_future_then(f, _open_done_cb, &opened_file, NULL);
    ecore_main_loop_begin();
 
    fail_if(!opened_file);

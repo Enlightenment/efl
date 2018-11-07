@@ -117,7 +117,7 @@ EFL_START_TEST(property_set)
    Eina_Value dummy = EINA_VALUE_EMPTY;
 
    future = efl_model_property_set(method, ARGUMENT_RESULT, &dummy);
-   eina_future_then(future, _expected_error, NULL);
+   eina_future_then(future, _expected_error, NULL, NULL);
 }
 EFL_END_TEST
 
@@ -138,7 +138,7 @@ EFL_START_TEST(children_slice_get)
    Eina_Future *future;
 
    future = efl_model_children_slice_get(method, 1, 1);
-   eina_future_then(future, _expected_error, &EFL_MODEL_ERROR_NOT_SUPPORTED);
+   eina_future_then(future, _expected_error, &EFL_MODEL_ERROR_NOT_SUPPORTED, NULL);
 
    ecore_main_loop_begin();
 }

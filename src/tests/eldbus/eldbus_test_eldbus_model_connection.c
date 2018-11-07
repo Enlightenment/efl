@@ -85,13 +85,13 @@ EFL_START_TEST(property_set)
    eina_value_setup(&value, EINA_VALUE_TYPE_INT);
    eina_value_set(&value, 1);
    future = efl_model_property_set(connection, "nonexistent", &value);
-   eina_future_then(future, _failed_property_set, eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND));
+   eina_future_then(future, _failed_property_set, eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND), NULL);
 
    ecore_main_loop_begin();
 
    // UNIQUE_NAME_PROPERTY is read-only
    future = efl_model_property_set(connection, UNIQUE_NAME_PROPERTY, &value);
-   eina_future_then(future, _failed_property_set, eina_value_error_new(EFL_MODEL_ERROR_READ_ONLY));
+   eina_future_then(future, _failed_property_set, eina_value_error_new(EFL_MODEL_ERROR_READ_ONLY), NULL);
 
    ecore_main_loop_begin();
 
@@ -111,7 +111,7 @@ _count_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Future *f;
    f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
-   eina_future_then(f, _leave, NULL);
+   eina_future_then(f, _leave, NULL, NULL);
 }
 
 static void

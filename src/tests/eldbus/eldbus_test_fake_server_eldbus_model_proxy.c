@@ -80,7 +80,7 @@ _property_ready(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    if (f) return ;
    f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
-   eina_future_then(f, _leave, NULL);
+   eina_future_then(f, _leave, NULL, NULL);
 }
 
 EFL_START_TEST(property_get)

@@ -89,7 +89,7 @@ Eina_Value *
 efl_model_future_then(Eina_Future *future)
 {
    Eina_Value *data = NULL;
-   eina_future_then(future, &_future_then_quit_cb, &data);
+   eina_future_then(future, &_future_then_quit_cb, &data, NULL);
    ecore_main_loop_begin();
    return data;
 }
@@ -97,7 +97,7 @@ efl_model_future_then(Eina_Future *future)
 void
 check_efl_model_future_error(Eina_Future *future, Eina_Error *err)
 {
-   eina_future_then(future, &_future_check_err, err);
+   eina_future_then(future, &_future_check_err, err, NULL);
    ecore_main_loop_begin();
 }
 
@@ -105,7 +105,7 @@ int
 efl_model_future_then_u(Eina_Future *future)
 {
    unsigned i = -1;
-   eina_future_then(future, &_future_then_quit_u_cb, &i);
+   eina_future_then(future, &_future_then_quit_u_cb, &i, NULL);
    ecore_main_loop_begin();
    return i;
 }
@@ -293,7 +293,7 @@ _count_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Future *f;
    f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
-   eina_future_then(f, _leave, NULL);
+   eina_future_then(f, _leave, NULL, NULL);
 }
 
 static Eina_Future *
@@ -444,7 +444,7 @@ check_efl_model_property_int_set(Efl_Model *efl_model, const char *property, int
    eina_value_set(&eina_value, value);
    future = efl_model_property_set(efl_model, property, &eina_value);
 
-   eina_future_then(future, &_future_then_cp, &value_ret);
+   eina_future_then(future, &_future_then_cp, &value_ret, NULL);
    ecore_main_loop_begin();
 
    property_type = eina_value_type_get(&value_ret);

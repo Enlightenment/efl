@@ -103,7 +103,7 @@ EFL_START_TEST(elm_layout_model_connect)
    ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
    ck_assert(!!eina_value_set(&v, text_value));
    f = efl_model_property_set(model, "text_property", &v);
-   eina_future_then(f, _propagated_cb, NULL);
+   eina_future_then(f, _propagated_cb, NULL, NULL);
 
    efl_ui_model_connect(ly, "text", "text_property");
    efl_ui_view_model_set(ly, model);

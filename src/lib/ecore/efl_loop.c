@@ -415,7 +415,7 @@ ecore_loop_arguments_send(int argc, const char **argv)
      }
 
    job = eina_future_then(efl_loop_job(efl_main_loop_get()),
-                          _efl_loop_arguments_send, arga);
+                          _efl_loop_arguments_send, arga, NULL);
    efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
 }
 

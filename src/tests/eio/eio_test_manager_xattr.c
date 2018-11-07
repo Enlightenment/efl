@@ -149,7 +149,7 @@ EFL_START_TEST(eio_test_job_xattr_set)
         fail_if(num_of_attr != 0); // test asynchronous
      }
    eina_future_then(eina_future_all_array(futures),
-                    _future_all_cb, &num_of_attr);
+                    _future_all_cb, &num_of_attr, NULL);
 
    ecore_main_loop_begin();
 
@@ -166,14 +166,14 @@ EFL_START_TEST(eio_test_job_xattr_set)
      }
 
    eina_future_then(eina_future_all_array(futures),
-                   _future_done_cb, &num_of_attr);
+                   _future_done_cb, &num_of_attr, NULL);
 
    ecore_main_loop_begin();
 
    num_of_attr = 0;
 
    eina_future_then(efl_io_manager_xattr_ls(job, test_file_path, &num_of_attr, _main_cb, NULL),
-                    _future_done_cb, &num_of_attr);
+                    _future_done_cb, &num_of_attr, NULL);
 
    fail_if(num_of_attr != 0);
 

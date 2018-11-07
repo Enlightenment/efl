@@ -94,7 +94,7 @@ _key_up(void *data, const Efl_Event *ev)
 
    if (td->f) eina_future_cancel(td->f);
    td->f = efl_loop_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.5);
-   eina_future_then(td->f, _ecore_timeout_cb, td);
+   eina_future_then(td->f, _ecore_timeout_cb, td, NULL);
 }
 
 static void

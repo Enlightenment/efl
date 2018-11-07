@@ -245,7 +245,7 @@ _child_added_cb(void *data, const Efl_Event *event)
    r->pd = pd;
 
    f = efl_model_children_slice_get(pd->model, evt->index, 1);
-   f = eina_future_then(f, _children_get, r);
+   f = eina_future_then(f, _children_get, r, NULL);
 }
 
 static void

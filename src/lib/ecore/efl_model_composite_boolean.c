@@ -297,8 +297,8 @@ _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj,
    req->parent = efl_ref(obj);
    req->start = start;
 
-   return efl_future_Eina_FutureXXX_then(obj,
-                                         eina_future_then(f, _efl_model_composite_boolean_then, req));
+   return efl_future_Eina_FutureXXX_then
+     (obj, eina_future_then(f, _efl_model_composite_boolean_then, req, NULL));
 }
 
 #include "efl_model_composite_boolean.eo.c"

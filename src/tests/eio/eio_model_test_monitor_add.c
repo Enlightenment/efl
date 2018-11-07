@@ -76,7 +76,7 @@ _children_added_cb(void *d EINA_UNUSED, const Efl_Event* event)
    Eina_Future *future;
 
    future = efl_model_children_slice_get(event->object, evt->index, 1);
-   eina_future_then(future, _children_get, event->object);
+   eina_future_then(future, _children_get, event->object, NULL);
 }
 
 static Eina_Value
@@ -111,7 +111,7 @@ EFL_START_TEST(eio_model_test_test_monitor_add)
 
    future = efl_model_children_slice_get(filemodel, 0, efl_model_children_count_get(filemodel));
 
-   eina_future_then(future, &_create_file, NULL);
+   eina_future_then(future, &_create_file, NULL, NULL);
 
    ecore_main_loop_begin();
 

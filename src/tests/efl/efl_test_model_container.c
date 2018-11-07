@@ -107,7 +107,7 @@ EFL_START_TEST(efl_test_model_container_values)
 
    future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
 
-   eina_future_then(future, _children_slice_future_then, NULL);
+   eina_future_then(future, _children_slice_future_then, NULL, NULL);
 
    ecore_main_loop_begin();
 }

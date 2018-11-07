@@ -84,13 +84,13 @@ EFL_START_TEST(property_set)
    eina_value_set(&value, 1);
 
    future = efl_model_property_set(object, "nonexistent", &value);
-   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_NOT_FOUND);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_NOT_FOUND, NULL);
 
    ecore_main_loop_begin();
 
    // UNIQUE_NAME_PROPERTY is read-only
    future = efl_model_property_set(object, UNIQUE_NAME_PROPERTY, &value);
-   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_READ_ONLY);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_READ_ONLY, NULL);
 
    ecore_main_loop_begin();
 
@@ -120,7 +120,7 @@ _count_changed(void *data EINA_UNUSED, const Efl_Event *ev)
    Eina_Future *f;
 
    f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
-   eina_future_then(f, _leave, NULL);
+   eina_future_then(f, _leave, NULL, NULL);
 }
 
 EFL_START_TEST(children_count)
@@ -186,7 +186,7 @@ EFL_START_TEST(child_del)
    fail_if(expected_children_count == 0);
 
    future = efl_model_children_slice_get(object, 0, 1);
-   eina_future_then(future, _one_child, &child);
+   eina_future_then(future, _one_child, &child, NULL);
 
    ecore_main_loop_begin();
 

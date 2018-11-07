@@ -1031,7 +1031,7 @@ _populate(Evas_Object *obj,
    if (efl_model_children_count_get(model))
      {
         future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-        future = eina_future_then(future, _process_children_cb, lreq);
+        future = eina_future_then(future, _process_children_cb, lreq, NULL);
         efl_future_Eina_FutureXXX_then(obj, future);
      }
    else
@@ -1498,7 +1498,7 @@ _on_text_activated(void *data, const Efl_Event *event)
    efl_key_data_set(fs, _text_activated_path_key, eina_stringshare_add(path));
    efl_key_ref_set(fs, _text_activated_model_key, model);
    efl_ref(fs);
-   eina_future_then(future, _on_text_activated_set_path_then, fs);
+   eina_future_then(future, _on_text_activated_set_path_then, fs, NULL);
 
    elm_object_focus_set(event->object, EINA_FALSE);
 }
@@ -1687,7 +1687,7 @@ _resource_created(void *data, const Efl_Event *event)
      return;
 
    f = efl_model_children_slice_get(sd->model, evt->index, 1);
-   f = eina_future_then(f, _resource_created_then, fs);
+   f = eina_future_then(f, _resource_created_then, fs, NULL);
    efl_future_Eina_FutureXXX_then(fs, f);
 }
 
