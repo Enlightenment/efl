@@ -506,13 +506,13 @@ _entry_selection_get(Efl_Ui_Internal_Text_Interactive *obj, Efl_Ui_Internal_Text
 }
 
 static void
-_sel_cursor_changed(void *data, const Efl_Event *event EINA_UNUSED)
+_sel_cursor_changed(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   Eo *obj = data;
+//   Eo *obj = data;
 }
 
 static void
-_sel_init(Evas_Textblock_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Interactive_Data *en)
+_sel_init(Evas_Textblock_Cursor *c, Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en)
 {
    if (en->have_selection)
       return;
