@@ -10,7 +10,8 @@
 static Elm_Theme theme_default =
 {
   NULL, NULL, NULL,
-  NULL, NULL, NULL, NULL, NULL, 1, NULL
+  NULL, NULL, NULL, NULL, NULL, 1, NULL,
+  NULL, NULL, NULL
 };
 
 static Eina_List *themes = NULL;
