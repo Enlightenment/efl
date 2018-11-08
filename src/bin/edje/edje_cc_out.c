@@ -374,6 +374,12 @@ data_part_lookup_free(Part_Lookup *pl)
    free(pl);
 }
 
+static void
+list_free(void *list)
+{
+   eina_list_free(list);
+}
+
 void
 data_setup(void)
 {
@@ -383,7 +389,7 @@ data_setup(void)
    part_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
                                     EINA_KEY_CMP(_part_lookup_key_cmp),
                                     EINA_KEY_HASH(_part_lookup_key_hash),
-                                    EINA_FREE_CB(eina_list_free),
+                                    EINA_FREE_CB(list_free),
                                     8);
    part_pc_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
                                        EINA_KEY_CMP(_part_lookup_key_pc_cmp),
