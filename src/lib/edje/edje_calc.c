@@ -4630,14 +4630,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (ep->part->type)
           {
            case EDJE_PART_TYPE_IMAGE:
-           {
-              Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image *)chosen_desc;
+               {
+                  Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image *)chosen_desc;
 
-              evas_object_image_scale_hint_set(ep->object,
-                                               img_desc->image.scale_hint);
+                  evas_object_image_scale_hint_set(ep->object,
+                                                   img_desc->image.scale_hint);
+               }
+             /* No break here as we share the rest of the code for all types. Intended fall-through*/
              EINA_FALLTHROUGH;
-              /* No break here as we share the rest of the code for all types. Intended fall-through*/
-           }
 
            case EDJE_PART_TYPE_PROXY:
              EINA_FALLTHROUGH;
