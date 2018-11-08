@@ -209,7 +209,10 @@ static void set_wordbreaks(
                 posLast = posCur;
                 break;
             }
-            /* Fall off */
+#if __has_attribute(fallthrough)
+           __attribute__((fallthrough));
+#endif
+           /* Fall off */
 
         case WBP_Newline:
             /* WB3a,3b */
@@ -322,7 +325,10 @@ static void set_wordbreaks(
                 wbcSeqStart = wbcCur;
                 posLast = posCur;
             }
-            /* No break on purpose */
+#if __has_attribute(fallthrough)
+           __attribute__((fallthrough));
+#endif
+           /* No break on purpose */
         case WBP_MidNumLet:
             if (((wbcLast == WBP_ALetter) ||
                         (wbcLast == WBP_Hebrew_Letter)) || /* WB6,7 */
