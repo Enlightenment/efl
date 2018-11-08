@@ -97,7 +97,7 @@ static void          _ecore_imf_xim_feedback_attr_add(Eina_List **attrs,
 static void          _ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx);
 static void          _ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
                                                         Ecore_X_Window window);
-static int           _ecore_imf_xim_preedit_start_call(XIC xic,
+static void          _ecore_imf_xim_preedit_start_call(XIC xic,
                                                       XPointer client_data,
                                                       XPointer call_data);
 static void          _ecore_imf_xim_preedit_done_call(XIC xic,
@@ -863,7 +863,7 @@ _ecore_imf_xim_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
    free(imf_context_data);
 }
 
-static int
+static void
 _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
                                  XPointer client_data,
                                  XPointer call_data EINA_UNUSED)
@@ -872,14 +872,13 @@ _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
 
    DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, -1);
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->finalizing == EINA_FALSE)
      {
         ecore_imf_context_preedit_start_event_add(ctx);
         ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
      }
-   return -1;
 }
 
 static void
