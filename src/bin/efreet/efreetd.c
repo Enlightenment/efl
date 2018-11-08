@@ -30,7 +30,7 @@ quit(void)
 int
 main(int argc, char *argv[])
 {
-   char path[PATH_MAX], buf[PATH_MAX];
+   char path[PATH_MAX + 128], buf[PATH_MAX];
    FILE *log;
    int fd;
    const char *log_file_dir = NULL;
