@@ -1807,7 +1807,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 static void
 _ecore_con_server_proxy_apply(Ecore_Con_Server *svr, const Ecore_Con_Socks *socks)
 {
-   char str[4096], port[sizeof(":65536")] = "";
+   char str[4096], port[16] = "";
    const char *protocol;
    const char *user = "";
    const char *userpass_sep = "";
