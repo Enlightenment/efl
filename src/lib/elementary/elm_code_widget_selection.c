@@ -203,6 +203,18 @@ _elm_code_widget_selection_delete_single(Elm_Code_Widget *widget, Elm_Code_Widge
 }
 
 static void
+my_string_copy_truncate(char *dest, const char *src, size_t len)
+{
+   char *p;
+   for (p = dest; len > 0; p++, src++, len--)
+     {
+        *p = *src;
+        if (*src == 0) break;
+     }
+}
+
+
+static void
 _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
    Elm_Code_Line *line;
@@ -232,9 +244,11 @@ _elm_code_widget_selection_delete_multi(Elm_Code_Widget *widget, Elm_Code_Widget
    if (last_length > 0)
      {
         if (end == last_length)
-          strncpy(content + start, last + end, last_length - end);
+          my_string_copy_truncate(content + start, last + end,
+                                  last_length - end);
         else
-          strncpy(content + start, last + end + 1, last_length - (end + 1));
+          my_string_copy_truncate(content + start, last + end + 1,
+                                  last_length - (end + 1));
      }
 
    for (i = line->number; i > selection->start_line; i--)
