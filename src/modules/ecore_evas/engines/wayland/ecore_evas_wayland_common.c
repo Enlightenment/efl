@@ -265,12 +265,29 @@ _ecore_evas_wayland_window_update(Ecore_Evas *ee, Ecore_Evas_Engine_Wl_Data *wda
    fullw = w + fw - shw;
    fullh = h + fh - shh;
 
+   /* shadow but no window alpha means we have a translucent visual but the
+    * window contents are always opaque - we can set the opaque region
+    * hint so the compositor can render more efficiently
+    */
    if (has_shadow && !ee->alpha)
      {
         ecore_wl2_window_opaque_region_set(wdata->win,
                                            ee->shadow.l, ee->shadow.t,
                                            fullw, fullh);
      }
+   /* No alpha, no shadows - this should really not be a visual capable
+    * of translucent behaviour, but just in case things are sketchy in
+    * the back-end, let the compositor know we're fully opaque.
+    */
+   else if (!ee->alpha)
+     {
+        ecore_wl2_window_opaque_region_set(wdata->win,
+                                           0, 0,
+                                           fullw, fullh);
+     }
+   /* alpha is set and we might use it, so we'd better clear the
+    * opaque region, let the compositor blend it all.
+    */
    else
      {
         ecore_wl2_window_opaque_region_set(wdata->win, 0, 0, 0, 0);
