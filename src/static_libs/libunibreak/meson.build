@@ -6,7 +6,6 @@ libunibreak_src = [
   'linebreakdef.h',
   'wordbreakdef.h',
   'wordbreak.h',
-  'wordbreakdata.c',
   'unibreakbase.c',
   'unibreakdef.c',
   'linebreak.c',
@@ -15,7 +14,6 @@ libunibreak_src = [
   'wordbreak.c',
   'graphemebreak.c',
   'graphemebreak.h',
-  'graphemebreakdata.c',
   'graphemebreakdef.h',
 ]
 
