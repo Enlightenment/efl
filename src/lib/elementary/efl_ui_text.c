@@ -86,7 +86,7 @@ struct _Efl_Ui_Text_Data
         const char  *hover_style; /**< style of a hover object */
      } anchor_hover;
 
-   Elm_Cnp_Mode                          cnp_mode;
+   Elm_Sel_Format                        cnp_mode;
    Elm_Sel_Format                        drop_format;
 
    struct {
@@ -1989,7 +1989,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_composite_attach(obj, text_obj);
 
    sd->entry_edje = wd->resize_obj;
-   sd->cnp_mode = ELM_CNP_MODE_PLAINTEXT;
+   sd->cnp_mode = EFL_SELECTION_FORMAT_TEXT;
    sd->line_wrap = ELM_WRAP_WORD;
    sd->context_menu = EINA_TRUE;
    sd->auto_save = EINA_TRUE;
@@ -2394,10 +2394,7 @@ _efl_ui_text_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, 
 EOLIAN static void
 _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cnp_mode)
 {
-   /* FIXME: CnP format handling really odd... */
-
    Elm_Sel_Format dnd_format = EFL_SELECTION_FORMAT_MARKUP;
-   Elm_Sel_Format cnp_format = cnp_mode;
 
    if (cnp_mode != EFL_SELECTION_FORMAT_TARGETS)
      {
@@ -2409,8 +2406,8 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cn
         cnp_mode &= ~EFL_SELECTION_FORMAT_HTML;
      }
 
-   if (sd->cnp_mode == cnp_format) return;
-   sd->cnp_mode = cnp_format;
+   if (sd->cnp_mode == cnp_mode) return;
+   sd->cnp_mode = cnp_mode;
    if (sd->cnp_mode == EFL_SELECTION_FORMAT_TEXT)
      dnd_format = EFL_SELECTION_FORMAT_TEXT;
    else if (cnp_mode == EFL_SELECTION_FORMAT_IMAGE)
