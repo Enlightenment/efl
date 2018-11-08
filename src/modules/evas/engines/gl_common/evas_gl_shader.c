@@ -310,7 +310,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 {
    char bin_dir_path[PATH_MAX];
    char bin_file_path[PATH_MAX];
-   char tmp_file_name[PATH_MAX];
+   char tmp_file_name[PATH_MAX + PATH_MAX + 128];
    int tmpfd = -1, copy;
    Eina_Tmpstr *tmp_file_path = NULL;
    Eet_File *ef = NULL;
