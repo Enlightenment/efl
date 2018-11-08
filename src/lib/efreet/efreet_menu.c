@@ -187,7 +187,9 @@ static int efreet_menu_cb_md_compare_ids(Efreet_Menu_Desktop *md, const char *na
 static int efreet_menu_cb_entry_compare_menu(Efreet_Menu *entry, Efreet_Menu_Internal *internal);
 static int efreet_menu_cb_entry_compare_desktop(Efreet_Menu *entry, Efreet_Desktop *desktop);
 
+#ifndef STRICT_SPEC
 static int efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old);
+#endif
 
 static int efreet_menu_process(Efreet_Menu_Internal *internal, unsigned int only_unallocated);
 static int efreet_menu_process_dirs(Efreet_Menu_Internal *internal);
@@ -3741,6 +3743,7 @@ efreet_menu_cb_entry_compare_desktop(Efreet_Menu *entry, Efreet_Desktop *desktop
     return strcmp(entry->name, desktop->name);
 }
 
+#ifndef STRICT_SPEC
 static int
 efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old)
 {
@@ -3748,6 +3751,7 @@ efreet_menu_cb_move_compare(Efreet_Menu_Move *move, const char *old)
     if (move->old_name == old) return 0;
     return 1;
 }
+#endif
 
 static int
 efreet_menu_layout_is_empty(Efreet_Menu *entry)
