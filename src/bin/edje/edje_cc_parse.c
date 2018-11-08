@@ -391,7 +391,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
                }
              l = pp - p;
              tmpstr = alloca(l + 1);
-             strncpy(tmpstr, p, l);
+             memcpy(tmpstr, p, l);
              tmpstr[l] = 0;
              if (l >= (int)sizeof(fl))
                {
