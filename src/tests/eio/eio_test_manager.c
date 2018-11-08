@@ -85,7 +85,7 @@ _done_cb(void *data,
    else
      {
         Eina_Value convert = EINA_VALUE_EMPTY;
-        uint64_t files_count = 0;
+        unsigned long files_count = 0;
 
         eina_value_setup(&convert, EINA_VALUE_TYPE_ULONG);
         eina_value_convert(&file, &convert);
