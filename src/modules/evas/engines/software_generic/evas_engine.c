@@ -4745,7 +4745,7 @@ glue_sym_init(void)
    //------------------------------------------------//
    // Use eglGetProcAddress
 #define FINDSYM(dst, sym, typ) \
-   if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
+   if (!dst) dst = dlsym(gl_lib_handle, sym); \
    if (!dst)  \
      { \
         ERR("Symbol not found: %s", sym); \
@@ -4783,12 +4783,12 @@ gl_sym_init(void)
 
    //------------------------------------------------//
 #define FINDSYM(dst, sym, typ) do { \
-   if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
-   if (!dst && _sym_OSMesaGetProcAddress) dst = (typeof(dst))_sym_OSMesaGetProcAddress(sym); \
+   if (!dst) dst = dlsym(gl_lib_handle, sym); \
+   if (!dst && _sym_OSMesaGetProcAddress) dst = (void *)_sym_OSMesaGetProcAddress(sym); \
    if (!dst) DBG("Symbol not found: %s", sym); \
    } while (0)
 #define FALLBAK(dst, typ) do { \
-   if (!dst) { dst = (typeof(dst))sym_missing; ok = EINA_FALSE; } \
+   if (!dst) { dst = (void *)sym_missing; ok = EINA_FALSE; } \
    } while (0)
 
    //------------------------------------------------------//
