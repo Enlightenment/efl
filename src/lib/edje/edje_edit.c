@@ -12441,7 +12441,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    Eina_Tmpstr *tmp_out;
    char embryo_cc_path[PATH_MAX] = "";
    char inc_path[PATH_MAX] = "";
-   char buf[4096];
+   char buf[PATH_MAX + PATH_MAX + PATH_MAX + 128];
    Eina_Iterator *it;
    Program_Script *ps;
    Edje_Part_Collection *edc;
