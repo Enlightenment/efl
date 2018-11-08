@@ -846,11 +846,14 @@ _edje_circul(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    char *group = data;
 
    part_name = eina_list_data_get(eina_list_last(parts));
-   strncat(buf, part_name, strlen(part_name));
+   strncat(buf, part_name, sizeof(buf) - 1);
+   part_name[sizeof(buf) - 1] = 0;
    EINA_LIST_FOREACH(parts, l, part_name)
      {
-        strncat(buf, " -> ", strlen(" -> "));
-        strncat(buf, part_name, strlen(part_name));
+        strncat(buf, " -> ", sizeof(buf) - strlen(buf) - 1);
+        part_name[sizeof(buf) - 1] = 0;
+        strncat(buf, part_name, sizeof(buf) - strlen(buf) - 1);
+        part_name[sizeof(buf) - 1] = 0;
      }
 
    fprintf(stderr, "Group '%s' have a circul dependency between parts: %s\n",
