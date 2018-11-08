@@ -15144,6 +15144,12 @@ ob_collections_group_parts_part_description_link(void)
    current_program->value = current_desc->state.value;
 }
 
+static void
+list_free(void *list)
+{
+   eina_list_free(list);
+}
+
 /**
     @page edcref
     @property
@@ -15184,7 +15190,7 @@ st_collections_group_parts_part_description_link_base(void)
         eina_hash_list_remove(pcp->link_hash, buf, el);
      }
    if (!pcp->link_hash)
-     pcp->link_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
+     pcp->link_hash = eina_hash_string_superfast_new(list_free);
    free((void *)current_program->signal);
    current_program->signal = name;
    if (get_arg_count() == 2)
