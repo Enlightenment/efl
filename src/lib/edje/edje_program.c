@@ -1252,6 +1252,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
    Efl_Input_Device *seat = NULL;
    char buf[128];
    char *sname;
+   const char *s;
 
    if (dev) seat = efl_input_device_seat_get(dev);
    if (seat)
@@ -1267,7 +1268,9 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
     * the signal belongs to a seat */
    if (!seat) return;
 
-   snprintf(buf, sizeof(buf), "seat,%s,%s", _edje_seat_name_get(ed, seat), sig);
+   s = _edje_seat_name_get(ed, seat);
+   if (!s) s = "";
+   snprintf(buf, sizeof(buf), "seat,%s,%s", s, sig);
    _edje_emit_full_data(ed, buf, src, mdata);
    _edje_signal_data_free(mdata);
 }
