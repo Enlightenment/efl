@@ -3033,6 +3033,17 @@ _text_append_idler(void *data)
 }
 
 static void
+my_string_copy_truncate(char *dest, const char *src, size_t len)
+{
+   char *p;
+   for (p = dest; len > 0; p++, src++, len--)
+     {
+        *p = *src;
+        if (*src == 0) break;
+     }
+}
+
+static void
 _chars_add_till_limit(Evas_Object *obj,
                       char **text,
                       int can_add,
@@ -3095,8 +3106,8 @@ _chars_add_till_limit(Evas_Object *obj,
                   return;
                }
              can_add = 0;
-             strncpy(new_text, new_text + idx,
-                     current_len - ((new_text + idx) - *text));
+             my_string_copy_truncate(new_text, new_text + idx,
+                                     current_len - ((new_text + idx) - *text));
              current_len -= idx;
              (*text)[current_len] = 0;
           }
