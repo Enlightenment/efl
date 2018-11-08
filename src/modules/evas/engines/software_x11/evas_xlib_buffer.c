@@ -303,8 +303,7 @@ evas_software_xlib_x_output_buffer_new(Display *d, Visual *v, int depth, int w, 
                               {
                                  XSync(d, False);
                                  _x_err = 0;
-                                 ph = XSetErrorHandler((XErrorHandler)
-                                                       x_output_tmp_x_err);
+                                 ph = XSetErrorHandler((void *)x_output_tmp_x_err);
                               }
 #if defined(LIBXEXT_VERSION_LOW)
                             /* workaround for libXext of lower then 1.1.1 */
