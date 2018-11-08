@@ -82,7 +82,7 @@ _edje_extract_mo_files(Edje *ed)
    for (i = 0; i < ed->file->mo_dir->mo_entries_count; i++)
      {
         Edje_Mo *mo_entry;
-        char out[PATH_MAX];
+        char out[PATH_MAX + PATH_MAX + 128];
         char outdir[PATH_MAX];
         char *sub_str;
         char *mo_src;
