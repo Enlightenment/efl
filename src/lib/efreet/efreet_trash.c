@@ -61,7 +61,7 @@ efreet_trash_shutdown(void)
 EAPI const char*
 efreet_trash_dir_get(const char *file)
 {
-    char buf[PATH_MAX];
+    char buf[PATH_MAX + PATH_MAX + 128];
     struct stat s_dest;
     struct stat s_src;
     const char *trash_dir = NULL;
