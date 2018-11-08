@@ -744,6 +744,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL, //fn_callback_device_mouse_out_set
      NULL, //fn_pointer_device_xy_get
      _ecore_evas_buffer_prepare,
+     NULL // fn_last_tick_get
 };
 
 static void *
