@@ -218,7 +218,11 @@ efreet_icon_remove_extension(const char *icon)
 EAPI const char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
 {
+#ifdef SLOPPY_SPEC
     char *tmp;
+#else
+    const char *tmp;
+#endif
     const char *value = NULL;
     Efreet_Icon_Theme *theme;
 
