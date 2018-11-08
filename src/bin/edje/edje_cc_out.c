@@ -890,7 +890,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
    void *m = NULL;
    int bytes = 0;
    char buf[EINA_PATH_MAX];
-   char buf2[EINA_PATH_MAX];
+   char buf2[EINA_PATH_MAX + EINA_PATH_MAX + 128];
    size_t size;
 
    f = eina_file_open(fc->fn->file, 0);
@@ -1830,7 +1830,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
         int i;
         char *po_entry;
         char *sub_str;
-        char buf[EINA_PATH_MAX];
+        char buf[EINA_PATH_MAX + PATH_MAX + PATH_MAX + 128];
         Eina_List *ll;
         char *dir_path = NULL;
         char mo_path[PATH_MAX];
@@ -2372,7 +2372,7 @@ data_write_scripts(Eet_File *ef)
         Code *cd = eina_list_data_get(l);
         Script_Write *sc;
         int fd;
-        char buf[EINA_PATH_MAX];
+        char buf[EINA_PATH_MAX + PATH_MAX + PATH_MAX + 128];
 
         if (cd->is_lua)
           continue;
