@@ -325,7 +325,7 @@ _find_mod(const char *name)
         if ((!path) || (!path[0])) continue;
         // path is /*/modulename/ARCH/module.* - we want "modulename"
         found = 0;
-        p1 = p2 = NULL;
+        p1 = p2 = p3 = NULL;
         for (p = path + strlen(path) - 1;
              p > path;
              p--)
