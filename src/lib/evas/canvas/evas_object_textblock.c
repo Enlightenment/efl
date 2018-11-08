@@ -15149,14 +15149,13 @@ _evas_textblock_annotation_iterator_next(Efl_Text_Annotate_Annotation_Iterator *
   * @param it the iterator to free
   * @return EINA_FALSE if unsuccessful. Otherwise, returns EINA_TRUE.
   */
-static Eina_Bool
+static void
 _evas_textblock_annotation_iterator_free(Efl_Text_Annotate_Annotation_Iterator *it)
 {
    EINA_MAGIC_SET(&it->iterator, 0);
    it->current = NULL;
    eina_list_free(it->list);
    free(it);
-   return EINA_TRUE;
 }
 
 /**
