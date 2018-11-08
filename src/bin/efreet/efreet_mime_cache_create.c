@@ -224,7 +224,7 @@ find_off(const char *str, Eina_List *strlist, Eina_List *offlist)
 static void
 store_cache(const char *out)
 {
-   char buf[PATH_MAX];
+   char buf[PATH_MAX + 128];
    FILE *f;
    size_t mimes_str_len = 0;
    size_t extn_mimes_str_len = 0;
