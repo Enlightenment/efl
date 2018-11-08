@@ -55,7 +55,8 @@ _dmabuf_cb_format(void *data EINA_UNUSED, struct zwp_linux_dmabuf_v1 *dmabuf EIN
 
 static const struct zwp_linux_dmabuf_v1_listener _dmabuf_listener =
 {
-   _dmabuf_cb_format
+   _dmabuf_cb_format,
+   NULL
 };
 
 static void
