@@ -1,4 +1,6 @@
-#define EFL_BETA_API_SUPPORT
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include "eldbus_geo_clue2_location.h"
 
