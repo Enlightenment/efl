@@ -845,66 +845,67 @@ _ecore_evas_extn_plug_msg_parent_send(Ecore_Evas *ee, int msg_domain, int msg_id
 static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 {
    _ecore_evas_extn_free,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
+   NULL, // fn_callback_resize_set
+   NULL, // fn_callback_move_set
+   NULL, // fn_callback_show_set
+   NULL, // fn_callback_hide_set
+   NULL, // fn_callback_delete_request_set
+   NULL, // fn_callback_destroy_set
+   NULL, // fn_callback_focus_in_set
+   NULL, // fn_callback_focus_out_set
+   NULL, // fn_callback_mouse_in_set
+   NULL, // fn_callback_mouse_out_set
+   NULL, // fn_callback_sticky_set
+   NULL, // fn_callback_unsticky_set
+   NULL, // fn_callback_pre_render_set
+   NULL, // fn_callback_post_render_set
+   NULL, // fn_move
+   NULL, // fn_managed_move
    _ecore_evas_resize,
    _ecore_evas_move_resize,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL, //transparent
-   NULL, // profiles_set
+   NULL, // fn_rotation_set
+   NULL, // fn_shaped_set
+   NULL, // fn_show
+   NULL, // fn_hide
+   NULL, // fn_raise
+   NULL, // fn_lower
+   NULL, // fn_activate
+   NULL, // fn_title_set
+   NULL, // fn_name_class_set
+   NULL, // fn_size_min_set
+   NULL, // fn_size_max_set
+   NULL, // fn_size_base_set
+   NULL, // fn_size_step_set
+   NULL, // fn_object_cursor_set
+   NULL, // fn_object_cursor_unset
+   NULL, // fn_layer_set
+   NULL, // fn_focus_set
+   NULL, // fn_iconified_set
+   NULL, // fn_borderless_set
+   NULL, // fn_override_set
+   NULL, // fn_maximized_set
+   NULL, // fn_fullscreen_set
+   NULL, // fn_avoid_damage_set
+   NULL, // fn_withdrawn_set
+   NULL, // fn_sticky_set
+   NULL, // fn_ignore_events_set
+   NULL, // fn_alpha_set
+   NULL, // fn_transparent_set
+   NULL, // fn_profiles_set
    _ecore_evas_extn_plug_profile_set,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
-   NULL,
 
-   NULL, // render
-   NULL, // screen_geometry_get
-   NULL, // screen_dpi_get
+   NULL, // fn_window_group_set
+   NULL, // fn_aspect_set
+   NULL, // fn_urgent_set
+   NULL, // fn_modal_set
+   NULL, // fn_demands_attention_set
+   NULL, // fn_focus_skip_set
+
+   NULL, // fn_render
+   NULL, // fn_screen_geometry_get
+   NULL, // fn_screen_dpi_get
    _ecore_evas_extn_plug_msg_parent_send,
-   NULL,   // msg_send
+   NULL,  // fn_msg_send
 
    /* 1.8 abstractions */
    NULL, // pointer_xy_get
@@ -921,14 +922,18 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL, // fn_animator_unregister
 
    NULL, // fn_evas_changed
-   NULL, //fn_focus_device_set
-   NULL, //fn_callback_focus_device_in_set
-   NULL, //fn_callback_focus_device_out_set
-   NULL, //fn_callback_device_mouse_in_set
-   NULL, //fn_callback_device_mouse_out_set
-   NULL, //fn_pointer_device_xy_get
-   NULL, //fn_prepare
-   NULL, //fn_last_tick_get
+
+   NULL, // fn_focus_device_set
+   NULL, // fn_callback_focus_device_in_set
+   NULL, // fn_callback_focus_device_out_set
+
+   NULL, // fn_callback_device_mouse_in_set
+   NULL, // fn_callback_device_mouse_out_set
+   NULL, // fn_pointer_device_xy_get
+
+   NULL, // fn_prepare
+
+   NULL  // fn_last_tick_get
 };
 
 static Eina_Bool
@@ -2110,6 +2115,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL, //fn_callback_device_mouse_out_set
    NULL, //fn_pointer_device_xy_get
    _ecore_evas_extn_socket_prepare,
+   NULL //fn_last_tick_get
 };
 
 EAPI Ecore_Evas *
