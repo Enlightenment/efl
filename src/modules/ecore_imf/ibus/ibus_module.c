@@ -49,14 +49,18 @@ static Ecore_IMF_Context_Class ibus_imf_class = {
     NULL,                                          /* input_panel_return_key_type_set */
     NULL,                                          /* input_panel_return_key_disabled_set */
     NULL,                                          /* input_panel_caps_lock_mode_set */
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL
+    NULL, // input_panel_geometry_get
+    NULL, // input_panel_state_get
+    NULL, // input_panel_event_callback_add
+    NULL, // input_panel_event_callback_del
+    NULL, // input_panel_language_locale_get
+    NULL, // candidate_panel_geometry_get
+    NULL, // input_hint_set
+    NULL, // bidi_direction_set
+    NULL, // keyboard_mode_get
+    NULL, // prediction_hint_set
+    NULL, // mime_type_accept_set
+    NULL  // input_panel_position_set
 };
 
 static Ecore_IMF_Context *im_module_create(void);
