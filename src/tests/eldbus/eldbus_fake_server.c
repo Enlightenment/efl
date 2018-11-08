@@ -21,13 +21,15 @@ static Eldbus_Connection *conn;
 static const Eldbus_Method methods[] = {
    {
      FAKE_SERVER_SUM_METHOD_NAME, ELDBUS_ARGS({"i", "a"}, {"i", "b"}), ELDBUS_ARGS({"i", "result"}),
-     _fake_server_sum
+     _fake_server_sum,
+      0
    },
    {
      FAKE_SERVER_PING_METHOD_NAME, ELDBUS_ARGS({"i", "a"}), NULL,
-     _fake_server_ping
+     _fake_server_ping,
+      0
    },
-   { 0 }
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 enum
@@ -37,14 +39,14 @@ enum
 
 static const Eldbus_Signal signals[] = {
    [FAKE_SERVER_PONG_SIGNAL] = {FAKE_SERVER_PONG_SIGNAL_NAME, ELDBUS_ARGS({ "i", NULL }), 0},
-   { 0 }
+   { NULL, NULL, 0 }
 };
 
 static const Eldbus_Property properties[] = {
    { FAKE_SERVER_READONLY_PROPERTY, "i", _fakse_server_property_get, NULL, 0 },
    { FAKE_SERVER_WRITEONLY_PROPERTY, "i", NULL, _fake_server_property_set, 0 },
    { FAKE_SERVER_READWRITE_PROPERTY, "i", _fakse_server_property_get, _fake_server_property_set, 0 },
-   { 0 }
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc test_interface_desc = {

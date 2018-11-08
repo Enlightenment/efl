@@ -199,17 +199,17 @@ static const Eldbus_Method methods[] = {
         ELDBUS_ARGS({"ai", "array_of_int"}), _receive_container_data, 0
       },
       { "SendBool", ELDBUS_ARGS({"b", "bool"}), ELDBUS_ARGS({"b", "bool"}),
-        _send_bool
+        _send_bool, 0
       },
       {
         "SendArrayInt", NULL,
         ELDBUS_ARGS({"ai", "array_of_int"}), _send_array_int, 0
       },
-      { }
+      { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc iface_desc = {
-   "org.freedesktop.Test", methods, NULL
+   "org.freedesktop.Test", methods, NULL, NULL, NULL, NULL
 };
 
 static void
