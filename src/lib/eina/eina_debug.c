@@ -336,7 +336,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
    memcpy(&info_64, buffer, sizeof(uint64_t));
    // cast to a ptr, so on 32bit we just take the lower 32bits and on 64
    // we take all of it so we're fine
-   info = (_opcode_reply_info *)info_64;
+   info = (_opcode_reply_info *)(uintptr_t)info_64;
 
    if (!info) return EINA_FALSE;
    EINA_LIST_FOREACH(session->opcode_reply_infos, itr, info2)
