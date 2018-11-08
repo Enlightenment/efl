@@ -4383,7 +4383,7 @@ _convert_map_zoom_mode(Elm_Map_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, E
 EAPI void
 elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 {
-   Efl_Ui_Zoom_Mode new_mode;
+   Efl_Ui_Zoom_Mode new_mode = EFL_UI_ZOOM_MODE_MANUAL;
 
    _convert_map_zoom_mode(&mode, &new_mode, EINA_FALSE);
 
@@ -4393,8 +4393,8 @@ elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 EAPI Elm_Map_Zoom_Mode
 elm_map_zoom_mode_get(const Eo *obj)
 {
-   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
-   Elm_Map_Zoom_Mode mode;
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);
+   Elm_Map_Zoom_Mode mode = ELM_MAP_ZOOM_MODE_MANUAL;
 
    _convert_map_zoom_mode(&mode, &new_mode, EINA_TRUE);
 
