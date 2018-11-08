@@ -1015,7 +1015,7 @@ get_verbatim_line2(void)
 void
 compile(void)
 {
-   char buf[4096], buf2[4096];
+   char buf[4096 + 4096 + 4096], buf2[4096];
    Eina_Tmpstr *tmpn;
    int fd;
    off_t size;
