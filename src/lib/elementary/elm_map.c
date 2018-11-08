@@ -207,7 +207,7 @@ _nominatim_url_cb(const Evas_Object *obj,
                   double lat)
 {
    char **str;
-   char buf[PATH_MAX];
+   char buf[PATH_MAX + 256];
    unsigned int ele, idx;
    char search_url[PATH_MAX];
 
@@ -686,7 +686,7 @@ _grid_item_create(Grid *g,
                   Evas_Coord y)
 {
    char buf[PATH_MAX];
-   char buf2[PATH_MAX];
+   char buf2[PATH_MAX + 128];
    Grid_Item *gi;
    char *url;
 
@@ -3214,7 +3214,7 @@ _name_request(const Evas_Object *obj,
 {
    char *url;
    Elm_Map_Name *name;
-   char *fname, fname2[PATH_MAX];
+   char *fname, fname2[PATH_MAX + 128];
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
@@ -3278,7 +3278,7 @@ _name_list_request(const Evas_Object *obj,
 {
    char *url;
    Elm_Map_Name_List *name_list;
-   char *fname, fname2[PATH_MAX];
+   char *fname, fname2[PATH_MAX + 128];
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
@@ -4631,7 +4631,7 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
    char *url;
    char *type_name;
    Elm_Map_Route *route;
-   char fname[PATH_MAX], fname2[PATH_MAX];
+   char fname[PATH_MAX], fname2[PATH_MAX + 128];
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
