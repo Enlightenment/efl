@@ -408,16 +408,25 @@ static const Eldbus_Service_Interface_Desc _efl_net_session_notifier_desc = {
   .interface = "net.connman.Notification",
   .methods = (const Eldbus_Method []){
      {
-       .member = "Release",
-       .cb = _efl_net_session_notifier_release,
+        .member = "Release",
+        .in = NULL,
+        .out = NULL,
+        .cb = _efl_net_session_notifier_release,
+        .flags = 0
      },
      {
-       .member = "Update",
-       .in = ELDBUS_ARGS({"a{sv}", "settings"}),
-       .cb = _efl_net_session_notifier_update,
+        .member = "Update",
+        .in = ELDBUS_ARGS({"a{sv}", "settings"}),
+        .out = NULL,
+        .cb = _efl_net_session_notifier_update,
+        .flags = 0
      },
-     { }
+     { NULL, NULL, NULL, NULL, 0 }
    },
+   .signals = NULL,
+   .properties = NULL,
+   .default_get = NULL,
+   .default_set = NULL
 };
 
 /* return of step #2: session was created, get a proxy for it */
