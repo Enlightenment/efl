@@ -379,6 +379,13 @@ cb_type_parse(Efreet_Desktop *desktop EINA_UNUSED, Efreet_Ini *ini)
    return (void *)strdup(val);
 }
 
+static void *
+free_cb(void *data)
+{
+   free(data);
+   return NULL; // this is never used... but... mistake made in api
+}
+
 int
 ef_cb_desktop_type_parse(void)
 {
@@ -388,8 +395,7 @@ ef_cb_desktop_type_parse(void)
    int ret = 1;
 
    /* add my custom desktop type to efreet */
-   my_type = efreet_desktop_type_add("My_Type", cb_type_parse, NULL,
-                                     (Efreet_Desktop_Type_Free_Cb)free);
+   my_type = efreet_desktop_type_add("My_Type", cb_type_parse, NULL, free_cb);
 
    desktop = efreet_desktop_get(ef_test_path_get("test_type.desktop"));
    if (!desktop)
