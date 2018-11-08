@@ -16,6 +16,7 @@ edc_files = [
   'test_table.edc',
   'test_text_cursor.edc',
   'test_textblock.edc',
+  'test_text.edc',
 ]
 
 themes = []
