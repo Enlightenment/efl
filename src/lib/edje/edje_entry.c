@@ -361,6 +361,7 @@ _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const
    if (text2)
      {
         char *s, *markup_text;
+        size_t size;
 
         s = text2;
         if (*s == '+')
@@ -373,13 +374,14 @@ _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const
                   free(text2);
                   return;
                }
-             markup_text = (char *)malloc(strlen(s) + 3);
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 3);
              if (markup_text)
                {
                   *(markup_text) = '<';
-                  strncpy((markup_text + 1), s, strlen(s));
-                  *(markup_text + strlen(s) + 1) = '>';
-                  *(markup_text + strlen(s) + 2) = '\0';
+                  memcpy((markup_text + 1), s, size);
+                  *(markup_text + size + 1) = '>';
+                  *(markup_text + size + 2) = '\0';
                }
           }
         else if (s[0] == '-')
@@ -392,26 +394,28 @@ _text_filter_format_prepend(Edje *ed, Entry *en, Evas_Textblock_Cursor *c, const
                   free(text2);
                   return;
                }
-             markup_text = (char *)malloc(strlen(s) + 4);
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 4);
              if (markup_text)
                {
                   *(markup_text) = '<';
                   *(markup_text + 1) = '/';
-                  strncpy((markup_text + 2), s, strlen(s));
-                  *(markup_text + strlen(s) + 2) = '>';
-                  *(markup_text + strlen(s) + 3) = '\0';
+                  memcpy((markup_text + 2), s, size);
+                  *(markup_text + size + 2) = '>';
+                  *(markup_text + size + 3) = '\0';
                }
           }
         else
           {
-             markup_text = (char *)malloc(strlen(s) + 4);
+             size = strlen(s);
+             markup_text = (char *)malloc(size + 4);
              if (markup_text)
                {
                   *(markup_text) = '<';
-                  strncpy((markup_text + 1), s, strlen(s));
-                  *(markup_text + strlen(s) + 1) = '/';
-                  *(markup_text + strlen(s) + 2) = '>';
-                  *(markup_text + strlen(s) + 3) = '\0';
+                  memcpy((markup_text + 1), s, size);
+                  *(markup_text + size + 1) = '/';
+                  *(markup_text + size + 2) = '>';
+                  *(markup_text + size + 3) = '\0';
                }
           }
         free(text2);
