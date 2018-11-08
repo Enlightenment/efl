@@ -144,7 +144,7 @@ plungefile(char *name, int try_currentpath, int try_includepaths)
      {
 	for (i = 0; !result && (ptr = get_path(i)); i++)
 	  {
-	     char                path[PATH_MAX];
+	     char                path[PATH_MAX + PATH_MAX + 128];
 
              snprintf(path, sizeof (path), "%s/%s", ptr, name);
 	     path[sizeof path - 1] = '\0';	/* force '\0' termination */
