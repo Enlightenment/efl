@@ -1273,7 +1273,9 @@ static const struct wl_touch_listener _touch_listener =
    _touch_cb_up,
    _touch_cb_motion,
    _touch_cb_frame,
-   _touch_cb_cancel
+   _touch_cb_cancel,
+   NULL, // XXX: FIXME: add shape
+   NULL, // XXX: FIXME: add orientation
 };
 
 static void
