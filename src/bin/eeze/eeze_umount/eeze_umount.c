@@ -29,24 +29,24 @@ static const Ecore_Getopt opts =
    }
 };
 
-void
-_unmount_cb(void *data, int type, Eeze_Event_Disk_Unmount *e)
+static Eina_Bool
+_unmount_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *info)
 {
-   (void)data;
-   (void)type;
+   Eeze_Event_Disk_Unmount *e = info;
    printf("Success!\n");
    eeze_disk_free(e->disk);
    ecore_main_loop_quit();
+   return EINA_TRUE;
 }
 
-void
-_error_cb(void *data, int type, Eeze_Event_Disk_Error *de)
+static Eina_Bool
+_error_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *info)
 {
-   (void)data;
-   (void)type;
+   Eeze_Event_Disk_Error *de = info;
    printf("Could not unmount disk with /dev/ path: %s!\n", eeze_disk_devpath_get(de->disk));
    eeze_disk_free(de->disk);
    ecore_main_loop_quit();
+   return EINA_TRUE;
 }
 
 int
@@ -104,8 +104,8 @@ main(int argc, char *argv[])
         printf("[%s] is already unmounted!", dev);
         exit(1);
      }
-   ecore_event_handler_add(EEZE_EVENT_DISK_UNMOUNT, (Ecore_Event_Handler_Cb)_unmount_cb, NULL);
-   ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, (Ecore_Event_Handler_Cb)_error_cb, NULL);
+   ecore_event_handler_add(EEZE_EVENT_DISK_UNMOUNT, _unmount_cb, NULL);
+   ecore_event_handler_add(EEZE_EVENT_DISK_ERROR, _error_cb, NULL);
    if (!eeze_disk_unmount(disk))
      {
         printf("unmount operation could not be started!\n");
