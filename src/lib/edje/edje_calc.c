@@ -3814,7 +3814,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Real_Part *confine_to = NULL;
    Edje_Real_Part *threshold = NULL;
    FLOAT_T pos = ZERO, pos2;
-   Edje_Calc_Params lp3 = { {0} };
+   Edje_Calc_Params lp3 = { 0 };
    Evas_Coord mmw = 0, mmh = 0;
    Eina_Bool map_colors_free = EINA_FALSE;
 
