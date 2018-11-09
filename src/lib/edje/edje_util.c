@@ -151,6 +151,7 @@ _edje_user_definition_free(Edje_User_Defined *eud)
       case EDJE_USER_DRAG_PAGE:
       case EDJE_USER_DRAG_VALUE:
       case EDJE_USER_DRAG_SIZE:
+      case EDJE_USER_TEXT_EXPAND:
         break;
      }
 
