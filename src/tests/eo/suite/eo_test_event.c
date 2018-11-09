@@ -185,12 +185,111 @@ EFL_START_TEST(eo_event_generation_bug)
 }
 EFL_END_TEST
 
+#include "eo_event_emitter.h"
+
+static void
+_test(void *data, const Efl_Event *info)
+{
+   Eina_Bool *flag = data;
+
+   *flag = EINA_TRUE;
+}
+
+
+static void
+_nop(void *data, const Efl_Event *info)
+{
+
+}
+
+static void
+_delete_in_ev(void *data, const Efl_Event *info)
+{
+   eo_event_emitter_unregister(data, _nop, EFL_EVENT_DEL, 0, NULL);
+}
+
+EFL_START_TEST(eo_event_basic)
+{
+   Eo_Event_Emitter emitter;
+   Eina_Bool flag = EINA_FALSE;
+   Efl_Event ev = { NULL, EFL_EVENT_DEL, NULL};
+
+   eo_event_emitter_init(&emitter);
+   eo_event_emitter_register(&emitter, _test, EFL_EVENT_DEL, 0, &flag);
+   eo_event_emitter_emit(&emitter, &ev);
+
+   ck_assert_int_eq(flag, EINA_TRUE);
+   flag = EINA_FALSE;
+
+   eo_event_emitter_unregister(&emitter, _test, EFL_EVENT_DEL, 0, &flag);
+   eo_event_emitter_emit(&emitter, &ev);
+
+   ck_assert_int_eq(flag, EINA_FALSE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_event_basic_del)
+{
+   Eo_Event_Emitter emitter;
+   Efl_Event ev = { NULL, EFL_EVENT_DEL, NULL};
+
+   eo_event_emitter_init(&emitter);
+   eo_event_emitter_register(&emitter, _nop, EFL_EVENT_DEL, 0, NULL);
+   eo_event_emitter_register(&emitter, _delete_in_ev, EFL_EVENT_DEL, 0, &emitter);
+   eo_event_emitter_register(&emitter, _nop, EFL_EVENT_DEL, 0, NULL);
+   eo_event_emitter_emit(&emitter, &ev);
+}
+EFL_END_TEST
+
+static int counter;
+
+#define TEST_FUNC(name) \
+static void \
+name(void *data, const Efl_Event *info) \
+{ \
+   int *flag = data; \
+   *flag = counter; \
+   counter++; \
+}
+TEST_FUNC(_ncb1)
+TEST_FUNC(_ncb2)
+TEST_FUNC(_ncb3)
+
+EFL_START_TEST(eo_event_basic_order)
+{
+   Eo_Event_Emitter emitter;
+   Efl_Event ev = { NULL, EFL_EVENT_DEL, NULL};
+   int flag[] = { 0,0,0,0,0,0,0,0,0 };
+
+   eo_event_emitter_init(&emitter);
+   eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[2]);
+   eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[1]);
+   eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[0]);
+   eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, 0, &flag[5]);
+   eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, 0, &flag[4]);
+   eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, 0, &flag[3]);
+   eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[8]);
+   eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[7]);
+   eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[6]);
+
+   counter = 0;
+
+   eo_event_emitter_emit(&emitter, &ev);
+
+   for (int i = 0; i < 9; ++i)
+     {
+        ck_assert_int_eq(flag[i], i);
+     }
+}
+EFL_END_TEST
 
 void eo_test_event(TCase *tc)
 {
-   tcase_add_test(tc, eo_event);
-   tcase_add_test(tc, eo_event_call_in_call);
-   tcase_add_test(tc, eo_event_generation_bug);
+   //tcase_add_test(tc, eo_event);
+   //tcase_add_test(tc, eo_event_call_in_call);
+   //tcase_add_test(tc, eo_event_generation_bug);
+   tcase_add_test(tc, eo_event_basic);
+   tcase_add_test(tc, eo_event_basic_order);
 }
 
 

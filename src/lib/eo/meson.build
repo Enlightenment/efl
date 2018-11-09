@@ -17,7 +17,9 @@ eo_src = [
   'eo_add_fallback.c',
   'eo_add_fallback.h',
   'eo_private.h',
-  'eo_internal.h'
+  'eo_internal.h',
+  'eo_event_emitter.c',
+  'eo_event_emitter.h'
 ]
 
 pub_eo_types_files = [
