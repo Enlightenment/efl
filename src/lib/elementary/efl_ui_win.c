@@ -7361,7 +7361,15 @@ _elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
         sd->legacy.bg_must_swallow = 1;
         sd->legacy.bg_must_swallow_init = 1;
 
-        bg = elm_bg_add(sd->obj);
+        if (sd->legacy.ctor)
+          bg = elm_bg_add(sd->obj);
+        else
+          {
+             // Note: This code path is probably not necessary (custom legacy
+             // theme but efl_add'ed window -- all efl_add'ed widgets would
+             // use default theme)
+             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, sd->obj);
+          }
         wd = efl_data_scope_get(bg, EFL_UI_WIDGET_CLASS);
         if (wd)
           {
