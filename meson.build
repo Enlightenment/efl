@@ -95,6 +95,7 @@ config_h.set_quoted('PACKAGE_SYSCONF_DIR', dir_sysconf)
 config_h.set_quoted('BINDIR', dir_bin)
 config_h.set_quoted('DATADIR', dir_data)
 config_h.set10('EFL_HAVE_THREADS', true)
+config_h.set10('SLOPPY_SPEC', true)
 
 ## have to get compiler again for this to work
 compiler = meson.get_compiler('c')
