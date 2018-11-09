@@ -1519,7 +1519,7 @@ efreet_menu_handle_default_merge_dirs(Efreet_Menu_Internal *parent, Efreet_Xml *
     char path[PATH_MAX], *p = NULL;
     const char *pp;
 #ifndef STRICT_SPEC
-    char parent_path[PATH_MAX];
+    char parent_path[PATH_MAX + PATH_MAX + 128];
 #endif
 
     if (!parent || !xml) return 0;
