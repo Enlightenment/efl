@@ -329,6 +329,9 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
 
    if ((!clas) || !o) return EFL_UI_THEME_APPLY_FAILED;
    if (!th) th = &(theme_default);
+
+   if (eina_streq(style, "default")) style = NULL;
+
    if (is_legacy)
      snprintf(buf2, sizeof(buf2), "elm/%s/%s/%s", clas, (group) ? group : "base", (style) ? style : "default");
    else
@@ -356,10 +359,9 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    if (!style)
      return EFL_UI_THEME_APPLY_FAILED;
 
-   if (eina_streq(style, "default")) return EFL_UI_THEME_APPLY_FAILED;
    // Use the elementary default style.
    return (EFL_UI_THEME_APPLY_DEFAULT &
-           _elm_theme_set(th, o, clas, group, "default", is_legacy));
+           _elm_theme_set(th, o, clas, group, NULL, is_legacy));
 }
 
 Eina_Bool
