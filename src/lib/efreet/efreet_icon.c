@@ -25,7 +25,9 @@ struct Efreet_Icon_Cache
     time_t lasttime;
 };
 
+#ifdef SLOPPY_SPEC
 static char *efreet_icon_remove_extension(const char *icon);
+#endif
 
 static Efreet_Icon *efreet_icon_new(const char *path);
 static void efreet_icon_populate(Efreet_Icon *icon, const char *file);
@@ -179,6 +181,7 @@ efreet_icon_theme_find(const char *theme_name)
     return efreet_cache_icon_theme_find(theme_name);
 }
 
+#ifdef SLOPPY_SPEC
 /**
  * @internal
  * @param icon The icon name to strip extension
@@ -214,6 +217,7 @@ efreet_icon_remove_extension(const char *icon)
 
     return tmp;
 }
+#endif
 
 EAPI const char *
 efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int size)
