@@ -14,7 +14,17 @@ _event_node_cb(const void *a, const void *b)
    if (wa->node->desc < wb->node->desc) return -1;
    else if (wa->node->desc == wb->node->desc) return 0;
    else return 1;
+}
 
+static int
+_event_node_legacy_cb(const void *a, const void *b)
+{
+   const Event_Node_Array_Wrapper *wa = a, *wb = b;
+
+   if (wa->node->desc < wb->node->desc) return -1;
+   else if ((wa->node->desc->legacy_is != wb->node->desc->legacy_is) && wa->node->desc == wb->node->desc) return 0;
+   else if (!strcmp(wa->node->desc->name, wb->node->desc->name)) return 0;
+   else return 1;
 }
 
 static int
@@ -25,7 +35,17 @@ _callback_node_cb(const void *a, const void *b)
    if (ca->priority < cb->priority) return 1;
    else if (ca->priority == cb->priority) return 0;
    else  return -1;
+}
 
+static int
+_callback_node_data_cb(const void *a, const void *b)
+{
+   const Callback_Node *ca = a, *cb = b;
+
+  if ((ca->func == cb->func) &&
+      (ca->data == cb->data))
+    return 0;
+  return 1;
 }
 
 static unsigned int
@@ -36,14 +56,17 @@ _generation_latest(Eo_Event_Emitter *emitter)
 }
 
 static inline Event_Node*
-_emitter_ev_node_get(Eo_Event_Emitter *emitter, const Efl_Event_Description *desc, int *index)
+_emitter_ev_node_get(Eo_Event_Emitter *emitter, const Efl_Event_Description *desc, int *index, Eina_Bool legacy_compatibility)
 {
    int event_index;
    Event_Node node = { .desc = desc };
    Event_Node_Array_Wrapper tmp = { &node };
    Event_Node_Array_Wrapper *res;
 
-   event_index = eina_inarray_search_sorted(emitter->callbacks, &tmp, _event_node_cb);
+   if (legacy_compatibility)
+     event_index = eina_inarray_search(emitter->callbacks, &tmp, _event_node_legacy_cb);
+   else
+     event_index = eina_inarray_search_sorted(emitter->callbacks, &tmp, _event_node_cb);
 
    if (index) *index = event_index;
    if (event_index == -1) return NULL;
@@ -51,12 +74,6 @@ _emitter_ev_node_get(Eo_Event_Emitter *emitter, const Efl_Event_Description *des
    res = eina_inarray_nth(emitter->callbacks, event_index);
 
    return res->node;
-}
-
-static inline void
-callback_fire(Eo_Event_Emitter_Frame *frame, Callback_Node *node, Efl_Event *event_info)
-{
-
 }
 
 #define NODE_USAGE(x, cb) \
@@ -76,16 +93,16 @@ else \
       } \
   } \
 
-void
-eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info)
+Eina_Bool
+eo_event_emitter_emit(Eo_Event_Emitter *emitter, const Efl_Event *event_info, Eina_Bool legacy)
 {
    int event_index;
    Eo_Event_Emitter_Frame frame, *restart_frame = NULL;
    Event_Node *ev_node = NULL;
 
-   ev_node = _emitter_ev_node_get(emitter, event_info->desc, NULL);
+   ev_node = _emitter_ev_node_get(emitter, event_info->desc, NULL, legacy);
 
-   if (!ev_node) return;
+   if (!ev_node) return EINA_TRUE;
 
    frame.generation = _generation_latest(emitter) + 1;
    if (!ev_node->simple)
@@ -110,15 +127,16 @@ eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info)
    frame.terminate = EINA_FALSE;
    emitter->most_recent = &frame;
 
-   NODE_USAGE(frame.runner_index,{
+   NODE_USAGE(frame.runner_index,
+     {
+        //ignore callbacks that are added later
+        if (node->generation >= frame.generation) continue;
 
-    //ignore callbacks that are added later
-    if (node->generation > frame.generation) return;
+        node->func((void*)node->data, event_info);
 
-    node->func(node->data, event_info);
-
-    if (frame.terminate) break;
-   })
+        if (frame.terminate) break;
+     }
+   )
 
    //restore the old frame to make this other thing start at the end again like a new run
    if (restart_frame)
@@ -153,7 +171,7 @@ eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info)
         NODE_USAGE(x, {
           if (node->generation == UINT_MAX && highest_generation == 0)
             {
-               eo_event_emitter_unregister(emitter, node->func, event_info->desc, node->priority, node->data);
+               eo_event_emitter_unregister(emitter, node->func, event_info->desc, node->data);
             }
           else if (node->generation > highest_generation)
             {
@@ -161,6 +179,7 @@ eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info)
             }
         })
      }
+   return !frame.terminate;
 }
 
 
@@ -171,14 +190,14 @@ eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info)
   (node)->generation = _generation_latest(emitter); \
 
 void
-eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, void *data)
+eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, const void *data)
 {
    Callback_Node *node;
    Event_Node *ev_node;
    Callback_Node new_callback_node;
    int cb_index;
 
-   ev_node = _emitter_ev_node_get(emitter, ev, NULL);
+   ev_node = _emitter_ev_node_get(emitter, ev, NULL, EINA_FALSE);
    if (!ev_node)
      {
         Event_Node_Array_Wrapper wrapper = { calloc(1, sizeof(Event_Node)) };
@@ -221,27 +240,28 @@ eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_
      {
         if (frame->desc == ev)
           {
-             if (frame->runner_index < cb_index) frame->runner_index ++;
+             if (frame->runner_index >= cb_index + 1) frame->runner_index ++;
+             frame->cleanup = EINA_TRUE;
           }
      }
 }
 
 void
-eo_event_emitter_unregister(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, void *data)
+eo_event_emitter_unregister(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, const void *data)
 {
    int ev_index = -1, cb_index = -1;
    Event_Node *ev_node, *cb_node;
-   Callback_Node  tmp = { .priority = priority};
+   Callback_Node  tmp = { .func = cb, .data = data };
    Callback_Node *node = NULL;
    Eina_Bool disable_deletion = EINA_FALSE;
 
-   ev_node = _emitter_ev_node_get(emitter, ev, &ev_index);
+   ev_node = _emitter_ev_node_get(emitter, ev, &ev_index, EINA_FALSE);
 
    if (!ev_node) return;
 
    if (!ev_node->simple)
      {
-        cb_index = eina_inarray_search_sorted(ev_node->callback.chain, &tmp, _callback_node_cb);
+        cb_index = eina_inarray_search(ev_node->callback.chain, &tmp, _callback_node_data_cb);
         node = eina_inarray_nth(ev_node->callback.chain, cb_index);
      }
    else

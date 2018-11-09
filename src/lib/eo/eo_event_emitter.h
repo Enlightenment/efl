@@ -7,7 +7,7 @@ typedef struct {
    Efl_Event_Cb func; /**< The callback function. */
    unsigned int generation;
    Efl_Callback_Priority priority;
-   void *data;
+   const void *data;
 } Callback_Node;
 
 typedef struct {
@@ -37,9 +37,9 @@ typedef struct {
   Eina_List *garbage;
 } Eo_Event_Emitter;
 
-void eo_event_emitter_emit(Eo_Event_Emitter *emitter, Efl_Event *event_info);
-void eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, void *data);
-void eo_event_emitter_unregister(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, void *data);
+Eina_Bool eo_event_emitter_emit(Eo_Event_Emitter *emitter, const Efl_Event *event_info, Eina_Bool legacy);
+void eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, Efl_Callback_Priority priority, const void *data);
+void eo_event_emitter_unregister(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_Event_Description *ev, const void *data);
 void eo_event_emitter_init(Eo_Event_Emitter *emitter);
 void eo_event_emitter_free(Eo_Event_Emitter *emitter);
 void eo_event_emitter_stop(Eo_Event_Emitter *emitter);
