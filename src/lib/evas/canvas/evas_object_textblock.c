@@ -7321,7 +7321,7 @@ _style_fetch(const char *style)
 }
 
 EOLIAN static void
-_efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o, const char *key, const char *style)
+_efl_canvas_text_style_set(Eo *eo_obj, Efl_Canvas_Text_Data *o EINA_UNUSED, const char *key, const char *style)
 {
    // FIXME: Make key value behaviour.
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
@@ -7359,8 +7359,6 @@ evas_object_textblock_style_user_push(Eo *eo_obj, Evas_Textblock_Style *ts)
    EINA_SAFETY_ON_NULL_RETURN(eo_obj);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Textblock_Style *old_ts, *tmp = NULL;
 
    _textblock_style_generic_set(eo_obj, ts, _STYLE_USER);
 }
@@ -7383,9 +7381,6 @@ evas_object_textblock_style_user_pop(Eo *eo_obj)
    EINA_SAFETY_ON_NULL_RETURN(eo_obj);
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   Evas_Textblock_Style *ts = _style_by_key_find(o, _STYLE_USER);
-
    _textblock_style_generic_set(eo_obj, NULL, _STYLE_USER);
 }
 
