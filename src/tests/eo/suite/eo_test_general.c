@@ -182,9 +182,9 @@ _eo_signals_cb_added_deled(void *data EINA_UNUSED, const Efl_Event *event)
    const Efl_Callback_Array_Item_Full *callback_array = event->info;
 
    if (check_is_deled)
-     fail_if(callback_array->func == _eo_signals_cb_added_deled);
+     ck_assert_ptr_eq(callback_array->func, _eo_signals_cb_added_deled);
    else
-     fail_if(callback_array->func != _eo_signals_cb_added_deled);
+     ck_assert_ptr_ne(callback_array->func, _eo_signals_cb_added_deled);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_eo_signals_callbacks,

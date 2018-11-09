@@ -12,6 +12,7 @@
 #include "eo_ptr_indirection.h"
 #include "eo_private.h"
 #include "eina_promise_private.h"
+#include "eo_event_emitter.h"
 
 #define EFL_EVENT_SPECIAL_SKIP 1
 
@@ -51,7 +52,7 @@ struct _Efl_Object_Data
    Efl_Object_Extension      *ext;
 
    Eina_Inlist               *current;
-
+   Eo_Event_Emitter          emitter;
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
    Eina_Inlist               *pending_futures;
@@ -1169,30 +1170,30 @@ _efl_pending_future_new(void)
 #define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
 
 static inline void
-_special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+_special_event_count_inc(Efl_Object_Data *pd, const Efl_Event_Description *desc)
 {
-   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
+   if      (desc == EFL_EVENT_CALLBACK_ADD)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
-   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
+   else if (desc == EFL_EVENT_CALLBACK_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_del_count);
-   else if (it->desc == EFL_EVENT_DEL)
+   else if (desc == EFL_EVENT_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_del_count);
-   else if (it->desc == EFL_EVENT_NOREF)
+   else if (desc == EFL_EVENT_NOREF)
      CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
-   else if (it->desc == EFL_EVENT_DESTRUCT)
+   else if (desc == EFL_EVENT_DESTRUCT)
      pd->has_destroyed_event_cb = EINA_TRUE;
 }
 
 static inline void
-_special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+_special_event_count_dec(Efl_Object_Data *pd, const Efl_Event_Description *desc)
 {
-   if      (it->desc == EFL_EVENT_CALLBACK_ADD)
+   if      (desc == EFL_EVENT_CALLBACK_ADD)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_add_count);
-   else if (it->desc == EFL_EVENT_CALLBACK_DEL)
+   else if (desc == EFL_EVENT_CALLBACK_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
-   else if (it->desc == EFL_EVENT_DEL)
+   else if (desc == EFL_EVENT_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
-   else if (it->desc == EFL_EVENT_NOREF)
+   else if (desc == EFL_EVENT_NOREF)
      CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
 }
 #endif
@@ -1208,9 +1209,9 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
    if ((*cb)->func_array)
      {
         for (it = (*cb)->items.item_array; it->func; it++)
-          _special_event_count_dec(pd, it);
+          _special_event_count_dec(pd, it->desc);
      }
-   else _special_event_count_dec(pd, &((*cb)->items.item));
+   else _special_event_count_dec(pd, ((*cb)->items.item).desc);
 #endif
 
    _eo_callback_free(*cb);
@@ -1383,33 +1384,24 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
                                         Efl_Event_Cb func,
                                         const void *user_data)
 {
-   const Efl_Callback_Array_Item_Full arr[] =
-     { {desc, priority, func, (void *)user_data}, {NULL, 0, NULL, NULL}};
-   Eo_Callback_Description *cb = _eo_callback_new();
-
+   const Efl_Callback_Array_Item arr = {desc, func};
    // very unlikely so improve l1 instr cache by using goto
-   if (EINA_UNLIKELY(!cb || !desc || !func)) goto err;
-   cb->items.item.desc = desc;
-   cb->items.item.func = func;
-   cb->func_data = (void *)user_data;
-   cb->priority = priority;
-   cb->generation = _efl_event_generation(pd);
-   if (cb->generation) pd->need_cleaning = EINA_TRUE;
+   if (EINA_UNLIKELY(!desc || !func)) goto err;
 
-   _eo_callbacks_sorted_insert(pd, cb);
+   eo_event_emitter_register(&pd->emitter, func, desc, priority, user_data);
+
 #ifdef EFL_EVENT_SPECIAL_SKIP
-   _special_event_count_inc(pd, &(cb->items.item));
+   _special_event_count_inc(pd, desc);
 #endif
    if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
      pd->has_destroyed_event_cb = EINA_TRUE;
 
-   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void *)arr);
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_ADD, (void*)&arr);
 
    return EINA_TRUE;
 
 err: EINA_COLD
-   ERR("Tried adding callback with invalid values: cb: %p desc: %p func: %p", cb, desc, func);
-   _eo_callback_free(cb);
+   ERR("Tried adding callback with invalid values:  desc: %p func: %p", desc, func);
    return EINA_FALSE;
 }
 
@@ -1439,26 +1431,15 @@ _efl_object_event_callback_del(Eo *obj, Efl_Object_Data *pd,
                                Efl_Event_Cb func,
                                const void *user_data)
 {
-   Eo_Callback_Description **cb;
-   unsigned int i;
+   const Efl_Callback_Array_Item array = {desc, func};
 
-   for (cb = pd->callbacks, i = 0;
-        i < pd->callbacks_count;
-        cb++, i++)
-     {
-        if (!(*cb)->delete_me &&
-            ((*cb)->items.item.desc == desc) &&
-            ((*cb)->items.item.func == func) &&
-            ((*cb)->func_data == user_data))
-          {
-             const Efl_Callback_Array_Item_Full arr[] =
-               { {desc, (*cb)->priority, func, (*cb)->func_data}, {NULL, 0, NULL, NULL}};
+   eo_event_emitter_unregister(&pd->emitter, func, desc, user_data);
 
-             _efl_object_event_callback_clean(obj, pd, arr, cb);
-             return EINA_TRUE;
-          }
-     }
+#ifdef EFL_EVENT_SPECIAL_SKIP
+   _special_event_count_dec(pd, desc);
+#endif
 
+   efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)&array);
    DBG("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
    return EINA_FALSE;
 }
@@ -1474,61 +1455,33 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                                               Efl_Callback_Priority priority,
                                               const void *user_data)
 {
-   Eo_Callback_Description *cb = _eo_callback_new();
    const Efl_Callback_Array_Item *it;
    unsigned int num, i;
    Efl_Callback_Array_Item_Full *ev_array;
-#ifdef EO_DEBUG
-   const Efl_Callback_Array_Item *prev;
-#endif
 
    // very unlikely so improve l1 instr cache by using goto
-   if (!cb || !array) goto err;
-#ifdef EO_DEBUG
-   prev = array;
-   for (it = prev + 1; prev->func && it->func; it++, prev++)
-     {
-        if (efl_callbacks_cmp(prev, it) > 0)
-          {
-             ERR("Trying to insert a non sorted array callbacks (%p).", array);
-             _eo_callback_free(cb);
-             return EINA_FALSE;
-          }
-     }
-#endif
-
-   cb->func_data = (void *) user_data;
-   cb->priority = priority;
-   cb->items.item_array = array;
-   cb->func_array = EINA_TRUE;
-   cb->generation = _efl_event_generation(pd);
-   if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
-
-   _eo_callbacks_sorted_insert(pd, cb);
-#ifdef EFL_EVENT_SPECIAL_SKIP
-   for (it = cb->items.item_array; it->func; it++)
-     _special_event_count_inc(pd, it);
-#else
-   if (!pd->has_destroyed_event_cb)
-     {
-        for (it = cb->items.item_array; it->func; it++)
-          if (it->desc == EFL_EVENT_DESTRUCT)
-            {
-               pd->has_destroyed_event_cb = EINA_TRUE;
-               break;
-            }
-     }
-#endif
+   if (!array) goto err;
 
    num = 0;
-   for (it = cb->items.item_array; it->func; it++) num++;
-   ev_array = alloca((num + 1) * sizeof(Efl_Callback_Array_Item_Full));
-   for (i = 0, it = cb->items.item_array; it->func; it++, i++)
+   for (it = array; it->func; it++)
      {
-        ev_array[i].desc = cb->items.item_array[i].desc;
-        ev_array[i].priority = cb->priority;
-        ev_array[i].func = cb->items.item_array[i].func;
-        ev_array[i].user_data = cb->func_data;
+        num++;
+
+        eo_event_emitter_register(&pd->emitter, it->func, it->desc, priority, user_data);
+
+#ifdef EFL_EVENT_SPECIAL_SKIP
+        _special_event_count_inc(pd, it->desc);
+#endif
+        if (it->desc == EFL_EVENT_DESTRUCT)
+          pd->has_destroyed_event_cb = EINA_TRUE;
+     }
+   ev_array = alloca((num + 1) * sizeof(Efl_Callback_Array_Item_Full));
+   for (i = 0, it = array; it->func; it++, i++)
+     {
+        ev_array[i].desc = array[i].desc;
+        ev_array[i].priority = priority;
+        ev_array[i].func = array[i].func;
+        ev_array[i].user_data = (void*)user_data;
      }
    ev_array[i].desc = NULL;
    ev_array[i].priority = 0;
@@ -1539,8 +1492,7 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    return EINA_TRUE;
 
 err:
-   ERR("Tried adding array of callbacks with invalid values: cb: %p array: %p.", cb, array);
-   _eo_callback_free(cb);
+   ERR("Tried adding array of callbacks with invalid values: array: %p.", array);
    return EINA_FALSE;
 }
 
@@ -1554,38 +1506,11 @@ _efl_object_event_callback_array_del(Eo *obj, Efl_Object_Data *pd,
                                      const Efl_Callback_Array_Item *array,
                                      const void *user_data)
 {
-   Eo_Callback_Description **cb;
-   unsigned int j;
+   const Efl_Callback_Array_Item *it;
 
-   for (cb = pd->callbacks, j = 0;
-        j < pd->callbacks_count;
-        cb++, j++)
+   for (it = array; it->func; it++)
      {
-        if (!(*cb)->delete_me &&
-            ((*cb)->items.item_array == array) &&
-            ((*cb)->func_data == user_data))
-          {
-             const Efl_Callback_Array_Item *it;
-             unsigned int num, i;
-             Efl_Callback_Array_Item_Full *ev_array;
-
-             num = 0;
-             for (it = (*cb)->items.item_array; it->func; it++) num++;
-             ev_array = alloca((num + 1) * sizeof(Efl_Callback_Array_Item_Full));
-             for (i = 0, it = (*cb)->items.item_array; it->func; it++, i++)
-               {
-                  ev_array[i].desc = (*cb)->items.item_array[i].desc;
-                  ev_array[i].priority = (*cb)->priority;
-                  ev_array[i].func = (*cb)->items.item_array[i].func;
-                  ev_array[i].user_data = (*cb)->func_data;
-               }
-             ev_array[i].desc = NULL;
-             ev_array[i].priority = 0;
-             ev_array[i].func = NULL;
-             ev_array[i].user_data = NULL;
-             _efl_object_event_callback_clean(obj, pd, ev_array, cb);
-             return EINA_TRUE;
-          }
+        eo_event_emitter_unregister(&pd->emitter, it->func, it->desc, user_data);
      }
 
    DBG("Callback of object %p with function array %p and data %p not found.", obj, array, user_data);
@@ -1766,7 +1691,8 @@ _efl_object_event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             const Efl_Event_Description *desc,
             void *event_info)
 {
-   return _event_callback_call(obj_id, pd, desc, event_info, EINA_FALSE);
+   Efl_Event ev = { obj_id, desc, event_info };
+   return eo_event_emitter_emit(&pd->emitter, &ev, EINA_FALSE);
 }
 
 EOAPI EFL_FUNC_BODYV(efl_event_callback_call,
@@ -1778,7 +1704,8 @@ _efl_object_event_callback_legacy_call(Eo *obj_id, Efl_Object_Data *pd,
             const Efl_Event_Description *desc,
             void *event_info)
 {
-   return _event_callback_call(obj_id, pd, desc, event_info, EINA_TRUE);
+   Efl_Event ev = { obj_id, desc, event_info };
+   return eo_event_emitter_emit(&pd->emitter, &ev, EINA_TRUE);
 }
 
 EOAPI EFL_FUNC_BODYV(efl_event_callback_legacy_call,
@@ -1788,7 +1715,7 @@ EOAPI EFL_FUNC_BODYV(efl_event_callback_legacy_call,
 EOLIAN static void
 _efl_object_event_callback_stop(Eo *obj EINA_UNUSED, Efl_Object_Data *pd)
 {
-   pd->callback_stopped = EINA_TRUE;
+   eo_event_emitter_stop(&pd->emitter);
 }
 
 static void
@@ -2156,9 +2083,11 @@ efl_future_chain_array(Eo *obj,
 }
 
 EOLIAN static Eo *
-_efl_object_constructor(Eo *obj, Efl_Object_Data *pd EINA_UNUSED)
+_efl_object_constructor(Eo *obj, Efl_Object_Data *pd)
 {
    DBG("%p - %s.", obj, efl_class_name_get(obj));
+
+   eo_event_emitter_init(&pd->emitter);
 
    _eo_condtor_done(obj);
 
@@ -2207,7 +2136,10 @@ err_parent_back:
    // point (so efl_destructed_is() returns false), but triggering the
    // "destruct" event here is the simplest, safest solution.
    if (EINA_UNLIKELY(pd->has_destroyed_event_cb))
-     _event_callback_call(obj, pd, EFL_EVENT_DESTRUCT, NULL, EINA_FALSE);
+     {
+        Efl_Event ev = {obj, EFL_EVENT_DESTRUCT, NULL};
+        eo_event_emitter_emit(&pd->emitter, &ev, EINA_FALSE);
+     }
 
    // remove generic data after this final event, in case they are used in a cb
    _eo_generic_data_del_all(obj, pd);
@@ -2338,3 +2270,4 @@ _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
    EFL_OBJECT_OP_FUNC(efl_key_value_get, _efl_object_key_value_get) \
 
 #include "efl_object.eo.c"
+
