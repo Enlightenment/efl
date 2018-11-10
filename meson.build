@@ -121,7 +121,7 @@ evas_opt_c_args = [ ]
 machine_c_args = [ ]
 compiler = meson.get_compiler('c')
 if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
-  if compiler.check_header('immintrin.h') == true
+  if compiler.has_header('immintrin.h') == true
     if (get_option('cpu-mmx') == true)
       config_h.set10('BUILD_MMX', true)
       cpu_mmx = true
@@ -133,18 +133,22 @@ if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
         message('x86 build - SSE3 enabled')
       endif
     endif
+  else
+    error('Perhaps you wish to disble MMX with -Dcpu-mmx=false')
   endif
 elif host_machine.cpu_family() == 'arm'
-  if compiler.check_header('arm_neon.h') == true
+  if compiler.has_header('arm_neon.h') == true
     if (get_option('cpu-neon') == true)
       config_h.set10('BUILD_NEON', true)
       machine_c_args += ['-mfpu=neon', '-ftree-vectorize']
       cpu_neon = true
       message('ARM build - NEON enabled')
     endif
+  else
+    error('Perhaps you wish to disble NEON with -Dcpu-neon=false')
   endif
 elif host_machine.cpu_family() == 'aarch64'
-  if compiler.check_header('arm_neon.h') == true
+  if compiler.has_header('arm_neon.h') == true
     if (get_option('cpu-neon') == true)
       config_h.set10('BUILD_NEON', true)
       config_h.set10('BUILD_NEON_INTRINSICS', true)
@@ -153,15 +157,19 @@ elif host_machine.cpu_family() == 'aarch64'
       cpu_neon_intrinsics = true
       message('ARM64 build - NEON + intrinsics enabled')
     endif
+  else
+    error('Perhaps you wish to disble NEON with -Dcpu-neon=false')
   endif
 elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
-  if compiler.check_header('altivec.h') == true
+  if compiler.has_header('altivec.h') == true
     if (get_option('cpu-akltivec') == true)
       config_h.set10('BUILD_ALTIVEC', true)
       machine_c_args += [ '-maltivec' ]
       cpu_altivec = true
       message('PPC/POWER build - ALTIVEC enabled')
     endif
+  else
+    error('Perhaps you wish to disble NEON with -Dcpu-altivec=false')
   endif
 endif
 
