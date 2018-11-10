@@ -3,7 +3,6 @@ group { name: "e/modules/temperature/main";
    alias: "e/gadget/thermal/main_vert";
    alias: "e/modules/thermal/main";
    alias: "e/modules/thermal/main_vert";
-   images.image: "therm_base.png" COMP;
    images.image: "therm_content.png" COMP;
    min: 16 16;
    max: 128 128;
@@ -24,7 +23,8 @@ group { name: "e/modules/temperature/main";
          description { state: "default" 0.0;
             rel1.to: "temp";
             rel2.to: "temp";
-            image.normal: "therm_base.png";
+            image.normal: "therm_content.png";
+            color: 32 32 32 255;
          }
       }
       part { name: "temp";
@@ -127,13 +127,15 @@ group { name: "e/modules/temperature/main";
 group { name: "e/gadget/thermal/main";
    alias: "e/gadget/thermal/main_vert";
    images.image: "therm_content.png" COMP;
-   images.image: "therm_shadow.png" COMP;
    script {
     public message(Msg_Type:type, id, ...) {
        if ((type == MSG_FLOAT) && (id == 1)) {
           new Float:val;
           val = getfarg(2);
           set_drag(PART:"temp_top", 0.0, val);
+          if (val <= 0.6) set_state(PART:"temp", "default", 0.0);
+          else if (val <= 0.8) set_state(PART:"temp", "warm", 0.0);
+          else if (val <= 1.0) set_state(PART:"temp", "hot", 0.0);
        }
     }
    }
@@ -144,11 +146,12 @@ group { name: "e/gadget/thermal/main";
             aspect_preference: BOTH;
          }
       }
-      part { name: "shadow";
+      part { name: "bg";
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
-            image.normal: "therm_shadow.png";
+            image.normal: "therm_content.png";
+            color: 32 32 32 255;
          }
       }
        part { name: "temp";
@@ -157,6 +160,15 @@ group { name: "e/gadget/thermal/main";
             rel1.to: "base";
             rel2.to: "base";
             image.normal: "therm_content.png";
+            color: 51 153 255 255;
+         }
+         description { state: "warm" 0.0;
+            inherit: "default" 0.0;
+            color: 255 153 51 255;
+         }
+         description { state: "hot" 0.0;
+            inherit: "default" 0.0;
+            color: 255 0 0 255;
          }
       }
       part { name: "fade_clip"; type: RECT;
