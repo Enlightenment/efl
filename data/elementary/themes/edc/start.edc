@@ -1,4 +1,5 @@
 group { name: "e/modules/start/main";
+   alias: "e/gadget/start/main";
    images.image: "big_arrow_down.png" COMP;
    images.image: "big_arrow_up.png" COMP;
    images.image: "big_arrow_left.png" COMP;
