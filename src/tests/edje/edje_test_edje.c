@@ -220,7 +220,7 @@ EFL_START_TEST(edje_test_part_caching)
 
         p = efl_part(ly, "swallow");
         o1 = efl_content_get(p);
-        ck_assert_ptr_ne(o1, NULL);
+        ck_assert_ptr_eq(o1, NULL);
 
         if (global_p)
           ck_assert_ptr_eq(global_p, p);
