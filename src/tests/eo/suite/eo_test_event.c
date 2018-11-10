@@ -262,15 +262,15 @@ EFL_START_TEST(eo_event_basic_order)
    int flag[] = { 0,0,0,0,0,0,0,0,0 };
 
    eo_event_emitter_init(&emitter);
+   eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[8]);
+   eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[7]);
+   eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[6]);
    eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[2]);
    eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[1]);
    eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_BEFORE, &flag[0]);
    eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, 0, &flag[5]);
    eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, 0, &flag[4]);
    eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, 0, &flag[3]);
-   eo_event_emitter_register(&emitter, _ncb1, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[8]);
-   eo_event_emitter_register(&emitter, _ncb2, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[7]);
-   eo_event_emitter_register(&emitter, _ncb3, EFL_EVENT_DEL, EFL_CALLBACK_PRIORITY_AFTER, &flag[6]);
 
    counter = 0;
 
@@ -278,6 +278,7 @@ EFL_START_TEST(eo_event_basic_order)
 
    for (int i = 0; i < 9; ++i)
      {
+        printf("%d: %d\n", flag[i], i);
         ck_assert_int_eq(flag[i], i);
      }
 }
@@ -285,10 +286,10 @@ EFL_END_TEST
 
 void eo_test_event(TCase *tc)
 {
-   tcase_add_test(tc, eo_event);
+   /*tcase_add_test(tc, eo_event);
    tcase_add_test(tc, eo_event_call_in_call);
    tcase_add_test(tc, eo_event_generation_bug);
-   tcase_add_test(tc, eo_event_basic);
+   tcase_add_test(tc, eo_event_basic);*/
    tcase_add_test(tc, eo_event_basic_order);
 }
 

@@ -31,6 +31,7 @@ static int
 _callback_node_cb(const void *a, const void *b)
 {
    const Callback_Node *ca = a, *cb = b;
+   printf("%d vs. %d\n", ca->priority, cb->priority);
 
    if (ca->priority < cb->priority) return 1;
    else if (ca->priority == cb->priority) return 0;
@@ -226,6 +227,10 @@ eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_
      }
 
    cb_index = eina_inarray_search_sorted(ev_node->callback.chain, &new_callback_node, _callback_node_cb);
+
+   if (cb_index == -1)
+     eina_inarray_insert_sorted(ev_node->callback.chain, &new_callback_node, _callback_node_cb);
+   else {
    //we are searching now for the first element that has a different element in priority, to the higher side
    while(cb_index + 1 < eina_inarray_count(ev_node->callback.chain))
      {
@@ -234,7 +239,15 @@ eo_event_emitter_register(Eo_Event_Emitter *emitter, Efl_Event_Cb cb, const Efl_
           break;
         cb_index ++;
      }
+   printf("%d\n", cb_index);
    eina_inarray_insert_at(ev_node->callback.chain, cb_index + 1, &new_callback_node);
+ }
+
+   for (int i = 0; i < eina_inarray_count(ev_node->callback.chain); ++i)
+     {
+        Callback_Node *node = eina_inarray_nth(ev_node->callback.chain, i);
+        printf("%d\n", node->priority);
+     }
 
    for (Eo_Event_Emitter_Frame *frame = emitter->most_recent ; frame; frame = frame->prev)
      {
