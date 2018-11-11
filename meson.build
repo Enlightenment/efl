@@ -120,6 +120,11 @@ cpu_altivec = false
 evas_opt_c_args = [ ]
 machine_c_args = [ ]
 compiler = meson.get_compiler('c')
+
+if host_machine.endian() == 'big'
+  config_h.set10('WORDS_BIGENDIAN', true)
+endif
+
 if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
   if compiler.has_header('immintrin.h') == true
     if (get_option('cpu-mmx') == true)
