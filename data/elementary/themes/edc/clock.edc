@@ -1,4 +1,5 @@
 group { name: "e/modules/clock/digital";
+   alias: "e/gadget/clock/digital";
    min: 64 16;
    max: 512 128;
    images.image: "digit_0.png" COMP;
@@ -497,6 +498,7 @@ group { name: "e/modules/clock/digital";
 }
 
 group { name: "e/modules/clock/main";
+   alias: "e/gadget/clock/analog";
    images.image: "clock_base.png" COMP;
    set { name: "tacho_hand_big";
       image { image: "tacho_hand_big.png" COMP; size: 73 73 99999 99999; }
@@ -654,6 +656,7 @@ group { name: "e/modules/clock/main";
 }
 
 group { name: "e/modules/clock/calendar/dayname";
+   alias: "e/gadget/clock/calendar/dayname";
    parts {
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          scale: 1;
@@ -688,6 +691,7 @@ group { name: "e/modules/clock/calendar/dayname";
 }
 
 group { name: "e/modules/clock/calendar/day";
+   alias: "e/gadget/clock/calendar/day";
    script {
       public day_state = 0;
       evalstate() {
@@ -831,6 +835,7 @@ group { name: "e/modules/clock/calendar/day";
 }
 
 group { name: "e/modules/clock/calendar";
+   alias: "e/gadget/clock/calendar";
    images.image: "calendar_prev.png" COMP;
    images.image: "calendar_next.png" COMP;
    parts {
