@@ -1986,6 +1986,124 @@ _update_guide_text(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 
 }
 
+/**
+ * @internal
+ * Returns the numeric value of HEX chars for example for ch = 'A'
+ * the function will return 10.
+ *
+ * @param ch The HEX char.
+ * @return numeric value of HEX.
+ */
+static int
+_hex_string_get(char ch, Eina_Bool *ok)
+{
+   if ((ch >= '0') && (ch <= '9')) return (ch - '0');
+   else if ((ch >= 'A') && (ch <= 'F')) return (ch - 'A' + 10);
+   else if ((ch >= 'a') && (ch <= 'f')) return (ch - 'a' + 10);
+   *ok = EINA_FALSE;
+   return 0;
+}
+
+
+static inline Eina_Bool
+_format_color_parse(const char *str, int slen,
+      unsigned char *r, unsigned char *g,
+      unsigned char *b, unsigned char *a)
+{
+   Eina_Bool v = EINA_TRUE;
+
+   *r = *g = *b = *a = 0;
+
+   if (slen == 7) /* #RRGGBB */
+     {
+        *r = (_hex_string_get(str[1], &v) << 4) | (_hex_string_get(str[2], &v));
+        *g = (_hex_string_get(str[3], &v) << 4) | (_hex_string_get(str[4], &v));
+        *b = (_hex_string_get(str[5], &v) << 4) | (_hex_string_get(str[6], &v));
+        *a = 0xff;
+     }
+   else if (slen == 9) /* #RRGGBBAA */
+     {
+        *r = (_hex_string_get(str[1], &v) << 4) | (_hex_string_get(str[2], &v));
+        *g = (_hex_string_get(str[3], &v) << 4) | (_hex_string_get(str[4], &v));
+        *b = (_hex_string_get(str[5], &v) << 4) | (_hex_string_get(str[6], &v));
+        *a = (_hex_string_get(str[7], &v) << 4) | (_hex_string_get(str[8], &v));
+     }
+   else if (slen == 4) /* #RGB */
+     {
+        *r = _hex_string_get(str[1], &v);
+        *r = (*r << 4) | *r;
+        *g = _hex_string_get(str[2], &v);
+        *g = (*g << 4) | *g;
+        *b = _hex_string_get(str[3], &v);
+        *b = (*b << 4) | *b;
+        *a = 0xff;
+     }
+   else if (slen == 5) /* #RGBA */
+     {
+        *r = _hex_string_get(str[1], &v);
+        *r = (*r << 4) | *r;
+        *g = _hex_string_get(str[2], &v);
+        *g = (*g << 4) | *g;
+        *b = _hex_string_get(str[3], &v);
+        *b = (*b << 4) | *b;
+        *a = _hex_string_get(str[4], &v);
+        *a = (*a << 4) | *a;
+     }
+   else v = EINA_FALSE;
+
+   *r = (*r * *a) / 255;
+   *g = (*g * *a) / 255;
+   *b = (*b * *a) / 255;
+   return v;
+}
+
+/**
+  * @internal
+  * Updates the text properties of the object from the theme.
+  * 
+  * This update functions skips any property that was already set,
+  * to allow users to override the theme during the construction of the widget.
+  */
+static void
+_update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
+{
+   const char *font_name;
+   const char *font_size;
+   const char *colorcode;
+
+   int font_size_n;
+   unsigned char r, g, b, a;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   // Main Text
+   // font_set
+   font_name = edje_object_data_get(wd->resize_obj, "font.name");
+   font_size = edje_object_data_get(wd->resize_obj, "font.size");
+   font_size_n = font_size ? atoi(font_size) : 0;
+   efl_text_font_set(sd->text_obj, font_name, font_size_n);
+
+   // color
+   colorcode = edje_object_data_get(wd->resize_obj, "style.color");
+   if (_format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
+     {
+        efl_text_normal_color_set(sd->text_obj, r, g, b, a);
+     }
+
+   // Guide Text
+   font_name = edje_object_data_get(wd->resize_obj, "guide.font.name");
+   font_size = edje_object_data_get(wd->resize_obj, "guide.font.size");
+   font_size_n = font_size ? atoi(font_size) : 0;
+   efl_text_font_set(sd->text_guide_obj, font_name, font_size_n);
+
+   // color
+   colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
+   if (_format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
+     {
+        efl_text_normal_color_set(sd->text_guide_obj, r, g, b, a);
+     }
+}
+
 EOLIAN static Eo *
 _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
 {
@@ -2043,11 +2161,9 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
 
-   // FIXME: use the theme, when a proper theming option is available
-   //  (possibly, text_classes).
-   // For now, set this for easier setup
-   efl_text_font_set(sd->text_obj, "Sans", 12);
-   efl_text_normal_color_set(sd->text_obj, 255, 255, 255, 255);
+   //TODO: complete the usage of the text theme
+   _update_text_theme(obj, sd);
+   //efl_text_font_set(sd->text_obj, "Sans", 12);
    sd->single_line = !efl_text_multiline_get(sd->text_obj);
    efl_text_set(sd->text_obj, "");
    efl_pack_table(sd->text_table, sd->text_obj, 0, 0, 1, 1);
@@ -3913,6 +4029,7 @@ _efl_ui_text_async_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, EFL_UI_TEXT_ASYNC_CLASS));
 
+   _update_text_theme(obj, sd);
    return obj;
 }
 
