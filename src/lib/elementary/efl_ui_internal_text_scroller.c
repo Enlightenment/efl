@@ -29,7 +29,8 @@
 
 typedef struct _Efl_Ui_Internal_Text_Scroller_Data
 {
-   Efl_Canvas_Text *content;
+   Efl_Canvas_Text *text_obj;
+   Efl_Ui_Table *text_table;
    Eo *smanager;
 
    Efl_Ui_Text_Scroller_Mode mode;
@@ -75,9 +76,9 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (sd->content)
+   if (sd->text_obj)
      {
-        efl_gfx_size_hint_weight_get(sd->content, &xw, &yw);
+        efl_gfx_size_hint_weight_get(sd->text_table, &xw, &yw);
      }
 
    if (psd->smanager)
@@ -87,17 +88,21 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
 
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
-   if (sd->content)
+   if (sd->text_obj)
      {
         Eina_Size2D fsz = EINA_SIZE2D(0, 0);
         Eina_Size2D sz = EINA_SIZE2D(0, 0);
 
-        sz = efl_gfx_entity_size_get(sd->content);
-        efl_event_freeze(sd->content);
-        efl_gfx_entity_size_set(sd->content, view.size);
-        efl_canvas_text_size_formatted_get(sd->content, &fsz.w, &fsz.h);
-        efl_gfx_entity_size_set(sd->content, sz);
-        efl_event_thaw(sd->content);
+        sz = efl_gfx_entity_size_get(sd->text_table);
+        efl_event_freeze(sd->text_table);
+        efl_event_freeze(sd->text_obj);
+        efl_gfx_entity_size_set(sd->text_table, view.size);
+        efl_gfx_entity_size_set(sd->text_obj, view.size);
+        efl_canvas_text_size_formatted_get(sd->text_obj, &fsz.w, &fsz.h);
+        efl_gfx_entity_size_set(sd->text_table, sz);
+        efl_gfx_entity_size_set(sd->text_obj, sz);
+        efl_event_thaw(sd->text_obj);
+        efl_event_thaw(sd->text_table);
 
 
         if (sd->mode == EFL_UI_TEXT_SCROLLER_MODE_SINGLELINE)
@@ -118,7 +123,7 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
           }
 
         // FIXME: should be restricted_min?
-        efl_gfx_entity_size_set(sd->content, fsz);
+        efl_gfx_entity_size_set(sd->text_table, fsz);
         efl_gfx_size_hint_min_set(obj, size);
         efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, size.h));
      }
@@ -131,6 +136,7 @@ _efl_ui_internal_text_scroller_efl_object_finalize(Eo *obj,
    obj = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_scrollbar_bar_mode_set(obj,
          EFL_UI_SCROLLBAR_MODE_OFF, EFL_UI_SCROLLBAR_MODE_OFF);
+   efl_content_set(obj, sd->text_table);
 
    return obj;
 }
@@ -143,12 +149,19 @@ _efl_ui_internal_text_scroller_efl_object_destructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_internal_text_scroller_text_object_set(Eo *obj,
+_efl_ui_internal_text_scroller_initialize(Eo *obj,
                                        Efl_Ui_Internal_Text_Scroller_Data *sd,
-                                       Efl_Canvas_Text *text_obj)
+                                       Efl_Canvas_Text *text_obj,
+                                       Efl_Ui_Table *text_table)
 {
-   sd->content = text_obj;
-   efl_content_set(obj, text_obj);
+   if (efl_finalized_get(obj))
+     {
+        ERR("Can only be called on construction");
+        return;
+     }
+
+   sd->text_obj = text_obj;
+   sd->text_table = text_table;
 }
 
 EOLIAN static void

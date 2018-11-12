@@ -33,6 +33,8 @@ struct _Efl_Ui_Text_Data
    Evas_Object                          *mgf_clip;
    Evas_Object                          *mgf_proxy;
    Eo                                   *text_obj;
+   Eo                                   *text_guide_obj;
+   Eo                                   *text_table;
    Eo                                   *pan;
    Eo                                   *scroller;
    Eo                                   *manager;
@@ -831,10 +833,9 @@ _cursor_geometry_recalc(Evas_Object *obj)
    edje_object_size_min_restricted_calc(sd->cursor, &cw, NULL, cw, 0);
    evas_object_geometry_get(sd->entry_edje, &x, &y, &w, &h);
    evas_object_geometry_get(
-         edje_object_part_swallow_get(sd->entry_edje, "efl.text"),
+         sd->text_obj,
          &x2, &y2, &w2, &h2);
-   cx = cx + x - x2;
-   cy = cy + y - y2;
+
    efl_ui_scrollable_scroll(sd->scroller, EINA_RECT(cx, cy, cw, ch), EINA_FALSE);
 
 }
@@ -946,7 +947,7 @@ _efl_ui_text_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Text_Data *sd)
      }
    else
      {
-        Eo *sw = edje_object_part_swallow_get(sd->entry_edje, "efl.text");
+        Eo *sw = sd->text_obj;
 
         _edje_signal_emit(sd, "efl,action,unfocus", "efl");
         if (sd->scroll)
@@ -1970,6 +1971,20 @@ _cb_deleted(void *data EINA_UNUSED, const Efl_Event *ev)
 
 }
 
+static void
+_update_guide_text(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
+{
+   const char *txt;
+   Eina_Bool show_guide;
+
+   txt = efl_text_get(sd->text_obj);
+
+   show_guide = (!txt || (txt[0] == '\0'));
+
+   efl_gfx_entity_visible_set(sd->text_guide_obj, show_guide);
+
+}
+
 EOLIAN static Eo *
 _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
 {
@@ -1985,6 +2000,8 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    sd->text_obj = text_obj;
+   sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
+   sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
    efl_composite_attach(obj, text_obj);
 
    sd->entry_edje = wd->resize_obj;
@@ -2032,9 +2049,17 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    efl_text_normal_color_set(sd->text_obj, 255, 255, 255, 255);
    sd->single_line = !efl_text_multiline_get(sd->text_obj);
 
-   sd->item_fallback_factory = efl_add(EFL_UI_TEXT_FACTORY_FALLBACK_CLASS, obj);
+   efl_text_set(sd->text_obj, "");
+   efl_pack_table(sd->text_table, sd->text_obj, 0, 0, 1, 1);
+   efl_pack_table(sd->text_table, sd->text_guide_obj, 0, 0, 1, 1);
 
-   edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_obj);
+   //edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_obj);
+   //edje_object_part_swallow(sd->entry_edje, "efl.text_guide", sd->text_guide_obj);
+   edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_table);
+
+   _update_guide_text(obj, sd);
+
+   sd->item_fallback_factory = efl_add(EFL_UI_TEXT_FACTORY_FALLBACK_CLASS, obj);
 
    evas_object_size_hint_weight_set
       (sd->entry_edje, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2441,14 +2466,12 @@ _efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool
 
    if (scroll)
      {
-        efl_ref(sd->text_obj);
-        sd->scroller = efl_add(EFL_UI_INTERNAL_TEXT_SCROLLER_CLASS, obj);
-        efl_ui_scrollbar_bar_mode_set(sd->scroller, EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO);
-        efl_content_set(sd->scroller, sd->text_obj);
-
         edje_object_part_swallow(sd->entry_edje, "efl.text", NULL);
+        sd->scroller = efl_add(EFL_UI_INTERNAL_TEXT_SCROLLER_CLASS, obj,
+              efl_ui_internal_text_scroller_initialize(efl_added,
+                 sd->text_obj, sd->text_table));
+        efl_ui_scrollbar_bar_mode_set(sd->scroller, EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO);
         edje_object_part_swallow(sd->entry_edje, "efl.text", sd->scroller);
-        efl_ui_internal_text_scroller_text_object_set(sd->scroller, sd->text_obj);
         evas_object_clip_set(sd->cursor,
               efl_ui_internal_text_scroller_viewport_clip_get(sd->scroller));
         efl_event_callback_add(sd->scroller, EFL_GFX_ENTITY_EVENT_RESIZE,
@@ -2457,8 +2480,7 @@ _efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool
    else
      {
         efl_content_set(sd->scroller, NULL);
-        edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_obj);
-        efl_unref(sd->text_obj);
+        edje_object_part_swallow(sd->entry_edje, "efl.text", sd->text_table);
         efl_del(sd->scroller);
         sd->scroller = NULL;
      }
@@ -3258,7 +3280,7 @@ _decoration_create(Eo *obj, Efl_Ui_Text_Data *sd,
    evas_object_smart_member_add(ret, sd->entry_edje);
    if (above)
      {
-        evas_object_stack_above(ret, sd->text_obj);
+        evas_object_stack_above(ret, sd->text_table);
      }
    else
      {
@@ -3758,6 +3780,7 @@ _efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->text_changed = EINA_TRUE;
    sd->cursor_update = EINA_TRUE;
+   _update_guide_text(data, sd);
    elm_layout_sizing_eval(data);
    _decoration_defer(data);
 }
@@ -3770,6 +3793,7 @@ _efl_ui_text_changed_user_cb(void *data, const Efl_Event *event)
    if (efl_invalidated_get(event->object)) return;
    EFL_UI_TEXT_DATA_GET(obj, sd);
    sd->text_changed = EINA_TRUE;
+   _update_guide_text(data, sd);
    elm_layout_sizing_eval(obj);
    _decoration_defer_all(obj);
 }
