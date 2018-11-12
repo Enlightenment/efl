@@ -219,8 +219,6 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    efl_ui_text_scrollable_set(en, EINA_TRUE);
 
    printf("Added Efl.Ui.Text object\n");
-   efl_text_set(en, "Sample input text");
-   efl_text_font_set(en, "Sans", 14);
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
    efl_text_normal_color_set(en, 255, 255, 255, 255);
 
@@ -229,7 +227,6 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    en = _create_label(win, bx);
    efl_text_markup_set(en, "This is a multiline input.\n"
          "Enter multiline here");
-   efl_text_font_set(en, "Sans", 14);
    efl_text_interactive_editable_set(en, EINA_TRUE);
    efl_text_wrap_set(en, EFL_TEXT_FORMAT_WRAP_WORD);
    efl_text_multiline_set(en, EINA_TRUE);
