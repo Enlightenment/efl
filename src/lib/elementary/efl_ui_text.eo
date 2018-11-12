@@ -364,6 +364,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
       Efl.Access.Editable.Text.paste;
       Efl.File.file { get; set; }
       Efl.Text_Interactive.editable { set; }
+      Efl.Part.part_get;
    }
    events {
       changed: void; [[Called when entry changes]]

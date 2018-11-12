@@ -278,7 +278,8 @@ pub_eo_files = [
   'elm_view_list.eo',
   'elm_view_form.eo',
   'elm_web.eo',
-  'elm_widget_item.eo'
+  'elm_widget_item.eo',
+  'efl_ui_text_part.eo'
 ]
 
 foreach eo_file : pub_eo_files

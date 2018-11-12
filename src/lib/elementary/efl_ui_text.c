@@ -6,6 +6,7 @@
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -15,6 +16,8 @@
 #include "elm_widget_entry.h"
 #include "efl_ui_text.eo.h"
 #include "elm_hoversel.eo.h"
+#include "efl_ui_text_part.eo.h"
+#include "elm_part_helper.h"
 
 typedef struct _Efl_Ui_Text_Data        Efl_Ui_Text_Data;
 typedef struct _Efl_Ui_Text_Rectangle   Efl_Ui_Text_Rectangle;
@@ -4002,16 +4005,52 @@ _efl_ui_text_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
    return pd->item_factory;
 }
 
-#if 0
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(elm_entry, EFL_UI_TEXT, Efl_Ui_Text_Data)
-#include "elm_entry_part.eo.c"
+#define STRCMP(X, Y) strncmp((X), (Y), strlen(X))
+
+EOLIAN static Eina_Bool
+_efl_ui_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      const char *part, const char *text)
+{
+   if (!STRCMP("efl.text_guide", part))
+     {
+        efl_text_set(pd->text_guide_obj, text);
+        return EINA_TRUE;
+     }
+   else if (!STRCMP("efl.text", part))
+     {
+        efl_text_set(pd->text_obj, text);
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static const char *
+_efl_ui_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      const char *part)
+{
+   if (!STRCMP("efl.text_guide", part))
+     {
+        return efl_text_get(pd->text_guide_obj);
+     }
+   else if (!STRCMP("efl.text", part))
+     {
+        return efl_text_get(pd->text_obj);
+     }
+
+   return NULL;
+}
+
+#undef STRCMP
+
+ELM_PART_OVERRIDE(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+#include "efl_ui_text_part.eo.c"
 
 /* Efl.Part end */
-#endif
 
 /* Internal EO APIs and hidden overrides */
 
