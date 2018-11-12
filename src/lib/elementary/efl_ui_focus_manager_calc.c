@@ -1319,6 +1319,20 @@ _request_subchild(Node *node)
    return target;
 }
 
+static inline void
+_current_focused_parent_to_array(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Eina_Array *array)
+{
+   Eo *focused = efl_ui_focus_manager_focus_get(obj);
+   Node *f;
+
+   if (!focused) return;
+
+   for (f = node_get(obj, pd, focused); f && efl_ui_focus_manager_root_get(obj) != f->focusable; f = f->tree.parent)
+     {
+        eina_array_push(array, f->focusable);
+     }
+}
+
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *focus)
 {
@@ -1326,8 +1340,11 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    Efl_Ui_Focus_Object *last_focusable = NULL, *new_focusable;
    Efl_Ui_Focus_Manager *redirect_manager;
    Node_Type node_type;
+   Eina_Array *old_chain = eina_array_new(5), *chain = eina_array_new(5);
 
    EINA_SAFETY_ON_NULL_RETURN(focus);
+
+   _current_focused_parent_to_array(obj, pd, old_chain);
 
    //check if node is part of this manager object
    node = node_get(obj, pd, focus);
@@ -1429,6 +1446,24 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
         efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
      }
+
+    _current_focused_parent_to_array(obj, pd, chain);
+    //first pop off all elements that are the same
+    while (eina_array_count(chain) > 0 && eina_array_count(old_chain) > 0 &&
+         eina_array_data_get(chain, (int)eina_array_count(chain) -1) == eina_array_data_get(old_chain, (int)eina_array_count(old_chain) - 1))
+     {
+        eina_array_pop(chain);
+        eina_array_pop(old_chain);
+     }
+
+   while (eina_array_count(chain) > 1)
+     efl_event_callback_call(eina_array_pop(chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED , (void*)EINA_TRUE);
+
+   while (eina_array_count(old_chain) > 1)
+     efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, (void*)EINA_FALSE);
+
+   eina_array_free(old_chain);
+   eina_array_free(chain);
 }
 
 EOLIAN static void

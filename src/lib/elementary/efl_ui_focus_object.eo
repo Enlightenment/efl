@@ -87,5 +87,6 @@ mixin Efl.Ui.Focus.Object
                                                  the parent for this object.]]
         logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
                                                 parent should be used.]]
+        child_focus,changed: bool; [[Emitted if child_focus has changed]]
     }
 }
