@@ -261,7 +261,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 if (!tp->freefunc)
                   switch (id)
                     {
-                     case KW_string:
+                     case KW_mstring:
                        tp->freefunc = eina_stringshare_add(eo_str_free);
                        break;
                      case KW_stringshare:
