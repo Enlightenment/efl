@@ -2059,23 +2059,31 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 /**
  * @def Replace the previous Eo pointer with new content.
  *
- * @param storage The object to replace the old reference. It can not be @c NULL.
+ * @param storage Pointer to the space holding the object to be replaced.
+ * It can not be @c NULL.
  * @param new_obj The new object. It may be @c NULL.
+ * @return @c true if objects were different and thus replaced, @c false
+ * if nothing happened, i.e. either the objects were the same or a @c NULL
+ * pointer was wrongly given as @a storage.
  *
- * The object pointed by @a storage must be previously an Eo or
- * @c NULL and it will be efl_unref(). The @a new_obj will be passed
- * to efl_ref() and then assigned to @c *storage.
+ * The object pointed by @c *storage must be previously an Eo or
+ * @c NULL; if it is an Eo then it will be efl_unref(). The @a new_obj
+ * will be passed to efl_ref() if not @c NULL, and then assigned to @c *storage.
  *
+ * @note The return is NOT a success/error flag, it just signalizes if
+ * the value has changed.
  * @see efl_ref()
  * @see efl_unref()
  */
-static inline void
+static inline Eina_Bool
 efl_replace(Eo **storage, Eo *new_obj)
 {
-   if (!storage || *storage == new_obj) return;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(storage, EINA_FALSE);
+   if (*storage == new_obj) return EINA_FALSE;
    if (new_obj) efl_ref(new_obj);
-   efl_unref(*storage);
+   if (*storage) efl_unref(*storage);
    *storage = new_obj;
+   return EINA_TRUE;
 }
 
 EOAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT;
