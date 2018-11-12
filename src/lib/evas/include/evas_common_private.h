@@ -391,10 +391,7 @@ extern EAPI int _evas_log_dom_global;
 
 #include "../file/evas_module.h"
 
-typedef unsigned long long		DATA64;
-typedef unsigned int			DATA32;
-typedef unsigned short			DATA16;
-typedef unsigned char                   DATA8;
+#include "evas_common_types.h"
 
 typedef struct _Image_Entry             Image_Entry;
 typedef struct _Image_Entry_Flags       Image_Entry_Flags;
@@ -442,8 +439,6 @@ typedef int FPc;
 // one fp unit
 #define FP1 (1 << (FP))
 
-typedef void (*RGBA_Gfx_Func)    (DATA32 *src, DATA8 *mask, DATA32 col, DATA32 *dst, int len);
-typedef void (*RGBA_Gfx_Pt_Func) (DATA32 src, DATA8 mask, DATA32 col, DATA32 *dst);
 typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
