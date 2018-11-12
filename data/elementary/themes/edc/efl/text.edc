@@ -518,6 +518,15 @@ group { "efl/text/anchor";
 }
 
 group { "efl/text";
+   data {
+      item: "font.name" "Sans";
+      item: "font.size" "10";
+      item: "style.color" "#fff";
+
+      item: "guide.font.name" "Sans";
+      item: "guide.font.size" "10";
+      item: "guide.style.color" "#666";
+   }
    sounds {
       sample { name: "key-tap1" LOSSY 64;
          source: "kbd-tap.wav";
@@ -552,6 +561,17 @@ group { "efl/text";
          scale: 1;
          description { state: "default" 0.0;
             /* we gotta use 0 0 here, because of scrolled entries */
+            fixed: 0 0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "efl.text_guide"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
             fixed: 0 0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
