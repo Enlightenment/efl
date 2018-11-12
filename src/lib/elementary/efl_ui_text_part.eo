@@ -1,0 +1,8 @@
+class Efl.Ui.Text_Part (Efl.Ui.Layout.Part_Text)
+{
+   [[Efl UI Text internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { set; get; }
+   }
+}
