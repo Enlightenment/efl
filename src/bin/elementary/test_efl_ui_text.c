@@ -220,7 +220,7 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
    printf("Added Efl.Ui.Text object\n");
    efl_text_font_width_set(en, EFL_TEXT_FONT_WIDTH_ULTRACONDENSED);
-   efl_text_normal_color_set(en, 255, 255, 255, 255);
+   efl_text_set(efl_part(en, "efl.text_guide"), "Enter you name here");
 
    efl_pack(bx, en);
 
