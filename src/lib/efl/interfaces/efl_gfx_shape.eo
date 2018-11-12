@@ -58,7 +58,12 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
          }
       }
       @property stroke_dash {
-         [[Not implemented]]
+         [[Set stroke dash pattern. A dash pattern is specified by dashes,
+           an array of Efl_Gfx_Dash. Efl_Gfx_Dash values(length, gap)
+           must be positive.
+
+           See also \@ref Efl_Gfx_Dash
+         ]]
          set {
          }
          get {
