@@ -1,6 +1,6 @@
 project('efl', ['c','cpp'],
   version: '1.21.99',
-  default_options : ['buildtype=plain'],
+  default_options : ['buildtype=plain', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
 
