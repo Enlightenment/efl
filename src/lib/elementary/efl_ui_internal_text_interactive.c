@@ -358,11 +358,10 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    info.length = end - start;
    info.content = tmp;
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
-
-   free(tmp);
-
    evas_textblock_cursor_range_delete(del_start, del_end);
+
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   free(tmp);
 
    _entry_imf_cursor_info_set(obj, cur, en);
 
@@ -605,11 +604,10 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_
    tmp = efl_canvas_text_range_text_get(obj, cur1, cur2);
    info.content = tmp;
 
-   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
-
-   if (tmp) free(tmp);
-
    evas_textblock_cursor_range_delete(cur1, cur2);
+
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   if (tmp) free(tmp);
 }
 
 static void
@@ -636,10 +634,10 @@ _delete_emit(Eo *obj, Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive
    info.length = 1;
    info.content = tmp;
 
+   evas_textblock_cursor_char_delete(c);
+
    efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
    if (tmp) free(tmp);
-
-   evas_textblock_cursor_char_delete(c);
 }
 
 static Eina_Bool
