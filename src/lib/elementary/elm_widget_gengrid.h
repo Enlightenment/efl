@@ -52,6 +52,7 @@ struct _Elm_Gengrid_Data
 
    Eina_Hash                            *content_item_map;
    Eo                                   *provider;
+   Elm_Gen_Item                         *focus_on_realization;
 
    Ecore_Job                            *calc_job;
    int                                   walking;

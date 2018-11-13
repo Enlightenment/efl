@@ -99,6 +99,7 @@ static void _item_position_update(Eina_Inlist *list, int idx);
 static void _item_mouse_callbacks_add(Elm_Gen_Item *it, Evas_Object *view);
 static void _item_mouse_callbacks_del(Elm_Gen_Item *it, Evas_Object *view);
 static void _calc_job(void *data);
+static void _elm_gengrid_item_focused(Elm_Object_Item *eo_it);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -106,6 +107,20 @@ static const Elm_Action key_actions[] = {
    {"escape", _key_action_escape},
    {NULL, NULL}
 };
+
+static void
+_flush_focus_on_realization(Eo *widget, Elm_Gen_Item *it)
+{
+   ELM_GENGRID_DATA_GET_OR_RETURN(widget, sd);
+
+   if (sd->focus_on_realization == it)
+     {
+        _elm_gengrid_item_focused(EO_OBJ(it));
+        efl_ui_focus_manager_focus_set(WIDGET(it), EO_OBJ(it));
+        sd->focus_on_realization = NULL;
+     }
+}
+
 
 
 //-- item cache handle routine --//
@@ -1936,6 +1951,7 @@ _item_place(Elm_Gen_Item *it,
              _elm_gengrid_item_index_update(it);
              efl_event_callback_legacy_call
                (WIDGET(it), ELM_GENGRID_EVENT_REALIZED, EO_OBJ(it));
+             _flush_focus_on_realization(WIDGET(it), it);
           }
         if (it->parent)
           {
@@ -2143,6 +2159,7 @@ _group_item_place(Elm_Gengrid_Pan_Data *psd)
                   _elm_gengrid_item_index_update(it);
                   efl_event_callback_legacy_call
                     (WIDGET(it), ELM_GENGRID_EVENT_REALIZED, EO_OBJ(it));
+                  _flush_focus_on_realization(WIDGET(it), it);
                }
              evas_object_move
                (VIEW(it), GG_IT(it)->gx,
@@ -3816,10 +3833,18 @@ _elm_gengrid_item_elm_widget_item_item_focus_set(Eo *eo_it, Elm_Gen_Item *it, Ei
           {
              if (sd->focused_item)
                _elm_gengrid_item_unfocused(sd->focused_item);
-             _elm_gengrid_item_focused(eo_it);
+             if (it->realized)
+               {
+                  _elm_gengrid_item_focused(eo_it);
+                  sd->focus_on_realization = NULL;
+                  efl_ui_focus_manager_focus_set(obj, eo_it);
+               }
+             else
+               {
+                  sd->focus_on_realization = it;
+               }
           }
 
-        efl_ui_focus_manager_focus_set(obj, eo_it);
      }
    else
      {
@@ -4220,16 +4245,18 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
                   eo_it = elm_gengrid_last_item_get(obj);
                }
           }
-
         eo_it = _elm_gengrid_nearest_visible_item_get(obj, eo_it);
-
         if (eo_it)
           {
              if (!_elm_config->item_select_on_focus_disable &&
                  eo_it != pd->last_selected_item)
                elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
              else
-               efl_ui_focus_manager_focus_set(obj, eo_it);
+               {
+                  ELM_GENGRID_ITEM_DATA_GET(eo_it, pd);
+                  if (pd->realized)
+                    efl_ui_focus_manager_focus_set(obj, eo_it);
+               }
           }
         else
           {
@@ -4253,7 +4280,6 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
      {
         EINA_SAFETY_ON_FALSE_RETURN(efl_isa(old_item, ELM_GENGRID_ITEM_CLASS));
         _elm_gengrid_item_unfocused(old_item);
-        pd->last_focused_item = NULL;
      }
 
    if (item)
