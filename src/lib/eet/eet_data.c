@@ -3843,9 +3843,12 @@ eet_data_get_list(Eet_Free_Context     *context,
 
    if (edd)
      {
+        void *oldlist = list;
+
         list = edd->func.list_append(list, data_ret);
         *ptr = list;
-        _eet_freelist_list_add(context, ptr);
+        if (oldlist != list)
+          _eet_freelist_list_add(context, ptr);
      }
    else
      eet_node_list_append(*((Eet_Node **)data), echnk->name, data_ret);
