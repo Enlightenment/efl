@@ -70,16 +70,11 @@ _efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
    Eina_Size2D size = {-1, -1};
    Eina_Rect view = EINA_RECT(0, 0, 0, 0);
    Evas_Coord vmw = 0, vmh = 0;
-   double xw = 0.0, yw = 0.0;
 
    EFL_UI_SCROLLER_DATA_GET(obj, psd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (sd->text_obj)
-     {
-        efl_gfx_size_hint_weight_get(sd->text_table, &xw, &yw);
-     }
 
    if (psd->smanager)
      {
