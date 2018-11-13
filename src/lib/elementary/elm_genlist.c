@@ -8872,6 +8872,13 @@ _elm_genlist_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Genlist_Data *pd EINA_
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_genlist_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Gen_Item *pd)
+{
+   if (!pd->item->block) return NULL;
+   return pd->item->block->adapter;
+}
+
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_genlist, Elm_Genlist_Data)

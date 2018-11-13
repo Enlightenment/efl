@@ -231,5 +231,6 @@ class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object, Efl.Ui
            Efl.Access.Object.i18n_name { get; }
            Efl.Access.Object.state_set { get; }
            Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+           Efl.Ui.Focus.Object.focus_parent { get; }
       }
 }

@@ -5772,6 +5772,13 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
    efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_gengrid_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Gen_Item *pd)
+{
+   return pd->base->widget;
+}
+
+
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_gengrid, Elm_Gengrid_Data)
