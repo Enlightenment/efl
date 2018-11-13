@@ -3568,6 +3568,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
    char *p;
    int size, i;
    Eet_Data_Chunk chnk;
+   Eina_Bool need_free = EINA_FALSE;
 
    if (_eet_data_words_bigendian == -1)
      {
@@ -3590,6 +3591,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
         else
           {
              data = edd->func.mem_alloc(edd->size);
+             need_free = EINA_TRUE;
           }
 
         if (!data)
@@ -3604,8 +3606,6 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
      }
 
    _eet_freelist_all_ref(context);
-   if (data && !data_out)
-     _eet_freelist_add(context, data);
 
    memset(&chnk, 0, sizeof(Eet_Data_Chunk));
    eet_data_chunk_get(ed, &chnk, data_in, size_in);
@@ -3775,6 +3775,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
    return data;
 
 error:
+   if (need_free) free(data);
    eet_node_del(result);
 
    _eet_freelist_all_unref(context);
@@ -3832,14 +3833,17 @@ eet_data_get_list(Eet_Free_Context     *context,
                          size,
                          on_error);
    else
-     STRUCT_TYPE_DECODE(data_ret,
-                        context,
-                        ed,
-                        subtype,
-                        echnk->data,
-                        echnk->size,
-                        -1,
-                        on_error);
+     {
+        STRUCT_TYPE_DECODE(data_ret,
+                           context,
+                           ed,
+                           subtype,
+                           echnk->data,
+                           echnk->size,
+                           -1,
+                           on_error);
+        if (subtype) _eet_freelist_add(context, data_ret);
+     }
 
    if (edd)
      {
@@ -3920,14 +3924,18 @@ eet_data_get_hash(Eet_Free_Context     *context,
                          size,
                          on_error);
    else
-     STRUCT_TYPE_DECODE(data_ret,
-                        context,
-                        ed,
-                        ede ? ede->subtype : NULL,
-                        echnk->data,
-                        echnk->size,
-                        -1,
-                        on_error);
+     {
+        STRUCT_TYPE_DECODE(data_ret,
+                           context,
+                           ed,
+                           ede ? ede->subtype : NULL,
+                           echnk->data,
+                           echnk->size,
+                           -1,
+                           on_error);
+
+        if (ede ? ede->subtype : NULL) _eet_freelist_add(context, data_ret);
+     }
 
    if (edd)
      {
@@ -4702,6 +4710,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                     {
                        ptr = (void **)(((char *)data));
                        *ptr = (void *)data_ret;
+                       _eet_freelist_add(context, data_ret);
                     }
                }
              else
