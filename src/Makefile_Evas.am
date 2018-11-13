@@ -161,6 +161,7 @@ noinst_HEADERS += \
 lib/evas/Evas_Internal.h \
 lib/evas/include/evas_inline.x \
 lib/evas/include/evas_private.h \
+lib/evas/include/evas_common_types.h \
 lib/evas/include/evas_options.h \
 lib/evas/include/evas_macros.h \
 lib/evas/include/evas_mmx.h \
