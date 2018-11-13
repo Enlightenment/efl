@@ -4,7 +4,7 @@ function EflIoFilter {
   [[EflIoFilter function]]
   params {
     @in model: Eio.Model;
-    @in entry: ptr(Eina.File.Direct.Info);
+    @in entry: ptr(Eina.File_Direct_Info);
   }
   return: int;
 };

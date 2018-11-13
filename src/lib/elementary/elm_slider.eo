@@ -6,7 +6,7 @@ class Elm.Slider (Efl.Ui.Slider_Interval, Efl.Ui.Legacy,
    eo_prefix: elm_obj_slider;
    legacy_prefix: elm_slider;
    parts {
-      indicator: Elm.Slider.Part_Indicator;
+      indicator: Elm.Slider_Part_Indicator;
           [[A floating indicator above the slider.]]
    }
    implements {

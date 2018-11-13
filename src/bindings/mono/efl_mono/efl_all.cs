@@ -70,7 +70,7 @@ public static class Config {
 #endif
         elm_init(0, IntPtr.Zero);
 
-        elm_policy_set((int)elm.Policy.Quit, (int)elm.policy.Quit.Last_window_hidden);
+        elm_policy_set((int)elm.Policy.Quit, (int)elm.Policy_Quit.Last_window_hidden);
     }
     public static void Shutdown() {
         elm_shutdown();

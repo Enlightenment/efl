@@ -1,4 +1,4 @@
-class Elm.Multibuttonentry.Item(Elm.Widget.Item,
+class Elm.Multibuttonentry_Item(Elm.Widget.Item,
                                 Efl.Access.Widget.Action,
                                 Efl.Ui.Legacy)
 {

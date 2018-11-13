@@ -34,7 +34,7 @@ enum Elm.Policy
 }
 
 /* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy.Quit
+enum Elm.Policy_Quit
 {
    [[Possible values for the @Elm.Policy.quit policy]]
    none = 0, [[never quit the application automatically]]
@@ -45,7 +45,7 @@ enum Elm.Policy.Quit
 }
 
 /* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy.Exit
+enum Elm.Policy_Exit
 {
    [[Possible values for the @Elm.Policy.exit policy.
 
@@ -56,7 +56,7 @@ enum Elm.Policy.Exit
 }
 
 /* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy.Throttle
+enum Elm.Policy_Throttle
 {
    [[Possible values for the @Elm.Policy.throttle policy.
 

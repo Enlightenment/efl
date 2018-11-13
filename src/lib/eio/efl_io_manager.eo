@@ -17,7 +17,7 @@ function EflIoPath {
 function EflIoDirectInfo {
   [[EflIoDirectInfo function]]
   params {
-     @in entries: array<ptr(Eina.File.Direct.Info)>; [[Accessor to an array of info.]]
+     @in entries: array<ptr(Eina.File_Direct_Info)>; [[Accessor to an array of info.]]
   }
 };
 
@@ -42,7 +42,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       params {
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
-	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File.Direct.Info]]
+	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
       }
       return: future<uint64> @owned; [[Amount of files found during the listing of the directory]]
     }
@@ -52,7 +52,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
       params {
         @in path: string;[[Path we want to list entries for]]
         @in recursive: bool; [[If $true, list entries recursively, $false otherwise]]
-	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File.Direct.Info]]
+	info: EflIoDirectInfo; [[Callback called for each packet of @Eina.File_Direct_Info]]
       }
       return: future<uint64> @owned; [[Amount of files found during the listing of the directory]]
     }
