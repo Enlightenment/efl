@@ -23,7 +23,7 @@ class Elm.Prefs (Efl.Ui.Widget, Efl.File, Efl.Ui.Legacy)
            widget.
 
            When $obj dies, the values of the elements declared on its
-           .epb file (the one set on elm_prefs_file_set()) marked as permanent
+           $.epb file (the one set on elm_prefs_file_set()) marked as permanent
            will be written back to prefs_data, if it is writable.
            One is also able to make this writing event to take place
            automatically after each UI element modification by using

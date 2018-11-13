@@ -697,7 +697,7 @@ class Evas.Canvas (Efl.Loop_Consumer, Efl.Canvas.Scene, Efl.Animator, Efl.Input.
          */
          return: list<ptr(Eina.Rect)> @owned @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
-            ($Eina.Rect structs). Free this list with
+            (@Eina.Rect structs). Free this list with
             \@ref evas_render_updates_free.
          ]]
       }

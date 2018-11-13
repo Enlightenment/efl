@@ -165,8 +165,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
 
            Note: This may not be a display manager window in case of nested
            canvases. If a "real" window is required, then you might want to
-           verify that the returned object is a $Efl.Ui.Win_Inlined, and then
-           get $Efl.Ui.Win_Inlined.inlined_parent to find an object in the
+           verify that the returned object is a @Efl.Ui.Win_Inlined, and then
+           get @Efl.Ui.Win_Inlined.inlined_parent to find an object in the
            master window.
 
            See also @.widget_parent.
