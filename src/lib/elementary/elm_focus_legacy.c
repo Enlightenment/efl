@@ -277,38 +277,12 @@ elm_object_focused_object_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
-   Efl_Ui_Focus_Manager *m;
-   Efl_Ui_Focus_Object *focused_child;
    API_ENTRY_VAL(EINA_FALSE)
 
    if (!elm_widget_is(obj))
      return evas_object_focus_get(obj);
 
-   m = efl_ui_focus_object_focus_manager_get(obj);
-
-   //no manager means not registered
-   if (!m) return EINA_FALSE;
-
-   //assertion: our redirect manager m is in the redirect chain
-   m = efl_ui_focus_object_focus_manager_get(obj);
-
-   //if obj is the redriect manager its kind of focused
-   if (efl_ui_focus_manager_redirect_get(m) == obj) return EINA_TRUE;
-
-   //if there is a redirect manager
-   if (!!efl_ui_focus_manager_redirect_get(m)) return EINA_FALSE;
-
-   //now take the focused object and walk down the parents, if this is
-   focused_child = efl_ui_focus_manager_focus_get(m);
-
-   while(focused_child)
-     {
-        if (focused_child == obj) return EINA_TRUE;
-
-        focused_child = efl_ui_focus_object_focus_parent_get(focused_child);
-     }
-
-   return efl_ui_focus_object_focus_get(obj);
+   return _elm_widget_top_win_focused_get(obj) && (efl_ui_focus_object_child_focus_get(obj) | efl_ui_focus_object_focus_get(obj));
 }
 
 EAPI void
