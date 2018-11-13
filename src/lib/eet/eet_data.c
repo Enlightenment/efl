@@ -3931,9 +3931,12 @@ eet_data_get_hash(Eet_Free_Context     *context,
 
    if (edd)
      {
+        void *oldhash = hash;
+
         hash = edd->func.hash_add(hash, key, data_ret);
         *ptr = hash;
-        _eet_freelist_hash_add(context, hash);
+        if (oldhash != hash)
+          _eet_freelist_hash_add(context, hash);
      }
    else
      eet_node_hash_add(*((Eet_Node **)data), echnk->name, key, data_ret);
