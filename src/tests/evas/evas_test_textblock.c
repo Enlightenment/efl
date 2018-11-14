@@ -2695,23 +2695,26 @@ EFL_START_TEST(evas_textblock_geometries)
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
-   ck_assert_int_eq(eina_list_count(rects), 3);
+   ck_assert_int_eq(eina_list_count(rects), 2);
 
      {
-        Evas_Coord y1, y2;
+        Evas_Coord x1, y1, x2, y2;
         void *tmp = tr;
-        /* We have 3 rectangles */
+        /* We have 2 rectangles */
         Eina_Iterator *itr = it;
         fail_if (!eina_iterator_next(itr, &tmp));
         tr = tmp;
+        x1 = tr->x;
         y1 = tr->y;
         fail_if (!eina_iterator_next(itr, &tmp));
         tr = tmp;
+        x2 = tr->x;
         y2 = tr->y;
 
-        /* Basically it means that the "extending" rectangle should not somehow
-         * reach the second line in this example. */
-        ck_assert_int_eq(y1, y2);
+        /* These rectangles must be placed without overlapping.
+         * In this test case, we expect to see a rect for each line. */
+        fail_if((x1 == x2) && (y1 == y2));
+        ck_assert_int_ne(y1, y2);
         eina_iterator_free(it);
      }
 
