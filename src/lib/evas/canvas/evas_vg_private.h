@@ -116,14 +116,10 @@ void                        efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg
 static inline Efl_Canvas_Vg_Node_Data *
 _evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
 {
-   Efl_Canvas_Vg_Node_Data *child_nd = NULL;
+   if (!child) return NULL;
 
-   // FIXME: Prevent infinite loop
-   if (child)
-     child_nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
-   if (child_nd)
-     child_nd->render_pre(child, m, s, child_nd->data, child_nd);
-
+   Efl_Canvas_Vg_Node_Data *child_nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
+   if (child_nd) child_nd->render_pre(child, m, s, child_nd->data, child_nd);
    return child_nd;
 }
 

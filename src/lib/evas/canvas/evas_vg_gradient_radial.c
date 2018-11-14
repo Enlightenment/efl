@@ -81,7 +81,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Eo *obj,
    Efl_Canvas_Vg_Gradient_Radial_Data *pd = data;
    Efl_Canvas_Vg_Gradient_Data *gd;
 
-   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
@@ -104,7 +104,9 @@ _efl_canvas_vg_gradient_radial_render_pre(Eo *obj,
    efl_gfx_gradient_radial_center_set(nd->renderer, pd->center.x, pd->center.y);
    efl_gfx_gradient_radial_focal_set(nd->renderer, pd->focal.x, pd->focal.y);
    efl_gfx_gradient_radial_radius_set(nd->renderer, pd->radius);
-   ector_renderer_prepare(nd->renderer);
+
+   //Prepare renderer triggered by ector shape this gradient applied to.
+   //ector_renderer_prepare(nd->renderer);
 }
 
 static Eo *

@@ -87,7 +87,7 @@ _efl_canvas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
    Efl_Canvas_Vg_Shape_Data *pd = data;
    Efl_Canvas_Vg_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
 
-   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
