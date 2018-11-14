@@ -478,14 +478,9 @@ static
 void _setup_span_fill_matrix(Software_Rasterizer *rasterizer)
 {
    if (rasterizer->transform)
-     {
-        eina_matrix3_inverse(rasterizer->transform, &rasterizer->fill_data.inv);
-     }
+     eina_matrix3_inverse(rasterizer->transform, &rasterizer->fill_data.inv);
    else
-     {
-        eina_matrix3_identity(&rasterizer->fill_data.inv);
-        eina_matrix3_identity(&rasterizer->fill_data.inv);
-     }
+     eina_matrix3_identity(&rasterizer->fill_data.inv);
 }
 
 void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t)
