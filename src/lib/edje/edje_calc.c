@@ -938,6 +938,9 @@ _edje_recalc_do(Edje *ed)
 {
    unsigned short i;
    Eina_Bool need_calc;
+#ifdef EDJE_CALC_CACHE
+   Eina_Bool need_reinit_state = EINA_FALSE;
+#endif
 
 // XXX: dont need this with current smart calc infra. remove me later
 //   ed->postponed = EINA_FALSE;
@@ -946,6 +949,16 @@ _edje_recalc_do(Edje *ed)
    if (!ed->dirty) return;
    ed->dirty = EINA_FALSE;
    ed->state++;
+
+   /* Avoid overflow problem */
+   if (ed->state == USHRT_MAX)
+     {
+        ed->state = 0;
+#ifdef EDJE_CALC_CACHE
+        need_reinit_state = EINA_TRUE;
+#endif
+     }
+
    for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *ep;
@@ -953,6 +966,15 @@ _edje_recalc_do(Edje *ed)
         ep = ed->table_parts[i];
         ep->calculated = FLAG_NONE; // FIXME: this is dubious (see below)
         ep->calculating = FLAG_NONE;
+#ifdef EDJE_CALC_CACHE
+        if (need_reinit_state)
+          {
+             ep->state = 0;
+             ep->param1.state = 0;
+             if (ep->param2)
+               ep->param2->state = 0;
+          }
+#endif
      }
    for (i = 0; i < ed->table_parts_size; i++)
      {
