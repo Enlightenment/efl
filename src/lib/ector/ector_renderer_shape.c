@@ -7,6 +7,8 @@
 
 #include "ector_private.h"
 
+#define MY_CLASS ECTOR_RENDERER_SHAPE_MIXIN
+
 static void
 _ector_renderer_shape_fill_set(Eo *obj EINA_UNUSED,
                                        Ector_Renderer_Shape_Data *pd,
@@ -51,5 +53,15 @@ _ector_renderer_shape_stroke_marker_get(const Eo *obj EINA_UNUSED,
 {
    return pd->stroke.marker;
 }
+
+static void
+_ector_renderer_shape_efl_object_invalidate(Eo *obj EINA_UNUSED,
+                                            Ector_Renderer_Shape_Data *pd)
+{
+   if (pd->fill) efl_unref(pd->fill);
+   if (pd->stroke.fill) efl_unref(pd->stroke.fill);
+   if (pd->stroke.marker) efl_unref(pd->stroke.marker);
+}
+
 
 #include "ector_renderer_shape.eo.c"

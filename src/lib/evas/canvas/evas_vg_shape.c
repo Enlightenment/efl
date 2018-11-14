@@ -137,8 +137,12 @@ _efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *p
 }
 
 static void
-_efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd EINA_UNUSED)
+_efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd)
 {
+   if (pd->fill) efl_unref(pd->fill);
+   if (pd->stroke.fill) efl_unref(pd->stroke.fill);
+   if (pd->stroke.marker) efl_unref(pd->stroke.marker);
+
    efl_gfx_path_reset(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
