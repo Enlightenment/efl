@@ -4285,7 +4285,6 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
         pd->last_focused_item = item;
      }
 
-   _all_items_deselect(pd);
    if (!_elm_config->item_select_on_focus_disable)
      {
         elm_gengrid_item_selected_set(item, EINA_TRUE);
