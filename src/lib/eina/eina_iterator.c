@@ -229,6 +229,67 @@ eina_carray_iterator_new(void** array)
    return &it->iterator;
 }
 
+typedef struct _Eina_Iterator_CArray_Length Eina_Iterator_CArray_Length;
+
+struct _Eina_Iterator_CArray_Length
+{
+   Eina_Iterator iterator;
+
+   void** array;
+   uintptr_t current;
+
+   uintptr_t end;
+   unsigned int step;
+};
+
+static Eina_Bool
+eina_carray_length_iterator_next(Eina_Iterator_CArray_Length *it, void **data)
+{
+   if (it->current >= it->end)
+     return EINA_FALSE;
+
+   memcpy(data, (void*) it->current, it->step);
+   it->current += it->step;
+
+   return EINA_TRUE;
+}
+
+static void**
+eina_carray_length_iterator_get_container(Eina_Iterator_CArray_Length *it)
+{
+   return it->array;
+}
+
+static void
+eina_carray_length_iterator_free(Eina_Iterator_CArray_Length *it)
+{
+   free(it);
+}
+
+EAPI Eina_Iterator *
+eina_carray_length_iterator_new(void** array, unsigned int step, unsigned int length)
+{
+   Eina_Iterator_CArray_Length *it;
+
+   it = calloc(1, sizeof (Eina_Iterator_CArray_Length));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->array = array;
+   it->current = (uintptr_t) it->array;
+   it->end = it->current + length * step;
+   it->step = step;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(eina_carray_length_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+      eina_carray_length_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(eina_carray_length_iterator_free);
+
+   return &it->iterator;
+}
+
 typedef struct {
    Eina_Iterator iterator;
 

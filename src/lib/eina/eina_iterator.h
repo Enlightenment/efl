@@ -294,11 +294,42 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  * int array[] = {1, 2, 3, 4};
  * int* array2[] = {&array[0], &array[1], &array[2], &array[3], NULL};
  *
- * Eina_Iterator* iterator = eina_carray_iterator_new((void**)array);
+ * Eina_Iterator* iterator = eina_carray_iterator_new((void**)array2);
  *
  * @since 1.18
  */
-EAPI Eina_Iterator* eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Iterator *eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @brief Creates an Eina_Iterator that iterates through a
+ * C array of specified size.
+ *
+ * @param[in] array The array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4};
+ *
+ * Eina_Iterator* iterator = eina_carray_length_iterator_new((void**)array, sizeof (array[0]), (EINA_C_ARRAY_LENGTH(array));
+ *
+ * @since 1.22
+ */
+EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int step, unsigned int length) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
+ * @def EINA_C_ARRAY_ITERATOR_NEW
+ * @brief Creates an Eina_Iterator that iterates through a
+ * NUL-terminated C array.
+ *
+ * @param[in] array The NUL-terminated array
+ *
+ * You can create it like this:
+ * int array[] = {1, 2, 3, 4};
+ *
+ * Eina_Iterator* iterator = EINA_C_ARRAY_ITERATOR_NEW(array);
+ *
+ * @since 1.22
+ */
+#define EINA_C_ARRAY_ITERATOR_NEW(Array) eina_carray_length_iterator_new((void**) Array, sizeof (Array[0]), EINA_C_ARRAY_LENGTH(Array))
 
 /**
  * @brief Creates a new iterator which which iterates through all elements with are accepted by the filter callback
