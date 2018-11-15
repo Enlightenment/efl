@@ -4649,9 +4649,8 @@ eet_data_get_unknown(Eet_Free_Context     *context,
           {
              if (type == EET_T_STRING)
                {
-                  char **str;
+                  char **str = data;
 
-                  str = (char **)(((char *)data));
                   if (*str)
                     {
                        if ((!ed) || (!edd->func.str_direct_alloc))
@@ -4668,9 +4667,8 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                }
              else if (edd && type == EET_T_INLINED_STRING)
                {
-                  char **str;
+                  char **str = data;
 
-                  str = (char **)(((char *)data));
                   if (*str)
                     {
                        *str = edd->func.str_alloc(*str);
@@ -4708,7 +4706,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                     }
                   else 
                     {
-                       ptr = (void **)(((char *)data));
+                       ptr = data;
                        *ptr = (void *)data_ret;
                        _eet_freelist_add(context, data_ret);
                     }
@@ -4771,7 +4769,7 @@ eet_data_put_array(Eet_Dictionary      *ed,
         int pos = ds->pos;
 
         if (ede->group_type == EET_G_ARRAY)
-          d = (void *)(((char *)data_in) + offset);
+          d = ((char *)data_in) + offset;
         else
           d = *(((char **)data_in)) + offset;
 
