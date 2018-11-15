@@ -2463,28 +2463,6 @@ _eet_free_add(Eet_Free *ef,
    eina_array_push(&ef->list, data);
 }
 
-#if 0
-static void
-_eet_free_del(Eet_Free *ef,
-              void     *data)
-{
-   void *track;
-   Eina_Array_Iterator it;
-   unsigned int i;
-   int hash;
-
-   hash = _eet_free_hash(data);
-
-   EINA_ARRAY_ITER_NEXT(&ef->list[hash], i, track, it)
-   if (track == data)
-     {
-        eina_array_data_set(&ef->list[hash], i, NULL);
-        return;
-     }
-}
-
-#endif
-
 static void
 _eet_free_reset(Eet_Free *ef)
 {
@@ -2507,9 +2485,6 @@ _eet_free_unref(Eet_Free *ef)
 }
 
 #define _eet_freelist_add(Ctx, Data) _eet_free_add(&Ctx->freelist, Data);
-#if 0
-#define _eet_freelist_del(Ctx, Data) _eet_free_del(&Ctx->freelist, Data);
-#endif
 #define _eet_freelist_reset(Ctx)     _eet_free_reset(&Ctx->freelist);
 #define _eet_freelist_ref(Ctx)       _eet_free_ref(&Ctx->freelist);
 #define _eet_freelist_unref(Ctx)     _eet_free_unref(&Ctx->freelist);
@@ -2537,7 +2512,6 @@ _eet_freelist_free(Eet_Free_Context    *context,
 }
 
 #define _eet_freelist_array_add(Ctx, Data) _eet_free_add(&Ctx->freelist_array, Data);
-#define _eet_freelist_array_del(Ctx, Data) _eet_free_del(&Ctx->freelist_array, Data);
 #define _eet_freelist_array_reset(Ctx)     _eet_free_reset(&Ctx->freelist_array);
 #define _eet_freelist_array_ref(Ctx)       _eet_free_ref(&Ctx->freelist_array);
 #define _eet_freelist_array_unref(Ctx)     _eet_free_unref(&Ctx->freelist_array);
@@ -2570,7 +2544,6 @@ _eet_freelist_array_free(Eet_Free_Context    *context,
 }
 
 #define _eet_freelist_list_add(Ctx, Data) _eet_free_add(&Ctx->freelist_list, Data);
-#define _eet_freelist_list_del(Ctx, Data) _eet_free_del(&Ctx->freelist_list, Data);
 #define _eet_freelist_list_reset(Ctx)     _eet_free_reset(&Ctx->freelist_list);
 #define _eet_freelist_list_ref(Ctx)       _eet_free_ref(&Ctx->freelist_list);
 #define _eet_freelist_list_unref(Ctx)     _eet_free_unref(&Ctx->freelist_list);
@@ -2596,7 +2569,6 @@ _eet_freelist_list_free(Eet_Free_Context    *context,
 }
 
 #define _eet_freelist_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_str, Data);
-#define _eet_freelist_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_str, Data);
 #define _eet_freelist_str_reset(Ctx)     _eet_free_reset(&Ctx->freelist_str);
 #define _eet_freelist_str_ref(Ctx)       _eet_free_ref(&Ctx->freelist_str);
 #define _eet_freelist_str_unref(Ctx)     _eet_free_unref(&Ctx->freelist_str);
@@ -2624,7 +2596,6 @@ _eet_freelist_str_free(Eet_Free_Context    *context,
 }
 
 #define _eet_freelist_direct_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_direct_str, Data);
-#define _eet_freelist_direct_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_direct_str, Data);
 #define _eet_freelist_direct_str_reset(Ctx)     _eet_free_reset(&Ctx->freelist_direct_str);
 #define _eet_freelist_direct_str_ref(Ctx)       _eet_free_ref(&Ctx->freelist_direct_str);
 #define _eet_freelist_direct_str_unref(Ctx)     _eet_free_unref(&Ctx->freelist_direct_str);
@@ -2652,7 +2623,6 @@ _eet_freelist_direct_str_free(Eet_Free_Context    *context,
 }
 
 #define _eet_freelist_hash_add(Ctx, Data) _eet_free_add(&Ctx->freelist_hash, Data);
-#define _eet_freelist_hash_del(Ctx, Data) _eet_free_del(&Ctx->freelist_hash, Data);
 #define _eet_freelist_hash_reset(Ctx)     _eet_free_reset(&Ctx->freelist_hash);
 #define _eet_freelist_hash_ref(Ctx)       _eet_free_ref(&Ctx->freelist_hash);
 #define _eet_freelist_hash_unref(Ctx)     _eet_free_unref(&Ctx->freelist_hash);
