@@ -289,6 +289,7 @@ EAPI Eina_Bool eina_iterator_unlock(Eina_Iterator *iterator) EINA_ARG_NONNULL(1)
  * NUL-terminated C array.
  *
  * @param[in] array The NUL-terminated array
+ * @return The iterator that will walk over the array.
  *
  * You can create it like this:
  * int array[] = {1, 2, 3, 4};
@@ -305,6 +306,7 @@ EAPI Eina_Iterator *eina_carray_iterator_new(void** array) EINA_ARG_NONNULL(1) E
  * C array of specified size.
  *
  * @param[in] array The array
+ * @return The iterator that will walk over the array.
  *
  * You can create it like this:
  * int array[] = {1, 2, 3, 4};
@@ -321,6 +323,7 @@ EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int s
  * NUL-terminated C array.
  *
  * @param[in] array The NUL-terminated array
+ * @return The iterator that will walk over the array.
  *
  * You can create it like this:
  * int array[] = {1, 2, 3, 4};
