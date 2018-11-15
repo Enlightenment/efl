@@ -1948,25 +1948,6 @@ _scroll_event_object_attach(Evas_Object *obj)
 }
 
 static void
-_scroll_event_object_detach(Evas_Object *obj)
-{
-   EFL_UI_SCROLL_MANAGER_DATA_GET_OR_RETURN(obj, sd);
-
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _efl_ui_scroll_manager_wheel_event_cb,
-     sd);
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_DOWN,
-     _efl_ui_scroll_manager_mouse_down_event_cb, sd);
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_UP,
-     _efl_ui_scroll_manager_mouse_up_event_cb, sd);
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_MOVE,
-     _efl_ui_scroll_manager_mouse_move_event_cb, sd);
-}
-
-static void
 _efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Ui_Scroll_Manager_Data *sd = data;
@@ -2462,8 +2443,6 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
       (sd->pan_obj, EFL_UI_PAN_EVENT_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_del
       (sd->pan_obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
-
-   _scroll_event_object_detach(obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
