@@ -201,11 +201,10 @@ struct _Eet_Data_Encode_Hash_Info
    Eet_Dictionary   *ed;
 };
 
-#define EET_FREE_COUNT 256
 struct _Eet_Free
 {
    int        ref;
-   Eina_Array list[EET_FREE_COUNT];
+   Eina_Array list;
 };
 
 struct _Eet_Free_Context
@@ -2424,89 +2423,44 @@ eet_data_write(Eet_File            *ef,
 static void
 eet_free_context_init(Eet_Free_Context *context)
 {
-   unsigned int i = 0;
-
    memset(context, 0, sizeof (Eet_Free_Context));
-   for (i = 0; i < EET_FREE_COUNT; ++i)
-     {
-        eina_array_step_set(&context->freelist.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-        eina_array_step_set(&context->freelist_array.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-        eina_array_step_set(&context->freelist_list.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-        eina_array_step_set(&context->freelist_hash.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-        eina_array_step_set(&context->freelist_str.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-        eina_array_step_set(&context->freelist_direct_str.list[i],
-                            sizeof (context->freelist.list[i]),
-                            32);
-     }
+
+   eina_array_step_set(&context->freelist.list,
+                       sizeof (context->freelist.list),
+                       32);
+   eina_array_step_set(&context->freelist_array.list,
+                       sizeof (context->freelist.list),
+                       32);
+   eina_array_step_set(&context->freelist_list.list,
+                       sizeof (context->freelist.list),
+                       32);
+   eina_array_step_set(&context->freelist_hash.list,
+                       sizeof (context->freelist.list),
+                       32);
+   eina_array_step_set(&context->freelist_str.list,
+                       sizeof (context->freelist.list),
+                       32);
+   eina_array_step_set(&context->freelist_direct_str.list,
+                       sizeof (context->freelist.list),
+                       32);
 }
 
 static void
 eet_free_context_shutdown(Eet_Free_Context *context)
 {
-   unsigned int i = 0;
-
-   for (i = 0; i < EET_FREE_COUNT; ++i)
-     {
-        eina_array_flush(&context->freelist.list[i]);
-        eina_array_flush(&context->freelist_array.list[i]);
-        eina_array_flush(&context->freelist_list.list[i]);
-        eina_array_flush(&context->freelist_hash.list[i]);
-        eina_array_flush(&context->freelist_str.list[i]);
-        eina_array_flush(&context->freelist_direct_str.list[i]);
-     }
-}
-
-static int
-_eet_free_hash(void *data)
-{
-#ifdef _WIN64
-   __int64 ptr = (UINT_PTR)data;
-#else /* ifdef _WIN64 */
-   unsigned long ptr = (unsigned long)(data);
-#endif /* ifdef _WIN64 */
-   int hash;
-
-   hash = ptr;
-   hash ^= ptr >> 8;
-   hash ^= ptr >> 16;
-   hash ^= ptr >> 24;
-
-#if defined (_WIN64) || ((!defined (_WIN32)) && (LONG_BIT != 32))
-   hash ^= ptr >> 32;
-   hash ^= ptr >> 40;
-   hash ^= ptr >> 48;
-   hash ^= ptr >> 56;
-#endif /* if defined (_WIN64) || ((!defined (_WIN32)) && (LONG_BIT != 32)) */
-
-   return hash & 0xFF;
+   eina_array_flush(&context->freelist.list);
+   eina_array_flush(&context->freelist_array.list);
+   eina_array_flush(&context->freelist_list.list);
+   eina_array_flush(&context->freelist_hash.list);
+   eina_array_flush(&context->freelist_str.list);
+   eina_array_flush(&context->freelist_direct_str.list);
 }
 
 static void
 _eet_free_add(Eet_Free *ef,
               void     *data)
 {
-   void *track;
-   Eina_Array_Iterator it;
-   unsigned int i;
-   int hash;
-
-   hash = _eet_free_hash(data);
-
-   EINA_ARRAY_ITER_NEXT(&ef->list[hash], i, track, it)
-   if (track == data)
-     return;
-
-   eina_array_push(&ef->list[hash], data);
+   eina_array_push(&ef->list, data);
 }
 
 #if 0
@@ -2534,13 +2488,10 @@ _eet_free_del(Eet_Free *ef,
 static void
 _eet_free_reset(Eet_Free *ef)
 {
-   unsigned int i;
-
    if (ef->ref > 0)
      return;
 
-   for (i = 0; i < EET_FREE_COUNT; ++i)
-     eina_array_clean(&ef->list[i]);
+   eina_array_clean(&ef->list);
 }
 
 static void
@@ -2569,14 +2520,12 @@ _eet_freelist_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist.list, i, track, it)
      if (track)
        {
           if (edd)
@@ -2599,14 +2548,12 @@ _eet_freelist_array_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist_array.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist_array.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist_array.list, i, track, it)
      if (track)
        {
           if (edd)
@@ -2634,14 +2581,12 @@ _eet_freelist_list_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist_list.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist_list.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist_list.list, i, track, it)
      if (track)
        {
           if (edd)
@@ -2662,14 +2607,12 @@ _eet_freelist_str_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist_str.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist_str.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist_str.list, i, track, it)
      if (track)
        {
           if (edd)
@@ -2692,14 +2635,12 @@ _eet_freelist_direct_str_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist_direct_str.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist_str.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist_str.list, i, track, it)
      if (track)
        {
           if (edd)
@@ -2722,14 +2663,12 @@ _eet_freelist_hash_free(Eet_Free_Context    *context,
 {
    void *track;
    Eina_Array_Iterator it;
-   unsigned int j;
    unsigned int i;
 
    if (context->freelist_hash.ref > 0)
      return;
 
-   for (j = 0; j < EET_FREE_COUNT; ++j)
-     EINA_ARRAY_ITER_NEXT(&context->freelist_hash.list[j], i, track, it)
+   EINA_ARRAY_ITER_NEXT(&context->freelist_hash.list, i, track, it)
      if (track)
        {
           if (edd)
