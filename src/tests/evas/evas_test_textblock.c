@@ -4148,6 +4148,9 @@ EFL_START_TEST(evas_textblock_hyphenation)
    Evas_Coord w, fw;
 
    const char *buf = "Automati-";
+
+   setenv("EVAS_DICTS_HYPHEN_DIR", TESTS_DIC_DIR, 1);
+
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    evas_object_resize(tb, w, 100);
@@ -4201,8 +4204,6 @@ EFL_START_TEST(evas_textblock_hyphenation)
 
    evas_object_textblock_text_markup_set(tb, buf);
    _hyphenation_width_stress(tb, cur);
-
-   setenv("EVAS_DICTS_HYPHEN_DIR", TESTS_DIC_DIR, 1);
 
    buf = "europäi-";
    evas_object_textblock_text_markup_set(tb, buf);
