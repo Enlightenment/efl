@@ -187,6 +187,7 @@ data_source_cancelled(void *data, struct wl_data_source *source)
    Ecore_Wl2_Input *input = data;
 
    if (input->data.drag.source == source) input->data.drag.source = NULL;
+   if (input->data.selection.source == source) input->data.selection.source = NULL;
    input->data.drag.action = WL_DATA_DEVICE_MANAGER_DND_ACTION_NONE;
    wl_data_source_destroy(source);
    data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END, 1);
@@ -205,6 +206,7 @@ data_source_dnd_finished(void *data, struct wl_data_source *source)
    Ecore_Wl2_Input *input = data;
 
    if (input->data.drag.source == source) input->data.drag.source = NULL;
+   if (input->data.selection.source == source) input->data.selection.source = NULL;
    wl_data_source_destroy(source);
    data_source_event_emit(input, ECORE_WL2_EVENT_DATA_SOURCE_END, 0);
 }
