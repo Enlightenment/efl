@@ -9,6 +9,16 @@ ector_src += files([
   'ector_software_buffer.c',
 ])
 
+if cpu_sse3 == true
+  ector_opt = static_library('ector_opt',
+    sources: [ 'ector_software_gradient_sse3.c' ],
+    dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
+    include_directories: config_dir + [ include_directories('..') ],
+    c_args: ector_opt_c_args,
+  )
+  ector_opt_lib += [ ector_opt ]
+endif
+
 pub_eo_files = [
   'ector_software_surface.eo',
   'ector_software_buffer.eo',

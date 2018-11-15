@@ -119,6 +119,7 @@ cpu_neon_intrinsics = false
 cpu_altivec = false
 evas_opt_c_args = [ ]
 draw_opt_c_args = [ ]
+ector_opt_c_args = [ ]
 machine_c_args = [ ]
 compiler = meson.get_compiler('c')
 
@@ -136,6 +137,7 @@ if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
         config_h.set10('BUILD_SSE3', true)
         evas_opt_c_args += [ '-msse3' ]
         draw_opt_c_args += [ '-msse3' ]
+        ector_opt_c_args += [ '-msse3' ]
         cpu_sse3 = true
         message('x86 build - SSE3 enabled')
       endif

@@ -2,6 +2,8 @@ ector_deps = [eina, emile, eet, eo, efl]
 ector_pub_deps = [eina, efl]
 
 pub_eo_file_target = []
+ector_opt_lib = [ ]
+
 
 ector_header_src = [
  # nothing for now ector stays only intree
@@ -76,7 +78,8 @@ ector_lib = library('ector',
     dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
     include_directories : config_dir,
     install: true,
-    version : meson.project_version()
+    version : meson.project_version(),
+    link_with: ector_opt_lib
 )
 
 ector = declare_dependency(
