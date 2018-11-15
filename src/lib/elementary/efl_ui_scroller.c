@@ -454,7 +454,6 @@ _efl_ui_scroller_efl_object_destructor(Eo *obj,
                           _efl_ui_scroller_pan_resized_cb, obj);
    efl_del(sd->pan_obj);
    sd->pan_obj = NULL;
-   efl_del(sd->smanager);
    sd->smanager = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
