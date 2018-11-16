@@ -2076,13 +2076,15 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @see efl_unref()
  */
 static inline Eina_Bool
-efl_replace(Eo **storage, Eo *new_obj)
+efl_replace(Eo **storage, const Eo *new_obj)
 {
+   Eo *tmp = NULL;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(storage, EINA_FALSE);
    if (*storage == new_obj) return EINA_FALSE;
-   if (new_obj) efl_ref(new_obj);
+   if (new_obj) tmp = efl_ref(new_obj);
    if (*storage) efl_unref(*storage);
-   *storage = new_obj;
+   *storage = tmp;
    return EINA_TRUE;
 }
 
