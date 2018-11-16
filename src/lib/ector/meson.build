@@ -50,7 +50,6 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 
 subdir('cairo')
 subdir('gl')
-subdir('software')
 
 pub_eo_types_files = [
   'ector_types.eot'
@@ -72,6 +71,8 @@ foreach eo_file : pub_eo_types_files
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-ghd', '@INPUT@'])
 endforeach
+
+subdir('software')
 
 ector_lib = library('ector',
     ector_src, pub_eo_file_target,
