@@ -133,7 +133,7 @@ _ector_renderer_mask_set(Eo *obj EINA_UNUSED,
                                       Ector_Renderer_Data *pd,
                                       Ector_Renderer *r)
 {
-   _efl_refplace(&pd->mask, r);
+   efl_replace(&pd->mask, r);
 }
 
 static Ector_Renderer *
