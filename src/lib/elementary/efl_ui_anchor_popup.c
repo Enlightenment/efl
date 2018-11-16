@@ -3,23 +3,23 @@
 #endif
 
 #define EFL_UI_POPUP_PROTECTED
-#define EFL_UI_POPUP_ANCHOR_BETA
+#define EFL_UI_ANCHOR_POPUP_BETA
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "efl_ui_popup_private.h"
-#include "efl_ui_popup_anchor_private.h"
+#include "efl_ui_anchor_popup_private.h"
 
-#define MY_CLASS EFL_UI_POPUP_ANCHOR_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Popup_Anchor"
+#define MY_CLASS EFL_UI_ANCHOR_POPUP_CLASS
+#define MY_CLASS_NAME "Efl.Ui.Anchor_Popup"
 
 static void
 _anchor_calc(Eo *obj)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
-   EFL_UI_POPUP_ANCHOR_DATA_GET(obj, pd);
+   EFL_UI_ANCHOR_POPUP_DATA_GET(obj, pd);
 
    Eina_Position2D pos = {0, 0};
 
@@ -205,7 +205,7 @@ static void
 _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(data, ppd);
-   EFL_UI_POPUP_ANCHOR_DATA_GET(data, pd);
+   EFL_UI_ANCHOR_POPUP_DATA_GET(data, pd);
 
    efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, data);
 
@@ -220,7 +220,7 @@ static void
 _anchor_detach(Eo *obj)
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
-   EFL_UI_POPUP_ANCHOR_DATA_GET(obj, pd);
+   EFL_UI_ANCHOR_POPUP_DATA_GET(obj, pd);
 
    if (!pd->anchor) return;
 
@@ -231,7 +231,7 @@ _anchor_detach(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *anchor)
+_efl_ui_anchor_popup_anchor_set(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd, Eo *anchor)
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
 
@@ -253,14 +253,14 @@ _efl_ui_popup_anchor_anchor_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eo *ancho
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_popup_anchor_anchor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Anchor_Data *pd)
+_efl_ui_anchor_popup_anchor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Anchor_Popup_Data *pd)
 {
    return pd->anchor;
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_align_priority_set(Eo *obj EINA_UNUSED,
-                                        Efl_Ui_Popup_Anchor_Data *pd,
+_efl_ui_anchor_popup_align_priority_set(Eo *obj EINA_UNUSED,
+                                        Efl_Ui_Anchor_Popup_Data *pd,
                                         Efl_Ui_Popup_Align first,
                                         Efl_Ui_Popup_Align second,
                                         Efl_Ui_Popup_Align third,
@@ -275,8 +275,8 @@ _efl_ui_popup_anchor_align_priority_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_align_priority_get(const Eo *obj EINA_UNUSED,
-                                        Efl_Ui_Popup_Anchor_Data *pd,
+_efl_ui_anchor_popup_align_priority_get(const Eo *obj EINA_UNUSED,
+                                        Efl_Ui_Anchor_Popup_Data *pd,
                                         Efl_Ui_Popup_Align *first,
                                         Efl_Ui_Popup_Align *second,
                                         Efl_Ui_Popup_Align *third,
@@ -291,7 +291,7 @@ _efl_ui_popup_anchor_align_priority_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd, Eina_Position2D pos)
+_efl_ui_anchor_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd, Eina_Position2D pos)
 {
    _anchor_detach(obj);
 
@@ -301,7 +301,7 @@ _efl_ui_popup_anchor_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Anchor_Da
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Anchor_Data *pd)
+_efl_ui_anchor_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd)
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
    /* When elm_layout_sizing_eval() is called, just flag is set instead of size
@@ -321,13 +321,13 @@ _efl_ui_popup_anchor_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Anch
 }
 
 EOLIAN static Eo *
-_efl_ui_popup_anchor_efl_object_constructor(Eo *obj,
-                                            Efl_Ui_Popup_Anchor_Data *pd)
+_efl_ui_anchor_popup_efl_object_constructor(Eo *obj,
+                                            Efl_Ui_Anchor_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "popup_anchor");
+     elm_widget_theme_klass_set(obj, "anchor_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
@@ -343,12 +343,12 @@ _efl_ui_popup_anchor_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_popup_anchor_efl_object_destructor(Eo *obj,
-                                           Efl_Ui_Popup_Anchor_Data *pd EINA_UNUSED)
+_efl_ui_anchor_popup_efl_object_destructor(Eo *obj,
+                                           Efl_Ui_Anchor_Popup_Data *pd EINA_UNUSED)
 {
    _anchor_detach(obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-#include "efl_ui_popup_anchor.eo.c"
+#include "efl_ui_anchor_popup.eo.c"

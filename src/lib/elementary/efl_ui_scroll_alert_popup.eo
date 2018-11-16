@@ -1,8 +1,8 @@
 import eina_types;
 
-class Efl.Ui.Popup_Alert_Scroll(Efl.Ui.Popup_Alert)
+class Efl.Ui.Scroll_Alert_Popup(Efl.Ui.Alert_Popup)
 {
-   [[EFL UI Popup Alert Scroll class]]
+   [[EFL UI Scroll Alert Popup class]]
    methods {
       @property expandable @beta {
          set {

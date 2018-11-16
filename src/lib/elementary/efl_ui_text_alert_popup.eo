@@ -1,8 +1,8 @@
 import eina_types;
 
-class Efl.Ui.Popup_Alert_Text(Efl.Ui.Popup_Alert, Efl.Text)
+class Efl.Ui.Text_Alert_Popup(Efl.Ui.Alert_Popup, Efl.Text)
 {
-   [[EFL UI Popup Alert Text class]]
+   [[EFL UI Text Alert Popup class]]
    methods {
       @property expandable {
          set {

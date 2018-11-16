@@ -307,10 +307,10 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_popup.eo.h>
-# include <efl_ui_popup_alert.eo.h>
-# include <efl_ui_popup_alert_scroll.eo.h>
-# include <efl_ui_popup_alert_text.eo.h>
-# include <efl_ui_popup_anchor.eo.h>
+# include <efl_ui_alert_popup.eo.h>
+# include <efl_ui_scroll_alert_popup.eo.h>
+# include <efl_ui_text_alert_popup.eo.h>
+# include <efl_ui_anchor_popup.eo.h>
 # include <efl_ui_popup_part_backwall.eo.h>
 # include <efl_ui_text_factory_images.eo.h>
 # include <efl_ui_text_factory_emoticons.eo.h>

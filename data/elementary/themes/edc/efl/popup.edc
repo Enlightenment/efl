@@ -23,9 +23,9 @@ group { "efl/popup";
    }
 }
 
-group { "efl/popup_alert";
-   alias: "efl/popup_alert_scroll";
-   alias: "efl/popup_alert_text";
+group { "efl/alert_popup";
+   alias: "efl/scroll_alert_popup";
+   alias: "efl/text_alert_popup";
    images.image: "rounded_square.png" COMP;
    parts {
       alias: "title" "efl.text.title";
@@ -111,15 +111,15 @@ group { "efl/popup_alert";
    }
 }
 
-group { "efl/popup_anchor";
+group { "efl/anchor_popup";
    inherit: "efl/popup";
 }
 
 group { "efl/popup/backwall";
-   alias: "efl/popup_alert/backwall";
-   alias: "efl/popup_alert_scroll/backwall";
-   alias: "efl/popup_alert_text/backwall";
-   alias: "efl/popup_anchor/backwall";
+   alias: "efl/alert_popup/backwall";
+   alias: "efl/scroll_alert_popup/backwall";
+   alias: "efl/text_alert_popup/backwall";
+   alias: "efl/anchor_popup/backwall";
    parts {
       rect { "base";
          desc { "default";
@@ -168,18 +168,18 @@ group { "efl/popup/backwall";
    }
 }
 
-group { "efl/popup_alert/button_layout1";
-   alias: "efl/popup_alert_scroll/button_layout1";
-   alias: "efl/popup_alert_text/button_layout1";
+group { "efl/alert_popup/button_layout1";
+   alias: "efl/scroll_alert_popup/button_layout1";
+   alias: "efl/text_alert_popup/button_layout1";
    parts {
       swallow { "efl.button1";
       }
    }
 }
 
-group { "efl/popup_alert/button_layout2";
-   alias: "efl/popup_alert_scroll/button_layout2";
-   alias: "efl/popup_alert_text/button_layout2";
+group { "efl/alert_popup/button_layout2";
+   alias: "efl/scroll_alert_popup/button_layout2";
+   alias: "efl/text_alert_popup/button_layout2";
    parts {
       spacer { "div1";
          desc { "default";
@@ -203,9 +203,9 @@ group { "efl/popup_alert/button_layout2";
    }
 }
 
-group { "efl/popup_alert/button_layout3";
-   alias: "efl/popup_alert_scroll/button_layout3";
-   alias: "efl/popup_alert_text/button_layout3";
+group { "efl/alert_popup/button_layout3";
+   alias: "efl/scroll_alert_popup/button_layout3";
+   alias: "efl/text_alert_popup/button_layout3";
    parts {
       spacer { "div1";
          desc { "default";
@@ -244,15 +244,15 @@ group { "efl/popup_alert/button_layout3";
    }
 }
 
-group { "efl/popup_alert/button";
+group { "efl/alert_popup/button";
    inherit: "efl/button";
-   alias: "efl/popup_alert_scroll/button";
-   alias: "efl/popup_alert_text/button";
+   alias: "efl/scroll_alert_popup/button";
+   alias: "efl/text_alert_popup/button";
 }
 
-group { "efl/popup_alert_scroll/scroller";
+group { "efl/scroll_alert_popup/scroller";
    inherit: "efl/scroller";
-   alias: "efl/popup_alert_text/scroller";
+   alias: "efl/text_alert_popup/scroller";
    parts {
        swallow { "efl.content";
          desc { "default";
@@ -273,6 +273,6 @@ group { "efl/popup_alert_scroll/scroller";
    }
 }
 
-group { "efl/popup_alert_text/text";
+group { "efl/text_alert_popup/text";
    inherit: "efl/text";
 }

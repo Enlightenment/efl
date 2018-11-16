@@ -43,13 +43,13 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_popup.eo \
 	lib/elementary/efl_ui_popup_part_backwall.eo \
-	lib/elementary/efl_ui_popup_alert.eo \
-	lib/elementary/efl_ui_popup_alert_part.eo \
-	lib/elementary/efl_ui_popup_alert_scroll.eo \
-	lib/elementary/efl_ui_popup_alert_scroll_part.eo \
-	lib/elementary/efl_ui_popup_alert_text.eo \
-	lib/elementary/efl_ui_popup_alert_text_part.eo \
-	lib/elementary/efl_ui_popup_anchor.eo \
+	lib/elementary/efl_ui_alert_popup.eo \
+	lib/elementary/efl_ui_alert_popup_part.eo \
+	lib/elementary/efl_ui_scroll_alert_popup.eo \
+	lib/elementary/efl_ui_scroll_alert_popup_part.eo \
+	lib/elementary/efl_ui_text_alert_popup.eo \
+	lib/elementary/efl_ui_text_alert_popup_part.eo \
+	lib/elementary/efl_ui_anchor_popup.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_ui_text_async.eo \
 	lib/elementary/efl_ui_text_factory_images.eo \
@@ -367,10 +367,10 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_icon.h \
 	lib/elementary/efl_ui_widget_image.h \
 	lib/elementary/efl_ui_popup_private.h \
-	lib/elementary/efl_ui_popup_alert_private.h \
-	lib/elementary/efl_ui_popup_alert_scroll_private.h \
-	lib/elementary/efl_ui_popup_alert_text_private.h \
-	lib/elementary/efl_ui_popup_anchor_private.h \
+	lib/elementary/efl_ui_alert_popup_private.h \
+	lib/elementary/efl_ui_scroll_alert_popup_private.h \
+	lib/elementary/efl_ui_text_alert_popup_private.h \
+	lib/elementary/efl_ui_anchor_popup_private.h \
 	lib/elementary/elm_widget_index.h \
 	lib/elementary/elm_widget_inwin.h \
 	lib/elementary/elm_widget_label.h \
@@ -813,10 +813,10 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_box_layout.c \
 	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/efl_ui_popup.c \
-	lib/elementary/efl_ui_popup_alert.c \
-	lib/elementary/efl_ui_popup_alert_scroll.c \
-	lib/elementary/efl_ui_popup_alert_text.c \
-	lib/elementary/efl_ui_popup_anchor.c \
+	lib/elementary/efl_ui_alert_popup.c \
+	lib/elementary/efl_ui_scroll_alert_popup.c \
+	lib/elementary/efl_ui_text_alert_popup.c \
+	lib/elementary/efl_ui_anchor_popup.c \
 	lib/elementary/efl_ui_table.c \
 	lib/elementary/efl_ui_table_static.c \
 	lib/elementary/efl_ui_table_private.h \

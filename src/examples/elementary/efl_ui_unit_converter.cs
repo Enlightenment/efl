@@ -16,14 +16,14 @@ public class Example
 
     private static void ShowErrorPopup(efl.ui.Win win, string message)
     {
-        efl.ui.IPopup_Alert popup = new efl.ui.Popup_Alert(win);
+        efl.ui.IAlert_Popup popup = new efl.ui.Alert_Popup(win);
         efl.ui.Text popup_text = new efl.ui.Text(popup);
         popup_text.SetText($"Error: {message}");
         popup.SetContent(popup_text);
         popup.SetVisible(true);
-        popup.SetButton(efl.ui.Popup_Alert_Button.Positive, "Ok", null);
+        popup.SetButton(efl.ui.Alert_Popup_Button.Positive, "Ok", null);
         popup.SetSize(new eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, efl.ui.Popup_Alert.ButtonClickedEvt_Args e) => {
+        popup.ButtonClickedEvt += (object sender, efl.ui.Alert_Popup.ButtonClickedEvt_Args e) => {
             popup.SetParent(null);
             popup.Invalidate();
         };

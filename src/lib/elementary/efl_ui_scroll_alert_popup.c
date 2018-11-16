@@ -2,22 +2,22 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_POPUP_ALERT_SCROLL_BETA
+#define EFL_UI_SCROLL_ALERT_POPUP_BETA
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "efl_ui_popup_private.h"
-#include "efl_ui_popup_alert_scroll_private.h"
-#include "efl_ui_popup_alert_scroll_part.eo.h"
+#include "efl_ui_scroll_alert_popup_private.h"
+#include "efl_ui_scroll_alert_popup_part.eo.h"
 #include "elm_part_helper.h"
 
-#define MY_CLASS EFL_UI_POPUP_ALERT_SCROLL_CLASS
-#define MY_CLASS_NAME "Efl.Ui.Popup_Alert_Scroll"
+#define MY_CLASS EFL_UI_SCROLL_ALERT_POPUP_CLASS
+#define MY_CLASS_NAME "Efl.Ui.Scroll_Alert_Popup"
 
 static void
-_scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
+_scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
                       Eina_Size2D obj_min, Eina_Size2D scr_min)
 {
    Eina_Size2D max_size;
@@ -104,7 +104,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd,
 }
 
 static void
-_sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord obj_minw = -1, obj_minh = -1;
@@ -132,7 +132,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_popup_alert_scroll_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_efl_ui_scroll_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 {
    /* When elm_layout_sizing_eval() is called, just flag is set instead of size
     * calculation.
@@ -152,7 +152,7 @@ _efl_ui_popup_alert_scroll_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popu
 }
 
 static Eina_Bool
-_efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part, Eo *content)
+_efl_ui_scroll_alert_popup_content_set(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd, const char *part, Eo *content)
 {
    //For efl_content_set()
    if (part && !strcmp(part, "efl.content"))
@@ -174,7 +174,7 @@ _efl_ui_popup_alert_scroll_content_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
 }
 
 Eo *
-_efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
+_efl_ui_scroll_alert_popup_content_get(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd, const char *part)
 {
    //For efl_content_set()
    if (part && !strcmp(part, "efl.content"))
@@ -184,7 +184,7 @@ _efl_ui_popup_alert_scroll_content_get(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *
 }
 
 static Eo *
-_efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, const char *part)
+_efl_ui_scroll_alert_popup_content_unset(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd, const char *part)
 {
    //For efl_content_set()
    if (part && !strcmp(part, "efl.content"))
@@ -201,7 +201,7 @@ _efl_ui_popup_alert_scroll_content_unset(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data
 }
 
 static Eina_Bool
-_efl_ui_popup_alert_scroll_text_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd EINA_UNUSED, const char *part, const char *label)
+_efl_ui_scroll_alert_popup_text_set(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd EINA_UNUSED, const char *part, const char *label)
 {
    efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
@@ -209,13 +209,13 @@ _efl_ui_popup_alert_scroll_text_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd 
 }
 
 const char *
-_efl_ui_popup_alert_scroll_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd EINA_UNUSED, const char *part)
+_efl_ui_scroll_alert_popup_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Alert_Popup_Data *pd EINA_UNUSED, const char *part)
 {
    return efl_text_get(efl_part(efl_super(obj, MY_CLASS), part));
 }
 
 static void
-_efl_ui_popup_alert_scroll_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D max_size)
+_efl_ui_scroll_alert_popup_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Alert_Popup_Data *pd, Eina_Size2D max_size)
 {
    Eina_Bool valid_max_w = EINA_FALSE;
    Eina_Bool valid_max_h = EINA_FALSE;
@@ -241,13 +241,13 @@ _efl_ui_popup_alert_scroll_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Aler
 }
 
 static Eina_Size2D
-_efl_ui_popup_alert_scroll_expandable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_efl_ui_scroll_alert_popup_expandable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 {
    return pd->max_size;
 }
 
 EOLIAN static void
-_efl_ui_popup_alert_scroll_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Alert_Scroll_Data *pd, Eina_Size2D size)
+_efl_ui_scroll_alert_popup_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd, Eina_Size2D size)
 {
    pd->size = size;
 
@@ -257,13 +257,13 @@ _efl_ui_popup_alert_scroll_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Ale
 }
 
 EOLIAN static Eo *
-_efl_ui_popup_alert_scroll_efl_object_constructor(Eo *obj,
-                                                  Efl_Ui_Popup_Alert_Scroll_Data *pd)
+_efl_ui_scroll_alert_popup_efl_object_constructor(Eo *obj,
+                                                  Efl_Ui_Scroll_Alert_Popup_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "popup_alert_scroll");
+     elm_widget_theme_klass_set(obj, "scroll_alert_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
@@ -285,14 +285,14 @@ _efl_ui_popup_alert_scroll_efl_object_constructor(Eo *obj,
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-ELM_PART_OVERRIDE_TEXT_SET(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-ELM_PART_OVERRIDE_TEXT_GET(efl_ui_popup_alert_scroll, EFL_UI_POPUP_ALERT_SCROLL, Efl_Ui_Popup_Alert_Scroll_Data)
-#include "efl_ui_popup_alert_scroll_part.eo.c"
+ELM_PART_OVERRIDE(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+ELM_PART_OVERRIDE_TEXT_SET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+ELM_PART_OVERRIDE_TEXT_GET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+#include "efl_ui_scroll_alert_popup_part.eo.c"
 
 /* Efl.Part end */
 
-#include "efl_ui_popup_alert_scroll.eo.c"
+#include "efl_ui_scroll_alert_popup.eo.c"
