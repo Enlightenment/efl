@@ -36,5 +36,7 @@ endforeach
 
 
 if get_option('vnc-server')
+  mod_install_dir = join_paths(dir_lib, package_name, engine, version_name)
+
   subdir(join_paths('vnc_server'))
 endif
