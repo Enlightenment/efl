@@ -12,10 +12,10 @@
 static void
 _ector_renderer_efl_object_destructor(Eo *obj, Ector_Renderer_Data *pd)
 {
+   efl_destructor(efl_super(obj, MY_CLASS));
+
    if (pd->m) free(pd->m);
    efl_unref(pd->surface);
-
-   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 static Efl_Object *
