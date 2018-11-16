@@ -17,50 +17,43 @@ env:
     - EIO_MONITOR_POLL=1
     - CC="ccache gcc"
     - CXX="ccache g++"
-  matrix:
-    -
-    - DISTRO=Ubuntu1804
-    - DISTRO=Fedora28 CI_BUILD_TYPE=wayland
-    - DISTRO=Fedora28 CI_BUILD_TYPE=misc
-    - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
-    - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
-    - DISTRO=Debian91
-    - DISTRO=Archlinux
+
+jobs:
+  include:
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=wayland
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=misc
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=misc-disabled
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Ubuntu1804
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Fedora28
+        - CI_BUILD_TYPE=release-ready
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Debian91
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Archlinux
+  exclude:
+    - os: linux
 
 services:
   - docker
-
-matrix:
-  fast_finish: true
-  exclude:
-    - os: osx
-      env:
-        DISTRO=Ubuntu1804
-    - os: osx
-      env:
-        DISTRO=Fedora28
-        CI_BUILD_TYPE=wayland
-    - os: osx
-      env:
-        DISTRO=Fedora28
-        CI_BUILD_TYPE=misc
-    - os: osx
-      env:
-        DISTRO=Fedora28
-        CI_BUILD_TYPE=misc-disabled
-    - os: osx
-      env:
-        DISTRO=Fedora28
-        CI_BUILD_TYPE=release-ready
-    - os: osx
-      env:
-        DISTRO=Debian91
-    - os: osx
-      env:
-        DISTRO=Archlinux
-
-    - os: linux
-      env:
 
 before_install:
   - |
