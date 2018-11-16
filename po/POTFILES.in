@@ -137,7 +137,7 @@ src/lib/elementary/elm_index.c
 src/lib/elementary/elm_interface_scrollable.c
 src/lib/elementary/elm_inwin.c
 src/lib/elementary/elm_label.c
-src/lib/elementary/efl_ui_layout_object.c
+src/lib/elementary/efl_ui_layout.c
 src/lib/elementary/elm_list.c
 src/lib/elementary/elm_main.c
 src/lib/elementary/elm_map.c

@@ -1,4 +1,4 @@
-class Elm.Fileselector_Entry (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
+class Elm.Fileselector_Entry (Efl.Ui.Layout, Elm.Interface.Fileselector,
                               Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary fileselector entry class]]

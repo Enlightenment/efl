@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.List (Efl.Ui.Layout.Object, Elm.Interface_Scrollable,
+class Elm.List (Efl.Ui.Layout, Elm.Interface_Scrollable,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {

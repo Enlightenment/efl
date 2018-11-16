@@ -1,4 +1,4 @@
-class Efl.Ui.Textpath_Part (Efl.Ui.Layout.Part_Text)
+class Efl.Ui.Textpath_Part (Efl.Ui.Layout_Part_Text)
 {
    [[Efl UI Textpath internal part class]]
    data: null;

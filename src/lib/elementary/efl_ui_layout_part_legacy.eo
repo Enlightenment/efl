@@ -1,4 +1,4 @@
-class Efl.Ui.Layout.Part_Legacy (Efl.Ui.Layout.Part, Efl.Content, Efl.Text,
+class Efl.Ui.Layout_Part_Legacy (Efl.Ui.Layout_Part, Efl.Content, Efl.Text,
                                  Efl.Text_Markup, Efl.Ui.Translatable)
 {
    [[Elementary layout internal part class]]

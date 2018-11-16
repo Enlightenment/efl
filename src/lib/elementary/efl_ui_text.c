@@ -797,7 +797,7 @@ _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
    _efl_ui_text_guide_update(obj, !sd->has_text);
    efl_event_thaw(obj);
 
-   efl_event_callback_call(obj, EFL_UI_LAYOUT_OBJECT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 

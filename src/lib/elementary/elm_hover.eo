@@ -7,7 +7,7 @@ enum Elm.Hover.Axis
    both [[ELM_HOVER_AXIS_BOTH -- both.]]
 }
 
-class Elm.Hover (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
+class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
                  Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary hover class]]

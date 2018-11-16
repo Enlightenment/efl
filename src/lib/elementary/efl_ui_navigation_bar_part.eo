@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Bar_Part (Efl.Ui.Layout.Part_Content)
+class Efl.Ui.Navigation_Bar_Part (Efl.Ui.Layout_Part_Content)
 {
    [[Efl UI Navigation_Bar internal part class]]
    data: null;

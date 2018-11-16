@@ -1,4 +1,4 @@
-class Efl.Ui.Scroller (Efl.Ui.Layout.Object,
+class Efl.Ui.Scroller (Efl.Ui.Layout,
                        Efl.Ui.Scrollable_Interactive,
                        Efl.Ui.Scrollbar,
                        Efl.Content)

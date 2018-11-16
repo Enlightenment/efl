@@ -1,6 +1,6 @@
 import efl_ui;
 
-class Efl.Ui.Layout.Object (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
+class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group)
@@ -16,7 +16,7 @@ class Efl.Ui.Layout.Object (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
 
            Widgets that inherit from this class will call this function
            automatically so it should not be called by applications, unless
-           you are dealing directly with a @Efl.Ui.Layout.Object object.
+           you are dealing directly with a @Efl.Ui.Layout object.
          ]]
          set {
             [[Sets the edje group from the elementary theme that will be used

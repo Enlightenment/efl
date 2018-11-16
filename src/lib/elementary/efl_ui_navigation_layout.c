@@ -13,15 +13,15 @@
 #define MY_CLASS_NAME "Efl.Ui.Navigation_Layout"
 
 EOLIAN static void
-_efl_ui_navigation_layout_bar_set(Eo *obj, Efl_Ui_Navigation_Layout_Data *pd, Efl_Ui_Layout_Object *bar)
+_efl_ui_navigation_layout_bar_set(Eo *obj, Efl_Ui_Navigation_Layout_Data *pd, Efl_Ui_Layout *bar)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(bar, EFL_UI_LAYOUT_OBJECT_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(bar, EFL_UI_LAYOUT_CLASS));
 
    efl_content_set(efl_part(obj, "efl.bar"), bar);
    pd->bar = bar;
 }
 
-EOLIAN static Efl_Ui_Layout_Object *
+EOLIAN static Efl_Ui_Layout *
 _efl_ui_navigation_layout_bar_get(const Eo *obj EINA_UNUSED, Efl_Ui_Navigation_Layout_Data *pd)
 {
    return pd->bar;

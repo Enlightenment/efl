@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Format,
+class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
                           Efl.Ui.Direction, Efl.Access.Value, Efl.Ui.Translatable,
                           Efl.Text, Efl.Content, Efl.Text_Markup)
 {

@@ -16,7 +16,7 @@ enum Efl.Ui.Calendar_Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
+class Efl.Ui.Calendar (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
 {
    [[Calendar widget
 

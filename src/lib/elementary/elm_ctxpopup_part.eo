@@ -1,4 +1,4 @@
-class Elm.Ctxpopup.Part (Efl.Ui.Layout.Part_Legacy)
+class Elm.Ctxpopup.Part (Efl.Ui.Layout_Part_Legacy)
 {
    [[Elementary contex popup internal part class]]
    data: null;

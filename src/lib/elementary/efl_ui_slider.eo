@@ -1,4 +1,4 @@
-class Efl.Ui.Slider (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Direction,
+class Efl.Ui.Slider (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Direction,
                      Efl.Access.Value,
                      Efl.Access.Widget.Action,
                      Efl.Content)

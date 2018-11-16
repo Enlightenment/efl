@@ -1,4 +1,4 @@
-class Efl.Ui.Layout.Part_Box (Efl.Object, Efl.Pack_Linear,
+class Efl.Ui.Layout_Part_Box (Efl.Object, Efl.Pack_Linear,
                               Efl.Ui.Direction)
 {
    [[Represents a Box created as part of a layout.

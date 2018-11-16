@@ -363,7 +363,7 @@ test_ui_popup_alert(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    efl_gfx_entity_size_set(efl_ui_popup, EINA_SIZE2D(160, 160));
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -384,7 +384,7 @@ _alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -408,7 +408,7 @@ _alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -434,7 +434,7 @@ _alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -460,7 +460,7 @@ _alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -486,7 +486,7 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, efl_ui_popup);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
 
@@ -1006,7 +1006,7 @@ test_ui_popup_anchor(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
-   Eo *layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_popup_anchor_layout");
    efl_gfx_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

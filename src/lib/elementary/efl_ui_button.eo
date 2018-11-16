@@ -1,4 +1,4 @@
-class Efl.Ui.Button (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
                      Efl.Text, Efl.Content,
                      Efl.Access.Widget.Action, Efl.Ui.Translatable)
 {

@@ -401,7 +401,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
 
    if (!str) return NULL;
 
-   layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, obj);
+   layout = efl_add(EFL_UI_LAYOUT_CLASS, obj);
 
    if (!elm_widget_element_update(obj, layout, PART_NAME_BUTTON))
      CRI("Failed to set layout!");

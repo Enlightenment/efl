@@ -1,4 +1,4 @@
-class Elm.Hover.Part (Efl.Ui.Layout.Part_Legacy)
+class Elm.Hover.Part (Efl.Ui.Layout_Part_Legacy)
 {
    [[elementary hover internal part class]]
    data: null;

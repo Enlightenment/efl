@@ -1,4 +1,4 @@
-abstract Efl.Ui.Item (Efl.Ui.Layout.Object, Efl.Ui.Selectable, Efl.Ui.Clickable)
+abstract Efl.Ui.Item (Efl.Ui.Layout, Efl.Ui.Selectable, Efl.Ui.Clickable)
 {
    [[Item abstract class for pack widget. All item have to be inherited from this class.]]
    methods {

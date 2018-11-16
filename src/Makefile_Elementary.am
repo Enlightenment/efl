@@ -14,7 +14,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_stack.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
-	lib/elementary/efl_ui_layout_object.eo \
+	lib/elementary/efl_ui_layout.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/efl_ui_navigation_bar.eo \
 	lib/elementary/efl_ui_navigation_bar_part.eo \
@@ -748,7 +748,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_interface_scrollable.c \
 	lib/elementary/elm_inwin.c \
 	lib/elementary/elm_label.c \
-	lib/elementary/efl_ui_layout_object.c \
+	lib/elementary/efl_ui_layout.c \
 	lib/elementary/efl_ui_layout_pack.c \
 	lib/elementary/elm_list.c \
 	lib/elementary/elm_main.c \

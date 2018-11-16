@@ -427,7 +427,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   Efl_Ui_Theme_Apply theme_apply = efl_ui_layout_object_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
+   Efl_Ui_Theme_Apply theme_apply = efl_ui_layout_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
    if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
      CRI("list(%p) failed to set theme [efl/list:%s]!", obj, efl_ui_widget_style_get(obj) ?: "NULL");
 

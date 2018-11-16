@@ -1,4 +1,4 @@
-class Elm.Inwin (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Content, Efl.Ui.Legacy)
+class Elm.Inwin (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Content, Efl.Ui.Legacy)
 {
    [[Elementary inwin class]]
    legacy_prefix: elm_inwin;

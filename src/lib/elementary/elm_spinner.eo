@@ -1,4 +1,4 @@
-class Elm.Spinner (Efl.Ui.Layout.Object, Efl.Ui.Range, Efl.Ui.Focus.Composition,
+class Elm.Spinner (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Focus.Composition,
                    Efl.Access.Value, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary spinner class]]

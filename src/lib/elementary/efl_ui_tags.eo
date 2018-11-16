@@ -1,4 +1,4 @@
-class Efl.Ui.Tags (Efl.Ui.Layout.Object, Efl.Text, Efl.Ui.Format)
+class Efl.Ui.Tags (Efl.Ui.Layout, Efl.Text, Efl.Ui.Format)
 {
    [[Elementary Tags class]]
    methods {

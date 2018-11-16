@@ -221,7 +221,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
    ti->tab = NULL;
    ti->label = eina_stringshare_add(label);
 
-   tab = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, obj);
+   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj);
 
    icon_obj = elm_icon_add(tab);
 

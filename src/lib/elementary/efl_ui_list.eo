@@ -1,6 +1,6 @@
 import efl_ui_list_item;
 
-class Efl.Ui.List (Efl.Ui.Layout.Object,
+class Efl.Ui.List (Efl.Ui.Layout,
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,

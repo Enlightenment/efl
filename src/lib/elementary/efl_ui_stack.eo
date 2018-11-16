@@ -18,7 +18,7 @@ struct Efl.Ui.Stack_Event_Deactivated {
    content: Efl.Canvas.Object; [[Deactivated content.]]
 }
 
-class Efl.Ui.Stack (Efl.Ui.Layout.Object)
+class Efl.Ui.Stack (Efl.Ui.Layout)
 {
    [[Stack widget.
    	   

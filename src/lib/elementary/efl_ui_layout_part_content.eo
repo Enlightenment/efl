@@ -1,4 +1,4 @@
-class Efl.Ui.Layout.Part_Content (Efl.Ui.Layout.Part, Efl.Content)
+class Efl.Ui.Layout_Part_Content (Efl.Ui.Layout_Part, Efl.Content)
 {
    [[Elementary layout internal part class]]
    data: null;

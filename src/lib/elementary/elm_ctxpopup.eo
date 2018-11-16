@@ -8,7 +8,7 @@ enum Elm.Ctxpopup.Direction
    unknown [[Ctxpopup does not determine it's direction yet.]]
 }
 
-class Elm.Ctxpopup (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action, Efl.Ui.Legacy)
+class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action, Efl.Ui.Legacy)
 {
    [[Elementary context popup class]]
    legacy_prefix: elm_ctxpopup;

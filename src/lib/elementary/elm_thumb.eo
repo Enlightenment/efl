@@ -1,4 +1,4 @@
-class Elm.Thumb (Efl.Ui.Layout.Object, Efl.File, Efl.Ui.Clickable,
+class Elm.Thumb (Efl.Ui.Layout, Efl.File, Efl.Ui.Clickable,
                  Efl.Ui.Draggable, Efl.Ui.Legacy)
 {
    [[Elementary thumbnail class]]

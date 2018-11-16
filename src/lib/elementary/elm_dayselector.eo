@@ -17,7 +17,7 @@ enum Elm.Dayselector.Day
    max     [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Elm.Dayselector (Efl.Ui.Layout.Object, Efl.Ui.Legacy)
+class Elm.Dayselector (Efl.Ui.Layout, Efl.Ui.Legacy)
 {
    [[Elementary dayselector class]]
    legacy_prefix: elm_dayselector;
