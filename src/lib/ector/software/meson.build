@@ -40,7 +40,7 @@ if cpu_sse3 == true
     sources: pub_eo_file_target + [ 'ector_software_gradient_sse3.c' ],
     dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
     include_directories: config_dir + [ include_directories('..') ],
-    c_args: ector_opt_c_args,
+    c_args: native_arch_opt_c_args,
   )
   ector_opt_lib += [ ector_opt ]
 endif

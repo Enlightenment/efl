@@ -188,7 +188,7 @@ if cpu_sse3 == true or cpu_neon == true and cpu_neon_intrinsics == false
       [ include_directories('../../..') ] +
       evas_include_directories +
       [vg_common_inc_dir],
-    c_args: evas_opt_c_args,
+    c_args: native_arch_opt_c_args,
     dependencies: [eina, eo, ector, emile, evas_deps, m],
   )
   evas_link += [ evas_opt ]

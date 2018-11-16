@@ -1,3 +1,19 @@
+if get_option('native-arch-optimization')
+  if target_machine.cpu_family() == 'x86' or target_machine.cpu_family() == 'x86_64'
+    native_header = 'immintrin.h'
+  elif target_machine.cpu_family() == 'arm'
+    native_header = 'arm_neon.h'
+  elif target_machine.cpu_family() == 'aarch64'
+    native_header = 'arm_neon.h'
+  elif target_machine.cpu_family() == 'ppc' or target_machine.cpu_family() == 'ppc64'
+    native_header = 'altivec.h'
+  endif
+
+  if cc.has_header(native_header) == false
+    error('Error, header '+native_header+' is required')
+  endif
+endif
+
 header_checks = [
   'alloca.h',
   'asm/hwcap.h',
