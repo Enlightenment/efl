@@ -9,15 +9,6 @@ ector_src += files([
   'ector_software_buffer.c',
 ])
 
-if cpu_sse3 == true
-  ector_opt = static_library('ector_opt',
-    sources: [ 'ector_software_gradient_sse3.c' ],
-    dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
-    include_directories: config_dir + [ include_directories('..') ],
-    c_args: ector_opt_c_args,
-  )
-  ector_opt_lib += [ ector_opt ]
-endif
 
 pub_eo_files = [
   'ector_software_surface.eo',
@@ -42,6 +33,17 @@ foreach eo_file : pub_eo_files
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
 endforeach
+
+
+if cpu_sse3 == true
+  ector_opt = static_library('ector_opt',
+    sources: pub_eo_file_target + [ 'ector_software_gradient_sse3.c' ],
+    dependencies: ector_pub_deps + [triangulator, freetype, draw, m] + ector_deps,
+    include_directories: config_dir + [ include_directories('..') ],
+    c_args: ector_opt_c_args,
+  )
+  ector_opt_lib += [ ector_opt ]
+endif
 
 install_data(pub_eo_files,
   install_dir: join_paths(eolian_include_dir, package_version_name)
