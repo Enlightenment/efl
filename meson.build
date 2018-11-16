@@ -98,7 +98,6 @@ config_h.set10('EFL_HAVE_THREADS', true)
 config_h.set10('SLOPPY_SPEC', true)
 
 ## have to get compiler again for this to work
-compiler = meson.get_compiler('c')
 code = '''#define _GNU_SOURCE 1
 #include <unistd.h>
 #include <stdio.h>
@@ -107,7 +106,7 @@ extern char **environ;
 
 void func(void) { printf("%p\n", environ); }
 '''
-if compiler.compiles(code, args : '-lc', name : 'environ check') == true
+if cc.compiles(code, args : '-lc', name : 'environ check') == true
   config_h.set10('HAVE_ENVIRON', true)
 endif
 
@@ -117,7 +116,7 @@ cpu_neon = false
 cpu_neon_intrinsics = false
 native_arch_opt_c_args = [ '-msse3' ]
 
-if host_machine.endian() == 'big'
+if target_machine.endian() == 'big'
   config_h.set10('WORDS_BIGENDIAN', true)
 endif
 
