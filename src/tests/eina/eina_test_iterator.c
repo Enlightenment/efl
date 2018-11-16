@@ -616,8 +616,8 @@ EFL_START_TEST(eina_iterator_carray_length)
 {
    int array[] = { 1, 4, 9, 16 };
    Eina_Iterator *it;
-   int i;
    int j = 1;
+   int i = 0;
 
    it = EINA_C_ARRAY_ITERATOR_NEW(array);
    EINA_ITERATOR_FOREACH(it, i)
@@ -625,6 +625,31 @@ EFL_START_TEST(eina_iterator_carray_length)
         fail_if(i != j * j);
         j++;
      }
+   fail_if(j < EINA_C_ARRAY_LENGTH(array));
+   eina_iterator_free(it);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_iterator_multi)
+{
+   int array1[] = { 1, 4, 9, 16 };
+   int array2[] = { 25, 36, 49, 64 };
+   int array3[] = { 81, 100, 121, 144 };
+   Eina_Iterator *it;
+   int i;
+   int j = 1;
+
+   it = eina_multi_iterator_new(EINA_C_ARRAY_ITERATOR_NEW(array1),
+                                EINA_C_ARRAY_ITERATOR_NEW(array2),
+                                EINA_C_ARRAY_ITERATOR_NEW(array3));
+   EINA_ITERATOR_FOREACH(it, i)
+     {
+        fail_if(i != j * j);
+        j++;
+     }
+   fail_if(j < EINA_C_ARRAY_LENGTH(array1)
+             + EINA_C_ARRAY_LENGTH(array2)
+             + EINA_C_ARRAY_LENGTH(array3));
    eina_iterator_free(it);
 }
 EFL_END_TEST
@@ -641,4 +666,5 @@ eina_test_iterator(TCase *tc)
    tcase_add_test(tc, eina_iterator_filter_simple);
    tcase_add_test(tc, eina_iterator_filter_free);
    tcase_add_test(tc, eina_iterator_carray_length);
+   tcase_add_test(tc, eina_iterator_multi);
 }
