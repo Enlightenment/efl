@@ -4,7 +4,7 @@ project('efl', ['c','cpp'],
   meson_version : '>=0.47'
 )
 
-if target_machine.system() == 'darwin'
+if host_machine.system() == 'darwin'
   add_languages('objc')
 endif
 
@@ -41,7 +41,7 @@ endif
 
 #prepare a special linker args flag for binaries on macos
 bin_linker_args = []
-if target_machine.system() == 'darwin'
+if host_machine.system() == 'darwin'
   bin_linker_args = ['-pagezero_size', '10000', '-image_base', '100000000']
 endif
 
@@ -110,37 +110,40 @@ if cc.compiles(code, args : '-lc', name : 'environ check') == true
   config_h.set10('HAVE_ENVIRON', true)
 endif
 
-## or should this be target_machine?
 cpu_sse3 = false
 cpu_neon = false
 cpu_neon_intrinsics = false
-native_arch_opt_c_args = [ '-msse3' ]
+native_arch_opt_c_args = [ ]
 
-if target_machine.endian() == 'big'
+if host_machine.endian() == 'big'
   config_h.set10('WORDS_BIGENDIAN', true)
 endif
 
 if get_option('native-arch-optimization')
-  if target_machine.cpu_family() == 'x86' or target_machine.cpu_family() == 'x86_64'
-    config_h.set10('BUILD_MMX', true)
-    message('x86 build - MMX enabled')
-    config_h.set10('BUILD_SSE3', true)
+  if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
     cpu_sse3 = true
-    message('x86 build - SSE3 enabled')
-  elif target_machine.cpu_family() == 'arm'
-    config_h.set10('BUILD_NEON', true)
+    config_h.set10('BUILD_MMX', true)
+    config_h.set10('BUILD_SSE3', true)
+    native_arch_opt_c_args = [ '-msse3' ]
+    message('x86 build - MMX + SSE3 enabled')
+  elif host_machine.cpu_family() == 'arm'
     cpu_neon = true
+    config_h.set10('BUILD_NEON', true)
+    add_global_arguments('-mfpu=neon', language: 'c')
+    add_global_arguments('-ftree-vectorize', language: 'c')
     message('ARM build - NEON enabled')
-  elif target_machine.cpu_family() == 'aarch64'
+  elif host_machine.cpu_family() == 'aarch64'
+    cpu_neon = true
+    cpu_neon_intrinsics = true
     config_h.set10('BUILD_NEON', true)
     config_h.set10('BUILD_NEON_INTRINSICS', true)
     add_global_arguments('-ftree-vectorize', language: 'c')
-    cpu_neon = true
-    cpu_neon_intrinsics = true
+    native_arch_opt_c_args = [ '-ftree-vectorize' ]
     message('ARM64 build - NEON + intrinsics enabled')
-  elif target_machine.cpu_family() == 'ppc' or target_machine.cpu_family() == 'ppc64'
+  elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
     config_h.set10('BUILD_ALTIVEC', true)
     add_global_arguments('-maltivec-vectorize', language: 'c')
+    add_global_arguments('-maltivec', language: 'c')
     message('PPC/POWER build - ALTIVEC enabled')
   endif
 endif
@@ -154,10 +157,10 @@ bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
 linux = ['linux']
 osx = ['darwin']
 
-sys_linux = linux.contains(target_machine.system())
-sys_bsd = bsd.contains(target_machine.system())
-sys_windows = windows.contains(target_machine.system())
-sys_osx = osx.contains(target_machine.system())
+sys_linux = linux.contains(host_machine.system())
+sys_bsd = bsd.contains(host_machine.system())
+sys_windows = windows.contains(host_machine.system())
+sys_osx = osx.contains(host_machine.system())
 
 if sys_linux == true or sys_bsd == true
   sys_lib_extension = 'so'
@@ -172,7 +175,7 @@ elif sys_osx == true
   sys_exe_extension = ''
   sys_mod_extension = 'dylib'
 else
-  error('System '+target_machine.system()+' not known')
+  error('System '+host_machine.system()+' not known')
 endif
 
 if (get_option('crypto') == 'gnutls')

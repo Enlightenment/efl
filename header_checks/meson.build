@@ -1,11 +1,11 @@
 if get_option('native-arch-optimization')
-  if target_machine.cpu_family() == 'x86' or target_machine.cpu_family() == 'x86_64'
+  if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
     native_header = 'immintrin.h'
-  elif target_machine.cpu_family() == 'arm'
+  elif host_machine.cpu_family() == 'arm'
     native_header = 'arm_neon.h'
-  elif target_machine.cpu_family() == 'aarch64'
+  elif host_machine.cpu_family() == 'aarch64'
     native_header = 'arm_neon.h'
-  elif target_machine.cpu_family() == 'ppc' or target_machine.cpu_family() == 'ppc64'
+  elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
     native_header = 'altivec.h'
   endif
 
