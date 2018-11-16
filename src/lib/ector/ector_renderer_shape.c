@@ -58,9 +58,9 @@ static void
 _ector_renderer_shape_efl_object_invalidate(Eo *obj EINA_UNUSED,
                                             Ector_Renderer_Shape_Data *pd)
 {
-   if (pd->fill) efl_unref(pd->fill);
-   if (pd->stroke.fill) efl_unref(pd->stroke.fill);
-   if (pd->stroke.marker) efl_unref(pd->stroke.marker);
+   efl_replace(&pd->fill, NULL);
+   efl_replace(&pd->stroke.fill, NULL);
+   efl_replace(&pd->stroke.marker, NULL);
 }
 
 
