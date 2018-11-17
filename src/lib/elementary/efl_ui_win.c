@@ -1799,7 +1799,7 @@ _evas_event_key_cb(void *data, const Efl_Event *ev)
    if (!evdata || evdata->win_fed)
      return;
 
-   // evas_callbacks will send the event to the focussed object (ie. this win)
+   // evas_callbacks will send the event to the focused object (ie. this win)
    if (evas_focus_get(evas_object_evas_get(win)) == win)
      return;
 

@@ -161,7 +161,7 @@ _elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, u
    if (line->status != ELM_CODE_STATUS_TYPE_DEFAULT)
      return line->status;
 
-   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
+   if (pd->editable && pd->focused && pd->cursor_line == line->number)
      return ELM_CODE_STATUS_TYPE_CURRENT;
 
    if (pd->line_width_marker > 0 && pd->line_width_marker == col-1)
@@ -338,7 +338,7 @@ _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int g
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->visible && pd->editable && pd->focussed && pd->cursor_line == number)
+   if (pd->visible && pd->editable && pd->focused && pd->cursor_line == number)
      {
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
@@ -1850,7 +1850,7 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    widget = (Elm_Code_Widget *)data;
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   pd->focussed = EINA_TRUE;
+   pd->focused = EINA_TRUE;
    if (pd->cursor_rect)
      elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
@@ -1867,7 +1867,7 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    widget = (Elm_Code_Widget *)data;
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   pd->focussed = EINA_FALSE;
+   pd->focused = EINA_FALSE;
    if (pd->cursor_rect)
      elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
 

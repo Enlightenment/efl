@@ -32,7 +32,7 @@ typedef struct
    unsigned int cursor_line, cursor_col;
    Evas_Object *cursor_rect;
 
-   Eina_Bool visible, editable, focussed;
+   Eina_Bool visible, editable, focused;
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker, tabstop;
    Eina_Bool show_whitespace, tab_inserts_spaces;
