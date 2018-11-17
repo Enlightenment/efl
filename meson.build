@@ -341,7 +341,7 @@ foreach package : subprojects
       pkgconfig.generate(tmp_lib,
         name : '-'.join(package_name.split('_')),
         subdirs : [package_version_name] + tmp_package_subdirs,
-        version : version_major + '.' + version_minor,
+        version : version_major + '.' + version_minor + '.' + version_micro,
         libraries : tmp_pub_deps,
         requires : package[8],
         variables : package_pc_variables
@@ -350,7 +350,7 @@ foreach package : subprojects
         pkgconfig.generate(tmp_lib,
           name : package_name,
           subdirs : [package_version_name] + tmp_package_subdirs,
-          version : version_major + '.' + version_minor,
+          version : version_major + '.' + version_minor + '.' + version_micro,
           libraries : tmp_pub_deps,
           requires : package[8],
         )
