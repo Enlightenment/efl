@@ -2383,7 +2383,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
 
-   elm_object_focus_allow_set(obj, EINA_TRUE);
+   legacy_object_focus_handle(obj);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
