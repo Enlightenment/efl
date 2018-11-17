@@ -3,8 +3,13 @@ mod_src = files([
   'scim_imcontext.cpp',
   'scim_imcontext.h'
 ])
-mod_deps = [ecore, ecore_imf, ecore_x, dependency('scim-1.0'), dependency('glib-2.0')]
 
+scim_dep = dependency('scim')
+if not scim_dep.found()
+  scim_dep = dependency('scim-1.0')
+endif
+
+mod_deps = [ecore, ecore_imf, ecore_x, ecore_evas, scim_dep, dependency('glib-2.0')]
 
 shared_module(mod_name,
     mod_src,
