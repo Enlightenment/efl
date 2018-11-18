@@ -2032,7 +2032,6 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    efl_text_font_set(sd->text_obj, "Sans", 12);
    efl_text_normal_color_set(sd->text_obj, 255, 255, 255, 255);
    sd->single_line = !efl_text_multiline_get(sd->text_obj);
-   efl_text_set(sd->text_obj, "");
 
    sd->item_fallback_factory = efl_add(EFL_UI_TEXT_FACTORY_FALLBACK_CLASS, obj);
 
@@ -2077,6 +2076,9 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
    _create_text_cursors(obj, sd);
+
+   sd->calc_force = EINA_TRUE;
+   elm_layout_sizing_eval(obj);
 
    return obj;
 
