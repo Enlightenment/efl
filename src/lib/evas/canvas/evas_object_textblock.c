@@ -7751,7 +7751,7 @@ _efl_canvas_text_efl_text_markup_markup_set(Eo *eo_obj, Efl_Canvas_Text_Data *o,
 {
    ASYNC_BLOCK;
    _evas_object_textblock_text_markup_set(eo_obj, o, text);
-   //efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
 static void
