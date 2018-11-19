@@ -32,10 +32,6 @@ jobs:
       - os: linux
       - DISTRO=Fedora28
       - CI_BUILD_TYPE=misc-disabled
-    - env:
-      - os: linux
-      - DISTRO=Fedora28
-      - CI_BUILD_TYPE=mingw
     - if: type = cron
       env:
         - os: linux
