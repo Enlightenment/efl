@@ -338,20 +338,6 @@ _efl_ui_widget_focus_highlight_style_get(const Eo *obj, Elm_Widget_Smart_Data *s
 }
 
 static Eina_Bool
-_tree_unfocusable(Eo *obj)
-{
-   Efl_Ui_Widget *wid = obj;
-
-   do {
-     ELM_WIDGET_DATA_GET(wid, wid_pd);
-
-     if (wid_pd->tree_unfocusable) return EINA_TRUE;
-   } while((wid = elm_widget_parent_widget_get(wid)));
-
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _tree_custom_chain_missing(Eo *obj)
 {
    Efl_Ui_Widget *wid = obj;
@@ -378,7 +364,7 @@ _tree_custom_chain_missing(Eo *obj)
 }
 
 static Eina_Bool
-_tree_disabled(Eo *obj)
+_tree_disabled_or_unfocusable(Eo *obj)
 {
    Efl_Ui_Widget *wid = obj;
 
@@ -386,6 +372,7 @@ _tree_disabled(Eo *obj)
      ELM_WIDGET_DATA_GET(wid, wid_pd);
 
      if (wid_pd->disabled) return EINA_TRUE;
+     if (wid_pd->tree_unfocusable) return EINA_TRUE;
    } while((wid = elm_widget_parent_widget_get(wid)));
 
    return EINA_FALSE;
@@ -498,8 +485,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
     //can focus can be overridden by the following properties
     if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS) ||
         (!pd->parent_obj) ||
-        (_tree_unfocusable(obj)) ||
-        (_tree_disabled(obj)) ||
+        (_tree_disabled_or_unfocusable(obj)) ||
         (_tree_custom_chain_missing(obj)) ||
         (!evas_object_visible_get(obj)))
       return;
