@@ -45,10 +45,6 @@ jobs:
       env:
         - os: linux
         - DISTRO=Debian91
-    - if: type = cron
-      env:
-        - os: linux
-        - DISTRO=Archlinux
   exclude:
     - os: linux
 
