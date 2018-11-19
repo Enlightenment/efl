@@ -10,7 +10,7 @@ if [ "$1" = "mingw" ] ; then
 fi
 
 #T7151
-if [ "$1" = "misc" ] || [ "$1" = "misc-disabled" ] ; then
+if [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ] ; then
   exit 0
 fi
 

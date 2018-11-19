@@ -23,15 +23,11 @@ jobs:
     - env:
       - os: linux
       - DISTRO=Fedora28
-      - CI_BUILD_TYPE=wayland
+      - CI_BUILD_TYPE=options-enabled
     - env:
       - os: linux
       - DISTRO=Fedora28
-      - CI_BUILD_TYPE=misc
-    - env:
-      - os: linux
-      - DISTRO=Fedora28
-      - CI_BUILD_TYPE=misc-disabled
+      - CI_BUILD_TYPE=options-disabled
     - env:
       - os: linux
       - DISTRO=Fedora28
