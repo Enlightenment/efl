@@ -483,11 +483,11 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
    *should = *want_full = EINA_FALSE;
 
     //can focus can be overridden by the following properties
-    if (!efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS) ||
-        (!pd->parent_obj) ||
+    if ((!pd->parent_obj) ||
+        (!evas_object_visible_get(obj)) ||
+        !efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS) ||
         (_tree_disabled_or_unfocusable(obj)) ||
-        (_tree_custom_chain_missing(obj)) ||
-        (!evas_object_visible_get(obj)))
+        (_tree_custom_chain_missing(obj)))
       return;
 
     if (pd->can_focus)
