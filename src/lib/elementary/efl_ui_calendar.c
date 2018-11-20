@@ -1164,6 +1164,48 @@ _efl_ui_calendar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Calendar_Data *sd, 
    evas_object_smart_changed(obj);
 }
 
+static void
+_calendar_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
+{
+   Efl_Ui_Calendar_Data *sd = data;
+   const Eina_Value_Type *type = eina_value_type_get(&value);
+   struct tm v;
+
+   if (type == EINA_VALUE_TYPE_TM)
+     {
+        eina_value_get(&value, &v);
+        eina_strbuf_append_strftime(str, sd->format_template, &v);
+     }
+}
+
+static void
+_calendar_format_free_cb(void *data)
+{
+   Efl_Ui_Calendar_Data *sd = data;
+
+   if (sd && sd->format_template)
+     {
+        eina_stringshare_del(sd->format_template);
+        sd->format_template = NULL;
+     }
+}
+
+EOLIAN static void
+_efl_ui_calendar_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Calendar_Data *sd, const char *template)
+{
+   if (!template) return;
+
+   eina_stringshare_replace(&sd->format_template, template);
+
+   efl_ui_format_cb_set(obj, sd, _calendar_format_cb, _calendar_format_free_cb);
+}
+
+EOLIAN static const char *
+_efl_ui_calendar_efl_ui_format_format_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
+{
+   return sd->format_template;
+}
+
 EOLIAN static void
 _efl_ui_calendar_first_day_of_week_set(Eo *obj, Efl_Ui_Calendar_Data *sd, Efl_Ui_Calendar_Weekday day)
 {

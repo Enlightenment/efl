@@ -42,6 +42,7 @@ struct _Efl_Ui_Calendar_Data
    Efl_Ui_Calendar_Weekday     first_week_day;
    unsigned char            first_day_it;
 
+   const char              *format_template;
    Efl_Ui_Format_Func_Cb    format_cb;
    Eina_Free_Cb             format_free_cb;
    void                    *format_cb_data;
