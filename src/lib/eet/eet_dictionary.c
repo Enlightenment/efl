@@ -101,16 +101,10 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    eina_rwlock_take_read(&ed->rwlock);
 
    idx = _eet_dictionary_lookup(ed, string, len, hash, &pidx);
-
    if (idx != -1)
      {
-        if (ed->all[idx].str && 
-            ((ed->all[idx].str == string) ||
-                (!strcmp(ed->all[idx].str, string))))
-	  {
-             eina_rwlock_release(&ed->rwlock);
-	    return idx;
-	  }
+        eina_rwlock_release(&ed->rwlock);
+        return idx;
      }
 
    str = eina_stringshare_add(string);
