@@ -150,13 +150,10 @@ _eventing_test(void *data, Evas_Object *obj, void *event_info)
 EFL_START_TEST (elm_test_widget_focus_simple_widget)
 {
    Evas_Object *win, *box, *resettor, *o;
-   Ecore_Evas *ee;
    Eina_Hash *map;
 
    map = eina_hash_string_small_new(NULL);
-   win = win_add(NULL, "focus test", ELM_WIN_BASIC);
-   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
-   ecore_evas_focus_set(ee, EINA_TRUE);
+   win = win_add_focused(NULL, "focus test", ELM_WIN_BASIC);
 
    box = elm_box_add(win);
    elm_win_resize_object_add(win, box);

@@ -103,5 +103,6 @@ void elm_code_test_widget_selection(TCase *tc);
 void elm_code_test_widget_undo(TCase *tc);
 
 Evas_Object *win_add();
+Evas_Object *win_add_focused();
 
 #endif /* _ELM_SUITE_H */

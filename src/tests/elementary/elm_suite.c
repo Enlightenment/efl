@@ -5,6 +5,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 #include "../efl_check.h"
+#include "elm_widget.h"
 
 static int main_pid = -1;
 static Eina_Bool did_shutdown;
@@ -182,6 +183,34 @@ win_add()
    return _elm_suite_win_create();
 }
 
+static void
+force_focus_win(Evas_Object *win)
+{
+   Ecore_Evas *ee;
+
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(win));
+   ecore_evas_focus_set(ee, EINA_TRUE);
+   ecore_evas_callback_focus_in_set(ee, NULL);
+   ecore_evas_callback_focus_out_set(ee, NULL);
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(win, EFL_UI_WIDGET_CLASS);
+   pd->top_win_focused = EINA_TRUE;
+}
+
+Evas_Object *
+win_add_focused()
+{
+   Evas_Object *win;
+
+   if (getpid() != main_pid)
+     {
+        if (global_win) return global_win;
+     }
+
+   win = _elm_suite_win_create();
+   force_focus_win(win);
+   return win;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -211,6 +240,7 @@ main(int argc, char **argv)
    if (buffer)
      {
         global_win = _elm_suite_win_create();
+        force_focus_win(global_win);
      }
    EINA_SAFETY_ON_TRUE_RETURN_VAL(failed_count, 255);
    /* preload default theme */

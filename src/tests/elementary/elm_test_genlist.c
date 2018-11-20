@@ -477,7 +477,8 @@ EFL_START_TEST (elm_genlist_test_focus_state)
    Elm_Object_Item *it;
    Evas_Object *btn;
 
-   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
+   win = win_add_focused(NULL, "genlist", ELM_WIN_BASIC);
+
    evas_object_show(win);
 
    btn = elm_button_add(win);
