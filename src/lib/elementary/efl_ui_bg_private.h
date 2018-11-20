@@ -23,8 +23,8 @@
 /**
  * Base layout smart data extended with bg instance data.
  */
-typedef struct _Efl_Ui_Bg_Widget_Data Efl_Ui_Bg_Widget_Data;
-struct _Efl_Ui_Bg_Widget_Data
+typedef struct _Efl_Ui_Bg_Data Efl_Ui_Bg_Data;
+struct _Efl_Ui_Bg_Data
 {
    Evas_Object          *rect; /*<< Used for elm_bg_color_set(): elm.swallow.rectangle */
    Evas_Object          *img; /*<< Used for elm_bg_file_set(): elm.swallow.content */
@@ -36,11 +36,11 @@ struct _Efl_Ui_Bg_Widget_Data
  * @}
  */
 
-#define EFL_UI_BG_WIDGET_DATA_GET(o, sd) \
-Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
+#define EFL_UI_BG_DATA_GET(o, sd) \
+Efl_Ui_Bg_Data * sd = efl_data_scope_get(o, EFL_UI_BG_CLASS)
 
-#define EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN(o, ptr)            \
-  EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
+#define EFL_UI_BG_DATA_GET_OR_RETURN(o, ptr)            \
+  EFL_UI_BG_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        ERR("No widget data for object %p (%s)",      \
@@ -48,8 +48,8 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
        return;                                       \
     }
 
-#define EFL_UI_BG_WIDGET_DATA_GET_OR_RETURN_VAL(o, ptr, val)   \
-  EFL_UI_BG_WIDGET_DATA_GET(o, ptr);                           \
+#define EFL_UI_BG_DATA_GET_OR_RETURN_VAL(o, ptr, val)   \
+  EFL_UI_BG_DATA_GET(o, ptr);                           \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        ERR("No widget data for object %p (%s)",      \
@@ -57,8 +57,8 @@ Efl_Ui_Bg_Widget_Data * sd = efl_data_scope_get(o, EFL_UI_BG_WIDGET_CLASS)
        return val;                                   \
     }
 
-#define EFL_UI_BG_WIDGET_CHECK(obj)                              \
-  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_BG_WIDGET_CLASS))) \
+#define EFL_UI_BG_CHECK(obj)                              \
+  if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_BG_CLASS))) \
     return
 
 #endif

@@ -82,7 +82,7 @@ struct _Elm_Translate_String_Data
  * "." to "_" among the class name. */
 static const char *legacy_type_table[][2] =
 {
-     { "Efl.Ui.Bg_Widget_Legacy", "Elm_Bg" },
+     { "Efl.Ui.Bg_Legacy", "Elm_Bg" },
      { "Efl.Ui.Button_Legacy", "Elm_Button" },
      { "Efl.Ui.Check_Legacy", "Elm_Check" },
      { "Efl.Ui.Clock_Legacy", "Elm_Datetime" },
@@ -6086,7 +6086,7 @@ _efl_ui_widget_bg_get(const Efl_Ui_Widget *obj)
    if (!bg_obj)
      {
         /* XXX const */
-        bg_obj = efl_add(EFL_UI_BG_WIDGET_CLASS, (Eo *)obj);
+        bg_obj = efl_add(EFL_UI_BG_CLASS, (Eo *)obj);
         EINA_SAFETY_ON_NULL_RETURN_VAL(bg_obj, NULL);
         sd->bg = bg_obj;
         efl_canvas_group_member_add((Eo *)obj, sd->bg);

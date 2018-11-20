@@ -1,4 +1,4 @@
-class Efl.Ui.Bg_Widget_Legacy (Efl.Ui.Bg_Widget, Efl.Ui.Legacy)
+class Efl.Ui.Bg_Legacy (Efl.Ui.Bg, Efl.Ui.Legacy)
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 

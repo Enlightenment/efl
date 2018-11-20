@@ -7368,7 +7368,7 @@ _elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
              // Note: This code path is probably not necessary (custom legacy
              // theme but efl_add'ed window -- all efl_add'ed widgets would
              // use default theme)
-             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, sd->obj);
+             bg = efl_add(EFL_UI_BG_CLASS, sd->obj);
           }
         wd = efl_data_scope_get(bg, EFL_UI_WIDGET_CLASS);
         if (wd)
@@ -7411,7 +7411,7 @@ _elm_win_standard_init(Eo *obj)
              // Note: This code path is probably not necessary (custom legacy
              // theme but efl_add'ed window -- all efl_add'ed widgets would
              // use default theme)
-             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, obj);
+             bg = efl_add(EFL_UI_BG_CLASS, obj);
           }
         _elm_win_bg_set(sd, bg);
      }
