@@ -110,6 +110,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_value.eo \
 	lib/elementary/efl_access_widget_action.eo \
 	lib/elementary/efl_access_window.eo \
+	lib/elementary/efl_ui_theme.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/elm_code_widget.eo \
 	lib/elementary/efl_selection.eo \

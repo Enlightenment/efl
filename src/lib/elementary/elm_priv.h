@@ -108,6 +108,7 @@ typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
 typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
 typedef struct _Elm_Config_Binding_Modifier  Elm_Config_Binding_Modifier;
 typedef struct _Elm_Module               Elm_Module;
+typedef struct _Efl_Ui_Theme_Data        Efl_Ui_Theme_Data;
 
 struct _Edje_Signal_Data
 {
@@ -142,13 +143,19 @@ struct _Elm_Theme
    Elm_Theme  *ref_theme;
    Eina_List  *referrers;
    const char *theme;
-   int         ref;
    Eina_Hash  *cache_style_load_failed;
 
    /* these only exist to preserve compat with bad elm_theme_XYZ_list_get() api */
    Eina_List *overlay_items;
    Eina_List *theme_items;
    Eina_List *extension_items;
+
+   Efl_Ui_Theme *eo_theme; //for accessing through the Eo interface
+};
+
+struct _Efl_Ui_Theme_Data
+{
+   Elm_Theme *th;
 };
 
 /* increment this whenever we change config enough that you need new
@@ -568,7 +575,7 @@ void                 _elm_win_standard_init(Eo *win);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
-Efl_Ui_Theme_Apply      _elm_theme_object_set(Evas_Object *parent,
+Efl_Ui_Theme_Apply_Result      _elm_theme_object_set(Evas_Object *parent,
                                            Evas_Object *o,
                                            const char *clas,
                                            const char *group,
@@ -576,7 +583,7 @@ Efl_Ui_Theme_Apply      _elm_theme_object_set(Evas_Object *parent,
 Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o,
                                                 const char *group,
                                                 const char *style);
-Efl_Ui_Theme_Apply      _elm_theme_set(Elm_Theme *th,
+Efl_Ui_Theme_Apply_Result      _elm_theme_set(Elm_Theme *th,
                                     Evas_Object *o,
                                     const char *clas,
                                     const char *group,
@@ -590,6 +597,7 @@ Eina_File           *_elm_theme_group_file_find(Elm_Theme *th,
                                                 const char *group);
 void                 _elm_theme_parse(Elm_Theme *th,
                                       const char *theme);
+void                 _elm_theme_init(void);
 void                 _elm_theme_shutdown(void);
 
 void                 _elm_module_init(void);

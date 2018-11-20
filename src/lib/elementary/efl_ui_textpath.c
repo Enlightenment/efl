@@ -655,13 +655,13 @@ _efl_ui_textpath_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Da
    return edje_object_part_text_get(pd->text_obj, "efl.text");
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",
                                elm_widget_style_get(obj));

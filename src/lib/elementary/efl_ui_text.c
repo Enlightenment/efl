@@ -719,17 +719,17 @@ _efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Ein
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   Efl_Ui_Theme_Apply theme_apply;
+   Efl_Ui_Theme_Apply_Result theme_apply;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
    theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
-   if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
+   if (!theme_apply) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    efl_event_freeze(obj);
 

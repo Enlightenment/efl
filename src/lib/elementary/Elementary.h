@@ -281,6 +281,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 #ifdef EFL_EO_API_SUPPORT
 # include <efl_selection_types.eot.h>
+# include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
 # include <efl_ui_widget_part.eo.h>

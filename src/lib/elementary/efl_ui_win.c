@@ -376,7 +376,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
-static Efl_Ui_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
+static Efl_Ui_Theme_Apply_Result _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
@@ -6855,16 +6855,16 @@ _efl_ui_win_efl_ui_widget_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED,
    return sd->focus_highlight.enabled;
 }
 
-static Efl_Ui_Theme_Apply
+static Efl_Ui_Theme_Apply_Result
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Eina_Bool ret = EINA_FALSE, prev_alpha;
    const char *s;
 
    int_ret = elm_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
                                        elm_widget_style_get(obj));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
@@ -6873,7 +6873,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
-   if (!ret) int_ret = EFL_UI_THEME_APPLY_FAILED;
+   if (!ret) int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    prev_alpha = sd->theme_alpha;
    s = edje_object_data_get(sd->legacy.edje, "alpha");
@@ -6884,17 +6884,17 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_win_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
    int_ret = _elm_win_theme_internal(obj, sd) & int_ret;
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 
    return int_ret;

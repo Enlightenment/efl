@@ -751,6 +751,8 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
 
    EINA_SAFETY_ON_FALSE_GOTO(ecore_file_init(), fail_ecore_file);
 
+   _elm_theme_init();
+
    _elm_exit_handler =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
 

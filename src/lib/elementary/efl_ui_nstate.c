@@ -116,13 +116,13 @@ _efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Nstate_Data *pd, int state)
    _state_active(obj, pd);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_nstate_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _state_signal_emit(obj, pd);
 

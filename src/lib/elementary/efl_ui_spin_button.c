@@ -788,10 +788,10 @@ _efl_ui_spin_button_theme_group_get(Evas_Object *obj, Efl_Ui_Spin_Button_Data *s
 }
 
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    char *group;
 
    group = _efl_ui_spin_button_theme_group_get(obj, sd);
@@ -802,7 +802,7 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
      }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (sd->ent)
      elm_widget_element_update(obj, sd->ent, PART_NAME_ENTRY);
@@ -821,7 +821,7 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
 
    _label_write(obj);
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 EOLIAN static Eo *

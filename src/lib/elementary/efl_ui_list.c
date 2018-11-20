@@ -427,8 +427,8 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   Efl_Ui_Theme_Apply theme_apply = efl_ui_layout_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
-   if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
+   Efl_Ui_Theme_Apply_Result theme_apply_ret = efl_ui_layout_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
+   if (theme_apply_ret == EFL_UI_THEME_APPLY_RESULT_FAIL)
      CRI("list(%p) failed to set theme [efl/list:%s]!", obj, efl_ui_widget_style_get(obj) ?: "NULL");
 
    pd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
@@ -599,12 +599,12 @@ _efl_ui_list_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_List_Data
    }
  */
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_list_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_List_Data *pd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
 

@@ -27,9 +27,9 @@ class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Part, Efl.Container, Efl.File,
               If this returns $false the widget is very likely to become
               non-functioning.
             ]]
-            return: Efl.Ui.Theme.Apply(0);
+            return: Efl.Ui.Theme_Apply_Result(0);
                [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme.Apply for more information.]]
+                 the values of @Efl.Ui.Theme_Apply_Result for more information.]]
          }
          /*
          TODO:

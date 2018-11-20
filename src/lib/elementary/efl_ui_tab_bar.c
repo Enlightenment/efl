@@ -214,7 +214,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 {
    Eo *tab, *icon_obj;
    Tab_Info *ti;
-   Efl_Ui_Theme_Apply theme_apply;
+   Efl_Ui_Theme_Apply_Result theme_apply;
 
    ti = calloc(1, sizeof(*ti));
 
@@ -239,7 +239,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 
    theme_apply = elm_widget_element_update(obj, tab, PART_NAME_TAB);
 
-   if (theme_apply == EFL_UI_THEME_APPLY_FAILED)
+   if (theme_apply == EFL_UI_THEME_APPLY_RESULT_FAIL)
      CRI("Failed to set layout!");
 
    efl_layout_signal_callback_add

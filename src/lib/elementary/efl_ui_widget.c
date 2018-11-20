@@ -1290,16 +1290,16 @@ _efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd 
 {
 }
 
-EAPI Efl_Ui_Theme_Apply
+EAPI Efl_Ui_Theme_Apply_Result
 elm_widget_theme(Evas_Object *obj)
 {
    const Eina_List *l;
    Evas_Object *child;
    Elm_Tooltip *tt;
    Elm_Cursor *cur;
-   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_SUCCESS;
+   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 
-   API_ENTRY return EFL_UI_THEME_APPLY_FAILED;
+   API_ENTRY return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      if (_elm_widget_is(child))
@@ -1362,14 +1362,14 @@ elm_widget_theme_specific(Evas_Object *obj,
    efl_ui_widget_theme_apply(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_widget_mirrored_reload(obj);
    if (elm_widget_disabled_get(obj))
      elm_widget_disabled_internal(obj, elm_widget_disabled_get(obj));
 
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 /**
@@ -2828,7 +2828,7 @@ elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th)
         if (elm_widget_theme_get(obj) != th) apply = EINA_TRUE;
         if (sd->theme) elm_theme_free(sd->theme);
         sd->theme = th;
-        if (th) th->ref++;
+        if (th) efl_ref(th->eo_theme);
         if (apply) elm_widget_theme(obj);
      }
 }
@@ -3049,19 +3049,19 @@ elm_widget_theme_get(const Evas_Object *obj)
    return sd->theme;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
    if (!elm_widget_is_legacy(obj) && efl_finalized_get(obj))
      {
         ERR("Efl.Ui.Widget.style can only be set before finalize!");
-        return EFL_UI_THEME_APPLY_FAILED;
+        return EFL_UI_THEME_APPLY_RESULT_FAIL;
      }
 
    if (eina_stringshare_replace(&sd->style, style))
       return elm_widget_theme(obj);
 
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 EOLIAN static const char*
@@ -3160,20 +3160,20 @@ elm_widget_scroll_child_locked_y_get(const Eo *obj)
    return sd->child_drag_y_locked;
 }
 
-EAPI Efl_Ui_Theme_Apply
+EAPI Efl_Ui_Theme_Apply_Result
 elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return EFL_UI_THEME_APPLY_FAILED;
+   if (!sd) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (eina_streq(welement, "base"))
      welement = NULL;
    if (eina_streq(wstyle, "default"))
      wstyle = NULL;
-   Efl_Ui_Theme_Apply ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
+   Efl_Ui_Theme_Apply_Result ret = _elm_theme_object_set(obj, edj, wname, welement, wstyle);
    if (!ret)
      {
-        return EFL_UI_THEME_APPLY_FAILED;
+        return EFL_UI_THEME_APPLY_RESULT_FAIL;
      }
 
    if (sd->orient_mode != -1)
@@ -3870,10 +3870,10 @@ elm_widget_theme_style_get(const Evas_Object *obj)
  * @param name An element name of sub object.
  * @return Whether the style was successfully applied or not.
  */
-EAPI Efl_Ui_Theme_Apply
+EAPI Efl_Ui_Theme_Apply_Result
 elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name)
 {
-   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_SUCCESS;
+   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_SUCCESS;
    Eina_Bool changed = EINA_FALSE;
    const char *obj_group;
    Eina_Stringshare *group;
