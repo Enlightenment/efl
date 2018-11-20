@@ -338,43 +338,34 @@ _efl_ui_widget_focus_highlight_style_get(const Eo *obj, Elm_Widget_Smart_Data *s
 }
 
 static Eina_Bool
-_tree_custom_chain_missing(Eo *obj)
-{
-   Efl_Ui_Widget *wid = obj;
-
-   while (elm_widget_parent_get(wid))
-     {
-        Efl_Ui_Widget *parent = elm_widget_parent_get(wid);
-        ELM_WIDGET_DATA_GET(parent, parent_pd);
-        Eina_List *lst = parent_pd->legacy_focus.custom_chain;
-
-        if (lst)
-          {
-             if (!eina_list_data_find(lst, wid))
-               {
-                  WRN("Widget %p disabled due to custom chain of %p", wid, parent);
-                  return EINA_TRUE;
-               }
-          }
-
-        wid = parent;
-     }
-
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _candidacy_exam(Eo *obj)
 {
+   Eina_List *lst;
    Efl_Ui_Widget *wid = obj, *top;
+   Elm_Widget_Smart_Data *wid_pd;
 
+   wid_pd = efl_data_scope_get(wid, MY_CLASS);
    do {
-     ELM_WIDGET_DATA_GET(wid, wid_pd);
 
      if (wid_pd->disabled) return EINA_TRUE;
      if (wid_pd->tree_unfocusable) return EINA_TRUE;
      top = wid;
-   } while((wid = elm_widget_parent_get(wid)));
+
+     wid = elm_widget_parent_get(wid);
+     if (!wid) break;
+     wid_pd = efl_data_scope_get(wid, MY_CLASS);
+
+     lst = wid_pd->legacy_focus.custom_chain;
+     if (lst)
+       {
+          if (!eina_list_data_find(lst, top))
+            {
+               WRN("Widget %p disabled due to custom chain of %p", top, wid);
+               return EINA_TRUE;
+            }
+       }
+
+   } while (1);
 
    return !efl_isa(top, EFL_UI_WIN_CLASS);
 }
@@ -486,8 +477,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
     //can focus can be overridden by the following properties
     if ((!pd->parent_obj) ||
         (!evas_object_visible_get(obj)) ||
-        (_candidacy_exam(obj)) ||
-        (_tree_custom_chain_missing(obj)))
+        (_candidacy_exam(obj)))
       return;
 
     if (pd->can_focus)
