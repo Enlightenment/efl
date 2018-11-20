@@ -373,7 +373,7 @@ _tree_disabled_or_unfocusable(Eo *obj)
 
      if (wid_pd->disabled) return EINA_TRUE;
      if (wid_pd->tree_unfocusable) return EINA_TRUE;
-   } while((wid = elm_widget_parent_widget_get(wid)));
+   } while((wid = elm_widget_parent_get(wid)));
 
    return EINA_FALSE;
 }
