@@ -89,6 +89,11 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_default_item.eo \
 	lib/elementary/efl_ui_list_empty_item.eo \
 	lib/elementary/efl_ui_list.eo \
+	lib/elementary/efl_ui_grid_item.eo \
+	lib/elementary/efl_ui_grid_default_item_part_icon.eo \
+	lib/elementary/efl_ui_grid_default_item_part_end.eo \
+	lib/elementary/efl_ui_grid_default_item.eo \
+	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
 	lib/elementary/elm_slider.eo \
@@ -415,6 +420,8 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_item_private.h \
 	lib/elementary/efl_ui_list_item_private.h \
 	lib/elementary/efl_ui_list_private.h \
+	lib/elementary/efl_ui_grid_item_private.h \
+	lib/elementary/efl_ui_grid_private.h \
 	lib/elementary/efl_ui_list_view_private.h \
 	lib/elementary/efl_ui_list_view_seg_array.h \
 	lib/elementary/elm_widget_web.h \
@@ -844,6 +851,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_default_item.c \
 	lib/elementary/efl_ui_list_empty_item.c \
 	lib/elementary/efl_ui_list.c \
+	lib/elementary/efl_ui_grid_item.c \
+	lib/elementary/efl_ui_grid_default_item.c \
+	lib/elementary/efl_ui_grid.c \
 	lib/elementary/efl_ui_list_view.c \
 	lib/elementary/efl_ui_list_view_precise_layouter.c \
 	lib/elementary/efl_ui_list_view_seg_array.c \
@@ -1566,7 +1576,8 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_common.c \
 	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c
+	tests/elementary/elm_test_focus_sub.c \
+	tests/elementary/efl_ui_test_grid.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
