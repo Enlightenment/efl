@@ -364,18 +364,19 @@ _tree_custom_chain_missing(Eo *obj)
 }
 
 static Eina_Bool
-_tree_disabled_or_unfocusable(Eo *obj)
+_candidacy_exam(Eo *obj)
 {
-   Efl_Ui_Widget *wid = obj;
+   Efl_Ui_Widget *wid = obj, *top;
 
    do {
      ELM_WIDGET_DATA_GET(wid, wid_pd);
 
      if (wid_pd->disabled) return EINA_TRUE;
      if (wid_pd->tree_unfocusable) return EINA_TRUE;
+     top = wid;
    } while((wid = elm_widget_parent_get(wid)));
 
-   return EINA_FALSE;
+   return !efl_isa(top, EFL_UI_WIN_CLASS);
 }
 
 static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
@@ -485,8 +486,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
     //can focus can be overridden by the following properties
     if ((!pd->parent_obj) ||
         (!evas_object_visible_get(obj)) ||
-        !efl_isa(elm_widget_top_get(obj), EFL_UI_WIN_CLASS) ||
-        (_tree_disabled_or_unfocusable(obj)) ||
+        (_candidacy_exam(obj)) ||
         (_tree_custom_chain_missing(obj)))
       return;
 
