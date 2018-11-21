@@ -683,19 +683,21 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
         tmp = eina_hash_find(pd->node_hash, &o);
 
         if (!tmp) continue;
+        if (T(tmp).parent != pnode) continue;
 
         node_order = eina_list_append(node_order, tmp);
      }
-
-   not_ordered = _set_a_without_b(T(pnode).children, node_order);
-   trash = _set_a_without_b(node_order, T(pnode).children);
-   node_order_clean = _set_a_without_b(node_order, trash);
-
-   eina_list_free(node_order);
-   eina_list_free(trash);
-
-   eina_list_free(T(pnode).children);
-   T(pnode).children = eina_list_merge(node_order_clean, not_ordered);
+   if (eina_list_count(node_order) == eina_list_count(T(pnode).children))
+     {
+        eina_list_free(T(pnode).children);
+        T(pnode).children = node_order;
+     }
+   else
+     {
+        not_ordered = _set_a_without_b(T(pnode).children, node_order);
+        eina_list_free(T(pnode).children);
+        T(pnode).children = eina_list_merge(node_order, not_ordered);
+     }
 
    return;
 }
