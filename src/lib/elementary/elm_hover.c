@@ -348,8 +348,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_size_hint_min_set(sd->offset, ofs_x, y2 - y);
    evas_object_size_hint_min_set(sd->size, w2, h2);
-   evas_object_move(wd->resize_obj, x, y);
-   evas_object_resize(wd->resize_obj, w, h);
+   evas_object_geometry_set(wd->resize_obj, x, y, w, h);
 }
 
 static void
