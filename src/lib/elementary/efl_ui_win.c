@@ -966,8 +966,7 @@ _elm_win_resize_job(void *data)
         int fx, fy, fw, fh;
 
         evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
-        evas_object_move(sd->frame_obj, -fx, -fy);
-        evas_object_resize(sd->frame_obj, w + fw, h + fh);
+        evas_object_geometry_set(sd->frame_obj, -fx, -fy, w + fw, h + fh);
      }
 
    if (sd->main_menu)
@@ -3233,8 +3232,7 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
              mw = 32;
              mh = 32;
           }
-        evas_object_move(sd->pointer.obj, 0, 0);
-        evas_object_resize(sd->pointer.obj, mw, mh);
+        evas_object_geometry_set(sd->pointer.obj, 0, 0, mw, mh);
         if (elm_widget_is_legacy(obj))
           edje_object_part_geometry_get(sd->pointer.obj,
                                         "elm.swallow.hotspot",
@@ -8631,8 +8629,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    EINA_LIST_FOREACH(p->children, l, opt)
      {
         child = opt->obj;
-        evas_object_move(child, x, y);
-        evas_object_resize(child, w, h);
+        evas_object_geometry_set(child, x, y, w, h);
      }
 
    efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
@@ -8653,8 +8650,7 @@ _elm_win_legacy_init(Efl_Ui_Win_Data *sd)
    else
      edje_object_part_swallow(sd->legacy.edje, "efl.contents", sd->legacy.box);
 
-   evas_object_move(sd->legacy.edje, 0, 0);
-   evas_object_resize(sd->legacy.edje, 1, 1);
+   evas_object_geometry_set(sd->legacy.edje, 0, 0, 1, 1);
    if (sd->type != ELM_WIN_FAKE)
      {
         edje_object_update_hints_set(sd->legacy.edje, EINA_TRUE);
