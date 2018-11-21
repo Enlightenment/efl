@@ -877,11 +877,11 @@ _box_layout_cb(Evas_Object *o,
              linew = ww;
           }
 
-        evas_object_move(obj,
-                         ((!rtl) ? (xx) : (r.x + (r.w - (xx - r.x) - ww)))
-                         + (Evas_Coord)(((double)(ww - ow)) * ax),
-                         yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-        evas_object_resize(obj, ow, oh);
+        evas_object_geometry_set(obj,
+                                 ((!rtl) ? (xx) : (r.x + (r.w - (xx - r.x) - ww)))
+                                 + (Evas_Coord)(((double)(ww - ow)) * ax),
+                                 yy + (Evas_Coord)(((double)(hh - oh)) * ay),
+                                 ow, oh);
         xx += ww;
         xx += priv->pad.h;
 
