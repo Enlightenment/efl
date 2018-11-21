@@ -11,38 +11,38 @@ static const char o_type[] = "vectors";
 const char *o_vg_type = o_type;
 
 
-static void _efl_canvas_vg_render(Evas_Object *eo_obj,
-                                  Evas_Object_Protected_Data *obj,
-                                  void *type_private_data,
-                                  void *engine, void *output, void *context, void *surface,
-                                  int x, int y, Eina_Bool do_async);
-static void _efl_canvas_vg_render_pre(Evas_Object *eo_obj,
-                                      Evas_Object_Protected_Data *obj,
-                                      void *type_private_data);
-static void _efl_canvas_vg_render_post(Evas_Object *eo_obj,
-                                       Evas_Object_Protected_Data *obj,
-                                       void *type_private_data);
-static void *_efl_canvas_vg_engine_data_get(Evas_Object *eo_obj);
-static int _efl_canvas_vg_is_opaque(Evas_Object *eo_obj,
-                                    Evas_Object_Protected_Data *obj,
-                                    void *type_private_data);
-static int _efl_canvas_vg_was_opaque(Evas_Object *eo_obj,
-                                     Evas_Object_Protected_Data *obj,
-                                     void *type_private_data);
+static void _efl_canvas_vg_object_render(Evas_Object *eo_obj,
+                                         Evas_Object_Protected_Data *obj,
+                                         void *type_private_data,
+                                         void *engine, void *output, void *context, void *surface,
+                                         int x, int y, Eina_Bool do_async);
+static void _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
+                                             Evas_Object_Protected_Data *obj,
+                                             void *type_private_data);
+static void _efl_canvas_vg_object_render_post(Evas_Object *eo_obj,
+                                              Evas_Object_Protected_Data *obj,
+                                              void *type_private_data);
+static void *_efl_canvas_vg_object_engine_data_get(Evas_Object *eo_obj);
+static int _efl_canvas_vg_object_is_opaque(Evas_Object *eo_obj,
+                                           Evas_Object_Protected_Data *obj,
+                                           void *type_private_data);
+static int _efl_canvas_vg_object_was_opaque(Evas_Object *eo_obj,
+                                            Evas_Object_Protected_Data *obj,
+                                            void *type_private_data);
 
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    NULL,
-     _efl_canvas_vg_render,
-     _efl_canvas_vg_render_pre,
-     _efl_canvas_vg_render_post,
-     _efl_canvas_vg_engine_data_get,
+   _efl_canvas_vg_object_render,
+   _efl_canvas_vg_object_render_pre,
+   _efl_canvas_vg_object_render_post,
+   _efl_canvas_vg_object_engine_data_get,
    /* these are optional. NULL = nothing */
      NULL,
      NULL,
-     _efl_canvas_vg_is_opaque,
-     _efl_canvas_vg_was_opaque,
+     _efl_canvas_vg_object_is_opaque,
+     _efl_canvas_vg_object_was_opaque,
      NULL,
      NULL,
      NULL,
@@ -179,7 +179,6 @@ _efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_
 
    // force a redraw
    pd->changed = EINA_TRUE;
-
    evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
 }
 
@@ -209,7 +208,7 @@ _efl_canvas_vg_object_viewbox_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Eina_R
              pd->viewbox = EINA_RECT_EMPTY();
              eina_matrix3_identity(&m);
              efl_canvas_vg_node_transformation_set(pd->root, &m);
-             // un register the resize callback
+             // unregister the resize callback
              efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _evas_vg_resize, pd);
           }
         return;
@@ -377,7 +376,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd,
         vc = efl_data_scope_get(n, EFL_CANVAS_VG_CONTAINER_CLASS);
 
         EINA_LIST_FOREACH(vc->children, l, child)
-          _evas_vg_render(obj, vd,
+          _evas_vg_render(obj, pd,
                           engine, output, context, surface, child,
                           clips, do_async);
      }
@@ -387,14 +386,13 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd,
         nd = efl_data_scope_get(n, EFL_CANVAS_VG_NODE_CLASS);
         obj->layer->evas->engine.func->ector_renderer_draw(engine, output, context, surface, nd->renderer, clips, do_async);
         if (do_async)
-          eina_array_push(&vd->cleanup, efl_ref(nd->renderer));
+          eina_array_push(&pd->cleanup, efl_ref(nd->renderer));
      }
 }
 
-// renders a vg_tree to an offscreen buffer
-// and push it to the cache.
+//renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
-_render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd,
+_render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                   void *engine, void *surface,
                   Efl_VG *root, int w, int h, void *key,
                   void *buffer, Eina_Bool do_async)
@@ -407,9 +405,9 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd
    ector = evas_ector_get(obj->layer->evas);
    if (!ector) return NULL;
 
+   //create a buffer
    if (!buffer)
      {
-        // 2. create a buffer
         buffer = obj->layer->evas->engine.func->ector_surface_create(engine,
                                                                      w, h,
                                                                      &error);
@@ -418,11 +416,9 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd
         buffer_created = EINA_TRUE;
      }
 
-
-   //1. render pre
    _evas_vg_render_pre(root, ector, NULL);
 
-   //3. draw into the buffer
+   //initialize buffer
    context = evas_common_draw_context_new();
    evas_common_draw_context_set_render_op(context, _EVAS_RENDER_COPY);
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
@@ -431,7 +427,8 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd
                                               ector,
                                               0, 0,
                                               do_async);
-   _evas_vg_render(obj, vd,
+   //draw on buffer
+   _evas_vg_render(obj, pd,
                    engine, buffer,
                    context, surface,
                    root, NULL,
@@ -459,7 +456,7 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
 {
    Eina_Bool async_unref;
 
-   // draw the buffer as image to canvas
+   //Draw the buffer as image to canvas
    async_unref = obj->layer->evas->engine.func->image_draw(engine, output, context, surface,
                                                            buffer,
                                                            0, 0, w, h,
@@ -467,6 +464,7 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
                                                            EINA_TRUE, do_async);
    if (do_async && async_unref)
      {
+        //Free buffer after drawing.
         evas_cache_image_ref((Image_Entry *)buffer);
         evas_unref_queue_image_put(obj->layer->evas, buffer);
      }
@@ -474,33 +472,33 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
 
 static void
 _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
-                       Efl_Canvas_Vg_Object_Data *vd,
+                       Efl_Canvas_Vg_Object_Data *pd,
                        void *engine, void *output, void *context, void *surface,
                        int x, int y, int w, int h, Eina_Bool do_async)
 {
-   Evas_Cache_Vg_Entry *vg_entry = vd->vg_entry;
+   Evas_Cache_Vg_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root, *dupe_root;
-   void *buffer;
 
    // if the size changed in between path set and the draw call;
+
    if ((vg_entry->w != w) ||
        (vg_entry->h != h))
      {
          evas_cache_vg_entry_del(vg_entry);
          vg_entry = evas_cache_vg_entry_find(vg_entry->file, vg_entry->key,
                                              w, h);
-         vd->vg_entry = vg_entry;
+         pd->vg_entry = vg_entry;
      }
    root = evas_cache_vg_tree_get(vg_entry);
    if (!root) return;
-   buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, root);
 
-   // if the buffer is not created yet
+   void *buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, root);
+
    if (!buffer)
      {
         dupe_root = efl_duplicate(root);
         // render to the buffer
-        buffer = _render_to_buffer(obj, vd,
+        buffer = _render_to_buffer(obj, pd,
                                    engine, surface,
                                    dupe_root,
                                    w, h,
@@ -523,28 +521,27 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
 
 static void
 _user_vg_entry_render(Evas_Object_Protected_Data *obj,
-                      Efl_Canvas_Vg_Object_Data *vd,
+                      Efl_Canvas_Vg_Object_Data *pd,
                       void *engine, void *output, void *context, void *surface,
                       int x, int y, int w, int h, Eina_Bool do_async)
 {
-   User_Vg_Entry *user_entry = vd->user_entry;
-   void *buffer;
+   User_Vg_Entry *user_entry = pd->user_entry;
 
-   // if the size dosen't match
+   //if the size doesn't match, drop previous cache surface.
    if ((user_entry->w != w ) ||
        (user_entry->h != h))
      {
          obj->layer->evas->engine.func->ector_surface_cache_drop(engine, user_entry);
          user_entry->w = w;
          user_entry->h = h;
-         vd->user_entry = user_entry;
+         pd->user_entry = user_entry;
      }
-   // if the buffer is not created yet
-   buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, user_entry);
+   //if the buffer is not created yet
+   void *buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, user_entry);
    if (!buffer)
      {
         // render to the buffer
-        buffer = _render_to_buffer(obj, vd,
+        buffer = _render_to_buffer(obj, pd,
                                    engine, surface,
                                    user_entry->root,
                                    w, h,
@@ -555,8 +552,8 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    else
      {
         // render to the buffer
-        if (vd->changed)
-          buffer = _render_to_buffer(obj, vd,
+        if (pd->changed)
+          buffer = _render_to_buffer(obj, pd,
                                      engine, surface,
                                      user_entry->root,
                                      w, h,
@@ -574,21 +571,17 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
 }
 
 static void
-_efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
-                      Evas_Object_Protected_Data *obj,
-                      void *type_private_data,
-                      void *engine, void *output, void *context, void *surface,
-                      int x, int y, Eina_Bool do_async)
+_efl_canvas_vg_object_render(Evas_Object *eo_obj EINA_UNUSED,
+                             Evas_Object_Protected_Data *obj,
+                             void *type_private_data,
+                             void *engine, void *output, void *context, void *surface,
+                             int x, int y, Eina_Bool do_async)
 {
-   Efl_Canvas_Vg_Object_Data *vd = type_private_data;
+   Efl_Canvas_Vg_Object_Data *pd = type_private_data;
 
    /* render object to surface with context, and offxet by x,y */
-   obj->layer->evas->engine.func->context_color_set(engine,
-                                                    context,
-                                                    255,
-                                                    255,
-                                                    255,
-                                                    255);
+   obj->layer->evas->engine.func->context_color_set(engine, context,
+                                                    255, 255, 255, 255);
    obj->layer->evas->engine.func->context_multiplier_set(engine,
                                                          context,
                                                          obj->cur->cache.clip.r,
@@ -599,33 +592,32 @@ _efl_canvas_vg_render(Evas_Object *eo_obj EINA_UNUSED,
                                                          obj->cur->anti_alias);
    obj->layer->evas->engine.func->context_render_op_set(engine, context,
                                                         obj->cur->render_op);
-   if (vd->vg_entry)
+   if (pd->vg_entry)
      {
-        _cache_vg_entry_render(obj, vd,
+        _cache_vg_entry_render(obj, pd,
                                engine, output, context, surface,
                                obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                                obj->cur->geometry.w, obj->cur->geometry.h, do_async);
      }
-   if (vd->user_entry)
+   if (pd->user_entry)
      {
-        _user_vg_entry_render(obj, vd,
+        _user_vg_entry_render(obj, pd,
                               engine, output, context, surface,
                               obj->cur->geometry.x + x, obj->cur->geometry.y + y,
                               obj->cur->geometry.w, obj->cur->geometry.h, do_async);
      }
-   vd->changed = EINA_FALSE;
+   pd->changed = EINA_FALSE;
 }
 
 static void
-_efl_canvas_vg_render_pre(Evas_Object *eo_obj,
-                          Evas_Object_Protected_Data *obj,
-                          void *type_private_data)
+_efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
+                                 Evas_Object_Protected_Data *obj,
+                                 void *type_private_data)
 {
-   Efl_Canvas_Vg_Object_Data *vd = type_private_data;
+   Efl_Canvas_Vg_Object_Data *pd = type_private_data;
    int is_v, was_v;
    Ector_Surface *s;
 
-   /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
    obj->pre_render_done = EINA_TRUE;
 
@@ -646,8 +638,8 @@ _efl_canvas_vg_render_pre(Evas_Object *eo_obj,
 
    // FIXME: handle damage only on changed renderer.
    s = evas_ector_get(obj->layer->evas);
-   if (vd->root && s)
-     _evas_vg_render_pre(vd->root, s, NULL);
+   if (pd->root && s)
+     _evas_vg_render_pre(pd->root, s, NULL);
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -655,7 +647,7 @@ _efl_canvas_vg_render_pre(Evas_Object *eo_obj,
    was_v = evas_object_was_visible(eo_obj,obj);
    if (!(is_v | was_v)) goto done;
 
-   if (vd->changed)
+   if (pd->changed)
      {
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
         goto done;
@@ -733,14 +725,15 @@ _efl_canvas_vg_render_pre(Evas_Object *eo_obj,
                                y + obj->layer->evas->framespace.y,
                                w, h);
      }
-   done:
+
+done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
 }
 
 static void
-_efl_canvas_vg_render_post(Evas_Object *eo_obj EINA_UNUSED,
-                           Evas_Object_Protected_Data *obj,
-                           void *type_private_data EINA_UNUSED)
+_efl_canvas_vg_object_render_post(Evas_Object *eo_obj EINA_UNUSED,
+                                  Evas_Object_Protected_Data *obj,
+                                  void *type_private_data EINA_UNUSED)
 {
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
@@ -752,24 +745,24 @@ _efl_canvas_vg_render_post(Evas_Object *eo_obj EINA_UNUSED,
 }
 
 static void *
-_efl_canvas_vg_engine_data_get(Evas_Object *eo_obj)
+_efl_canvas_vg_object_engine_data_get(Evas_Object *eo_obj)
 {
    Efl_Canvas_Vg_Object_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
 
 static int
-_efl_canvas_vg_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
-                         Evas_Object_Protected_Data *obj EINA_UNUSED,
-                         void *type_private_data EINA_UNUSED)
+_efl_canvas_vg_object_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                                Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                void *type_private_data EINA_UNUSED)
 {
    return 0;
 }
 
 static int
-_efl_canvas_vg_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
-                          Evas_Object_Protected_Data *obj EINA_UNUSED,
-                          void *type_private_data EINA_UNUSED)
+_efl_canvas_vg_object_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
+                                 Evas_Object_Protected_Data *obj EINA_UNUSED,
+                                 void *type_private_data EINA_UNUSED)
 {
    return 0;
 }
