@@ -96,8 +96,7 @@ _notify_move_to_orientation(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_C
    x = x + ((w - minw) * ax);
    y = y + ((h - minh) * ay);
 
-   evas_object_move(sd->notify, x, y);
-   evas_object_resize(sd->notify, minw, minh);
+   evas_object_geometry_set(sd->notify, x, y, minw, minh);
 }
 
 static void
@@ -137,8 +136,7 @@ _sizing_eval(Evas_Object *obj)
         x = 0;
         y = 0;
      }
-   evas_object_move(obj, x, y);
-   evas_object_resize(obj, w, h);
+   evas_object_geometry_set(obj, x, y, w, h);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result
