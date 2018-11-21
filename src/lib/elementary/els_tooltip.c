@@ -671,8 +671,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    // XXX: if this is a window for toolkit this relies on abs positioning
    // and this is not portable to wayland so we need relative positioning
    // implemented lower down for this
-   evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
-   evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
+   evas_object_geometry_set(tt->tt_win ? : tt->tooltip, tx, ty, tw, th);
    TTDBG("FINAL: tx=%d,ty=%d,tw=%d,th=%d\n", tx, ty, tw, th);
    evas_object_show(tt->tooltip);
 
