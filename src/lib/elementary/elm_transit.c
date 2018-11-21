@@ -197,8 +197,8 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
    //recover the states of the object.
    if (!transit->state_keep)
      {
-        evas_object_move(obj, obj_data->state.x, obj_data->state.y);
-        evas_object_resize(obj, obj_data->state.w, obj_data->state.h);
+        evas_object_geometry_set(obj, obj_data->state.x, obj_data->state.y,
+                                 obj_data->state.w, obj_data->state.h);
         evas_object_color_set(obj, obj_data->state.r, obj_data->state.g,
                               obj_data->state.b, obj_data->state.a);
         if (obj_data->state.visible) evas_object_show(obj);
