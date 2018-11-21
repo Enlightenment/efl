@@ -39,17 +39,17 @@ static const Evas_Object_Func object_func =
    _efl_canvas_vg_object_render_post,
    _efl_canvas_vg_object_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
-     _efl_canvas_vg_object_is_opaque,
-     _efl_canvas_vg_object_was_opaque,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL // render_prepare
+   NULL,
+   NULL,
+   _efl_canvas_vg_object_is_opaque,
+   _efl_canvas_vg_object_was_opaque,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL // render_prepare
 };
 
 static void
