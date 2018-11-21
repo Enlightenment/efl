@@ -99,6 +99,9 @@ _update_vgtree_viewport(Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
      }
 
    efl_canvas_vg_node_transformation_set(pd->root, &m);
+
+   pd->changed = EINA_TRUE;
+   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
 }
 
 static void
@@ -363,7 +366,7 @@ _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd
 }
 
 static void
-_evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *vd,
+_evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                 void *engine, void *output, void *context, void *surface, Efl_VG *n,
                 Eina_Array *clips, Eina_Bool do_async)
 {
