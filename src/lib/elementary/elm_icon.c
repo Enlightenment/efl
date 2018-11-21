@@ -355,10 +355,7 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
         return EINA_FALSE;
      }
 
-   evas_object_move(id->img, id->img_x,
-                    id->img_y);
-   evas_object_resize(id->img, id->img_w,
-                      id->img_h);
+   evas_object_geometry_set(id->img, id->img_x, id->img_y, id->img_w, id->img_h);
 
    return EINA_TRUE;
 }
