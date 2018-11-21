@@ -55,8 +55,7 @@ _elm_ews_border_geo_apply(Ecore_Evas *ee, Evas_Object *o)
 {
    int x, y, w, h;
    ecore_evas_geometry_get(ee, &x, &y, &w, &h);
-   evas_object_move(o, x, y);
-   evas_object_resize(o, w, h);
+   evas_object_geometry_set(o, x, y, w, h);
 }
 
 static void
