@@ -198,8 +198,7 @@ _image_place(Evas_Object *obj,
         if (ow > gw) ax = (ow - gw) / 2;
         if (oh > gh) ay = (oh - gh) / 2;
      }
-   evas_object_move(sd->img, ox + 0 - px + ax, oy + 0 - py + ay);
-   evas_object_resize(sd->img, gw, gh);
+   evas_object_geometry_set(sd->img, ox + 0 - px + ax, oy + 0 - py + ay, gw, gh);
 
    if (sd->show_item)
      {
@@ -360,10 +359,9 @@ _grid_place(Evas_Object *obj,
                   yy = (gh * yy) / g->h;
                   hh = ((gh * (ty + hh)) / g->h) - yy;
                }
-             evas_object_move(g->grid[tn].img,
-                              ox + xx - px + ax,
-                              oy + yy - py + ay);
-             evas_object_resize(g->grid[tn].img, ww, hh);
+             evas_object_geometry_set(g->grid[tn].img,
+                                      ox + xx - px + ax,
+                                      oy + yy - py + ay, ww, hh);
           }
      }
 }
