@@ -98,8 +98,7 @@ _position_items(Elm_Segment_Control_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
         ELM_SEGMENT_ITEM_DATA_GET(eo_item, it);
-        evas_object_move(VIEW(it), pos, by);
-        evas_object_resize(VIEW(it), sd->item_width, bh);
+        evas_object_geometry_set(VIEW(it), pos, by, sd->item_width, bh);
         if (rtl) pos -= sd->item_width;
         else pos += sd->item_width;
      }
