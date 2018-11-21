@@ -2276,8 +2276,7 @@ _wl_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Selection_Manager_Data *
    seat_sel->drag_win_start.x = seat_sel->drag_win_end.x = x;
    seat_sel->drag_win_start.y = seat_sel->drag_win_end.y = y;
 
-   evas_object_move(seat_sel->drag_win, x, y);
-   evas_object_resize(seat_sel->drag_win, w, h);
+   evas_object_geometry_set(seat_sel->drag_win, x, y, w, h);
    evas_object_show(seat_sel->drag_win);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(drag_obj), &x3, &y3);
@@ -4472,8 +4471,7 @@ _drag_anim_play(void *data, double pos)
              h = ai->start.h - ((dc->final_icon.h - ai->start.h) * pos);
              x = ai->start.x - (pos * (ai->start.x + (w / 2) - xm));
              y = ai->start.y - (pos * (ai->start.y + (h / 2) - ym));
-             evas_object_move(ai->obj, x, y);
-             evas_object_resize(ai->obj, w, h);
+             evas_object_geometry_set(ai->obj, x, y, w, h);
           }
 
         return ECORE_CALLBACK_RENEW;
