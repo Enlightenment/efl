@@ -888,18 +888,15 @@ _smart_reconfigure(Elm_Widget_Smart_Data *sd)
 {
    if (sd->resize_obj)
      {
-        evas_object_move(sd->resize_obj, sd->x, sd->y);
-        evas_object_resize(sd->resize_obj, sd->w, sd->h);
+        evas_object_geometry_set(sd->resize_obj, sd->x, sd->y, sd->w, sd->h);
      }
    if (sd->hover_obj)
      {
-        evas_object_move(sd->hover_obj, sd->x, sd->y);
-        evas_object_resize(sd->hover_obj, sd->w, sd->h);
+        evas_object_geometry_set(sd->hover_obj, sd->x, sd->y, sd->w, sd->h);
      }
    if (sd->bg)
      {
-        evas_object_move(sd->bg, sd->x, sd->y);
-        evas_object_resize(sd->bg, sd->w, sd->h);
+        evas_object_geometry_set(sd->bg, sd->x, sd->y, sd->w, sd->h);
      }
    if (sd->has_shadow)
      _elm_widget_shadow_update(sd->obj);
@@ -3912,8 +3909,7 @@ _track_obj_update(Evas_Object *track, Evas_Object *obj)
    //Geometry
    Evas_Coord x, y, w, h;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   evas_object_move(track, x, y);
-   evas_object_resize(track, w, h);
+   evas_object_geometry_set(track, x, y, w, h);
 
    //Visibility
    if (evas_object_visible_get(obj)) evas_object_show(track);
