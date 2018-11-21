@@ -323,8 +323,7 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    efl_unref(pd->root);
    pd->root = NULL;
 
-   if (pd->user_entry)
-     free(pd->user_entry);
+   if (pd->user_entry) free(pd->user_entry);
    pd->user_entry = NULL;
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
@@ -437,7 +436,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
                    root, NULL,
                    do_async);
 
-   obj->layer->evas->engine.func->image_dirty_region(engine, buffer, 0, 0, 0, 0);
+   obj->layer->evas->engine.func->image_dirty_region(engine, buffer, 0, 0, w, h);
    obj->layer->evas->engine.func->ector_end(engine, buffer,
                                             context, surface,
                                             ector,do_async);
