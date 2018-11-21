@@ -297,8 +297,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
         cur_y = y + tad->start.y + ((tad->end.y - tad->start.y) * progress);
         cur_w = tad->start.w + ((tad->end.w - tad->start.w) * progress);
         cur_h = tad->start.h + ((tad->end.h - tad->start.h) * progress);
-        evas_object_move(tad->obj, cur_x, cur_y);
-        evas_object_resize(tad->obj, cur_w, cur_h);
+        evas_object_geometry_set(tad->obj, cur_x, cur_y, cur_w, cur_h);
      }
 }
 
