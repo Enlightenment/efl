@@ -327,8 +327,7 @@ _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd
         elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
      }
 
-   evas_object_resize(pd->cursor_rect, cw/8, ch);
-   evas_object_move(pd->cursor_rect, cx, cy);
+   evas_object_geometry_set(pd->cursor_rect, cx, cy, cw/8, ch);
    evas_object_show(pd->cursor_rect);
 }
 
