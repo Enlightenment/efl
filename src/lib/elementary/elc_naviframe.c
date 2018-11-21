@@ -922,8 +922,7 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    EINA_INLIST_FOREACH(sd->stack, it)
      {
-        evas_object_move(VIEW(it), x, y);
-        evas_object_resize(VIEW(it), w, h);
+        evas_object_geometry_set(VIEW(it), x, y, w, h);
 
         if (it == top)
           {
