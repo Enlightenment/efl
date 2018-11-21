@@ -1204,29 +1204,25 @@ _configure(Evas_Object *obj)
      {
         fsize = (double)w * sd->dir_hitsize[0];
         elm_coords_finger_size_adjust(0, NULL, 1, &fsize);
-        evas_object_move(sd->event[0], x, y);
-        evas_object_resize(sd->event[0], w, fsize);
+        evas_object_geometry_set(sd->event[0], x, y, w, fsize);
      }
    if (sd->event[1])
      {
         fsize = (double)w * sd->dir_hitsize[1];
         elm_coords_finger_size_adjust(0, NULL, 1, &fsize);
-        evas_object_move(sd->event[1], x, y + h - fsize);
-        evas_object_resize(sd->event[1], w, fsize);
+        evas_object_geometry_set(sd->event[1], x, y + h - fsize, w, fsize);
      }
    if (sd->event[2])
      {
         fsize = (double)h * sd->dir_hitsize[2];
         elm_coords_finger_size_adjust(1, &fsize, 0, NULL);
-        evas_object_move(sd->event[2], x, y);
-        evas_object_resize(sd->event[2], fsize, h);
+        evas_object_geometry_set(sd->event[2], x, y, fsize, h);
      }
    if (sd->event[3])
      {
         fsize = (double)h * sd->dir_hitsize[3];
         elm_coords_finger_size_adjust(1, &fsize, 0, NULL);
-        evas_object_move(sd->event[3], x + w - fsize, y);
-        evas_object_resize(sd->event[3], fsize, h);
+        evas_object_geometry_set(sd->event[3], x + w - fsize, y, fsize, h);
      }
 }
 
@@ -1820,23 +1816,20 @@ _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);
-   evas_object_move(priv->clip, -49999, -49999);
-   evas_object_resize(priv->clip, 99999, 99999);
+   evas_object_geometry_set(priv->clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->clip, obj);
 
    priv->front.clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->front.clip, EINA_TRUE);
    evas_object_data_set(priv->front.clip, "_elm_leaveme", obj);
-   evas_object_move(priv->front.clip, -49999, -49999);
-   evas_object_resize(priv->front.clip, 99999, 99999);
+   evas_object_geometry_set(priv->front.clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->front.clip, obj);
    evas_object_clip_set(priv->front.clip, priv->clip);
 
    priv->back.clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->back.clip, EINA_TRUE);
    evas_object_data_set(priv->back.clip, "_elm_leaveme", obj);
-   evas_object_move(priv->back.clip, -49999, -49999);
-   evas_object_resize(priv->back.clip, 99999, 99999);
+   evas_object_geometry_set(priv->back.clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->back.clip, obj);
    evas_object_clip_set(priv->back.clip, priv->clip);
 
