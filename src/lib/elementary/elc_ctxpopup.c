@@ -575,8 +575,7 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
    evas_object_geometry_get(sd->parent, NULL, NULL, &parent_size.x, &parent_size.y);
    evas_object_resize(sd->bg, parent_size.x, parent_size.y);
 
-   evas_object_move(wd->resize_obj, rect.x, rect.y);
-   evas_object_resize(wd->resize_obj, rect.w, rect.h);
+   evas_object_geometry_set(wd->resize_obj, rect.x, rect.y, rect.w, rect.h);
 
    _show_signals_emit(obj, sd->dir);
 
@@ -1171,8 +1170,7 @@ _elm_ctxpopup_hover_parent_set(Eo *obj, Elm_Ctxpopup_Data *sd, Evas_Object *pare
    evas_object_geometry_get(parent, &x, &y, &w, &h);
    if (parent && efl_isa(parent, EFL_UI_WIN_CLASS))
      x = y = 0;
-   evas_object_move(sd->bg, x, y);
-   evas_object_resize(sd->bg, w, h);
+   evas_object_geometry_set(sd->bg, x, y, w, h);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 }
