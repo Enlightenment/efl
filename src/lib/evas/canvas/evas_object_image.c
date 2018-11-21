@@ -2720,6 +2720,8 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
     o->cur.opaque_valid = 0;*/
    Evas_Image_Data *o = type_private_data;
 
+   if (o->preload == EVAS_IMAGE_PRELOADING) return 0;
+
    if (o->cur->opaque_valid)
      {
         if (!o->cur->opaque) return 0;
