@@ -287,11 +287,9 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
           }
      }
 done:
-   evas_object_move(img, x, y);
-   evas_object_resize(img, w, h);
+   evas_object_geometry_set(img, x, y, w, h);
 
-   evas_object_move(sd->hit_rect, x, y);
-   evas_object_resize(sd->hit_rect, w, h);
+   evas_object_geometry_set(sd->hit_rect, x, y, w, h);
 }
 
 static inline void
