@@ -169,8 +169,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    if (sd->menu_bar && (y_p < py))
      y_p = py;
 
-   evas_object_move(parent_it->submenu.location, x_p, y_p);
-   evas_object_resize(parent_it->submenu.location, bw, h_p);
+   evas_object_geometry_set(parent_it->submenu.location, x_p, y_p, bw, h_p);
    evas_object_size_hint_min_set(parent_it->submenu.location, bw, h_p);
    evas_object_size_hint_max_set(parent_it->submenu.location, bw, h_p);
    elm_hover_target_set(parent_it->submenu.hv, parent_it->submenu.location);
