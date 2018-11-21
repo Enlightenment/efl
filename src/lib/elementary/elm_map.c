@@ -440,8 +440,7 @@ _obj_place(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   evas_object_move(obj, x, y);
-   evas_object_resize(obj, w, h);
+   evas_object_geometry_set(obj, x, y, w, h);
    evas_object_show(obj);
 }
 
@@ -1009,9 +1008,8 @@ _track_place(Elm_Map_Data *sd)
                  (ymin > py + oh && ymax > py + oh))
                {
                   //display the route
-                  evas_object_move(route, xmin - px, ymin - py);
-                  evas_object_resize(route, xmax - xmin, ymax - ymin);
-
+                  evas_object_geometry_set(route, xmin - px, ymin - py,
+                                           xmax - xmin, ymax - ymin);
                   evas_object_raise(route);
                   _obj_rotate(sd, route);
                   evas_object_show(route);
@@ -1882,8 +1880,7 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    evas_object_del(ovl->icon);
    ovl->icon = icon;
    // For using proxy, it should have size and be shown but moved away to hide.
-   evas_object_resize(icon, 32, 32);
-   evas_object_move(icon, -9999, -9999);
+   evas_object_geometry_set(icon, -9999, -9999, 32, 32);
    evas_object_show(icon);
 
    // Update class members' class icons
