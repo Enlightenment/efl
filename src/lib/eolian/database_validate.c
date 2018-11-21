@@ -465,7 +465,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         if (EINA_UNLIKELY(!!oobj))
           {
              snprintf(buf, sizeof(buf),
-                      "event '%s' conflicts with another symbol (at %s:%d:%d)",
+                      "event '%s' conflicts with another event (at %s:%d:%d)",
                       event->base.name, oobj->file, oobj->line, oobj->column);
              _obj_error(&event->base, buf);
              vals->warned = EINA_TRUE;
@@ -782,7 +782,7 @@ _validate_implement(Eolian_Implement *impl)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Hash *chash)
+                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -828,7 +828,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_validate_class(vals, icl, nhash, chash))
+        if (!_validate_class(vals, icl, nhash, ehash, chash))
           return EINA_FALSE;
      }
 
@@ -841,7 +841,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->events, l, event)
-     if (!_validate_event(vals, event, nhash))
+     if (!_validate_event(vals, event, ehash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
@@ -927,20 +927,24 @@ database_validate(const Eolian_Unit *src)
 
    iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_pointer_new(NULL);
+   Eina_Hash *ehash = eina_hash_pointer_new(NULL);
    Eina_Hash *chash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
+        eina_hash_free_buckets(ehash);
         eina_hash_free_buckets(chash);
-        if (!_validate_class(&vals, cl, nhash, chash))
+        if (!_validate_class(&vals, cl, nhash, ehash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
+             eina_hash_free(ehash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
    eina_hash_free(chash);
+   eina_hash_free(ehash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
 
