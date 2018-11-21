@@ -1405,8 +1405,7 @@ _hoversel_position(Evas_Object *obj)
      cx = w - mw;
    if (cy + mh > h)
      cy = h - mh;
-   evas_object_move(sd->hoversel, x + cx, y + cy);
-   evas_object_resize(sd->hoversel, mw, mh);
+   evas_object_geometry_set(sd->hoversel, x + cx, y + cy, mw, mh);
 }
 
 static void
@@ -1923,8 +1922,7 @@ _magnifier_move(void *data)
    if (ty > 0) py += ty;
    if (-(tx - pw) > tw) pw -= (-((tx - pw) + tw));
    if (-(ty - ph) > th) ph -= (-((ty - ph) + th));
-   evas_object_move(sd->mgf_clip, px, py);
-   evas_object_resize(sd->mgf_clip, pw, ph);
+   evas_object_geometry_set(sd->mgf_clip, px, py, pw, ph);
 }
 
 static void
@@ -2594,8 +2592,8 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
    ei.anchor_info = info;
 
    sd->anchor_hover.pop = elm_icon_add(obj);
-   evas_object_move(sd->anchor_hover.pop, info->x, info->y);
-   evas_object_resize(sd->anchor_hover.pop, info->w, info->h);
+   evas_object_geometry_set(sd->anchor_hover.pop,
+                            info->x, info->y, info->w, info->h);
 
    sd->anchor_hover.hover = elm_hover_add(obj);
    evas_object_event_callback_add
