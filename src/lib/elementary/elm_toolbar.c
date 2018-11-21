@@ -1901,8 +1901,7 @@ _item_transition_start
    it->trans = elm_transit_add();
    elm_transit_object_add(it->trans, it->proxy);
    evas_object_geometry_get(VIEW(sd->reorder_empty), &tx, &ty, NULL, NULL);
-   evas_object_move(it->proxy, x, y);
-   evas_object_resize(it->proxy, w, h);
+   evas_object_geometry_set(it->proxy, x, y, w, h);
    evas_object_show(it->proxy);
 
    elm_transit_effect_translation_add(it->trans, 0, 0, tx - x, 0);
@@ -2101,8 +2100,7 @@ _item_reorder_start(Elm_Toolbar_Item_Data *item)
      (Evas_Object_Event_Cb)_mouse_up_reorder, item);
 
    evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   evas_object_resize(item->proxy, w, h);
-   evas_object_move(item->proxy, x, y);
+   evas_object_geometry_set(item->proxy, x, y, w, h);
    evas_object_show(item->proxy);
 
    elm_interface_scrollable_hold_set(WIDGET(item), EINA_TRUE);
