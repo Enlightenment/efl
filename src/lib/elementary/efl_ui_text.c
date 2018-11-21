@@ -1030,8 +1030,7 @@ _hoversel_position(Evas_Object *obj)
      cx = w - mw;
    if (cy + mh > h)
      cy = h - mh;
-   evas_object_move(sd->hoversel, x + cx, y + cy);
-   evas_object_resize(sd->hoversel, mw, mh);
+   evas_object_geometry_set(sd->hoversel, x + cx, y + cy, mw, mh);
 }
 
 static void
@@ -3324,16 +3323,16 @@ _update_text_cursors(Eo *obj)
    if (hh < 1) hh = 1;
    if (sd->cursor)
      {
-        evas_object_move(sd->cursor, off.x + xx, off.y + yy);
-        evas_object_resize(sd->cursor, ww, hh);
+        evas_object_geometry_set(sd->cursor, off.x + xx, off.y + yy, ww, hh);
      }
    if (sd->cursor_bidi)
      {
         if (bidi_cursor)
           {
-             evas_object_move(sd->cursor_bidi, off.x + xx2, off.y + yy2 + (hh / 2));
+             evas_object_geometry_set(sd->cursor_bidi,
+                                      off.x + xx2, off.y + yy2 + (hh / 2),
+                                      ww, hh / 2);
              evas_object_resize(sd->cursor, ww, hh / 2);
-             evas_object_resize(sd->cursor_bidi, ww, hh / 2);
              evas_object_show(sd->cursor_bidi);
           }
         else
@@ -3403,8 +3402,8 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 
         if (rect->obj_bg)
           {
-             evas_object_move(rect->obj_bg, off.x + r->x, off.y + r->y);
-             evas_object_resize(rect->obj_bg, r->w, r->h);
+             evas_object_geometry_set(rect->obj_bg, off.x + r->x, off.y + r->y,
+                                      r->w, r->h);
           }
      }
    eina_iterator_free(range);
@@ -3655,20 +3654,23 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                        rect = eina_list_data_get(l);
                        if (rect->obj_bg)
                          {
-                            evas_object_move(rect->obj_bg, off.x + r->x, off.y + r->y);
-                            evas_object_resize(rect->obj_bg, r->w, r->h);
+                            evas_object_geometry_set(rect->obj_bg,
+                                                     off.x + r->x, off.y + r->y,
+                                                     r->w, r->h);
                             evas_object_show(rect->obj_bg);
                          }
                        if (rect->obj_fg)
                          {
-                            evas_object_move(rect->obj_fg, off.x + r->x, off.y + r->y);
-                            evas_object_resize(rect->obj_fg, r->w, r->h);
+                            evas_object_geometry_set(rect->obj_fg,
+                                                     off.x + r->x, off.y + r->y,
+                                                     r->w, r->h);
                             evas_object_show(rect->obj_fg);
                          }
                        if (rect->obj)
                          {
-                            evas_object_move(rect->obj, off.x + r->x, off.y + r->y);
-                            evas_object_resize(rect->obj, r->w, r->h);
+                            evas_object_geometry_set(rect->obj,
+                                                     off.x + r->x, off.y + r->y,
+                                                     r->w, r->h);
                             evas_object_show(rect->obj);
                          }
 
