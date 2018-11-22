@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Elementary Perf
+Comment=Elementary Performance Test Application
+Icon=elementary
+Exec=elementary_perf
+Terminal=false
+Categories=Development;Utility;

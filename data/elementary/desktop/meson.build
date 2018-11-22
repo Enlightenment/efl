@@ -1,4 +1,7 @@
-desktop_files = files('elementary_config.desktop', 'elementary_test.desktop')
+desktop_files = files(
+  'elementary_config.desktop',
+  'elementary_test.desktop',
+  'elementary_perf.desktop')
 elementary_icon = files('elementary.png')
 
 install_data(desktop_files,

@@ -210,7 +210,6 @@ elm_prefs_cc_src = [
    'elm_prefs_cc_out.c',
    'elm_prefs_cc_parse.c',
    'elm_prefs_cc_handlers.c'
-
 ]
 
 elm_prefs_cc = executable('elm_prefs_cc',
@@ -232,3 +231,27 @@ elementary_run = executable('elementary_run',
         c_args : package_c_args,
         link_args: '-rdynamic'
 )
+
+elementary_perf_src = [
+   'perf.c',
+   'perf_rnd.c',
+   'perf_test_01.c',
+   'perf_test_02.c',
+   'perf_test_03.c',
+   'perf_test_04.c',
+   'perf_test_05.c',
+   'perf_test_06.c'
+]
+
+elementary_perf = executable('elementary_perf',
+        elementary_perf_src,
+        dependencies: [elementary] + elementary_deps + elementary_pub_deps,
+        install: true,
+        c_args : package_c_args + [
+          '-Delementary_test_BIN_DIR="'+dir_bin+'"',
+          '-Delementary_test_LIB_DIR="'+dir_lib+'"',
+          '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
+        ],
+        link_args: '-rdynamic'
+)
+
