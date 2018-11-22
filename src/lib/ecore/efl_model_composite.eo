@@ -1,4 +1,4 @@
-class Efl.Model_Composite (Efl.Loop_Consumer, Efl.Model, Efl.Ui.View)
+class Efl.Model_Composite (Efl.Model_Loop, Efl.Ui.View)
 {
    [[Efl model for all composite class which provide a unified API to set source of data]]
    implements {

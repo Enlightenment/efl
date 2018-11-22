@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Model_Container (Efl.Loop_Consumer, Efl.Model)
+class Efl.Model_Container (Efl.Model_Loop)
 {
    [[
      Class used to create data models from Eina containers.
