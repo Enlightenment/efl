@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model (Efl.Object, Efl.Model) {
+class Eldbus.Model (Efl.Model_Loop) {
     methods {
         connect {
             [[Define connection parameters.
