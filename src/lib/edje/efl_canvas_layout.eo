@@ -1,7 +1,7 @@
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
 class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
-                         Efl.Observer, Efl.Ui.Base, Efl.Layout.Calc,
+                         Efl.Observer, Efl.Layout.Calc,
                          Efl.Layout.Signal, Efl.Layout.Group,
                          Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                          Efl.Gfx.Size_Class)

@@ -1,5 +1,5 @@
 class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition, Efl.Ui.Direction,
-                        Efl.Access.Value, Efl.Access.Widget.Action)
+                          Efl.Access.Widget.Action)
 {
    [[A Button Spin.
 

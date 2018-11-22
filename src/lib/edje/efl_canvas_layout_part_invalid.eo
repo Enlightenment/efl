@@ -1,7 +1,7 @@
 class Efl.Canvas.Layout_Part_Invalid (Efl.Canvas.Layout_Part, Efl.Content,
                                       Efl.Pack_Linear, Efl.Ui.Direction,
                                       Efl.Pack_Table, Efl.Text,
-                                      Efl.Text_Markup, Efl.Text_Cursor)
+                                      Efl.Text_Markup)
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 

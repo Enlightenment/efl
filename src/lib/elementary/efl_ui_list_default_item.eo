@@ -2,7 +2,6 @@
 class Efl.Ui.List_Default_Item (Efl.Ui.List_Item,
                                 Efl.Text,
                                 Efl.Text_Markup,
-                                Efl.Ui.Translatable,
                                 Efl.Content)
 {
    [[List Default Item class.

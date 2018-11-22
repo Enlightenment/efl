@@ -11,8 +11,7 @@ enum Efl.Canvas.Layout_Part_Text_Expand
 }
 
 class Efl.Canvas.Layout_Part_Text (Efl.Canvas.Layout_Part, Efl.Text,
-Efl.Text_Markup, Efl.Text_Cursor, Efl.Text_Format, Efl.Text_Font,
-Efl.Text_Style)
+Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style)
 {
    [[Represents a TEXT part of a layout
 

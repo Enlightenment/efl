@@ -1,5 +1,5 @@
 class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
-                    Efl.Ui.Translatable, Efl.Content)
+                    Efl.Content)
 {
    [[Frame widget
 

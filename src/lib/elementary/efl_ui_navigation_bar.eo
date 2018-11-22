@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Bar (Efl.Ui.Layout, Efl.Content, Efl.Text, Efl.Ui.Translatable)
+class Efl.Ui.Navigation_Bar (Efl.Ui.Layout, Efl.Content, Efl.Text)
 {
    [[Navigation_Bar widget.
 

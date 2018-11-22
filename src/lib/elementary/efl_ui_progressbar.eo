@@ -1,5 +1,5 @@
 class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
-                          Efl.Ui.Direction, Efl.Access.Value, Efl.Ui.Translatable,
+                          Efl.Ui.Direction, Efl.Access.Value,
                           Efl.Text, Efl.Content, Efl.Text_Markup)
 {
    [[Elementary progressbar class]]
