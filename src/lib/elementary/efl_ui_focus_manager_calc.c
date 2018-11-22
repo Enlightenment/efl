@@ -79,6 +79,7 @@ typedef struct {
     Efl_Ui_Focus_Object *redirect_entry;
     Eina_List *dirty;
     Efl_Ui_Focus_Graph_Context graph_ctx;
+    int freeze;
 
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
@@ -446,6 +447,10 @@ _node_new_geometry_cb(void *data, const Efl_Event *event)
 {
    Node *node;
    FOCUS_DATA(data)
+
+   if (pd->freeze > 0) {
+     return;
+   }
 
    node = node_get(data, pd, event->object);
    if (!node)
@@ -1837,6 +1842,24 @@ _efl_ui_focus_manager_calc_efl_object_dbg_info_get(Eo *obj, Efl_Ui_Focus_Manager
      }
    eina_iterator_free(iter);
 }
+
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_freeze(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+  pd->freeze ++;
+  if (pd->freeze == 1)
+    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_TRUE);
+}
+
+
+EOLIAN static void
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+  pd->freeze --;
+  if (!pd->freeze)
+    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_FALSE);
+}
+
 
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)

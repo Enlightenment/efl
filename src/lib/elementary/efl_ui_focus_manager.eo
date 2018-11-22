@@ -158,6 +158,18 @@ interface Efl.Ui.Focus.Manager {
              entry : Efl.Ui.Focus.Object; [[The object that caused this manager to be redirect]]
            }
         }
+        dirty_logic_freeze {
+          [[This disables the cache invalidation when a object is moved.
+
+            Even the object is moved, the focus manager will not recalculate its relations, this can be used when you know that the set of widgets in the focus manager is equally moved. so the relations between the widets in the set do not change.
+          ]]
+        }
+        dirty_logic_unfreeze {
+          [[This enables the cache invalidation when a object is moved.
+
+            This is the counter part to @.dirty_logic_freeze
+          ]]
+        }
     }
     events {
         redirect,changed : Efl.Ui.Focus.Manager; [[Emitted when the redirect
@@ -167,5 +179,6 @@ interface Efl.Ui.Focus.Manager {
             potential changes in border_elements you want to know about]]
         focus,changed : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]
+        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or unfrozen, even_info beeing $true indicates that it is now frozen, $false indicates that it is unfrozen.]]
     }
 }
