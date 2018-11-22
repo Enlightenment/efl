@@ -1,4 +1,4 @@
-class Override (Base) {
+class Override extends Base {
    methods {
       @property a {
          set @pure_virtual {

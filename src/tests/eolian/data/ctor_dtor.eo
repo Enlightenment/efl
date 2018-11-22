@@ -1,4 +1,4 @@
-class Ctor_Dtor (Base) {
+class Ctor_Dtor extends Base {
    methods {
       custom_constructor_1 {
          params {

@@ -1,6 +1,6 @@
 import eina_types;
 
-class Test.Child (Test.Testing) {
+class Test.Child extends Test.Testing {
 
    implements {
       class.constructor;

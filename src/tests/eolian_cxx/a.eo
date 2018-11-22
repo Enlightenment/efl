@@ -1,4 +1,4 @@
-class A (Efl.Object)
+class A extends Efl.Object
 {
    data: A_Data;
    implements {

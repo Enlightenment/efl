@@ -1,4 +1,4 @@
-class Complex (Efl.Object)
+class Complex extends Efl.Object
 {
    data: Complex_Data;
    methods {

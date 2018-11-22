@@ -5,7 +5,7 @@ struct Generic.Event
   field2: list<ptr(int)>;
 }
 
-class Generic (Efl.Object)
+class Generic extends Efl.Object
 {
    data: Generic_Data;
    methods {

@@ -1,4 +1,4 @@
-class Parts (Override, Base) {
+class Parts extends Override implements Base {
    parts {
       part1: Override; [[Part 1]]
       part2: Base; [[Part 2]]

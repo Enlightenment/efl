@@ -1,4 +1,4 @@
-class nmsp1.class1 (nmsp1.nmsp11.class2, nmsp2.class1, no_nmsp)
+class nmsp1.class1 extends nmsp1.nmsp11.class2 implements nmsp2.class1, no_nmsp
 {
    implements {
       nmsp1.nmsp11.class2.a { set; }

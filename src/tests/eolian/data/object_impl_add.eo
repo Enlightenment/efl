@@ -1,4 +1,4 @@
-class Object_Impl_Add (Base) {
+class Object_Impl_Add extends Base {
    data: Object_Impl_Data;
 
    methods {
