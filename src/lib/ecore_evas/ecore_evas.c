@@ -120,9 +120,6 @@ _ecore_evas_animator(void *data, const Efl_Event *ev EINA_UNUSED)
    Ecore_Evas *ee = data;
 
    ee->animator_ticked = EINA_TRUE;
-
-   efl_event_callback_del(ee->evas, EFL_EVENT_ANIMATOR_TICK, _ecore_evas_animator, ee);
-   ee->animator_registered = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -308,6 +305,11 @@ _ecore_evas_idle_enter(void *data EINA_UNUSED)
         if (ee->engine.func->fn_evas_changed)
           ee->engine.func->fn_evas_changed(ee, change);
 
+        if (!change)
+          {
+             efl_event_callback_del(ee->evas, EFL_EVENT_ANIMATOR_TICK, _ecore_evas_animator, ee);
+             ee->animator_registered = EINA_FALSE;
+          }
 #ifdef ECORE_EVAS_ASYNC_RENDER_DEBUG
         if ((ee->in_async_render) && (ee->async_render_start <= 0.0))
           {
@@ -3284,7 +3286,10 @@ _ticking_start(Ecore_Evas *ee)
     {
        // Backend doesn't support per window vsync, fallback to generic support
        if (ee->animator_count++ > 0) return;
-       ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
+       if (!ee->anim)
+         {
+            ee->anim = ecore_animator_add(_ecore_evas_animator_fallback, ee);
+         }
     }
 }
 
@@ -3304,8 +3309,11 @@ _ticking_stop(Ecore_Evas *ee)
      {
         // Backend doesn't support per window vsync, fallback to generic support
         if (--ee->animator_count > 0) return;
-        ecore_animator_del(ee->anim);
-        ee->anim = NULL;
+        if (ee->anim)
+          {
+             ecore_animator_del(ee->anim);
+             ee->anim = NULL;
+          }
      }
 }
 
