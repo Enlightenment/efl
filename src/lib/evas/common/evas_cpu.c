@@ -7,7 +7,6 @@
 
 static int cpu_feature_mask = 0;
 
-
 #ifdef BUILD_ALTIVEC
 # ifdef __POWERPC__
 #  ifdef __VEC__
@@ -21,6 +20,12 @@ static int cpu_feature_mask = 0;
 #endif
 
 #if defined(__ARM_ARCH__)
+# ifdef BUILD_NEON
+#  define NEED_FEATURE_TEST
+# endif
+#endif
+
+#if defined(__aarch64__)
 # ifdef BUILD_NEON
 #  define NEED_FEATURE_TEST
 # endif
@@ -70,6 +75,7 @@ evas_common_cpu_neon_test(void)
 # ifdef BUILD_NEON
 #  ifdef BUILD_NEON_INTRINSICS
    volatile uint32x4_t temp = vdupq_n_u32(0x1);
+   vaddq_u32(temp, temp);
 #  else
    asm volatile (
 		".fpu neon	     \n\t"
@@ -82,6 +88,15 @@ evas_common_cpu_neon_test(void)
 #  endif
 # endif
 //#endif
+}
+
+void
+evas_common_cpu_sve_test(void)
+{
+#if defined(__aarch64__)
+   volatile int result = 123;
+   asm("movz %w[res], #10" : [res] "=r" (result));
+#endif
 }
 
 void
@@ -164,6 +179,10 @@ evas_common_cpu_feature_test(void (*feature)(void))
 #  ifdef BUILD_NEON
    if (feature == evas_common_cpu_neon_test)
      return _cpu_check(EINA_CPU_NEON);
+#  endif
+#  if defined(__aarch64__)
+   if (feature == evas_common_cpu_sve_test)
+     return _cpu_check(EINA_CPU_SVE);
 #  endif
    return 0;
 # endif
@@ -248,6 +267,23 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_NEON;
    else
      cpu_feature_mask |= CPU_FEATURE_NEON;
+#endif
+
+#if defined(__aarch64__)
+   if (getenv("EVAS_CPU_NO_SVE"))
+     cpu_feature_mask &= ~CPU_FEATURE_SVE;
+   else
+     {
+#  if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+#error "xx"
+        cpu_feature_mask |= CPU_FEATURE_SVE *
+          !!(eina_cpu_features_get() & EINA_CPU_SVE);
+#  else
+        cpu_feature_mask |= CPU_FEATURE_SVE *
+          evas_common_cpu_feature_test(evas_common_cpu_sve_test);
+        evas_common_cpu_end_opt();
+#  endif
+     }
 #endif
 }
 
