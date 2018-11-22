@@ -76,6 +76,23 @@ interface Efl.Model ()
               value: any_value_ptr; [[Property value]]
            }
         }
+	property_ready_get {
+           [[Get a future value when it change to something that is not error:EAGAIN
+
+             property_get can return an error with code EAGAIN when it doesn't have any
+             meaningful value. To make life easier, this future will resolve when
+             the error:EAGAIN disapear. Either into a failed future in case the error
+             code change to something else or a success with the value of property whenever
+             the property finally change.
+
+
+             The future can also be canceled if the model itself get destroyed.
+	   ]]
+           params {
+              @in property: string;
+           }
+           return: future<any_value_ptr>;
+        }
         children_slice_get {
                [[Get children slice OR full range.
 

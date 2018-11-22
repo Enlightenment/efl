@@ -123,6 +123,7 @@ EAPI Eo *efl_app_get(void);
  * @{
  */
 
+#include "efl_model_loop.eo.h"
 #include "efl_model_item.eo.h"
 #include "efl_model_container.eo.h"
 #include "efl_model_container_item.eo.h"

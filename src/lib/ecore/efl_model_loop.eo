@@ -1,0 +1,7 @@
+class Efl.Model_Loop (Efl.Loop_Consumer, Efl.Model)
+{
+   data: null;
+   implements {
+      Efl.Model.property_ready_get;
+   }
+}

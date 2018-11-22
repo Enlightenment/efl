@@ -41,6 +41,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_bounce_interpolator.eo \
 	lib/ecore/efl_spring_interpolator.eo \
 	lib/ecore/efl_cubic_bezier_interpolator.eo \
+	lib/ecore/efl_model_loop.eo \
 	lib/ecore/efl_model_item.eo \
 	lib/ecore/efl_model_container.eo \
 	lib/ecore/efl_model_container_item.eo \
@@ -117,6 +118,7 @@ lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
+lib/ecore/efl_model_loop.c \
 lib/ecore/efl_model_item.c \
 lib/ecore/efl_model_container.c \
 lib/ecore/efl_model_container_item.c \
