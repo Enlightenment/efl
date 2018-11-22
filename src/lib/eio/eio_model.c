@@ -577,7 +577,7 @@ _property_size_cb(const Eo *obj, Eio_Model_Data *pd)
      return eina_value_error_new(pd->error);
 
    _eio_build_st(obj, pd);
-   return eina_value_ulong_new(EAGAIN);
+   return eina_value_error_new(EAGAIN);
 }
 
 static Eina_Value *
