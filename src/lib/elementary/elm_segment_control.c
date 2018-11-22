@@ -819,6 +819,12 @@ _elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj E
    return efl_gfx_entity_geometry_get(VIEW(pd));
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_segment_control_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
+{
+   return WIDGET(pd);
+}
+
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SEGMENT_CONTROL_EXTRA_OPS \

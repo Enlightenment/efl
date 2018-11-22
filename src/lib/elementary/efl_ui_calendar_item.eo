@@ -11,6 +11,7 @@ class Efl.Ui.Calendar_Item (Efl.Object, Efl.Ui.Focus.Object)
     }
     implements {
        Efl.Ui.Focus.Object.focus {set;}
+       Efl.Ui.Focus.Object.focus_parent {get;}
        Efl.Ui.Focus.Object.focus_geometry {get;}
     }
 }

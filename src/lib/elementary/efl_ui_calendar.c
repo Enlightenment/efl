@@ -1301,4 +1301,10 @@ _efl_ui_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_
    return efl_gfx_entity_geometry_get(pd->part);
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_calendar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Efl_Ui_Calendar_Item_Data *pd EINA_UNUSED)
+{
+   return efl_parent_get(obj);
+}
+
 #include "efl_ui_calendar_item.eo.c"

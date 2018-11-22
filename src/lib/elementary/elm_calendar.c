@@ -1979,4 +1979,11 @@ _elm_calendar_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNU
    return efl_gfx_entity_geometry_get(pd->part);
 }
 
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_calendar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Elm_Calendar_Item_Data *pd EINA_UNUSED)
+{
+   return efl_parent_get(obj);
+}
+
+
 #include "elm_calendar_item.eo.c"

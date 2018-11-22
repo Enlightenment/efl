@@ -42,5 +42,6 @@ class Elm.Segment_Control.Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Ui.Lega
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.part_content { get; set; }
         Efl.Ui.Focus.Object.focus_geometry {get; }
+        Efl.Ui.Focus.Object.focus_parent {get;}
    }
 }
