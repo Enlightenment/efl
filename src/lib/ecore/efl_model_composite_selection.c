@@ -218,7 +218,7 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
         if (!success)
           return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-        return efl_future_Eina_FutureXXX_then
+        return efl_future_then
           (obj, eina_future_then(efl_model_children_slice_get(obj, l, 1),
                                  _select_slice_then, obj, NULL));
      }
@@ -389,7 +389,7 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
  commit_change:
    chain = eina_future_then(chain, _commit_change, obj, NULL);
 
-   return efl_future_Eina_FutureXXX_then(obj, chain);
+   return efl_future_then(obj, chain);
 }
 
 typedef struct _Selection_Children_Request Selection_Children_Request;
@@ -450,7 +450,7 @@ _efl_model_composite_selection_efl_model_children_slice_get(Eo *obj,
                                     start, count);
    f = eina_future_then(f, _slice_get, req, NULL);
 
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return efl_future_then(obj, f);
 }
 
 #include "efl_model_composite_selection.eo.c"

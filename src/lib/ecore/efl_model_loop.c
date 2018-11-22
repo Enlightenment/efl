@@ -103,7 +103,7 @@ _efl_model_loop_efl_model_property_ready_get(Eo *obj, void *pd EINA_UNUSED, cons
    f = eina_future_resolved(efl_loop_future_scheduler_get(obj),
                             eina_value_reference_copy(value));
    eina_value_free(value);
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return efl_future_then(obj, f);
 }
 
 #include "efl_model_loop.eo.c"

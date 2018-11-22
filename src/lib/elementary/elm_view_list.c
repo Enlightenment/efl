@@ -285,7 +285,7 @@ _efl_model_load_children(View_List_ItemData *pdata)
    f = efl_model_children_slice_get(pdata->priv->connect.model, 0,
                                     efl_model_children_count_get(pdata->priv->connect.model));
    f = eina_future_then(f, _efl_model_load_children_then, pdata, NULL);
-   efl_future_Eina_FutureXXX_then(pdata->priv->genlist, f);
+   efl_future_then(pdata->priv->genlist, f);
 }
 
 static void
@@ -318,7 +318,7 @@ _efl_model_children_added_cb(void *data, const Efl_Event *event)
 
    f = efl_model_children_slice_get(idata->priv->connect.model, evt->index, 1);
    f = eina_future_then(f, _efl_model_load_children_then, idata, NULL);
-   efl_future_Eina_FutureXXX_then(idata->priv->genlist, f);
+   efl_future_then(idata->priv->genlist, f);
 }
 
 static void

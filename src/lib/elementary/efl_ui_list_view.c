@@ -998,7 +998,7 @@ _efl_ui_list_view_efl_ui_list_view_model_load_range_set(Eo* obj, Efl_Ui_List_Vie
      {
         Eina_Future *f = efl_model_children_slice_get(pd->model, first, count);
         f = eina_future_then(f, _children_slice_then, pd, NULL);
-        pd->slice.future = efl_future_Eina_FutureXXX_then(obj, f);
+        pd->slice.future = efl_future_then(obj, f);
      }
 }
 

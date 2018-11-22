@@ -786,11 +786,11 @@ _efl_net_control_access_point_connect(Eo *o, Efl_Net_Control_Access_Point_Data *
    pd->pending = eina_list_append(pd->pending, p);
    eldbus_pending_data_set(p, ".object", pd);
 
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f);
 
  error_dbus:
    eina_promise_reject(promise, ENOSYS);
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f);
 }
 
 static void

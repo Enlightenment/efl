@@ -2005,7 +2005,7 @@ _scroll_wheel_post_event_go(Elm_Scrollable_Smart_Interface_Data *sid, int x, int
 
         f = eina_future_then(efl_loop_job(efl_loop_get(sid->obj)),
                              _scroll_wheel_post_event_job, sid, NULL);
-        efl_future_Eina_FutureXXX_then(sid->obj, f);
+        efl_future_then(sid->obj, f);
      }
    else
      {

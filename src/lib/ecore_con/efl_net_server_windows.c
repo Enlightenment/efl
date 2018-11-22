@@ -338,7 +338,7 @@ _efl_net_server_windows_pending_announce_job_schedule(Eo *o, Efl_Net_Server_Wind
 
    loop = efl_loop_get(o);
    if (!loop) return;
-   efl_future_Eina_FutureXXX_then(o, efl_loop_job(loop),
+   efl_future_then(o, efl_loop_job(loop),
                                   .success = _efl_net_server_windows_pending_announce_job,
                                   .storage = &pd->pending_announcer_job);
 }

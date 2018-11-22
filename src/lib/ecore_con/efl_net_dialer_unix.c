@@ -129,7 +129,7 @@ _efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_
 static void
 _timeout_schedule(Eo *o, Efl_Net_Dialer_Unix_Data *pd)
 {
-   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial),
+   efl_future_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial),
                                   .success = _efl_net_dialer_unix_connect_timeout,
                                   .storage = &pd->connect.timeout);
 }

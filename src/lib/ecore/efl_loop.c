@@ -416,7 +416,7 @@ ecore_loop_arguments_send(int argc, const char **argv)
 
    job = eina_future_then(efl_loop_job(efl_main_loop_get()),
                           _efl_loop_arguments_send, arga, NULL);
-   efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
+   efl_future_then(efl_main_loop_get(), job);
 }
 
 static Eina_Future *
@@ -424,7 +424,7 @@ _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
    Eina_Future_Scheduler *sched = efl_loop_future_scheduler_get(obj);
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then
+   return efl_future_then
      (obj, eina_future_resolved(sched, EINA_VALUE_EMPTY));
 }
 
@@ -481,7 +481,7 @@ _efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    d->promise = p;
 
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+   return efl_future_then(obj, eina_future_new(p));
 
 idler_error:
    d->idler = NULL;
@@ -546,7 +546,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
    d->promise = p;
 
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+   return efl_future_then(obj, eina_future_new(p));
 
 timer_error:
    d->timer = NULL;

@@ -487,7 +487,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
         pd->run = EINA_TRUE;
         pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
         Eina_Future *f = eina_future_new(pd->promise);
-        return efl_future_Eina_FutureXXX_then(obj, f);
+        return efl_future_then(obj, f);
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.

@@ -286,7 +286,7 @@ _efl_thread_main(void *data, Eina_Thread t)
    for (i = 0; i < thdat->args.argc; i++)
      efl_task_arg_append(obj, thdat->args.argv[i]);
    job = eina_future_then(efl_loop_job(obj), _efl_loop_arguments_send, obj);
-   efl_future_Eina_FutureXXX_then(obj, job);
+   efl_future_then(obj, job);
 
    for (i = 0; i < thdat->args.argc; i++)
      eina_stringshare_del(thdat->args.argv[i]);
@@ -781,7 +781,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    pd->run = EINA_TRUE;
    pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
    Eina_Future *f = eina_future_new(pd->promise);
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return efl_future_then(obj, f);
 }
 
 EOLIAN static void

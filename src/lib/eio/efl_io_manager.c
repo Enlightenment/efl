@@ -145,7 +145,7 @@ _efl_io_manager_direct_ls(const Eo *obj,
    ecore_thread_local_data_add(h->thread, ".info_data", info_data, info_free_cb, EINA_TRUE);
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -188,7 +188,7 @@ _efl_io_manager_stat_ls(const Eo *obj,
    ecore_thread_local_data_add(h->thread, ".info_data", info_data, info_free_cb, EINA_TRUE);
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -219,7 +219,7 @@ _efl_io_manager_ls(const Eo *obj,
    ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -267,7 +267,7 @@ _efl_io_manager_stat(const Eo *obj,
    if (!h) goto end;
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -301,10 +301,10 @@ _efl_io_manager_xattr_ls(const Eo *obj,
    ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
-   return efl_future_Eina_FutureXXX_then(obj, future);;
+   return efl_future_then(obj, future);;
 }
 
 static void
@@ -350,7 +350,7 @@ _efl_io_manager_xattr_set(Eo *obj,
    if (!h) goto end;
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -378,7 +378,7 @@ _efl_io_manager_xattr_get(const Eo *obj,
    eina_promise_data_set(p, h);
 
    /* XXX const */
-   return efl_future_Eina_FutureXXX_then((Eo *)obj, future);
+   return efl_future_then((Eo *)obj, future);
 
  end:
    return future;
@@ -416,7 +416,7 @@ _efl_io_manager_open(const Eo *obj,
    if (!h) goto end;
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;
@@ -442,7 +442,7 @@ _efl_io_manager_close(const Eo *obj,
    if (!h) goto end;
    eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return efl_future_then(obj, future);
 
  end:
    return future;

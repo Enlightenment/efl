@@ -81,7 +81,7 @@ _eldbus_model_connection_efl_model_children_slice_get(Eo *obj,
    pd->requests = eina_list_prepend(pd->requests, slice);
 
    _eldbus_model_children_list(obj, pd);
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));;
+   return efl_future_then(obj, eina_future_new(p));;
 }
 
 static unsigned int

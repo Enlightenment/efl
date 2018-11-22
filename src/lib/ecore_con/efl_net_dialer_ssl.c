@@ -142,7 +142,7 @@ _efl_net_dialer_ssl_connect_timeout(Eo *o, const Eina_Value v)
 static void
 _timeout_schedule(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, double timeout)
 {
-   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), timeout),
+   efl_future_then(o, efl_loop_timeout(efl_loop_get(o), timeout),
                                   .success = _efl_net_dialer_ssl_connect_timeout,
                                   .storage = &pd->connect_timeout);
 }

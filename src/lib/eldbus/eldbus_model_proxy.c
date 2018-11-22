@@ -310,7 +310,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
      }
 
    if (pending) pd->pendings = eina_list_append(pd->pendings, pending);
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(data->promise));
+   return efl_future_then(obj, eina_future_new(data->promise));
 
  on_error:
    return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);

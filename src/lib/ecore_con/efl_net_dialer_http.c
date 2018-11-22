@@ -1732,7 +1732,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if ((!pd->pending_close) && (pd->easy))
           {
-             efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
+             efl_future_then(o, efl_loop_job(efl_loop_get(o)),
                                             .success = _efl_net_dialer_http_pending_close,
                                             .storage = &pd->pending_close);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);

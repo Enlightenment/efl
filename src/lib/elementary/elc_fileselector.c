@@ -1032,7 +1032,7 @@ _populate(Evas_Object *obj,
      {
         future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
         future = eina_future_then(future, _process_children_cb, lreq, NULL);
-        efl_future_Eina_FutureXXX_then(obj, future);
+        efl_future_then(obj, future);
      }
    else
      {
@@ -1688,7 +1688,7 @@ _resource_created(void *data, const Efl_Event *event)
 
    f = efl_model_children_slice_get(sd->model, evt->index, 1);
    f = eina_future_then(f, _resource_created_then, fs, NULL);
-   efl_future_Eina_FutureXXX_then(fs, f);
+   efl_future_then(fs, f);
 }
 
 static void

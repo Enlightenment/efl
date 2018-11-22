@@ -456,7 +456,7 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
      {
         Eina_Future *f = eina_future_then(_build_delay(pd->loop),
                                           _eio_build_mime_now, model, NULL);
-        return eina_future_as_value(efl_future_Eina_FutureXXX_then(model, f));
+        return eina_future_as_value(efl_future_then(model, f));
      }
 
    pd->mime_type = efreet_mime_type_get(pd->path);
@@ -485,7 +485,7 @@ _eio_build_mime(const Efl_Object *model, Eio_Model_Data *pd)
 
    f = efl_loop_job(pd->loop);
    f = eina_future_then(f, _eio_build_mime_now, model, NULL);
-   pd->request.mime = efl_future_Eina_FutureXXX_then(model, f);
+   pd->request.mime = efl_future_then(model, f);
 }
 
 static Eina_Value *
@@ -703,7 +703,7 @@ _eio_model_efl_model_property_set(Eo *obj,
                                  eina_value_string_init(pd->path));
      }
 
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return efl_future_then(obj, f);
 
  on_error:
    return eina_future_rejected(efl_loop_future_scheduler_get(loop), err);
@@ -802,7 +802,7 @@ _eio_model_efl_model_children_count_get(const Eo *obj, Eio_Model_Data *pd)
         f = efl_io_manager_direct_ls(iom, pd->path, EINA_FALSE,
                                      (void*) obj, _eio_model_children_list, NULL);
         f = eina_future_then(f, _eio_model_children_list_on, pd, NULL);
-        pd->request.listing = efl_future_Eina_FutureXXX_then(obj, f);
+        pd->request.listing = efl_future_then(obj, f);
      }
 
    return eina_list_count(pd->files);

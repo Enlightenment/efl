@@ -413,11 +413,11 @@ _efl_net_control_technology_scan(Eo *o, Efl_Net_Control_Technology_Data *pd)
    eina_promise_data_set(promise, p);
    eldbus_pending_data_set(p, ".object", o);
 
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f);
 
  error_dbus:
    eina_promise_reject(promise, ENOSYS);
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f);
 }
 
 const char *

@@ -739,7 +739,7 @@ _scroll_wheel_post_event_go(Efl_Ui_Scroll_Manager_Data *sd, int x, int y)
 
         f = eina_future_then(efl_loop_job(efl_loop_get(sd->obj)),
                              _scroll_wheel_post_event_job, sd, NULL);
-        efl_future_Eina_FutureXXX_then(sd->obj, f);
+        efl_future_then(sd->obj, f);
      }
    else
      {
