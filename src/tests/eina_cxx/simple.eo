@@ -1,4 +1,4 @@
-class Simple (Efl.Object)
+class Simple extends Efl.Object
 {
    data: null;
    implements {

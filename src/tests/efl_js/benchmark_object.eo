@@ -1,4 +1,4 @@
-class Benchmark_Object (Efl.Object)
+class Benchmark_Object extends Efl.Object
 {
    data: null;
    methods {

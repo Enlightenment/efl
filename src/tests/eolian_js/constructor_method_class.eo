@@ -1,4 +1,4 @@
-class Constructor_Method_Class (Efl.Object)
+class Constructor_Method_Class extends Efl.Object
 {
    data: Constructor_Method_Class_Data;
    methods {

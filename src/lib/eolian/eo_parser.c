@@ -2043,23 +2043,49 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
      }
    eo_lexer_context_pop(ls);
    eo_lexer_dtor_pop(ls);
+
+   Eina_Bool is_reg = (type == EOLIAN_CLASS_REGULAR) || (type == EOLIAN_CLASS_ABSTRACT);
    if (ls->t.token != '{')
      {
         line = ls->line_number;
         col = ls->column;
-        check_next(ls, '(');
-        if (ls->t.token != ')')
+        Eina_Strbuf *ibuf = eina_strbuf_new();
+        eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
+        /* new inherits syntax, keep alongside old for now */
+        if (ls->t.kw == KW_extends || (is_reg && (ls->t.kw == KW_implements)))
           {
-              Eina_Strbuf *ibuf = eina_strbuf_new();
-              eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
-              _inherit_dep(ls, ibuf,
-                (type == EOLIAN_CLASS_REGULAR) || (type == EOLIAN_CLASS_ABSTRACT));
-              while (test_next(ls, ','))
-                _inherit_dep(ls, ibuf, EINA_FALSE);
-              eo_lexer_dtor_pop(ls);
+             Eina_Bool ext = (ls->t.kw == KW_extends);
+             eo_lexer_get(ls);
+             if (is_reg && ext)
+               {
+                  /* regular class can have a parent, but just one */
+                  _inherit_dep(ls, ibuf, EINA_TRUE);
+                  /* if not followed by implements, we're done */
+                  if (ls->t.kw != KW_implements)
+                    {
+                       eo_lexer_dtor_pop(ls);
+                       goto inherit_done;
+                    }
+                  eo_lexer_get(ls);
+               }
+             do
+               _inherit_dep(ls, ibuf, EINA_FALSE);
+             while (test_next(ls, ','));
           }
-        check_match(ls, ')', '(', line, col);
+        else
+          {
+             check_next(ls, '(');
+             if (ls->t.token != ')')
+               {
+                   _inherit_dep(ls, ibuf, is_reg);
+                   while (test_next(ls, ','))
+                     _inherit_dep(ls, ibuf, EINA_FALSE);
+               }
+             check_match(ls, ')', '(', line, col);
+          }
+        eo_lexer_dtor_pop(ls);
      }
+inherit_done:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');

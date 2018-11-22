@@ -25,14 +25,15 @@ enum Tokens
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
     KW(abstract), KW(constructor), KW(constructors), KW(data), \
-    KW(destructor), KW(eo), KW(eo_prefix), KW(event_prefix), KW(events), KW(free), \
-    KW(get), KW(implements), KW(import), KW(interface), KW(keys), KW(legacy), \
-    KW(legacy_prefix), KW(methods), KW(mixin), KW(params), KW(parse), KW(parts), \
-    KW(ptr), KW(set), KW(type), KW(values), KW(var), KWAT(auto), KWAT(beta), \
-    KWAT(class), KWAT(const), KWAT(cref), KWAT(empty), KWAT(extern), \
-    KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), KWAT(nullable), \
-    KWAT(optional), KWAT(out), KWAT(owned), KWAT(private), KWAT(property), \
-    KWAT(protected), KWAT(restart), KWAT(pure_virtual), \
+    KW(destructor), KW(eo), KW(eo_prefix), KW(event_prefix), KW(events), \
+    KW(extends), KW(free), KW(get), KW(implements), KW(import), KW(interface), \
+    KW(keys), KW(legacy), KW(legacy_prefix), KW(methods), KW(mixin), KW(params), \
+    KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), \
+    \
+    KWAT(auto), KWAT(beta), KWAT(class), KWAT(const), KWAT(cref), KWAT(empty), \
+    KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), KWAT(nonull), \
+    KWAT(nullable), KWAT(optional), KWAT(out), KWAT(owned), KWAT(private), \
+    KWAT(property), KWAT(protected), KWAT(restart), KWAT(pure_virtual), \
     KWAT(warn_unused), \
     \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \

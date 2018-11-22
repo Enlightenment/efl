@@ -1,4 +1,7 @@
-class Focus.Test(Efl.Object, Efl.Ui.Focus.Object, Efl.Gfx.Entity) {
+class Focus.Test
+    extends Efl.Object
+    implements Efl.Ui.Focus.Object, Efl.Gfx.Entity
+{
     methods {
         test_size {
             params {

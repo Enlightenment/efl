@@ -1,4 +1,4 @@
-class Generated_Future (Efl.Object)
+class Generated_Future extends Efl.Object
 {
    methods {
    }

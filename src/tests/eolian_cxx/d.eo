@@ -1,4 +1,4 @@
-class D (B, C)
+class D extends B implements C
 {
    data: D_Data;
    implements {

@@ -1,4 +1,4 @@
-class Name1.Name2.Type_Generation (Efl.Object)
+class Name1.Name2.Type_Generation extends Efl.Object
 {
    data: Type_Generation_Data;
    methods {

@@ -8,7 +8,7 @@ struct Efl.Event_Description {
     restart: bool; [[$true if when the event is triggered again from a callback it'll start from where it was]]
 }
 
-abstract Efl.Object ()
+abstract Efl.Object
 {
    [[Abstract Efl object class]]
    eo_prefix: efl;

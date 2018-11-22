@@ -10,7 +10,7 @@ struct Test.Struct_Ex {
     value_enum: Test.Enum_Ex;
 }
 
-class Test.Object (Efl.Object) {
+class Test.Object extends Efl.Object {
    methods {
        method_integral_in_a_check {
            [[ tests integral in ]]
