@@ -686,9 +686,14 @@ class Class(Object):
                                                      _str_to_bytes(event_name))
         return Event(c_event) if c_event else None
 
+    @cached_property
+    def parent(self):
+        c_class = lib.eolian_class_parent_get(self)
+        return Class(c_class) if c_class else None
+
     @property
-    def inherits(self):
-        return Iterator(Class, lib.eolian_class_inherits_get(self))
+    def extensions(self):
+        return Iterator(Class, lib.eolian_class_extensions_get(self))
 
     @cached_property
     def inherits_full(self):

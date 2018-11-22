@@ -1951,8 +1951,9 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 }
 
 static void
-_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
+_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool parent)
 {
+   char ebuf[PATH_MAX];
    const char *iname;
    char *fnm;
    eina_strbuf_reset(buf);
@@ -1962,7 +1963,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
    fnm = database_class_to_filename(iname);
    if (compare_class_file(fnm, ls->filename))
      {
-        char ebuf[PATH_MAX];
         free(fnm);
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "class '%s' cannot inherit from itself",
@@ -1972,7 +1972,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
      }
    if (!eina_hash_find(ls->state->filenames_eo, fnm))
      {
-        char ebuf[PATH_MAX];
         free(fnm);
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
@@ -1981,25 +1980,33 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
      }
 
    Eina_Stringshare *inames = eina_stringshare_add(iname), *oiname = NULL;
-   Eina_List *l;
    /* never allow duplicate inherits */
-   EINA_LIST_FOREACH(ls->klass->inherits, l, oiname)
+   if (!parent)
      {
-        if (inames == oiname)
+        Eina_List *l;
+        if (inames == ls->klass->parent_name)
+          goto inherit_dup;
+        EINA_LIST_FOREACH(ls->klass->extends, l, oiname)
           {
-             char ebuf[PATH_MAX];
-             free(fnm);
-             eina_stringshare_del(inames);
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "duplicate inherit '%s'", iname);
-             eo_lexer_syntax_error(ls, ebuf);
-             return;
+             if (inames == oiname)
+               goto inherit_dup;
           }
      }
    database_defer(ls->state, fnm, EINA_TRUE);
-   ls->klass->inherits = eina_list_append(ls->klass->inherits, inames);
+   if (parent)
+     ls->klass->parent_name = inames;
+   else
+     ls->klass->extends = eina_list_append(ls->klass->extends, inames);
    free(fnm);
    eo_lexer_context_pop(ls);
+   return;
+
+inherit_dup:
+   free(fnm);
+   eina_stringshare_del(inames);
+   eo_lexer_context_restore(ls);
+   snprintf(ebuf, sizeof(ebuf), "duplicate inherit '%s'", iname);
+   eo_lexer_syntax_error(ls, ebuf);
 }
 
 static void
@@ -2045,9 +2052,10 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
           {
               Eina_Strbuf *ibuf = eina_strbuf_new();
               eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
-              _inherit_dep(ls, ibuf);
+              _inherit_dep(ls, ibuf,
+                (type == EOLIAN_CLASS_REGULAR) || (type == EOLIAN_CLASS_ABSTRACT));
               while (test_next(ls, ','))
-                _inherit_dep(ls, ibuf);
+                _inherit_dep(ls, ibuf, EINA_FALSE);
               eo_lexer_dtor_pop(ls);
           }
         check_match(ls, ')', '(', line, col);

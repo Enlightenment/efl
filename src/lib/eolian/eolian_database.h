@@ -180,7 +180,11 @@ struct _Eolian_Class
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
-   Eina_List *inherits; /* Eolian_Class */
+   union {
+      Eolian_Class *parent;
+      Eina_Stringshare *parent_name;
+   };
+   Eina_List *extends; /* Eolian_Class */
    Eina_List *properties; /* Eolian_Function */
    Eina_List *methods; /* Eolian_Function */
    Eina_List *implements; /* Eolian_Implement */
