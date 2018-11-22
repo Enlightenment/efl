@@ -93,6 +93,12 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
    Efl_Ui_Focus_Manager_Calc *subm = efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, focus_main,
     efl_ui_focus_manager_root_set(efl_added, root)
    );
+   efl_event_callback_forwarder_add(subm, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, focus_main);
+   efl_event_callback_forwarder_add(subm, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, focus_main);
+   efl_event_callback_forwarder_add(subm, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , focus_main);
+   efl_event_callback_forwarder_add(subm, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, focus_main);
+   efl_event_callback_forwarder_add(subm, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, focus_main);
+
 
    efl_composite_attach(focus_main, subm);
 
