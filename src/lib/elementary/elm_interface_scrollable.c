@@ -95,7 +95,15 @@ static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
    if (psd->content)
-     evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
+     {
+        Efl_Ui_Focus_Manager *manager;
+
+        manager = psd->interface_object;
+
+        efl_ui_focus_manager_dirty_logic_freeze(manager);
+        evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
+        efl_ui_focus_manager_dirty_logic_unfreeze(manager);
+     }
 }
 
 EOLIAN static void
@@ -4188,6 +4196,8 @@ _elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_I
    if (!sid->pan_obj)
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
+        ELM_PAN_DATA_GET_OR_RETURN(o, pd);
+        pd->interface_object = obj;
         sid->pan_obj = o;
         efl_event_callback_add
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);

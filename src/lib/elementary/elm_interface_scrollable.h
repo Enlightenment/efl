@@ -46,6 +46,7 @@ struct _Elm_Pan_Smart_Data
 {
    Evas_Object                   *self;
    Evas_Object                   *content;
+   Evas_Object                   *interface_object;
    Evas_Coord                     x, y, w, h;
    Evas_Coord                     content_w, content_h, px, py;
 };
