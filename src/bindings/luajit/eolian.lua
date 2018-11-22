@@ -334,7 +334,8 @@ ffi.cdef [[
     const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_eo_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_data_type_get(const Eolian_Class *klass);
-    Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
+    const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
+    Eina_Iterator *eolian_class_extensions_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
     Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
@@ -1338,9 +1339,15 @@ M.Class = ffi.metatype("Eolian_Class", {
             return ffi.string(v)
         end,
 
-        inherits_get = function(self)
+        parent_get = function(self)
+            local v = eolian.eolian_class_parent_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
+        extensions_get = function(self)
             return Ptr_Iterator("const Eolian_Class*",
-                eolian.eolian_class_inherits_get(self))
+                eolian.eolian_class_extensions_get(self))
         end,
 
         functions_get = function(self, func_type)

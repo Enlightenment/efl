@@ -48,11 +48,18 @@ eolian_class_data_type_get(const Eolian_Class *cl)
    return cl->data_type;
 }
 
+EAPI const Eolian_Class *
+eolian_class_parent_get(const Eolian_Class *cl)
+{
+  EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
+  return cl->parent;
+}
+
 EAPI Eina_Iterator *
-eolian_class_inherits_get(const Eolian_Class *cl)
+eolian_class_extensions_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
-   return (cl->inherits ? eina_list_iterator_new(cl->inherits) : NULL);
+   return (cl->extends ? eina_list_iterator_new(cl->extends) : NULL);
 }
 
 EAPI Eina_Iterator *

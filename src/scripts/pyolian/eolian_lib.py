@@ -254,9 +254,13 @@ lib.eolian_class_event_prefix_get.restype = c_char_p
 lib.eolian_class_data_type_get.argtypes = (c_void_p,)
 lib.eolian_class_data_type_get.restype = c_char_p
 
-# EAPI Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
-lib.eolian_class_inherits_get.argtypes = (c_void_p,)
-lib.eolian_class_inherits_get.restype = c_void_p
+# EAPI const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
+lib.eolian_class_parent_get.argtypes = (c_void_p,)
+lib.eolian_class_parent_get.restype = c_void_p
+
+# EAPI Eina_Iterator *eolian_class_extensions_get(const Eolian_Class *klass);
+lib.eolian_class_extensions_get.argtypes = (c_void_p,)
+lib.eolian_class_extensions_get.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
 lib.eolian_class_functions_get.argtypes = (c_void_p, c_int)

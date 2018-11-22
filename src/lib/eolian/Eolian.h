@@ -1446,14 +1446,36 @@ EAPI Eina_Stringshare* eolian_class_event_prefix_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns an iterator to the inherited classes.
+ * @brief Get the parent class of a class
+ *
+ * This is the class the class inherits from. It only applies to classes,
+ * as Eo follows a single-inheritance model with interfaces. This will be
+ * NULL for any non-class (i.e. interface or mixin).
+ *
+ * @param[in] klass the class
+ * @return the parent
+ *
+ * @see eolian_class_extensions_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
+
+/*
+ * @brief Returns an iterator to the class extensions
+ *
+ * For regular classes, extensions are interfaces/mixins for the class, i.e.
+ * everything past the parent class. For interfaces/mixins, this is everything
+ * in the inherits list.
  *
  * @param[in] klass the class
  * @return the iterator
  *
+ * @see eolian_class_parent_get
+ *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_extensions_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns an iterator to functions of a class.

@@ -61,9 +61,8 @@ EFL_START_TEST(eolian_namespaces)
    fail_if(eolian_class_namespaces_get(class_no));
 
    /* Inherits */
-   fail_if(!(iter = eolian_class_inherits_get(class11)));
-   fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
-   fail_if(iclass != class112);
+   fail_if(eolian_class_parent_get(class11) != class112);
+   fail_if(!(iter = eolian_class_extensions_get(class11)));
    fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
    fail_if(iclass != class21);
    fail_if(!(eina_iterator_next(iter, (void**)&iclass)));
@@ -551,7 +550,8 @@ EFL_START_TEST(eolian_simple_parsing)
 
    /* Class */
    fail_if(eolian_class_type_get(class) != EOLIAN_CLASS_REGULAR);
-   fail_if(eolian_class_inherits_get(class) != NULL);
+   fail_if(eolian_class_parent_get(class) != NULL);
+   fail_if(eolian_class_extensions_get(class) != NULL);
    fail_if(strcmp(eolian_class_legacy_prefix_get(class), "evas_object_simple"));
    fail_if(strcmp(eolian_class_eo_prefix_get(class), "efl_canvas_object_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));

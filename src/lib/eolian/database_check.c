@@ -116,8 +116,11 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
 
    _add_dep(depset, cl->base.unit);
 
-   Eina_Iterator *itr = eina_list_iterator_new(cl->inherits);
-   const Eolian_Class *icl;
+   const Eolian_Class *icl = cl->parent;
+   if (icl)
+     _add_dep(depset, icl->base.unit);
+
+   Eina_Iterator *itr = eina_list_iterator_new(cl->extends);
    EINA_ITERATOR_FOREACH(itr, icl)
      _add_dep(depset, icl->base.unit);
    eina_iterator_free(itr);

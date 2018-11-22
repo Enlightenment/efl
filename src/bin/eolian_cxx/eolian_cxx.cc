@@ -120,7 +120,17 @@ generate(const Eolian_Class* klass, eolian_cxx::options_type const& opts,
    std::function<void(Eolian_Class const*)> klass_function
      = [&] (Eolian_Class const* klass2)
      {
-       for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_inherits_get(klass2))
+       if(::eolian_class_parent_get(klass2))
+         {
+           Eolian_Class const* inherit = ::eolian_class_parent_get(klass2);
+           c_headers.insert(eolian_object_file_get((const Eolian_Object *)inherit) + std::string(".h"));
+           cpp_headers.insert(eolian_object_file_get((const Eolian_Object *)inherit) + std::string(".hh"));
+           efl::eolian::grammar::attributes::klass_def klass3{inherit, opts.unit};
+           forward_klasses.insert(klass3);
+
+           klass_function(inherit);
+         }
+       for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_extensions_get(klass2))
              , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
          {
            Eolian_Class const* inherit = &*inherit_iterator;

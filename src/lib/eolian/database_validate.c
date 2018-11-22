@@ -497,12 +497,18 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
    if (!cl || !strcmp(cl->base.name, cln))
      return cl;
    Eina_List *l;
-   Eolian_Class *icl;
-   EINA_LIST_FOREACH(cl->inherits, l, icl)
+   Eolian_Class *icl = cl->parent;
+   if (icl)
      {
         /* we can do a depth first search, it's easier and doesn't matter
          * which part of the inheritance tree we find the class in
          */
+        const Eolian_Class *fcl = _get_impl_class(icl, cln);
+        if (fcl)
+          return fcl;
+     }
+   EINA_LIST_FOREACH(cl->extends, l, icl)
+     {
         const Eolian_Class *fcl = _get_impl_class(icl, cln);
         if (fcl)
           return fcl;
@@ -704,6 +710,29 @@ end:
 }
 
 static Eina_Bool
+_db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
+                 Eolian_Class **out_cl)
+{
+   if (!succ)
+     {
+        eina_stringshare_del(in_cl);
+        return EINA_FALSE;
+     }
+   Eolian_Class *icl = eina_hash_find(cl->base.unit->classes, in_cl);
+   if (!icl)
+     {
+        succ = EINA_FALSE;
+        char buf[PATH_MAX];
+        snprintf(buf, sizeof(buf), "unknown inherit '%s' (incorrect case?)", in_cl);
+        _obj_error(&cl->base, buf);
+     }
+   else
+     *out_cl = icl;
+   eina_stringshare_del(in_cl);
+   return succ;
+}
+
+static Eina_Bool
 _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
 {
    if (eina_hash_find(fhash, &cl->base.name))
@@ -713,37 +742,32 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
    if (eina_hash_find(cl->base.unit->state->main.unit.classes, cl->base.name))
      return EINA_TRUE;
 
-   Eina_List *il = cl->inherits;
+   Eina_List *il = cl->extends;
    Eina_Stringshare *inn = NULL;
-   cl->inherits = NULL;
+   cl->extends = NULL;
    Eina_Bool succ = EINA_TRUE;
 
-   EINA_LIST_FREE(il, inn)
+   if (cl->parent_name)
      {
-        if (!succ)
+        succ = _db_swap_inherit(cl, succ, cl->parent_name, &cl->parent);
+        if (succ)
           {
-             eina_stringshare_del(inn);
-             continue;
-          }
-        Eolian_Class *icl = eina_hash_find(cl->base.unit->classes, inn);
-        if (!icl)
-          {
-             succ = EINA_FALSE;
-             char buf[PATH_MAX];
-             snprintf(buf, sizeof(buf), "unknown inherit '%s' (incorrect case?)", inn);
-             _obj_error(&cl->base, buf);
-          }
-        else
-          {
-             cl->inherits = eina_list_append(cl->inherits, icl);
              /* fill if not found, but do not return right away because
               * the rest of the list needs to be freed in order not to
               * leak any memory
               */
-             if (!_db_fill_inherits(icl, fhash))
-               succ = EINA_FALSE;
+             succ = _db_fill_inherits(cl->parent, fhash);
           }
-        eina_stringshare_del(inn);
+     }
+
+   EINA_LIST_FREE(il, inn)
+     {
+        Eolian_Class *out_cl = NULL;
+        succ = _db_swap_inherit(cl, succ, inn, &out_cl);
+        if (!succ)
+          continue;
+        cl->extends = eina_list_append(cl->extends, out_cl);
+        succ = _db_fill_inherits(out_cl, fhash);
      }
 
    /* failed on the way, no point in filling further
@@ -800,34 +824,30 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 
    Eina_Bool valid = cl->base.validated;
 
-   EINA_LIST_FOREACH(cl->inherits, l, icl)
+   if (cl->parent)
      {
         /* first inherit needs some checking done on it */
-        if (!valid && (l == cl->inherits)) switch (cl->type)
+        if (!valid) switch (cl->type)
           {
            case EOLIAN_CLASS_REGULAR:
            case EOLIAN_CLASS_ABSTRACT:
-             if (icl->type != EOLIAN_CLASS_REGULAR && icl->type != EOLIAN_CLASS_ABSTRACT)
+             if (cl->parent->type != EOLIAN_CLASS_REGULAR && cl->parent->type != EOLIAN_CLASS_ABSTRACT)
                {
                   char buf[PATH_MAX];
                   snprintf(buf, sizeof(buf), "regular classes ('%s') cannot inherit from non-regular classes ('%s')",
-                           cl->base.name, icl->base.name);
-                  return _obj_error(&cl->base, buf);
-               }
-             break;
-           case EOLIAN_CLASS_MIXIN:
-           case EOLIAN_CLASS_INTERFACE:
-             if (icl->type != EOLIAN_CLASS_MIXIN && icl->type != EOLIAN_CLASS_INTERFACE)
-               {
-                  char buf[PATH_MAX];
-                  snprintf(buf, sizeof(buf), "non-regular classes ('%s') cannot inherit from regular classes ('%s')",
-                           cl->base.name, icl->base.name);
+                           cl->base.name, cl->parent->base.name);
                   return _obj_error(&cl->base, buf);
                }
              break;
            default:
              break;
           }
+        if (!_validate_class(vals, cl->parent, nhash, ehash, chash))
+          return EINA_FALSE;
+     }
+
+   EINA_LIST_FOREACH(cl->extends, l, icl)
+     {
         if (!_validate_class(vals, icl, nhash, ehash, chash))
           return EINA_FALSE;
      }
