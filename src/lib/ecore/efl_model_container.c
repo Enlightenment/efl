@@ -233,7 +233,7 @@ _efl_model_container_efl_model_property_set(Eo *obj,
                                             const char *property EINA_UNUSED,
                                             Eina_Value *value EINA_UNUSED)
 {
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_rejected(obj,
                                EFL_MODEL_ERROR_NOT_FOUND);
 }
 
@@ -254,7 +254,7 @@ _efl_model_container_efl_model_children_slice_get(Eo *obj,
    Eina_Value v;
 
    v = efl_model_list_value_get(sd->childrens, start, count);
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+   return efl_loop_future_resolved(obj, v);
 }
 
 static unsigned int

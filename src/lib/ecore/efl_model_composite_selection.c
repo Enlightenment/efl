@@ -126,8 +126,7 @@ _check_child_change(Efl_Model *child, Eina_Bool value)
 
    if (prevflag & value)
      {
-        r = eina_future_resolved(efl_loop_future_scheduler_get(child),
-                                 eina_value_bool_init(value));
+        r = efl_loop_future_resolved(child, eina_value_bool_init(value));
      }
    else
      {
@@ -217,10 +216,9 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
         changed = (!pd->exclusive != !exclusive);
         pd->exclusive = !!exclusive;
 
-        if (changed)
-          efl_model_properties_changed(obj, "exclusive");
+        if (changed) efl_model_properties_changed(obj, "exclusive");
 
-        return eina_future_resolved(efl_loop_future_scheduler_get(obj), vf);
+        return efl_loop_future_resolved(obj, vf);
      }
 
    if (!strcmp("selected", property))
@@ -233,7 +231,7 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
         success &= eina_value_convert(value, &vl);
         success &= eina_value_ulong_get(&vl, &l);
         if (!success)
-          return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
         return efl_future_then
           (obj, eina_future_then(efl_model_children_slice_get(obj, l, 1),
@@ -346,11 +344,11 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
    eina_value_flush(&lvb);
 
    if (!success)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
+     return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
    // Nothing changed
    if (newflag == prevflag)
-     return eina_future_resolved(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_resolved(obj,
                                  eina_value_bool_init(newflag));
 
    ve = efl_model_property_get(efl_parent_get(obj), "exclusive");
@@ -402,8 +400,7 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
              eina_value_free(vs);
 
              if (!success)
-               return eina_future_rejected(efl_loop_future_scheduler_get(obj),
-                                           EFL_MODEL_ERROR_INCORRECT_VALUE);
+               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
              // There was, need to unselect the previous one along setting the new value
              chain = eina_future_all(chain,
@@ -469,7 +466,7 @@ _efl_model_composite_selection_efl_model_children_slice_get(Eo *obj,
    Eina_Future *f;
 
    req = calloc(1, sizeof (Selection_Children_Request));
-   if (!req) return eina_future_rejected(efl_loop_future_scheduler_get(obj), ENOMEM);
+   if (!req) return efl_loop_future_rejected(obj, ENOMEM);
    req->parent = efl_ref(obj);
    req->start = start;
 

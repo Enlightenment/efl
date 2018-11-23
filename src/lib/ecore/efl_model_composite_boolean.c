@@ -121,10 +121,10 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
    Eina_Bool flag;
 
    if (!property)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
    if (strcmp(property, "child.index") == 0)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_READ_ONLY);
 
    s = eina_stringshare_add(property);
@@ -137,10 +137,10 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
 
    eina_value_setup(&b, EINA_VALUE_TYPE_BOOL);
    if (!eina_value_convert(value, &b))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
    if (!eina_value_get(value, &flag))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
 
    eina_value_flush(&b);
@@ -153,7 +153,7 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
         unsigned char *tmp;
 
         tmp = realloc(v->buffer, rcount);
-        if (!tmp) return eina_future_rejected(efl_loop_future_scheduler_get(obj), ENOMEM);
+        if (!tmp) return efl_loop_future_rejected(obj, ENOMEM);
         v->buffer = tmp;
         memset(v->buffer + v->buffer_count, 0, rcount - v->buffer_count);
         v->buffer_count = rcount;
@@ -169,8 +169,7 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
    efl_model_properties_changed(obj, property);
 
    // Return fulfilled future
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj),
-                               eina_value_bool_init(!!flag));
+   return efl_loop_future_resolved(obj, eina_value_bool_init(!!flag));
 }
 
 /**************** efl_model_composite_boolean **************/
@@ -291,7 +290,7 @@ _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj,
                                     start, count);
 
    req = malloc(sizeof (Efl_Model_Slice_Request));
-   if (!req) return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   if (!req) return efl_loop_future_rejected(obj,
                                          ENOMEM);
    req->parent = efl_ref(obj);
    req->start = start;
