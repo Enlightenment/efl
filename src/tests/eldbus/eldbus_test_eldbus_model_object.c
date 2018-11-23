@@ -29,12 +29,17 @@ _teardown(void)
 
 EFL_START_TEST(properties_get)
 {
-   const Eina_Array *properties = NULL;
+   Eina_Iterator *properties = NULL;
    properties = efl_model_properties_get(object);
    ck_assert_ptr_ne(NULL, properties);
 
    const unsigned int expected_properties_count = 1;
-   unsigned int actual_properties_count = eina_array_count(properties);
+   unsigned int actual_properties_count = 0;
+   const char *prop;
+
+   EINA_ITERATOR_FOREACH(properties, prop)
+     actual_properties_count++;
+   eina_iterator_free(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
 EFL_END_TEST

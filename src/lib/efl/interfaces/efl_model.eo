@@ -33,7 +33,7 @@ interface Efl.Model ()
                ]]
             }
             values {
-               properties: array<string>; [[Array of current properties]]
+               properties: iterator<string> @owned; [[Array of current properties]]
             }
         }
 	@property property {

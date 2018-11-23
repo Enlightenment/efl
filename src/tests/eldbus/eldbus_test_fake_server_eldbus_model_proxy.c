@@ -52,12 +52,17 @@ _teardown(void)
 
 EFL_START_TEST(properties_get)
 {
-   const Eina_Array *properties = efl_model_properties_get(fake_server_proxy);
+   Eina_Iterator *properties = efl_model_properties_get(fake_server_proxy);
    ck_assert_ptr_ne(NULL, properties);
 
    // FAKE_SERVER_READONLY_PROPERTY, FAKE_SERVER_WRITEONLY_PROPERTY and FAKE_SERVER_READWRITE_PROPERTY properties
    const unsigned int expected_properties_count = 3;
-   const unsigned int actual_properties_count = eina_array_count(properties);
+   unsigned int actual_properties_count = 0;
+   const char *prop;
+
+   EINA_ITERATOR_FOREACH(properties, prop)
+     actual_properties_count++;
+   eina_iterator_free(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 
    _teardown();

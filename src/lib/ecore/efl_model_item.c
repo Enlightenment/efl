@@ -13,7 +13,6 @@ typedef struct _Efl_Model_Item_Data Efl_Model_Item_Data;
 struct _Efl_Model_Item_Data
 {
    Eina_Hash                        *properties;
-   Eina_Array                       *defined_properties;
    Eina_List                        *childrens;
 };
 
@@ -38,7 +37,6 @@ _efl_model_item_efl_object_constructor(Eo *obj, Efl_Model_Item_Data *sd)
      return NULL;
 
    sd->properties = eina_hash_stringshared_new(_item_value_free_cb);
-   sd->defined_properties = eina_array_new(8);
 
    return obj;
 }
@@ -57,15 +55,13 @@ _efl_model_item_efl_object_destructor(Eo *obj, Efl_Model_Item_Data *sd)
    eina_hash_foreach(sd->properties, _stringshared_keys_free, NULL);
    eina_hash_free(sd->properties);
 
-   eina_array_free(sd->defined_properties);
-
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Item_Data *pd)
 {
-   return pd->defined_properties;
+   return eina_hash_iterator_key_new(pd->properties);
 }
 
 static Eina_Future *

@@ -64,17 +64,16 @@ EFL_CALLBACKS_ARRAY_DEFINE(child_cbs,
 static void
 process(Eo *child, unsigned int index)
 {
-   Eina_Array *properties = efl_model_properties_get(child);
+   Eina_Iterator *properties = efl_model_properties_get(child);
    const char *property;
-   Eina_Array_Iterator it;
    Eina_Strbuf *buf;
-   unsigned int i;
+   Eina_Bool noproperties = EINA_TRUE;
 
    buf = eina_strbuf_new();
 
    const char *name = eldbus_model_proxy_name_get(child);
 
-   EINA_ARRAY_ITER_NEXT(properties, i, property, it)
+   EINA_ITERATOR_FOREACH(properties, property)
      {
         Eina_Value *v = efl_model_property_get(child, property);
         char *str;
@@ -90,16 +89,18 @@ process(Eo *child, unsigned int index)
         free(str);
 
         eina_value_free(v);
-     }
 
-   if (eina_array_count(properties) <= 0)
+        noproperties = EINA_FALSE;
+     }
+   eina_iterator_free(properties);
+
+   if (noproperties)
      eina_strbuf_append_printf(buf,  " %2d: %s (no properties yet)\n", index, name);
    else
      eina_strbuf_prepend_printf(buf, " -> %s\n   Properties:\n", name);
 
    printf("%s", eina_strbuf_string_get(buf));
 
-   eina_array_free(properties);
    eina_strbuf_free(buf);
 
    efl_ref(child);

@@ -190,22 +190,11 @@ _eldbus_model_proxy_efl_object_destructor(Eo *obj, Eldbus_Model_Proxy_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _eldbus_model_proxy_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                              Eldbus_Model_Proxy_Data *pd)
 {
-   Eina_Iterator *it;
-   Eina_Array *r;
-   Eina_Stringshare *property;
-
-   r = eina_array_new(4);
-
-   it = eina_hash_iterator_key_new(pd->properties);
-   EINA_ITERATOR_FOREACH(it, property)
-     eina_array_push(r, property);
-   eina_iterator_free(it);
-
-   return r;
+   return eina_hash_iterator_key_new(pd->properties);
 }
 
 #define PROPERTY_EXIST 1

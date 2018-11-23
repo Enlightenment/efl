@@ -225,20 +225,10 @@ _efl_model_container_child_property_add(Eo *obj,
    return EINA_FALSE;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_container_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd)
 {
-   Eina_Iterator *it;
-   Eina_Array *r;
-   Eina_Stringshare *s;
-
-   r = eina_array_new(1);
-   it = eina_hash_iterator_key_new(sd->properties);
-   EINA_ITERATOR_FOREACH(it, s)
-     eina_array_push(r, eina_stringshare_ref(s));
-   eina_iterator_free(it);
-
-   return r;
+   return eina_hash_iterator_key_new(sd->properties);
 }
 
 static Eina_Future *

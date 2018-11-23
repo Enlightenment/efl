@@ -25,7 +25,7 @@ _efl_model_container_item_efl_object_invalidate(Eo *obj, Efl_Model_Container_Ite
    sd->index = 0;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_container_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
 {
    // FIXME: Not to sure here, shouldn't we extend a child of the parent actually ?

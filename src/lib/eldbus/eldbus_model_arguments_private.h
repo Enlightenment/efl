@@ -14,8 +14,7 @@ struct _Eldbus_Model_Arguments_Data
 {
    Eo *obj;
    Eldbus_Proxy *proxy;
-   Eina_Array *properties_array;
-   Eina_Hash *properties_hash;
+   Eina_Hash *properties;
    Eina_Stringshare *name;
    Eina_List *pending_list;
    const Eina_List *arguments;
@@ -23,5 +22,7 @@ struct _Eldbus_Model_Arguments_Data
 };
 
 Eina_Bool eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *, const Eldbus_Message *, Eldbus_Pending *);
+
+#define ARGUMENT_FORMAT "arg%u"
 
 #endif

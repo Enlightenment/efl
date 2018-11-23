@@ -67,23 +67,20 @@ _efl_model_composite_boolean_children_efl_object_finalize(Eo *obj,
    return obj;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_composite_boolean_children_efl_model_properties_get(const Eo *obj,
                                                                Efl_Model_Composite_Boolean_Children_Data *pd)
 {
-   Eina_Iterator *it;
-   Eina_Stringshare *s;
-   Eina_Array *r;
+   Eina_Iterator *its;
+   Eina_Iterator *itr;
 
-   r = efl_model_properties_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS));
-   if (!r) r = eina_array_new(1);
+   its = efl_model_properties_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS));
+   itr = eina_hash_iterator_key_new(pd->parent->values);
 
-   it = eina_hash_iterator_key_new(pd->parent->values);
-   EINA_ITERATOR_FOREACH(it, s)
-     eina_array_push(r, s);
-   eina_array_push(r, "child.index");
+   if (!its) return itr;
+   if (!itr) return its;
 
-   return r;
+   return eina_multi_iterator_new(its, itr);
 }
 
 static Eina_Value *

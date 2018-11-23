@@ -69,7 +69,7 @@ _efl_model_composite_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Model
    return efl_model_property_get(pd->source, property);
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_composite_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Composite_Data *pd)
 {
    return efl_model_properties_get(pd->source);

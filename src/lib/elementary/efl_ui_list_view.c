@@ -141,25 +141,25 @@ _efl_ui_list_view_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *
 static Eina_Bool
 _efl_model_properties_has(Efl_Model *model, Eina_Stringshare *propfind)
 {
-   const Eina_Array *properties;
-   Eina_Array_Iterator iter_prop;
-   Eina_Stringshare *property;
+   Eina_Iterator *properties;
+   const char *property;
    Eina_Bool ret = EINA_FALSE;
-   unsigned i = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(model, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(propfind, EINA_FALSE);
 
    properties = efl_model_properties_get(model);
-
-   EINA_ARRAY_ITER_NEXT(properties, i, property, iter_prop)
+   EINA_ITERATOR_FOREACH(properties, property)
      {
-        if (property == propfind)
+        if (property == propfind ||
+            !strcmp(property, propfind))
           {
              ret = EINA_TRUE;
              break;
           }
      }
+   eina_iterator_free(properties);
+
    return ret;
 }
 

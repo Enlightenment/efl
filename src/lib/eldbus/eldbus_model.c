@@ -152,16 +152,13 @@ _eldbus_model_efl_model_property_get(const Eo *obj,
    return eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND);
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _eldbus_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                        Eldbus_Model_Data *pd EINA_UNUSED)
 {
-   Eina_Array *r;
+   char *unique[] = { UNIQUE_NAME_PROPERTY };
 
-   r = eina_array_new(1);
-   eina_array_push(r, eina_stringshare_add(UNIQUE_NAME_PROPERTY));
-
-   return r;
+   return EINA_C_ARRAY_ITERATOR_NEW(unique);
 }
 
 static Efl_Object *

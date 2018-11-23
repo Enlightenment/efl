@@ -54,7 +54,7 @@ _teardown(void)
 
 EFL_START_TEST(properties_get)
 {
-   const Eina_Array *properties = NULL;
+   Eina_Iterator *properties = NULL;
    // ELDBUS_FDO_INTERFACE have no properties
    properties = efl_model_properties_get(dbus_proxy);
    ck_assert_ptr_ne(NULL, properties);
@@ -63,6 +63,7 @@ EFL_START_TEST(properties_get)
    // due to an EFL change, but a change in the DBus interface:
    // properties contains 2 properties, "Interfaces" and "Features".
    //ck_assert_int_eq(0, eina_array_count(properties));
+   eina_iterator_free(properties);
 }
 EFL_END_TEST
 

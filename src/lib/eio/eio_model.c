@@ -631,18 +631,11 @@ static struct {
 /**
  * Interfaces impl.
  */
-static Eina_Array *
+static Eina_Iterator *
 _eio_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                     Eio_Model_Data *pd EINA_UNUSED)
 {
-   Eina_Array *r;
-   unsigned int i;
-
-   r = eina_array_new(4);
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
-     eina_array_push(r, properties[i].name);
-
-   return r;
+   return EINA_C_ARRAY_ITERATOR_NEW(properties);
 }
 
 static Eina_Value *
