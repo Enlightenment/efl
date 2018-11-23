@@ -361,13 +361,13 @@ lib/evas/common3d/primitives/primitive_common.c
 # Evas_VG
 lib_evas_libevas_la_SOURCES += \
 lib/evas/canvas/efl_canvas_vg_object.c \
-lib/evas/canvas/evas_vg_node.c \
-lib/evas/canvas/evas_vg_container.c \
-lib/evas/canvas/evas_vg_gradient.c \
-lib/evas/canvas/evas_vg_gradient_linear.c \
-lib/evas/canvas/evas_vg_gradient_radial.c \
-lib/evas/canvas/evas_vg_utils.c \
-lib/evas/canvas/evas_vg_shape.c
+lib/evas/canvas/efl_canvas_vg_node.c \
+lib/evas/canvas/efl_canvas_vg_container.c \
+lib/evas/canvas/efl_canvas_vg_gradient.c \
+lib/evas/canvas/efl_canvas_vg_gradient_linear.c \
+lib/evas/canvas/efl_canvas_vg_gradient_radial.c \
+lib/evas/canvas/efl_canvas_vg_utils.c \
+lib/evas/canvas/efl_canvas_vg_shape.c
 
 # Static draw lib
 lib_evas_libevas_la_SOURCES += \
