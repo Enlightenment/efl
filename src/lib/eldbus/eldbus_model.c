@@ -123,7 +123,7 @@ _eldbus_model_efl_model_property_set(Eo *obj,
 
    if (strcmp(property, UNIQUE_NAME_PROPERTY))
      err = EFL_MODEL_ERROR_NOT_FOUND;
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
+   return efl_loop_future_rejected(obj, err);
 }
 
 static Eina_Value *
@@ -181,7 +181,7 @@ _eldbus_model_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
                                            unsigned int start EINA_UNUSED,
                                            unsigned int count EINA_UNUSED)
 {
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_rejected(obj,
                                EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 
