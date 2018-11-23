@@ -293,8 +293,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
    if (!data) goto on_error;
 
    data->pd = pd;
-   data->promise = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                                    _eldbus_model_proxy_cancel_cb, data);
+   data->promise = efl_loop_promise_new(obj, _eldbus_model_proxy_cancel_cb, data);
    data->property = eina_stringshare_add(property);
    if (!(data->value = eina_value_dup(value))) goto on_error;
 
