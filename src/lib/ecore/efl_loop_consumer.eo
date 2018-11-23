@@ -14,6 +14,18 @@ class Efl.Loop_Consumer (Efl.Object)
             loop: Efl.Loop; [[Efl loop]]
          }
       }
+      future_resolved {
+         params {
+            result: any_value;
+         }
+         return: future<any_value>;
+      }
+      future_rejected {
+         params {
+            error: Eina.Error;
+         }
+         return: future<Eina.Error>;
+      }
    }
    implements {
       Efl.Object.parent { set; }
