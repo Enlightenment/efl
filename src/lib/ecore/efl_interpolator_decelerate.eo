@@ -1,4 +1,4 @@
-class Efl.Interpolator_Decelerate (Efl.Interpolator)
+class Efl.Interpolator_Decelerate (Efl.Object, Efl.Interpolator)
 {
    [[Efl decelerate interpolator class
 

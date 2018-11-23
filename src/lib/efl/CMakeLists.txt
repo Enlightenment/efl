@@ -29,6 +29,7 @@ set(PUBLIC_EO_FILES
   interfaces/efl_image_load.eo
   interfaces/efl_input_device.eo
   interfaces/efl_input_types.eot
+  interfaces/efl_interpolator.eo
   interfaces/efl_io_buffer.eo
   interfaces/efl_io_closer.eo
   interfaces/efl_io_positioner.eo

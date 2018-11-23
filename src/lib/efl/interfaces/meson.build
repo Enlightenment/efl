@@ -71,6 +71,7 @@ pub_eo_files = [
   'efl_gfx_size_hint.eo',
   'efl_model.eo',
   'efl_animator.eo',
+  'efl_interpolator.eo',
   'efl_orientation.eo',
   'efl_container.eo',
   'efl_content.eo',

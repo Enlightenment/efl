@@ -62,7 +62,7 @@ class Efl.Canvas.Animation (Efl.Object, Efl.Playable)
          get {
          }
          values {
-            interpolator: Efl.Object; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
+            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
          }
       }
       animation_apply {

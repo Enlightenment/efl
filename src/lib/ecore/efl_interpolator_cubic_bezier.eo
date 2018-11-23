@@ -1,4 +1,4 @@
-class Efl.Interpolator_Cubic_Bezier (Efl.Interpolator)
+class Efl.Interpolator_Cubic_Bezier (Efl.Object, Efl.Interpolator)
 {
    [[Efl cubic_bezier interpolator class]]
    data: Efl_Interpolator_Cubic_Bezier_Data;

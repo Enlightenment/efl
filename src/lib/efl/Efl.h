@@ -117,6 +117,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Core interface */
 #include "interfaces/efl_animator.eo.h"
+#include "interfaces/efl_interpolator.eo.h"
 
 /* Graphics */
 #include "interfaces/efl_gfx_entity.eo.h"

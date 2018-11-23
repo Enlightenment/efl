@@ -1,4 +1,4 @@
-class Efl.Interpolator_Bounce (Efl.Interpolator)
+class Efl.Interpolator_Bounce (Efl.Object, Efl.Interpolator)
 {
    [[Efl bounce interpolator class]]
    data: Efl_Interpolator_Bounce_Data;

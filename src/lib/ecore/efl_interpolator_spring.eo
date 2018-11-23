@@ -1,4 +1,4 @@
-class Efl.Interpolator_Spring (Efl.Interpolator)
+class Efl.Interpolator_Spring (Efl.Object, Efl.Interpolator)
 {
    [[Efl spring interpolator class]]
    data: Efl_Interpolator_Spring_Data;

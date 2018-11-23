@@ -38,7 +38,6 @@ set(PUBLIC_EO_FILES
   efl_loop_timer.eo
   efl_loop_user.eo
   efl_promise.eo
-  efl_interpolator.eo
   efl_interpolator_linear.eo
   efl_interpolator_accelerate.eo
   efl_interpolator_decelerate.eo

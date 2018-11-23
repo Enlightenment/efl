@@ -78,7 +78,6 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"
 
-#include "efl_interpolator.eo.h"
 #include "efl_interpolator_linear.eo.h"
 #include "efl_interpolator_accelerate.eo.h"
 #include "efl_interpolator_decelerate.eo.h"

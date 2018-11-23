@@ -1,7 +1,6 @@
-class Efl.Interpolator (Efl.Object)
+interface Efl.Interpolator ()
 {
-   [[Efl interpolator class]]
-   data: Efl_Interpolator_Data;
+   [[Efl interpolator interface]]
    methods {
       interpolate {
          [[Interpolate the given value.]]

@@ -33,7 +33,6 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_io_file.eo \
         lib/ecore/efl_io_copier.eo \
         lib/ecore/efl_io_buffered_stream.eo \
-	lib/ecore/efl_interpolator.eo \
 	lib/ecore/efl_interpolator_linear.eo \
 	lib/ecore/efl_interpolator_accelerate.eo \
 	lib/ecore/efl_interpolator_decelerate.eo \
@@ -127,7 +126,6 @@ lib/ecore/efl_model_composite_boolean.c \
 lib/ecore/efl_model_composite_selection.c \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
-lib/ecore/efl_interpolator.c \
 lib/ecore/efl_interpolator_linear.c \
 lib/ecore/efl_interpolator_accelerate.c \
 lib/ecore/efl_interpolator_decelerate.c \
