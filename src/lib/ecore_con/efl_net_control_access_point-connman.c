@@ -773,8 +773,7 @@ _efl_net_control_access_point_connect(Eo *o, Efl_Net_Control_Access_Point_Data *
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = eina_promise_new(efl_loop_future_scheduler_get(o),
-                              _efl_net_control_access_point_connect_promise_del, o);
+   promise = efl_loop_promise_new(o, _efl_net_control_access_point_connect_promise_del, o);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);

@@ -399,8 +399,7 @@ _efl_net_control_technology_scan(Eo *o, Efl_Net_Control_Technology_Data *pd)
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = eina_promise_new(efl_loop_future_scheduler_get(o),
-                              _efl_net_control_technology_scan_promise_del, NULL);
+   promise = efl_loop_promise_new(o, _efl_net_control_technology_scan_promise_del, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);
