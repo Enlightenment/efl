@@ -312,7 +312,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
    return efl_future_then(obj, eina_future_new(data->promise));
 
  on_error:
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
+   return efl_loop_future_rejected(obj, err);
 }
 
 static Eina_Value *
@@ -380,7 +380,7 @@ _eldbus_model_proxy_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
    _eldbus_model_proxy_listed(pd);
 
    v = efl_model_list_value_get(pd->childrens, start, count);
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+   return efl_loop_future_resolved(obj, v);
 }
 
 static unsigned int

@@ -124,7 +124,7 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
         Eina_Value v;
 
         v = efl_model_list_value_get(pd->childrens, start, count);
-        return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+        return efl_loop_future_resolved(obj, v);
      }
 
    p = efl_loop_promise_new(obj, _eldbus_eina_promise_cancel, NULL);
