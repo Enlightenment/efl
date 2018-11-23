@@ -596,6 +596,7 @@ _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_It
    parent = efl_parent_get(obj);
 
    VIEW_SET(it, edje_object_add(evas_object_evas_get(parent)));
+   _efl_ui_focus_event_redirector(VIEW(it), obj);
    edje_object_scale_set(VIEW(it),efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(VIEW(it), parent);

@@ -1955,6 +1955,8 @@ _elm_calendar_item_day_number_set(Eo *obj, Elm_Calendar_Item_Data *pd, int i)
    else
      pd->part = evas_object_data_get(po, "_part_access_obj");
 
+   _efl_ui_focus_event_redirector(pd->part, obj);
+
    EINA_SAFETY_ON_NULL_RETURN(pd->part);
 }
 

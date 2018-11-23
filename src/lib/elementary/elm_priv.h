@@ -909,4 +909,6 @@ void legacy_child_focus_handle(Efl_Ui_Focus_Object *object);
  */
 void legacy_object_focus_handle(Efl_Ui_Focus_Object *object);
 
+void _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal);
+
 #endif

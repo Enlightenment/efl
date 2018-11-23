@@ -5323,6 +5323,7 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    Eo *parent = NULL;
 
    sd->on_create = EINA_TRUE;
+   _efl_ui_focus_event_redirector(obj, obj);
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

@@ -243,9 +243,8 @@ _canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _new_geom(void *data, const Efl_Event *event)
 {
-   efl_event_callback_call(data, event->desc, event->info);
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, event->info);
 }
-
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
     {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},

@@ -402,6 +402,8 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 static void
 dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
+   if (!pd->dirty) return;
+
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
    dirty_flush_node(obj, pd, node);
@@ -465,8 +467,7 @@ _object_del_cb(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(regular_node,
-    {EFL_GFX_ENTITY_EVENT_RESIZE, _node_new_geometry_cb},
-    {EFL_GFX_ENTITY_EVENT_MOVE, _node_new_geometry_cb},
+    {EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, _node_new_geometry_cb},
     {EFL_EVENT_INVALIDATE, _object_del_cb},
 );
 

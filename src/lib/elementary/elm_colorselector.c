@@ -1781,6 +1781,8 @@ _elm_color_item_efl_object_constructor(Eo *eo_item, Elm_Color_Item_Data *item)
    evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_event_callback_add
      (VIEW(item), EVAS_CALLBACK_RESIZE, _item_resize, NULL);
+   _efl_ui_focus_event_redirector(VIEW(item), obj);
+
 
    item->color_obj = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set
