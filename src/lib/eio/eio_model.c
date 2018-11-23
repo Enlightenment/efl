@@ -696,14 +696,14 @@ _eio_model_efl_model_property_set(Eo *obj,
      }
    else
      {
-        f = eina_future_resolved(efl_loop_future_scheduler_get(obj),
+        f = efl_loop_future_resolved(obj,
                                  eina_value_string_init(pd->path));
      }
 
    return efl_future_then(obj, f);
 
  on_error:
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
+   return efl_loop_future_rejected(obj, err);
 }
 
 static void
