@@ -231,6 +231,7 @@ node_item_free(Node *item)
    Eina_List *l;
    Eo *obj = item->manager;
    FOCUS_DATA(obj);
+   Eina_Bool dirty_added = EINA_FALSE;
 
    /*cleanup graph parts*/
 
@@ -243,6 +244,7 @@ node_item_free(Node *item)
         EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
           { \
              dirty_add(obj, pd, partner); \
+             dirty_added = EINA_TRUE; \
           }
 
         MAKE_LIST_DIRTY(item, one_direction)
@@ -251,6 +253,10 @@ node_item_free(Node *item)
         border_onedirection_cleanup(item, i);
         border_onedirection_set(item, i, NULL);
      }
+
+   //the unregistering of a item should ever result in atleast a coords_dirty call
+   if (!dirty_added)
+     efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
 
    /*cleanup manager householdings*/
 
