@@ -790,8 +790,10 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
    free(pd->task);
 
    efl_data_xunref(pd->base->surface, pd->surface, obj);
-   efl_data_xunref(obj, pd->shape, obj);
    efl_data_xunref(obj, pd->base, obj);
+   efl_data_xunref(obj, pd->shape, obj);
+   efl_data_xunref(obj, pd->public_shape, obj);
+
    efl_destructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
 }
 
