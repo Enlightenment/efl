@@ -660,7 +660,6 @@ _eio_model_efl_model_property_set(Eo *obj,
                                   Eio_Model_Data *pd,
                                   const char *property, Eina_Value *value)
 {
-   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    const char *path;
    Eina_Future *f;
    Eina_Value s = EINA_VALUE_EMPTY;
@@ -683,7 +682,7 @@ _eio_model_efl_model_property_set(Eo *obj,
 
    if (finalized)
      {
-        Eina_Promise *p = efl_loop_promise_new(loop, _efl_io_manager_future_cancel, NULL);
+        Eina_Promise *p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
         f = eina_future_new(p);
 
         pd->request.move = eio_file_move(pd->path, path,
@@ -697,14 +696,14 @@ _eio_model_efl_model_property_set(Eo *obj,
      }
    else
      {
-        f = eina_future_resolved(efl_loop_future_scheduler_get(loop),
+        f = eina_future_resolved(efl_loop_future_scheduler_get(obj),
                                  eina_value_string_init(pd->path));
      }
 
    return efl_future_then(obj, f);
 
  on_error:
-   return eina_future_rejected(efl_loop_future_scheduler_get(loop), err);
+   return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
 }
 
 static void
