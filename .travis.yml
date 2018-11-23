@@ -23,10 +23,6 @@ jobs:
     - env:
       - os: linux
       - DISTRO=Fedora28
-      - CI_BUILD_TYPE=mingw
-    - env:
-      - os: linux
-      - DISTRO=Fedora28
       - CI_BUILD_TYPE=options-enabled
     - env:
       - os: linux
@@ -73,6 +69,11 @@ jobs:
         - BUILDSYSTEM=ninja
   exclude:
     - os: linux
+
+#    - env:
+#      - os: linux
+#      - DISTRO=Fedora28
+#      - CI_BUILD_TYPE=mingw
 
 services:
   - docker
