@@ -1,10 +1,10 @@
-class Efl.Interpolator_Accelerate (Efl.Object, Efl.Interpolator)
+class Efl.Sinusoidal_Interpolator (Efl.Object, Efl.Interpolator)
 {
-   [[Efl accelerate interpolator class
+   [[Efl sinusoidal interpolator class
 
-     output = 1 - sin(Pi / 2 + input * Pi / 2);
+     output = (1 - cos(input * Pi)) / 2;
    ]]
-   data: Efl_Interpolator_Accelerate_Data;
+   data: Efl_Sinusoidal_Interpolator_Data;
    methods {
       @property factor {
          [[Factor property]]

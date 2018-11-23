@@ -1,8 +1,0 @@
-class Efl.Interpolator_Linear (Efl.Object, Efl.Interpolator)
-{
-   [[Efl linear interpolator class]]
-   data: Efl_Interpolator_Linear_Data;
-   implements {
-      Efl.Interpolator.interpolate;
-   }
-}

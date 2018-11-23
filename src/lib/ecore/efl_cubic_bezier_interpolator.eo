@@ -1,7 +1,7 @@
-class Efl.Interpolator_Divisor (Efl.Object, Efl.Interpolator)
+class Efl.Cubic_Bezier_Interpolator (Efl.Object, Efl.Interpolator)
 {
-   [[Efl divisor interpolator class]]
-   data: Efl_Interpolator_Divisor_Data;
+   [[Efl cubic_bezier interpolator class]]
+   data: Efl_Cubic_Bezier_Interpolator_Data;
    methods {
       @property factors {
          [[Factors property]]
@@ -12,6 +12,8 @@ class Efl.Interpolator_Divisor (Efl.Object, Efl.Interpolator)
          values {
             factor1: double; [[First factor of the interpolation function.]]
             factor2: double; [[Second factor of the interpolation function.]]
+            factor3: double; [[Third factor of the interpolation function.]]
+            factor4: double; [[Fourth factor of the interpolation function.]]
          }
       }
    }

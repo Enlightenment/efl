@@ -38,14 +38,14 @@ set(PUBLIC_EO_FILES
   efl_loop_timer.eo
   efl_loop_user.eo
   efl_promise.eo
-  efl_interpolator_linear.eo
-  efl_interpolator_accelerate.eo
-  efl_interpolator_decelerate.eo
-  efl_interpolator_sinusoidal.eo
-  efl_interpolator_divisor.eo
-  efl_interpolator_bounce.eo
-  efl_interpolator_spring.eo
-  efl_interpolator_cubic_bezier.eo
+  efl_linear_interpolator.eo
+  efl_accelerate_interpolator.eo
+  efl_decelerate_interpolator.eo
+  efl_sinusoidal_interpolator.eo
+  efl_divisor_interpolator.eo
+  efl_bounce_interpolator.eo
+  efl_spring_interpolator.eo
+  efl_cubic_bezier_interpolator.eo
 )
 
 set(PUBLIC_HEADERS

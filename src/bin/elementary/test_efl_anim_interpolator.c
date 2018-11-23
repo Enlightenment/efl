@@ -28,37 +28,37 @@ _interpolator_create(int index, Evas_Object *win)
 
    if (index == 0)
      {
-        interp = efl_add(EFL_INTERPOLATOR_LINEAR_CLASS, win);
+        interp = efl_add(EFL_LINEAR_INTERPOLATOR_CLASS, win);
      }
    else if (index == 1)
      {
-        interp = efl_add(EFL_INTERPOLATOR_SINUSOIDAL_CLASS, win);
-        efl_interpolator_sinusoidal_factor_set(interp, 1.0);
+        interp = efl_add(EFL_SINUSOIDAL_INTERPOLATOR_CLASS, win);
+        efl_sinusoidal_interpolator_factor_set(interp, 1.0);
      }
    else if (index == 2)
      {
-        interp = efl_add(EFL_INTERPOLATOR_DECELERATE_CLASS, win);
-        efl_interpolator_decelerate_factor_set(interp, 1.0);
+        interp = efl_add(EFL_DECELERATE_INTERPOLATOR_CLASS, win);
+        efl_decelerate_interpolator_factor_set(interp, 1.0);
      }
    else if (index == 3)
      {
-        interp = efl_add(EFL_INTERPOLATOR_ACCELERATE_CLASS, win);
-        efl_interpolator_accelerate_factor_set(interp, 1.0);
+        interp = efl_add(EFL_ACCELERATE_INTERPOLATOR_CLASS, win);
+        efl_accelerate_interpolator_factor_set(interp, 1.0);
      }
    else if (index == 4)
      {
-        interp = efl_add(EFL_INTERPOLATOR_DIVISOR_CLASS, win);
-        efl_interpolator_divisor_factors_set(interp, 1.0, 1.0);
+        interp = efl_add(EFL_DIVISOR_INTERPOLATOR_CLASS, win);
+        efl_divisor_interpolator_factors_set(interp, 1.0, 1.0);
      }
    else if (index == 5)
      {
-        interp = efl_add(EFL_INTERPOLATOR_BOUNCE_CLASS, win);
-        efl_interpolator_bounce_factors_set(interp, 1.0, 1.0);
+        interp = efl_add(EFL_BOUNCE_INTERPOLATOR_CLASS, win);
+        efl_bounce_interpolator_factors_set(interp, 1.0, 1.0);
      }
    else if (index == 6)
      {
-        interp = efl_add(EFL_INTERPOLATOR_SPRING_CLASS, win);
-        efl_interpolator_spring_factors_set(interp, 1.0, 1.0);
+        interp = efl_add(EFL_SPRING_INTERPOLATOR_CLASS, win);
+        efl_spring_interpolator_factors_set(interp, 1.0, 1.0);
      }
 
    return interp;

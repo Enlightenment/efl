@@ -1,7 +1,7 @@
-class Efl.Interpolator_Spring (Efl.Object, Efl.Interpolator)
+class Efl.Bounce_Interpolator (Efl.Object, Efl.Interpolator)
 {
-   [[Efl spring interpolator class]]
-   data: Efl_Interpolator_Spring_Data;
+   [[Efl bounce interpolator class]]
+   data: Efl_Bounce_Interpolator_Data;
    methods {
       @property factors {
          [[Factors property]]

@@ -78,14 +78,14 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"
 
-#include "efl_interpolator_linear.eo.h"
-#include "efl_interpolator_accelerate.eo.h"
-#include "efl_interpolator_decelerate.eo.h"
-#include "efl_interpolator_sinusoidal.eo.h"
-#include "efl_interpolator_divisor.eo.h"
-#include "efl_interpolator_bounce.eo.h"
-#include "efl_interpolator_spring.eo.h"
-#include "efl_interpolator_cubic_bezier.eo.h"
+#include "efl_linear_interpolator.eo.h"
+#include "efl_accelerate_interpolator.eo.h"
+#include "efl_decelerate_interpolator.eo.h"
+#include "efl_sinusoidal_interpolator.eo.h"
+#include "efl_divisor_interpolator.eo.h"
+#include "efl_bounce_interpolator.eo.h"
+#include "efl_spring_interpolator.eo.h"
+#include "efl_cubic_bezier_interpolator.eo.h"
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);

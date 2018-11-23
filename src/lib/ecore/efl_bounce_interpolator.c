@@ -5,18 +5,18 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-#define MY_CLASS EFL_INTERPOLATOR_BOUNCE_CLASS
+#define MY_CLASS EFL_BOUNCE_INTERPOLATOR_CLASS
 
-typedef struct _Efl_Interpolator_Bounce_Data Efl_Interpolator_Bounce_Data;
+typedef struct _Efl_Bounce_Interpolator_Data Efl_Bounce_Interpolator_Data;
 
-struct _Efl_Interpolator_Bounce_Data
+struct _Efl_Bounce_Interpolator_Data
 {
    double factor[2];
 };
 
 EOLIAN static double
-_efl_interpolator_bounce_efl_interpolator_interpolate(Eo *eo_obj EINA_UNUSED,
-                                                      Efl_Interpolator_Bounce_Data *pd EINA_UNUSED,
+_efl_bounce_interpolator_efl_interpolator_interpolate(Eo *eo_obj EINA_UNUSED,
+                                                      Efl_Bounce_Interpolator_Data *pd EINA_UNUSED,
                                                       double progress)
 {
    if ((progress < 0.0) || (progress > 1.0))
@@ -27,8 +27,8 @@ _efl_interpolator_bounce_efl_interpolator_interpolate(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_interpolator_bounce_factors_set(Eo *eo_obj EINA_UNUSED,
-                                     Efl_Interpolator_Bounce_Data *pd,
+_efl_bounce_interpolator_factors_set(Eo *eo_obj EINA_UNUSED,
+                                     Efl_Bounce_Interpolator_Data *pd,
                                      double factor1, double factor2)
 {
    pd->factor[0] = factor1;
@@ -36,8 +36,8 @@ _efl_interpolator_bounce_factors_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_interpolator_bounce_factors_get(const Eo *eo_obj EINA_UNUSED,
-                                     Efl_Interpolator_Bounce_Data *pd,
+_efl_bounce_interpolator_factors_get(const Eo *eo_obj EINA_UNUSED,
+                                     Efl_Bounce_Interpolator_Data *pd,
                                      double *factor1, double *factor2)
 {
    if (factor1)
@@ -48,8 +48,8 @@ _efl_interpolator_bounce_factors_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Efl_Object *
-_efl_interpolator_bounce_efl_object_constructor(Eo *eo_obj,
-                                                Efl_Interpolator_Bounce_Data *pd)
+_efl_bounce_interpolator_efl_object_constructor(Eo *eo_obj,
+                                                Efl_Bounce_Interpolator_Data *pd)
 {
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
@@ -59,4 +59,4 @@ _efl_interpolator_bounce_efl_object_constructor(Eo *eo_obj,
    return eo_obj;
 }
 
-#include "efl_interpolator_bounce.eo.c"
+#include "efl_bounce_interpolator.eo.c"
