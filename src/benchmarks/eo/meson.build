@@ -13,4 +13,6 @@ eo_bench = executable('eo_bench',
   dependencies: [eo, eina],
 )
 
-benchmark('eo', eo_bench)
+benchmark('eo', eo_bench,
+  args: run_command('date','+%F_%s').stdout()
+)
