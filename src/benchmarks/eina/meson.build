@@ -37,5 +37,6 @@ eina_bench = executable('eina_bench',
 )
 
 benchmark('eina_bench', eina_bench,
+  args : 'libcity.la',
 	timeout : 20*60
 )
