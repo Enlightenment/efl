@@ -103,6 +103,10 @@ _elm_pan_update(Elm_Pan_Smart_Data *psd)
         efl_ui_focus_manager_dirty_logic_freeze(manager);
         evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
         efl_ui_focus_manager_dirty_logic_unfreeze(manager);
+        //XXX: hack, right now there is no api in efl_ui_focus_manager_sub.eo to mark it dirty
+        // If we have moved the content, then emit this event, in order to ensure that the focus_manager_sub
+        // logic tries to fetch the viewport again
+        efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
      }
 }
 

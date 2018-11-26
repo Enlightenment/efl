@@ -141,6 +141,15 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(const 
    return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static Eina_Iterator *
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Eina_Rect viewport)
+{
+   if (pd->rect_registered)
+     return eina_list_iterator_new(pd->iterator_list);
+
+   return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
 {

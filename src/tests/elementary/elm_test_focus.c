@@ -1074,6 +1074,38 @@ EFL_START_TEST(test_events_child_focus)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(viewport_check)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
+   Eina_List *list = NULL;
+   Eina_Iterator *iter;
+   Efl_Ui_Focus_Object *obj;
+
+   elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
+
+   m = elm_focus_test_manager_new(&root);
+   efl_ui_focus_manager_calc_register(m, middle, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north, root, NULL);
+   efl_ui_focus_manager_calc_register(m, east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, west, root, NULL);
+
+   iter = efl_ui_focus_manager_viewport_elements_get(m, EINA_RECT(80, 0, 100, 100));
+
+   EINA_ITERATOR_FOREACH(iter, obj)
+     {
+        list = eina_list_append(list, obj);
+     }
+
+   eina_iterator_free(iter);
+
+   ck_assert(eina_list_count(list) == 1);
+   ck_assert_ptr_eq(eina_list_data_get(list), east);
+}
+EFL_END_TEST
+
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -1105,4 +1137,5 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, test_request_move);
     tcase_add_test(tc, redirect_unregister_entrypoint);
     tcase_add_test(tc, test_events_child_focus);
+    tcase_add_test(tc, viewport_check);
 }

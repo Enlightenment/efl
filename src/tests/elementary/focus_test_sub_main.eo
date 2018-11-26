@@ -1,10 +1,11 @@
 class Focus.Test.Sub.Main
     extends Efl.Object
-    implements Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager_Sub
+    implements Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager_Sub, Efl.Gfx.Entity
 {
     implements {
         Efl.Ui.Focus.Object.focus_manager { get; }
         Efl.Ui.Focus.Object.focus_parent { get; }
         Efl.Ui.Focus.Object.focus_geometry { get; }
+        Efl.Gfx.Entity.geometry {get;}
     }
 }

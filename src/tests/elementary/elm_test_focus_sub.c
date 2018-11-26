@@ -5,6 +5,11 @@ typedef struct {
 
 } Focus_Test_Sub_Main_Data;
 
+EOLIAN static Eina_Rect
+_focus_test_sub_main_efl_gfx_entity_geometry_get(const Eo *obj, Focus_Test_Sub_Main_Data *pd)
+{
+   return EINA_RECT(-10, -10, 40, 40);
+}
 
 EOLIAN static Eina_Rect
 _focus_test_sub_main_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Focus_Test_Sub_Main_Data *pd EINA_UNUSED)

@@ -53,7 +53,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    manager = efl_ui_focus_object_focus_manager_get(obj);
    logical = obj;
-   borders = efl_ui_focus_manager_border_elements_get(obj);
+   borders = efl_ui_focus_manager_viewport_elements_get(obj, efl_gfx_entity_geometry_get(obj));
 
    selection = NULL;
    EINA_ITERATOR_FOREACH(borders, node)

@@ -1,4 +1,5 @@
 import efl_ui;
+import eina_types;
 
 struct Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focussable objects.
@@ -88,6 +89,20 @@ interface Efl.Ui.Focus.Manager {
             values {
                 border_elements : iterator<Efl.Ui.Focus.Object>; [[An iterator
                    over the border objects.]]
+            }
+        }
+        @property viewport_elements {
+            [[The list of elements which are at the border of the viewport.
+
+              This means one of the relations right,left or down,up are not set.
+              This call flushes all changes. See @Efl.Ui.Focus.Manager.move
+            ]]
+            get {}
+            keys {
+                viewport : Eina.Rect;
+            }
+            values {
+              viewport_elements : iterator<Efl.Ui.Focus.Object>;
             }
         }
         @property root {

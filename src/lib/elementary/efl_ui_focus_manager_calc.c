@@ -937,7 +937,73 @@ typedef struct {
    Eina_Iterator iterator;
    Eina_Iterator *real_iterator;
    Efl_Ui_Focus_Manager *object;
+   Eina_Each_Cb filter_cb;
+   Eina_Rect viewport;
+   Eina_Bool use_viewport;
 } Border_Elements_Iterator;
+
+static Eina_Bool
+_border_filter_cb(Node *node, Border_Elements_Iterator *pd EINA_UNUSED)
+{
+   for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+     {
+        if (!DIRECTION_ACCESS(node, i).one_direction)
+          {
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+eina_rectangle_real_inside(Eina_Rect rect, Eina_Rect geom)
+{
+   int min_x, max_x, min_y, max_y;
+
+   min_x = geom.rect.x;
+   min_y = geom.rect.y;
+   max_x = eina_rectangle_max_x(&geom.rect);
+   max_y = eina_rectangle_max_y(&geom.rect);
+
+   Eina_Bool inside = eina_rectangle_coords_inside(&rect.rect, min_x, min_y) &&
+                      eina_rectangle_coords_inside(&rect.rect, min_x, max_y) &&
+                      eina_rectangle_coords_inside(&rect.rect, max_x, min_y) &&
+                      eina_rectangle_coords_inside(&rect.rect, max_x, max_y);
+
+   return inside;
+}
+
+static Eina_Bool
+_viewport_filter_cb(Node *node, Border_Elements_Iterator *pd)
+{
+   Node *partner;
+   Eina_Rect geom;
+
+   if (node->type == NODE_TYPE_ONLY_LOGICAL) return EINA_FALSE;
+
+   geom = efl_ui_focus_object_focus_geometry_get(node->focusable);
+
+   if (eina_rectangle_real_inside(pd->viewport, geom))
+     {
+        for (int i = 0; i < 4; ++i)
+          {
+             Eina_List *n, *lst = G(node).directions[i].one_direction;
+
+             if (!lst)
+               return EINA_TRUE;
+
+             EINA_LIST_FOREACH(lst, n, partner)
+               {
+                  Eina_Rect partner_geom;
+                  partner_geom = efl_ui_focus_object_focus_geometry_get(partner->focusable);
+                  if (!eina_rectangle_real_inside(pd->viewport, partner_geom))
+                    return EINA_TRUE;
+               }
+          }
+     }
+   return EINA_FALSE;
+}
+
 
 static Eina_Bool
 _iterator_next(Border_Elements_Iterator *it, void **data)
@@ -946,17 +1012,21 @@ _iterator_next(Border_Elements_Iterator *it, void **data)
 
    EINA_ITERATOR_FOREACH(it->real_iterator, node)
      {
+        Eina_Bool use = EINA_FALSE;
         if (node->type == NODE_TYPE_ONLY_LOGICAL) continue;
 
-        for(int i = EFL_UI_FOCUS_DIRECTION_UP ;i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+        if (!it->use_viewport)
+          use = _border_filter_cb(node, it);
+        else
+          use = _viewport_filter_cb(node, it);
+
+        if (use)
           {
-             if (!DIRECTION_ACCESS(node, i).one_direction)
-               {
-                  *data = node->focusable;
-                  return EINA_TRUE;
-               }
+             *data = node->focusable;
+             return EINA_TRUE;
           }
      }
+
    return EINA_FALSE;
 }
 
@@ -987,8 +1057,8 @@ _prepare_node(Node *root)
      }
 }
 
-EOLIAN static Eina_Iterator*
-_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+static Border_Elements_Iterator*
+_elements_iterator_new(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
    Border_Elements_Iterator *it;
 
@@ -1008,6 +1078,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *ob
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_iterator_free);
    it->object = (Eo *)obj;
+
+   return it;
+}
+
+EOLIAN static Eina_Iterator*
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
+{
+   return (Eina_Iterator*) _elements_iterator_new(obj, pd);
+}
+
+EOLIAN static Eina_Iterator*
+_efl_ui_focus_manager_calc_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Eina_Rect viewport)
+{
+   Border_Elements_Iterator *it = _elements_iterator_new(obj, pd);
+
+   it->use_viewport = EINA_TRUE;
+   it->viewport = viewport;
 
    return (Eina_Iterator*) it;
 }
