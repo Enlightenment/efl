@@ -1017,3 +1017,47 @@ test_scroller5(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    evas_object_resize(win, 400, 550);
    evas_object_show(win);
 }
+
+void
+test_scroller6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *scr, *lb, *table, *btn, *btn2;
+
+   win = elm_win_util_standard_add("Scroller with unfocusable content", "Scroller with unfocusable content");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+
+   table = elm_table_add(win);
+   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, table);
+   evas_object_show(table);
+
+   scr = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(table, scr, 0, 0, 1, 1);
+   evas_object_show(scr);
+
+   lb = elm_label_add(scr);
+   elm_object_text_set(lb, "Enlightenment started out way back in 1996 as a project to build a Window Manager for X11. It has grown much more since then. Enlightenment still produces this Window Manager, but it has evolved to also cover Mobile, Wearable and TV UI requirements for projects such as Tizen as well as the traditional “desktop” UI. We still push out releases. See our download page for more details on the this. Visit our contribute page for our latest source code repositories. The project is currently transitioning from X11 to Wayland. We are fully committed to moving to Wayland eventually, as its the future of graphical display layers on Linux. We still primarily support Linux for Enlightenment, but there is some effort (based on help and support from users and some developers) to support BSD too.");
+   elm_object_content_set(scr, lb);
+   evas_object_show(lb);
+
+   btn = elm_button_add(table);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(btn, "Button 2");
+   elm_table_pack(table, btn, 0, 1, 2, 1);
+   evas_object_show(btn);
+
+   btn2 = elm_button_add(table);
+   evas_object_size_hint_weight_set(btn2, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn2, 0.0, EVAS_HINT_FILL);
+   elm_object_text_set(btn2, "Button 3");
+   elm_table_pack(table, btn2, 1, 0, 1, 1);
+   evas_object_show(btn2);
+
+   evas_object_resize(win, 400, 550);
+   evas_object_show(win);
+}

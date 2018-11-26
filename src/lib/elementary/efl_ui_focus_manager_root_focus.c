@@ -180,7 +180,7 @@ _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager
 
    if (pd->replacement_object)
      {
-        pd->iterator_list = eina_list_remove(pd->iterator_list, pd->replacement_object);
+        pd->iterator_list = eina_list_remove(pd->iterator_list, pd->rect);
         pd->replacement_object = NULL;
      }
 
@@ -188,7 +188,7 @@ _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager
    if (pd->replacement_object)
      {
         efl_ui_focus_composition_adapter_canvas_object_set(pd->rect, pd->replacement_object);
-        pd->iterator_list = eina_list_append(pd->iterator_list, pd->replacement_object);
+        pd->iterator_list = eina_list_append(pd->iterator_list, pd->rect);
      }
 }
 
