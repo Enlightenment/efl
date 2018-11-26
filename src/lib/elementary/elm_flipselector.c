@@ -456,14 +456,18 @@ static void
 _items_add(Evas_Object *obj)
 {
    double d;
+   Eina_Bool reverse;
    char buf[16];
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
+   reverse = (sd->val_min > sd->val_max);
    _clear_items(obj);
-   for (d = sd->val_min; d < sd->val_max; d = d + sd->step)
+   for (d = sd->val_min; d < sd->val_max;)
      {
         snprintf(buf, sizeof(buf), "%.2f", d);
         elm_flipselector_item_append(obj, buf, NULL, NULL);
+        if (reverse) d = d - sd->step;
+        else d = d + sd->step;
      }
    snprintf(buf, sizeof(buf), "%.2f", sd->val_max);
    elm_flipselector_item_append(obj, buf, NULL, NULL);
@@ -472,7 +476,6 @@ _items_add(Evas_Object *obj)
 EOLIAN static void
 _elm_flipselector_efl_ui_range_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
-   if (min > max) return;
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
    sd->val_min = min;
@@ -492,6 +495,9 @@ EOLIAN static void
 _elm_flipselector_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
 {
    if (sd->step == step) return;
+
+   if (step == 0.0) step = 1.0;
+   else if (step < 0.0) step *= -1;
 
    sd->step = step;
    _items_add(obj);
