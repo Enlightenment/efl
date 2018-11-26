@@ -243,8 +243,11 @@ node_item_free(Node *item)
 #define MAKE_LIST_DIRTY(node, field) \
         EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
           { \
-             dirty_add(obj, pd, partner); \
-             dirty_added = EINA_TRUE; \
+             if (partner->type != NODE_TYPE_ONLY_LOGICAL) \
+               { \
+                  dirty_add(obj, pd, partner); \
+                  dirty_added = EINA_TRUE; \
+               } \
           }
 
         MAKE_LIST_DIRTY(item, one_direction)
@@ -409,7 +412,7 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
 static void
 dirty_flush(Efl_Ui_Focus_Manager *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *node)
 {
-   if (!pd->dirty) return;
+   if (!pd->dirty && node->type == NODE_TYPE_NORMAL) return;
 
    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, NULL);
 
