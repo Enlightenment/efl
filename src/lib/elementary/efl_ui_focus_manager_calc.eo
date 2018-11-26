@@ -95,6 +95,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         Efl.Ui.Focus.Manager.manager_focus {get; set;}
         Efl.Ui.Focus.Manager.redirect {set; get;}
         Efl.Ui.Focus.Manager.border_elements {get;}
+        Efl.Ui.Focus.Manager.viewport_elements {get;}
         Efl.Ui.Focus.Manager.root {set; get;}
         Efl.Ui.Focus.Manager.request_subchild;
         Efl.Ui.Focus.Manager.fetch;
