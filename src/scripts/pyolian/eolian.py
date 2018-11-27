@@ -698,9 +698,12 @@ class Class(Object):
     @cached_property
     def inherits_full(self):
         L = []
+
         def do_class_recursive(cls):
+            if cls.parent:
+                L.append(cls.parent)
             for other in cls.inherits:
-                if not other in L:
+                if other not in L:
                     L.append(other)
                 do_class_recursive(other)
 
@@ -718,9 +721,7 @@ class Class(Object):
 
     @cached_property
     def base_class(self):
-        inherits = list(self.inherits)
-        if len(inherits) > 0:
-            return inherits[0]
+        return self.parent
 
     @cached_property
     def ctor_enable(self):
