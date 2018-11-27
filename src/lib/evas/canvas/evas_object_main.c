@@ -364,11 +364,29 @@ evas_object_clip_recalc_do(Evas_Object_Protected_Data *obj, Evas_Object_Protecte
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
    Eina_Bool cvis, nvis;
+   Evas_Public_Data *e;
 
    evas_object_coords_recalc(obj->object, obj);
 
    if (EINA_UNLIKELY((!!obj->map) && (obj->map->cur.map) && (obj->map->cur.usemap)))
      {
+        e = obj->layer->evas;
+        if (!evas_object_is_active(obj->object, obj) &&
+            ((obj->map->cur.map->normal_geometry.x +
+              obj->map->cur.map->normal_geometry.w <= 0) ||
+             (obj->map->cur.map->normal_geometry.y +
+              obj->map->cur.map->normal_geometry.h <= 0) ||
+             (obj->map->cur.map->normal_geometry.x >= e->output.w) ||
+              obj->map->cur.map->normal_geometry.y >= e->output.h))
+          {
+             /* out of screen, but need to calc map geometry to update cache */
+             cy = obj->map->cur.map->normal_geometry.y;
+             cx = obj->map->cur.map->normal_geometry.x;
+             cw = obj->cur->geometry.w;
+             ch = obj->cur->geometry.h;
+             evas_object_map_update(obj->object, cx, cy, cw, ch, cw, ch);
+          }
+
         cx = obj->map->cur.map->normal_geometry.x;
         cy = obj->map->cur.map->normal_geometry.y;
         cw = obj->map->cur.map->normal_geometry.w;
