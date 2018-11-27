@@ -1485,6 +1485,7 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
 
    _config_profile_lock = EINA_TRUE;
    _elm_config_profile_set(sd->profile.name);
+   _config_profile_lock = EINA_FALSE;
 
    /* update sub ee */
    Ecore_Evas *ee2;
