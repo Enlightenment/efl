@@ -695,7 +695,7 @@ Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Eina_Bool alphaonly,
                                                     Shader_Sampling *psam, int *pnomul,
                                                     Shader_Sampling *pmasksam);
-void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p);
+void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p, Eina_Bool recover_prog);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);
 Eina_Bool         evas_gl_common_file_cache_mkdir(const char *dir);
