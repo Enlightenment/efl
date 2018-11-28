@@ -700,7 +700,7 @@ class Class(Object):
         def do_class_recursive(cls):
             if cls.parent:
                 L.append(cls.parent)
-            for other in cls.inherits:
+            for other in cls.extensions:
                 if other not in L:
                     L.append(other)
                 do_class_recursive(other)
@@ -711,15 +711,11 @@ class Class(Object):
     @cached_property
     def hierarchy(self):
         L = []
-        base = self.base_class
+        base = self.parent
         while base:
             L.append(base)
-            base = base.base_class
+            base = base.parent
         return L
-
-    @cached_property
-    def base_class(self):
-        return self.parent
 
     @cached_property
     def ctor_enable(self):

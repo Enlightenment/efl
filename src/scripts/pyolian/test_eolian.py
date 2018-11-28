@@ -327,7 +327,6 @@ class TestEolianClass(unittest.TestCase):
         self.assertIsNone(cls.eo_prefix)  # TODO fin a class with a value
         self.assertIsNone(cls.event_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
-        self.assertEqual(cls.base_class.name, 'Efl.Loop_Consumer')
         self.assertEqual(cls.parent.name, 'Efl.Loop_Consumer')
         self.assertEqual([c.name for c in cls.extensions], [])
         self.assertEqual([c.name for c in cls.hierarchy], ['Efl.Loop_Consumer', 'Efl.Object'])
