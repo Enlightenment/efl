@@ -584,6 +584,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    Ecore_Evas_Engine_Wl_Data *wdata;
    Ecore_Wl2_Event_Window_Configure *ev;
    int nw = 0, nh = 0, fw, fh, pfw, pfh, sw, sh, contentw, contenth;
+   int ww, wh;
    int framew, frameh;
    Eina_Bool active, prev_max, prev_full, state_change = EINA_FALSE;
 
@@ -617,13 +618,15 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nw = ev->w;
    nh = ev->h;
 
+   ecore_wl2_window_geometry_get(wdata->win, NULL, NULL, &ww, &wh);
+
    sw = ee->shadow.l + ee->shadow.r;
    sh = ee->shadow.t + ee->shadow.b;
    evas_output_framespace_get(ee->evas, NULL, NULL, &framew, &frameh);
-   contentw = wdata->win->set_config.geometry.w - (framew - sw);
-   contenth = wdata->win->set_config.geometry.h - (frameh - sh);
-   pfw = fw = wdata->win->set_config.geometry.w - contentw;
-   pfh = fh = wdata->win->set_config.geometry.h - contenth;
+   contentw = ww - (framew - sw);
+   contenth = wh - (frameh - sh);
+   pfw = fw = ww - contentw;
+   pfh = fh = wh - contenth;
 
    if ((prev_max != ee->prop.maximized) ||
        (prev_full != ee->prop.fullscreen) ||
@@ -634,10 +637,10 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
         sw = ee->shadow.l + ee->shadow.r;
         sh = ee->shadow.t + ee->shadow.b;
         evas_output_framespace_get(ee->evas, NULL, NULL, &framew, &frameh);
-        contentw = wdata->win->set_config.geometry.w - (framew - sw);
-        contenth = wdata->win->set_config.geometry.h - (frameh - sh);
-        fw = wdata->win->set_config.geometry.w - contentw;
-        fh = wdata->win->set_config.geometry.h - contenth;
+        contentw = ww - (framew - sw);
+        contenth = wh - (frameh - sh);
+        fw = ww - contentw;
+        fh = wh - contenth;
      }
    if ((!nw) && (!nh))
      {
@@ -1877,10 +1880,11 @@ _ecore_evas_wl_common_render_flush_pre(void *data, Evas *evas, void *event EINA_
    /* Surviving bits of WWW - track interesting state we might want
     * to pass to clients to do client side effects
     */
-   einfo->window.x = wdata->win->set_config.geometry.x;
-   einfo->window.y = wdata->win->set_config.geometry.y;
-   einfo->window.w = wdata->win->set_config.geometry.w;
-   einfo->window.h = wdata->win->set_config.geometry.h;
+   ecore_wl2_window_geometry_get(wdata->win,
+                                 &einfo->window.x,
+                                 &einfo->window.y,
+                                 &einfo->window.w,
+                                 &einfo->window.h);
    if (einfo->resizing)
      {
         einfo->x_rel = 0;
