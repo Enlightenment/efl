@@ -88,8 +88,7 @@ _efl_canvas_vg_gradient_linear_render_pre(Eo *obj,
    efl_gfx_gradient_linear_start_set(nd->renderer, pd->start.x, pd->start.y);
    efl_gfx_gradient_linear_end_set(nd->renderer, pd->end.x, pd->end.y);
 
-   //Prepare renderer triggered by ector shape this gradient applied to.
-   //ector_renderer_prepare(nd->renderer);
+   ector_renderer_prepare(nd->renderer);
 }
 
 static Eo *

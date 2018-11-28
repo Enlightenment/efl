@@ -631,14 +631,6 @@ _ector_renderer_software_shape_ector_renderer_prepare(Eo *obj,
 {
    Ector_Software_Shape_Task *task;
 
-   // FIXME: shouldn't this be part of the shape generic implementation?
-   if (pd->shape->fill)
-     ector_renderer_prepare(pd->shape->fill);
-   if (pd->shape->stroke.fill)
-     ector_renderer_prepare(pd->shape->stroke.fill);
-   if (pd->shape->stroke.marker)
-     ector_renderer_prepare(pd->shape->stroke.marker);
-
    // FIXME: shouldn't this be moved to the software base object?
    if (!pd->surface)
      pd->surface = efl_data_xref(pd->base->surface, ECTOR_SOFTWARE_SURFACE_CLASS, obj);

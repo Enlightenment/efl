@@ -105,8 +105,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Eo *obj,
    efl_gfx_gradient_radial_focal_set(nd->renderer, pd->focal.x, pd->focal.y);
    efl_gfx_gradient_radial_radius_set(nd->renderer, pd->radius);
 
-   //Prepare renderer triggered by ector shape this gradient applied to.
-   //ector_renderer_prepare(nd->renderer);
+   ector_renderer_prepare(nd->renderer);
 }
 
 static Eo *
