@@ -73,8 +73,9 @@ else
 
   RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
-  MINGW_COPTS=" --prefix=/root/EFL/ewpi_64 --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/bin/eolian_gen \
-  --with-edje-cc=/usr/bin/edje_cc --with-eet-eet=/usr/bin/eet --with-bin-elm-prefs-cc=/usr/bin/elm_prefs_cc \
+  MINGW_COPTS=" --prefix=/root/EFL/ewpi_64 --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/local/bin/eolian_gen \
+  --with-edje-cc=/usr/local/bin/edje_cc --with-eet-eet=/usr/local/bin/eet \
+  --with-bin-elm-prefs-cc=/usr/local/bin/elm_prefs_cc \
   --disable-static --with-tests=regular --with-crypto=openssl --disable-gstreamer1 \
   --disable-libmount --disable-valgrind --disable-avahi --disable-spectre --disable-libraw \
   --disable-librsvg --disable-pulseaudio --disable-cxx-bindings \
