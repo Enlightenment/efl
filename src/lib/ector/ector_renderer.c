@@ -143,21 +143,6 @@ _ector_renderer_mask_get(const Eo *obj EINA_UNUSED,
    return pd->mask;
 }
 
-static void
-_ector_renderer_quality_set(Eo *obj EINA_UNUSED,
-                                         Ector_Renderer_Data *pd,
-                                         Ector_Quality q)
-{
-   pd->q = q;
-}
-
-static Ector_Quality
-_ector_renderer_quality_get(const Eo *obj EINA_UNUSED,
-                                         Ector_Renderer_Data *pd)
-{
-   return pd->q;
-}
-
 static Eina_Bool
 _ector_renderer_prepare(Eo *obj EINA_UNUSED,
                                      Ector_Renderer_Data *pd)
@@ -175,7 +160,6 @@ _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
    unsigned int crc;
 
    crc = eina_crc((void*) &pd->color, sizeof(pd->color), 0xffffffff, EINA_TRUE);
-   crc = eina_crc((void*) &pd->q, sizeof(pd->q), crc, EINA_FALSE);
    crc = eina_crc((void*) &pd->origin, sizeof(pd->origin), crc, EINA_FALSE);
 
    if (pd->m) crc = eina_crc((void*) pd->m, sizeof(Eina_Matrix3), crc, EINA_FALSE);

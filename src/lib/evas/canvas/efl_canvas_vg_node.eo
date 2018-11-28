@@ -51,15 +51,6 @@ abstract Efl.Canvas.Vg.Node (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.
             m: Efl.Canvas.Vg.Node; [[Object mask]]
          }
       }
-/*      quality {
-         set {
-         }
-         get {
-         }
-         values {
-            Evas_VG_Quality q;
-         }
-      } */
    }
    implements {
       Efl.Object.name { set; }

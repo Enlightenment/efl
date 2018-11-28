@@ -1,14 +1,5 @@
 import eina_types;
 
-enum Ector.Quality
-{
-   [[Quality values]]
-   best, [[Best quality]]
-   good, [[Good quality]]
-   fast, [[Lower quality]]
-   last, [[Sentinel value to indicate last enum field during iteration]]
-}
-
 abstract Ector.Renderer (Efl.Object)
 {
    [[Ector renderer abstract interface]]
@@ -89,16 +80,6 @@ abstract Ector.Renderer (Efl.Object)
          }
          values {
             r: Ector.Renderer; [[Rendering mask]]
-         }
-      }
-      @property quality {
-         [[Quality of the renderer]]
-         set {
-         }
-         get {
-         }
-         values {
-            q: Ector.Quality; [[Quality of the renderer]]
          }
       }
       @property crc {

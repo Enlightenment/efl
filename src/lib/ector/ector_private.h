@@ -65,7 +65,6 @@ struct _Ector_Renderer_Data
 
    Ector_Renderer *mask;
 
-   Ector_Quality q;
    Eina_Bool visibility : 1;
    Eina_Bool finalized : 1;
 };
