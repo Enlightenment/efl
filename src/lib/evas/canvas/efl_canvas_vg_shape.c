@@ -194,6 +194,7 @@ _efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Shape_
    node = efl_duplicate(efl_super(obj, MY_CLASS));
    sd = efl_data_scope_get(node, MY_CLASS);
 
+   //FIXME: These fill, markers couldn't allow node as parent...
    if (pd->fill)
      {
         sd->fill = efl_duplicate(pd->fill);
