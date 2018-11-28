@@ -76,10 +76,9 @@ else
   MINGW_COPTS=" --prefix=/root/EFL/ewpi_64 --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/local/bin/eolian_gen \
   --with-edje-cc=/usr/local/bin/edje_cc --with-eet-eet=/usr/local/bin/eet \
   --with-bin-elm-prefs-cc=/usr/local/bin/elm_prefs_cc \
-  --disable-static --with-tests=regular --with-crypto=openssl --disable-gstreamer1 \
+  --disable-static --with-tests=regular --with-crypto=openssl \
   --disable-libmount --disable-valgrind --disable-avahi --disable-spectre --disable-libraw \
-  --disable-librsvg --disable-pulseaudio --disable-cxx-bindings \
-  --disable-physics --disable-image-loader-tiff"
+  --disable-librsvg --disable-pulseaudio --disable-cxx-bindings"
 
   patch -p1 < .ci/efl.m4.diff
   sed -i.orig 's/AC_INIT\(.*\)efl_version-[a-zA-Z0-9]\+/AC_INIT\1efl_version/g' configure.ac
