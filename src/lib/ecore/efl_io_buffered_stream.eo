@@ -221,7 +221,7 @@ class Efl.Io.Buffered_Stream (Efl.Loop_Consumer, Efl.Io.Reader, Efl.Io.Writer, E
               is closed or the wrapper itself's closed, this
               function will do nothing and return $true.
 
-              \@note this function may block the main loop execution
+              Note: this function may block the main loop execution
               until operations are complete! This is bad for usability as
               the user interface or other operations may freeze. A better
               approach is to operate asynchronously and wait for the

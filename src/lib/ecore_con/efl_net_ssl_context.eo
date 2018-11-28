@@ -11,7 +11,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
       @Efl.Object.finalize in order to define the mandatory
       operational parameters.
 
-      \@note All setter methods must be called before @Efl.Object.finalize.
+      Note: All setter methods must be called before @Efl.Object.finalize.
 
       @since 1.19
     ]]

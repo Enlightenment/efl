@@ -292,7 +292,7 @@ class Efl.Net.Dialer_Websocket (Efl.Loop_Consumer, Efl.Net.Dialer) {
               system, create a cookie jar and pass its path to this
               property.
 
-              \@note that whenever this property is set, even if to the
+              Note: that whenever this property is set, even if to the
               same value, it will flush all cookies to the previously
               set file, then erase all known cookies, then use the new
               file (if any).

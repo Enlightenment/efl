@@ -5,7 +5,7 @@ struct Efl.Model_Property_Event {
 }
 
 struct Efl.Model_Children_Event {
-     [[Every time a child is added the event EFL_MODEL_EVENT_CHILD_ADDED is dispatched
+     [[Every time a child is added the event @[Efl.Model.child,added] is dispatched
      passing along this structure.]]
      index: uint; [[index is a hint and is intended to provide a way for applications
                     to control/know children relative positions through listings.]]
@@ -24,10 +24,10 @@ interface Efl.Model ()
 
                  properties_get is due to provide callers a way the fetch the
                  current properties implemented/used by the model. The event
-                 EFL_MODEL_EVENT_PROPERTIES_CHANGED will be raised to notify
+                 @[Efl.Model.properties,changed] will be raised to notify
                  listeners of any modifications in the properties.
 
-                 See also \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED.
+                 See also @[Efl.Model.properties,changed].
 
                  @since 1.14
                ]]
@@ -44,14 +44,14 @@ interface Efl.Model ()
                before being able to see/set properties. This function sets
                a new property value into given property name. Once the
                operation is completed the concrete implementation should
-               raise EFL_MODEL_EVENT_PROPERTIES_CHANGED event in order to
+               raise @[Efl.Model.properties,changed] event in order to
                notify listeners of the new value of the property.
 
                If the model doesn't have the property then there are two
                possibilities, either raise an error or create the new
                property in model
 
-               See @.property.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
+               See @.property.get, @[Efl.Model.properties,changed]
 
                @since 1.14
               ]]
@@ -61,10 +61,10 @@ interface Efl.Model ()
               [[Retrieve the value of a given property name.
 
                 At this point the caller is free to get values from properties.
-                The event EFL_MODEL_EVENT_PROPERTIES_CHANGED may be raised to
+                The event @[Efl.Model.properties,changed] may be raised to
                 notify listeners of the property/value.
 
-                See @.properties.get, \@ref EFL_MODEL_EVENT_PROPERTIES_CHANGED
+                See @.properties.get, @[Efl.Model.properties,changed]
 
                 @since 1.14
               ]]
@@ -134,7 +134,7 @@ interface Efl.Model ()
                   When efl_model_load is completed efl_model_coildren_count_get
                   can be used to get the number of children. children_count_get
                   can also be used before calling children_slice_get so a valid
-                  range is known. Event EFL_MODEL_CHILDREN_COUNT_CHANGED is
+                  range is known. Event @[Efl.Model.children,count,changed] is
                   emitted when count is finished.
 
                   See also @.children_slice_get.
@@ -151,7 +151,7 @@ interface Efl.Model ()
 
               Add a new child, possibly dummy, depending on the implementation,
               of a internal keeping. When the child is effectively
-              added the event \@ref EFL_MODEL_EVENT_CHILD_ADDED is then raised
+              added the event @[Efl.Model.child,added] is then raised
               and the new child is kept along with other children.
 
               @since 1.14
@@ -162,7 +162,7 @@ interface Efl.Model ()
             [[Remove a child.
 
               Remove a child of a internal keeping. When the child is effectively
-              removed the event \@ref EFL_MODEL_EVENT_CHILD_REMOVED is then
+              removed the event @[Efl.Model.child,removed] is then
               raised to give a chance for listeners to perform any cleanup
               and/or update references.
 

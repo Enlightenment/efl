@@ -4,7 +4,7 @@ class Efl.Net.Dialer_Unix (Efl.Net.Socket_Unix, Efl.Net.Dialer) {
       The dial address is a file system path (portable) or
       "abstract:ID" (Linux-only extension).
 
-      \@note Proxies are meaningless for AF_UNIX family, thus are not
+      Note: Proxies are meaningless for AF_UNIX family, thus are not
       implemented.
 
       @since 1.19

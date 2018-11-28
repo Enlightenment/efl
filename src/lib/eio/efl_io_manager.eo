@@ -28,7 +28,7 @@ class Efl.Io.Manager (Efl.Loop_Consumer)
   methods {
     ls @const {
       [[Lists entries in a given path.
-        See \@ref eina_file_ls().
+        See @Eina.File.
       ]]
       params {
         @in path: string; [[Path we want to list entries for]]

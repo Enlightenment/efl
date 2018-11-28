@@ -44,7 +44,7 @@ class Efl.Net.Session (Efl.Loop_Consumer) {
       state is online but those properties are NULL or technology is
       unknown.
 
-      \@note the @.connect method is subject to backend policy. For
+      Note: the @.connect method is subject to backend policy. For
       instance, ConnMan uses
       https://github.com/aldebaran/connman/blob/master/doc/session-policy-format.txt
 
@@ -95,7 +95,7 @@ class Efl.Net.Session (Efl.Loop_Consumer) {
         @property state {
             [[If the session connectivity is offline, local or online.
 
-              \@note if there is no backend for this class, then state
+              Note: if there is no backend for this class, then state
               will be always online, however @.technology will be
               unknown, @.interface, @.network_name, @.ipv4 and @.ipv6 will be
               NULL.

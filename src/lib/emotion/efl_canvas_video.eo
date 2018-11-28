@@ -10,8 +10,7 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Gfx.Image, E
                     emotion object.
 
                     Please don't use this function, consider using
-                    \@ref emotion_object_audio_mute_set and
-                    \@ref emotion_object_video_mute_set instead.
+                    @Efl.Player.mute instead.
                   ]]
                   legacy: emotion_object_module_option_set;
              }
@@ -38,8 +37,7 @@ class Efl.Canvas.Video (Efl.Canvas.Group, Efl.File, Efl.Player, Efl.Gfx.Image, E
                     It's possible to disable the build of a module with
                     --disable-module_name.
 
-                    See also \@ref emotion_object_add and
-                    \@ref emotion_object_file_set.
+                    See also @Efl.File.file.
                   ]]
                   legacy: emotion_object_init;
                   return: bool; [[$true if the specified module was successfully

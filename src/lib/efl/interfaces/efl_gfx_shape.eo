@@ -59,10 +59,10 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
       }
       @property stroke_dash {
          [[Set stroke dash pattern. A dash pattern is specified by dashes,
-           an array of Efl_Gfx_Dash. Efl_Gfx_Dash values(length, gap)
+           an array of @Efl.Gfx.Dash. @Efl.Gfx.Dash values(length, gap)
            must be positive.
 
-           See also \@ref Efl_Gfx_Dash
+           See also @Efl.Gfx.Dash
          ]]
          set {
          }
@@ -78,7 +78,7 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
            The cap will be used for capping the end point of a
            open subpath.
 
-           See also \@ref Efl_Gfx_Cap.
+           See also @Efl.Gfx.Cap.
 
            @since 1.14
          ]]
@@ -87,7 +87,7 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
          get {
          }
          values {
-            c: Efl.Gfx.Cap; [[Cap style to use, default is EFL_GFX_CAP_BUTT]]
+            c: Efl.Gfx.Cap; [[Cap style to use, default is @Efl.Gfx.Cap.butt]]
          }
       }
       @property stroke_join {
@@ -95,7 +95,7 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
            The join style will be used for joining the two line segment
            while stroking the path.
 
-           See also \@ref Efl_Gfx_Join.
+           See also @Efl.Gfx.Join.
 
            @since 1.14
          ]]
@@ -104,12 +104,12 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
          get {
          }
          values {
-            j: Efl.Gfx.Join; [[Join style to use, default is EFL_GFX_JOIN_MITER]]
+            j: Efl.Gfx.Join; [[Join style to use, default is @Efl.Gfx.Join.miter]]
          }
       }
       @property fill_rule {
          [[The fill rule of the given shape object.
-           $EFL_GFX_FILL_RULE_WINDING, or $EFL_GFX_FILL_RULE_ODD_EVEN.
+           @Efl.Gfx.Fill_Rule.winding or @Efl.Gfx.Fill_Rule.odd_even.
 
            @since 1.14
          ]]
@@ -119,7 +119,7 @@ mixin Efl.Gfx.Shape (Efl.Gfx.Path)
          }
          values {
             fill_rule: Efl.Gfx.Fill_Rule; [[The current fill rule of the shape object.
-                                           One of $EFL_GFX_FILL_RULE_WINDING, $EFL_GFX_FILL_RULE_ODD_EVEN]]
+                                           One of @Efl.Gfx.Fill_Rule.winding or @Efl.Gfx.Fill_Rule.odd_even]]
          }
       }
    }

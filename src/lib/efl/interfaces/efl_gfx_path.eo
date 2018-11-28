@@ -9,8 +9,6 @@ mixin Efl.Gfx.Path
          [[Set the list of commands and points to be used to create the
            content of path.
 
-           See \@ref efl_gfx_path interface for how to create a command list.
-
            @since 1.18
          ]]
          set {

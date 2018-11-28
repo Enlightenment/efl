@@ -310,10 +310,7 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
          }
       }
       attributes_clear {
-         [[Removes all attributes in accessible object.
-
-           \@internal
-         ]]
+         [[Removes all attributes in accessible object.]]
       }
       @property reading_info_type @protected {
          get {

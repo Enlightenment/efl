@@ -42,7 +42,7 @@ class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear)
               and cause it to flip). By default a flip is not interactive.
               You may also need to set which sides of the flip are "active"
               for flipping and how much space they use (a minimum of a
-              finger size) with \@ref @.interaction_direction_enabled_set
+              finger size) with @.interaction_direction_enabled_set
               and @.interaction_direction_hitsize_set.
 
               The four available mode of interaction are

@@ -81,7 +81,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
       create access points to allow configuration and connection.
 
       An application requiring only a network connection can just
-      use a \@Efl.Net.Session instead.
+      use a @Efl.Net.Session instead.
 
       @since 1.19
     ]]
@@ -177,7 +177,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
               first (most priority), then use 0. To move as the last
               priority, use UINT32_MAX or the last known priority + 1.
 
-              \@note Only stored access points may be reordered
+              Note: Only stored access points may be reordered
               among themselves. Those that are not remembered will
               always come last in a random order defined by the backend.
             ]]
