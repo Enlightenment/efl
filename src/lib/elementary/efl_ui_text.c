@@ -2100,7 +2100,7 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
 
    // color
    colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
-   if (_format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
+   if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
         efl_text_normal_color_set(sd->text_guide_obj, r, g, b, a);
      }
