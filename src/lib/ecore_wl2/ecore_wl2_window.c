@@ -1074,35 +1074,6 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
           zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
         ecore_wl2_display_flush(window->display);
      }
-   else
-     {
-        if (window->xdg_toplevel)
-          {
-             struct wl_array states;
-             uint32_t *s;
-
-             wl_array_init(&states);
-             s = wl_array_add(&states, sizeof(*s));
-             *s = XDG_TOPLEVEL_STATE_ACTIVATED;
-             _xdg_toplevel_cb_configure(window, window->xdg_toplevel,
-                                         window->set_config.geometry.w,
-                                         window->set_config.geometry.h, &states);
-             wl_array_release(&states);
-          }
-        if (window->zxdg_toplevel)
-          {
-             struct wl_array states;
-             uint32_t *s;
-
-             wl_array_init(&states);
-             s = wl_array_add(&states, sizeof(*s));
-             *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
-             _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                         window->set_config.geometry.w,
-                                         window->set_config.geometry.h, &states);
-             wl_array_release(&states);
-          }
-     }
 }
 
 EAPI void
