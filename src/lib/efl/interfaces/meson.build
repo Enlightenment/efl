@@ -1,3 +1,5 @@
+eolian_include_directories += ['-I', join_paths(meson.source_root(), 'src', 'lib')]
+
 pub_legacy_eo_files = [
   'efl_gfx_fill.eo',
   'efl_gfx_entity.eo',
@@ -103,8 +105,6 @@ pub_eo_files = [
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
 ]
-
-eolian_include_directories += ['-I', join_paths(meson.source_root(), 'src', 'lib', 'evas', 'canvas')]
 
 foreach eo_file : pub_eo_files
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
