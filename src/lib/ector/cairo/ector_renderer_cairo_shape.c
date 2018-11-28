@@ -98,13 +98,6 @@ _ector_renderer_cairo_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_Cairo
 
    ector_renderer_prepare(efl_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
 
-   if (pd->shape->fill)
-     ector_renderer_prepare(pd->shape->fill);
-   if (pd->shape->stroke.fill)
-     ector_renderer_prepare(pd->shape->stroke.fill);
-   if (pd->shape->stroke.marker)
-     ector_renderer_prepare(pd->shape->stroke.marker);
-
    // shouldn't this be moved to the cairo base object?
    if (!pd->parent)
      {
