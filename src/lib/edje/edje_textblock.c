@@ -578,6 +578,304 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
      }
 }
 
+#define COLOR_SET(color) \
+   (color).r * (color).a / 255, \
+   (color).g * (color).a / 255, \
+   (color).b * (color).a / 255, \
+   (color).a
+
+static void
+_edje_textblock_colors_set(Edje *ed EINA_UNUSED,
+                           Edje_Real_Part *ep,
+                           Edje_Calc_Params *params,
+                           Eina_Bool styles)
+{
+
+   Edje_Text_Effect effect;
+   Efl_Text_Style_Effect_Type st;
+   Efl_Text_Style_Shadow_Direction dir;
+
+   efl_text_normal_color_set(ep->object, COLOR_SET(params->color));
+   evas_object_color_set(ep->object, 255, 255, 255, 255);
+
+   effect = ep->part->effect;
+   switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
+     {
+      case EDJE_TEXT_EFFECT_NONE:
+      case EDJE_TEXT_EFFECT_PLAIN:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
+         break;
+
+      case EDJE_TEXT_EFFECT_OUTLINE:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE;
+         if (styles) efl_text_outline_color_set(ep->object,
+               COLOR_SET(params->type.text->color2));
+         break;
+
+      case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE;
+         if (styles) efl_text_outline_color_set(ep->object,
+               COLOR_SET(params->type.text->color2));
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW;
+         if (styles) efl_text_shadow_color_set(ep->object,
+               COLOR_SET(params->type.text->color3));
+         break;
+
+      case EDJE_TEXT_EFFECT_SOFT_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW;
+         if (styles) efl_text_shadow_color_set(ep->object,
+               COLOR_SET(params->type.text->color3));
+         break;
+
+      case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW;
+         if (styles)
+           {
+              efl_text_outline_color_set(ep->object,
+                    COLOR_SET(params->type.text->color2));
+              efl_text_shadow_color_set(ep->object,
+                    COLOR_SET(params->type.text->color3));
+           }
+         break;
+
+      case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW;
+         if (styles)
+           {
+              efl_text_outline_color_set(ep->object,
+                    COLOR_SET(params->type.text->color2));
+              efl_text_shadow_color_set(ep->object,
+                    COLOR_SET(params->type.text->color3));
+           }
+         break;
+
+      case EDJE_TEXT_EFFECT_FAR_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW;
+         if (styles) efl_text_shadow_color_set(ep->object,
+               COLOR_SET(params->type.text->color3));
+         break;
+
+      case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW;
+         if (styles) efl_text_shadow_color_set(ep->object,
+               COLOR_SET(params->type.text->color3));
+         break;
+
+      case EDJE_TEXT_EFFECT_GLOW:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_GLOW;
+         if (styles)
+           {
+              efl_text_glow_color_set(ep->object,
+                    COLOR_SET(params->type.text->color2));
+              efl_text_glow2_color_set(ep->object,
+                    COLOR_SET(params->type.text->color3));
+           }
+         break;
+
+      default:
+         st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
+         break;
+     }
+
+   switch (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
+     {
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
+        break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM;
+        break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT;
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT;
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT;
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT;
+         break;
+
+      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT:
+        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
+         break;
+
+      default:
+         dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
+         break;
+     }
+   efl_text_effect_type_set(ep->object, st);
+   efl_text_shadow_direction_set(ep->object, dir);
+}
+
+#undef COLOR_SET
+
+static void
+_edje_part_recalc_textblock_font_get(Edje *ed, Edje_Real_Part *ep,
+      Edje_Part_Description_Text *chosen_desc,
+      const char **ret_font_source,
+      const char **ret_font, int *ret_size)
+
+{
+   Edje_Real_Part *source;
+   const char *font;
+   int size;
+   Eina_Bool inlined_font = EINA_FALSE;
+   const char *font_source = NULL;
+   char *sfont, *font2;
+
+   sfont = font2 = NULL;
+
+   source = ep->typedata.text->source;
+
+   if (source)
+     {
+        font = _edje_text_class_font_get(ed,
+              _edje_real_part_text_source_description_get(ep,
+                 &source), &size, &sfont);
+     }
+   else
+     {
+        font = _edje_text_class_font_get(ed, chosen_desc, &size, &sfont);
+     }
+
+   if (size <= 0) size = 1;
+   if (!font) font = "";
+
+   if (source)
+     {
+        if (source->typedata.text->font) font = source->typedata.text->font;
+        if (source->typedata.text->size > 0) size = source->typedata.text->size;
+     }
+   else
+     {
+        if (ep->typedata.text->font) font = ep->typedata.text->font;
+        if (ep->typedata.text->size > 0) size = ep->typedata.text->size;
+     }
+
+   if (ed->file->fonts)
+     {
+        Edje_Font_Directory_Entry *fnt;
+
+        fnt = eina_hash_find(ed->file->fonts, font);
+
+        if (fnt)
+          {
+             size_t len = strlen(font) + sizeof("edje/fonts/") + 1;
+             font2 = alloca(len);
+             sprintf(font2, "edje/fonts/%s", font);
+             font = font2;
+             inlined_font = 1;
+             font2 = NULL; // so it is not freed at the end of the function
+          }
+     }
+   if (inlined_font)
+     {
+        font_source = ed->path;
+     }
+
+   if ((_edje_fontset_append) && (font))
+     {
+        font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
+        if (font2)
+          {
+             strcpy(font2, font);
+             strcat(font2, ",");
+             strcat(font2, _edje_fontset_append);
+             font = font2; //font2 needs to be freed at the end of the
+             // function.
+          }
+     }
+   if (ret_font) *ret_font = font;
+   if (ret_size) *ret_size = size;
+   if (ret_font_source) *ret_font_source = font_source;
+
+   if (font2) free(font2);
+   if (sfont) free(sfont);
+}
+
+static void
+_edje_text_min_max_calc(Edje *ed, Edje_Real_Part *ep,
+      Edje_Part_Description_Text *chosen_desc,
+      Edje_Calc_Params *params,
+      int *minw, int *minh,
+      int *maxw, int *maxh)
+{
+
+   if ((ed->file->efl_version.major >= 1) && (ed->file->efl_version.minor >= 19))
+     {
+        _edje_part_recalc_single_textblock_min_max_calc(ep,
+              chosen_desc,
+              params,
+              minw, minh,
+              maxw, maxh);
+     }
+   else
+     {
+        _edje_part_recalc_single_textblock_min_max_calc_legacy(ep,
+              chosen_desc,
+              params,
+              minw, minh,
+              maxw, maxh);
+     }
+}
+
+static void
+_edje_text_recalc(FLOAT_T sc,
+      Edje *ed,
+      Edje_Real_Part *ep,
+      Edje_Part_Description_Text *chosen_desc,
+      Edje_Calc_Params *params,
+      const char *text,
+      int *minw, int *minh,
+      int *maxw, int *maxh)
+{
+   const char *font, *font_source;
+   int size;
+   FLOAT_T ellip;
+   double align_y, align_x;
+
+   _edje_part_recalc_textblock_font_get(ed, ep, chosen_desc,
+              &font_source, &font, &size);
+
+   ellip = params->type.text->ellipsis;
+
+   align_y = TO_DOUBLE(params->type.text->align.y);
+   align_x = TO_DOUBLE(params->type.text->align.x);
+   efl_text_font_set(ep->object, font, size);
+   efl_text_ellipsis_set(ep->object, (ellip == -1.0) ? -1.0 : 1.0 - ellip);
+   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
+
+   efl_text_valign_set(ep->object, align_y);
+
+   if (align_x < 0)
+     {
+        efl_text_halign_auto_type_set(ep->object,
+              EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NORMAL);
+     }
+   else
+     {
+        efl_text_halign_set(ep->object, align_x);
+     }
+
+   efl_text_markup_set(ep->object, text);
+   _edje_text_min_max_calc(ed, ep, chosen_desc, params, minw, minh, maxw, maxh);
+}
+
 void
 _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    Edje *ed,
@@ -627,22 +925,13 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                         &tw, &th);
                }
 
-             if ((ed->file->efl_version.major >= 1) && (ed->file->efl_version.minor >= 19))
-               {
-                  _edje_part_recalc_single_textblock_min_max_calc(ep,
-                                                                  chosen_desc,
-                                                                  params,
-                                                                  minw, minh,
-                                                                  maxw, maxh);
-               }
-             else
-               {
-                  _edje_part_recalc_single_textblock_min_max_calc_legacy(ep,
-                                                                         chosen_desc,
-                                                                         params,
-                                                                         minw, minh,
-                                                                         maxw, maxh);
-               }
+             _edje_text_min_max_calc(ed, ep, chosen_desc, params,
+                   minw, minh, maxw, maxh);
+          }
+        else
+          {
+             _edje_text_recalc(sc, ed, ep, chosen_desc, params, text, minw,
+                   minh, maxw, maxh);
           }
 
         evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
