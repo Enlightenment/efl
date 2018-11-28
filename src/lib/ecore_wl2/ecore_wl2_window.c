@@ -304,17 +304,16 @@ static const struct xdg_popup_listener _xdg_popup_listener =
 static void
 _ecore_wl2_window_xdg_popup_create(Ecore_Wl2_Window *win)
 {
+   int gx, gy, gw, gh;
    struct xdg_positioner *pos;
 
    EINA_SAFETY_ON_NULL_RETURN(win->parent);
    pos = xdg_wm_base_create_positioner(win->display->wl.xdg_wm_base);
    if (!pos) return;
 
-   xdg_positioner_set_anchor_rect(pos, win->set_config.geometry.x,
-                                      win->set_config.geometry.y,
-                                      1, 1);
-   xdg_positioner_set_size(pos, win->set_config.geometry.w,
-                               win->set_config.geometry.h);
+   ecore_wl2_window_geometry_get(win, &gx, &gy, &gw, &gh);
+   xdg_positioner_set_anchor_rect(pos, gx, gy, 1, 1);
+   xdg_positioner_set_size(pos, gw, gh);
    xdg_positioner_set_anchor(pos, XDG_POSITIONER_ANCHOR_TOP_LEFT);
    xdg_positioner_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
                                   ZXDG_POSITIONER_V6_ANCHOR_RIGHT);
@@ -408,20 +407,18 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
      {
         if (window->uuid)
           {
+             int gx, gy, gw, gh;
+
              zwp_e_session_recovery_set_uuid(window->display->wl.session_recovery,
                                              window->surface, window->uuid);
+
+             ecore_wl2_window_geometry_get(window, &gx, &gy, &gw, &gh);
              if (window->xdg_surface)
                xdg_surface_set_window_geometry(window->xdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                               gx, gy, gw, gh);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                                   gx, gy, gw, gh);
 
              ecore_wl2_window_opaque_region_set(window,
                                                 window->opaque.x,
@@ -1568,18 +1565,15 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         /* Dispatch any state we've been saving along the way */
         if (window->pending.geom)
           {
+             int gx, gy, gw, gh;
+
+             ecore_wl2_window_geometry_get(window, &gx, &gy, &gw, &gh);
              if (window->xdg_toplevel)
                xdg_surface_set_window_geometry(window->xdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                               gx, gy, gw, gh);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                                   gx, gy, gw, gh);
           }
         if (window->pending.opaque || window->pending.input)
           _regions_set(window);
