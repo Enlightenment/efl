@@ -13,13 +13,15 @@ _bt_clicked(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _scroll_start_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   printf("scroll start: %p\n", ev->object);
+   Eina_Position2D pos = efl_ui_scrollable_content_pos_get(ev->object);
+   printf("scroll start: %p x: %d y: %d\n", ev->object, pos.x, pos.y);
 }
 
 static void
 _scroll_stop_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   printf("scroll stop: %p\n", ev->object);
+   Eina_Position2D pos = efl_ui_scrollable_content_pos_get(ev->object);
+   printf("scroll stop: %p x: %d y: %d\n", ev->object, pos.x, pos.y);
 }
 
 void

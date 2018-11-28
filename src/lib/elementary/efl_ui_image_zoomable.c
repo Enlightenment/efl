@@ -1847,6 +1847,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
+   efl_composite_attach(obj, priv->smanager);
 
    efl_ui_mirrored_set(priv->smanager, efl_ui_mirrored_get(obj));
    efl_ui_scrollable_bounce_enabled_set(priv->smanager, bounce, bounce);

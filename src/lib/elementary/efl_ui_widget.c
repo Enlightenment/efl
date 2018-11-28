@@ -2547,9 +2547,19 @@ _efl_ui_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rect sr,
 
         if (_elm_scrollable_is(obj))
           {
-             elm_interface_scrollable_content_pos_get(obj, &nx, &ny);
-             sr.x -= nx;
-             sr.y -= ny;
+             if (elm_widget_is_legacy(obj))
+               {
+                  elm_interface_scrollable_content_pos_get(obj, &nx, &ny);
+                  sr.x -= nx;
+                  sr.y -= ny;
+               }
+             else
+               {
+                  Eina_Position2D pos;
+                  pos = efl_ui_scrollable_content_pos_get(obj);
+                  sr.x -= pos.x;
+                  sr.y -= pos.y;
+               }
           }
      }
 

@@ -83,9 +83,6 @@ class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scr
       Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }
 
-      Efl.Ui.Scrollable_Interactive.viewport_geometry { get; }
-      Efl.Ui.Scrollable_Interactive.content_pos { get; set; }
-      Efl.Ui.Scrollable_Interactive.content_size { get; }
 //      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;

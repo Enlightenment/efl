@@ -433,6 +433,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
 
    pd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
+   efl_composite_attach(obj, pd->smanager);
 
    pd->pan = efl_add(EFL_UI_PAN_CLASS, obj);
 
@@ -914,68 +915,6 @@ _efl_ui_list_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
  */
 
 /* Scroll APIs */
-EOLIAN static Eina_Size2D
-_efl_ui_list_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED,
-                                                            Efl_Ui_List_Data *pd)
-{
-   return efl_ui_scrollable_content_size_get(pd->smanager);
-}
-
-EOLIAN static Eina_Rect
-_efl_ui_list_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED,
-                                                                 Efl_Ui_List_Data *pd)
-{
-   return efl_ui_scrollable_viewport_geometry_get(pd->smanager);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_bounce_enabled_set(Eo *obj EINA_UNUSED,
-                                                              Efl_Ui_List_Data *pd,
-                                                              Eina_Bool horiz,
-                                                              Eina_Bool vert)
-{
-   efl_ui_scrollable_bounce_enabled_set(pd->smanager, horiz, vert);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_bounce_enabled_get(const Eo *obj EINA_UNUSED,
-                                                              Efl_Ui_List_Data *pd,
-                                                              Eina_Bool *horiz,
-                                                              Eina_Bool *vert)
-{
-   efl_ui_scrollable_bounce_enabled_get(pd->smanager, horiz, vert);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_list_efl_ui_scrollable_interactive_scroll_hold_get(const Eo *obj EINA_UNUSED,
-                                                           Efl_Ui_List_Data *pd)
-{
-   return efl_ui_scrollable_scroll_hold_get(pd->smanager);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_scroll_hold_set(Eo *obj EINA_UNUSED,
-                                                           Efl_Ui_List_Data *pd,
-                                                           Eina_Bool hold)
-{
-   efl_ui_scrollable_scroll_hold_set(pd->smanager, hold);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_list_efl_ui_scrollable_interactive_scroll_freeze_get(const Eo *obj EINA_UNUSED,
-                                                             Efl_Ui_List_Data *pd)
-{
-   return efl_ui_scrollable_scroll_freeze_get(pd->smanager);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_scroll_freeze_set(Eo *obj EINA_UNUSED,
-                                                             Efl_Ui_List_Data *pd,
-                                                             Eina_Bool freeze)
-{
-   efl_ui_scrollable_scroll_freeze_set(pd->smanager, freeze);
-}
-
 EOLIAN static void
 _efl_ui_list_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED,
                                                              Efl_Ui_List_Data *pd,
@@ -988,33 +927,6 @@ _efl_ui_list_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED
    efl_ui_scrollable_match_content_set(pd->smanager, match_content_w, match_content_h);
 
    elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollbar_bar_mode_set(Eo *obj EINA_UNUSED,
-                                           Efl_Ui_List_Data *pd,
-                                           Efl_Ui_Scrollbar_Mode hmode,
-                                           Efl_Ui_Scrollbar_Mode vmode)
-{
-   efl_ui_scrollbar_bar_mode_set(pd->smanager, hmode, vmode);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollbar_bar_mode_get(const Eo *obj EINA_UNUSED,
-                                           Efl_Ui_List_Data *pd,
-                                           Efl_Ui_Scrollbar_Mode *hmode,
-                                           Efl_Ui_Scrollbar_Mode *vmode)
-{
-   efl_ui_scrollbar_bar_mode_get(pd->smanager, hmode, vmode);
-}
-
-EOLIAN static void
-_efl_ui_list_efl_ui_scrollable_interactive_scroll(Eo *obj EINA_UNUSED,
-                                                  Efl_Ui_List_Data *pd,
-                                                  Eina_Rect rc,
-                                                  Eina_Bool animation)
-{
-   efl_ui_scrollable_scroll(pd->smanager, rc, animation);
 }
 
 EOLIAN static void

@@ -111,33 +111,6 @@ _efl_ui_list_view_pan_efl_object_destructor(Eo *obj, Efl_Ui_List_View_Pan_Data *
 
 #include "efl_ui_list_view_pan.eo.c"
 
-EOLIAN static void
-_efl_ui_list_view_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *psd, Eina_Position2D pos)
-{
-   efl_ui_scrollable_content_pos_set(psd->scrl_mgr, pos);
-}
-
-EOLIAN static Eina_Position2D
-_efl_ui_list_view_efl_ui_scrollable_interactive_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *psd)
-{
-   Eina_Position2D pos = efl_ui_scrollable_content_pos_get(psd->scrl_mgr);
-   return pos;
-}
-
-EOLIAN static Eina_Size2D
-_efl_ui_list_view_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *psd)
-{
-   Eina_Size2D size = efl_ui_scrollable_content_size_get(psd->scrl_mgr);
-   return size;
-}
-
-EOLIAN static Eina_Rect
-_efl_ui_list_view_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *psd)
-{
-   Eina_Rect gmt = efl_ui_scrollable_viewport_geometry_get(psd->scrl_mgr);
-   return gmt;
-}
-
 static Eina_Bool
 _efl_model_properties_has(Efl_Model *model, Eina_Stringshare *propfind)
 {
@@ -610,6 +583,7 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
 
    pd->scrl_mgr = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj,
                             efl_ui_mirrored_set(efl_added, efl_ui_mirrored_get(obj)));
+   efl_composite_attach(obj, pd->scrl_mgr);
    pd->pan_obj = efl_add(MY_PAN_CLASS, obj);
    pan_data = efl_data_scope_get(pd->pan_obj, MY_PAN_CLASS);
    pan_data->wobj = obj;
