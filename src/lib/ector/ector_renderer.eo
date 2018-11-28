@@ -64,8 +64,8 @@ abstract Ector.Renderer (Efl.Object)
          set {
          }
          get {
-    }
-    values {
+         }
+         values {
             r: int; [[The red component of the given color.]]
             g: int; [[The green component of the given color.]]
             b: int; [[The blue component of the given color.]]
@@ -79,7 +79,7 @@ abstract Ector.Renderer (Efl.Object)
          get {
          }
          values {
-            r: Ector.Renderer; [[Rendering mask]]
+            mask: Ector.Renderer; [[Rendering mask]]
          }
       }
       @property crc {

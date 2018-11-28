@@ -49,8 +49,8 @@ _ector_renderer_surface_set(Eo *obj EINA_UNUSED, Ector_Renderer_Data *pd, Ector_
 
 static void
 _ector_renderer_transformation_set(Eo *obj EINA_UNUSED,
-                                                Ector_Renderer_Data *pd,
-                                                const Eina_Matrix3 *m)
+                                   Ector_Renderer_Data *pd,
+                                   const Eina_Matrix3 *m)
 {
    if (!m)
      {
@@ -60,23 +60,22 @@ _ector_renderer_transformation_set(Eo *obj EINA_UNUSED,
    else
      {
         if (!pd->m) pd->m = malloc(sizeof (Eina_Matrix3));
-        if (!pd->m) return ;
-
+        if (!pd->m) return;
         memcpy(pd->m, m, sizeof (Eina_Matrix3));
      }
 }
 
 static const Eina_Matrix3 *
 _ector_renderer_transformation_get(const Eo *obj EINA_UNUSED,
-                                                Ector_Renderer_Data *pd)
+                                   Ector_Renderer_Data *pd)
 {
    return pd->m;
 }
 
 static void
 _ector_renderer_origin_set(Eo *obj EINA_UNUSED,
-                                        Ector_Renderer_Data *pd,
-                                        double x, double y)
+                           Ector_Renderer_Data *pd,
+                           double x, double y)
 {
    pd->origin.x = x;
    pd->origin.y = y;
@@ -84,8 +83,8 @@ _ector_renderer_origin_set(Eo *obj EINA_UNUSED,
 
 static void
 _ector_renderer_origin_get(const Eo *obj EINA_UNUSED,
-                                        Ector_Renderer_Data *pd,
-                                        double *x, double *y)
+                           Ector_Renderer_Data *pd,
+                           double *x, double *y)
 {
    if (x) *x = pd->origin.x;
    if (y) *y = pd->origin.y;
@@ -93,23 +92,23 @@ _ector_renderer_origin_get(const Eo *obj EINA_UNUSED,
 
 static void
 _ector_renderer_visibility_set(Eo *obj EINA_UNUSED,
-                                            Ector_Renderer_Data *pd,
-                                            Eina_Bool v)
+                               Ector_Renderer_Data *pd,
+                               Eina_Bool v)
 {
    pd->visibility = v;
 }
 
 static Eina_Bool
 _ector_renderer_visibility_get(const Eo *obj EINA_UNUSED,
-                                            Ector_Renderer_Data *pd)
+                               Ector_Renderer_Data *pd)
 {
    return pd->visibility;
 }
 
 static void
 _ector_renderer_color_set(Eo *obj EINA_UNUSED,
-                                       Ector_Renderer_Data *pd,
-                                       int r, int g, int b, int a)
+                          Ector_Renderer_Data *pd,
+                          int r, int g, int b, int a)
 {
    pd->color.r = r;
    pd->color.g = g;
@@ -119,8 +118,8 @@ _ector_renderer_color_set(Eo *obj EINA_UNUSED,
 
 static void
 _ector_renderer_color_get(const Eo *obj EINA_UNUSED,
-                                       Ector_Renderer_Data *pd,
-                                       int *r, int *g, int *b, int *a)
+                          Ector_Renderer_Data *pd,
+                          int *r, int *g, int *b, int *a)
 {
    if (r) *r = pd->color.r;
    if (g) *g = pd->color.g;
@@ -130,22 +129,22 @@ _ector_renderer_color_get(const Eo *obj EINA_UNUSED,
 
 static void
 _ector_renderer_mask_set(Eo *obj EINA_UNUSED,
-                                      Ector_Renderer_Data *pd,
-                                      Ector_Renderer *r)
+                         Ector_Renderer_Data *pd,
+                         Ector_Renderer *mask)
 {
-   efl_replace(&pd->mask, r);
+   efl_replace(&pd->mask, mask);
 }
 
 static Ector_Renderer *
 _ector_renderer_mask_get(const Eo *obj EINA_UNUSED,
-                                      Ector_Renderer_Data *pd)
+                         Ector_Renderer_Data *pd)
 {
    return pd->mask;
 }
 
 static Eina_Bool
 _ector_renderer_prepare(Eo *obj EINA_UNUSED,
-                                     Ector_Renderer_Data *pd)
+                        Ector_Renderer_Data *pd)
 {
    if (pd->mask)
      ector_renderer_prepare(pd->mask);
@@ -155,7 +154,7 @@ _ector_renderer_prepare(Eo *obj EINA_UNUSED,
 
 static unsigned int
 _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
-                                     Ector_Renderer_Data *pd)
+                        Ector_Renderer_Data *pd)
 {
    unsigned int crc;
 
