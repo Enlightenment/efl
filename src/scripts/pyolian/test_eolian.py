@@ -97,11 +97,11 @@ class TestEolianUnit(unittest.TestCase):
         self.assertIsInstance(unit, eolian.Eolian_Unit)
         self.assertEqual(unit.file, 'efl_ui_win.eo')
 
-    # Commented out until unit/state support is fixed
-    # def test_children_listing(self):
-    #     l = list(eolian_db.children)
-    #     self.assertGreater(len(l), 500)
-    #     self.assertIsInstance(l[0], eolian.Eolian_Unit)
+    @unittest.skip('Skipped until unit/state support is fixed')
+    def test_children_listing(self):
+        l = list(eolian_db.children)
+        self.assertGreater(len(l), 500)
+        self.assertIsInstance(l[0], eolian.Eolian_Unit)
 
     def test_file_listing(self):
         l = list(eolian_db.eo_file_paths)
@@ -210,10 +210,13 @@ class TestEolianNamespace(unittest.TestCase):
         count = 0
         for ns in eolian_db.all_namespaces:
             self.assertIsInstance(ns, eolian.Namespace)
-            cls = eolian_db.class_by_name_get(ns.name)
-            self.assertIsNone(cls)
             count += 1
         self.assertGreater(count, 100)
+
+    def test_namespace_vs_class_collision(self):
+        for ns in eolian_db.all_namespaces:
+            cls = eolian_db.class_by_name_get(ns.name)
+            self.assertIsNone(cls)
 
     def test_namespace_equality(self):
         ns1 = eolian.Namespace(eolian_db, 'Efl.Io')

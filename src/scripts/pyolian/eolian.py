@@ -389,7 +389,6 @@ class Eolian_Unit(EolianBaseObject):
         c_tdecl = lib.eolian_unit_alias_by_name_get(self, _str_to_bytes(name))
         return Typedecl(c_tdecl) if c_tdecl else None
 
-
     @property
     def all_namespaces(self):
         # TODO find a better way to find namespaces (maybe inside eolian?)
@@ -530,7 +529,6 @@ class Namespace(object):
         deep = self._name.count('.') + 1
         return [ ns for ns in self._unit.all_namespaces
                  if ns.name.startswith(base) and ns.name.count('.') == deep ]
-        
 
     @property
     def classes(self):
