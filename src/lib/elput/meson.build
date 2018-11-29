@@ -22,6 +22,9 @@ elput_deps += dependency('libudev')
 if get_option('systemd')
   elput_deps += systemd
 endif
+if get_option('elogind')
+  elput_deps += dependency('libelogind')
+endif
 
 elput_lib = library('elput',
     elput_src, pub_eo_file_target,
