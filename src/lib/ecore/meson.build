@@ -75,7 +75,8 @@ pub_eo_files = [
   'efl_model_composite_boolean_children.eo',
   'efl_model_composite_selection.eo',
   'efl_model_composite_selection_children.eo',
-  'efl_model_composite.eo'
+  'efl_model_composite.eo',
+  'efl_model_view.eo'
 ]
 
 foreach eo_file : pub_eo_files
@@ -156,6 +157,7 @@ ecore_src = [
   'efl_model_composite_private.h',
   'efl_model_accessor_view.c',
   'efl_model_accessor_view_private.h',
+  'efl_model_view.c',
   'efl_linear_interpolator.c',
   'efl_accelerate_interpolator.c',
   'efl_decelerate_interpolator.c',

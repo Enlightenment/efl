@@ -49,7 +49,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_model_composite_boolean_children.eo \
 	lib/ecore/efl_model_composite_selection.eo \
 	lib/ecore/efl_model_composite_selection_children.eo \
-	lib/ecore/efl_model_composite.eo
+	lib/ecore/efl_model_composite.eo \
+	lib/ecore/efl_model_view.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -129,6 +130,7 @@ lib/ecore/efl_model_composite_selection.c \
 lib/ecore/efl_model_composite_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
+lib/ecore/efl_model_view.c \
 lib/ecore/efl_linear_interpolator.c \
 lib/ecore/efl_accelerate_interpolator.c \
 lib/ecore/efl_decelerate_interpolator.c \
