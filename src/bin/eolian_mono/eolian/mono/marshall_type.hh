@@ -22,7 +22,7 @@ struct marshall_native_annotation_visitor_generate;
  *
  * For example, Eina.Value can be marshaled either as an eina.Value instance through
  * CustomMarshallers if we have a ptr(Eina.Value) or through the intermediate
- * eina.Value_Native blittable struct if it is passed by value.
+ * eina.ValueNative blittable struct if it is passed by value.
  *
  * For details, check marshall_type_impl.h with the actual conversion rules.
  */

@@ -40,7 +40,7 @@ struct function_registration_generator
 #ifdef _WIN32
        (scope_tab << scope_tab << "descs[" << index << "].api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\");\n"
 #else
-       (scope_tab << scope_tab << "descs[" << index << "].api_func = efl.eo.Globals.dlsym(efl.eo.Globals.RTLD_DEFAULT, \"" << string << "\");\n"
+       (scope_tab << scope_tab << "descs[" << index << "].api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\");\n"
 #endif
         << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << name_helpers::klass_native_inherit_name(*klass) << "." << string << "_static_delegate);\n"
        )

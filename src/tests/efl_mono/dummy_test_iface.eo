@@ -1,0 +1,13 @@
+interface Dummy.Test_Iface ()
+{
+   methods {
+      emit_test_conflicted {
+      }
+      emit_nonconflicted {
+      }
+   }
+   events {
+      conflicted: void;
+      nonconflicted: void;
+   }
+}

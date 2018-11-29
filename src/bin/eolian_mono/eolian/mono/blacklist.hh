@@ -62,6 +62,8 @@ inline bool is_struct_blacklisted(std::string const& full_name)
        || full_name == "Eina.Slice"
        || full_name == "Eina.Rw_Slice"
        || full_name == "Eina.Promise"
+       || full_name == "Eina.Value"
+       || full_name == "Eina.Value_Type"
        || full_name == "Eina.Future";
 }
 

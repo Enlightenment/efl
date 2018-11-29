@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eina {
+namespace Eina {
 
 public struct Error : IComparable<Error>
 {
@@ -36,7 +36,7 @@ public struct Error : IComparable<Error>
     }
     public override string ToString()
     {
-        return "eina.Error(" + code + ")";
+        return "Eina.Error(" + code + ")";
     }
 
     internal static void Init()
@@ -62,7 +62,7 @@ public struct Error : IComparable<Error>
     public static String MsgGet(Error error)
     {
         IntPtr cstr = eina_error_msg_get(error);
-        return eina.StringConversion.NativeUtf8ToManagedString(cstr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(cstr);
     }
 
     public static void RaiseIfOccurred()
@@ -75,7 +75,7 @@ public struct Error : IComparable<Error>
     public static void Raise(Error e)
     {
         if (e != 0)
-            throw (new efl.EflException(MsgGet(e)));
+            throw (new Efl.EflException(MsgGet(e)));
     }
 
     public static void Clear()

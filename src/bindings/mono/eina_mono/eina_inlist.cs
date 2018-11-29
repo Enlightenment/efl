@@ -4,11 +4,11 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.InlistNativeFunctions;
-using eina.Callbacks;
+using static Eina.TraitFunctions;
+using static Eina.InlistNativeFunctions;
+using Eina.Callbacks;
 
-namespace eina {
+namespace Eina {
 
 public static class InlistNativeFunctions
 {
@@ -296,9 +296,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     }
 
 
-    public eina.Iterator<T> GetIterator()
+    public Eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -315,9 +315,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary> Gets an Accessor for this List.</summary>
-    public eina.Accessor<T> GetAccessor()
+    public Eina.Accessor<T> GetAccessor()
     {
-        return new eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
+        return new Eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
     }
 }
 

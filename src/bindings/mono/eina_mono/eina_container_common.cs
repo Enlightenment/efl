@@ -5,14 +5,14 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using eina.Callbacks;
-using static eina.HashNativeFunctions;
-using static eina.InarrayNativeFunctions;
-using static eina.InlistNativeFunctions;
-using static eina.NativeCustomExportFunctions;
-using static eina.ContainerCommonData;
+using Eina.Callbacks;
+using static Eina.HashNativeFunctions;
+using static Eina.InarrayNativeFunctions;
+using static Eina.InlistNativeFunctions;
+using static Eina.NativeCustomExportFunctions;
+using static Eina.ContainerCommonData;
 
-namespace eina {
+namespace Eina {
 
 public enum ElementType { NumericType, StringType, ObjectType };
 
@@ -150,7 +150,7 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
@@ -204,15 +204,15 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 
     public IntPtr ManagedToNativeAlloc(T man)
     {
-        IntPtr h = ((efl.eo.IWrapper)man).raw_handle;
+        IntPtr h = ((Efl.Eo.IWrapper)man).NativeHandle;
         if (h == IntPtr.Zero)
             return h;
-        return efl.eo.Globals.efl_ref(h);
+        return Efl.Eo.Globals.efl_ref(h);
     }
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
-        IntPtr h = refs ? ManagedToNativeAlloc(man) : ((efl.eo.IWrapper)man).raw_handle;
+        IntPtr h = refs ? ManagedToNativeAlloc(man) : ((Efl.Eo.IWrapper)man).NativeHandle;
         return intPtrTraits.ManagedToNativeAlloc(h);
     }
 
@@ -235,7 +235,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     public void NativeFree(IntPtr nat)
     {
         if (nat != IntPtr.Zero)
-            efl.eo.Globals.efl_unref(nat);
+            Efl.Eo.Globals.efl_unref(nat);
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)
@@ -276,7 +276,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat == IntPtr.Zero)
             return default(T);
-        return (T) Activator.CreateInstance(concreteType, efl.eo.Globals.efl_ref(nat));
+        return (T) Activator.CreateInstance(concreteType, Efl.Eo.Globals.efl_ref(nat));
     }
 
     public T NativeToManagedRef(IntPtr nat)
@@ -290,7 +290,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
@@ -384,7 +384,7 @@ public abstract class PrimitiveElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer on primitive/struct container.");
+            Eina.Log.Error("Null pointer on primitive/struct container.");
             return default(T);
         }
         return PrimitiveConversion.PointerToManaged<T>(nat);
@@ -399,7 +399,7 @@ public abstract class PrimitiveElementTraits<T>
     {
         if (nat == IntPtr.Zero)
         {
-            eina.Log.Error("Null pointer for Inlist node.");
+            Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
         var w = Marshal.PtrToStructure< InlistNode<T> >(nat);
@@ -503,7 +503,7 @@ public static class TraitFunctions
 {
     public static bool IsEflObject(System.Type type)
     {
-        return typeof(efl.eo.IWrapper).IsAssignableFrom(type);
+        return typeof(Efl.Eo.IWrapper).IsAssignableFrom(type);
     }
 
     public static bool IsString(System.Type type)
@@ -511,7 +511,7 @@ public static class TraitFunctions
         return type == typeof(string);
     }
 
-    public static eina.ElementType GetElementTypeCode(System.Type type)
+    public static Eina.ElementType GetElementTypeCode(System.Type type)
     {
         if (IsEflObject(type))
             return ElementType.ObjectType;

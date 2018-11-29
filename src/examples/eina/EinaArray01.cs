@@ -4,7 +4,7 @@ public class ExampleEinaArray01
 {
     public static void Main()
     {
-        eina.Config.Init();
+        Eina.Config.Init();
 
         var strings = new string[]{
             "helo", "hera", "starbuck", "kat", "boomer",
@@ -13,7 +13,7 @@ public class ExampleEinaArray01
             "skulls", "bulldog", "flat top", "hammerhead", "gonzo"
         };
 
-        var array = new eina.Array<string>(20U);
+        var array = new Eina.Array<string>(20U);
 
         // Push new elements
         foreach (string s in strings)

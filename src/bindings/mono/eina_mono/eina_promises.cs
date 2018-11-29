@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-using static eina.EinaNative.PromiseNativeMethods;
+using static Eina.EinaNative.PromiseNativeMethods;
 
-namespace eina {
+namespace Eina {
 
 namespace EinaNative {
 
@@ -21,10 +21,10 @@ static internal class PromiseNativeMethods
     internal static extern IntPtr eina_promise_new(IntPtr scheduler, Promise_Cancel_Cb cancel_cb, IntPtr data);
 
     [DllImport(efl.Libs.Eina)]
-    internal static extern void eina_promise_resolve(IntPtr scheduler, eina.Value_Native value);
+    internal static extern void eina_promise_resolve(IntPtr scheduler, Eina.ValueNative value);
 
     [DllImport(efl.Libs.Eina)]
-    internal static extern void eina_promise_reject(IntPtr scheduler, eina.Error reason);
+    internal static extern void eina_promise_reject(IntPtr scheduler, Eina.Error reason);
 
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_future_new(IntPtr promise);
@@ -41,7 +41,7 @@ static internal class PromiseNativeMethods
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_future_chain_array(IntPtr prev, FutureDesc[] desc);
 
-    internal delegate eina.Value_Native FutureCb(IntPtr data, eina.Value_Native value, IntPtr dead_future);
+    internal delegate Eina.ValueNative FutureCb(IntPtr data, Eina.ValueNative value, IntPtr dead_future);
 
     [StructLayout(LayoutKind.Sequential)]
     internal struct FutureDesc
@@ -82,10 +82,10 @@ public class Promise : IDisposable
     /// </summary>
     public Promise(CancelCb cancelCb=null)
     {
-        efl.ILoop loop = efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.GetLoopMain();
 
         // Should we be able to pass different schedulers?
-        IntPtr scheduler = efl_loop_future_scheduler_get(loop.raw_handle);
+        IntPtr scheduler = efl_loop_future_scheduler_get(loop.NativeHandle);
 
         IntPtr cb_data = IntPtr.Zero;
 
@@ -112,7 +112,7 @@ public class Promise : IDisposable
         if (cb != null)
             cb();
         else
-            eina.Log.Info("Null promise CancelCb found");
+            Eina.Log.Info("Null promise CancelCb found");
         handle.Free();
     }
 
@@ -133,7 +133,7 @@ public class Promise : IDisposable
     {
         if (Handle != IntPtr.Zero)
         {
-            eina_promise_reject(Handle, eina.Error.ECANCELED);
+            eina_promise_reject(Handle, Eina.Error.ECANCELED);
             Handle = IntPtr.Zero;
         }
     }
@@ -149,7 +149,7 @@ public class Promise : IDisposable
     ///
     /// This will make all futures attached to it to be called with the given value as payload.
     /// </summary>
-    public void Resolve(eina.Value value)
+    public void Resolve(Eina.Value value)
     {
         SanityChecks();
         eina_promise_resolve(this.Handle, value);
@@ -162,10 +162,10 @@ public class Promise : IDisposable
     /// <summary>
     /// Rejects a promise.
     ///
-    /// The future chain attached to this promise will be called with an eina.Value of type
-    /// eina.ValueType.Error and payload eina.Error.ECANCELED.
+    /// The future chain attached to this promise will be called with an Eina.Value of type
+    /// Eina.ValueType.Error and payload Eina.Error.ECANCELED.
     /// </summary>
-    public void Reject(eina.Error reason)
+    public void Reject(Eina.Error reason)
     {
         SanityChecks();
         eina_promise_reject(this.Handle, reason);
@@ -182,13 +182,13 @@ public class Future
     /// <summary>
     /// Callback attached to a future and to be called when resolving/rejecting a promise.
     ///
-    /// The eina.Value as argument can come with an eina.Error.ECANCELED as payload if the
+    /// The Eina.Value as argument can come with an Eina.Error.ECANCELED as payload if the
     /// promise/future was rejected/cancelled.
     ///
     /// The return value usually is same as the argument, forwarded, but can be changed in
     /// case were the chain act as a transforming pipeline.
     /// </summary>
-    public delegate eina.Value ResolvedCb(eina.Value value);
+    public delegate Eina.Value ResolvedCb(Eina.Value value);
 
     public IntPtr Handle { get; internal set; }
 
@@ -197,7 +197,7 @@ public class Future
     /// </summary>
     public Future(IntPtr handle)
     {
-        Handle = ThenRaw(handle, (eina.Value value) => {
+        Handle = ThenRaw(handle, (Eina.Value value) => {
             Handle = IntPtr.Zero;
             return value;
         });
@@ -212,7 +212,7 @@ public class Future
     public Future(Promise promise, ResolvedCb cb=null)
     {
         IntPtr intermediate = eina_future_new(promise.Handle);
-        Handle = ThenRaw(intermediate, (eina.Value value) => {
+        Handle = ThenRaw(intermediate, (Eina.Value value) => {
             if (cb != null)
                 value = cb(value);
             Handle = IntPtr.Zero;
@@ -229,7 +229,7 @@ public class Future
     /// <summary>
     /// Cancels this future and the chain it belongs to, along with the promise linked against it.
     ///
-    /// The callbacks will still be called with eina.Error.ECANCELED as payload. The promise cancellation
+    /// The callbacks will still be called with Eina.Error.ECANCELED as payload. The promise cancellation
     /// callback will also be called if present.
     /// </summary>
     public void Cancel()
@@ -263,14 +263,14 @@ public class Future
         desc.data = GCHandle.ToIntPtr(handle);
         return eina_future_then_from_desc(previous, desc);
     }
-    private static eina.Value_Native NativeResolvedCb(IntPtr data, eina.Value_Native value, IntPtr dead_future)
+    private static Eina.ValueNative NativeResolvedCb(IntPtr data, Eina.ValueNative value, IntPtr dead_future)
     {
         GCHandle handle = GCHandle.FromIntPtr(data);
         ResolvedCb cb = handle.Target as ResolvedCb;
         if (cb != null)
             value = cb(value);
         else
-            eina.Log.Warning("Failed to get future callback.");
+            Eina.Log.Warning("Failed to get future callback.");
         handle.Free();
         return value;
     }
@@ -310,7 +310,7 @@ public class Future
                 GCHandle handle = GCHandle.FromIntPtr(descs[i].data);
                 handle.Free();
             }
-            eina.Log.Error($"Failed to create native future description for callbacks. Error: {e.ToString()}");
+            Eina.Log.Error($"Failed to create native future description for callbacks. Error: {e.ToString()}");
             return null;
         }
         return new Future(eina_future_chain_array(Handle, descs));

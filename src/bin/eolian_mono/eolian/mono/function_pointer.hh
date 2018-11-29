@@ -38,28 +38,29 @@ struct function_pointer {
       if (!name_helpers::open_namespaces(sink, f.namespaces, funcptr_ctx))
         return false;
 
+      std::string f_name = name_helpers::typedecl_managed_name(f);
+
       // C# visible delegate
       if (!as_generator(documentation
                   << "public delegate " << type << " " << string
                   << "(" << (parameter % ", ") << ");\n")
-              .generate(sink, std::make_tuple(f, f.return_type, name_helpers::escape_keyword(f.name), f.parameters), funcptr_ctx))
+              .generate(sink, std::make_tuple(f, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
       if (!as_generator(marshall_native_annotation(true)
-                  << "internal delegate " << marshall_type(true) << " " << string // public?
+                  << "public delegate " << marshall_type(true) << " " << string // public?
                   << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ");\n")
-              .generate(sink, std::make_tuple(f.return_type, f.return_type, name_helpers::escape_keyword(f.name), f.parameters), funcptr_ctx))
+              .generate(sink, std::make_tuple(f.return_type, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
 
-      std::string f_name = name_helpers::escape_keyword(f.name);
       // Wrapper type, with callback matching the Unamanaged one
       if (!as_generator("internal class " << f_name << "Wrapper\n"
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
-                  << scope_tab << "private Eina_Free_Cb _cb_free_cb;\n\n"
+                  << scope_tab << "private EinaFreeCb _cb_free_cb;\n\n"
 
-                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, Eina_Free_Cb _cb_free_cb)\n"
+                  << scope_tab << "internal " << f_name << "Wrapper (" << f_name << "Internal _cb, IntPtr _cb_data, EinaFreeCb _cb_free_cb)\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "this._cb = _cb;\n"
                   << scope_tab << scope_tab << "this._cb_data = _cb_data;\n"
@@ -88,8 +89,8 @@ struct function_pointer {
                   << scope_tab << scope_tab << "try {\n"
                   << scope_tab << scope_tab << scope_tab <<  (return_type != " void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
                   << scope_tab << scope_tab << "} catch (Exception e) {\n"
-                  << scope_tab << scope_tab << scope_tab << "eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-                  << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+                  << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
+                  << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
                   << scope_tab << scope_tab << "}\n"
                   << native_function_definition_epilogue(nullptr)
                   << scope_tab << "}\n"

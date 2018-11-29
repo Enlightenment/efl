@@ -2,6 +2,7 @@
 #define EOLIAN_MONO_UTILS_HPP
 
 #include <string>
+#include <vector>
 #include <sstream>
 #include <iterator>
 #include <algorithm>
@@ -63,6 +64,12 @@ namespace eolian_mono { namespace utils {
 
         return ret;
     }
+
+   inline std::string remove_all(std::string name, char target)
+   {
+       name.erase(std::remove(name.begin(), name.end(), target), name.end());
+       return name;
+   }
 } }
 
 #endif

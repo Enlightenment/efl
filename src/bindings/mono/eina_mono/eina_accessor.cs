@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-using static eina.TraitFunctions;
+using static Eina.TraitFunctions;
 
-using static eina.AccessorNativeFunctions;
+using static Eina.AccessorNativeFunctions;
 
-namespace eina {
+namespace Eina {
 
 internal class AccessorNativeFunctions
 {

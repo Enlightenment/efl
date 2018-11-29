@@ -6,7 +6,7 @@ class TestStrBuf
 {
     public static void test_steal()
     {
-        eina.Strbuf buf = new eina.Strbuf();
+        Eina.Strbuf buf = new Eina.Strbuf();
 
         buf.Append("Here's");
         buf.Append(' ');
@@ -18,8 +18,8 @@ class TestStrBuf
 
     public static void test_eolian()
     {
-        test.ITesting obj = new test.Testing();
-        eina.Strbuf buf = new eina.Strbuf();
+        var obj = new Dummy.TestObject();
+        Eina.Strbuf buf = new Eina.Strbuf();
 
         obj.AppendToStrbuf(buf, "Appended");
         obj.AppendToStrbuf(buf, " to buf");
@@ -27,7 +27,7 @@ class TestStrBuf
         Test.AssertEquals("Appended to buf", buf.Steal());
     }
 
-    private class Appender : test.TestingInherit
+    private class Appender : Dummy.TestObject
     {
         public bool called;
         public Appender() : base(null)
@@ -35,9 +35,9 @@ class TestStrBuf
             called = false;
         }
 
-        public override void AppendToStrbuf(eina.Strbuf buf, string str)
+        public override void AppendToStrbuf(Eina.Strbuf buf, string str)
         {
-            eina.Log.Error("Virtual wrapper called");
+            Eina.Log.Error("Virtual wrapper called");
             called = true;
             buf.Append(str);
         }
@@ -46,7 +46,7 @@ class TestStrBuf
     public static void test_virtual_eolian()
     {
         Appender obj = new Appender();
-        eina.Strbuf buf = new eina.Strbuf();
+        Eina.Strbuf buf = new Eina.Strbuf();
 
         obj.CallAppendToStrbuf(buf, "Is");
         obj.CallAppendToStrbuf(buf, " this");

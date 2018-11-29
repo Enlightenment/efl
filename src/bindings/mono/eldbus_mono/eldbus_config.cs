@@ -13,7 +13,7 @@ public static class Config
     public static void Init()
     {
         if (eldbus_init() == 0)
-            throw new efl.EflException("Failed to initialize Eldbus");
+            throw new Efl.EflException("Failed to initialize Eldbus");
     }
 
     public static void Shutdown()

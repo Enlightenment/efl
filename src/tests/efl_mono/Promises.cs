@@ -9,8 +9,8 @@ class TestPromises
     public static void test_simple_cancel()
     {
         bool cleanCalled = false;
-        eina.Promise promise = new eina.Promise(() => { cleanCalled = true; });
-        eina.Future future = new eina.Future(promise);
+        Eina.Promise promise = new Eina.Promise(() => { cleanCalled = true; });
+        Eina.Future future = new Eina.Future(promise);
         future.Cancel();
         Test.Assert(cleanCalled, "Promise clean callback should have been called.");
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
@@ -20,19 +20,19 @@ class TestPromises
     public static void test_simple_resolve()
     {
         bool callbackCalled = false;
-        eina.Value received_value = null;
+        Eina.Value received_value = null;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
 
-        future = future.Then((eina.Value value) => {
+        future = future.Then((Eina.Value value) => {
             callbackCalled = true;
             received_value = value;
             return value;
         } );
 
-        eina.Value reference_value = new eina.Value(eina.ValueType.Int32);
+        Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);
         reference_value.Set(1984);
         promise.Resolve(reference_value);
 
@@ -45,24 +45,24 @@ class TestPromises
     public static void test_simple_reject()
     {
         bool callbackCalled = false;
-        eina.Error received_error = eina.Error.NO_ERROR;
+        Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
 
-        future = future.Then((eina.Value value) => {
+        future = future.Then((Eina.Value value) => {
             callbackCalled = true;
             value.Get(out received_error);
             return value;
         });
 
-        promise.Reject(eina.Error.EPERM);
+        promise.Reject(Eina.Error.EPERM);
 
         loop.Iterate();
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
-        Test.AssertEquals(received_error, eina.Error.EPERM);
+        Test.AssertEquals(received_error, Eina.Error.EPERM);
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
@@ -72,12 +72,12 @@ class TestPromises
     {
         bool callbackCalled = false;
         bool promiseCallbackCalled = false;
-        eina.Error received_error = eina.Error.NO_ERROR;
+        Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        eina.Promise promise = new eina.Promise(() => { promiseCallbackCalled = true; });
-        eina.Future future = new eina.Future(promise);
+        Eina.Promise promise = new Eina.Promise(() => { promiseCallbackCalled = true; });
+        Eina.Future future = new Eina.Future(promise);
 
-        future = future.Then((eina.Value value) => {
+        future = future.Then((Eina.Value value) => {
             callbackCalled = true;
             value.Get(out received_error);
             return value;
@@ -87,18 +87,18 @@ class TestPromises
 
         Test.Assert(promiseCallbackCalled, "Promise cancel callback should have been called.");
         Test.Assert(callbackCalled, "Future callback should have been called.");
-        Test.AssertEquals(received_error, eina.Error.ECANCELED);
+        Test.AssertEquals(received_error, Eina.Error.ECANCELED);
     }
 
 
-    private delegate eina.Future.ResolvedCb FutureCbGenerator(int x);
+    private delegate Eina.Future.ResolvedCb FutureCbGenerator(int x);
     public static void test_then_chaining()
     {
         bool[] callbacksCalled = {false, false, false, false};
-        eina.Value[] received_value = {null, null, null, null};
+        Eina.Value[] received_value = {null, null, null, null};
 
         FutureCbGenerator genResolvedCb = (int i) => {
-            return (eina.Value value) => {
+            return (Eina.Value value) => {
                 callbacksCalled[i] = true;
                 int x;
                 value.Get(out x);
@@ -108,13 +108,13 @@ class TestPromises
             };
         };
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
         for (int i = 0; i < 4; i++)
             future = future.Then(genResolvedCb(i));
 
-        eina.Value reference_value = new eina.Value(eina.ValueType.Int32);
+        Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);
         reference_value.Set(0);
         promise.Resolve(reference_value);
 
@@ -137,10 +137,10 @@ class TestPromises
     public static void test_then_chain_array()
     {
         bool[] callbacksCalled = {false, false, false, false};
-        eina.Value[] received_value = {null, null, null, null};
+        Eina.Value[] received_value = {null, null, null, null};
 
         FutureCbGenerator genResolvedCb = (int i) => {
-            return (eina.Value value) => {
+            return (Eina.Value value) => {
                 callbacksCalled[i] = true;
                 int x;
                 value.Get(out x);
@@ -150,16 +150,16 @@ class TestPromises
             };
         };
 
-        var cbs = new List<eina.Future.ResolvedCb>();
+        var cbs = new List<Eina.Future.ResolvedCb>();
         for (int i = 0; i < 4; i++)
             cbs.Add(genResolvedCb(i));
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
         future = future.Chain(cbs);
 
-        eina.Value reference_value = new eina.Value(eina.ValueType.Int32);
+        Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);
         reference_value.Set(0);
         promise.Resolve(reference_value);
 
@@ -182,25 +182,25 @@ class TestPromises
     public static void test_cancel_after_resolve()
     {
         bool callbackCalled = false;
-        eina.Error received_error = eina.Error.NO_ERROR;
+        Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
 
-        future = future.Then((eina.Value value) => {
+        future = future.Then((Eina.Value value) => {
             callbackCalled = true;
             value.Get(out received_error);
             return value;
         });
 
-        promise.Reject(eina.Error.EPERM);
+        promise.Reject(Eina.Error.EPERM);
         future.Cancel();
 
         loop.Iterate();
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
-        Test.AssertEquals(received_error, eina.Error.ECANCELED);
+        Test.AssertEquals(received_error, Eina.Error.ECANCELED);
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);
@@ -209,19 +209,19 @@ class TestPromises
     public static void test_constructor_with_callback()
     {
         bool callbackCalled = false;
-        eina.Value received_value = null;
+        Eina.Value received_value = null;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
 #pragma warning disable 0219
-        eina.Future future = new eina.Future(promise,(eina.Value value) => {
+        Eina.Future future = new Eina.Future(promise,(Eina.Value value) => {
             callbackCalled = true;
             received_value = value;
             return value;
         } );
 #pragma warning restore 0219
 
-        eina.Value reference_value = new eina.Value(eina.ValueType.Int32);
+        Eina.Value reference_value = new Eina.Value(Eina.ValueType.Int32);
         reference_value.Set(1984);
         promise.Resolve(reference_value);
 
@@ -234,13 +234,13 @@ class TestPromises
     public static void test_reject_on_disposal()
     {
         bool callbackCalled = false;
-        eina.Error received_error = eina.Error.NO_ERROR;
+        Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        efl.ILoop loop = efl.App.GetLoopMain();
-        eina.Promise promise = new eina.Promise();
-        eina.Future future = new eina.Future(promise);
+        Efl.Loop loop = Efl.App.GetLoopMain();
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
 
-        future = future.Then((eina.Value value) => {
+        future = future.Then((Eina.Value value) => {
             callbackCalled = true;
             value.Get(out received_error);
             return value;
@@ -251,7 +251,7 @@ class TestPromises
         loop.Iterate();
 
         Test.Assert(callbackCalled, "Future callback should have been called.");
-        Test.AssertEquals(received_error, eina.Error.ECANCELED);
+        Test.AssertEquals(received_error, Eina.Error.ECANCELED);
 
         Test.AssertRaises<ObjectDisposedException>(() => { promise.Resolve(null); });
         Test.AssertRaises<ObjectDisposedException>(future.Cancel);

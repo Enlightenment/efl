@@ -2,20 +2,20 @@ using System;
 
 public class Example
 {
-    public static efl.ui.IButton CreateButton(efl.IObject parent,
+    public static Efl.Ui.Button CreateButton(Efl.Object parent,
                                              string text,
                                              int w, int h,
                                              EventHandler callback) {
-        efl.ui.IButton button = new efl.ui.Button(parent);
+        Efl.Ui.Button button = new Efl.Ui.Button(parent);
         button.SetText(text);
-        button.SetSize(new eina.Size2D(w, h));
+        button.SetSize(new Eina.Size2D(w, h));
 
-        button.ClickedEvt += callback;
+        ((Efl.Ui.Clickable)button).ClickedEvt += callback;
 
         return button;
     }
 
-    public static void Formatter(eina.Strbuf buf, eina.Value val){
+    public static void Formatter(Eina.Strbuf buf, Eina.Value val){
         double ratio;
         if (val.Get(out ratio)) {
             buf.Append($"{(int)(ratio*100)}%");
@@ -34,27 +34,27 @@ public class Example
         int W = 120;
         int H = 30;
 
-        efl.All.Init(efl.Components.Ui);
+        Efl.All.Init(Efl.Components.Ui);
 
-        efl.ui.Win win = new efl.ui.Win(null);
+        Efl.Ui.Win win = new Efl.Ui.Win(null);
         win.SetText("Hello, C#!!");
         win.SetAutohide(true);
 
-        efl.ui.Box_Flow box = new efl.ui.Box_Flow(win);
+        Efl.Ui.BoxFlow box = new Efl.Ui.BoxFlow(win);
 
-        efl.ui.IButton button = CreateButton(box, "Click to exit", 120, 30,
+        Efl.Ui.Button button = CreateButton(box, "Click to exit", 120, 30,
                 (object sender, EventArgs e) => {
-                    efl.ui.Config.Exit();
+                    Efl.Ui.Config.Exit();
                 });
 
         box.DoPack(button);
 
-        efl.ui.Progressbar bar = new efl.ui.Progressbar(box);
-        bar.SetSize(new eina.Size2D(W, H));
+        Efl.Ui.Progressbar bar = new Efl.Ui.Progressbar(box);
+        bar.SetSize(new Eina.Size2D(W, H));
         bar.SetFormatCb(Formatter);
 
-        efl.ui.ISlider slider = new efl.ui.Slider(box);
-        slider.SetSize(new eina.Size2D(W, H));
+        Efl.Ui.Slider slider = new Efl.Ui.Slider(box);
+        slider.SetSize(new Eina.Size2D(W, H));
 
         slider.ChangedEvt += (object sender, EventArgs e) => {
             bar.SetRangeValue(slider.GetRangeValue());
@@ -66,12 +66,12 @@ public class Example
         button.SetVisible(true);
         box.SetVisible(true);
 
-        win.SetSize(new eina.Size2D(W, 3 * H));
+        win.SetSize(new Eina.Size2D(W, 3 * H));
         win.SetVisible(true);
 
-        efl.ui.Config.Run();
+        Efl.Ui.Config.Run();
 
-        efl.All.Shutdown();
+        Efl.All.Shutdown();
     }
 
 }

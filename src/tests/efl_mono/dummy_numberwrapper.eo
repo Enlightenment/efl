@@ -1,4 +1,4 @@
-class Test.Numberwrapper extends Efl.Object {
+class Dummy.Numberwrapper extends Efl.Object {
    methods {
       @property number {
          get {

@@ -34,14 +34,10 @@ struct native_function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                scope_tab << scope_tab << "//Placeholder in variables\n"
-                << *(scope_tab << scope_tab << native_convert_in_variable << "\n")
-                << scope_tab << scope_tab << "//Placeholder out variables\n"
-                << *(scope_tab << scope_tab << native_convert_out_variable << "\n")
-                << scope_tab << scope_tab << "//Function pointer wrappers\n"
-                << *(scope_tab << scope_tab << native_convert_function_pointer << "\n")
-                << scope_tab << scope_tab << "//Return variable and function call\n"
-                << scope_tab << scope_tab << scope_tab << native_convert_return_variable << "\n"
+                *(scope_tab << scope_tab << native_convert_in_variable)
+                << *(scope_tab << scope_tab << native_convert_out_variable)
+                << *(scope_tab << scope_tab << native_convert_function_pointer)
+                << scope_tab << scope_tab << scope_tab << native_convert_return_variable
                 ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
@@ -61,13 +57,9 @@ struct function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                  scope_tab << scope_tab << "//Placeholder in variables\n"
-                  << *(scope_tab << scope_tab << convert_in_variable << "\n")
-                  << scope_tab << scope_tab << "//Placeholder out variables\n"
-                  << *(scope_tab << scope_tab << convert_out_variable << "\n")
-                  << scope_tab << scope_tab << "//Function pointers handling\n"
-                  << *(scope_tab << scope_tab << convert_function_pointer << "\n")
-                  << scope_tab << scope_tab << "//Return variable and function call\n"
+                  *(scope_tab << scope_tab << convert_in_variable)
+                  << *(scope_tab << scope_tab << convert_out_variable)
+                  << *(scope_tab << scope_tab << convert_function_pointer)
                   << scope_tab << scope_tab << convert_return_variable
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
@@ -90,11 +82,8 @@ struct native_function_definition_epilogue_generator
           return false;
 
       if (!as_generator(
-                  scope_tab << scope_tab << "//Assigning out variables\n"
-                  << *(scope_tab << scope_tab << native_convert_out_assign(*klass) << "\n")
-                  << scope_tab << scope_tab << "//Placeholder in ptr variables that need to be updated\n"
-                  << *(scope_tab << scope_tab << native_convert_in_ptr_assign << "\n")
-                  << scope_tab << scope_tab << "//Converting return variable\n"
+                  *(scope_tab << scope_tab << native_convert_out_assign(*klass))
+                  << *(scope_tab << scope_tab << native_convert_in_ptr_assign)
                   << scope_tab << scope_tab << native_convert_return(*klass)
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
@@ -110,12 +99,9 @@ struct function_definition_epilogue_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
       if (!as_generator(
-                  scope_tab << scope_tab << "eina.Error.RaiseIfOccurred();\n"
-                  << scope_tab << scope_tab << "//Assigning out variables\n"
-                  << *(scope_tab << scope_tab << convert_out_assign << "\n")
-                  << scope_tab << scope_tab << "//Placeholder in ptr variables that need to be updated\n"
-                  << *(scope_tab << scope_tab << convert_in_ptr_assign << "\n")
-                  << scope_tab << scope_tab << "//Converting return variable\n"
+                  scope_tab << scope_tab << "Eina.Error.RaiseIfOccurred();\n"
+                  << *(scope_tab << scope_tab << convert_out_assign)
+                  << *(scope_tab << scope_tab << convert_in_ptr_assign)
                   << scope_tab << scope_tab << convert_return
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
