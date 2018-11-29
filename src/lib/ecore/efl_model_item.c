@@ -44,14 +44,7 @@ _efl_model_item_efl_object_constructor(Eo *obj, Efl_Model_Item_Data *sd)
 static void
 _efl_model_item_efl_object_destructor(Eo *obj, Efl_Model_Item_Data *sd)
 {
-   Efl_Model *child;
-
-   EINA_LIST_FREE(sd->childrens, child)
-     {
-        if (child)
-          efl_parent_set(child, NULL);
-     }
-
+   eina_list_free(sd->childrens);
    eina_hash_foreach(sd->properties, _stringshared_keys_free, NULL);
    eina_hash_free(sd->properties);
 

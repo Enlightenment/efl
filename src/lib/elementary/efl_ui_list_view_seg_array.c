@@ -56,7 +56,6 @@ static Eina_Rbtree_Direction _rbtree_compare(Efl_Ui_List_View_Seg_Array_Node con
     return EINA_RBTREE_RIGHT;
 }
 
-
 static void
 _free_node(Efl_Ui_List_View_Seg_Array_Node* node, void* data EINA_UNUSED)
 {
@@ -64,8 +63,10 @@ _free_node(Efl_Ui_List_View_Seg_Array_Node* node, void* data EINA_UNUSED)
 
    while (i < node->length)
      {
-       free(node->pointers[i]);
-       ++i;
+        Efl_Ui_List_View_Layout_Item* item = node->pointers[i];
+        efl_unref(item->children);
+        free(item);
+        ++i;
      }
 
    free(node);
@@ -98,7 +99,7 @@ _efl_ui_list_view_seg_array_flush(Eo* obj EINA_UNUSED, Efl_Ui_List_View_Seg_Arra
 static Efl_Ui_List_View_Layout_Item* _create_item_partial(Efl_Model* model)
 {
    Efl_Ui_List_View_Layout_Item* item = calloc(1, sizeof(Efl_Ui_List_View_Layout_Item));
-   item->children = model;
+   item->children = efl_ref(model);
    return item;
 }
 

@@ -84,12 +84,8 @@ _efl_model_container_efl_object_destructor(Eo *obj,
 {
    Eina_Stringshare *key;
    Eina_Iterator *it;
-   Efl_Model *child;
 
-   EINA_LIST_FREE(sd->childrens, child)
-     {
-        if (child) efl_parent_set(child, NULL);
-     }
+   eina_list_free(sd->childrens);
 
    it = eina_hash_iterator_key_new(sd->properties);
    EINA_ITERATOR_FOREACH(it, key)
