@@ -249,7 +249,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    result = EINA_TRUE;
 
 on_error:
-   while (property = eina_array_pop(changed_properties))
+   while ((property = eina_array_pop(changed_properties)))
      eina_stringshare_del(property);
    eina_array_free(changed_properties);
    eina_value_free(value_struct);
