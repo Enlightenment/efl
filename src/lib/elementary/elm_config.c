@@ -535,6 +535,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, offline, T_UCHAR);
    ELM_CONFIG_VAL(D, T, powersave, T_INT);
    ELM_CONFIG_VAL(D, T, drag_anim_duration, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, win_no_border, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1868,6 +1869,7 @@ _config_load(Eina_Bool on_flush)
    _elm_config->popup_scrollable = EINA_FALSE;
    _elm_config->entry_select_allow = EINA_TRUE;
    _elm_config->drag_anim_duration = 0.0;
+   _elm_config->win_no_border = EINA_FALSE;
    _env_get();
 }
 
@@ -2076,6 +2078,8 @@ _elm_config_reload_do(Eina_Bool on_flush)
         KEEP_STR(icon_theme);
         KEEP_VAL(entry_select_allow);
         KEEP_VAL(drag_anim_duration);
+
+        KEEP_VAL(win_no_border);
 
         _elm_config->priv = prev_config->priv;
         _config_free(prev_config);
@@ -2516,6 +2520,10 @@ _config_update(void)
    _elm_key_bindings_update(_elm_config, tcfg);
    IFCFGEND
 
+   IFCFG(0x0010)
+   _elm_config->win_no_border = EINA_FALSE;
+   IFCFGEND
+
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
@@ -2892,6 +2900,9 @@ _env_get(void)
 
    s = getenv("EFL_UI_DND_DRAG_ANIM_DURATION");
    if (s) _elm_config->drag_anim_duration = _elm_atof(s);
+
+   s = getenv("ELM_WIN_NO_BORDER");
+   if (s) _elm_config->win_no_border = EINA_TRUE;
 }
 
 static void
