@@ -4,10 +4,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.InarrayNativeFunctions;
+using static Eina.TraitFunctions;
+using static Eina.InarrayNativeFunctions;
 
-namespace eina {
+namespace Eina {
 
 public static class InarrayNativeFunctions
 {
@@ -298,14 +298,14 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         return true;
     }
 
-    public eina.Iterator<T> GetIterator()
+    public Eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_inarray_iterator_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inarray_iterator_new(Handle), true, false);
     }
 
-    public eina.Iterator<T> GetReversedIterator()
+    public Eina.Iterator<T> GetReversedIterator()
     {
-        return new eina.Iterator<T>(eina_inarray_iterator_reversed_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_inarray_iterator_reversed_new(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -323,9 +323,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary> Gets an Accessor for this Array.</summary>
-    public eina.Accessor<T> GetAccessor()
+    public Eina.Accessor<T> GetAccessor()
     {
-        return new eina.AccessorInArray<T>(eina_inarray_accessor_new(Handle), Ownership.Managed);
+        return new Eina.AccessorInArray<T>(eina_inarray_accessor_new(Handle), Ownership.Managed);
     }
 }
 

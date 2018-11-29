@@ -1129,6 +1129,22 @@ struct klass_def
 
       return ret;
   }
+
+  std::vector<event_def> get_all_events() const
+  {
+      std::vector<event_def> ret;
+
+      std::copy(events.cbegin(), events.cend(), std::back_inserter(ret));
+
+      for (auto inherit : inherits)
+        {
+           klass_def klass(get_klass(inherit, unit), unit);
+           std::copy(klass.events.cbegin(), klass.events.cend(),
+                     std::back_inserter(ret));
+        }
+
+      return ret;
+  }
 };
 
 struct value_def

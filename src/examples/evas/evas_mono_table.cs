@@ -9,37 +9,37 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl.All.Init();
+        Efl.All.Init();
 
-        efl.Loop loop = new efl.Loop();
+        Efl.Loop loop = new Efl.Loop();
 
         EcoreEvas ecore_evas = new EcoreEvas();
         
-        eina.Size2D size = new eina.Size2D();
+        Eina.Size2D size = new Eina.Size2D();
         size.W = WIDTH;
         size.H = HEIGHT;
 
-        eina.Size2D hint = new eina.Size2D();
+        Eina.Size2D hint = new Eina.Size2D();
 
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        Efl.Canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.IObject parent = canvas.GetParent();
-        System.Diagnostics.Debug.Assert(parent.raw_handle != IntPtr.Zero);
+        Efl.Object parent = canvas.GetParent();
+        System.Diagnostics.Debug.Assert(parent.NativeHandle != IntPtr.Zero);
         
-        efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);
+        Efl.Canvas.Rectangle bg = new Efl.Canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         bg.SetSize(size);
         bg.SetVisible(true);
 
 
-        evas.Table table = new evas.Table(canvas);
-        table.SetHomogeneous(evas.object_table.Homogeneous_Mode.None);
+        Evas.Table table = new Evas.Table(canvas);
+        table.SetHomogeneous(Evas.ObjectTable.HomogeneousMode.None);
         table.SetPadding(0, 0);
         table.SetSize(size);
         table.SetVisible(true);
 
-        efl.canvas.Rectangle rect = new efl.canvas.Rectangle(canvas);
+        Efl.Canvas.Rectangle rect = new Efl.Canvas.Rectangle(canvas);
         rect.SetColor(255, 0, 0, 255);
         hint.W = 100;
         hint.H = 50;
@@ -47,7 +47,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 1, 1, 2, 1);
         
-        rect = new efl.canvas.Rectangle(canvas);
+        rect = new Efl.Canvas.Rectangle(canvas);
         rect.SetColor(0, 255, 0, 255);
         hint.W = 50;
         hint.H = 100;
@@ -55,7 +55,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 1, 2, 1, 2);
 
-        rect = new efl.canvas.Rectangle(canvas);
+        rect = new Efl.Canvas.Rectangle(canvas);
         rect.SetColor(0, 0, 255, 255);
         hint.W = 50;
         hint.H = 50;
@@ -63,7 +63,7 @@ class TestMain
         rect.SetVisible(true);
         table.Pack(rect, 2, 2, 1, 1);
 
-        rect = new efl.canvas.Rectangle(canvas);
+        rect = new Efl.Canvas.Rectangle(canvas);
         rect.SetColor(255, 255, 0, 255);
         rect.SetHintMin(hint);
         rect.SetVisible(true);
@@ -71,7 +71,7 @@ class TestMain
         
         loop.Begin();
 
-        efl.All.Shutdown();
+        Efl.All.Shutdown();
     }
 }
 

@@ -6,7 +6,7 @@ namespace TestSuite
 
 class TestEo
 {
-    private class Derived : test.TestingInherit
+    private class Derived : Dummy.TestObject
     {
     }
 
@@ -15,21 +15,20 @@ class TestEo
     //
     public static void return_same_object()
     {
-        test.ITesting testing = new test.Testing();
-        test.ITesting o1 = testing.ReturnObject();
-        Test.Assert(o1.raw_handle != IntPtr.Zero);
-        Test.Assert(o1.raw_handle == testing.raw_handle);
-        test.ITesting o2 = o1.ReturnObject();
-        Test.Assert(o2.raw_handle != IntPtr.Zero);
-        Test.Assert(o2.raw_handle == o1.raw_handle);
+        var testing = new Dummy.TestObject();
+        var o1 = testing.ReturnObject();
+        Test.Assert(o1.NativeHandle != IntPtr.Zero);
+        Test.Assert(o1.NativeHandle == testing.NativeHandle);
+        var o2 = o1.ReturnObject();
+        Test.Assert(o2.NativeHandle != IntPtr.Zero);
+        Test.Assert(o2.NativeHandle == o1.NativeHandle);
     }
-
     /* Commented out as adding the event listener seems to prevent it from being GC'd.
     public static void destructor_really_frees()
     {
        bool delEventCalled = false;
        {
-           test.ITesting obj = new test.Testing();
+           var obj = new Dummy.TestObject();
            obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
        }
 
@@ -46,8 +45,10 @@ class TestEo
     {
        bool delEventCalled = false;
        {
-           test.ITesting obj = new test.Testing();
+           var obj = new Dummy.TestObject();
+           Eina.Log.Error($"Created object 0x{obj.NativeHandle.ToInt64():x}");
            obj.DelEvt += (object sender, EventArgs e) => { delEventCalled = true; };
+           Eina.Log.Error($"Will dispose object 0x{obj.NativeHandle.ToInt64():x}");
            ((IDisposable)obj).Dispose();
        }
 
@@ -59,7 +60,7 @@ class TestEo
     {
        bool delEventCalled = false;
        {
-           test.ITesting obj = new Derived();
+           var obj = new Derived();
            obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
        }
 
@@ -76,7 +77,7 @@ class TestEo
     {
        bool delEventCalled = false;
        {
-           test.ITesting obj = new Derived();
+           var obj = new Derived();
            obj.DEL += (object sender, EventArgs e) => { delEventCalled = true; };
            ((IDisposable)obj).Dispose();
        }
@@ -86,7 +87,8 @@ class TestEo
     */
 }
 
-class MyLoop : efl.LoopInherit
+
+class MyLoop : Efl.Loop
 {
     public MyLoop() : base(null) { }
 }
@@ -95,8 +97,8 @@ class TestEoInherit
 {
     public static void instantiate_inherited()
     {
-        efl.ILoop loop = new MyLoop();
-        Test.Assert(loop.raw_handle != System.IntPtr.Zero);
+        Efl.Loop loop = new MyLoop();
+        Test.Assert(loop.NativeHandle != System.IntPtr.Zero);
     }
 }
 
@@ -104,7 +106,7 @@ class TestEoNames
 {
     public static void name_getset()
     {
-        test.ITesting obj = new test.Testing();
+        var obj = new Dummy.TestObject();
 
         string name = "Dummy";
         obj.SetName(name);
@@ -118,9 +120,9 @@ class TestEoConstructingMethods
     {
         bool called = false;
         string name = "Test object";
-        test.ITesting obj = new test.Testing(null, (test.ITesting a) => {
+        var obj = new Dummy.TestObject(null, (Dummy.TestObject a) => {
                 called = true;
-                Console.WriteLine("callback: obj raw_handle: {0:x}", a.raw_handle);
+                Console.WriteLine("callback: obj NativeHandle: {0:x}", a.NativeHandle);
                 a.SetName(name);
             });
 
@@ -128,10 +130,10 @@ class TestEoConstructingMethods
         Test.AssertEquals(name, obj.GetName());
     }
 
-    private class Derived : test.TestingInherit
+    private class Derived : Dummy.TestObject
     {
-        public Derived(test.ITesting parent = null,
-                       test.TestingInherit.ConstructingMethod cb = null) : base(parent, cb) {
+        public Derived(Dummy.TestObject parent = null,
+                       Dummy.TestObject.ConstructingMethod cb = null) : base(parent, cb) {
         }
     }
 
@@ -139,7 +141,7 @@ class TestEoConstructingMethods
     {
         bool called = false;
         string name = "Another test object";
-        Derived obj = new Derived(null, (test.ITesting a) => {
+        Derived obj = new Derived(null, (Dummy.TestObject a) => {
                 called = true;
                 a.SetComment(name);
             });
@@ -153,41 +155,41 @@ class TestEoParent
 {
     public static void basic_parent()
     {
-        test.ITesting parent = new test.Testing(null);
-        test.ITesting child = new test.Testing(parent);
+        var parent = new Dummy.TestObject(null);
+        var child = new Dummy.TestObject(parent);
 
         Test.AssertEquals(parent, child.GetParent());
 
-        test.ITesting parent_retrieved = test.Testing.static_cast(child.GetParent());
+        var parent_retrieved = Dummy.TestObject.static_cast(child.GetParent());
         Test.AssertEquals(parent, parent_retrieved);
     }
 
     public static void parent_inherited_class()
     {
-        test.INumberwrapper parent = new test.Numberwrapper(null);
-        test.ITesting child = new test.Testing(parent);
+        Dummy.Numberwrapper parent = new Dummy.Numberwrapper(null);
+        var child = new Dummy.TestObject(parent);
 
         Test.AssertEquals(parent, child.GetParent());
 
-        test.INumberwrapper parent_retrieved = test.Numberwrapper.static_cast(child.GetParent());
+        Dummy.Numberwrapper parent_retrieved = Dummy.Numberwrapper.static_cast(child.GetParent());
         Test.AssertEquals(parent, parent_retrieved);
     }
 
-    private class Derived : test.TestingInherit
+    private class Derived : Dummy.TestObject
     {
-        public Derived(test.ITesting parent = null) : base (parent)
+        public Derived(Dummy.TestObject parent = null) : base (parent)
         {
         }
     }
 
     public static void basic_parent_managed_inherit()
     {
-        test.ITesting parent = new Derived(null);
-        test.ITesting child = new Derived(parent);
+        var parent = new Derived(null);
+        var child = new Derived(parent);
 
         Test.AssertEquals(parent, child.GetParent());
 
-        test.ITesting parent_from_cast = test.Testing.static_cast(child.GetParent());
+        var parent_from_cast = Dummy.TestObject.static_cast(child.GetParent());
         Test.AssertEquals(parent, parent_from_cast);
     }
 }
@@ -197,15 +199,15 @@ class TestKlassMethods
     public static void basic_class_method()
     {
         int reference = 0xbeef;
-        test.Testing.SetKlassProp(reference);
-        Test.AssertEquals(reference, test.Testing.GetKlassProp());
+        Dummy.TestObject.SetKlassProp(reference);
+        Test.AssertEquals(reference, Dummy.TestObject.GetKlassProp());
     }
 
     public static void inherited_class_method()
     {
         int reference = 0xdead;
-        test.Child.SetKlassProp(reference);
-        Test.AssertEquals(reference, test.Child.GetKlassProp());
+        Dummy.Child.SetKlassProp(reference);
+        Test.AssertEquals(reference, Dummy.Child.GetKlassProp());
     }
 }
 
@@ -213,13 +215,13 @@ class TestTypedefs
 {
     public static void basic_typedef_test()
     {
-        test.ITesting obj = new test.Testing();
-        test.MyInt input = 1900;
-        test.MyInt receiver;
+        var obj = new Dummy.TestObject();
+        Dummy.MyInt input = 1900;
+        Dummy.MyInt receiver;
 
         int ret = obj.BypassTypedef(input, out receiver);
 
-        Test.AssertEquals((test.MyInt)ret, input);
+        Test.AssertEquals((Dummy.MyInt)ret, input);
         Test.AssertEquals(receiver, input);
 
     }
@@ -229,13 +231,13 @@ class TestEoAccessors
 {
     public static void basic_eo_accessors()
     {
-        test.ITesting obj = new test.Testing();
-        eina.List<int> lst = new eina.List<int>();
+        var obj = new Dummy.TestObject();
+        Eina.List<int> lst = new Eina.List<int>();
         lst.Append(4);
         lst.Append(3);
         lst.Append(2);
         lst.Append(5);
-        eina.Accessor<int> acc = obj.CloneAccessor(lst.GetAccessor());
+        Eina.Accessor<int> acc = obj.CloneAccessor(lst.GetAccessor());
 
         var zipped = acc.Zip(lst, (first, second) => new Tuple<int, int>(first, second));
 
@@ -248,10 +250,10 @@ class TestEoAccessors
 
 class TestEoFinalize
 {
-    public sealed class Inherit : efl.ObjectInherit
+    public sealed class Inherit : Efl.Object
     {
         public bool finalizeCalled = false;
-        public override efl.IObject FinalizeAdd()
+        public override Efl.Object FinalizeAdd()
         {
             finalizeCalled = true;
             return this;
@@ -263,6 +265,41 @@ class TestEoFinalize
     {
         Inherit inherit = new Inherit();
         Test.Assert(inherit.finalizeCalled);
+    }
+}
+
+class TestEoMultipleChildClasses
+{
+
+    public sealed class FirstChild : Efl.Object
+    {
+        public int receivedValue = 0;
+        public override Efl.Object FinalizeAdd()
+        {
+            receivedValue = 1;
+            return this;
+        }
+    }
+
+    public sealed class SecondChild : Efl.Object
+    {
+        public int receivedValue = 0;
+        public override Efl.Object FinalizeAdd()
+        {
+            receivedValue = 2;
+            return this;
+        }
+    }
+
+    public static void test_multiple_child_classes()
+    {
+        FirstChild obj = new FirstChild();
+        Test.AssertEquals(1, obj.receivedValue);
+        SecondChild obj2 = new SecondChild();
+        Test.AssertEquals(2, obj2.receivedValue);
+
+        obj = new FirstChild();
+        Test.AssertEquals(1, obj.receivedValue);
     }
 }
 

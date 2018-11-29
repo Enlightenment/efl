@@ -9,15 +9,15 @@ class TestFunctionPointerMarshalling
 {
     public static void func_pointer_marshalling()
     {
-        test.ITesting obj = new test.Testing();
+        var obj = new Dummy.TestObject();
         bool called = false;
-        eina.Strbuf buf = new eina.Strbuf();
+        Eina.Strbuf buf = new Eina.Strbuf();
         string argument = "Some String";
-        eina.Value v = new eina.Value(eina.ValueType.String);
+        Eina.Value v = new Eina.Value(Eina.ValueType.String);
         v.Set(argument);
         string reference = new string(argument.ToCharArray().Reverse().ToArray());
 
-        obj.CallFormatCb(buf, v, (eina.Strbuf ibuf, eina.Value val) => {
+        obj.CallFormatCb(buf, v, (Eina.Strbuf ibuf, Eina.Value val) => {
             called = true;
             string str = null;
             val.Get(out str);

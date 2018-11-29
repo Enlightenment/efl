@@ -4,12 +4,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.IteratorNativeFunctions;
-using static eina.HashNativeFunctions;
-using eina.Callbacks;
+using static Eina.TraitFunctions;
+using static Eina.IteratorNativeFunctions;
+using static Eina.HashNativeFunctions;
+using Eina.Callbacks;
 
-namespace eina
+namespace Eina
 {
 
 [StructLayout(LayoutKind.Sequential)]
@@ -365,14 +365,14 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return eina_hash_population(Handle);
     }
 
-    public eina.Iterator<TKey> Keys()
+    public Eina.Iterator<TKey> Keys()
     {
-        return new eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
+        return new Eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
     }
 
-    public eina.Iterator<TValue> Values()
+    public Eina.Iterator<TValue> Values()
     {
-        return new eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
+        return new Eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -382,7 +382,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         {
             for (IntPtr tuplePtr; eina_iterator_next(itr, out tuplePtr);)
             {
-                var tuple = Marshal.PtrToStructure<eina.HashTupleNative>(tuplePtr);
+                var tuple = Marshal.PtrToStructure<Eina.HashTupleNative>(tuplePtr);
                 var key = NativeToManagedRef<TKey>(tuple.key);
                 var val = NativeToManaged<TValue>(tuple.data);
                 yield return new KeyValuePair<TKey, TValue>(key, val);

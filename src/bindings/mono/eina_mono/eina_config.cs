@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eina {
+namespace Eina {
 
 public class Config {
     [DllImport(efl.Libs.Eina)] private static extern int eina_init();
@@ -11,11 +11,11 @@ public class Config {
 
     public static void Init() {
         if (eina_init() == 0)
-            throw (new efl.EflException("Failed to initialize Eina"));
+            throw (new Efl.EflException("Failed to initialize Eina"));
 
         // Initialize the submodules here
-        eina.Log.Init();
-        eina.Error.Init();
+        Eina.Log.Init();
+        Eina.Error.Init();
     }
 
     public static int Shutdown() {

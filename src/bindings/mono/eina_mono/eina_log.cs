@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Contracts;
 
-namespace eina { // Manual wrappers around eina functions
+namespace Eina { // Manual wrappers around eina functions
 
 public class Log
 {

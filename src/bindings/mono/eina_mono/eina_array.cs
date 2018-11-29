@@ -4,10 +4,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.ArrayNativeFunctions;
+using static Eina.TraitFunctions;
+using static Eina.ArrayNativeFunctions;
 
-namespace eina {
+namespace Eina {
 
 public static class ArrayNativeFunctions
 {
@@ -272,9 +272,9 @@ public class Array<T> : IEnumerable<T>, IDisposable
     }
 
 
-    public eina.Iterator<T> GetIterator()
+    public Eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_array_iterator_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_array_iterator_new(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -292,9 +292,9 @@ public class Array<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary> Gets an Accessor for this Array.</summary>
-    public eina.Accessor<T> GetAccessor()
+    public Eina.Accessor<T> GetAccessor()
     {
-        return new eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
+        return new Eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
     }
 }
 

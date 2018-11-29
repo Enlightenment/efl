@@ -1,0 +1,10 @@
+interface Dummy.Another_Iface ()
+{
+   methods {
+      emit_another_conflicted {
+      }
+   }
+   events {
+      conflicted: void;
+   }
+}

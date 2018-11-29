@@ -1,4 +1,4 @@
-eo_files = ['test_child.eo', 'test_numberwrapper.eo', 'test_testing.eo']
+eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_another_iface.eo']
 
 eo_file_targets = []
 

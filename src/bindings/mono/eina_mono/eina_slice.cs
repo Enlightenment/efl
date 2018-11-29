@@ -3,7 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eina {
+namespace Eina {
 
 public interface ISliceBase
 {
@@ -40,7 +40,7 @@ public struct Slice : ISliceBase
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct Rw_Slice : ISliceBase
+public struct RwSlice : ISliceBase
 {
     public UIntPtr Len {get;set;}
     public IntPtr Mem {get;set;}
@@ -51,13 +51,13 @@ public struct Rw_Slice : ISliceBase
         set { Len = (UIntPtr) value; }
     }
 
-    public Rw_Slice(IntPtr mem, UIntPtr len)
+    public RwSlice(IntPtr mem, UIntPtr len)
     {
         Mem = mem;
         Len = len;
     }
 
-    public Rw_Slice PinnedDataSet(IntPtr mem, UIntPtr len)
+    public RwSlice PinnedDataSet(IntPtr mem, UIntPtr len)
     {
         Mem = mem;
         Len = len;
@@ -77,7 +77,7 @@ public struct Rw_Slice : ISliceBase
 
 public static class Eina_SliceUtils
 {
-    public static byte[] GetBytes(this eina.ISliceBase slc)
+    public static byte[] GetBytes(this Eina.ISliceBase slc)
     {
         var size = (int)(slc.Len);
         byte[] mArray = new byte[size];

@@ -1,9 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using static eina.EinaNative.StrbufNativeMethods;
+using static Eina.EinaNative.StrbufNativeMethods;
 
-namespace eina
+namespace Eina
 {
 namespace EinaNative
 {

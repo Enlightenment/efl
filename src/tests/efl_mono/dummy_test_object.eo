@@ -1,8 +1,8 @@
 import eina_types;
 
-type Test.MyInt: int;
+type Dummy.MyInt: int;
 
-enum Test.SampleEnum {
+enum Dummy.SampleEnum {
    v0,
    v1,
    v2,
@@ -10,7 +10,7 @@ enum Test.SampleEnum {
    v4,
 }
 
-struct Test.StructSimple
+struct Dummy.StructSimple
 {
    fbyte: byte;
    fubyte: ubyte;
@@ -40,7 +40,7 @@ struct Test.StructSimple
    fdouble: double;
    fbool: bool;
    fvoid_ptr: void_ptr;
-   fenum: Test.SampleEnum;
+   fenum: Dummy.SampleEnum;
    // fboolptr: ptr(bool); // TODO
    // fbyteptr: ptr(byte);
    // fubyteptr: ptr(ubyte);
@@ -55,14 +55,14 @@ struct Test.StructSimple
    // ffloatptr: ptr(float);
    // fdoubleptr: ptr(double);
    // fvoid_ptrptr: ptr(void_ptr);
-   // fenumptr: ptr(Test.SampleEnum);
+   // fenumptr: ptr(Dummy.SampleEnum);
    fstring: string;
    fmstring: mstring;
    fstringshare: stringshare;
-   fmyint: Test.MyInt;
+   fmyint: Dummy.MyInt;
 }
 
-struct Test.StructComplex {
+struct Dummy.StructComplex {
    farray: array<ptr(int)>;
    finarray: inarray<int>;
    flist: list<string>;
@@ -74,32 +74,32 @@ struct Test.StructComplex {
    fbinbuf: ptr(Eina.Binbuf);
    fslice: Eina.Slice;
    // fslice: ptr(Eina.Slice); // TODO
-   fobj: Test.Numberwrapper;
+   fobj: Dummy.Numberwrapper;
 }
 
-function Test.SimpleCb {
+function Dummy.SimpleCb {
    params {
       a: int;
    }
    return: int;
 };
 
-function Test.FormatCb {
+function Dummy.FormatCb {
    params {
       @in str: strbuf;
       @in value: const(any_value);
    }
 };
 
-class Test.Testing extends Efl.Object implements Efl.Part {
+class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface, Dummy.Another_Iface {
 
    parts {
-      part1: Test.Testing; [[ Part number one. ]]
-      part2: Test.Testing; [[ Part number two. ]]
+      part_one: Dummy.Test_Object; [[ Part number one. ]]
+      part_two: Dummy.Test_Object; [[ Part number two. ]]
    }
    methods {
       return_object {
-         return: Test.Testing;
+         return: Dummy.Test_Object;
       }
 
       int_out {
@@ -451,14 +451,14 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       /* Object */
       eina_array_obj_in {
          params {
-            @in arr: array<Test.Numberwrapper>;
+            @in arr: array<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
       eina_array_obj_in_own {
          params {
-            @in arr: array<Test.Numberwrapper @owned> @owned;
+            @in arr: array<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
@@ -468,7 +468,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_array_obj_out {
          params {
-            @out arr: array<Test.Numberwrapper>;
+            @out arr: array<Dummy.Numberwrapper>;
          }
          return: bool;
       }
@@ -478,27 +478,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_array_obj_out_own {
          params {
-            @out arr: array<Test.Numberwrapper @owned> @owned;
+            @out arr: array<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
 
       eina_array_obj_return {
-         return: array<Test.Numberwrapper>;
+         return: array<Dummy.Numberwrapper>;
       }
       check_eina_array_obj_return {
          return: bool;
       }
 
       eina_array_obj_return_own {
-         return: array<Test.Numberwrapper @owned> @owned;
+         return: array<Dummy.Numberwrapper @owned> @owned;
       }
 
       eina_array_obj_return_in {
          params {
-            @in arr: array<Test.Numberwrapper>;
+            @in arr: array<Dummy.Numberwrapper>;
          }
-         return: array<Test.Numberwrapper>;
+         return: array<Dummy.Numberwrapper>;
      }
 
       /* Eina Inarray */
@@ -598,14 +598,14 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       /* Object */
       eina_inarray_obj_in {
          params {
-            @in arr: inarray<Test.Numberwrapper>;
+            @in arr: inarray<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
       eina_inarray_obj_in_own {
          params {
-            @in arr: inarray<Test.Numberwrapper @owned> @owned;
+            @in arr: inarray<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
@@ -615,7 +615,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_inarray_obj_out {
          params {
-            @out arr: inarray<Test.Numberwrapper>;
+            @out arr: inarray<Dummy.Numberwrapper>;
          }
          return: bool;
       }
@@ -625,27 +625,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_inarray_obj_out_own {
          params {
-            @out arr: inarray<Test.Numberwrapper @owned> @owned;
+            @out arr: inarray<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
 
       eina_inarray_obj_return {
-         return: inarray<Test.Numberwrapper>;
+         return: inarray<Dummy.Numberwrapper>;
       }
       check_eina_inarray_obj_return {
          return: bool;
       }
 
       eina_inarray_obj_return_own {
-         return: inarray<Test.Numberwrapper @owned> @owned;
+         return: inarray<Dummy.Numberwrapper @owned> @owned;
       }
 
       eina_inarray_obj_return_in {
          params {
-            @in arr: inarray<Test.Numberwrapper>;
+            @in arr: inarray<Dummy.Numberwrapper>;
          }
-         return: inarray<Test.Numberwrapper>;
+         return: inarray<Dummy.Numberwrapper>;
      }
 
       /* Eina List */
@@ -745,14 +745,14 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       /* Object */
       eina_list_obj_in {
          params {
-            @in lst: list<Test.Numberwrapper>;
+            @in lst: list<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
       eina_list_obj_in_own {
          params {
-            @in lst: list<Test.Numberwrapper @owned> @owned;
+            @in lst: list<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
@@ -762,7 +762,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_list_obj_out {
          params {
-            @out lst: list<Test.Numberwrapper>;
+            @out lst: list<Dummy.Numberwrapper>;
          }
          return: bool;
       }
@@ -772,27 +772,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_list_obj_out_own {
          params {
-            @out lst: list<Test.Numberwrapper @owned> @owned;
+            @out lst: list<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
 
       eina_list_obj_return {
-         return: list<Test.Numberwrapper>;
+         return: list<Dummy.Numberwrapper>;
       }
       check_eina_list_obj_return {
          return: bool;
       }
 
       eina_list_obj_return_own {
-         return: list<Test.Numberwrapper @owned> @owned;
+         return: list<Dummy.Numberwrapper @owned> @owned;
       }
 
       eina_list_obj_return_in {
          params {
-            @in lst: list<Test.Numberwrapper>;
+            @in lst: list<Dummy.Numberwrapper>;
          }
-         return: list<Test.Numberwrapper>;
+         return: list<Dummy.Numberwrapper>;
       }
 
       /* Eina Inlist */
@@ -892,14 +892,14 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       /* Object */
       eina_inlist_obj_in {
          params {
-            @in lst: inlist<Test.Numberwrapper>;
+            @in lst: inlist<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
       eina_inlist_obj_in_own {
          params {
-            @in lst: inlist<Test.Numberwrapper @owned> @owned;
+            @in lst: inlist<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
@@ -909,7 +909,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_inlist_obj_out {
          params {
-            @out lst: inlist<Test.Numberwrapper>;
+            @out lst: inlist<Dummy.Numberwrapper>;
          }
          return: bool;
       }
@@ -919,27 +919,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_inlist_obj_out_own {
          params {
-            @out lst: inlist<Test.Numberwrapper @owned> @owned;
+            @out lst: inlist<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
 
       eina_inlist_obj_return {
-         return: inlist<Test.Numberwrapper>;
+         return: inlist<Dummy.Numberwrapper>;
       }
       check_eina_inlist_obj_return {
          return: bool;
       }
 
       eina_inlist_obj_return_own {
-         return: inlist<Test.Numberwrapper @owned> @owned;
+         return: inlist<Dummy.Numberwrapper @owned> @owned;
       }
 
       eina_inlist_obj_return_in {
          params {
-            @in lst: inlist<Test.Numberwrapper>;
+            @in lst: inlist<Dummy.Numberwrapper>;
          }
-         return: inlist<Test.Numberwrapper>;
+         return: inlist<Dummy.Numberwrapper>;
       }
 
 
@@ -1052,58 +1052,58 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       // Object //
       eina_hash_obj_in {
          params {
-            @in hsh: hash<Test.Numberwrapper, Test.Numberwrapper>;
-            @in nwk1: Test.Numberwrapper;
-            @in nwv1: Test.Numberwrapper;
-            @out nwk2: Test.Numberwrapper;
-            @out nwv2: Test.Numberwrapper;
+            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @out nwk2: Dummy.Numberwrapper;
+            @out nwv2: Dummy.Numberwrapper;
          }
          return: bool;
       }
 
       eina_hash_obj_in_own {
          params {
-            @in hsh: hash<Test.Numberwrapper, Test.Numberwrapper @owned> @owned;
-            @in nwk1: Test.Numberwrapper;
-            @in nwv1: Test.Numberwrapper;
-            @out nwk2: Test.Numberwrapper;
-            @out nwv2: Test.Numberwrapper;
+            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @out nwk2: Dummy.Numberwrapper;
+            @out nwv2: Dummy.Numberwrapper;
          }
          return: bool;
       }
       check_eina_hash_obj_in_own {
          params {
-            @in nwk1: Test.Numberwrapper;
-            @in nwv1: Test.Numberwrapper;
-            @in nwk2: Test.Numberwrapper;
-            @in nwv2: Test.Numberwrapper;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
          }
          return: bool;
       }
 
       eina_hash_obj_out {
          params {
-            @out hsh: hash<Test.Numberwrapper, Test.Numberwrapper>;
-            @out nwk: Test.Numberwrapper;
-            @out nwv: Test.Numberwrapper;
+            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
          }
          return: bool;
       }
       check_eina_hash_obj_out {
          params {
-            @in nwk1: Test.Numberwrapper;
-            @in nwv1: Test.Numberwrapper;
-            @in nwk2: Test.Numberwrapper;
-            @in nwv2: Test.Numberwrapper;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
          }
          return: bool;
       }
 
       eina_hash_obj_out_own {
          params {
-            @out hsh: hash<Test.Numberwrapper, Test.Numberwrapper @owned> @owned;
-            @out nwk: Test.Numberwrapper;
-            @out nwv: Test.Numberwrapper;
+            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
          }
          return: bool;
       }
@@ -1113,27 +1113,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_hash_obj_return {
          params {
-            @out nwk: Test.Numberwrapper;
-            @out nwv: Test.Numberwrapper;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
          }
-         return: hash<Test.Numberwrapper, Test.Numberwrapper>;
+         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
       }
       check_eina_hash_obj_return {
          params {
-            @in nwk1: Test.Numberwrapper;
-            @in nwv1: Test.Numberwrapper;
-            @in nwk2: Test.Numberwrapper;
-            @in nwv2: Test.Numberwrapper;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
          }
          return: bool;
       }
 
       eina_hash_obj_return_own {
          params {
-            @out nwk: Test.Numberwrapper;
-            @out nwv: Test.Numberwrapper;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
          }
-         return: hash<Test.Numberwrapper, Test.Numberwrapper @owned> @owned;
+         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
       }
       check_eina_hash_obj_return_own {
          return: bool;
@@ -1236,14 +1236,14 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       /* Object */
       eina_iterator_obj_in {
          params {
-            @in itr: iterator<Test.Numberwrapper>;
+            @in itr: iterator<Dummy.Numberwrapper>;
          }
          return: bool;
       }
 
       eina_iterator_obj_in_own {
          params {
-            @in itr: iterator<Test.Numberwrapper @owned> @owned;
+            @in itr: iterator<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
@@ -1253,7 +1253,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_iterator_obj_out {
          params {
-            @out itr: iterator<Test.Numberwrapper>;
+            @out itr: iterator<Dummy.Numberwrapper>;
          }
          return: bool;
       }
@@ -1263,27 +1263,27 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       eina_iterator_obj_out_own {
          params {
-            @out itr: iterator<Test.Numberwrapper @owned> @owned;
+            @out itr: iterator<Dummy.Numberwrapper @owned> @owned;
          }
          return: bool;
       }
 
       eina_iterator_obj_return {
-         return: iterator<Test.Numberwrapper>;
+         return: iterator<Dummy.Numberwrapper>;
       }
       check_eina_iterator_obj_return {
          return: bool;
       }
 
       eina_iterator_obj_return_own {
-         return: iterator<Test.Numberwrapper @owned> @owned;
+         return: iterator<Dummy.Numberwrapper @owned> @owned;
       }
 
      /* Function Pointer */
 
      set_callback {
          params {
-            cb: Test.SimpleCb;
+            cb: Dummy.SimpleCb;
          }
       }
 
@@ -1385,158 +1385,158 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       struct_simple_in {
          params {
-            @in simple: Test.StructSimple;
+            @in simple: Dummy.StructSimple;
          }
          return: bool;
       }
 
       struct_simple_ptr_in {
          params {
-            @in simple: ptr(Test.StructSimple);
+            @in simple: ptr(Dummy.StructSimple);
          }
          return: bool;
       }
 
       struct_simple_ptr_in_own {
          params {
-            @in simple: ptr(Test.StructSimple) @owned;
+            @in simple: ptr(Dummy.StructSimple) @owned;
          }
-         return: Test.StructSimple;
+         return: Dummy.StructSimple;
       }
 
       struct_simple_out {
          params {
-            @out simple: Test.StructSimple;
+            @out simple: Dummy.StructSimple;
          }
          return: bool;
       }
 
       struct_simple_ptr_out {
          params {
-            @out simple: ptr(Test.StructSimple);
+            @out simple: ptr(Dummy.StructSimple);
          }
-         return: Test.StructSimple;
+         return: Dummy.StructSimple;
       }
 
       struct_simple_ptr_out_own {
          params {
-            @out simple: ptr(Test.StructSimple) @owned;
+            @out simple: ptr(Dummy.StructSimple) @owned;
          }
-         return: Test.StructSimple;
+         return: Dummy.StructSimple;
       }
 
       struct_simple_return {
-         return: Test.StructSimple;
+         return: Dummy.StructSimple;
       }
 
       struct_simple_ptr_return {
-         return: ptr(Test.StructSimple);
+         return: ptr(Dummy.StructSimple);
       }
 
       struct_simple_ptr_return_own {
-         return: ptr(Test.StructSimple) @owned;
+         return: ptr(Dummy.StructSimple) @owned;
       }
 
       call_struct_simple_in {
          params {
-            @in simple: Test.StructSimple;
+            @in simple: Dummy.StructSimple;
          }
       }
 
       call_struct_simple_ptr_in {
          params {
-            @in simple: ptr(Test.StructSimple);
+            @in simple: ptr(Dummy.StructSimple);
          }
       }
 
       call_struct_simple_ptr_in_own {
          params {
-            @in simple: ptr(Test.StructSimple) @owned;
+            @in simple: ptr(Dummy.StructSimple) @owned;
          }
       }
 
       call_struct_simple_out {
          params {
-            @out simple: Test.StructSimple;
+            @out simple: Dummy.StructSimple;
          }
       }
 
       call_struct_simple_ptr_out {
          params {
-            @out simple: ptr(Test.StructSimple);
+            @out simple: ptr(Dummy.StructSimple);
          }
       }
 
       call_struct_simple_ptr_out_own {
          params {
-            @out simple: ptr(Test.StructSimple) @owned;
+            @out simple: ptr(Dummy.StructSimple) @owned;
          }
       }
 
       call_struct_simple_return {
-         return: Test.StructSimple;
+         return: Dummy.StructSimple;
       }
 
       call_struct_simple_ptr_return {
-         return: ptr(Test.StructSimple);
+         return: ptr(Dummy.StructSimple);
       }
 
       call_struct_simple_ptr_return_own {
-         return: ptr(Test.StructSimple) @owned;
+         return: ptr(Dummy.StructSimple) @owned;
       }
 
       struct_complex_in {
          params {
-            @in complex: Test.StructComplex;
+            @in complex: Dummy.StructComplex;
          }
          return: bool;
       }
 
       struct_complex_ptr_in {
          params {
-            @in complex: ptr(Test.StructComplex);
+            @in complex: ptr(Dummy.StructComplex);
          }
          return: bool;
       }
 
       struct_complex_ptr_in_own {
          params {
-            @in complex: ptr(Test.StructComplex) @owned;
+            @in complex: ptr(Dummy.StructComplex) @owned;
          }
          return: bool;
       }
 
       struct_complex_out {
          params {
-            @out complex: Test.StructComplex;
+            @out complex: Dummy.StructComplex;
          }
          return: bool;
       }
 
       // struct_complex_ptr_out {
       //    params {
-      //       @out complex: ptr(Test.StructComplex);
+      //       @out complex: ptr(Dummy.StructComplex);
       //    }
       //    return: bool;
       // }
       //
       // struct_complex_ptr_out_own {
       //    params {
-      //       @out complex: ptr(Test.StructComplex) @owned;
+      //       @out complex: ptr(Dummy.StructComplex) @owned;
       //    }
       //    return: bool;
       // }
 
       struct_complex_return {
-         return: Test.StructComplex;
+         return: Dummy.StructComplex;
       }
 
       // struct_complex_ptr_return {
-      //    return: ptr(Test.StructComplex);
+      //    return: ptr(Dummy.StructComplex);
       // }
       //
       // struct_complex_ptr_return_own {
-      //    return: ptr(Test.StructComplex) @owned;
+      //    return: ptr(Dummy.StructComplex) @owned;
       // }
 
       emit_event_with_string {
@@ -1561,7 +1561,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       }
       emit_event_with_obj {
          params {
-            @in data: Test.Testing;
+            @in data: Dummy.Test_Object;
          }
       }
 
@@ -1573,7 +1573,7 @@ class Test.Testing extends Efl.Object implements Efl.Part {
 
       emit_event_with_struct {
          params {
-            @in data: Test.StructSimple;
+            @in data: Dummy.StructSimple;
          }
       }
 
@@ -1595,17 +1595,17 @@ class Test.Testing extends Efl.Object implements Efl.Part {
          params {
             @in str: strbuf;
             @in value: const(any_value);
-            @in func: Test.FormatCb;
+            @in func: Dummy.FormatCb;
          }
       }
 
       bypass_typedef {
          params {
-            @in data: Test.MyInt;
-            @out receiver: Test.MyInt;
+            @in data: Dummy.MyInt;
+            @out receiver: Dummy.MyInt;
          }
 
-         return: Test.MyInt;
+         return: Dummy.MyInt;
       }
 
       @property klass_prop @class {
@@ -1647,14 +1647,17 @@ class Test.Testing extends Efl.Object implements Efl.Part {
       class.destructor;
       Efl.Object.constructor;
       Efl.Part.part_get;
+      Dummy.Test_Iface.emit_test_conflicted;
+      Dummy.Test_Iface.emit_nonconflicted;
+      Dummy.Another_Iface.emit_another_conflicted;
    }
    events {
       evt,with,string @hot: string;
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
-      evt,with,obj @hot: Test.Testing;
+      evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
-      evt,with,struct @hot: Test.StructSimple;
+      evt,with,struct @hot: Dummy.StructSimple;
    }
 }

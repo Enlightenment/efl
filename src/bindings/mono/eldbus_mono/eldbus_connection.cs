@@ -193,7 +193,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_connection_send");
         }
 
@@ -225,7 +225,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_request");
         }
 
@@ -246,7 +246,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_release");
         }
 
@@ -267,7 +267,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_get");
         }
 
@@ -288,7 +288,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_has");
         }
 
@@ -306,7 +306,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_list");
         }
 
@@ -324,7 +324,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_activatable_list");
         }
 
@@ -342,7 +342,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_hello");
         }
 
@@ -363,7 +363,7 @@ public class Connection : IDisposable
 
         if(pending_hdl == IntPtr.Zero)
         {
-            eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_start");
         }
 

@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-public class MyBox : evas.BoxInherit
+public class MyBox : Evas.Box
 {
-    public MyBox(efl.Object parent) : base(parent) {}
+    public MyBox(Efl.Object parent) : base(parent) {}
 
     [DllImport("evas")] static extern void evas_obj_box_layout_vertical(IntPtr obj, IntPtr data, IntPtr privdata);
     [DllImport("evas")] static extern void evas_obj_box_layout_horizontal(IntPtr obj, IntPtr data, IntPtr privdata);
@@ -15,11 +15,11 @@ public class MyBox : evas.BoxInherit
 
     override public void CalculateGroup()
     {
-        IntPtr evas = evas_object_evas_get(raw_handle);
+        IntPtr evas = evas_object_evas_get(NativeHandle);
         evas_event_freeze(evas);
-        eina.Log.Debug("called group_calculate");
+        Eina.Log.Debug("called group_calculate");
         // slayouting_set(true);
-        evas_obj_box_layout_vertical(raw_handle, IntPtr.Zero, IntPtr.Zero);
+        evas_obj_box_layout_vertical(NativeHandle, IntPtr.Zero, IntPtr.Zero);
         // layouting_set(false);
         // children_changed_set(false);
         evas_event_thaw(evas);
@@ -46,7 +46,7 @@ class TestEvas
     /*     canvas.visible_set(true); */
 
     /*     efl.Object parent = canvas.parent_get(); */
-    /*     Test.Assert(parent.raw_handle != IntPtr.Zero); */
+    /*     Test.Assert(parent.NativeHandle != IntPtr.Zero); */
 
     /*     efl.canvas.Rectangle rect = new efl.canvas.RectangleConcrete(canvas); */
     /*     rect.color_set(255, 255, 255, 255); */

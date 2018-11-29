@@ -4,11 +4,11 @@ public class ExampleEinaBinbuf01
 {
     public static void Main()
     {
-        eina.Config.Init();
+        Eina.Config.Init();
 
         var bytes = new byte[]{0, 1, 2, 3, 4, 5, 6};
 
-        var bb = new eina.Binbuf();
+        var bb = new Eina.Binbuf();
 
         // Append initial bytes
         bb.Append(bytes);

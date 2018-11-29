@@ -4,11 +4,11 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.ListNativeFunctions;
-using eina.Callbacks;
+using static Eina.TraitFunctions;
+using static Eina.ListNativeFunctions;
+using Eina.Callbacks;
 
-namespace eina {
+namespace Eina {
 
 public static class ListNativeFunctions
 {
@@ -328,14 +328,14 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
 
-    public eina.Iterator<T> GetIterator()
+    public Eina.Iterator<T> GetIterator()
     {
-        return new eina.Iterator<T>(eina_list_iterator_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_list_iterator_new(Handle), true, false);
     }
 
-    public eina.Iterator<T> GetReversedIterator()
+    public Eina.Iterator<T> GetReversedIterator()
     {
-        return new eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true, false);
+        return new Eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true, false);
     }
 
     public IEnumerator<T> GetEnumerator()
@@ -352,9 +352,9 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary> Gets an Accessor for this List.</summary>
-    public eina.Accessor<T> GetAccessor()
+    public Eina.Accessor<T> GetAccessor()
     {
-        return new eina.Accessor<T>(eina_list_accessor_new(Handle), Ownership.Managed);
+        return new Eina.Accessor<T>(eina_list_accessor_new(Handle), Ownership.Managed);
     }
 }
 

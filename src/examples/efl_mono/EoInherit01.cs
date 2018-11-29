@@ -1,8 +1,8 @@
 using static System.Console;
 
-class PlusTenNumberWrapper : example.NumberwrapperInherit
+class PlusTenNumberWrapper : Example.Numberwrapper
 {
-    public PlusTenNumberWrapper(efl.IObject parent = null)
+    public PlusTenNumberWrapper(Efl.Object parent = null)
         : base(parent)
     {}
 
@@ -20,8 +20,8 @@ public class ExampleEoInherit01
 {
     public static void Main()
     {
-        eina.Config.Init();
-        efl.eo.Config.Init();
+        Eina.Config.Init();
+        Efl.Eo.Config.Init();
 
         var inheritObj = new PlusTenNumberWrapper();
 
@@ -52,7 +52,7 @@ public class ExampleEoInherit01
         WriteLine("## Using original object ##\n");
 
         // Check original EFL object
-        var origObj = new example.Numberwrapper();
+        var origObj = new Example.Numberwrapper();
         given = 111;
         origObj.SetNumber(given);
         stored = origObj.GetNumber();

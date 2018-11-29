@@ -4,13 +4,13 @@ using System;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace eina
+namespace Eina
 {
 namespace Callbacks
 {
 
-public delegate int Eina_Compare_Cb(IntPtr data1, IntPtr data2);
-public delegate void Eina_Free_Cb(IntPtr data);
+public delegate int EinaCompareCb(IntPtr data1, IntPtr data2);
+public delegate void EinaFreeCb(IntPtr data);
 
 }
 
@@ -107,11 +107,11 @@ public static class PrimitiveConversion
    {
        if (nat == IntPtr.Zero)
        {
-           eina.Log.Error("Null pointer for primitive type.");
+           Eina.Log.Error("Null pointer for primitive type.");
            return default(T);
        }
 
-       var w = Marshal.PtrToStructure<eina.ConvertWrapper<T> >(nat);
+       var w = Marshal.PtrToStructure<Eina.ConvertWrapper<T> >(nat);
        return w.val;
    }
 

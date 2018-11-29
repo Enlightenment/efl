@@ -391,6 +391,25 @@ ecore_ecore_ipc_server_example_CPPFLAGS = $(ECORE_COMMON_CPPFLAGS) $(AM_CPPFLAGS
 ecore_ecore_ipc_client_example_SOURCES = ecore/ecore_ipc_client_example.c
 ecore_ecore_ipc_client_example_CPPFLAGS = $(ECORE_COMMON_CPPFLAGS) $(AM_CPPFLAGS)
 
+if HAVE_CSHARP
+
+if HAVE_WIN32
+MCSFLAGS ?=
+MCSFLAGS += -define:WIN32
+endif
+
+EXTRA_PROGRAMS += \
+ecore/efl_mono_loop_timer_example
+
+ecore_efl_mono_loop_timer_example_SOURCES = \
+	ecore/efl_mono_loop_timer_example.cs
+
+ecore/efl_mono_loop_timer_example$(EXEEXT): $(ecore_efl_mono_loop_timer_example_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
+	@rm -f ecore/efl_mono_loop_timer_example$(EXEEXT)
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
+
+endif
+
 
 ECORE_SRCS = \
 ecore/ecore_animator_example.c \

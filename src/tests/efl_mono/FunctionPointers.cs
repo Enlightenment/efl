@@ -29,7 +29,7 @@ class TestFunctionPointers
     public static void set_callback_basic()
     {
         setup();
-        test.ITesting obj = new test.Testing();
+        var obj = new Dummy.TestObject();
         obj.SetCallback(twice);
 
         Test.Assert(called == false, "set_callback should not call the callback");
@@ -44,7 +44,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.ITesting obj = new test.Testing();
+        var obj = new Dummy.TestObject();
         obj.SetCallback(y => {
                     called = true;
                     return y + 4;
@@ -62,7 +62,7 @@ class TestFunctionPointers
     {
         setup();
 
-        test.ITesting obj = new test.Testing();
+        var obj = new Dummy.TestObject();
         obj.SetCallback(twice);
         Test.Assert(called == false, "set_callback should not call the callback");
 
@@ -83,7 +83,7 @@ class TestFunctionPointers
         Test.AssertEquals(42 * 42, x);
     }
 
-    class NoOverride : test.TestingInherit {
+    class NoOverride : Dummy.TestObject {
     }
     public static void set_callback_inherited_no_override()
     {
@@ -99,15 +99,15 @@ class TestFunctionPointers
         Test.AssertEquals(42 * 3, x);
     }
 
-    class WithOverride : test.TestingInherit {
+    class WithOverride : Dummy.TestObject {
         public bool set_called = false;
         public bool invoke_called = false;
-        public test.SimpleCb cb = null;
+        public Dummy.SimpleCb cb = null;
 
         public WithOverride() : base() {
 
         }
-        public override void SetCallback(test.SimpleCb cb) {
+        public override void SetCallback(Dummy.SimpleCb cb) {
             set_called = true;
             this.cb = cb;
         }
@@ -115,7 +115,7 @@ class TestFunctionPointers
             invoke_called = true;
             if (cb != null)
                 return cb(a);
-            eina.Log.Error("No callback set upon call_callback invocation");
+            Eina.Log.Error("No callback set upon call_callback invocation");
             return -1;
         }
     }

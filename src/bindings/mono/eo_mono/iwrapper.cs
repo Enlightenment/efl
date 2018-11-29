@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using static eina.NativeCustomExportFunctions;
+using static Eina.NativeCustomExportFunctions;
 
-namespace efl { namespace eo {
+namespace Efl { namespace Eo {
 
 public class Globals {
     [DllImport(efl.Libs.Eo)] public static extern void efl_object_init();
@@ -20,8 +20,10 @@ public class Globals {
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_ref(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_unref(IntPtr eo);
+    [DllImport(efl.Libs.Eo)] public static extern int
+        efl_ref_count(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr base0);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
@@ -55,12 +57,12 @@ public class Globals {
               System.IntPtr obj,
               IntPtr desc,
               short priority,
-              efl.Event_Cb cb,
+              Efl.EventCb cb,
               System.IntPtr data);
    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
               System.IntPtr obj,
               IntPtr desc,
-              efl.Event_Cb cb,
+              Efl.EventCb cb,
               System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
@@ -83,36 +85,40 @@ public class Globals {
         if(initializer != null)
             description.class_initializer = Marshal.GetFunctionPointerForDelegate(initializer);
 
-        IntPtr description_ptr = eina.MemoryNative.Alloc(Marshal.SizeOf(description));
+        IntPtr description_ptr = Eina.MemoryNative.Alloc(Marshal.SizeOf(description));
         Marshal.StructureToPtr(description, description_ptr, false);
       
-        eina.Log.Debug("Going to register!");
-        IntPtr klass = efl.eo.Globals.efl_class_new(description_ptr, base_klass, IntPtr.Zero);
+        Eina.Log.Debug("Going to register!");
+        IntPtr klass = Efl.Eo.Globals.efl_class_new(description_ptr, base_klass, IntPtr.Zero);
         if(klass == IntPtr.Zero)
-            eina.Log.Error("klass was not registered");
-        eina.Log.Debug("Registered?");
+            Eina.Log.Error("klass was not registered");
+        else
+            Eina.Log.Debug("Registered class successfully");
         return klass;
     }
-    public static IntPtr instantiate_start(IntPtr klass, efl.IObject parent)
+    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
     {
-        eina.Log.Debug("Instantiating");
+        Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
-            parent_ptr = parent.raw_handle;
+            parent_ptr = parent.NativeHandle;
 
-        System.IntPtr eo = efl.eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        Console.WriteLine($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
+        Console.WriteLine($"Parent was 0x{parent_ptr.ToInt64()}");
         return eo;
     }
 
     public static IntPtr instantiate_end(IntPtr eo) {
-        eina.Log.Debug("efl_add_internal_start returned");
-        eo = efl.eo.Globals._efl_add_end(eo, 1, 0);
-        eina.Log.Debug("efl_add_end returned");
+        Eina.Log.Debug("calling efl_add_internal_end");
+        eo = Efl.Eo.Globals._efl_add_end(eo, 1, 0);
+        Eina.Log.Debug($"efl_add_end returned eo 0x{eo.ToInt64():x}");
         return eo;
     }
-    public static void data_set(efl.eo.IWrapper obj)
+    public static void data_set(Efl.Eo.IWrapper obj)
     {
-      IntPtr pd = efl.eo.Globals.efl_data_scope_get(obj.raw_handle, obj.raw_klass);
+      Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
+      IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
       {
           GCHandle gch = GCHandle.Alloc(obj);
           EolianPD epd;
@@ -120,13 +126,13 @@ public class Globals {
           Marshal.StructureToPtr(epd, pd, false);
       }
     }
-    public static efl.eo.IWrapper data_get(IntPtr pd)
+    public static Efl.Eo.IWrapper data_get(IntPtr pd)
     {
         EolianPD epd = (EolianPD)Marshal.PtrToStructure(pd, typeof(EolianPD));
         if(epd.pointer != IntPtr.Zero)
         {
             GCHandle gch = GCHandle.FromIntPtr(epd.pointer);
-            return (efl.eo.IWrapper)gch.Target;
+            return (Efl.Eo.IWrapper)gch.Target;
         }
         else
             return null;
@@ -137,7 +143,7 @@ public class Globals {
         IntPtr ptr = IntPtr.Zero;
         if (!dict.TryGetValue(str, out ptr))
         {
-            ptr = eina.StringConversion.ManagedStringToNativeUtf8Alloc(str);
+            ptr = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(str);
             dict[str] = ptr;
         }
 
@@ -149,7 +155,7 @@ public class Globals {
         IntPtr ptr = IntPtr.Zero;
         if (!dict.TryGetValue(str, out ptr))
         {
-            ptr = eina.Stringshare.eina_stringshare_add(str);
+            ptr = Eina.Stringshare.eina_stringshare_add(str);
             dict[str] = ptr;
         }
 
@@ -160,7 +166,7 @@ public class Globals {
     {
         foreach(IntPtr ptr in dict.Values)
         {
-            eina.MemoryNative.Free(ptr);
+            Eina.MemoryNative.Free(ptr);
         }
     }
 
@@ -168,7 +174,7 @@ public class Globals {
     {
         foreach(IntPtr ptr in dict.Values)
         {
-            eina.Stringshare.eina_stringshare_del(ptr);
+            Eina.Stringshare.eina_stringshare_del(ptr);
         }
     }
 
@@ -178,27 +184,27 @@ public class Globals {
         handle.Free();
     }
 
-    public static System.Threading.Tasks.Task<eina.Value> WrapAsync(eina.Future future, CancellationToken token)
+    public static System.Threading.Tasks.Task<Eina.Value> WrapAsync(Eina.Future future, CancellationToken token)
     {
         // Creates a task that will wait for SetResult for completion.
         // TaskCompletionSource is used to create tasks for 'external' Task sources.
-        var tcs = new System.Threading.Tasks.TaskCompletionSource<eina.Value>();
+        var tcs = new System.Threading.Tasks.TaskCompletionSource<Eina.Value>();
 
         // Flag to be passed to the cancell callback
         bool fulfilled = false;
 
-        future.Then((eina.Value received) => {
+        future.Then((Eina.Value received) => {
                 lock (future)
                 {
                     // Convert an failed Future to a failed Task.
-                    if (received.GetValueType() == eina.ValueType.Error)
+                    if (received.GetValueType() == Eina.ValueType.Error)
                     {
-                        eina.Error err;
+                        Eina.Error err;
                         received.Get(out err);
-                        if (err == eina.Error.ECANCELED)
+                        if (err == Eina.Error.ECANCELED)
                             tcs.SetCanceled();
                         else
-                            tcs.TrySetException(new efl.FutureException(received));
+                            tcs.TrySetException(new Efl.FutureException(received));
                     }
                     else
                     {
@@ -213,7 +219,7 @@ public class Globals {
         token.Register(() => {
                 lock (future)
                 {
-                    // Will trigger the Then callback above with an eina.Error
+                    // Will trigger the Then callback above with an Eina.Error
                     if (!fulfilled)
                         future.Cancel();
                 }
@@ -238,11 +244,13 @@ public static class Config
 
 public interface IWrapper
 {
-    IntPtr raw_handle
+    /// <summary>Pointer to internal Eo instance.</summary>
+    IntPtr NativeHandle
     {
         get;
     }
-    IntPtr raw_klass
+    /// <summary>Pointer to internal Eo class.</summary>
+    IntPtr NativeClass 
     {
         get;
     }
@@ -265,42 +273,42 @@ public class MarshalTest<T, U> : ICustomMarshaler
 {
     public static ICustomMarshaler GetInstance(string cookie)
     {
-        eina.Log.Debug("MarshalTest.GetInstace cookie " + cookie);
+        Eina.Log.Debug("MarshalTest.GetInstace cookie " + cookie);
         return new MarshalTest<T, U>();
     }
     public void CleanUpManagedData(object ManagedObj)
     {
-        //eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
+        //Eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
         //throw new NotImplementedException();
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
     {
-        //eina.Log.Warning("MarshalTest.CleanUpNativeData not implemented");
+        //Eina.Log.Warning("MarshalTest.CleanUpNativeData not implemented");
         //throw new NotImplementedException();
     }
 
     public int GetNativeDataSize()
     {
-        eina.Log.Debug("MarshalTest.GetNativeDataSize");
+        Eina.Log.Debug("MarshalTest.GetNativeDataSize");
         return 0;
         //return 8;
     }
 
     public IntPtr MarshalManagedToNative(object ManagedObj)
     {
-        eina.Log.Debug("MarshalTest.MarshallManagedToNative");
-        var r = ((IWrapper)ManagedObj).raw_handle;
+        Eina.Log.Debug("MarshalTest.MarshallManagedToNative");
+        var r = ((IWrapper)ManagedObj).NativeHandle;
         if (typeof(U) == typeof(OwnTag))
-            efl.eo.Globals.efl_ref(r);
+            Efl.Eo.Globals.efl_ref(r);
         return r;
     }
 
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
-        eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
+        Eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
         if (typeof(U) != typeof(OwnTag))
-            efl.eo.Globals.efl_ref(pNativeData);
+            Efl.Eo.Globals.efl_ref(pNativeData);
         return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
 //        return null;
     }
@@ -308,13 +316,13 @@ public class MarshalTest<T, U> : ICustomMarshaler
 
 public class StringPassOwnershipMarshaler : ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        var ret = eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
-        eina.MemoryNative.Free(pNativeData);
+        var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
+        Eina.MemoryNative.Free(pNativeData);
         return ret;
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        return eina.MemoryNative.StrDup((string)managedObj);
+        return Eina.MemoryNative.StrDup((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData) {
@@ -339,11 +347,11 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler {
 
 public class StringKeepOwnershipMarshaler: ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
+        return Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        return eina.StringConversion.ManagedStringToNativeUtf8Alloc((string)managedObj);
+        return Eina.StringConversion.ManagedStringToNativeUtf8Alloc((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData) {
@@ -368,13 +376,13 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler {
 
 public class StringsharePassOwnershipMarshaler : ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        var ret = eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
-        eina.Stringshare.eina_stringshare_del(pNativeData);
+        var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
+        Eina.Stringshare.eina_stringshare_del(pNativeData);
         return ret;
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        return eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData) {
@@ -399,11 +407,11 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler {
 
 public class StringshareKeepOwnershipMarshaler : ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
+        return Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        return eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData) {
@@ -428,11 +436,11 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler {
 
 public class StrbufPassOwnershipMarshaler : ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return new eina.Strbuf(pNativeData, eina.Ownership.Managed);
+        return new Eina.Strbuf(pNativeData, Eina.Ownership.Managed);
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        eina.Strbuf buf = managedObj as eina.Strbuf;
+        Eina.Strbuf buf = managedObj as Eina.Strbuf;
         buf.ReleaseOwnership();
         return buf.Handle;
     }
@@ -459,11 +467,11 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler {
 
 public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
     public object MarshalNativeToManaged(IntPtr pNativeData) {
-        return new eina.Strbuf(pNativeData, eina.Ownership.Unmanaged);
+        return new Eina.Strbuf(pNativeData, Eina.Ownership.Unmanaged);
     }
 
     public IntPtr MarshalManagedToNative(object managedObj) {
-        eina.Strbuf buf = managedObj as eina.Strbuf;
+        Eina.Strbuf buf = managedObj as Eina.Strbuf;
         return buf.Handle;
     }
 
@@ -500,18 +508,18 @@ public class EflException : Exception
     }
 }
 
-/// <summary>Exception to be raised when a Task fails due to a failed eina.Future.</summary>
+/// <summary>Exception to be raised when a Task fails due to a failed Eina.Future.</summary>
 public class FutureException : EflException
 {
-    /// <summary>The error code returned by the failed eina.Future.</summary>
-    public eina.Error Error { get; private set; }
+    /// <summary>The error code returned by the failed Eina.Future.</summary>
+    public Eina.Error Error { get; private set; }
 
-    /// <summary>Construct a new exception from the eina.Error stored in the given eina.Value.</summary>
-    public FutureException(eina.Value value) : base("Future failed.")
+    /// <summary>Construct a new exception from the Eina.Error stored in the given Eina.Value.</summary>
+    public FutureException(Eina.Value value) : base("Future failed.")
     {
-        if (value.GetValueType() != eina.ValueType.Error)
-            throw new ArgumentException("FutureException must receive an eina.Value with eina.Error.");
-        eina.Error err;
+        if (value.GetValueType() != Eina.ValueType.Error)
+            throw new ArgumentException("FutureException must receive an Eina.Value with Eina.Error.");
+        Eina.Error err;
         value.Get(out err);
         Error = err;
     }

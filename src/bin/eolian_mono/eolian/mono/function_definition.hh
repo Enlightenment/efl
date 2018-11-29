@@ -83,22 +83,22 @@ struct native_function_definition_generator
         << ")\n"
         << scope_tab << "{\n"
         /****/
-        << scope_tab << scope_tab << "eina.Log.Debug(\"function " << string << " was called\");\n"
+        << scope_tab << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
         /****/
-        << scope_tab << scope_tab << "efl.eo.IWrapper wrapper = efl.eo.Globals.data_get(pd);\n"
+        << scope_tab << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.data_get(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << scope_tab << scope_tab << scope_tab << "try {\n"
         << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_inherit_name << ")wrapper)." << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "eina.Error.Set(eina.Error.EFL_ERROR);\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
         << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
-        << "(efl.eo.Globals.efl_super(obj, " << klass_inherit_name << ".klass)" << *(", " << argument) << ");\n"
+        << "(Efl.Eo.Globals.efl_super(obj, " << klass_inherit_name << ".klass)" << *(", " << argument) << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
@@ -137,7 +137,7 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
-    if(do_super && f.is_static) // Static methods goes only on Concrete classes.
+    if(!do_super && f.is_static) // Static methods goes only on Concrete classes.
       return true;
     if(blacklist::is_function_blacklisted(f.c_name))
       return true;
@@ -145,7 +145,7 @@ struct function_definition_generator
     if(!as_generator
        ("\n\n" << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(f.filename) << ")]\n"
         << scope_tab << eolian_mono::marshall_annotation(true)
-        << " private static extern "
+        << (do_super ? " protected " : " private ") << "static extern "
         << eolian_mono::marshall_type(true)
         << " " << string
         << "(System.IntPtr obj"
@@ -165,13 +165,19 @@ struct function_definition_generator
        (documentation(1)).generate(sink, f, context))
       return false;
 
+    std::string self = "this.NativeHandle";
+
+    // inherited is set in the constructor, true if this instance is from a pure C# class (not generated).
+    if (do_super && !f.is_static)
+      self = "(inherited ? Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass) : " + self + ")";
+    else
+      self = name_helpers::klass_get_full_name(f.klass) + "()";
+
     if(!as_generator
-       (scope_tab << (do_super ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
-        << (do_super ? "efl.eo.Globals.efl_super(" : "")
-        << (f.is_static ? name_helpers::klass_get_full_name(f.klass) + "()": "this.raw_handle")
-        << (do_super ? ", this.raw_klass)" : "")
+        << self
         << *(", " << argument_invocation ) << ");\n"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
