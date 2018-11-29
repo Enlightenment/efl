@@ -4623,7 +4623,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         if (!efl_finalized_get(sd->obj)) return;
         if (EINA_LIKELY(sd->type == ELM_WIN_FAKE))
           return;
-        CRI("Window has no frame object!");
+        if (!_elm_config->win_no_border)
+          CRI("Window has no frame object!");
         return;
      }
 
@@ -4640,6 +4641,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_menu = EINA_FALSE;
         sd->csd.need_indicator = EINA_FALSE;
      }
+   else if (_elm_config->win_no_border)
+     sd->csd.need_borderless = EINA_TRUE;
    else
      {
         sd->csd.need_shadow = sd->csd.need && (!sd->maximized);
@@ -5606,7 +5609,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
            case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
            default: break;
           }
-        _elm_win_frame_add(sd, element, style);
+
+        if (!_elm_config->win_no_border)
+          _elm_win_frame_add(sd, element, style);
 
         if (sd->indimode != EFL_UI_WIN_INDICATOR_OFF)
           _indicator_add(sd);
@@ -7330,13 +7335,29 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
      return EINA_FALSE;
    if (elm_widget_is_legacy(sd->obj))
      {
-        if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
-          return EINA_FALSE;
+        if (!_elm_config->win_no_border)
+          {
+             if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
+               return EINA_FALSE;
+          }
+        else
+          {
+             if (!edje_object_part_swallow(sd->legacy.edje, "elm.swallow.background", bg))
+               return EINA_FALSE;
+          }
      }
    else
      {
-        if (!edje_object_part_swallow(sd->frame_obj, "efl.background", bg))
-          return EINA_FALSE;
+        if (!_elm_config->win_no_border)
+          {
+             if (!edje_object_part_swallow(sd->frame_obj, "efl.background", bg))
+               return EINA_FALSE;
+          }
+        else
+          {
+             if (!edje_object_part_swallow(sd->legacy.edje, "efl.background", bg))
+               return EINA_FALSE;
+          }
      }
    efl_gfx_entity_visible_set(bg, 1);
    efl_gfx_size_hint_align_set(bg, -1, -1);
