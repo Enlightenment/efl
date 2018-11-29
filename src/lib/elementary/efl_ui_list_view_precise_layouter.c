@@ -325,14 +325,15 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_
    if(pd->initialized)
      return EINA_TRUE;
 
-   if(!pd->model || !pd->count_total)
+   efl_replace(&pd->modeler, modeler);
+
+   if(!pd->model || !pd->modeler)
      return EINA_FALSE;
 
    pd->recalc = EINA_TRUE;
    pd->initialized = EINA_TRUE;
 
-   pd->modeler = modeler;
-   pd->seg_array = seg_array;
+   efl_replace(&pd->seg_array, seg_array);
 
    efl_ui_list_view_model_load_range_set(pd->modeler, 0, pd->count_total); // load all
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
@@ -351,27 +352,36 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Precise_Layouter_Data *pd)
    Efl_Ui_List_View_Seg_Array_Node* node;
    int i = 0;
 
-   evas_object_event_callback_del_full(pd->modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
-   efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
-   efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
-   pd->count_total = 0;
-
-   Eina_Accessor *nodes = efl_ui_list_view_seg_array_node_accessor_get(pd->seg_array);
-   EINA_ACCESSOR_FOREACH(nodes, i, node)
+   if (pd->model)
      {
-        _node_unrealize(pd, node);
-        free(node->layout_data);
+         efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
+         efl_event_callback_del(pd->model, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed_cb, pd);
+         pd->count_total = 0;
      }
 
-   eina_accessor_free(nodes);
+   if (pd->seg_array)
+     {
+        Eina_Accessor *nodes = efl_ui_list_view_seg_array_node_accessor_get(pd->seg_array);
+        EINA_ACCESSOR_FOREACH(nodes, i, node)
+          {
+             _node_unrealize(pd, node);
+             free(node->layout_data);
+          }
+
+        eina_accessor_free(nodes);
+     }
 
    pd->min.w = 0;
    pd->min.h = 0;
 
-   efl_ui_list_view_model_min_size_set(pd->modeler, pd->min);
+   if (pd->modeler)
+     {
+        evas_object_event_callback_del_full(pd->modeler, EVAS_CALLBACK_RESIZE, _on_modeler_resize, pd);
+        efl_ui_list_view_model_min_size_set(pd->modeler, pd->min);
+     }
 
-   pd->seg_array = NULL;
-   pd->modeler = NULL;
+   efl_replace(&pd->seg_array, NULL);
+   efl_replace(&pd->modeler, NULL);
 
    pd->initialized = EINA_FALSE;
    pd->recalc = EINA_TRUE;
@@ -567,7 +577,8 @@ _efl_ui_list_view_precise_layouter_efl_ui_list_view_relayout_elements_get(const 
           }
      }
 
-    return elements_order;
+   eina_accessor_free(nodes);
+   return elements_order;
 }
 
 EOLIAN static void
@@ -682,7 +693,7 @@ _efl_ui_list_view_precise_layouter_efl_ui_list_view_relayout_layout_do
   (Eo *obj EINA_UNUSED, Efl_Ui_List_View_Precise_Layouter_Data *pd
    , Efl_Ui_List_View_Model *modeler, int first, Efl_Ui_List_View_Seg_Array *seg_array)
 {
-   if (!_initilize(obj, pd, modeler, seg_array))
+   if (!_initilize(obj, pd, modeler, seg_array) || !pd->seg_array)
      return;
 
    pd->first = first;

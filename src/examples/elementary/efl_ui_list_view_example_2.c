@@ -15,7 +15,7 @@
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Efl_Ui_Layout_Factory *factory;
    Efl_Ui_Image_Factory *imgf;

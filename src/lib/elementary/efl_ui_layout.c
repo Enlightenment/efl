@@ -2103,9 +2103,8 @@ _efl_ui_layout_connect_hash(Efl_Ui_Layout_Data *pd)
 {
    if (pd->connect.properties) return ;
 
-   // FIXME: fix destruction function definition
-   pd->connect.properties = eina_hash_stringshared_new(NULL); // Hash of property targeting a part
-   pd->connect.signals = eina_hash_stringshared_new(NULL); // Hash of property triggering a signal
+   pd->connect.properties = eina_hash_stringshared_new(EINA_FREE_CB(free)); // Hash of property targeting a part
+   pd->connect.signals = eina_hash_stringshared_new(EINA_FREE_CB(free)); // Hash of property triggering a signal
    pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref)); // Hash of property triggering a content creation
 }
 
@@ -2116,13 +2115,16 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_Model 
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it;
 
-   efl_replace(&pd->connect.model, model);
+   if (pd->connect.model && pd->connect.model != model)
+     efl_event_callback_del(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_model_properties_changed_cb, pd);
+
+   if (!efl_replace(&pd->connect.model, model))
+     return;
 
    if (model)
-     {
-        efl_event_callback_add(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+     efl_event_callback_add(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                _efl_model_properties_changed_cb, pd);
-     }
 
    _efl_ui_layout_connect_hash(pd);
 
