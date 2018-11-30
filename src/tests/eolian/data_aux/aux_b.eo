@@ -1,0 +1,2 @@
+class Aux_B(Aux_C) {
+}
