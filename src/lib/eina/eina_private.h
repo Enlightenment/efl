@@ -20,7 +20,6 @@
 #define EINA_PRIVATE_H_
 
 #include <stdarg.h>
-#include <locale.h>
 
 #ifdef _WIN32
 # include <Evil.h>
@@ -151,11 +150,6 @@ typedef struct _Eina_FreeQ Eina_FreeQ;
 Eina_Stringshare *eina_file_sanitize(const char *path);
 
 void eina_freeq_main_set(Eina_FreeQ *fq);
-
-#ifdef _WIN32
-typedef _locale_t locale_t;
-#endif
-locale_t _eina_c_locale_get(void);
 
 #include "eina_inline_private.h"
 

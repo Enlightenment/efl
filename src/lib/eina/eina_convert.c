@@ -453,16 +453,6 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
    return EINA_TRUE;
 }
 
-EAPI double
-eina_convert_strtod_c(const char *nptr, char **endptr)
-{
-#ifdef _WIN32
-   return _strtod_l(nptr, endptr, _eina_c_locale_get());
-#else
-   return strtod_l(nptr, endptr, _eina_c_locale_get());
-#endif
-}
-
 /**
  * @}
  */
