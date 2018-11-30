@@ -8,7 +8,6 @@
 #endif
 
 #define PRG_INVALID NULL
-#define GLPIPES 1
 
 static int tbm_sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
@@ -1014,12 +1013,12 @@ evas_gl_common_context_new(void)
         s = (const char *)glGetString(GL_RENDERER);
         if (s)
           {
-             if      (strstr(s, "PowerVR SGX 540"))
-                shared->info.tune.pipes.max = DEF_PIPES_SGX_540;
+             if (strstr(s, "PowerVR SGX 540"))
+               shared->info.tune.pipes.max = DEF_PIPES_SGX_540;
              else if (strstr(s, "NVIDIA Tegra 3"))
-                shared->info.tune.pipes.max = DEF_PIPES_TEGRA_3;
+               shared->info.tune.pipes.max = DEF_PIPES_TEGRA_3;
              else if (strstr(s, "NVIDIA Tegra"))
-                shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
+               shared->info.tune.pipes.max = DEF_PIPES_TEGRA_2;
           }
         if (!getenv("EVAS_GL_MAPBUFFER"))
           {
@@ -1775,7 +1774,6 @@ _push_mask(Evas_Engine_GL_Context *gc, const int pn, int nm, Evas_GL_Texture *mt
    _push_mask(gc, pn, nm, mtex, mx, my, mw, mh, msam, nms); \
    } while(0)
 
-#ifdef GLPIPES
 static int
 pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
                        int x, int y, int w, int h)
@@ -1809,7 +1807,6 @@ pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
      }
    return 0;
 }
-#endif
 
 static void
 pipe_region_expand(Evas_Engine_GL_Context *gc, int n,
@@ -1873,12 +1870,10 @@ _evas_gl_common_context_push(Shader_Type rtype,
    if (tex)
      current_tex = tex->ptt ? tex->ptt->texture : tex->pt->texture;
 
-#ifdef GLPIPES
  again:
-#endif
    vertex_array_size_check(gc, gc->state.top_pipe, (rtype == SHD_LINE) ? 2 : 6);
    pn = gc->state.top_pipe;
-#ifdef GLPIPES
+
    if (!((pn == 0) && (gc->pipe[pn].array.num == 0)))
      {
         int found = 0;
@@ -1927,34 +1922,6 @@ _evas_gl_common_context_push(Shader_Type rtype,
              goto again;
           }
      }
-#else
-   if (!((gc->pipe[pn].region.type == rtype)
-         && (!tex || gc->pipe[pn].shader.cur_tex == current_tex)
-         /* && (!texa || gc->pipe[pn].shader.cur_texa == current_texa) */
-         && (!texm || ((gc->pipe[i].shader.cur_texm == texm->pt->texture)
-                       && (gc->pipe[i].shader.mask_smooth == mask_smooth)))
-         && (gc->pipe[pn].shader.prog == prog)
-         && (gc->pipe[pn].shader.smooth == smooth)
-         && (gc->pipe[pn].shader.blend == blend)
-         && (gc->pipe[pn].shader.render_op == gc->dc->render_op)
-         && (gc->pipe[pn].shader.clip == clip)
-         && (!clip || ((gc->pipe[pn].shader.cx == cx)
-                       && (gc->pipe[pn].shader.cy == cy)
-                       && (gc->pipe[pn].shader.cw == cw)
-                       && (gc->pipe[pn].shader.ch == ch)))))
-     {
-        shader_array_flush(gc);
-     }
-   if ((tex) && (((tex->im) && (tex->im->native.data)) || tex->pt->dyn.img))
-     {
-        if (gc->pipe[pn].array.im != tex->im)
-          {
-             shader_array_flush(gc);
-             gc->pipe[pn].array.im = tex->im;
-          }
-     }
-#endif
-
    return pn;
 }
 
