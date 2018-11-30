@@ -178,6 +178,7 @@ tests_eolian_cxx_eolian_cxx_suite_CXXFLAGS = \
 -I$(top_builddir)/src/tests/eolian_cxx \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
+-DEO_SRC_DIR=\"$(top_srcdir)/src/lib\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/eolian_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eolian_cxx\" \

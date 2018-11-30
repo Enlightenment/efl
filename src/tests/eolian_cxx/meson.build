@@ -65,6 +65,7 @@ eolian_cxx_suite = executable('eolian_cxx_suite',
   # package_c_args contains -D definitions for the package
   cpp_args : package_c_args +[
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DEO_SRC_DIR="'+join_paths(meson.source_root(), 'src', 'lib')+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
 )
 
