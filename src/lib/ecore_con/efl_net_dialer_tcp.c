@@ -42,6 +42,17 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
 
+static void
+_efl_net_dialer_tcp_async_stop(Efl_Net_Dialer_Tcp_Data *pd)
+{
+   if (pd->connect.thread)
+     {
+        ecore_thread_cancel(pd->connect.thread);
+        ecore_thread_wait(pd->connect.thread, 1);
+        pd->connect.thread = NULL;
+     }
+}
+
 EOLIAN static Eo*
 _efl_net_dialer_tcp_efl_object_constructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED)
 {
@@ -63,11 +74,8 @@ _efl_net_dialer_tcp_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
         efl_event_thaw(o);
      }
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
+
 
    efl_invalidate(efl_super(o, MY_CLASS));
 }
@@ -87,11 +95,7 @@ _efl_net_dialer_tcp_connect_timeout(Eo *o, const Eina_Value v)
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
@@ -155,7 +159,7 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr, socklen_t
 }
 
 EOLIAN static Eina_Error
-_efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED, const char *address)
+_efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, const char *address)
 {
    const char *proxy_env = NULL, *no_proxy_env = NULL;
 
@@ -164,11 +168,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) >= 0, EALREADY);
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
 
    if (!pd->proxy)
      {
