@@ -12,6 +12,7 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool event_redef;
+   Eina_Bool ext_regular;
 } Validate_State;
 
 static Eina_Bool
@@ -848,6 +849,23 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 
    EINA_LIST_FOREACH(cl->extends, l, icl)
      {
+        if (!valid && vals->ext_regular) switch (icl->type)
+          {
+           case EOLIAN_CLASS_REGULAR:
+           case EOLIAN_CLASS_ABSTRACT:
+             /* regular class in extensions list, forbidden */
+             {
+                char buf[PATH_MAX];
+                snprintf(buf, sizeof(buf), "regular classes ('%s') cannot appear in extensions list of '%s'",
+                         icl->base.name, cl->base.name);
+                _obj_error(&cl->base, buf);
+                vals->warned = EINA_TRUE;
+                break;
+             }
+           default:
+             /* it's ok, interfaces are allowed */
+             break;
+          }
         if (!_validate_class(vals, icl, nhash, ehash, chash))
           return EINA_FALSE;
      }
@@ -928,7 +946,8 @@ database_validate(const Eolian_Unit *src)
 
    Validate_State vals = {
       EINA_FALSE,
-      !!getenv("EOLIAN_EVENT_REDEF_WARN")
+      !!getenv("EOLIAN_EVENT_REDEF_WARN"),
+      !!getenv("EOLIAN_CLASS_REGULAR_AS_EXT_WARN")
    };
 
    /* do an initial pass to refill inherits */
