@@ -491,6 +491,8 @@ EFL_START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
+
+   ecore_con_init();
 }
 EFL_END_TEST
 
