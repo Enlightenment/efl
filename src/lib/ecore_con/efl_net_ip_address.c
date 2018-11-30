@@ -415,6 +415,7 @@ _efl_net_ip_address_resolve_del(void *data,
    if (ctx->thread)
      {
         ecore_thread_cancel(ctx->thread);
+        ecore_thread_wait(ctx->thread, 1);
         ctx->thread = NULL;
      }
 
