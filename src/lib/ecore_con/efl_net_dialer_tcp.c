@@ -241,6 +241,8 @@ EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, Eina_Bool connected)
 {
    if (pd->connect.timeout) eina_future_cancel(pd->connect.timeout);
+   // This has to be done before the state check as there could be a connection in progress that need to be canceled
+   if (!connected) _efl_net_dialer_tcp_async_stop(pd);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
