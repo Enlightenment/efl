@@ -28,6 +28,7 @@ _timeout_timer(void *d EINA_UNUSED)
 
 SUITE_INIT(ecore_con)
 {
+   ck_assert_int_eq(ecore_init(), 1);
    ck_assert_int_eq(ecore_con_init(), 1);
    timeout_timer = ecore_timer_add(TIMEOUT, _timeout_timer, NULL);
 }
@@ -37,6 +38,7 @@ SUITE_SHUTDOWN(ecore_con)
    if (timeout_timer) ecore_timer_del(timeout_timer);
    timeout_timer = NULL;
    ck_assert_int_eq(ecore_con_shutdown(), 0);
+   ck_assert_int_eq(ecore_shutdown(), 0);
 }
 
 int
