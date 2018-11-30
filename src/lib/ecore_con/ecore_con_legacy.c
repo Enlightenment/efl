@@ -1341,13 +1341,19 @@ _ecore_con_server_dialer_error(void *data, const Efl_Event *event)
 {
    Ecore_Con_Server *svr = data;
    Eina_Error *perr = event->info;
+   static int nested = EINA_FALSE;
 
    if (svr->delete_me) return;
+   if (nested) return;
+
+   nested = EINA_TRUE;
 
    WRN("error reaching server %s: %s", efl_net_dialer_address_dial_get(svr->dialer), eina_error_msg_get(*perr));
 
    if (_ecore_con_post_event_server_error(svr, eina_error_msg_get(*perr)))
      _ecore_con_server_dialer_close(svr);
+
+   nested = EINA_FALSE;
 }
 
 static void
@@ -1413,6 +1419,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_server_dialer_cbs,
                            { EFL_IO_BUFFERED_STREAM_EVENT_SLICE_CHANGED, _ecore_con_server_dialer_slice_changed },
                            { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _ecore_con_server_dialer_read_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _ecore_con_server_dialer_finished },
+                           { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _ecore_con_server_dialer_error },
                            { EFL_NET_DIALER_EVENT_ERROR, _ecore_con_server_dialer_error },
                            { EFL_NET_DIALER_EVENT_RESOLVED, _ecore_con_server_dialer_resolved },
                            { EFL_NET_DIALER_EVENT_CONNECTED, _ecore_con_server_dialer_connected });
