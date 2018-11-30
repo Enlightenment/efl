@@ -1,4 +1,4 @@
-class C {
+class Aux_C {
     methods {
         foo {}
         bar {}

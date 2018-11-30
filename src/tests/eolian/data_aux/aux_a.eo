@@ -1,4 +1,4 @@
-class A(C) {
+class Aux_A(Aux_C) {
     methods {
         baz {}
     }
@@ -6,7 +6,7 @@ class A(C) {
         test2: void;
     }
     implements {
-        C.foo;
-        C.bar;
+        Aux_C.foo;
+        Aux_C.bar;
     }
 }
