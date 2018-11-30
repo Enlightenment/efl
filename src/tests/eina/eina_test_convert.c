@@ -160,31 +160,10 @@ _eina_convert_fp_check(double d, Eina_F32p32 fp, int length)
 }
 EFL_END_TEST
 
-static void
-_eina_convert_strtod_c_check(const char *str, double expected_result)
-{
-   double result = eina_convert_strtod_c(str, NULL);
-
-   fail_if(result != expected_result);
-}
-
-EFL_START_TEST(eina_convert_strtod_c_simple)
-{
-   _eina_convert_strtod_c_check("0.0", 0.0);
-   _eina_convert_strtod_c_check("0.5", 0.5);
-   _eina_convert_strtod_c_check("1.0", 1.0);
-   _eina_convert_strtod_c_check("-0.5", -0.5);
-   _eina_convert_strtod_c_check("-1.0", -1.0);
-   _eina_convert_strtod_c_check("3.45e-2", 0.0345);
-   _eina_convert_strtod_c_check("3.45e+2", 345.0);
-}
-EFL_END_TEST
-
 void
 eina_test_convert(TCase *tc)
 {
    tcase_add_test(tc, eina_convert_simple);
    tcase_add_test(tc, eina_convert_double);
    tcase_add_test(tc,     eina_convert_fp);
-   tcase_add_test(tc, eina_convert_strtod_c_simple);
 }

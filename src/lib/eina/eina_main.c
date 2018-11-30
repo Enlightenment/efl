@@ -85,7 +85,6 @@ static int _eina_main_count = 0;
 static int _eina_main_thread_count = 0;
 #endif
 static int _eina_log_dom = -1;
-static locale_t _eina_c_locale;
 
 #ifdef ERR
 #undef ERR
@@ -286,12 +285,6 @@ eina_init(void)
    if (EINA_LIKELY(_eina_main_count > 0))
       return ++_eina_main_count;
 
-#ifdef _WIN32
-   _eina_c_locale = _create_locale(LC_ALL, "C");
-#else
-   _eina_c_locale = newlocale(LC_ALL_MASK, "C", NULL);
-#endif
-
    srand(time(NULL));
    while (eina_seed == 0)
      eina_seed = rand();
@@ -355,12 +348,6 @@ eina_init(void)
    return 1;
 }
 
-locale_t
-_eina_c_locale_get(void)
-{
-   return _eina_c_locale;
-}
-
 EAPI int
 eina_shutdown(void)
 {
@@ -372,12 +359,6 @@ eina_shutdown(void)
    _eina_main_count--;
    if (EINA_UNLIKELY(_eina_main_count == 0))
      {
-#ifdef _WIN32
-        _free_locale(_eina_c_locale);
-#else
-        freelocale(_eina_c_locale);
-#endif
-
         eina_log_timing(_eina_log_dom,
                         EINA_LOG_STATE_START,
                         EINA_LOG_STATE_SHUTDOWN);
