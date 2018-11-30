@@ -35,27 +35,7 @@ group { name: "elm/slider/horizontal/default";
    alias: "elm/slider/horizontal/media_player/position/flush";
    alias: "elm/slider/horizontal/media_player/volume/default";
    alias: "elm/slider/horizontal/media_player/volume/flush";
-   images.image: "slider_run_base_horiz.png" COMP;
-   images.image: "slider_run_bevel_horiz.png" COMP;
-   images.image: "slider_run_base_light_horiz.png" COMP;
-   images.image: "horiz_glow_run.png" COMP;
-   images.image: "horiz_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
+   images.image: "speaker_vol.png" COMP;
 #define ICON    1
 #define LABEL   2
 #define END     4
@@ -127,9 +107,11 @@ group { name: "elm/slider/horizontal/default";
          if (!d) {
             set_state(PART:"event", "default", 0.0);
             set_state(PART:"dis_clip", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
          } else {
             set_state(PART:"event", "disabled", 0.0);
             set_state(PART:"dis_clip", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
          }
       }
    }
@@ -137,70 +119,55 @@ group { name: "elm/slider/horizontal/default";
       part { name: "elm.swallow.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 42 21;
-            max: 99999 21;
+            min: 40 20;
+            max: 99999 20;
             align: 1.0 0.5;
             rel1.to_x: "elm.text";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 2 0;
+            rel1.offset: 4 4;
             rel2.to_x: "limits";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -3 -1;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.bar";
             rel2.to: "elm.swallow.bar";
-            image.normal: "slider_run_base_horiz.png";
-            image.border: 4 4 0 0;
-            fill.smooth: 0;
-            min: 8 5;
-            max: 99999 5;
+            color: 48 48 48 255;
+            min: 8 4;
+            max: 99999 4;
             fixed: 0 1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_horiz.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "horiz_glow_run.png";
-            rel1.offset: 1 1;
+            color: 53 153 255 255;
             rel1.to: "base";
             rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
             rel2.to_x: "button";
             rel2.to_y: "base";
-            image.border: 0 4 0 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "inverted" 0.0;
-            image.normal: "horiz_glow_run_rev.png";
+            color: 53 153 255 255;
             rel1.relative: 0.5 0.0;
-            rel1.offset: 0 1;
             rel1.to_x: "button";
             rel1.to_y: "base";
-            rel2.offset: -2 -2;
             rel2.to: "base";
-            image.border: 4 0 0 0;
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_horiz.png";
-            image.border: 5 5 0 0;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "dis_clip"; type: RECT;
@@ -219,18 +186,17 @@ group { name: "elm/slider/horizontal/default";
             fixed: 1 0;
             visible: 0;
             align: 0.0 0.5;
-            rel1.offset: 0 2;
-            rel1.to_y: "elm.swallow.bar";
-            rel2.offset: -1 -3;
+            rel1.offset: -1 4;
+            rel2.offset: -1 -5;
             rel2.relative: 0.0 1.0;
-            rel2.to_y: "elm.swallow.bar";
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
          }
       }
       part { name: "sizer_content"; type: TEXT; mouse_events:  0;
@@ -255,39 +221,37 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             align: 0.0 0.5;
             rel1.to_x: "elm.swallow.icon";
             rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
+            rel1.offset: -1 4;
             rel2.to_x: "elm.swallow.icon";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
+            rel2.offset: -1 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "slider";
                min: 0 0;
                align: 0.0 0.5;
             }
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             fixed: 1 0;
             visible: 1;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
             text.min: 1 1;
             text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
+            color: 96 96 96 255;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -296,17 +260,18 @@ group { name: "elm/slider/horizontal/default";
             fixed: 1 0;
             visible: 0;
             align: 1.0 0.5;
-            rel1.offset: 0 2;
+            rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
-            rel2.offset: -1 -3;
+            rel2.offset: -1 -5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0;
             aspect_preference: VERTICAL;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
          }
       }
       part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
@@ -342,33 +307,34 @@ group { name: "elm/slider/horizontal/default";
             fixed: 1 1;
             rel1.to_x: "elm.swallow.end";
             rel1.relative: 0.0 0.0;
-            rel1.offset: 0 2;
+            rel1.offset: 0 4;
             rel2.to_x: "elm.swallow.end";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -3;
+            rel2.offset: -1 -5;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
+            visible: 1;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
+            visible: 1;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
             color: 255 255 255 64;
          }
       }
       part { name: "elm.units"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 1;
             rel1.to_x: "limits";
             rel2.to_x: "limits";
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "slider";
                align: 1.0 0.5;
@@ -382,8 +348,7 @@ group { name: "elm/slider/horizontal/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
+            color: 96 96 96 255;
          }
       }
       part { name: "button"; type: GROUP; mouse_events: 0;
@@ -399,7 +364,6 @@ group { name: "elm/slider/horizontal/default";
          }
       }
       part { name: "elm.dragable.slider"; type: RECT;
-         nomouse;
          scale: 1;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
@@ -415,26 +379,28 @@ group { name: "elm/slider/horizontal/default";
             rel2.to_x: "elm.swallow.bar";
          }
       }
-      part { name: "knob";
-         nomouse;
+      part { name: "knob"; repeat_events: 1;
+         scale: 1;
          description { state: "default" 0.0;
-            image.normal: "knob";
             fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
             rel1.to: "elm.dragable.slider";
-            rel1.offset: -4 -4;
             rel2.to: "elm.dragable.slider";
-            rel2.offset: 3 3;
+            image.normal: "speaker_vol.png";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
-         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -625,13 +591,12 @@ group { name: "elm/slider/horizontal/indicator/default";
    alias: "elm/slider/horizontal/indicator/media_player/position/flush";
    alias: "elm/slider/horizontal/indicator/media_player/volume/default";
    alias: "elm/slider/horizontal/indicator/media_player/volume/flush";
-   images.image: "darken_rounded_square.png" COMP;
    parts {
       part { name: "base"; type: SPACER;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
-            min: 16 16;
+            min: 20 20;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -645,22 +610,22 @@ group { name: "elm/slider/horizontal/indicator/default";
             rel2.to: "elm.indicator";
             rel2.offset: 99 99;
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
          }
       }
-      part { name: "bevel"; mouse_events: 0;
+      part { name: "bevel"; type: RECT; mouse_events: 0;
          clip_to: "clip";
          description { state: "default" 0.0;
-            rel1.offset: -12 -12;
+            rel1.offset: -10 -10;
             rel1.to: "elm.indicator";
-            rel2.offset: 11 11;
+            rel2.offset: 9 9;
             rel2.to: "elm.indicator";
-            image.normal: "darken_rounded_square.png";
-            image.border: 15 15 15 15;
-            fill.smooth: 0;
+            color: 0 0 0 64;
+            offscale;
             visible: 0;
          }
          description { state: "visible" 0.0;
@@ -670,7 +635,6 @@ group { name: "elm/slider/horizontal/indicator/default";
       }
       part { name: "elm.indicator"; type: TEXT; mouse_events: 0;
          clip_to: "clip";
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -681,8 +645,7 @@ group { name: "elm/slider/horizontal/indicator/default";
             rel2.to: "base";
             rel2.relative: 1.0 -0.1;
             rel2.offset: -1 -12;
-            color_class: "slider_indicator";
-            color: FN_COL_DEFAULT;
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                align: 0.5 1.0;
@@ -690,6 +653,7 @@ group { name: "elm/slider/horizontal/indicator/default";
                ellipsis: -1;
             }
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
@@ -755,27 +719,7 @@ group { name: "elm/slider/vertical/default";
    alias: "elm/slider/vertical/media_player/position/flush";
    alias: "elm/slider/vertical/media_player/volume/default";
    alias: "elm/slider/vertical/media_player/volume/flush";
-   images.image: "slider_run_base_vert.png" COMP;
-   images.image: "slider_run_bevel_vert.png" COMP;
-   images.image: "slider_run_base_light_vert.png" COMP;
-   images.image: "vert_glow_run.png" COMP;
-   images.image: "vert_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
+   images.image: "speaker_vol.png" COMP;
 #define ICON    1
 #define LABEL   2
 #define END     4
@@ -847,9 +791,11 @@ group { name: "elm/slider/vertical/default";
          if (!d) {
             set_state(PART:"event", "default", 0.0);
             set_state(PART:"dis_clip", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
          } else {
             set_state(PART:"event", "disabled", 0.0);
             set_state(PART:"dis_clip", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
          }
       }
    }
@@ -857,70 +803,55 @@ group { name: "elm/slider/vertical/default";
       part { name: "elm.swallow.bar"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            min: 21 42;
-            max: 21 99999;
+            min: 20 40;
+            max: 29 99999;
             align: 0.5 1.0;
             rel1.to_y: "elm.text";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 2;
+            rel1.offset: 4 4;
             rel2.to_y: "limits";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -1 -3;
+            rel2.offset: -5 -5;
+            offscale;
          }
       }
-      part { name: "base"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.to: "elm.swallow.bar";
             rel2.to: "elm.swallow.bar";
-            image.normal: "slider_run_base_vert.png";
-            image.border: 0 0 4 4;
-            fill.smooth: 0;
-            min: 5 8;
-            max: 5 99999;
+            color: 48 48 48 255;
+            min: 4 8;
+            max: 4 99999;
             fixed: 1 0;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_vert.png";
+            color: 56 56 56 255;
          }
       }
-      part { name: "glow"; mouse_events: 0;
+      part { name: "glow"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "vert_glow_run.png";
-            rel1.offset: 1 1;
+            color: 53 153 255 255;
             rel1.to: "base";
             rel2.relative: 1.0 0.5;
-            rel2.offset: -2 -1;
             rel2.to_y: "button";
             rel2.to_x: "base";
-            image.border: 0 0 0 4;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 64;
+            color: 192 192 192 64;
          }
          description { state: "inverted" 0.0;
-            image.normal: "vert_glow_run_rev.png";
+            color: 53 153 255 255;
             rel1.relative: 0.0 0.5;
-            rel1.offset: 1 0;
             rel1.to_y: "button";
             rel1.to_x: "base";
-            rel2.offset: -2 -2;
             rel2.to: "base";
-            image.border: 0 0 4 0;
          }
          description { state: "disabled_inverted" 0.0;
             inherit: "inverted" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_vert.png";
-            image.border: 0 0 5 5;
-            fill.smooth: 0;
+            color: 192 192 192 64;
          }
       }
       part { name: "dis_clip"; type: RECT;
@@ -939,18 +870,19 @@ group { name: "elm/slider/vertical/default";
             fixed: 0 1;
             visible: 0;
             align: 0.5 0.0;
-            rel1.offset: 2 0;
             rel1.to_x: "elm.swallow.bar";
-            rel2.offset: -3 -1;
-            rel2.relative: 1.0 0.0;
             rel2.to_x: "elm.swallow.bar";
+            rel1.offset: 4 -1;
+            rel2.offset: -5 -1;
+            rel2.relative: 1.0 0.0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: 2 2;
-            rel2.offset: -3 2;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
          }
       }
       part { name: "sizer_content"; type: TEXT; mouse_events:  0;
@@ -975,40 +907,36 @@ group { name: "elm/slider/vertical/default";
          }
       }
       part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             fixed: 0 1;
             align: 0.5 0.0;
             rel1.to_y: "elm.swallow.icon";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 2 -1;
+            rel1.offset: 4 -1;
             rel2.to_y: "elm.swallow.icon";
             rel2.relative: 1.0 1.0;
-            rel2.offset: -3 -1;
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
+            rel2.offset: -5 -1;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "slider";
-               min: 1 0;
-               ellipsis: -1;
+               min: 0 0;
                align: 0.5 0.0;
             }
             visible: 0;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            rel1.offset: 2 2;
-            rel2.offset: -3 2;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
             text.min: 1 1;
             text.ellipsis: -1;
-
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
+            color: 96 96 96 255;
          }
       }
       part { name: "elm.swallow.end"; type: SWALLOW;
@@ -1017,17 +945,20 @@ group { name: "elm/slider/vertical/default";
             fixed: 0 1;
             visible: 0;
             align: 0.5 1.0;
-            rel1.offset: 2 0;
+            rel1.to_x: "elm.swallow.bar";
+            rel2.to_x: "elm.swallow.bar";
+            rel1.offset: 4 0;
             rel1.relative: 0.0 1.0;
-            rel2.offset: -3 -1;
+            rel2.offset: -5 -1;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
             aspect: 1.0 1.0;
             aspect_preference: VERTICAL;
-            rel2.offset: 2 -3;
-            rel2.offset: -3 -3;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
          }
       }
       part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
@@ -1057,56 +988,56 @@ group { name: "elm/slider/vertical/default";
          source: "elm/slider/hidden/limit";
          scale: 1;
          description { state: "default" 0.0;
+            visible: 0;
             align: 0.5 1.0;
-            fixed: 1 1;
             max: 0 0;
+            fixed: 1 1;
             rel1.to_y: "elm.swallow.end";
             rel1.relative: 0.0 0.0;
-            rel1.offset: 2 1;
+            rel1.offset: 4 0;
             rel2.to_y: "elm.swallow.end";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 0;
+            rel2.offset: -5 -1;
+            offscale;
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             min: SOURCE;
-            rel1.offset: 2 -3;
-            rel2.offset: -3 -3;
+            max: 9999 9999;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            rel1.offset: 2 -3;
-            rel2.offset: -3 -3;
+            min: SOURCE;
+            max: 9999 9999;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
             color: 255 255 255 64;
          }
       }
       part { name: "elm.units"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 1;
             rel1.to_y: "limits";
             rel2.to_y: "limits";
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                text_class: "slider";
-               min: 0 0;
                align: 0.5 1.0;
+               min: 1 1;
                ellipsis: -1;
             }
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
             visible: 1;
-            text.min: 1 1;
-            text.ellipsis: -1;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
+            color: 96 96 96 255;
          }
       }
       part { name: "button"; type: GROUP; mouse_events: 0;
@@ -1123,7 +1054,6 @@ group { name: "elm/slider/vertical/default";
       }
       part { name: "elm.dragable.slider"; type: RECT;
          scale: 1;
-         nomouse;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "elm.swallow.bar";
@@ -1133,805 +1063,33 @@ group { name: "elm/slider/vertical/default";
             max: 16 16;
             fixed: 1 1;
             rel1.relative: 0.0 0.5;
-            rel1.to_x: "elm.swallow.bar";
-            rel2.relative: 1.0 0.5;
-            rel2.to_x: "elm.swallow.bar";
-         }
-      }
-      part { name: "knob";
-         nomouse;
-         description { state: "default" 0.0;
-            image.normal: "knob";
-            fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "elm.dragable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "elm.dragable.slider";
-            rel2.offset: 3 3;
-         }
-         description { state: "clicked" 0.0;
-            inherit: "default" 0.0;
-         }
-      }
-      part { name: "slideevent"; type: RECT; repeat_events: 1;
-         scale: 1;
-         nomouse;
-         ignore_flags: ON_HOLD;
-         dragable.events: "elm.dragable.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "elm.dragable.slider";
-            rel2.to: "elm.dragable.slider";
-            color: 0 0 0 0;
-         }
-      }
-      part { name: "elm.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "elm.dragable.slider";
-            rel2.to: "elm.dragable.slider";
-         }
-      }
-      part { name: "event"; type: RECT;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-            visible: 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "mouse,down,1"; source: "elm.dragable.slider";
-         action:  STATE_SET "clicked" 0.0;
-         target: "knob";
-      }
-      program {
-         signal: "mouse,up,1"; source: "elm.dragable.slider";
-         action:  STATE_SET "default" 0.0;
-         target: "knob";
-      }
-      program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
-         after: "popup_show2";
-      }
-      program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
-         after: "popup_hide2";
-      }
-      program {
-         signal: "mouse,down,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
-         after: "popup_show2";
-      }
-      program { name: "popup_show2";
-         action:  STATE_SET "hidden" 0.0;
-         target: "button";
-      }
-      program {
-         signal: "mouse,up,1"; source: "slideevent";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
-         after: "popup_hide2";
-      }
-      program { name: "popup_hide2";
-         action:  STATE_SET "default" 0.0;
-         target: "button";
-      }
-      program {
-         signal: "elm,state,text,visible"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= LABEL; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,text,hidden"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m &= ~LABEL; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,icon,visible"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= ICON; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,icon,hidden"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m &= ~ICON; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program { name: "end_show";
-         signal: "elm,state,end,visible"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= END; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program { name: "end_hide";
-         signal: "elm,state,end,hidden"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m &= ~END; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,units,visible"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= UNITS; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,units,visible"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,visible" "elm";
-      }
-      program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action:  STATE_SET "default" 0.0;
-         script {
-            new m = get_int(slmode);
-            m &= ~UNITS; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,units,hidden"; source: "elm";
-         action: SIGNAL_EMIT "limits:limits,hide" "elm";
-      }
-      program {
-         signal: "elm,state,inverted,on"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= INVERT; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,inverted,off"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m &= ~INVERT; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,disabled"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m |= DISABLE; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
-         script {
-            new m = get_int(slmode);
-            m &= ~DISABLE; set_int(slmode, m);
-            eval_mode(m);
-         }
-      }
-   }
-#undef ICON
-#undef LABEL
-#undef END
-#undef UNITS
-#undef MASK
-#undef INVERT
-#undef DISABLE
-}
-
-group { name: "elm/slider/vertical/indicator/default";
-   alias: "elm/slider/vertical/indicator/disabled";
-   alias: "elm/slider/vertical/popup/default";
-   alias: "elm/slider/vertical/indicator/media_player/position/default";
-   alias: "elm/slider/vertical/indicator/media_player/position/flush";
-   alias: "elm/slider/vertical/indicator/media_player/volume/default";
-   alias: "elm/slider/vertical/indicator/media_player/volume/flush";
-   images.image: "darken_rounded_square.png" COMP;
-   parts {
-      part { name: "base"; type: SPACER;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            min: 16 16;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-         }
-      }
-      part { name: "clip"; type: RECT;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "elm.indicator";
-            rel1.offset: -100 -100;
-            rel2.to: "elm.indicator";
-            rel2.offset: 99 99;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            rel1.offset: -12 -12;
-            rel1.to: "elm.indicator";
-            rel2.offset: 11 11;
-            rel2.to: "elm.indicator";
-            image.normal: "darken_rounded_square.png";
-            image.border: 15 15 15 15;
-            fill.smooth: 0;
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.indicator"; type: TEXT; mouse_events: 0;
-         clip_to: "clip";
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            align: 0.0 0.5;
-            rel1.to: "base";
-            rel1.relative: 1.1 0.0;
-            rel1.offset: 11 0;
-            rel2.to: "base";
-            rel2.relative: 1.1 1.0;
-            rel2.offset: 11 -1;
-            color_class: "slider_indicator";
-            color: FN_COL_DEFAULT;
-            text { font: FNBD; size: 10;
-               min: 1 1;
-               align: 0.0 0.5;
-               text_class: "slider_indicator";
-               ellipsis: -1;
-            }
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-   }
-   programs {
-      program {
-         signal: "elm,popup,show"; source: "elm";
-         action:  STATE_SET "visible" 0.0;
-         target:  "elm.indicator";
-         target:  "bevel";
-      }
-      program {
-         signal: "elm,popup,hide"; source: "elm";
-         action:  STATE_SET "default" 0.0;
-         target:  "elm.indicator";
-         target:  "bevel";
-      }
-      program {
-         signal: "elm,popup,hide"; source: "elm";
-         action:  SIGNAL_EMIT "elm,popup,hide,done" "elm";
-      }
-      program {
-         signal: "elm,state,val,show"; source: "elm";
-         action:  STATE_SET "visible" 0.0;
-         target: "clip";
-      }
-      program {
-         signal: "elm,state,val,hide"; source: "elm";
-         action:  STATE_SET "default" 0.0;
-         target: "clip";
-      }
-      program {
-         signal: "elm,state,indicator,show"; source: "elm";
-         action:  STATE_SET "visible" 0.0;
-         target:  "elm.indicator";
-         target:  "bevel";
-      }
-      program {
-         signal: "elm,state,indicator,hide"; source: "elm";
-         action:  STATE_SET "visible" 0.0;
-         target:  "elm.indicator";
-         target:  "bevel";
-      }
-      program {
-         signal:  "elm,state,disabled"; source: "elm";
-         action:  STATE_SET "disabled" 0.0;
-         target:  "base";
-      }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
-         action:  STATE_SET "default" 0.0;
-         target:  "base";
-      }
-   }
-}
-
-//Range
-
-group { name: "elm/slider/range/horizontal/default";
-   alias: "elm/slider/horizontal/disabled";
-   alias: "elm/slider/horizontal/media_player/position/default";
-   alias: "elm/slider/horizontal/media_player/position/flush";
-   alias: "elm/slider/horizontal/media_player/volume/default";
-   alias: "elm/slider/horizontal/media_player/volume/flush";
-   images.image: "slider_run_base_horiz.png" COMP;
-   images.image: "slider_run_bevel_horiz.png" COMP;
-   images.image: "slider_run_base_light_horiz.png" COMP;
-   images.image: "horiz_glow_run.png" COMP;
-   images.image: "horiz_glow_range.png" COMP;
-   images.image: "horiz_glow_run_rev.png" COMP;
-   images.image: "knob_round_small_normal.png" COMP;
-   images.image: "knob_round_small_selected.png" COMP;
-   set { name: "knob";
-      // XXX: add more sizes (at least up to 128x128)
-      image { image: "knob_sz_24.png"  COMP; size: 31 31 32 32; }
-      image { image: "knob_sz_22.png"  COMP; size: 29 29 30 30; }
-      image { image: "knob_sz_20.png"  COMP; size: 27 27 28 28; }
-      image { image: "knob_sz_18.png"  COMP; size: 25 25 26 26; }
-      image { image: "knob_sz_16.png"  COMP; size: 23 23 24 24; }
-      image { image: "knob_sz_14.png"  COMP; size: 21 21 22 22; }
-      image { image: "knob_sz_12.png"  COMP; size: 19 19 20 20; }
-      image { image: "knob_sz_10.png"  COMP; size: 17 17 18 18; }
-      image { image: "knob_sz_08.png"  COMP; size: 15 15 16 16; }
-      image { image: "knob_sz_06.png"  COMP; size: 13 13 14 14; }
-      image { image: "knob_sz_04.png"  COMP; size:  0  0 12 12; }
-   }
-#define ICON    1
-#define LABEL   2
-#define END     4
-#define UNITS   8
-#define MASK    15
-#define INVERT  16
-#define DISABLE 32
-   script {
-      public slmode;
-      public range;
-      public g_timer_id;
-      public update_glow()
-        {
-           new x1,y1,w1,h1;
-           new x2,y2,w2,h2;
-           get_geometry(PART:"knob", x1, y1, w1, h1);
-           get_geometry(PART:"knob2", x2, y2, w2, h2);
-           if(x2 < x1)
-             set_state(PART:"glow", "range_reverse", 0.0);
-           else
-             set_state(PART:"glow", "range", 0.0);
-        }
-      public eval_mode(m) {
-         new ic = m & ICON;
-         new l = m & LABEL;
-         new e = m & END;
-         new u = m & UNITS;
-         new d = m & DISABLE;
-         new i = m & INVERT;
-         new r = get_int(range);
-         if (!r) {
-           if (i) {
-                if (!d) {
-                     set_state(PART:"base", "default", 0.0);
-                     set_state(PART:"glow", "inverted", 0.0);
-                } else {
-                     set_state(PART:"base", "disabled", 0.0);
-                     set_state(PART:"glow", "disabled_inverted", 0.0);
-                }
-           } else {
-                if (!d) {
-                     set_state(PART:"base", "default", 0.0);
-                     set_state(PART:"glow", "default", 0.0);
-                } else {
-                     set_state(PART:"base", "disabled", 0.0);
-                     set_state(PART:"glow", "disabled", 0.0);
-                }
-           }
-         } else if (d) {
-              new x1,y1,w1,h1;
-              new x2,y2,w2,h2;
-              get_geometry(PART:"knob", x1, y1, w1, h1);
-              get_geometry(PART:"knob2", x2, y2, w2, h2);
-              set_state(PART:"base", "disabled", 0.0);
-              if(x2 < x1)
-                set_state(PART:"glow", "disabled_range_reverse", 0.0);
-              else
-                set_state(PART:"glow", "disabled_range", 0.0);
-
-         }
-         if (l) {
-            if (!d) {
-               set_state(PART:"elm.text", "visible", 0.0);
-            } else {
-               set_state(PART:"elm.text", "disabled_visible", 0.0);
-            }
-         } else {
-            set_state(PART:"elm.text", "default", 0.0);
-         }
-         if (u) {
-            if (!d) {
-               set_state(PART:"elm.units", "visible", 0.0);
-               set_state(PART:"limits", "visible", 0.0);
-            } else {
-               set_state(PART:"elm.units", "disabled_visible", 0.0);
-               set_state(PART:"limits", "disabled_visible", 0.0);
-            }
-         } else {
-            set_state(PART:"elm.units", "default", 0.0);
-            set_state(PART:"limits", "default", 0.0);
-         }
-         if (ic) {
-            set_state(PART:"elm.swallow.icon", "visible", 0.0);
-            set_state(PART:"sizer_content", "visible", 0.0);
-         } else {
-            set_state(PART:"elm.swallow.icon", "default", 0.0);
-            set_state(PART:"sizer_content", "default", 0.0);
-         }
-         if (e) {
-            set_state(PART:"elm.swallow.end", "visible", 0.0);
-            set_state(PART:"sizer_content_end", "visible", 0.0);
-         } else {
-            set_state(PART:"elm.swallow.end", "default", 0.0);
-            set_state(PART:"sizer_content_end", "default", 0.0);
-         }
-         if (!d) {
-            set_state(PART:"event", "default", 0.0);
-            set_state(PART:"dis_clip", "default", 0.0);
-         } else {
-            set_state(PART:"event", "disabled", 0.0);
-            set_state(PART:"dis_clip", "disabled", 0.0);
-         }
-      }
-   }
-   parts {
-      part { name: "elm.swallow.bar"; type: SWALLOW;
-         scale: 1;
-         description { state: "default" 0.0;
-            min: 42 21;
-            max: 99999 21;
-            align: 1.0 0.5;
-            rel1.to_x: "elm.text";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 2 0;
-            rel2.to_x: "limits";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -3 -1;
-         }
-      }
-      part { name: "base"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "elm.swallow.bar";
-            rel2.to: "elm.swallow.bar";
-            image.normal: "slider_run_base_horiz.png";
-            image.border: 4 4 0 0;
-            fill.smooth: 0;
-            min: 8 5;
-            max: 99999 5;
-            fixed: 0 1;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "slider_run_base_light_horiz.png";
-         }
-      }
-      part { name: "glow"; mouse_events: 0;
-         description { state: "default" 0.0;
-            image.normal: "horiz_glow_run.png";
-            rel1.offset: 1 1;
-            rel1.to: "base";
-            rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
-            rel2.to_x: "button";
-            rel2.to_y: "base";
-            image.border: 0 4 0 0;
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
-         }
-         description { state: "inverted" 0.0;
-            image.normal: "horiz_glow_run_rev.png";
-            rel1.relative: 0.5 0.0;
-            rel1.offset: 0 1;
-            rel1.to_x: "button";
-            rel1.to_y: "base";
-            rel2.offset: -2 -2;
-            rel2.to: "base";
-            image.border: 4 0 0 0;
-         }
-         description { state: "range" 0.0;
-            image.normal: "horiz_glow_range.png";
-            rel1.relative: 0.5 1.0;
-            rel1.offset: -1 -2;
-            rel1.to_x: "button";
-            rel1.to_y: "base";
-            rel2.relative: 0.5 1.0;
-            rel2.offset: -1 -2;
-            rel2.to_x: "button2";
-            rel2.to_y: "base";
-            fixed: 0 1;
-            image.border: 0 4 0 0;
-         }
-         description { state: "disabled_range" 0.0;
-            inherit: "range" 0.0;
-            color: 255 255 255 64;
-         }
-         description { state: "range_reverse" 0.0;
-            inherit: "range" 0.0;
-            rel1.to_x: "button2";
-            rel2.to_x: "button";
-         }
-         description { state: "disabled_range_reverse" 0.0;
-            inherit: "range_reverse" 0.0;
-            color: 255 255 255 64;
-         }
-         description { state: "disabled_inverted" 0.0;
-            inherit: "inverted" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "bevel"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "base";
-            rel2.to: "base";
-            image.normal: "slider_run_bevel_horiz.png";
-            image.border: 5 5 0 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "dis_clip"; type: RECT;
-         description { state: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.end";
-         }
-         description { state: "disabled" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "elm.swallow.icon"; type: SWALLOW;
-         clip_to: "dis_clip";
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 0.0 0.5;
-            rel1.offset: 0 2;
             rel1.to_y: "elm.swallow.bar";
-            rel2.offset: -1 -3;
-            rel2.relative: 0.0 1.0;
+            rel2.relative: 1.0 0.5;
             rel2.to_y: "elm.swallow.bar";
-            fixed: 1 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
          }
       }
-      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
+      part { name: "knob"; repeat_events: 1;
          scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.icon";
-            rel2.to: "elm.swallow.icon";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-      }
-      part { name: "elm.text"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            align: 0.0 0.5;
-            rel1.to_x: "elm.swallow.icon";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: -1 2;
-            rel2.to_x: "elm.swallow.icon";
-            rel2.relative: 1.0 1.0;
-            rel2.offset: -1 -3;
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
-            text { font: FN; size: 10;
-               text_class: "slider";
-               min: 0 0;
-               align: 0.0 0.5;
-            }
-            visible: 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            fixed: 1 0;
-            visible: 1;
-            rel1.offset: 2 2;
-            rel2.offset: 2 -3;
-            text.min: 1 1;
-            text.ellipsis: -1;
-         }
-         description { state: "disabled_visible" 0.0;
-            inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
-         }
-      }
-      part { name: "elm.swallow.end"; type: SWALLOW;
-         clip_to: "dis_clip";
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 1.0 0.5;
-            rel1.offset: 0 2;
-            rel1.relative: 1.0 0.0;
-            rel2.offset: -1 -3;
-            fixed: 1 0;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            aspect: 1.0 1.0;
-            aspect_preference: VERTICAL;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
-         }
-      }
-      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            visible: 0;
-            text { font: FN; size: 10;
-               min: 0 0;
-               text_class: "slider_text";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.to: "elm.swallow.end";
-            rel2.to: "elm.swallow.end";
-            text {
-               min: 1 1;
-               ellipsis: -1;
-               text: SPACER_TEXT;
-            }
-         }
-      }
-      alias: "elm.units.min" "limits:elm.units.min";
-      alias: "elm.units.max" "limits:elm.units.max";
-      part { name: "limits"; type: GROUP; mouse_events: 0;
-         source: "elm/slider/hidden/limit";
-         scale: 1;
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 1.0 0.5;
-            min: SOURCE;
-            fixed: 1 1;
-            rel1.to_x: "elm.swallow.end";
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 0 2;
-            rel2.to_x: "elm.swallow.end";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -1 -3;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
-         }
-         description { state: "disabled_visible" 0.0;
-            inherit: "default" 0.0;
-            rel1.offset: -3 2;
-            rel2.offset: -3 -3;
-            color: 255 255 255 64;
-         }
-      }
-      part { name: "elm.units"; type: TEXT; mouse_events: 0;
-         effect: SHADOW BOTTOM;
-         scale: 1;
-         description { state: "default" 0.0;
-            visible: 0;
-            fixed: 1 1;
-            rel1.to_x: "limits";
-            rel2.to_x: "limits";
-            color: FN_COL_DEFAULT;
-            color_class: "slider_text";
-            text { font: FN; size: 10;
-               text_class: "slider";
-               align: 1.0 0.5;
-               min: 1 1;
-               ellipsis: -1;
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "disabled_visible" 0.0;
-            inherit: "visible" 0.0;
-            color_class: "slider_text_disabled";
-            color3: 255 255 255 255;
-         }
-      }
-      part { name: "button"; type: GROUP; mouse_events: 0;
-         source: "elm/slider/horizontal/indicator/default";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.to: "elm.dragable.slider";
             rel2.to: "elm.dragable.slider";
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "elm.dragable.slider"; type: RECT;
-         scale: 1;
-         nomouse;
-         dragable.x: 1 1 0;
-         dragable.y: 0 0 0;
-         dragable.confine: "elm.swallow.bar";
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
+            image.normal: "speaker_vol.png";
             min: 16 16;
             max: 16 16;
-            fixed: 1 1;
-            rel1.relative: 0.5 0.0;
-            rel1.to_x: "elm.swallow.bar";
-            rel2.relative: 0.5 1.0;
-            rel2.to_x: "elm.swallow.bar";
-         }
-      }
-      part { name: "knob";
-         nomouse;
-         description { state: "default" 0.0;
-            image.normal: "knob";
-            fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "elm.dragable.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "elm.dragable.slider";
-            rel2.offset: 3 3;
+            color: 160 160 160 255;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
          }
       }
       part { name: "slideevent"; type: RECT; repeat_events: 1;
          scale: 1;
-         nomouse;
          ignore_flags: ON_HOLD;
          dragable.events: "elm.dragable.slider";
          description { state: "default" 0.0;
@@ -1946,96 +1104,6 @@ group { name: "elm/slider/range/horizontal/default";
             max: 0 0;
             rel1.to: "elm.dragable.slider";
             rel2.to: "elm.dragable.slider";
-         }
-      }
-      part { name: "button2"; type: GROUP; mouse_events: 0;
-         source: "elm/slider/horizontal/indicator/default";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "elm.dragable2.slider";
-            rel2.to: "elm.dragable2.slider";
-            visible: 0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
-      part { name: "elm.dragable2.slider"; type: RECT;
-         scale: 1;
-         nomouse;
-         dragable.x: 1 1 0;
-         dragable.y: 0 0 0;
-         dragable.confine: "elm.swallow.bar";
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-            min: 16 16;
-            max: 16 16;
-            fixed: 1 1;
-            rel1.relative: 0.5 0.0;
-            rel1.to_x: "elm.swallow.bar";
-            rel2.relative: 0.5 1.0;
-            rel2.to_x: "elm.swallow.bar";
-            visible: 0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "knob2";
-         nomouse;
-         description { state: "default" 0.0;
-            image.normal: "knob";
-            fixed: 1 1;
-            min: 12 12;
-            step: 2 2;
-            max: 32 32; // XXX allow bigger sizes with more knob images
-            rel1.to: "elm.dragable2.slider";
-            rel1.offset: -4 -4;
-            rel2.to: "elm.dragable2.slider";
-            rel2.offset: 3 3;
-            visible: 0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-         description { state: "clicked" 0.0;
-            inherit: "default" 0.0;
-         }
-      }
-      part { name: "slideevent2"; type: RECT; repeat_events: 1;
-         scale: 1;
-         nomouse;
-         ignore_flags: ON_HOLD;
-         dragable.events: "elm.dragable2.slider";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "elm.dragable2.slider";
-            rel2.to: "elm.dragable2.slider";
-            color: 0 0 0 0;
-            visible: 0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "elm.track2.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "elm.dragable2.slider";
-            rel2.to: "elm.dragable2.slider";
-            visible: 0;
-         }
-         description { state: "show" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
          }
       }
       part { name: "event"; type: RECT;
@@ -2059,46 +1127,6 @@ group { name: "elm/slider/range/horizontal/default";
          signal: "mouse,up,1"; source: "elm.dragable.slider";
          action:  STATE_SET "default" 0.0;
          target: "knob";
-      }
-      program {
-         signal: "elm,slider,range,enable";
-         source: "elm";
-         script {
-              set_int(range, 1);
-              set_state(PART:"button2", "show", 0.0);
-              set_state(PART:"elm.dragable2.slider", "show", 0.0);
-              set_state(PART:"knob2", "show", 0.0);
-              set_state(PART:"slideevent2", "show", 0.0);
-              set_state(PART:"elm.track2.slider", "show", 0.0);
-              update_glow();
-              new m = get_int(slmode);
-              eval_mode(m);
-         }
-      }
-      program {
-         signal: "elm,slider,range,disable";
-         source: "elm";
-         script {
-              set_int(range, 0);
-              set_state(PART:"button2", "default", 0.0);
-              set_state(PART:"elm.dragable2.slider", "default", 0.0);
-              set_state(PART:"knob2", "default", 0.0);
-              set_state(PART:"slideevent2", "default", 0.0);
-              set_state(PART:"elm.track2.slider", "default", 0.0);
-              set_state(PART:"glow", "default", 0.0);
-              new m = get_int(slmode);
-              eval_mode(m);
-         }
-      }
-      program {
-         signal: "drag";
-         source: "elm.dragable*";
-         script {
-              new r;
-              r = get_int(range);
-              if (r)
-                 update_glow();
-         }
       }
       program {
          signal: "elm,state,indicator,show"; source: "elm";
@@ -2127,24 +1155,6 @@ group { name: "elm/slider/range/horizontal/default";
       program { name: "popup_hide2";
          action:  STATE_SET "default" 0.0;
          target: "button";
-      }
-       program {
-         signal: "mouse,down,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,show" "elm";
-         after: "popup2_show2";
-      }
-      program { name: "popup2_show2";
-         action:  STATE_SET "show" 0.0;
-         target: "button2";
-      }
-      program {
-         signal: "mouse,up,1"; source: "slideevent2";
-         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
-         after: "popup2_hide2";
-      }
-      program { name: "popup2_hide2";
-         action:  STATE_SET "hidden" 0.0;
-         target: "button2";
       }
       program {
          signal: "elm,state,text,visible"; source: "elm";
@@ -2263,12 +1273,1661 @@ group { name: "elm/slider/range/horizontal/default";
 #undef DISABLE
 }
 
+group { name: "elm/slider/vertical/indicator/default";
+   alias: "elm/slider/vertical/indicator/disabled";
+   alias: "elm/slider/vertical/popup/default";
+   alias: "elm/slider/vertical/indicator/media_player/position/default";
+   alias: "elm/slider/vertical/indicator/media_player/position/flush";
+   alias: "elm/slider/vertical/indicator/media_player/volume/default";
+   alias: "elm/slider/vertical/indicator/media_player/volume/flush";
+   parts {
+      part { name: "base"; type: SPACER;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 20 20;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "clip"; type: RECT;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.indicator";
+            rel1.offset: -100 -100;
+            rel2.to: "elm.indicator";
+            rel2.offset: 99 99;
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "bevel"; type: RECT; mouse_events: 0;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            rel1.offset: -10 -10;
+            rel1.to: "elm.indicator";
+            rel2.offset: 9 9;
+            rel2.to: "elm.indicator";
+            color: 0 0 0 64;
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "elm.indicator"; type: TEXT; mouse_events: 0;
+         clip_to: "clip";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            align: 0.0 0.5;
+            rel1.to: "base";
+            rel1.relative: 1.1 0.0;
+            rel1.offset: 11 0;
+            rel2.to: "base";
+            rel2.relative: 1.1 1.0;
+            rel2.offset: 11 -1;
+            color: 255 255 255 255;
+            text { font: FNBD; size: 10;
+               min: 1 1;
+               align: 0.0 0.5;
+               text_class: "slider_indicator";
+               ellipsis: -1;
+            }
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         signal: "elm,popup,show"; source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target:  "elm.indicator";
+         target:  "bevel";
+      }
+      program {
+         signal: "elm,popup,hide"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target:  "elm.indicator";
+         target:  "bevel";
+      }
+      program {
+         signal: "elm,popup,hide"; source: "elm";
+         action:  SIGNAL_EMIT "elm,popup,hide,done" "elm";
+      }
+      program {
+         signal: "elm,state,val,show"; source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target: "clip";
+      }
+      program {
+         signal: "elm,state,val,hide"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target: "clip";
+      }
+      program {
+         signal: "elm,state,indicator,show"; source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target:  "elm.indicator";
+         target:  "bevel";
+      }
+      program {
+         signal: "elm,state,indicator,hide"; source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target:  "elm.indicator";
+         target:  "bevel";
+      }
+      program {
+         signal:  "elm,state,disabled"; source: "elm";
+         action:  STATE_SET "disabled" 0.0;
+         target:  "base";
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target:  "base";
+      }
+   }
+}
+
+//Range
+
+group { name: "elm/slider/range/horizontal/default";
+   alias: "elm/slider/horizontal/disabled";
+   alias: "elm/slider/horizontal/media_player/position/default";
+   alias: "elm/slider/horizontal/media_player/position/flush";
+   alias: "elm/slider/horizontal/media_player/volume/default";
+   alias: "elm/slider/horizontal/media_player/volume/flush";
+   images.image: "speaker_vol.png" COMP;
+#define ICON    1
+#define LABEL   2
+#define END     4
+#define UNITS   8
+#define MASK    15
+#define INVERT  16
+#define DISABLE 32
+   script {
+      public slmode;
+      public range;
+      public update_glow(m) {
+         new d = m & DISABLE;
+         new i = m & INVERT;
+         new r = get_int(range);
+         if (r) {
+            new x1, y1, w1, h1, x2, y2, w2, h2;
+            get_geometry(PART:"knob", x1, y1, w1, h1);
+            get_geometry(PART:"knob2", x2, y2, w2, h2);
+            if (d) {
+               if (x2 < x1) {
+                 set_state(PART:"glow", "disabled_range_reverse", 0.0);
+               } else {
+                 set_state(PART:"glow", "disabled_range", 0.0);
+               }
+            } else {
+               if (x2 < x1) {
+                 set_state(PART:"glow", "range_reverse", 0.0);
+               } else {
+                 set_state(PART:"glow", "range", 0.0);
+               }
+            }
+         } else {
+            if (d) {
+               if (i) {
+                  set_state(PART:"glow", "disabled_inverted", 0.0);
+               } else {
+                  set_state(PART:"glow", "disabled", 0.0);
+               }
+            } else {
+               if (i) {
+                  set_state(PART:"glow", "default", 0.0);
+               } else {
+                  set_state(PART:"glow", "inverted", 0.0);
+               }
+            }
+         }
+      }
+      public eval_mode(m) {
+         new ic = m & ICON;
+         new l = m & LABEL;
+         new e = m & END;
+         new u = m & UNITS;
+         new d = m & DISABLE;
+         new i = m & INVERT;
+         if (i) {
+            if (!d) {
+               set_state(PART:"base", "default", 0.0);
+            } else {
+               set_state(PART:"base", "disabled", 0.0);
+            }
+         } else {
+            if (!d) {
+               set_state(PART:"base", "default", 0.0);
+            } else {
+               set_state(PART:"base", "disabled", 0.0);
+            }
+         }
+         if (l) {
+            if (!d) {
+               set_state(PART:"elm.text", "visible", 0.0);
+            } else {
+               set_state(PART:"elm.text", "disabled_visible", 0.0);
+            }
+         } else {
+            set_state(PART:"elm.text", "default", 0.0);
+         }
+         if (u) {
+            if (!d) {
+               set_state(PART:"elm.units", "visible", 0.0);
+               set_state(PART:"limits", "visible", 0.0);
+            } else {
+               set_state(PART:"elm.units", "disabled_visible", 0.0);
+               set_state(PART:"limits", "disabled_visible", 0.0);
+            }
+         } else {
+            set_state(PART:"elm.units", "default", 0.0);
+            set_state(PART:"limits", "default", 0.0);
+         }
+         if (ic) {
+            set_state(PART:"elm.swallow.icon", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.icon", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
+         }
+         if (e) {
+            set_state(PART:"elm.swallow.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
+         }
+         if (!d) {
+            set_state(PART:"event", "default", 0.0);
+            set_state(PART:"dis_clip", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
+            set_state(PART:"knob2", "default", 0.0);
+         } else {
+            set_state(PART:"event", "disabled", 0.0);
+            set_state(PART:"dis_clip", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
+            set_state(PART:"knob2", "disabled", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "elm.swallow.bar"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 40 20;
+            max: 99999 20;
+            align: 1.0 0.5;
+            rel1.to_x: "elm.text";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: 4 4;
+            rel2.to_x: "limits";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
+            color: 48 48 48 255;
+            min: 8 4;
+            max: 99999 4;
+            fixed: 0 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 56 56 56 255;
+         }
+      }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 53 153 255 255;
+            rel1.to: "base";
+            rel2.relative: 0.5 1.0;
+            rel2.to_x: "button";
+            rel2.to_y: "base";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 192 192 192 64;
+         }
+         description { state: "inverted" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.5 0.0;
+            rel1.to_x: "button";
+            rel1.to_y: "base";
+            rel2.to: "base";
+         }
+         description { state: "disabled_inverted" 0.0;
+            inherit: "inverted" 0.0;
+            color: 192 192 192 64;
+         }
+         description { state: "range" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 0.5 1.0;
+            rel1.to_x: "button";
+            rel2.to_x: "button2";
+            rel1.to_y: "base";
+            rel2.to_y: "base";
+         }
+         description { state: "disabled_range" 0.0;
+            inherit: "range" 0.0;
+             color: 192 192 192 64;
+         }
+         description { state: "range_reverse" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.5 0.0;
+            rel2.relative: 0.5 1.0;
+            rel1.to_x: "button2";
+            rel2.to_x: "button";
+            rel1.to_y: "base";
+            rel2.to_y: "base";
+         }
+         description { state: "disabled_range_reverse" 0.0;
+            inherit: "range_reverse" 0.0;
+             color: 192 192 192 64;
+         }
+      }
+      part { name: "dis_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.end";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "dis_clip";
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            visible: 0;
+            align: 0.0 0.5;
+            rel1.offset: -1 4;
+            rel2.offset: -1 -5;
+            rel2.relative: 0.0 1.0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
+         }
+      }
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            text { font: FN; size: 10;
+               min: 0 0;
+               text_class: "slider_text";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.icon";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: SPACER_TEXT;
+            }
+         }
+      }
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            align: 0.0 0.5;
+            rel1.to_x: "elm.swallow.icon";
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -1 4;
+            rel2.to_x: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -1 -5;
+            color: 160 160 160 255;
+            text { font: FN; size: 10;
+               text_class: "slider";
+               min: 0 0;
+               align: 0.0 0.5;
+            }
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            fixed: 1 0;
+            visible: 1;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
+            text.min: 1 1;
+            text.ellipsis: -1;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "visible" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         clip_to: "dis_clip";
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            visible: 0;
+            align: 1.0 0.5;
+            rel1.offset: 0 4;
+            rel1.relative: 1.0 0.0;
+            rel2.offset: -1 -5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            aspect: 1.0 1.0;
+            aspect_preference: VERTICAL;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
+         }
+      }
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            text { font: FN; size: 10;
+               min: 0 0;
+               text_class: "slider_text";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "elm.swallow.end";
+            rel2.to: "elm.swallow.end";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: SPACER_TEXT;
+            }
+         }
+      }
+      alias: "elm.units.min" "limits:elm.units.min";
+      alias: "elm.units.max" "limits:elm.units.max";
+      part { name: "limits"; type: GROUP; mouse_events: 0;
+         source: "elm/slider/hidden/limit";
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 1.0 0.5;
+            min: SOURCE;
+            fixed: 1 1;
+            rel1.to_x: "elm.swallow.end";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 4;
+            rel2.to_x: "elm.swallow.end";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: -1 -5;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "elm.units"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            fixed: 1 1;
+            rel1.to_x: "limits";
+            rel2.to_x: "limits";
+            color: 160 160 160 255;
+            text { font: FN; size: 10;
+               text_class: "slider";
+               align: 1.0 0.5;
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "visible" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "button"; type: GROUP; mouse_events: 0;
+         source: "elm/slider/horizontal/indicator/default";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable.slider"; type: RECT;
+         scale: 1;
+         dragable.x: 1 1 0;
+         dragable.y: 0 0 0;
+         dragable.confine: "elm.swallow.bar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            min: 16 16;
+            max: 16 16;
+            fixed: 1 1;
+            rel1.relative: 0.5 0.0;
+            rel1.to_x: "elm.swallow.bar";
+            rel2.relative: 0.5 1.0;
+            rel2.to_x: "elm.swallow.bar";
+         }
+      }
+      part { name: "knob"; repeat_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            image.normal: "speaker_vol.png";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "slideevent"; type: RECT; repeat_events: 1;
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         dragable.events: "elm.dragable.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track.slider"; type: SWALLOW; mouse_events: 0;
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+      }
+      part { name: "button2"; type: GROUP; mouse_events: 0;
+         clip_to: "enable2";
+         source: "elm/slider/horizontal/indicator/default";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable2.slider"; type: RECT;
+         clip_to: "enable2";
+         scale: 1;
+         dragable.x: 1 1 0;
+         dragable.y: 0 0 0;
+         dragable.confine: "elm.swallow.bar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            min: 16 16;
+            max: 16 16;
+            fixed: 1 1;
+            rel1.relative: 0.5 0.0;
+            rel1.to_x: "elm.swallow.bar";
+            rel2.relative: 0.5 1.0;
+            rel2.to_x: "elm.swallow.bar";
+         }
+      }
+      part { name: "knob2"; repeat_events: 1;
+         clip_to: "enable2";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+            image.normal: "speaker_vol.png";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "slideevent2"; type: RECT; repeat_events: 1;
+         clip_to: "enable2";
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         dragable.events: "elm.dragable2.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track2.slider"; type: SWALLOW; mouse_events: 0;
+         clip_to: "enable2";
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+         }
+      }
+      part { name: "enable2"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: -150 -150;
+            rel2.offset: 149 149;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { signal: "elm,slider,range,enable"; source: "elm";
+         script {
+            set_int(range, 1);
+            set_state(PART:"enable2", "visible", 0.0);
+            new m = get_int(slmode);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { signal: "elm,slider,range,disable"; source: "elm";
+         script {
+            set_int(range, 0);
+            set_state(PART:"enable2", "visible", 0.0);
+            new m = get_int(slmode);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { signal: "drag"; source: "elm.dragable*";
+         script {
+            new r = get_int(range);
+            new m = get_int(slmode);
+            if (r) update_glow(m);
+         }
+      }
+      program {
+         signal: "mouse,down,1"; source: "elm.dragable.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob";
+      }
+      program {
+         signal: "mouse,down,1"; source: "elm.dragable2.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable2.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob2";
+      }
+      program {
+         signal: "elm,state,indicator,show"; source: "elm";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program {
+         signal: "elm,state,indicator,hide"; source: "elm";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program {
+         signal: "mouse,down,1"; source: "slideevent";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "popup_show2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_hide2";
+         action:  STATE_SET "default" 0.0;
+         target: "button";
+      }
+      program {
+         signal: "mouse,down,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program {
+         signal: "elm,state,text,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= LABEL; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,text,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~LABEL; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,icon,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= ICON; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,icon,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~ICON; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { name: "end_show";
+         signal: "elm,state,end,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= END; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { name: "end_hide";
+         signal: "elm,state,end,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~END; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= UNITS; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,visible"; source: "elm";
+         action: SIGNAL_EMIT "limits,visible" "elm";
+         target: "limits";
+      }
+      program {
+         signal: "elm,state,units,hidden"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         script {
+            new m = get_int(slmode);
+            m &= ~UNITS; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,hidden"; source: "elm";
+         action: SIGNAL_EMIT "limits,hide" "elm";
+         target: "limits";
+      }
+      program {
+         signal: "elm,state,inverted,on"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= INVERT; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,inverted,off"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~INVERT; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= DISABLE; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~DISABLE; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+   }
+#undef ICON
+#undef LABEL
+#undef END
+#undef UNITS
+#undef MASK
+#undef INVERT
+#undef DISABLE
+}
+
 group { name: "elm/slider/range/vertical/default";
    alias: "elm/slider/vertical/disabled";
    alias: "elm/slider/vertical/media_player/position/default";
    alias: "elm/slider/vertical/media_player/position/flush";
    alias: "elm/slider/vertical/media_player/volume/default";
    alias: "elm/slider/vertical/media_player/volume/flush";
+   images.image: "speaker_vol.png" COMP;
+#define ICON    1
+#define LABEL   2
+#define END     4
+#define UNITS   8
+#define MASK    15
+#define INVERT  16
+#define DISABLE 32
+   script {
+      public slmode;
+      public range;
+      public update_glow(m) {
+         new d = m & DISABLE;
+         new i = m & INVERT;
+         new r = get_int(range);
+         if (r) {
+            new x1, y1, w1, h1, x2, y2, w2, h2;
+            get_geometry(PART:"knob", x1, y1, w1, h1);
+            get_geometry(PART:"knob2", x2, y2, w2, h2);
+            if (d) {
+               if (y2 < y1) {
+                  set_state(PART:"glow", "disabled_range_reverse", 0.0);
+               } else {
+                  set_state(PART:"glow", "disabled_range", 0.0);
+               }
+            } else {
+               if (y2 < y1) {
+                  set_state(PART:"glow", "range_reverse", 0.0);
+               } else {
+                  set_state(PART:"glow", "range", 0.0);
+               }
+            }
+         } else {
+            if (d) {
+               if (i) {
+                  set_state(PART:"glow", "disabled_inverted", 0.0);
+               } else {
+                  set_state(PART:"glow", "disabled", 0.0);
+               }
+            } else {
+               if (i) {
+                  set_state(PART:"glow", "default", 0.0);
+               } else {
+                  set_state(PART:"glow", "inverted", 0.0);
+               }
+            }
+         }
+      }
+      public eval_mode(m) {
+         new ic = m & ICON;
+         new l = m & LABEL;
+         new e = m & END;
+         new u = m & UNITS;
+         new d = m & DISABLE;
+         new i = m & INVERT;
+         if (i) {
+            if (!d) {
+               set_state(PART:"base", "default", 0.0);
+            } else {
+               set_state(PART:"base", "disabled", 0.0);
+            }
+         } else {
+            if (!d) {
+               set_state(PART:"base", "default", 0.0);
+            } else {
+               set_state(PART:"base", "disabled", 0.0);
+            }
+         }
+         if (l) {
+            if (!d) {
+               set_state(PART:"elm.text", "visible", 0.0);
+            } else {
+               set_state(PART:"elm.text", "disabled_visible", 0.0);
+            }
+         } else {
+            set_state(PART:"elm.text", "default", 0.0);
+         }
+         if (u) {
+            if (!d) {
+               set_state(PART:"elm.units", "visible", 0.0);
+               set_state(PART:"limits", "visible", 0.0);
+            } else {
+               set_state(PART:"elm.units", "disabled_visible", 0.0);
+               set_state(PART:"limits", "disabled_visible", 0.0);
+            }
+         } else {
+            set_state(PART:"elm.units", "default", 0.0);
+            set_state(PART:"limits", "default", 0.0);
+         }
+         if (ic) {
+            set_state(PART:"elm.swallow.icon", "visible", 0.0);
+            set_state(PART:"sizer_content", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.icon", "default", 0.0);
+            set_state(PART:"sizer_content", "default", 0.0);
+         }
+         if (e) {
+            set_state(PART:"elm.swallow.end", "visible", 0.0);
+            set_state(PART:"sizer_content_end", "visible", 0.0);
+         } else {
+            set_state(PART:"elm.swallow.end", "default", 0.0);
+            set_state(PART:"sizer_content_end", "default", 0.0);
+         }
+         if (!d) {
+            set_state(PART:"event", "default", 0.0);
+            set_state(PART:"dis_clip", "default", 0.0);
+            set_state(PART:"knob", "default", 0.0);
+            set_state(PART:"knob2", "default", 0.0);
+         } else {
+            set_state(PART:"event", "disabled", 0.0);
+            set_state(PART:"dis_clip", "disabled", 0.0);
+            set_state(PART:"knob", "disabled", 0.0);
+            set_state(PART:"knob2", "disabled", 0.0);
+         }
+      }
+   }
+   parts {
+      part { name: "elm.swallow.bar"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
+            min: 20 40;
+            max: 29 99999;
+            align: 0.5 1.0;
+            rel1.to_y: "elm.text";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 4 4;
+            rel2.to_y: "limits";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 -5;
+            offscale;
+         }
+      }
+      part { name: "base"; type: RECT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.bar";
+            rel2.to: "elm.swallow.bar";
+            color: 48 48 48 255;
+            min: 4 8;
+            max: 4 99999;
+            fixed: 1 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 56 56 56 255;
+         }
+      }
+      part { name: "glow"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+            color: 53 153 255 255;
+            rel1.to: "base";
+            rel2.relative: 1.0 0.5;
+            rel2.to_y: "button";
+            rel2.to_x: "base";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 192 192 192 64;
+         }
+         description { state: "inverted" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.0 0.5;
+            rel1.to_y: "button";
+            rel1.to_x: "base";
+            rel2.to: "base";
+         }
+         description { state: "disabled_inverted" 0.0;
+            inherit: "inverted" 0.0;
+            color: 192 192 192 64;
+         }
+         description { state: "range" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+            rel1.to_y: "button";
+            rel2.to_y: "button2";
+            rel1.to_x: "base";
+            rel2.to_x: "base";
+         }
+         description { state: "disabled_range" 0.0;
+            inherit: "range" 0.0;
+            color: 192 192 192 64;
+         }
+         description { state: "range_reverse" 0.0;
+            color: 53 153 255 255;
+            rel1.relative: 0.0 0.5;
+            rel2.relative: 1.0 0.5;
+            rel1.to_y: "button2";
+            rel2.to_y: "button";
+            rel1.to_x: "base";
+            rel2.to_x: "base";
+         }
+         description { state: "disabled_range_reverse" 0.0;
+            inherit: "range_reverse" 0.0;
+            color: 192 192 192 64;
+         }
+      }
+      part { name: "dis_clip"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.end";
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "elm.swallow.icon"; type: SWALLOW;
+         clip_to: "dis_clip";
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            visible: 0;
+            align: 0.5 0.0;
+            rel1.to_x: "elm.swallow.bar";
+            rel2.to_x: "elm.swallow.bar";
+            rel1.offset: 4 -1;
+            rel2.offset: -5 -1;
+            rel2.relative: 1.0 0.0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
+         }
+      }
+      part { name: "sizer_content"; type: TEXT; mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            text { font: FN; size: 10;
+               min: 0 0;
+               text_class: "slider_text";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "elm.swallow.icon";
+            rel2.to: "elm.swallow.icon";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: SPACER_TEXT;
+            }
+         }
+      }
+      part { name: "elm.text"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            align: 0.5 0.0;
+            rel1.to_y: "elm.swallow.icon";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 4 -1;
+            rel2.to_y: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -5 -1;
+            color: 160 160 160 255;
+            text { font: FN; size: 10;
+               text_class: "slider";
+               min: 0 0;
+               align: 0.5 0.0;
+            }
+            visible: 0;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
+            text.min: 1 1;
+            text.ellipsis: -1;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "visible" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "elm.swallow.end"; type: SWALLOW;
+         clip_to: "dis_clip";
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            visible: 0;
+            align: 0.5 1.0;
+            rel1.to_x: "elm.swallow.bar";
+            rel2.to_x: "elm.swallow.bar";
+            rel1.offset: 4 0;
+            rel1.relative: 0.0 1.0;
+            rel2.offset: -5 -1;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            aspect: 1.0 1.0;
+            aspect_preference: VERTICAL;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
+         }
+      }
+      part { name: "sizer_content_end"; type: TEXT; mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            visible: 0;
+            text { font: FN; size: 10;
+               min: 0 0;
+               text_class: "slider_text";
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            rel1.to: "elm.swallow.end";
+            rel2.to: "elm.swallow.end";
+            text {
+               min: 1 1;
+               ellipsis: -1;
+               text: SPACER_TEXT;
+            }
+         }
+      }
+      alias: "elm.units.min" "limits:elm.units.min";
+      alias: "elm.units.max" "limits:elm.units.max";
+      part { name: "limits"; type: GROUP; mouse_events: 0;
+         source: "elm/slider/hidden/limit";
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 0.5 1.0;
+            max: 0 0;
+            fixed: 1 1;
+            rel1.to_y: "elm.swallow.end";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 4 0;
+            rel2.to_y: "elm.swallow.end";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 -1;
+            offscale;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            min: SOURCE;
+            max: 9999 9999;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            min: SOURCE;
+            max: 9999 9999;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
+            color: 255 255 255 64;
+         }
+      }
+      part { name: "elm.units"; type: TEXT; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            fixed: 1 1;
+            rel1.to_y: "limits";
+            rel2.to_y: "limits";
+            color: 160 160 160 255;
+            text { font: FN; size: 10;
+               text_class: "slider";
+               align: 0.5 1.0;
+               min: 1 1;
+               ellipsis: -1;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "visible" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "button"; type: GROUP; mouse_events: 0;
+         source: "elm/slider/vertical/indicator/default";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable.slider"; type: RECT;
+         scale: 1;
+         dragable.x: 0 0 0;
+         dragable.y: 1 1 0;
+         dragable.confine: "elm.swallow.bar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            min: 16 16;
+            max: 16 16;
+            fixed: 1 1;
+            rel1.relative: 0.0 0.5;
+            rel1.to_y: "elm.swallow.bar";
+            rel2.relative: 1.0 0.5;
+            rel2.to_y: "elm.swallow.bar";
+         }
+      }
+      part { name: "knob"; repeat_events: 1;
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            image.normal: "speaker_vol.png";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "slideevent"; type: RECT; repeat_events: 1;
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         dragable.events: "elm.dragable.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track.slider"; type: SWALLOW; mouse_events: 0;
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+      }
+      part { name: "button2"; type: GROUP; mouse_events: 0;
+         source: "elm/slider/vertical/indicator/default";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable2.slider"; type: RECT;
+         clip_to: "enable2";
+         scale: 1;
+         dragable.x: 0 0 0;
+         dragable.y: 1 1 0;
+         dragable.confine: "elm.swallow.bar";
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            min: 16 16;
+            max: 16 16;
+            fixed: 1 1;
+            rel1.relative: 0.0 0.5;
+            rel1.to_y: "elm.swallow.bar";
+            rel2.relative: 1.0 0.5;
+            rel2.to_y: "elm.swallow.bar";
+         }
+      }
+      part { name: "knob2"; repeat_events: 1;
+         clip_to: "enable2";
+         scale: 1;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+            image.normal: "speaker_vol.png";
+            min: 16 16;
+            max: 16 16;
+            color: 160 160 160 255;
+         }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 96 96 96 255;
+         }
+      }
+      part { name: "slideevent2"; type: RECT; repeat_events: 1;
+         clip_to: "enable2";
+         scale: 1;
+         ignore_flags: ON_HOLD;
+         dragable.events: "elm.dragable2.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track2.slider"; type: SWALLOW; mouse_events: 0;
+         clip_to: "enable2";
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable2.slider";
+            rel2.to: "elm.dragable2.slider";
+         }
+      }
+      part { name: "enable2"; type: RECT;
+         description { state: "default" 0.0;
+            rel1.offset: -150 -150;
+            rel2.offset: 149 149;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "event"; type: RECT;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+   }
+   programs {
+      program { signal: "elm,slider,range,enable"; source: "elm";
+         script {
+            set_int(range, 1);
+            set_state(PART:"enable2", "visible", 0.0);
+            new m = get_int(slmode);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { signal: "elm,slider,range,disable"; source: "elm";
+         script {
+            set_int(range, 0);
+            set_state(PART:"enable2", "visible", 0.0);
+            new m = get_int(slmode);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { signal: "drag"; source: "elm.dragable*";
+         script {
+            new r = get_int(range);
+            new m = get_int(slmode);
+            if (r) update_glow(m);
+         }
+      }
+      program {
+         signal: "mouse,down,1"; source: "elm.dragable.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob";
+      }
+      program {
+         signal: "mouse,down,1"; source: "elm.dragable2.slider";
+         action:  STATE_SET "clicked" 0.0;
+         target: "knob2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "elm.dragable2.slider";
+         action:  STATE_SET "default" 0.0;
+         target: "knob2";
+      }
+      program {
+         signal: "elm,state,indicator,show"; source: "elm";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program {
+         signal: "elm,state,indicator,hide"; source: "elm";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program {
+         signal: "mouse,down,1"; source: "slideevent";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "popup_show2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_hide2";
+         action:  STATE_SET "default" 0.0;
+         target: "button";
+      }
+      program {
+         signal: "mouse,down,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,show" "elm";
+         after: "popup_show2";
+      }
+      program {
+         signal: "mouse,up,1"; source: "slideevent2";
+         action:  SIGNAL_EMIT "elm,popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program {
+         signal: "elm,state,text,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= LABEL; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,text,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~LABEL; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,icon,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= ICON; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,icon,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~ICON; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { name: "end_show";
+         signal: "elm,state,end,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= END; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program { name: "end_hide";
+         signal: "elm,state,end,hidden"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~END; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,visible"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= UNITS; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,visible"; source: "elm";
+         action: SIGNAL_EMIT "limits,visible" "elm";
+         target: "limits";
+      }
+      program {
+         signal: "elm,state,units,hidden"; source: "elm";
+         action:  STATE_SET "default" 0.0;
+         script {
+            new m = get_int(slmode);
+            m &= ~UNITS; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,units,hidden"; source: "elm";
+         action: SIGNAL_EMIT "limits,hide" "elm";
+         target: "limits";
+      }
+      program {
+         signal: "elm,state,inverted,on"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= INVERT; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,inverted,off"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~INVERT; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,disabled"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m |= DISABLE; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+      program {
+         signal: "elm,state,enabled"; source: "elm";
+         script {
+            new m = get_int(slmode);
+            m &= ~DISABLE; set_int(slmode, m);
+            eval_mode(m);
+            update_glow(m);
+         }
+      }
+   }
+#undef ICON
+#undef LABEL
+#undef END
+#undef UNITS
+#undef MASK
+#undef INVERT
+#undef DISABLE
+   
+   
+   
+   
+   
+   
+   
+   
+   
+#if 0
    images.image: "slider_run_base_vert.png" COMP;
    images.image: "slider_run_bevel_vert.png" COMP;
    images.image: "slider_run_base_light_vert.png" COMP;
@@ -3052,4 +3711,5 @@ group { name: "elm/slider/range/vertical/default";
 #undef MASK
 #undef INVERT
 #undef DISABLE
+#endif
 }
