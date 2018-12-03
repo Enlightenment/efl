@@ -20,6 +20,7 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
+   if (!bdata) return;
    if (bdata->image)
      {
         Ecore_Evas *ee2;
@@ -31,11 +32,11 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-        bdata->free_func(bdata->data,
-			 bdata->pixels);
+        bdata->free_func(bdata->data, bdata->pixels);
      }
 
    free(bdata);
+   ee->engine.data = NULL;
 
    ecore_event_evas_shutdown();
 }
@@ -895,6 +896,8 @@ ecore_evas_buffer_new(int w, int h)
    ee =  ecore_evas_buffer_allocfunc_new
      (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
 
+   if (!ee) ecore_event_evas_shutdown();
+
    ecore_evas_done(ee, EINA_TRUE);
 
    return ee;
@@ -1084,5 +1087,6 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
      }
 
    _ecore_evas_subregister(ee_target, ee);
+   ecore_event_evas_init();
    return o;
 }
