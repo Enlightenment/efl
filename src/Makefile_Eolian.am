@@ -102,7 +102,10 @@ tests/eolian/data/struct.eo \
 tests/eolian/data/typedef.eo \
 tests/eolian/data/var.eo \
 tests/eolian/data/function_types.eot \
-tests/eolian/data/import_types.eot
+tests/eolian/data/import_types.eot \
+tests/eolian/data_aux/aux_a.eo \
+tests/eolian/data_aux/aux_b.eo \
+tests/eolian/data_aux/aux_c.eo
 
 if EFL_ENABLE_TESTS
 check_PROGRAMS += \
