@@ -237,7 +237,7 @@ eng_egl_symbols(EGLDisplay edsp)
    FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
            glsym_func_uint);
 
-   if (evas_gl_extension_string_check(exts, "EGL_IMG_context_priority"))
+   if (_ckext(exts, "EGL_IMG_context_priority"))
      _extn_have_context_priority = 1;
 
    done = EINA_TRUE;
