@@ -173,6 +173,38 @@ elm_object_focus_cycle(Evas_Object        *obj,
    elm_object_focus_next(obj, dir);
 }
 
+static Evas_Object*
+_get_legacy_target(Evas_Object *eo, Elm_Widget_Smart_Data *pd, Elm_Focus_Direction dir)
+{
+   Evas_Object *result = NULL;
+
+   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) result = elm_object_item_widget_get(pd->legacy_focus.item_ ##field);
+   MAPPING()
+   #undef MAP
+
+   if (!result)
+     {
+        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) result = pd->legacy_focus.field;
+        MAPPING()
+        #undef MAP
+     }
+
+   return result;
+}
+
+static Eina_Array*
+_focus_parent_chain_gen(Efl_Ui_Focus_Object *obj)
+{
+   Eina_Array *result = eina_array_new(5);
+
+   for (Eo *parent = obj; parent; parent = efl_ui_focus_object_focus_parent_get(parent))
+     {
+        eina_array_push(result, parent);
+     }
+
+   return result;
+}
+
 EAPI void
 elm_object_focus_next(Evas_Object        *obj,
                       Elm_Focus_Direction dir)
@@ -194,16 +226,31 @@ elm_object_focus_next(Evas_Object        *obj,
         Efl_Ui_Focus_Object *legacy_target = NULL;
         ELM_WIDGET_DATA_GET_OR_RETURN(logical, pd_logical);
 
-
-        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd_logical->legacy_focus.item_ ##field) legacy_target = elm_object_item_widget_get(pd_logical->legacy_focus.item_ ##field);
-        MAPPING()
-        #undef MAP
+        legacy_target = _get_legacy_target(obj, pd_logical, dir);
 
         if (!legacy_target)
           {
-             #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd_logical->legacy_focus.field) legacy_target = pd_logical->legacy_focus.field;
-             MAPPING()
-             #undef MAP
+             Eina_Array *old_chain = _focus_parent_chain_gen(logical);
+             Eina_Array *new_chain = _focus_parent_chain_gen(efl_ui_focus_manager_request_move(top, dir, NULL, EINA_FALSE));
+
+             //first pop off all elements that are the same
+             while (eina_array_count(new_chain) > 0 && eina_array_count(old_chain) > 0 &&
+                    eina_array_data_get(new_chain, (int)eina_array_count(new_chain) -1) == eina_array_data_get(old_chain, (int)eina_array_count(old_chain) - 1))
+               {
+                  eina_array_pop(new_chain);
+                  eina_array_pop(old_chain);
+               }
+
+             for (unsigned int i = 0; i < eina_array_count(old_chain); ++i)
+               {
+                  Evas_Object *parent = eina_array_data_get(old_chain, i);
+                  if (!elm_widget_is(parent)) continue;
+                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, pd);
+                  legacy_target = _get_legacy_target(parent, pd, dir);
+                  if (legacy_target) break;
+               }
+             eina_array_free(new_chain);
+             eina_array_free(old_chain);
           }
 
         if (legacy_target)
