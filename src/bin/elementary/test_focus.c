@@ -1031,7 +1031,7 @@ _focus5_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info E
    Evas_Object *grid = data;
    struct _focus5_obj *layout = evas_object_data_get(grid, "layout");
 
-   // brrr...a really naive looping 
+   // brrr...a really naive looping
    if (layout == _focus5_layout_data1)
       _focus5_layout(grid, _focus5_layout_data2);
    else if (layout == _focus5_layout_data2)
@@ -1218,6 +1218,66 @@ test_focus6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    evas_object_data_set(btn, "direction", (void *)(uintptr_t)ELM_FOCUS_RIGHT);
    evas_object_smart_callback_add(btn, "clicked", _focus6_btn_clicked, ly);
    elm_box_pack_end(box2, btn);
+   evas_object_show(btn);
+
+   // size and show the window
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
+}
+
+void
+test_focus7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *box, *btn, *gl;
+   Elm_Genlist_Item_Class *itc;
+   Elm_Object_Item *it;
+   int i;
+
+   win = elm_win_util_standard_add("focus7", "Focus 7");
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+
+   // main vertical box
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   // genlist in a swallow
+   gl = elm_genlist_add(box);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
+   elm_box_pack_end(box, gl);
+
+   itc = elm_genlist_item_class_new();
+   itc->item_style = "default";
+   itc->func.text_get = _focus6_gl_text_get;
+   for (i = 0; i < 3; i++)
+     {
+        it = elm_genlist_item_append(gl, itc, (void*)(uintptr_t)i, NULL,
+                                     ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+        if (i == 1)
+          {
+             elm_genlist_item_selected_set(it, EINA_TRUE);
+
+             /* focus should start from second item */
+             elm_object_item_focus_set(it, EINA_TRUE);
+          }
+     }
+   elm_genlist_item_class_free(itc);
+   evas_object_show(gl);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "To the right will result in genlist focus");
+   elm_object_focus_next_item_set(btn, it, ELM_FOCUS_RIGHT);
+   elm_box_pack_end(box, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "UP");
+   elm_box_pack_end(box, btn);
    evas_object_show(btn);
 
    // size and show the window
