@@ -4,7 +4,7 @@ class Complex_Type {
    methods {
       @property a {
          set {
-            return: list<array<Eo @owned> > @owned;
+            return: list<array<ptr(Eo) @owned> > @owned;
          }
          get {
          }
