@@ -18,7 +18,7 @@ foreach eo_file : priv_eo_files
     input : eo_file,
     output : [eo_file + '.h'],
     depfile : eo_file + '.d',
-    command : [eolian_gen, '-I', meson.current_source_dir(), eolian_include_directories,
+    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
@@ -29,7 +29,7 @@ eolian_suite = executable('eolian_suite',
   eolian_test_src, priv_eo_file_target,
   dependencies: [eolian, check, eo],
   c_args : [
-  '-DEOLIAN_GEN="'+eolian_gen.full_path()+'"',
+  '-DEOLIAN_GEN="'+eolian_gen_path+'"',
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DEO_SRC_DIR="'+join_paths(meson.source_root(), 'src', 'lib')+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
