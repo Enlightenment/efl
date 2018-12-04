@@ -140,7 +140,7 @@ static const Simple_Test_Widget simple_widgets[] = {
 };
 
 static void
-_eventing_test(void *data, Evas_Object *obj, void *event_info)
+_eventing_test(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eina_Bool *val = data;
 
