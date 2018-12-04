@@ -25,7 +25,7 @@ foreach edc_file : edc_files
    themes += custom_target('edje_cc_' + edc_file,
     input : edc_file,
     output : '@BASENAME@.edj',
-    command : ['/usr/bin/env', 'EFL_RUN_IN_TREE=1', edje_cc.full_path(), '-beta',
+    command : edje_cc_exe + [ '-beta',
               '-id', join_paths(meson.source_root(), 'src', 'tests', 'emotion', 'data'),
               '-fd', meson.current_source_dir(),
               '-sd', meson.current_source_dir(),
