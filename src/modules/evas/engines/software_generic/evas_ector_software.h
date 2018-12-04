@@ -1,5 +1,5 @@
-#ifndef EVAS_ECTOR_GL_H
-#define EVAS_ECTOR_GL_H
+#ifndef EVAS_ECTOR_SOFTWARE_H
+#define EVAS_ECTOR_SOFTWARE_H
 
 #ifdef EAPI
 # undef EAPI
@@ -33,5 +33,5 @@
 #undef EAPI
 #define EAPI
 
-#endif /* ! EVAS_ECTOR_GL_H */
+#endif /* ! EVAS_ECTOR_SOFTWARE_H */
 
