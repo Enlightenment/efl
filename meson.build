@@ -203,7 +203,7 @@ ecore_evas_wayland_engine_include_dir = []
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
-['eina'             ,[]                    , false,  true,  true,  true,  true,  true, [], []],
+['eina'             ,[]                    , false,  true,  true,  true,  true,  true, [], ['fcontext']],
 ['eolian'           ,[]                    , false,  true,  true, false,  true, false, ['eina'], []],
 ['eo'               ,[]                    , false,  true, false,  true,  true, false, ['eina'], []],
 ['efl'              ,[]                    , false,  true, false, false,  true, false, ['eo'], []],

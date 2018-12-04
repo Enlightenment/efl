@@ -17,7 +17,8 @@ eo_suite_src = [
   'eo_test_event.c',
   'eo_test_threaded_calls.c',
   'eo_test_init.c',
-  'eo_test_lifecycle.c'
+  'eo_test_lifecycle.c',
+  'eo_test_coro.c'
 ]
 
 eo_suite = executable('eo_suite',

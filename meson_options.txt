@@ -333,3 +333,10 @@ option('native-arch-optimization',
   value: true,
   description: 'Flag for enabling architecture native optimizations'
 )
+
+option('coro',
+  type : 'combo',
+  choices : ['fcontext', 'thread'],
+  value : 'fcontext',
+  description : 'Which coroutine implementation to use'
+)

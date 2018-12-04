@@ -101,6 +101,7 @@ public_sub_headers = [
 'eina_freeq.h',
 'eina_slstr.h',
 'eina_vpath.h',
+'eina_coro.h',
 ]
 
 public_headers = [
@@ -115,6 +116,7 @@ sources = [
 'eina_binbuf.c',
 'eina_binshare.c',
 'eina_convert.c',
+'eina_coro.c',
 'eina_counter.c',
 'eina_cow.c',
 'eina_cpu.c',
@@ -345,6 +347,15 @@ if sys_osx == true
 
 endif
 
+eina_build_libs = []
+
+if get_option('coro') == 'fcontext'
+   eina_config.set('USE_CORO_FCONTEXT', 1)
+   eina_build_libs += fcontext_lib
+else
+   eina_config.set('USE_CORO_THREAD', 1)
+endif
+
 eina_config_file = configure_file(
   output: 'eina_config.h',
   configuration: eina_config,
@@ -370,7 +381,8 @@ eina_lib = library('eina', sources,
   include_directories : config_dir,
   dependencies: [m, rt, dl, execinfo, iconv, eina_deps, thread_dep, eina_mem_pools],
   install: true,
-  version : meson.project_version()
+  version : meson.project_version(),
+  link_with : eina_build_libs
 )
 
 
