@@ -679,7 +679,7 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
 {
    Node *pnode;
    Efl_Ui_Focus_Object *o;
-   Eina_List *node_order = NULL, *not_ordered, *trash, *node_order_clean, *n;
+   Eina_List *node_order = NULL, *not_ordered, *n;
 
    F_DBG("Manager_update_order on %p %p", obj, parent);
 
