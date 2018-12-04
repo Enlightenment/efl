@@ -4072,7 +4072,7 @@ _elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_elm_toolbar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Elm_Toolbar_Item_Data *pd)
+_elm_toolbar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
 {
    return WIDGET(pd);
 }
