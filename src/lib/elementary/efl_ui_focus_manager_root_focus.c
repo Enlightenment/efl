@@ -142,7 +142,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(const 
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Eina_Rect viewport)
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Eina_Rect viewport EINA_UNUSED)
 {
    if (pd->rect_registered)
      return eina_list_iterator_new(pd->iterator_list);
