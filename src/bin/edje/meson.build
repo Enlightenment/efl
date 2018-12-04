@@ -30,6 +30,10 @@ edje_cc = executable('edje_cc',
         link_args : bin_linker_args
 )
 
+env = find_program('env')
+
+edje_cc_exe = [env, 'EFL_RUN_IN_TREE=1', edje_cc.full_path()]
+
 edje_decc_src = [
   'edje_decc.c',
   'edje_decc.h',

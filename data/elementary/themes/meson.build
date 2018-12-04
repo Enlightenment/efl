@@ -10,7 +10,7 @@ foreach edc_file : edc_files
    elm_themes += custom_target('edje_cc_' + edc_file,
     input : edc_file,
     output : '@BASENAME@.edj',
-    command : ['/usr/bin/env', 'EFL_RUN_IN_TREE=1', edje_cc.full_path(), '-beta',
+    command : edje_cc_exe + [ '-beta',
               '-sd', join_paths(meson.current_source_dir(), 'snd'),
               '-id', elm_themes_image_include,
               '-id', join_paths(meson.current_source_dir(), 'fdo'),
