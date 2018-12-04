@@ -1436,7 +1436,7 @@ _profile_fetch_from_conf(void)
 {
    char buf[PATH_MAX], *p, *s;
    Eet_File *ef = NULL;
-   int len = 0, i;
+   int len = 0;
 
    // if env var - use profile without question
    s = getenv("ELM_PROFILE");
@@ -2188,9 +2188,9 @@ _elm_config_eet_close_error_get(Eet_File *ef,
 static char *
 _elm_config_profile_name_get()
 {
-   char buf[PATH_MAX], *p, *s;
+   char buf[PATH_MAX], *p;
    Eet_File *ef = NULL;
-   int len = 0, i;
+   int len = 0;
    char *rst = NULL;
 
    _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -4408,12 +4408,11 @@ _config_change_delay_cb(void *data EINA_UNUSED)
 
 static Eina_Bool
 _elm_config_file_monitor_cb(void *data EINA_UNUSED,
-                            int type,
+                            int type EINA_UNUSED,
                             void *event)
 {
    Eio_Monitor_Event *ev = event;
    const char *file = ecore_file_file_get(ev->filename);
-   char buf[PATH_MAX];
 
    if (ev->monitor == _eio_config_monitor)
      {
