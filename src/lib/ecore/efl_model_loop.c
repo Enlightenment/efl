@@ -66,7 +66,7 @@ _propagate_future(void *data, const Efl_Event *event)
 }
 
 static void
-_event_cancel(void *data, const Eina_Promise *dead_ptr)
+_event_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
 {
    _efl_model_loop_wathcer_free(data);
 }
