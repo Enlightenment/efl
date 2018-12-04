@@ -37,6 +37,7 @@
 /ecore_file_download_example
 /ecore_getopt_example
 /ecore_idler_example
+/ecore_input_joystick_example
 /ecore_imf_example
 /ecore_job_example
 /ecore_pipe_gstreamer_example
