@@ -53,6 +53,8 @@
 /index_example_02
 /inwin_example
 /label_example_01
+/label_example_02
+/label_example_03
 /layout_example_01
 /layout_example_02
 /layout_example_03
@@ -161,3 +163,9 @@
 /codegen_example_generated.c
 /codegen_example_generated.h
 /toolbar_cxx_example_01
+/efl_canvas_layout_text
+/efl_ui_list_view_example_1
+/efl_ui_list_view_example_2
+/efl_ui_list_view_example_3
+/efl_ui_theme_example_01
+/efl_ui_theme_example_02
