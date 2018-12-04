@@ -293,7 +293,7 @@ _eldbus_model_arguments_is(Eldbus_Model_Arguments_Data *pd,
    _eldbus_model_arguments_properties_load(pd);
 
    i = _eldbus_model_arguments_argument_index_get(pd, argument);
-   if (i >= eina_hash_population(pd->properties))
+   if ((i > 0x7fffffff) || ((int)i >= eina_hash_population(pd->properties)))
      {
         WRN("Argument not found: %s", argument);
         return false;
