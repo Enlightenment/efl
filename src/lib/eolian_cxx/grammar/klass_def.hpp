@@ -802,6 +802,7 @@ struct property_def
 {
   klass_name klass;
   std::string name;
+  documentation_def documentation;
 
   efl::eina::optional<function_def> getter;
   efl::eina::optional<function_def> setter;
@@ -810,6 +811,7 @@ struct property_def
   {
     return lhs.klass == rhs.klass
       && lhs.name == rhs.name
+      && lhs.documentation == rhs.documentation
       && lhs.getter == rhs.getter
       && lhs.setter == rhs.setter;
   }
@@ -828,6 +830,14 @@ struct property_def
 
     const Eolian_Class *eolian_klass = eolian_function_class_get(function);
     klass = klass_name(eolian_klass, {attributes::qualifier_info::is_none, std::string()});
+
+    Eolian_Implement const* implement = ::eolian_function_implement_get(function);
+    if (!implement)
+      return;
+
+    Eolian_Function_Type type = ::eolian_function_type_get(function);
+    if (type == EOLIAN_PROP_GET || type == EOLIAN_PROP_SET || type == EOLIAN_PROPERTY)
+      documentation = eolian_implement_documentation_get(implement, EOLIAN_PROPERTY);
   }
 };
 

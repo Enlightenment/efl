@@ -144,6 +144,12 @@ EFL_START_TEST(eolian_cxx_test_property_docs)
    ck_assert_str_eq(doc.summary.c_str(), "Set documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
+
+   auto property_iter = klass.properties.begin();
+   auto property = *property_iter;
+   doc = property.documentation;
+   ck_assert_str_eq(doc.summary.c_str(), "Property common documentation.");
+   ck_assert_str_eq(doc.since.c_str(), "1.18");
 }
 EFL_END_TEST
 
