@@ -2,20 +2,19 @@ group { name: "e/widgets/fontpreview";
    parts {
       part { name: "e.fontpreview.text"; type: TEXT; mouse_events: 0;
          scale: 1;
-         effect: SHADOW BOTTOM;
          description { state: "default" 0.0;
             color_class: "entry_text";
-            rel1.offset: 3 3;
-            rel2.offset: -4 -4;
-            color: FN_COL_DEFAULT;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            color: 160 160 160 255;
             text { font: FN; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
                text_class: "_e_font_preview";
             }
+            offscale;
          }
       }
    }
 }
-      
