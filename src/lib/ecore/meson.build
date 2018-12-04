@@ -180,11 +180,12 @@ ecore_src = [
 
 if sys_windows == true
   #nothing for now ... needs testing
+  ecore_src += ['ecore_exe_win32.c']
 else
   ecore_src += ['ecore_signal.c', 'ecore_exe_posix.c']
 endif
 
-if get_option('glib') == true
+if get_option('glib') == true and sys_windows == false
   ecore_deps += dependency('glib-2.0')
   ecore_deps += dependency('gthread-2.0')
   config_h.set('GLIB_INTEGRATION_ALWAYS', '1')

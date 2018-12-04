@@ -70,6 +70,13 @@ if get_option('pulseaudio')
   config_h.set('HAVE_PULSE', '1')
 endif
 
+if sys_windows == true
+  ecore_audio_src += [
+    'ecore_audio_obj_out_wasapi.c'
+  ]
+  ecore_audio_deps += [cc.find_library('ksuser', required: true), cc.find_library('winmm', required: true)]
+endif
+
 ecore_audio_lib = library('ecore_audio',
     ecore_audio_src, pub_eo_file_target,
     dependencies: ecore_audio_pub_deps + [m] + ecore_audio_deps,

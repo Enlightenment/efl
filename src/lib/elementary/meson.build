@@ -914,7 +914,12 @@ config_h.set_quoted('MODULES_PATH', join_paths(dir_lib, 'modules'))
 config_h.set_quoted('ELEMENTARY_BASE_DIR', '.elementary')
 config_h.set_quoted('ICON_DIR', join_paths(dir_lib, 'icons'))
 
-elm_options.set('ELM_UNIX', '1')
+if sys_windows == false
+  elm_options.set('ELM_UNIX', '1')
+else
+  elm_options.set('DLL_EXPORT', '1')
+endif
+
 elm_options.set('ELM_ELOCATION', '1')
 elm_options.set('ELM_EFREET', '1')
 

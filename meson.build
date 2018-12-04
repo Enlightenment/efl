@@ -45,6 +45,17 @@ if host_machine.system() == 'darwin'
   bin_linker_args = ['-pagezero_size', '10000', '-image_base', '100000000']
 endif
 
+windows = ['windows', 'cygwin']
+#bsd for meson 0.46 and 0.47
+bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
+linux = ['linux']
+osx = ['darwin']
+
+sys_linux = linux.contains(host_machine.system())
+sys_bsd = bsd.contains(host_machine.system())
+sys_windows = windows.contains(host_machine.system())
+sys_osx = osx.contains(host_machine.system())
+
 module_files = []
 evas_loader_map = []
 
@@ -74,6 +85,11 @@ foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
   add_global_arguments('-DEFL_BUILD=1', language: lang)
   add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
+  if sys_windows == true
+    add_global_arguments('-DWINVER=0x0601', language: lang)
+    add_global_arguments('-D_WIN32_WINNT=0x0601', language: lang)
+  endif
+
 endforeach
 
 config_h = configuration_data()
@@ -150,17 +166,6 @@ endif
 config_dir = [include_directories('.')]
 eolian_include_directories = []
 
-windows = ['windows', 'cygwin']
-#bsd for meson 0.46 and 0.47
-bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
-linux = ['linux']
-osx = ['darwin']
-
-sys_linux = linux.contains(host_machine.system())
-sys_bsd = bsd.contains(host_machine.system())
-sys_windows = windows.contains(host_machine.system())
-sys_osx = osx.contains(host_machine.system())
-
 if sys_linux == true or sys_bsd == true
   sys_lib_extension = 'so'
   sys_exe_extension = ''
@@ -202,6 +207,7 @@ ecore_evas_wayland_engine_include_dir = []
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
+['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
 ['eina'             ,[]                    , false,  true,  true,  true,  true,  true, [], []],
 ['eolian'           ,[]                    , false,  true,  true, false,  true, false, ['eina'], []],
 ['eo'               ,[]                    , false,  true, false,  true,  true, false, ['eina'], []],

@@ -194,3 +194,8 @@ endif
 
 config_h.set('SIZEOF_INT', cc.sizeof('int'))
 config_h.set('SIZEOF_LONG', cc.sizeof('long'))
+
+if sys_windows == true
+  config_h.set('HAVE_DLSYM', '1')
+  config_h.set('HAVE_NOTIFY_WIN32', '1')
+endif

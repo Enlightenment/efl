@@ -155,6 +155,11 @@ elementary_test_src = [
   'test.h'
 ]
 
+if sys_windows == false
+  link_args = '-rdynamic'
+else
+  link_args = []
+endif
 elementary_test = executable('elementary_test',
         elementary_test_src,
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
@@ -164,7 +169,7 @@ elementary_test = executable('elementary_test',
           '-Delementary_test_LIB_DIR="'+dir_lib+'"',
           '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
         ],
-        link_args: '-rdynamic'
+        link_args: link_args
 )
 
 elementary_config_src = [
@@ -176,20 +181,22 @@ elementary_config = executable('elementary_config',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
-        link_args: '-rdynamic'
+        link_args: link_args
 )
 
-elementary_quicklaunch_src = [
-   'quicklaunch.c'
-]
+if sys_windows == false
+  elementary_quicklaunch_src = [
+     'quicklaunch.c'
+  ]
 
-elementary_quicklaunch = executable('elementary_quicklaunch',
-        elementary_quicklaunch_src,
-        dependencies: [elementary] + elementary_deps + elementary_pub_deps,
-        install: true,
-        c_args : package_c_args,
-        link_args: '-rdynamic'
-)
+  elementary_quicklaunch = executable('elementary_quicklaunch',
+          elementary_quicklaunch_src,
+          dependencies: [elementary] + elementary_deps + elementary_pub_deps,
+          install: true,
+          c_args : package_c_args,
+          link_args: link_args
+  )
+endif
 
 elementary_codegen_src = [
    'elementary_codegen.c'
@@ -200,7 +207,7 @@ elementary_codegen = executable('elementary_codegen',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
-        link_args: '-rdynamic'
+        link_args: link_args
 )
 
 elm_prefs_cc_src = [
@@ -217,7 +224,7 @@ elm_prefs_cc = executable('elm_prefs_cc',
         dependencies: [elementary] + elementary_deps + elementary_pub_deps,
         install: true,
         c_args : package_c_args,
-        link_args: '-rdynamic'
+        link_args: link_args
 )
 
 if meson.is_cross_build()
@@ -229,18 +236,19 @@ else
   elm_prefs_cc_exe = [env, 'EFL_RUN_IN_TREE=1', elm_prefs_cc.full_path()]
 endif
 
+if sys_windows == false
+  elementary_run_src = [
+     'run.c'
+  ]
 
-elementary_run_src = [
-   'run.c'
-]
-
-elementary_run = executable('elementary_run',
-        elementary_run_src,
-        dependencies: [elementary] + elementary_deps + elementary_pub_deps,
-        install: true,
-        c_args : package_c_args,
-        link_args: '-rdynamic'
-)
+  elementary_run = executable('elementary_run',
+          elementary_run_src,
+          dependencies: [elementary] + elementary_deps + elementary_pub_deps,
+          install: true,
+          c_args : package_c_args,
+          link_args: link_args
+  )
+endif
 
 elementary_perf_src = [
    'perf.c',
@@ -262,6 +270,6 @@ elementary_perf = executable('elementary_perf',
           '-Delementary_test_LIB_DIR="'+dir_lib+'"',
           '-Delementary_test_DATA_DIR="'+join_paths(dir_data,'elementary')+'"'
         ],
-        link_args: '-rdynamic'
+        link_args: link_args
 )
 

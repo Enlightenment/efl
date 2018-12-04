@@ -1,13 +1,16 @@
 engines = [
 ['cocoa', ['cocoa']],
 ['drm', ['drm']],
-['extn', []],
 ['fb', ['fb']],
 ['sdl', ['sdl']],
 ['wayland', ['wl']],
 #['win32', ['ecore_win32']],
 ['x', ['x11']],
 ]
+
+if sys_windows == false
+  engines += [['extn', []]]
+endif
 
 
 foreach engine_conf : engines

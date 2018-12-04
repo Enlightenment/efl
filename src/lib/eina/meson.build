@@ -1,6 +1,10 @@
 eina_deps = [dl]
 eina_pub_deps = [thread_dep]
 
+if sys_windows == true
+   eina_pub_deps += [evil]
+endif
+
 public_sub_headers = [
 'eina_promise.h',
 'eina_safety_checks.h',
@@ -368,7 +372,7 @@ execinfo = cc.find_library('execinfo', required: false)
 
 eina_lib = library('eina', sources,
   include_directories : config_dir,
-  dependencies: [m, rt, dl, execinfo, iconv, eina_deps, thread_dep, eina_mem_pools],
+  dependencies: [m, rt, dl, execinfo, iconv, eina_deps, thread_dep, eina_mem_pools, evil],
   install: true,
   version : meson.project_version()
 )

@@ -9,7 +9,7 @@ draw_src = [
 
 draw_opt_lib = [ ]
 
-if cpu_sse3 == true
+if cpu_sse3 == true and sys_windows == false
   draw_opt = static_library('draw_opt',
     sources: [ 'draw_main_sse2.c' ],
     include_directories: config_dir + [include_directories(join_paths('..', '..', 'lib'))],
@@ -21,16 +21,9 @@ else
   draw_src += [ 'draw_main_sse2.c' ]
 endif
 
-draw_lib = static_library('draw',
-    draw_src,
-    dependencies : [eina, efl],
-    include_directories : config_dir + [include_directories(join_paths('..', '..', 'lib'))],
-    install: false,
-    link_with: draw_opt_lib,
-)
-
 draw = declare_dependency(
   include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'lib'))],
-  link_with: draw_lib,
-  dependencies: [eina],
+  dependencies: [eina, efl],
+  sources : draw_src,
+  link_with : draw_opt_lib
 )
