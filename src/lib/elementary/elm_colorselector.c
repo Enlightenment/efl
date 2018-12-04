@@ -2733,7 +2733,7 @@ _elm_color_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, 
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_elm_color_item_efl_ui_focus_object_focus_manager_get(const Eo *obj, Elm_Color_Item_Data *pd)
+_elm_color_item_efl_ui_focus_object_focus_manager_get(const Eo *obj EINA_UNUSED, Elm_Color_Item_Data *pd)
 {
    return efl_ui_focus_object_focus_manager_get(WIDGET(pd));
 }
