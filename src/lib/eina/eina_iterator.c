@@ -304,8 +304,6 @@ struct _Eina_Iterator_Multi
 static Eina_Bool
 eina_multi_iterator_next(Eina_Multi_Iterator *it, void **data)
 {
-   Eina_Bool r;
-
    if (!it->iterators)
      return EINA_FALSE;
 
