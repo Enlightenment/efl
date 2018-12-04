@@ -3,8 +3,10 @@ group { name: "e/pointer/enlightenment/default/color";
    data.item: "can_suspend" "1";
    parts {
       part { name: "parent"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             color: 255 255 255 255;
+            FIXED_SIZE(32, 32)
          }
          description { state: "suspend" 0.0;
             inherit: "default" 0.0;
@@ -383,7 +385,7 @@ group { name: "e/pointer/enlightenment/rotate/color";
 }
 
 group { name: "e/pointer/enlightenment/plus/color";
-inherit: "e/pointer/enlightenment/default/color";
+   inherit: "e/pointer/enlightenment/default/color";
    images.image: "pointer_plus.png" COMP;
    parts {
       part { name: "add";
@@ -422,9 +424,11 @@ group { name: "e/pointer/enlightenment/entry/color";
    images.image: "pointer_entry.png" COMP;
    parts {
       part { name: "base";
+         scale: 1;
          description { state: "default" 0.0;
             image.normal: "pointer_entry.png";
             aspect: (44/88) (44/88); aspect_preference: VERTICAL;
+            FIXED_SIZE(32, 32)
          }
       }
       part { name: "e.swallow.hotspot"; type: SWALLOW;
