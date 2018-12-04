@@ -614,10 +614,10 @@ EFL_END_TEST
 
 EFL_START_TEST(eina_iterator_carray_length)
 {
-   int array[] = { 1, 4, 9, 16 };
+   unsigned int array[] = { 1, 4, 9, 16 };
    Eina_Iterator *it;
-   int j = 1;
-   int i = 0;
+   unsigned int j = 1;
+   unsigned int i = 0;
 
    it = EINA_C_ARRAY_ITERATOR_NEW(array);
    EINA_ITERATOR_FOREACH(it, i)
@@ -632,12 +632,12 @@ EFL_END_TEST
 
 EFL_START_TEST(eina_iterator_multi)
 {
-   int array1[] = { 1, 4, 9, 16 };
-   int array2[] = { 25, 36, 49, 64 };
-   int array3[] = { 81, 100, 121, 144 };
+   unsigned int array1[] = { 1, 4, 9, 16 };
+   unsigned int array2[] = { 25, 36, 49, 64 };
+   unsigned int array3[] = { 81, 100, 121, 144 };
    Eina_Iterator *it;
-   int i;
-   int j = 1;
+   unsigned int i;
+   unsigned int j = 1;
 
    it = eina_multi_iterator_new(EINA_C_ARRAY_ITERATOR_NEW(array1),
                                 EINA_C_ARRAY_ITERATOR_NEW(array2),
