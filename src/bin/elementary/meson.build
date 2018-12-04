@@ -220,6 +220,16 @@ elm_prefs_cc = executable('elm_prefs_cc',
         link_args: '-rdynamic'
 )
 
+if meson.is_cross_build()
+  _elm_prefs_cc = find_program('elm_prefs_cc', native: true)
+  elm_prefs_cc_path = _elm_prefs_cc.path()
+  elm_prefs_cc_exe = [_elm_prefs_cc]
+else
+  env = find_program('env', native: true)
+  elm_prefs_cc_exe = [env, 'EFL_RUN_IN_TREE=1', elm_prefs_cc.full_path()]
+endif
+
+
 elementary_run_src = [
    'run.c'
 ]
