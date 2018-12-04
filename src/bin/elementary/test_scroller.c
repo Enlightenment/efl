@@ -1065,7 +1065,7 @@ test_scroller6(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 void
 test_scroller7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win, *scr, *lb, *table, *btn, *btn2, *inner_table, *o, *inner_button;
+   Evas_Object *win, *scr, *lb, *table, *btn, *btn2, *inner_table, *o;
 
    win = elm_win_util_standard_add("Scroller with unfocusable content", "Scroller with unfocusable content");
    elm_win_autodel_set(win, EINA_TRUE);
