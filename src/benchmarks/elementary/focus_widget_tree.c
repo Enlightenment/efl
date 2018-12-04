@@ -84,7 +84,7 @@ _scroll2_del_cb(void *data, Evas *e EINA_UNUSED,
 }
 
 static void
-_focus_state_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_focus_state_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Focus *focus = data;
 
