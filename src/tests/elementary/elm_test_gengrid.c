@@ -91,7 +91,7 @@ EFL_END_TEST
 #endif
 
 static void
-_realized(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_realized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    static int i = 0;
 
