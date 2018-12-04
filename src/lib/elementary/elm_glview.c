@@ -363,7 +363,7 @@ _elm_glview_version_constructor(Eo *obj, Elm_Glview_Data *sd,
 }
 
 EOLIAN static Efl_Object*
-_elm_glview_efl_object_constructor(Eo *obj, Elm_Glview_Data *pd)
+_elm_glview_efl_object_constructor(Eo *obj, Elm_Glview_Data *pd EINA_UNUSED)
 {
    legacy_object_focus_handle(obj);
    return efl_constructor(efl_super(obj, MY_CLASS));
