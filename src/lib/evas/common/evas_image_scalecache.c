@@ -829,6 +829,8 @@ evas_common_rgba_image_scalecache_do_cbs(Image_Entry *ie, RGBA_Image *dst,
 //             INF(" + %i @ flop: %i (%ix%i)",
 //                    sci->dst_w * sci->dst_h * 4, sci->flop,
 //                    sci->dst_w, sci->dst_h);
+             if (eina_inlist_find(cache_list, (Eina_Inlist *)sci))
+                cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
              cache_list = eina_inlist_append(cache_list, (Eina_Inlist *)sci);
              SLKU(cache_lock);
              didpop = 1;
