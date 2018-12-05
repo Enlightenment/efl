@@ -1978,7 +1978,7 @@ EAPI void                         ecore_imf_context_mime_type_accept_set(Ecore_I
 /**
  * @ingroup Ecore_IMF_Context_Group
  * @brief Sets the x,y coordinates of the input panel.
- * This API can be used in floating mode.
+ * @remarks This API can be used in floating mode.
  *
  * @since 1.21.0
  *
