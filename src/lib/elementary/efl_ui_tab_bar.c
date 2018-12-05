@@ -298,7 +298,6 @@ _efl_ui_tab_bar_tab_remove(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int ind
         _tab_unselect(sd, ti);
         evas_object_box_remove(sd->bx, ti->tab);
         efl_del(ti->tab);
-        efl_del(ti->icon);
 
         sd->tab_infos = eina_list_remove(sd->tab_infos, ti);
         sd->cnt --;
