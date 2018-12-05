@@ -476,7 +476,7 @@ EFL_START_TEST(ecore_test_ecore_con_dns)
    client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP,
                                      "wongsub.wrongdns.lan", 1234, NULL);
    fail_if (client == NULL);
-   ecore_con_server_timeout_set(client, 5.0);
+   ecore_con_server_timeout_set(client, 1.0); // No point for a long timeout as we know it is wrong
 
    ecore_main_loop_begin();
    fail_if (err_check != EINA_FALSE);
