@@ -65,7 +65,7 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-create_dir_struct(void)
+_create_dir_struct(void)
 {
    FILE *fp;
    if (mkdir("/tmp/test_fs_bt", S_IRWXU) < 0)
@@ -182,7 +182,7 @@ test_fileselector_button(void *data       EINA_UNUSED,
 
    elm_box_pack_end(bxx, vbox);
 
-   create_dir_struct(); /* Create a dir struct in /tmp */
+   _create_dir_struct(); /* Create a dir struct in /tmp */
    /* file selector button */
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "file");
