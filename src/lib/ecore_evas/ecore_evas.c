@@ -2793,6 +2793,10 @@ EAPI void
 ecore_evas_shadow_geometry_set(Ecore_Evas *ee, int l, int r, int t, int b)
 {
    ECORE_EVAS_CHECK(ee);
+   EINA_SAFETY_ON_TRUE_RETURN(l < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(r < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(t < 0);
+   EINA_SAFETY_ON_TRUE_RETURN(b < 0);
    if ((ee->shadow.l == l) && (ee->shadow.r == r) &&
        (ee->shadow.t == t) && (ee->shadow.b == b)) return;
    ee->shadow.l = l;
