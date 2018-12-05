@@ -21,6 +21,9 @@
 
 #include <stdarg.h>
 #include <locale.h>
+#if defined (__MacOSX__) || (defined (__MACH__) && defined (__APPLE__))
+#include <xlocale.h>
+#endif
 
 #ifdef _WIN32
 # include <Evil.h>
