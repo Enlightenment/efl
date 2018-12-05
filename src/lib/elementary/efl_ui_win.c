@@ -4659,11 +4659,18 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    else
 #endif
    focus = ecore_evas_focus_get(sd->ee);
-   bg_solid = sd->csd.need_bg_solid && (!alpha);
    bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
    indicator = sd->csd.need_indicator;
+   bg_solid = sd->csd.need_bg_solid;
+   /* Set background transparent if window supports alpha.
+    * If alpha window does not emit signal to show background rectangle, then
+    * the background color set by _efl_ui_win_part_color_set cannot be applied
+    * because the background rectangle remains hidden.
+    */
+   if (alpha && bg_solid && !(sd->csd.cur_bg_solid))
+     edje_object_color_class_set(sd->frame_obj, "elm/win/background", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
    /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
     * At the moment, E Wayland uses SSD for its internal windows. Which means
