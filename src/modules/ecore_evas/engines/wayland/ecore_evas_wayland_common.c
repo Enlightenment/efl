@@ -618,7 +618,7 @@ _ecore_evas_wl_common_cb_window_configure(void *data EINA_UNUSED, int type EINA_
    nw = ev->w;
    nh = ev->h;
 
-   ecore_wl2_window_geometry_get(wdata->win, NULL, NULL, &ww, &wh);
+   ecore_evas_geometry_get(ee, NULL, NULL, &ww, &wh);
 
    sw = ee->shadow.l + ee->shadow.r;
    sh = ee->shadow.t + ee->shadow.b;
