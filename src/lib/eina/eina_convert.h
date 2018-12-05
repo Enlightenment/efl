@@ -334,6 +334,22 @@ EAPI Eina_Bool eina_convert_atofp(const char  *src,
                                   Eina_F32p32 *fp) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * @brief Converts a string to a floating point number.
+ *
+ * @param[in] nptr a string to convert. It shouldn't be NULL.
+ * @param[out] endptr If endptr is not NULL, a pointer to the character after the last
+ *                    character used in the conversion is stored in the location referenced
+ *                    by endptr.
+ * @return a double type floating point number.
+ *
+ * This function returns converted floating point number with locale-independency.
+ * Actually, it use "C" locale for strtod_l function internally. If you need strtod
+ * without locale-dependency, this function can replace strtod.
+ * For more information, please refer documents of strtod, strtod_l.
+ */
+EAPI double eina_convert_strtod_c(const char *nptr, char **endptr);
+
+/**
  * @}
  */
 
