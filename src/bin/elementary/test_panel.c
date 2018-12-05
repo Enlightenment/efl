@@ -84,6 +84,27 @@ _item_del(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
+_create_dir_struct(void)
+{
+   FILE *fp;
+   if (mkdir("/tmp/test_panel", S_IRWXU) < 0)
+     printf("make dir /tmp/test_panel failed!\n");
+   fp = fopen("/tmp/test_panel/a_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_panel/k_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_panel/m_file.txt", "w");
+   if (fp) fclose(fp);
+
+   if (mkdir("/tmp/test_panel/a_subdir", S_IRWXU) < 0)
+     printf("make dir /tmp/test_panel/a_subdir failed!\n");
+   fp = fopen("/tmp/test_panel/a_subdir/d_sub_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_panel/a_subdir/j_sub_file.txt", "w");
+   if (fp) fclose(fp);
+}
+
+static void
 _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
 {
    Eina_List *l;
@@ -95,7 +116,8 @@ _fill_list(Evas_Object *obj, Elm_Genlist_Item_Class *itc)
         Eina_Iterator *it;
         const char *name;
 
-        it = eina_file_ls(eina_environment_home_get());
+        _create_dir_struct();
+        it = eina_file_ls("/tmp/test_panel");
         EINA_ITERATOR_FOREACH(it, name)
           {
              if (x >= LIST_ITEM_MAX)
