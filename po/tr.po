@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the enlightenment package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
-#: src/lib/elementary/elm_config.c:4240
+#: src/lib/elementary/elm_config.c:4306
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-09-21 12:35+0100\n"
+"POT-Creation-Date: 2018-12-06 14:49+0000\n"
 "PO-Revision-Date: 2014-04-18 13:35+0000\n"
 "Last-Translator: Ali E.İMREK <alierkanimrek@gmail.com>\n"
 "Language-Team: Turkish <tr@li.org>\n"
@@ -251,21 +251,21 @@ msgstr "Ev"
 msgid "Search"
 msgstr ""
 
-#: src/lib/elementary/elc_fileselector.c:2103
+#: src/lib/elementary/elc_fileselector.c:2104
 msgid "OK"
 msgstr "Tamam"
 
-#: src/lib/elementary/elc_fileselector.c:2113
-#: src/lib/elementary/elm_entry.c:1734 src/lib/elementary/elm_entry.c:1759
+#: src/lib/elementary/elc_fileselector.c:2114
+#: src/lib/elementary/elm_entry.c:1739 src/lib/elementary/elm_entry.c:1764
 msgid "Cancel"
 msgstr "İptal"
 
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
-#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1508
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1523
 #: src/lib/elementary/elm_genlist.c:1764 src/lib/elementary/elm_list.c:2185
 #: src/lib/elementary/efl_ui_radio.c:201
-#: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
+#: src/lib/elementary/elm_segment_control.c:528
+#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2291
 msgid "State: Disabled"
 msgstr "Durum: Kapalı"
 
@@ -300,7 +300,7 @@ msgstr "Başlık"
 msgid "Back"
 msgstr "Geri"
 
-#: src/lib/elementary/elc_naviframe.c:1356
+#: src/lib/elementary/elc_naviframe.c:1358
 msgid "Next"
 msgstr "Sonraki"
 
@@ -312,7 +312,7 @@ msgstr "Pencere başlığı"
 msgid "Popup Body Text"
 msgstr "Pencere gövde metni"
 
-#: src/lib/elementary/elc_popup.c:1841
+#: src/lib/elementary/elc_popup.c:1842
 msgid "Alert"
 msgstr ""
 
@@ -437,7 +437,7 @@ msgstr "renk seçici paleti öğesi"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4263
+#: src/lib/elementary/elm_config.c:4329
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -449,29 +449,25 @@ msgstr "gün seçici ögesi"
 msgid "diskselector item"
 msgstr "disk seçici öğesi"
 
-#: src/lib/elementary/elm_entry.c:1724
+#: src/lib/elementary/elm_entry.c:1729
 msgid "Cut"
 msgstr "Kes"
 
-#: src/lib/elementary/elm_entry.c:1727
+#: src/lib/elementary/elm_entry.c:1732
 msgid "Copy"
 msgstr "Kopyala"
 
-#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1753
+#: src/lib/elementary/elm_entry.c:1736 src/lib/elementary/elm_entry.c:1758
 msgid "Paste"
 msgstr "Yapıştır"
 
-#: src/lib/elementary/elm_entry.c:1746
+#: src/lib/elementary/elm_entry.c:1751
 msgid "Select"
 msgstr "Seç"
 
-#: src/lib/elementary/elm_entry.c:3895
+#: src/lib/elementary/elm_entry.c:3910
 msgid "Entry"
 msgstr "Girdi"
-
-#: src/lib/elementary/elm_gengrid.c:1538
-msgid "Gengrid Item"
-msgstr "Izgara öğesi"
 
 #: src/lib/elementary/elm_index.c:95
 msgid "Index"
@@ -513,16 +509,16 @@ msgstr "ilerleme çubuğu"
 msgid "Radio"
 msgstr "Radyo"
 
-#: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2283
+#: src/lib/elementary/elm_segment_control.c:531
+#: src/lib/elementary/elm_toolbar.c:2293
 msgid "State: Selected"
 msgstr "Durum: Seçili"
 
-#: src/lib/elementary/elm_segment_control.c:534
+#: src/lib/elementary/elm_segment_control.c:533
 msgid "State: Unselected"
 msgstr "Bölge: Seçilmedi"
 
-#: src/lib/elementary/elm_segment_control.c:548
+#: src/lib/elementary/elm_segment_control.c:547
 msgid "Segment Control Item"
 msgstr "Bölüm Kontrol Öğesi"
 
@@ -555,22 +551,25 @@ msgstr "değiştirici azaltma düğmesi"
 msgid "spinner text"
 msgstr "değiştirici"
 
-#: src/lib/elementary/elm_toolbar.c:1738 src/lib/elementary/elm_toolbar.c:2342
+#: src/lib/elementary/elm_toolbar.c:1750 src/lib/elementary/elm_toolbar.c:2352
 msgid "Selected"
 msgstr "Seçili"
 
-#: src/lib/elementary/elm_toolbar.c:2279
+#: src/lib/elementary/elm_toolbar.c:2289
 msgid "Separator"
 msgstr "Ayraç"
 
-#: src/lib/elementary/elm_toolbar.c:2285
+#: src/lib/elementary/elm_toolbar.c:2295
 msgid "Has menu"
 msgstr "menü"
 
-#: src/lib/elementary/elm_toolbar.c:2337
+#: src/lib/elementary/elm_toolbar.c:2347
 msgid "Unselected"
 msgstr "Seçili değil"
 
-#: src/lib/elementary/elm_toolbar.c:2354
+#: src/lib/elementary/elm_toolbar.c:2364
 msgid "Toolbar Item"
 msgstr "Araç Çubuğu Öğesi"
+
+#~ msgid "Gengrid Item"
+#~ msgstr "Izgara öğesi"

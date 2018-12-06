@@ -3,12 +3,12 @@
 # This file is put in the public domain.
 # Thiep Ha <thiepha@gmail.com>, 2015.
 #
-#: src/lib/elementary/elm_config.c:4240
+#: src/lib/elementary/elm_config.c:4306
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-09-21 12:35+0100\n"
+"POT-Creation-Date: 2018-12-06 14:49+0000\n"
 "PO-Revision-Date: 2015-09-29 18:06+0900\n"
 "Last-Translator: Thiep Ha <thiepha@gmail.com>\n"
 "Language-Team: General\n"
@@ -252,21 +252,21 @@ msgstr "Trang Chủ"
 msgid "Search"
 msgstr "Tìm Kiếm"
 
-#: src/lib/elementary/elc_fileselector.c:2103
+#: src/lib/elementary/elc_fileselector.c:2104
 msgid "OK"
 msgstr "Đồng Ý"
 
-#: src/lib/elementary/elc_fileselector.c:2113
-#: src/lib/elementary/elm_entry.c:1734 src/lib/elementary/elm_entry.c:1759
+#: src/lib/elementary/elc_fileselector.c:2114
+#: src/lib/elementary/elm_entry.c:1739 src/lib/elementary/elm_entry.c:1764
 msgid "Cancel"
 msgstr "Hủy"
 
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
-#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1508
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1523
 #: src/lib/elementary/elm_genlist.c:1764 src/lib/elementary/elm_list.c:2185
 #: src/lib/elementary/efl_ui_radio.c:201
-#: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
+#: src/lib/elementary/elm_segment_control.c:528
+#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2291
 msgid "State: Disabled"
 msgstr "Trạng Thái: Không Khả Dụng"
 
@@ -301,7 +301,7 @@ msgstr "Đề Mục"
 msgid "Back"
 msgstr "Quay Lại"
 
-#: src/lib/elementary/elc_naviframe.c:1356
+#: src/lib/elementary/elc_naviframe.c:1358
 msgid "Next"
 msgstr "Tiếp"
 
@@ -313,7 +313,7 @@ msgstr "Tiêu Đề Hộp Thoại"
 msgid "Popup Body Text"
 msgstr "Văn Bản Thân Hộp Thoại"
 
-#: src/lib/elementary/elc_popup.c:1841
+#: src/lib/elementary/elc_popup.c:1842
 msgid "Alert"
 msgstr ""
 
@@ -438,7 +438,7 @@ msgstr "Mục Của Bảng Chọn Màu"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4263
+#: src/lib/elementary/elm_config.c:4329
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -450,29 +450,25 @@ msgstr "Mục Của Bảng Chọn Ngày"
 msgid "diskselector item"
 msgstr "Mục Của Bộ Chọn Đĩa"
 
-#: src/lib/elementary/elm_entry.c:1724
+#: src/lib/elementary/elm_entry.c:1729
 msgid "Cut"
 msgstr "Cắt"
 
-#: src/lib/elementary/elm_entry.c:1727
+#: src/lib/elementary/elm_entry.c:1732
 msgid "Copy"
 msgstr "Sao Chép"
 
-#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1753
+#: src/lib/elementary/elm_entry.c:1736 src/lib/elementary/elm_entry.c:1758
 msgid "Paste"
 msgstr "Dán"
 
-#: src/lib/elementary/elm_entry.c:1746
+#: src/lib/elementary/elm_entry.c:1751
 msgid "Select"
 msgstr "Chọn"
 
-#: src/lib/elementary/elm_entry.c:3895
+#: src/lib/elementary/elm_entry.c:3910
 msgid "Entry"
 msgstr "Bộ Nhập"
-
-#: src/lib/elementary/elm_gengrid.c:1538
-msgid "Gengrid Item"
-msgstr "Mục Của Gengrid"
 
 #: src/lib/elementary/elm_index.c:95
 msgid "Index"
@@ -514,16 +510,16 @@ msgstr "Thanh Trạng Thái"
 msgid "Radio"
 msgstr "Đài"
 
-#: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2283
+#: src/lib/elementary/elm_segment_control.c:531
+#: src/lib/elementary/elm_toolbar.c:2293
 msgid "State: Selected"
 msgstr "Trạng Thái: Đã Chọn"
 
-#: src/lib/elementary/elm_segment_control.c:534
+#: src/lib/elementary/elm_segment_control.c:533
 msgid "State: Unselected"
 msgstr "Trạng Thái: Chưa Chọn"
 
-#: src/lib/elementary/elm_segment_control.c:548
+#: src/lib/elementary/elm_segment_control.c:547
 msgid "Segment Control Item"
 msgstr "Mục Điều Khiển Đoạn"
 
@@ -555,22 +551,25 @@ msgstr "Nút Giảm Bộ Xoay"
 msgid "spinner text"
 msgstr "Văn Bản Bộ Xoay"
 
-#: src/lib/elementary/elm_toolbar.c:1738 src/lib/elementary/elm_toolbar.c:2342
+#: src/lib/elementary/elm_toolbar.c:1750 src/lib/elementary/elm_toolbar.c:2352
 msgid "Selected"
 msgstr "Đã Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2279
+#: src/lib/elementary/elm_toolbar.c:2289
 msgid "Separator"
 msgstr "Bộ Tách"
 
-#: src/lib/elementary/elm_toolbar.c:2285
+#: src/lib/elementary/elm_toolbar.c:2295
 msgid "Has menu"
 msgstr "Có Bảng Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2337
+#: src/lib/elementary/elm_toolbar.c:2347
 msgid "Unselected"
 msgstr "Không Chọn"
 
-#: src/lib/elementary/elm_toolbar.c:2354
+#: src/lib/elementary/elm_toolbar.c:2364
 msgid "Toolbar Item"
 msgstr "Mục Của Thanh Công Cụ"
+
+#~ msgid "Gengrid Item"
+#~ msgstr "Mục Của Gengrid"

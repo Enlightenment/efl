@@ -2,12 +2,12 @@
 # Copyright (C) 2017 Enlightenment development team
 # This file is distributed under the same license as the efl package.
 # scootergrisen, 2017-2018.
-#: src/lib/elementary/elm_config.c:4240
+#: src/lib/elementary/elm_config.c:4306
 msgid ""
 msgstr ""
 "Project-Id-Version: efl 1.21\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-09-21 12:35+0100\n"
+"POT-Creation-Date: 2018-12-06 14:49+0000\n"
 "PO-Revision-Date: 2018-08-09 18:38+0200\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish\n"
@@ -249,21 +249,21 @@ msgstr "Hjem"
 msgid "Search"
 msgstr "Søg"
 
-#: src/lib/elementary/elc_fileselector.c:2103
+#: src/lib/elementary/elc_fileselector.c:2104
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elementary/elc_fileselector.c:2113
-#: src/lib/elementary/elm_entry.c:1734 src/lib/elementary/elm_entry.c:1759
+#: src/lib/elementary/elc_fileselector.c:2114
+#: src/lib/elementary/elm_entry.c:1739 src/lib/elementary/elm_entry.c:1764
 msgid "Cancel"
 msgstr "Annuller"
 
 #: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
-#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1508
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1523
 #: src/lib/elementary/elm_genlist.c:1764 src/lib/elementary/elm_list.c:2185
 #: src/lib/elementary/efl_ui_radio.c:201
-#: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2281
+#: src/lib/elementary/elm_segment_control.c:528
+#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2291
 msgid "State: Disabled"
 msgstr "Tilstand: Deaktiveret"
 
@@ -297,7 +297,7 @@ msgstr "Undertitel"
 msgid "Back"
 msgstr "Tilbage"
 
-#: src/lib/elementary/elc_naviframe.c:1356
+#: src/lib/elementary/elc_naviframe.c:1358
 msgid "Next"
 msgstr "Næste"
 
@@ -309,7 +309,7 @@ msgstr "Titel til pop op"
 msgid "Popup Body Text"
 msgstr "Brødtekst til pop op"
 
-#: src/lib/elementary/elc_popup.c:1841
+#: src/lib/elementary/elc_popup.c:1842
 msgid "Alert"
 msgstr "Besked"
 
@@ -434,7 +434,7 @@ msgstr "palet-element til farvevælger"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4263
+#: src/lib/elementary/elm_config.c:4329
 msgid "default:LTR"
 msgstr "default:LTR"
 
@@ -446,29 +446,25 @@ msgstr "dagvælger-element"
 msgid "diskselector item"
 msgstr "diskvælger-element"
 
-#: src/lib/elementary/elm_entry.c:1724
+#: src/lib/elementary/elm_entry.c:1729
 msgid "Cut"
 msgstr "Klip"
 
-#: src/lib/elementary/elm_entry.c:1727
+#: src/lib/elementary/elm_entry.c:1732
 msgid "Copy"
 msgstr "Kopiér"
 
-#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1753
+#: src/lib/elementary/elm_entry.c:1736 src/lib/elementary/elm_entry.c:1758
 msgid "Paste"
 msgstr "Indsæt"
 
-#: src/lib/elementary/elm_entry.c:1746
+#: src/lib/elementary/elm_entry.c:1751
 msgid "Select"
 msgstr "Vælg"
 
-#: src/lib/elementary/elm_entry.c:3895
+#: src/lib/elementary/elm_entry.c:3910
 msgid "Entry"
 msgstr "Indtastning"
-
-#: src/lib/elementary/elm_gengrid.c:1538
-msgid "Gengrid Item"
-msgstr "Gengitter-element"
 
 #: src/lib/elementary/elm_index.c:95
 msgid "Index"
@@ -510,16 +506,16 @@ msgstr "forløbslinje"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2283
+#: src/lib/elementary/elm_segment_control.c:531
+#: src/lib/elementary/elm_toolbar.c:2293
 msgid "State: Selected"
 msgstr "Tilstand: Valgt"
 
-#: src/lib/elementary/elm_segment_control.c:534
+#: src/lib/elementary/elm_segment_control.c:533
 msgid "State: Unselected"
 msgstr "Tilstand: Fravalgt"
 
-#: src/lib/elementary/elm_segment_control.c:548
+#: src/lib/elementary/elm_segment_control.c:547
 msgid "Segment Control Item"
 msgstr "Segmentkontrol-element"
 
@@ -551,22 +547,25 @@ msgstr "formindsk-knap til ruller"
 msgid "spinner text"
 msgstr "rullertekst"
 
-#: src/lib/elementary/elm_toolbar.c:1738 src/lib/elementary/elm_toolbar.c:2342
+#: src/lib/elementary/elm_toolbar.c:1750 src/lib/elementary/elm_toolbar.c:2352
 msgid "Selected"
 msgstr "Valgt"
 
-#: src/lib/elementary/elm_toolbar.c:2279
+#: src/lib/elementary/elm_toolbar.c:2289
 msgid "Separator"
 msgstr "Separator"
 
-#: src/lib/elementary/elm_toolbar.c:2285
+#: src/lib/elementary/elm_toolbar.c:2295
 msgid "Has menu"
 msgstr "Har menu"
 
-#: src/lib/elementary/elm_toolbar.c:2337
+#: src/lib/elementary/elm_toolbar.c:2347
 msgid "Unselected"
 msgstr "Fravalgt"
 
-#: src/lib/elementary/elm_toolbar.c:2354
+#: src/lib/elementary/elm_toolbar.c:2364
 msgid "Toolbar Item"
 msgstr "Værktøjslinje-element"
+
+#~ msgid "Gengrid Item"
+#~ msgstr "Gengitter-element"
