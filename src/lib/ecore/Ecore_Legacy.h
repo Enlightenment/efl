@@ -274,10 +274,6 @@ EAPI void ecore_timer_freeze(Ecore_Timer *timer);
 /**
  * @brief Return whether the timer is freezing.
  *
- * @if MOBILE @since_tizen 3.0
- * @elseif WEARABLE @since_tizen 3.0
- * @endif
- *
  * @return True if the timer object is freezed, false otherwise.
  *
  * @see ecore_timer_freeze(), ecore_timer_thaw()
@@ -286,10 +282,6 @@ EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
 
 /**
  * @brief Resumes a frozen (paused) timer.
- *
- * @if MOBILE @since_tizen 2.3
- * @elseif WEARABLE @since_tizen 2.3.1
- * @endif
  *
  * @remarks The timer will be resumed from its previous relative position in time. That
  *          means, if it had X seconds remaining until expire when it was paused, it will
