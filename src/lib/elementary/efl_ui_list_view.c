@@ -159,11 +159,21 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
 {
    Evas_Event_Mouse_Down *ev = event_info;
    Efl_Ui_List_View_Layout_Item *item = data;
+   Eina_Value *v;
+   Eina_Bool select;
 
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
-   _efl_ui_list_view_item_select_set(item, EINA_TRUE);
+   v = efl_model_property_get(item->children, SELECTED_PROP);
+   if (!eina_value_get(v, &select)) 
+     {
+        WRN("Could not get the select value");
+        eina_value_free(v);
+        return;
+     }
+   _efl_ui_list_view_item_select_set(item, !select);
+   eina_value_free(v);
 }
 
 EOLIAN static void
