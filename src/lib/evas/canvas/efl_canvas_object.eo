@@ -450,6 +450,7 @@ abstract Efl.Canvas.Object (Efl.Loop_Consumer, Efl.Gfx.Entity, Efl.Gfx.Color, Ef
          return: bool @warn_unused; [[$true if any object is clipped by $obj, $false otherwise]]
       }
       key_grab {
+         /* FIXME: can't reference Eolian object, .eo file not being installed */
          [[Requests $keyname key events be directed to $obj.
 
            Key grabs allow one or more objects to receive key events for
@@ -464,7 +465,7 @@ abstract Efl.Canvas.Object (Efl.Loop_Consumer, Efl.Gfx.Entity, Efl.Gfx.Color, Ef
            modifiers that must and mustn't, respectively, be pressed along
            with $keyname key in order to trigger this new key grab.
            Modifiers can be things such as Shift and Ctrl as well as
-           user defined types via @Evas.Canvas.key_modifier_add.
+           user defined types via \@ref evas_key_modifier_add.
            $exclusive will make the given object the only one permitted to
            grab the given key. If given $true, subsequent calls on this
            function with different $obj arguments will fail, unless the key
