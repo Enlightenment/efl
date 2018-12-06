@@ -5529,7 +5529,6 @@ EvasGLImage *img = glapi->evasglCreateImageForContext
    /*------- EvasGL / EGL-related functions -------*/
    /**
     * @name Evas GL Sync object functions
-    * @since_tizen 2.3
     * @since 1.12
     * @{ */
 
