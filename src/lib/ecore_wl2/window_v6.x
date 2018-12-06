@@ -107,15 +107,15 @@ static void
 _window_v6_popup_create(Ecore_Wl2_Window *win)
 {
    struct zxdg_positioner_v6 *pos;
-   int wx, wy, ww, wh;
+   int ww, wh;
 
    EINA_SAFETY_ON_NULL_RETURN(win->parent);
    pos = zxdg_shell_v6_create_positioner(win->display->wl.zxdg_shell);
    if (!pos) return;
 
-   ecore_wl2_window_geometry_get(win, &wx, &wy, &ww, &wh);
+   ecore_wl2_window_geometry_get(win, NULL, NULL, &ww, &wh);
 
-   zxdg_positioner_v6_set_anchor_rect(pos, wx, wy, 1, 1);
+   zxdg_positioner_v6_set_anchor_rect(pos, 0, 0, 1, 1);
    zxdg_positioner_v6_set_size(pos, ww, wh);
    zxdg_positioner_v6_set_anchor(pos, ZXDG_POSITIONER_V6_ANCHOR_TOP |
                                  ZXDG_POSITIONER_V6_ANCHOR_LEFT);

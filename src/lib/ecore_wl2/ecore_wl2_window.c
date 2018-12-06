@@ -304,15 +304,15 @@ static const struct xdg_popup_listener _xdg_popup_listener =
 static void
 _ecore_wl2_window_xdg_popup_create(Ecore_Wl2_Window *win)
 {
-   int gx, gy, gw, gh;
+   int gw, gh;
    struct xdg_positioner *pos;
 
    EINA_SAFETY_ON_NULL_RETURN(win->parent);
    pos = xdg_wm_base_create_positioner(win->display->wl.xdg_wm_base);
    if (!pos) return;
 
-   ecore_wl2_window_geometry_get(win, &gx, &gy, &gw, &gh);
-   xdg_positioner_set_anchor_rect(pos, gx, gy, 1, 1);
+   ecore_wl2_window_geometry_get(win, NULL, NULL, &gw, &gh);
+   xdg_positioner_set_anchor_rect(pos, 0, 0, 1, 1);
    xdg_positioner_set_size(pos, gw, gh);
    xdg_positioner_set_anchor(pos, XDG_POSITIONER_ANCHOR_TOP_LEFT);
    xdg_positioner_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
