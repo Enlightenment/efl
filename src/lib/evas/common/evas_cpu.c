@@ -91,15 +91,6 @@ evas_common_cpu_neon_test(void)
 }
 
 void
-evas_common_cpu_sve_test(void)
-{
-#if defined(__aarch64__)
-   volatile int result = 123;
-   asm("movz %w[res], #10" : [res] "=r" (result));
-#endif
-}
-
-void
 evas_common_cpu_vis_test(void)
 {
 # ifdef __SPARC__
@@ -127,6 +118,15 @@ _cpu_check(Eina_Cpu_Features f)
 
    features = eina_cpu_features_get();
    return (features & f) == f;
+}
+#endif
+
+#if defined(__aarch64__)
+void
+evas_common_cpu_sve_test(void)
+{
+   volatile int result = 123;
+   asm("movz %w[res], #10" : [res] "=r" (result));
 }
 #endif
 
@@ -274,15 +274,14 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_SVE;
    else
      {
-#  if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
-#error "xx"
+# if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
         cpu_feature_mask |= CPU_FEATURE_SVE *
           !!(eina_cpu_features_get() & EINA_CPU_SVE);
-#  else
+# else
         cpu_feature_mask |= CPU_FEATURE_SVE *
           evas_common_cpu_feature_test(evas_common_cpu_sve_test);
         evas_common_cpu_end_opt();
-#  endif
+# endif
      }
 #endif
 }
