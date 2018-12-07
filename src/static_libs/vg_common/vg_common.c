@@ -832,6 +832,7 @@ vg_common_create_vg_node(Svg_Node *node)
    vg_data->view_box.w = node->node.doc.vw;
    vg_data->view_box.h = node->node.doc.vh;
    vg_data->preserve_aspect = node->node.doc.preserve_aspect;
+   vg_data->static_viewbox = EINA_TRUE;
    vg_data->root = vg_common_create_vg_node_helper(node, NULL, vg_data);
 
    return vg_data;

@@ -69,7 +69,7 @@ _find_loader_module(const char *file)
    return em;
 }
 
-Vg_File_Data *
+static Vg_File_Data *
 _vg_load_from_file(const char *file, const char *key)
 {
    Evas_Module       *em;
@@ -136,9 +136,8 @@ _find_saver_module(const char *file)
 static void
 _evas_cache_vg_data_free_cb(void *data)
 {
-   Vg_File_Data *val = data;
-   efl_unref(val->root);
-   free(val);
+   Vg_File_Data *vfd = data;
+   vfd->loader->file_close(vfd);
 }
 
 static void
@@ -146,7 +145,21 @@ _evas_cache_vg_entry_free_cb(void *data)
 {
    Vg_Cache_Entry *vg_entry = data;
 
-   eina_stringshare_del(vg_entry->file);
+   if (vg_entry->vfd)
+     {
+        vg_entry->vfd->ref--;
+        if (vg_entry->vfd->ref <= 0)
+          {
+             Eina_Strbuf *hash_key = eina_strbuf_new();
+             eina_strbuf_append_printf(hash_key, "%s/%s",
+                                       vg_entry->file,
+                                       vg_entry->key);
+             if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
+               ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
+             eina_strbuf_free(hash_key);
+          }
+     }
+
    eina_stringshare_del(vg_entry->key);
    free(vg_entry->hash_key);
    efl_unref(vg_entry->root);
@@ -192,6 +205,65 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *
      return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+static Efl_VG*
+_cached_root_get(Vg_Cache_Entry *vg_entry)
+{
+   return vg_entry->root;
+}
+
+static void
+_caching_root_update(Vg_Cache_Entry *vg_entry)
+{
+   Vg_File_Data *vfd = vg_entry->vfd;
+
+   /* Optimization: static viewbox may have same root data regardless of size.
+      So we can't use the root data directly, but copy it for each vg_entries.
+      In the meantime, non-static viewbox root data may have difference instance for each
+      size. So it's affordable to share the root data for each vg_entries. */
+   if (vfd->static_viewbox)
+     {
+        /* TODO: Yet trivial but still we may have a better solution to
+           avoid this unnecessary copy. If the ector surface key is not
+           to this root pointer. */
+        vg_entry->root = efl_duplicate(vfd->root);
+     }
+   else if (vg_entry->root != vfd->root)
+     {
+        if (vg_entry->root) efl_unref(vg_entry->root);
+        vg_entry->root = efl_ref(vfd->root);
+     }
+}
+
+static void
+_local_transform(Efl_VG *root, double w, double h, Vg_File_Data *vfd)
+{
+   double sx = 0, sy= 0, scale;
+   Eina_Matrix3 m;
+
+   if (!vfd->static_viewbox) return;
+   if (vfd->view_box.w == w && vfd->view_box.h == h) return;
+
+   sx = w / vfd->view_box.w;
+   sy = h / vfd->view_box.h;
+
+   scale = sx < sy ? sx : sy;
+   eina_matrix3_identity(&m);
+
+   // align hcenter and vcenter
+   if (vfd->preserve_aspect)
+     {
+        eina_matrix3_translate(&m, (w - vfd->view_box.w * scale)/2.0, (h - vfd->view_box.h * scale)/2.0);
+        eina_matrix3_scale(&m, scale, scale);
+        eina_matrix3_translate(&m, -vfd->view_box.x, -vfd->view_box.y);
+     }
+   else
+     {
+        eina_matrix3_scale(&m, sx, sy);
+        eina_matrix3_translate(&m, -vfd->view_box.x, -vfd->view_box.y);
+     }
+   efl_canvas_vg_node_transformation_set(root, &m);
 }
 
 void
@@ -245,82 +317,26 @@ evas_cache_vg_file_open(const char *file, const char *key)
    return vfd;
 }
 
-static void
-_local_transformation(Efl_VG *root, double w, double h, Vg_File_Data *vfd)
+Vg_Cache_Entry*
+evas_cache_vg_entry_resize(Vg_Cache_Entry *vg_entry, int w, int h)
 {
-   double sx = 0, sy= 0, scale;
-   Eina_Matrix3 m;
-
-   if (vfd->view_box.w)
-     sx = w/vfd->view_box.w;
-   if (vfd->view_box.h)
-     sy = h/vfd->view_box.h;
-
-   scale = sx < sy ? sx: sy;
-   eina_matrix3_identity(&m);
-
-   // allign hcenter and vcenter
-   if (vfd->preserve_aspect)
-     {
-        eina_matrix3_translate(&m, (w - vfd->view_box.w * scale)/2.0, (h - vfd->view_box.h * scale)/2.0);
-        eina_matrix3_scale(&m, scale, scale);
-        eina_matrix3_translate(&m, -vfd->view_box.x, -vfd->view_box.y);
-     }
-   else
-     {
-        eina_matrix3_scale(&m, sx, sy);
-        eina_matrix3_translate(&m, -vfd->view_box.x, -vfd->view_box.y);
-     }
-   efl_canvas_vg_node_transformation_set(root, &m);
-}
-
-static Efl_VG *
-_evas_vg_dup_vg_tree(Vg_File_Data *vfd, double w, double h)
-{
-   Efl_VG *root;
-
-   if (!vfd) return NULL;
-   if (w < 1 || h < 1) return NULL;
-
-   root = efl_duplicate(vfd->root);
-   _local_transformation(root, w, h, vfd);
-
-   return root;
-}
-
-static void
-_evas_cache_vg_tree_update(Vg_Cache_Entry *vg_entry)
-{
-   Vg_File_Data *vfd = NULL;
-   if(!vg_entry) return;
-
-   if (!vg_entry->file)
-     {
-        vg_entry->root = NULL;
-        return;
-     }
-
-   vfd = evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
-
-   vg_entry->root = _evas_vg_dup_vg_tree(vfd, vg_entry->w, vg_entry->h);
-   eina_stringshare_del(vg_entry->file);
-   eina_stringshare_del(vg_entry->key);
-   vg_entry->file = NULL;
-   vg_entry->key = NULL;
+   return evas_cache_vg_entry_create(vg_entry->file, vg_entry->key, w, h);
 }
 
 Vg_Cache_Entry*
-evas_cache_vg_entry_find(const char *file, const char *key,
-                         int w, int h)
+evas_cache_vg_entry_create(const char *file,
+                           const char *key,
+                           int w, int h)
 {
    Vg_Cache_Entry* vg_entry;
    Eina_Strbuf *hash_key;
 
    if (!vg_cache) return NULL;
 
+   //TODO: zero-sized entry is useless. how to skip it?
+
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%s/%s/%d/%d",
-                             file, key, w, h);
+   eina_strbuf_append_printf(hash_key, "%s/%s/%d/%d", file, key, w, h);
    vg_entry = eina_hash_find(vg_cache->vg_entry_hash, eina_strbuf_string_get(hash_key));
    if (!vg_entry)
      {
@@ -340,16 +356,42 @@ evas_cache_vg_entry_find(const char *file, const char *key,
      }
    eina_strbuf_free(hash_key);
    vg_entry->ref++;
+
+   vg_entry->vfd = evas_cache_vg_file_open(file, key);
+   //No File??
+   if (!vg_entry->vfd)
+     {
+        evas_cache_vg_entry_del(vg_entry);
+        return NULL;
+     }
+   vg_entry->vfd->ref++;
+
    return vg_entry;
 }
 
 Efl_VG*
 evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
 {
-   if (vg_entry->root) return vg_entry->root;
+   if (!vg_entry) return NULL;
+   if ((vg_entry->w < 1) || (vg_entry->h < 1)) return NULL;
 
-   if (vg_entry->file)
-     _evas_cache_vg_tree_update(vg_entry);
+   Vg_File_Data *vfd = vg_entry->vfd;
+   if (!vfd) return NULL;
+
+   Efl_VG *root = _cached_root_get(vg_entry);
+   if (root) return root;
+
+   if (!vfd->static_viewbox)
+     {
+        vfd->view_box.w = vg_entry->w;
+        vfd->view_box.h = vg_entry->h;
+     }
+
+   if (!vfd->loader->file_data(vfd)) return NULL;
+
+   _caching_root_update(vg_entry);
+
+   _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
 
    return vg_entry->root;
 }
@@ -357,10 +399,11 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
 void
 evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
 {
-   if (!vg_entry) return;
-
+   if (!vg_cache || !vg_entry) return;
    vg_entry->ref--;
-   // FIXME implement delete logic (LRU)
+   if (vg_entry->ref > 0) return;
+   if (!eina_hash_del(vg_cache->vg_entry_hash, vg_entry->hash_key, vg_entry))
+     ERR("Failed to delete vg_entry = (%p) from hash", vg_entry);
 }
 
 Eina_Bool

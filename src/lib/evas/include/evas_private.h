@@ -1508,6 +1508,9 @@ struct _Vg_File_Data
    Efl_VG            *root;
    Evas_Vg_Load_Func *loader;
    Eina_Rectangle  view_box;
+   int ref;
+
+   Eina_Bool       static_viewbox: 1;
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
 };
 

@@ -25,6 +25,8 @@ typedef struct _Vg_Cache_Entry
    int                   h;
    Efl_VG               *root;
    int                   ref;
+   Vg_File_Data         *vfd;
+
 } Vg_Cache_Entry;
 
 // holds the vg tree info set by the user
@@ -100,9 +102,10 @@ struct _Efl_Canvas_Vg_Interpolation
 
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
-Vg_Cache_Entry*             evas_cache_vg_entry_find(const char *file, const char *key, int w, int h);
-Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *svg_entry);
-void                        evas_cache_vg_entry_del(Vg_Cache_Entry *svg_entry);
+Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(const char *file, const char *key, int w, int h);
+Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry);
+void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
 Vg_File_Data *              evas_cache_vg_file_open(const char *file, const char *key);
 Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
 Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);

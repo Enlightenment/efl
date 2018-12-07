@@ -2325,6 +2325,18 @@ _update_gradient(Svg_Node *node, Eina_List *grad_list)
           }
      }
 }
+static Eina_Bool
+evas_vg_load_file_data_svg(Vg_File_Data *vfd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+evas_vg_load_file_close_svg(Vg_File_Data *vfd)
+{
+   if (vfd->root) efl_unref(vfd->root);
+   return EINA_TRUE;
+}
 
 static Vg_File_Data*
 evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *error EINA_UNUSED)
@@ -2377,7 +2389,9 @@ evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *e
 
 static Evas_Vg_Load_Func evas_vg_load_svg_func =
 {
-   evas_vg_load_file_open_svg
+   evas_vg_load_file_open_svg,
+   evas_vg_load_file_close_svg,
+   evas_vg_load_file_data_svg,
 };
 
 static int

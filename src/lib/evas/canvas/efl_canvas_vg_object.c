@@ -113,27 +113,27 @@ _evas_vg_resize(void *data, const Efl_Event *ev)
    _update_vgtree_viewport(ev->object, pd);
 }
 
-/* the actual api call to add a vector graphic object */
-EAPI Evas_Object *
-evas_object_vg_add(Evas *e)
-{
-   e = evas_find(e);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
-   // TODO: Ask backend to return the main Ector_Surface
-   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
-}
-
 EOLIAN static Efl_VG *
-_efl_canvas_vg_object_root_node_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd)
+_efl_canvas_vg_object_root_node_get(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
 {
    Efl_VG *root = NULL;
 
    if (pd->vg_entry)
-     root = evas_cache_vg_tree_get(pd->vg_entry);
-   else if (pd->user_entry)
-     root = pd->user_entry->root;
-   else
-     root = pd->root;
+     {
+        Evas_Coord w, h;
+        evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+
+        //Update vg data with current size.
+        if ((pd->vg_entry->w != w) || (pd->vg_entry->h != h))
+          {
+             Vg_Cache_Entry *vg_entry = evas_cache_vg_entry_resize(pd->vg_entry, w, h);
+             evas_cache_vg_entry_del(pd->vg_entry);
+             pd->vg_entry = vg_entry;
+          }
+        root = evas_cache_vg_tree_get(pd->vg_entry);
+     }
+   else if (pd->user_entry) root = pd->user_entry->root;
+   else root = pd->root;
 
    return root;
 }
@@ -256,7 +256,7 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
+_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
 {
    Vg_Cache_Entry *old_entry;
    int w, h;
@@ -264,10 +264,18 @@ _efl_canvas_vg_object_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, 
    if (!file) return EINA_FALSE;
 
    old_entry = pd->vg_entry;
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   pd->vg_entry = evas_cache_vg_entry_find(file, key, w, h);
-   if (pd->vg_entry != old_entry)
-     evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+
+   Evas_Object_Protected_Data *obj;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   if (file)
+     pd->vg_entry = evas_cache_vg_entry_create(file, key,
+                                               obj->cur->geometry.w,
+                                               obj->cur->geometry.h);
+   else
+     pd->vg_entry = NULL;
+
+   evas_object_change(eo_obj, obj);
    evas_cache_vg_entry_del(old_entry);
 
    return EINA_TRUE;
@@ -321,6 +329,7 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
 
    if (pd->user_entry) free(pd->user_entry);
    pd->user_entry = NULL;
+   evas_cache_vg_entry_del(pd->vg_entry);
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -472,16 +481,15 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
                        int x, int y, int w, int h, Eina_Bool do_async)
 {
    Vg_Cache_Entry *vg_entry = pd->vg_entry;
-   Efl_VG *root, *dupe_root;
+   Efl_VG *root;
 
    // if the size changed in between path set and the draw call;
 
    if ((vg_entry->w != w) ||
        (vg_entry->h != h))
      {
-         evas_cache_vg_entry_del(vg_entry);
-         vg_entry = evas_cache_vg_entry_find(vg_entry->file, vg_entry->key,
-                                             w, h);
+         vg_entry = evas_cache_vg_entry_resize(vg_entry, w, h);
+         evas_cache_vg_entry_del(pd->vg_entry);
          pd->vg_entry = vg_entry;
      }
    root = evas_cache_vg_tree_get(vg_entry);
@@ -490,18 +498,8 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    void *buffer = ENFN->ector_surface_cache_get(engine, root);
 
    if (!buffer)
-     {
-        dupe_root = efl_duplicate(root);
-        // render to the buffer
-        buffer = _render_to_buffer(obj, pd,
-                                   engine, surface,
-                                   dupe_root,
-                                   w, h,
-                                   root,
-                                   buffer,
-                                   do_async);
-        efl_unref(dupe_root);
-     }
+     buffer = _render_to_buffer(obj, pd, engine, surface, root, w, h, root, NULL,
+                                do_async);
    else
      //cache reference was increased when we get the cache.
      ENFN->ector_surface_cache_drop(engine, root);
@@ -525,13 +523,14 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    if ((user_entry->w != w ) ||
        (user_entry->h != h))
      {
-         ENFN->ector_surface_cache_drop(engine, user_entry);
+         ENFN->ector_surface_cache_drop(engine, user_entry->root);
          user_entry->w = w;
          user_entry->h = h;
-         pd->user_entry = user_entry;
      }
+
    //if the buffer is not created yet
-   void *buffer = ENFN->ector_surface_cache_get(engine, user_entry);
+   void *buffer = ENFN->ector_surface_cache_get(engine, user_entry->root);
+
    if (!buffer)
      {
         // render to the buffer
@@ -554,7 +553,8 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                                      user_entry,
                                      buffer,
                                      do_async);
-        ENFN->ector_surface_cache_drop(engine, user_entry);
+        //cache reference was increased when we get the cache.
+        ENFN->ector_surface_cache_drop(engine, user_entry->root);
      }
 
    _render_buffer_to_screen(obj,
@@ -749,6 +749,16 @@ _efl_canvas_vg_object_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
                                  void *type_private_data EINA_UNUSED)
 {
    return 0;
+}
+
+/* the actual api call to add a vector graphic object */
+EAPI Evas_Object *
+evas_object_vg_add(Evas *e)
+{
+   e = evas_find(e);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
+   // TODO: Ask backend to return the main Ector_Surface
+   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 #include "efl_canvas_vg_object.eo.c"
