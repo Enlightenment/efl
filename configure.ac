@@ -3943,7 +3943,7 @@ AC_ARG_ENABLE([elogind],
        want_elogind="no"
     fi
    ], [
-    want_elogind="yes"
+    want_elogind="no"
    ])
 
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
