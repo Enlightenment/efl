@@ -84,7 +84,7 @@ _efl_canvas_vg_gradient_linear_render_pre(Eo *obj,
    ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
    efl_gfx_gradient_stop_set(nd->renderer, gd->colors, gd->colors_count);
-   efl_gfx_gradient_spread_set(nd->renderer, gd->s);
+   efl_gfx_gradient_spread_set(nd->renderer, gd->spread);
    efl_gfx_gradient_linear_start_set(nd->renderer, pd->start.x, pd->start.y);
    efl_gfx_gradient_linear_end_set(nd->renderer, pd->end.x, pd->end.y);
 

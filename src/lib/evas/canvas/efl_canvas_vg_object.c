@@ -139,11 +139,13 @@ _efl_canvas_vg_object_root_node_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Obj
 }
 
 EOLIAN static void
-_efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_VG *root_node)
+_efl_canvas_vg_object_root_node_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, Efl_VG *root_node)
 {
    // if the same root is already set
    if (pd->user_entry && pd->user_entry->root == root_node)
      return;
+
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    // check if a file has been already set
    if (pd->vg_entry)
@@ -173,21 +175,19 @@ _efl_canvas_vg_object_root_node_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Efl_
         // set the parent so that vg canvas can render it.
         efl_parent_set(pd->user_entry->root, pd->root);
 
-        efl_canvas_vg_node_root_set(root_node, obj);
+        efl_canvas_vg_node_root_set(root_node, eo_obj);
      }
    else if (pd->user_entry)
      {
         // drop any surface cache attached to it.
-        Evas_Object_Protected_Data *eobj = efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS);
-        eobj->layer->evas->engine.func->ector_surface_cache_drop(_evas_engine_context(eobj->layer->evas),
-                                                                 pd->user_entry);
+        ENFN->ector_surface_cache_drop(_evas_engine_context(obj->layer->evas), pd->user_entry->root);
         free(pd->user_entry);
         pd->user_entry = NULL;
      }
 
    // force a redraw
    pd->changed = EINA_TRUE;
-   evas_object_change(obj, efl_data_scope_get(obj, EFL_CANVAS_OBJECT_CLASS));
+   evas_object_change(eo_obj, obj);
 }
 
 EOLIAN static void
@@ -415,11 +415,8 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    //create a buffer
    if (!buffer)
      {
-        buffer = obj->layer->evas->engine.func->ector_surface_create(engine,
-                                                                     w, h,
-                                                                     &error);
-        if (error)
-          return NULL; // surface creation error
+        buffer = ENFN->ector_surface_create(engine, w, h, &error);
+        if (error) return NULL;
         buffer_created = EINA_TRUE;
      }
 
@@ -449,7 +446,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_free(context);
 
    if (buffer_created)
-     obj->layer->evas->engine.func->ector_surface_cache_set(engine, key, buffer);
+     ENFN->ector_surface_cache_set(engine, key, buffer);
 
    return buffer;
 }
@@ -464,7 +461,7 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
    Eina_Bool async_unref;
 
    //Draw the buffer as image to canvas
-   async_unref = obj->layer->evas->engine.func->image_draw(engine, output, context, surface,
+   async_unref = ENFN->image_draw(engine, output, context, surface,
                                                            buffer,
                                                            0, 0, w, h,
                                                            x, y, w, h,
@@ -499,7 +496,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    root = evas_cache_vg_tree_get(vg_entry);
    if (!root) return;
 
-   void *buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, root);
+   void *buffer = ENFN->ector_surface_cache_get(engine, root);
 
    if (!buffer)
      {
@@ -515,9 +512,8 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         efl_unref(dupe_root);
      }
    else
-     {
-        obj->layer->evas->engine.func->ector_surface_cache_drop(engine, root);
-     }
+     //cache reference was increased when we get the cache.
+     ENFN->ector_surface_cache_drop(engine, root);
 
    _render_buffer_to_screen(obj,
                             engine, output, context, surface,
@@ -538,13 +534,13 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    if ((user_entry->w != w ) ||
        (user_entry->h != h))
      {
-         obj->layer->evas->engine.func->ector_surface_cache_drop(engine, user_entry);
+         ENFN->ector_surface_cache_drop(engine, user_entry);
          user_entry->w = w;
          user_entry->h = h;
          pd->user_entry = user_entry;
      }
    //if the buffer is not created yet
-   void *buffer = obj->layer->evas->engine.func->ector_surface_cache_get(engine, user_entry);
+   void *buffer = ENFN->ector_surface_cache_get(engine, user_entry);
    if (!buffer)
      {
         // render to the buffer
@@ -567,7 +563,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                                      user_entry,
                                      buffer,
                                      do_async);
-        obj->layer->evas->engine.func->ector_surface_cache_drop(engine, user_entry);
+        ENFN->ector_surface_cache_drop(engine, user_entry);
      }
 
    _render_buffer_to_screen(obj,
@@ -587,18 +583,15 @@ _efl_canvas_vg_object_render(Evas_Object *eo_obj EINA_UNUSED,
    Efl_Canvas_Vg_Object_Data *pd = type_private_data;
 
    /* render object to surface with context, and offxet by x,y */
-   obj->layer->evas->engine.func->context_color_set(engine, context,
-                                                    255, 255, 255, 255);
-   obj->layer->evas->engine.func->context_multiplier_set(engine,
-                                                         context,
-                                                         obj->cur->cache.clip.r,
-                                                         obj->cur->cache.clip.g,
-                                                         obj->cur->cache.clip.b,
-                                                         obj->cur->cache.clip.a);
-   obj->layer->evas->engine.func->context_anti_alias_set(engine, context,
-                                                         obj->cur->anti_alias);
-   obj->layer->evas->engine.func->context_render_op_set(engine, context,
-                                                        obj->cur->render_op);
+   ENFN->context_color_set(engine, context, 255, 255, 255, 255);
+   ENFN->context_multiplier_set(engine, context,
+                                obj->cur->cache.clip.r,
+                                obj->cur->cache.clip.g,
+                                obj->cur->cache.clip.b,
+                                obj->cur->cache.clip.a);
+   ENFN->context_anti_alias_set(engine, context, obj->cur->anti_alias);
+   ENFN->context_render_op_set(engine, context, obj->cur->render_op);
+
    if (pd->vg_entry)
      {
         _cache_vg_entry_render(obj, pd,

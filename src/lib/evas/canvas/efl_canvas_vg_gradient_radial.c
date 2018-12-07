@@ -100,7 +100,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Eo *obj,
    ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
    efl_gfx_gradient_stop_set(nd->renderer, gd->colors, gd->colors_count);
-   efl_gfx_gradient_spread_set(nd->renderer, gd->s);
+   efl_gfx_gradient_spread_set(nd->renderer, gd->spread);
    efl_gfx_gradient_radial_center_set(nd->renderer, pd->center.x, pd->center.y);
    efl_gfx_gradient_radial_focal_set(nd->renderer, pd->focal.x, pd->focal.y);
    efl_gfx_gradient_radial_radius_set(nd->renderer, pd->radius);

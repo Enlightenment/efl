@@ -39,7 +39,6 @@ typedef struct _User_Vg_Entry
 
 struct _Efl_Canvas_Vg_Object_Data
 {
-   void                     *engine_data;
    Efl_VG                   *root;
    Evas_Cache_Vg_Entry      *vg_entry;
    User_Vg_Entry            *user_entry; // holds the user set vg tree
@@ -87,7 +86,7 @@ struct _Efl_Canvas_Vg_Gradient_Data
    Efl_Gfx_Gradient_Stop *colors;
    unsigned int colors_count;
 
-   Efl_Gfx_Gradient_Spread s;
+   Efl_Gfx_Gradient_Spread spread;
 };
 
 struct _Efl_Canvas_Vg_Interpolation
