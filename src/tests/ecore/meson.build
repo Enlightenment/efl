@@ -50,7 +50,32 @@ ecore_suite = executable('ecore_suite',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
 )
 
+efl_app_suite_src = [
+  'efl_app_suite.c',
+  'efl_app_suite.h',
+  'efl_app_test_loop.c',
+  'efl_app_test_loop_fd.c',
+  'efl_app_test_loop_timer.c',
+  'efl_app_test_promise.c'
+]
+
+efl_app_suite_deps = [m]
+efl_app_suite_deps += ecore
+
+efl_app_suite = executable('efl_app_suite',
+  efl_app_suite_src,
+  dependencies: [efl_app_suite_deps, check],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
 test('ecore-suite', ecore_suite,
+  timeout : 10*60,
+  env : test_env
+)
+
+test('efl-app', efl_app_suite,
   timeout : 10*60,
   env : test_env
 )
