@@ -1316,6 +1316,103 @@ EFL_END_TEST
 
 #endif
 
+const char *test_strings[] = { "another", "string" };
+
+static Eina_Value
+test_generate_int(Eo *o, void *data, const Eina_Value value)
+{
+   const Eina_Value empty = EINA_VALUE_EMPTY;
+
+   ck_assert_int_eq(memcmp(&value, &empty, sizeof (Eina_Value)), 0);
+   ck_assert_ptr_eq(data, test_strings[0]);
+   ck_assert_ptr_eq(o, efl_main_loop_get());
+   return eina_value_int_init(42);
+}
+
+static Eina_Value
+test_got_int(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value value)
+{
+   int i = 0;
+   ck_assert_ptr_eq(eina_value_type_get(&value), EINA_VALUE_TYPE_INT);
+   eina_value_get(&value, &i);
+   ck_assert_int_eq(i, 42);
+
+   return eina_value_error_init(EAGAIN);
+}
+
+static Eina_Value
+test_error_not_reached(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error error)
+{
+   abort();
+
+   return eina_value_error_init(EAGAIN);
+}
+
+static Eina_Value
+test_not_reached(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value value)
+{
+   abort();
+
+   return value;
+}
+
+static Eina_Value
+test_failure(Eo *o, void *data EINA_UNUSED, Eina_Error error)
+{
+   ck_assert_int_eq(error, EAGAIN);
+   ck_assert_ptr_eq(o, efl_main_loop_get());
+
+   return eina_value_error_init(error);
+}
+
+static Eina_Value
+test_end_future(Eo *o, void *data, Eina_Error error)
+{
+   ck_assert_ptr_eq(o, efl_main_loop_get());
+   ck_assert_ptr_eq(data, test_strings[1]);
+   ck_assert_int_eq(error, EAGAIN);
+
+   return eina_value_error_init(error);
+}
+
+static void
+test_cleanup(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   ck_assert_ptr_eq(o, efl_main_loop_get());
+   ck_assert_ptr_eq(data, test_strings[1]);
+   efl_loop_quit(o, eina_value_error_init(EAGAIN));
+}
+
+static void
+efl_main_test(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Eina_Future *f;
+
+   f = efl_future_chain(ev->object, efl_loop_idle(ev->object),
+                        { .success = test_generate_int, .data = test_strings[0] },
+                        { .success_type = EINA_VALUE_TYPE_INT, .success = test_got_int , .error = test_error_not_reached },
+                        { .success = test_not_reached, .error = test_failure });
+   efl_future_then(ev->object, f, .success = test_not_reached, .error = test_end_future, .data = test_strings[1], .free = test_cleanup);
+}
+
+
+EFL_START_TEST(efl_test_future_then)
+{
+   char *argv[] = { "Future" };
+   Eina_Value *ret = NULL;
+   Eina_Error err = 0;
+
+   efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main_test, NULL);
+   ecore_init_ex(1, argv);
+   ret = efl_loop_begin(efl_main_loop_get());
+   ecore_shutdown_ex();
+
+   ck_assert_ptr_eq(eina_value_type_get(ret), EINA_VALUE_TYPE_ERROR);
+   eina_value_get(ret, &err);
+   ck_assert_int_eq(err, EAGAIN);
+}
+EFL_END_TEST
+
 static void
 promise_init(void)
 {
@@ -1327,6 +1424,8 @@ static void
 promise_shutdown(void)
 {
    /* enable ecore init count manipulation for these tests */
+   _efl_startup_time = ecore_time_unix_get();
+   _EFL_APP_VERSION_SET();
    ecore_init();
 }
 
@@ -1340,6 +1439,7 @@ void efl_app_test_promise(TCase *tc)
    tcase_add_test(tc, efl_test_promise_future_ignore_error);
    tcase_add_test(tc, efl_test_promise_future_success);
    tcase_add_test(tc, efl_test_promise_future_failure);
+   tcase_add_test(tc, efl_test_future_then);
 }
 
 void efl_app_test_promise_2(TCase *tc)
