@@ -113,3 +113,24 @@ __efl_internal_init(void)
 {
    efl_model_init();
 }
+
+static Eina_Value
+_efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Ui_Factory_Item_Created_Event event = { NULL, NULL };
+
+   eina_value_pget(&v, &event.item);
+   event.model = efl_ui_view_model_get(event.item);
+
+   efl_event_callback_call(factory, EFL_UI_FACTORY_EVENT_CREATED, &event);
+
+   return v;
+}
+
+EAPI Eina_Future *
+efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Efl_Model *model, Efl_Gfx_Entity *parent)
+{
+   return efl_future_then(efl_ui_factory_create(factory, model, parent), factory,
+                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                          .success = _efl_ui_view_factory_item_created);
+}

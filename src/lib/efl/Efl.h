@@ -197,6 +197,22 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
  */
 EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 
+/**
+ * @brief This triggers the create method of a factory and trigger the item created event.
+ *
+ * @param[in] factory The factory that will provide the item
+ * @param[in] model The model to use to fetch information from
+ * @param[in] parent The parent of the newly created item
+ * @return A future that will resolve with the newly created item.
+ *
+ * @since 1.22
+ * @note This exists as we always want to trigger the event once all the logic
+ * of every factory in the chain has done what it planned to do. Basically we
+ * want the inverse of inheritance call like efl_super. So we do setup the future
+ * in this way.
+ */
+EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Efl_Model *model, Efl_Gfx_Entity *parent);
+
 #else
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
