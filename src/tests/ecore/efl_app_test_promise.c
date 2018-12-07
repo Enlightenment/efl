@@ -280,7 +280,7 @@ _cancel_cb(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_U
    ERROR_CHECK(v, ECANCELED);
    (*cancel_count)++;
    /* Although this function returns an INT Eina_Value, the next
-      _cancel_cb must receive a EINA_VALYE_TYPE_ERROR as ECANCELED */
+      _cancel_cb must receive a EINA_VALUE_TYPE_ERROR as ECANCELED */
    return new_v;
 }
 
