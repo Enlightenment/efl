@@ -49,12 +49,16 @@ _blend_color_argb_with_maskA(int count, const SW_FT_Span *spans, void *user_data
          sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   //Temp buffer for intermediate processing
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
               mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = alloca(sizeof(uint32_t) * spans->len);
+        uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
 
@@ -88,12 +92,16 @@ _blend_color_argb_with_maskInvA(int count, const SW_FT_Span *spans, void *user_d
          sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   //Temp buffer for intermediate processing
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
               mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = alloca(sizeof(uint32_t) * spans->len);
+        uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
 
