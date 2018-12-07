@@ -918,12 +918,21 @@ EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 
 /**
  * @brief Gets the name of the passed class.
- * @param klass the class to work on.
+ * @param[in] klass The class (or object) to work on.
  * @return The class' name.
  *
  * @see efl_class_get()
  */
 EAPI const char *efl_class_name_get(const Efl_Class *klass);
+
+/**
+ * @brief Gets the amount of memory this class object would use.
+ * @param[in] klass The class (or object) to work on.
+ * @return The amount of memory in Bytes.
+ *
+ * @see efl_class_get()
+ */
+EAPI size_t efl_class_memory_size_get(const Efl_Class *klass);
 
 /**
  * @brief Gets a debug name for this object
