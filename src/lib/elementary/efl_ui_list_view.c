@@ -976,7 +976,7 @@ _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data 
    tracking->obj = obj;
    tracking->pd = pd;
 
-   item->layout_request = efl_ui_factory_create(pd->factory, item->children, obj);
+   item->layout_request = efl_ui_view_factory_create_with_event(pd->factory, item->children, obj);
    item->layout_request = efl_future_then(obj, item->layout_request);
    item->layout_request = eina_future_then_from_desc(item->layout_request,
                                                      eina_future_cb_easy(.success = _content_created,

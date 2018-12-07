@@ -2099,7 +2099,7 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
    request->factory = efl_ref(tracking->factory);
    request->tracking = tracking;
 
-   f = efl_ui_factory_create(tracking->factory, pd->connect.model, pd->obj);
+   f = efl_ui_view_factory_create_with_event(tracking->factory, pd->connect.model, pd->obj);
    f = eina_future_then_from_desc(efl_future_then(pd->obj, f),
                                   eina_future_cb_easy(.success = _content_created,
                                                       .success_type = EINA_VALUE_TYPE_OBJECT,
