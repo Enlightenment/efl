@@ -12,6 +12,8 @@
 #include "ector_private.h"
 #include "ector_software_private.h"
 
+#define MY_CLASS ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS
+
 typedef struct _Ector_Renderer_Software_Shape_Data Ector_Renderer_Software_Shape_Data;
 typedef struct _Ector_Software_Shape_Task Ector_Software_Shape_Task;
 
@@ -730,7 +732,7 @@ _ector_renderer_software_shape_efl_gfx_path_path_set(Eo *obj,
    pd->shape_data = NULL;
    pd->outline_data = NULL;
 
-   efl_gfx_path_set(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS), op, points);
+   efl_gfx_path_set(efl_super(obj, MY_CLASS), op, points);
 }
 
 
@@ -754,7 +756,7 @@ _ector_renderer_software_shape_path_changed(void *data, const Efl_Event *event E
 static Eo *
 _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Software_Shape_Data *pd)
 {
-   obj = efl_constructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    if (!obj) return NULL;
 
    pd->task = NULL;
@@ -786,17 +788,16 @@ _ector_renderer_software_shape_efl_object_destructor(Eo *obj, Ector_Renderer_Sof
    efl_data_xunref(obj, pd->shape, obj);
    efl_data_xunref(obj, pd->public_shape, obj);
 
-   efl_destructor(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
-
 
 unsigned int
 _ector_renderer_software_shape_ector_renderer_crc_get(const Eo *obj,
-                                                                   Ector_Renderer_Software_Shape_Data *pd)
+                                                      Ector_Renderer_Software_Shape_Data *pd)
 {
    unsigned int crc;
 
-   crc = ector_renderer_crc_get(efl_super(obj, ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS));
+   crc = ector_renderer_crc_get(efl_super(obj, MY_CLASS));
 
    crc = eina_crc((void*) &pd->shape->stroke.marker,
                   sizeof (pd->shape->stroke.marker),

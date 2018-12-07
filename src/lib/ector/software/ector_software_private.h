@@ -53,6 +53,7 @@ typedef struct _Ector_Renderer_Software_Gradient_Data
 typedef struct _Shape_Rle_Data
 {
    Eina_Rectangle   bbox;
+   //ALLOC == SIZE?
    unsigned short   alloc;
    unsigned short   size;
    SW_FT_Span      *spans;// array of Scanlines.
@@ -63,10 +64,8 @@ typedef struct _Clip_Data
    Eina_Array           *clips; //Eina_Rectangle
    Shape_Rle_Data       *path;
    unsigned int          enabled : 1;
-   unsigned int          has_rect_clip : 1;
-   unsigned int          has_path_clip : 1;
+   unsigned int          type : 1;   //0: rect, 1: path
 } Clip_Data;
-
 
 typedef enum _Span_Data_Type {
   None,
@@ -98,6 +97,7 @@ typedef struct _Span_Data
 typedef struct _Software_Rasterizer
 {
    Span_Data        fill_data;
+   //Necessary?:
    Eina_Matrix3    *transform;
    Eina_Rectangle   system_clip;
 } Software_Rasterizer;

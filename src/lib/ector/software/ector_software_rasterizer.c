@@ -220,8 +220,8 @@ _span_fill_clipRect(int span_count, const SW_FT_Span *spans, void *user_data)
    Eina_Rectangle *rect;
    Eina_Rectangle tmp_rect;
 
-
    clip_count = eina_array_count(clip.clips);
+
    for (i = 0; i < clip_count; i++)
      {
         rect = (Eina_Rectangle *)eina_array_data_get(clip.clips, i);
@@ -281,23 +281,16 @@ _adjust_span_fill_methods(Span_Data *spdata)
           break;
      }
 
-   // setup clipping
-   if (!spdata->unclipped_blend)
+   // Clipping Function
+   if (spdata->clip.enabled)
      {
-        spdata->blend = 0;
-     }
-   else if (!spdata->clip.enabled)
-     {
-        spdata->blend = spdata->unclipped_blend;
-     }
-   else if (spdata->clip.has_rect_clip)
-     {
-        spdata->blend = &_span_fill_clipRect;
+        if (spdata->clip.type == 0)
+          spdata->blend = &_span_fill_clipRect;
+        else
+          spdata->blend = &_span_fill_clipPath;
      }
    else
-     {
-        spdata->blend = &_span_fill_clipPath;
-     }
+     spdata->blend = spdata->unclipped_blend;
 }
 
 void ector_software_thread_init(Ector_Software_Thread *thread)
@@ -464,7 +457,8 @@ ector_software_rasterizer_generate_stroke_rle_data(Ector_Software_Thread *thread
    return rle_data;
 }
 
-void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle)
+void
+ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle)
 {
    if (rle)
      {
@@ -483,35 +477,48 @@ void _setup_span_fill_matrix(Software_Rasterizer *rasterizer)
      eina_matrix3_identity(&rasterizer->fill_data.inv);
 }
 
-void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t)
+void
+ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t)
 {
    rasterizer->transform = t;
 }
 
-void ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips)
+void
+ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips)
 {
    if (clips)
      {
         rasterizer->fill_data.clip.clips = clips;
-        rasterizer->fill_data.clip.has_rect_clip = EINA_TRUE;
+        rasterizer->fill_data.clip.type = 0;
         rasterizer->fill_data.clip.enabled = EINA_TRUE;
      }
    else
      {
         rasterizer->fill_data.clip.clips = NULL;
-        rasterizer->fill_data.clip.has_rect_clip = EINA_FALSE;
+        rasterizer->fill_data.clip.type = 0;
         rasterizer->fill_data.clip.enabled = EINA_FALSE;
      }
 }
 
-void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip)
+void
+ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip)
 {
-   rasterizer->fill_data.clip.path = clip;
-   rasterizer->fill_data.clip.has_path_clip = EINA_TRUE;
-   rasterizer->fill_data.clip.enabled = EINA_TRUE;
+   if (clip)
+     {
+        rasterizer->fill_data.clip.path = clip;
+        rasterizer->fill_data.clip.type = 1;
+        rasterizer->fill_data.clip.enabled = EINA_TRUE;
+     }
+   else
+     {
+        rasterizer->fill_data.clip.path = NULL;
+        rasterizer->fill_data.clip.type = 0;
+        rasterizer->fill_data.clip.enabled = EINA_FALSE;
+     }
 }
 
-void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
+void
+ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
    rasterizer->fill_data.color = DRAW_ARGB_JOIN(a, r, g, b);
    rasterizer->fill_data.type = Solid;
@@ -524,8 +531,9 @@ void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasteriz
    rasterizer->fill_data.type = LinearGradient;
 }
 
-void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer,
-                                                   Ector_Renderer_Software_Gradient_Data *radial)
+void
+ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer,
+                                              Ector_Renderer_Software_Gradient_Data *radial)
 {
    rasterizer->fill_data.gradient = radial;
    rasterizer->fill_data.type = RadialGradient;
