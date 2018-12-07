@@ -56,30 +56,33 @@ _efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_get(const Eo *obj EIN
 }
 
 static void
-_efl_canvas_vg_gradient_linear_render_pre(Eo *obj,
-                                   Eina_Matrix3 *parent,
-                                   Ector_Surface *s,
-                                   void *data,
-                                   Efl_Canvas_Vg_Node_Data *nd)
+_efl_canvas_vg_gradient_linear_render_pre(Evas_Object_Protected_Data *vg_pd EINA_UNUSED,
+                                          Efl_VG *obj,
+                                          Efl_Canvas_Vg_Node_Data *nd,
+                                          Ector_Surface *surface,
+                                          Eina_Matrix3 *ptransform,
+                                          Ector_Buffer *mask,
+                                          int mask_op,
+                                          void *data)
 {
    Efl_Canvas_Vg_Gradient_Linear_Data *pd = data;
    Efl_Canvas_Vg_Gradient_Data *gd;
 
-   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return ;
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    gd = efl_data_scope_get(obj, EFL_CANVAS_VG_GRADIENT_CLASS);
-   EFL_CANVAS_VG_COMPUTE_MATRIX(current, parent, nd);
+   EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
    if (!nd->renderer)
      {
         efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN);
+        nd->renderer = ector_surface_renderer_factory_new(surface, ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN);
         efl_domain_current_pop();
      }
 
-   ector_renderer_transformation_set(nd->renderer, current);
+   ector_renderer_transformation_set(nd->renderer, ctransform);
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
    ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
@@ -87,8 +90,8 @@ _efl_canvas_vg_gradient_linear_render_pre(Eo *obj,
    efl_gfx_gradient_spread_set(nd->renderer, gd->spread);
    efl_gfx_gradient_linear_start_set(nd->renderer, pd->start.x, pd->start.y);
    efl_gfx_gradient_linear_end_set(nd->renderer, pd->end.x, pd->end.y);
-
    ector_renderer_prepare(nd->renderer);
+   ector_renderer_mask_set(nd->renderer, mask, mask_op);
 }
 
 static Eo *

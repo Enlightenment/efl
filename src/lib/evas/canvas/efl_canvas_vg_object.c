@@ -371,37 +371,71 @@ _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd
 
 static void
 _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                void *engine, void *output, void *context, void *surface, Efl_VG *n,
+                void *engine, void *output, void *context, Efl_VG *node,
                 Eina_Array *clips, Eina_Bool do_async)
 {
-   if (efl_isa(n, EFL_CANVAS_VG_CONTAINER_CLASS))
+   if (efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
-        Efl_Canvas_Vg_Container_Data *vc;
+        Efl_Canvas_Vg_Container_Data *cd =
+           efl_data_scope_get(node, EFL_CANVAS_VG_CONTAINER_CLASS);
+
+        //Update Mask Image
+        if (cd->mask_src)
+          {
+             Efl_Canvas_Vg_Container_Data *cd2 =
+                efl_data_scope_get(cd->mask_src, EFL_CANVAS_VG_CONTAINER_CLASS);
+
+             if (cd2->mask.buffer && cd2->mask.dirty)
+               {
+                  Ector_Surface *ector = evas_ector_get(obj->layer->evas);
+                  if (!ector) return;
+
+                  ENFN->ector_end(engine, output, context, ector, EINA_FALSE);
+
+                  //Need a better approach.
+                  ector_buffer_pixels_set(ector, cd2->mask.pixels, cd2->mask.bound.w, cd2->mask.bound.h, 0,
+                                          EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+                  ector_surface_reference_point_set(ector, -cd2->mask.bound.x, -cd2->mask.bound.y);
+
+                  //Draw Mask Image.
+                  Efl_VG *child;
+                  Eina_List *l;
+                  EINA_LIST_FOREACH(cd2->children, l, child)
+                     _evas_vg_render(obj, pd, engine, output, context, child,
+                                     clips, EINA_FALSE);
+
+                  cd2->mask.dirty = EINA_FALSE;
+#if 0
+                  FILE *fp = fopen("./test.raw", "w+");
+                  fwrite(cd2->mask.pixels, cd2->mask.bound.w * cd2->mask.bound.h, sizeof(uint32_t), fp);
+                  fclose(fp);
+                  ERR("size = %d x %d", cd2->mask.bound.w, cd2->mask.bound.h);
+#endif
+                  //Restore previous ector context
+                  ENFN->ector_begin(engine, output, context, ector, 0, 0, EINA_FALSE, do_async);
+               }
+          }
+
+        if (cd->mask.target) return;   //Don't draw mask itself.
+
         Efl_VG *child;
         Eina_List *l;
 
-        vc = efl_data_scope_get(n, EFL_CANVAS_VG_CONTAINER_CLASS);
-
-        EINA_LIST_FOREACH(vc->children, l, child)
-          _evas_vg_render(obj, pd,
-                          engine, output, context, surface, child,
-                          clips, do_async);
+        EINA_LIST_FOREACH(cd->children, l, child)
+          _evas_vg_render(obj, pd, engine, output, context, child, clips, do_async);
      }
    else
      {
-        Efl_Canvas_Vg_Node_Data *nd;
-        nd = efl_data_scope_get(n, EFL_CANVAS_VG_NODE_CLASS);
-        obj->layer->evas->engine.func->ector_renderer_draw(engine, output, context, surface, nd->renderer, clips, do_async);
-        if (do_async)
-          eina_array_push(&pd->cleanup, efl_ref(nd->renderer));
+        Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(node, EFL_CANVAS_VG_NODE_CLASS);
+        ENFN->ector_renderer_draw(engine, output, context, nd->renderer, clips, do_async);
+        if (do_async) eina_array_push(&pd->cleanup, efl_ref(nd->renderer));
      }
 }
 
 //renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                  void *engine, void *surface,
-                  Efl_VG *root, int w, int h, void *key,
+                  void *engine, Efl_VG *root, int w, int h, void *key,
                   void *buffer, Eina_Bool do_async)
 {
    Ector_Surface *ector;
@@ -420,29 +454,24 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
         buffer_created = EINA_TRUE;
      }
 
-   _evas_vg_render_pre(root, ector, NULL);
+   _evas_vg_render_pre(obj, root, ector, NULL, NULL, 0);
 
    //initialize buffer
    context = evas_common_draw_context_new();
    evas_common_draw_context_set_render_op(context, _EVAS_RENDER_COPY);
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
-   obj->layer->evas->engine.func->ector_begin(engine, buffer,
-                                              context, surface,
-                                              ector,
-                                              0, 0,
-                                              do_async);
+
+   ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_TRUE, do_async);
+
    //draw on buffer
    _evas_vg_render(obj, pd,
                    engine, buffer,
-                   context, surface,
-                   root, NULL,
+                   context, root,
+                   NULL,
                    do_async);
 
-   obj->layer->evas->engine.func->image_dirty_region(engine, buffer, 0, 0, w, h);
-   obj->layer->evas->engine.func->ector_end(engine, buffer,
-                                            context, surface,
-                                            ector,do_async);
-
+   ENFN->image_dirty_region(engine, buffer, 0, 0, w, h);
+   ENFN->ector_end(engine, buffer, context, ector, do_async);
    evas_common_draw_context_free(context);
 
    if (buffer_created)
@@ -498,7 +527,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    void *buffer = ENFN->ector_surface_cache_get(engine, root);
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, surface, root, w, h, root, NULL,
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
                                 do_async);
    else
      //cache reference was increased when we get the cache.
@@ -534,20 +563,15 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
    if (!buffer)
      {
         // render to the buffer
-        buffer = _render_to_buffer(obj, pd,
-                                   engine, surface,
-                                   user_entry->root,
-                                   w, h,
-                                   user_entry,
-                                   buffer,
+        buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
+                                   w, h, user_entry, buffer,
                                    do_async);
      }
    else
      {
         // render to the buffer
         if (pd->changed)
-          buffer = _render_to_buffer(obj, pd,
-                                     engine, surface,
+          buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
                                      w, h,
                                      user_entry,
@@ -630,7 +654,7 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
    // FIXME: handle damage only on changed renderer.
    s = evas_ector_get(obj->layer->evas);
    if (pd->root && s)
-     _evas_vg_render_pre(pd->root, s, NULL);
+     _evas_vg_render_pre(obj, pd->root, s, NULL, NULL, 0);
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */

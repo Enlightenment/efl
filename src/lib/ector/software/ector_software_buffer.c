@@ -76,8 +76,8 @@ _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buff
 {
    unsigned pxs;
 
-   if (pd->generic->immutable)
-     fail("This buffer is immutable.");
+   //if (pd->generic->immutable)
+//     fail("This buffer is immutable.");
 
    if (pd->internal.maps)
      fail("Can not call pixels_set when the buffer is mapped.");

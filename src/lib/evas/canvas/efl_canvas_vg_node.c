@@ -66,6 +66,14 @@ _efl_canvas_vg_node_transformation_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_
 }
 
 static void
+_efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
+                             Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED,
+                             Efl_Canvas_Vg_Node *mask EINA_UNUSED,
+                             int op EINA_UNUSED)
+{
+}
+
+static void
 _efl_canvas_vg_node_origin_set(Eo *obj,
                         Efl_Canvas_Vg_Node_Data *pd,
                         double x, double y)
@@ -164,25 +172,6 @@ _efl_canvas_vg_node_efl_gfx_color_color_get(const Eo *obj EINA_UNUSED,
    if (g) *g = pd->g;
    if (b) *b = pd->b;
    if (a) *a = pd->a;
-}
-
-static void
-_efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
-                       Efl_Canvas_Vg_Node_Data *pd,
-                       Efl_VG *r)
-{
-   Efl_VG *tmp = pd->mask;
-
-   pd->mask = efl_ref(r);
-   efl_unref(tmp);
-
-   _efl_canvas_vg_node_changed(obj);
-}
-
-static Efl_VG*
-_efl_canvas_vg_node_mask_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Node_Data *pd)
-{
-   return pd->mask;
 }
 
 static Eina_Size2D
@@ -711,14 +700,6 @@ _efl_canvas_vg_node_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Node_Data *p
 
    pd->visibility = pos_map >= 0.5 ? tod->visibility : fromd->visibility;
 
-   //Interpolates Mask
-   if (fromd->mask && tod->mask && pd->mask)
-     {
-        if (!efl_gfx_path_interpolate(pd->mask,
-                                      fromd->mask, tod->mask, pos_map))
-          return EINA_FALSE;
-     }
-
    _efl_canvas_vg_node_changed(obj);
 
    return EINA_TRUE;
@@ -748,12 +729,6 @@ _efl_canvas_vg_node_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Node_Da
      {
         nd->m = malloc(sizeof(Eina_Matrix3));
         if (nd->m) memcpy(nd->m, pd->m, sizeof(Eina_Matrix3));
-     }
-
-   if (pd->mask)
-     {
-        nd->mask = efl_duplicate(pd->mask);
-        efl_parent_set(nd->mask, node);
      }
 
    nd->x = pd->x;

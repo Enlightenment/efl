@@ -63,8 +63,6 @@ struct _Ector_Renderer_Data
       int r, g, b, a;
    } color;
 
-   Ector_Renderer *mask;
-
    Eina_Bool visibility : 1;
    Eina_Bool finalized : 1;
 };

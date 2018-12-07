@@ -4,14 +4,14 @@ class Efl.Canvas.Vg.Container (Efl.Canvas.Vg.Node)
    legacy_prefix: evas_vg_container;
    methods {
       child_get {
-          [[Get child of container]]
+         [[Get child of container]]
          params {
             @in name: string; [[Child node name]]
          }
          return: Efl.Canvas.Vg.Node; [[Child object]]
       }
       children_get {
-          [[Get all children of container]]
+         [[Get all children of container]]
          return: iterator<Efl.Canvas.Vg.Node> @owned @warn_unused; [[Iterator to children]]
       }
    }
@@ -21,5 +21,6 @@ class Efl.Canvas.Vg.Container (Efl.Canvas.Vg.Node)
       Efl.Gfx.Path.bounds_get;
       Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
+      Efl.Canvas.Vg.Node.mask { set; }
    }
 }

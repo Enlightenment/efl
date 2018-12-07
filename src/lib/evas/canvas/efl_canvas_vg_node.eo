@@ -42,13 +42,12 @@ abstract Efl.Canvas.Vg.Node (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.
          }
       }
       @property mask {
-         [[Vector graphics object mask]]
+         [[Set Mask Node to this renderer]]
          set {
          }
-         get {
-         }
          values {
-            m: Efl.Canvas.Vg.Node; [[Object mask]]
+            mask: Efl.Canvas.Vg.Node; [[Mask object]]
+            op: int; [[Masking Option. Reserved]]
          }
       }
    }

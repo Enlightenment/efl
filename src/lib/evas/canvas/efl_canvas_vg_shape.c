@@ -78,43 +78,45 @@ _efl_canvas_vg_shape_stroke_marker_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_canvas_vg_shape_render_pre(Eo *obj EINA_UNUSED,
-                         Eina_Matrix3 *parent,
-                         Ector_Surface *s,
-                         void *data,
-                         Efl_Canvas_Vg_Node_Data *nd)
+_efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
+                                Efl_VG *obj,
+                                Efl_Canvas_Vg_Node_Data *nd,
+                                Ector_Surface *surface,
+                                Eina_Matrix3 *ptransform,
+                                Ector_Buffer *mask,
+                                int mask_op,
+                                void *data)
 {
    Efl_Canvas_Vg_Shape_Data *pd = data;
-   Efl_Canvas_Vg_Node_Data *fill, *stroke_fill, *stroke_marker, *mask;
+   Efl_Canvas_Vg_Node_Data *fill, *stroke_fill, *stroke_marker;
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
-   EFL_CANVAS_VG_COMPUTE_MATRIX(current, parent, nd);
+   EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
-   fill = _evas_vg_render_pre(pd->fill, s, current);
-   stroke_fill = _evas_vg_render_pre(pd->stroke.fill, s, current);
-   stroke_marker = _evas_vg_render_pre(pd->stroke.marker, s, current);
-   mask = _evas_vg_render_pre(nd->mask, s, current);
+   fill = _evas_vg_render_pre(vg_pd, pd->fill, surface, ctransform, mask, mask_op);
+   stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill, surface, ctransform, mask, mask_op);
+   stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker, surface, ctransform, mask, mask_op);
 
    if (!nd->renderer)
      {
         efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-        nd->renderer = ector_surface_renderer_factory_new(s, ECTOR_RENDERER_SHAPE_MIXIN);
+        nd->renderer = ector_surface_renderer_factory_new(surface, ECTOR_RENDERER_SHAPE_MIXIN);
         efl_domain_current_pop();
      }
-
-   ector_renderer_transformation_set(nd->renderer, current);
+   ector_renderer_transformation_set(nd->renderer, ctransform);
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
    ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
-   ector_renderer_mask_set(nd->renderer, mask ? mask->renderer : NULL);
    ector_renderer_shape_fill_set(nd->renderer, fill ? fill->renderer : NULL);
    ector_renderer_shape_stroke_fill_set(nd->renderer, stroke_fill ? stroke_fill->renderer : NULL);
    ector_renderer_shape_stroke_marker_set(nd->renderer, stroke_marker ? stroke_marker->renderer : NULL);
    efl_gfx_path_copy_from(nd->renderer, obj);
    ector_renderer_prepare(nd->renderer);
+   ector_renderer_mask_set(nd->renderer, mask, mask_op);
+
 }
 
 static Eo *

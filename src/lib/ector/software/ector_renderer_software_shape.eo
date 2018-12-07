@@ -6,6 +6,7 @@ class Ector.Renderer.Software.Shape (Ector.Renderer.Software, Ector.Renderer.Sha
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.Software.op_fill;
+      Ector.Renderer.mask { set; }
       Ector.Renderer.crc { get; }
       Efl.Gfx.Path.path { set; }
       Efl.Object.constructor;

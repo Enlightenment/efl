@@ -411,6 +411,7 @@ struct _Evas_Thread_Command_Ector_Surface
    Ector_Surface *ector;
    void *pixels;
    int x, y;
+   Eina_Bool clear;
 };
 
 // declare here as it is re-used
@@ -4237,7 +4238,7 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int width, int height,
+eng_ector_buffer_new(void *data, Evas *evas, int width, int height,
                      Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags EINA_UNUSED)
 {
    Ector_Buffer *buf;
@@ -4293,8 +4294,8 @@ _draw_thread_ector_draw(void *data)
 
 static void
 eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
-                        void *context, void *remove EINA_UNUSED,
-                        Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
+                        void *context, Ector_Renderer *renderer,
+                        Eina_Array *clips, Eina_Bool do_async)
 {
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;
@@ -4400,7 +4401,7 @@ _draw_thread_ector_surface_set(void *data)
         x = ector_surface->x;
         y = ector_surface->y;
         // clear the surface before giving to ector
-        memset(pixels, 0, (w * h * 4));
+        if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
      }
 
    ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
@@ -4411,20 +4412,21 @@ _draw_thread_ector_surface_set(void *data)
 
 static void
 eng_ector_begin(void *engine EINA_UNUSED, void *surface,
-                void *context EINA_UNUSED, void *remove EINA_UNUSED,
-                Ector_Surface *ector, int x, int y, Eina_Bool do_async)
+                void *context EINA_UNUSED, Ector_Surface *ector,
+                int x, int y, Eina_Bool clear, Eina_Bool do_async)
 {
    if (do_async)
      {
         Evas_Thread_Command_Ector_Surface *nes;
 
         nes = eina_mempool_malloc(_mp_command_ector_surface, sizeof (Evas_Thread_Command_Ector_Surface));
-        if (!nes) return ;
+        if (!nes) return;
 
         nes->ector = ector;
         nes->pixels = surface;
         nes->x = x;
         nes->y = y;
+        nes->clear = clear;
 
         QCMD(_draw_thread_ector_surface_set, nes);
      }
@@ -4439,7 +4441,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
         // clear the surface before giving to ector
-        memset(pixels, 0, (w * h * 4));
+        if (clear) memset(pixels, 0, (w * h * 4));
 
         ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
@@ -4447,9 +4449,11 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
 }
 
 static void
-eng_ector_end(void *engine EINA_UNUSED, void *surface EINA_UNUSED,
-              void *context EINA_UNUSED, void *remove EINA_UNUSED,
-              Ector_Surface *ector, Eina_Bool do_async)
+eng_ector_end(void *engine EINA_UNUSED,
+              void *surface EINA_UNUSED,
+              void *context EINA_UNUSED,
+              Ector_Surface *ector,
+              Eina_Bool do_async)
 {
    if (do_async)
      {

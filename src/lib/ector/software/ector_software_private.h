@@ -82,9 +82,11 @@ typedef struct _Span_Data
 
    int              offx, offy;
    Clip_Data        clip;
+   Ector_Software_Buffer_Base_Data    *mask;
+   int mask_op;
    Eina_Matrix3     inv;
    Span_Data_Type   type;
-   Eina_Bool        fast_matrix ;
+   Eina_Bool        fast_matrix;
    uint32_t         mul_col;
    Efl_Gfx_Render_Op        op;
    union {
@@ -129,7 +131,12 @@ void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, S
 Shape_Rle_Data * ector_software_rasterizer_generate_rle_data(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer, SW_FT_Outline *outline);
 Shape_Rle_Data * ector_software_rasterizer_generate_stroke_rle_data(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer, SW_FT_Outline *outline, Eina_Bool closePath);
 
-void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer, int x, int y, uint32_t mul_col, Efl_Gfx_Render_Op op, Shape_Rle_Data* rle);
+void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
+                                             int x, int y, uint32_t mul_col,
+                                             Efl_Gfx_Render_Op op,
+                                             Shape_Rle_Data* rle,
+                                             Ector_Buffer *mask,
+                                             int mask_op);
 
 void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 

@@ -57,12 +57,13 @@ struct _Efl_Canvas_Vg_Node_Data
    Eina_Matrix3 *m;
    Efl_Canvas_Vg_Interpolation *intp;
 
-   Efl_Canvas_Vg_Node *mask;
    Ector_Renderer *renderer;
 
    Efl_VG *vg_obj;    //...Not necessary!!
 
-   void (*render_pre)(Eo *obj, Eina_Matrix3 *parent, Ector_Surface *s, void *data, Efl_Canvas_Vg_Node_Data *nd);
+   void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
+         Efl_Canvas_Vg_Node_Data *nd, Ector_Surface *surface,
+         Eina_Matrix3 *ptransform, Ector_Buffer *mask, int mask_op, void *data);
    void *data;
 
    double x, y;
@@ -74,11 +75,25 @@ struct _Efl_Canvas_Vg_Node_Data
    Eina_Bool parenting : 1;
 };
 
+typedef struct _Vg_Mask
+{
+   Evas_Object_Protected_Data *vg_pd;  //Vector Object (for accessing backend engine)
+   Ector_Buffer *buffer;               //Mask Ector Buffer
+   void *pixels;                       //Mask pixel buffer (actual data)
+   Eina_Rect bound;                    //Mask boundary
+   Eina_List *target;                  //Mask target
+   int option;                         //Mask option
+   Eina_Bool dirty : 1;                //Need to update mask image.
+} Vg_Mask;
+
 struct _Efl_Canvas_Vg_Container_Data
 {
    Eina_List *children;
-
    Eina_Hash *names;
+
+   //Masking feature.
+   Efl_Canvas_Vg_Node *mask_src;         //Mask Source
+   Vg_Mask mask;                         //Mask source data
 };
 
 struct _Efl_Canvas_Vg_Gradient_Data
@@ -112,13 +127,12 @@ Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_ent
 void                        efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg_obj);
 
 static inline Efl_Canvas_Vg_Node_Data *
-_evas_vg_render_pre(Efl_VG *child, Ector_Surface *s, Eina_Matrix3 *m)
+_evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child, Ector_Surface *surface, Eina_Matrix3 *transform, Ector_Buffer *mask, int mask_op)
 {
    if (!child) return NULL;
-
-   Efl_Canvas_Vg_Node_Data *child_nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
-   if (child_nd) child_nd->render_pre(child, m, s, child_nd->data, child_nd);
-   return child_nd;
+   Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
+   if (nd) nd->render_pre(vg_pd, child, nd, surface, transform, mask, mask_op, nd->data);
+   return nd;
 }
 
 static inline void

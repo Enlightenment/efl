@@ -127,31 +127,6 @@ _ector_renderer_color_get(const Eo *obj EINA_UNUSED,
    if (a) *a = pd->color.a;
 }
 
-static void
-_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
-                         Ector_Renderer_Data *pd,
-                         Ector_Renderer *mask)
-{
-   efl_replace(&pd->mask, mask);
-}
-
-static Ector_Renderer *
-_ector_renderer_mask_get(const Eo *obj EINA_UNUSED,
-                         Ector_Renderer_Data *pd)
-{
-   return pd->mask;
-}
-
-static Eina_Bool
-_ector_renderer_prepare(Eo *obj EINA_UNUSED,
-                        Ector_Renderer_Data *pd)
-{
-   if (pd->mask)
-     ector_renderer_prepare(pd->mask);
-
-   return EINA_TRUE;
-}
-
 static unsigned int
 _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
                         Ector_Renderer_Data *pd)
@@ -162,9 +137,16 @@ _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
    crc = eina_crc((void*) &pd->origin, sizeof(pd->origin), crc, EINA_FALSE);
 
    if (pd->m) crc = eina_crc((void*) pd->m, sizeof(Eina_Matrix3), crc, EINA_FALSE);
-   if (pd->mask) crc = _renderer_crc_get(pd->mask, crc);
 
    return crc;
+}
+
+static void
+_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
+                         Ector_Renderer_Data *pd EINA_UNUSED,
+                         Ector_Buffer *mask EINA_UNUSED,
+                         int op EINA_UNUSED)
+{
 }
 
 #include "ector_renderer.eo.c"

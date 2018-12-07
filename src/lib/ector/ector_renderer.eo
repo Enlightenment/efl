@@ -72,20 +72,19 @@ abstract Ector.Renderer (Efl.Object)
             a: int; [[The alpha component of the given color.]]
          }
       }
-      @property mask {
-         [[Rendering mask]]
-         set {
-         }
-         get {
-         }
-         values {
-            mask: Ector.Renderer; [[Rendering mask]]
-         }
-      }
       @property crc {
          [[Cyclic redundancy check]]
          get {
             return: uint; [[CRC value]]
+         }
+      }
+      @property mask {
+         [[Set Mask Image to this Renderer]]
+         set {
+         }
+         values {
+            mask: Ector.Buffer; [[Mask Image Buffer]]
+            op: int; [[Masking option]]
          }
       }
       draw @pure_virtual {
@@ -97,7 +96,7 @@ abstract Ector.Renderer (Efl.Object)
             @in mul_col: uint; [[Premultiplied color]]
          }
       }
-      prepare {
+      prepare @pure_virtual {
          [[Prepare for rendering]]
          return: bool; [[$true on success, $false otherwise]]
       }
