@@ -77,6 +77,22 @@ local_benchmark = join_paths('src', 'benchmarks')
 local_examples = join_paths('src', 'examples')
 local_scripts = join_paths('src', 'scripts')
 
+dev_cflags = []
+dev_cflags_try = [
+  '-fvisibility=hidden',
+  '-Wall',
+  '-Wsign-compare',
+  '-Wno-missing-field-initializers',
+]
+
+foreach cf: dev_cflags_try
+  if cc.has_argument(cf) == true
+    dev_cflags += cf
+  endif
+endforeach
+add_global_arguments(dev_cflags, language: 'c')
+
+
 foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
   add_global_arguments('-D_GNU_SOURCE=1', language: lang)
