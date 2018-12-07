@@ -1,0 +1,14 @@
+interface Efl.Cached.Item
+{
+   [[Efl Cached Item interface]]
+   methods {
+      @property memory_size {
+         get {
+            [[Get the memory size associated with an object.]]
+         }
+         values {
+            consumed: uint; [[Size of memory consumed by this object.]]
+         }
+      }
+   }
+}

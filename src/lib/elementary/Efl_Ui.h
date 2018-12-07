@@ -207,6 +207,8 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_calendar.h>
 # include <efl_ui_button_eo.h>
 
+# include "efl_ui_caching_factory.eo.h"
+
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 # warning Efl.Ui.Multibutton is not available yet without Elementary.h
 # if 0

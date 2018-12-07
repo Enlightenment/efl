@@ -78,6 +78,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
       lib/efl/interfaces/efl_interpolator.eo \
+      lib/efl/interfaces/efl_cached_item.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
