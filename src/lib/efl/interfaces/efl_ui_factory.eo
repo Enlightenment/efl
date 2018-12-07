@@ -8,7 +8,7 @@ interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
             model: Efl.Model; [[Efl model]]
             parent: Efl.Gfx.Entity; [[Efl canvas]]
          }
-         return: Efl.Gfx.Entity; [[Created UI object]]
+         return: future<Efl.Gfx.Entity>; [[Created UI object]]
       }
       release {
          [[Release a UI object and disconnect from models.]]

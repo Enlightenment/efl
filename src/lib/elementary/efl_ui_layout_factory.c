@@ -64,10 +64,11 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Gfx_Entity *
-_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd
-                                                        , Efl_Model *model, Efl_Gfx_Entity *parent)
+EOLIAN static Eina_Future *
+_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd,
+                                             Efl_Model *model, Efl_Gfx_Entity *parent)
 {
+   Eina_Value r;
    Efl_Gfx_Entity *layout;
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
@@ -81,7 +82,9 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj EINA_UNUSED, Efl_Ui_Layout_
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   return layout;
+   r = eina_value_object_init(layout);
+
+   return eina_future_resolved(efl_loop_future_scheduler_get(obj), r);
 }
 
 EOLIAN static void

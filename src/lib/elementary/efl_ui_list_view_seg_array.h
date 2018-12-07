@@ -1,8 +1,6 @@
 #ifndef EFL_UI_LIST_VIEW_SEG_ARRAY_H
 #define EFL_UI_LIST_VIEW_SEG_ARRAY_H
 
-typedef struct _Efl_Ui_List_View_Item Efl_Ui_List_View_Item;
-
 typedef struct _Efl_Ui_List_View_SegArray_Node
 {
    EINA_RBTREE;

@@ -902,18 +902,25 @@ _efl_ui_list_view_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_List_View_Data
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
-EOLIAN static Efl_Ui_List_View_Layout_Item *
-_efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data *pd, Efl_Ui_List_View_Layout_Item *item)
+typedef struct _Efl_Ui_List_Vuew_Layout_Item_Tracking Efl_Ui_List_View_Layout_Item_Tracking;
+struct _Efl_Ui_List_Vuew_Layout_Item_Tracking
 {
+   Efl_Ui_List_View_Layout_Item *item;
+   Eo *obj;
+   Efl_Ui_List_View_Data *pd;
+};
+
+static Eina_Value
+_content_created(void *data, const Eina_Value value)
+{
+   Efl_Ui_List_View_Layout_Item_Tracking *tracking = data;
+   Efl_Ui_List_View_Layout_Item *item = tracking->item;
+   Eo *obj = tracking->obj;
    Efl_Ui_List_View_Item_Event evt;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(item, NULL);
 
-   if (!item->children)
-     return item;
+   eina_value_pget(&value, &item->layout);
 
-   item->layout = efl_ui_factory_create(pd->factory, item->children, obj);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(item->layout, NULL);
-   evas_object_smart_member_add(item->layout, pd->pan_obj);
+   evas_object_smart_member_add(item->layout, tracking->pd->pan_obj);
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
    if (_elm_config->atspi_mode)
@@ -929,6 +936,44 @@ _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data 
    efl_ui_focus_composition_dirty(obj);
 
    evas_object_show(item->layout);
+
+   return value;
+}
+
+static void
+_clean_request(void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_List_View_Layout_Item_Tracking *tracking = data;
+
+   tracking->item->layout_request = NULL;
+   free(tracking);
+}
+
+EOLIAN static Efl_Ui_List_View_Layout_Item *
+_efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data *pd, Efl_Ui_List_View_Layout_Item *item)
+{
+   Efl_Ui_List_View_Layout_Item_Tracking *tracking;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
+
+   if (!item->children) return item;
+
+   if (item->layout_request) eina_future_cancel(item->layout_request);
+
+   tracking = calloc(1, sizeof (Efl_Ui_List_View_Layout_Item_Tracking));
+   if (!tracking) return item;
+
+   tracking->item = item;
+   tracking->obj = obj;
+   tracking->pd = pd;
+
+   item->layout_request = efl_ui_factory_create(pd->factory, item->children, obj);
+   item->layout_request = efl_future_then(obj, item->layout_request);
+   item->layout_request = eina_future_then_from_desc(item->layout_request,
+                                                     eina_future_cb_easy(.success = _content_created,
+                                                                         .success_type = EINA_VALUE_TYPE_OBJECT,
+                                                                         .data = tracking,
+                                                                         .free = _clean_request));
+
    return item;
 }
 
@@ -940,6 +985,13 @@ _efl_ui_list_view_efl_ui_list_view_model_unrealize(Eo *obj, Efl_Ui_List_View_Dat
 
    if (!item->layout)
      return;
+
+   // First check if the item has been fully realized
+   if (item->layout_request)
+     {
+        eina_future_cancel(item->layout_request);
+        return ;
+     }
 
    evas_object_event_callback_del_full(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
    if (elm_object_focus_allow_get(item->layout))
