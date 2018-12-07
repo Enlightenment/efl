@@ -276,32 +276,25 @@ _efl_canvas_vg_object_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, 
 EOLIAN static void
 _efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
 {
+   if (file) *file = NULL;
+   if (key) *key = NULL;
+
    if (pd->vg_entry)
      {
         if (file) *file = pd->vg_entry->file;
-        if (key)  *key = pd->vg_entry->key;
+        if (key) *key = pd->vg_entry->key;
      }
 }
 
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
 {
-   Vg_File_Data tmp = {};
-   Vg_File_Data *info = &tmp;
+   if (pd->vg_entry)
+     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, flags);
 
-   if (pd->vg_entry && pd->vg_entry->file)
-     {
-        info = evas_cache_vg_file_info(pd->vg_entry->file, pd->vg_entry->key);
-     }
-   else
-     {
-        info->view_box.x = 0;
-        info->view_box.y = 0;
-        evas_object_geometry_get(obj, NULL, NULL, &info->view_box.w, &info->view_box.h);
-        info->root = pd->root;
-        info->preserve_aspect = EINA_FALSE;
-     }
-   return evas_vg_save_to_file(info, file, key, flags);
+   Evas_Coord w, h;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   return evas_cache_vg_file_save(pd->root, w, h, file, key, flags);
 }
 
 static void

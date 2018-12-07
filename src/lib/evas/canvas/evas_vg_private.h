@@ -103,10 +103,9 @@ void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_find(const char *file, const char *key, int w, int h);
 Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *svg_entry);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *svg_entry);
-Vg_File_Data *              evas_cache_vg_file_info(const char *file, const char *key);
-
-Eina_Bool                   evas_vg_save_to_file(Vg_File_Data *evg_data, const char *file, const char *key, const char *flags);
-
+Vg_File_Data *              evas_cache_vg_file_open(const char *file, const char *key);
+Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
+Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);
 void                        efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg_obj);
 
 static inline Efl_Canvas_Vg_Node_Data *

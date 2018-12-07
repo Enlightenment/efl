@@ -153,8 +153,8 @@ _evas_cache_vg_entry_free_cb(void *data)
    free(vg_entry);
 }
 
-Eina_Bool
-evas_vg_save_to_file(Vg_File_Data *vfd, const char *file, const char *key, const char *flags)
+static Eina_Bool
+_vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *flags)
 {
    Evas_Module       *em;
    Evas_Vg_Save_Func *saver;
@@ -227,7 +227,7 @@ evas_cache_vg_shutdown(void)
 }
 
 Vg_File_Data *
-evas_cache_vg_file_info(const char *file, const char *key)
+evas_cache_vg_file_open(const char *file, const char *key)
 {
    Vg_File_Data *vfd;
    Eina_Strbuf *hash_key;
@@ -300,7 +300,7 @@ _evas_cache_vg_tree_update(Vg_Cache_Entry *vg_entry)
         return;
      }
 
-   vfd = evas_cache_vg_file_info(vg_entry->file, vg_entry->key);
+   vfd = evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
 
    vg_entry->root = _evas_vg_dup_vg_tree(vfd, vg_entry->w, vg_entry->h);
    eina_stringshare_del(vg_entry->file);
@@ -363,3 +363,30 @@ evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
    // FIXME implement delete logic (LRU)
 }
 
+Eina_Bool
+evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key,
+                              const char *flags)
+{
+   Vg_File_Data *vfd =
+      evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
+
+   if (!vfd) return EINA_FALSE;
+
+   return _vg_file_save(vfd, file, key, flags);
+}
+
+Eina_Bool
+evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key,
+                        const char *flags)
+{
+   Vg_File_Data vfd = {};
+
+   if (!root) return EINA_FALSE;
+
+   vfd.view_box.x = w;
+   vfd.view_box.y = h;
+   vfd.root = root;
+   vfd.preserve_aspect = EINA_FALSE;
+
+   return _vg_file_save(&vfd, file, key, flags);
+}
