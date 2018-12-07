@@ -1551,10 +1551,10 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
 
    if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch) && (!force)) return;
    _elm_win_frame_geometry_adjust(sd);
-   if (sd->first_draw)
-     evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
-   else
-     w = ow, h = oh;
+
+   if (!sd->first_draw) return;
+
+   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    if (w && h)
      TRAP(sd, resize, w, h);
 }
