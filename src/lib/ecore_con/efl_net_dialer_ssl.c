@@ -128,7 +128,7 @@ _efl_net_dialer_ssl_ssl_context_get(const Eo *o EINA_UNUSED, Efl_Net_Dialer_Ssl_
 }
 
 static Eina_Value
-_efl_net_dialer_ssl_connect_timeout(Eo *o, const Eina_Value v)
+_efl_net_dialer_ssl_connect_timeout(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Eina_Error err = ETIMEDOUT;
 
@@ -143,8 +143,8 @@ static void
 _timeout_schedule(Eo *o, Efl_Net_Dialer_Ssl_Data *pd, double timeout)
 {
    efl_future_then(o, efl_loop_timeout(efl_loop_get(o), timeout),
-                                  .success = _efl_net_dialer_ssl_connect_timeout,
-                                  .storage = &pd->connect_timeout);
+                   .success = _efl_net_dialer_ssl_connect_timeout,
+                   .storage = &pd->connect_timeout);
 }
 
 EOLIAN static Eina_Error

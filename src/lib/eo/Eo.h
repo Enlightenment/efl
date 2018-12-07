@@ -379,7 +379,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * using @c eina_value_flush() once they are unused (no more future or futures
     * returned a new value).
     */
-   Eina_Value (*success)(Eo *o, const Eina_Value value);
+   Eina_Value (*success)(Eo *o, void *data, const Eina_Value value);
    /**
     * Called on error (value.type is @c EINA_VALUE_TYPE_ERROR).
     *
@@ -417,7 +417,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * using @c eina_value_flush() once they are unused (no more future or futures
     * returned a new value).
     */
-   Eina_Value (*error)(Eo *o, Eina_Error error);
+   Eina_Value (*error)(Eo *o, void *data, Eina_Error error);
    /**
     * Called on @b all situations to notify future destruction.
     *
@@ -431,7 +431,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * @param o The object used to create the link in efl_future_cb_from_desc() or efl_future_chain_array().
     * @param dead_future The future that's been freed.
     */
-   void (*free)(Eo *o, const Eina_Future *dead_future);
+   void (*free)(Eo *o, void *data, const Eina_Future *dead_future);
    /**
     * If provided, then @c success will only be called if the value type matches the given pointer.
     *
@@ -439,6 +439,13 @@ typedef struct _Efl_Future_Cb_Desc {
     * then it will be propagated to the next future in the chain.
     */
    const Eina_Value_Type *success_type;
+   /**
+    * Context data given to every callback.
+    *
+    * This must be freed @b only by @c free callback as it's called from every case,
+    * otherwise it may lead to memory leaks.
+    */
+   const void *data;
    /**
     * This is used by Eo to cancel pending futures in case
     * an Eo object is deleted. It can be @c NULL.
@@ -476,7 +483,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * }
  *
  * static Eina_Value
- * _file_ok(Eo *o EINA_UNUSED, const Eina_Value value)
+ * _file_ok(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value value)
  * {
  *    const char *data;
  *    //There's no need to check the value type since EO infra already has done so.
@@ -487,7 +494,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * }
  *
  * static Eina_Value
- * _file_err(Eo *o EINA_UNUSED, Eina_Error error)
+ * _file_err(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error error)
  * {
  *    //In case the downloader is deleted before the future is resolved, the future will be canceled thus this callback will be called.
  *    fprintf(stderr, "Could not download the file. Reason: %s\n", eina_error_msg_get(error));
@@ -495,7 +502,7 @@ typedef struct _Efl_Future_Cb_Desc {
  * }
  *
  * static void
- * _downlader_free(Eo *o, const Eina_Future *dead_future EINA_UNUSED)
+ * _downlader_free(Eo *o, void *data EINA_UNUSED, const Eina_Future *dead_future EINA_UNUSED)
  * {
  *    Ecore_Timer *t = efl_key_data_get(o, "timer");
  *    //The download finished before the timer expired. Cancel it...

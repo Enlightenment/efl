@@ -2080,7 +2080,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
    pd->pending_futures = eina_inlist_remove(pd->pending_futures,
                                             EINA_INLIST_GET(pending));
    efl_ref(o);
-   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, (void*) o);
+   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, (void*) o, (void*) pending->desc.data);
    efl_unref(o);
    _efl_pending_future_free(pending);
 
@@ -2147,10 +2147,10 @@ efl_future_chain_array(Eo *obj,
      {
         if (descs[i].error)
           {
-             Eina_Value r = descs[i].error(obj, ENOMEM);
+             Eina_Value r = descs[i].error(obj, (void*) descs[i].data, ENOMEM);
              eina_value_flush(&r);
           }
-        if (descs[i].free) descs[i].free(obj, NULL);
+        if (descs[i].free) descs[i].free(obj, (void*) descs[i].data, NULL);
      }
    return NULL;
 }

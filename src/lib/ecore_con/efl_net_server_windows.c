@@ -312,7 +312,7 @@ _efl_net_server_windows_efl_net_server_address_get(const Eo *o EINA_UNUSED, Efl_
 }
 
 static Eina_Value
-_efl_net_server_windows_pending_announce_job(Eo *o, const Eina_Value v)
+_efl_net_server_windows_pending_announce_job(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Net_Server_Windows_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eo *client;
@@ -339,8 +339,8 @@ _efl_net_server_windows_pending_announce_job_schedule(Eo *o, Efl_Net_Server_Wind
    loop = efl_loop_get(o);
    if (!loop) return;
    efl_future_then(o, efl_loop_job(loop),
-                                  .success = _efl_net_server_windows_pending_announce_job,
-                                  .storage = &pd->pending_announcer_job);
+                   .success = _efl_net_server_windows_pending_announce_job,
+                   .storage = &pd->pending_announcer_job);
 }
 
 EOLIAN static void

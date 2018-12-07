@@ -808,7 +808,7 @@ EFL_START_TEST(efl_test_promise_future_race)
 EFL_END_TEST
 
 static Eina_Value
-_eo_future1_ok(Eo *eo EINA_UNUSED, const Eina_Value v)
+_eo_future1_ok(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
 {
    const char *number;
 
@@ -819,14 +819,14 @@ _eo_future1_ok(Eo *eo EINA_UNUSED, const Eina_Value v)
 }
 
 static Eina_Value
-_eo_future1_err(Eo *eo EINA_UNUSED, Eina_Error err EINA_UNUSED)
+_eo_future1_err(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, Eina_Error err EINA_UNUSED)
 {
    //Should not happen
    fail_if(EINA_TRUE);
 }
 
 static Eina_Value
-_eo_future2_ok(Eo *eo EINA_UNUSED, const Eina_Value v)
+_eo_future2_ok(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
 {
    //Should not happen
    fail_if(EINA_TRUE);
@@ -834,7 +834,7 @@ _eo_future2_ok(Eo *eo EINA_UNUSED, const Eina_Value v)
 }
 
 static Eina_Value
-_eo_future2_err(Eo *eo EINA_UNUSED, Eina_Error err)
+_eo_future2_err(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, Eina_Error err)
 {
    Eina_Value v;
 
@@ -845,7 +845,7 @@ _eo_future2_err(Eo *eo EINA_UNUSED, Eina_Error err)
 }
 
 static void
-_eo_future_free(Eo *eo, const Eina_Future *dead EINA_UNUSED)
+_eo_future_free(Eo *eo, void *data EINA_UNUSED, const Eina_Future *dead EINA_UNUSED)
 {
    int *free_called = efl_key_data_get(eo, "free_called");
    (*free_called)++;
@@ -890,7 +890,7 @@ EFL_START_TEST(efl_test_promise_eo)
 EFL_END_TEST
 
 static Eina_Value
-_eo_future_link_success(Eo *eo EINA_UNUSED, const Eina_Value v)
+_eo_future_link_success(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
 {
    //This should never happen
    fail_if(EINA_TRUE);
@@ -898,7 +898,7 @@ _eo_future_link_success(Eo *eo EINA_UNUSED, const Eina_Value v)
 }
 
 static Eina_Value
-_eo_future_link_err(Eo *eo, Eina_Error err)
+_eo_future_link_err(Eo *eo, void *data EINA_UNUSED, Eina_Error err)
 {
    int *err_called = efl_key_data_get(eo, "err_called");
    Eina_Value v;

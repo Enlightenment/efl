@@ -90,7 +90,7 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 }
 
 static Eina_Value
-_efl_net_dialer_tcp_connect_timeout(Eo *o, const Eina_Value v)
+_efl_net_dialer_tcp_connect_timeout(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
@@ -108,8 +108,8 @@ static void
 _timeout_schedule(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
    efl_future_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial),
-                                  .success = _efl_net_dialer_tcp_connect_timeout,
-                                  .storage = &pd->connect.timeout);
+                   .success = _efl_net_dialer_tcp_connect_timeout,
+                   .storage = &pd->connect.timeout);
 }
 
 static void

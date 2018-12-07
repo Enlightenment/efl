@@ -72,7 +72,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
   while (0)
 
 static Eina_Value
-_efl_io_copier_timeout_inactivity_cb(Eo *o, const Eina_Value v)
+_efl_io_copier_timeout_inactivity_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Eina_Error err = ETIMEDOUT;
    efl_event_callback_call(o, EFL_IO_COPIER_EVENT_ERROR, &err);
@@ -86,12 +86,12 @@ _efl_io_copier_timeout_inactivity_reschedule(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->timeout_inactivity <= 0.0) return;
 
    efl_future_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_inactivity),
-                                  .success = _efl_io_copier_timeout_inactivity_cb,
-                                  .storage = &pd->inactivity_timer);
+                   .success = _efl_io_copier_timeout_inactivity_cb,
+                   .storage = &pd->inactivity_timer);
 }
 
 static Eina_Value
-_efl_io_copier_job(Eo *o, const Eina_Value v)
+_efl_io_copier_job(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Io_Copier_Data *pd = efl_data_scope_get(o, MY_CLASS);
    uint64_t old_read = pd->progress.read;
@@ -138,14 +138,14 @@ _efl_io_copier_job_schedule(Eo *o, Efl_Io_Copier_Data *pd)
      {
         Eina_Value v = EINA_VALUE_EMPTY;
 
-        v = _efl_io_copier_job(o, v);
+        v = _efl_io_copier_job(o, NULL, v);
         eina_value_flush(&v);
      }
    else
      {
         efl_future_then(o, efl_loop_job(efl_loop_get(o)),
-                                       .success = _efl_io_copier_job,
-                                       .storage = &pd->job);
+                        .success = _efl_io_copier_job,
+                        .storage = &pd->job);
      }
 }
 
