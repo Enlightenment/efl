@@ -145,19 +145,16 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static Eina_Value
-_efl_loop_arguments_send(void *data, const Eina_Value v,
-                         const Eina_Future *dead EINA_UNUSED)
+_efl_loop_arguments_send(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
 
 {
    Efl_Loop_Arguments arge;
-   Eo *obj = data;
    Eina_Array *arga;
    Eina_Stringshare *s;
    unsigned int argc = efl_task_arg_count_get(obj);
    unsigned int i;
 
    arga = eina_array_new(argc);
-   if (v.type == EINA_VALUE_TYPE_ERROR) goto on_error;
 
    for (i = 0; i < argc; i++)
      {
@@ -169,9 +166,10 @@ _efl_loop_arguments_send(void *data, const Eina_Value v,
    arge.initialization = EINA_TRUE;
    efl_event_callback_call(obj,
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
-on_error:
+
    while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
    eina_array_free(arga);
+
    return v;
 }
 
@@ -285,8 +283,8 @@ _efl_thread_main(void *data, Eina_Thread t)
      }
    for (i = 0; i < thdat->args.argc; i++)
      efl_task_arg_append(obj, thdat->args.argv[i]);
-   job = eina_future_then(efl_loop_job(obj), _efl_loop_arguments_send, obj);
-   efl_future_then(obj, job);
+   efl_future_then(obj, efl_loop_job(obj),
+                   .success = _efl_loop_arguments_send);
 
    for (i = 0; i < thdat->args.argc; i++)
      eina_stringshare_del(thdat->args.argv[i]);
@@ -780,8 +778,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    pd->thdat = thdat;
    pd->run = EINA_TRUE;
    pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
-   Eina_Future *f = eina_future_new(pd->promise);
-   return efl_future_then(obj, f);
+   return efl_future_then(obj, eina_future_new(pd->promise));
 }
 
 EOLIAN static void

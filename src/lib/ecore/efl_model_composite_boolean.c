@@ -181,15 +181,12 @@ struct _Efl_Model_Slice_Request
 };
 
 static Eina_Value
-_efl_model_composite_boolean_then(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_efl_model_composite_boolean_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 {
    Efl_Model_Slice_Request *req = data;
    unsigned int i, len;
    Eina_Value r = EINA_VALUE_EMPTY;
    Eo *target = NULL;
-
-   if (eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY)
-     goto on_error;
 
    eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
 
@@ -206,11 +203,16 @@ _efl_model_composite_boolean_then(void *data, const Eina_Value v, const Eina_Fut
         eina_value_array_append(&r, composite);
      }
 
- on_error:
+   return r;
+}
+
+static void
+_efl_model_composite_boolean_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Model_Slice_Request *req = data;
+
    efl_unref(req->parent);
    free(req);
-
-   return r;
 }
 
 static void
@@ -295,8 +297,10 @@ _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj,
    req->parent = efl_ref(obj);
    req->start = start;
 
-   return efl_future_then
-     (obj, eina_future_then(f, _efl_model_composite_boolean_then, req, NULL));
+   return efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                          .success = _efl_model_composite_boolean_then,
+                          .free = _efl_model_composite_boolean_clean,
+                          .data = req);
 }
 
 #include "efl_model_composite_boolean.eo.c"
