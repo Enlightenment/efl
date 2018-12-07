@@ -6,7 +6,6 @@
 #include <unistd.h>
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
-#include <Efl_Net.h>
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
