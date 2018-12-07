@@ -73,7 +73,7 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #include "interfaces/efl_types.eot.h"
 
-#include <Efl_Model_Common.h>
+#include <Efl_MVVM_Common.h>
 
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
