@@ -166,7 +166,7 @@ abstract Efl.Object
           If this is not done the class cannot be found up in the object tree.
         ]]
         params {
-          klass : const(Efl.Object); [[The class identifier to search for]]
+          klass : const(Efl.Class); [[The class identifier to search for]]
         }
         return : Efl.Object; [[Object from the provider list]]
       }
