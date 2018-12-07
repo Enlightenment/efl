@@ -522,7 +522,7 @@ typedef struct _Efl_Future_Cb_Desc {
  *   //Usually this would be done with an eina_future_race() of the download promise and a timeout promise,
  *   //however the following example is useful to illustrate efl_key_data_set() usage.
  *   efl_key_data_set(downloader, "timer", timer);
- *   eina_future_then_from_desc(f, efl_future_cb(.success = _file_ok, .error = _file_err, .success_type = EINA_VALUE_TYPE_STRING, .free = downloader_free));
+ *   efl_future_then(downloader, f, .success = _file_ok, .error = _file_err, .success_type = EINA_VALUE_TYPE_STRING, .free = downloader_free);
  * }
  * @endcode
  *
