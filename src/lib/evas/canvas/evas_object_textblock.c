@@ -6788,6 +6788,8 @@ _relayout_if_needed(const Evas_Object *eo_obj, Efl_Canvas_Text_Data *o)
    ASYNC_BLOCK;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
+   if (obj->delete_me) return EINA_TRUE;
+
    /* XXX const */
    evas_object_textblock_coords_recalc((Evas_Object *)eo_obj, obj, obj->private_data);
    if (o->formatted.valid)
