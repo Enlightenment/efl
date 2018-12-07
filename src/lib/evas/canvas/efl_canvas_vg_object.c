@@ -162,7 +162,7 @@ _efl_canvas_vg_object_root_node_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, E
      {
         if (!pd->user_entry)
           {
-             pd->user_entry = malloc(sizeof(User_Vg_Entry));
+             pd->user_entry = malloc(sizeof(Vg_User_Entry));
              if (!pd->user_entry)
                {
                   ERR("Failed to alloc user entry data while setting root node");
@@ -255,12 +255,10 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
-// file set and save api implementation
-
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_file_file_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
 {
-   Evas_Cache_Vg_Entry *old_entry;
+   Vg_Cache_Entry *old_entry;
    int w, h;
 
    if (!file) return EINA_FALSE;
@@ -480,7 +478,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
                        void *engine, void *output, void *context, void *surface,
                        int x, int y, int w, int h, Eina_Bool do_async)
 {
-   Evas_Cache_Vg_Entry *vg_entry = pd->vg_entry;
+   Vg_Cache_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root, *dupe_root;
 
    // if the size changed in between path set and the draw call;
@@ -528,7 +526,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                       void *engine, void *output, void *context, void *surface,
                       int x, int y, int w, int h, Eina_Bool do_async)
 {
-   User_Vg_Entry *user_entry = pd->user_entry;
+   Vg_User_Entry *user_entry = pd->user_entry;
 
    //if the size doesn't match, drop previous cache surface.
    if ((user_entry->w != w ) ||
