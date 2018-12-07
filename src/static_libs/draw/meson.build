@@ -23,7 +23,7 @@ endif
 
 draw = declare_dependency(
   include_directories: [include_directories('.'), include_directories(join_paths('..', '..', 'lib'))],
-  dependencies: [eina, efl],
+  dependencies: [eina, efl, rg_etc],
   sources : draw_src,
   link_with : draw_opt_lib
 )
