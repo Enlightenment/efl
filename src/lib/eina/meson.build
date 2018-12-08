@@ -264,6 +264,9 @@ if get_option('systemd') == true
   systemd = dependency('libsystemd')
   eina_deps += systemd
   config_h.set('HAVE_SYSTEMD', '1')
+  if systemd.version().version_compare('>=209')
+    config_h.set('HAVE_SYSTEMD_LOGIN_209', '1')
+  endif
 else
   systemd = []
 endif
