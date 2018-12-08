@@ -916,16 +916,14 @@ typedef struct _Efl_Ui_List_Vuew_Layout_Item_Tracking Efl_Ui_List_View_Layout_It
 struct _Efl_Ui_List_Vuew_Layout_Item_Tracking
 {
    Efl_Ui_List_View_Layout_Item *item;
-   Eo *obj;
    Efl_Ui_List_View_Data *pd;
 };
 
 static Eina_Value
-_content_created(void *data, const Eina_Value value)
+_content_created(Eo *obj, void *data, const Eina_Value value)
 {
    Efl_Ui_List_View_Layout_Item_Tracking *tracking = data;
    Efl_Ui_List_View_Layout_Item *item = tracking->item;
-   Eo *obj = tracking->obj;
    Efl_Ui_List_View_Item_Event evt;
 
    eina_value_pget(&value, &item->layout);
@@ -951,7 +949,7 @@ _content_created(void *data, const Eina_Value value)
 }
 
 static void
-_clean_request(void *data, const Eina_Future *dead_future EINA_UNUSED)
+_clean_request(Eo *obj EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Ui_List_View_Layout_Item_Tracking *tracking = data;
 
@@ -973,16 +971,14 @@ _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data 
    if (!tracking) return item;
 
    tracking->item = item;
-   tracking->obj = obj;
    tracking->pd = pd;
 
    item->layout_request = efl_ui_view_factory_create_with_event(pd->factory, item->children, obj);
-   item->layout_request = efl_future_then(obj, item->layout_request);
-   item->layout_request = eina_future_then_from_desc(item->layout_request,
-                                                     eina_future_cb_easy(.success = _content_created,
-                                                                         .success_type = EINA_VALUE_TYPE_OBJECT,
-                                                                         .data = tracking,
-                                                                         .free = _clean_request));
+   item->layout_request = efl_future_then(obj, item->layout_request,
+                                          .success = _content_created,
+                                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                                          .data = tracking,
+                                          .free = _clean_request);
 
    return item;
 }
