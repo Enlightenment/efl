@@ -130,10 +130,7 @@ void _x86_simd(Eina_Cpu_Features *features)
 static void
 _arm_cpu_features(Eina_Cpu_Features *features)
 {
-   unsigned long aux;
-
-   aux = getauxval(AT_HWCAP);
-
+   unsigned long aux = getauxval(AT_HWCAP);
 # if defined(__aarch64__)
    *features |= EINA_CPU_NEON;
 # endif
@@ -142,6 +139,17 @@ _arm_cpu_features(Eina_Cpu_Features *features)
 # endif
 # ifdef HWCAP_SVE
    if (aux & HWCAP_SVE) *features |= EINA_CPU_SVE;
+# endif
+}
+#endif
+
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__POWERPC__) && defined(__VEC__)) && defined(__linux__)
+static void
+_ppc_cpu_features(Eina_Cpu_Features *features)
+{
+# ifdef PPC_FEATURE_HAS_ALTIVEC
+   unsigned long aux = getauxval(AT_HWCAP);
+   if (aux & PPC_FEATURE_HAS_ALTIVEC) *features |= EINA_CPU_ALTIVEC;
 # endif
 }
 #endif
