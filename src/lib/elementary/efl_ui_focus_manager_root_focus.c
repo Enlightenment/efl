@@ -68,7 +68,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl
 {
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
-        if (child != pd->rect)
+        if (child != pd->rect && pd->rect_registered)
           _state_eval(obj, pd);
 
         return EINA_TRUE;
@@ -81,7 +81,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *
 {
    if (efl_ui_focus_manager_calc_register_logical(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
-        if (redirect)
+        if (redirect && pd->rect_registered)
           _state_eval(obj, pd);
 
         return EINA_TRUE;

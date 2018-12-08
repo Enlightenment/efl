@@ -60,6 +60,7 @@ struct _Node{
     Node *parent; //the parent of the tree
     Eina_List *children; //this saves the original set of elements
     Eina_List *saved_order;
+    Eina_Bool clean_apply; //set if there was no new registration after a "update_order" call
   }tree;
 
   struct _Graph_Node {
@@ -511,6 +512,7 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *chil
      {
         T(node).parent = parent;
         T(parent).children = eina_list_append(T(parent).children, node);
+        T(parent).clean_apply = EINA_FALSE;
      }
    node->type = NODE_TYPE_ONLY_LOGICAL;
    node->redirect_manager = redirect;
@@ -581,15 +583,6 @@ _efl_ui_focus_manager_calc_register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd,
 
    //mark dirty
    dirty_add(obj, pd, node);
-
-   //set again
-   if (T(pnode).saved_order)
-     {
-        Eina_List *tmp;
-
-        tmp = eina_list_clone(T(pnode).saved_order);
-        efl_ui_focus_manager_calc_update_order(obj, parent, tmp);
-     }
 
    return EINA_TRUE;
 }
@@ -689,6 +682,7 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
 
    ELM_SAFE_FREE(T(pnode).saved_order, eina_list_free);
    T(pnode).saved_order = order;
+   T(pnode).clean_apply = EINA_TRUE;
 
    //get all nodes from the subset
    EINA_LIST_FOREACH(order, n, o)
@@ -713,6 +707,7 @@ _efl_ui_focus_manager_calc_update_order(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data 
         eina_list_free(T(pnode).children);
         T(pnode).children = eina_list_merge(node_order, not_ordered);
      }
+   T(pnode).clean_apply = EINA_TRUE;
 
    return;
 }
@@ -1291,7 +1286,7 @@ _prev(Node *node)
 
 
 static Node*
-_logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction, Eina_Bool accept_logical)
+_logical_movement(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, Efl_Ui_Focus_Direction direction, Eina_Bool accept_logical)
 {
    Node* (*deliver)(Node *n);
    Node *result;
@@ -1319,7 +1314,17 @@ _logical_movement(Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node *upper, E
         stack = eina_list_append(stack, result);
 
         if (direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-          efl_ui_focus_object_prepare_logical(result->focusable);
+          {
+             //set again
+             if (T(result).saved_order && !T(result).clean_apply)
+               {
+                  Eina_List *tmp;
+
+                  tmp = eina_list_clone(T(result).saved_order);
+                  efl_ui_focus_manager_calc_update_order(obj, result->focusable, tmp);
+               }
+             efl_ui_focus_object_prepare_logical(result->focusable);
+          }
 
         result = deliver(result);
         if (accept_logical)
@@ -1350,7 +1355,7 @@ _request_move(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Directio
 
    if (direction == EFL_UI_FOCUS_DIRECTION_PREVIOUS
     || direction == EFL_UI_FOCUS_DIRECTION_NEXT)
-      dir = _logical_movement(pd, upper, direction, accept_logical);
+      dir = _logical_movement(obj, pd, upper, direction, accept_logical);
    else
       dir = _coords_movement(obj, pd, upper, direction);
 
