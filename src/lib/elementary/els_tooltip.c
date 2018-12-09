@@ -518,7 +518,8 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (!tt->content)
      {
         tt->ref++;
-        tt->content = tt->func((void *)tt->data, tt->owner, tt->tt_win ? : tt->owner);
+        if (tt->func)
+           tt->content = tt->func((void *)tt->data, tt->owner, tt->tt_win ? : tt->owner);
         tt->ref--;
         if (tt->unset_me)
           {
