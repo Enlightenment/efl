@@ -157,7 +157,7 @@ if get_option('native-arch-optimization')
     message('ARM64 build - NEON + intrinsics enabled')
   elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
     config_h.set10('BUILD_ALTIVEC', true)
-    add_global_arguments('-maltivec-vectorize', language: 'c')
+    add_global_arguments('-ftree-vectorize', language: 'c')
     add_global_arguments('-maltivec', language: 'c')
     message('PPC/POWER build - ALTIVEC enabled')
   endif
