@@ -528,6 +528,7 @@ class Elm.Gengrid (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.setup_on_first_touch;
+      Efl.Ui.Focus.Manager.manager_focus { get; }
    }
    events {
       realized: Efl.Object; [[Called when gengrid realized]]

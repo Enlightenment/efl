@@ -555,6 +555,7 @@ class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
       Efl.Access.Selection.access_selection_clear;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.setup_on_first_touch;
+      Efl.Ui.Focus.Manager.manager_focus { get; }
    }
    events {
       item,focused: Efl.Object; [[Called when genlist item got focus]]

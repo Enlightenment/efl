@@ -4255,10 +4255,21 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
           }
         else
           {
-             //Just set evas focus on the gengrid itself, events will pass on and some element will be taken
-             evas_object_focus_set(obj, EINA_TRUE);
+             efl_ui_focus_object_focus_set(obj, EINA_TRUE);
           }
       }
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_gengrid_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Elm_Gengrid_Data *pd)
+{
+   Eo *focused_obj = efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS));
+   Eo *registered_manager = efl_ui_focus_object_focus_manager_get(obj);
+
+   if (!focused_obj && efl_ui_focus_manager_redirect_get(registered_manager))
+     return (Efl_Ui_Focus_Object*) obj;
+
+   return focused_obj;
 }
 
 static void
