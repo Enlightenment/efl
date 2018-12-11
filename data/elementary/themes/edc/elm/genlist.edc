@@ -288,6 +288,9 @@ group { "elm/genlist/item/default/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -461,6 +464,9 @@ group { "elm/genlist/item/default_style/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -637,6 +643,9 @@ group { "elm/genlist/item/one_icon/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -767,6 +776,9 @@ group { "elm/genlist/item/end_icon/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -891,6 +903,9 @@ group { "elm/genlist/item/no_icon/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1539,6 +1554,9 @@ group { "elm/genlist/item/icon_top_text_bottom/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -1786,6 +1804,9 @@ group { "elm/genlist/item/double_label/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2094,6 +2115,9 @@ group { "elm/genlist/item/message/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2269,6 +2293,9 @@ group { "elm/genlist/item/media/default"; nomouse;
             hid;
             rel1.to_y: "elm.text.title";
             rel2.to_y: "elm.text.title";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2485,6 +2512,9 @@ group { "elm/genlist/item/media-album/default"; nomouse;
             hid;
             rel1.to_y: "elm.text.trackno";
             rel2.to_y: "elm.text.trackno";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -2752,6 +2782,9 @@ group { "elm/genlist/item/media-preview/default"; nomouse;
             hid;
             rel1.to_y: "elm.text";
             rel2.to_y: "elm.text";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
@@ -3021,6 +3054,9 @@ group { "elm/genlist/item/mode/default"; nomouse;
             hid;
             rel1.to_y: "elm.text.mode";
             rel2.to_y: "elm.text.mode";
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
+            offscale;
          }
          desc { "flip_enabled";
             inherit: "default";
