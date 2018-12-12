@@ -56,10 +56,10 @@ _efl_model_composite_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Model_Compos
      }
    pd->source = efl_ref(model);
 
-   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILD_ADDED, obj);
-   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, obj);
-   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
-   efl_event_callback_forwarder_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
+   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILD_ADDED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
+   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
+   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
+   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
 }
 
 static Efl_Model *
