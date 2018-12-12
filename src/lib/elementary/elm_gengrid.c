@@ -4260,6 +4260,49 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
       }
 }
 
+static Efl_Ui_Focus_Object*
+_select_candidate(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction)
+{
+   Elm_Object_Item *first = elm_gengrid_first_item_get(obj);
+   Elm_Object_Item *last = elm_gengrid_last_item_get(obj);
+
+   switch(direction)
+     {
+        case EFL_UI_FOCUS_DIRECTION_DOWN:
+        case EFL_UI_FOCUS_DIRECTION_RIGHT:
+          elm_object_item_focus_set(first, EINA_TRUE);
+          return obj;
+        break;
+        case EFL_UI_FOCUS_DIRECTION_UP:
+        case EFL_UI_FOCUS_DIRECTION_LEFT:
+          elm_object_item_focus_set(last, EINA_TRUE);
+          return obj;
+        break;
+        case EFL_UI_FOCUS_DIRECTION_NEXT:
+        case EFL_UI_FOCUS_DIRECTION_PREVIOUS:
+          //do not go further with logical movement
+          return NULL;
+        break;
+        default:
+          ERR("Uncaught focus direction");
+          return NULL;
+        break;
+     }
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_gengrid_efl_ui_focus_manager_move(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction)
+{
+   if (efl_ui_focus_manager_focus_get(obj) == obj)
+     {
+        return _select_candidate(obj, pd, direction);
+     }
+   else
+     {
+        return efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
+     }
+}
+
 EOLIAN static Efl_Ui_Focus_Object*
 _elm_gengrid_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Elm_Gengrid_Data *pd)
 {
