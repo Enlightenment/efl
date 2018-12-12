@@ -1630,7 +1630,7 @@ _config_user_load(Eina_Bool on_flush)
      _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/.base.flush.cfg",
                             _elm_profile);
 
-   if (!ecore_file_exists(buf) || !on_flush)
+   if ((on_flush && !ecore_file_exists(buf)) || !on_flush)
      _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s/base.cfg",
                             _elm_profile);
 
