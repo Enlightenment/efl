@@ -229,18 +229,19 @@ abstract Efl.Object
            under certain conditions to block a certain event.
          ]]
       }
-      event_callback_forwarder_add {
+      event_callback_forwarder_priority_add {
          [[Add an event callback forwarder for an event and an object.]]
          params {
             @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
-            @in new_obj: Efl.Object; [[The object to emit events from]]
+            @in priority: short; [[The priority at which to insert the callback handler.]]
+            @in new_obj: Efl.Object @nonull; [[The object to emit events from]]
          }
       }
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for an event and an object.]]
          params {
             @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
-            @in new_obj: Efl.Object; [[The object to emit events from]]
+            @in new_obj: Efl.Object @nonull; [[The object to emit events from]]
          }
       }
       children_iterator_new {

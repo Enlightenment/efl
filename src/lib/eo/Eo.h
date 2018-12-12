@@ -2063,6 +2063,19 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
    efl_event_callback_array_priority_add(obj, array, \
          EFL_CALLBACK_PRIORITY_DEFAULT, data)
 
+
+/**
+ * @def efl_event_callback_forwarder_add(obj, desc, new_obj)
+ * @brief Add an event callback forwarder for an event and an object.
+ *
+ * @param[in] obj The object.
+ * @param[in] desc The description of the event to listen to
+ * @param[in] new_obj The object to emit events from
+ *
+ * @ingroup Efl_Object
+ */
+#define efl_event_callback_forwarder_add(obj, desc, new_obj) efl_event_callback_forwarder_priority_add(obj, desc, EFL_CALLBACK_PRIORITY_DEFAULT, new_obj)
+
 /**
  * @def Replace the previous Eo pointer with new content.
  *

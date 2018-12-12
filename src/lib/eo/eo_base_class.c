@@ -1806,25 +1806,25 @@ _efl_event_forwarder_callback(void *data, const Efl_Event *event)
      }
 }
 
-/* FIXME: Change default priority? Maybe call later? */
 EOLIAN static void
-_efl_object_event_callback_forwarder_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
-                     const Efl_Event_Description *desc,
-                     Eo *new_obj)
+_efl_object_event_callback_forwarder_priority_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
+                                                  const Efl_Event_Description *desc,
+                                                  short priority,
+                                                  Eo *new_obj)
 {
+   EO_OBJ_POINTER_RETURN(new_obj, new_data);
+   EO_OBJ_DONE(new_obj);
 
-   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
-
-   efl_event_callback_add(obj, desc, _efl_event_forwarder_callback, new_obj);
+   efl_event_callback_priority_add(obj, desc, priority, _efl_event_forwarder_callback, new_obj);
 }
 
 EOLIAN static void
 _efl_object_event_callback_forwarder_del(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
-                     const Efl_Event_Description *desc,
-                     Eo *new_obj)
+                                         const Efl_Event_Description *desc,
+                                         Eo *new_obj)
 {
-
-   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
+   EO_OBJ_POINTER_RETURN(new_obj, new_data);
+   EO_OBJ_DONE(new_obj);
 
    efl_event_callback_del(obj, desc, _efl_event_forwarder_callback, new_obj);
 }
