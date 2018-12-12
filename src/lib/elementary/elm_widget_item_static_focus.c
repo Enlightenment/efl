@@ -15,6 +15,7 @@
 typedef struct {
    Eo *adapter;
    Eina_Bool realized;
+   Eina_Bool in_unrealize;
 } Elm_Widget_Item_Static_Focus_Data;
 
 static void
@@ -73,7 +74,9 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         //only delete the adapter when not focused, this will lead to awfull artifacts
         if (!efl_ui_focus_object_focus_get(pd->adapter))
           {
+             pd->in_unrealize = EINA_TRUE;
              efl_del(pd->adapter);
+             pd->in_unrealize = EINA_FALSE;
           }
         pd->realized = EINA_FALSE;
      }
@@ -126,9 +129,12 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
      }
    else if (logical_child && logical_child != pd->adapter)
      {
-        efl_ui_focus_manager_calc_unregister(wpd->widget, pd->adapter);
-        efl_del(pd->adapter);
-        pd->adapter = NULL;
+        if (!pd->in_unrealize)
+          {
+             efl_del(pd->adapter);
+             pd->adapter = NULL;
+          }
+
      }
 
    //genlist sometimes changes views when doing quick scrolls so reset the view in every possible call
