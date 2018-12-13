@@ -452,6 +452,9 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
                {
                   efl_pack_unpack(pi->obj, pi->content);
                   efl_canvas_object_clip_set(pi->content, pd->backclip);
+
+                  pi->content_num = -1;
+                  pi->content = NULL;
                }
           }
      }
