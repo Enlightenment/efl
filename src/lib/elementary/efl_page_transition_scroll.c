@@ -303,7 +303,7 @@ _efl_page_transition_scroll_update(Eo *obj,
    int tmp_id, curr_page, cnt;
    Eo *tmp;
    Eina_List *list;
-   Page_Info *pi, *tpi;
+   Page_Info *pi, *tpi, *dummy;
 
    t = pos;
    if (t < 0) t *= (-1);
@@ -329,8 +329,6 @@ _efl_page_transition_scroll_update(Eo *obj,
                            tpi->geometry.h);
 
         efl_gfx_entity_geometry_set(pi->obj, (Eina_Rect) pi->temp);
-
-        if (!pi->vis_page && !tpi->vis_page) continue;
 
         if (!eina_rectangles_intersect(&pi->temp, &pd->viewport))
           {
@@ -378,6 +376,20 @@ _efl_page_transition_scroll_update(Eo *obj,
                     }
                }
           }
+     }
+
+   if (pos < 0) dummy = pd->tail;
+   else dummy = pd->head;
+
+   if (dummy->visible)
+     {
+        efl_canvas_object_clip_set(dummy->obj, pd->backclip);
+        efl_pack_unpack(dummy->obj, dummy->content);
+        efl_canvas_object_clip_set(dummy->content, pd->backclip);
+
+        dummy->content_num = -1;
+        dummy->content = NULL;
+        dummy->visible = EINA_FALSE;
      }
 }
 
