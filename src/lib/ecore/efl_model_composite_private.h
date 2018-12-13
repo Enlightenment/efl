@@ -2,13 +2,12 @@
 #define EFL_MODEL_COMPOSITE_PROPERTIES(name, dyn, sta, ...) \
   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(name, NULL, NULL, (dyn), sta, ##__VA_ARGS__)
 
-#define EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(name, obj, klass, dyn, sta, ...)  \
+#define EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(name, obj, klass, dyn, ...)       \
   Eina_Iterator *name;                                                         \
   do                                                                           \
     {                                                                          \
        static const char *static_props__[] = {                                 \
-         sta,                                                                  \
-         ##__VA_ARGS__                                                         \
+         __VA_ARGS__                                                           \
        };                                                                      \
        name = _efl_model_composite_properties_mix(                             \
          ((obj) ? efl_model_properties_get(efl_super((obj), (klass))) : NULL), \
