@@ -195,7 +195,7 @@ _efl_model_container_child_property_add(Eo *obj,
 
    for (i = children_count; i < in_count; ++i)
      {
-        Efl_Model_Children_Event cevt;
+        Efl_Model_Children_Event cevt = { 0 };
         Efl_Model *child;
 
         child = efl_add(EFL_MODEL_CONTAINER_ITEM_CLASS, obj,
