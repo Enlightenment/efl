@@ -27,6 +27,7 @@
 
 static const Efl_Test_Case etc[] = {
    { "Efl_Model_Container", efl_test_case_model_container },
+   { "Efl_Model_View", efl_test_case_model_view },
    { "Efl_Model_Composite_Boolean", efl_test_case_model_composite_boolean },
    { NULL, NULL }
 };

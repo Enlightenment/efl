@@ -25,9 +25,9 @@
 #include <Efl.h>
 #include <Ecore.h>
 
-const int child_number = 3;
-const int base_ints[] = { 41, 42, 43 };
-const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
+static const int child_number = 3;
+static const int base_ints[] = { 41, 42, 43 };
+static const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
 
 static Eina_Value
 _children_slice_get_then(void *data EINA_UNUSED,
