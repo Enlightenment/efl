@@ -428,35 +428,20 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
           }
         pi->pos = pi->id - (pd->side_page_num + 1);
 
-        if (!target) return;
-
         EINA_RECTANGLE_SET(&pi->temp,
                            target->geometry.x,
                            target->geometry.y,
                            target->geometry.w,
                            target->geometry.h);
+     }
 
-        if (eina_rectangles_intersect(&pi->temp, &pd->viewport) &&
-            (pi->id != 0) && (pi->id != (pd->page_info_num - 1)))
-          {
-             pi->vis_page = EINA_TRUE;
-             pi->visible = EINA_TRUE;
-             efl_canvas_object_clip_set(pi->obj, pd->foreclip);
-          }
-        else
-          {
-             pi->vis_page = EINA_FALSE;
-             pi->visible = EINA_FALSE;
-             efl_canvas_object_clip_set(pi->obj, pd->backclip);
-             if (pi->content)
-               {
-                  efl_pack_unpack(pi->obj, pi->content);
-                  efl_canvas_object_clip_set(pi->content, pd->backclip);
-
-                  pi->content_num = -1;
-                  pi->content = NULL;
-               }
-          }
+   EINA_LIST_FOREACH(pd->page_infos, list, pi)
+     {
+        EINA_RECTANGLE_SET(&pi->geometry,
+                           pi->temp.x,
+                           pi->temp.y,
+                           pi->temp.w,
+                           pi->temp.h);
      }
 
    if (EINA_DBL_EQ(pos, 1.0))
@@ -468,15 +453,6 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
      {
         pd->head = pd->head->prev;
         pd->tail = pd->tail->prev;
-     }
-
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
-     {
-        EINA_RECTANGLE_SET(&pi->geometry,
-                           pi->temp.x,
-                           pi->temp.y,
-                           pi->temp.w,
-                           pi->temp.h);
      }
 }
 
