@@ -66,7 +66,6 @@ typedef struct _Page_Info
    struct _Page_Info       *prev, *next;
 
    Eina_Bool                visible;
-   Eina_Bool                vis_page;
 
 } Page_Info;
 
