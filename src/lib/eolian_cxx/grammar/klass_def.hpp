@@ -987,6 +987,9 @@ struct klass_def
   class_type type;
   std::vector<event_def> events;
   std::set<klass_name, compare_klass_name_by_name> immediate_inherits;
+  eina::optional<klass_name> parent;
+  std::set<klass_name, compare_klass_name_by_name> extensions;
+
   std::set<part_def> parts;
   Eolian_Unit const* unit;
 
@@ -1108,12 +1111,17 @@ struct klass_def
          } catch(std::exception const&) {}
        }
      if(::eolian_class_parent_get(klass))
-       immediate_inherits.insert({::eolian_class_parent_get(klass), {}});
+       {
+          parent = eina::optional<klass_name>({::eolian_class_parent_get(klass), {}});
+          immediate_inherits.insert(*parent);
+       }
      for(efl::eina::iterator<Eolian_Class const> inherit_iterator ( ::eolian_class_extensions_get(klass))
            , inherit_last; inherit_iterator != inherit_last; ++inherit_iterator)
        {
          Eolian_Class const* inherit = &*inherit_iterator;
-         immediate_inherits.insert({inherit, {}});
+         klass_name extension(inherit, {});
+         immediate_inherits.insert(extension);
+         extensions.insert(extension);
        }
      std::function<void(Eolian_Class const*)> inherit_algo =
        [&] (Eolian_Class const* inherit_klass)

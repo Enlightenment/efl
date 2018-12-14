@@ -292,6 +292,23 @@ EFL_START_TEST(eolian_cxx_test_properties)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_cxx_test_parent_extensions)
+{
+  efl::eolian::eolian_init eolian_init;
+  efl::eolian::eolian_state eolian_state;
+
+  klass_def cls = init_test_data("generic.eo", "Generic", eolian_state);
+
+  auto parent = cls.parent;
+  ck_assert(parent.is_engaged());
+  ck_assert_str_eq("Object", parent->eolian_name.c_str());
+
+  ck_assert_int_eq(1, cls.extensions.size());
+  auto extension = *cls.extensions.cbegin();
+  ck_assert_str_eq("Generic_Interface", extension.eolian_name.c_str());
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
@@ -303,4 +320,5 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_type_generation_optional);
    tcase_add_test(tc, eolian_cxx_test_type_callback);
    tcase_add_test(tc, eolian_cxx_test_properties);
+   tcase_add_test(tc, eolian_cxx_test_parent_extensions);
 }

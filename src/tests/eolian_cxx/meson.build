@@ -34,6 +34,7 @@ pub_eo_files = [
   'cyclic2.eo',
   'docs.eo',
   'generic.eo',
+  'generic_interface.eo',
   'name1_name2_type_generation.eo',
   'name_name.eo',
   'ns_name.eo',

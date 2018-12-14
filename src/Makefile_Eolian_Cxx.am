@@ -110,14 +110,14 @@ endif
 
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-name1_name2_type_generation.$(OBJEXT): tests/eolian_cxx/name1_name2_type_generation.eo.h tests/eolian_cxx/name1_name2_type_generation.eo.c
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_inheritance.$(OBJEXT): tests/eolian_cxx/simple.eo.hh tests/eolian_cxx/simple.eo.h
-tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_binding.$(OBJEXT): tests/eolian_cxx/generic.eo.hh tests/eolian_cxx/generic.eo.h tests/eolian_cxx/name1_name2_type_generation.eo.hh tests/eolian_cxx/name1_name2_type_generation.eo.h tests/eolian_cxx/name1_name2_type_generation.eo.c
+tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_binding.$(OBJEXT): tests/eolian_cxx/generic.eo.hh tests/eolian_cxx/generic.eo.h tests/eolian_cxx/generic.eo.c tests/eolian_cxx/generic_interface.eo.hh tests/eolian_cxx/generic_interface.eo.h tests/eolian_cxx/generic_interface.eo.c tests/eolian_cxx/name1_name2_type_generation.eo.hh tests/eolian_cxx/name1_name2_type_generation.eo.h tests/eolian_cxx/name1_name2_type_generation.eo.c
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_address_of.$(OBJEXT): tests/eolian_cxx/a.eo.hh tests/eolian_cxx/b.eo.hh tests/eolian_cxx/c.eo.hh tests/eolian_cxx/d.eo.hh tests/eolian_cxx/a.eo.h tests/eolian_cxx/b.eo.h tests/eolian_cxx/c.eo.h tests/eolian_cxx/d.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_cyclic.$(OBJEXT): tests/eolian_cxx/cyclic1.eo.hh tests/eolian_cxx/cyclic2.eo.hh tests/eolian_cxx/cyclic1.eo.c tests/eolian_cxx/cyclic2.eo.c tests/eolian_cxx/cyclic1.eo.h tests/eolian_cxx/cyclic2.eo.h
 
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-eolian_cxx_test_wrapper.$(OBJEXT): tests/eolian_cxx/a.eo.h tests/eolian_cxx/a.eo.c tests/eolian_cxx/a.eo.hh
 
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-simple.$(OBJEXT): tests/eolian_cxx/simple.eo.c tests/eolian_cxx/simple.eo.h
-tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-generic.$(OBJEXT): tests/eolian_cxx/generic.eo.c tests/eolian_cxx/generic.eo.h
+tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-generic.$(OBJEXT): tests/eolian_cxx/generic.eo.c tests/eolian_cxx/generic.eo.h tests/eolian_cxx/generic_interface.eo.c tests/eolian_cxx/generic_interface.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-a.$(OBJEXT): tests/eolian_cxx/a.eo.c tests/eolian_cxx/a.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-b.$(OBJEXT): tests/eolian_cxx/b.eo.c tests/eolian_cxx/b.eo.h
 tests/eolian_cxx/$(TESTS_EOLIAN_CXX_OBJNAME)eolian_cxx_suite-c.$(OBJEXT): tests/eolian_cxx/c.eo.c tests/eolian_cxx/c.eo.h
@@ -138,6 +138,10 @@ tests/eolian_cxx/generic.eo.c \
 tests/eolian_cxx/generic.eo.h \
 tests/eolian_cxx/generic.eo.hh \
 tests/eolian_cxx/generic.eo.impl.hh \
+tests/eolian_cxx/generic_interface.eo.c \
+tests/eolian_cxx/generic_interface.eo.h \
+tests/eolian_cxx/generic_interface.eo.hh \
+tests/eolian_cxx/generic_interface.eo.impl.hh \
 tests/eolian_cxx/a.eo.hh tests/eolian_cxx/a.eo.impl.hh tests/eolian_cxx/a.eo.c tests/eolian_cxx/a.eo.h \
 tests/eolian_cxx/b.eo.hh tests/eolian_cxx/b.eo.impl.hh tests/eolian_cxx/b.eo.c tests/eolian_cxx/b.eo.h \
 tests/eolian_cxx/c.eo.hh tests/eolian_cxx/c.eo.impl.hh tests/eolian_cxx/c.eo.c tests/eolian_cxx/c.eo.h \
@@ -198,6 +202,7 @@ endif
 EXTRA_DIST2 += \
 tests/eolian_cxx/simple.eo \
 tests/eolian_cxx/generic.eo \
+tests/eolian_cxx/generic_interface.eo \
 tests/eolian_cxx/docs.eo \
 tests/eolian_cxx/a.eo \
 tests/eolian_cxx/b.eo \
