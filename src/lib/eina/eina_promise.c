@@ -1393,7 +1393,7 @@ static Eina_Value
 _eina_future_cb_ignore_error(void *data, const Eina_Value value,
                              const Eina_Future *dead_future EINA_UNUSED)
 {
-   Eina_Error expected_err = (Eina_Error)(long)data;
+   Eina_Error expected_err = (Eina_Error)(intptr_t)data;
 
    if (value.type == EINA_VALUE_TYPE_ERROR)
      {
@@ -1411,7 +1411,7 @@ _eina_future_cb_ignore_error(void *data, const Eina_Value value,
 EAPI Eina_Future_Desc
 eina_future_cb_ignore_error(Eina_Error err)
 {
-   return (Eina_Future_Desc){ _eina_future_cb_ignore_error, (void *)(long)err, NULL };
+   return (Eina_Future_Desc){ _eina_future_cb_ignore_error, (void*)(uintptr_t)err, NULL };
 }
 
 EAPI void
