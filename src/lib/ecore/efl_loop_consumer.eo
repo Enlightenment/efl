@@ -10,7 +10,7 @@ class Efl.Loop_Consumer (Efl.Object)
 {
    [[An Efl.Loop_Consumer is a class which requires one of the parents to provide
      an Efl.Loop interface when performing provider_find. It will enforce this by
-     only allowing parents which provide such an interface or NULL.]]
+     only allowing parents which provide such an interface or $NULL.]]
    eo_prefix: efl_loop;
    methods {
       @property loop {
@@ -22,17 +22,36 @@ class Efl.Loop_Consumer (Efl.Object)
             loop: Efl.Loop; [[Efl loop]]
          }
       }
-      future_resolved {
+      future_resolved @const {
+         [[Creates a new future that is already resolved to a value.
+
+         This function creates a new future with an already known value,
+         that will be resolved and dispatched by the loop scheduler as
+         usual.
+
+         This is a helper that behaves the same as eina_future_resolved.]]
          params {
-            result: any_value;
+            result: any_value; [[The value to be delivered.
+
+            Note that the value contents must survive this function scope, that is, do 
+            not use stack allocated blobs, arrays, structures or types that keep
+            references to memory you give. Values will be automatically cleaned up using
+            \@ref eina_value_flush() once they are unused (no more future or futures returned a new value)]]
          }
-         return: future<any_value>;
+         return: future<any_value>; [[The future or $NULL on error.]]
       }
-      future_rejected {
+      future_rejected @const {
+         [[Creates a new future that is already rejected to a specified error using the @.loop.get.
+
+         This function creates a new future with an already known error,
+         that will be resolved and dispatched by the loop scheduler as
+         usual.
+
+         This is a helper that behaves the same as \@ref eina_future_rejected.]]
          params {
-            error: Eina.Error;
+            error: Eina.Error; [[An Eina_Error value]]
          }
-         return: future<Eina.Error>;
+         return: future<Eina.Error>; [[The future or $NULL on error.]]
       }
       promise_new {
          [[Create a new promise with the scheduler coming from the loop provided by this object.
