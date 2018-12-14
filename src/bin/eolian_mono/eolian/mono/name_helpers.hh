@@ -274,14 +274,14 @@ struct klass_interface_name_generator
   {
     return utils::remove_all(klass.eolian_name, '_');
   }
-    
+
   template <typename OutputIterator, typename Attr, typename Context>
   bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
   {
     return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
   }
-} klass_interface_name;
-  
+} const klass_interface_name;
+
 struct klass_full_interface_name_generator
 {
   template <typename T>
@@ -289,13 +289,13 @@ struct klass_full_interface_name_generator
   {
     return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_interface_name(klass);
   }
-    
+
   template <typename OutputIterator, typename Attr, typename Context>
   bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
   {
     return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
   }
-} klass_full_interface_name;
+} const klass_full_interface_name;
 
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
@@ -313,13 +313,13 @@ struct klass_full_concrete_name_generator
   {
     return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_concrete_name(klass);
   }
-    
+
   template <typename OutputIterator, typename Attr, typename Context>
   bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
   {
     return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
   }
-} klass_full_concrete_name;
+} const klass_full_concrete_name;
 
 struct klass_full_concrete_or_interface_name_generator
 {
@@ -347,7 +347,7 @@ struct klass_full_concrete_or_interface_name_generator
   {
     return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
   }
-} klass_full_concrete_or_interface_name;
+} const klass_full_concrete_or_interface_name;
 
 template<typename T>
 inline std::string klass_inherit_name(T const& klass)
@@ -373,9 +373,22 @@ inline std::string klass_get_name(T const& clsname)
   return clsname.klass_get_name;
 }
 
-inline std::string klass_get_full_name(attributes::klass_name const& clsname)
+template<typename T>
+inline std::string klass_get_full_name(T const& clsname)
 {
   return klass_full_concrete_name(clsname) + "." + klass_get_name(clsname);
+}
+
+template<typename T>
+inline std::string interface_native_getter_attr_name(T const& clsname)
+{
+  return klass_interface_name(clsname) + "NativeGetterAttr";
+}
+
+template<typename T>
+inline std::string interface_native_getter_attr_full_name(T const& clsname)
+{
+  return klass_full_interface_name(clsname) + "NativeGetterAttr";
 }
 
 // Events
