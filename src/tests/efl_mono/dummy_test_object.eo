@@ -1641,6 +1641,17 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          }
          return: accessor<ptr(int)> @owned;
       }
+
+      @property setter_only {
+         set {}
+         values {
+           prop: int;
+         }
+      }
+
+      get_setter_only {
+         return: int;
+      }
    }
    implements {
       class.constructor;
@@ -1649,6 +1660,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       Efl.Part.part_get;
       Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;
+      Dummy.Test_Iface.iface_prop { get; set; }
       Dummy.Another_Iface.emit_another_conflicted;
    }
    events {

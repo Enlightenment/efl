@@ -137,8 +137,6 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
-    if(!do_super && f.is_static) // Static methods goes only on Concrete classes.
-      return true;
     if(blacklist::is_function_blacklisted(f.c_name))
       return true;
 
@@ -209,6 +207,75 @@ struct native_function_definition_parameterized
   }
 } const native_function_definition;
 
+struct property_wrapper_definition_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
+   {
+      if (blacklist::is_property_blacklisted(property))
+        return true;
+
+      bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
+      bool is_static = (property.getter.is_engaged() && property.getter->is_static
+                       || property.setter.is_engaged() && property.setter->is_static);
+
+
+      if (interface && is_static)
+        return true;
+
+      auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
+      auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
+
+      // C# properties must have a single value.
+      //
+      // Single values in getters are automatically converted to return_type,
+      // meaning they should have 0 parameters.
+      //
+      // For setters, we ignore the return type - usually boolean.
+      if (get_params > 0 || set_params > 1)
+        return true;
+
+      attributes::type_def prop_type;
+
+      if (property.getter.is_engaged())
+        prop_type = property.getter->return_type;
+      else if (property.setter.is_engaged())
+        prop_type = property.setter->parameters[0].type;
+      else
+        {
+           EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Property must have either a getter or a setter." << std::endl;
+           return false;
+        }
+
+      std::string dir_mod;
+      if (property.setter.is_engaged())
+        dir_mod = direction_modifier(property.setter->parameters[0]);
+
+      std::string managed_name = name_helpers::property_managed_name(property);
+
+      if (!as_generator(
+                  scope_tab << documentation
+                  << scope_tab << (interface ? "" : "public ") << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+            ).generate(sink, std::make_tuple(property, prop_type), context))
+        return false;
+
+      if (property.getter.is_engaged())
+        if (!as_generator(scope_tab << scope_tab << "get " << (interface ? ";" : "{ return Get" + managed_name + "(); }") << "\n"
+            ).generate(sink, attributes::unused, context))
+          return false;
+
+      if (property.setter.is_engaged())
+        if (!as_generator(scope_tab << scope_tab << "set " << (interface ? ";" : "{ Set" + managed_name + "(" + dir_mod + "value); }") << "\n"
+            ).generate(sink, attributes::unused, context))
+          return false;
+
+      if (!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, context))
+        return false;
+
+      return true;
+   }
+} const property_wrapper_definition;
+
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -218,11 +285,15 @@ struct is_eager_generator< ::eolian_mono::function_definition_generator> : std::
 template <>
 struct is_eager_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
 template <>
+struct is_eager_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
+template <>
 struct is_generator< ::eolian_mono::function_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::function_definition_parameterized> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
 
 namespace type_traits {
 template <>
@@ -233,6 +304,9 @@ struct attributes_needed< ::eolian_mono::function_definition_parameterized> : st
 
 template <>
 struct attributes_needed< ::eolian_mono::native_function_definition_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::property_wrapper_definition_generator> : std::integral_constant<int, 1> {};
 }
       
 } } }

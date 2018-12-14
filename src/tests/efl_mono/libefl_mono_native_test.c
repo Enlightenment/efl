@@ -57,6 +57,8 @@ typedef struct Dummy_Test_Object_Data
   Eo *part_two;
   Eina_Promise *promise;
   Eina_List *list_for_accessor;
+  int setter_only;
+  int iface_prop;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -3876,7 +3878,25 @@ void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dum
     efl_event_callback_legacy_call(obj, DUMMY_ANOTHER_IFACE_EVENT_CONFLICTED, NULL);
 }
 
+void _dummy_test_object_setter_only_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+    pd->setter_only = value;
+}
 
+int _dummy_test_object_get_setter_only(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd)
+{
+    return pd->setter_only;
+}
+
+void _dummy_test_object_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+    pd->iface_prop = value;
+}
+
+int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+    return pd->iface_prop;
+}
 
 #include "dummy_test_object.eo.c"
 #include "dummy_numberwrapper.eo.c"

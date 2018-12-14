@@ -303,4 +303,46 @@ class TestEoMultipleChildClasses
     }
 }
 
+class TestCsharpProperties
+{
+    public static void test_csharp_properties()
+    {
+        var obj = new Dummy.TestObject();
+        var name = "My Name";
+        obj.Name = name;
+
+        Test.AssertEquals(name, obj.Name);
+    }
+
+    public static void test_getter_only()
+    {
+        var obj = new Dummy.TestObject();
+        Test.Assert(!obj.Invalidating);
+    }
+
+    public static void test_setter_only()
+    {
+        var obj = new Dummy.TestObject();
+        int val = -1984;
+
+        obj.SetterOnly = val;
+        Test.AssertEquals(val, obj.GetSetterOnly());
+    }
+
+    public static void test_class_property()
+    {
+        int val = -42;
+        Dummy.TestObject.KlassProp = val;
+        Test.AssertEquals(val, Dummy.TestObject.KlassProp);
+    }
+
+    public static void test_iface_property()
+    {
+        int val = -33;
+        Dummy.TestIface iface = new Dummy.TestObject();
+        iface.IfaceProp = val;
+        Test.AssertEquals(val, iface.IfaceProp);
+    }
+}
+
 }

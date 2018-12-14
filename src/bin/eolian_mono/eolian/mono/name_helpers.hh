@@ -243,6 +243,14 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
+inline std::string property_managed_name(attributes::property_def const& property)
+{
+  auto names = utils::split(property.name, '_');
+  // No need to escape keyword here as it will be capitalized and already
+  // namespaced inside the owner class.
+  return utils::to_pascal_case(names);
+}
+
 inline std::string managed_part_name(attributes::part_def const& part)
 {
   std::vector<std::string> names = utils::split(part.name, '_');

@@ -164,6 +164,9 @@ struct klass
             ).generate(sink, p, iface_cxt))
          return false;
 
+     if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, iface_cxt))
+       return false;
+
      // End of interface declaration
      if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
 
@@ -255,6 +258,18 @@ struct klass
          if(!as_generator(*(async_function_definition)).generate(sink, implemented_methods, concrete_cxt))
            return false;
 
+         // Property wrappers
+         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, concrete_cxt))
+           return false;
+
+         for (auto&& klass : helpers::non_implemented_interfaces(cls))
+           {
+              attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
+              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, concrete_cxt))
+                return false;
+           }
+
+
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
 
        }
@@ -314,6 +329,17 @@ struct klass
          // Async wrappers
          if(!as_generator(*(async_function_definition(true))).generate(sink, implemented_methods, inherit_cxt))
            return false;
+
+         // Property wrappers
+         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, inherit_cxt))
+           return false;
+
+         for (auto&& klass : helpers::non_implemented_interfaces(cls))
+           {
+              attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
+              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, inherit_cxt))
+                return false;
+           }
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
