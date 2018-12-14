@@ -768,7 +768,7 @@ class Part(Object):
 
 class Constructor(Object):
     def __repr__(self):
-        return "<eolian.Constructor '{0.name}', optional={0.is_optional}>".format(self)
+        return "<eolian.Constructor '{0.name}', optional={0.is_optional}, is_ctor_param={0.is_ctor_param}>".format(self)
 
     @cached_property
     def function(self):
@@ -781,6 +781,10 @@ class Constructor(Object):
     @cached_property
     def class_(self):
         return Class(lib.eolian_constructor_class_get(self))
+
+    @cached_property
+    def is_ctor_param(self):
+        return bool(lib.eolian_constructor_is_ctor_param(self))
 
 
 class Event(Object):
