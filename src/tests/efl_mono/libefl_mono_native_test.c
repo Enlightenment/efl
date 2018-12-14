@@ -8,9 +8,20 @@
 #include <Ecore.h>
 #include <Eo.h>
 
+#ifdef EOAPI
 #undef EOAPI
+#endif
+
+#ifdef EWAPI
+#undef EWAPI
+#endif
+
+#ifdef EAPI
 #undef EAPI
+#endif
+
 #define EOAPI EAPI EAPI_WEAK
+#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # ifdef EFL_BUILD

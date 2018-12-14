@@ -128,6 +128,11 @@ struct klass
      if(!as_generator(documentation).generate(sink, cls, iface_cxt))
        return false;
 
+     // Mark the interface with the proper native Efl_Class* getter
+     if(!as_generator(lit("[") << name_helpers::interface_native_getter_attr_name(cls) << "]\n")
+        .generate(sink, attributes::unused, iface_cxt))
+       return false;
+
      if(!as_generator
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
@@ -272,6 +277,16 @@ struct klass
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
 
+         // Attribute getter of the native 'Efl_Class *' handle (for proper inheritance from additional explicit interfaces)
+         if(!as_generator(lit("public class ") << name_helpers::interface_native_getter_attr_name(cls) << " : Efl.Eo.NativeGetterAttr\n"
+              << "{\n"
+              << scope_tab << "public override IntPtr GetEflClass()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+              << "}\n")
+            .generate(sink, attributes::unused, concrete_cxt))
+           return false;
        }
 
      // Inheritable class
@@ -560,7 +575,7 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "target_klass = Efl.Eo.Globals.register_class(class_initializer, klass_name, base_klass);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "target_klass = Efl.Eo.Globals.register_class(class_initializer, klass_name, base_klass, this.GetType());\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "throw new System.InvalidOperationException(\"Failed to initialize class '" << inherit_name << "'\");\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
