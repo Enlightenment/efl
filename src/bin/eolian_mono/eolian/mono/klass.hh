@@ -357,10 +357,19 @@ struct klass
        {
          auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
+         auto inherit_name = name_helpers::klass_inherit_name(cls);
+         std::string base_name;
+         if(!root)
+           {
+              attributes::klass_def parent_klass(get_klass(*cls.parent, cls.unit), cls.unit);
+              base_name = name_helpers::klass_full_native_inherit_name(parent_klass);
+           }
+
          if(!as_generator
             (
-             "internal " << class_type << " " << native_inherit_name << " {\n"
-             << scope_tab << "public static byte class_initializer(IntPtr klass)\n"
+             "public " << class_type << " " << native_inherit_name << " " << (root ? "" : (": " + base_name)) <<"{\n"
+             << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
+             << scope_tab << "public " << (root ? "" : "new ") << "Efl_Op_Description[] GetEoOps()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Efl_Op_Description[] descs = new Efl_Op_Description[" << grammar::int_ << "];\n"
             )
@@ -371,20 +380,35 @@ struct klass
          if(!as_generator(*(function_registration(index_generator, cls)))
             .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
 
+         if(!root)
+           if(!as_generator(scope_tab << scope_tab << "descs = descs.Concat(base.GetEoOps()).ToArray();\n").generate(sink, attributes::unused, inative_cxt))
+             return false;
+
+         if(!as_generator(
+                scope_tab << scope_tab << "return descs;\n"
+                << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, inative_cxt))
+           return false;
+
          if(!as_generator
-            (   scope_tab << scope_tab << "IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*" << function_count << ");\n"
+            (scope_tab << "public " << (root ? "" : "new " ) << "byte class_initializer(IntPtr klass)\n"
+             << scope_tab << "{\n"
+             << scope_tab << scope_tab << "var descs = GetEoOps();\n"
+             << scope_tab << scope_tab << "var count = descs.Length;\n"
+             << scope_tab << scope_tab << "IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*count);\n"
              << scope_tab << scope_tab << "IntPtr ptr = descs_ptr;\n"
-             << scope_tab << scope_tab << "for(int i = 0; i != " << function_count << "; ++i)\n"
+             << scope_tab << scope_tab << "for(int i = 0; i != count; ++i)\n"
              << scope_tab << scope_tab << "{\n"
              << scope_tab << scope_tab << scope_tab << "Marshal.StructureToPtr(descs[i], ptr, false);\n"
              << scope_tab << scope_tab << scope_tab << "ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "Efl_Object_Ops ops;\n"
              << scope_tab << scope_tab << "ops.descs = descs_ptr;\n"
-             << scope_tab << scope_tab << "ops.count = (UIntPtr)" << function_count << ";\n"
+             << scope_tab << scope_tab << "ops.count = (UIntPtr)count;\n"
              << scope_tab << scope_tab << "IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));\n"
              << scope_tab << scope_tab << "Marshal.StructureToPtr(ops, ops_ptr, false);\n"
              << scope_tab << scope_tab << "Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);\n"
+             << scope_tab << scope_tab << "EoKlass = klass;\n"
             ).generate(sink, attributes::unused, inative_cxt)) return false;
 
 
@@ -413,6 +437,7 @@ struct klass
      bool is_inherit = is_inherit_context(context);
 
      std::string class_getter = "return Efl.Eo.Globals.efl_class_get(handle);";
+     std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
 
      // The klass field is static but there is no problem if multiple C# classes inherit from this generated one
      // as it is just a simple wrapper, forwarding the Eo calls either to the user API (where C#'s virtual method
@@ -421,6 +446,7 @@ struct klass
        {
           if(!as_generator(
              scope_tab << "public " << (root ? "" : "new ") <<  "static System.IntPtr klass = System.IntPtr.Zero;\n"
+             << scope_tab << "public " << (root ? "" : "new ") << "static " << native_inherit_full_name << " nativeInherit = new " << native_inherit_full_name << "();\n"
              ).generate(sink, attributes::unused, context))
             return false;
           class_getter = "return klass;";
@@ -493,7 +519,7 @@ struct klass
                      scope_tab << "///<summary>Creates a new instance.</summary>\n"
                      << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
                      << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : base(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent, ref klass)\n"
+                     << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : base(nativeInherit.class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent, ref klass)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "if (init_cb != null) {\n"
                      << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
@@ -518,7 +544,7 @@ struct klass
              scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
              << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : this(" << native_inherit_name << ".class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent, ref klass)\n"
+             << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : this(nativeInherit.class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent, ref klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"

@@ -354,6 +354,12 @@ inline std::string klass_native_inherit_name(T const& klass)
 }
 
 template<typename T>
+inline std::string klass_full_native_inherit_name(T const& klass)
+{
+  return klass_full_concrete_name(klass) + "NativeInherit";
+}
+
+template<typename T>
 inline std::string klass_get_name(T const& clsname)
 {
   return utils::to_lowercase(join_namespaces(clsname.namespaces, '_') + clsname.eolian_name + "_class_get");

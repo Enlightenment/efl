@@ -131,6 +131,7 @@ run(options_type const& opts)
    if (!as_generator("using System;\n"
                      "using System.Runtime.InteropServices;\n"
                      "using System.Collections.Generic;\n"
+                     "using System.Linq;\n"
                      "using System.ComponentModel;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {

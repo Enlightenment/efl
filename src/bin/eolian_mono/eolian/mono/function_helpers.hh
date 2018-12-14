@@ -41,7 +41,7 @@ struct native_function_definition_preamble_generator
                 ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
-      return true;
+      return as_generator("\n").generate(sink, attributes::unused, context);
   }
 };
 

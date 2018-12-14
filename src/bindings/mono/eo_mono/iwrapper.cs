@@ -141,6 +141,10 @@ public class Globals {
     public static IntPtr cached_string_to_intptr(Dictionary<String, IntPtr> dict, String str)
     {
         IntPtr ptr = IntPtr.Zero;
+
+        if (str == null)
+            return ptr;
+
         if (!dict.TryGetValue(str, out ptr))
         {
             ptr = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(str);
@@ -153,6 +157,10 @@ public class Globals {
     public static IntPtr cached_stringshare_to_intptr(Dictionary<String, IntPtr> dict, String str)
     {
         IntPtr ptr = IntPtr.Zero;
+
+        if (str == null)
+            return ptr;
+
         if (!dict.TryGetValue(str, out ptr))
         {
             ptr = Eina.Stringshare.eina_stringshare_add(str);

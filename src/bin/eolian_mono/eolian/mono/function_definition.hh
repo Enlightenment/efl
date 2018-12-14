@@ -75,7 +75,7 @@ struct native_function_definition_generator
 
     if(!as_generator
        (scope_tab
-        << " private static "
+        << " private "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
@@ -98,7 +98,7 @@ struct native_function_definition_generator
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
-        << "(Efl.Eo.Globals.efl_super(obj, " << klass_inherit_name << ".klass)" << *(", " << argument) << ");\n"
+        << "(Efl.Eo.Globals.efl_super(obj, " << "EoKlass)" << *(", " << argument) << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
@@ -114,13 +114,10 @@ struct native_function_definition_generator
                  , context))
       return false;
 
-    if(!as_generator
-       (scope_tab << "private static  "
-        << string
-        << "_delegate "
-        << string << "_static_delegate = new " << string << "_delegate(" << name_helpers::klass_native_inherit_name(*klass) << "." << string << ");\n"
-       )
-       .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, escape_keyword(f.name)), context))
+    // This is the delegate that will be passed to Eo to be called from C.
+    if(!as_generator(
+            scope_tab << "private " << f.c_name << "_delegate " << f.c_name << "_static_delegate;\n"
+        ).generate(sink, attributes::unused, context))
       return false;
     return true;
       }

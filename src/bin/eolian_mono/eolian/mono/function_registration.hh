@@ -35,14 +35,20 @@ struct function_registration_generator
     else
       {
     auto index = index_generator();
-    
+
+    if(!as_generator(
+            scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
+                escape_keyword(f.name) << ");\n"
+        ).generate(sink, attributes::unused, context))
+      return false;
+
     if(!as_generator
 #ifdef _WIN32
        (scope_tab << scope_tab << "descs[" << index << "].api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\");\n"
 #else
        (scope_tab << scope_tab << "descs[" << index << "].api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\");\n"
 #endif
-        << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << name_helpers::klass_native_inherit_name(*klass) << "." << string << "_static_delegate);\n"
+        << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate);\n"
        )
        .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
       return false;
