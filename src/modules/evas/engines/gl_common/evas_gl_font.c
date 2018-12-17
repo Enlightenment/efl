@@ -5,7 +5,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
    Evas_Engine_GL_Context *gc = context;
    Evas_GL_Texture *tex;
-   int w, h, j, nw, fh, x, y;
+   int w, h, j, nw, fh, y;
    DATA8 *ndata, *data, *p1, *p2;
 
    if (fg->ext_dat) return fg->ext_dat; // FIXME: one engine at a time can do this :(
@@ -22,19 +22,21 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 
    // expand to 32bit (4 byte) aligned rows for texture upload
    nw = ((w + 3) / 4) * 4;
-   ndata = alloca(nw *h);
-   if (!ndata) return NULL;
-   for (y = 0; y < h; y++)
-     {
+   // if image already (4 byte) aligned rows then assign old image data to new data(ndata) to 
+   if(nw == w){
+      ndata = data;
+   } else {
+      ndata = alloca(nw *h);
+      if (!ndata) return NULL;
+      // else copy row by row
+      for (y = 0; y < h; y++)
+      {
         p1 = data + (j * y);
         p2 = ndata + (nw * y);
-        for (x = 0; x < w; x++)
-          {
-             *p2 = *p1;
-             p1++;
-             p2++;
-          }
-     }
+        memcpy(p2,p1,w);
+      }
+   }
+
    fh = fg->fi->max_h;
    tex = evas_gl_common_texture_alpha_new(gc, ndata, w, h, fh);
    if (!tex) goto done;
