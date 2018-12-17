@@ -986,6 +986,7 @@ modules_evas_engines_gl_generic_module_la_CFLAGS = \
 -I$(top_builddir)/src/lib/evas/canvas \
 -I$(top_srcdir)/src/modules/evas/engines/gl_common \
 -I$(top_builddir)/src/modules/evas/engines/gl_generic \
+-I$(top_builddir)/src/modules/evas/engines/software_generic \
 @evas_engine_gl_common_cflags@ \
 @EVAS_CFLAGS@
 modules_evas_engines_gl_generic_module_la_LIBADD = \
