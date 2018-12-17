@@ -528,7 +528,7 @@ struct klass
                      << scope_tab << "}\n"
 
                      << scope_tab << "///<summary>Internal constructor to forward the wrapper initialization to the root class.</summary>\n"
-                     << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, Efl.Object parent, ref IntPtr target_klass) : base(class_initializer, klass_name, base_klass, managed_type, parent, ref target_klass) {}\n"
+                     << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent, ref IntPtr target_klass) : base(class_initializer, klass_name, base_klass, managed_type, parent, ref target_klass) {}\n"
 
                      << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
@@ -552,7 +552,7 @@ struct klass
              << scope_tab << scope_tab << "FinishInstantiation();\n"
              << scope_tab << "}\n"
 
-             << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, Type managed_type, Efl.Object parent, ref IntPtr target_klass)\n"
+             << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent, ref IntPtr target_klass)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "inherited = this.GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
