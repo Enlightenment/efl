@@ -63,10 +63,16 @@ endforeach
 
 inc_dir = include_directories(join_paths('..', '..', '..', 'lib', 'eolian_cxx'))
 
-eolian_cxx_gen = executable('eolian_cxx',
+eolian_cxx_gen_bin = executable('eolian_cxx',
                    join_paths('..', '..', '..', 'bin', 'eolian_cxx', 'eolian_cxx.cc'),
                    dependencies: [eina_cxx, eolian],
                    install: true,
                    include_directories : inc_dir,
                    cpp_args : package_c_args,
                  )
+
+if meson.is_cross_build()
+  eolian_cxx_gen = find_program('eolian_cxx', native: true)
+else
+  eolian_cxx_gen = eolian_cxx_gen_bin
+endif
