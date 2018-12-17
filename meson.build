@@ -91,6 +91,7 @@ foreach cf: dev_cflags_try
   endif
 endforeach
 add_global_arguments(dev_cflags, language: 'c')
+add_global_arguments(dev_cflags, language: 'cpp')
 
 
 foreach lang : ['c', 'objc', 'cpp']
