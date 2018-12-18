@@ -9,8 +9,10 @@ elm_themes_image_include = join_paths(meson.current_source_dir(), 'img')
 foreach edc_file : edc_files
    elm_themes += custom_target('edje_cc_' + edc_file,
     input : edc_file,
+    depfile: '@BASENAME@.edj.d',
     output : '@BASENAME@.edj',
     command : edje_cc_exe + [ '-beta',
+              '-deps', '@DEPFILE@',
               '-sd', join_paths(meson.current_source_dir(), 'snd'),
               '-id', elm_themes_image_include,
               '-id', join_paths(meson.current_source_dir(), 'fdo'),
