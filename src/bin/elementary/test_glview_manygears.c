@@ -461,7 +461,7 @@ draw_gear(GLData *gld, Gear *gear, GLfloat *transform,
 
    // Set up the position of the attributes in the vertex buffer object
    gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), NULL);
-   gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLfloat *) 0 + 3);
+   gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat *)));
 
    // Enable the attributes
    gl->glEnableVertexAttribArray(0);

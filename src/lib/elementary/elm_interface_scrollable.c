@@ -2675,7 +2675,7 @@ _elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int
    fvel_y = vel_y * (1/60.0);
    fvel = vel * (1/60.0);
 
-   if (abs(fvel) < _elm_config->thumbscroll_threshold ) return EINA_FALSE;
+   if (abs((int) fvel) < _elm_config->thumbscroll_threshold ) return EINA_FALSE;
 
    // calculate a number of frames to reach min_px when it follows a geometric sequence with scale factor r
    n = log(min_px/fvel) / log(r);

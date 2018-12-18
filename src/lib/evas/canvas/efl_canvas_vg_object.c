@@ -259,7 +259,6 @@ EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
 {
    Vg_Cache_Entry *old_entry;
-   int w, h;
 
    if (!file) return EINA_FALSE;
 

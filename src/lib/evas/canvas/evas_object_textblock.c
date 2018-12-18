@@ -5564,7 +5564,7 @@ _layout_item_obstacle_get(Ctxt *c, Evas_Object_Textblock_Item *it);
 static int
 _layout_par(Ctxt *c)
 {
-   Evas_Object_Textblock_Item *it, *prev_it;
+   Evas_Object_Textblock_Item *it;
    Eina_List *i;
    int ret = 0;
    int wrap = -1;
@@ -5681,8 +5681,8 @@ _layout_par(Ctxt *c)
         int redo_item = 0;
         Evas_Textblock_Obstacle_Info *obs_info = NULL;
         Evas_Coord itw;
+        Evas_Object_Textblock_Item *prev_it = it;
 
-        prev_it = it;
         it = _ITEM(eina_list_data_get(i));
         /* Skip visually deleted items */
         if (it->visually_deleted ||

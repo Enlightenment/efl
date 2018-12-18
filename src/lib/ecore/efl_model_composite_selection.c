@@ -380,7 +380,6 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
              Eo *parent;
              Eina_Value *vs;
              unsigned long selected = 0;
-             Eina_Bool success;
 
              // In this case we need to first unselect the previously selected one
              // and then commit the change to this one.

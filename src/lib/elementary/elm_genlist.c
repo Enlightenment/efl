@@ -3444,7 +3444,7 @@ _elm_genlist_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Genlist_Data
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_elm_genlist_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Elm_Genlist_Data *pd)
+_elm_genlist_efl_ui_focus_manager_manager_focus_get(const Eo *obj, EINA_UNUSED Elm_Genlist_Data *pd)
 {
    Eo *focused_obj = efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS));
    Eo *registered_manager = efl_ui_focus_object_focus_manager_get(obj);
@@ -3456,7 +3456,7 @@ _elm_genlist_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Elm_Genlist_D
 }
 
 static Efl_Ui_Focus_Object*
-_select_candidate(Eo *obj, Elm_Genlist_Data *pd, Efl_Ui_Focus_Direction direction)
+_select_candidate(Eo *obj, EINA_UNUSED Elm_Genlist_Data *pd, Efl_Ui_Focus_Direction direction)
 {
    Elm_Object_Item *first = elm_genlist_first_item_get(obj);
    Elm_Object_Item *last = elm_genlist_last_item_get(obj);

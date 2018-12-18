@@ -347,10 +347,10 @@ main(int argc, char **argv)
      {
         int fd;
         struct sockaddr_un client;
-        socklen_t len;
+        socklen_t slen;
 
-        len = sizeof(struct sockaddr_un);
-        fd = accept(sock, (struct sockaddr *)&client, &len);
+        slen = sizeof(struct sockaddr_un);
+        fd = accept(sock, (struct sockaddr *)&client, &slen);
 
         DBG("Accepting connection.");
         elm_quicklaunch_sub_init(argc, argv);

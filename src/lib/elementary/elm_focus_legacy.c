@@ -174,7 +174,7 @@ elm_object_focus_cycle(Evas_Object        *obj,
 }
 
 static Evas_Object*
-_get_legacy_target(Evas_Object *eo, Elm_Widget_Smart_Data *pd, Elm_Focus_Direction dir)
+_get_legacy_target(EINA_UNUSED Evas_Object *eo, Elm_Widget_Smart_Data *pd, Elm_Focus_Direction dir)
 {
    Evas_Object *result = NULL;
 
@@ -245,8 +245,8 @@ elm_object_focus_next(Evas_Object        *obj,
                {
                   Evas_Object *parent = eina_array_data_get(old_chain, i);
                   if (!elm_widget_is(parent)) continue;
-                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, pd);
-                  legacy_target = _get_legacy_target(parent, pd, dir);
+                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
+                  legacy_target = _get_legacy_target(parent, ppd, dir);
                   if (legacy_target) break;
                }
              eina_array_free(new_chain);

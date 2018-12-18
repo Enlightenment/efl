@@ -4248,8 +4248,8 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
                elm_gengrid_item_selected_set(eo_it, EINA_TRUE);
              else
                {
-                  ELM_GENGRID_ITEM_DATA_GET(eo_it, pd);
-                  if (pd->realized)
+                  ELM_GENGRID_ITEM_DATA_GET(eo_it, pd_it);
+                  if (pd_it->realized)
                     efl_ui_focus_manager_focus_set(obj, eo_it);
                }
           }
@@ -4261,7 +4261,7 @@ _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch(Eo *obj, Elm_Gengrid_Data
 }
 
 static Efl_Ui_Focus_Object*
-_select_candidate(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction)
+_select_candidate(Eo *obj, EINA_UNUSED Elm_Gengrid_Data *pd, Efl_Ui_Focus_Direction direction)
 {
    Elm_Object_Item *first = elm_gengrid_first_item_get(obj);
    Elm_Object_Item *last = elm_gengrid_last_item_get(obj);
@@ -4304,7 +4304,7 @@ _elm_gengrid_efl_ui_focus_manager_move(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Foc
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
-_elm_gengrid_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Elm_Gengrid_Data *pd)
+_elm_gengrid_efl_ui_focus_manager_manager_focus_get(const Eo *obj, EINA_UNUSED Elm_Gengrid_Data *pd)
 {
    Eo *focused_obj = efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS));
    Eo *registered_manager = efl_ui_focus_object_focus_manager_get(obj);
