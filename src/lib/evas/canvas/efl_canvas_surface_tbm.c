@@ -4,13 +4,13 @@
 
 typedef struct _Efl_Canvas_Surface_Tbm_Data
 {
-   Efl_Canvas_Surface_Data *base;
 } Efl_Canvas_Surface_Tbm_Data;
 
 EOLIAN static Eo *
-_efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
+_efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
+   Efl_Canvas_Surface_Data *sd;
 
    eo = efl_constructor(efl_super(eo, MY_CLASS));
    obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
@@ -22,34 +22,35 @@ _efl_canvas_surface_tbm_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Tbm_Da
         return NULL;
      }
 
-   pd->base = efl_data_ref(eo, EFL_CANVAS_SURFACE_MIXIN);
-   pd->base->surf.type = EVAS_NATIVE_SURFACE_TBM;
+   sd = efl_data_scope_get(eo, EFL_CANVAS_SURFACE_CLASS);
+   sd->surf.type = EVAS_NATIVE_SURFACE_TBM;
    return eo;
 }
 
 EOLIAN static void
-_efl_canvas_surface_tbm_efl_object_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd)
+_efl_canvas_surface_tbm_efl_object_destructor(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj;
 
    obj = efl_data_scope_get(eo, EFL_CANVAS_OBJECT_CLASS);
 
    ENFN->image_native_shutdown(ENC, EVAS_NATIVE_SURFACE_TBM);
-   efl_data_unref(eo, pd->base);
    efl_destructor(eo);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_surface_tbm_efl_canvas_surface_native_buffer_set(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd, void *buffer)
+_efl_canvas_surface_tbm_efl_canvas_surface_native_buffer_set(Eo *eo, Efl_Canvas_Surface_Tbm_Data *pd EINA_UNUSED, void *buffer)
 {
-   pd->base->surf.data.tbm.buffer = buffer;
-   if (!_evas_image_native_surface_set(eo, &pd->base->surf))
+   Efl_Canvas_Surface_Data *sd = efl_data_scope_get(eo, EFL_CANVAS_SURFACE_CLASS);
+
+   sd->surf.data.tbm.buffer = buffer;
+   if (!_evas_image_native_surface_set(eo, &sd->surf))
      {
         ERR("failed to set native buffer");
-        pd->base->buffer = NULL;
+        sd->buffer = NULL;
         return EINA_FALSE;
      }
-   pd->base->buffer = buffer;
+   sd->buffer = buffer;
    return EINA_TRUE;
 }
 
