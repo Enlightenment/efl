@@ -241,6 +241,12 @@ public class Globals {
             Eina.Log.Debug("Registered class successfully");
         return klass;
     }
+    public static Efl.Class get_efl_klass_from_klass<T>()
+    {
+        var native = get_native_class (typeof(T));
+        return new Efl.Class (native.GetEflClass());
+    }
+    
     public static List<IntPtr> get_efl_interfaces(System.Type type)
     {
         System.Type base_type = type.BaseType;
@@ -408,12 +414,14 @@ public class Globals {
     public static void data_set(Efl.Eo.IWrapper obj)
     {
       Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
+      Console.WriteLine($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
       IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
+      if (pd != null)
       {
           GCHandle gch = GCHandle.Alloc(obj);
           EolianPD epd;
           epd.pointer = GCHandle.ToIntPtr(gch);
-          Marshal.StructureToPtr(epd, pd, false);
+          Marshal.StructureToPtr<EolianPD>(epd, pd, false);
       }
     }
     public static Efl.Eo.IWrapper data_get(IntPtr pd)

@@ -1,6 +1,10 @@
 mono_files += files(
   'efl_all.cs',
-  'efl_csharp_application.cs'
+  'efl_csharp_application.cs',
+  'UserModel.cs',
+  'GenericModel.cs',
+  'Factory.cs',
+  'Bind.cs'
   )
 
 bash = find_program('bash')

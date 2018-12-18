@@ -1,0 +1,19 @@
+class Efl.Mono_Model_Internal extends Efl.Object implements Efl.Model
+{
+  methods {
+    add_property {
+      params {
+        @in name: string;
+        @in type: void_ptr;
+      }
+    }
+  }
+  implements {
+    Efl.Object.constructor;
+    Efl.Object.destructor;
+    Efl.Model.properties { get; }
+    Efl.Model.child_add;
+    Efl.Model.children_count { get; }
+    Efl.Model.children_slice_get;
+  }
+}

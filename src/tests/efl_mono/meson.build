@@ -59,6 +59,7 @@ efl_mono_src = [
      'Events.cs',
      'FunctionPointers.cs',
      'FunctionPointerMarshalling.cs',
+     'Model.cs',
      'Parts.cs',
      'Promises.cs',
      'Strbuf.cs',

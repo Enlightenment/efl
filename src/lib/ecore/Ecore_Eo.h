@@ -126,4 +126,7 @@ EAPI Eo *efl_main_loop_get(void);
  * @}
  */
 
+#include "efl_mono_model_internal.eo.h"
+#include "efl_mono_model_internal_child.eo.h"
+
 #endif

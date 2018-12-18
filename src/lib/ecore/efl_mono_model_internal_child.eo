@@ -1,0 +1,10 @@
+class Efl.Mono_Model_Internal_Child extends Efl.Object implements Efl.Model
+{
+  implements {
+    Efl.Object.constructor;
+    Efl.Object.destructor;
+    Efl.Model.properties { get; }
+    Efl.Model.property { get; set; }
+    Efl.Model.child_add;
+  }
+}

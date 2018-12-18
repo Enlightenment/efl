@@ -52,7 +52,9 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_view_model.eo \
 	lib/ecore/efl_core_env.eo \
 	lib/ecore/efl_core_proc_env.eo \
-	lib/ecore/efl_core_command_line.eo
+	lib/ecore/efl_core_command_line.eo \
+	lib/ecore/efl_mono_model_internal.eo \
+	lib/ecore/efl_mono_model_internal_child.eo
 
 ecore_test_eolian_files = \
 	tests/ecore/efl_app_test_cml.eo
@@ -144,6 +146,7 @@ lib/ecore/efl_composite_model_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
 lib/ecore/efl_view_model.c \
+lib/ecore/efl_mono_model_internal.c \
 lib/ecore/efl_linear_interpolator.c \
 lib/ecore/efl_accelerate_interpolator.c \
 lib/ecore/efl_decelerate_interpolator.c \
