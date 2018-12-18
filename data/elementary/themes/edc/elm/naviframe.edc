@@ -129,7 +129,7 @@ group { name: "elm/naviframe/item/basic/default";
          } \
       }
       BOTTOMMAX()
-      
+
       part { name: "title1"; type: TEXT;
          scale: 1;
          description { state: "default" 0.0;
@@ -375,7 +375,7 @@ group { name: "elm/naviframe/item/basic/default";
             max: 1 1;
             fixed: 1 1;
          }
-         description { state: "hidden" 0.0;
+         description { state: "title-hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
          }
@@ -396,7 +396,7 @@ group { name: "elm/naviframe/item/basic/default";
             max: 1 1;
             fixed: 1 1;
          }
-         description { state: "hidden" 0.0;
+         description { state: "title-hidden" 0.0;
             inherit: "default" 0.0;
             visible: 0;
          }
@@ -463,6 +463,8 @@ group { name: "elm/naviframe/item/basic/default";
          target: "shadow";
          target: "elm.swallow.content";
          target: "buttons_clip";
+         target: "elm.swallow.prev_btn";
+         target: "elm.swallow.next_btn";
       }
       program {
          signal: "elm,action,title,show"; source: "elm";
@@ -477,6 +479,8 @@ group { name: "elm/naviframe/item/basic/default";
          action: STATE_SET "default" 0.0;
          target: "buttons_clip";
          after: "title_transition_finished";
+         target: "elm.swallow.prev_btn";
+         target: "elm.swallow.next_btn";
       }
       program {
          signal: "elm,state,title,hide"; source: "elm";
@@ -485,11 +489,15 @@ group { name: "elm/naviframe/item/basic/default";
          target: "top";
          target: "shadow";
          target: "elm.swallow.content";
+         target: "elm.swallow.prev_btn";
+         target: "elm.swallow.next_btn";
       }
       program {
          signal: "elm,action,title,hide"; source: "elm";
          action: STATE_SET "title-hidden" 0.0;
          target: "buttons_clip";
+         target: "elm.swallow.prev_btn";
+         target: "elm.swallow.next_btn";
          after: "titlehide2";
       }
       program { name: "titlehide2";
@@ -506,21 +514,23 @@ group { name: "elm/naviframe/item/basic/default";
       program {
          signal: "elm,state,prev_btn,show"; source: "elm";
          action: STATE_SET "default" 0.0;
+         filter: "elm.swallow.content" "default";
          target: "elm.swallow.prev_btn";
       }
       program {
          signal: "elm,state,prev_btn,hide"; source: "elm";
-         action: STATE_SET "hidden" 0.0;
+         action: STATE_SET "title-hidden" 0.0;
          target: "elm.swallow.prev_btn";
       }
       program {
          signal: "elm,state,next_btn,show"; source: "elm";
          action: STATE_SET "default" 0.0;
+         filter: "elm.swallow.content" "default";
          target: "elm.swallow.next_btn";
       }
       program {
          signal: "elm,state,next_btn,hide"; source: "elm";
-         action: STATE_SET "hidden" 0.0;
+         action: STATE_SET "title-hidden" 0.0;
          target: "elm.swallow.next_btn";
       }
       program {
