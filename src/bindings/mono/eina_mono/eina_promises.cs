@@ -82,7 +82,7 @@ public class Promise : IDisposable
     /// </summary>
     public Promise(CancelCb cancelCb=null)
     {
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
 
         // Should we be able to pass different schedulers?
         IntPtr scheduler = efl_loop_future_scheduler_get(loop.NativeHandle);

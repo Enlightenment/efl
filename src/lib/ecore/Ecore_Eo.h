@@ -89,7 +89,6 @@ EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb ca
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);
-EAPI Eo *efl_app_get(void);
 
 /**
  * @}

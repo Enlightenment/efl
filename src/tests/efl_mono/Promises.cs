@@ -22,7 +22,7 @@ class TestPromises
         bool callbackCalled = false;
         Eina.Value received_value = null;
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
 
@@ -47,7 +47,7 @@ class TestPromises
         bool callbackCalled = false;
         Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
 
@@ -108,7 +108,7 @@ class TestPromises
             };
         };
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
         for (int i = 0; i < 4; i++)
@@ -154,7 +154,7 @@ class TestPromises
         for (int i = 0; i < 4; i++)
             cbs.Add(genResolvedCb(i));
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
         future = future.Chain(cbs);
@@ -184,7 +184,7 @@ class TestPromises
         bool callbackCalled = false;
         Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
 
@@ -211,7 +211,7 @@ class TestPromises
         bool callbackCalled = false;
         Eina.Value received_value = null;
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
 #pragma warning disable 0219
         Eina.Future future = new Eina.Future(promise,(Eina.Value value) => {
@@ -236,7 +236,7 @@ class TestPromises
         bool callbackCalled = false;
         Eina.Error received_error = Eina.Error.NO_ERROR;
 
-        Efl.Loop loop = Efl.App.GetLoopMain();
+        Efl.Loop loop = Efl.App.AppMain;
         Eina.Promise promise = new Eina.Promise();
         Eina.Future future = new Eina.Future(promise);
 

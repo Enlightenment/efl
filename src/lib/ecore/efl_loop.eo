@@ -11,7 +11,7 @@ class Efl.Loop extends Efl.Task
    The Efl main loop provides a clean and tiny event loop library with many modules to
    do lots of convenient things for a programmer, saving time and effort. It's
    lean and designed to work on anything from embedded systems all the way up to large
-   and powerful multi-cpu workstations. The main loop has a number of primitives you can use. 
+   and powerful multi-cpu workstations. The main loop has a number of primitives you can use.
    It serializes these and allows for
    greater responsiveness without the need for threads (or any other concurrency). However
    you can provide these if you need to.

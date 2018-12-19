@@ -61,7 +61,7 @@ static void _clean_old_environ(void);
 EAPI Eo *
 efl_main_loop_get(void)
 {
-   return efl_app_loop_main_get(EFL_APP_CLASS);
+   return efl_app_main_get(EFL_APP_CLASS);
 }
 
 EOLIAN static void

@@ -15,24 +15,24 @@ EFL_START_TEST(efl_app_test_efl_loop_register)
 
    ecore_init();
 
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_CLASS);
+   t = efl_provider_find(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_CLASS);
    fail_if(!efl_isa(t, EFL_LOOP_CLASS));
    fail_if(!efl_isa(t, EFL_APP_CLASS));
 
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
-   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get(),
+   n = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get(EFL_APP_CLASS),
                efl_loop_timer_interval_set(efl_added, 1.0));
-   efl_loop_register(efl_app_get(), EFL_LOOP_TIMER_CLASS, n);
+   efl_loop_register(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_TIMER_CLASS, n);
 
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_TIMER_CLASS);
    fail_if(!efl_isa(t, EFL_LOOP_TIMER_CLASS));
    fail_if(t != n);
 
-   efl_loop_unregister(efl_app_get(), EFL_LOOP_TIMER_CLASS, n);
+   efl_loop_unregister(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_TIMER_CLASS, n);
 
-   t = efl_provider_find(efl_app_get(), EFL_LOOP_TIMER_CLASS);
+   t = efl_provider_find(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_TIMER_CLASS);
    fail_if(t != NULL);
 
    ecore_shutdown();

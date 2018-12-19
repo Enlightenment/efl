@@ -3822,7 +3822,7 @@ Eina_Future* _dummy_test_object_get_future(EINA_UNUSED Eo *obj, Dummy_Test_Objec
 {
     if (pd->promise == NULL)
       {
-         Eo *loop = efl_app_loop_main_get(EFL_APP_CLASS);
+         Eo *loop = efl_app_main_get(EFL_APP_CLASS);
          Eina_Future_Scheduler *scheduler = efl_loop_future_scheduler_get(loop);
          pd->promise = eina_promise_new(scheduler, _promise_cancelled, pd);
       }

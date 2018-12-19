@@ -4,11 +4,14 @@ class Efl.App (Efl.Loop)
 {
    [[ ]]
    methods {
-      @property loop_main @class {
-         [[ Points to the main loop instance of the application. ]]
+      @property app_main @class {
+         [[ Returns the app object that is representing this process
+
+            Note: This function call only works in the main loop thread of the process.
+         ]]
          get {}
          values {
-            main_loop: Efl.Loop; [[Application main loop]]
+            app : Efl.App; [[Application for this process]]
          }
       }
       @property build_efl_version {

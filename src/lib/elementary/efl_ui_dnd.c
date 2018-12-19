@@ -25,7 +25,7 @@ Eo*
 _efl_ui_selection_manager_get(Eo *obj)
 {
    if (!efl_isa(obj, EFL_UI_WIDGET_CLASS)) return NULL;
-   Eo *app = efl_app_get();
+   Eo *app = efl_app_main_get(EFL_APP_CLASS);
    Eo *sel_man = efl_key_data_get(app, "__selection_manager");
    if (!sel_man)
      {
@@ -38,7 +38,7 @@ _efl_ui_selection_manager_get(Eo *obj)
 void
 _efl_ui_dnd_shutdown(void)
 {
-   Eo *app = efl_app_get();
+   Eo *app = efl_app_main_get(EFL_APP_CLASS);
    Eo *sel_man = efl_key_data_get(app, "__selection_manager");
 
    efl_del(sel_man);
