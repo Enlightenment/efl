@@ -110,8 +110,8 @@ _logic_free(void *data)
    Efl_Model_View_Logic *logic = data;
    Eina_Stringshare *source;
 
-   logic->get.free_cb(logic->get.data);
-   logic->set.free_cb(logic->set.data);
+   if (logic->get.free_cb) logic->get.free_cb(logic->get.data);
+   if (logic->set.free_cb) logic->set.free_cb(logic->set.data);
    EINA_LIST_FREE(logic->sources, source)
      {
         efl_model_view_property_unbind(logic->object, source, logic->property);
@@ -119,6 +119,23 @@ _logic_free(void *data)
      }
    eina_stringshare_del(logic->property);
    free(logic);
+}
+
+static Eina_Value *
+_efl_model_view_property_dummy_get(void *data EINA_UNUSED,
+                                   const Efl_Model_View *model_view EINA_UNUSED,
+                                   Eina_Stringshare *property EINA_UNUSED)
+{
+   return eina_value_error_new(EFL_MODEL_ERROR_NOT_SUPPORTED);
+}
+
+static Eina_Future *
+_efl_model_view_property_dummy_set(void *data EINA_UNUSED,
+                                   Efl_Model_View *model_view,
+                                   Eina_Stringshare *property EINA_UNUSED,
+                                   Eina_Value *value EINA_UNUSED)
+{
+   return efl_loop_future_rejected(model_view, EFL_MODEL_ERROR_READ_ONLY);
 }
 
 static Eina_Error
@@ -145,10 +162,10 @@ _efl_model_view_property_logic_add(Eo *obj, Efl_Model_View_Data *pd,
 
    logic->object = obj;
    logic->property = prop;
-   logic->get.fct = get;
+   logic->get.fct = get ? get : _efl_model_view_property_dummy_get;
    logic->get.free_cb = get_free_cb;
    logic->get.data = get_data;
-   logic->set.fct = set;
+   logic->set.fct = set ? set : _efl_model_view_property_dummy_set;
    logic->set.free_cb = set_free_cb;
    logic->set.data = set_data;
 
