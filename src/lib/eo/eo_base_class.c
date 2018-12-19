@@ -1643,6 +1643,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
    lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
+   pd->callback_stopped = EINA_FALSE;
    ret = EINA_TRUE;
 
    ev.object = obj_id;
