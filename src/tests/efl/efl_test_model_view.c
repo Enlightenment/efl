@@ -175,6 +175,8 @@ _efl_test_model_view_child_get(Eo *obj EINA_UNUSED,
         Eina_Value *p_int = NULL;
         Eina_Value *p_color = NULL;
         Eina_Value *p_label = NULL;
+        Eina_Value *p_deadend = NULL;
+        Eina_Error err = 0;
         int v_int = 0;
 
         p_int = efl_model_property_get(child, "test_p_int");
@@ -182,6 +184,11 @@ _efl_test_model_view_child_get(Eo *obj EINA_UNUSED,
 
         p_color = efl_model_property_get(child, "color");
         p_label = efl_model_property_get(child, "label");
+        p_deadend = efl_model_property_get(child, "deadend");
+
+        ck_assert_ptr_eq(eina_value_type_get(p_deadend), EINA_VALUE_TYPE_ERROR);
+        eina_value_error_get(p_deadend, &err);
+        ck_assert_int_eq(err, EFL_MODEL_ERROR_NOT_SUPPORTED);
 
         efl_event_callback_add(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_changed, &counting);
 
@@ -189,8 +196,14 @@ _efl_test_model_view_child_get(Eo *obj EINA_UNUSED,
                         .success = _dummy, .error = _expected_fail);
         efl_future_then(child, efl_model_property_set(child, "color", p_color),
                         .success = _dummy, .error = _expected_fail);
+        efl_future_then(child, efl_model_property_set(child, "deadend", eina_value_int_new(42)),
+                        .success = _dummy, .error = _expected_fail);
 
         all[i] = efl_model_property_set(child, "test_p_int", eina_value_int_new(v_int+100));
+
+        eina_value_free(p_color);
+        eina_value_free(p_label);
+        eina_value_free(p_deadend);
      }
 
    all[i] = EINA_FUTURE_SENTINEL;
@@ -284,6 +297,11 @@ EFL_START_TEST(efl_test_model_view)
                                      NULL, _efl_test_model_view_color_get, _efl_test_model_view_color_clean,
                                      NULL, _efl_test_model_view_color_set, _efl_test_model_view_color_clean,
                                      EINA_C_ARRAY_ITERATOR_NEW(dependences));
+
+   efl_model_view_property_logic_add(mv, "deadend",
+                                     NULL, NULL, NULL,
+                                     NULL, NULL, NULL,
+                                     NULL);
 
    f = efl_model_children_slice_get(mv, 0, efl_model_children_count_get(mv));
    f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,
