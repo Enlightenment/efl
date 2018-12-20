@@ -1,5 +1,5 @@
 ecore_wl2_deps = [dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'), wayland_protocol, dependency('wayland-client')]
-ecore_wl2_pub_deps = [eina, ecore, wayland_protocol]
+ecore_wl2_pub_deps = [eina, ecore]
 
 ecore_wl2_header_src = [
   'Ecore_Wl2.h'
