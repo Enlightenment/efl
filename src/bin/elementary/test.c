@@ -189,6 +189,8 @@ void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
 void test_ui_datepicker(void *data, Evas_Object *obj, void *event_info);
 void test_ui_timepicker(void *data, Evas_Object *obj, void *event_info);
 void test_ui_tags(void *data, Evas_Object *obj, void *event_info);
+void test_ui_panel(void *data, Evas_Object *obj, void *event_info);
+void test_ui_panel2(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index3(void *data, Evas_Object *obj, void *event_info);
@@ -1165,6 +1167,8 @@ add_tests:
    ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
    ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panes", test_panes_minsize);
+   ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel", test_ui_panel);
+   ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel Scrollable", test_ui_panel2);
 
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);

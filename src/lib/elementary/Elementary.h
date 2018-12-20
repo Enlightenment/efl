@@ -323,6 +323,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_datepicker.eo.h>
 # include <efl_ui_timepicker.eo.h>
 # include <efl_ui_tags.eo.h>
+# include <efl_ui_panel.eo.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>

@@ -186,6 +186,7 @@ collections {
 #include "edc/efl/video.edc"
 #include "edc/efl/focus.edc"
 #include "edc/efl/tags.edc"
+#include "edc/efl/panel.edc"
 #include "edc/efl/tooltip.edc"
 #include "edc/efl/photocam.edc"
 #include "edc/efl/progress.edc"
