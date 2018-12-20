@@ -103,6 +103,7 @@ struct _Eina_Promise {
    Eina_Future *future;
    Eina_Future_Scheduler *scheduler;
    Eina_Promise_Cancel_Cb cancel;
+   Eina_Free_Cb free_cb;
    const void *data;
 };
 
@@ -306,12 +307,19 @@ _eina_promise_link(Eina_Promise *p, Eina_Future *f)
 }
 
 static void
+_eina_promise_free(Eina_Promise *p)
+{
+   if (p->free_cb) p->free_cb((void*) p->data);
+   eina_mempool_free(_promise_mp, p);
+}
+
+static void
 _eina_promise_cancel(Eina_Promise *p)
 {
    DBG("Cancelling promise: %p, data: %p, future: %p", p, p->data, p->future);
    _eina_promise_unlink(p);
    p->cancel((void *)p->data, p);
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 static void
@@ -516,7 +524,7 @@ _eina_promise_deliver(Eina_Promise *p,
         DBG("Promise %p has no future", p);
         eina_value_flush(&value);
      }
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 Eina_Bool
@@ -635,7 +643,7 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
         // This function is called on a promise created with a scheduler, not a continue one.
         _eina_future_dispatch(p->scheduler, f, v);
      }
-   eina_mempool_free(_promise_mp, p);
+   _eina_promise_free(p);
 }
 
 static Eina_Value
@@ -1111,6 +1119,13 @@ eina_promise_data_set(Eina_Promise *p,
    p->data = data;
 }
 
+EAPI void
+eina_promise_data_free_cb_set(Eina_Promise *p,
+                              Eina_Free_Cb free_cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(p);
+   p->free_cb = free_cb;
+}
 
 static Eina_Value
 _eina_future_cb_easy(void *data, const Eina_Value value,
