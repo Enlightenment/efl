@@ -299,22 +299,10 @@
 
 #include "elm_object_item.h"
 
-typedef void                  (*Elm_Widget_Text_Set_Cb)(void *data, const char *part, const char *text);
-typedef void                  (*Elm_Widget_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
-typedef const char           *(*Elm_Widget_Text_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object          *(*Elm_Widget_Content_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, const char *part);
-typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
-typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
-typedef void                  (*Elm_Widget_Style_Set_Cb)(void *data, const char *style);
-typedef const char           *(*Elm_Widget_Style_Get_Cb)(const void *data);
-typedef void                  (*Elm_Widget_Focus_Set_Cb)(void *data, Eina_Bool focused);
-typedef Eina_Bool             (*Elm_Widget_Focus_Get_Cb)(const void *data);
 
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
-typedef void * (*list_data_get_func_type)(const Eina_List * l);
 
 #include "efl_ui_widget.eo.h"
 
@@ -322,55 +310,6 @@ typedef void * (*list_data_get_func_type)(const Eina_List * l);
  * @addtogroup Widget
  * @{
  */
-
-/* Please, ALWAYS update the ELM_WIDGET_SMART_CLASS_INIT macro
- * whenever you change the following struct! */
-
-/**
- * Base widget smart class. It has the 'virtual' functions for all
- * general, common actions on Elementary widgets.
- */
-typedef struct _Elm_Widget_Smart_Class
-{
-   Evas_Smart_Class base; /**< Base smart class struct, needed for all smart objects */
-   int              version; /**< Version of this smart class definition */
-
-   void             (*parent_set)(Evas_Object *obj,
-                                  Evas_Object *parent); /**< 'Virtual' function handling parent widget attachment to new object */
-   Eina_Bool        (*on_focus)(Evas_Object *obj); /**< 'Virtual' function handling focus in/out events on the widget */
-   Eina_Bool        (*disable)(Evas_Object *obj); /**< 'Virtual' function on the widget being disabled */
-   Eina_Bool        (*theme)(Evas_Object *obj); /**< 'Virtual' function on the widget being re-themed */
-   Eina_Bool        (*translate)(Evas_Object *obj); /**< 'Virtual' function handling language changes on Elementary */
-   Eina_Bool        (*event)(Evas_Object *obj,
-                             Evas_Object *source,
-                             Evas_Callback_Type type,
-                             void *event_info); /**< 'Virtual' function handling input events on the widget */
-   Eina_Bool        (*on_focus_region)(const Evas_Object *obj,
-                                       Evas_Coord *x,
-                                       Evas_Coord *y,
-                                       Evas_Coord *w,
-                                       Evas_Coord *h); /**< 'Virtual' function returning an inner area of a widget that should be brought into the visible area of a broader viewport, may this context arise. On the base Elementary widget class, it defaults to the object's total area, so only override it if you have to. */
-   Eina_Bool        (*focus_next)(const Evas_Object *obj,
-                                  Elm_Focus_Direction dir,
-                                  Evas_Object **next,
-                                  Elm_Object_Item **next_item); /**< 'Virtual' function handling passing focus to sub-objects */
-   Eina_Bool        (*focus_direction)(const Evas_Object *obj,
-                                       const Evas_Object *base,
-                                       double degree,
-                                       Evas_Object **target,
-                                       Elm_Object_Item **target_item,
-                                       double *weight); /**< 'Virtual' function handling passing focus to sub-objects <b>given a direction, in degrees</b> */
-
-   Eina_Bool        (*widget_sub_object_add)(Evas_Object *obj,
-                                      Evas_Object *sobj); /**< 'Virtual' function handling sub objects being added */
-
-   Eina_Bool        (*widget_sub_object_del)(Evas_Object *obj,
-                                      Evas_Object *sobj); /**< 'Virtual' function handling sub objects being removed */
-   void             (*access)(Evas_Object *obj,
-                              Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */
-   Eina_Bool        (*activate)(Evas_Object *obj,
-                                Efl_Ui_Activate act); /**< 'Virtual' function to activate widget  */
-} Elm_Widget_Smart_Class;
 
 /**
  * Base widget smart data. This is data bound to an Elementary object
@@ -639,7 +578,6 @@ struct _Elm_Widget_Item_Data
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
-EAPI Evas_Object     *elm_widget_add(Evas_Smart *, Evas_Object *);
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
 EAPI Efl_Ui_Theme_Apply_Result  elm_widget_theme(Evas_Object *obj);
@@ -680,7 +618,6 @@ EAPI void             elm_widget_display_mode_set(Evas_Object *obj, Evas_Display
 EAPI Eina_Bool        elm_widget_focus_highlight_enabled_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 Evas_Object          *_elm_widget_focus_highlight_object_get(const Evas_Object *obj);
-EAPI const Elm_Widget_Smart_Class *elm_widget_smart_class_get(void);
 
 /**
  * @internal
