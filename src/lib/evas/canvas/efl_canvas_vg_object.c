@@ -52,19 +52,6 @@ static const Evas_Object_Func object_func =
 };
 
 static void
-_evas_vg_tree_changed(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Evas_Object_Protected_Data *obj = data;
-   Efl_Canvas_Vg_Object_Data *pd = efl_data_scope_get(obj->object, MY_CLASS);
-
-   if (pd->changed) return;
-
-   pd->changed = EINA_TRUE;
-
-   evas_object_change(obj->object, obj);
-}
-
-static void
 _update_vgtree_viewport(Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
 {
    double vb_w, vb_h, vp_w, vp_h, scale_w, scale_h, scale;
@@ -116,7 +103,7 @@ _evas_vg_resize(void *data, const Efl_Event *ev)
 EOLIAN static Efl_VG *
 _efl_canvas_vg_object_root_node_get(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
 {
-   Efl_VG *root = NULL;
+   Efl_VG *root;
 
    if (pd->vg_entry)
      {
@@ -156,7 +143,10 @@ _efl_canvas_vg_object_root_node_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, E
 
    // detach/free the old root_node
    if (pd->user_entry && pd->user_entry->root)
-     efl_parent_set(pd->user_entry->root, NULL);
+     {
+        efl_canvas_vg_node_vg_obj_set(pd->user_entry->root, NULL, NULL);
+        efl_parent_set(pd->user_entry->root, NULL);
+     }
 
    if (root_node)
      {
@@ -174,8 +164,7 @@ _efl_canvas_vg_object_root_node_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, E
 
         // set the parent so that vg canvas can render it.
         efl_parent_set(pd->user_entry->root, pd->root);
-
-        efl_canvas_vg_node_root_set(root_node, eo_obj);
+        efl_canvas_vg_node_vg_obj_set(root_node, eo_obj, pd);
      }
    else if (pd->user_entry)
      {
@@ -345,13 +334,11 @@ _efl_canvas_vg_object_efl_object_constructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Da
    obj->private_data = efl_data_ref(eo_obj, MY_CLASS);
    obj->type = o_type;
 
-   /* root node */
-   //FIXME: Well. I don't think this is necessary if user set a new root node...
+   /* default root node */
+   pd->obj = obj;
    pd->root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
 
    eina_array_step_set(&pd->cleanup, sizeof(pd->cleanup), 8);
-
-   efl_event_callback_add(pd->root, EFL_GFX_PATH_EVENT_CHANGED, _evas_vg_tree_changed, obj);
 
    return eo_obj;
 }

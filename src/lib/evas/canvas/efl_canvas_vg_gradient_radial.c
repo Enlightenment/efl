@@ -22,7 +22,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_center_set(Eo *obj EINA_U
    pd->center.x = x;
    pd->center.y = y;
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static void
@@ -41,7 +41,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_radius_set(Eo *obj EINA_U
 {
    pd->radius = r;
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static double
@@ -59,7 +59,7 @@ _efl_canvas_vg_gradient_radial_efl_gfx_gradient_radial_focal_set(Eo *obj EINA_UN
    pd->focal.x = x;
    pd->focal.y = y;
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static void

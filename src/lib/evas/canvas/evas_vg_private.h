@@ -42,6 +42,7 @@ struct _Efl_Canvas_Vg_Object_Data
    Efl_VG                    *root;
    Vg_Cache_Entry            *vg_entry;
    Vg_User_Entry             *user_entry; //holds the user set vg tree
+   Evas_Object_Protected_Data *obj;
    Eina_Rect                  fill;
    Eina_Rect                  viewbox;
    unsigned int               width, height;
@@ -59,7 +60,8 @@ struct _Efl_Canvas_Vg_Node_Data
 
    Ector_Renderer *renderer;
 
-   Efl_VG *vg_obj;    //...Not necessary!!
+   Efl_VG *vg_obj;
+   Efl_Canvas_Vg_Object_Data *vd;
 
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
          Efl_Canvas_Vg_Node_Data *nd, Ector_Surface *surface,
@@ -72,7 +74,6 @@ struct _Efl_Canvas_Vg_Node_Data
 
    Eina_Bool visibility : 1;
    Eina_Bool changed : 1;
-   Eina_Bool parenting : 1;
 };
 
 typedef struct _Vg_Mask
@@ -124,7 +125,17 @@ void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
 Vg_File_Data *              evas_cache_vg_file_open(const char *file, const char *key);
 Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
 Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);
-void                        efl_canvas_vg_node_root_set(Efl_VG *node, Efl_VG *vg_obj);
+void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
+void                        efl_canvas_vg_node_change(Efl_VG *node);
+void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
+
+static inline void
+efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
+{
+   if (!vd || vd->changed) return;
+   vd->changed = EINA_TRUE;
+   evas_object_change(vd->obj->object, vd->obj);
+}
 
 static inline Efl_Canvas_Vg_Node_Data *
 _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child, Ector_Surface *surface, Eina_Matrix3 *transform, Ector_Buffer *mask, int mask_op)
@@ -133,14 +144,6 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child, Ector_Surf
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
    if (nd) nd->render_pre(vg_pd, child, nd, surface, transform, mask, mask_op, nd->data);
    return nd;
-}
-
-static inline void
-_efl_canvas_vg_node_changed(Eo *obj)
-{
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_FILL };
-
-   if (obj) efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 #define EFL_CANVAS_VG_COMPUTE_MATRIX(Current, Parent, Nd)                      \

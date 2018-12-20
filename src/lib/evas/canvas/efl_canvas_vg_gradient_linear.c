@@ -23,7 +23,7 @@ _efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_start_set(Eo *obj EINA_UN
    pd->start.x = x;
    pd->start.y = y;
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static void
@@ -43,7 +43,7 @@ _efl_canvas_vg_gradient_linear_efl_gfx_gradient_linear_end_set(Eo *obj EINA_UNUS
    pd->end.x = x;
    pd->end.y = y;
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static void

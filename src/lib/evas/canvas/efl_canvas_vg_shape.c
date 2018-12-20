@@ -17,6 +17,11 @@ struct _Efl_Canvas_Vg_Shape_Data
 };
 
 // FIXME: Use the renderer bounding box when it has been created instead of an estimation
+static void
+_efl_canvas_vg_shape_path_changed(void *data, const Efl_Event *event)
+{
+   efl_canvas_vg_node_change(event->object);
+}
 
 static void
 _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
@@ -28,7 +33,7 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
    pd->fill = efl_ref(f);
    efl_unref(tmp);
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static Efl_Canvas_Vg_Node *
@@ -47,7 +52,7 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
    pd->stroke.fill = efl_ref(f);
    efl_unref(tmp);
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static Efl_Canvas_Vg_Node *
@@ -67,7 +72,7 @@ _efl_canvas_vg_shape_stroke_marker_set(Eo *obj EINA_UNUSED,
    pd->stroke.marker = efl_ref(m);
    efl_unref(tmp);
 
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
 }
 
 static Efl_Canvas_Vg_Shape *
@@ -135,6 +140,9 @@ _efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *p
    nd->render_pre = _efl_canvas_vg_shape_render_pre;
    nd->data = pd;
 
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED,
+                          _efl_canvas_vg_shape_path_changed, pd);
+
    return obj;
 }
 
@@ -144,6 +152,9 @@ _efl_canvas_vg_shape_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *pd
    if (pd->fill) efl_unref(pd->fill);
    if (pd->stroke.fill) efl_unref(pd->stroke.fill);
    if (pd->stroke.marker) efl_unref(pd->stroke.marker);
+
+   efl_event_callback_del(obj, EFL_GFX_PATH_EVENT_CHANGED,
+                          _efl_canvas_vg_shape_path_changed, pd);
 
    efl_gfx_path_reset(obj);
    efl_destructor(efl_super(obj, MY_CLASS));

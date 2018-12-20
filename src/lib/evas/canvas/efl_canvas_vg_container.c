@@ -286,7 +286,18 @@ _efl_canvas_vg_container_efl_canvas_vg_node_mask_set(Eo *obj,
 
    pd->mask.option = op;
    efl_replace(&pd->mask_src, mask);
-   _efl_canvas_vg_node_changed(obj);
+   efl_canvas_vg_node_change(obj);
+}
+
+static void
+_efl_canvas_vg_container_efl_object_parent_set(Eo *obj,
+                                               Efl_Canvas_Vg_Container_Data *cd,
+                                               Eo *parent)
+{
+   efl_parent_set(efl_super(obj, MY_CLASS), parent);
+
+   Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
+   efl_canvas_vg_container_vg_obj_update(obj, nd);
 }
 
 EOLIAN static Efl_VG *
@@ -317,6 +328,32 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
      }
 
    return container;
+}
+
+void
+efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
+{
+   if (!obj) return;
+
+   Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(obj, MY_CLASS);
+   if (!cd) return;
+
+   Eina_List *l;
+   Efl_VG* child;
+
+   EINA_LIST_FOREACH(cd->children, l, child)
+     {
+        Efl_Canvas_Vg_Node_Data *child_nd =
+           efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
+
+        if (child_nd->vg_obj == nd->vg_obj) continue;
+
+        child_nd->vg_obj = nd->vg_obj;
+        child_nd->vd = nd->vd;
+
+        if (efl_isa(child, MY_CLASS))
+          efl_canvas_vg_container_vg_obj_update(child, child_nd);
+     }
 }
 
 EAPI Efl_VG*

@@ -18,6 +18,7 @@ class Efl.Canvas.Vg.Container (Efl.Canvas.Vg.Node)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.parent { set; }
       Efl.Gfx.Path.bounds_get;
       Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
