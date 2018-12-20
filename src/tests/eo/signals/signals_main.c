@@ -58,6 +58,22 @@ _restart_2_cb(void *data, const Efl_Event *event)
    efl_event_callback_stop(event->object);
 }
 
+static void
+_restart_3_cb(void *data, const Efl_Event *event)
+{
+   fprintf(stderr, "restart 3 inside: %i\n", inside);
+   fail_if(!inside);
+
+   fprintf(stderr, "restart 3 exit inside: %i (%i)\n", inside, called);
+   efl_event_callback_stop(event->object);
+
+   inside = EINA_TRUE;
+   efl_event_callback_call(event->object, event->desc, data);
+   inside = EINA_FALSE;
+
+   called++;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -198,10 +214,11 @@ main(int argc, char *argv[])
    fail_if(fcount != 0);
 
    efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_DEFAULT, _restart_1_cb, NULL);
+   efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_BEFORE, _restart_3_cb, NULL);
    efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_BEFORE, _restart_2_cb, NULL);
    efl_event_callback_legacy_call(obj, EV_RESTART, NULL);
    fail_if(inside);
-   fail_if(called != 2);
+   fail_if(called != 3);
 
    efl_unref(obj);
    efl_object_shutdown();
