@@ -485,7 +485,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
                                               EFL_LOOP_HANDLER_FLAGS_READ));
         _ecore_signal_pid_unlock();
         pd->run = EINA_TRUE;
-        pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
+        pd->promise = efl_loop_promise_new(obj, obj, _run_cancel_cb, NULL);
         return efl_future_then(obj, eina_future_new(pd->promise));
      }
    // this code is in the child here, and is temporary setup until we
