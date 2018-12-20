@@ -127,7 +127,7 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
         return efl_loop_future_resolved(obj, v);
      }
 
-   p = efl_loop_promise_new(obj, _eldbus_eina_promise_cancel, NULL);
+   p = efl_loop_promise_new(obj, NULL, _eldbus_eina_promise_cancel, NULL);
 
    slice = calloc(1, sizeof(struct _Eldbus_Children_Slice_Promise));
    slice->p = p;

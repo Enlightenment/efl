@@ -41,6 +41,7 @@ extern int eldbus_model_log_dom;
 
 static inline void
 _eldbus_eina_promise_cancel(void *data EINA_UNUSED,
+                            Efl_Loop_Consumer *consumer EINA_UNUSED,
                             const Eina_Promise *dead_ptr EINA_UNUSED)
 {
 }

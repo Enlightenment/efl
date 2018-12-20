@@ -1,3 +1,11 @@
+function EflLoopConsumerPromiseCancel {
+   [[EflLoopConsumerPromiseCancel function callback called when a promise is cancelled.]]
+   params {
+      @in consumer: Efl.Loop_Consumer; [[The consumer that was used to create the promise.]]
+      @in dead_promise: const(ptr(Eina.Promise)); [[The promise that was just cancelled.]]
+   }
+};
+
 class Efl.Loop_Consumer (Efl.Object)
 {
    [[An Efl.Loop_Consumer is a class which requires one of the parents to provide
@@ -25,6 +33,15 @@ class Efl.Loop_Consumer (Efl.Object)
             error: Eina.Error;
          }
          return: future<Eina.Error>;
+      }
+      promise_new {
+         [[Create a new promise with the scheduler coming from the loop provided by this object.
+
+	 Note: You should not use eina_promise_data_set as this function rely on controlling the promise data.]]
+         params {
+	    cancel: EflLoopConsumerPromiseCancel; [[Callback called when the promise is being cancelled.]]
+	 }
+	 return: ptr(Eina.Promise) @owned; [[The new promise.]]
       }
    }
    implements {

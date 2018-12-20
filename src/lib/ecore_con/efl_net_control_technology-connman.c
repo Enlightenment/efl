@@ -371,9 +371,9 @@ _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbu
 }
 
 static void
-_efl_net_control_technology_scan_promise_del(void *data, const Eina_Promise *dead_ptr)
+_efl_net_control_technology_scan_promise_del(void *data, Efl_Loop_Consumer *consumer, const Eina_Promise *dead_ptr)
 {
-   Eldbus_Pending *p = data;
+   Eldbus_Pending *p = consumer;
    Efl_Net_Control_Technology_Data *pd;
    Eo *o;
 
@@ -399,7 +399,7 @@ _efl_net_control_technology_scan(Eo *o, Efl_Net_Control_Technology_Data *pd)
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = efl_loop_promise_new(o, _efl_net_control_technology_scan_promise_del, NULL);
+   promise = efl_loop_promise_new(o, NULL, _efl_net_control_technology_scan_promise_del, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);
