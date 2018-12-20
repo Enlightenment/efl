@@ -148,7 +148,7 @@ install-examples:
 dist-hook:
 	@mkdir -p $(distdir)/tests/elua/data/apps $(distdir)/tests/eolian/data
 	@mkdir -p $(distdir)/tests/evas/images $(distdir)/tests/evas/meshes
-	@mkdir -p $(distdir)/tests/evas/fonts
+	@mkdir -p $(distdir)/tests/evas/fonts $(distdir)/tests/eolian/data_aux
 	@mkdir -p $(distdir)/tests/efreet/data $(distdir)/tests/edje/data
 	@mkdir -p $(distdir)/tests/emotion/data $(distdir)/tests/evas/meshes/md2
 	@mkdir -p $(distdir)/tests/evas/meshes/obj $(distdir)/tests/efreet/data/sub
