@@ -213,6 +213,7 @@ tests/eolian_cxx/ns_name.eo \
 tests/eolian_cxx/ns_name_other.eo \
 tests/eolian_cxx/name1_name2_type_generation.eo \
 tests/eolian_cxx/complex.eo \
+tests/eolian_cxx/property_holder.eo \
 tests/eolian_cxx/cyclic1.eo \
 tests/eolian_cxx/cyclic2.eo
 
