@@ -130,7 +130,7 @@ _efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Ein
 EAPI Eina_Future *
 efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Efl_Model *model, Efl_Gfx_Entity *parent)
 {
-   return efl_future_then(efl_ui_factory_create(factory, model, parent), factory,
+   return efl_future_then(factory, efl_ui_factory_create(factory, model, parent),
                           .success_type = EINA_VALUE_TYPE_OBJECT,
                           .success = _efl_ui_view_factory_item_created);
 }
