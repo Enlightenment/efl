@@ -28,8 +28,6 @@ _edje_part_recalc_textblock_text_get(Edje *ed, Edje_Real_Part *ep,
 
    if (chosen_desc->text.id_source >= 0)
      {
-        Edje_Part_Description_Text *et;
-
         ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
      }
    else
@@ -835,7 +833,7 @@ _edje_text_min_max_calc(Edje *ed, Edje_Real_Part *ep,
 }
 
 static void
-_edje_text_recalc(FLOAT_T sc,
+_edje_text_recalc(FLOAT_T sc EINA_UNUSED,
       Edje *ed,
       Edje_Real_Part *ep,
       Edje_Part_Description_Text *chosen_desc,
