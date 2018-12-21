@@ -119,7 +119,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_theme.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/elm_code_widget.eo \
-	lib/elementary/efl_selection.eo \
+	lib/elementary/efl_ui_selection.eo \
 	lib/elementary/efl_ui_dnd.eo \
 	lib/elementary/efl_ui_dnd_container.eo \
 	lib/elementary/efl_ui_focus_manager_window_root.eo \
@@ -172,7 +172,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_model_state.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
-	lib/elementary/efl_selection_manager.eo \
+	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \
 	$(NULL)
 
@@ -291,7 +291,7 @@ elm_eolian_type_files = \
 	lib/elementary/elm_general.eot \
 	lib/elementary/efl_ui.eot \
 	lib/elementary/efl_ui_list_view_types.eot \
-	lib/elementary/efl_selection_types.eot \
+	lib/elementary/efl_ui_selection_types.eot \
 	lib/elementary/efl_ui_dnd_types.eot
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
@@ -865,9 +865,9 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_scroller.c \
 	lib/elementary/efl_ui_scroll_manager.c \
 	lib/elementary/efl_ui_pan.c \
-	lib/elementary/efl_selection_manager.c \
-	lib/elementary/efl_selection_manager_private.h \
-	lib/elementary/efl_selection.c \
+	lib/elementary/efl_ui_selection_manager.c \
+	lib/elementary/efl_ui_selection_manager_private.h \
+	lib/elementary/efl_ui_selection.c \
 	lib/elementary/efl_datetime_manager.c \
 	lib/elementary/efl_ui_dnd.c \
 	lib/elementary/elm_focus_legacy.c \

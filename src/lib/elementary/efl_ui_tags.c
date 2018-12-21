@@ -933,7 +933,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
    sd->entry = efl_add(EFL_UI_TEXT_CLASS, sd->box,
                        efl_text_multiline_set(efl_added, EINA_FALSE),
                        efl_text_set(efl_added, ""),
-                       efl_ui_text_cnp_mode_set(efl_added, EFL_SELECTION_FORMAT_MARKUP),
+                       efl_ui_text_cnp_mode_set(efl_added, EFL_UI_SELECTION_FORMAT_MARKUP),
                        efl_ui_text_input_panel_enabled_set(efl_added, EINA_FALSE),
                        efl_text_interactive_editable_set(efl_added, EINA_TRUE),
                        efl_composite_attach(obj, efl_added));

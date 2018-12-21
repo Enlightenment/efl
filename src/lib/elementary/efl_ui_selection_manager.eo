@@ -1,13 +1,13 @@
 import efl_ui_dnd_types;
 
-class Efl.Selection_Manager (Efl.Object) {
+class Efl.Ui.Selection_Manager (Efl.Object) {
    methods {
       selection_set @beta {
          [[Set selection]]
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
-            @in type: Efl.Selection_Type; [[Selection type]]
-            @in format: Efl.Selection_Format; [[Selection format]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection format]]
             @in data: Eina.Slice; [[Selection data]]
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
@@ -17,16 +17,16 @@ class Efl.Selection_Manager (Efl.Object) {
          [[Get selection]]
          params {
             @in request: const(Efl.Object); [[Seleciton owner]]
-            @in type: Efl.Selection_Type; [[Selection type]]
-            @in format: Efl.Selection_Format; [[Selection Format]]
-            @in data_func: Efl.Selection_Data_Ready; [[Data ready function pointer]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
+            @in data_func: Efl.Ui.Selection_Data_Ready; [[Data ready function pointer]]
             @in seat: uint @optional;[[Specified seat for multiple seats case.]]
          }
       }
       selection_clear @beta {
          params {
             @in owner: Efl.Object; [[Seleciton owner]]
-            @in type: Efl.Selection_Type; [[Selection type]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
       }
@@ -34,7 +34,7 @@ class Efl.Selection_Manager (Efl.Object) {
          [[Check if the request object has selection or not]]
          params {
             @in request: Efl.Object; [[Request object]]
-            @in type: Efl.Selection_Type; [[Selection type]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
             @in seat: uint @optional; [[Specified seat for multiple seats case.]]
          }
          return: bool; [[EINA_TRUE if the request object has selection, otherwise, EINA_FALSE]]
@@ -48,9 +48,9 @@ class Efl.Selection_Manager (Efl.Object) {
           ]]
          params {
             @in drag_obj: Efl.Object; [[Drag object]]
-            @in format: Efl.Selection_Format; [[Data format]]
+            @in format: Efl.Ui.Selection_Format; [[Data format]]
             @in data: Eina.Slice; [[Data to transfer]]
-            @in action: Efl.Selection_Action; [[Action when data is transferred]]
+            @in action: Efl.Ui.Selection_Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
@@ -59,7 +59,7 @@ class Efl.Selection_Manager (Efl.Object) {
          [[This sets the action for the drag]]
          params {
             @in drag_obj: Efl.Object; [[Drag object]]
-            @in action: Efl.Selection_Action; [[Drag action]]
+            @in action: Efl.Ui.Selection_Action; [[Drag action]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
@@ -102,7 +102,7 @@ class Efl.Selection_Manager (Efl.Object) {
               - EFL_UI_DND_DROP_DRAG_DROP.]]
          params {
             @in target_obj: Efl.Object; [[Drop target]]
-            @in format: Efl.Selection_Format; [[Accepted data format]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
          return: bool; [[$true on success, $false otherwise]]
@@ -111,7 +111,7 @@ class Efl.Selection_Manager (Efl.Object) {
          [[Remove a dropable target]]
          params {
             @in target_obj: Efl.Object; [[Drop target]]
-            @in format: Efl.Selection_Format; [[Accepted data format]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
@@ -119,7 +119,7 @@ class Efl.Selection_Manager (Efl.Object) {
          [[Add dropable target for a container in which items can drop to it]]
          params {
             @in cont: Efl.Object; [[Container object]]
-            @in format: Efl.Selection_Format; [[Accepted data formats]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data formats]]
             @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }

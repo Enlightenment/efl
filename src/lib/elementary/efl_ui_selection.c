@@ -2,43 +2,43 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_SELECTION_MANAGER_BETA
+#define EFL_UI_SELECTION_MANAGER_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#define MY_CLASS EFL_SELECTION_MIXIN
-#define MY_CLASS_NAME "Efl.Selection"
+#define MY_CLASS EFL_UI_SELECTION_MIXIN
+#define MY_CLASS_NAME "Efl.Ui.Selection"
 
 EOLIAN static void
-_efl_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format,
-                                     void *data_func_data, Efl_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
+_efl_ui_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Type type, Efl_Ui_Selection_Format format,
+                                     void *data_func_data, Efl_Ui_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_selection_get(sel_man, obj, type, format,
+   efl_ui_selection_manager_selection_get(sel_man, obj, type, format,
                                        data_func_data, data_func,
                                        data_func_free_cb, seat);
 }
 
 EOLIAN static Eina_Future *
-_efl_selection_selection_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, Efl_Selection_Format format, Eina_Slice data, unsigned int seat)
+_efl_ui_selection_selection_set(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Type type, Efl_Ui_Selection_Format format, Eina_Slice data, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   return efl_selection_manager_selection_set(sel_man, obj, type, format, data, seat);
+   return efl_ui_selection_manager_selection_set(sel_man, obj, type, format, data, seat);
 }
 
 EOLIAN static void
-_efl_selection_selection_clear(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
+_efl_ui_selection_selection_clear(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Type type, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_selection_clear(sel_man, obj, type, seat);
+   efl_ui_selection_manager_selection_clear(sel_man, obj, type, seat);
 }
 
 EOLIAN static Eina_Bool
-_efl_selection_has_owner(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Type type, unsigned int seat)
+_efl_ui_selection_has_owner(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Type type, unsigned int seat)
 {
     Eo *sel_man = _efl_ui_selection_manager_get(obj);
-    return efl_selection_manager_selection_has_owner(sel_man, obj, type, seat);
+    return efl_ui_selection_manager_selection_has_owner(sel_man, obj, type, seat);
 }
 
 
@@ -153,7 +153,7 @@ struct _Cnp_Data_Cb_Wrapper
 };
 
 static void
-_selection_data_ready_cb(void *data, Efl_Object *obj, Efl_Selection_Data *seldata)
+_selection_data_ready_cb(void *data, Efl_Object *obj, Efl_Ui_Selection_Data *seldata)
 {
     Cnp_Data_Cb_Wrapper *wdata = data;
     if (!wdata) return;
@@ -217,8 +217,8 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
 #endif
    wdata->udata = udata;
    wdata->datacb = datacb;
-   efl_selection_manager_selection_get(sel_man, (Evas_Object *)obj, (Efl_Selection_Type)type,
-                                       (Efl_Selection_Format)format,
+   efl_ui_selection_manager_selection_get(sel_man, (Evas_Object *)obj, (Efl_Ui_Selection_Type)type,
+                                       (Efl_Ui_Selection_Format)format,
                                        wdata, _selection_data_ready_cb, NULL, seatid);
    return EINA_TRUE;
 }
@@ -240,8 +240,8 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   f = efl_selection_manager_selection_set(sel_man, obj, (Efl_Selection_Type)type,
-                                           (Efl_Selection_Format)format, data, seatid);
+   f = efl_ui_selection_manager_selection_set(sel_man, obj, (Efl_Ui_Selection_Type)type,
+                                           (Efl_Ui_Selection_Format)format, data, seatid);
 
    ldata->obj = obj;
    ldata->type = type;
@@ -259,7 +259,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type type)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_selection_clear(sel_man, obj, (Efl_Selection_Type)type, seatid);
+   efl_ui_selection_manager_selection_clear(sel_man, obj, (Efl_Ui_Selection_Type)type, seatid);
 
    return EINA_TRUE;
 }
@@ -292,8 +292,8 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    seatid = _wl_default_seat_id_get(obj);
 #endif
 
-   return efl_selection_manager_selection_has_owner(sel_man, obj,
-                                                    EFL_SELECTION_TYPE_CLIPBOARD, seatid);
+   return efl_ui_selection_manager_selection_has_owner(sel_man, obj,
+                                                    EFL_UI_SELECTION_TYPE_CLIPBOARD, seatid);
 }
 
 EAPI Eina_Bool
@@ -305,8 +305,8 @@ elm_cnp_clipboard_selection_has_owner(Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   return efl_selection_manager_selection_has_owner(sel_man, obj,
-                                                    EFL_SELECTION_TYPE_CLIPBOARD, seatid);
+   return efl_ui_selection_manager_selection_has_owner(sel_man, obj,
+                                                    EFL_UI_SELECTION_TYPE_CLIPBOARD, seatid);
 }
 
-#include "efl_selection.eo.c"
+#include "efl_ui_selection.eo.c"

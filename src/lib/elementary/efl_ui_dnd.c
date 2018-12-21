@@ -7,7 +7,7 @@
 #define ELM_INTERFACE_ATSPI_TEXT_EDITABLE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 
-#define EFL_SELECTION_MANAGER_BETA
+#define EFL_UI_SELECTION_MANAGER_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -29,7 +29,7 @@ _efl_ui_selection_manager_get(Eo *obj)
    Eo *sel_man = efl_key_data_get(app, "__selection_manager");
    if (!sel_man)
      {
-        sel_man = efl_add(EFL_SELECTION_MANAGER_CLASS, app);
+        sel_man = efl_add(EFL_UI_SELECTION_MANAGER_CLASS, app);
         efl_key_data_set(app, "__selection_manager", sel_man);
      }
    return sel_man;
@@ -45,12 +45,12 @@ _efl_ui_dnd_shutdown(void)
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_start(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, Eina_Slice data,
-                       Efl_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
+_efl_ui_dnd_drag_start(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Format format, Eina_Slice data,
+                       Efl_Ui_Selection_Action action, void *icon_func_data, Efl_Dnd_Drag_Icon_Create icon_func, Eina_Free_Cb icon_func_free_cb,
                        unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_drag_start(sel_man, obj, format, data, action,
+   efl_ui_selection_manager_drag_start(sel_man, obj, format, data, action,
                                     icon_func_data, icon_func, icon_func_free_cb,
                                     seat);
 }
@@ -59,29 +59,29 @@ EOLIAN static void
 _efl_ui_dnd_drag_cancel(Eo *obj, void *pd EINA_UNUSED, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_drag_cancel(sel_man, obj, seat);
+   efl_ui_selection_manager_drag_cancel(sel_man, obj, seat);
 }
 
 EOLIAN static void
-_efl_ui_dnd_drag_action_set(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Action action, unsigned int seat)
+_efl_ui_dnd_drag_action_set(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Action action, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_drag_action_set(sel_man, obj, action, seat);
+   efl_ui_selection_manager_drag_action_set(sel_man, obj, action, seat);
 }
 
 
 EOLIAN static void
-_efl_ui_dnd_drop_target_add(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, unsigned int seat)
+_efl_ui_dnd_drop_target_add(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Format format, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_drop_target_add(sel_man, obj, format, seat);
+   efl_ui_selection_manager_drop_target_add(sel_man, obj, format, seat);
 }
 
 EOLIAN static void
-_efl_ui_dnd_drop_target_del(Eo *obj, void *pd EINA_UNUSED, Efl_Selection_Format format, unsigned int seat)
+_efl_ui_dnd_drop_target_del(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Format format, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_drop_target_del(sel_man, obj, format, seat);
+   efl_ui_selection_manager_drop_target_del(sel_man, obj, format, seat);
 }
 
 EOLIAN static double
@@ -107,7 +107,7 @@ _efl_ui_dnd_container_drag_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd,
    double drag_delay_time = pd->drag_delay_time;
    double anim_time = elm_config_drag_anim_duration_get();
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_container_drag_item_add(sel_man, obj, drag_delay_time, anim_time,
+   efl_ui_selection_manager_container_drag_item_add(sel_man, obj, drag_delay_time, anim_time,
                                                  data_func_data, data_func, data_func_free_cb,
                                                  item_func_data, item_func, item_func_free_cb,
                                                  icon_func_data, icon_func, icon_func_free_cb,
@@ -119,23 +119,23 @@ static void
 _efl_ui_dnd_container_drag_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_UNUSED, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_container_drag_item_del(sel_man, obj, seat);
+   efl_ui_selection_manager_container_drag_item_del(sel_man, obj, seat);
 }
 EOLIAN static void
 _efl_ui_dnd_container_drop_item_add(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_UNUSED,
-                                    Efl_Selection_Format format,
+                                    Efl_Ui_Selection_Format format,
                                     void *item_func_data, Efl_Dnd_Item_Get item_func, Eina_Free_Cb item_func_free_cb,
                                     unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_container_drop_item_add(sel_man, obj, format, item_func_data, item_func, item_func_free_cb, seat);
+   efl_ui_selection_manager_container_drop_item_add(sel_man, obj, format, item_func_data, item_func, item_func_free_cb, seat);
 }
 
 EOLIAN static void
 _efl_ui_dnd_container_drop_item_del(Eo *obj, Efl_Ui_Dnd_Container_Data *pd EINA_UNUSED, unsigned int seat)
 {
    Eo *sel_man = _efl_ui_selection_manager_get(obj);
-   efl_selection_manager_container_drop_item_del(sel_man, obj, seat);
+   efl_ui_selection_manager_container_drop_item_del(sel_man, obj, seat);
 }
 
 
@@ -288,7 +288,7 @@ static void
 _dnd_drop_cb(void *data, const Efl_Event *event)
 {
    Dnd_Drop *drop = data;
-   Efl_Selection_Data *org_ddata = event->info;
+   Efl_Ui_Selection_Data *org_ddata = event->info;
    Elm_Selection_Data ddata;
 
    ddata.x = org_ddata->pos.x;
@@ -344,8 +344,8 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 
    ic->icon_data = icon_create_data;
    ic->icon_cb = icon_create_cb;
-   efl_selection_manager_drag_start(sel_man, obj, (Efl_Selection_Format)format, sl,
-                                    (Efl_Selection_Action)action,
+   efl_ui_selection_manager_drag_start(sel_man, obj, (Efl_Ui_Selection_Format)format, sl,
+                                    (Efl_Ui_Selection_Action)action,
                                     ic, _dnd_icon_create_cb, NULL, seatid);
 
    return EINA_TRUE;
@@ -368,7 +368,7 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
 #ifdef HAVE_ELEMENTARY_WL2
    seatid = _wl_default_seat_id_get(obj);
 #endif
-   efl_selection_manager_drag_action_set(sel_man, obj, (Efl_Selection_Action)action, seatid);
+   efl_ui_selection_manager_drag_action_set(sel_man, obj, (Efl_Ui_Selection_Action)action, seatid);
 
    return EINA_TRUE;
 }
@@ -383,7 +383,7 @@ elm_drag_cancel(Evas_Object *obj)
    seatid = _wl_default_seat_id_get(obj);
 #endif
 
-   efl_selection_manager_drag_cancel(sel_man, obj, seatid);
+   efl_ui_selection_manager_drag_cancel(sel_man, obj, seatid);
 
    return EINA_TRUE;
 }
@@ -462,7 +462,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
                           _dnd_drag_pos_cb, pos);
    efl_event_callback_add(obj, EFL_UI_DND_EVENT_DRAG_DROP,
                           _dnd_drop_cb, drop);
-   efl_selection_manager_drop_target_add(sel_man, obj, (Efl_Selection_Format)format, seatid);
+   efl_ui_selection_manager_drop_target_add(sel_man, obj, (Efl_Ui_Selection_Format)format, seatid);
 
    return EINA_TRUE;
 
@@ -521,7 +521,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
         free(drop->pos);
         free(drop);
      }
-   efl_selection_manager_drop_target_del(sel_man, obj, (Efl_Selection_Format)format, seatid);
+   efl_ui_selection_manager_drop_target_del(sel_man, obj, (Efl_Ui_Selection_Format)format, seatid);
 
    return EINA_TRUE;
 }
@@ -568,7 +568,7 @@ static void
 _dnd_cont_drop_cb(void *data, const Efl_Event *event)
 {
    Dnd_Cont_Drop *drop = data;
-   Efl_Selection_Data *org_ddata = event->info;
+   Efl_Ui_Selection_Data *org_ddata = event->info;
    Elm_Selection_Data ddata;
    Evas_Coord xret = 0, yret = 0;
 
@@ -681,7 +681,7 @@ elm_drop_item_container_add(Evas_Object *obj,
                           _dnd_cont_drag_pos_cb, pos);
    efl_event_callback_add(obj, EFL_UI_DND_EVENT_DRAG_DROP,
                           _dnd_cont_drop_cb, drop);
-   efl_selection_manager_container_drop_item_add(sel_man, obj, (Efl_Selection_Format)format,
+   efl_ui_selection_manager_container_drop_item_add(sel_man, obj, (Efl_Ui_Selection_Format)format,
                                                  item_get_cb, _dnd_item_func, NULL,
                                                  seatid);
 
@@ -708,21 +708,21 @@ elm_drop_item_container_del(Evas_Object *obj)
 
    _cont_drop_free_data(obj);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _cont_drop_obj_del_cb);
-   efl_selection_manager_container_drop_item_del(sel_man, obj, seatid);
+   efl_ui_selection_manager_container_drop_item_del(sel_man, obj, seatid);
 
    return EINA_TRUE;
 }
 
 static void
-_cont_drag_data_func(void *data, Efl_Object *obj, Efl_Selection_Format *format,
-                     Eina_Rw_Slice *drag_data, Efl_Selection_Action *action)
+_cont_drag_data_func(void *data, Efl_Object *obj, Efl_Ui_Selection_Format *format,
+                     Eina_Rw_Slice *drag_data, Efl_Ui_Selection_Action *action)
 {
    Item_Container_Drag_Info *di;
 
    di = data;
    if (!di) return;
    di->data_get_cb(obj, di->it, &di->user_info);
-   if (format) *format = (Efl_Selection_Format)di->user_info.format;
+   if (format) *format = (Efl_Ui_Selection_Format)di->user_info.format;
    if (drag_data)
      {
         if (di->user_info.data)
@@ -731,7 +731,7 @@ _cont_drag_data_func(void *data, Efl_Object *obj, Efl_Selection_Format *format,
              drag_data->len = strlen(di->user_info.data);
           }
      }
-   if (action) *action = (Efl_Selection_Action)di->user_info.action;
+   if (action) *action = (Efl_Ui_Selection_Action)di->user_info.action;
 }
 
 static Eina_List *
@@ -817,7 +817,7 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
    di_list = eina_list_append(di_list, di);
    efl_key_data_set(obj, "__cont_drag_item", di_list);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _cont_drag_obj_del_cb, NULL);
-   efl_selection_manager_container_drag_item_add(sel_man, obj, anim_tm, tm_to_drag,
+   efl_ui_selection_manager_container_drag_item_add(sel_man, obj, anim_tm, tm_to_drag,
                                                  di, _cont_drag_data_func, NULL,
                                                  di, _cont_drag_item_func, NULL,
                                                  di, _cont_drag_icon_create, NULL,
@@ -838,7 +838,7 @@ elm_drag_item_container_del(Evas_Object *obj)
 
    _cont_drag_free_data(obj);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _cont_drag_obj_del_cb);
-   efl_selection_manager_container_drag_item_del(sel_man, obj, seatid);
+   efl_ui_selection_manager_container_drag_item_del(sel_man, obj, seatid);
 
    return EINA_TRUE;
 }

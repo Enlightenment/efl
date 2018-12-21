@@ -1,5 +1,5 @@
-#ifndef EFL_SELECTION_MANAGER_PRIVATE_H
-#define EFL_SELECTION_MANAGER_PRIVATE_H
+#ifndef EFL_UI_SELECTION_MANAGER_PRIVATE_H
+#define EFL_UI_SELECTION_MANAGER_PRIVATE_H
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
@@ -35,7 +35,7 @@ enum
    SELECTION_N_ATOMS,
 };
 
-typedef struct _Efl_Selection_Manager_Data Efl_Selection_Manager_Data;
+typedef struct _Efl_Ui_Selection_Manager_Data Efl_Ui_Selection_Manager_Data;
 typedef struct _Sel_Manager_Seat_Selection Sel_Manager_Seat_Selection;
 typedef struct _Sel_Manager_Atom Sel_Manager_Atom;
 typedef struct _Sel_Manager_Dropable Sel_Manager_Dropable;
@@ -51,7 +51,7 @@ typedef struct _Saved_Type    Saved_Type;
 #ifdef HAVE_ELEMENTARY_X
 typedef Eina_Bool (*X11_Converter_Fn_Cb)     (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
 typedef int       (*X11_Response_Handler_Cb) (Sel_Manager_Selection *sel, Ecore_X_Event_Selection_Notify *);
-typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *, Efl_Selection_Data *, Tmp_Info **);
+typedef Eina_Bool (*X11_Data_Preparer_Cb)    (Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selection_Notify *, Efl_Ui_Selection_Data *, Tmp_Info **);
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
 typedef Eina_Bool (*Wl_Converter_Fn_Cb)     (char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
@@ -59,12 +59,12 @@ static Eina_Bool _wl_targets_converter(char *target, Sel_Manager_Selection *sel,
 static Eina_Bool _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 static Eina_Bool _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int size, void **data_ret, int *size_ret);
 
-typedef Eina_Bool (*Wl_Data_Preparer_Cb)    (Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
-static Eina_Bool _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
-static Eina_Bool _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
-static Eina_Bool _wl_data_preparer_vcard(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
-static Eina_Bool _wl_data_preparer_image(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
-static Eina_Bool _wl_data_preparer_text(Sel_Manager_Selection *sel, Efl_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+typedef Eina_Bool (*Wl_Data_Preparer_Cb)    (Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+static Eina_Bool _wl_data_preparer_markup(Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+static Eina_Bool _wl_data_preparer_uri(Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+static Eina_Bool _wl_data_preparer_vcard(Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+static Eina_Bool _wl_data_preparer_image(Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
+static Eina_Bool _wl_data_preparer_text(Sel_Manager_Selection *sel, Efl_Ui_Selection_Data *ddata, Ecore_Wl2_Event_Offer_Data_Ready *ev, Tmp_Info **tmp_info);
 #endif
 
 
@@ -89,7 +89,7 @@ struct _Sel_Manager_Selection
 {
    const char               *debug;
    Eina_Rw_Slice             data;
-   Efl_Selection_Format      request_format;
+   Efl_Ui_Selection_Format   request_format;
 #ifdef HAVE_ELEMENTARY_X
    Eina_Bool               (*set) (Ecore_X_Window, const void *data, int size);
    Eina_Bool               (*clear) (void);
@@ -118,9 +118,9 @@ struct _Sel_Manager_Selection
    Ecore_Win32_Window       *win;
 #endif
 
-   Efl_Selection_Format      want_format;
-   Efl_Selection_Format      format;
-   Efl_Selection_Action      action;
+   Efl_Ui_Selection_Format   want_format;
+   Efl_Ui_Selection_Format   format;
+   Efl_Ui_Selection_Action   action;
    Eina_Bool                 active : 1;
 
    unsigned char             asked : 2;
@@ -128,7 +128,7 @@ struct _Sel_Manager_Selection
    Efl_Object               *owner;
    Efl_Object               *request_obj;
    void                     *data_func_data;
-   Efl_Selection_Data_Ready  data_func;
+   Efl_Ui_Selection_Data_Ready  data_func;
    Eina_Free_Cb              data_func_free_cb;
 
    Sel_Manager_Seat_Selection *seat_sel;
@@ -140,7 +140,7 @@ struct _Sel_Manager_Selection_Lost
 {
     Efl_Object *request;
     Eina_Promise *promise;
-    Efl_Selection_Type type;
+    Efl_Ui_Selection_Type type;
     Sel_Manager_Seat_Selection *seat_sel;
 };
 
@@ -163,7 +163,7 @@ struct _Sel_Manager_Seat_Selection
    Eina_List *sel_lost_list;
    //drag
    Eo *drag_obj;
-   Efl_Selection_Action drag_action;
+   Efl_Ui_Selection_Action drag_action;
    Eo *drag_win;
    Ecore_Event_Handler *mouse_up_handler, *dnd_status_handler;
    Eina_Bool accept;
@@ -171,7 +171,7 @@ struct _Sel_Manager_Seat_Selection
    Eina_Position2D drag_pos;
    Eina_Position2D drag_win_start;
    Eina_Position2D drag_win_end;
-   Efl_Selection_Type active_type;
+   Efl_Ui_Selection_Type active_type;
 
    Saved_Type *saved_types;
    Ecore_Event_Handler *enter_handler;
@@ -179,7 +179,7 @@ struct _Sel_Manager_Seat_Selection
    Ecore_Event_Handler *pos_handler;
    Ecore_Event_Handler *drop_handler;
 
-   Efl_Selection_Manager_Data *pd;
+   Efl_Ui_Selection_Manager_Data *pd;
 };
 
 struct _Anim_Icon
@@ -192,9 +192,9 @@ struct _Sel_Manager_Drag_Container
 {
    Evas                          *e;
    Efl_Object                    *cont;
-   Efl_Selection_Format           format;
-   Eina_Rw_Slice                     data;
-   Efl_Selection_Action           action;
+   Efl_Ui_Selection_Format        format;
+   Eina_Rw_Slice                  data;
+   Efl_Ui_Selection_Action        action;
    Eina_List                     *icons;
    Eina_Size2D                    final_icon;
    Eina_Position2D                down;
@@ -216,13 +216,13 @@ struct _Sel_Manager_Drag_Container
    Eina_Free_Cb                   icon_list_func_free_cb;
    unsigned int                   seat;
 
-   Efl_Selection_Manager_Data    *pd;
+   Efl_Ui_Selection_Manager_Data    *pd;
 };
 
 struct _Sel_Manager_Atom
 {
    const char              *name;
-   Efl_Selection_Format     format;
+   Efl_Ui_Selection_Format  format;
 #ifdef HAVE_ELEMENTARY_X
    // Called by ecore to do conversion
    X11_Converter_Fn_Cb      x_converter;
@@ -241,7 +241,7 @@ struct _Sel_Manager_Atom
 struct _Drop_Format
 {
    EINA_INLIST;
-   Efl_Selection_Format format;
+   Efl_Ui_Selection_Format format;
 };
 
 struct _Sel_Manager_Dropable
@@ -253,7 +253,7 @@ struct _Sel_Manager_Dropable
       Eina_Position2D       pos;
       Eina_Bool             in : 1;
       const char           *type;
-      Efl_Selection_Format  format;
+      Efl_Ui_Selection_Format  format;
    } last;
 
    //for container
@@ -272,7 +272,7 @@ struct _Item_Container_Drop_Info
 #ifdef HAVE_ELEMENTARY_WL2
 typedef struct _Wl_Format_Translation
 {
-  Efl_Selection_Format   format;
+  Efl_Ui_Selection_Format   format;
   char                 **translates;
 } Sel_Manager_Wl_Format_Translation;
 
@@ -283,16 +283,16 @@ char *sm_wl_vcard[] = {"text/x-vcard", NULL};
 char *sm_wl_image[] = {"image/", "text/uri-list", NULL};
 
 Sel_Manager_Wl_Format_Translation sm_wl_convertion[] = {
-  {EFL_SELECTION_FORMAT_MARKUP | EFL_SELECTION_FORMAT_TEXT, sm_wl_markup},
-  {EFL_SELECTION_FORMAT_TEXT, sm_wl_text},
-  {EFL_SELECTION_FORMAT_HTML, sm_wl_html},
-  {EFL_SELECTION_FORMAT_VCARD, sm_wl_vcard},
-  {EFL_SELECTION_FORMAT_IMAGE, sm_wl_image},
-  {EFL_SELECTION_FORMAT_NONE, NULL},
+  {EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_TEXT, sm_wl_markup},
+  {EFL_UI_SELECTION_FORMAT_TEXT, sm_wl_text},
+  {EFL_UI_SELECTION_FORMAT_HTML, sm_wl_html},
+  {EFL_UI_SELECTION_FORMAT_VCARD, sm_wl_vcard},
+  {EFL_UI_SELECTION_FORMAT_IMAGE, sm_wl_image},
+  {EFL_UI_SELECTION_FORMAT_NONE, NULL},
 };
 #endif
 
-struct _Efl_Selection_Manager_Data
+struct _Efl_Ui_Selection_Manager_Data
 {
    Eo                 *sel_man;
 #ifdef HAVE_ELEMENTARY_X
@@ -306,7 +306,7 @@ struct _Efl_Selection_Manager_Data
    Ecore_Event_Handler *end_handler;
    Ecore_Wl2_Display   *wl_display;
 #endif
-   Efl_Selection_Type  loss_type;
+   Efl_Ui_Selection_Type loss_type;
 
    Sel_Manager_Atom   *atom_list;
    Eina_List          *seat_list;

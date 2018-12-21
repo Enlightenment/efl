@@ -59,7 +59,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
          }
       }
       @property cnp_mode {
-         /* FIXME: Efl.Selection_Format does not allow markup without images! */
+         /* FIXME: Efl.Ui.Selection_Format does not allow markup without images! */
          set {
             [[Control pasting of text and images for the widget.
 
@@ -78,7 +78,7 @@ class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
             ]]
          }
          values {
-            format: Efl.Selection_Format; [[Format for copy & paste.]]
+            format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {

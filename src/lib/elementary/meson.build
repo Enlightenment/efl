@@ -246,7 +246,7 @@ pub_eo_files = [
   'efl_ui_theme.eo',
   'efl_config_global.eo',
   'elm_code_widget.eo',
-  'efl_selection.eo',
+  'efl_ui_selection.eo',
   'efl_ui_dnd.eo',
   'efl_ui_dnd_container.eo',
   'efl_ui_focus_manager_window_root.eo',
@@ -312,7 +312,7 @@ pub_eo_types_files = [
   'elm_general.eot',
   'efl_ui.eot',
   'efl_ui_list_view_types.eot',
-  'efl_selection_types.eot',
+  'efl_ui_selection_types.eot',
   'efl_ui_dnd_types.eot'
 ]
 
@@ -337,7 +337,7 @@ priv_eo_files = [
   'efl_ui_focus_parent_provider_standard.eo',
   'efl_ui_focus_parent_provider_gen.eo',
   'efl_ui_model_state.eo',
-  'efl_selection_manager.eo',
+  'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
 ]
 
@@ -887,9 +887,9 @@ elementary_src = [
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',
   'efl_ui_pan.c',
-  'efl_selection_manager.c',
-  'efl_selection_manager_private.h',
-  'efl_selection.c',
+  'efl_ui_selection_manager.c',
+  'efl_ui_selection_manager_private.h',
+  'efl_ui_selection.c',
   'efl_datetime_manager.c',
   'efl_ui_dnd.c',
   'elm_focus_legacy.c',

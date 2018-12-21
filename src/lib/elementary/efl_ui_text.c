@@ -193,7 +193,7 @@ struct _Efl_Ui_Text_Rectangle
 struct _Selection_Loss_Data
 {
    Eo *obj;
-   Efl_Selection_Type stype;
+   Efl_Ui_Selection_Type stype;
 };
 
 #define MY_CLASS EFL_UI_TEXT_CLASS
@@ -596,7 +596,7 @@ _update_selection_handler(Eo *obj)
 
 static void
 _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
-                   Efl_Selection_Data *sel_data)
+                   Efl_Ui_Selection_Data *sel_data)
 {
    Efl_Text_Cursor_Cursor *cur, *start, *end;
 
@@ -608,7 +608,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
         efl_canvas_text_range_delete(obj, start, end);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
-   if (sel_data->format == EFL_SELECTION_FORMAT_MARKUP)
+   if (sel_data->format == EFL_UI_SELECTION_FORMAT_MARKUP)
      {
         efl_text_markup_cursor_markup_insert(obj, cur, buf);
      }
@@ -684,8 +684,8 @@ _get_drop_format(Evas_Object *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if ((sd->editable) && (!sd->single_line) && (!sd->password) && (!sd->disabled))
-     return EFL_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
-   return EFL_SELECTION_FORMAT_MARKUP;
+     return EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   return EFL_UI_SELECTION_FORMAT_MARKUP;
 }
 
 /* we can't reuse layout's here, because it's on entry_edje only */
@@ -1094,10 +1094,10 @@ _hover_selected_cb(void *data,
 static void
 _paste_cb(Eo *obj)
 {
-   Efl_Selection_Format formats = EFL_SELECTION_FORMAT_TEXT |
-      EFL_SELECTION_FORMAT_MARKUP;
+   Efl_Ui_Selection_Format formats = EFL_UI_SELECTION_FORMAT_TEXT |
+      EFL_UI_SELECTION_FORMAT_MARKUP;
 
-   efl_selection_get(obj, EFL_SELECTION_TYPE_CLIPBOARD, formats,
+   efl_ui_selection_get(obj, EFL_UI_SELECTION_TYPE_CLIPBOARD, formats,
          NULL, _selection_data_cb, NULL, 1);
 
 }
@@ -1116,8 +1116,8 @@ _selection_clear(void *data, Elm_Sel_Type selection)
    EFL_UI_TEXT_DATA_GET(data, sd);
 
    if (!sd->have_selection) return;
-   if ((selection == EFL_SELECTION_TYPE_CLIPBOARD) ||
-       (selection == EFL_SELECTION_TYPE_PRIMARY))
+   if ((selection == EFL_UI_SELECTION_TYPE_CLIPBOARD) ||
+       (selection == EFL_UI_SELECTION_TYPE_PRIMARY))
      {
         _efl_ui_text_select_none(data, sd);
      }
@@ -1132,10 +1132,10 @@ _selection_lost_cb(void *data, const Eina_Value value)
    EFL_UI_TEXT_DATA_GET(sdata->obj, sd);
    switch (sdata->stype)
      {
-      case EFL_SELECTION_TYPE_CLIPBOARD:
+      case EFL_UI_SELECTION_TYPE_CLIPBOARD:
          sd->sel_future.clipboard = NULL;
          break;
-      case EFL_SELECTION_TYPE_PRIMARY:
+      case EFL_UI_SELECTION_TYPE_PRIMARY:
       default:
          sd->sel_future.primary = NULL;
          break;
@@ -1145,12 +1145,12 @@ _selection_lost_cb(void *data, const Eina_Value value)
 }
 
 static void
-_selection_store(Efl_Selection_Type seltype,
+_selection_store(Efl_Ui_Selection_Type seltype,
                  Evas_Object *obj)
 {
    char *sel;
    Efl_Text_Cursor_Cursor *start, *end;
-   Efl_Selection_Format selformat = EFL_SELECTION_FORMAT_MARKUP;
+   Efl_Ui_Selection_Format selformat = EFL_UI_SELECTION_FORMAT_MARKUP;
    Eina_Slice slice;
    Selection_Loss_Data *ldata;
    Eina_Future *f;
@@ -1171,24 +1171,24 @@ _selection_store(Efl_Selection_Type seltype,
 
    switch (seltype)
      {
-      case EFL_SELECTION_TYPE_CLIPBOARD:
+      case EFL_UI_SELECTION_TYPE_CLIPBOARD:
          if (sd->sel_future.clipboard)
            {
               eina_future_cancel(sd->sel_future.clipboard);
            }
 
-         f = sd->sel_future.clipboard = efl_selection_set(obj, seltype,
+         f = sd->sel_future.clipboard = efl_ui_selection_set(obj, seltype,
                selformat, slice, 1);
          break;
 
-      case EFL_SELECTION_TYPE_PRIMARY:
+      case EFL_UI_SELECTION_TYPE_PRIMARY:
       default:
          if (sd->sel_future.primary)
            {
               eina_future_cancel(sd->sel_future.primary);
            }
 
-         f = sd->sel_future.primary = efl_selection_set(obj, seltype,
+         f = sd->sel_future.primary = efl_ui_selection_set(obj, seltype,
                selformat, slice, 1);
          break;
      }
@@ -1196,7 +1196,7 @@ _selection_store(Efl_Selection_Type seltype,
    ldata->obj = obj;
    eina_future_then_easy(f, _selection_lost_cb, NULL, NULL, EINA_VALUE_TYPE_UINT, ldata);
 
-   //if (seltype == EFL_SELECTION_TYPE_CLIPBOARD)
+   //if (seltype == EFL_UI_SELECTION_TYPE_CLIPBOARD)
    //  eina_stringshare_replace(&sd->cut_sel, sel);
 
    free(sel);
@@ -1219,7 +1219,7 @@ _cut_cb(Eo *obj)
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(obj);
 
-   _selection_store(EFL_SELECTION_TYPE_CLIPBOARD, obj);
+   _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    efl_canvas_text_range_delete(obj, start, end);
 }
@@ -1246,7 +1246,7 @@ _copy_cb(Eo *obj)
         edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
         elm_widget_scroll_hold_pop(obj);
      }
-   _selection_store(EFL_SELECTION_TYPE_CLIPBOARD, obj);
+   _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
 }
 
 static void
@@ -2126,13 +2126,13 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_composite_attach(obj, text_obj);
 
    sd->entry_edje = wd->resize_obj;
-   sd->cnp_mode = EFL_SELECTION_FORMAT_TEXT;
+   sd->cnp_mode = EFL_UI_SELECTION_FORMAT_TEXT;
    sd->line_wrap = ELM_WRAP_WORD;
    sd->context_menu = EINA_TRUE;
    sd->auto_save = EINA_TRUE;
    sd->editable = EINA_TRUE;
    sd->sel_allow = EINA_TRUE;
-   sd->drop_format = EFL_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
    sd->sel_handler_disabled = EINA_TRUE;
 
@@ -2537,25 +2537,25 @@ _efl_ui_text_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, 
 }
 
 EOLIAN static void
-_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cnp_mode)
+_efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Ui_Selection_Format cnp_mode)
 {
-   Elm_Sel_Format dnd_format = EFL_SELECTION_FORMAT_MARKUP;
+   Elm_Sel_Format dnd_format = EFL_UI_SELECTION_FORMAT_MARKUP;
 
-   if (cnp_mode != EFL_SELECTION_FORMAT_TARGETS)
+   if (cnp_mode != EFL_UI_SELECTION_FORMAT_TARGETS)
      {
-        if (cnp_mode & EFL_SELECTION_FORMAT_VCARD)
+        if (cnp_mode & EFL_UI_SELECTION_FORMAT_VCARD)
           ERR("VCARD format not supported for copy & paste!");
-        else if (cnp_mode & EFL_SELECTION_FORMAT_HTML)
+        else if (cnp_mode & EFL_UI_SELECTION_FORMAT_HTML)
           ERR("HTML format not supported for copy & paste!");
-        cnp_mode &= ~EFL_SELECTION_FORMAT_VCARD;
-        cnp_mode &= ~EFL_SELECTION_FORMAT_HTML;
+        cnp_mode &= ~EFL_UI_SELECTION_FORMAT_VCARD;
+        cnp_mode &= ~EFL_UI_SELECTION_FORMAT_HTML;
      }
 
    if (sd->cnp_mode == cnp_mode) return;
    sd->cnp_mode = cnp_mode;
-   if (sd->cnp_mode == EFL_SELECTION_FORMAT_TEXT)
-     dnd_format = EFL_SELECTION_FORMAT_TEXT;
-   else if (cnp_mode == EFL_SELECTION_FORMAT_IMAGE)
+   if (sd->cnp_mode == EFL_UI_SELECTION_FORMAT_TEXT)
+     dnd_format = EFL_UI_SELECTION_FORMAT_TEXT;
+   else if (cnp_mode == EFL_UI_SELECTION_FORMAT_IMAGE)
      dnd_format |= ELM_SEL_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
@@ -2571,7 +2571,7 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Selection_Format cn
                        _dnd_drop_cb, NULL);
 }
 
-EOLIAN static Efl_Selection_Format
+EOLIAN static Efl_Ui_Selection_Format
 _efl_ui_text_cnp_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
 {
    return sd->cnp_mode;
@@ -3978,7 +3978,7 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
           }
         _edje_signal_emit(sd, "selection,changed", "efl.text");
         sd->have_selection = EINA_TRUE;
-        _selection_store(EFL_SELECTION_TYPE_PRIMARY, obj);
+        _selection_store(EFL_UI_SELECTION_TYPE_PRIMARY, obj);
      }
    if (text) free(text);
    _selection_defer(obj, sd);
