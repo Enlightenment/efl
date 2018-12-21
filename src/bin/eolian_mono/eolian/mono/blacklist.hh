@@ -77,12 +77,17 @@ inline bool is_alias_blacklisted(attributes::alias_def const& alias)
    return name_helpers::alias_full_eolian_name(alias) == "Eina.Error";
 }
 
-inline bool is_property_blacklisted(attributes::property_def const& property)
+inline bool is_property_blacklisted(std::string const& name)
 {
-    auto name = name_helpers::klass_full_concrete_or_interface_name(property.klass) + "." + name_helpers::property_managed_name(property);
     return name == "Efl.Input.Key.Key"
         || name == "Efl.Input.Hold.Hold"
         || name == "Efl.Text.Text";
+}
+
+inline bool is_property_blacklisted(attributes::property_def const& property)
+{
+    auto name = name_helpers::klass_full_concrete_or_interface_name(property.klass) + "." + name_helpers::property_managed_name(property);
+    return is_property_blacklisted(name);
 }
 
 }

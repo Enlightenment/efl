@@ -6,6 +6,8 @@
 #include "grammar/html_escaped_string.hpp"
 #include "using_decl.hh"
 #include "name_helpers.hh"
+#include "generation_contexts.hh"
+#include "blacklist.hh"
 
 #include <Eina.h>
 
@@ -19,14 +21,185 @@ struct documentation_generator
    documentation_generator(int scope_size)
        : scope_size(scope_size) {}
 
+
+   // Returns the number of parameters (values + keys) that a property method requires
+   // Specify if you want the Setter or the Getter method.
+   static int property_num_parameters(const ::Eolian_Function *function, ::Eolian_Function_Type ftype)
+   {
+      Eina_Iterator *itr = ::eolian_property_keys_get(function, ftype);
+      Eolian_Function_Parameter *pr;
+      int n = 0;
+      EINA_ITERATOR_FOREACH(itr, pr) { n++; }
+      eina_iterator_free(itr);
+      itr = ::eolian_property_values_get(function, ftype);
+      EINA_ITERATOR_FOREACH(itr, pr) { n++; }
+      eina_iterator_free(itr);
+      return n;
+   }
+
+   // Turns a function name from EO convention to EFL# convention.
+   // The name_tail parameter is the last 4 chars of the original string, which
+   // could be ".set" or ".get" and in this case they are ignored by Eolian.
+   // We want them to know what the documentation intended to reference.
+   static std::string function_conversion(const ::Eolian_Object *klass, const ::Eolian_Function *function, std::string name_tail)
+   {
+      ::Eolian_Function_Type ftype = ::eolian_function_type_get(function);
+      const char* eo_name = ::eolian_function_name_get(function);
+      std::string name = name_helpers::managed_namespace(::eolian_object_name_get(klass));
+      switch(ftype)
+      {
+         case ::EOLIAN_METHOD:
+           if (blacklist::is_function_blacklisted(
+                 ::eolian_function_full_c_name_get(function, ftype, EINA_FALSE))) return "";
+           name += ".";
+           name += name_helpers::managed_method_name(
+             ::eolian_object_short_name_get(klass), eo_name);
+           break;
+         case ::EOLIAN_PROP_SET:
+           name += ".Set";
+           name += name_helpers::property_managed_name(eo_name);
+           break;
+         case ::EOLIAN_PROP_GET:
+           name += ".Get";
+           name += name_helpers::property_managed_name(eo_name);
+           break;
+         case ::EOLIAN_PROPERTY:
+           {
+             int getter_params = property_num_parameters(function, ::EOLIAN_PROP_GET);
+             int setter_params = property_num_parameters(function, ::EOLIAN_PROP_SET);
+             std::string short_name = name_helpers::property_managed_name(eo_name);
+             bool blacklisted = blacklist::is_property_blacklisted(name + "." + short_name);
+             // EO properties with keys, with more than one value, or blacklisted, are not
+             // converted into C# properties.
+             // In these cases we refer to the getter method instead of the property.
+             if ((getter_params > 1) || (setter_params > 1) || (blacklisted)) name += ".Get" + short_name;
+             else if (name_tail == ".get") name += ".Get" + short_name;
+             else if (name_tail == ".set") name += ".Set" + short_name;
+             else name += "." + short_name;
+           }
+           break;
+         default:
+           break;
+      }
+      return name;
+   }
+
+   // Turns an Eolian reference like @Efl.Input.Pointer.tool into a <see> tag
+   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail)
+   {
+      const Eolian_Object *data, *data2;
+      ::Eolian_Object_Type type =
+        ::eolian_doc_token_ref_resolve(token, state, &data, &data2);
+      std::string ref;
+      switch(type)
+      {
+         case ::EOLIAN_OBJECT_STRUCT_FIELD:
+           ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           ref += ".";
+           ref += ::eolian_object_name_get(data2);
+           if (blacklist::is_struct_blacklisted(ref)) return "";
+           break;
+         case ::EOLIAN_OBJECT_EVENT:
+           ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           ref += ".";
+           ref += name_helpers::managed_event_name(::eolian_object_name_get(data2));
+           break;
+         case ::EOLIAN_OBJECT_ENUM_FIELD:
+           ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           ref += ".";
+           ref += name_helpers::enum_field_managed_name(::eolian_object_name_get(data2));
+           break;
+         case ::EOLIAN_OBJECT_FUNCTION:
+           ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
+           break;
+         case ::EOLIAN_OBJECT_UNKNOWN:
+           // If the reference cannot be resolved, just return an empty string and
+           // it won't be converted into a <see> tag.
+           break;
+         default:
+           ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           break;
+      }
+      return ref;
+   }
+
+   // Turns EO documentation syntax into C# triple-slash XML comment syntax
+   static std::string syntax_conversion(std::string text, const Eolian_State *state)
+   {
+      std::string new_text, ref;
+      ::Eolian_Doc_Token token;
+      const char *text_ptr = text.c_str();
+      ::eolian_doc_token_init(&token);
+      while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
+        {
+           std::string token_text, name_tail;
+           char *token_text_cstr = ::eolian_doc_token_text_get(&token);
+           if (token_text_cstr)
+             {
+                token_text = token_text_cstr;
+                free(token_text_cstr);
+                if (token_text.length() > 4)
+                  name_tail = token_text.substr(token_text.size() - 4, 4);
+             }
+           switch(::eolian_doc_token_type_get(&token))
+           {
+              case ::EOLIAN_DOC_TOKEN_TEXT:
+                new_text += token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_REF:
+                ref = ref_conversion(&token, state, name_tail);
+                if (ref != "")
+                  new_text += "<see cref=\"" + ref + "\"/>";
+                else
+                  // Unresolved references are passed through.
+                  // They will appear in the docs as plain text, without link,
+                  // but at least they won't be removed by DocFX.
+                  new_text += token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_MARK_NOTE:
+                new_text += "NOTE: " + token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_MARK_WARNING:
+                new_text += "WARNING: " + token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_MARK_REMARK:
+                new_text += "REMARK: " + token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_MARK_TODO:
+                new_text += "TODO: " + token_text;
+                break;
+              case ::EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE:
+                new_text += "<c>" + token_text + "</c>";
+                break;
+              default:
+                break;
+           }
+        }
+      return new_text;
+   }
+
    /// Tag generator helpers
    template<typename OutputIterator, typename Context>
-   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context) const
+   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
    {
-      if (text.empty())
-        return true;
+      std::string new_text;
+      if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
+        return false;
+      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state );
 
-      return as_generator( scope_tab(scope_size) << "///<" << tag << ">" << html_escaped_string << "</" << tag << ">\n").generate(sink, text, context);
+      std::string tabs;
+      as_generator(scope_tab(scope_size) << "/// ").generate (std::back_inserter(tabs), attributes::unused, context);
+
+      std::istringstream ss(new_text);
+      std::string para;
+      std::string final_text = "<" + tag + tag_params + ">";
+      bool first = true;
+      while (std::getline(ss, para)) {
+        if (first) final_text += para;
+        else final_text += "\n" + tabs + para;
+        first = false;
+      }
+      return as_generator(scope_tab(scope_size) << "/// " << final_text << "</" << tag << ">\n").generate(sink, attributes::unused, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -36,22 +209,15 @@ struct documentation_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate_tag_para(OutputIterator sink, std::string const& text, Context const& context) const
-   {
-      return generate_tag(sink, "para", text, context);
-   }
-
-   template<typename OutputIterator, typename Context>
    bool generate_tag_param(OutputIterator sink, std::string const& name, std::string const& text, Context const& context) const
    {
-      return as_generator( scope_tab(scope_size) << "///<param name=\"" << name << "\">"
-                    << html_escaped_string << "</param>\n").generate(sink, text, context);
+      return generate_tag(sink, "param", text, context, " name=\"" + name + "\"");
    }
 
    template<typename OutputIterator, typename Context>
    bool generate_tag_return(OutputIterator sink, std::string const& text, Context const& context) const
    {
-      return generate_tag(sink, "return", text, context);
+      return generate_tag(sink, "returns", text, context);
    }
 
    // Actual exported generators
@@ -91,7 +257,7 @@ struct documentation_generator
          if (!generate_parameter(sink, param, context))
            return false;
 
-       if (!generate_tag_return(sink, func.return_documentation.summary, context))
+       if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
        return true;
@@ -107,7 +273,7 @@ struct documentation_generator
          if (!generate_parameter(sink, param, context))
            return false;
 
-       if (!generate_tag_return(sink, func.return_documentation.summary, context))
+       if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
        return true;
@@ -116,51 +282,13 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_parameter(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.summary, context);
+      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.full_text, context);
    }
 
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context) const
    {
-      if (!generate_preamble(sink, doc, context))
-        return false;
-      if (!generate_body(sink, doc, context))
-        return false;
-      if (!generate_epilogue(sink, doc, context))
-        return false;
-
-      return true;
-   }
-
-   template<typename OutputIterator, typename Context>
-   bool generate_preamble(OutputIterator sink, attributes::documentation_def const& doc, Context const context) const
-   {
-      return generate_tag_summary(sink, doc.summary, context);
-   }
-
-
-   template<typename OutputIterator, typename Context>
-   bool generate_body(OutputIterator sink, attributes::documentation_def const& doc, Context const context) const
-   {
-      for (auto&& para : doc.desc_paragraphs)
-        {
-           if (!generate_tag_para(sink, para, context))
-             return false;
-        }
-
-      return true;
-   }
-
-   template<typename OutputIterator, typename Context>
-   bool generate_epilogue(OutputIterator sink, attributes::documentation_def const& doc, Context const context) const
-   {
-      if (doc.since.empty())
-        return true;
-
-      if (!generate_tag_para(sink, doc.since, context))
-        return false;
-
-      return true;
+      return generate_tag_summary(sink, doc.full_text, context);
    }
 };
 

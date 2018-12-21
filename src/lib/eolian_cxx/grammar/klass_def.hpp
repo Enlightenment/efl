@@ -174,10 +174,11 @@ struct documentation_def
    std::string description;
    std::string since;
    std::vector<std::string> desc_paragraphs;
+   std::string full_text;
 
    documentation_def() = default;
-   documentation_def(std::string summary, std::string description, std::string since)
-     : summary(summary), description(description), since(since)
+   documentation_def(std::string summary, std::string description, std::string since, std::string full_text)
+     : summary(summary), description(description), since(since), full_text(full_text)
    {}
    documentation_def(Eolian_Documentation const* eolian_doc)
    {
@@ -188,15 +189,19 @@ struct documentation_def
 
       str = eolian_documentation_summary_get(eolian_doc);
       if (str)
-        summary = str;
+        full_text = summary = str;
 
       str = eolian_documentation_description_get(eolian_doc);
-      if (str)
+      if (str) {
         description = str;
+        full_text += "\n" + description;
+      }
 
       str = eolian_documentation_since_get(eolian_doc);
-      if (str)
+      if (str) {
         since = str;
+        full_text += "\n" + since;
+      }
 
       efl::eina::ptr_list<const char> l(eolian_documentation_string_split(description.c_str()));
       for (auto&& i : l)
@@ -441,7 +446,6 @@ struct alias_def
        }
 
      documentation = ::eolian_typedecl_documentation_get(alias_obj);
-
   }
 };
 
@@ -627,6 +631,7 @@ struct function_def
   {
     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
     name = ::eolian_function_name_get(function);
+    return_documentation = eolian_function_return_documentation_get(function, type);
     if(r_type)
       return_type.set(r_type, unit, EOLIAN_C_TYPE_RETURN);
      if(type == EOLIAN_METHOD || type == EOLIAN_FUNCTION_POINTER)
@@ -660,6 +665,9 @@ struct function_def
          if(!r_type && type == EOLIAN_PROP_GET && values.size() == 1)
            {
              return_type = values[0].type;
+             if (return_documentation.summary.empty())
+               return_documentation = values[0].documentation;
+
            }
          else if(type == EOLIAN_PROP_GET)
            {
@@ -695,8 +703,6 @@ struct function_def
      is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
      is_static = eolian_function_is_class(function);
-
-     return_documentation = eolian_function_return_documentation_get(function, type);
 
      Eolian_Implement const* implement = eolian_function_implement_get(function);
      if (!implement)
@@ -823,7 +829,7 @@ struct property_def
 
   property_def() = default;
   property_def(Eolian_Function const *function, efl::eina::optional<function_def> getter
-              , efl::eina::optional<function_def> setter, Eolian_Unit const* unit)
+              , efl::eina::optional<function_def> setter, Eolian_Unit const*)
               : getter(getter), setter(setter)
   {
     name = ::eolian_function_name_get(function);

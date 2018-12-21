@@ -138,11 +138,14 @@ run(options_type const& opts)
         throw std::runtime_error("Failed to generate file preamble");
      }
 
-   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
+   auto lib_context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
                                                                                      opts.v_major,
                                                                                      opts.v_minor,
                                                                                      opts.references_map},
                                                         efl::eolian::grammar::context_null());
+
+   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, lib_context);
+
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
          if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
@@ -179,7 +182,8 @@ run(options_type const& opts)
            , enum_last; enum_iterator != enum_last; ++enum_iterator)
      {
         efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator, opts.unit);
-        if (!eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null()))
+        auto enum_cxt = context_add_tag(class_context{class_context::enums}, context);
+        if (!eolian_mono::enum_definition.generate(iterator, enum_, enum_cxt))
           {
              throw std::runtime_error("Failed to generate enum");
           }

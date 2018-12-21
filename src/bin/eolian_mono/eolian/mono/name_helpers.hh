@@ -32,10 +32,6 @@ namespace name_helpers {
 namespace attributes = efl::eolian::grammar::attributes;
 
 namespace detail {
-inline bool is_iequal(std::string const& lhs, std::string const& rhs)
-{
-  return strcasecmp(lhs.c_str(), rhs.c_str()) == 0;
-}
 inline bool is_equal(std::string const& lhs, std::string const& rhs)
 {
   return lhs == rhs;
@@ -176,19 +172,24 @@ inline std::string managed_namespace(std::string const& ns)
   return escape_keyword(utils::remove_all(ns, '_'));
 }
 
-inline std::string managed_method_name(attributes::function_def const& f)
+inline std::string managed_method_name(std::string const& klass, std::string const& name)
 {
-  std::vector<std::string> names = utils::split(f.name, '_');
+  std::vector<std::string> names = utils::split(name, '_');
 
   name_helpers::reorder_verb(names);
 
   std::string candidate = escape_keyword(utils::to_pascal_case(names));
 
   // Some eolian methods have the same name as their parent class
-  if (candidate == f.klass.eolian_name)
+  if (candidate == klass)
       candidate = "Do" + candidate;
 
   return candidate;
+}
+
+inline std::string managed_method_name(attributes::function_def const& f)
+{
+  return managed_method_name(f.klass.eolian_name, f.name);
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
@@ -243,12 +244,17 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
-inline std::string property_managed_name(attributes::property_def const& property)
+inline std::string property_managed_name(const std::string name)
 {
-  auto names = utils::split(property.name, '_');
+  auto names = utils::split(name, '_');
   // No need to escape keyword here as it will be capitalized and already
   // namespaced inside the owner class.
   return utils::to_pascal_case(names);
+}
+
+inline std::string property_managed_name(attributes::property_def const& property)
+{
+  return property_managed_name(property.name);
 }
 
 inline std::string managed_part_name(attributes::part_def const& part)
