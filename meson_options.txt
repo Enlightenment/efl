@@ -312,7 +312,7 @@ option('nls',
 
 option('luajit',
   type: 'boolean',
-  value: false,
+  value: true,
   description: 'Flag for handling lua bindings'
 )
 
