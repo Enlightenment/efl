@@ -594,7 +594,6 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
    Efl_Text_Style_Shadow_Direction dir;
 
    efl_text_normal_color_set(ep->object, COLOR_SET(params->color));
-   evas_object_color_set(ep->object, 255, 255, 255, 255);
 
    effect = ep->part->effect;
    switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
