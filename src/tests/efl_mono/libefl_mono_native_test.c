@@ -3754,6 +3754,10 @@ void _dummy_test_object_emit_event_with_struct(Eo *obj, EINA_UNUSED Dummy_Test_O
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT, &data);
 }
 
+void _dummy_test_object_emit_event_with_struct_complex(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Dummy_StructComplex data)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT_COMPLEX, &data);
+}
 
 Efl_Object *_dummy_test_object_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const char *name)
 {

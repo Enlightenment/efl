@@ -148,6 +148,22 @@ class TestEoEvents
         Test.AssertEquals(sent_struct.Fstring, received_struct.Fstring);
     }
 
+    public static void event_with_struct_complex_payload()
+    {
+        var obj = new Dummy.TestObject();
+        Dummy.StructComplex received_struct = default(Dummy.StructComplex);
+
+        obj.EvtWithStructComplexEvt += (object sender, Dummy.TestObjectEvtWithStructComplexEvt_Args e) => {
+            received_struct = e.arg;
+        };
+
+        Dummy.StructComplex sent_struct = StructHelpers.structComplexWithValues();
+
+        obj.EmitEventWithStructComplex(sent_struct);
+
+        Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
+    }
+
     public static void event_in_init_callback()
     {
         int received = 0;
