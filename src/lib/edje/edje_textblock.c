@@ -850,7 +850,7 @@ _edje_text_recalc(FLOAT_T sc,
    double align_y, align_x;
 
    _edje_part_recalc_textblock_font_get(ed, ep, chosen_desc,
-              &font_source, &font, &size);
+         &font_source, &font, &size);
 
    ellip = params->type.text->ellipsis;
 
@@ -892,11 +892,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
    if (chosen_desc)
      {
         Evas_Coord tw, th;
-        const char *font, *font_source, *tmp;
-        Eina_List *l;
-        int size;
         const char *text = "";
-        const char *style = "";
         Edje_Style *stl = NULL;
 
         text = _edje_part_recalc_textblock_text_get(ed, ep, chosen_desc);
