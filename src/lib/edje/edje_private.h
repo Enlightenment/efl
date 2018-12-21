@@ -388,6 +388,7 @@ typedef struct _Edje_Part_Description_Spec_Svg       Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Allowed_Seat               Edje_Part_Allowed_Seat;
 
 typedef struct _Edje Edje;
+typedef struct _Edje_Real_Part_Text_Style Edje_Real_Part_Text_Style;
 typedef struct _Edje_Real_Part_Text Edje_Real_Part_Text;
 typedef struct _Edje_Real_Part_Swallow Edje_Real_Part_Swallow;
 typedef struct _Edje_Real_Part_Container Edje_Real_Part_Container;
@@ -1964,6 +1965,37 @@ struct _Edje_Real_Part_Drag
 #define EDJE_RP_TYPE_CONTAINER 2
 #define EDJE_RP_TYPE_SWALLOW 3
 
+typedef enum
+{
+  EDJE_PART_TEXT_PROP_NONE =                   0, // never used
+  EDJE_PART_TEXT_PROP_BACKING_TYPE =           1,
+  EDJE_PART_TEXT_PROP_COLOR_BACKING =          1 << 2,
+  EDJE_PART_TEXT_PROP_COLOR_GLOW =             1 << 3,
+  EDJE_PART_TEXT_PROP_COLOR_GLOW2 =            1 << 4,
+  EDJE_PART_TEXT_PROP_COLOR_NORMAL =           1 << 5,
+  EDJE_PART_TEXT_PROP_COLOR_OUTLINE =          1 << 6,
+  EDJE_PART_TEXT_PROP_COLOR_SHADOW =           1 << 7,
+  EDJE_PART_TEXT_PROP_COLOR_STRIKETHROUGH =    1 << 8,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE =        1 << 9,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE2 =       1 << 10,
+  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE_DASHED = 1 << 11,
+  EDJE_PART_TEXT_PROP_EFFECT_TYPE =            1 << 12,
+  EDJE_PART_TEXT_PROP_ELLIPSIS =               1 << 13,
+  EDJE_PART_TEXT_PROP_FONT =                   1 << 14,
+  EDJE_PART_TEXT_PROP_SHADOW_DIRECTION   =     1 << 15,
+  EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE =     1 << 16,
+  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_GAP =   1 << 17,
+  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_WIDTH = 1 << 18,
+  EDJE_PART_TEXT_PROP_UNDERLINE_TYPE =         1 << 19,
+  EDJE_PART_TEXT_PROP_UNDERLINE_HEIGHT =       1 << 20,
+  EDJE_PART_TEXT_PROP_WRAP =                   1 << 21
+} Edje_Part_Text_Prop_Type;
+
+struct _Edje_Real_Part_Text_Style {
+  Eina_List *props;
+  Edje_Part_Text_Prop_Type types;
+};
+
 struct _Edje_Real_Part_Text
 {
    void                  *entry_data; // 4
@@ -1975,6 +2007,7 @@ struct _Edje_Real_Part_Text
    Edje_Position          offset; // 8
    short                  size; // 2
    Efl_Canvas_Layout_Part_Text_Expand expand;
+   Eina_List             *text_props; // 4 Edje_Part_Text_Prop list
    struct {
       unsigned char       fit_x, fit_y; // 2
       short               in_size; // 2
@@ -2253,32 +2286,6 @@ struct _Edje_Patterns
    unsigned int    finals[];
 };
 
-typedef enum
-{
-  EDJE_PART_TEXT_PROP_NONE =                   0, // never used
-  EDJE_PART_TEXT_PROP_BACKING_TYPE =           1,
-  EDJE_PART_TEXT_PROP_COLOR_BACKING =          1 << 2,
-  EDJE_PART_TEXT_PROP_COLOR_GLOW =             1 << 3,
-  EDJE_PART_TEXT_PROP_COLOR_GLOW2 =            1 << 4,
-  EDJE_PART_TEXT_PROP_COLOR_NORMAL =           1 << 5,
-  EDJE_PART_TEXT_PROP_COLOR_OUTLINE =          1 << 6,
-  EDJE_PART_TEXT_PROP_COLOR_SHADOW =           1 << 7,
-  EDJE_PART_TEXT_PROP_COLOR_STRIKETHROUGH =    1 << 8,
-  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE =        1 << 9,
-  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE2 =       1 << 10,
-  EDJE_PART_TEXT_PROP_COLOR_UNDERLINE_DASHED = 1 << 11,
-  EDJE_PART_TEXT_PROP_EFFECT_TYPE =            1 << 12,
-  EDJE_PART_TEXT_PROP_ELLIPSIS =               1 << 13,
-  EDJE_PART_TEXT_PROP_FONT =                   1 << 14,
-  EDJE_PART_TEXT_PROP_SHADOW_DIRECTION   =     1 << 15,
-  EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE =     1 << 16,
-  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_GAP =   1 << 17,
-  EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_WIDTH = 1 << 18,
-  EDJE_PART_TEXT_PROP_UNDERLINE_TYPE =         1 << 19,
-  EDJE_PART_TEXT_PROP_UNDERLINE_HEIGHT =       1 << 20,
-  EDJE_PART_TEXT_PROP_WRAP =                   1 << 21
-} Edje_Part_Text_Prop_Type;
-
 typedef struct
 {
   Edje_Part_Text_Prop_Type type;
@@ -2351,10 +2358,7 @@ struct _Edje_User_Defined
       struct {
          double w, h;
       } drag_size;
-      struct {
-        Eina_List *props;
-        Edje_Part_Text_Prop_Type types;
-      } text_style;
+      Edje_Real_Part_Text_Style text_style;
       struct {
         Efl_Canvas_Layout_Part_Text_Expand expand;
       } text_expand;

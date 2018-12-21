@@ -1992,12 +1992,21 @@ _edje_file_del(Edje *ed)
              else if ((rp->type == EDJE_RP_TYPE_TEXT) &&
                       (rp->typedata.text))
                {
+                  Edje_Part_Text_Prop *prop;
+
                   eina_stringshare_del(rp->typedata.text->text);
                   eina_stringshare_del(rp->typedata.text->font);
                   eina_stringshare_del(rp->typedata.text->cache.in_str);
                   eina_stringshare_del(rp->typedata.text->cache.out_str);
+
+                  EINA_LIST_FREE(rp->typedata.text->text_props, prop)
+                    {
+                       free(prop);
+                    }
+
                   free(rp->typedata.text);
                   rp->typedata.text = NULL;
+
                }
              else if ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
                       (rp->typedata.swallow))

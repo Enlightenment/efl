@@ -199,6 +199,40 @@ _efl_canvas_layout_part_text_efl_text_markup_cursor_markup_insert(Eo *obj,
 
 /* More Efl.Text.* API (@since 1.22) */
 
+static Edje_Part_Text_Prop *
+_prop_new(Eina_List **props, Edje_Part_Text_Prop_Type type)
+{
+   Edje_Part_Text_Prop *prop;
+
+   prop = malloc(sizeof(*prop));
+   prop->type = type;
+
+   *props = eina_list_append(*props, prop);
+
+   return prop;
+}
+
+static Edje_Part_Text_Prop *
+_prop_fetch(Eina_List **props, Edje_Part_Text_Prop_Type type)
+{
+   Edje_Part_Text_Prop *prop;
+   Eina_List *i;
+
+   // lookup prop
+   EINA_LIST_FOREACH(*props, i, prop)
+     {
+        if (prop->type == type) return prop;
+     }
+
+   // prop not found
+   prop = malloc(sizeof(*prop));
+   prop->type = type;
+
+   *props = eina_list_append(*props, prop);
+
+   return prop;
+}
+
 EOLIAN static void
 _efl_canvas_layout_part_text_efl_text_style_backing_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
@@ -455,19 +489,6 @@ _efl_canvas_layout_part_text_efl_text_format_wrap_get(const Eo *obj,
       return EFL_TEXT_FORMAT_WRAP_NONE;
 
    return efl_text_wrap_get(pd->rp->object);
-}
-
-static Edje_Part_Text_Prop *
-_prop_new(Eina_List **props, Edje_Part_Text_Prop_Type type)
-{
-   Edje_Part_Text_Prop *prop;
-
-   prop = malloc(sizeof(*prop));
-   prop->type = type;
-
-   *props = eina_list_append(*props, prop);
-
-   return prop;
 }
 
 void
