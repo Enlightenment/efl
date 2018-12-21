@@ -843,7 +843,15 @@ struct property_def
 
     Eolian_Function_Type type = ::eolian_function_type_get(function);
     if (type == EOLIAN_PROP_GET || type == EOLIAN_PROP_SET || type == EOLIAN_PROPERTY)
-      documentation = eolian_implement_documentation_get(implement, EOLIAN_PROPERTY);
+      {
+         documentation = eolian_implement_documentation_get(implement, EOLIAN_PROPERTY);
+         // If property-level documentation is empty, use the getter- or setter-level
+         // docs as fallback (if present).
+         if (documentation.summary.empty())
+           documentation = eolian_implement_documentation_get(implement, EOLIAN_PROP_GET);
+         if (documentation.summary.empty())
+           documentation = eolian_implement_documentation_get(implement, EOLIAN_PROP_SET);
+      }
   }
 };
 
