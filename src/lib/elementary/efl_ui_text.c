@@ -4009,38 +4009,79 @@ _efl_ui_text_item_factory_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd)
 
 #define STRCMP(X, Y) strncmp((X), (Y), strlen(X))
 
-EOLIAN static Eina_Bool
-_efl_ui_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
-      const char *part, const char *text)
+static Eo *
+_text_part_get(Efl_Ui_Text_Data *pd, const char *part)
 {
+   Eo *ret = NULL;
+
    if (!STRCMP("efl.text_guide", part))
      {
-        efl_text_set(pd->text_guide_obj, text);
-        return EINA_TRUE;
+        ret = pd->text_guide_obj;
      }
    else if (!STRCMP("efl.text", part))
      {
-        efl_text_set(pd->text_obj, text);
-        return EINA_TRUE;
+        ret = pd->text_obj;
      }
+   return ret;
+}
 
-   return EINA_FALSE;
+EOLIAN static void
+_efl_ui_text_text_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      const char *part, const char *text)
+{
+   Eo *text_part;
+
+   text_part = _text_part_get(pd, part);
+
+   if (text_part)
+     {
+        efl_text_set(text_part, text);
+     }
 }
 
 EOLIAN static const char *
 _efl_ui_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
       const char *part)
 {
-   if (!STRCMP("efl.text_guide", part))
+   Eo *text_part;
+   const char *ret = NULL;
+
+   text_part = _text_part_get(pd, part);
+
+   if (text_part)
      {
-        return efl_text_get(pd->text_guide_obj);
-     }
-   else if (!STRCMP("efl.text", part))
-     {
-        return efl_text_get(pd->text_obj);
+        ret = efl_text_get(text_part);
      }
 
-   return NULL;
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_text_text_font_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      const char *part, const char *font, Efl_Font_Size size)
+{
+   Eo *text_part;
+
+   text_part = _text_part_get(pd, part);
+
+   if (text_part)
+     {
+        efl_text_font_set(text_part, font, size);
+     }
+}
+
+EOLIAN static void
+_efl_ui_text_text_font_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
+      const char *part, const char **font, Efl_Font_Size *size)
+{
+   Eo *text_part;
+
+   text_part = _text_part_get(pd, part);
+
+   if (text_part)
+     {
+        efl_text_font_get(text_part, font, size);
+     }
 }
 
 #undef STRCMP
@@ -4048,6 +4089,8 @@ _efl_ui_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
 ELM_PART_OVERRIDE(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_FONT_SET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+ELM_PART_OVERRIDE_FONT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 #include "efl_ui_text_part.eo.c"
 
 /* Efl.Part end */

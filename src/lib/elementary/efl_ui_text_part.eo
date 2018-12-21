@@ -4,5 +4,6 @@ class Efl.Ui.Text_Part (Efl.Ui.Layout_Part_Text)
    data: null;
    implements {
       Efl.Text.text { set; get; }
+      Efl.Text_Font.font { set; get; }
    }
 }
