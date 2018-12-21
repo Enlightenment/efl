@@ -206,6 +206,6 @@ class Evas.Table (Efl.Canvas.Group)
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Ui.Base.mirrored { get; set; }
+      Efl.Ui.I18n.mirrored { get; set; }
    }
 }

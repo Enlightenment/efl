@@ -519,7 +519,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_base_mirrored_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool mirrored)
+_efl_ui_scroll_manager_efl_ui_i18n_mirrored_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool mirrored)
 {
    Evas_Coord wx;
 

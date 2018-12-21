@@ -171,7 +171,7 @@ edje_object_part_external_content_get(const Edje_Object *obj, const char *part, 
    return _edje_object_part_external_content_get(ed, part, content);
 }
 
-/* Efl.Ui.Base APIs */
+/* Efl.Ui.I18n APIs */
 EAPI void
 edje_object_mirrored_set(Edje_Object *obj, Eina_Bool rtl)
 {

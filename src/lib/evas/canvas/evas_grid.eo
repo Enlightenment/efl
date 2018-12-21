@@ -118,6 +118,6 @@ class Evas.Grid (Efl.Canvas.Group)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Ui.Base.mirrored {get; set;}
+      Efl.Ui.I18n.mirrored {get; set;}
    }
 }

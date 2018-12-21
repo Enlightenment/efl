@@ -110,8 +110,8 @@ class Efl.Canvas.Layout (Efl.Canvas.Group, Efl.File, Efl.Container, Efl.Part,
       Efl.Layout.Signal.signal_callback_del;
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Signal.signal_process;
-      Efl.Ui.Base.mirrored { set; get; }
-      Efl.Ui.Base.language { set; get; }
+      Efl.Ui.I18n.mirrored { set; get; }
+      Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }

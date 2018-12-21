@@ -1355,7 +1355,7 @@ _efl_ui_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
  *
  **/
 EOLIAN static Eina_Bool
-_efl_ui_widget_efl_ui_base_mirrored_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_efl_ui_i18n_mirrored_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->is_mirrored;
 }
@@ -1369,7 +1369,7 @@ _efl_ui_widget_efl_ui_base_mirrored_get(const Eo *obj EINA_UNUSED, Elm_Widget_Sm
  * @param mirrored EINA_TRUE to set mirrored mode. EINA_FALSE to unset.
  */
 EOLIAN static void
-_efl_ui_widget_efl_ui_base_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool mirrored)
+_efl_ui_widget_efl_ui_i18n_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
 
@@ -1387,7 +1387,7 @@ _efl_ui_widget_efl_ui_base_mirrored_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina
  *
  **/
 EOLIAN static Eina_Bool
-_efl_ui_widget_efl_ui_base_mirrored_automatic_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_efl_ui_i18n_mirrored_automatic_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->mirrored_auto_mode;
 }
@@ -1402,7 +1402,7 @@ _efl_ui_widget_efl_ui_base_mirrored_automatic_get(const Eo *obj EINA_UNUSED, Elm
  * @param automatic EINA_TRUE for auto mirrored mode. EINA_FALSE for manual.
  */
 EOLIAN static void
-_efl_ui_widget_efl_ui_base_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool automatic)
+_efl_ui_widget_efl_ui_i18n_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool automatic)
 {
    if (sd->mirrored_auto_mode != automatic)
      {

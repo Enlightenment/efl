@@ -55,7 +55,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \
       lib/efl/interfaces/efl_pack_table.eo \
-      lib/efl/interfaces/efl_ui_base.eo \
+      lib/efl/interfaces/efl_ui_i18n.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
       lib/efl/interfaces/efl_ui_range.eo \

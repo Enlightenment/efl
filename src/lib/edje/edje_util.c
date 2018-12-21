@@ -249,7 +249,7 @@ _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
+_efl_canvas_layout_efl_ui_i18n_language_set(Eo *obj, Edje *ed, const char *locale)
 {
    const char *lookup;
    char *signal;
@@ -271,7 +271,7 @@ _efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *local
 }
 
 EOLIAN const char *
-_efl_canvas_layout_efl_ui_base_language_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_i18n_language_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed->language)
      return _edje_language;
@@ -417,7 +417,7 @@ edje_object_base_scale_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_ui_base_mirrored_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_i18n_mirrored_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->is_rtl;
 }
@@ -433,7 +433,7 @@ _edje_object_orientation_inform(Evas_Object *obj)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
+_efl_canvas_layout_efl_ui_i18n_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
    unsigned short i;
 

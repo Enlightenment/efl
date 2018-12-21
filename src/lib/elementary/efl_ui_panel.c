@@ -1360,7 +1360,7 @@ _efl_ui_panel_scrollable_set(Eo *obj, Efl_Ui_Panel_Data *sd, Eina_Bool scrollabl
 }
 
 EOLIAN static void
-_efl_ui_panel_efl_ui_base_mirrored_set(Eo *obj, Efl_Ui_Panel_Data *sd, Eina_Bool mirrored)
+_efl_ui_panel_efl_ui_i18n_mirrored_set(Eo *obj, Efl_Ui_Panel_Data *sd, Eina_Bool mirrored)
 {
    if (sd->scrollable)
      efl_ui_mirrored_set(efl_cast(obj, ELM_INTERFACE_SCROLLABLE_MIXIN), mirrored);

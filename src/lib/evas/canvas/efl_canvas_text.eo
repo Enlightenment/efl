@@ -5,7 +5,7 @@ struct Efl.Canvas.Text_Style; [[EFL text style data structure]]
 class Efl.Canvas.Text (Efl.Canvas.Object, Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
                        Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
-                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.Base)
+                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.I18n)
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;

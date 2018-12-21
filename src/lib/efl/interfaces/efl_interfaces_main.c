@@ -63,7 +63,7 @@
 #include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_interpolator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
-#include "interfaces/efl_ui_base.eo.c"
+#include "interfaces/efl_ui_i18n.eo.c"
 #include "interfaces/efl_ui_direction.eo.c"
 #include "interfaces/efl_ui_drag.eo.c"
 #include "interfaces/efl_ui_range.eo.c"

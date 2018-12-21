@@ -36,7 +36,7 @@ interface Efl.Ui.Direction
            vertically or horizontally or inverted vertically or inverted
            horizontally.
 
-           Mirroring as defined in @Efl.Ui.Base can invert the $horizontal
+           Mirroring as defined in @Efl.Ui.I18n can invert the $horizontal
            direction: it is $ltr by default, but becomes $rtl if the object
            is mirrored.
          ]]

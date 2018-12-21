@@ -1,7 +1,6 @@
-/* FIXME: Any better name? Efl.Ui? Efl.Ui.Common? */
-interface Efl.Ui.Base
+interface Efl.Ui.I18n
 {
-   [[A common interface for UI objects.]]
+   [[A common Internationalization interface for UI objects.]]
    eo_prefix: efl_ui;
    methods {
       @property mirrored {

@@ -1776,7 +1776,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
 }
 
 EOLIAN static void
-_elm_interface_scrollable_efl_ui_base_mirrored_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
+_elm_interface_scrollable_efl_ui_i18n_mirrored_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
 {
    Evas_Coord wx;
 

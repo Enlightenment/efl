@@ -583,8 +583,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
-      Efl.Ui.Base.mirrored { get; set; }
-      Efl.Ui.Base.mirrored_automatic { get; set; }
+      Efl.Ui.I18n.mirrored { get; set; }
+      Efl.Ui.I18n.mirrored_automatic { get; set; }
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }

@@ -1,5 +1,5 @@
 class Efl.Ui.Scroll.Manager (Efl.Object,
-                             Efl.Ui.Base,
+                             Efl.Ui.I18n,
                              Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar)
 {
@@ -24,7 +24,7 @@ class Efl.Ui.Scroll.Manager (Efl.Object,
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Base.mirrored { set; }
+      Efl.Ui.I18n.mirrored { set; }
       Efl.Ui.Scrollable_Interactive.content_pos { set; get; }
       Efl.Ui.Scrollable_Interactive.content_size{ get; }
       Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }

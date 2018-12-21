@@ -81,7 +81,7 @@ pub_eo_files = [
   'efl_pack_layout.eo',
   'efl_pack_linear.eo',
   'efl_pack_table.eo',
-  'efl_ui_base.eo',
+  'efl_ui_i18n.eo',
   'efl_ui_direction.eo',
   'efl_ui_drag.eo',
   'efl_ui_range.eo',

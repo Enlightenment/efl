@@ -479,13 +479,13 @@ _evas_grid_children_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_Bool
-_evas_grid_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
+_evas_grid_efl_ui_i18n_mirrored_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
    return priv->is_mirrored;
 }
 
 EOLIAN static void
-_evas_grid_efl_ui_base_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
+_evas_grid_efl_ui_i18n_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
    if (priv->is_mirrored != mirrored)
