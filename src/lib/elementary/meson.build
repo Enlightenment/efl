@@ -184,7 +184,7 @@ pub_eo_files = [
   'efl_ui_text_factory_emoticons.eo',
   'efl_ui_text_factory_fallback.eo',
   'efl_ui_textpath.eo',
-  'efl_ui_translatable.eo',
+  'efl_ui_l10n.eo',
   'efl_ui_clock.eo',
   'efl_ui_cursor.eo',
   'efl_ui_image_factory.eo',

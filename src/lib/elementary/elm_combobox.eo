@@ -40,7 +40,7 @@ class Elm.Combobox (Efl.Ui.Button, Efl.Ui.Selectable,
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Elm.Genlist.filter { set; }

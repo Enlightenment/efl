@@ -145,7 +145,7 @@ class Elm.Naviframe (Efl.Ui.Layout, Efl.Access.Widget.Action, Efl.Ui.Legacy)
       Efl.Object.constructor;
       Efl.Gfx.Entity.visible { set; }
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;

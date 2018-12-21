@@ -21,6 +21,6 @@ class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Text.text { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
    }
 }

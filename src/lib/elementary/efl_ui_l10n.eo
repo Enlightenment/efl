@@ -1,4 +1,4 @@
-interface Efl.Ui.Translatable
+interface Efl.Ui.L10n
 {
    [[Interface for all translatable text APIs.
 
@@ -6,7 +6,7 @@ interface Efl.Ui.Translatable
      but may also be used in text-to-speech situations.
    ]]
    methods {
-      @property translatable_text {
+      @property l10n_text {
          [[A unique string to be translated.
            
            Often this will be a human-readable string (e.g. in English) but it

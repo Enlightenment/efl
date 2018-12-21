@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -439,12 +439,12 @@ _reload_format(Evas_Object *obj)
 }
 
 EOLIAN static void
-_efl_ui_clock_efl_ui_translatable_translation_update(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_efl_ui_l10n_translation_update(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
    if (!sd->user_format) _reload_format(obj);
    else _field_list_display(obj);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

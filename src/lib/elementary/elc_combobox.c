@@ -5,7 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -50,14 +50,14 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_combobox_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
-   efl_ui_translatable_translation_update(sd->genlist);
-   efl_ui_translatable_translation_update(sd->entry);
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(sd->genlist);
+   efl_ui_l10n_translation_update(sd->entry);
 
    if (sd->hover)
-     efl_ui_translatable_translation_update(sd->hover);
+     efl_ui_l10n_translation_update(sd->hover);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result

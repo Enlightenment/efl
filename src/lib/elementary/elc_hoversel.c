@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -52,7 +52,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_hoversel_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Eo *it;
    Eina_List *l;
@@ -60,7 +60,7 @@ _elm_hoversel_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Ho
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result

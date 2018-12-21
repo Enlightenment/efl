@@ -7,7 +7,7 @@
 #define EFL_UI_WIDGET_PROTECTED
 //#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -50,7 +50,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_ui_l10n_translation_update(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_List *l;
    Elm_Object_Item *it;
@@ -60,7 +60,7 @@ _elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool

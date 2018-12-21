@@ -58,7 +58,7 @@ class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
    }

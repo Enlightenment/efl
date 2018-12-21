@@ -3,7 +3,7 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -58,7 +58,7 @@ _dayselector_resize(void *data,
 }
 
 EOLIAN static void
-_elm_dayselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
+_elm_dayselector_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Dayselector_Data *sd)
 {
    time_t t;
    Eina_List *l;
@@ -78,7 +78,7 @@ _elm_dayselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm
         elm_object_text_set(VIEW(it), buf);
      }
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static void

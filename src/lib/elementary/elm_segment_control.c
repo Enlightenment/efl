@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -28,7 +28,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EOLIAN static void
-_elm_segment_control_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
+_elm_segment_control_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -36,7 +36,7 @@ _elm_segment_control_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED,
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

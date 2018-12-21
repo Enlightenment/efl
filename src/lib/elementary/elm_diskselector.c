@@ -5,7 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -50,7 +50,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_diskselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
+_elm_diskselector_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
    Eina_List *l;

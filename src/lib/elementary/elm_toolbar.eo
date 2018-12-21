@@ -353,7 +353,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.focused_item { get; }

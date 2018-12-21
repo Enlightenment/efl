@@ -171,7 +171,7 @@ class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action, Efl.Ui.Legacy)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.widget_parent { set; }
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;

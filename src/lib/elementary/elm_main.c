@@ -1485,9 +1485,9 @@ elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part,
    else
      {
         if (!part)
-           efl_ui_translatable_text_set(obj, text, domain);
+           efl_ui_l10n_text_set(obj, text, domain);
         else
-           efl_ui_translatable_text_set(efl_part(obj, part), text, domain);
+           efl_ui_l10n_text_set(efl_part(obj, part), text, domain);
      }
 }
 
@@ -1507,9 +1507,9 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
    else
      {
         if (!part)
-          return efl_ui_translatable_text_get(obj, NULL);
+          return efl_ui_l10n_text_get(obj, NULL);
         else
-          return efl_ui_translatable_text_get(efl_part(obj, part), NULL);
+          return efl_ui_l10n_text_get(efl_part(obj, part), NULL);
      }
 }
 

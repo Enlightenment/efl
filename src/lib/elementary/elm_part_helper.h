@@ -207,14 +207,14 @@ _ ## type ## _efl_text_text_get(const Eo *obj, typedata *sd EINA_UNUSED) \
   return efl_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj))); \
 } \
 EOLIAN static void \
-_ ## type ## _efl_ui_translatable_translatable_text_set(Eo *obj, typedata *sd EINA_UNUSED, const char *label, const char *domain) \
+_ ## type ## _efl_ui_l10n_l10n_text_set(Eo *obj, typedata *sd EINA_UNUSED, const char *label, const char *domain) \
 { \
-   efl_ui_translatable_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), label, domain); \
+   efl_ui_l10n_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), label, domain); \
 } \
 EOLIAN static const char * \
-_ ## type ## _efl_ui_translatable_translatable_text_get(const Eo *obj, typedata *sd EINA_UNUSED, const char **domain) \
+_ ## type ## _efl_ui_l10n_l10n_text_get(const Eo *obj, typedata *sd EINA_UNUSED, const char **domain) \
 { \
-  return efl_ui_translatable_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), domain); \
+  return efl_ui_l10n_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), domain); \
 }
 
 #define ELM_PART_MARKUP_DEFAULT_IMPLEMENT(type, typedata) \

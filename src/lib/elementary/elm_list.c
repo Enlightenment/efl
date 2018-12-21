@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 
@@ -678,7 +678,7 @@ static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params EINA_UN
 }
 
 EOLIAN static void
-_elm_list_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -686,7 +686,7 @@ _elm_list_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_List_D
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void

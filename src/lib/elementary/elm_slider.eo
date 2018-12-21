@@ -19,7 +19,7 @@ class Elm.Slider (Efl.Ui.Slider_Interval, Efl.Ui.Legacy,
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Format.format_cb { set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Part.part_get;
    }
 }

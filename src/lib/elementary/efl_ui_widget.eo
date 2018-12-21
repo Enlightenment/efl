@@ -15,7 +15,7 @@ struct Efl.Ui.Widget_Focus_State {
 
 abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
-                        Efl.Ui.Cursor, Efl.Ui.Translatable,
+                        Efl.Ui.Cursor, Efl.Ui.L10n,
                         Efl.Ui.Selection, Efl.Ui.Dnd)
 {
    [[Efl UI widget abstract class]]
@@ -589,7 +589,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
+      Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
    }
    events {

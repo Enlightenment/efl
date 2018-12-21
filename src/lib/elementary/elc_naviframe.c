@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
 #define ELM_WIDGET_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -97,14 +97,14 @@ _prev_page_focus_recover(Elm_Naviframe_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_naviframe_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
+_elm_naviframe_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
 
    EINA_INLIST_FOREACH(sd->stack, it)
      elm_wdg_item_translate(EO_OBJ(it));
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static void

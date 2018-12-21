@@ -234,7 +234,7 @@ class Elm.Ctxpopup (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Access.Widget.Action,
       Efl.Ui.Widget.widget_parent { set; }
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Widget.widget_sub_object_add;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focused_item { get; }

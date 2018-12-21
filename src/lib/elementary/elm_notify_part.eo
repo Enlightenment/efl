@@ -1,11 +1,11 @@
 class Elm.Notify.Part (Efl.Ui.Widget_Part, Efl.Content, Efl.Text,
-                       Efl.Ui.Translatable)
+                       Efl.Ui.L10n)
 {
    [[Elementary notification internel part class]]
    data: null;
    implements {
       Efl.Text.text { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
    }

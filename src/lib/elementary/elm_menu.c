@@ -6,7 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
 #include <Elementary.h>
@@ -34,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 #undef ELM_PRIV_MENU_SIGNALS
 
 EOLIAN static void
-_elm_menu_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Elm_Menu_Item_Data *it;
    Eina_List *l;

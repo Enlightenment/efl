@@ -2,7 +2,7 @@
 class Efl.Ui.Grid_Default_Item (Efl.Ui.Grid_Item,
                                 Efl.Text,
                                 Efl.Text_Markup,
-                                Efl.Ui.Translatable,
+                                Efl.Ui.L10n,
                                 Efl.Content)
 {
    [[Grid Default Item class.
@@ -20,7 +20,7 @@ class Efl.Ui.Grid_Default_Item (Efl.Ui.Grid_Item,
       Efl.Object.destructor;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part_get;

@@ -139,7 +139,7 @@ class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Legac
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.on_disabled_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
    }
    events {
       changed: Efl.Object; [[Called when segment control changed]]

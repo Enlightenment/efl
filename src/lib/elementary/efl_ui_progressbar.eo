@@ -61,7 +61,7 @@ class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
       Efl.Text_Markup.markup { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
    }
    events {
       changed: void; [[Called when progressbar changed]]

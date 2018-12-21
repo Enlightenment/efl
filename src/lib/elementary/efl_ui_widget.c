@@ -8,7 +8,7 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
 #define EFL_INPUT_EVENT_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIDGET_PART_BG_PROTECTED
 #define EFL_PART_PROTECTED
@@ -2978,7 +2978,7 @@ elm_widget_part_translatable_text_get(const Eo *obj, const char *part, const cha
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
+_efl_ui_widget_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    const Eina_List *l;
    Evas_Object *child;
@@ -2986,10 +2986,10 @@ _efl_ui_widget_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_W
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         if (elm_widget_is(child))
-          efl_ui_translatable_translation_update(child);
+          efl_ui_l10n_translation_update(child);
      }
 
-   if (sd->hover_obj) efl_ui_translatable_translation_update(sd->hover_obj);
+   if (sd->hover_obj) efl_ui_l10n_translation_update(sd->hover_obj);
 
 #ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
@@ -6158,4 +6158,4 @@ ELM_PART_TEXT_DEFAULT_GET(efl_ui_widget, NULL)
 #include "efl_ui_widget.eo.c"
 
 /* Others */
-#include "efl_ui_translatable.eo.c"
+#include "efl_ui_l10n.eo.c"

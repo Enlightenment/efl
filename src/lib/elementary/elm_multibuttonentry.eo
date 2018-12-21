@@ -180,7 +180,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Legacy)
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Object.access_children { get; }
       Efl.Part.part_get;
