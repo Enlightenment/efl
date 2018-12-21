@@ -130,6 +130,7 @@ struct documentation_generator
       ::Eolian_Doc_Token token;
       const char *text_ptr = text.c_str();
       ::eolian_doc_token_init(&token);
+      ::Eolian_Doc_Token_Type previous_token_type = ::EOLIAN_DOC_TOKEN_UNKNOWN;
       while ((text_ptr = ::eolian_documentation_tokenize(text_ptr, &token)) != NULL)
         {
            std::string token_text, name_tail;
@@ -139,11 +140,18 @@ struct documentation_generator
                 token_text = token_text_cstr;
                 free(token_text_cstr);
                 if (token_text.length() > 4)
-                  name_tail = token_text.substr(token_text.size() - 4, 4);
+                  name_tail = token_text.substr(token_text.length() - 4, 4);
              }
-           switch(::eolian_doc_token_type_get(&token))
+           ::Eolian_Doc_Token_Type token_type = ::eolian_doc_token_type_get(&token);
+           switch(token_type)
            {
               case ::EOLIAN_DOC_TOKEN_TEXT:
+                // If previous token was a reference and this text token starts with
+                // parentheses, remove them, since the reference will be rendered
+                // with the parentheses already.
+                if ((previous_token_type == ::EOLIAN_DOC_TOKEN_REF) &&
+                    (token_text.substr(0, 2)  == "()"))
+                  token_text = token_text.substr(2, token_text.length() - 2);
                 new_text += token_text;
                 break;
               case ::EOLIAN_DOC_TOKEN_REF:
@@ -174,6 +182,7 @@ struct documentation_generator
               default:
                 break;
            }
+           previous_token_type = token_type;
         }
       return new_text;
    }
