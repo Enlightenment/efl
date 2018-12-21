@@ -152,6 +152,22 @@ _ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const c
    _ ## type ## _text_markup_set(pd->obj, sd, pd->part, markup); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_FONT_SET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_font_font_set(Eo *obj, void *_pd EINA_UNUSED, const char *font, Efl_Font_Size size) \
+{ \
+   internals \
+   _ ## type ## _text_font_set(pd->obj, sd, pd->part, font, size); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_FONT_GET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_font_font_get(const Eo *obj, void *_pd EINA_UNUSED, const char **font, Efl_Font_Size *size) \
+{ \
+   internals \
+   _ ## type ## _text_font_get(pd->obj, sd, pd->part, font, size); \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
@@ -193,6 +209,12 @@ _ ## full ## _efl_text_markup_markup_set(Eo *obj, void *_pd EINA_UNUSED, const c
 
 #define ELM_PART_OVERRIDE_MARKUP_GET_NO_SD(type) \
    ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH_NO_SD())
+
+#define ELM_PART_OVERRIDE_FONT_SET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_FONT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
+
+#define ELM_PART_OVERRIDE_FONT_GET(type, TYPE, typedata) \
+   ELM_PART_OVERRIDE_TEXT_FONT_GET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
 
 #define ELM_PART_TEXT_DEFAULT_IMPLEMENT(type, typedata) \

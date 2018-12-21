@@ -1353,6 +1353,22 @@ _efl_ui_layout_text_markup_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part
 }
 
 static void
+_efl_ui_layout_text_font_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
+      const char *part, const char *font, Efl_Font_Size size)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_text_font_set(efl_part(wd->resize_obj, part), font, size);
+}
+
+static void
+_efl_ui_layout_text_font_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
+      const char *part, const char **font, Efl_Font_Size *size)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_text_font_get(efl_part(wd->resize_obj, part), font, size);
+}
+
+static void
 _layout_box_subobj_init(Efl_Ui_Layout_Data *sd, Efl_Ui_Layout_Sub_Object_Data *sub_d, const char *part, Evas_Object *child)
 {
    sub_d->part = eina_stringshare_add(part);
@@ -2526,12 +2542,17 @@ _efl_ui_layout_part_efl_ui_cursor_cursor_theme_search_enabled_get(const Eo *obj,
   ELM_PART_OVERRIDE_TEXT_MARKUP_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
   ELM_PART_OVERRIDE_TEXT_MARKUP_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
 
+#define FONT_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_TEXT_FONT_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_TEXT_FONT_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+
 /* Efl.Ui.Layout_Part_Content */
 CONTENT_FULL(efl_ui_layout_part_content, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 /* Efl.Ui.Layout_Part_Text */
 TEXT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 MARKUP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+FONT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
