@@ -3904,13 +3904,6 @@ int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj
 }
 
 /// Dummy.Child
-static Efl_Object *
-_dummy_child_efl_object_constructor(Eo *obj, EINA_UNUSED Dummy_Child_Data *pd)
-{
-    efl_constructor(efl_super(obj, DUMMY_CHILD_CLASS));
-    return obj;
-}
-
 EOLIAN static void
 _dummy_child_class_constructor(Efl_Class *klass)
 {

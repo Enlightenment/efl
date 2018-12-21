@@ -213,8 +213,8 @@ struct property_wrapper_definition_generator
         return true;
 
       bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
-      bool is_static = (property.getter.is_engaged() && property.getter->is_static
-                       || property.setter.is_engaged() && property.setter->is_static);
+      bool is_static = (property.getter.is_engaged() && property.getter->is_static)
+                       || (property.setter.is_engaged() && property.setter->is_static);
 
 
       if (interface && is_static)

@@ -329,9 +329,9 @@ struct klass_full_concrete_or_interface_name_generator
     case attributes::class_type::abstract_:
     case attributes::class_type::regular:
       return klass_full_concrete_name(klass);
+    default:
+      return klass_full_interface_name(klass);
     }
-    return klass_full_interface_name(klass);
-
   }
 
   template <typename OutputIterator, typename Context>
