@@ -168,6 +168,22 @@ _ ## full ## _efl_text_font_font_get(const Eo *obj, void *_pd EINA_UNUSED, const
    _ ## type ## _text_font_get(pd->obj, sd, pd->part, font, size); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_COLOR_SET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_normal_color_set(Eo *obj, void *_pd EINA_UNUSED, unsigned char r, unsigned char g, unsigned char b, unsigned char a) \
+{ \
+   internals \
+   _ ## type ## _text_color_set(pd->obj, sd, pd->part, r, g, b, a); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_COLOR_GET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_normal_color_get(const Eo *obj, void *_pd EINA_UNUSED, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) \
+{ \
+   internals \
+   _ ## type ## _text_color_get(pd->obj, sd, pd->part, r, g, b, a); \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
