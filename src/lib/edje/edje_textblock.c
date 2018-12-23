@@ -586,14 +586,28 @@ static void
 _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
                            Edje_Real_Part *ep,
                            Edje_Calc_Params *params,
-                           Eina_Bool styles)
+                           Eina_Bool styles,
+                           Eina_Bool has_color,
+                           Edje_Color color)
 {
 
    Edje_Text_Effect effect;
    Efl_Text_Style_Effect_Type st;
    Efl_Text_Style_Shadow_Direction dir;
+   Edje_Color *ncol;
 
-   efl_text_normal_color_set(ep->object, COLOR_SET(params->color));
+
+   ncol = &params->color;
+
+   if (has_color)
+     {
+        ncol = &color;
+     }
+
+   // XXX: compatibility with legacy behavior. The 'color' field in the EDC is
+   // used to multiply with the TEXTBLOCK's color.
+   evas_object_color_set(ep->object, COLOR_SET(*ncol));
+   efl_text_normal_color_set(ep->object, COLOR_SET(*ncol));
 
    effect = ep->part->effect;
    switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
@@ -715,8 +729,8 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
          dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
          break;
      }
-   efl_text_effect_type_set(ep->object, st);
-   efl_text_shadow_direction_set(ep->object, dir);
+   //efl_text_effect_type_set(ep->object, st);
+   //efl_text_shadow_direction_set(ep->object, dir);
 }
 
 #undef COLOR_SET
@@ -845,6 +859,24 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
    int size;
    FLOAT_T ellip;
    double align_y, align_x;
+   Edje_Color color;
+   Eina_Bool has_color = EINA_FALSE;
+
+   Eina_List *i;
+   Edje_Part_Text_Prop *prop;
+
+   EINA_LIST_FOREACH(ep->typedata.text->text_props, i, prop)
+     {
+        if (prop->type == EDJE_PART_TEXT_PROP_COLOR_NORMAL)
+          {
+             color.r = prop->val.color.r;
+             color.g = prop->val.color.g;
+             color.b = prop->val.color.b;
+             color.a = prop->val.color.a;
+             has_color = EINA_TRUE;
+             break;
+          }
+     }
 
    _edje_part_recalc_textblock_font_get(ed, ep, chosen_desc,
          &font_source, &font, &size);
@@ -855,7 +887,7 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
    align_x = TO_DOUBLE(params->type.text->align.x);
    efl_text_font_set(ep->object, font, size);
    efl_text_ellipsis_set(ep->object, (ellip == -1.0) ? -1.0 : 1.0 - ellip);
-   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
+   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE, has_color, color);
 
    efl_text_valign_set(ep->object, align_y);
 

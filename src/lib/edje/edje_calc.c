@@ -4674,6 +4674,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_SNAPSHOT:
              EINA_FALLTHROUGH;
            case EDJE_PART_TYPE_VECTOR:
+             if (ep->part->type != EDJE_PART_TYPE_TEXTBLOCK)
              evas_object_color_set(ep->object,
                                    (pf->color.r * pf->color.a) / 255,
                                    (pf->color.g * pf->color.a) / 255,

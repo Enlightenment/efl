@@ -213,26 +213,36 @@ _prop_new(Eina_List **props, Edje_Part_Text_Prop_Type type)
 }
 
 static Edje_Part_Text_Prop *
-_prop_fetch(Eina_List **props, Edje_Part_Text_Prop_Type type)
+_prop_find(Eina_List *props, Edje_Part_Text_Prop_Type type)
 {
    Edje_Part_Text_Prop *prop;
    Eina_List *i;
 
    // lookup prop
-   EINA_LIST_FOREACH(*props, i, prop)
+   EINA_LIST_FOREACH(props, i, prop)
      {
-        if (prop->type == type) return prop;
+        if (prop->type == type) break;
      }
-
-   // prop not found
-   prop = malloc(sizeof(*prop));
-   prop->type = type;
-
-   *props = eina_list_append(*props, prop);
 
    return prop;
 }
 
+
+static Edje_Part_Text_Prop *
+_prop_fetch(Eina_List **props, Edje_Part_Text_Prop_Type type)
+{
+   Edje_Part_Text_Prop *prop;
+
+   prop = _prop_find(*props, type);
+   if (!prop)
+     {
+        prop = malloc(sizeof(*prop));
+        prop->type = type;
+        *props = eina_list_append(*props, prop);
+     }
+
+   return prop;
+}
 EOLIAN static void
 _efl_canvas_layout_part_text_efl_text_style_backing_type_set(Eo *obj,
       void *_pd EINA_UNUSED,
@@ -259,6 +269,48 @@ _efl_canvas_layout_part_text_efl_text_style_backing_type_get(const Eo *obj,
       return EFL_TEXT_STYLE_BACKING_TYPE_DISABLED;
 
    return efl_text_backing_type_get(pd->rp->object);
+}
+
+EOLIAN static void \
+_efl_canvas_layout_part_text_efl_text_style_normal_color_set(Eo *obj,
+      void *_pd EINA_UNUSED,
+      unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+   Edje_User_Defined *eud;
+   Edje_Part_Text_Prop *prop;
+   PROXY_DATA_GET(obj, pd);
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
+   eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
+
+   prop = _prop_fetch(&pd->rp->typedata.text->text_props, EDJE_PART_TEXT_PROP_COLOR_NORMAL);
+
+   prop->val.color.r = r;
+   prop->val.color.g = g;
+   prop->val.color.b = b;
+   prop->val.color.a = a;
+
+   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_COLOR_NORMAL;
+}
+
+EOLIAN static void
+_efl_canvas_layout_part_text_efl_text_style_normal_color_get(const Eo *obj,
+      void *_pd EINA_UNUSED,
+      unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+{
+   PROXY_DATA_GET(obj, pd);
+   Edje_Part_Text_Prop *prop;
+
+   *r = *g = *b = *a = 0;
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
+   prop = _prop_find(pd->rp->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_NORMAL);
+   if (prop)
+     {
+        *r = prop->val.color.r;
+        *g = prop->val.color.g;
+        *b = prop->val.color.b;
+        *a = prop->val.color.a;
+     }
 }
 
 #define TEXT_COLOR_IMPL(x, X) \
@@ -292,7 +344,7 @@ _efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_get(const Eo *obj, \
 TEXT_COLOR_IMPL(backing, BACKING)
 TEXT_COLOR_IMPL(glow, GLOW)
 TEXT_COLOR_IMPL(glow2, GLOW2)
-TEXT_COLOR_IMPL(normal, NORMAL)
+//TEXT_COLOR_IMPL(normal, NORMAL)
 TEXT_COLOR_IMPL(outline, OUTLINE)
 TEXT_COLOR_IMPL(shadow, SHADOW)
 TEXT_COLOR_IMPL(strikethrough, STRIKETHROUGH)
@@ -519,6 +571,21 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
         prop = _prop_new(props, EDJE_PART_TEXT_PROP_BACKING_TYPE);
         prop->val.backing = efl_text_backing_type_get(rp->object);
      }
+
+   if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_NORMAL)
+     {
+        Edje_Part_Text_Prop *prop, *prop2;
+        prop = _prop_new(props, EDJE_PART_TEXT_PROP_COLOR_NORMAL);
+        prop2 = _prop_find(rp->typedata.text->text_props,
+              EDJE_PART_TEXT_PROP_COLOR_NORMAL);
+        if (prop2)
+          {
+             prop->val.color.r = prop2->val.color.r;
+             prop->val.color.g = prop2->val.color.g;
+             prop->val.color.b = prop2->val.color.b;
+             prop->val.color.a = prop2->val.color.a;
+          }
+     }
 #define STYLE_COLOR_COLLECT(x, X) \
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_ ##X) \
      { \
@@ -532,7 +599,6 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
    STYLE_COLOR_COLLECT(backing, BACKING)
       STYLE_COLOR_COLLECT(glow, GLOW)
       STYLE_COLOR_COLLECT(glow2, GLOW2)
-      STYLE_COLOR_COLLECT(normal, NORMAL)
       STYLE_COLOR_COLLECT(outline, OUTLINE)
       STYLE_COLOR_COLLECT(shadow, SHADOW)
       STYLE_COLOR_COLLECT(strikethrough, STRIKETHROUGH)
