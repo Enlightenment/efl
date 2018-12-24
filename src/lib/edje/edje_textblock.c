@@ -604,9 +604,6 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
         ncol = &color;
      }
 
-   // XXX: compatibility with legacy behavior. The 'color' field in the EDC is
-   // used to multiply with the TEXTBLOCK's color.
-   evas_object_color_set(ep->object, COLOR_SET(*ncol));
    efl_text_normal_color_set(ep->object, COLOR_SET(*ncol));
 
    effect = ep->part->effect;
@@ -729,8 +726,8 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
          dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
          break;
      }
-   //efl_text_effect_type_set(ep->object, st);
-   //efl_text_shadow_direction_set(ep->object, dir);
+   efl_text_effect_type_set(ep->object, st);
+   efl_text_shadow_direction_set(ep->object, dir);
 }
 
 #undef COLOR_SET
