@@ -8,6 +8,7 @@ class Ector.Renderer.GL.Shape (Ector.Renderer.GL, Ector.Renderer.Shape, Efl.Gfx.
       Ector.Renderer.crc { get; }
       Ector.Renderer.GL.op_fill;
       Efl.Gfx.Path.bounds_get;
+      Efl.Gfx.Path.commit;
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

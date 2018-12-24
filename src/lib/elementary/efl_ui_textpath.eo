@@ -40,6 +40,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout, Efl.Text, Efl.Gfx.Path)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Gfx.Path.commit;
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text {get; set;}
       Efl.Part.part_get;
