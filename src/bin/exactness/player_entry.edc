@@ -1,0 +1,932 @@
+collections {
+   #include "../../../data/elementary/themes/fonts.edc"
+   group { name: "elm/entry/cursor/default";
+      min: 1 0;
+      images.image: "white_bar_vert_glow.png" COMP;
+      parts {
+         part { name: "cursor"; mouse_events: 0;
+            clip_to: "clipper";
+            description { state: "default" 0.0;
+               rel1.offset: -4 -4;
+               rel2.offset: 3 3;
+               image.normal: "white_bar_vert_glow.png";
+               image.border: 4 4 4 4;
+               fill.smooth: 0;
+               color: 255 255 255 0;
+               color_class: "entry_cursor";
+               min: 9 10;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+         part { name: "clipper"; type: RECT;
+            description { state: "default" 0.0;
+               rel1.to: "cursor";
+               rel2.to: "cursor";
+               fixed: 1 1;
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "selection,changed"; source: "elm.text";
+            action: STATE_SET "hidden" 0.0;
+            target: "clipper";
+         }
+         program {
+            signal: "selection,cleared"; source: "elm.text";
+            action: STATE_SET "default" 0.0;
+            target: "clipper";
+         }
+         program {
+            signal: "selection,reset"; source: "elm.text";
+            action: STATE_SET "default" 0.0;
+            target: "clipper";
+         }
+         program {
+            signal: "elm,action,focus"; source: "elm";
+            action: ACTION_STOP;
+            target: "cursor_show";
+            target: "cursor_hide";
+            target: "cursor_show_timer";
+            target: "cursor_hide_timer";
+            after: "cursor_show";
+         }
+         program {
+            signal: "elm,action,unfocus"; source: "elm";
+            action: ACTION_STOP;
+            target: "cursor_show";
+            target: "cursor_hide";
+            target: "cursor_show_timer";
+            target: "cursor_hide_timer";
+            after: "cursor_hide_stop";
+         }
+         program {
+            signal: "elm,action,show,cursor"; source: "elm";
+            action: ACTION_STOP;
+            target: "cursor_show";
+            target: "cursor_hide";
+            target: "cursor_show_timer";
+            target: "cursor_hide_timer";
+            after: "cursor_show";
+         }
+         program { name: "cursor_hide_stop";
+            action: STATE_SET "default" 0.0;
+            target: "cursor";
+         }
+         program { name: "cursor_show";
+            action: STATE_SET "default" 0.0;
+            target: "cursor";
+            after: "cursor_show_timer";
+         }
+         program { name: "cursor_hide";
+            action: STATE_SET "default" 0.0;
+            target: "cursor";
+            transition: SINUSOIDAL 0.2;
+            after: "cursor_hide_timer";
+         }
+         program { name: "cursor_show_timer";
+            in: 0.5 0.0;
+            after: "cursor_hide";
+         }
+         program { name: "cursor_hide_timer";
+            in: 0.2 0.0;
+            after: "cursor_show";
+         }
+      }
+   }
+   
+   group { name: "elm/entry/selection/default";
+      parts {
+         part { name: "base"; type: RECT;
+            description { state: "default" 0.0;
+               color: 51 153 255 255;
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/anchor/default";
+      images.image: "horizontal_separated_bar_small_glow.png" COMP;
+      parts {
+         part { name: "bar";
+            description { state: "default" 0.0;
+               image.normal: "horizontal_separated_bar_small_glow.png";
+               image.border: 4 4 4 4;
+               fill.smooth: 0;
+               fixed: 0 1;
+               rel1.relative: 0.0 1.0;
+               rel1.offset: -3 -5;
+               rel2.offset: 2 4;
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base/default";
+      sounds {
+         sample { name: "key-tap1" LOSSY 64;
+            source: "kbd-tap.wav";
+         }
+         sample { name: "key-tap2" LOSSY 64;
+            source: "kbd-tap2.wav";
+         }
+         sample { name: "key-tap3" LOSSY 64;
+            source: "kbd-tap3.wav";
+         }
+         sample { name: "key-tap4" LOSSY 64;
+            source: "kbd-tap4.wav";
+         }
+         sample { name: "key-tap5" LOSSY 64;
+            source: "kbd-tap5.wav";
+         }
+      }
+      
+      styles {
+         style { name: "entry_style";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=word text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_nowrap_style";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_disabled_style";
+            base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_nowrap_disabled_style";
+            base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_guide_style";
+            base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=word text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+      }
+   //   data.item: "context_menu_orientation" "horizontal";
+      parts {
+         part { name: "elm.swallow.background"; type: SWALLOW;
+            description { state: "default" 0.0;
+               rel1.offset: 1 1;
+               rel2.offset: -2 -2;
+            }
+         }
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text"; type: TEXTBLOCK;
+            scale: 1;
+            entry_mode: EDITABLE;
+            select_mode: DEFAULT;
+   //         select_mode: EXPLICIT;
+            cursor_mode: BEFORE;
+            multiline: 1;
+            source: "elm/entry/selection/default"; // selection under
+   //         source2: "X"; // selection over
+   //         source3: "X"; // cursor under
+            source4: "elm/entry/cursor/default"; // cursorover
+   //         source5: "elm/entry/anchor/default"; // anchor under
+            source6: "elm/entry/anchor/default"; // anchor over
+            description { state: "default" 0.0;
+               /* we gotta use 0 0 here, because of scrolled entries */
+               fixed: 0 0;
+               rel1.offset: 2 2;
+               rel2.offset: -3 -3;
+               text { style: "entry_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style";
+                  min: 0 1;
+               }
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "load"; source: "";
+            action: FOCUS_SET;
+            target: "elm.text";
+         }
+         program {
+            signal: "elm,state,disabled"; source: "elm";
+            action: STATE_SET "disabled" 0.0;
+            target: "elm.text";
+         }
+         program {
+            signal: "elm,state,enabled"; source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.text";
+         }
+         program {
+            signal: "elm,guide,disabled"; source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.guide";
+         }
+         program {
+            signal: "elm,guide,enabled"; source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.guide";
+         }
+         program { name: "key-down";
+            signal: "entry,keydown"; source: "elm.text";
+            script {
+               new buf[32];
+               snprintf(buf, 31, "key-down%i", (rand() % 5) + 1);
+               run_program(get_program_id(buf));
+            }
+         }
+         program { name: "key-down1";
+            action: PLAY_SAMPLE "key-tap1" 1.0 INPUT;
+         }
+         program { name: "key-down2";
+            action: PLAY_SAMPLE "key-tap2" 1.0 INPUT;
+         }
+         program { name: "key-down3";
+            action: PLAY_SAMPLE "key-tap3" 1.0 INPUT;
+         }
+         program { name: "key-down4";
+            action: PLAY_SAMPLE "key-tap4" 1.0 INPUT;
+         }
+         program { name: "key-down5";
+            action: PLAY_SAMPLE "key-tap5" 1.0 INPUT;
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-mixedwrap/default";
+      inherit: "elm/entry/base/default";
+      styles {
+         style { name: "entry_style_mixedwrap";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=mixed text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_disabled_style_mixedwrap";
+            base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_guide_style_mixedwrap";
+            base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=mixed text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+      }
+      parts {
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_guide_style_mixedwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text";
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               text { style: "entry_style_mixedwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style_mixedwrap";
+                  min: 0 1;
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-charwrap/default";
+      inherit: "elm/entry/base/default";
+      styles {
+         style { name: "entry_style_charwrap";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=char text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_disabled_style_charwrap";
+            base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_guide_style_charwrap";
+            base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=char text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+      }
+      parts {
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_guide_style_charwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text";
+            description { state: "default" 0.0;
+               fixed: 1 1;
+               text { style: "entry_style_charwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style_charwrap";
+                  min: 0 1;
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-nowrap/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text";
+            description { state: "default" 0.0;
+               text { style: "entry_nowrap_style";
+                  min: 1 1;
+                  ellipsis: -1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_nowrap_disabled_style";
+                  min: 0 1;
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-single/default";
+      inherit: "elm/entry/base/default";
+      styles {
+         style { name: "entry_single_style";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_single_disabled_style";
+            base: "font="FN" font_size=10 color=#151515 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_text_disabled color_class=entry_text_disabled left_margin=2 right_margin=2";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+         style { name: "entry_single_guide_style";
+            base: "font="FN" font_size=10 color=#000000 style=shadow,bottom shadow_color=#ffffff19 wrap=none text_class=entry_guide_text color_class=entry_guide_text left_margin=2 right_margin=2 ellipsis=0.0";
+            DISABLED_TEXTBLOCK_TAGS
+         }
+      }
+      parts {
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_single_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text";
+            multiline: 0;
+            description { state: "default" 0.0;
+               text { style: "entry_single_style";
+                  min: 1 1;
+                  ellipsis: -1;
+                  max: 0 0;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_single_disabled_style";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-single/spinner/default";
+      alias: "elm/entry/base-single/spinner/vertical";
+      inherit: "elm/entry/base-single/default";
+      styles {
+         style { name: "entry_single_spinner_style";
+            base: "font="FN" font_size=10 color=#ffffff style=shadow,bottom shadow_color=#00000080 align=center wrap=none text_class=entry_text color_class=entry_text left_margin=2 right_margin=2";
+            ENABLED_TEXTBLOCK_TAGS
+         }
+      }
+      parts {
+         part { name: "elm.text";
+            description { state: "default" 0.0;
+               text.style: "entry_single_spinner_style";
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-single-noedit/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.text";
+            entry_mode: PLAIN;
+            multiline: 0;
+            source: "elm/entry/selection/default"; // selection under
+            source4: ""; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor over
+            description { state: "default" 0.0;
+               text { style: "entry_single_style";
+                  min: 1 1;
+                  ellipsis: -1;
+                  max: 0 0;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_single_disabled_style";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-noedit/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.text";
+            entry_mode: PLAIN;
+            source: "elm/entry/selection/default"; // selection under
+            source4: ""; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor over
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               text { style: "entry_style";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-noedit-mixedwrap/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.text";
+            entry_mode: PLAIN;
+            source: "elm/entry/selection/default"; // selection under
+            source4: ""; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor over
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               text { style: "entry_style_mixedwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style_mixedwrap";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-noedit-charwrap/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.text";
+            entry_mode: PLAIN;
+            source: "elm/entry/selection/default"; // selection under
+            source4: ""; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor under
+            description { state: "default" 0.0;
+               fixed: 1 0;
+               text { style: "entry_style_charwrap";
+                  min: 0 1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style_charwrap";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-nowrap-noedit/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.text";
+            entry_mode: PLAIN;
+            source: "elm/entry/selection/default"; // selection under
+            source4: ""; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor under
+            description { state: "default" 0.0;
+               text { style: "entry_style";
+                  min: 1 1;
+                  ellipsis: -1;
+                  align: 0.0 0.0;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_disabled_style";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/base-password/default";
+      inherit: "elm/entry/base/default";
+      parts {
+         part { name: "elm.guide"; type: TEXTBLOCK; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               rel1.to: "elm.text";
+               rel2.to: "elm.text";
+               text { style: "entry_single_guide_style";
+                  min: 0 1;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.text";
+            entry_mode: PASSWORD;
+            multiline: 0;
+            source: "elm/entry/selection/default"; // selection under
+            source4: "elm/entry/cursor/default"; // cursorover
+            source6: "elm/entry/anchor/default"; // anchor under
+            description { state: "default" 0.0;
+               text { style: "entry_single_style";
+                  repch: "*";
+                  min: 1 1;
+                  ellipsis: -1;
+                  max: 0 0;
+                  align: 0.0 0.5;
+               }
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               text { style: "entry_single_disabled_style";
+               }
+            }
+         }
+      }
+   }
+   
+   group { name: "elm/entry/magnifier/default";
+      images.image: "frame_rounded.png" COMP;
+      parts {
+         part { name: "bg"; type: RECT; mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 10 10;
+               rel1.to: "over";
+               rel2.offset: -11 -11;
+               rel2.to: "over";
+               color: 48 48 48 255;
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "elm.swallow.content"; type: SWALLOW; mouse_events: 0;
+            description { state: "default" 0.0;
+               rel1.offset: 10 10;
+               rel1.to: "over";
+               rel2.offset: -11 -11;
+               rel2.to: "over";
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+         part { name: "over"; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 128 64;
+               align: 0 0;
+               image.normal: "frame_rounded.png";
+               image.border: 14 14 14 14;
+               image.middle: 0;
+               fill.smooth: 0;
+            }
+            description { state: "hidden" 0.0;
+               inherit: "default" 0.0;
+               visible: 0;
+            }
+         }
+      }
+      programs {
+         program { name: "magnifier_show";
+            signal: "elm,action,show,magnifier"; source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "elm.swallow.content";
+            target: "bg";
+            target: "over";
+         }
+         program { name: "magnifier_hide";
+            signal: "elm,action,hide,magnifier"; source: "elm";
+            action: STATE_SET "hidden" 0.0;
+            target: "elm.swallow.content";
+            target: "bg";
+            target: "over";
+         }
+      }
+   }
+   
+   group { name: "elm/entry/handler/start/default";
+      images.image: "handle_pick_up_left.png" COMP;
+      parts {
+         part { name: "base"; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 21 27; // 42 54
+               image.normal: "handle_pick_up_left.png";
+               align: (29/42) (11/54);
+               color_class: "entry_selection_handler";
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "event"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.to: "base";
+               rel2.to: "base";
+               min: 32 32;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "elm,handler,show"; source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "base";
+            target: "event";
+         }
+         program {
+            signal: "elm,handler,hide"; source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "base";
+            target: "event";
+         }
+      }
+   }
+   
+   group { name: "elm/entry/handler/end/default";
+      images.image: "handle_pick_up_right.png" COMP;
+      parts {
+         part { name: "base"; mouse_events: 0;
+            scale: 1;
+            description { state: "default" 0.0;
+               min: 21 27; // 42 54
+               image.normal: "handle_pick_up_right.png";
+               align: (12/42) (11/54);
+               color_class: "entry_selection_handler";
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+         part { name: "event"; type: RECT;
+            scale: 1;
+            description { state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.to: "base";
+               rel2.to: "base";
+               min: 32 32;
+               visible: 0;
+            }
+            description { state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+      }
+      programs {
+         program {
+            signal: "elm,handler,show"; source: "elm";
+            action: STATE_SET "visible" 0.0;
+            target: "base";
+            target: "event";
+         }
+         program {
+            signal: "elm,handler,hide"; source: "elm";
+            action: STATE_SET "default" 0.0;
+            target: "base";
+            target: "event";
+         }
+      }
+   }
+   
+   ///////////////////////////////////////////////////////////////////////////////
+   // emoticon images from:
+   // Tanya - Latvia
+   // http://lazycrazy.deviantart.com/
+   // http://lazycrazy.deviantart.com/art/Very-Emotional-Emoticons-144461621
+   group { name: "elm/entry/emoticon/angry/default"; images.image:
+      "emo-angry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-angry.png"; } } } }
+   group { name: "elm/entry/emoticon/angry-shout/default"; images.image:
+      "emo-angry-shout.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-angry-shout.png"; } } } }
+   group { name: "elm/entry/emoticon/crazy-laugh/default"; images.image:
+      "emo-crazy-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-crazy-laugh.png"; } } } }
+   group { name: "elm/entry/emoticon/evil-laugh/default"; images.image:
+      "emo-evil-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-evil-laugh.png"; } } } }
+   group { name: "elm/entry/emoticon/evil/default"; images.image:
+      "emo-evil.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-evil.png"; } } } }
+   group { name: "elm/entry/emoticon/goggle-smile/default"; images.image:
+      "emo-goggle-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-goggle-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/grumpy/default"; images.image:
+      "emo-grumpy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-grumpy.png"; } } } }
+   group { name: "elm/entry/emoticon/grumpy-smile/default"; images.image:
+      "emo-grumpy-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-grumpy-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/guilty/default"; images.image:
+      "emo-guilty.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-guilty.png"; } } } }
+   group { name: "elm/entry/emoticon/guilty-smile/default"; images.image:
+      "emo-guilty-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-guilty-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/haha/default"; images.image:
+      "emo-haha.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-haha.png"; } } } }
+   group { name: "elm/entry/emoticon/half-smile/default"; images.image:
+      "emo-half-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-half-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/happy-panting/default"; images.image:
+      "emo-happy-panting.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-happy-panting.png"; } } } }
+   group { name: "elm/entry/emoticon/happy/default"; images.image:
+      "emo-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-happy.png"; } } } }
+   group { name: "elm/entry/emoticon/indifferent/default"; images.image:
+      "emo-indifferent.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-indifferent.png"; } } } }
+   group { name: "elm/entry/emoticon/kiss/default"; images.image:
+      "emo-kiss.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-kiss.png"; } } } }
+   group { name: "elm/entry/emoticon/knowing-grin/default"; images.image:
+      "emo-knowing-grin.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-knowing-grin.png"; } } } }
+   group { name: "elm/entry/emoticon/laugh/default"; images.image:
+      "emo-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-laugh.png"; } } } }
+   group { name: "elm/entry/emoticon/little-bit-sorry/default"; images.image:
+      "emo-little-bit-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-little-bit-sorry.png"; } } } }
+   group { name: "elm/entry/emoticon/love-lots/default"; images.image:
+      "emo-love-lots.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-love-lots.png"; } } } }
+   group { name: "elm/entry/emoticon/love/default"; images.image:
+      "emo-love.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-love.png"; } } } }
+   group { name: "elm/entry/emoticon/minimal-smile/default"; images.image:
+      "emo-minimal-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-minimal-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/not-happy/default"; images.image:
+      "emo-not-happy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-not-happy.png"; } } } }
+   group { name: "elm/entry/emoticon/not-impressed/default"; images.image:
+      "emo-not-impressed.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-not-impressed.png"; } } } }
+   group { name: "elm/entry/emoticon/omg/default"; images.image:
+      "emo-omg.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-omg.png"; } } } }
+   group { name: "elm/entry/emoticon/opensmile/default"; images.image:
+      "emo-opensmile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-opensmile.png"; } } } }
+   group { name: "elm/entry/emoticon/smile/default"; images.image:
+      "emo-smile.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-smile.png"; } } } }
+   group { name: "elm/entry/emoticon/sorry/default"; images.image:
+      "emo-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-sorry.png"; } } } }
+   group { name: "elm/entry/emoticon/squint-laugh/default"; images.image:
+      "emo-squint-laugh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-squint-laugh.png"; } } } }
+   group { name: "elm/entry/emoticon/surprised/default"; images.image:
+      "emo-surprised.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-surprised.png"; } } } }
+   group { name: "elm/entry/emoticon/suspicious/default"; images.image:
+      "emo-suspicious.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-suspicious.png"; } } } }
+   group { name: "elm/entry/emoticon/tongue-dangling/default"; images.image:
+      "emo-tongue-dangling.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-tongue-dangling.png"; } } } }
+   group { name: "elm/entry/emoticon/tongue-poke/default"; images.image:
+      "emo-tongue-poke.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-tongue-poke.png"; } } } }
+   group { name: "elm/entry/emoticon/uh/default"; images.image:
+      "emo-uh.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-uh.png"; } } } }
+   group { name: "elm/entry/emoticon/unhappy/default"; images.image:
+      "emo-unhappy.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-unhappy.png"; } } } }
+   group { name: "elm/entry/emoticon/very-sorry/default"; images.image:
+      "emo-very-sorry.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-very-sorry.png"; } } } }
+   group { name: "elm/entry/emoticon/what/default"; images.image:
+      "emo-what.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-what.png"; } } } }
+   group { name: "elm/entry/emoticon/wink/default"; images.image:
+      "emo-wink.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-wink.png"; } } } }
+   group { name: "elm/entry/emoticon/worried/default"; images.image:
+      "emo-worried.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-worried.png"; } } } }
+   group { name: "elm/entry/emoticon/wtf/default"; images.image:
+      "emo-wtf.png" COMP; parts { part { name: "icon"; mouse_events: 0; description { state: "default" 0.0; max: 64 64; image.normal:
+               "emo-wtf.png"; } } } }
+   //------------------------------------------------------------
+}
