@@ -280,6 +280,18 @@ mixin Efl.Gfx.Path
           @in with: const(Efl.Object); [[Object]]
         }
       }
+      reserve {
+        [[Reserve path commands buffer in advance. If you know the count of
+          path commands coming, you can reserve commands buffer in advance
+          to avoid buffer growing job.
+
+          @since 1.22
+        ]]
+        params {
+          @in cmd_count: uint; [[Commands count to reserve]]
+          @in pts_count: uint; [[Pointers count to reserve]]
+        }
+      }
    }
    events {
       changed: Efl.Gfx.Path_Change_Event; [[Graphics path was changed.]]
