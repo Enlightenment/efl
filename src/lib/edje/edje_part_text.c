@@ -249,14 +249,17 @@ _efl_canvas_layout_part_text_efl_text_style_backing_type_set(Eo *obj,
       Efl_Text_Style_Backing_Type type)
 {
    Edje_User_Defined *eud;
+   Edje_Part_Text_Prop *prop;
 
    PROXY_DATA_GET(obj, pd);
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
 
    eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
+   prop = _prop_fetch(&pd->rp->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_BACKING_TYPE);
+   prop->val.backing = type;
+   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_BACKING_TYPE;
 
-   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_NONE;
-   efl_text_backing_type_set(pd->rp->object, type);
 }
 
 EOLIAN static Efl_Text_Style_Backing_Type
@@ -265,10 +268,20 @@ _efl_canvas_layout_part_text_efl_text_style_backing_type_get(const Eo *obj,
 {
 
    PROXY_DATA_GET(obj, pd);
+   Edje_Part_Text_Prop *prop;
+   Efl_Text_Style_Backing_Type ret = EFL_TEXT_STYLE_BACKING_TYPE_DISABLED;
+
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT)
       return EFL_TEXT_STYLE_BACKING_TYPE_DISABLED;
 
-   return efl_text_backing_type_get(pd->rp->object);
+   prop = _prop_find(pd->rp->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_BACKING_TYPE);
+   if (prop)
+     {
+        ret = prop->val.backing;
+     }
+
+   return ret;
 }
 
 #define TEXT_COLOR_IMPL2(x, X) \
@@ -567,10 +580,15 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
 
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_BACKING_TYPE)
      {
-        Edje_Part_Text_Prop *prop;
+        Edje_Part_Text_Prop *prop, *prop2;
 
         prop = _prop_new(props, EDJE_PART_TEXT_PROP_BACKING_TYPE);
-        prop->val.backing = efl_text_backing_type_get(rp->object);
+        prop2 = _prop_find(rp->typedata.text->text_props,
+              EDJE_PART_TEXT_PROP_BACKING_TYPE);
+        if (prop2)
+          {
+             prop->val.backing = prop->val.backing;
+          }
      }
 
 #define STYLE_COLOR_COLLECT(X) \
