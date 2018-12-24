@@ -1,5 +1,11 @@
 #include "edje_private.h"
 
+#define COLOR_SET(color) \
+   (color).r * (color).a / 255, \
+   (color).g * (color).a / 255, \
+   (color).b * (color).a / 255, \
+   (color).a
+
 static double
 _edje_part_recalc_single_textblock_scale_range_adjust(Edje_Part_Description_Text *chosen_desc, double base_scale, double scale)
 {
@@ -576,19 +582,11 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
      }
 }
 
-#define COLOR_SET(color) \
-   (color).r * (color).a / 255, \
-   (color).g * (color).a / 255, \
-   (color).b * (color).a / 255, \
-   (color).a
-
 static void
 _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
                            Edje_Real_Part *ep,
                            Edje_Calc_Params *params,
-                           Eina_Bool styles,
-                           Eina_Bool has_color,
-                           Edje_Color color)
+                           Eina_Bool styles)
 {
 
    Edje_Text_Effect effect;
@@ -596,12 +594,17 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
    Efl_Text_Style_Shadow_Direction dir;
    Edje_Color *ncol;
 
+   Eina_List *i;
+   Edje_Part_Text_Prop *prop;
 
    ncol = &params->color;
-
-   if (has_color)
+   EINA_LIST_FOREACH(ep->typedata.text->text_props, i, prop)
      {
-        ncol = &color;
+        if (prop->type == EDJE_PART_TEXT_PROP_COLOR_NORMAL)
+          {
+             ncol = &prop->val.color;
+             break;
+          }
      }
 
    efl_text_normal_color_set(ep->object, COLOR_SET(*ncol));
@@ -730,8 +733,6 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
    efl_text_shadow_direction_set(ep->object, dir);
 }
 
-#undef COLOR_SET
-
 static void
 _edje_part_recalc_textblock_font_get(Edje *ed, Edje_Real_Part *ep,
       Edje_Part_Description_Text *chosen_desc,
@@ -842,6 +843,17 @@ _edje_text_min_max_calc(Edje *ed, Edje_Real_Part *ep,
      }
 }
 
+void
+_edje_textblock_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep,
+                        Edje_Calc_Params *params,
+                        Edje_Part_Description_Text *chosen_desc EINA_UNUSED,
+                        Eina_Bool calc_only EINA_UNUSED)
+{
+   efl_text_normal_color_set(ep->object, COLOR_SET(params->color));
+   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
+
+}
+
 static void
 _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
       Edje *ed,
@@ -856,24 +868,6 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
    int size;
    FLOAT_T ellip;
    double align_y, align_x;
-   Edje_Color color;
-   Eina_Bool has_color = EINA_FALSE;
-
-   Eina_List *i;
-   Edje_Part_Text_Prop *prop;
-
-   EINA_LIST_FOREACH(ep->typedata.text->text_props, i, prop)
-     {
-        if (prop->type == EDJE_PART_TEXT_PROP_COLOR_NORMAL)
-          {
-             color.r = prop->val.color.r;
-             color.g = prop->val.color.g;
-             color.b = prop->val.color.b;
-             color.a = prop->val.color.a;
-             has_color = EINA_TRUE;
-             break;
-          }
-     }
 
    _edje_part_recalc_textblock_font_get(ed, ep, chosen_desc,
          &font_source, &font, &size);
@@ -884,7 +878,7 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
    align_x = TO_DOUBLE(params->type.text->align.x);
    efl_text_font_set(ep->object, font, size);
    efl_text_ellipsis_set(ep->object, (ellip == -1.0) ? -1.0 : 1.0 - ellip);
-   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE, has_color, color);
+   _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
 
    efl_text_valign_set(ep->object, align_y);
 
@@ -959,3 +953,4 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
         evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
      }
 }
+#undef COLOR_SET
