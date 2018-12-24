@@ -17,6 +17,7 @@ collections {
                rel1.offset: 1 1;
                rel2.to: "border";
                rel2.offset: -2 -2;
+               color: 128 128 128 255;
             }
             desc { "disabled";
                inherit: "default";
@@ -69,6 +70,10 @@ collections {
                   //text_class: "button";
                }
             }
+            desc { "bt_state2";
+               inherit: "default";
+               color: 0 0 0 255;
+            }
             desc { "visible";
                inherit: "default";
                vis;
@@ -86,11 +91,20 @@ collections {
          }
       }
       programs {
+         program { "text_in_anim";
+            script {
+                echo("animating...");
+            }
+            action: STATE_SET "bt_state2" 0.0;
+            transition: LINEAR 2.0;
+            target: "efl.text";
+         }
          program { "button_mouse_in";
             signal: "mouse,in";
             source: "base";
             action: STATE_SET "in" 0.0;
             target: "border";
+            after: "text_in_anim";
          }
          program { "button_mouse_out";
             signal: "mouse,out";
