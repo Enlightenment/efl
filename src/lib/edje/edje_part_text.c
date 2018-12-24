@@ -572,20 +572,24 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
         prop->val.backing = efl_text_backing_type_get(rp->object);
      }
 
-   if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_NORMAL)
-     {
-        Edje_Part_Text_Prop *prop, *prop2;
-        prop = _prop_new(props, EDJE_PART_TEXT_PROP_COLOR_NORMAL);
-        prop2 = _prop_find(rp->typedata.text->text_props,
-              EDJE_PART_TEXT_PROP_COLOR_NORMAL);
-        if (prop2)
-          {
-             prop->val.color.r = prop2->val.color.r;
-             prop->val.color.g = prop2->val.color.g;
-             prop->val.color.b = prop2->val.color.b;
-             prop->val.color.a = prop2->val.color.a;
-          }
+#define STYLE_COLOR_COLLECT2(X) \
+   if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_NORMAL) \
+     { \
+        Edje_Part_Text_Prop *prop, *prop2; \
+        prop = _prop_new(props, EDJE_PART_TEXT_PROP_COLOR_ ##X); \
+        prop2 = _prop_find(rp->typedata.text->text_props, \
+              EDJE_PART_TEXT_PROP_COLOR_ ##X); \
+        if (prop2) \
+          { \
+             prop->val.color.r = prop2->val.color.r; \
+             prop->val.color.g = prop2->val.color.g; \
+             prop->val.color.b = prop2->val.color.b; \
+             prop->val.color.a = prop2->val.color.a; \
+          } \
      }
+
+   STYLE_COLOR_COLLECT2(NORMAL)
+
 #define STYLE_COLOR_COLLECT(x, X) \
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_ ##X) \
      { \
@@ -606,6 +610,7 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
       STYLE_COLOR_COLLECT(underline2, UNDERLINE2)
       STYLE_COLOR_COLLECT(underline_dashed, UNDERLINE_DASHED)
 #undef STYLE_COLOR_COLLECT
+#undef STYLE_COLOR_COLLECT2
 
       if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_EFFECT_TYPE)
         {
