@@ -86,6 +86,8 @@ include Makefile_Elua.am
 
 include Makefile_Wayland_Protocols.am
 
+include Makefile_Exactness.am
+
 if HAVE_JS
 AM_V_CP = $(am__v_CP_@AM_V@)
 am__v_CP_ = $(am__v_CP_@AM_DEFAULT_V@)

@@ -1,0 +1,62 @@
+
+### Library
+
+lib_LTLIBRARIES += lib/exactness/libexactness.la
+
+installed_exactnessmainheadersdir = $(includedir)/exactness-@VMAJ@
+dist_installed_exactnessmainheaders_DATA = lib/exactness/Exactness.h
+
+lib_exactness_libexactness_la_SOURCES = lib/exactness/unit.c lib/exactness/legacy_file.c
+
+lib_exactness_libexactness_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EXACTNESS_CFLAGS@
+
+lib_exactness_libexactness_la_LDFLAGS = -fPIC -rdynamic
+lib_exactness_libexactness_la_DEPENDENCIES = $(top_builddir)/config.h @EXACTNESS_INTERNAL_LIBS@
+lib_exactness_libexactness_la_LIBADD = @EFL_LIBS@
+lib_exactness_libexactness_la_CFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@
+
+### Binary
+
+bin_PROGRAMS += \
+                bin/exactness/exactness \
+                bin/exactness/exactness_inject \
+                bin/exactness/exactness_inspect \
+                bin/exactness/exactness_play \
+                bin/exactness/exactness_record
+
+bin_exactness_exactness_SOURCES = bin/exactness/exactness.c
+bin_exactness_exactness_CPPFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@
+bin_exactness_exactness_LDADD = @USE_EXACTNESS_LIBS@
+bin_exactness_exactness_DEPENDENCIES = @USE_EXACTNESS_INTERNAL_LIBS@
+
+bin_exactness_exactness_inject_SOURCES = bin/exactness/injector.c
+bin_exactness_exactness_inject_CPPFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@
+bin_exactness_exactness_inject_LDADD = @USE_EXACTNESS_LIBS@
+bin_exactness_exactness_inject_DEPENDENCIES = @USE_EXACTNESS_INTERNAL_LIBS@
+
+bin_exactness_exactness_inspect_SOURCES = bin/exactness/inspect.c
+bin_exactness_exactness_inspect_CPPFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@
+bin_exactness_exactness_inspect_LDADD = @USE_EXACTNESS_LIBS@
+bin_exactness_exactness_inspect_DEPENDENCIES = @USE_EXACTNESS_INTERNAL_LIBS@
+
+bin_exactness_exactness_play_SOURCES = bin/exactness/player.c
+bin_exactness_exactness_play_CPPFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@ \
+	-DDATA_DIR=\"$(datadir)/exactness\"
+bin_exactness_exactness_play_LDADD = @USE_EXACTNESS_LIBS@
+bin_exactness_exactness_play_DEPENDENCIES = @USE_EXACTNESS_INTERNAL_LIBS@
+
+bin_exactness_exactness_record_SOURCES = bin/exactness/recorder.c lib/exactness/unit.c
+bin_exactness_exactness_record_CPPFLAGS = @EXACTNESS_CFLAGS@ @ELEMENTARY_CFLAGS@
+bin_exactness_exactness_record_LDADD = @USE_EXACTNESS_LIBS@
+bin_exactness_exactness_record_DEPENDENCIES = @USE_EXACTNESS_INTERNAL_LIBS@
+
+### Edje
+
+sharedir = $(datadir)/exactness
+share_DATA = exactness_play.edj
+
+CLEANFILES += $(share_DATA)
+
+exactness_play.edj: bin/exactness/player_entry.edc bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -sd $(top_srcdir)/data/elementary/themes/snd -id $(top_srcdir)/data/elementary/themes/img $< $@

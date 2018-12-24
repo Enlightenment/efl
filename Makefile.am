@@ -161,7 +161,8 @@ pc/ethumb.pc \
 pc/ethumb_client.pc \
 pc/elocation.pc \
 pc/elementary.pc \
-pc/efl-ui.pc
+pc/efl-ui.pc \
+pc/exactness.pc
 
 if HAVE_CXX
 pkgconfig_DATA += \

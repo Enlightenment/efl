@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+eoincludedir=@datadir@/exactness/include
+
+Name: exactness
+Description: Pixel perfect comparison test suite for EFL applications
+Version: @VERSION@
+Libs: -L${libdir} -lexactness
+Libs.private: @requirements_libs_exactness@
+Cflags: -I${includedir}/efl-@VMAJ@ -I${includedir}/exactness-@VMAJ@

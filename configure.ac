@@ -5711,6 +5711,45 @@ AC_SUBST([ELEMENTARYJS_CXXFLAGS])
 EFL_LIB_END_OPTIONAL([ELEMENTARY_JS])
 #### End of Efl_Js
 
+#### Exactness
+EFL_LIB_START([Exactness])
+
+### Additional options to configure
+
+### Default values
+
+### Checks for programs
+
+## Compatibility layers
+EFL_PLATFORM_DEPEND([EXACTNESS], [evil])
+
+### Checks for libraries
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [elementary])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [evas])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [eet])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [ecore])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [ecore-evas])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [ecore-file])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [eo])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [efl])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [eina])
+EFL_INTERNAL_DEPEND_PKG([EXACTNESS], [emile])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+EFL_LIB_END([Exactness])
+#### End of Exactness
+
 ELM_EDJE_DEFINES=""
 AC_ARG_ENABLE([cancel-ok],
               [AS_HELP_STRING([--enable-cancel-ok],[Enable ordering of cancel and ok buttons to be cancel first, then ok instead of ok then cancel. @<:@default=disabled@:>@])],
@@ -5840,6 +5879,7 @@ pc/elementary.pc
 pc/elementary-cxx.pc
 pc/elput.pc
 pc/ecore-drm2.pc
+pc/exactness.pc
 dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
