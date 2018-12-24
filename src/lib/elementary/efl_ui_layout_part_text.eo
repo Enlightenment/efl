@@ -9,6 +9,15 @@ class Efl.Ui.Layout_Part_Text (Efl.Ui.Layout_Part, Efl.Text, Efl.Text_Markup,
       Efl.Text_Markup.markup { get; set; }
       Efl.Ui.Translatable.translatable_text { get; set; }
       Efl.Text_Font.font { set; get; }
+      Efl.Text_Style.backing_color { set; get; }
+      Efl.Text_Style.glow_color { set; get; }
+      Efl.Text_Style.glow2_color { set; get; }
       Efl.Text_Style.normal_color { set; get; }
+      Efl.Text_Style.outline_color { set; get; }
+      Efl.Text_Style.shadow_color { set; get; }
+      Efl.Text_Style.strikethrough_color { set; get; }
+      Efl.Text_Style.underline_color { set; get; }
+      Efl.Text_Style.underline2_color { set; get; }
+      Efl.Text_Style.underline_dashed_color { set; get; }
    }
 }
