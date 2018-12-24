@@ -271,46 +271,47 @@ _efl_canvas_layout_part_text_efl_text_style_backing_type_get(const Eo *obj,
    return efl_text_backing_type_get(pd->rp->object);
 }
 
+#define TEXT_COLOR_IMPL2(x, X) \
 EOLIAN static void \
-_efl_canvas_layout_part_text_efl_text_style_normal_color_set(Eo *obj,
-      void *_pd EINA_UNUSED,
-      unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-   Edje_User_Defined *eud;
-   Edje_Part_Text_Prop *prop;
-   PROXY_DATA_GET(obj, pd);
-   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
-   eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
-
-   prop = _prop_fetch(&pd->rp->typedata.text->text_props, EDJE_PART_TEXT_PROP_COLOR_NORMAL);
-
-   prop->val.color.r = r;
-   prop->val.color.g = g;
-   prop->val.color.b = b;
-   prop->val.color.a = a;
-
-   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_COLOR_NORMAL;
-}
-
-EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_style_normal_color_get(const Eo *obj,
-      void *_pd EINA_UNUSED,
-      unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
-{
-   PROXY_DATA_GET(obj, pd);
-   Edje_Part_Text_Prop *prop;
-
-   *r = *g = *b = *a = 0;
-   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
-   prop = _prop_find(pd->rp->typedata.text->text_props,
-         EDJE_PART_TEXT_PROP_COLOR_NORMAL);
-   if (prop)
-     {
-        *r = prop->val.color.r;
-        *g = prop->val.color.g;
-        *b = prop->val.color.b;
-        *a = prop->val.color.a;
-     }
+_efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_set(Eo *obj, \
+      void *_pd EINA_UNUSED, \
+      unsigned char r, unsigned char g, unsigned char b, unsigned char a) \
+{ \
+   Edje_User_Defined *eud; \
+   Edje_Part_Text_Prop *prop; \
+   PROXY_DATA_GET(obj, pd); \
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return; \
+   eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part); \
+ \
+   prop = _prop_fetch(&pd->rp->typedata.text->text_props, EDJE_PART_TEXT_PROP_COLOR_ ##X); \
+ \
+   prop->val.color.r = r; \
+   prop->val.color.g = g; \
+   prop->val.color.b = b; \
+   prop->val.color.a = a; \
+ \
+   eud->u.text_style.types |= EDJE_PART_TEXT_PROP_COLOR_ ##X; \
+} \
+\
+EOLIAN static void \
+_efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_get(const Eo *obj, \
+      void *_pd EINA_UNUSED, \
+      unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) \
+{ \
+   PROXY_DATA_GET(obj, pd); \
+   Edje_Part_Text_Prop *prop; \
+ \
+   *r = *g = *b = *a = 0; \
+   if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return; \
+   prop = _prop_find(pd->rp->typedata.text->text_props, \
+         EDJE_PART_TEXT_PROP_COLOR_ ##X); \
+   if (prop) \
+     { \
+        *r = prop->val.color.r; \
+        *g = prop->val.color.g; \
+        *b = prop->val.color.b; \
+        *a = prop->val.color.a; \
+     } \
 }
 
 #define TEXT_COLOR_IMPL(x, X) \
@@ -341,16 +342,16 @@ _efl_canvas_layout_part_text_efl_text_style_ ##x ##_color_get(const Eo *obj, \
    efl_text_ ##x ##_color_get(pd->rp->object, r, g, b, a); \
 }
 
-TEXT_COLOR_IMPL(backing, BACKING)
-TEXT_COLOR_IMPL(glow, GLOW)
-TEXT_COLOR_IMPL(glow2, GLOW2)
-//TEXT_COLOR_IMPL(normal, NORMAL)
-TEXT_COLOR_IMPL(outline, OUTLINE)
-TEXT_COLOR_IMPL(shadow, SHADOW)
-TEXT_COLOR_IMPL(strikethrough, STRIKETHROUGH)
-TEXT_COLOR_IMPL(underline, UNDERLINE)
-TEXT_COLOR_IMPL(underline2, UNDERLINE2)
-TEXT_COLOR_IMPL(underline_dashed, UNDERLINE_DASHED)
+TEXT_COLOR_IMPL2(normal, NORMAL)
+TEXT_COLOR_IMPL2(backing, BACKING)
+TEXT_COLOR_IMPL2(glow, GLOW)
+TEXT_COLOR_IMPL2(glow2, GLOW2)
+TEXT_COLOR_IMPL2(outline, OUTLINE)
+TEXT_COLOR_IMPL2(shadow, SHADOW)
+TEXT_COLOR_IMPL2(strikethrough, STRIKETHROUGH)
+TEXT_COLOR_IMPL2(underline, UNDERLINE)
+TEXT_COLOR_IMPL2(underline2, UNDERLINE2)
+TEXT_COLOR_IMPL2(underline_dashed, UNDERLINE_DASHED)
 
 EOLIAN static void
 _efl_canvas_layout_part_text_efl_text_style_effect_type_set(Eo *obj,
@@ -572,7 +573,7 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
         prop->val.backing = efl_text_backing_type_get(rp->object);
      }
 
-#define STYLE_COLOR_COLLECT2(X) \
+#define STYLE_COLOR_COLLECT(X) \
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_NORMAL) \
      { \
         Edje_Part_Text_Prop *prop, *prop2; \
@@ -588,29 +589,17 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
           } \
      }
 
-   STYLE_COLOR_COLLECT2(NORMAL)
-
-#define STYLE_COLOR_COLLECT(x, X) \
-   if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_COLOR_ ##X) \
-     { \
-        Edje_Part_Text_Prop *prop; \
-        prop = _prop_new(props, EDJE_PART_TEXT_PROP_COLOR_ ##X); \
-        efl_text_ ##x ##_color_get(rp->object, \
-              &prop->val.color.r, &prop->val.color.g, \
-              &prop->val.color.b, &prop->val.color.a); \
-     } \
-
-   STYLE_COLOR_COLLECT(backing, BACKING)
-      STYLE_COLOR_COLLECT(glow, GLOW)
-      STYLE_COLOR_COLLECT(glow2, GLOW2)
-      STYLE_COLOR_COLLECT(outline, OUTLINE)
-      STYLE_COLOR_COLLECT(shadow, SHADOW)
-      STYLE_COLOR_COLLECT(strikethrough, STRIKETHROUGH)
-      STYLE_COLOR_COLLECT(underline, UNDERLINE)
-      STYLE_COLOR_COLLECT(underline2, UNDERLINE2)
-      STYLE_COLOR_COLLECT(underline_dashed, UNDERLINE_DASHED)
+   STYLE_COLOR_COLLECT(NORMAL)
+   STYLE_COLOR_COLLECT(BACKING)
+   STYLE_COLOR_COLLECT(GLOW)
+   STYLE_COLOR_COLLECT(GLOW2)
+   STYLE_COLOR_COLLECT(OUTLINE)
+   STYLE_COLOR_COLLECT(SHADOW)
+   STYLE_COLOR_COLLECT(STRIKETHROUGH)
+   STYLE_COLOR_COLLECT(UNDERLINE)
+   STYLE_COLOR_COLLECT(UNDERLINE2)
+   STYLE_COLOR_COLLECT(UNDERLINE_DASHED)
 #undef STYLE_COLOR_COLLECT
-#undef STYLE_COLOR_COLLECT2
 
       if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_EFFECT_TYPE)
         {
