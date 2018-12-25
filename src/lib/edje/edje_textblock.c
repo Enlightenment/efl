@@ -582,156 +582,176 @@ _edje_part_recalc_single_textblock_min_max_calc(Edje_Real_Part *ep,
      }
 }
 
+static Edje_Part_Text_Prop *
+_prop_find(Eina_List *props, Edje_Part_Text_Prop_Type type)
+{
+   Edje_Part_Text_Prop *prop;
+   Eina_List *i;
+
+   // lookup prop
+   EINA_LIST_FOREACH(props, i, prop)
+     {
+        if (prop->type == type) break;
+     }
+
+   return prop;
+}
+
+#define APPLY_COLOR(col, x, X) do \
+{ \
+   Edje_Color *_col; \
+   Edje_Part_Text_Prop *_prop; \
+   _col = &params->type.text->col; \
+   if ((_prop = _prop_find(ep->typedata.text->text_props, \
+               EDJE_PART_TEXT_PROP_COLOR_ ##X))) \
+     { \
+        _col = &_prop->val.color; \
+     } \
+   efl_text_ ##x ## _color_set(ep->object, COLOR_SET(*_col)); \
+} while(0)
+
 static void
 _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
                            Edje_Real_Part *ep,
                            Edje_Calc_Params *params,
-                           Eina_Bool styles)
+                           Eina_Bool styles EINA_UNUSED)
 {
 
    Edje_Text_Effect effect;
    Efl_Text_Style_Effect_Type st;
    Efl_Text_Style_Shadow_Direction dir;
-   Edje_Color *ncol;
+   Edje_Color *col;
 
-   Eina_List *i;
    Edje_Part_Text_Prop *prop;
 
-   ncol = &params->color;
-   EINA_LIST_FOREACH(ep->typedata.text->text_props, i, prop)
+   col = &params->color;
+   if ((prop = _prop_find(ep->typedata.text->text_props,
+               EDJE_PART_TEXT_PROP_COLOR_NORMAL)))
      {
-        if (prop->type == EDJE_PART_TEXT_PROP_COLOR_NORMAL)
+        col = &prop->val.color;
+     }
+
+   efl_text_normal_color_set(ep->object, COLOR_SET(*col));
+
+   APPLY_COLOR(color2, outline, OUTLINE);
+   APPLY_COLOR(color3, shadow, SHADOW);
+   APPLY_COLOR(color2, glow, GLOW);
+   APPLY_COLOR(color2, glow2, GLOW2);
+
+   effect = ep->part->effect;
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_EFFECT_TYPE);
+   if (prop)
+     {
+        st = prop->val.effect;
+     }
+   else
+     {
+        switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
           {
-             ncol = &prop->val.color;
-             break;
+           case EDJE_TEXT_EFFECT_NONE:
+           case EDJE_TEXT_EFFECT_PLAIN:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
+              break;
+
+           case EDJE_TEXT_EFFECT_OUTLINE:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE;
+              break;
+
+           case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_SOFT_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_FAR_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW;
+              break;
+
+           case EDJE_TEXT_EFFECT_GLOW:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_GLOW;
+              break;
+
+           default:
+              st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
+              break;
           }
      }
 
-   efl_text_normal_color_set(ep->object, COLOR_SET(*ncol));
-
-   effect = ep->part->effect;
-   switch (effect & EDJE_TEXT_EFFECT_MASK_BASIC)
-     {
-      case EDJE_TEXT_EFFECT_NONE:
-      case EDJE_TEXT_EFFECT_PLAIN:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
-         break;
-
-      case EDJE_TEXT_EFFECT_OUTLINE:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE;
-         if (styles) efl_text_outline_color_set(ep->object,
-               COLOR_SET(params->type.text->color2));
-         break;
-
-      case EDJE_TEXT_EFFECT_SOFT_OUTLINE:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_OUTLINE;
-         if (styles) efl_text_outline_color_set(ep->object,
-               COLOR_SET(params->type.text->color2));
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_SHADOW;
-         if (styles) efl_text_shadow_color_set(ep->object,
-               COLOR_SET(params->type.text->color3));
-         break;
-
-      case EDJE_TEXT_EFFECT_SOFT_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_SOFT_SHADOW;
-         if (styles) efl_text_shadow_color_set(ep->object,
-               COLOR_SET(params->type.text->color3));
-         break;
-
-      case EDJE_TEXT_EFFECT_OUTLINE_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SHADOW;
-         if (styles)
-           {
-              efl_text_outline_color_set(ep->object,
-                    COLOR_SET(params->type.text->color2));
-              efl_text_shadow_color_set(ep->object,
-                    COLOR_SET(params->type.text->color3));
-           }
-         break;
-
-      case EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_OUTLINE_SOFT_SHADOW;
-         if (styles)
-           {
-              efl_text_outline_color_set(ep->object,
-                    COLOR_SET(params->type.text->color2));
-              efl_text_shadow_color_set(ep->object,
-                    COLOR_SET(params->type.text->color3));
-           }
-         break;
-
-      case EDJE_TEXT_EFFECT_FAR_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SHADOW;
-         if (styles) efl_text_shadow_color_set(ep->object,
-               COLOR_SET(params->type.text->color3));
-         break;
-
-      case EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_FAR_SOFT_SHADOW;
-         if (styles) efl_text_shadow_color_set(ep->object,
-               COLOR_SET(params->type.text->color3));
-         break;
-
-      case EDJE_TEXT_EFFECT_GLOW:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_GLOW;
-         if (styles)
-           {
-              efl_text_glow_color_set(ep->object,
-                    COLOR_SET(params->type.text->color2));
-              efl_text_glow2_color_set(ep->object,
-                    COLOR_SET(params->type.text->color3));
-           }
-         break;
-
-      default:
-         st = EFL_TEXT_STYLE_EFFECT_TYPE_NONE;
-         break;
-     }
-
-   switch (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
-     {
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
-        break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM;
-        break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT;
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT;
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT;
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT;
-         break;
-
-      case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT:
-        dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
-         break;
-
-      default:
-         dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
-         break;
-     }
    efl_text_effect_type_set(ep->object, st);
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_SHADOW_DIRECTION);
+
+   if (prop)
+     {
+        dir = prop->val.shadow;
+     }
+   else
+     {
+        switch (effect & EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION)
+          {
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM_LEFT;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_LEFT;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_LEFT;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT;
+              break;
+
+           case EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_RIGHT;
+              break;
+
+           default:
+              dir = EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP;
+              break;
+          }
+     }
+
    efl_text_shadow_direction_set(ep->object, dir);
 }
+
+#undef APPLY_COLOR
 
 static void
 _edje_part_recalc_textblock_font_get(Edje *ed, Edje_Real_Part *ep,
@@ -849,7 +869,6 @@ _edje_textblock_recalc_apply(Edje *ed EINA_UNUSED, Edje_Real_Part *ep,
                         Edje_Part_Description_Text *chosen_desc EINA_UNUSED,
                         Eina_Bool calc_only EINA_UNUSED)
 {
-   efl_text_normal_color_set(ep->object, COLOR_SET(params->color));
    _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
 
 }
@@ -878,6 +897,7 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
    align_x = TO_DOUBLE(params->type.text->align.x);
    efl_text_font_set(ep->object, font, size);
    efl_text_ellipsis_set(ep->object, (ellip == -1.0) ? -1.0 : 1.0 - ellip);
+
    _edje_textblock_colors_set(ed, ep, params, EINA_TRUE);
 
    efl_text_valign_set(ep->object, align_y);
