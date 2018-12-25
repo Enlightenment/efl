@@ -187,6 +187,26 @@ struct _Eina_Future_Scheduler {
  */
 typedef void (*Eina_Promise_Cancel_Cb) (void *data, const Eina_Promise *dead_promise);
 
+/*
+ * @typedef Eina_Promise_Data_Set_Cb Eina_Promise_Data_Set_Cb.
+ * @ingroup eina_promise
+ * 
+ * A callback used to intercept eina_promise_data_set().
+ * 
+ * Used internally by EFL - please do not use.
+ */
+typedef void (*Eina_Promise_Data_Set_Cb) (Eina_Promise *p, void *data);
+
+/*
+ * @typedef Eina_Promise_Data_Free_Cb_Set_Cb Eina_Promise_Data_Free_Cb_Set_Cb.
+ * @ingroup eina_promise
+ * 
+ * A callback used to intercept eina_promise_data_set_cb_set().
+ * 
+ * Used internally by EFL - please do not use.
+ */
+typedef void (*Eina_Promise_Data_Free_Cb_Set_Cb) (Eina_Promise *p, Eina_Free_Cb free_cb);
+
 /**
  * @typedef Eina_Future_Success_Cb Eina_Future_Success_Cb.
  * @ingroup eina_future
@@ -635,6 +655,28 @@ EAPI void eina_promise_data_set(Eina_Promise *p, void *data) EINA_ARG_NONNULL(1)
  * @param[in] free_cb The free callback.
  */
 EAPI void eina_promise_data_free_cb_set(Eina_Promise *p, Eina_Free_Cb free_cb);
+
+/**
+ * Sets a data set intercept function that can alter the behavior of
+ * eina_promise_data_set(). Please do not use this as it is only used
+ * internally inside EFL and may be used to slightly alter a promise
+ * behavior and if used on these promises may remove EFL's override
+ * 
+ * @param[in] p The promise to set the data set callback on
+ * @param[in] data_set_cb The callabck to intercept the data set
+ */
+EAPI void eina_promise_data_set_cb_set(Eina_Promise *p, Eina_Promise_Data_Set_Cb data_set_cb);
+
+/**
+ * Sets a data free cb set intercept function that can alter the behavior of
+ * eina_promise_data_free_cb_set(). Please do not use this as it is only used
+ * internally inside EFL and may be used to slightly alter a promise
+ * behavior and if used on these promises may remove EFL's override
+ * 
+ * @param[in] p The promise to set the data set callback on
+ * @param[in] data_free_cb_set_cb The callabck to intercept the data free cb set
+ */
+EAPI void eina_promise_data_free_cb_set_cb_set(Eina_Promise *p, Eina_Promise_Data_Free_Cb_Set_Cb data_free_cb_set_cb);
 
 /**
  * Resolves a promise.
