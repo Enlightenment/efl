@@ -573,7 +573,7 @@ _efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const cha
    ctx->thread = efl_net_ip_resolve_async_new(host, port, &hints, _efl_net_ip_address_resolve_done, ctx);
    EINA_SAFETY_ON_NULL_GOTO(ctx->thread, error_thread);
 
-   ctx->promise = efl_loop_promise_new(efl_main_loop_get(), _efl_net_ip_address_resolve_del, ctx);
+   ctx->promise = eina_promise_new(efl_loop_future_scheduler_get(efl_main_loop_get()), _efl_net_ip_address_resolve_del, ctx);
    EINA_SAFETY_ON_NULL_GOTO(ctx->promise, error_promise);
 
    free(str);

@@ -119,7 +119,7 @@ _efl_io_manager_direct_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -162,7 +162,7 @@ _efl_io_manager_stat_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -204,7 +204,7 @@ _efl_io_manager_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -256,7 +256,7 @@ _efl_io_manager_stat(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -285,7 +285,7 @@ _efl_io_manager_xattr_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -336,7 +336,7 @@ _efl_io_manager_xattr_set(Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -366,7 +366,7 @@ _efl_io_manager_xattr_get(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -405,7 +405,7 @@ _efl_io_manager_open(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -431,7 +431,7 @@ _efl_io_manager_close(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
    if (!p) return NULL;
    future = eina_future_new(p);
 

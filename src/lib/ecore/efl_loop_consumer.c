@@ -98,7 +98,6 @@ _efl_loop_consumer_promise_new(Eo *obj, Efl_Loop_Consumer_Data *pd,
    Efl_Loop_Consumer_Promise *lcp;
    Eina_Promise *p;
 
-
    lcp = calloc(1, sizeof (Efl_Loop_Consumer_Promise));
    if (!lcp) return NULL;
 
