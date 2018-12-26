@@ -216,6 +216,9 @@ _efl_ui_item_efl_object_finalize(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo, wd, eo);
 
+   /* Support Item Focus Feature */
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+
    _item_mouse_callback_add(wd->resize_obj, eo);
    return eo;
 }
