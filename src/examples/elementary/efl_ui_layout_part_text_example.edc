@@ -72,7 +72,7 @@ collections {
             }
             desc { "bt_state2";
                inherit: "default";
-               color: 0 0 0 255;
+               color: 0 0 0 0;
             }
             desc { "visible";
                inherit: "default";

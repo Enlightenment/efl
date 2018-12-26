@@ -52,6 +52,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_text_font_set(efl_part(custom_bt, "efl.text"), "Serif:style=Bold", 24);
    efl_text_font_set(efl_part(custom_bt, "efl.text"), "Mono:style=Bold", 24);
    efl_text_normal_color_set(efl_part(custom_bt, "efl.text"), 255, 0, 255, 255);
+   efl_text_backing_color_set(efl_part(custom_bt, "efl.text"), 255, 255, 255, 255);
+   efl_text_backing_type_set(efl_part(custom_bt, "efl.text"), EFL_TEXT_STYLE_BACKING_TYPE_ENABLED);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 320));
 }

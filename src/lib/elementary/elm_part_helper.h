@@ -184,13 +184,20 @@ _ ## full ## _efl_text_style_ ##col ##_color_get(const Eo *obj, void *_pd EINA_U
    _ ## type ## _text_ ##col ##_color_get(pd->obj, sd, pd->part, r, g, b, a); \
 }
 
-
-#define ELM_PART_OVERRIDE_TEXT_STYLE_SET_FULL(full, type, internals) \
+#define ELM_PART_OVERRIDE_TEXT_BACKING_SET_FULL(full, type, internals) \
 EOLIAN static void \
-_ ## full ## _efl_text_style_backing_type_set(Eo *obj, void *_pd EINA_UNUSED, unsigned char r, unsigned char g, unsigned char b, unsigned char a) \
+_ ## full ## _efl_text_style_backing_type_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Text_Style_Backing_Type type) \
 { \
    internals \
-   _ ## type ## _text_backing_type_set(pd->obj, sd, pd->part, r, g, b, a); \
+   _ ## type ## _text_backing_type_set(pd->obj, sd, pd->part, type); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_BACKING_GET_FULL(full, type, internals) \
+EOLIAN static Efl_Text_Style_Backing_Type \
+_ ## full ## _efl_text_style_backing_type_get(const Eo *obj, void *_pd EINA_UNUSED) \
+{ \
+   internals \
+   return _ ## type ## _text_backing_type_get(pd->obj, sd, pd->part); \
 }
 
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
