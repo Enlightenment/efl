@@ -291,6 +291,7 @@ subprojects = [
 ['elua'             ,['elua']              , false,  true,  true, false,  true, false, ['eina', 'luajit'], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_drm'        ,['drm-deprecated']    , false,  true, false, false, false, false, ['eina'], []],
+['exactness'        ,[]                    , false,  true,  true, false, false, false, ['eina, evas, eet'], []],
 ]
 
 # We generate Efl_Config.h and config.h later, they will be available here
