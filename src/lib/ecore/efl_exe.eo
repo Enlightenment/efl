@@ -42,6 +42,23 @@ class Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.C
             sig: int; [[ The exit signal, or -1 if no exit signal happened ]]
          }
       }
+      @property env {
+         [[ If $env is $null then the process created by this object is
+            going to inherit the enviroment of this process.
+
+            In case $env is not $null then the environment variables declared
+            in this object will represent the environment passed to the new process.
+         ]]
+         get {
+            [[ Get the object assosiated with this object ]]
+         }
+         set {
+            [[ Set the object assosiated with this object ]]
+         }
+         values {
+            env : Efl.Core.Env; [[$env will be referenced until this object does not need it anymore.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
