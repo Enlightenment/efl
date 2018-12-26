@@ -224,7 +224,7 @@ _sel_manager_seat_selection_init(Efl_Selection_Manager_Data *pd, unsigned int se
 }
 
 static void
-_sel_manager_promise_cancel(void *data, Efl_Loop_Consumer *consumer, const Eina_Promise *dead_future EINA_UNUSED)
+_sel_manager_promise_cancel(void *data, const Eina_Promise *dead_future EINA_UNUSED)
 {
    Sel_Manager_Selection_Lost *sel_lost = data;
    sel_lost->seat_sel->sel_lost_list = eina_list_remove(
@@ -247,7 +247,7 @@ _update_sel_lost_list(Efl_Object *obj, Efl_Selection_Type type,
    sel_lost->seat_sel = seat_sel;
    seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
 
-   p = efl_loop_promise_new(obj, NULL, _sel_manager_promise_cancel, NULL);
+   p = efl_loop_promise_new(obj, _sel_manager_promise_cancel, NULL);
    eina_promise_data_set(p, sel_lost);
    if (!p) return NULL;
    sel_lost->promise = p;

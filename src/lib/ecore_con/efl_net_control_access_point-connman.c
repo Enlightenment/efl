@@ -751,7 +751,7 @@ _efl_net_control_access_point_connect_cb(void *data, const Eldbus_Message *msg, 
 }
 
 static void
-_efl_net_control_access_point_connect_promise_del(void *data, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_ptr)
+_efl_net_control_access_point_connect_promise_del(void *data, const Eina_Promise *dead_ptr)
 {
    Eldbus_Pending *p = data;
    Efl_Net_Control_Access_Point_Data *pd;
@@ -773,7 +773,7 @@ _efl_net_control_access_point_connect(Eo *o, Efl_Net_Control_Access_Point_Data *
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = efl_loop_promise_new(o, o, _efl_net_control_access_point_connect_promise_del, NULL);
+   promise = efl_loop_promise_new(o, _efl_net_control_access_point_connect_promise_del, o);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);

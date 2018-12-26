@@ -417,7 +417,7 @@ _build_delay(Efl_Loop *loop)
 {
    Eina_Promise *p;
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(loop), _cancel_request, NULL);
+   p = efl_loop_promise_new(loop, _cancel_request, NULL);
 
    if (!delayed_queue)
      {
@@ -682,7 +682,7 @@ _eio_model_efl_model_property_set(Eo *obj,
 
    if (finalized)
      {
-        Eina_Promise *p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
+        Eina_Promise *p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
         f = eina_future_new(p);
 
         pd->request.move = eio_file_move(pd->path, path,

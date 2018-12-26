@@ -902,4 +902,11 @@ efl_loop_future_scheduler_get(const Eo *obj)
 #define EFL_LOOP_EXTRA_OPS \
   EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process)
 
+EAPI Eina_Promise *
+efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb cancel_cb, const void *data)
+{
+   return eina_promise_new(efl_loop_future_scheduler_get(obj),
+                           cancel_cb, data);
+}
+
 #include "efl_loop.eo.c"

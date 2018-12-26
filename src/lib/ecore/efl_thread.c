@@ -412,7 +412,7 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 //////////////////////////////////////////////////////////////////////////
 
 static void
-_run_cancel_cb(void *data, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_promise EINA_UNUSED)
+_run_cancel_cb(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
 {
    Eo *obj = data;
    Efl_Thread_Data *pd = efl_data_scope_get(obj, MY_CLASS);
@@ -777,7 +777,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
      }
    pd->thdat = thdat;
    pd->run = EINA_TRUE;
-   pd->promise = efl_loop_promise_new(obj, obj, _run_cancel_cb, NULL);
+   pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
    return efl_future_then(obj, eina_future_new(pd->promise));
 }
 

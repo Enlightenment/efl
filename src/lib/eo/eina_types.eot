@@ -99,8 +99,6 @@ struct @extern Eina.Stat {
     ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
 }
 
-struct @extern Eina.Promise; [[Eina promise type]]
-
 /* FIXME: This definitely shouldn't be here. */
 type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
 
