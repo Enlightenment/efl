@@ -165,12 +165,13 @@ endif
 
 
 if get_option('opengl') != 'none'
-  gl_deps += dependency('gl')
-endif
-
-if get_option('opengl') == 'es-egl'
-  config_h.set('GL_GLES', '1')
-  gl_deps += dependency('egl')
+  if get_option('opengl') == 'es-egl'
+    config_h.set('GL_GLES', '1')
+    gl_deps += cc.find_library('GLESv2')
+    gl_deps += cc.find_library('EGL')
+  else
+    gl_deps += cc.find_library('GL')
+  endif
 endif
 
 evas_pre = declare_dependency(
