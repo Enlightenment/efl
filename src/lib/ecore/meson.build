@@ -76,7 +76,8 @@ pub_eo_files = [
   'efl_composite_model.eo',
   'efl_view_model.eo',
   'efl_core_env.eo',
-  'efl_core_proc_env.eo'
+  'efl_core_proc_env.eo',
+  'efl_core_command_line.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -184,6 +185,7 @@ ecore_src = [
   'efl_appthread.c',
   'efl_core_env.c',
   'efl_core_proc_env.c',
+  'efl_core_command_line.c',
 ]
 
 if sys_windows == true
