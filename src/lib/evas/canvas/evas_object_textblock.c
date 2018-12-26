@@ -14783,6 +14783,16 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
 
+   /* if someone is clipping this obj - go calculate the clipper */
+   if (obj->cur->clipper)
+     {
+        if (obj->cur->cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur->clipper);
+        obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
+                                            obj->cur->clipper,
+                                            obj->cur->clipper->private_data);
+     }
+
    //evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
    if (!_relayout_if_needed(eo_obj, o))
      {
@@ -14812,15 +14822,6 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         is_v = evas_object_is_visible(eo_obj, obj);
         was_v = evas_object_was_visible(eo_obj, obj);
         goto done;
-     }
-   /* if someone is clipping this obj - go calculate the clipper */
-   if (obj->cur->clipper)
-     {
-        if (obj->cur->cache.clip.dirty)
-          evas_object_clip_recalc(obj->cur->clipper);
-        obj->cur->clipper->func->render_pre(obj->cur->clipper->object,
-                                            obj->cur->clipper,
-                                            obj->cur->clipper->private_data);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
