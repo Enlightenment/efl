@@ -749,6 +749,22 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      }
 
    efl_text_shadow_direction_set(ep->object, dir);
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_BACKING_TYPE);
+
+   if (prop)
+     {
+        efl_text_backing_type_set(ep->object, prop->val.backing);
+     }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_BACKING);
+
+   if (prop)
+     {
+        efl_text_backing_color_set(ep->object, COLOR_SET(prop->val.color));
+     }
 }
 
 #undef APPLY_COLOR
