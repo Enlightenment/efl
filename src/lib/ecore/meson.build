@@ -175,7 +175,10 @@ ecore_src = [
   'ecore_exe_private.h',
   'ecore_private.h',
   'ecore_internal.h',
-  'ecore_main_common.h'
+  'ecore_main_common.h',
+  'efl_exe.c',
+  'efl_thread.c',
+  'efl_threadio.c',
 ]
 
 if sys_windows == true
