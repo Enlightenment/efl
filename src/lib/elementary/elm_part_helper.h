@@ -200,6 +200,22 @@ _ ## full ## _efl_text_style_backing_type_get(const Eo *obj, void *_pd EINA_UNUS
    return _ ## type ## _text_backing_type_get(pd->obj, sd, pd->part); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_SHADOW_DIRECTION_SET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_shadow_direction_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Text_Style_Shadow_Direction dir) \
+{ \
+   internals \
+   _ ## type ## _text_shadow_direction_set(pd->obj, sd, pd->part, dir); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_SHADOW_DIRECTION_GET_FULL(full, type, internals) \
+EOLIAN static Efl_Text_Style_Shadow_Direction \
+_ ## full ## _efl_text_style_shadow_direction_type_get(const Eo *obj, void *_pd EINA_UNUSED) \
+{ \
+   internals \
+   return _ ## type ## _text_shadow_direction_get(pd->obj, sd, pd->part); \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 

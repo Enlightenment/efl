@@ -2613,6 +2613,27 @@ _efl_ui_layout_text_backing_type_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED
   ELM_PART_OVERRIDE_TEXT_BACKING_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
   ELM_PART_OVERRIDE_TEXT_BACKING_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
 
+
+static void
+_efl_ui_layout_text_shadow_direction_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
+      const char *part, Efl_Text_Style_Shadow_Direction dir)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_text_shadow_direction_set(efl_part(wd->resize_obj, part), dir);
+}
+
+static Efl_Text_Style_Shadow_Direction
+_efl_ui_layout_text_shadow_direction_get(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
+      const char *part)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM);
+   return efl_text_shadow_direction_get(efl_part(wd->resize_obj, part));
+}
+
+#define SHADOWDIR_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_TEXT_SHADOW_DIRECTION_SET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+  ELM_PART_OVERRIDE_TEXT_SHADOW_DIRECTION_GET_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+
 TEXT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 MARKUP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 FONT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
@@ -2627,6 +2648,7 @@ COLOR_FULL(underline, efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl
 COLOR_FULL(underline2, efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 COLOR_FULL(underline_dashed, efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 BACKING_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+SHADOWDIR_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)

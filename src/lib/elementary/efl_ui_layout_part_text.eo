@@ -20,5 +20,6 @@ class Efl.Ui.Layout_Part_Text (Efl.Ui.Layout_Part, Efl.Text, Efl.Text_Markup,
       Efl.Text_Style.underline2_color { set; get; }
       Efl.Text_Style.underline_dashed_color { set; get; }
       Efl.Text_Style.backing_type { set; get; }
+      Efl.Text_Style.shadow_direction { set; }
    }
 }
