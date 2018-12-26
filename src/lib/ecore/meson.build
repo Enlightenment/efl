@@ -181,6 +181,7 @@ ecore_src = [
   'ecore_main_common.h',
   'efl_exe.c',
   'efl_thread.c',
+  'efl_appthread.c',
   'efl_threadio.c',
   'efl_appthread.c',
   'efl_core_env.c',

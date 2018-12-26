@@ -383,17 +383,19 @@ _efl_loop_arguments_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *de
 EAPI void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
-   Eina_Array *arga;
+   Eina_Array *arga, *cml;
    int i = 0;
 
-   efl_task_arg_reset(efl_main_loop_get());
    arga = eina_array_new(argc);
+   cml = eina_array_new(argc);
    for (i = 0; i < argc; i++)
      {
-        eina_array_push(arga, eina_stringshare_add(argv[i]));
-        efl_task_arg_append(efl_main_loop_get(), argv[i]);
+        Eina_Stringshare *arg = eina_stringshare_add(argv[i]);
+        eina_array_push(arga, arg);
+        eina_array_push(cml, arg);
      }
 
+   efl_core_command_line_command_array_set(efl_app_main_get(EFL_APP_CLASS), cml);
    efl_future_then(efl_main_loop_get(), efl_loop_job(efl_main_loop_get()),
                    .success = _efl_loop_arguments_send,
                    .free = _efl_loop_arguments_cleanup,

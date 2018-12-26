@@ -395,7 +395,7 @@ _efl_exe_efl_task_priority_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 }
 
 EOLIAN static Eina_Future *
-_efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
    return EINA_FALSE;
@@ -414,7 +414,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    if (!td) return NULL;
 
    // get a cmdline to run
-   cmd = efl_task_command_get(obj);
+   cmd = efl_core_command_line_command_get(obj);
    if (!cmd) return NULL;
 
    ret = pipe(pipe_exited);
