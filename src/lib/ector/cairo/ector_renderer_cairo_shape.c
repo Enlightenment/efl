@@ -75,15 +75,19 @@ struct _Ector_Renderer_Cairo_Shape_Data
    cairo_path_t *path;
 };
 
-EOLIAN static void
-_ector_renderer_cairo_shape_efl_gfx_path_commit(Eo *obj EINA_UNUSED,
-                                                Ector_Renderer_Cairo_Shape_Data *pd)
+static void
+_ector_renderer_cairo_shape_path_changed(void *data, const Efl_Event *event)
 {
-   if (pd->path)
-     {
-        cairo_path_destroy(pd->path);
-        pd->path = NULL;
-     }
+   Ector_Renderer_Cairo_Shape_Data *pd = data;
+   Efl_Gfx_Path_Change_Event *ev = event->info;
+
+   if (!pd->path) return;
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
+
+   cairo_path_destroy(pd->path);
+   pd->path = NULL;
 }
 
 static Eina_Bool
@@ -251,7 +255,9 @@ _ector_renderer_cairo_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
-   return obj;
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
+
+    return obj;
 }
 
 static Efl_Object *

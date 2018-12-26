@@ -6,7 +6,6 @@ class Ector.Renderer.Cairo.Shape (Ector.Renderer.Cairo, Ector.Renderer.Shape, Ef
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Efl.Gfx.Path.bounds_get;
-      Efl.Gfx.Path.commit;
       Ector.Renderer.crc { get; }
       Ector.Renderer.Cairo.op_fill;
       Efl.Object.constructor;

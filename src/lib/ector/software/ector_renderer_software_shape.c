@@ -734,20 +734,36 @@ _ector_renderer_software_shape_ector_renderer_software_op_fill(Eo *obj EINA_UNUS
    return EINA_FALSE;
 }
 
-EOLIAN static void
-_ector_renderer_software_shape_efl_gfx_path_commit(Eo *obj EINA_UNUSED,
-                                                   Ector_Renderer_Software_Shape_Data *pd)
+static void
+_ector_renderer_software_shape_efl_gfx_path_path_set(Eo *obj,
+                                                     Ector_Renderer_Software_Shape_Data *pd,
+                                                     const Efl_Gfx_Path_Command *op,
+                                                     const double *points)
 {
-   if (pd->shape_data)
-     {
-        ector_software_rasterizer_destroy_rle_data(pd->shape_data);
-        pd->shape_data = NULL;
-     }
-   if (pd->outline_data)
-     {
-        ector_software_rasterizer_destroy_rle_data(pd->outline_data);
-        pd->outline_data = NULL;
-     }
+   if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+   pd->shape_data = NULL;
+   pd->outline_data = NULL;
+
+   efl_gfx_path_set(efl_super(obj, MY_CLASS), op, points);
+}
+
+
+static void
+_ector_renderer_software_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Ector_Renderer_Software_Shape_Data *pd = data;
+   Efl_Gfx_Path_Change_Event *ev = event->info;
+
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
+
+   if (pd->shape_data) ector_software_rasterizer_destroy_rle_data(pd->shape_data);
+   if (pd->outline_data) ector_software_rasterizer_destroy_rle_data(pd->outline_data);
+
+   pd->shape_data = NULL;
+   pd->outline_data = NULL;
 }
 
 static Eo *
@@ -761,6 +777,7 @@ _ector_renderer_software_shape_efl_object_constructor(Eo *obj, Ector_Renderer_So
    pd->public_shape = efl_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _ector_renderer_software_shape_path_changed, pd);
 
    return obj;
 }

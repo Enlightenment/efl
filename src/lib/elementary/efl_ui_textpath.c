@@ -544,10 +544,17 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_efl_ui_textpath_efl_gfx_path_commit(Eo *obj, Efl_Ui_Textpath_Data *pd)
+_path_changed_cb(void *data, const Efl_Event *event)
 {
-   _path_data_get(obj, pd, EINA_TRUE);
-   _sizing_eval(pd);
+   Efl_Gfx_Path_Change_Event *ev = event->info;
+   EFL_UI_TEXTPATH_DATA_GET(data, sd);
+
+   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
+               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
+     return;
+
+   _path_data_get(data, sd, EINA_TRUE);
+   _sizing_eval(sd);
 }
 
 static Eina_Bool
@@ -587,6 +594,8 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
 
    evas_object_smart_member_add(priv->text_obj, obj);
    elm_widget_sub_object_add(obj, priv->text_obj);
+
+   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _path_changed_cb, obj);
 }
 
 EOLIAN static Efl_Object *
@@ -705,7 +714,6 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
                                 radius * 2,  start_angle, 360);
      }
 
-   _path_data_get(obj, pd, EINA_TRUE);
    _sizing_eval(pd);
 }
 

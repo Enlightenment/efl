@@ -292,15 +292,8 @@ mixin Efl.Gfx.Path
           @in pts_count: uint; [[Pointers count to reserve]]
         }
       }
-      commit @pure_virtual {
-        [[Request to update the path object.
-
-          One path object may get appending several path calls (such as
-          append_cubic, append_rect, etc) to construct the final path data.
-          Here commit means all path data is prepared and now object
-          could update its own internal status based on the last path
-          information.
-        ]]
-      }
+   }
+   events {
+      changed: Efl.Gfx.Path_Change_Event; [[Graphics path was changed.]]
    }
 }
