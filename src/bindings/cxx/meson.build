@@ -104,7 +104,7 @@ foreach lib : cxx_sublibs
     name : '-'.join(package_name.split('_')) + '-cxx',
     description : lib[0]+' cxx bindings',
     subdirs : tmp_package_subdirs,
-    version : version_major + '.' + version_minor,
+    version : version_major + '.' + version_minor + '.' + version_micro,
     libraries : dep,
     requires : growing_deps + [package_name],
   )

@@ -31,6 +31,6 @@ endforeach
 pkgconfig.generate(evas_lib,
   name : 'evas',
   subdirs : ['evas-'+version_major] + tmp_package_subdirs,
-  version : version_major + '.' + version_minor,
+  version : version_major + '.' + version_minor + '.' + version_micro,
   libraries : [eina, ecore, ector, emile, dependency('luajit')],
 )

@@ -124,7 +124,7 @@ efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 pkgconfig.generate(
   name : 'efl-mono',
   description : 'Efl C# bindings',
-  version : version_major + '.' + version_minor,
+  version : version_major + '.' + version_minor + '.' + version_micro,
   libraries : ['-r:${assemblies_dir}/efl_mono.dll'],
   variables : ['assemblies_dir='+join_paths(dir_lib, 'efl-mono-'+version_major),
                'mono_libs=-r:${assemblies_dir}/efl_mono.dll']

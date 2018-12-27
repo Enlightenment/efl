@@ -400,6 +400,6 @@ automatic_pkgfile = false
 pkgconfig.generate(eina_lib,
   name : 'eina',
   subdirs : ['eina-'+version_major, 'efl-'+version_major, join_paths('eina-'+version_major, 'eina')],
-  version : version_major + '.' + version_minor,
+  version : version_major + '.' + version_minor + '.' + version_micro,
   libraries : eina_pub_deps,
 )
