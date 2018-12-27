@@ -780,6 +780,21 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      {
         efl_text_strikethrough_color_set(ep->object, COLOR_SET(prop->val.color));
      }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_UNDERLINE_TYPE);
+   if (prop)
+     {
+        efl_text_underline_type_set(ep->object,
+              prop->val.underline_type);
+     }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_UNDERLINE);
+   if (prop)
+     {
+        efl_text_underline_color_set(ep->object, COLOR_SET(prop->val.color));
+     }
 }
 
 #undef APPLY_COLOR
