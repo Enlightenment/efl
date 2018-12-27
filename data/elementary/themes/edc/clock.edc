@@ -381,7 +381,7 @@ group { name: "e/modules/clock/digital";
              rel1.offset: 0 1;
              rel2.offset: -1 -1;
              align: 0.5 1.0;
-             color: FN_COL_DEFAULT_BASIC;
+             color: 160 160 160 255;
              text { font: FN; size: 8;
                 text_class: "module_small";
                 align: 0.5 0.5;
@@ -398,7 +398,6 @@ group { name: "e/modules/clock/digital";
              text.ellipsis: -1;
           }
        }
-                       
        part { name: "event"; type: RECT;
           description { state: "default" 0.0;
              color: 0 0 0 0;
