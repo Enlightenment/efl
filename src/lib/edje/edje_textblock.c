@@ -765,6 +765,21 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      {
         efl_text_backing_color_set(ep->object, COLOR_SET(prop->val.color));
      }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE);
+   if (prop)
+     {
+        efl_text_strikethrough_type_set(ep->object,
+              prop->val.strikethrough_type);
+     }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_STRIKETHROUGH);
+   if (prop)
+     {
+        efl_text_strikethrough_color_set(ep->object, COLOR_SET(prop->val.color));
+     }
 }
 
 #undef APPLY_COLOR
@@ -929,6 +944,7 @@ _edje_text_recalc(FLOAT_T sc EINA_UNUSED,
      }
 
    efl_text_markup_set(ep->object, text);
+
    _edje_text_min_max_calc(ed, ep, chosen_desc, params, minw, minh, maxw, maxh);
 }
 

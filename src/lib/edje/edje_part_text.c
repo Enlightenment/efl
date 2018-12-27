@@ -473,6 +473,7 @@ _efl_canvas_layout_part_text_efl_text_style_strikethrough_type_set(Eo *obj,
       Efl_Text_Style_Strikethrough_Type type)
 {
    Edje_User_Defined *eud;
+   Edje_Part_Text_Prop *prop;
 
    PROXY_DATA_GET(obj, pd);
    if (pd->rp->part->type == EDJE_PART_TYPE_TEXT) return;
@@ -480,7 +481,9 @@ _efl_canvas_layout_part_text_efl_text_style_strikethrough_type_set(Eo *obj,
    eud = _edje_user_text_style_definition_fetch(pd->ed, pd->part);
 
    eud->u.text_style.types |= EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE;
-   efl_text_strikethrough_type_set(pd->rp->object, type);
+   prop = _prop_fetch(&pd->rp->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_STRIKETHROUGH_TYPE);
+   prop->val.strikethrough_type = type;
 }
 
 EOLIAN static void
