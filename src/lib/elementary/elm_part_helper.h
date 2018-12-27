@@ -224,6 +224,14 @@ _ ## full ## _efl_text_style_strikethrough_type_set(Eo *obj, void *_pd EINA_UNUS
    _ ## type ## _text_strikethrough_type_set(pd->obj, sd, pd->part, type); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_UNDERLINE_SET_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_underline_type_set(Eo *obj, void *_pd EINA_UNUSED, Efl_Text_Style_Underline_Type type) \
+{ \
+   internals \
+   _ ## type ## _text_underline_type_set(pd->obj, sd, pd->part, type); \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 

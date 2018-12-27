@@ -57,6 +57,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_text_shadow_direction_set(efl_part(custom_bt, "efl.text"), EFL_TEXT_STYLE_SHADOW_DIRECTION_TOP);
    efl_text_strikethrough_type_set(efl_part(custom_bt, "efl.text"), EFL_TEXT_STYLE_STRIKETHROUGH_TYPE_ENABLED);
    efl_text_strikethrough_color_set(efl_part(custom_bt, "efl.text"), 0, 0, 0, 255);
+   efl_text_underline_color_set(efl_part(custom_bt, "efl.text"), 0, 0, 0, 255);
+   efl_text_underline_type_set(efl_part(custom_bt, "efl.text"), EFL_TEXT_STYLE_UNDERLINE_TYPE_SINGLE);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 320));
 }
