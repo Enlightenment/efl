@@ -4,8 +4,6 @@ project('efl', ['c','cpp'],
   meson_version : '>=0.47'
 )
 
-chmod    = join_paths(meson.source_root(), 'meson/meson-chmod.sh')
-
 if host_machine.system() == 'darwin'
   add_languages('objc')
 endif

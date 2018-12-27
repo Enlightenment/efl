@@ -1,3 +1,4 @@
-install_data('eina-bench-cmp', install_dir : dir_bin)
-o = join_paths(dir_bin, 'eina-bench-cmp')
-meson.add_install_script(chmod, 'a+r+x', o)
+# disabled because its a pretty useless script that forces python as a
+# a dependency and doesn't parse anything efl or test apps produce
+#install_data('eina-bench-cmp', install_dir : dir_bin,
+#             install_mode: 'rwxr-xr-x')
