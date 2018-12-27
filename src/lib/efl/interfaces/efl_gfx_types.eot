@@ -45,7 +45,7 @@ enum Efl.Gfx.Path_Command_Type {
 enum Efl.Gfx.Cap {
   [[These values determine how the end of opened sub-paths are rendered in a
     stroke.
-    @Efl.Gfx.Shape.stroke_cap_set()
+    @Efl.Gfx.Shape.stroke_cap.set
     @since 1.14
   ]]
   butt = 0,  [[The end of lines is rendered as a full stop on the last point itself.]]
@@ -57,7 +57,7 @@ enum Efl.Gfx.Cap {
 enum Efl.Gfx.Join
 {
   [[These values determine how two joining lines are rendered in a stroker.
-    @Efl.Gfx.Shape.stroke_join_set()
+    @Efl.Gfx.Shape.stroke_join.set
     @since 1.14
   ]]
   miter = 0, [[Used to render rounded line joins. Circular arcs are used to join two lines smoothly.]]
@@ -69,7 +69,7 @@ enum Efl.Gfx.Join
 enum Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
-    @Efl.Gfx.Gradient.spread_set()
+    @Efl.Gfx.Gradient.spread.set
     @since 1.14
   ]]
   pad, [[The area is filled with the closest stop color. This is the default.]]
@@ -89,7 +89,7 @@ enum Efl.Gfx.Fill_Rule
 
 struct Efl.Gfx.Dash {
   [[Type describing dash.
-    @Efl.Gfx.Shape.stroke_dash_set()
+    @Efl.Gfx.Shape.stroke_dash.set
     @since 1.14
   ]]
   length: double;  [[Dash drawing length.]]
