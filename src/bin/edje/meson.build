@@ -94,3 +94,7 @@ edje_watch = executable('edje_watch',
         install: true,
         c_args : package_c_args,
 )
+
+install_data('edje_recc', install_dir : dir_bin)
+o = join_paths(dir_bin, 'edje_recc')
+meson.add_install_script(chmod, 'a+r+x', o)

@@ -14,3 +14,12 @@ if meson.is_cross_build()
 else
   eet_bin = _eet_bin
 endif
+
+install_data('diffeet', install_dir : dir_bin)
+o = join_paths(dir_bin, 'diffeet')
+meson.add_install_script(chmod, 'a+r+x', o)
+
+install_data('vieet', install_dir : dir_bin)
+o = join_paths(dir_bin, 'vieet')
+meson.add_install_script(chmod, 'a+r+x', o)
+
