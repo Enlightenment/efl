@@ -454,13 +454,13 @@ evas_vg_shape_equal_commands(Eo *obj, const Eo *with)
    return efl_gfx_path_equal_commands(obj, with);
 }
 
-EAPI Efl_Canvas_Vg_Node*
+EAPI Efl_Canvas_Vg_Shape*
 evas_vg_shape_add(Efl_Canvas_Vg_Node *parent)
 {
    /* Warn it because the usage has been changed.
       We can remove this message after v1.21. */
-   if (!parent) CRI("Efl_VG Shape doesn't allow null parent!");
-   return efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+   if (!parent) CRI("Efl_Canvas_Vg_Shape only allow Efl_Canvas_Vg_Node as the parent");
+   return efl_add(MY_CLASS, parent);
 }
 
 #include "efl_canvas_vg_shape.eo.c"
