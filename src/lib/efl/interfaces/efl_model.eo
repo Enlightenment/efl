@@ -77,16 +77,16 @@ interface Efl.Model ()
            }
         }
 	property_ready_get {
-           [[Get a future value when it change to something that is not error:EAGAIN
+           [[Get a future value when it changes to something that is not error:EAGAIN
 
-             property_get can return an error with code EAGAIN when it doesn't have any
+             @.property.get can return an error with code EAGAIN when it doesn't have any
              meaningful value. To make life easier, this future will resolve when
-             the error:EAGAIN disapear. Either into a failed future in case the error
-             code change to something else or a success with the value of property whenever
-             the property finally change.
+             the error:EAGAIN disapears. Either into a failed future in case the error
+             code changed to something else or a success with the value of the property
+             whenever the property finally changes.
 
 
-             The future can also be canceled if the model itself get destroyed.
+             The future can also be canceled if the model itself gets destroyed.
 	   ]]
            params {
               @in property: string;
@@ -96,11 +96,11 @@ interface Efl.Model ()
         children_slice_get {
                [[Get children slice OR full range.
 
-                 children_slice_get behaves in two different ways, it may
+                 @.children_slice_get behaves in two different ways, it may
                  provide the slice if $count is non-zero
                  OR full range otherwise.
 
-                 Since 'slice' is a range, for example if we have 20 childs a
+                 Since 'slice' is a range, for example if we have 20 children a
                  slice could be the range from 3(start) with 4(count), see:
 
                  child 0  [no]
@@ -112,7 +112,7 @@ interface Efl.Model ()
                  child 6  [yes]
                  child 7  [no]
 
-                 Optionally the user can call children_count_get to know the
+                 Optionally the user can call @.children_count.get to know the
                  number of children so a valid range can be known in advance.
 
                  See @.children_count.get
@@ -125,15 +125,15 @@ interface Efl.Model ()
                                ignored.]]
             }
             /* XXX: is this right? */
-            return: future<accessor<Efl.Object>>; [[Array of childrens]]
+            return: future<accessor<Efl.Object>>; [[Array of children]]
          }
          @property children_count {
 	    get {
                [[Get children count.
 
-                  When efl_model_load is completed efl_model_coildren_count_get
-                  can be used to get the number of children. children_count_get
-                  can also be used before calling children_slice_get so a valid
+                  When efl_model_load is completed @.children_count.get
+                  can be used to get the number of children. @.children_count.get
+                  can also be used before calling @.children_slice_get so a valid
                   range is known. Event @[Efl.Model.children,count,changed] is
                   emitted when count is finished.
 
