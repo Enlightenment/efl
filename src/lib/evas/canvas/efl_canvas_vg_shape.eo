@@ -36,6 +36,7 @@ class Efl.Canvas.Vg.Shape (Efl.Canvas.Vg.Node, Efl.Gfx.Shape)
    }
    implements {
       Efl.Gfx.Path.interpolate;
+      Efl.Gfx.Path.commit;
       Efl.Duplicate.duplicate;
       Efl.Object.constructor;
       Efl.Object.destructor;
