@@ -347,6 +347,7 @@ static Efl_Object *
 _efl_canvas_vg_object_efl_object_finalize(Eo *obj, Efl_Canvas_Vg_Object_Data *pd)
 {
    Evas *e = evas_object_evas_get(obj);
+   efl_parent_set(pd->root, obj);
 
    // TODO: If we start to have to many Evas_Object_VG per canvas, it may be nice
    // to actually have one event per canvas and one array per canvas to.

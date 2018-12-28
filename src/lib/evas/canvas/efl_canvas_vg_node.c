@@ -25,11 +25,11 @@ _node_change(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
    Eo *p = obj;
    while ((p = efl_parent_get(p)))
      {
+        if (!efl_isa(p, MY_CLASS)) break;
         Efl_Canvas_Vg_Node_Data *pnd = efl_data_scope_get(p, MY_CLASS);
-        if (!pnd || (pnd->flags != EFL_GFX_CHANGE_FLAG_NONE)) break;
+        if (pnd->flags != EFL_GFX_CHANGE_FLAG_NONE) break;
         pnd->flags = EFL_GFX_CHANGE_FLAG_ALL;
      }
-
    efl_canvas_vg_object_change(nd->vd);
 }
 
@@ -327,23 +327,29 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
    Efl_Canvas_Vg_Container_Data *old_cd;
    Efl_VG *old_parent;
 
-   if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
-     cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
-   else if (efl_isa(parent, EFL_CANVAS_VG_OBJECT_CLASS))
+   if (parent)
      {
-        if (nd->vg_obj != parent)
+        if (efl_isa(parent, EFL_CANVAS_VG_CONTAINER_CLASS))
+          cd = efl_data_scope_get(parent, EFL_CANVAS_VG_CONTAINER_CLASS);
+        else if (efl_isa(parent, EFL_CANVAS_VG_OBJECT_CLASS))
           {
-             nd->vg_obj = parent;
-             nd->vd = efl_data_scope_get(parent, EFL_CANVAS_VG_OBJECT_CLASS);
-             efl_canvas_vg_container_vg_obj_update(obj, nd);
+             if (nd->vg_obj != parent)
+               {
+                  nd->vg_obj = parent;
+                  nd->vd = efl_data_scope_get(parent, EFL_CANVAS_VG_OBJECT_CLASS);
+               }
           }
-
+        else
+          {
+             ERR("parent(%p, class = %s) is not allowed by vg node(%p).",
+                 parent, efl_class_name_get(efl_class_get(parent)), obj);
+             return;
+          }
      }
-   else if (parent)
+   else
      {
-        ERR("parent(%p, class = %s) is not allowed by vg node(%p).",
-            parent, efl_class_name_get(efl_class_get(parent)), obj);
-        return;
+        nd->vg_obj = NULL;
+        nd->vd = NULL;
      }
 
    if (!_efl_canvas_vg_node_parent_checked_get(obj, &old_parent, &old_cd))
@@ -365,17 +371,14 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
         _efl_canvas_vg_node_name_insert(obj, cd);
 
         Efl_Canvas_Vg_Node_Data *parent_nd = efl_data_scope_get(parent, MY_CLASS);
-        _node_change(parent, parent_nd);
-
         if (nd->vg_obj != parent_nd->vg_obj)
           {
              nd->vg_obj = parent_nd->vg_obj;
              nd->vd = parent_nd->vd;
-             efl_canvas_vg_container_vg_obj_update(obj, nd);
           }
      }
 
-   _node_change(obj, nd);
+   if (parent) _node_change(obj, nd);
 }
 
 static void
