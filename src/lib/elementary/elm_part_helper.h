@@ -232,6 +232,22 @@ _ ## full ## _efl_text_style_underline_type_set(Eo *obj, void *_pd EINA_UNUSED, 
    _ ## type ## _text_underline_type_set(pd->obj, sd, pd->part, type); \
 }
 
+#define ELM_PART_OVERRIDE_TEXT_UNDERLINE_DASHED_WIDTH_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_underline_dashed_width_set(Eo *obj, void *_pd EINA_UNUSED, int width) \
+{ \
+   internals \
+   _ ## type ## _text_underline_dashed_width_set(pd->obj, sd, pd->part, width); \
+}
+
+#define ELM_PART_OVERRIDE_TEXT_UNDERLINE_DASHED_GAP_FULL(full, type, internals) \
+EOLIAN static void \
+_ ## full ## _efl_text_style_underline_dashed_gap_set(Eo *obj, void *_pd EINA_UNUSED, int gap) \
+{ \
+   internals \
+   _ ## type ## _text_underline_dashed_gap_set(pd->obj, sd, pd->part, gap); \
+}
+
 #define ELM_PART_OVERRIDE_CONTENT_SET(type, TYPE, typedata) \
    ELM_PART_OVERRIDE_CONTENT_SET_FULL(type ## _part, type, ELM_PART_OVERRIDE_INTERNALS_FETCH(TYPE, typedata))
 
