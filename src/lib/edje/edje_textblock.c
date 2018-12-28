@@ -802,6 +802,27 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      {
         efl_text_underline2_color_set(ep->object, COLOR_SET(prop->val.color));
      }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_UNDERLINE_DASHED);
+   if (prop)
+     {
+        efl_text_underline_dashed_color_set(ep->object, COLOR_SET(prop->val.color));
+     }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_WIDTH);
+   if (prop)
+     {
+        efl_text_underline_dashed_width_set(ep->object, prop->val.ni);
+     }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_UNDERLINE_DASHED_GAP);
+   if (prop)
+     {
+        efl_text_underline_dashed_gap_set(ep->object, prop->val.ni);
+     }
 }
 
 #undef APPLY_COLOR
