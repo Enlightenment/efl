@@ -637,6 +637,7 @@ struct _Evas_Object_Textblock
          Efl_Text_Style_Shadow_Direction shadow_direction;
          Efl_Text_Format_Wrap            wrap;
          Efl_Text_Font_Bitmap_Scalable   bitmap_scalable;
+         Efl_Text_Style_Underline_Type   underline_type;
       } info;
    } default_format;
    double                              valign;
@@ -15811,6 +15812,7 @@ static struct
 } _style_underline_map[] = {
      { 0, 0, 0 },
      { 1, 0, 0 },
+     { 1, 0, 0 },
      { 1, 1, 0 },
      { 0, 0, 1 }
 };
@@ -15819,10 +15821,11 @@ static void
 _efl_canvas_text_efl_text_style_underline_type_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Style_Underline_Type type EINA_UNUSED)
 {
    ASYNC_BLOCK;
-   _FMT_SET(underline, _style_underline_map[type].underline_single);
-   _FMT_SET(underline2, _style_underline_map[type].underline_double);
-   _FMT_SET(underline_dash, _style_underline_map[type].underline_dashed);
-
+   _FMT_INFO_SET_START(underline_type, type);
+   o->default_format.format.underline = _style_underline_map[type].underline_single;
+   o->default_format.format.underline2 = _style_underline_map[type].underline_double;
+   o->default_format.format.underline_dash = _style_underline_map[type].underline_dashed;
+   _FMT_INFO_SET_END();
 }
 
 static Efl_Text_Style_Underline_Type
