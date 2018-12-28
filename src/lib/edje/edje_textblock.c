@@ -795,6 +795,13 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      {
         efl_text_underline_color_set(ep->object, COLOR_SET(prop->val.color));
      }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_COLOR_UNDERLINE2);
+   if (prop)
+     {
+        efl_text_underline2_color_set(ep->object, COLOR_SET(prop->val.color));
+     }
 }
 
 #undef APPLY_COLOR
