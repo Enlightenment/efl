@@ -91,7 +91,9 @@ struct event_argument_wrapper_generator
            return false;
         }
 
-      return as_generator("///<summary>Event argument wrapper for event " << evt_name << ".</summary>\n"
+      return as_generator("///<summary>Event argument wrapper for event <see cref=\""
+                          << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
+                          << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.</summary>\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
                           << scope_tab << "///<summary>Actual event payload.</summary>\n"
                           << scope_tab << "public " << arg_type << " arg { get; set; }\n"
