@@ -405,21 +405,6 @@ public struct ValueNative
     }
 }
 
-
-/// <summary>Exception for trying to access flushed values.</summary>
-[Serializable]
-public class ValueFlushedException : Exception
-{
-    /// <summary> Default constructor.</summary>
-    public ValueFlushedException() : base () { }
-    /// <summary> Most commonly used contructor.</summary>
-    public ValueFlushedException(string msg) : base(msg) { }
-    /// <summary> Wraps an inner exception.</summary>
-    public ValueFlushedException(string msg, Exception inner) : base(msg, inner) { }
-    /// <summary> Serializable constructor.</summary>
-    protected ValueFlushedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
-}
-
 /// <summary>Exception for failures when setting an container item.</summary>
 [Serializable]
 public class SetItemFailedException : Exception
@@ -681,8 +666,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary> Whether this wrapper owns (can free) the native value. </summary>
     public Ownership Ownership { get; protected set;}
     private bool Disposed;
-    /// <summary> Whether this wrapper has already freed the native value. </summary>
-    public bool Flushed { get; protected set;}
     /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
     public bool Optional {
         get {
@@ -774,7 +757,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw new System.InvalidOperationException("Failed to copy value to managed memory.");
 
         Disposed = false;
-        Flushed = false;
         Ownership = Ownership.Managed;
     }
 
@@ -912,10 +894,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (type.IsContainer())
             throw new ArgumentException("To setup a container you must provide a subtype.");
 
-        bool ret = eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
-        if (ret)
-            Flushed = false;
-        return ret;
+        return eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
     }
 
     public bool Setup(ValueType containerType, ValueType subtype, uint step=0) {
@@ -930,9 +909,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 break;
         }
 
-        if (ret)
-            Flushed = false;
-
         return ret;
     }
 
@@ -940,8 +916,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
             throw new ObjectDisposedException(GetType().Name);
-        if (Flushed)
-            throw new ValueFlushedException("Trying to use value that has been flushed. Setup it again.");
     }
 
     private void ContainerSanityChecks(int targetIndex=-1)
@@ -977,16 +951,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!type.IsOptional())
             throw new InvalidValueTypeException("Value is not an Optional one");
-    }
-
-    /// <summary>Releases the memory stored by this value. It can be reused by calling setup again.
-    /// </summary>
-    public void Flush()
-    {
-        if (Disposed)
-            throw new ObjectDisposedException(GetType().Name);
-        eina_value_flush_wrapper(this.Handle);
-        Flushed = true;
     }
 
     /// <summary>Get a ValueNative struct with the *value* pointed by this Eina.Value.</summary>
@@ -1439,8 +1403,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         try {
             return this.CompareTo(other) == 0;
         } catch (ObjectDisposedException) {
-            return false;
-        } catch (ValueFlushedException) {
             return false;
         }
     }

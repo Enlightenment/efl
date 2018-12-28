@@ -176,43 +176,8 @@ public static class TestEinaValue {
     {
         Eina.Value v = new Eina.Value(Eina.ValueType.Int32);
         v.Dispose();
-        Test.AssertRaises<ObjectDisposedException>(v.Flush);
         Test.AssertRaises<ObjectDisposedException>(() => v.ToString());
         Test.AssertRaises<ObjectDisposedException>(() => v.Set(24));
-    }
-
-    public static void TestValueFlush()
-    {
-        using (Eina.Value v = new Eina.Value(Eina.ValueType.Int32)) {
-            Test.Assert(v.Set(44));
-            Test.Assert(!v.Flushed);
-            v.Flush();
-            Test.Assert(v.Flushed);
-
-            int x;
-            Test.AssertRaises<Eina.ValueFlushedException>(() => v.Get(out x));
-            x = 42;
-            Test.AssertRaises<Eina.ValueFlushedException>(() => v.Set(x));
-
-            v.Setup(Eina.ValueType.String);
-            Test.AssertNotRaises<Eina.ValueFlushedException>(() => v.Set("Hello, EFL"));
-
-            string y = String.Empty;
-            Test.AssertNotRaises<Eina.ValueFlushedException>(() => v.Get(out y));
-            v.Flush();
-            Test.AssertRaises<Eina.ValueFlushedException>(() => v.Get(out y));
-
-            v.Setup(Eina.ValueType.Array, Eina.ValueType.UInt32);
-
-            Test.AssertNotRaises<Eina.ValueFlushedException>(() =>
-                    v.Append(42));
-            v.Flush();
-            Test.AssertRaises<Eina.ValueFlushedException>(() =>
-                    v.Append(42));
-
-            Test.AssertRaises<Eina.ValueFlushedException>(() => v.GetValueSubType());
-
-        }
     }
 
     private delegate bool BoolRet();
