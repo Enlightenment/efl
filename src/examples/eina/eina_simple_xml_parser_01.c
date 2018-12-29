@@ -29,9 +29,15 @@ main(void)
         size = ftell(file);
         fseek(file, 0, SEEK_SET);
 
+        if (size < 0)
+          {
+             EINA_LOG_ERR("Can't read chat.xml");
+             return 0;
+          }
+
         if ((buffer = malloc(size)))
           {
-             if (fread(buffer, 1, size, file) != size)
+             if (fread(buffer, 1, size, file) != (unsigned long)size)
                {
                   EINA_LOG_ERR("Can't read chat.xml");
                }
