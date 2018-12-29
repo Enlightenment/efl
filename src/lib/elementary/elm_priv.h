@@ -69,6 +69,14 @@
 # include "elm_widget_item_static_focus.eo.h"
 #include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
+# include "efl_ui_model_size.eo.h"
+
+extern const char *_efl_model_property_itemw;
+extern const char *_efl_model_property_itemh;
+extern const char *_efl_model_property_selfw;
+extern const char *_efl_model_property_selfh;
+extern const char *_efl_model_property_totalw;
+extern const char *_efl_model_property_totalh;
 
 # ifdef HAVE_LANGINFO_H
 #  include <langinfo.h>
