@@ -46,7 +46,7 @@
 
 #define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)               \
    mesh[num] = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);                                  \
-   snprintf(full_file_path, PATH_MAX, "%s%s", path, ".obj");                      \
+   snprintf(full_file_path, sizeof(full_file_path), "%s.obj", path);                      \
    efl_file_set(mesh[num], full_file_path, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh[num], 0, name_of_material); \
    evas_canvas3d_mesh_shader_mode_set(mesh[num], shade_mode);                                \
@@ -56,9 +56,9 @@
    evas_canvas3d_node_position_set(mesh_node[num], 0, Y, Z);                                     \
 
 #define ADD_OBJ_MESH_AND_SAVED_COPY(path, Y, Z, num, shade_mode, name_of_material)\
-   snprintf(buffer, PATH_MAX, "%s%s", input_template, #path);                     \
+   snprintf(buffer, sizeof(buffer), "%s%s", input_template, #path);                     \
    ADD_OBJ_MESH(buffer, Y, Z, num, shade_mode, name_of_material)                  \
-   snprintf(buffer, PATH_MAX, "%s%s%s", output_template, #path, ".obj");          \
+   snprintf(buffer, sizeof(buffer), "%s%s.obj", output_template, #path);          \
    efl_file_save(mesh[num], buffer, NULL, NULL);                           \
    snprintf(buffer, PATH_MAX, "%s%s", output_template, #path);                    \
    ADD_OBJ_MESH(buffer, Y + COPY_OFFSET, Z, num + 4, shade_mode, name_of_material)
@@ -141,7 +141,7 @@ int
 main(void)
 {
    int i;
-   char buffer[PATH_MAX], full_file_path[PATH_MAX];
+   char buffer[PATH_MAX], full_file_path[PATH_MAX + 4];
 
    // Unless Evas 3D supports Software renderer, we force use of the gl backend.
    setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
