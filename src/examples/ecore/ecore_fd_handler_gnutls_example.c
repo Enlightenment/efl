@@ -28,7 +28,12 @@
  * compile with gcc $(pkgconfig --cflags --libs gnutls ecore)
  */
 
-#define print(...) fprintf(stderr, "line %i: ", __LINE__); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n")
+#define print(...) \
+do { \
+  fprintf(stderr, "line %i: ", __LINE__); \
+  fprintf(stderr, __VA_ARGS__); \
+  fprintf(stderr, "\n");\
+} while(0)
 
 static int done = 0;
 
@@ -75,6 +80,8 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
 
       case GNUTLS_HANDSHAKE_SUPPLEMENTAL:
         return "Supplemental";
+      default:
+        return "Uncaught state";
      }
    return NULL;
 }
