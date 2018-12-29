@@ -21,8 +21,9 @@
  */
 
 #include <stdlib.h>
-
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
 #include <signal.h>
 
 #include "Eldbus.h"
