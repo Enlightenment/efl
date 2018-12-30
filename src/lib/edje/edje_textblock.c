@@ -823,6 +823,13 @@ _edje_textblock_colors_set(Edje *ed EINA_UNUSED,
      {
         efl_text_underline_dashed_gap_set(ep->object, prop->val.ni);
      }
+
+   prop = _prop_find(ep->typedata.text->text_props,
+         EDJE_PART_TEXT_PROP_UNDERLINE_HEIGHT);
+   if (prop)
+     {
+        efl_text_underline_height_set(ep->object, prop->val.nd);
+     }
 }
 
 #undef APPLY_COLOR
