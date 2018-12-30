@@ -25,5 +25,6 @@ class Efl.Ui.Layout_Part_Text (Efl.Ui.Layout_Part, Efl.Text, Efl.Text_Markup,
       Efl.Text_Style.underline_type { set; }
       Efl.Text_Style.underline_dashed_width { set; }
       Efl.Text_Style.underline_dashed_gap { set; }
+      Efl.Text_Style.underline_height { set; }
    }
 }

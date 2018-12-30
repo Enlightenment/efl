@@ -2679,6 +2679,17 @@ _efl_ui_layout_text_underline_dashed_gap_set(Eo *obj, Efl_Ui_Layout_Data *sd EIN
 #define UNDERLINE_DASHED_GAP_FULL(part_typename, typename, CLASS, TYPENAME) \
   ELM_PART_OVERRIDE_TEXT_UNDERLINE_DASHED_GAP_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
 
+static void
+_efl_ui_layout_text_underline_height_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
+      const char *part, double height)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_text_underline_height_set(efl_part(wd->resize_obj, part), height);
+}
+
+#define UNDERLINE_HEIGHT_FULL(part_typename, typename, CLASS, TYPENAME) \
+  ELM_PART_OVERRIDE_TEXT_UNDERLINE_HEIGHT_FULL(part_typename, typename, ELM_PART_OVERRIDE_INTERNALS_FETCH(CLASS, TYPENAME)) \
+
 TEXT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 MARKUP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 FONT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
@@ -2698,6 +2709,7 @@ STRIKETHROUGH_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui
 UNDERLINE_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 UNDERLINE_DASHED_WIDTH_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 UNDERLINE_DASHED_GAP_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
+UNDERLINE_HEIGHT_FULL(efl_ui_layout_part_text, efl_ui_layout, EFL_UI_LAYOUT, Efl_Ui_Layout_Data)
 
 EOLIAN static const char *
 _efl_ui_layout_part_text_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
