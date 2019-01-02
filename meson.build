@@ -102,10 +102,25 @@ foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DEFL_BUILD=1', language: lang)
   add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
   if sys_windows == true
-    add_global_arguments('-DWINVER=0x0601', language: lang)
-    add_global_arguments('-D_WIN32_WINNT=0x0601', language: lang)
+    if (get_option('windows-version') == 'vista')
+      add_global_arguments('-DWINVER=0x060', language: lang)
+      add_global_arguments('-D_WIN32_WINNT=0x0600', language: lang)
+    elif (get_option('windows-version') == 'win7')
+      add_global_arguments('-DWINVER=0x0601', language: lang)
+      add_global_arguments('-D_WIN32_WINNT=0x0601', language: lang)
+    elif (get_option('windows-version') == 'win8')
+      add_global_arguments('-DWINVER=0x0602', language: lang)
+      add_global_arguments('-D_WIN32_WINNT=0x0602', language: lang)
+    elif (get_option('windows-version') == 'win81')
+      add_global_arguments('-DWINVER=0x0603', language: lang)
+      add_global_arguments('-D_WIN32_WINNT=0x0603', language: lang)
+    elif (get_option('windows-version') == 'win10')
+      add_global_arguments('-DWINVER=0x0A00', language: lang)
+      add_global_arguments('-D_WIN32_WINNT=0x0A00', language: lang)
+    else
+      error('Version of targetted Windows incorrect')
+    endif
   endif
-
 endforeach
 
 config_h = configuration_data()
