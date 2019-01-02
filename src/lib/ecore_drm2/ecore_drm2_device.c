@@ -95,14 +95,19 @@ static const char *
 _drm2_device_find(Elput_Manager *em, const char *seat)
 {
    Eina_List *devs, *l;
-   const char *dev, *ret = NULL, *chosen_dev = NULL;
+   const char *dev, *ret = NULL, *chosen_dev = NULL, *d = NULL;
    Eina_Bool found = EINA_FALSE;
    Eina_Bool modeset;
    int fd;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(seat, NULL);
 
-   devs = eeze_udev_find_by_subsystem_sysname("drm", "card[0-9]*");
+   d = getenv("ECORE_DRM2_CARD");
+   if (d)
+     devs = eeze_udev_find_by_subsystem_sysname("drm", d);
+   else
+     devs = eeze_udev_find_by_subsystem_sysname("drm", "card[0-9]*");
+
    if (!devs) return NULL;
 
    EINA_LIST_FOREACH(devs, l, dev)
