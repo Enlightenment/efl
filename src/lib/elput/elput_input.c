@@ -832,6 +832,9 @@ elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, do
                                                  LIBINPUT_DEVICE_CAP_POINTER))
                continue;
 
+             if (!libinput_device_config_accel_is_available(edev->device))
+               continue;
+
              if (libinput_device_config_accel_set_speed(edev->device,
                                                         speed) !=
                  LIBINPUT_CONFIG_STATUS_SUCCESS)
