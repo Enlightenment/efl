@@ -56,7 +56,7 @@ _promise_ctx_new(Efl_Loop *loop, Eina_Value *v)
    Ctx *ctx;
    ctx = calloc(1, sizeof(Ctx));
    EINA_SAFETY_ON_NULL_GOTO(ctx, err_ctx);
-   ctx->p = efl_loop_promise_new(loop, _promise_cancel, ctx);
+   ctx->p = efl_loop_promise_new(loop, ctx, _promise_cancel, NULL);
    EINA_SAFETY_ON_NULL_GOTO(ctx->p, err_timer);
    ctx->value = v;
    return ctx;
