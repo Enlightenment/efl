@@ -2017,7 +2017,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 /**
  * @def efl_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
- * @param[in] desc The description of the event to listen to.
+ * @param[in] desc An #Efl_Event_Description of the event to listen to.
  * @param[in] cb the callback to call.
  * @param[in] data additional data to pass to the callback.
  *
@@ -2033,6 +2033,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @def efl_event_callback_array_add(obj, desc, cb, data)
  * Add an array of callbacks for an event.
  *
+ * @param[in] obj The object.
  * @param[in] array an #Efl_Callback_Array_Item of events to listen to.
  * @param[in] data additional data to pass to the callback.
  *
@@ -2053,7 +2054,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @brief Add an event callback forwarder for an event and an object.
  *
  * @param[in] obj The object.
- * @param[in] desc The description of the event to listen to
+ * @param[in] desc An #Efl_Event_Description of the event to forward to.
  * @param[in] new_obj The object to emit events from
  *
  * @ingroup Efl_Object
