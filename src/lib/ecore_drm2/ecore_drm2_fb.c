@@ -290,8 +290,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
                   plane->scanout = EINA_TRUE;
                   if (fb->status_handler && (fb->scanout_count == 1) &&
                       (plane_scanout != plane->scanout))
-                    fb->status_handler(fb,
-                                       ECORE_DRM2_FB_STATUS_SCANOUT_ON,
+                    fb->status_handler(fb, ECORE_DRM2_FB_STATUS_SCANOUT_ON,
                                        fb->status_data);
                   continue;
                }
@@ -301,8 +300,7 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
              fb->scanout_count--;
              if (fb->status_handler && (fb->scanout_count == 0))
-               fb->status_handler(fb,
-                                  ECORE_DRM2_FB_STATUS_SCANOUT_OFF,
+               fb->status_handler(fb, ECORE_DRM2_FB_STATUS_SCANOUT_OFF,
                                   fb->status_data);
           }
      }
@@ -448,8 +446,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->prep.atomic_req, -1);
 
    res =
-     sym_drmModeAtomicCommit(output->fd,
-                             output->prep.atomic_req, flags,
+     sym_drmModeAtomicCommit(output->fd, output->prep.atomic_req, flags,
                              output->user_data);
    if (res < 0)
      {
@@ -502,8 +499,7 @@ _fb_flip(Ecore_Drm2_Output *output)
         static Eina_Bool bugged_about_bug = EINA_FALSE;
         repeat = EINA_FALSE;
         ret = sym_drmModePageFlip(fb->fd, output->crtc_id, fb->id,
-                                  DRM_MODE_PAGE_FLIP_EVENT,
-                                  output->user_data);
+                                  DRM_MODE_PAGE_FLIP_EVENT, output->user_data);
         /* Some drivers (RPI - looking at you) are broken and produce
          * flip events before they are ready for another flip, so be
          * a little robust in the face of badness and try a few times
