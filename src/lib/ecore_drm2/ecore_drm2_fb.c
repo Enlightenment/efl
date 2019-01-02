@@ -472,7 +472,7 @@ _fb_flip(Ecore_Drm2_Output *output)
      {
         ret =
           sym_drmModeSetCrtc(fb->fd, output->crtc_id, fb->id,
-                             output->x, output->y, &output->conn_id, 1,
+                             0, 0, &output->conn_id, 1,
                              &output->current_mode->info);
         if (ret)
           {
