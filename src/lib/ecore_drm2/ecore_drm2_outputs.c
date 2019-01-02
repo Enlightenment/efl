@@ -1291,7 +1291,7 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
      }
 
    ret = sym_drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
-                                 output->user_data);
+                                 output);
    if (ret < 0)
      {
         ERR("Failed to commit atomic Mode: %m");
@@ -1538,7 +1538,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
              if (res < 0) goto err;
 
              res = sym_drmModeAtomicCommit(output->fd, req, flags,
-                                           output->user_data);
+                                           output);
              if (res < 0)
                goto err;
              else
