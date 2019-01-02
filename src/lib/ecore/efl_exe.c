@@ -281,7 +281,7 @@ _cb_exe_in(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_run_cancel_cb(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+_run_cancel_cb(void *data, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_promise EINA_UNUSED)
 {
    Eo *obj = data;
    Efl_Exe_Data *pd = efl_data_scope_get(obj, MY_CLASS);
