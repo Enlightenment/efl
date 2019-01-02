@@ -30,7 +30,8 @@ _node_change(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
         if (pnd->flags != EFL_GFX_CHANGE_FLAG_NONE) break;
         pnd->flags = EFL_GFX_CHANGE_FLAG_ALL;
      }
-   efl_canvas_vg_object_change(nd->vd);
+   if (efl_invalidated_get(nd->vg_obj)) return;
+   efl_canvas_vg_object_chang(nd->vd);
 }
 
 static void
