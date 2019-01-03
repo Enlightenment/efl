@@ -3,7 +3,6 @@ class Efl.Model_Composite_Selection extends Efl.Model_Composite_Boolean
    [[Efl model composite selection class]]
    implements {
       Efl.Object.constructor;
-      Efl.Model.children_slice_get;
       Efl.Model.property { get; set; }
       Efl.Model.properties { get; }
    }

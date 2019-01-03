@@ -4,15 +4,14 @@
 
 #include <Efl_Core.h>
 
-#include "efl_model_composite_boolean_children.eo.h"
 #include "efl_model_composite_private.h"
 
 typedef struct _Efl_Model_Composite_Boolean_Data Efl_Model_Composite_Boolean_Data;
-typedef struct _Efl_Model_Composite_Boolean_Children_Data Efl_Model_Composite_Boolean_Children_Data;
 typedef struct _Efl_Model_Composite_Boolean_Value Efl_Model_Composite_Boolean_Value;
 
 struct _Efl_Model_Composite_Boolean_Data
 {
+   Efl_Model_Composite_Boolean_Data *parent;
    Eina_Hash *values;
 };
 
@@ -29,127 +28,92 @@ struct _Efl_Model_Composite_Boolean_Value
    Eina_Bool      default_value;
 };
 
-struct _Efl_Model_Composite_Boolean_Children_Data
-{
-   Efl_Model_Composite_Boolean_Data *parent;
-   unsigned int                      index;
-};
-
-/**************** efl_mmodel_composite_boolean_children **************/
-
-static void
-_efl_model_composite_boolean_children_index_set(Eo *obj EINA_UNUSED,
-                                                Efl_Model_Composite_Boolean_Children_Data *pd,
-                                                unsigned int index)
-{
-   if (pd->parent) // This is set during finalize
-     return ;
-
-   pd->index = index;
-}
-
-static unsigned int
-_efl_model_composite_boolean_children_index_get(const Eo *obj EINA_UNUSED,
-                                                Efl_Model_Composite_Boolean_Children_Data *pd)
-{
-   return pd->index;
-}
-
-static Efl_Object *
-_efl_model_composite_boolean_children_efl_object_finalize(Eo *obj,
-                                                          Efl_Model_Composite_Boolean_Children_Data *pd)
-{
-   Eo *parent;
-
-   parent = efl_parent_get(obj);
-   if (!parent) return NULL;
-   pd->parent = efl_data_scope_get(parent, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS);
-
-   return obj;
-}
-
 static Eina_Iterator *
-_efl_model_composite_boolean_children_efl_model_properties_get(const Eo *obj,
-                                                               Efl_Model_Composite_Boolean_Children_Data *pd)
+_efl_model_composite_boolean_efl_model_properties_get(const Eo *obj,
+                                                      Efl_Model_Composite_Boolean_Data *pd)
 {
    EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
-                                        obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS,
-                                        eina_hash_iterator_key_new(pd->parent->values),
-                                        "child.index");
+                                        obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS,
+                                        eina_hash_iterator_key_new(pd->parent->values));
    return props;
 }
 
 static Eina_Value *
-_efl_model_composite_boolean_children_efl_model_property_get(const Eo *obj,
-                                                             Efl_Model_Composite_Boolean_Children_Data *pd,
-                                                             const char *property)
+_efl_model_composite_boolean_efl_model_property_get(const Eo *obj,
+                                                    Efl_Model_Composite_Boolean_Data *pd,
+                                                    const char *property)
 {
    Efl_Model_Composite_Boolean_Value *v;
    Eina_Stringshare *s;
    Eina_Bool flag;
+   unsigned int index;
 
    if (property == NULL) return NULL;
-   if (strcmp(property, "child.index") == 0)
-     return eina_value_uint_new(pd->index);
 
+   // If we do not have a parent set that his a COMPOSITE_BOOLEAN, then we should just forward up the call
+   if (!pd->parent)
+     return efl_model_property_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS), property);
+
+   // Check if this is requesting a defined boolean property
+   // Property are defined and their value are stored on the parent COMPOSITE_BOOLEAN
    s = eina_stringshare_add(property);
    v = eina_hash_find(pd->parent->values, s);
    eina_stringshare_del(s);
 
-   if (!v)
-     return efl_model_property_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS),
-                                   property);
+   if (!v) // Not a property handle by this object, forward
+     return efl_model_property_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS), property);
+
+   index = efl_model_composite_index_get(obj);
 
    // As an optimization we do optimistically allocate the boolean array
    // Better would be to have a sparse boolean array
-   if ((pd->index >> 3) >= v->buffer_count)
+   if ((index >> 3) >= v->buffer_count)
      flag = v->default_value;
    else
-     flag = v->buffer[pd->index >> 3] & (((unsigned char)1) << (pd->index & 0x7));
+     flag = v->buffer[index >> 3] & (((unsigned char)1) << (index & 0x7));
 
    return eina_value_bool_new(!!flag);
 }
 
 static Eina_Future *
-_efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
-                                                             Efl_Model_Composite_Boolean_Children_Data *pd,
-                                                             const char *property, Eina_Value *value)
+_efl_model_composite_boolean_efl_model_property_set(Eo *obj,
+                                                    Efl_Model_Composite_Boolean_Data *pd,
+                                                    const char *property, Eina_Value *value)
 {
    Efl_Model_Composite_Boolean_Value *v;
    Eina_Stringshare *s;
-   Eina_Value b = EINA_VALUE_EMPTY;
    Eina_Bool flag;
+   unsigned int index;
 
    if (!property)
      return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
-   if (strcmp(property, "child.index") == 0)
-     return efl_loop_future_rejected(obj,
-                                 EFL_MODEL_ERROR_READ_ONLY);
 
+   // If we do not have a parent set that his a COMPOSITE_BOOLEAN, then we should just forward up the call
+   if (!pd->parent)
+     return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS),
+                                   property, value);
+
+   // Check if this is requesting a defined boolean property
+   // Property are defined and their value are stored on the parent COMPOSITE_BOOLEAN
    s = eina_stringshare_add(property);
    v = eina_hash_find(pd->parent->values, s);
    eina_stringshare_del(s);
 
    if (!v)
-     return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS),
+     return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS),
                                    property, value);
 
-   eina_value_setup(&b, EINA_VALUE_TYPE_BOOL);
-   if (!eina_value_convert(value, &b))
-     return efl_loop_future_rejected(obj,
-                                 EFL_MODEL_ERROR_UNKNOWN);
-   if (!eina_value_get(value, &flag))
-     return efl_loop_future_rejected(obj,
-                                 EFL_MODEL_ERROR_UNKNOWN);
+   if (!eina_value_bool_convert(value, &flag))
+     return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_UNKNOWN);
 
-   eina_value_flush(&b);
+   index = efl_model_composite_index_get(obj);
 
    // We are optimistically allocating the boolean buffer now.
    // Aligning it on 64bits
-   if (v->buffer_count < (((pd->index) >> 3) | 0x7) + 1)
+   if (v->buffer_count < (((index) >> 3) | 0x7) + 1)
      {
-        unsigned int rcount = (((pd->index | 0xF) >> 3) | 0x7) + 1;
+        unsigned int rcount = (((index | 0xF) >> 3) | 0x7) + 1;
         unsigned char *tmp;
 
         tmp = realloc(v->buffer, rcount);
@@ -161,58 +125,15 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
 
    // It is assumed that during slice get the buffer is properly sized
    if (flag)
-     v->buffer[pd->index >> 3] |= ((unsigned char)1) << (pd->index & 0x7);
+     v->buffer[index >> 3] |= ((unsigned char)1) << (index & 0x7);
    else
-     v->buffer[pd->index >> 3] &= ~(((unsigned char)1) << (pd->index & 0x7));
+     v->buffer[index >> 3] &= ~(((unsigned char)1) << (index & 0x7));
 
    // Calling "properties,changed" event
    efl_model_properties_changed(obj, property);
 
    // Return fulfilled future
    return efl_loop_future_resolved(obj, eina_value_bool_init(!!flag));
-}
-
-/**************** efl_model_composite_boolean **************/
-typedef struct _Efl_Model_Slice_Request Efl_Model_Slice_Request;
-struct _Efl_Model_Slice_Request
-{
-   Eo *parent;
-   unsigned int start;
-};
-
-static Eina_Value
-_efl_model_composite_boolean_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
-{
-   Efl_Model_Slice_Request *req = data;
-   unsigned int i, len;
-   Eina_Value r = EINA_VALUE_EMPTY;
-   Eo *target = NULL;
-
-   eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
-
-   EINA_VALUE_ARRAY_FOREACH(&v, len, i, target)
-     {
-        Eo *composite;
-
-        // It would have been nice if I could have just overriden the object
-        // function, but this would allow only one composite model
-        composite = efl_add(EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS, req->parent,
-                            efl_model_composite_boolean_children_index_set(efl_added, req->start + i),
-                            efl_ui_view_model_set(efl_added, target));
-
-        eina_value_array_append(&r, composite);
-     }
-
-   return r;
-}
-
-static void
-_efl_model_composite_boolean_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
-{
-   Efl_Model_Slice_Request *req = data;
-
-   efl_unref(req->parent);
-   free(req);
 }
 
 static void
@@ -233,11 +154,17 @@ _boolean_value_free(void *data)
 static Eo *
 _efl_model_composite_boolean_efl_object_constructor(Eo *obj, Efl_Model_Composite_Boolean_Data *pd)
 {
+   Eo *parent;
    obj = efl_constructor(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS));
 
    if (!obj) return NULL;
 
    pd->values = eina_hash_stringshared_new(_boolean_value_free);
+   // Only add a reference to the parent if it is actually a COMPOSITE_BOOLEAN_CLASS
+   // The root typically doesn't have any boolean property, only its child do
+   parent = efl_parent_get(obj);
+   if (efl_isa(parent, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS))
+     pd->parent = efl_data_scope_get(parent, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS);
 
    return obj;
 }
@@ -280,28 +207,4 @@ _efl_model_composite_boolean_boolean_del(Eo *obj EINA_UNUSED,
    eina_stringshare_del(s);
 }
 
-static Eina_Future *
-_efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj,
-                                                          Efl_Model_Composite_Boolean_Data *pd EINA_UNUSED,
-                                                          unsigned int start, unsigned int count)
-{
-   Efl_Model_Slice_Request *req;
-   Eina_Future *f;
-
-   f = efl_model_children_slice_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS),
-                                    start, count);
-
-   req = malloc(sizeof (Efl_Model_Slice_Request));
-   if (!req) return efl_loop_future_rejected(obj,
-                                         ENOMEM);
-   req->parent = efl_ref(obj);
-   req->start = start;
-
-   return efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
-                          .success = _efl_model_composite_boolean_then,
-                          .free = _efl_model_composite_boolean_clean,
-                          .data = req);
-}
-
 #include "efl_model_composite_boolean.eo.c"
-#include "efl_model_composite_boolean_children.eo.c"

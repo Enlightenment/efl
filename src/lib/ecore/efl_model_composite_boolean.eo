@@ -17,8 +17,9 @@ class Efl.Model_Composite_Boolean extends Efl.Model_Composite
       }
    }
    implements {
+      Efl.Model.properties { get; }
+      Efl.Model.property { get; set; }
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Model.children_slice_get;
    }
 }

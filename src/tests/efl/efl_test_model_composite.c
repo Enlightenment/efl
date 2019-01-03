@@ -80,17 +80,22 @@ _selection_children_slice_get_then(void *data EINA_UNUSED,
      {
         Eina_Value *p_int = NULL;
         Eina_Value *p_bool = NULL;
+        Eina_Value *p_index = NULL;
         int v_int = 0;
+        unsigned int index = 0;
         Eina_Bool v_bool = EINA_FALSE;
 
         p_bool = efl_model_property_get(child, "selected");
         p_int = efl_model_property_get(child, "test_p_int");
+        p_index = efl_model_property_get(child, "child.index");
 
         eina_value_get(p_bool, &v_bool);
         eina_value_get(p_int, &v_int);
+        fail_if(!eina_value_uint_convert(p_index, &index));
 
         fail_if(v_bool != base_selections[i]);
         fail_if(v_int != base_ints[i]);
+        ck_assert_int_eq(i, index);
      }
 
    ecore_main_loop_quit();
@@ -165,7 +170,7 @@ EFL_START_TEST(efl_test_model_composite_selection)
    model = efl_add_ref(EFL_MODEL_COMPOSITE_SELECTION_CLASS, efl_main_loop_get(),
                    efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
-   future = efl_model_property_set(model, "selected", eina_value_int_new(2));
+   future = efl_model_property_set(model, "child.selected", eina_value_int_new(2));
    eina_future_then(future, _wait_propagate, NULL, NULL);
    ecore_main_loop_begin();
 

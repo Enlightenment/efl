@@ -47,9 +47,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_model_container.eo \
 	lib/ecore/efl_model_container_item.eo \
 	lib/ecore/efl_model_composite_boolean.eo \
-	lib/ecore/efl_model_composite_boolean_children.eo \
 	lib/ecore/efl_model_composite_selection.eo \
-	lib/ecore/efl_model_composite_selection_children.eo \
 	lib/ecore/efl_model_composite.eo \
 	lib/ecore/efl_model_view.eo
 
