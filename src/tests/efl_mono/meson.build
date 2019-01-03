@@ -39,6 +39,8 @@ efl_mono_test = library('efl_mono_test',
 efl_mono_src = [
      'Main.cs',
      'TestUtils.cs',
+     'EinaTestData.cs',
+     'StructHelpers.cs',
      'BasicDirection.cs',
      'Eina.cs',
      'Eldbus.cs',
