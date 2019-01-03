@@ -100,12 +100,16 @@ namespace Efl {
       /// This function initializices everything in EFL and runs your application.
       /// This call will result in a call to args
       /// </summary>
-      public void launch(Efl.Csharp.Components components=Components.Ui) {
+      public void launch(string[] argv=null, Efl.Csharp.Components components=Components.Ui) {
         Init(components);
         Efl.App app = Efl.App.AppMain;
         app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) => {
           args(evt.arg);
         };
+        if (argv != null)
+            // Does not seem to be being passed to the callback.
+            foreach (var arg in argv)
+                app.AppendArg(arg);
         app.PauseEvt += (object sender, EventArgs e) => {
           pause();
         };
