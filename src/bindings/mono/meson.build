@@ -113,6 +113,19 @@ foreach mono_gen_file : legacy_evas_required_by_mono
                                        '@INPUT@'])
 endforeach
 
+efl_mono_conf_data = configuration_data()
+efl_mono_conf_data.set('EINA', eina_lib.full_path())
+efl_mono_conf_data.set('EFL', efl_lib.full_path())
+efl_mono_conf_data.set('ECORE', ecore_lib.full_path())
+efl_mono_conf_data.set('EO', eo_lib.full_path())
+efl_mono_conf_data.set('EVAS', evas_lib.full_path())
+efl_mono_conf_data.set('ELDBUS', eldbus_lib.full_path())
+efl_mono_conf_data.set('ELEMENTARY', elementary_lib.full_path())
+
+configure_file(input : 'efl_mono.dll.config.in',
+               output : 'efl_mono.dll.config',
+               configuration : efl_mono_conf_data)
+
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
