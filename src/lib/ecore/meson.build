@@ -181,6 +181,7 @@ ecore_src = [
   'efl_exe.c',
   'efl_thread.c',
   'efl_threadio.c',
+  'efl_appthread.c',
 ]
 
 if sys_windows == true
