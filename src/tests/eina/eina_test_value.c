@@ -55,6 +55,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(c == 'x');
    fail_unless(eina_value_char_get(value, &c));
    fail_if(eina_value_double_get(value, &d));
+   fail_unless(eina_value_int64_convert(value, &i64));
+   fail_unless(i64 == 'x');
    fail_unless(c == 'x');
    eina_value_flush(value);
 
@@ -64,6 +66,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(s == 300);
    fail_unless(eina_value_short_get(value, &s));
    fail_if(eina_value_char_get(value, &c));
+   fail_unless(eina_value_int_convert(value, &i));
+   fail_unless(i == 300);
    fail_unless(s == 300);
    eina_value_flush(value);
 
@@ -73,6 +77,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(i == -12345);
    fail_unless(eina_value_int_get(value, &i));
    fail_if(eina_value_short_get(value, &s));
+   fail_unless(eina_value_long_convert(value, &l));
+   fail_unless(l == -12345);
    fail_unless(i == -12345);
    eina_value_flush(value);
 
@@ -82,6 +88,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(l == 0xb33f);
    fail_unless(eina_value_long_get(value, &l));
    fail_if(eina_value_int_get(value, &i));
+   fail_unless(eina_value_int_convert(value, &i));
+   fail_unless(i == 0xb33f);
    fail_unless(l == 0xb33f);
    eina_value_flush(value);
 
@@ -91,6 +99,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(i64 == 0x0011223344556677);
    fail_unless(eina_value_int64_get(value, &i64));
    fail_if(eina_value_long_get(value, &l));
+   fail_unless(eina_value_long_convert(value, &l));
+   fail_unless(l == 0x0011223344556677);
    fail_unless(i64 == 0x0011223344556677);
    eina_value_flush(value);
 
@@ -102,6 +112,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(uc == 200);
    fail_unless(eina_value_uchar_get(value, &uc));
    fail_if(eina_value_int64_get(value, &i64));
+   fail_unless(eina_value_uint64_convert(value, &u64));
+   fail_unless(u64 == 200);
    fail_unless(uc == 200);
    eina_value_flush(value);
 
@@ -111,6 +123,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(us == 65535);
    fail_unless(eina_value_ushort_get(value, &us));
    fail_if(eina_value_uchar_get(value, &uc));
+   fail_unless(eina_value_uint_convert(value, &ui));
+   fail_unless(ui == 65535);
    fail_unless(us == 65535);
    eina_value_flush(value);
 
@@ -120,6 +134,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(ui == 4000000000U);
    fail_unless(eina_value_uint_get(value, &ui));
    fail_if(eina_value_ushort_get(value, &us));
+   fail_unless(eina_value_ulong_convert(value, &ul));
+   fail_unless(ul == 4000000000U);
    fail_unless(ui == 4000000000U);
    eina_value_flush(value);
 
@@ -129,6 +145,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(ul == 3000000001UL);
    fail_unless(eina_value_ulong_get(value, &ul));
    fail_if(eina_value_uint_get(value, &ui));
+   fail_unless(eina_value_uint64_convert(value, &u64));
+   fail_unless(u64 == 3000000001UL);
    fail_unless(ul == 3000000001UL);
    eina_value_flush(value);
 
@@ -138,6 +156,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(u64 == 0x1122334455667788);
    fail_unless(eina_value_uint64_get(value, &u64));
    fail_if(eina_value_ulong_get(value, &ul));
+   fail_unless(eina_value_ulong_convert(value, &ul));
+   fail_unless(ul == 0x1122334455667788);
    fail_unless(u64 == 0x1122334455667788);
    eina_value_flush(value);
 
@@ -148,6 +168,8 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(CHECK_FP(0.1234, f));
    fail_unless(eina_value_float_get(value, &f));
    fail_if(eina_value_uint64_get(value, &u64));
+   fail_unless(eina_value_double_convert(value, &d));
+   fail_unless(CHECK_FP(0.1234, d));
    fail_unless(CHECK_FP(0.1234, f));
    eina_value_flush(value);
 
@@ -157,7 +179,9 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(CHECK_FP(34567.8, d));
    fail_unless(eina_value_double_get(value, &d));
    fail_if(eina_value_float_get(value, &f));
+   fail_unless(eina_value_float_convert(value, &f));
    fail_unless(CHECK_FP(34567.8, d));
+   fail_unless(CHECK_FP(34567.8, f));
    eina_value_flush(value);
 
    eina_value_free(value);
