@@ -167,10 +167,10 @@ endif
 if get_option('opengl') != 'none'
   if get_option('opengl') == 'es-egl'
     config_h.set('GL_GLES', '1')
-    gl_deps += cc.find_library('GLESv2')
-    gl_deps += cc.find_library('EGL')
+    gl_deps += dependency('glesv2')
+    gl_deps += dependency('egl')
   else
-    gl_deps += cc.find_library('GL')
+    gl_deps += dependency('gl')
   endif
 endif
 
