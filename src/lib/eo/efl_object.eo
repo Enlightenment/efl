@@ -8,6 +8,21 @@ struct Efl.Event_Description {
     restart: bool; [[$true if when the event is triggered again from a callback it'll start from where it was]]
 }
 
+
+type Efl.Callback_Priority : short;
+[[
+  Callback priority. Range is -32k - 32k. The lower the number, the higher the priority.
+
+  See @Efl.Callback_Priority_Before @Efl.Callback_Priority_Default  @Efl.Callback_Priority_After
+ ]]
+
+const Efl.Callback_Priority_Before : Efl.Callback_Priority = -100;
+[[Slightly more prioritized than default.]]
+const Efl.Callback_Priority_Default : Efl.Callback_Priority = 0;
+[[Default priority.]]
+const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
+[[Slightly less prioritized than default.]]
+
 abstract Efl.Object
 {
    [[Abstract Efl object class]]

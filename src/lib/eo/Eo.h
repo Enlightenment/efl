@@ -223,15 +223,6 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 typedef void (*Efl_Event_Cb)(void *data, const Efl_Event *event);
 
 /**
- * @brief Callback priority value. Range is -32k - 32k. The lower the number,
- * the higher the priority.
- *
- * See @ref EFL_CALLBACK_PRIORITY_AFTER, @ref EFL_CALLBACK_PRIORITY_BEFORE @ref
- * EFL_CALLBACK_PRIORITY_DEFAULT
- */
-typedef short Efl_Callback_Priority;
-
-/**
  * @struct _Efl_Callback_Array_Item
  * @brief An item in an array of callback desc/func.
  *
@@ -1985,22 +1976,6 @@ typedef void (*efl_key_data_free_func)(void *);
  * @internal
  */
 EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(const char *_event_name);
-
-/**
- * @def EFL_CALLBACK_PRIORITY_BEFORE
- * Slightly more prioritized than default.
- */
-#define EFL_CALLBACK_PRIORITY_BEFORE -100
-/**
- * @def EFL_CALLBACK_PRIORITY_DEFAULT
- * Default callback priority level
- */
-#define EFL_CALLBACK_PRIORITY_DEFAULT 0
-/**
- * @def EFL_CALLBACK_PRIORITY_AFTER
- * Slightly less prioritized than default.
- */
-#define EFL_CALLBACK_PRIORITY_AFTER 100
 
 /**
  * Helper for sorting callbacks array. Automatically used by
