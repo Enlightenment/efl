@@ -4963,6 +4963,24 @@ _win_finalize_job_cb(void *data, const Eina_Value value)
    return value;
 }
 
+static void
+_gesture_manager_config_load(Eo *obj)
+{
+   Eina_Value val;
+   Efl_Canvas_Gesture_Manager *gm = efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(&val, _elm_config->glayer_long_tap_start_timeout);
+   efl_gesture_manager_config_set(gm, "glayer_long_tap_start_timeout", &val);
+
+   eina_value_set(&val, _elm_config->glayer_double_tap_timeout);
+   efl_gesture_manager_config_set(gm, "glayer_double_tap_timeout", &val);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_INT);
+   eina_value_set(&val, _elm_config->glayer_tap_finger_size);
+   efl_gesture_manager_config_set(gm, "glayer_tap_finger_size", &val);
+}
+
 static Eo *
 _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_Ui_Win_Type type)
 {
@@ -5683,6 +5701,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
            default: break;
           }
      }
+
+   // Load the config values into gesutre manager.
+   _gesture_manager_config_load(obj);
 
    return obj;
 }
