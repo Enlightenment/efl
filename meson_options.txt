@@ -346,3 +346,9 @@ option('windows-version',
   value : 'win7',
   description : 'When host_machine is windows, compile the efl with the specified version of Windows'
 )
+
+option('efl-sharp-key-file',
+  type: 'string',
+  value: 'none',
+  description : 'This option can be used to provide a key which is used to sign efl-mono.dll'
+)

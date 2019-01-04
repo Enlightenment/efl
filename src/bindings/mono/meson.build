@@ -126,11 +126,27 @@ configure_file(input : 'efl_mono.dll.config.in',
                output : 'efl_mono.dll.config',
                configuration : efl_mono_conf_data)
 
+
+if get_option('efl-sharp-key-file') == 'none'
+  signing = false
+  mono_option = ''
+  installing_from_meson = true
+else
+  signing = true
+  mono_option = '-keyfile:'+get_option('efl-sharp-key-file')
+  installing_from_meson = false
+endif
+
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
-    install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major)
+    install : installing_from_meson,
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+    cs_args : mono_option,
 )
+
+if signing
+  meson.add_install_script('gacutil', '-i', efl_mono.full_path())
+endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 
