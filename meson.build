@@ -404,6 +404,7 @@ subdir(join_paths('src', 'bin', 'efl'))
 
 subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
+subdir('cmakeconfig')
 
 bindings = ['luajit', 'cxx', 'mono']
 
