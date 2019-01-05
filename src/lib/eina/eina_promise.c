@@ -1096,13 +1096,6 @@ eina_future_cb_convert_to(const Eina_Value_Type *type)
    return (Eina_Future_Desc){.cb = _eina_future_cb_convert_to, .data = type};
 }
 
-EAPI void *
-eina_promise_data_get(const Eina_Promise *p)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(p, NULL);
-   return (void *)p->data;
-}
-
 static Eina_Value
 _eina_future_cb_easy(void *data, const Eina_Value value,
                      const Eina_Future *dead_future)

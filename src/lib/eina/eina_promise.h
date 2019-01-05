@@ -535,7 +535,6 @@ struct _Eina_Future_Desc {
  * @see eina_promise_continue_new()
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  * @see #Eina_Future_Scheduler
  * @see #Eina_Future_Scheduler_Entry
@@ -602,22 +601,12 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * @see eina_promise_new()
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  * @see #Eina_Future_Scheduler
  * @see #Eina_Future_Scheduler_Entry
  * @see #Eina_Future_Scheduler_Cb
  */
 EAPI Eina_Promise *eina_promise_continue_new(const Eina_Future *dead_future, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
-
-/**
- * Gets the data attached to the promise.
- *
- * @return The data passed to eina_promise_new() or @c NULL on error.
- * @see eina_promise_new()
- * @see eina_promise_data_set()
- */
-EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
 
 /**
  * Resolves a promise.
@@ -637,7 +626,6 @@ EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
  *
  * @see eina_promise_new()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  */
 EAPI void eina_promise_resolve(Eina_Promise *p, Eina_Value value) EINA_ARG_NONNULL(1);
@@ -655,7 +643,6 @@ EAPI void eina_promise_resolve(Eina_Promise *p, Eina_Value value) EINA_ARG_NONNU
  *
  * @see eina_promise_new()
  * @see eina_promise_resolve()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  */
 EAPI void eina_promise_reject(Eina_Promise *p, Eina_Error err) EINA_ARG_NONNULL(1);
