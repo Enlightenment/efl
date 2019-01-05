@@ -629,14 +629,6 @@ EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
 EAPI void eina_promise_data_set(Eina_Promise *p, void *data) EINA_ARG_NONNULL(1);
 
 /**
- * Sets the free callback used when the data attached on the promise is freed just before the destruction of the promise itself.
- *
- * @param[in] p The promise to set the free callback on.
- * @param[in] free_cb The free callback.
- */
-EAPI void eina_promise_data_free_cb_set(Eina_Promise *p, Eina_Free_Cb free_cb);
-
-/**
  * Resolves a promise.
  *
  * This function schedules a resolve event in a
