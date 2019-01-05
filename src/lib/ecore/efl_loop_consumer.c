@@ -77,20 +77,6 @@ _cancel_triggered(void *data, const Eina_Promise *p)
    if (lcp->func) lcp->func(lcp->data, lcp->obj, p);
 }
 
-static void
-_data_set(Eina_Promise *p, void *data)
-{
-   Efl_Loop_Consumer_Promise *lcp = eina_promise_data_get(p);
-   lcp->data = data;
-}
-
-static void
-_cancel_free_cb_set(Eina_Promise *p, Eina_Free_Cb free_cb)
-{
-   Efl_Loop_Consumer_Promise *lcp = eina_promise_data_get(p);
-   lcp->free = free_cb;
-}
-
 static Eina_Promise *
 _efl_loop_consumer_promise_new(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED,
                                void *cancel_data, EflLoopConsumerPromiseCancel cancel, Eina_Free_Cb cancel_free_cb)
@@ -106,11 +92,7 @@ _efl_loop_consumer_promise_new(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UN
    lcp->free = cancel_free_cb;
    lcp->obj = efl_ref(obj);
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(obj), _cancel_triggered, lcp);
-   eina_promise_data_set_cb_set(p, _data_set);
-   eina_promise_data_free_cb_set_cb_set(p, _cancel_free_cb_set);
-   eina_promise_data_free_cb_set(p, _cancel_free);
-   return p;
+   return eina_promise_new(efl_loop_future_scheduler_get(obj), _cancel_triggered, lcp);
 }
 
 #include "efl_loop_consumer.eo.c"
