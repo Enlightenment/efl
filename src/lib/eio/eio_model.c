@@ -406,10 +406,12 @@ _delayed_flush(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_event_callback_del(ev->object, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
 }
 
-static void
-_cancel_request(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+static Eina_Value
+_cancel_request(Efl_Loop *loop EINA_UNUSED, void *data, Eina_Error error)
 {
    delayed_queue = eina_list_remove_list(delayed_queue, data);
+
+   return eina_value_error_init(error);
 }
 
 static Eina_Future *
@@ -417,7 +419,7 @@ _build_delay(Efl_Loop *loop)
 {
    Eina_Promise *p;
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(loop), _cancel_request, NULL);
+   p = eina_promise_new(efl_loop_future_scheduler_get(loop), NULL, NULL);
 
    if (!delayed_queue)
      {
@@ -428,9 +430,10 @@ _build_delay(Efl_Loop *loop)
      }
 
    delayed_queue = eina_list_append(delayed_queue, p);
-   eina_promise_data_set(p, eina_list_last(delayed_queue));
 
-   return eina_future_new(p);
+   return efl_future_then(loop, eina_future_new(p),
+                          .error = _cancel_request,
+                          .data = eina_list_last(delayed_queue));
 }
 
 static void
@@ -682,7 +685,7 @@ _eio_model_efl_model_property_set(Eo *obj,
 
    if (finalized)
      {
-        Eina_Promise *p = eina_promise_new(efl_loop_future_scheduler_get(obj), _efl_io_manager_future_cancel, NULL);
+        Eina_Promise *p = efl_loop_promise_new(obj, NULL, NULL, NULL);
         f = eina_future_new(p);
 
         pd->request.move = eio_file_move(pd->path, path,
@@ -690,17 +693,17 @@ _eio_model_efl_model_property_set(Eo *obj,
                                          _eio_move_done_cb, _eio_file_error_cb, p);
 
         ecore_thread_local_data_add(pd->request.move->thread, ".pd", pd, NULL, EINA_TRUE);
-        eina_promise_data_set(p, pd->request.move);
+
+        f = _efl_io_manager_future(obj, f, pd->request.move);
 
         // FIXME: turn on monitor in the finalize stage or after move
      }
    else
      {
-        f = efl_loop_future_resolved(obj,
-                                 eina_value_string_init(pd->path));
+        f = efl_loop_future_resolved(obj, eina_value_string_init(pd->path));
      }
 
-   return efl_future_then(obj, f);
+   return f;
 
  on_error:
    return efl_loop_future_rejected(obj, err);
