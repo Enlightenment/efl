@@ -92,7 +92,7 @@ _cancel_free_cb_set(Eina_Promise *p, Eina_Free_Cb free_cb)
 }
 
 static Eina_Promise *
-_efl_loop_consumer_promise_new(Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED,
+_efl_loop_consumer_promise_new(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED,
                                void *cancel_data, EflLoopConsumerPromiseCancel cancel, Eina_Free_Cb cancel_free_cb)
 {
    Efl_Loop_Consumer_Promise *lcp;

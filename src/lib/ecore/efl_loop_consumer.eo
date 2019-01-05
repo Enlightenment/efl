@@ -53,7 +53,7 @@ abstract Efl.Loop_Consumer (Efl.Object)
          }
          return: future<Eina.Error>; [[The future or $NULL on error.]]
       }
-      promise_new {
+      promise_new @const {
          [[Create a new promise with the scheduler coming from the loop provided by this object.
 
 	 Note: You should not use eina_promise_data_set as this function rely on controlling the promise data.]]
