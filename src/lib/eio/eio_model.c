@@ -407,7 +407,7 @@ _delayed_flush(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static Eina_Value
-_cancel_request(Efl_Loop *loop EINA_UNUSED, void *data, Eina_Error error)
+_cancel_request(Eo *model EINA_UNUSED, void *data, Eina_Error error)
 {
    delayed_queue = eina_list_remove_list(delayed_queue, data);
 
@@ -415,23 +415,23 @@ _cancel_request(Efl_Loop *loop EINA_UNUSED, void *data, Eina_Error error)
 }
 
 static Eina_Future *
-_build_delay(Efl_Loop *loop)
+_build_delay(Eio_Model *model)
 {
    Eina_Promise *p;
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(loop), NULL, NULL);
+   p = efl_loop_promise_new(model);
 
    if (!delayed_queue)
      {
         // Remove callback, just in case it is still there.
-        efl_event_callback_del(loop, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
-        efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+        efl_event_callback_del(efl_loop_get(model), EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+        efl_event_callback_add(efl_loop_get(model), EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
         // FIXME: It would be nice to be able to build a future directly to be triggered on one event
      }
 
    delayed_queue = eina_list_append(delayed_queue, p);
 
-   return efl_future_then(loop, eina_future_new(p),
+   return efl_future_then(model, eina_future_new(p),
                           .error = _cancel_request,
                           .data = eina_list_last(delayed_queue));
 }
@@ -456,7 +456,7 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
    // Make sure that we are not over consuming time in the main loop
    if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
      {
-        Eina_Future *f = eina_future_then(_build_delay(pd->loop),
+        Eina_Future *f = eina_future_then(_build_delay(model),
                                           _eio_build_mime_now, model, NULL);
         return eina_future_as_value(efl_future_then(model, f));
      }
@@ -483,7 +483,7 @@ _eio_build_mime(const Efl_Object *model, Eio_Model_Data *pd)
    if (pd->mime_type) return ;
    if (pd->request.mime) return ;
 
-   efl_wref_add(efl_provider_find(model, EFL_LOOP_CLASS), &pd->loop);
+   efl_wref_add(efl_loop_get(model), &pd->loop);
 
    f = efl_loop_job(pd->loop);
    f = eina_future_then(f, _eio_build_mime_now, model, NULL);
@@ -685,7 +685,7 @@ _eio_model_efl_model_property_set(Eo *obj,
 
    if (finalized)
      {
-        Eina_Promise *p = efl_loop_promise_new(obj, NULL, NULL, NULL);
+        Eina_Promise *p = efl_loop_promise_new(obj);
         f = eina_future_new(p);
 
         pd->request.move = eio_file_move(pd->path, path,

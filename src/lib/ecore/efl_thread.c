@@ -329,7 +329,6 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
           {
              Eina_Promise *p = pd->promise;
              int exit_code = efl_task_exit_code_get(obj);
-             pd->promise = NULL;
              if ((exit_code != 0) && (!(efl_task_flags_get(obj) &
                                         EFL_TASK_FLAGS_NO_EXIT_CODE_ERROR)))
                eina_promise_reject(p, exit_code + 1000000);
@@ -410,13 +409,20 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 
 //////////////////////////////////////////////////////////////////////////
 
-static void
-_run_cancel_cb(void *data, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_promise EINA_UNUSED)
+static Eina_Value
+_run_cancel_cb(Efl_Loop_Consumer *consumer, void *data EINA_UNUSED, Eina_Error error)
 {
-   Eo *obj = data;
-   Efl_Thread_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   if (error == ECANCELED) efl_task_end(consumer);
+
+   return eina_value_error_init(error);
+}
+
+static void
+_run_clean_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Thread_Data *pd = data;
+
    pd->promise = NULL;
-   efl_task_end(obj);
 }
 
 static void
@@ -776,8 +782,9 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
      }
    pd->thdat = thdat;
    pd->run = EINA_TRUE;
-   pd->promise = efl_loop_promise_new(obj, obj, _run_cancel_cb, NULL);
-   return efl_future_then(obj, eina_future_new(pd->promise));
+   pd->promise = efl_loop_promise_new(obj);
+   return efl_future_then(obj, eina_future_new(pd->promise),
+                          .data = pd, .error = _run_cancel_cb, .free = _run_clean_cb);
 }
 
 EOLIAN static void

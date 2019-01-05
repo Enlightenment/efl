@@ -50,49 +50,15 @@ _efl_loop_consumer_future_rejected(const Eo *obj, Efl_Loop_Consumer_Data *pd EIN
    return eina_future_rejected(efl_loop_future_scheduler_get(obj), error);
 }
 
-typedef struct _Efl_Loop_Consumer_Promise Efl_Loop_Consumer_Promise;
-struct _Efl_Loop_Consumer_Promise
-{
-   EflLoopConsumerPromiseCancel func;
-   Eina_Free_Cb free;
-   void *data;
-   Eo *obj;
-};
-
 static void
-_cancel_free(void *data)
+_dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *p EINA_UNUSED)
 {
-   Efl_Loop_Consumer_Promise *lcp = data;
-
-   if (lcp->free) lcp->free(lcp->data);
-   efl_unref(lcp->obj);
-   free(lcp);
-}
-
-static void
-_cancel_triggered(void *data, const Eina_Promise *p)
-{
-   Efl_Loop_Consumer_Promise *lcp = data;
-
-   if (lcp->func) lcp->func(lcp->data, lcp->obj, p);
 }
 
 static Eina_Promise *
-_efl_loop_consumer_promise_new(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED,
-                               void *cancel_data, EflLoopConsumerPromiseCancel cancel, Eina_Free_Cb cancel_free_cb)
+_efl_loop_consumer_promise_new(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED)
 {
-   Efl_Loop_Consumer_Promise *lcp;
-   Eina_Promise *p;
-
-   lcp = calloc(1, sizeof (Efl_Loop_Consumer_Promise));
-   if (!lcp) return NULL;
-
-   lcp->func = cancel;
-   lcp->data = cancel_data;
-   lcp->free = cancel_free_cb;
-   lcp->obj = efl_ref(obj);
-
-   return eina_promise_new(efl_loop_future_scheduler_get(obj), _cancel_triggered, lcp);
+   return eina_promise_new(efl_loop_future_scheduler_get(obj), _dummy_cancel, NULL);
 }
 
 #include "efl_loop_consumer.eo.c"

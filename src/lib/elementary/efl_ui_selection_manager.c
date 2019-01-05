@@ -242,7 +242,7 @@ _update_sel_lost_list(Efl_Object *obj, Efl_Ui_Selection_Type type,
    sel_lost->seat_sel = seat_sel;
    seat_sel->sel_lost_list = eina_list_append(seat_sel->sel_lost_list, sel_lost);
 
-   p = efl_loop_promise_new(obj, NULL, NULL, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    sel_lost->promise = p;
 

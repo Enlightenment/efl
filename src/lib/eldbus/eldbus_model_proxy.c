@@ -229,9 +229,9 @@ eldbus_model_proxy_property_check(Eldbus_Model_Proxy_Data *pd,
 }
 
 static void
-_eldbus_model_proxy_cancel_cb(void *data,
-                              Efl_Loop_Consumer *consumer EINA_UNUSED,
-                              const Eina_Promise *dead_promise EINA_UNUSED)
+_eldbus_model_proxy_cancel_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,
+                              void *data,
+                              const Eina_Future *dead_future EINA_UNUSED)
 {
    Eldbus_Model_Proxy_Property_Set_Data *sd = data;
 
@@ -294,7 +294,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
    if (!data) goto on_error;
 
    data->pd = pd;
-   data->promise = efl_loop_promise_new(obj, data, _eldbus_model_proxy_cancel_cb, NULL);
+   data->promise = efl_loop_promise_new(obj);
    data->property = eina_stringshare_add(property);
    if (!(data->value = eina_value_dup(value))) goto on_error;
 
@@ -310,7 +310,8 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
      }
 
    if (pending) pd->pendings = eina_list_append(pd->pendings, pending);
-   return efl_future_then(obj, eina_future_new(data->promise));
+   return efl_future_then(obj, eina_future_new(data->promise),
+                          .data = data, .free = _eldbus_model_proxy_cancel_cb);
 
  on_error:
    return efl_loop_future_rejected(obj, err);
