@@ -620,15 +620,6 @@ EAPI Eina_Promise *eina_promise_continue_new(const Eina_Future *dead_future, Ein
 EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
 
 /**
- * Sets the data attached to the promise.
- *
- * Set the data passed to eina_promise_new().
- * @see eina_promise_new()
- * @see eina_promise_data_get()
- */
-EAPI void eina_promise_data_set(Eina_Promise *p, void *data) EINA_ARG_NONNULL(1);
-
-/**
  * Resolves a promise.
  *
  * This function schedules a resolve event in a

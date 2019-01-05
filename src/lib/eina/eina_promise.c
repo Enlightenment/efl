@@ -1103,15 +1103,6 @@ eina_promise_data_get(const Eina_Promise *p)
    return (void *)p->data;
 }
 
-EAPI void
-eina_promise_data_set(Eina_Promise *p,
-                      void *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(p);
-   p->data = data;
-}
-
-
 static Eina_Value
 _eina_future_cb_easy(void *data, const Eina_Value value,
                      const Eina_Future *dead_future)
