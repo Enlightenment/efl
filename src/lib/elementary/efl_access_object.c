@@ -146,7 +146,7 @@ _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_CLASS);
    if (!parent) return -1;
 
    children = efl_access_object_access_children_get(parent);
@@ -173,14 +173,14 @@ _efl_access_object_efl_object_provider_find(const Eo *obj, Efl_Access_Object_Dat
 {
    if (efl_isa(obj, klass))
      {
-        if (klass == EFL_ACCESS_OBJECT_MIXIN)
+        if (klass == EFL_ACCESS_OBJECT_CLASS)
           {
              Efl_Access_Type type = efl_access_object_access_type_get(obj);
              if (type != EFL_ACCESS_TYPE_SKIPPED) return (Eo*)obj;
           }
         else return (Eo*)obj;
      }
-   return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN), klass);
+   return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_CLASS), klass);
 }
 
 EOLIAN Eina_List*
@@ -363,7 +363,7 @@ _efl_access_object_access_children_get(const Eo *obj, Efl_Access_Object_Data *pd
 
    EINA_ITERATOR_FOREACH(iter, chld)
      {
-        if (efl_isa(chld, EFL_ACCESS_OBJECT_MIXIN))
+        if (efl_isa(chld, EFL_ACCESS_OBJECT_CLASS))
           children = eina_list_append(children, chld);
      }
    eina_iterator_free(iter);
@@ -401,7 +401,7 @@ _efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *a
    Efl_Access_Event_Handler *hdl;
    Efl_Access_Type type;
 
-   if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_OBJECT_MIXIN))
+   if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_OBJECT_CLASS))
      {
         CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
         return;
@@ -610,7 +610,7 @@ _efl_access_object_access_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Acce
    if (val == pd->type)
      return;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_CLASS);
 
    switch (val)
      {
@@ -631,7 +631,7 @@ _efl_access_object_efl_object_invalidate(Eo *obj, Efl_Access_Object_Data *pd)
 {
    efl_access_relation_set_free(pd);
 
-   efl_invalidate(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
+   efl_invalidate(efl_super(obj, EFL_ACCESS_OBJECT_CLASS));
 }
 
 EOLIAN void
@@ -641,7 +641,7 @@ _efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
 
-   efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
+   efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_CLASS));
 }
 
 void
