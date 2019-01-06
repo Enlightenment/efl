@@ -1,4 +1,4 @@
-class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
+class Efl.Ui.Radio (Efl.Ui.Check, Efl.Content)
 {
    [[Elementary radio class]]
    legacy_prefix: elm_radio;
@@ -64,8 +64,6 @@ class Efl.Ui.Radio (Efl.Ui.Check, Efl.Access.Widget.Action, Efl.Content)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Object.state_set { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Nstate.value { set; get; }
    }
 }

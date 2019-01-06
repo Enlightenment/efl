@@ -1576,7 +1576,7 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_create)
           {
              Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_CLASS);
              if (aparent)
                 efl_access_children_changed_added_signal_emit(aparent, sobj);
           }
@@ -1654,7 +1654,7 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
              Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
+             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_CLASS);
              if (aparent)
                 efl_access_children_changed_del_signal_emit(aparent, sobj);
           }
@@ -5342,8 +5342,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    efl_ui_widget_parent_set(obj, parent);
    sd->on_create = EINA_FALSE;
 
-   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
-
    return obj;
 }
 
@@ -5476,7 +5474,7 @@ _efl_ui_widget_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, 
    EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
-        if (!efl_isa(widget, EFL_ACCESS_OBJECT_MIXIN)) continue;
+        if (!efl_isa(widget, EFL_ACCESS_OBJECT_CLASS)) continue;
         type = efl_access_object_access_type_get(widget);
         if (type == EFL_ACCESS_TYPE_DISABLED) continue;
         if (type == EFL_ACCESS_TYPE_SKIPPED)
@@ -5624,7 +5622,7 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_CLASS))
      return _efl_config_obj;
 
-   if (klass == EFL_ACCESS_OBJECT_MIXIN)
+   if (klass == EFL_ACCESS_OBJECT_CLASS)
      {
         Efl_Access_Type type = efl_access_object_access_type_get(obj);
         if (type != EFL_ACCESS_TYPE_SKIPPED)
@@ -6139,6 +6137,37 @@ _efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA
 
 /* Efl.Part Bg end */
 
+EOLIAN static Efl_Access_Object*
+_efl_ui_widget_access_object_get(const Eo *obj, Elm_Widget_Smart_Data *wd)
+{
+   if (!wd->access_object)
+     wd->access_object = efl_ui_widget_access_object_create((Eo*)obj);
+   return wd->access_object;
+}
+
+EOLIAN static Efl_Access_Object*
+_efl_ui_widget_access_object_create(Eo *obj, Elm_Widget_Smart_Data *wd EINA_UNUSED)
+{
+   Efl_Access_Object *access = efl_add(EFL_ACCESS_OBJECT_CLASS, obj);
+   efl_access_object_role_set(access, EFL_ACCESS_ROLE_UNKNOWN);
+   return access;
+}
+
+EOLIAN static Efl_Access_Object*
+_elm_widget_item_access_object_get(const Eo *obj, Elm_Widget_Item_Data *wd)
+{
+   if (!wd->access_object)
+     wd->access_object = efl_ui_widget_access_object_create((Eo*)obj);
+   return wd->access_object;
+}
+
+EOLIAN static Efl_Access_Object*
+_elm_widget_item_access_object_create(Eo *obj, Elm_Widget_Item_Data *wd EINA_UNUSED)
+{
+   Efl_Access_Object *access = efl_add(EFL_ACCESS_OBJECT_CLASS, obj);
+   efl_access_object_role_set(access, EFL_ACCESS_ROLE_UNKNOWN);
+   return access;
+}
 
 /* Internal EO APIs and hidden overrides */
 

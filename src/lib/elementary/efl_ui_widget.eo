@@ -13,8 +13,7 @@ struct Efl.Ui.Widget_Focus_State {
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
-abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
-                        Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
+abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Part, Efl.Ui.Focus.Object,
                         Efl.Ui.Cursor, Efl.Ui.L10n,
                         Efl.Ui.Selection, Efl.Ui.Dnd)
 {
@@ -109,6 +108,18 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
                [[Source object where the event originated. Often same as this.]]
          }
          return: bool; [[$true on success, $false otherwise]]
+         legacy: null;
+      }
+      @property access_object {
+         [[ Return accessibile object representation of widget ]]
+          get {
+            return: Efl.Access.Object;
+          }
+      }
+      access_object_create @protected {
+         [[ Virtual function returning new instance of widget accessible
+            representation. Expected to be overloaded in derived classes. ]]
+         return: Efl.Access.Object;
          legacy: null;
       }
       // FIXME: focus_allow? can_focus? focusable?
@@ -574,11 +585,6 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Access.Object.i18n_name { get; }
-      Efl.Access.Object.state_set { get; }
-      Efl.Access.Object.access_children { get; }
-      Efl.Access.Object.attributes { get; }
-      Efl.Access.Component.focus_grab;
       Efl.Ui.Focus.Object.focus_manager { get; }
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }

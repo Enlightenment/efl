@@ -1,4 +1,4 @@
-class Efl.Ui.Check (Efl.Ui.Nstate, Efl.Access.Widget.Action)
+class Efl.Ui.Check (Efl.Ui.Nstate)
 {
    [[Check widget
 
@@ -26,7 +26,5 @@ class Efl.Ui.Check (Efl.Ui.Nstate, Efl.Access.Widget.Action)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Nstate.value { set; }
-      Efl.Access.Object.state_set { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

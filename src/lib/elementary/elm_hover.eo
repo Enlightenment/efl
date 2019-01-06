@@ -8,7 +8,7 @@ enum Elm.Hover.Axis
 }
 
 class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
-                 Efl.Access.Widget.Action, Efl.Ui.Legacy)
+                 Efl.Ui.Legacy)
 {
    [[Elementary hover class]]
    legacy_prefix: elm_hover;
@@ -69,8 +69,6 @@ class Elm.Hover (Efl.Ui.Layout, Efl.Ui.Focus.Layer, Efl.Ui.Clickable,
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.widget_parent { get; set; }
       Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.Object.state_set { get; }
       Efl.Part.part_get;
    }
    events {

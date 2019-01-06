@@ -24,7 +24,6 @@ enum Elm.Toolbar_Shrink_Mode
 }
 
 class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
-                   Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
                    Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
 {
    [[Elementary toolbar class]]
@@ -359,17 +358,6 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Widget.focused_item { get; }
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Efl.Ui.Widget.focus_state_apply;
-      Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.Object.access_children { get; }
-      Efl.Access.Object.state_set { get; }
-      Efl.Access.Selection.selected_children_count { get; }
-      Efl.Access.Selection.selected_child { get; }
-      Efl.Access.Selection.selected_child_deselect;
-      Efl.Access.Selection.child_select;
-      Efl.Access.Selection.child_deselect;
-      Efl.Access.Selection.is_child_selected;
-      Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.access_selection_clear;
       Efl.Ui.Focus.Composition.prepare;
    }
    events {

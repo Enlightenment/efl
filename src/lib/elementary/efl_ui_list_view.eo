@@ -7,7 +7,7 @@ struct Efl.Ui.List_View_Item_Event
    index: int;
 }
 class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
+                Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager)
 {
    methods {
@@ -86,17 +86,5 @@ class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scr
 //      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
-//      Elm.Interface.Atspi_Accessible.children { get; }
-//      Elm.Interface.Atspi_Widget.Action.elm_actions { get; }
-//      Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Access.Object.access_children { get; }
-      Efl.Access.Selection.selected_children_count { get; }
-      Efl.Access.Selection.selected_child { get; }
-      Efl.Access.Selection.selected_child_deselect;
-      Efl.Access.Selection.child_select;
-      Efl.Access.Selection.child_deselect;
-      Efl.Access.Selection.is_child_selected;
-      Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.access_selection_clear;
    }
 }

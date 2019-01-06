@@ -1,5 +1,4 @@
 class Elm.Multibuttonentry_Item(Elm.Widget.Item,
-                                Efl.Access.Widget.Action,
                                 Efl.Ui.Legacy)
 {
    [[Elementary multibuttonentry class]]
@@ -31,8 +30,5 @@ class Elm.Multibuttonentry_Item(Elm.Widget.Item,
         Elm.Widget.Item.signal_emit;
         Elm.Widget.Item.part_text { get; set; }
         Elm.Widget.Item.disable;
-        Efl.Access.Object.i18n_name { get; }
-        Efl.Access.Object.state_set { get; }
-        Efl.Access.Widget.Action.elm_actions { get; }
    }
 }

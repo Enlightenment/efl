@@ -1,8 +1,7 @@
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
 
-class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
-                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
+class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.File,
                  Efl.Ui.Selectable, Efl.Text_Interactive)
 {
    [[Efl UI text class]]
@@ -338,30 +337,6 @@ class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
       //Efl.Ui.Widget.widget_sub_object_del;
       //Elm.Interface_Scrollable.policy { set; }
       //Elm.Interface_Scrollable.bounce_allow { set; }
-      Efl.Access.Object.state_set { get; }
-      Efl.Access.Object.i18n_name { get; }
-      Efl.Access.Text.access_text { get; }
-      Efl.Access.Text.string { get; }
-      Efl.Access.Text.attribute { get; }
-      Efl.Access.Text.text_attributes { get; }
-      Efl.Access.Text.default_attributes { get; }
-      Efl.Access.Text.caret_offset { get; set; }
-      Efl.Access.Text.character { get; }
-      Efl.Access.Text.character_extents { get; }
-      Efl.Access.Text.character_count { get; }
-      Efl.Access.Text.offset_at_point { get; }
-      Efl.Access.Text.bounded_ranges { get; }
-      Efl.Access.Text.range_extents { get; }
-      Efl.Access.Text.access_selection { get; set; }
-      Efl.Access.Text.selections_count { get; }
-      Efl.Access.Text.selection_add;
-      Efl.Access.Text.selection_remove;
-      Efl.Access.Editable.Text.text_content { set; }
-      Efl.Access.Editable.Text.insert;
-      Efl.Access.Editable.Text.copy;
-      Efl.Access.Editable.Text.cut;
-      Efl.Access.Editable.Text.delete;
-      Efl.Access.Editable.Text.paste;
       Efl.File.file { get; set; }
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;

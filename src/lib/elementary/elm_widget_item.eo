@@ -4,8 +4,7 @@ import efl_ui;
 type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item content callback type]]
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 
-class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
-                      Efl.Access.Component)
+class Elm.Widget.Item(Efl.Object)
 {
       [[Elementary widget item class]]
       eo_prefix: elm_wdg_item;
@@ -534,14 +533,22 @@ class Elm.Widget.Item(Efl.Object, Efl.Access.Object,
                      dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
            }
+           @property access_object {
+              [[ Return accessibile object representation of widget ]]
+               get {
+                 return: Efl.Access.Object;
+               }
+           }
+           access_object_create @protected {
+              [[ Virtual function returning new instance of widget accessible
+                 representation. Expected to be overloaded in derived classes. ]]
+              return: Efl.Access.Object;
+              legacy: null;
+           }
       }
       implements {
            Efl.Object.constructor;
            Efl.Object.destructor;
            Efl.Object.invalidate;
-           Efl.Access.Object.state_set { get; }
-           Efl.Access.Object.attributes { get; }
-           Efl.Access.Component.extents { get; set; }
-           Efl.Access.Component.focus_grab;
       }
 }

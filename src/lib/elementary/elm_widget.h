@@ -382,6 +382,8 @@ typedef struct _Elm_Widget_Smart_Data
      Evas_Object *prev, *next, *up, *down, *right, *left;
      Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
    } legacy_focus;
+
+   Eo                            *access_object;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
@@ -569,6 +571,7 @@ struct _Elm_Widget_Item_Data
    Eina_List                     *signals;
    Eina_Hash                     *labels;
    Evas_Object                   *track_obj;
+   Eo                            *access_object;
 
    Eina_Bool                      disabled : 1;
    Eina_Bool                      on_deletion : 1;
