@@ -361,6 +361,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                 void *engine, void *output, void *context, Efl_VG *node,
                 Eina_Array *clips, Eina_Bool do_async)
 {
+   if (!efl_gfx_entity_visible_get(node)) return;
+
    if (efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS))
      {
         Efl_Canvas_Vg_Container_Data *cd =
