@@ -39,7 +39,7 @@ public struct Error : IComparable<Error>
         return "Eina.Error(" + code + ")";
     }
 
-    internal static void Init()
+    static Error()
     {
         UNHANDLED_EXCEPTION = eina_error_msg_register("Unhandled C# exception occurred.");
     }

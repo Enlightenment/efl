@@ -5,6 +5,10 @@ namespace TestSuite
 
 class TestEinaError
 {
+    public static void basic_efl_error_available()
+    {
+        Test.AssertEquals(Eina.Error.UNHANDLED_EXCEPTION.Message, "Unhandled C# exception occurred.");
+    }
     public static void basic_test()
     {
         Eina.Error.Clear();
