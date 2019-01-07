@@ -662,18 +662,22 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
      {
         im->pixman.im = pixman_image_create_bits
           (
-// FIXME: endianess determines this
+#ifdef WORDS_BIGENDIAN
+           PIXMAN_b8g8r8a8,
+#else
            PIXMAN_a8r8g8b8,
-//           PIXMAN_b8g8r8a8,
+#endif
            w, h, im->image.data, w * 4);
      }
    else
      {
         im->pixman.im = pixman_image_create_bits
           (
-// FIXME: endianess determines this
+#ifdef WORDS_BIGENDIAN
+           PIXMAN_b8g8r8x8,
+#else
            PIXMAN_x8r8g8b8,
-//           PIXMAN_b8g8r8x8,
+#endif
            w, h, im->image.data, w * 4);
      }
 # else
