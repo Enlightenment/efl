@@ -181,7 +181,7 @@ _efl_model_view_property_logic_add(Eo *obj, Efl_Model_View_Data *pd,
 }
 
 static Eina_Error
-_efl_model_view_property_logic_del(Eo *obj, Efl_Model_View_Data *pd,
+_efl_model_view_property_logic_del(Eo *obj EINA_UNUSED, Efl_Model_View_Data *pd,
                                    const char *property)
 {
    Efl_Model_View_Logic *logic;
@@ -193,7 +193,7 @@ _efl_model_view_property_logic_del(Eo *obj, Efl_Model_View_Data *pd,
 }
 
 static void
-_efl_model_view_property_bind(Eo *obj, Efl_Model_View_Data *pd,
+_efl_model_view_property_bind(Eo *obj EINA_UNUSED, Efl_Model_View_Data *pd,
                               const char *source, const char *destination)
 {
    Efl_Model_View_Bind *bind;
@@ -222,7 +222,7 @@ _efl_model_view_property_bind(Eo *obj, Efl_Model_View_Data *pd,
 }
 
 static void
-_efl_model_view_property_unbind(Eo *obj, Efl_Model_View_Data *pd,
+_efl_model_view_property_unbind(Eo *obj EINA_UNUSED, Efl_Model_View_Data *pd,
                                 const char *source, const char *destination)
 {
    Efl_Model_View_Bind *bind;
@@ -324,7 +324,7 @@ _efl_model_view_property_changed(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_model_view_children_bind_set(Eo *obj, Efl_Model_View_Data *pd, Eina_Bool enable)
+_efl_model_view_children_bind_set(Eo *obj EINA_UNUSED, Efl_Model_View_Data *pd, Eina_Bool enable)
 {
    if (pd->finalized) return;
 
@@ -332,7 +332,7 @@ _efl_model_view_children_bind_set(Eo *obj, Efl_Model_View_Data *pd, Eina_Bool en
 }
 
 static Eina_Bool
-_efl_model_view_children_bind_get(const Eo *obj, Efl_Model_View_Data *pd)
+_efl_model_view_children_bind_get(const Eo *obj EINA_UNUSED, Efl_Model_View_Data *pd)
 {
    return pd->children_bind;
 }
