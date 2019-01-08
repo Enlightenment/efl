@@ -385,9 +385,12 @@ _widget_calculate_recursive(Eo *obj)
    if (!pd || !pd->resize_obj)
      return;
 
-   if (!efl_canvas_group_need_recalculate_get(obj) &&
-       !efl_canvas_group_need_recalculate_get(pd->resize_obj))
-     return;
+   if (!efl_canvas_group_need_recalculate_get(obj))
+     {
+        if (!efl_isa(pd->resize_obj, EFL_CANVAS_GROUP_CLASS) ||
+            !efl_canvas_group_need_recalculate_get(pd->resize_obj))
+          return;
+     }
 
    EINA_LIST_FOREACH(pd->subobjs, l, child)
      _widget_calculate_recursive(child);
