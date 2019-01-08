@@ -291,7 +291,7 @@ _efl_canvas_vg_container_efl_canvas_vg_node_mask_set(Eo *obj,
 
 static void
 _efl_canvas_vg_container_efl_object_parent_set(Eo *obj,
-                                               Efl_Canvas_Vg_Container_Data *cd,
+                                               Efl_Canvas_Vg_Container_Data *cd EINA_UNUSED,
                                                Eo *parent)
 {
    efl_parent_set(efl_super(obj, MY_CLASS), parent);
