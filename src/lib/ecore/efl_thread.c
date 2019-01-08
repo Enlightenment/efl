@@ -232,7 +232,6 @@ _efl_thread_main(void *data, Eina_Thread t)
    unsigned int i;
    int real;
    Efl_Callback_Array_Item_Full *it;
-   Eina_Future *job;
 
    if (thdat->name) eina_thread_name_set(t, thdat->name);
    else eina_thread_name_set(t, "Eflthread");
