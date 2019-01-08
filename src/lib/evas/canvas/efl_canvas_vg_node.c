@@ -248,6 +248,7 @@ _efl_canvas_vg_node_efl_object_constructor(Eo *obj,
 
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
    nd->changed = EINA_TRUE;
+   nd->visibility = EINA_TRUE;
 
    return obj;
 }
