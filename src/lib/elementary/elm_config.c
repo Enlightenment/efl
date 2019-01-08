@@ -60,6 +60,7 @@ const char *_elm_engines[] = {
    "wayland_egl",
    "drm",
    "ddraw",
+   "gl_drm",
    NULL
 };
 

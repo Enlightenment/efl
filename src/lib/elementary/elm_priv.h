@@ -190,6 +190,7 @@ extern const char *_elm_engines[];
 # define ELM_WAYLAND_EGL       (_elm_engines[10])
 # define ELM_DRM               (_elm_engines[11])
 # define ELM_SOFTWARE_DDRAW    (_elm_engines[12])
+# define ELM_GL_DRM            (_elm_engines[13])
 
 # define ELM_FONT_TOKEN_STYLE  ":style="
 
