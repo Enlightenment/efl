@@ -159,7 +159,7 @@ _efl_gfx_shape_stroke_color_get(const Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *p
 }
 
 EOLIAN static void
-_efl_gfx_shape_stroke_width_set(Eo *obj, Efl_Gfx_Shape_Data *pd, double w)
+_efl_gfx_shape_stroke_width_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd, double w)
 {
    pd->public.stroke.width = w;
 }
