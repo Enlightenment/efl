@@ -1150,7 +1150,7 @@ err_obj:
    return NULL;
 }
 
-EAPI const size_t
+EAPI size_t
 efl_class_memory_size_get(const Efl_Class *eo_id)
 {
    const _Efl_Class *klass;
