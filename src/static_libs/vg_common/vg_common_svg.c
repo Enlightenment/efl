@@ -7,8 +7,6 @@
 #include <Eet.h>
 #include <Evas.h>
 
-
-
 Eet_Data_Descriptor *_eet_rect_node = NULL;
 Eet_Data_Descriptor *_eet_circle_node = NULL;
 Eet_Data_Descriptor *_eet_ellipse_node = NULL;
@@ -333,7 +331,7 @@ _eet_for_path_node(void)
    return eet;
 }
 
-struct
+static struct
 {
    Svg_Node_Type u;
    const char       *name;
@@ -354,8 +352,6 @@ struct
 };
 
 static const char *
-/* union
-   type_get() */
 _union_type_get(const void *data,
                 Eina_Bool  *unknow)
 {
@@ -372,7 +368,7 @@ _union_type_get(const void *data,
    if (unknow)
      *unknow = EINA_TRUE;
    return NULL;
-} /* _union_type_get */
+}
 
 static Eina_Bool
 _union_type_set(const char *type,
@@ -392,7 +388,7 @@ _union_type_set(const char *type,
           return EINA_TRUE;
        }
    return EINA_FALSE;
-} /* _union_type_set */
+}
 
 Eet_Data_Descriptor *
 vg_common_svg_node_eet(void)
@@ -450,7 +446,7 @@ vg_common_svg_node_eet(void)
    return _eet_vg_node;
 }
 
-void 
+void
 vg_common_svg_node_eet_destroy(void)
 {
    FREE_DESCRIPTOR(_eet_rect_node);
@@ -612,10 +608,10 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
 
              efl_gfx_path_bounds_get(grad_obj, &grad_geom);
 
-             double cy = (grad_geom.h / 2.0) + grad_geom.y;
-             double cy_scaled = (grad_geom.h / 2.0) * scale_reversed_Y;
-             double cx = (grad_geom.w / 2.0) + grad_geom.x;
-             double cx_scaled = (grad_geom.w / 2.0) * scale_reversed_X;
+             double cy = (grad_geom.h / 2) + grad_geom.y;
+             double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;
+             double cx = grad_geom.w / 2 + grad_geom.x;
+             double cx_scaled = (grad_geom.w / 2) * scale_reversed_X;
 
              /* matrix tranformation of gradient figure:
               * 0. we remember size of gradient and it's center point
@@ -820,7 +816,7 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg
 }
 
 Vg_File_Data *
-vg_common_create_vg_node(Svg_Node *node)
+vg_common_svg_create_vg_node(Svg_Node *node)
 {
    Vg_File_Data *vg_data;
 
@@ -1013,7 +1009,7 @@ vg_common_create_svg_node_helper(Efl_VG *vg, Svg_Node *parent)
 }
 
 Svg_Node *
-vg_common_create_svg_node(Vg_File_Data *node)
+vg_common_svg_create_svg_node(Vg_File_Data *node)
 {
    Svg_Node *doc;
 

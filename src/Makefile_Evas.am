@@ -1456,7 +1456,7 @@ endif
 if BUILD_VG_LOADER_SVG
 if EVAS_STATIC_BUILD_VG_SVG
 lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/svg/evas_vg_load_svg.c modules/evas/vg_savers/svg/evas_vg_save_svg.c \
-static_libs/vg_common/vg_common.c \
+static_libs/vg_common/vg_common_svg.c \
 static_libs/vg_common/vg_common.h
 lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/vg_common \
 @evas_vg_loader_svg_cflags@
@@ -1471,7 +1471,7 @@ install_vgloadersvgpkgLTLIBRARIES = install-vgloadersvgpkgLTLIBRARIES
 $(install_vgloadersvgpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_evas_vg_loaders_svg_module_la_SOURCES = modules/evas/vg_loaders/svg/evas_vg_load_svg.c \
-static_libs/vg_common/vg_common.c \
+static_libs/vg_common/vg_common_svg.c \
 static_libs/vg_common/vg_common.h
 modules_evas_vg_loaders_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
@@ -1494,7 +1494,7 @@ install_vgsaversvgpkgLTLIBRARIES = install-vgloadersvgpkgLTLIBRARIES
 $(install_vgsaversvgpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_evas_vg_savers_svg_module_la_SOURCES = modules/evas/vg_savers/svg/evas_vg_save_svg.c \
-static_libs/vg_common/vg_common.c \
+static_libs/vg_common/vg_common_svg.c \
 static_libs/vg_common/vg_common.h
 modules_evas_vg_savers_svg_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/evas/include \
