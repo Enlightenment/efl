@@ -371,7 +371,7 @@ _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbu
 }
 
 static void
-_efl_net_control_technology_scan_promise_del(void *data, Efl_Loop_Consumer *consumer, const Eina_Promise *dead_ptr)
+_efl_net_control_technology_scan_promise_del(void *data EINA_UNUSED, Efl_Loop_Consumer *consumer, const Eina_Promise *dead_ptr)
 {
    Eldbus_Pending *p = consumer;
    Efl_Net_Control_Technology_Data *pd;
