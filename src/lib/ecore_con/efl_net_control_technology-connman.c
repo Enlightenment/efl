@@ -377,7 +377,7 @@ _efl_net_control_technology_scan_promise_del(void *data, Efl_Loop_Consumer *cons
    Efl_Net_Control_Technology_Data *pd;
    Eo *o;
 
-   if (!p) return ;
+   if (!p) return;
 
    o = eldbus_pending_data_get(p, ".object");
    pd = efl_data_scope_get(o, MY_CLASS);
