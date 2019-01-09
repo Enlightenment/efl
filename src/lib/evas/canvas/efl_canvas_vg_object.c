@@ -117,7 +117,7 @@ _efl_canvas_vg_object_root_node_get(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd
              evas_cache_vg_entry_del(pd->vg_entry);
              pd->vg_entry = vg_entry;
           }
-        root = evas_cache_vg_tree_get(pd->vg_entry);
+        root = evas_cache_vg_tree_get(pd->vg_entry, pd->frame_idx);
      }
    else if (pd->user_entry) root = pd->user_entry->root;
    else root = pd->root;
@@ -244,22 +244,21 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
+static Eina_Bool
+_vg_file_mmap_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const Eina_File *file, const char *key, Eina_Bool mmap)
 {
    Vg_Cache_Entry *old_entry;
+   Evas_Object_Protected_Data *obj;
 
-   if (!file) return EINA_FALSE;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    old_entry = pd->vg_entry;
-
-   Evas_Object_Protected_Data *obj;
-   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    if (file)
      pd->vg_entry = evas_cache_vg_entry_create(file, key,
                                                obj->cur->geometry.w,
-                                               obj->cur->geometry.h);
+                                               obj->cur->geometry.h,
+                                               mmap);
    else
      pd->vg_entry = NULL;
 
@@ -270,7 +269,9 @@ _efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *p
 }
 
 EOLIAN static void
-_efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
+_efl_canvas_vg_object_efl_file_mmap_get(const Eo *eo_obj EINA_UNUSED,
+                                        Efl_Canvas_Vg_Object_Data *pd,
+                                        const Eina_File **file, const char **key)
 {
    if (file) *file = NULL;
    if (key) *key = NULL;
@@ -278,6 +279,106 @@ _efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (pd->vg_entry)
      {
         if (file) *file = pd->vg_entry->file;
+        if (key) *key = pd->vg_entry->key;
+     }
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_vg_object_efl_file_mmap_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const Eina_File *file, const char *key)
+{
+   Eina_File *pf = pd->file;
+   Eina_Bool ret;
+
+   if (!file)
+     {
+        Evas_Object_Protected_Data *obj;
+        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        evas_cache_vg_entry_del(pd->vg_entry);
+        evas_object_change(eo_obj, obj);
+        eina_stringshare_del(pd->key);
+        pd->vg_entry = NULL;
+        pd->file = NULL;
+        pd->key = NULL;
+        return EINA_TRUE;
+     }
+   if (pd->file == file)
+     {
+        if (!pd->key && !key) return EINA_FALSE;
+        else if (pd->key && key)
+          {
+             if (!strcmp(pd->key, key)) return EINA_FALSE;
+          }
+        pf = NULL;
+     }
+   if (pd->file != file)
+     pd->file = eina_file_dup(file);
+   ret = _vg_file_mmap_set(eo_obj, pd, file, key, EINA_TRUE);
+
+   //Close previous file after deleting ex-cache entry.
+   if (pf) eina_file_close(pf);
+
+   return ret;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
+{
+   Eina_File *pf = pd->file;
+   Eina_Bool ret;
+
+   if (!file)
+     {
+        Evas_Object_Protected_Data *obj;
+        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        evas_cache_vg_entry_del(pd->vg_entry);
+        evas_object_change(eo_obj, obj);
+        eina_stringshare_del(pd->key);
+        pd->vg_entry = NULL;
+        pd->file = NULL;
+        pd->key = NULL;
+        return EINA_TRUE;
+     }
+   if (!pd->file)
+     {
+        pd->file = eina_file_open(file, EINA_FALSE);
+        if (!pd->file) return EINA_FALSE;
+     }
+   else
+     {
+        const char *filename = eina_file_filename_get(pd->file);
+        if (filename)
+          {
+             if (strcmp(filename, file))
+               pd->file = eina_file_open(file, EINA_FALSE);
+             else
+               {
+                  if (!pd->key && !key) return EINA_FALSE;
+                  else if (pd->key && key)
+                    {
+                       if (!strcmp(pd->key, key)) return EINA_FALSE;
+                    }
+                  pf = NULL;
+               }
+          }
+     }
+
+   ret = _vg_file_mmap_set(eo_obj, pd, pd->file, key, EINA_FALSE);
+
+   //Close previous file after deleting ex-cache entry.
+   if (pf) eina_file_close(pf);
+
+   return ret;
+}
+
+EOLIAN static void
+_efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
+{
+   if (file) *file = NULL;
+   if (key) *key = NULL;
+
+   if (pd->vg_entry)
+     {
+        if (file) *file = eina_file_filename_get(pd->vg_entry->file);
         if (key) *key = pd->vg_entry->key;
      }
 }
@@ -318,6 +419,18 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    if (pd->user_entry) free(pd->user_entry);
    pd->user_entry = NULL;
    evas_cache_vg_entry_del(pd->vg_entry);
+
+   //Close files after deleting entry.
+   if (pd->file)
+     {
+        eina_file_close(pd->file);
+        pd->file = NULL;
+     }
+   if (pd->key)
+     {
+        eina_stringshare_del(pd->key);
+        pd->key = NULL;
+     }
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -425,7 +538,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
                   void *engine, Efl_VG *root, int w, int h, void *key,
-                  void *buffer, Eina_Bool do_async)
+                  void *buffer, Eina_Bool do_async, Eina_Bool cacheable)
 {
    Ector_Surface *ector;
    RGBA_Draw_Context *context;
@@ -463,8 +576,11 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    ENFN->ector_end(engine, buffer, context, ector, do_async);
    evas_common_draw_context_free(context);
 
-   if (buffer_created)
-     ENFN->ector_surface_cache_set(engine, key, buffer);
+   if (buffer_created && cacheable)
+     {
+        ENFN->ector_surface_cache_set(engine, key, buffer);
+        pd->cached_frame_idx = pd->frame_idx;
+     }
 
    return buffer;
 }
@@ -474,7 +590,7 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
                          void *engine, void *output, void *context, void *surface,
                          void *buffer,
                          int x, int y, int w, int h,
-                         Eina_Bool do_async)
+                         Eina_Bool do_async, Eina_Bool cacheable)
 {
    Eina_Bool async_unref;
 
@@ -490,50 +606,90 @@ _render_buffer_to_screen(Evas_Object_Protected_Data *obj,
         evas_cache_image_ref((Image_Entry *)buffer);
         evas_unref_queue_image_put(obj->layer->evas, buffer);
      }
+
+   //TODO: Reuse buffer if size is same?
+   if (!cacheable) ENFN->ector_surface_destroy(engine, buffer);
 }
 
 static void
 _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
                        Efl_Canvas_Vg_Object_Data *pd,
                        void *engine, void *output, void *context, void *surface,
-                       int x, int y, int w, int h, Eina_Bool do_async)
+                       int x, int y, int w, int h, Eina_Bool do_async,
+                       Eina_Bool cacheable)
 {
    Vg_Cache_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root;
+   Eina_Position2D offset = {0, 0};  //Offset after keeping aspect ratio.
 
    // if the size changed in between path set and the draw call;
-
    if ((vg_entry->w != w) ||
        (vg_entry->h != h))
      {
-         vg_entry = evas_cache_vg_entry_resize(vg_entry, w, h);
-         evas_cache_vg_entry_del(pd->vg_entry);
-         pd->vg_entry = vg_entry;
-     }
-   root = evas_cache_vg_tree_get(vg_entry);
-   if (!root) return;
+        Eina_Size2D size = evas_cache_vg_entry_default_size_get(pd->vg_entry);
 
-   void *buffer = ENFN->ector_surface_cache_get(engine, root);
+        //adjust size for aspect ratio.
+        if (size.w > 0 && size.h > 0)
+          {
+             float rw = (float) w / (float) size.w;
+             float rh = (float) h / (float) size.h;
+
+             if (rw < rh)
+               {
+                  size.w = w;
+                  size.h = (int) ((float) size.h * rw);
+               }
+             else
+               {
+                  size.w = (int) ((float) size.w * rh);
+                  size.h = h;
+               }
+          }
+        else
+          {
+              size.w = w;
+              size.h = h;
+          }
+
+        vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
+        evas_cache_vg_entry_del(pd->vg_entry);
+        pd->vg_entry = vg_entry;
+
+        //update for adjusted pos and size.
+        offset.x = w - size.w;
+        if (offset.x > 0) offset.x /= 2;
+        offset.y = h - size.h;
+        if (offset.y > 0) offset.y /= 2;
+        w = size.w;
+        h = size.h;
+     }
+   root = evas_cache_vg_tree_get(vg_entry, pd->frame_idx);
+   if (!root) return;
+   void *buffer = NULL;
+
+   if (pd->frame_idx == pd->cached_frame_idx)
+     buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
 
    if (!buffer)
      buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
-                                do_async);
+                                do_async, cacheable);
    else
      //cache reference was increased when we get the cache.
-     ENFN->ector_surface_cache_drop(engine, root);
+     ENFN->ector_surface_cache_drop(engine, (void *) root);
 
    _render_buffer_to_screen(obj,
                             engine, output, context, surface,
                             buffer,
-                            x, y, w, h,
-                            do_async);
+                            x + offset.x, y + offset.y, w, h,
+                            do_async, cacheable);
 }
 
 static void
 _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                       Efl_Canvas_Vg_Object_Data *pd,
                       void *engine, void *output, void *context, void *surface,
-                      int x, int y, int w, int h, Eina_Bool do_async)
+                      int x, int y, int w, int h, Eina_Bool do_async,
+                      Eina_Bool cacheable)
 {
    Vg_User_Entry *user_entry = pd->user_entry;
 
@@ -554,7 +710,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
                                    w, h, user_entry, buffer,
-                                   do_async);
+                                   do_async, cacheable);
      }
    else
      {
@@ -565,7 +721,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                                      w, h,
                                      user_entry,
                                      buffer,
-                                     do_async);
+                                     do_async, EINA_FALSE);
         //cache reference was increased when we get the cache.
         ENFN->ector_surface_cache_drop(engine, user_entry->root);
      }
@@ -574,7 +730,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
                             engine, output, context, surface,
                             buffer,
                             x, y, w, h,
-                            do_async);
+                            do_async, cacheable);
 }
 
 static void
@@ -596,19 +752,30 @@ _efl_canvas_vg_object_render(Evas_Object *eo_obj EINA_UNUSED,
    ENFN->context_anti_alias_set(engine, context, obj->cur->anti_alias);
    ENFN->context_render_op_set(engine, context, obj->cur->render_op);
 
+   //Cache surface?
+   Eina_Bool cacheable = EINA_FALSE;
+
+   /* Try caching buffer only for first and last frames
+      because it's an overhead task if it caches all frame images.
+      We assume the first and last frame images are the most resusable
+      in generic scenarios. */
+   if (pd->frame_idx == 0 ||
+       (pd->frame_idx == (int) evas_cache_vg_anim_frame_count_get(pd->vg_entry)))
+     cacheable = EINA_TRUE;
+
    if (pd->vg_entry)
      {
         _cache_vg_entry_render(obj, pd,
                                engine, output, context, surface,
                                obj->cur->geometry.x + x, obj->cur->geometry.y + y,
-                               obj->cur->geometry.w, obj->cur->geometry.h, do_async);
+                               obj->cur->geometry.w, obj->cur->geometry.h, do_async, cacheable);
      }
    if (pd->user_entry)
      {
         _user_vg_entry_render(obj, pd,
                               engine, output, context, surface,
                               obj->cur->geometry.x + x, obj->cur->geometry.y + y,
-                              obj->cur->geometry.w, obj->cur->geometry.h, do_async);
+                              obj->cur->geometry.w, obj->cur->geometry.h, do_async, cacheable);
      }
    pd->changed = EINA_FALSE;
 }
@@ -764,6 +931,79 @@ _efl_canvas_vg_object_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
    return 0;
 }
 
+/* animated feature */
+EOLIAN static Eina_Bool
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_get(const Eo *eo_obj EINA_UNUSED,
+                                                                      Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED EINA_UNUSED)
+{
+   //TODO:
+   return EINA_TRUE;
+}
+
+EOLIAN static int
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_count_get(const Eo *eo_obj EINA_UNUSED,
+                                                                                  Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   if (!pd->vg_entry) return 0;
+   return evas_cache_vg_anim_frame_count_get(pd->vg_entry);
+}
+
+EOLIAN static Efl_Gfx_Image_Animation_Controller_Loop_Hint
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_loop_type_get(const Eo *eo_obj EINA_UNUSED,
+                                                                                Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   //TODO:
+   return EFL_GFX_IMAGE_ANIMATION_CONTROLLER_LOOP_HINT_NONE;
+}
+
+EOLIAN static int
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_loop_count_get(const Eo *eo_obj EINA_UNUSED,
+                                                                                 Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   //TODO:
+   return 0;
+}
+
+EOLIAN static double
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_duration_get(const Eo *eo_obj EINA_UNUSED,
+                                                                                     Efl_Canvas_Vg_Object_Data *pd,
+                                                                                     int start_frame EINA_UNUSED,
+                                                                                     int frame_num EINA_UNUSED)
+{
+   if (!pd->vg_entry) return 0;
+   return evas_cache_vg_anim_duration_get(pd->vg_entry);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_set(Eo *eo_obj,
+                                                                            Efl_Canvas_Vg_Object_Data *pd,
+                                                                            int frame_index)
+{
+   //TODO: Validate frame_index range
+   if (pd->frame_idx == frame_index) return EINA_TRUE;
+
+   //Image is changed, drop previous cached image.
+   pd->frame_idx = frame_index;
+   pd->changed = EINA_TRUE;
+   evas_object_change(eo_obj, efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS));
+
+   return EINA_TRUE;
+}
+
+EOLIAN static int
+_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_get(const Eo *eo_obj EINA_UNUSED,
+                                                                            Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   return pd->frame_idx;
+}
+
+EOLIAN static Eina_Size2D
+_efl_canvas_vg_object_default_size_get(const Eo *eo_obj EINA_UNUSED,
+                                       Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
+{
+   return evas_cache_vg_entry_default_size_get(pd->vg_entry);
+}
+
 /* the actual api call to add a vector graphic object */
 EAPI Evas_Object *
 evas_object_vg_add(Evas *e)
@@ -772,6 +1012,42 @@ evas_object_vg_add(Evas *e)
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
    // TODO: Ask backend to return the main Ector_Surface
    return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
+}
+
+EAPI int
+evas_object_vg_animated_frame_get(const Evas_Object *obj)
+{
+   return efl_gfx_image_animated_frame_get(obj);
+}
+
+EAPI double
+evas_object_vg_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
+{
+   return efl_gfx_image_animated_frame_duration_get(obj, start_frame, frame_num);
+}
+
+EAPI int
+evas_object_vg_animated_frame_count_get(const Evas_Object *obj)
+{
+   return efl_gfx_image_animated_frame_count_get(obj);
+}
+
+EAPI Eina_Bool
+evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index)
+{
+   return efl_gfx_image_animated_frame_set(obj, frame_index);
+}
+
+EAPI Eina_Bool
+evas_object_vg_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key)
+{
+   return efl_file_mmap_set(obj, f, key);
+}
+
+EAPI Eina_Bool
+evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
+{
+   return efl_file_set(obj, file, key);
 }
 
 #include "efl_canvas_vg_object.eo.c"

@@ -317,4 +317,10 @@ Vg_File_Data * vg_common_svg_create_vg_node(Svg_Node *node);
 Svg_Node *vg_common_svg_create_svg_node(Vg_File_Data *node);
 void vg_common_svg_node_free(Svg_Node *node);
 
+
+/******************************************************************************************
+ * Lottie Compatible feature implementation
+ ******************************************************************************************/
+Eina_Bool vg_common_json_create_vg_node(Vg_File_Data *vfd);
+
 #endif //EVAS_VG_COMMON_H_

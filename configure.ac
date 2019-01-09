@@ -2585,7 +2585,7 @@ esac
 
 ARG_ENABLE_EVAS_VG_LOADER(SVG, static)
 ARG_ENABLE_EVAS_VG_LOADER(EET, static)
-
+ARG_ENABLE_EVAS_VG_LOADER(JSON, auto)
 
 ARG_ENABLE_EVAS_IMAGE_LOADER(BMP, static)
 ARG_ENABLE_EVAS_IMAGE_LOADER(Eet, static)
@@ -2876,6 +2876,7 @@ AM_CONDITIONAL([BUILD_ENGINE_WAYLAND_COMMON], [test "x${have_evas_engine_wayland
 
 EVAS_CHECK_VG_LOADER([SVG], [${want_evas_vg_loader_svg}])
 EVAS_CHECK_VG_LOADER([EET], [${want_evas_vg_loader_eet}])
+EVAS_CHECK_VG_LOADER([JSON], [${want_evas_vg_loader_json}])
 
 ## Image Loaders
 

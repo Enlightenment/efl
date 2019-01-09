@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg.Object (Efl.Canvas.Object, Efl.File)
+class Efl.Canvas.Vg.Object (Efl.Canvas.Object, Efl.File, Efl.Gfx.Image_Animation_Controller)
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -68,13 +68,28 @@ class Efl.Canvas.Vg.Object (Efl.Canvas.Object, Efl.File)
             root: Efl.Canvas.Vg.Node; [[Root node of the VG canvas.]]
          }
       }
+      @property default_size {
+         get {
+            [[Get the default vector size that specified from vector resource.
+              @since 1.22]]
+         }
+         values {
+            size: Eina.Size2D;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      // FIXME: Implement mmap only (also fix cache keys)
+      Efl.File.mmap { get; set; }
       Efl.File.file { get; set; }
       Efl.File.save;
+      Efl.Gfx.Image_Animation_Controller.animated { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame { get; set; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame_count { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_loop_type { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_loop_count { get; }
+      Efl.Gfx.Image_Animation_Controller.animated_frame_duration { get; }
    }
 }

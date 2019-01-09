@@ -13,13 +13,11 @@ static int _evas_vg_loader_eet_log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_evas_vg_loader_eet_log_dom, __VA_ARGS__)
 
 static Vg_File_Data*
-evas_vg_load_file_open_eet(const char *file, const char *key, int *error EINA_UNUSED)
+evas_vg_load_file_open_eet(Eina_File *file, const char *key, Eina_Bool mmap EINA_UNUSED, int *error EINA_UNUSED)
 {
    Eet_Data_Descriptor *svg_node_eet;
    Svg_Node *node;
-   Eet_File *ef;
-
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   Eet_File *ef = eet_mmap(file);
    if (!ef)
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;

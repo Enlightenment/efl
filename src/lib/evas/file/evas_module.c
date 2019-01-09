@@ -185,6 +185,7 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, wayland_egl);
 #if !EVAS_MODULE_NO_VG_LOADERS
 EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, svg);
+EVAS_EINA_STATIC_MODULE_DEFINE(vg_loader, json);
 #endif
 
 #if !EVAS_MODULE_NO_IMAGE_LOADERS
@@ -273,6 +274,9 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_VG_EET
   EVAS_EINA_STATIC_MODULE_USE(vg_loader, eet),
+#endif
+#ifdef EVAS_STATIC_BUILD_VG_JSON
+  EVAS_EINA_STATIC_MODULE_USE(vg_loader, json),
 #endif
 #endif
 #if !EVAS_MODULE_NO_IMAGE_LOADERS

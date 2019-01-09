@@ -19,14 +19,15 @@ typedef struct _Vg_Cache
 typedef struct _Vg_Cache_Entry
 {
    char                 *hash_key;
-   Eina_Stringshare     *file;
+   const Eina_File      *file;
    Eina_Stringshare     *key;
    int                   w;
    int                   h;
-   Efl_VG               *root;
+   Efl_VG               *root[3];     //0: default, 1: start frame, 2: end frame
    int                   ref;
    Vg_File_Data         *vfd;
 
+   Eina_Bool             mmap : 1;
 } Vg_Cache_Entry;
 
 // holds the vg tree info set by the user
@@ -49,6 +50,10 @@ struct _Efl_Canvas_Vg_Object_Data
    Eina_Array                 cleanup;
    double                     align_x, align_y;
    Efl_Canvas_Vg_Fill_Mode    fill_mode;
+   int                        frame_idx;
+   Eina_File                 *file;
+   Eina_Stringshare          *key;
+   int                        cached_frame_idx;
 
    Eina_Bool                  changed : 1;
 };
@@ -119,12 +124,15 @@ struct _Efl_Canvas_Vg_Interpolation
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
-Vg_Cache_Entry*             evas_cache_vg_entry_create(const char *file, const char *key, int w, int h);
-Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(const Eina_File *file, const char *key, int w, int h, Eina_Bool mmap);
+Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
-Vg_File_Data *              evas_cache_vg_file_open(const char *file, const char *key);
+Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key, Eina_Bool mmap);
 Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
 Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);
+double                      evas_cache_vg_anim_duration_get(const Vg_Cache_Entry *vg_entry);
+unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
+Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
