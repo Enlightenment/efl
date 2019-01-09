@@ -20,6 +20,9 @@ struct _Efl_Ui_Dnd_Container_Data
 };
 
 extern int _wl_default_seat_id_get(Evas_Object *obj);
+#ifdef HAVE_ELEMENTARY_WL2
+Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
+#endif
 
 Eo*
 _efl_ui_selection_manager_get(Eo *obj)
@@ -339,7 +342,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    sl.mem = data;
    sl.len = strlen(data);
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    ic->icon_data = icon_create_data;
@@ -366,7 +369,7 @@ elm_drag_action_set(Evas_Object *obj, Elm_Xdnd_Action action)
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
    efl_ui_selection_manager_drag_action_set(sel_man, obj, (Efl_Ui_Selection_Action)action, seatid);
 
@@ -380,7 +383,7 @@ elm_drag_cancel(Evas_Object *obj)
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    efl_ui_selection_manager_drag_cancel(sel_man, obj, seatid);
@@ -433,7 +436,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Format format,
    drop = calloc(1, sizeof(Dnd_Drop));
    if (!enter || !leave || !pos || !drop) goto on_error;
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
    enter->state_cb = enter_cb;
    enter->state_data = enter_data;
@@ -489,7 +492,7 @@ elm_drop_target_del(Evas_Object *obj, Elm_Sel_Format format,
    Dnd_Drop *drop;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    drop_list = efl_key_data_get(obj, "__drop_list");
@@ -650,7 +653,7 @@ elm_drop_item_container_add(Evas_Object *obj,
    drop = calloc(1, sizeof(Dnd_Cont_Drop));
    if (!enter || !leave || !pos || !drop) goto on_error;
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    enter->state_cb = enter_cb;
@@ -703,7 +706,7 @@ elm_drop_item_container_del(Evas_Object *obj)
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    _cont_drop_free_data(obj);
@@ -806,7 +809,7 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
    Item_Container_Drag_Info *di;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    di = calloc(1, sizeof(Item_Container_Drag_Info));
@@ -833,7 +836,7 @@ elm_drag_item_container_del(Evas_Object *obj)
    int seatid = 1;
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    _cont_drag_free_data(obj);

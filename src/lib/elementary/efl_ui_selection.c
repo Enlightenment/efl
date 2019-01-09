@@ -10,6 +10,10 @@
 #define MY_CLASS EFL_UI_SELECTION_MIXIN
 #define MY_CLASS_NAME "Efl.Ui.Selection"
 
+#ifdef HAVE_ELEMENTARY_WL2
+Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
+#endif
+
 EOLIAN static void
 _efl_ui_selection_selection_get(Eo *obj, void *pd EINA_UNUSED, Efl_Ui_Selection_Type type, Efl_Ui_Selection_Format format,
                                      void *data_func_data, Efl_Ui_Selection_Data_Ready data_func, Eina_Free_Cb data_func_free_cb, unsigned int seat)
@@ -70,34 +74,6 @@ _wl_is_wl(const Evas_Object *obj)
    if (!strncmp(engine_name, "wayland", sizeof("wayland") - 1))
      return ee;
    return NULL;
-}
-
-static Ecore_Wl2_Window *
-_wl_window_get(const Evas_Object *obj)
-{
-   Evas_Object *top;
-   Ecore_Wl2_Window *win = NULL;
-
-   if (elm_widget_is(obj))
-     {
-        top = elm_widget_top_get(obj);
-        if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-        if (top && (efl_isa(top, EFL_UI_WIN_CLASS)))
-            win = elm_win_wl_window_get(top);
-     }
-   if (!win)
-     {
-        Ecore_Evas *ee = _wl_is_wl(obj);
-
-        if (ee)
-          {
-             /* In case the engine is not a buffer, we want to check once. */
-             win = ecore_evas_wayland2_window_get(ee);
-             if (!win) return NULL;
-          }
-     }
-
-   return win;
 }
 
 int
@@ -212,8 +188,7 @@ elm_cnp_selection_get(const Evas_Object *obj, Elm_Sel_Type type,
    if (!wdata) return EINA_FALSE;
 
 #ifdef HAVE_ELEMENTARY_WL2
-
-   seatid = _wl_default_seat_id_get((Evas_Object *)obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get((Evas_Object *)obj);
 #endif
    wdata->udata = udata;
    wdata->datacb = datacb;
@@ -238,7 +213,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type type,
    data.mem = selbuf;
    data.len = buflen;
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
    f = efl_ui_selection_manager_selection_set(sel_man, obj, (Efl_Ui_Selection_Type)type,
                                            (Efl_Ui_Selection_Format)format, data, seatid);
@@ -257,7 +232,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type type)
    Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
    efl_ui_selection_manager_selection_clear(sel_man, obj, (Efl_Ui_Selection_Type)type, seatid);
 
@@ -289,7 +264,7 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
 
    return efl_ui_selection_manager_selection_has_owner(sel_man, obj,
@@ -303,7 +278,7 @@ elm_cnp_clipboard_selection_has_owner(Evas_Object *obj)
    Eo *sel_man = _efl_ui_selection_manager_get((Evas_Object *)obj);
 
 #ifdef HAVE_ELEMENTARY_WL2
-   seatid = _wl_default_seat_id_get(obj);
+   if (_wl_window_get(obj)) seatid = _wl_default_seat_id_get(obj);
 #endif
    return efl_ui_selection_manager_selection_has_owner(sel_man, obj,
                                                     EFL_UI_SELECTION_TYPE_CLIPBOARD, seatid);

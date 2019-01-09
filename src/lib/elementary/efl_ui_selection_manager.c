@@ -37,7 +37,7 @@ static Ecore_X_Window _x11_xwin_get(const Evas_Object *obj);
 #endif
 
 #ifdef HAVE_ELEMENTARY_WL2
-static Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
+Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
 static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id);
 #endif
 
@@ -2806,7 +2806,7 @@ _wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
      evas_device_seat_id_get(seat));
 }
 
-static Ecore_Wl2_Window *
+Ecore_Wl2_Window *
 _wl_window_get(const Evas_Object *obj)
 {
    Evas_Object *top;
