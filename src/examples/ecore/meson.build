@@ -7,7 +7,6 @@ examples = [
   'ecore_file_download_example',
   'ecore_idler_example',
   'ecore_job_example',
-  'ecore_pipe_gstreamer_example',
   'ecore_pipe_simple_example',
   'ecore_poller_example',
   'ecore_thread_example',
@@ -22,8 +21,19 @@ examples += ['ecore_fd_handler_gnutls_example']
 endif
 
 foreach example : examples
-  executable(example, example + '.c', dependencies: [eina, ecore, gstreamer, ecore_file, gnutls])
+  executable(example, example + '.c', dependencies: [eina, ecore, ecore_file, gnutls])
 endforeach
+
+if get_option('gstreamer') == true
+  examples = [
+    'ecore_pipe_gstreamer_example',
+  ]
+
+  foreach example : examples
+    executable(example, example + '.c', dependencies: [eina, ecore, gstreamer, ecore_file])
+  endforeach
+endif
+
 
 examples = [
 #  'ecore_audio_custom',
