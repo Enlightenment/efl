@@ -310,22 +310,11 @@ option('nls',
   description: 'enable localization: (default=true)'
 )
 
-option('luajit',
-  type: 'boolean',
-  value: true,
-  description: 'Flag for handling lua bindings'
-)
-
-option('cxx',
-  type: 'boolean',
-  value: true,
-  description: 'Flag for handling cxx bindings'
-)
-
-option('mono',
-  type: 'boolean',
-  value: false,
-  description: 'Flag for handling c# bindings'
+option('bindings',
+  type : 'array',
+  choices : ['luajit', 'cxx', 'mono'],
+  value : ['luajit', 'cxx'],
+  description : 'Add values here to enable the bindings',
 )
 
 option('native-arch-optimization',

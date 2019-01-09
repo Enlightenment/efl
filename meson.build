@@ -406,12 +406,10 @@ subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
 subdir('cmakeconfig')
 
-bindings = ['luajit', 'cxx', 'mono']
+bindings = get_option('bindings')
 
 foreach binding : bindings
-  if get_option(binding)
-    subdir(join_paths('src', 'bindings', binding))
-  endif
+  subdir(join_paths('src', 'bindings', binding))
 endforeach
 
 subdir(join_paths('src', 'edje_external'))

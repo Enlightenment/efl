@@ -7,7 +7,7 @@ set -e
 if [ "$BUILDSYSTEM" = "ninja" ] ; then
   if [ "$DISTRO" != "" ] ; then
     # Normal build test of all targets
-    OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Davahi=false -Dmono=false -Dcxx=false"
+    OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Davahi=false -Dbindings=luajit"
 
     WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl"
 
@@ -41,7 +41,7 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
     export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
     export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
     export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
-    mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dmono=false -Dcxx=false -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
+    mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
   fi
 else
   CI_BUILD_TYPE="$1"
