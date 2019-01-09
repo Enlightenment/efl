@@ -2384,7 +2384,7 @@ evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *e
      }
    free(loader.svg_parse);
    eina_file_close(f);
-   return vg_common_create_vg_node(loader.doc);
+   return vg_common_svg_create_vg_node(loader.doc);
 }
 
 static Evas_Vg_Load_Func evas_vg_load_svg_func =

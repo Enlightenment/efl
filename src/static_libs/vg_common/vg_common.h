@@ -8,6 +8,9 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
+/******************************************************************************************
+ * SVG Compatible feature implementation
+ ******************************************************************************************/
 typedef enum _Svg_Node_Type                Svg_Node_Type;
 typedef enum _Svg_Length_Type              Svg_Length_Type;
 
@@ -25,12 +28,10 @@ typedef struct _Svg_Style_Property         Svg_Style_Property;
 typedef struct _Svg_Line_Node              Svg_Line_Node;
 typedef struct _Svg_Custom_Command_Node    Svg_Custom_Command_Node;
 
-
 typedef struct  _Svg_Style_Stroke          Svg_Style_Stroke;
 typedef struct  _Svg_Style_Fill            Svg_Style_Fill;
 typedef enum    _Svg_Fill_Flags            Svg_Fill_Flags;
 typedef enum    _Svg_Stroke_Flags          Svg_Stroke_Flags;
-
 
 typedef enum   _Svg_Gradient_Type          Svg_Gradient_Type;
 typedef struct _Svg_Style_Gradient         Svg_Style_Gradient;
@@ -312,8 +313,8 @@ enum _Svg_Style_Type
 
 Eet_Data_Descriptor * vg_common_svg_node_eet(void);
 void vg_common_svg_node_eet_destroy(void);
-Vg_File_Data * vg_common_create_vg_node(Svg_Node *node);
-Svg_Node * vg_common_create_svg_node(Vg_File_Data *node);
+Vg_File_Data * vg_common_svg_create_vg_node(Svg_Node *node);
+Svg_Node *vg_common_svg_create_svg_node(Vg_File_Data *node);
 void vg_common_svg_node_free(Svg_Node *node);
 
 #endif //EVAS_VG_COMMON_H_

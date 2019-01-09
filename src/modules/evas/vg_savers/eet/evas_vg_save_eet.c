@@ -24,7 +24,7 @@ evas_vg_save_file_eet(Vg_File_Data *evg_data, const char *file, const char *key,
      return EVAS_LOAD_ERROR_GENERIC;
 
    svg_node_eet = vg_common_svg_node_eet();
-   root = vg_common_create_svg_node(evg_data);
+   root = vg_common_svg_create_svg_node(evg_data);
    eet_data_write(ef, svg_node_eet, key, root, compress);
    eet_close(ef);
 

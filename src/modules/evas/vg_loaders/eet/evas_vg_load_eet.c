@@ -38,7 +38,7 @@ evas_vg_load_file_open_eet(const char *file, const char *key, int *error EINA_UN
      {
         *error = EVAS_LOAD_ERROR_NONE;
      }
-   return vg_common_create_vg_node(node);
+   return vg_common_svg_create_vg_node(node);
 }
 
 static Eina_Bool
