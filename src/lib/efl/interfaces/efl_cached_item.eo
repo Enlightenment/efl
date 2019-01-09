@@ -7,7 +7,7 @@ interface Efl.Cached.Item
             [[Get the memory size associated with an object.]]
          }
          values {
-            consumed: uint; [[Size of memory consumed by this object.]]
+            consumed: uint; [[Bytes of memory consumed by this object.]]
          }
       }
    }
