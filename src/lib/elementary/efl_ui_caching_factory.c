@@ -104,14 +104,14 @@ _efl_ui_caching_factory_item_class_set(Eo *obj,
 }
 
 static const Efl_Object *
-_efl_ui_caching_factory_item_class_get(const Eo *obj,
+_efl_ui_caching_factory_item_class_get(const Eo *obj EINA_UNUSED,
                                        Efl_Ui_Caching_Factory_Data *pd)
 {
    return pd->klass;
 }
 
 static void
-_efl_ui_caching_factory_memory_limit_set(Eo *obj,
+_efl_ui_caching_factory_memory_limit_set(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Caching_Factory_Data *pd,
                                          unsigned int limit)
 {
@@ -121,14 +121,14 @@ _efl_ui_caching_factory_memory_limit_set(Eo *obj,
 }
 
 static unsigned int
-_efl_ui_caching_factory_memory_limit_get(const Eo *obj,
+_efl_ui_caching_factory_memory_limit_get(const Eo *obj EINA_UNUSED,
                                          Efl_Ui_Caching_Factory_Data *pd)
 {
    return pd->limit.memory;
 }
 
 static void
-_efl_ui_caching_factory_items_limit_set(Eo *obj,
+_efl_ui_caching_factory_items_limit_set(Eo *obj EINA_UNUSED,
                                         Efl_Ui_Caching_Factory_Data *pd,
                                         unsigned int limit)
 {
@@ -138,7 +138,7 @@ _efl_ui_caching_factory_items_limit_set(Eo *obj,
 }
 
 static unsigned int
-_efl_ui_caching_factory_items_limit_get(const Eo *obj,
+_efl_ui_caching_factory_items_limit_get(const Eo *obj EINA_UNUSED,
                                         Efl_Ui_Caching_Factory_Data *pd)
 {
    return pd->limit.items;
@@ -166,7 +166,7 @@ _efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
 }
 
 static void
-_efl_ui_caching_factory_efl_object_invalidate(Eo *obj,
+_efl_ui_caching_factory_efl_object_invalidate(Eo *obj EINA_UNUSED,
                                               Efl_Ui_Caching_Factory_Data *pd)
 {
    // As all the objects in the cache have the factory as parent, there's no need to unparent them
@@ -186,7 +186,7 @@ _efl_ui_caching_factory_app_get(Eo *obj)
 }
 
 static void
-_efl_ui_caching_factory_pause(void *data, const Efl_Event *event)
+_efl_ui_caching_factory_pause(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Ui_Caching_Factory_Data *pd = data;
    Efl_Gfx_Entity *entity;

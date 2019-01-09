@@ -214,7 +214,7 @@ _efl_test_model_view_child_get(Eo *obj EINA_UNUSED,
 static Eina_Value
 _efl_test_model_view_child_fetch(Eo *mv,
                                  void *data EINA_UNUSED,
-                                 const Eina_Value v)
+                                 const Eina_Value v EINA_UNUSED)
 {
    Eina_Future *r;
 
