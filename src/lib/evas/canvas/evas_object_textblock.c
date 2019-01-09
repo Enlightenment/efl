@@ -2842,7 +2842,8 @@ _format_dup(Evas_Object *eo_obj, const Evas_Object_Textblock_Format *fmt)
         fmt2->gfx_filter = malloc(sizeof(*fmt2->gfx_filter));
         memcpy(fmt2->gfx_filter, fmt->gfx_filter, sizeof(*fmt->gfx_filter));
         fmt2->gfx_filter->name = eina_stringshare_ref(fmt->gfx_filter->name);
-        fmt2->gfx_filter->dc = ENFN->context_dup(ENC, fmt->gfx_filter->dc);
+        if (fmt->gfx_filter->dc)
+          fmt2->gfx_filter->dc = ENFN->context_dup(ENC, fmt->gfx_filter->dc);
      }
 
    return fmt2;
