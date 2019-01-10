@@ -228,6 +228,10 @@ config_h.set_quoted('MOD_SUFFIX', '.'+sys_mod_extension)
 config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
 config_h.set('EFL_BUILD', '1')
 
+if get_option('tslib') == true
+  config_h.set('HAVE_TSLIB', '1')
+endif
+
 subdir('header_checks')
 subdir('po')
 
