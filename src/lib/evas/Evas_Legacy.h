@@ -3602,6 +3602,102 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
+/**
+ * Get the total number of frames of the vector, if it's animated.
+ *
+ * @return The number of frames. 0, if it's not animated.
+ *
+ * @since 1.22
+ */
+EAPI int evas_object_vg_animated_frame_count_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the duration of a sequence of frames.
+ *
+ * This returns total duration in seconds that the specified
+ * sequence of frames should take.
+ *
+ * If @p start_frame is 1 and @p frame_num is 0, this returns the
+ * duration of frame 1. If @p start_frame is 1 and @p frame_num is 1,
+ * this returns the total duration of frame 1 + frame 2.
+ *
+ * @param[in] start_frame The first frame, ranges from 1 to maximum frame count.
+ * @param[in] frame_num Number of frames in the sequence, starts from 0.
+ *
+ * @return Duration in seconds.
+ *
+ * @see evas_object_vg_animated_frame_count_get()
+ * @since 1.22
+ */
+EAPI double evas_object_vg_animated_frame_duration_get(const Evas_Object *obj, int start_frame EINA_UNUSED, int frame_num EINA_UNUSED) EINA_ARG_NONNULL(1);
+
+/**
+ *
+ * Set the source file from where an vector object must fetch the real
+ * vector data (it may be one of json, svg, eet files).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the vector in
+ * this file.
+ *
+ * @param[in] file The vector file path.
+ * @param[in] key The vector key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ *
+ * @return @c EINA_TRUE if it's succeed to read file, @c EINA_FALSE otherwise.
+ *
+ * @since 1.22
+ */
+EAPI Eina_Bool evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key);
+
+/**
+ *
+ * Set the source mmaped file from where an vector object must fetch the real
+ * vector data (it may be one of json, svg, eet files).
+ *
+ * If the file supports multiple data stored in it (as Eet files do),
+ * you can specify the key to be used as the index of the vector in
+ * this file.
+ *
+ * @since 1.22
+ *
+ * @param[in] f The mmaped file
+ * @param[in] key The vector key in @p file (if its an Eet one), or @c
+NULL, otherwise.
+ *
+ * @return @c EINA_TRUE if it's succeed to read file, @c EINA_FALSE otherwise.
+ *
+ */
+EAPI Eina_Bool evas_object_vg_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key);
+
+/**
+ * Set current frame of animated vector object.
+ *
+ * @param[in] frame_index The index of current frame.
+ *
+ * @note the @p frame_index must be in range of animation frames. (0 ~ max frame count)
+ *
+ * @return @c EINA_TRUE, if the frame index is valid. @c EINA_FALSE, otherwise.
+ *
+ * @see evas_object_vg_animated_frame_count_get()
+ *
+ * @since 1.22
+ */
+EAPI Eina_Bool evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Get the current frame number of animated vector object.
+ *
+ * @return The frame index.
+ *
+ * @see evas_object_vg_animated_frame_set()
+ * @see evas_object_vg_animated_frame_count_get()
+ *
+ * @since 1.22
+ */
+EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+
 #include "canvas/efl_canvas_vg_node.eo.legacy.h"
 #include "canvas/efl_canvas_vg_object.eo.legacy.h"
 #include "canvas/efl_canvas_vg_container.eo.legacy.h"
