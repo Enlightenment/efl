@@ -335,3 +335,9 @@ option('windows-version',
   value : 'win7',
   description : 'When host_machine is windows, compile the efl with the specified version of Windows'
 )
+
+option('dictionaries-hyphen-dir',
+  type : 'string',
+  value : '/usr/share/hyphen/',
+  description : 'Put the path to hyphen dictionaries directory'
+)

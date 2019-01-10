@@ -139,7 +139,7 @@ if (get_option('hyphen'))
      evas_deps += cc.find_library('hyphen')
    endif
    evas_deps += hyphen
-   config_h.set_quoted('EVAS_DICTS_HYPHEN_DIR', '/usr/share/hyphen')
+   config_h.set_quoted('EVAS_DICTS_HYPHEN_DIR', get_option('dictionaries-hyphen-dir'))
 endif
 
 subdir('include')
