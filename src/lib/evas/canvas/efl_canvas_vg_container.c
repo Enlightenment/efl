@@ -64,6 +64,11 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
         pd->mask.bound.h = mbound.h;
         pd->mask.vg_pd = obj;
      }
+   else
+     {
+        if (pd->mask.pixels)
+          memset(pd->mask.pixels, 0x0, sizeof(uint32_t) * mbound.w * mbound.h);
+     }
 
    pd->mask.bound.x = mbound.x;
    pd->mask.bound.y = mbound.y;
