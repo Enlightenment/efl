@@ -239,7 +239,7 @@ struct Efl.Access.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-mixin Efl.Access.Object (Efl.Interface, Efl.Object)
+mixin Efl.Access.Object requires Efl.Object
 {
    [[Accessibility accessible mixin]]
    eo_prefix: efl_access_object;
