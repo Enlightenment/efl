@@ -394,6 +394,7 @@ typedef struct _Edje_Real_Part_Container Edje_Real_Part_Container;
 typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
 typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
 typedef struct _Edje_Real_Part_Set Edje_Real_Part_Set;
+typedef struct _Edje_Real_Part_Vector Edje_Real_Part_Vector;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
@@ -681,10 +682,17 @@ struct _Edje_Image_Directory
    unsigned int vectors_count;
 };
 
+typedef enum _Edje_Vector_File_Type
+{
+   EDJE_VECTOR_FILE_TYPE_SVG = 0,
+   EDJE_VECTOR_FILE_TYPE_JSON
+} Edje_Vector_File_Type;
+
 struct _Edje_Vector_Directory_Entry
 {
    const char *entry; /* the nominal name of the vector image - if any */
    int   id; /* the id no. of the image */
+   Edje_Vector_File_Type type;
 };
 
 struct _Edje_Image_Directory_Entry
@@ -1585,8 +1593,10 @@ struct _Edje_Part_Description_Spec_Camera
 
 struct _Edje_Part_Description_Spec_Svg
 {
-   int            id; /* the svg id to use */
-   Eina_Bool      set; /* if vg condition it's content */
+   int                   id; /* the svg id to use */
+   Eina_Bool             set; /* if vg condition it's content */
+   Edje_Vector_File_Type type;
+   double                frame;
 };
 
 struct _Edje_Part_Description_Image
@@ -1963,6 +1973,7 @@ struct _Edje_Real_Part_Drag
 #define EDJE_RP_TYPE_TEXT 1
 #define EDJE_RP_TYPE_CONTAINER 2
 #define EDJE_RP_TYPE_SWALLOW 3
+#define EDJE_RP_TYPE_VECTOR 4
 
 struct _Edje_Real_Part_Text
 {
@@ -2007,6 +2018,19 @@ struct _Edje_Real_Part_Swallow
    } swallow_params; // 28 // FIXME: only if type SWALLOW
 };
 
+struct _Edje_Real_Part_Vector
+{
+   Eo        *anim;
+   Eo        *player;
+   Eina_File *json_virtual_file;
+   char      *json_data;
+   int        start_frame;
+   int        current_id;
+   Eina_Bool  backward : 1;
+   Eina_Bool  loop : 1;
+   Eina_Bool  is_playing : 1;
+};
+
 struct _Edje_Real_Part
 {
    Edje_Real_Part_State      param1; // 32
@@ -2029,6 +2053,7 @@ struct _Edje_Real_Part
       Edje_Real_Part_Text      *text;
       Edje_Real_Part_Container *container;
       Edje_Real_Part_Swallow   *swallow;
+      Edje_Real_Part_Vector    *vector;
    } typedata; // 4
    FLOAT_T                   description_pos; // 8
    Edje_Rectangle            req; // 16
@@ -3279,6 +3304,10 @@ char * _edje_text_cursor_content_get(Edje_Real_Part *rp, Efl_Text_Cursor_Cursor 
 void _edje_object_part_text_insert(Edje *ed, Edje_Real_Part *rp, const char *text);
 
 void _edje_internal_proxy_shutdown(void);
+void _edje_part_vector_anim_stop(Edje *ed, Edje_Real_Part *rp);
+void _edje_part_vector_anim_pause(Edje *ed, Edje_Real_Part *rp);
+void _edje_part_vector_anim_resume(Edje *ed, Edje_Real_Part *rp);
+void _edje_part_vector_anim_play(Edje *ed, Edje_Real_Part *rp, Eina_Bool backward, Eina_Bool loop);
 
 #ifdef HAVE_EPHYSICS
 Eina_Bool _edje_ephysics_load(void);

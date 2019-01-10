@@ -1404,17 +1404,46 @@ data_write_vectors(Eet_File *ef, int *vector_num)
              if (!f) continue;
              eina_file_close(f);
 
-             if (!efl_file_set(vg, eina_strbuf_string_get(buf), NULL))
-               error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
+             if (vector->type == EDJE_VECTOR_FILE_TYPE_JSON)
+               {
+                  char *json_data = NULL;
+                  int json_data_len = 0;
 
-             eina_strbuf_reset(buf);
-             eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
-             if (!efl_file_save(vg, eet_file_get(ef), eina_strbuf_string_get(buf), NULL))
-               error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
+                  f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
+                  if (!f) continue;
 
-             *vector_num += 1;
-             found = EINA_TRUE;
-             break;
+                  json_data_len = (int) eina_file_size_get(f);
+                  json_data = eina_file_map_all(f, EINA_FILE_POPULATE);
+
+                  eina_strbuf_reset(buf);
+                  eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
+                  eet_write(ef, eina_strbuf_string_get(buf), json_data, json_data_len, EET_COMPRESSION_NONE);
+
+                  eina_file_map_free(f, json_data);
+                  eina_file_close(f);
+
+                  *vector_num += 1;
+                  found = EINA_TRUE;
+                  break;
+               }
+             else
+               {
+                  f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
+                  if (!f) continue;
+                  eina_file_close(f);
+
+                  if (!efl_file_set(vg, eina_strbuf_string_get(buf), NULL))
+                    error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
+
+                  eina_strbuf_reset(buf);
+                  eina_strbuf_append_printf(buf, "edje/vectors/%i", vector->id);
+                  if (!efl_file_save(vg, eet_file_get(ef), eina_strbuf_string_get(buf), NULL))
+                    error_and_abort(ef, "Failed to write data in Eet for svg :%s", vector->entry);
+
+                  *vector_num += 1;
+                  found = EINA_TRUE;
+                  break;
+               }
           }
         if (!found)
           error_and_abort(ef, "Unable to find the svg :%s", vector->entry);

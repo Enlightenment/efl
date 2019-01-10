@@ -3178,34 +3178,137 @@ _edje_image_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
 }
 
 static void
-_edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
+_edje_vector_animation_running_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   int new_svg = -1; //invalid svg
+   Efl_Canvas_Animation_Player_Event_Running *event_running = event->info;
+   double pos = event_running->progress;
+   Edje_Real_Part *ep = (Edje_Real_Part *)data;
+   int frame, frame_count;
+
+   frame_count = efl_gfx_image_animated_frame_count_get(ep->object);
+
+   if (ep->typedata.vector->backward)
+     frame = ep->typedata.vector->start_frame - (int) (frame_count * pos);
+   else
+     frame = ep->typedata.vector->start_frame + (int) (frame_count * pos);
+
+   efl_gfx_image_animated_frame_set(ep->object, frame);
+
+   if ((ep->typedata.vector->backward && (frame <= 0)) ||
+       (!ep->typedata.vector->backward && (frame >= frame_count)))
+     {
+        if (ep->typedata.vector->loop)
+          {
+             if (ep->typedata.vector->backward)
+               ep->typedata.vector->start_frame = frame_count;
+             else
+               ep->typedata.vector->start_frame = 0;
+
+             efl_player_start(ep->typedata.vector->player);
+          }
+        else
+          {
+             efl_player_stop(ep->typedata.vector->player);
+          }
+     }
+}
+
+static void
+_edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
+{
+   Edje_Part_Description_Vector *desc = (Edje_Part_Description_Vector *)ep->chosen_description;
+   Eina_File *file;
+   char *json_data;
+   double frame_duration;
+   int json_data_len = 0;
+   int frame_count;
+
+   if (ep->typedata.vector->anim == NULL)
+     {
+        Eo *anim = efl_add(EFL_CANVAS_ANIMATION_CLASS, ed->base.evas);
+        ep->typedata.vector->anim = anim;
+     }
+
+   if (ep->typedata.vector->player == NULL)
+     {
+        Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, ed->base.evas);
+        efl_animation_player_animation_set(player, ep->typedata.vector->anim);
+        efl_event_callback_add(player, EFL_ANIMATION_PLAYER_EVENT_RUNNING,
+                               _edje_vector_animation_running_cb, ep);
+        ep->typedata.vector->player = player;
+     }
+
+   if (ep->typedata.vector->current_id != desc->vg.id)
+     {
+        json_data = (char *)eet_read(ed->file->ef, key, &json_data_len);
+        json_data[json_data_len] = '\0';
+        file = eina_file_virtualize(NULL, json_data, json_data_len + 1, EINA_FALSE);
+        efl_file_mmap_set(ep->object, file, NULL);
+
+        if (ep->typedata.vector->json_virtual_file)
+          eina_file_close(ep->typedata.vector->json_virtual_file);
+        ep->typedata.vector->json_virtual_file = file;
+
+        if (ep->typedata.vector->json_data)
+          free(ep->typedata.vector->json_data);
+        ep->typedata.vector->json_data = json_data;
+
+        ep->typedata.vector->current_id = desc->vg.id;
+     }
+
+   frame_duration = efl_gfx_image_animated_frame_duration_get(ep->object, 0, 0);
+   efl_animation_duration_set(ep->typedata.vector->anim, frame_duration);
+
+   if (!ep->typedata.vector->is_playing)
+     {
+        frame_count = efl_gfx_image_animated_frame_count_get(ep->object);
+        efl_gfx_image_animated_frame_set(ep->object, (int)(frame_count * desc->vg.frame));
+     }
+}
+
+static void
+_edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_UNUSED, Edje_Part_Description_Vector *chosen_desc, FLOAT_T pos)
+{
+   int new_id = -1; //invalid svg
    int w, h;
    char src_key[32], dest_key[32];
    Efl_VG *src_root, *dest_root, *root;
+   Edje_Vector_File_Type type = chosen_desc->vg.type;
+   Edje_Vector_File_Type new_type = EDJE_VECTOR_FILE_TYPE_SVG;
 
    evas_object_geometry_get(ep->object, NULL, NULL, &w, &h);
    if( (w == 0) || (h == 0)) return;
 
    snprintf(src_key, sizeof(src_key), "edje/vectors/%i", chosen_desc->vg.id);
 
+   if (type == EDJE_VECTOR_FILE_TYPE_JSON)
+     {
+        _edje_vector_load_json(ed, ep, src_key);
+
+        return;
+     }
+
    if (ep->param2)
      {
         Edje_Part_Description_Vector *next_state = (Edje_Part_Description_Vector *)ep->param2->description;
         if (chosen_desc->vg.id != next_state->vg.id)
-          new_svg = next_state->vg.id;
+          {
+             new_id = next_state->vg.id;
+             new_type = next_state->vg.type;
+          }
         else
-          pos = 0;
+          {
+             pos = 0;
+          }
      }
 
-   if (new_svg < 0)
+   if ((new_id < 0) || (new_type == EDJE_VECTOR_FILE_TYPE_JSON))
      {
         efl_file_set(ep->object, ed->file->path, src_key);
      }
    else
      {
-        snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_svg);
+        snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_id);
 
         efl_file_set(ep->object, ed->file->path, src_key);
         src_root = efl_canvas_vg_object_root_node_get(ep->object);
@@ -3225,6 +3328,43 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
         efl_unref(src_root);
         efl_unref(dest_root);
      }
+}
+
+void
+_edje_part_vector_anim_stop(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+{
+   Edje_Part_Description_Vector *desc = (Edje_Part_Description_Vector *)rp->chosen_description;
+   double frame_count = efl_gfx_image_animated_frame_count_get(rp->object);
+
+   efl_player_stop(rp->typedata.vector->player);
+   efl_gfx_image_animated_frame_set(rp->object, (int)(frame_count * desc->vg.frame));
+   rp->typedata.vector->is_playing = EINA_FALSE;
+}
+
+void
+_edje_part_vector_anim_pause(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+{
+   efl_player_stop(rp->typedata.vector->player);
+}
+
+void
+_edje_part_vector_anim_resume(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
+{
+   if (rp->typedata.vector->is_playing)
+     {
+        rp->typedata.vector->start_frame = efl_gfx_image_animated_frame_get(rp->object);
+        efl_player_start(rp->typedata.vector->player);
+     }
+}
+
+void
+_edje_part_vector_anim_play(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool backward, Eina_Bool loop)
+{
+   rp->typedata.vector->backward = backward;
+   rp->typedata.vector->loop = loop;
+   rp->typedata.vector->start_frame = efl_gfx_image_animated_frame_get(rp->object);
+   rp->typedata.vector->is_playing = EINA_TRUE;
+   efl_player_start(rp->typedata.vector->player);
 }
 
 static Edje_Real_Part *
@@ -4995,7 +5135,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              break;
 
            case EDJE_PART_TYPE_VECTOR:
-             _edje_svg_recalc_apply(ed, ep, pf, (Edje_Part_Description_Vector *)chosen_desc, pos);
+             _edje_vector_recalc_apply(ed, ep, pf, (Edje_Part_Description_Vector *)chosen_desc, pos);
              break;
 
            case EDJE_PART_TYPE_TEXTBLOCK:

@@ -509,6 +509,9 @@ static void       st_collections_group_parts_part_description_params_bool(void);
 static void       st_collections_group_parts_part_description_params_choice(void);
 static void       st_collections_group_parts_part_description_params_smart(void);
 
+/* vector part parameter */
+static void       st_collections_group_parts_part_description_vector_frame(void);
+
 static void       ob_collections_group_programs_program(void);
 static void       st_collections_group_programs_program_name(void);
 static void       st_collections_group_programs_program_signal(void);
@@ -1037,6 +1040,7 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.parts.part.description.params.bool", st_collections_group_parts_part_description_params_bool},
    {"collections.group.parts.part.description.params.choice", st_collections_group_parts_part_description_params_choice},
    {"collections.group.parts.part.description.params.*", st_collections_group_parts_part_description_params_smart},
+   {"collections.group.parts.part.description.vector.frame", st_collections_group_parts_part_description_vector_frame},
    IMAGE_STATEMENTS("collections.group.parts.part.description.")
    {
       "collections.group.parts.part.description.font", st_fonts_font
@@ -1580,6 +1584,7 @@ New_Object_Handler object_handlers[] =
    {"collections.group.parts.part.description.map.zoom", NULL},
    {"collections.group.parts.part.description.perspective", NULL},
    {"collections.group.parts.part.description.params", NULL},
+   {"collections.group.parts.part.description.vector", NULL},
    {"collections.group.parts.part.description.color_classes", NULL},   /* dup */
    {"collections.group.parts.part.description.color_classes.color_class", ob_color_class},   /* dup */
    {"collections.group.parts.part.description.text_classes", NULL},   /* dup */
@@ -2535,6 +2540,7 @@ _handle_vector_image(void)
           {
              ed->vg.set = EINA_TRUE;
              ed->vg.id = edje_file->image_dir->vectors[i].id;
+             ed->vg.type = edje_file->image_dir->vectors[i].type;
              break;
           }
      }
@@ -2577,6 +2583,7 @@ st_images_vector(void)
    Edje_Vector_Directory_Entry *vector;
    const char *tmp;
    unsigned int i;
+   size_t entry_len;
 
    check_min_arg_count(1);
 
@@ -2608,6 +2615,16 @@ st_images_vector(void)
 
    vector->entry = tmp;
    vector->id = edje_file->image_dir->vectors_count - 1;
+
+   entry_len = strlen(vector->entry);
+   if ((entry_len > 5) && !strncmp(vector->entry + entry_len - 5, ".json", 5))
+     {
+        vector->type = EDJE_VECTOR_FILE_TYPE_JSON;
+     }
+   else
+     {
+        vector->type = EDJE_VECTOR_FILE_TYPE_SVG;
+     }
 }
 
 /**
@@ -8947,6 +8964,8 @@ st_collections_group_parts_part_description_inherit(void)
          Edje_Part_Description_Vector *iparent = (Edje_Part_Description_Vector *)parent;
          ied->vg.set = iparent->vg.set;
          ied->vg.id = iparent->vg.id;
+         ied->vg.type = iparent->vg.type;
+         ied->vg.frame = iparent->vg.frame;
          break;
       }
      }
@@ -15094,6 +15113,25 @@ st_collections_group_parts_part_description_params_choice(void)
    _st_collections_group_parts_part_description_params(EDJE_EXTERNAL_PARAM_TYPE_CHOICE);
 }
 
+static void
+st_collections_group_parts_part_description_vector_frame(void)
+{
+   Edje_Part_Description_Vector *ed;
+
+   check_arg_count(1);
+
+   if (current_part->type != EDJE_PART_TYPE_VECTOR)
+     {
+        ERR("parse error %s:%i. vector attributes in non-VECTOR part.",
+            file_in, line - 1);
+        exit(-1);
+     }
+
+   ed = (Edje_Part_Description_Vector *)current_desc;
+
+   ed->vg.frame = parse_float_range(0, 0.0, 1.0);
+}
+
 /** @edcsubsection{collections_group_parts_description_links,
  *                 Group.Parts.Part.Description.Links} */
 
@@ -15606,6 +15644,12 @@ st_collections_group_programs_program_action(void)
                            "PHYSICS_STOP", EDJE_ACTION_TYPE_PHYSICS_STOP,
                            "PHYSICS_ROT_SET", EDJE_ACTION_TYPE_PHYSICS_ROT_SET,
                            "PLAY_VIBRATION", EDJE_ACTION_TYPE_VIBRATION_SAMPLE,
+                           "VG_ANIM_STOP", EDJE_ACTION_TYPE_VG_ANIM_STOP,
+                           "VG_ANIM_PAUSE", EDJE_ACTION_TYPE_VG_ANIM_PAUSE,
+                           "VG_ANIM_RESUME", EDJE_ACTION_TYPE_VG_ANIM_RESUME,
+                           "VG_ANIM_PLAY", EDJE_ACTION_TYPE_VG_ANIM_PLAY,
+                           "VG_ANIM_PLAY_BACK", EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK,
+                           "VG_ANIM_LOOP", EDJE_ACTION_TYPE_VG_ANIM_LOOP,
                            NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -15767,6 +15811,12 @@ st_collections_group_programs_program_action(void)
       case EDJE_ACTION_TYPE_ACTION_STOP:
       case EDJE_ACTION_TYPE_PHYSICS_FORCES_CLEAR:
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_STOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
+      case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
         check_arg_count(1);
         break;
 
@@ -16046,6 +16096,12 @@ _program_target_add(char *name)
       case EDJE_ACTION_TYPE_PHYSICS_STOP:
       case EDJE_ACTION_TYPE_PHYSICS_ROT_SET:
 #endif
+      case EDJE_ACTION_TYPE_VG_ANIM_STOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
+      case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
         data_queue_part_lookup(pc, name, &(et->id));
         break;
 

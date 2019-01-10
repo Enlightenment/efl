@@ -1211,6 +1211,78 @@ low_mem_current:
         break;
 
 #endif
+
+      case EDJE_ACTION_TYPE_VG_ANIM_STOP:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if (rp)
+                    _edje_part_vector_anim_stop(ed, rp);
+               }
+          }
+        break;
+
+      case EDJE_ACTION_TYPE_VG_ANIM_PAUSE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if (rp)
+                    _edje_part_vector_anim_pause(ed, rp);
+               }
+          }
+        break;
+
+      case EDJE_ACTION_TYPE_VG_ANIM_RESUME:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if (rp)
+                    _edje_part_vector_anim_resume(ed, rp);
+               }
+          }
+        break;
+
+      case EDJE_ACTION_TYPE_VG_ANIM_LOOP:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK:
+      case EDJE_ACTION_TYPE_VG_ANIM_PLAY:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+          {
+             if (pt->id >= 0)
+               {
+                  rp = ed->table_parts[pt->id % ed->table_parts_size];
+                  if (rp)
+                    {
+                       Eina_Bool vector_anim_backward = EINA_FALSE;
+                       Eina_Bool vector_anim_loop = EINA_FALSE;
+
+                       if (pr->action == EDJE_ACTION_TYPE_VG_ANIM_PLAY_BACK)
+                         vector_anim_backward = EINA_TRUE;
+
+                       if (pr->action == EDJE_ACTION_TYPE_VG_ANIM_LOOP)
+                         vector_anim_loop = EINA_TRUE;
+
+                       _edje_part_vector_anim_play(ed, rp,
+                                                   vector_anim_backward,
+                                                   vector_anim_loop);
+                    }
+               }
+          }
+        break;
+
       default:
         // _edje_emit(ed, "program,start", pr->name);
         // _edje_emit(ed, "program,stop", pr->name);

@@ -419,6 +419,7 @@ _edje_edd_init(void)
      eet_data_descriptor_file_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vector_directory_entry, Edje_Vector_Directory_Entry, "entry", entry, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vector_directory_entry, Edje_Vector_Directory_Entry, "id", id, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_vector_directory_entry, Edje_Vector_Directory_Entry, "type", type, EET_T_INT);
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Image_Directory);
    _edje_edd_edje_image_directory =
@@ -964,6 +965,8 @@ _edje_edd_init(void)
    EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_vector, Edje_Part_Description_Vector, common);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_vector, Edje_Part_Description_Vector, "vg.id", vg.id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_vector, Edje_Part_Description_Vector, "vg.set", vg.set, EET_T_UCHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_vector, Edje_Part_Description_Vector, "vg.type", vg.type, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description_vector, Edje_Part_Description_Vector, "vg.frame", vg.frame, EET_T_DOUBLE);
 
 
    EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Edje_Part_Description_Common);
