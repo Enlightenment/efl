@@ -2985,11 +2985,13 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if ((!_elm_win_list) &&
-       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+   if (!_elm_win_list)
      {
-        _elm_win_flush_cache_and_exit(obj);
+       if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED)
+         _elm_win_flush_cache_and_exit(obj);
      }
+   if (!_elm_win_list)
+     efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
 }
 
 EOLIAN static void
