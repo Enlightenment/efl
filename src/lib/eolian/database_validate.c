@@ -508,6 +508,12 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
         if (fcl)
           return fcl;
      }
+   EINA_LIST_FOREACH(cl->requires, l, icl)
+     {
+        const Eolian_Class *fcl = _get_impl_class(icl, cln);
+        if (fcl)
+          return fcl;
+     }
    EINA_LIST_FOREACH(cl->extends, l, icl)
      {
         const Eolian_Class *fcl = _get_impl_class(icl, cln);
@@ -743,9 +749,10 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
    if (eina_hash_find(cl->base.unit->state->main.unit.classes, cl->base.name))
      return EINA_TRUE;
 
-   Eina_List *il = cl->extends;
+   Eina_List *il = cl->extends, *rl = cl->requires;
    Eina_Stringshare *inn = NULL;
    cl->extends = NULL;
+   cl->requires = NULL;
    Eina_Bool succ = EINA_TRUE;
 
    if (cl->parent_name)
@@ -769,6 +776,30 @@ _db_fill_inherits(Eolian_Class *cl, Eina_Hash *fhash)
           continue;
         cl->extends = eina_list_append(cl->extends, out_cl);
         succ = _db_fill_inherits(out_cl, fhash);
+     }
+
+   if (succ && cl->type == EOLIAN_CLASS_MIXIN)
+     {
+        EINA_LIST_FREE(rl, inn)
+          {
+             Eolian_Class *out_cl = NULL;
+             succ = _db_swap_inherit(cl, succ, inn, &out_cl);
+             if (succ && !(out_cl->type == EOLIAN_CLASS_REGULAR || out_cl->type == EOLIAN_CLASS_ABSTRACT))
+               {
+                  char buf[PATH_MAX];
+                  snprintf(buf, sizeof(buf), "requires only allows regulars or abstracts");
+                  _obj_error(&cl->base, buf);
+                  succ = EINA_FALSE;
+               }
+             if (succ)
+               {
+                 _db_fill_inherits(out_cl, fhash);
+               }
+             if (!succ)
+               continue;
+             if (!eina_list_data_find(cl->requires, out_cl))
+               cl->requires = eina_list_append(cl->requires, out_cl);
+          }
      }
 
    /* failed on the way, no point in filling further
@@ -805,6 +836,24 @@ _validate_implement(Eolian_Implement *impl)
    return _validate(&impl->base);
 }
 
+static Eina_List*
+_required_classes(Eolian_Class *mixin)
+{
+   Eina_List *result = NULL, *n;
+   Eolian_Class *extension;
+
+
+   result = eina_list_clone(mixin->requires);
+
+   if (mixin->parent)
+     result = eina_list_merge(result, _required_classes(mixin->parent));
+
+   EINA_LIST_FOREACH(mixin->extends, n, extension)
+     result = eina_list_merge(result, _required_classes(extension));
+
+   return result;
+}
+
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
                 Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
@@ -815,6 +864,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
    Eolian_Part *part;
    Eolian_Implement *impl;
    Eolian_Class *icl;
+   Eina_List *required_classes = NULL;
 
    if (!cl)
      return EINA_FALSE; /* if this happens something is very wrong though */
@@ -849,6 +899,17 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 
    EINA_LIST_FOREACH(cl->extends, l, icl)
      {
+        if (icl->type == EOLIAN_CLASS_MIXIN)
+          {
+             Eina_List *res = _required_classes(icl);
+             Eolian_Class *required_class;
+             Eina_List *n;
+             EINA_LIST_FOREACH(res, n, required_class)
+               {
+                 if (!eina_list_data_find(required_classes, required_class))
+                   required_classes = eina_list_append(required_classes, required_class);
+               }
+          }
         if (!valid && vals->ext_regular) switch (icl->type)
           {
            case EOLIAN_CLASS_REGULAR:
@@ -869,6 +930,35 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
         if (!_validate_class(vals, icl, nhash, ehash, chash))
           return EINA_FALSE;
      }
+   if (cl->type == EOLIAN_CLASS_ABSTRACT || cl->type == EOLIAN_CLASS_REGULAR)
+     {
+        //walk up the parent list and remove all classes from there
+        icl = cl;
+        while (icl)
+          {
+             required_classes = eina_list_remove(required_classes, icl);
+             icl = icl->parent;
+          }
+        //if there are a few left, drop, and error
+        if (required_classes)
+          {
+             Eina_Strbuf *classes = eina_strbuf_new();
+             Eolian_Class *required_class;
+             Eina_List *n;
+             EINA_LIST_FOREACH(required_classes, n, required_class)
+               {
+                   eina_strbuf_append(classes, required_class->base.name);
+                   eina_strbuf_append_char(classes, ' ');
+               }
+             char buf[PATH_MAX];
+             snprintf(buf, sizeof(buf), "required classes %sare not in the inherit chain of %s",
+                      eina_strbuf_string_get(classes), cl->base.name);
+             eina_strbuf_free(classes);
+             _obj_error(&cl->base, buf);
+             return EINA_FALSE;
+          }
+     }
+
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(vals, func, nhash))

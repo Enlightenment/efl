@@ -1,0 +1,8 @@
+import base;
+import mixins_require;
+
+class Class.Requires (Base, Mixins.Require) {
+  methods {
+
+  }
+}
