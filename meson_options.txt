@@ -97,7 +97,7 @@ option('build-examples',
 option('build-tests',
   type : 'boolean',
   value : true,
-  description : 'build examples'
+  description : 'build tests'
 )
 
 option('crypto',
