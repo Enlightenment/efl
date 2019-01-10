@@ -353,3 +353,9 @@ option('elementary-base-dir',
   value : '.elementary',
   description : 'Put the name of a base directory for elementary data'
 )
+
+option('exactness-check',
+  type : 'boolean',
+  value : false,
+  description : 'Flag to enable Exactness checking in EFL'
+)
