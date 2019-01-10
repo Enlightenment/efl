@@ -1,0 +1,148 @@
+class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
+{
+   [[Elementary Animation View class]]
+   legacy_prefix: elm_animation_view;
+   eo_prefix: elm_obj_animation_view;
+   event_prefix: elm_animation_view;
+   methods {
+      @property auto_play {
+         [[Animation will be started automatically when it's possible.
+
+           If $auto_play is $true, animation will be started when it's readied.
+           The condition of auto play is when animation view opened file successfully,
+           yet to play it plus when the object is visible.
+           If animation view is disabled, invisible,
+           it turns to pause state then resume animation when it's visible again.
+
+           Warning: This auto play will be only affected to the next animation source.
+           So must be called before elm_animation_view_file_set().]]
+         set {
+         }
+         get {
+         }
+         values {
+            auto_play: bool; [[$true Enable auto play mode, disable otherwise]]
+         }
+      }
+      @property auto_repeat {
+         [[Turn on/off animation looping.
+
+           If $auto_repeat is $true, it repeats animation when animation frame is reached to
+           end. This auto repeat mode is valid to both play and play_back cases.]]
+         set {
+         }
+         get {
+         }
+         values {
+            auto_repeat: bool; [[Enable loop mode if $true, disable otherwise]]
+         }
+      }
+      @property speed {
+         [[Control animation speed.
+
+           Control animation speed by multiplying $speed value. If you want to play
+           animation double-time faster, you can give $speed 2. If you want to play
+           animation double-time slower, you can give $speed 0.5.
+
+           Warning: speed must be greater than zero.]]
+         set {
+            return: bool; [[$true when it's successful. $false otherwise.]]
+         }
+         get {
+         }
+         values {
+            speed: double; [[ Speed factor. Default value is 1]]
+         }
+      }
+      @property duration_time {
+         [[Get the duration of animation in seconds.
+
+           This API returns total duration time of current animation in the seconds.
+           If current animation source isn't animatable, it returns zero.]]
+         get {
+         }
+         values {
+            frame_duration: double; [[duration time in the seconds]]
+         }
+      }
+      @property keyframe {
+         [[Set current keyframe position of animation view.
+
+           When you required to jump on a certain frame instantly,
+           you can change current keyframe by using this API.
+
+           Warning: The range of keyframe is 0 ~ 1.]]
+         set {
+         }
+         get {
+         }
+         values {
+            keyframe: double; [[Keyframe position. Value must be 0 ~ 1.]]
+         }
+      }
+      play {
+         [[Play animation one time instantly when it's available.
+
+           If current keyframe is on a certain position by playing back, this will
+           play forward from there.
+
+           Warning: Play request will be ignored if animation source is not set yet or
+           animation is paused state or it's already on playing.]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      play_back {
+         [[Play back animation one time instantly when it's available.
+
+           If current keyframe is on a certain position by playing, this will
+           play backward from there.
+
+           Warning: Play back request will be ignored if animation source is not set yet or
+           animation is paused state or it's already on playing back.]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      pause {
+         [[Pause current animation instantly.
+
+           Once animation is paused, animation view must get resume to play continue again.
+
+           Warning: Animation must be on playing or playing back status.]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      resume {
+         [[Resume paused animation to continue animation.
+
+           Warning: This resume must be called on animation paused status. ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      stop {
+         [[Stop playing animation.
+
+           Stop animation instatly regardless of it's status and reset to
+           show first frame of animation. Even though current animation is paused,
+           the animation status will be stopped.]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      @property default_size {
+         get {
+            [[Get the default view size that specified from vector resource.
+              @since 1.22]]
+         }
+         values {
+            size: Eina.Size2D;
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.File.file { set; }
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+   }
+}
