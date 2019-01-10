@@ -1418,13 +1418,13 @@ _frame_cb(void *data, struct wl_callback *callback, uint32_t timestamp)
 {
    Ecore_Wl2_Frame_Cb_Handle *cb;
    Ecore_Wl2_Window *window;
-   Eina_List *l, *ll;
+   Eina_Inlist *l;
 
    window = data;
    window->commit_pending = EINA_FALSE;
    wl_callback_destroy(callback);
    window->callback = NULL;
-   EINA_LIST_FOREACH_SAFE(window->frame_callbacks, l, ll, cb)
+   EINA_INLIST_FOREACH_SAFE(window->frame_callbacks, l, cb)
      cb->cb(window, timestamp, cb->data);
 }
 
@@ -1652,7 +1652,7 @@ ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb
    callback->data = data;
    callback->win = window;
    window->frame_callbacks =
-     eina_list_append(window->frame_callbacks, callback);
+     eina_inlist_append(window->frame_callbacks, EINA_INLIST_GET(callback));
    return callback;
 }
 
@@ -1662,7 +1662,7 @@ ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
    EINA_SAFETY_ON_NULL_RETURN(handle);
 
    handle->win->frame_callbacks =
-     eina_list_remove(handle->win->frame_callbacks, handle);
+     eina_inlist_remove(handle->win->frame_callbacks, EINA_INLIST_GET(handle));
    free(handle);
 }
 
