@@ -341,3 +341,9 @@ option('dictionaries-hyphen-dir',
   value : '/usr/share/hyphen/',
   description : 'Put the path to hyphen dictionaries directory'
 )
+
+option('elementary-base-dir',
+  type : 'string',
+  value : '.elementary',
+  description : 'Put the name of a base directory for elementary data'
+)

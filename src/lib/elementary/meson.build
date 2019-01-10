@@ -916,7 +916,7 @@ elm_options = configuration_data()
 
 config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())
 config_h.set_quoted('MODULES_PATH', join_paths(dir_lib, 'modules'))
-config_h.set_quoted('ELEMENTARY_BASE_DIR', '.elementary')
+config_h.set_quoted('ELEMENTARY_BASE_DIR', get_option('elementary-base-dir'))
 config_h.set_quoted('ICON_DIR', join_paths(dir_lib, 'icons'))
 
 if sys_windows == false
