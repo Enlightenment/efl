@@ -889,12 +889,13 @@ struct _Evas_Public_Data
    Evas_Device   *default_mouse;
    Evas_Device   *default_keyboard;
 
+   Eina_List     *rendering;
+
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
    Eina_Bool      is_frozen : 1;
-   Eina_Bool      rendering : 1;
    Eina_Bool      inside_post_render : 1;
    Eina_Bool      devices_modified : 1;
 };

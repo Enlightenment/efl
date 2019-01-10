@@ -3582,8 +3582,8 @@ evas_render_updates_internal(Evas *eo_e,
                {
                   eina_evlog("+render_output_async_flush", eo_e, 0.0, NULL);
                   efl_ref(eo_e);
-                  e->rendering = EINA_TRUE;
-                  _rendering_evases = eina_list_append(_rendering_evases, e);
+                  _rendering_evases = eina_list_prepend(_rendering_evases, e);
+                  e->rendering = _rendering_evases;
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
                   evas_thread_queue_flush((Evas_Thread_Command_Cb)evas_render_pipe_wakeup, e);
                   eina_evlog("-render_output_async_flush", eo_e, 0.0, NULL);
@@ -3856,8 +3856,8 @@ evas_render_wakeup(Evas *eo_e)
      }
 
    /* post rendering */
-   _rendering_evases = eina_list_remove(_rendering_evases, evas);
-   evas->rendering = EINA_FALSE;
+   _rendering_evases = eina_list_remove_list(_rendering_evases, evas->rendering);
+   evas->rendering = NULL;
 
    post.updated_area = ret_updates;
    _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_POST, &post);
