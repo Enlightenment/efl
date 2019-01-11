@@ -72,6 +72,7 @@
 # include "efl_ui_model_size.eo.h"
 # include "efl_ui_model_homogeneous.eo.h"
 # include "efl_ui_model_exact.eo.h"
+# include "efl_ui_model_average.eo.h"
 
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;

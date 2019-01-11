@@ -340,6 +340,7 @@ priv_eo_files = [
   'efl_ui_model_size.eo',
   'efl_ui_model_homogeneous.eo',
   'efl_ui_model_exact.eo',
+  'efl_ui_model_average.eo',
 ]
 
 priv_eo_file_target = []
@@ -911,6 +912,7 @@ elementary_src = [
   'efl_ui_model_size.c',
   'efl_ui_model_homogeneous.c',
   'efl_ui_model_exact.c',
+  'efl_ui_model_average.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

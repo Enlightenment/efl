@@ -179,6 +179,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_model_size.eo \
 	lib/elementary/efl_ui_model_homogeneous.eo \
 	lib/elementary/efl_ui_model_exact.eo \
+	lib/elementary/efl_ui_model_average.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -892,6 +893,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_model_size.c \
 	lib/elementary/efl_ui_model_homogeneous.c \
 	lib/elementary/efl_ui_model_exact.c \
+	lib/elementary/efl_ui_model_average.c \
 	$(NULL)
 
 
