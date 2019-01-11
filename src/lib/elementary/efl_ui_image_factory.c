@@ -34,7 +34,7 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
 }
 
 static Eina_Value
-_efl_ui_image_factory_connect(Eo *obj, void *data, const Eina_Value value)
+_efl_ui_image_factory_connect(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
 {
    Efl_Gfx_Entity *entity = NULL;
    Efl_Ui_Image_Factory_Data *pd = data;
