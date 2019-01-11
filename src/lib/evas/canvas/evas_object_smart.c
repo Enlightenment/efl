@@ -675,7 +675,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 
    eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
+   eo_obj = efl_add(EFL_CANVAS_GROUP_OBJECT_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
    evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }
@@ -1849,3 +1849,4 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), E
    EFL_OBJECT_OP_FUNC(efl_canvas_group_clipped_set, _efl_canvas_group_group_clipped_set)
 
 #include "canvas/efl_canvas_group.eo.c"
+#include "canvas/efl_canvas_group_object.eo.c"

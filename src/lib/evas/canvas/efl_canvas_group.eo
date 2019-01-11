@@ -1,4 +1,4 @@
-class Efl.Canvas.Group (Efl.Canvas.Object)
+abstract Efl.Canvas.Group (Efl.Canvas.Object)
 {
    [[A group object is a container for other canvas objects. Its children
      move along their parent and are often clipped with a common clipper.

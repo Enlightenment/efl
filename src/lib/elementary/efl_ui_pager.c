@@ -351,7 +351,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
+   pd->page_root = efl_add(EFL_CANVAS_GROUP_OBJECT_CLASS, evas_object_evas_get(obj));
    efl_content_set(efl_part(obj, "efl.page_root"), pd->page_root);
 
    efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, pd);
