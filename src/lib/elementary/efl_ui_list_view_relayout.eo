@@ -8,6 +8,11 @@ interface Efl.Ui.List_View_Relayout (Efl.Interface)
             children: Efl.Ui.List_View_Seg_Array;
          }
       }
+      content_created {
+         params {
+            item: ptr(Efl.Ui.List_View_Layout_Item);
+         }
+      }
       @property model {
          [[Model that is/will be ]]
          set {}

@@ -32,7 +32,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 void _efl_ui_list_view_custom_layout(Efl_Ui_List_View *);
 void _efl_ui_list_view_item_select_set(Efl_Ui_List_View_Layout_Item*, Eina_Bool);
-static void _layout(Efl_Ui_List_View_Data* pd);
 
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
@@ -166,7 +165,7 @@ _on_item_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *o EINA_UNUSED
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
    v = efl_model_property_get(item->children, SELECTED_PROP);
-   if (!eina_value_get(v, &select)) 
+   if (!eina_value_get(v, &select))
      {
         WRN("Could not get the select value");
         eina_value_free(v);
@@ -239,7 +238,11 @@ _efl_ui_list_view_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_List_View_Data *pd, Ei
 EOLIAN static void
 _efl_ui_list_view_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *pd)
 {
-   _layout(pd);
+   if (!pd->model)
+     return;
+
+   efl_ui_list_view_relayout_layout_do(pd->relayout, pd->obj, pd->seg_array_first, pd->seg_array);
+
 }
 
 EOLIAN static void
@@ -841,15 +844,6 @@ _efl_ui_list_view_relayout_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data 
    return pd->relayout;
 }
 
-static void
-_layout(Efl_Ui_List_View_Data *pd)
-{
-   if (!pd->model)
-     return;
-
-   efl_ui_list_view_relayout_layout_do(pd->relayout, pd->obj, pd->seg_array_first, pd->seg_array);
-}
-
 static Eina_Value
 _children_slice_then(void * data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
 {
@@ -941,8 +935,11 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    evt.layout = item->layout;
    evt.index = efl_ui_list_view_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, &evt);
-   efl_ui_focus_composition_dirty(obj);
 
+   tracking->item->layout_request = NULL;
+   efl_ui_list_view_relayout_content_created(tracking->pd->relayout, item);
+
+   efl_ui_focus_composition_dirty(obj);
    evas_object_show(item->layout);
 
    return value;

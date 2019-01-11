@@ -87,7 +87,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    );
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "signal/elm,state,%v", "odd_style");
+   efl_ui_model_connect(factory, "signal/efl,state,%v", "odd_style");
    efl_ui_model_connect(factory, "signal/efl,state,%{selected;unselected}", "selected");
    efl_ui_model_connect(factory, "efl.text", "name");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
