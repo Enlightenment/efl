@@ -14858,7 +14858,11 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
    if ((obj->cur->color.r != obj->prev->color.r) ||
        (obj->cur->color.g != obj->prev->color.g) ||
        (obj->cur->color.b != obj->prev->color.b) ||
-       (obj->cur->color.a != obj->prev->color.a))
+       (obj->cur->color.a != obj->prev->color.a) ||
+       (obj->cur->cache.clip.r != obj->prev->cache.clip.r) ||
+       (obj->cur->cache.clip.g != obj->prev->cache.clip.g) ||
+       (obj->cur->cache.clip.b != obj->prev->cache.clip.b) ||
+       (obj->cur->cache.clip.a != obj->prev->cache.clip.a))
      {
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
