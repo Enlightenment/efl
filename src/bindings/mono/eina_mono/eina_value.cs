@@ -792,6 +792,83 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         this.Ownership = Ownership.Managed;
     }
 
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(byte x) : this(ValueType.Byte)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(sbyte x) : this(ValueType.SByte)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(short x) : this(ValueType.Short)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(ushort x) : this(ValueType.UShort)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(int x) : this(ValueType.Int32)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(uint x) : this(ValueType.UInt32)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(long x) : this(ValueType.Long)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(ulong x) : this(ValueType.ULong)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(float x) : this(ValueType.Float)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(double x) : this(ValueType.Double)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(string x) : this(ValueType.String)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
     /// <summary>Implicit conversion from managed value to native struct representation.</summary>
     public static implicit operator ValueNative(Value v)
     {
