@@ -67,7 +67,7 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
 }
 
 static Eina_Value
-_efl_ui_layout_factory_connect(Eo *obj, void *data, const Eina_Value value)
+_efl_ui_layout_factory_connect(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
 {
    Efl_Ui_Layout_Factory_Data *pd = data;
    Efl_Gfx_Entity *layout;
