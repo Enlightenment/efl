@@ -6,7 +6,7 @@ function EflLoopConsumerPromiseCancel {
    }
 };
 
-class Efl.Loop_Consumer (Efl.Object)
+abstract Efl.Loop_Consumer (Efl.Object)
 {
    [[An Efl.Loop_Consumer is a class which requires one of the parents to provide
      an Efl.Loop interface when performing provider_find. It will enforce this by
