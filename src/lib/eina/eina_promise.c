@@ -635,6 +635,11 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
         // This function is called on a promise created with a scheduler, not a continue one.
         _eina_future_dispatch(p->scheduler, f, v);
      }
+   else
+     {
+        // Nobody is going to flush this value if we don't
+        eina_value_flush(&v);
+     }
    eina_mempool_free(_promise_mp, p);
 }
 
