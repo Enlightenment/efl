@@ -1612,6 +1612,7 @@ tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 
 tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/suite_helpers.c \
+	tests/elementary/suite_helpers.h \
 	tests/elementary/efl_ui_suite.c \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
@@ -1622,7 +1623,9 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \
-	tests/elementary/efl_ui_test_layout.c
+	tests/elementary/efl_ui_test_layout.c \
+	tests/elementary/efl_ui_suite.h \
+	tests/elementary/efl_ui_model.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \

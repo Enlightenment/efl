@@ -1,10 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#include <check.h>
-#define EFL_NOLEGACY_API_SUPPORT
-#include <Efl_Ui.h>
-#include "../efl_check.h"
+
 #include "efl_ui_suite.h"
 #include "suite_helpers.h"
 
@@ -19,6 +16,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_image", efl_ui_test_image},
   { "efl_ui_image_zoomable", efl_ui_test_image_zoomable},
   { "efl_ui_layout", efl_ui_test_layout},
+  { "Efl_Ui_Model", efl_ui_model },
   { NULL, NULL }
 };
 
