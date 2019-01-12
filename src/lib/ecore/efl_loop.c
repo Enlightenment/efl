@@ -173,6 +173,7 @@ efl_loop_exit_code_process(Eina_Value *value)
              out = stderr;
           }
         fprintf(out, "%s\n", msg);
+        free(msg);
      }
    return r;
 }
@@ -360,6 +361,8 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    free(pd->env.environ_copy);
    pd->env.environ_copy = NULL;
    eina_lock_release(&_environ_lock);
+
+   eina_value_flush(&pd->exit_code);
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
