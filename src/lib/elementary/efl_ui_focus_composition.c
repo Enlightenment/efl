@@ -92,10 +92,11 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
      }
 }
 static void
-_del(void *data, const Efl_Event *ev)
+_invalidate(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Focus_Composition_Data *pd = efl_data_scope_get(data, EFL_UI_FOCUS_COMPOSITION_MIXIN);
    pd->register_target = eina_list_remove(pd->register_target, ev->object);
+   pd->registered_targets = eina_list_remove(pd->registered_targets, ev->object);
 }
 
 EOLIAN static void
@@ -107,7 +108,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    pd->targets_ordered = eina_list_free(pd->targets_ordered);
    EINA_LIST_FREE(pd->register_target, elem)
      {
-        efl_event_callback_del(elem, EFL_EVENT_DEL, _del, obj);
+        efl_event_callback_del(elem, EFL_EVENT_INVALIDATE, _invalidate, obj);
      }
 
    pd->order = eina_list_free(pd->order);
@@ -125,7 +126,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
              if (efl_isa(elem, EFL_UI_FOCUS_OBJECT_MIXIN))
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
-                  efl_event_callback_add(o, EFL_EVENT_DEL, _del, obj);
+                  efl_event_callback_add(o, EFL_EVENT_INVALIDATE, _invalidate, obj);
                }
              else
                {
