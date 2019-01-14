@@ -225,7 +225,7 @@ struct Efl.Access.Event.Children_Changed.Data
    child: Efl.Object; [[Child object]]
 }
 
-struct Efl.Access.Attribute
+struct @free(efl_access_attribute_free) Efl.Access.Attribute
 {
    [[Accessibility Attribute]]
    key: string; [[Attribute key]]
