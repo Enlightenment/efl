@@ -165,7 +165,7 @@ void _dummy_test_object_int_ptr_out(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data 
     *y = &pd->stored_int;
 }
 
-const char *_dummy_test_object_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char *str)
+char *_dummy_test_object_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char *str)
 {
   const char *ret = malloc(sizeof(char)*(strlen(str) + 1));
   return strcpy((char*)ret, str);
@@ -196,7 +196,7 @@ const char *_dummy_test_object_return_string(EINA_UNUSED Eo *obj, EINA_UNUSED Du
   return "string";
 }
 
-const char *_dummy_test_object_return_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_return_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   static const char* reference = "own_string";
   const char *ret = malloc(sizeof(char)*(strlen(reference) + 1));
@@ -208,7 +208,7 @@ void _dummy_test_object_out_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_O
   *str = "out_string";
 }
 
-void _dummy_test_object_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char**str)
+void _dummy_test_object_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, char**str)
 {
   static const char* reference = "out_own_string";
   *str = malloc(sizeof(char)*(strlen(reference) + 1));
@@ -230,7 +230,7 @@ const char *_dummy_test_object_call_return_string(Eo *obj, EINA_UNUSED Dummy_Tes
   return dummy_test_object_return_string(obj);
 }
 
-const char *_dummy_test_object_call_return_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_call_return_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return dummy_test_object_return_own_string(obj);
 }
@@ -242,9 +242,9 @@ const char *_dummy_test_object_call_out_string(Eo *obj, EINA_UNUSED Dummy_Test_O
   return ret;
 }
 
-const char *_dummy_test_object_call_out_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_call_out_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-  const char *ret = NULL;
+  char *ret = NULL;
   dummy_test_object_out_own_string(obj, &ret);
   return ret;
 }
