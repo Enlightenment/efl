@@ -1,4 +1,4 @@
-struct Efl.Ui.List_View_Layout_Item {
+struct @free(free) Efl.Ui.List_View_Layout_Item {
    layout: Efl.Ui.Layout;
    layout_request: future<Efl.Ui.Layout>;
    children: Efl.Model;
