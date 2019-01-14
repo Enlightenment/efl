@@ -562,6 +562,14 @@ elm_animation_view_is_playing_back(const Elm_Animation_View *obj)
    return pd->play_back;
 }
 
+EAPI int
+elm_animation_view_frame_count_get(const Elm_Animation_View *obj)
+{
+   ELM_ANIMATION_VIEW_DATA_GET(obj, pd);
+   if (!pd) return 0;
+   return evas_object_vg_animated_frame_count_get(pd->vg);
+}
+
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_ANIMATION_VIEW_EXTRA_OPS \

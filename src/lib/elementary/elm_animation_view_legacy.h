@@ -68,4 +68,15 @@ EAPI Elm_Animation_View_State elm_animation_view_state_get(const Elm_Animation_V
  */
 EAPI Eina_Bool         elm_animation_view_is_playing_back(const Elm_Animation_View *obj);
 
+/**
+ * @brief Get the total number of frames of the animation view, if it's animated.
+ *
+ * @return The number of frames. 0, if it's not animated.
+ *
+ * @ingroup Elm_Animation_View
+ *
+ * @since 1.22
+ */
+EAPI int elm_animation_view_frame_count_get(const Elm_Animation_View *obj);
+
 #include "elm_animation_view.eo.legacy.h"
