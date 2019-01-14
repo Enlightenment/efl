@@ -182,6 +182,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
 
+EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
+
 /**
  * @brief Get a proxy object referring to a part of an object.
  *

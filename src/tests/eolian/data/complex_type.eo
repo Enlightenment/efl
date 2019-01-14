@@ -1,4 +1,4 @@
-struct @extern Eo;
+struct @free(efl_del) @extern Eo;
 
 class Complex_Type {
    methods {

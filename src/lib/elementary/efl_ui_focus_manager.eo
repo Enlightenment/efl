@@ -1,15 +1,15 @@
 import efl_ui;
 import eina_types;
 
-struct Efl.Ui.Focus.Relations {
+struct @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focussable objects.
 
       @since 1.20
     ]]
-    right : list<Efl.Ui.Focus.Object>; [[List of objects on the right side]]
-    left : list<Efl.Ui.Focus.Object>; [[[List of objects on the left side]]
-    top : list<Efl.Ui.Focus.Object>; [[[List of objects above]]
-    down : list<Efl.Ui.Focus.Object>; [[[List of objects below]]
+    right : list<Efl.Ui.Focus.Object> @owned; [[List of objects on the right side]]
+    left : list<Efl.Ui.Focus.Object> @owned; [[[List of objects on the left side]]
+    top : list<Efl.Ui.Focus.Object> @owned; [[[List of objects above]]
+    down : list<Efl.Ui.Focus.Object> @owned; [[[List of objects below]]
     next : Efl.Ui.Focus.Object; [[[Next object]]
     prev : Efl.Ui.Focus.Object; [[Previous object]]
     parent : Efl.Ui.Focus.Object; [[Parent object]]
