@@ -194,7 +194,9 @@ inline std::string managed_method_name(attributes::function_def const& f)
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
 {
-   return join_namespaces(alias.namespaces, '.') + alias.eolian_name;
+
+   std::string eolian_name = utils::remove_all(alias.eolian_name, '_');
+   return join_namespaces(alias.namespaces, '.') + eolian_name;
 }
 
 inline std::string managed_async_method_name(attributes::function_def const& f)
