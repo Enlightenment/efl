@@ -199,6 +199,20 @@ static const char *eo_value_free = "eina_value_flush";
 static const char *eo_value_ptr_free = "eina_value_free";
 
 static Eina_Bool
+_validate_ownable(Eolian_Type *tp)
+{
+   char buf[256];
+   if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
+     return EINA_TRUE;
+   if (tp->owned && !tp->freefunc)
+     {
+        snprintf(buf, sizeof(buf), "type '%s' is not ownable", tp->base.name);
+        return _obj_error(&tp->base, buf);
+     }
+   return _validate(&tp->base);
+}
+
+static Eina_Bool
 _validate_type(Validate_State *vals, Eolian_Type *tp)
 {
    const Eolian_Unit *src = tp->base.unit;
@@ -225,7 +239,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
      {
       case EOLIAN_TYPE_VOID:
       case EOLIAN_TYPE_UNDEFINED:
-        return _validate(&tp->base);
+        return _validate_ownable(tp);
       case EOLIAN_TYPE_REGULAR:
         {
            if (tp->base_type)
@@ -254,7 +268,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                        }
                      itp = itp->next_type;
                   }
-                return _validate(&tp->base);
+                return _validate_ownable(tp);
              }
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->base.name);
@@ -280,7 +294,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                      default:
                        break;
                     }
-                return _validate(&tp->base);
+                return _validate_ownable(tp);
              }
            /* user defined */
            tp->tdecl = database_type_decl_find(src, tp);
@@ -293,7 +307,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              return EINA_FALSE;
            if (tp->tdecl->freefunc && !tp->freefunc)
              tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
-           return _validate(&tp->base);
+           return _validate_ownable(tp);
         }
       case EOLIAN_TYPE_CLASS:
         {
@@ -306,12 +320,12 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!tp->freefunc)
              tp->freefunc = eina_stringshare_add(eo_obj_free);
-           return _validate(&tp->base);
+           return _validate_ownable(tp);
         }
       default:
         return EINA_FALSE;
      }
-   return _validate(&tp->base);
+   return _validate_ownable(tp);
 }
 
 static Eina_Bool
