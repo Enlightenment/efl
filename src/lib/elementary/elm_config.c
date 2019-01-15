@@ -1459,9 +1459,14 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   if(!_use_build_config)
+   for (i = 0; i < 2 && !_use_build_config; i++)
      {
-        _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+        // user profile
+        if (i == 0)
+          _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
+        // system profile
+        else if (i == 1)
+          _elm_data_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
         ef = eet_open(buf, EET_FILE_MODE_READ);
         if (ef)
           {
