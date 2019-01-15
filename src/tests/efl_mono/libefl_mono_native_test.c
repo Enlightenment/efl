@@ -39,6 +39,8 @@
 #include "dummy_child.eo.h"
 #include "dummy_test_iface.eo.h"
 #include "dummy_another_iface.eo.h"
+#include "dummy_inherit_iface.eo.h"
+#include "dummy_inherit_helper.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 
@@ -71,6 +73,13 @@ typedef struct Dummy_Child_Data
 {
 } Dummy_Child_Data;
 
+typedef struct Dummy_Inherit_Helper_Data
+{
+} Dummy_Inherit_Helper_Data;
+
+typedef struct Dummy_Inherit_Iface_Data
+{
+} Dummy_Inherit_Iface_Data;
 
 static
 void *_new_int(int v)
@@ -3928,9 +3937,24 @@ _dummy_child_class_destructor(Efl_Class *klass)
     (void)klass;
 }
 
+// Inherit
+int _dummy_inherit_helper_receive_dummy_and_call_int_out(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+{
+  int v = 8;
+  dummy_test_object_int_out (x, 5, &v);
+  return v;
+}
+
+const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+{
+  return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
+}
+
 #include "dummy_test_object.eo.c"
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
 #include "dummy_test_iface.eo.c"
 #include "dummy_another_iface.eo.c"
+#include "dummy_inherit_helper.eo.c"
+#include "dummy_inherit_iface.eo.c"
 
