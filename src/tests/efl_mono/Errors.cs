@@ -8,29 +8,14 @@ class TestEinaError
     public static void basic_test()
     {
         Eina.Error.Clear();
-        Test.AssertNotRaises<Efl.EflException>(Eina.Error.RaiseIfOccurred);
         Eina.Error.Set(Eina.Error.ENOENT);
-        Test.AssertRaises<Efl.EflException>(Eina.Error.RaiseIfOccurred);
+        Eina.Error err = Eina.Error.Get();
+        Test.AssertEquals(err, Eina.Error.ENOENT);
     }
 }
 
 class TestEolianError
 {
-
-    public static void global_eina_error()
-    {
-        var obj = new Dummy.TestObject();
-        Test.AssertRaises<Efl.EflException>(() => obj.RaisesEinaError());
-    }
-
-    class Child : Dummy.TestObject {
-    }
-
-    public static void global_eina_error_inherited()
-    {
-        var obj = new Child();
-        Test.AssertRaises<Efl.EflException>(() => obj.RaisesEinaError());
-    }
 
     class CustomException : Exception {
         public CustomException(string msg): base(msg) {}

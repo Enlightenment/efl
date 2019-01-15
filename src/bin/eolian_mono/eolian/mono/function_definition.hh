@@ -93,7 +93,7 @@ struct native_function_definition_generator
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
         << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
         << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"

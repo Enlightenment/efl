@@ -264,7 +264,7 @@ struct event_definition_generator
             << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
             << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
             << scope_tab << scope_tab << scope_tab << "Eina.Log.Error(e.ToString());\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
             << scope_tab << scope_tab << "}\n"
             << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
