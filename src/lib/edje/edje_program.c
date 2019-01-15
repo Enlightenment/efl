@@ -4,7 +4,6 @@ static void _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Messa
 static void _edje_param_copy(Edje *ed, Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
 static void _edje_param_set(Edje *ed, Edje_Real_Part *part, const char *param, const char *value);
 
-Eina_List *_edje_animators = NULL;
 static double _edje_transition_duration_scale = 0;
 
 static Eina_Bool

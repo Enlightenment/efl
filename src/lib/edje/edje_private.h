@@ -2433,7 +2433,6 @@ EAPI void _edje_edd_shutdown(void);
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
 EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 
-extern Eina_List       *_edje_animators;
 extern Eina_Inlist     *_edje_edjes;
 
 extern char            *_edje_fontset_append;
