@@ -63,8 +63,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    eina_iterator_free(borders);
 
    //elements which are not in the current border elements
-   tmp = eina_list_clone(pd->current_border);
-   tmp = _set_a_without_b(tmp , selection);
+   tmp = _set_a_without_b(pd->current_border, selection);
 
    EINA_LIST_FREE(tmp, node)
      {
@@ -73,8 +72,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
      }
 
    //set of the elements which are new without those which are currently registered
-   tmp = eina_list_clone(selection);
-   tmp = _set_a_without_b(tmp, pd->current_border);
+   tmp = _set_a_without_b(selection, pd->current_border);
 
    EINA_LIST_FREE(tmp, node)
      {
