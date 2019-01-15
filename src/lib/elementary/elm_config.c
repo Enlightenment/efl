@@ -1437,7 +1437,7 @@ _profile_fetch_from_conf(void)
 {
    char buf[PATH_MAX], *p, *s;
    Eet_File *ef = NULL;
-   int len = 0;
+   int len = 0, i;
 
    // if env var - use profile without question
    s = getenv("ELM_PROFILE");
