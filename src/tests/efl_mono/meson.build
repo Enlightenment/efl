@@ -1,4 +1,4 @@
-eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_another_iface.eo']
+eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_another_iface.eo', 'dummy_inherit_helper.eo', 'dummy_inherit_iface.eo']
 
 eo_file_targets = []
 
@@ -57,7 +57,8 @@ efl_mono_src = [
      'Strings.cs',
      'Structs.cs',
      'Value.cs',
-     'ValueEolian.cs'
+     'ValueEolian.cs',
+     'Inheritance.cs',
 ]
 
 efl_mono_suite = executable('efl-mono-suite',
