@@ -52,9 +52,9 @@ emile_compress(const Eina_Binbuf *data,
    switch (t)
      {
       case EMILE_LZ4:
-        length = LZ4_compress((const char *)eina_binbuf_string_get(data),
-                              compact,
-                              eina_binbuf_length_get(data));
+        length = LZ4_compress_default
+          ((const char *)eina_binbuf_string_get(data), compact,
+           eina_binbuf_length_get(data), length);
         /* It is going to be smaller and should never fail, if it does you are in deep poo. */
         temp = realloc(compact, length);
         if (temp) compact = temp;
@@ -64,9 +64,9 @@ emile_compress(const Eina_Binbuf *data,
         break;
 
       case EMILE_LZ4HC:
-        length = LZ4_compressHC((const char *)eina_binbuf_string_get(data),
-                                compact,
-                                eina_binbuf_length_get(data));
+        length = LZ4_compress_HC
+          ((const char *)eina_binbuf_string_get(data), compact,
+           eina_binbuf_length_get(data), length, 16);
         temp = realloc(compact, length);
         if (temp) compact = temp;
 
