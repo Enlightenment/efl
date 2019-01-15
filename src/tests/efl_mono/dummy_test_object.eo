@@ -266,6 +266,13 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          return: bool;
       }
 
+      eina_rw_slice_inout {
+         params {
+            @inout slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
       /*
       eina_slice_return {
          return: Eina.Slice;
