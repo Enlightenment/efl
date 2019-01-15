@@ -331,6 +331,14 @@ Eina_Bool _dummy_test_object_eina_rw_slice_out(EINA_UNUSED Eo *obj, EINA_UNUSED 
   return EINA_TRUE;
 }
 
+Eina_Bool _dummy_test_object_eina_rw_slice_inout(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Rw_Slice *slice)
+{
+  if (!slice) return EINA_FALSE;
+  for (size_t i = 0; i < slice->len; i++)
+    memset(slice->mem + i, (char)i, 1);
+  return EINA_TRUE;
+}
+
 Eina_Slice _dummy_test_object_eina_slice_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   Eina_Slice slc = EINA_SLICE_ARRAY(base_seq);

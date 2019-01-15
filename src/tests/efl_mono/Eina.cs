@@ -380,6 +380,20 @@ class TestEinaSlice
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
     }
 
+    public static void test_eina_rw_slice_inout()
+    {
+        var t = new Dummy.TestObject();
+        var rw_seq = new byte[4]{0xf, 0xf, 0xf, 0xf};
+        var expected_seq = new byte[4]{0x1, 0x2, 0x3, 0x4};
+        var pinnedRWData = GCHandle.Alloc(rw_seq, GCHandleType.Pinned);
+        IntPtr ptr = pinnedRWData.AddrOfPinnedObject();
+        var slc = new Eina.RwSlice(ptr, (UIntPtr)4);
+        Test.Assert(t.EinaRwSliceInout(ref slc));
+        Test.Assert(slc.Mem != IntPtr.Zero);
+        Test.Assert(slc.Length == rw_seq.Length);
+        Test.Assert(slc.GetBytes().SequenceEqual(expected_seq));
+    }
+
     /*
     public static void test_eina_slice_return()
     {
