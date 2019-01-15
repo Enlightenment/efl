@@ -76,7 +76,6 @@ _efl_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
    return _ecore_main_loop_iterate_may_block(obj, pd, may_block);
 }
 
-// FIXME: This should return an Eina_Value, but that doesn't work at the moment
 EOLIAN static Eina_Value *
 _efl_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {

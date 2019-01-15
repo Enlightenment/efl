@@ -191,6 +191,7 @@ struct _Eolian_Class
    Eina_List *constructors; /* Eolian_Constructor */
    Eina_List *events; /* Eolian_Event */
    Eina_List *parts; /* Eolian_Part */
+   Eina_List *requires; /* a list of required other classes only used internally */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
 };

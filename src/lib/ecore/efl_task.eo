@@ -15,7 +15,7 @@ enum Efl.Task_Flags {
    no_exit_code_error = 4,
 }
 
-class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
+abstract Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
 {
    [[ ]]
    methods {
@@ -138,11 +138,11 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
             flags: Efl.Task_Flags; [[ ]]
          }
       }
-      run {
+      run @pure_virtual {
          [[ Actually run the task ]]
          return: future<void> @owned; [[ A future triggered when task exits and is passed int exit code ]]
       }
-      end {
+      end @pure_virtual {
          [[ Request the task end (may send a signal or interrupt
             signal resulting in a terminate event being tiggered in the
             target task loop) ]]
@@ -151,7 +151,6 @@ class Efl.Task (Efl.Object, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer)
    events {
    }
    implements {
-      Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.parent { set; }
    }

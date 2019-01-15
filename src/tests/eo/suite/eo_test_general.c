@@ -1788,6 +1788,14 @@ EFL_START_TEST(efl_object_auto_unref_test)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_object_size)
+{
+   // This test is checking that we are not increasing the size of our object over time
+   // Update this number only if you modified the class size on purpose
+   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 148);
+}
+EFL_END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1815,4 +1823,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_cast_test);
    tcase_add_test(tc, efl_object_destruct_test);
    tcase_add_test(tc, efl_object_auto_unref_test);
+   tcase_add_test(tc, efl_object_size);
 }

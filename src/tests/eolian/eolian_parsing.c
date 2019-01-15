@@ -1552,6 +1552,66 @@ EFL_START_TEST(eolian_parts)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_mixins_require)
+{
+   const Eolian_Unit *unit;
+   const Eolian_Class *cl;
+   const Eolian_Class *base;
+
+   Eolian_State *eos = eolian_state_new();
+
+   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
+
+   fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/mixins_require.eo")));
+
+   fail_if (!(cl = eolian_state_class_by_name_get(eos, "Mixins.Require")));
+   fail_if (!(base = eolian_state_class_by_name_get(eos, "Base")));
+
+   ck_assert_ptr_eq(eolian_class_parent_get(cl), NULL);
+
+   //Check that implements is empty
+   {
+      Eolian_Class *extc;
+      Eina_Iterator *ext = eolian_class_extensions_get (cl);
+
+      EINA_ITERATOR_FOREACH(ext, extc)
+        {
+           ck_abort_msg("Iterator should be empty");
+        }
+      eina_iterator_free(ext);
+   }
+   //check that implements contains this one class
+   {
+      Eolian_Implement *impl;
+      Eina_Iterator *i = eolian_class_extensions_get (cl);
+
+      EINA_ITERATOR_FOREACH(i, impl)
+        {
+           ck_assert_ptr_eq(eolian_implement_class_get(impl), base);
+        }
+      eina_iterator_free(i);
+   }
+   eolian_state_free(eos);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eolian_class_requires_classes)
+{
+   const Eolian_Unit *unit;
+   const Eolian_Class *cl;
+
+   Eolian_State *eos = eolian_state_new();
+
+   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
+
+   fail_if(!(unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/class_requires.eo")));
+
+   fail_if (!(cl = eolian_state_class_by_name_get(eos, "Class.Requires")));
+
+   eolian_state_free(eos);
+}
+EFL_END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1575,4 +1635,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_function_types);
    tcase_add_test(tc, eolian_function_as_arguments);
    tcase_add_test(tc, eolian_parts);
+   tcase_add_test(tc, eolian_mixins_require);
+   tcase_add_test(tc, eolian_class_requires_classes);
 }

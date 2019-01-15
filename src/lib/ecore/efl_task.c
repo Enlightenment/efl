@@ -380,26 +380,6 @@ _efl_task_flags_get(const Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
    return pd->flags;
 }
 
-EOLIAN static Eina_Future *
-_efl_task_run(Eo *obj EINA_UNUSED, Efl_Task_Data *pd EINA_UNUSED)
-{
-   // NOP
-   return NULL;
-}
-
-EOLIAN static void
-_efl_task_end(Eo *obj EINA_UNUSED, Efl_Task_Data *pd EINA_UNUSED)
-{
-   // NOP
-}
-
-EOLIAN static Efl_Object *
-_efl_task_efl_object_constructor(Eo *obj, Efl_Task_Data *pd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   return obj;
-}
-
 EOLIAN static void
 _efl_task_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
 {

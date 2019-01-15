@@ -25,10 +25,19 @@ struct unpack_event_args_visitor
       std::string const& arg = "evt.Info";
       std::string arg_type = name_helpers::type_full_managed_name(regular);
 
-      // Structs are usually passed by pointer to events, like having a ptr<> modifier
-      if (type.is_ptr || regular.is_struct())
-        return as_generator("(" + arg_type + ")Marshal.PtrToStructure(" + arg + ", typeof(" + arg_type + "))")
+      if (regular.is_struct())
+        {
+           // Structs are usually passed by pointer to events, like having a ptr<> modifier
+           // Uses implicit conversion from IntPtr
+           return as_generator(
+                " evt.Info;"
+              ).generate(sink, attributes::unused, *context);
+        }
+      else if (type.is_ptr)
+        {
+           return as_generator("(" + arg_type + ")Marshal.PtrToStructure(" + arg + ", typeof(" + arg_type + "))")
                  .generate(sink, attributes::unused, *context);
+        }
 
       using attributes::regular_type_def;
       struct match
@@ -84,21 +93,15 @@ struct event_argument_wrapper_generator
         return true;
 
       std::string evt_name = name_helpers::managed_event_name(evt.name);
-      std::string arg_type;
-      if (!as_generator(type).generate(std::back_inserter(arg_type), *etype, efl::eolian::grammar::context_null()))
-        {
-           EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Failed to get argument type for event " << evt.name;
-           return false;
-        }
 
       return as_generator("///<summary>Event argument wrapper for event <see cref=\""
                           << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
                           << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.</summary>\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
                           << scope_tab << "///<summary>Actual event payload.</summary>\n"
-                          << scope_tab << "public " << arg_type << " arg { get; set; }\n"
+                          << scope_tab << "public " << type << " arg { get; set; }\n"
                           << "}\n"
-                 ).generate(sink, attributes::unused, context);
+                 ).generate(sink, *etype, context);
    }
 } const event_argument_wrapper {};
 

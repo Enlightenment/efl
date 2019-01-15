@@ -134,19 +134,6 @@ public struct ActionData {
     public IntPtr func;
 }
 
-public struct StateSet {
-    private ulong val;
-
-    public static implicit operator StateSet(ulong x)
-    {
-        return new StateSet{val=x};
-    }
-    public static implicit operator ulong(StateSet x)
-    {
-        return x.val;
-    }
-}
-
 } // namespace Access
 
 } // namespace Efl

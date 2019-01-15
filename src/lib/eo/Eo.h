@@ -918,12 +918,21 @@ EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 
 /**
  * @brief Gets the name of the passed class.
- * @param klass the class to work on.
+ * @param[in] klass The class (or object) to work on.
  * @return The class' name.
  *
  * @see efl_class_get()
  */
 EAPI const char *efl_class_name_get(const Efl_Class *klass);
+
+/**
+ * @brief Gets the amount of memory this class object would use.
+ * @param[in] klass The class (or object) to work on.
+ * @return The amount of memory in Bytes.
+ *
+ * @see efl_class_get()
+ */
+EAPI size_t efl_class_memory_size_get(const Efl_Class *klass);
 
 /**
  * @brief Gets a debug name for this object
@@ -2008,7 +2017,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 /**
  * @def efl_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
- * @param[in] desc The description of the event to listen to.
+ * @param[in] desc An #Efl_Event_Description of the event to listen to.
  * @param[in] cb the callback to call.
  * @param[in] data additional data to pass to the callback.
  *
@@ -2024,6 +2033,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @def efl_event_callback_array_add(obj, desc, cb, data)
  * Add an array of callbacks for an event.
  *
+ * @param[in] obj The object.
  * @param[in] array an #Efl_Callback_Array_Item of events to listen to.
  * @param[in] data additional data to pass to the callback.
  *
@@ -2044,7 +2054,7 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
  * @brief Add an event callback forwarder for an event and an object.
  *
  * @param[in] obj The object.
- * @param[in] desc The description of the event to listen to
+ * @param[in] desc An #Efl_Event_Description of the event to forward to.
  * @param[in] new_obj The object to emit events from
  *
  * @ingroup Efl_Object

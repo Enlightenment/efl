@@ -106,18 +106,20 @@ struct klass_name
    std::string eolian_name;
    qualifier_def base_qualifier;
    class_type type;
+   std::string klass_get_name;
 
    klass_name() {
    }
 
    klass_name(std::vector<std::string> namespaces
               , std::string eolian_name, qualifier_def base_qualifier
-              , class_type type)
+              , class_type type, std::string klass_get_name)
      : namespaces(namespaces), eolian_name(eolian_name), base_qualifier(base_qualifier)
-     , type(type) {}
+     , type(type), klass_get_name(klass_get_name) {}
    klass_name(Eolian_Class const* klass, qualifier_def base_qualifier)
      : eolian_name( ::eolian_class_short_name_get(klass))
               , base_qualifier(base_qualifier)
+              , klass_get_name( ::eolian_class_c_get_function_name_get(klass))
    {
      for(efl::eina::iterator<const char> namespace_iterator ( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -1003,6 +1005,7 @@ struct klass_def
   std::set<klass_name, compare_klass_name_by_name> immediate_inherits;
   eina::optional<klass_name> parent;
   std::set<klass_name, compare_klass_name_by_name> extensions;
+  std::string klass_get_name;
 
   std::set<part_def> parts;
   Eolian_Unit const* unit;
@@ -1018,7 +1021,8 @@ struct klass_def
       && lhs.inherits == rhs.inherits
       && lhs.type == rhs.type
       && lhs.events == rhs.events
-      && lhs.parts == rhs.parts;
+      && lhs.parts == rhs.parts
+      && lhs.klass_get_name == rhs.klass_get_name;
   }
   friend inline bool operator!=(klass_def const& lhs, klass_def const& rhs)
   {
@@ -1039,24 +1043,29 @@ struct klass_def
             , std::vector<property_def> properties
             , std::set<klass_name, compare_klass_name_by_name> inherits
             , class_type type
-            , std::set<klass_name, compare_klass_name_by_name> immediate_inherits)
+            , std::set<klass_name, compare_klass_name_by_name> immediate_inherits
+            , std::string klass_get_name)
     : eolian_name(eolian_name), cxx_name(cxx_name), filename(filename)
     , documentation(documentation)
     , namespaces(namespaces)
     , functions(functions), properties(properties), inherits(inherits), type(type)
     , immediate_inherits(immediate_inherits)
+    , klass_get_name(klass_get_name)
   {}
   klass_def(std::string _eolian_name, std::string _cxx_name
             , std::vector<std::string> _namespaces
             , std::vector<function_def> _functions
             , std::vector<property_def> _properties
             , std::set<klass_name, compare_klass_name_by_name> _inherits
-            , class_type _type, Eolian_Unit const* unit)
+            , class_type _type, Eolian_Unit const* unit
+            , std::string klass_get_name)
     : eolian_name(_eolian_name), cxx_name(_cxx_name)
     , namespaces(_namespaces)
     , functions(_functions), properties(_properties), inherits(_inherits), type(_type), unit(unit)
+    , klass_get_name(klass_get_name)
   {}
   klass_def(Eolian_Class const* klass, Eolian_Unit const* unit) : unit(unit)
+    , klass_get_name( ::eolian_class_c_get_function_name_get(klass))
   {
      for(efl::eina::iterator<const char> namespace_iterator( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -1349,7 +1358,7 @@ struct struct_def
 
 inline klass_name get_klass_name(klass_def const& klass)
 {
-  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type};
+  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type, klass.klass_get_name};
 }
 
 inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit const* unit)

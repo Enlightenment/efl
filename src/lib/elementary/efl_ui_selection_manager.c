@@ -37,7 +37,7 @@ static Ecore_X_Window _x11_xwin_get(const Evas_Object *obj);
 #endif
 
 #ifdef HAVE_ELEMENTARY_WL2
-static Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
+Ecore_Wl2_Window *_wl_window_get(const Evas_Object *obj);
 static Ecore_Wl2_Input *_wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id);
 #endif
 
@@ -738,14 +738,16 @@ _x11_data_preparer_uri(Sel_Manager_Seat_Selection *seat_sel, Ecore_X_Event_Selec
         return EINA_FALSE;
      }
    free(seat_sel->saved_types->imgfile);
+#if 0 // this seems to be broken - we should be handling uri lists as text
    if (seat_sel->saved_types->textreq)
      {
         seat_sel->saved_types->textreq = 0;
         seat_sel->saved_types->imgfile = stripstr;
      }
    else
+#endif
      {
-        ddata->format = EFL_UI_SELECTION_FORMAT_IMAGE;
+        ddata->format = EFL_UI_SELECTION_FORMAT_TEXT;
         ddata->content.mem = stripstr;
         ddata->content.len = strlen(stripstr);
         seat_sel->saved_types->imgfile = NULL;
@@ -944,7 +946,7 @@ _efl_sel_manager_x11_selection_notify(void *udata, int type EINA_UNUSED, void *e
           {
              if (pd->atom_list[i].x_data_preparer)
                {
-                  Efl_Ui_Selection_Data ddata;
+                  Efl_Ui_Selection_Data ddata = { 0 };
                   Tmp_Info *tmp_info = NULL;
                   Eina_Bool success;
                   sel_debug("Found something: %s", pd->atom_list[i].name);
@@ -1960,11 +1962,9 @@ _x11_dnd_drop(void *data, int etype EINA_UNUSED, void *ev)
    Efl_Ui_Selection_Manager_Data *pd = seat_sel->pd;
    Ecore_X_Event_Xdnd_Drop *drop;
    Sel_Manager_Dropable *dropable = NULL;
-   Efl_Ui_Selection_Data ddata;
    Evas_Coord x = 0, y = 0;
    Efl_Ui_Selection_Action act = EFL_UI_SELECTION_ACTION_UNKNOWN;
    Eina_List *l;
-   Eina_Inlist *itr;
    Sel_Manager_Selection *sel;
 
    drop = ev;
@@ -2000,6 +2000,10 @@ found:
 
    dropable->last.in = EINA_FALSE;
    sel_debug("Last type: %s - Last format: %X\n", dropable->last.type, dropable->last.format);
+#if 0 // this seems to be broken and causes dnd to stop working e.g. to/from
+   // rage even though iut used to work fine.
+   Efl_Ui_Selection_Data ddata;
+   Eina_Inlist *itr;
    if ((!strcmp(dropable->last.type, pd->text_uri)))
      {
         sel_debug("We found a URI... (%scached) %s\n",
@@ -2061,7 +2065,7 @@ found:
              return EINA_TRUE;
           }
      }
-
+#endif
    sel = seat_sel->sel_list + EFL_UI_SELECTION_TYPE_DND;
    sel_debug("doing a request then: %s\n", dropable->last.type);
    sel->xwin = drop->win;
@@ -2069,6 +2073,7 @@ found:
    sel->request_format = dropable->last.format;
    sel->active = EINA_TRUE;
    sel->action = act;
+   sel->asked++;
    ecore_x_selection_xdnd_request(drop->win, dropable->last.type);
 
    return EINA_TRUE;
@@ -2806,7 +2811,7 @@ _wl_seat_get(Ecore_Wl2_Window *win, Evas_Object *obj, unsigned int seat_id)
      evas_device_seat_id_get(seat));
 }
 
-static Ecore_Wl2_Window *
+Ecore_Wl2_Window *
 _wl_window_get(const Evas_Object *obj)
 {
    Evas_Object *top;
@@ -5269,7 +5274,7 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
 #endif
 
    pd->atom_list[SELECTION_ATOM_TEXT_URILIST].name = "text/uri-list";
-   pd->atom_list[SELECTION_ATOM_TEXT_URILIST].format = EFL_UI_SELECTION_FORMAT_IMAGE;
+   pd->atom_list[SELECTION_ATOM_TEXT_URILIST].format = EFL_UI_SELECTION_FORMAT_TEXT;
 #ifdef HAVE_ELEMENTARY_X
    pd->atom_list[SELECTION_ATOM_TEXT_URILIST].x_converter = _x11_general_converter;
    pd->atom_list[SELECTION_ATOM_TEXT_URILIST].x_data_preparer = _x11_data_preparer_uri;

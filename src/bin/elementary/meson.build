@@ -157,7 +157,8 @@ elementary_test_src = [
 ]
 
 if sys_windows == false
-  link_args = '-rdynamic'
+  link_args = ['-rdynamic', '-fPIC', '-pie']
+  package_c_args =  package_c_args + ['-fPIC']
 else
   link_args = []
 endif

@@ -97,7 +97,7 @@ option('build-examples',
 option('build-tests',
   type : 'boolean',
   value : true,
-  description : 'build examples'
+  description : 'build tests'
 )
 
 option('crypto',
@@ -310,22 +310,11 @@ option('nls',
   description: 'enable localization: (default=true)'
 )
 
-option('luajit',
-  type: 'boolean',
-  value: true,
-  description: 'Flag for handling lua bindings'
-)
-
-option('cxx',
-  type: 'boolean',
-  value: true,
-  description: 'Flag for handling cxx bindings'
-)
-
-option('mono',
-  type: 'boolean',
-  value: false,
-  description: 'Flag for handling c# bindings'
+option('bindings',
+  type : 'array',
+  choices : ['luajit', 'cxx', 'mono'],
+  value : ['luajit', 'cxx'],
+  description : 'Add values here to enable the bindings',
 )
 
 option('native-arch-optimization',
@@ -345,4 +334,16 @@ option('windows-version',
   choices : ['vista', 'win7', 'win8', 'win81', 'win10'],
   value : 'win7',
   description : 'When host_machine is windows, compile the efl with the specified version of Windows'
+)
+
+option('dictionaries-hyphen-dir',
+  type : 'string',
+  value : '/usr/share/hyphen/',
+  description : 'Put the path to hyphen dictionaries directory'
+)
+
+option('elementary-base-dir',
+  type : 'string',
+  value : '.elementary',
+  description : 'Put the name of a base directory for elementary data'
 )

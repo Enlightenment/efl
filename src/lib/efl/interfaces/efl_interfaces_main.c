@@ -81,6 +81,8 @@
 #include "interfaces/efl_ui_multi_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
 
+#include "interfaces/efl_cached_item.eo.c"
+
 static void
 _noref_death(void *data EINA_UNUSED, const Efl_Event *event)
 {

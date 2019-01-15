@@ -371,21 +371,19 @@ _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbu
 }
 
 static void
-_efl_net_control_technology_scan_promise_del(void *data, Efl_Loop_Consumer *consumer, const Eina_Promise *dead_ptr)
+_efl_net_control_technology_scan_promise_del(void *data EINA_UNUSED, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_ptr)
 {
-   Eldbus_Pending *p = consumer;
+   Eldbus_Pending *p;
    Efl_Net_Control_Technology_Data *pd;
    Eo *o;
 
-   if (!p) return ;
+   p = eina_promise_data_get(dead_ptr);
+   if (!p) return; /* already gone, nothing to do */
 
    o = eldbus_pending_data_get(p, ".object");
    pd = efl_data_scope_get(o, MY_CLASS);
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   p = eina_promise_data_get(dead_ptr);
-   if (!p) return; /* already gone, nothing to do */
 
    pd->pending = eina_list_remove(pd->pending, p);
    DBG("cancel pending scan %p", p);

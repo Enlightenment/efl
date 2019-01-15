@@ -1577,6 +1577,12 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          }
       }
 
+      emit_event_with_struct_complex {
+         params {
+            @in data: Dummy.StructComplex;
+         }
+      }
+
       append_to_strbuf {
          params {
             @in buf: strbuf;
@@ -1671,5 +1677,6 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
+      evt,with,struct,complex @hot: Dummy.StructComplex;
    }
 }

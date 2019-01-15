@@ -104,6 +104,7 @@ pub_eo_files = [
   'efl_gfx_color_class.eo',
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
+  'efl_cached_item.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -155,7 +156,7 @@ pub_eo_types_files = []
 
 efl_src += files([
   'efl_interfaces_main.c',
-  'efl_model_common.c',
+  'efl_mvvm_common.c',
   'efl_gfx_path.c',
   'efl_gfx_shape.c',
   'efl_gfx_color.c',

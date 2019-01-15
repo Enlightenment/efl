@@ -3564,7 +3564,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    double wx, wy;
 
    evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
-   if ((!minw) && (!minh)) return;
+   if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
    // If content has a weight, make resizable
    efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
@@ -3609,6 +3609,12 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
+
+   if (sd->deferred_resize_job)
+     _elm_win_resize_job(sd->obj);
+
+   /* do not need to go below. if you go, ee could become 0. */
+   if ((!minw) && (!minh)) return;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    w = ow;

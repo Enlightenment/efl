@@ -348,6 +348,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_list_view_relayout.eo.h>
 # include <efl_ui_list_view.eo.h>
 # include <efl_ui_list_view_pan.eo.h>
+# include <efl_ui_caching_factory.eo.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>

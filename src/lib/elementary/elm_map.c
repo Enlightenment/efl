@@ -1607,6 +1607,8 @@ _overlay_default_content_update(Overlay_Default *ovl,
    if (ovl->content == content) return;
    evas_object_del(ovl->content);
    ovl->content = content;
+   evas_object_smart_member_add(ovl->content, ovl->wsd->pan_obj);
+   evas_object_stack_above(ovl->content, ovl->wsd->sep_maps_overlays);
 
    if (ovl->content)
      evas_object_event_callback_add(ovl->content, EVAS_CALLBACK_MOUSE_DOWN,

@@ -281,7 +281,8 @@ pub_eo_files = [
   'elm_view_form.eo',
   'elm_web.eo',
   'elm_widget_item.eo',
-  'efl_ui_text_part.eo'
+  'efl_ui_text_part.eo',
+  'efl_ui_caching_factory.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -908,7 +909,8 @@ elementary_src = [
   'efl_ui_tab_pager.c',
   'efl_ui_tab_bar.c',
   'efl_ui_tab_page.c',
-  'efl_ui_widget_focus_manager.c'
+  'efl_ui_widget_focus_manager.c',
+  'efl_ui_caching_factory.c'
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
@@ -919,7 +921,7 @@ elm_options = configuration_data()
 
 config_h.set_quoted('ELM_TOP_BUILD_DIR', meson.build_root())
 config_h.set_quoted('MODULES_PATH', join_paths(dir_lib, 'modules'))
-config_h.set_quoted('ELEMENTARY_BASE_DIR', '.elementary')
+config_h.set_quoted('ELEMENTARY_BASE_DIR', get_option('elementary-base-dir'))
 config_h.set_quoted('ICON_DIR', join_paths(dir_lib, 'icons'))
 
 if sys_windows == false

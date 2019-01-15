@@ -127,7 +127,7 @@ source_client_complex_method_call_generate(const DBus_Method *method, Eina_Strbu
    eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_send(proxy, msg, %s, cb, -1);\n", method->cb_name);
    eina_strbuf_append_printf(c_code, "   if (data)\n");
    eina_strbuf_append_printf(c_code, "     eldbus_pending_data_set(p, \"__user_data\", data);\n");
-   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__proxy\", proxy);\n");
+   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
    eina_strbuf_append_printf(c_code, "}\n");
 
@@ -210,7 +210,7 @@ source_client_simple_method_call_generate(const DBus_Method *method, Eina_Strbuf
    eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_send(proxy, msg, %s, cb, -1);\n", method->cb_name);
    eina_strbuf_append_printf(c_code, "   if (data)\n");
    eina_strbuf_append_printf(c_code, "     eldbus_pending_data_set(p, \"__user_data\", data);\n");
-   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__proxy\", proxy);\n");
+   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
    eina_strbuf_append_printf(c_code, "}\n");
 
@@ -228,7 +228,7 @@ source_client_complex_method_callback_generate(const DBus_Method *method, Eina_S
    eina_strbuf_append_printf(c_code, "   %s cb = data;\n", prefix_append(method->function_cb));
    eina_strbuf_append_printf(c_code, "   const char *error, *error_msg;\n");
    eina_strbuf_append_printf(c_code, "   Eina_Value *value;\n");
-   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__proxy\");\n");
+   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__user_proxy\");\n");
    eina_strbuf_append_printf(c_code, "   if (eldbus_message_error_get(msg, &error, &error_msg))\n");
    eina_strbuf_append_printf(c_code, "     {\n");
    eina_strbuf_append_printf(c_code, "        Eldbus_Error_Info error_info = {error, error_msg};\n");
@@ -256,7 +256,7 @@ source_client_simple_method_callback_generate(const DBus_Method *method, Eina_St
    eina_strbuf_append_printf(c_code, "   void *user_data = eldbus_pending_data_del(pending, \"__user_data\");\n");
    eina_strbuf_append_printf(c_code, "   %s cb = data;\n", prefix_append(method->function_cb));
    eina_strbuf_append_printf(c_code, "   const char *error, *error_msg;\n");
-   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__proxy\");\n");
+   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__user_proxy\");\n");
 
    EINA_INLIST_FOREACH(method->args, arg)
      {
@@ -436,7 +436,7 @@ source_client_property_generate_get(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "   void *user_data = eldbus_pending_data_del(pending, \"__user_data\");\n");
    eina_strbuf_append_printf(c_code, "   const char *error, *error_msg;\n");
    eina_strbuf_append_printf(c_code, "   %s cb = data;\n", prop_cb_get(prop));
-   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__proxy\");\n");
+   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__user_proxy\");\n");
    eina_strbuf_append_printf(c_code, "   Eldbus_Message_Iter *variant;\n");
    if (prop->complex)
      eina_strbuf_append_printf(c_code, "   Eina_Value *v, stack_value;\n");
@@ -485,7 +485,7 @@ source_client_property_generate_get(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_property_get(proxy, \"%s\", %s, cb);\n", prop->name, prop->cb_name);
    eina_strbuf_append_printf(c_code, "   if (data)\n");
    eina_strbuf_append_printf(c_code, "     eldbus_pending_data_set(p, \"__user_data\", data);\n");
-   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__proxy\", proxy);\n");
+   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
    eina_strbuf_append_printf(c_code, "}\n");
 }
@@ -497,7 +497,7 @@ source_client_property_generate_set(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "\nstatic void\n%s_set(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)\n{\n", prop->cb_name);
    eina_strbuf_append_printf(c_code, "   const char *error, *error_msg;\n");
    eina_strbuf_append_printf(c_code, "   void *user_data = eldbus_pending_data_del(pending, \"__user_data\");\n");
-   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__proxy\");\n");
+   eina_strbuf_append_printf(c_code, "   Eldbus_Proxy *proxy = eldbus_pending_data_del(pending, \"__user_proxy\");\n");
    eina_strbuf_append_printf(c_code, "   Eldbus_Codegen_Property_Set_Cb cb = data;\n");
    eina_strbuf_append_printf(c_code, "   if (eldbus_message_error_get(msg, &error, &error_msg))");
    eina_strbuf_append_printf(c_code, "     {\n");
@@ -517,7 +517,7 @@ source_client_property_generate_set(const DBus_Property *prop, Eina_Strbuf *c_co
    eina_strbuf_append_printf(c_code, "   EINA_SAFETY_ON_NULL_RETURN_VAL(value, NULL);\n");
    eina_strbuf_append_printf(c_code, "   p = eldbus_proxy_property_set(proxy, \"%s\", \"%s\", value, %s_set, cb);\n", prop->name, prop->type, prop->cb_name);
    eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_data\", data);\n");
-   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__proxy\", proxy);\n");
+   eina_strbuf_append_printf(c_code, "   eldbus_pending_data_set(p, \"__user_proxy\", proxy);\n");
    eina_strbuf_append_printf(c_code, "   return p;\n");
    eina_strbuf_append_printf(c_code, "}\n");
 }

@@ -3,7 +3,7 @@
 #endif
 
 #include "Efl.h"
-#include "Efl_Model_Common.h"
+#include "Efl_MVVM_Common.h"
 
 EAPI Eina_Error EFL_MODEL_ERROR_UNKNOWN = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_NOT_SUPPORTED = 0;
@@ -14,6 +14,8 @@ EAPI Eina_Error EFL_MODEL_ERROR_PERMISSION_DENIED = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
 
+EAPI Eina_Error EFL_FACTORY_ERROR_NOT_SUPPORTED = 0;
+
 static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
 static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
 static const char EFL_MODEL_ERROR_NOT_FOUND_STR[]         = "Value not found";
@@ -23,11 +25,12 @@ static const char EFL_MODEL_ERROR_PERMISSION_DENIED_STR[] = "Permission denied";
 static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
 static const char EFL_MODEL_ERROR_INVALID_OBJECT_STR[]    = "Object is invalid";
 
-#define _ERROR(Name) EFL_MODEL_ERROR_##Name = eina_error_msg_static_register(EFL_MODEL_ERROR_##Name##_STR);
+static const char EFL_FACTORY_ERROR_NOT_SUPPORTED_STR[]   = "Operation not supported";
 
 EAPI int
 efl_model_init(void)
 {
+#define _ERROR(Name) EFL_MODEL_ERROR_##Name = eina_error_msg_static_register(EFL_MODEL_ERROR_##Name##_STR);
    _ERROR(INCORRECT_VALUE);
    _ERROR(UNKNOWN);
    _ERROR(NOT_SUPPORTED);
@@ -36,6 +39,10 @@ efl_model_init(void)
    _ERROR(INIT_FAILED);
    _ERROR(PERMISSION_DENIED);
    _ERROR(INVALID_OBJECT);
+
+#undef _ERROR
+#define _ERROR(Name) EFL_FACTORY_ERROR_##Name = eina_error_msg_static_register(EFL_FACTORY_ERROR_##Name##_STR);
+   _ERROR(NOT_SUPPORTED);
 
    return EINA_TRUE;
 }

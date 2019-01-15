@@ -78,6 +78,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
       lib/efl/interfaces/efl_interpolator.eo \
+      lib/efl/interfaces/efl_cached_item.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -114,7 +115,7 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
-lib/efl/interfaces/efl_model_common.c \
+lib/efl/interfaces/efl_mvvm_common.c \
 lib/efl/interfaces/efl_gfx_path.c \
 lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_input_device.c \
@@ -140,7 +141,7 @@ lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 installed_eflheadersdir = $(includedir)/efl-@VMAJ@
 dist_installed_eflheaders_DATA = \
               lib/efl/Efl_Config.h \
-              lib/efl/Efl_Model_Common.h \
+              lib/efl/Efl_MVVM_Common.h \
               lib/efl/Efl.h
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces

@@ -95,7 +95,6 @@ _children_added_cb(void *d EINA_UNUSED, const Efl_Event* event)
 EFL_START_TEST(eio_model_test_test_monitor_add)
 {
    Eo *filemodel = NULL;
-   Eina_Future* future;
 
    tmpdir = eina_environment_tmp_get();
 

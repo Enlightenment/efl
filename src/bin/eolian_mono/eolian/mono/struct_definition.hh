@@ -56,6 +56,8 @@ struct struct_definition_generator
             return false;
        }
 
+      auto struct_name = binding_struct_name(struct_);
+
      // Check whether this is an extern struct without declared fields in .eo file and generate a
      // placeholder field if positive.
      // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
@@ -68,7 +70,6 @@ struct struct_definition_generator
      else
        {
           // Constructor with default parameters for easy struct initialization
-          auto struct_name = binding_struct_name(struct_);
           if(!as_generator(
                       scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
                       << scope_tab << "public " << string << "(\n"
@@ -80,6 +81,16 @@ struct struct_definition_generator
              .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
               return false;
        }
+
+     if(!as_generator(
+            "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
+            << scope_tab << "{\n"
+            << scope_tab << scope_tab << "var tmp = (" << struct_name << "_StructInternal)Marshal.PtrToStructure(ptr, typeof(" << struct_name << "_StructInternal));\n"
+            << scope_tab << scope_tab << "return " << struct_name << "_StructConversion.ToManaged(tmp);\n"
+            << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
@@ -120,7 +131,8 @@ struct struct_internal_definition_generator
                    .generate(sink, nullptr, context))
                  return false;
             }
-          else if (!as_generator(eolian_mono::marshall_annotation(false) << " public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+          else if (!as_generator(scope_tab << eolian_mono::marshall_annotation(false) << "\n"
+                                 << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
             return false;
        }
@@ -142,7 +154,7 @@ struct struct_internal_definition_generator
                  scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToExternal(struct_);\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToManaged(struct_);\n"
                  << scope_tab << "}\n"
                  << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
@@ -315,7 +327,7 @@ struct to_external_field_convert_generator
       else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToExternal(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToManaged(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
@@ -406,7 +418,7 @@ struct struct_binding_conversion_functions_generator
      // to external
      if (!as_generator
          (
-          scope_tab << "internal static " << string << " ToExternal(" << string << " _internal_struct)\n"
+          scope_tab << "internal static " << string << " ToManaged(" << string << " _internal_struct)\n"
           << scope_tab << "{\n"
           << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n\n"
          )

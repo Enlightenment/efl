@@ -151,7 +151,14 @@ public static class TestEinaValueEolian {
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Double, received.GetValueType());
 
-
+        // Check for 0
+        // This is a special value, since C# can silently convert it to an enum
+        // leading to collisions with Eina.ValueType
+        expected = new Eina.Value(0);
+        obj.SetValue(0);
+        obj.OutValue(out received);
+        Test.AssertEquals(expected, received);
+        Test.AssertEquals(Eina.ValueType.Int32, received.GetValueType());
     }
 }
 #pragma warning restore 1591

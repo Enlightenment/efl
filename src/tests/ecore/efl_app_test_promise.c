@@ -1341,7 +1341,7 @@ test_got_int(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value value)
 }
 
 static Eina_Value
-test_error_not_reached(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error error)
+test_error_not_reached(Eo *o EINA_UNUSED, void *data EINA_UNUSED, Eina_Error error EINA_UNUSED)
 {
    abort();
 

@@ -1,6 +1,10 @@
 ecore_fb_deps = [ecore, ecore_input]
 ecore_fb_pub_deps = [eina]
 
+if get_option('tslib')
+  ecore_fb_deps += dependency('tslib')
+endif
+
 ecore_fb_header_src = [
   'Ecore_Fb.h'
 ]

@@ -2010,6 +2010,24 @@ inherit_dup:
 }
 
 static void
+_requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
+{
+   const char *required;
+   char *fnm;
+
+   eo_lexer_context_push(ls);
+   parse_name(ls, buf);
+   required = eina_strbuf_string_get(buf);
+   fnm = database_class_to_filename(required);
+
+   ls->klass->requires = eina_list_append(ls->klass->requires, eina_stringshare_add(required));
+   database_defer(ls->state, fnm, EINA_TRUE);
+   eo_lexer_context_pop(ls);
+
+   free(fnm);
+}
+
+static void
 parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    const char *bnm;
@@ -2052,6 +2070,20 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
         Eina_Strbuf *ibuf = eina_strbuf_new();
         eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
         /* new inherits syntax, keep alongside old for now */
+        if (ls->t.kw == KW_requires)
+          {
+             if (type != EOLIAN_CLASS_MIXIN)
+               {
+                  eo_lexer_syntax_error(ls, "\"requires\" keyword is only needed for mixin classes");
+               }
+             eo_lexer_get(ls);
+             do
+               _requires_add(ls, ibuf);
+             while (test_next(ls, ','));
+             if (ls->t.token == '{')
+               goto inherit_done;
+          }
+
         if (ls->t.kw == KW_extends || (is_reg && (ls->t.kw == KW_implements)))
           {
              Eina_Bool ext = (ls->t.kw == KW_extends);

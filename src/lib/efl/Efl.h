@@ -73,7 +73,7 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #include "interfaces/efl_types.eot.h"
 
-#include <Efl_Model_Common.h>
+#include <Efl_MVVM_Common.h>
 
 /* Data types */
 #include "interfaces/efl_gfx_types.eot.h"
@@ -149,6 +149,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_model_connect.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
+#include "interfaces/efl_cached_item.eo.h"
 
 /* Observable interface */
 #include "interfaces/efl_observer.eo.h"

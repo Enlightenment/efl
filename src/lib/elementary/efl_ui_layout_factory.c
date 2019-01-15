@@ -45,6 +45,8 @@ _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Dat
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
+   efl_ui_caching_factory_item_class_set(obj, EFL_UI_LAYOUT_CLASS);
+
    pd->connects = eina_hash_stringshared_new(EINA_FREE_CB(eina_stringshare_del));
    pd->factory_connects = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref));
 
@@ -64,17 +66,15 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Eina_Future *
-_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd,
-                                             Efl_Model *model, Efl_Gfx_Entity *parent)
+static Eina_Value
+_efl_ui_layout_factory_connect(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
 {
-   Eina_Value r;
+   Efl_Ui_Layout_Factory_Data *pd = data;
    Efl_Gfx_Entity *layout;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   layout = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                    efl_ui_view_model_set(efl_added, model),
-                    efl_ui_layout_theme_set(efl_added, pd->klass, pd->group, pd->style));
+   eina_value_pget(&value, &layout);
+
+   efl_ui_layout_theme_set(layout, pd->klass, pd->group, pd->style);
 
    eina_hash_foreach(pd->connects, _model_connect, layout);
    eina_hash_foreach(pd->factory_connects, _factory_model_connect, layout);
@@ -82,16 +82,21 @@ _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   r = eina_value_object_init(layout);
-
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), r);
+   return value;
 }
 
-EOLIAN static void
-_efl_ui_layout_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *layout)
+EOLIAN static Eina_Future *
+_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd,
+                                             Efl_Model *model, Efl_Gfx_Entity *parent)
 {
-   efl_ui_view_model_set(layout, NULL);
-   efl_del(layout);
+   Eina_Future *f;
+
+   f = efl_ui_factory_create(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), model, parent);
+
+   return efl_future_then(obj, f,
+                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                          .success = _efl_ui_layout_factory_connect,
+                          .data = pd);
 }
 
 EOLIAN static void

@@ -3,7 +3,7 @@ efl_pub_deps = [eo]
 
 efl_header_src = [
   'Efl.h',
-  'Efl_Model_Common.h'
+  'Efl_MVVM_Common.h'
 ]
 
 efl_src = []

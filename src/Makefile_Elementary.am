@@ -134,6 +134,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_tab_page_part_tab.eo \
 	lib/elementary/efl_ui_widget_focus_manager.eo \
 	lib/elementary/efl_ui_text_part.eo \
+	lib/elementary/efl_ui_caching_factory.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -889,6 +890,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_tab_bar.c \
 	lib/elementary/efl_ui_tab_page.c \
 	lib/elementary/efl_ui_widget_focus_manager.c \
+	lib/elementary/efl_ui_caching_factory.c \
 	$(NULL)
 
 

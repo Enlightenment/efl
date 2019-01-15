@@ -1,4 +1,7 @@
-ecore_wl2_deps = [dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'), wayland_protocol, dependency('wayland-client')]
+ecore_wl2_deps = [
+  dependency('wayland-client'), dependency('wayland-server'), dependency('xkbcommon'),
+  wayland_protocol, dl, m, ecore, ecore_input, libdrm, buildsystem
+]
 ecore_wl2_pub_deps = [eina, ecore]
 
 ecore_wl2_header_src = [
@@ -20,7 +23,7 @@ ecore_wl2_src = [
 
 ecore_wl2_lib = library('ecore_wl2',
     ecore_wl2_src, pub_eo_file_target,
-    dependencies: ecore_wl2_pub_deps + [dl, m, ecore, ecore_input, ecore_wl2_deps, libdrm, buildsystem],
+    dependencies: ecore_wl2_deps + ecore_wl2_pub_deps,
     include_directories : config_dir,
     install: true,
     version : meson.project_version()

@@ -1,11 +1,10 @@
-class Efl.Ui.Image_Factory (Efl.Object, Efl.Ui.Factory)
+class Efl.Ui.Image_Factory (Efl.Ui.Caching_Factory)
 {
    [[Efl UI image factory class]]
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Factory.create;
-      Efl.Ui.Factory.release;
       Efl.Ui.Model.Connect.connect;
    }
 }

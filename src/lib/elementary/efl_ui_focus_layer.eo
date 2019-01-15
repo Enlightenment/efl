@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Layer (Efl.Interface, Efl.Ui.Widget, Efl.Ui.Widget_Focus_Manager) {
+mixin Efl.Ui.Focus.Layer requires Efl.Ui.Widget extends Efl.Ui.Widget_Focus_Manager {
    [[This defines the inheriting widget as focus layer
 
      A focus layer is the uppermost one which received input and handles all focus related events for as long as it exists and is visible. It's NOT possible to escape this layer with focus movement.

@@ -2168,7 +2168,6 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    //efl_text_font_set(sd->text_obj, "Sans", 12);
    sd->single_line = !efl_text_multiline_get(sd->text_obj);
 
-   efl_text_set(sd->text_obj, "");
    efl_pack_table(sd->text_table, sd->text_obj, 0, 0, 1, 1);
    efl_pack_table(sd->text_table, sd->text_guide_obj, 0, 0, 1, 1);
 

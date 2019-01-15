@@ -228,6 +228,10 @@ config_h.set_quoted('MOD_SUFFIX', '.'+sys_mod_extension)
 config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
 config_h.set('EFL_BUILD', '1')
 
+if get_option('tslib') == true
+  config_h.set('HAVE_TSLIB', '1')
+endif
+
 subdir('header_checks')
 subdir('po')
 
@@ -406,12 +410,10 @@ subdir(join_paths('src', 'generic', 'evas'))
 subdir(join_paths('src', 'generic', 'emotion'))
 subdir('cmakeconfig')
 
-bindings = ['luajit', 'cxx', 'mono']
+bindings = get_option('bindings')
 
 foreach binding : bindings
-  if get_option(binding)
-    subdir(join_paths('src', 'bindings', binding))
-  endif
+  subdir(join_paths('src', 'bindings', binding))
 endforeach
 
 subdir(join_paths('src', 'edje_external'))
