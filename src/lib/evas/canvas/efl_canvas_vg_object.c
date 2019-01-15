@@ -621,6 +621,8 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    Vg_Cache_Entry *vg_entry = pd->vg_entry;
    Efl_VG *root;
    Eina_Position2D offset = {0, 0};  //Offset after keeping aspect ratio.
+   Eina_Bool drop_cache = EINA_FALSE;
+   void *buffer = NULL;
 
    // if the size changed in between path set and the draw call;
    if ((vg_entry->w != w) ||
@@ -662,13 +664,23 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         if (offset.y > 0) offset.y /= 2;
         w = size.w;
         h = size.h;
+
+        //Size is changed, cached data is invalid.
+        drop_cache = EINA_TRUE;
      }
    root = evas_cache_vg_tree_get(vg_entry, pd->frame_idx);
    if (!root) return;
-   void *buffer = NULL;
 
-   if (pd->frame_idx == pd->cached_frame_idx)
-     buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
+   if (cacheable)
+     {
+        if (drop_cache)
+          {
+             //if the size doesn't match, drop previous cache surface.
+             ENFN->ector_surface_cache_drop(engine, (void *) root);
+          }
+        else if (pd->frame_idx == pd->cached_frame_idx)
+          buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
+     }
 
    if (!buffer)
      buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
@@ -703,7 +715,10 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
      }
 
    //if the buffer is not created yet
-   void *buffer = ENFN->ector_surface_cache_get(engine, user_entry->root);
+   void *buffer = NULL;
+
+   if (cacheable)
+     buffer = ENFN->ector_surface_cache_get(engine, user_entry->root);
 
    if (!buffer)
      {
