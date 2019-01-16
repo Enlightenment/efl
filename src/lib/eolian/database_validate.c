@@ -14,6 +14,7 @@ typedef struct _Validate_State
    Eina_Bool event_redef;
    Eina_Bool ext_regular;
    Eina_Bool unimplemented;
+   Eina_Bool pure_virtual;
 } Validate_State;
 
 static Eina_Bool
@@ -22,6 +23,9 @@ _validate(Eolian_Object *obj)
    obj->validated = EINA_TRUE;
    return EINA_TRUE;
 }
+
+#define _eo_parser_log(_base, ...) \
+   eolian_state_log_obj((_base)->unit->state, (_base), __VA_ARGS__)
 
 static Eina_Bool
 _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **rdbg)
@@ -405,6 +409,48 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    if (!_validate_doc(func->set_return_doc))
      return EINA_FALSE;
 
+   if (!vals->pure_virtual)
+     goto final;
+
+   Eolian_Implement *impl = func->impl;
+
+   /* pure virtual methods are ok for abstracts/mixins as well as ifaces
+    * in ifaces they are implicit, in regulars and abstracts explicit
+    */
+   if (!impl || (impl->klass->type != EOLIAN_CLASS_REGULAR))
+     goto final;
+
+   if (func->type == EOLIAN_METHOD && impl->get_pure_virtual)
+     {
+        _eo_parser_log(&func->base,
+          "pure virtual function '%s' in a non-abstract class '%s'",
+          func->base.name, impl->implklass->base.name);
+        return EINA_FALSE;
+     }
+   else if (func->type == EOLIAN_PROPERTY &&
+            impl->get_pure_virtual && impl->set_pure_virtual)
+     {
+        _eo_parser_log(&func->base,
+          "pure virtual property '%s' in a non-abstract class '%s'",
+          func->base.name, impl->implklass->base.name);
+        return EINA_FALSE;
+     }
+   else if (impl->get_pure_virtual)
+     {
+        _eo_parser_log(&func->base,
+          "pure virtual getter '%s' in a non-abstract class '%s'",
+          func->base.name, impl->implklass->base.name);
+        return EINA_FALSE;
+     }
+   else if (impl->set_pure_virtual)
+     {
+        _eo_parser_log(&func->set_base,
+          "pure virtual setter '%s' in a non-abstract class '%s'",
+          func->base.name, impl->implklass->base.name);
+        return EINA_FALSE;
+     }
+
+final:
    /* just for now, when dups become errors there will be no need to check */
    if (!oobj && nhash)
      eina_hash_add(nhash, &func->base.name, &func->base);
@@ -523,9 +569,6 @@ _get_impl_class(const Eolian_Class *cl, const char *cln)
      }
    return NULL;
 }
-
-#define _eo_parser_log(_base, ...) \
-   eolian_state_log_obj((_base)->unit->state, (_base), __VA_ARGS__)
 
 static Eina_Bool
 _db_fill_implement(Eolian_Class *cl, Eolian_Implement *impl)
@@ -1223,7 +1266,8 @@ database_validate(const Eolian_Unit *src)
       EINA_FALSE,
       !!getenv("EOLIAN_EVENT_REDEF_WARN"),
       !!getenv("EOLIAN_CLASS_REGULAR_AS_EXT_WARN"),
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN")
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
+      !!getenv("EOLIAN_PURE_VIRTUAL_WARN")
    };
 
    /* do an initial pass to refill inherits */
