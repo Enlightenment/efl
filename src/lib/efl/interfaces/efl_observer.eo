@@ -1,7 +1,7 @@
 interface Efl.Observer {
    [[Efl observer interface]]
    methods {
-      update @pure_virtual {
+      update {
          [[Update observer according to the changes of observable object.
 
            @since 1.19]]
