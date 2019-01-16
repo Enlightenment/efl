@@ -211,6 +211,8 @@ _edje_var_init(Edje *ed)
 void
 _edje_var_shutdown(Edje *ed)
 {
+   Edje_Var_Timer *et;
+
    if (!ed->var_pool) return;
    if (ed->var_pool->vars)
      {
@@ -237,12 +239,8 @@ _edje_var_shutdown(Edje *ed)
           }
         free(ed->var_pool->vars);
      }
-   while (ed->var_pool->timers)
+   EINA_LIST_FREE(ed->var_pool->timers, et)
      {
-        Edje_Var_Timer *et;
-
-        et = eina_list_data_get(ed->var_pool->timers);
-        ed->var_pool->timers = eina_list_remove(ed->var_pool->timers, et);
         ecore_timer_del(et->timer);
         free(et);
      }
