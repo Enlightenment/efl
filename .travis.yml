@@ -49,6 +49,8 @@ jobs:
     - os: linux
       env: DISTRO=Fedora31-mingw CI_BUILD_TYPE=mingw
     - os: linux
+      env: DISTRO=Fedora31 CI_BUILD_TYPE=exactness
+    - os: linux
       env: DISTRO=Fedora31 CI_BUILD_TYPE=options-enabled
     - os: linux
       env: DISTRO=Fedora31 CI_BUILD_TYPE=options-disabled
