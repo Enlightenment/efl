@@ -543,6 +543,24 @@ _elm_animation_view_default_size_get(const Eo *obj EINA_UNUSED,
    return efl_canvas_vg_object_default_size_get(pd->vg);
 }
 
+EOLIAN static Elm_Animation_View_State
+_elm_animation_view_state_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd)
+{
+   return pd->state;
+}
+
+EOLIAN static Eina_Bool
+_elm_animation_view_is_playing_back(Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd)
+{
+   return pd->play_back;
+}
+
+EOLIAN static int
+_elm_animation_view_frame_count_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd)
+{
+   return evas_object_vg_animated_frame_count_get(pd->vg);
+}
+
 EAPI Elm_Animation_View*
 elm_animation_view_add(Evas_Object *parent)
 {
@@ -554,32 +572,6 @@ EAPI Eina_Bool
 elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const char *key)
 {
    return efl_file_set(obj, file, key);
-}
-
-EAPI Elm_Animation_View_State
-elm_animation_view_state_get(const Elm_Animation_View *obj)
-{
-   ELM_ANIMATION_VIEW_DATA_GET(obj, pd);
-   if (!pd) return ELM_ANIMATION_VIEW_STATE_NOT_READY;
-
-   return pd->state;
-}
-
-EAPI Eina_Bool
-elm_animation_view_is_playing_back(const Elm_Animation_View *obj)
-{
-   ELM_ANIMATION_VIEW_DATA_GET(obj, pd);
-   if (!pd) return EINA_FALSE;
-
-   return pd->play_back;
-}
-
-EAPI int
-elm_animation_view_frame_count_get(const Elm_Animation_View *obj)
-{
-   ELM_ANIMATION_VIEW_DATA_GET(obj, pd);
-   if (!pd) return 0;
-   return evas_object_vg_animated_frame_count_get(pd->vg);
 }
 
 /* Internal EO APIs and hidden overrides */

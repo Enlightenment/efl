@@ -1,3 +1,13 @@
+
+enum Elm.Animation_View.State
+{
+   not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file. @since 1.22]]
+   play, [[Animation is on playing. see @.play @since 1.22]]
+   play_back, [[Animation is on playing back (rewinding). see @.back @since 1.22]]
+   pause, [[Animation has been paused. To continue animation, call @.resume. see @.pause @since 1.22]]
+   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @.stop @since 1.22]]
+}
+
 class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
 {
    [[Elementary Animation View class]]
@@ -148,6 +158,32 @@ class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
          }
          values {
             size: Eina.Size2D;
+         }
+      }
+      @property state {
+         get{
+            [[Get current animation view state.
+              see @.State
+              @since 1.22]]
+         }
+         values {
+            state: Elm.Animation_View.State; [[Current animation view state]]
+         }
+      }
+      is_playing_back {
+            [[Returns the status whether current animation is on playing forward or backward.
+              warning: If animation view is not on playing, it will return $false. 
+              @since 1.22]]
+         return: bool; [[$true, if animation on playing back, $false otherwise.]]
+      }
+      @property frame_count {
+         get {
+            [[Get the index of end frame of the animation view, if it's animated. 
+              note : frame number starts with 0.
+              @since 1.22]]
+         }
+         values {
+            frame_count: int; [[ The number of frames. 0, if it's not animated.]]
          }
       }
    }
