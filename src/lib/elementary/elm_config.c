@@ -2210,6 +2210,7 @@ _elm_config_profile_name_get()
              rst = calloc(1, len+1);
              memcpy(rst, p, len);
              rst[len] = '\0';
+             free(p);
           }
         eet_close(ef);
      }
