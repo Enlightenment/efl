@@ -31,6 +31,7 @@ enum {
 G_DEFINE_TYPE_WITH_CODE(EmotionVideoSink,
                      emotion_video_sink,
                      GST_TYPE_VIDEO_SINK,
+                     G_ADD_PRIVATE(EmotionVideoSink)
                      _do_init);
 
 
@@ -43,7 +44,7 @@ emotion_video_sink_init(EmotionVideoSink* sink)
    EmotionVideoSinkPrivate* priv;
 
    INF("sink init");
-   sink->priv = priv = G_TYPE_INSTANCE_GET_PRIVATE(sink, EMOTION_TYPE_VIDEO_SINK, EmotionVideoSinkPrivate);
+   sink->priv = priv = emotion_video_sink_get_instance_private(sink);
    gst_video_info_init (&priv->info);
    priv->eheight = 0;
    priv->func = NULL;
@@ -586,8 +587,6 @@ emotion_video_sink_class_init(EmotionVideoSinkClass* klass)
    gstelement_class = GST_ELEMENT_CLASS(klass);
    gstbase_sink_class = GST_BASE_SINK_CLASS(klass);
    gstvideo_sink_class = GST_VIDEO_SINK_CLASS(klass);
-
-   g_type_class_add_private(klass, sizeof(EmotionVideoSinkPrivate));
 
    gobject_class->set_property = emotion_video_sink_set_property;
    gobject_class->get_property = emotion_video_sink_get_property;
