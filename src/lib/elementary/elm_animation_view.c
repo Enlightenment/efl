@@ -512,6 +512,18 @@ _elm_animation_view_keyframe_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_D
    return pd->keyframe;
 }
 
+EOLIAN static void
+_elm_animation_view_frame_set(Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd, int frame)
+{
+   elm_animation_view_keyframe_set(obj, (double) frame / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
+}
+
+EOLIAN static int
+_elm_animation_view_frame_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd)
+{
+   return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * pd->keyframe);
+}
+
 EOLIAN static double
 _elm_animation_view_speed_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd)
 {

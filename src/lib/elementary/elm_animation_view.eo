@@ -80,6 +80,20 @@ class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
             keyframe: double; [[Keyframe position. Value must be 0 ~ 1.]]
          }
       }
+      @property frame {
+         //FIXME : frame_count need add '@' symbol after add eo method frame_count.
+         [[Index of the current frame of an animated animation view.
+
+           Ranges from 0 to frame_count - 1.
+         ]]
+         set {
+            [[Set the frame to current frame of an animation view object.]]
+         }
+         get {}
+         values {
+            frame: int; [[The index of current frame.]]
+         }
+      }
       play {
          [[Play animation one time instantly when it's available.
 
