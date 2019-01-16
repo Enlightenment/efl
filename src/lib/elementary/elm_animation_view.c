@@ -513,9 +513,9 @@ _elm_animation_view_keyframe_get(const Eo *obj EINA_UNUSED, Elm_Animation_View_D
 }
 
 EOLIAN static void
-_elm_animation_view_frame_set(Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd, int frame)
+_elm_animation_view_frame_set(Eo *obj EINA_UNUSED, Elm_Animation_View_Data *pd, int frame_num)
 {
-   elm_animation_view_keyframe_set(obj, (double) frame / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
+   elm_animation_view_keyframe_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
 }
 
 EOLIAN static int
