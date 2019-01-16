@@ -143,18 +143,24 @@ _file_load(const char *file)
    Eina_File *f;
    char *text = NULL;
    void *tmp = NULL;
+   size_t size;
 
    f = eina_file_open(file, EINA_FALSE);
    if (!f) return NULL;
 
-   tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   if (!tmp) goto on_error;
+   size = eina_file_size_get(f);
+   if (size)
+     {
+        tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+        if (!tmp) goto on_error;
+     }
 
-   text = malloc(eina_file_size_get(f) + 1);
+   text = malloc(size + 1);
    if (!text) goto on_error;
 
-   memcpy(text, tmp, eina_file_size_get(f));
-   text[eina_file_size_get(f)] = 0;
+   if (size)
+     memcpy(text, tmp, size);
+   text[size] = 0;
 
    if (eina_file_map_faulted(f, tmp))
      {
