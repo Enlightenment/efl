@@ -150,11 +150,14 @@ public class Globals {
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
 
+    public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klasses
+        = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
+    
     public const int RTLD_NOW = 2;
 
     public delegate byte class_initializer(IntPtr klass);
-    
-    public static IntPtr register_class(class_initializer initializer, String class_name, IntPtr base_klass, System.Type type)
+
+    public static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
     {
         ClassDescription description;
         description.version = 2; // EO_VERSION
@@ -165,38 +168,112 @@ public class Globals {
         description.class_constructor = IntPtr.Zero;
         description.class_destructor = IntPtr.Zero;
 
-        if(initializer != null)
-            description.class_initializer = Marshal.GetFunctionPointerForDelegate(initializer);
+        class_initializer init = (IntPtr kls) =>
+            {
+                return Globals.class_initializer_call(kls, type);
+            };
+        
+        description.class_initializer = Marshal.GetFunctionPointerForDelegate(init);
 
         IntPtr description_ptr = Eina.MemoryNative.Alloc(Marshal.SizeOf(description));
         Marshal.StructureToPtr(description, description_ptr, false);
 
         var interface_list = EoG.get_efl_interfaces(type);
 
+        System.Console.WriteLine ("Interafaces: {0}", interface_list.Count);
+
         Eina.Log.Debug("Going to register!");
         IntPtr klass = EoG.call_efl_class_new(description_ptr, base_klass, interface_list);
         if(klass == IntPtr.Zero)
+        {
             Eina.Log.Error("klass was not registered");
+            Console.WriteLine("klass was not registered");
+        }
         else
             Eina.Log.Debug("Registered class successfully");
         return klass;
     }
     public static List<IntPtr> get_efl_interfaces(System.Type type)
     {
+        System.Type base_type = type.BaseType;
+        
         var ifaces_lst = new List<IntPtr>();
+        var base_ifaces = base_type.GetInterfaces();
         var ifaces = type.GetInterfaces();
         foreach (var iface in ifaces)
         {
-            var attrs = System.Attribute.GetCustomAttributes(iface);
-            foreach (var attr in attrs)
+            if (!System.Array.Exists(base_ifaces, element => element == iface))
             {
-                if (attr is Efl.Eo.NativeGetterAttr) {
-                    ifaces_lst.Add(((Efl.Eo.NativeGetterAttr)attr).GetEflClass());
+               var attrs = System.Attribute.GetCustomAttributes(iface);
+               foreach (var attr in attrs)
+               {
+                  if (attr is Efl.Eo.NativeClass) {
+                    ifaces_lst.Add(((Efl.Eo.NativeClass)attr).GetEflClass());
                     break;
-                }
+                  }
+               }
             }
         }
         return ifaces_lst;
+    }
+    private static Efl.Eo.NativeClass get_native_class(System.Type type)
+    {
+        var attrs = System.Attribute.GetCustomAttributes(type);
+        foreach (var attr in attrs)
+        {
+            if (attr is Efl.Eo.NativeClass) {
+                return (Efl.Eo.NativeClass)attr;
+            }
+        }
+        return null;
+    }
+    public static byte class_initializer_call(IntPtr klass, System.Type type)
+    {
+        Console.WriteLine("class_intiailizer_call 0x{1} {0}", type, klass);
+        Efl.Eo.NativeClass nativeClass = get_native_class(type.BaseType);
+
+        if (nativeClass != null)
+        {
+            Console.WriteLine("nativeClass != null");
+            var descs = nativeClass.GetEoOps(type);
+            var count = descs.Count;
+
+            var all_interfaces = type.GetInterfaces();
+            var base_interfaces = type.BaseType.GetInterfaces();
+            foreach (var iface in all_interfaces)
+            {
+                if (!System.Array.Exists(base_interfaces, element => element == iface))
+                {
+                    var nc = get_native_class(iface);
+                    if(nc != null)
+                    {
+                        var moredescs = nc.GetEoOps(type);
+                        Console.WriteLine("adding {0} more descs to registration", moredescs.Count);
+                        descs.AddRange(moredescs);
+                        count = descs.Count;
+                    }
+                }
+            }
+            
+            IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*count);
+            IntPtr ptr = descs_ptr;
+            for(int i = 0; i != count; ++i)
+            {
+               Marshal.StructureToPtr(descs[i], ptr, false);
+               ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));
+            }
+            Efl_Object_Ops ops;
+            ops.descs = descs_ptr;
+            ops.count = (UIntPtr)count;
+            IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));
+            Marshal.StructureToPtr(ops, ops_ptr, false);
+            Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);
+            //EoKlass = klass;
+        }
+        else
+            Console.WriteLine("nativeClass == null");
+            
+       return 1;
     }
     public static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
     {
@@ -259,11 +336,17 @@ public class Globals {
     public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
     {
         Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
+        Console.WriteLine($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.NativeHandle;
 
         System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        if (eo == System.IntPtr.Zero)
+        {
+            throw new Exception("Instantiation failed");
+        }
+        
         Console.WriteLine($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
         Console.WriteLine($"Parent was 0x{parent_ptr.ToInt64()}");
         return eo;
@@ -415,9 +498,10 @@ public static class Config
                        AllowMultiple = false,
                        Inherited = true)
 ]
-public abstract class NativeGetterAttr : System.Attribute
+public abstract class NativeClass : System.Attribute
 {
     public abstract IntPtr GetEflClass();
+    public abstract System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type);
 }
 
 public interface IWrapper

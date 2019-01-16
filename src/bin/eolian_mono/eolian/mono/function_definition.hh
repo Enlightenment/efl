@@ -71,7 +71,11 @@ struct native_function_definition_generator
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
 
-    std::string klass_inherit_name = name_helpers::klass_inherit_name(*klass);
+    std::string klass_cast_name;
+    if (klass->type != attributes::class_type::interface_)
+      klass_cast_name = name_helpers::klass_inherit_name(*klass);
+    else
+      klass_cast_name = name_helpers::klass_interface_name(*klass);
 
     if(!as_generator
        (scope_tab
@@ -89,7 +93,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << scope_tab << scope_tab << scope_tab << "try {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_inherit_name << ")wrapper)." << string
+        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_cast_name << ")wrapper)." << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
         << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
@@ -98,7 +102,7 @@ struct native_function_definition_generator
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
-        << "(Efl.Eo.Globals.efl_super(obj, " << "EoKlass)" << *(", " << argument) << ");\n"
+        << "(Efl.Eo.Globals.efl_super(obj, " << "GetEflClass())" << *(", " << argument) << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )

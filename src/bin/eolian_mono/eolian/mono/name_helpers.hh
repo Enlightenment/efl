@@ -379,18 +379,6 @@ inline std::string klass_get_full_name(T const& clsname)
   return klass_full_concrete_name(clsname) + "." + klass_get_name(clsname);
 }
 
-template<typename T>
-inline std::string interface_native_getter_attr_name(T const& clsname)
-{
-  return klass_interface_name(clsname) + "NativeGetterAttr";
-}
-
-template<typename T>
-inline std::string interface_native_getter_attr_full_name(T const& clsname)
-{
-  return klass_full_interface_name(clsname) + "NativeGetterAttr";
-}
-
 // Events
 inline std::string managed_event_name(std::string const& name)
 {
