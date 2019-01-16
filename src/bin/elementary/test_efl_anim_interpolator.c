@@ -139,6 +139,16 @@ static void
 _win_del_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    App_Data *ad = data;
+   int i;
+
+   for (i = 0; i < INTERP_NUM; i++)
+     {
+        //Unregister callback called when window deletes
+        efl_event_callback_del(ad->anim_obj[i],
+                               EFL_ANIMATION_PLAYER_EVENT_ENDED,
+                               _anim_ended_cb, ad);
+     }
+
    free(ad);
 }
 
