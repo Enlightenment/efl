@@ -32,6 +32,11 @@ if [ "$DISTRO" != "" ] ; then
     if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
       false
   done
+  if [ "$1" = "exactness" ] ; then
+    docker exec  --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c 'cd /; git clone https://git.enlightenment.org/tools/exactness-elm-data.git' # How should we cache this?
+    docker exec  --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) sh -c 'cd /exactness-elm-data; git checkout origin/devs/stefan/init-shots-docker-travis-ci -b docker'
+    docker exec  --env EIO_MONITOR_POLL=1 --env LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/usr/local/lib64 --env EINA_LOG_LEVELS_GLOB=eina_*:0,ecore*:0,efreet*:0,eldbus:0,elementary:0 $(cat $HOME/cid) exactness -j 20 -b /exactness-elm-data/default-profile -p /exactness-elm-data/default-profile/tests.txt
+  fi
 fi
 ret=$?
 travis_endfold check
