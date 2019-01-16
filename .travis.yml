@@ -44,31 +44,8 @@ env:
 
 jobs:
   include:
-    - os: osx
     - os: linux
-      env: DISTRO=Fedora29 CI_BUILD_TYPE=exactness BUILDSYSTEM=ninja
-    - os: linux
-      env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw
-    - os: linux
-      env: DISTRO=Fedora30 CI_BUILD_TYPE=options-enabled
-    - os: linux
-      env: DISTRO=Fedora30 CI_BUILD_TYPE=options-disabled
-    - os: linux
-      env: DISTRO=Fedora29 CI_BUILD_TYPE=wayland
-    - os: linux
-      env: DISTRO=Fedora29 CI_BUILD_TYPE=default
-    - os: linux
-      if: type = cron
-      env: DISTRO=Fedora29 CI_BUILD_TYPE=release-ready
-    - os: linux
-      if: type = cron
-      env: DISTRO=Ubuntu1804
-    - os: linux
-      if: type = cron
-      env: DISTRO=Ubuntu1904
-    - os: linux
-      if: type = cron
-      env: DISTRO=Debian96
+      env: DISTRO=Fedora30 CI_BUILD_TYPE=exactness
 
 services:
   - docker
@@ -131,16 +108,3 @@ before_cache:
          cp config.cache $HOME/cachedir
          mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
        fi
-
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#edevelop"
-    on_success: change
-    on_failure: always
-    on_cancel: never
-    template:
-      - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message} (%{elapsed_time})"
-      - "Commit: %{commit_subject} (%{commit}) from %{author}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
