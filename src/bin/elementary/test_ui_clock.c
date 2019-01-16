@@ -58,7 +58,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    dt1 = efl_add(EFL_UI_CLOCK_CLASS, bx,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_HOUR, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MINUTE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_AMPM, EINA_FALSE),
@@ -70,7 +70,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    dt2 = efl_add(EFL_UI_CLOCK_CLASS, bx,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_YEAR, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MONTH, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_DATE, EINA_FALSE),
@@ -81,19 +81,20 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    dt3 = efl_add(EFL_UI_CLOCK_CLASS, bx,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Editable Clock:"),
            efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
-           efl_gfx_size_hint_align_set(efl_added, 0, EVAS_HINT_FILL),
+           efl_gfx_size_hint_align_set(efl_added, 0, 0.5),
+           efl_gfx_size_hint_fill_set(efl_added, EINA_FALSE, EINA_TRUE),
            efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(100, 25)),
            efl_pack(bx, efl_added));
 
    dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx,
                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, 0.5),
+                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_edit_mode_set(efl_added, EINA_TRUE),
                  efl_ui_clock_pause_set(efl_added, EINA_TRUE),
                  efl_pack(bx, efl_added));

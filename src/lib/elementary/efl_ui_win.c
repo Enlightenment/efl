@@ -7385,7 +7385,7 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
           }
      }
    efl_gfx_entity_visible_set(bg, 1);
-   efl_gfx_size_hint_align_set(bg, -1, -1);
+   efl_gfx_size_hint_fill_set(bg, EINA_TRUE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bg, 1, 1);
    efl_wref_add(bg, &sd->bg);
    return EINA_TRUE;

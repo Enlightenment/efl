@@ -1891,7 +1891,6 @@ _palette_box_prepare(Eo *o)
 {
    efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
    efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_gfx_entity_visible_set(o, EINA_FALSE);
 }
 
@@ -1910,6 +1909,7 @@ _create_colorpalette(Evas_Object *obj)
    if (elm_widget_is_legacy(obj))
      {
         sd->palette_box = elm_legacy_add(EFL_UI_BOX_FLOW_CLASS, obj);
+        evas_object_size_hint_align_set(sd->palette_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
    else
      {

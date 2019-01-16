@@ -35,7 +35,8 @@ elm_main(int argc, char* argv[])
    elm::Toolbar toolbar_1(instantiate, win_1);
    toolbar_1.shrink_mode_set(ELM_TOOLBAR_SHRINK_MENU);
    toolbar_1.hint_weight_set(0, 0);
-   toolbar_1.hint_align_set(-1, 0);
+   toolbar_1.hint_align_set(0.5, 0);
+   toolbar_1.hint_fill_set(ture, false);
    toolbar_1.menu_parent_set(win_1);
    elm::toolbar::Item item_1 = efl::eo::downcast<elm::toolbar::Item>
      (toolbar_1.item_append("document-print", "Hello", nullptr, nullptr));
@@ -71,7 +72,7 @@ elm_main(int argc, char* argv[])
    box_1.pack_end(toolbar_1);
    elm::Widget table_1(elm_table_add(win_1._eo_ptr()));
    table_1.hint_weight_set(0.0, 1.0);
-   table_1.hint_align_set(-1, -1);
+   table_1.hint_fill_set(true, true);
    table_1.visible_set(true);
 
    elm::Widget photo_1(elm_photo_add(win_1._eo_ptr()));

@@ -56,12 +56,14 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
 {
    int boxx, boxy, boxw, boxh, boxl, boxr, boxt, boxb, pad[4];
    double align[2];
+   Eina_Bool fill[2];
    Eina_Size2D max;
 
    efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
    evas_object_geometry_get(pd->modeler, &boxx, &boxy, &boxw, &boxh);
    efl_gfx_size_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
    efl_gfx_size_hint_align_get(item->layout, &align[0], &align[1]);
+   efl_gfx_size_hint_fill_get(item->layout, &fill[0], &fill[1]);
    max = efl_gfx_size_hint_max_get(item->layout);
 
    // box outer margin
@@ -70,8 +72,25 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
    boxx += boxl;
    boxy += boxt;
 
-   if (align[0] < 0) align[0] = -1;
-   if (align[1] < 0) align[1] = -1;
+   if (EINA_DBL_EQ(align[0], -1))
+     {
+        align[0] = 0.5;
+        fill[0] = EINA_TRUE;
+     }
+   else if (align[0] < 0)
+     {
+        align[0] = 0;
+     }
+   if (EINA_DBL_EQ(align[1], -1))
+     {
+        align[1] = 0.5;
+        fill[1] = EINA_TRUE;
+     }
+   else if (align[1] < 0)
+     {
+        align[1] = 0;
+     }
+
    if (align[0] > 1) align[0] = 1;
    if (align[1] > 1) align[1] = 1;
 
@@ -86,7 +105,7 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
         item->size.w = MIN(MAX(item->min.w - pad[0] - pad[1], max.w), boxw);
         item->pos.x = boxx + pad[0];
      }
-   else if (align[0] < 0)
+   else if (fill[0])
      {
         // fill x
        item->size.w = boxw - pad[0] - pad[1];
@@ -104,7 +123,7 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
         item->size.h = MIN(MAX(item->min.h - pad[2] - pad[3], max.h), boxh);
         item->pos.y = boxy + pad[2];
      }
-   else if (align[1] < 0)
+   else if (fill[1])
      {
         // fill y
        item->size.h = item->min.h - pad[2] - pad[3];

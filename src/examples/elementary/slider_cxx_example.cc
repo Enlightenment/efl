@@ -22,7 +22,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.content_set(bx);
 
    efl::ui::Slider sl(instantiate, win);
-   sl.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl.hint_fill_set(true, false);
    bx.pack_end(sl);
 
    efl::ui::Slider sl2(instantiate, win);
@@ -38,37 +38,37 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::eo::downcast<efl::Content>(sl2.part_get("elm.swallow.end"))
          .content_set(ic2);
 
-   sl2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl2.hint_fill_set(true, false);
    bx.pack_end(sl2);
 
    efl::ui::Slider sl3(instantiate, win);
    sl3.range_value_set(1);
    sl3.hint_min_set({220, 0});
-   sl3.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl3.hint_fill_set(true, false);
    bx.pack_end(sl3);
 
    efl::ui::Slider sl4(instantiate, win);
    sl4.range_min_max_set(0, 100);
-   sl4.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl4.hint_fill_set(true, false);
    bx.pack_end(sl4);
 
    efl::ui::Slider sl5(instantiate, win);
    sl5.range_min_max_set(0, 100);
    sl5.range_step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
-   sl5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl5.hint_fill_set(true, false);
    sl5.hint_min_set({0, 120});
    bx.pack_end(sl5);
 
    efl::ui::Slider sl6(instantiate, win);
    sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
    sl6.range_min_max_set(0, 10);
-   sl6.hint_align_set(0.5, EFL_GFX_SIZE_HINT_FILL);
+   sl6.hint_fill_set(false, true);
    sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
    bx.pack_end(sl6);
 
    efl::ui::Slider sl7(instantiate, win);
-   sl7.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sl7.hint_fill_set(true, false);
    bx.pack_end(sl7);
 
    auto changed = std::bind ( [] (efl::ui::Slider obj)

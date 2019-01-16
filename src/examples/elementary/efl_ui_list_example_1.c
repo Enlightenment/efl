@@ -116,7 +116,7 @@ elm_main(int argc, char **argv)
    wbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_ui_direction_set(wbox, EFL_UI_DIR_VERTICAL);
    efl_gfx_size_hint_weight_set(wbox, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(wbox, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL);
+   efl_gfx_size_hint_fill_set(wbox, EINA_TRUE, EINA_TRUE);
 
    if ((argv[1] != NULL) &&
        (!strcmp(argv[1], "empty")))

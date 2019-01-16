@@ -23,12 +23,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.content_set(bx);
 
    elm::Spinner sp(instantiate, win);
-   sp.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp.hint_fill_set(true, false);
    bx.pack_end(sp);
 
    elm::Spinner sp2(instantiate, win);
    sp2.label_format_set("Percentage %%%1.2f something");
-   sp2.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp2.hint_fill_set(true, false);
    bx.pack_end(sp2);
 
    elm::Spinner sp3(instantiate, win);
@@ -36,18 +36,18 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sp3.step_set(1.5);
    sp3.wrap_set(true);
    sp3.min_max_set(-50.0, 250.0);
-   sp3.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp3.hint_fill_set(true, false);
    bx.pack_end(sp3);
 
    elm::Spinner sp4(instantiate, win);
    sp4.style_set("vertical");
    sp4.interval_set(0.2);
-   sp4.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp4.hint_fill_set(true, false);
    bx.pack_end(sp4);
 
    elm::Spinner sp5(instantiate, win);
    sp5.editable_set(false);
-   sp5.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp5.hint_fill_set(true, false);
    bx.pack_end(sp5);
 
    elm::Spinner sp6(instantiate, win);
@@ -65,11 +65,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sp6.special_value_add(10, "October");
    sp6.special_value_add(11, "November");
    sp6.special_value_add(12, "December");
-   sp6.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp6.hint_fill_set(true, false);
    bx.pack_end(sp6);
 
    elm::Spinner sp7(instantiate, win);
-   sp7.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.5);
+   sp7.hint_fill_set(true, false);
    bx.pack_end(sp7);
    sp7.editable_set(true);
 

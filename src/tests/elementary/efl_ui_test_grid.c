@@ -20,7 +20,7 @@ grid_setup()
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
    efl_gfx_size_hint_weight_set(box, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(box, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL);
+   efl_gfx_size_hint_fill_set(box, EINA_TRUE, EINA_TRUE);
    elm_win_resize_object_add(win, box);
 
    grid = efl_add(EFL_UI_GRID_CLASS, box);

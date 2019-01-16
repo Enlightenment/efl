@@ -843,16 +843,18 @@ _box_layout_cb(Evas_Object *o,
         Eina_Size2D obj_min;
         Evas_Coord ww, hh, ow, oh;
         double wx, wy;
-        int fw, fh;
+        Eina_Bool fx, fy;
 
         obj = opt->obj;
         evas_object_size_hint_align_get(obj, &ax, &ay);
         evas_object_size_hint_weight_get(obj, &wx, &wy);
+        efl_gfx_size_hint_fill_get(obj, &fx, &fy);
         obj_min = efl_gfx_size_hint_combined_min_get(obj);
 
-        fw = fh = EINA_FALSE;
-        if (EINA_DBL_EQ(ax, -1)) {fw = 1; ax = 0.5; }
-        if (EINA_DBL_EQ(ay, -1)) {fh = 1; ay = 0.5; }
+        if (EINA_DBL_EQ(ax, -1)) { fx = 1; ax = 0.5; }
+        else if (ax < 0) { ax = 0.0; }
+        if (EINA_DBL_EQ(ay, -1)) { fy = 1; ay = 0.5; }
+        else if (ay < 0) { ay = 0.0; }
         if (rtl) ax = 1.0 - ax;
 
         ww = obj_min.w;
@@ -864,9 +866,9 @@ _box_layout_cb(Evas_Object *o,
         hh = lineh;
 
         ow = obj_min.w;
-        if (fw) ow = ww;
+        if (fx) ow = ww;
         oh = obj_min.h;
-        if (fh) oh = hh;
+        if (fy) oh = hh;
 
         linew += ww;
         if (linew > r.w && l != priv->children)
@@ -941,7 +943,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
    efl_gfx_size_hint_min_set(sd->entry, EINA_SIZE2D(MIN_W_ENTRY, 0));
    evas_object_size_hint_weight_set
      (sd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(sd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_size_hint_fill_set(sd->entry, EINA_TRUE, EINA_TRUE);
 
    elm_box_pack_end(sd->box, sd->entry);
 

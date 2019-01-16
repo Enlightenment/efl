@@ -175,7 +175,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                 efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                  efl_pack_table(table, efl_added, 0, TABLE_SIZE + 1, TABLE_SIZE, 1));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
