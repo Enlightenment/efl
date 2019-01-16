@@ -4047,5 +4047,12 @@ class TestEinaAccessor
     }
 }
 
+class TestEinaLog
+{
+    public static void basic_log_usage()
+    {
+        Eina.Log.Error("This should work");
+    }
+}
 
 }

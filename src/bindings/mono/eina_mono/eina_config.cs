@@ -14,7 +14,6 @@ public class Config {
             throw (new Efl.EflException("Failed to initialize Eina"));
 
         // Initialize the submodules here
-        Eina.Log.Init();
         Eina.Error.Init();
     }
 
