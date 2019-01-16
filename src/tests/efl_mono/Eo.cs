@@ -10,6 +10,13 @@ class TestEo
     {
     }
 
+    public static void return_null_object()
+    {
+        var testing = new Dummy.TestObject();
+        var o1 = testing.ReturnNullObject();
+        Test.Assert(o1 == null);
+    }
+
     //
     // Test cases:
     //

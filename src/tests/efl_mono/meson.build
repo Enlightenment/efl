@@ -31,10 +31,18 @@ foreach mono_gen_file : eo_files
                                 '@INPUT@'])
 endforeach
 
+if (cs_is_dotnet)
+efl_mono_test = library('efl_mono_test',
+    eo_file_targets,
+    link_with : [efl_mono],
+    runtime_assemblies : runtime_assemblies
+)
+else
 efl_mono_test = library('efl_mono_test',
     eo_file_targets,
     link_with : [efl_mono],
 )
+endif
 
 efl_mono_src = [
      'Main.cs',
@@ -60,13 +68,42 @@ efl_mono_src = [
      'Inheritance.cs',
 ]
 
+if (cs_is_dotnet)
+efl_mono_suite = executable('efl-mono-suite',
+  efl_mono_src,
+  link_with : [efl_mono, efl_mono_test],
+  runtime_assemblies : runtime_assemblies
+)
+else
 efl_mono_suite = executable('efl-mono-suite',
   efl_mono_src,
   link_with : [efl_mono, efl_mono_test],
 )
+endif
 
 env = environment()
 env.set('MONO_PATH', efl_mono_test_suite_path )
+
+if (cs_is_dotnet)
+env.set('LD_LIBRARY_PATH', efl_mono_test_suite_path )
+copy_prog = find_program(['cp', 'copy'])
+
+configure_file(input : 'efl-mono-suite.runtimeconfig.json',
+               output : 'efl-mono-suite.runtimeconfig.json',
+               copy : true)
+
+custom_target('copy_efl_mono_dll',
+              build_by_default : true,
+              input : efl_mono,
+              output : efl_mono.full_path().split('/')[-1],
+              command : [copy_prog, '@INPUT@', '@OUTPUT@'])
+
+custom_target('copy_efl_mono_lib_dll',
+              build_by_default : true,
+              input : efl_mono_lib,
+              output : efl_mono_lib.full_path().split('/')[-1],
+              command : [copy_prog, '@INPUT@', '@OUTPUT@'])
+endif
 
 config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
 load_lib = ''

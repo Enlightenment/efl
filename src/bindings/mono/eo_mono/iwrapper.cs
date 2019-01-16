@@ -12,19 +12,40 @@ using EoG = Efl.Eo.Globals;
 namespace Efl { namespace Eo {
 
 public class Globals {
-    [DllImport(efl.Libs.Eo)] public static extern void efl_object_init();
-    [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
+    [return: MarshalAs(UnmanagedType.U1)]
+    public delegate bool efl_object_init_delegate();
+    public static FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
+        new FunctionWrapper<efl_object_init_delegate>(efl.Libs.EoModule, "efl_object_init");
+    public static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
+
+    public delegate void efl_object_shutdown_delegate();
+    public static FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
+    public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
+    // [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
+    public static FunctionWrapper<_efl_add_internal_start_delegate> _efl_add_internal_start_ptr = new FunctionWrapper<_efl_add_internal_start_delegate>(efl.Libs.EoModule, "_efl_add_internal_start");
+    public delegate  IntPtr
+        _efl_add_internal_start_delegate([MarshalAs(UnmanagedType.LPStr)] String file, int line,
+                                IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
+    public delegate  IntPtr
+        _efl_add_end_delegate(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
+    public delegate  IntPtr
+        efl_ref_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_ref(IntPtr eo);
+    public delegate  void
+        efl_unref_delegate(IntPtr eo);
     [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_unref(IntPtr eo);
+    public delegate  int
+        efl_ref_count_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern int
         efl_ref_count(IntPtr eo);
+
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_name_get(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
@@ -125,30 +146,42 @@ public class Globals {
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr term);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr extn48, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops, IntPtr reflection_ops);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
-#if WIN32
-    public static IntPtr RTLD_DEFAULT = new IntPtr(1);
-#else
-    public static IntPtr RTLD_DEFAULT = new IntPtr(0);
-#endif
-    [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
-    [DllImport(efl.Libs.Evil)] public static extern IntPtr dlsym
-       (IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] String name);
 
-   [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
+    public delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    public delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
+    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
+    public delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
+    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
+    public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
+    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
+    public delegate  IntPtr dlerror_delegate();
+    [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
+
+    public delegate  bool efl_event_callback_priority_add_delegate(
               System.IntPtr obj,
               IntPtr desc,
               short priority,
               Efl.EventCb cb,
               System.IntPtr data);
-   [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
+    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
+              System.IntPtr obj,
+              IntPtr desc,
+              short priority,
+              Efl.EventCb cb,
+              System.IntPtr data);
+    public delegate  bool efl_event_callback_del_delegate(
               System.IntPtr obj,
               IntPtr desc,
               Efl.EventCb cb,
               System.IntPtr data);
+    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
+              System.IntPtr obj,
+              IntPtr desc,
+              Efl.EventCb cb,
+              System.IntPtr data);
+    public delegate  IntPtr
+        efl_object_legacy_only_event_description_get_delegate([MarshalAs(UnmanagedType.LPStr)] String name);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
 
@@ -240,7 +273,7 @@ public class Globals {
     }
     public static byte class_initializer_call(IntPtr klass, System.Type type)
     {
-        Eina.Log.Debug($"called with 0x{klass.ToInt64()} {type}");
+        Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");
         Efl.Eo.NativeClass nativeClass = get_native_class(type.BaseType);
 
         if (nativeClass != null)
@@ -259,7 +292,7 @@ public class Globals {
                     if(nc != null)
                     {
                         var moredescs = nc.GetEoOps(type);
-                        Eina.Log.Debug("adding {moredescs.Count} more descs to registration");
+                        Eina.Log.Debug($"adding {moredescs.Count} more descs to registration");
                         descs.AddRange(moredescs);
                         count = descs.Count;
                     }
@@ -278,7 +311,7 @@ public class Globals {
             ops.count = (UIntPtr)count;
             IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));
             Marshal.StructureToPtr(ops, ops_ptr, false);
-            Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero, IntPtr.Zero);
+            Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);
             //EoKlass = klass;
         }
         else
@@ -389,38 +422,6 @@ public class Globals {
         }
         else
             return null;
-    }
-
-    public static IntPtr cached_string_to_intptr(Dictionary<String, IntPtr> dict, String str)
-    {
-        IntPtr ptr = IntPtr.Zero;
-
-        if (str == null)
-            return ptr;
-
-        if (!dict.TryGetValue(str, out ptr))
-        {
-            ptr = Eina.StringConversion.ManagedStringToNativeUtf8Alloc(str);
-            dict[str] = ptr;
-        }
-
-        return ptr;
-    }
-
-    public static IntPtr cached_stringshare_to_intptr(Dictionary<String, IntPtr> dict, String str)
-    {
-        IntPtr ptr = IntPtr.Zero;
-
-        if (str == null)
-            return ptr;
-
-        if (!dict.TryGetValue(str, out ptr))
-        {
-            ptr = Eina.Stringshare.eina_stringshare_add(str);
-            dict[str] = ptr;
-        }
-
-        return ptr;
     }
 
     public static void free_dict_values(Dictionary<String, IntPtr> dict)

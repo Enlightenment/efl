@@ -4,7 +4,24 @@ efl_custom_exports_mono_files = \
 
 efl_eo_mono_files = \
 	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/FunctionWrapper.cs \
+	bindings/mono/eo_mono/NativeModule.cs \
 	bindings/mono/eo_mono/workaround.cs
+
+if HAVE_WIN32
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Windows.cs \
+	bindings/mono/eo_mono/NativeModule_Windows.cs
+
+else
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Unix.cs \
+	bindings/mono/eo_mono/NativeModule_Unix.cs
+
+endif
+
 
 efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_config.cs \
@@ -293,7 +310,7 @@ msbuildcsprojs: ../libefl_mono.csproj
 	done
 
 ### Some hard-coded runtime dependencies for tests and examples
-TEST_PATHS = $(abs_top_builddir)/src/lib/efl_mono:$(abs_top_builddir)/src/lib/efl_mono/.libs:$(abs_top_builddir)/src/lib/eina/.libs:$(abs_top_builddir)/src/lib/ecore/.libs:$(abs_top_builddir)/src/lib/ecore_evas/.libs:$(abs_top_builddir)/src/lib/eo/.libs:$(abs_top_builddir)/src/lib/evas/.libs:$(abs_top_builddir)/src/lib/emile/.libs:$(abs_top_builddir)/src/lib/eet/.libs:$(abs_top_builddir)/src/lib/efl/.libs:$(abs_top_builddir)/src/ecore-file/.libs:$(abs_top_builddir)/src/lib/efl-input/.libs:$(abs_top_builddir)/src/lib/edje/.libs:$(abs_top_builddir)/src/lib/ethumb/.libs:$(abs_top_builddir)/src/lib/ethumb-client/.libs:$(abs_top_builddir)/src/lib/emotion/.libs:$(abs_top_builddir)/src/lib/ecore-imf/.libs:$(abs_top_builddir)/src/lib/ecore-con/.libs:$(abs_top_builddir)/src/lib/eldbus/.libs:$(abs_top_builddir)/src/lib/efreet/.libs:$(abs_top_builddir)/src/lib/efreet-mime/.libs:$(abs_top_builddir)/src/lib/efreet-trash/.libs:$(abs_top_builddir)/src/lib/eio/.libs:$(abs_top_builddir)/src/lib/elocation/.libs:$(abs_top_builddir)/src/lib/elementary/.libs
+TEST_PATHS = $(abs_top_builddir)/src/lib/efl_mono:$(abs_top_builddir)/src/lib/efl_mono/.libs:$(abs_top_builddir)/src/lib/eina/.libs:$(abs_top_builddir)/src/lib/ecore/.libs:$(abs_top_builddir)/src/lib/ecore_evas/.libs:$(abs_top_builddir)/src/lib/eo/.libs:$(abs_top_builddir)/src/lib/evas/.libs:$(abs_top_builddir)/src/lib/emile/.libs:$(abs_top_builddir)/src/lib/eet/.libs:$(abs_top_builddir)/src/lib/efl/.libs:$(abs_top_builddir)/src/ecore-file/.libs:$(abs_top_builddir)/src/lib/efl-input/.libs:$(abs_top_builddir)/src/lib/edje/.libs:$(abs_top_builddir)/src/lib/ethumb/.libs:$(abs_top_builddir)/src/lib/ethumb-client/.libs:$(abs_top_builddir)/src/lib/emotion/.libs:$(abs_top_builddir)/src/lib/ecore-imf/.libs:$(abs_top_builddir)/src/lib/ecore-con/.libs:$(abs_top_builddir)/src/lib/eldbus/.libs:$(abs_top_builddir)/src/lib/efreet/.libs:$(abs_top_builddir)/src/lib/efreet-mime/.libs:$(abs_top_builddir)/src/lib/efreet-trash/.libs:$(abs_top_builddir)/src/lib/eio/.libs:$(abs_top_builddir)/src/lib/elocation/.libs:$(abs_top_builddir)/src/lib/elementary/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
 
 WIN_ADD_TEST_PATHS = $(abs_top_builddir)/src/lib/evil/.libs:$(abs_top_builddir)/src/lib/ecore_win32/.libs:$(abs_top_builddir)/src/lib/ector/.libs:$(abs_top_builddir)/src/lib/ecore_con/.libs:$(abs_top_builddir)/src/lib/ecore_imf/.libs:$(abs_top_builddir)/src/lib/ecore_file/.libs:$(abs_top_builddir)/src/lib/ecore_input/.libs:$(abs_top_builddir)/src/ethumb_client/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
 

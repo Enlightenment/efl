@@ -1,5 +1,31 @@
 add_languages('cs')
 
+
+runtime_assemblies = []
+
+# Check if we should use dotnet options
+cs_is_dotnet = meson.get_compiler('cs').get_id().contains('dotnet')
+
+if (cs_is_dotnet)
+
+runtime_assemblies += [
+    'System.Console',
+    'Microsoft.CSharp',
+    'System.Collections',
+    'System.Collections.Concurrent',
+    'System.ComponentModel.Primitives',
+    'System.ComponentModel.Primitives',
+    'System.Diagnostics.Debug',
+    'System.Diagnostics.TraceSource',
+    'System.Dynamic.Runtime',
+    'System.Linq',
+    'System.Runtime',
+    'System.Runtime.Extensions',
+    'System.Security',
+]
+
+endif
+
 mono_sublibs = [
   ['Eina',        true, ], #
   ['Eolian',      true, ], #
@@ -114,15 +140,24 @@ efl_mono_conf_data.set('EVAS', evas_lib.full_path())
 efl_mono_conf_data.set('ELDBUS', eldbus_lib.full_path())
 efl_mono_conf_data.set('ELEMENTARY', elementary_lib.full_path())
 
-configure_file(input : 'efl_mono.dll.config.in',
-               output : 'efl_mono.dll.config',
-               configuration : efl_mono_conf_data)
+efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
+                                 output : 'efl_mono.dll.config',
+                                 configuration : efl_mono_conf_data)
 
+if (cs_is_dotnet)
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major)
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+    runtime_assemblies : runtime_assemblies
 )
+else
+efl_mono = library('efl_mono',
+    mono_generator_target + mono_files + [efl_src],
+    install : true,
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+)
+endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 

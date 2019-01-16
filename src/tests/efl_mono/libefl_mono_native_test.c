@@ -162,6 +162,11 @@ Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Obj
   return obj;
 }
 
+Efl_Object *_dummy_test_object_return_null_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return NULL;
+}
+
 void _dummy_test_object_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x, int *y)
 {
     *y = -x;

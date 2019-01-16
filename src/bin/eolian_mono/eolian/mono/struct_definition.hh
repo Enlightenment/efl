@@ -131,6 +131,22 @@ struct struct_internal_definition_generator
                    .generate(sink, nullptr, context))
                  return false;
             }
+          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
+                   && regular->base_type == "bool")
+            {
+               if (!as_generator("///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 "public System.Byte " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
+                 return false;
+            }
+          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
+                   && regular->base_type == "char")
+            {
+               if (!as_generator("///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 "public System.Byte " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
+                 return false;
+            }
           else if (!as_generator(scope_tab << eolian_mono::marshall_annotation(false) << "\n"
                                  << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
@@ -255,6 +271,20 @@ struct to_internal_field_convert_generator
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
+      else if (!field.type.is_ptr && regular && regular->base_type == "bool")
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << " ? (byte)1 : (byte)0;\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (!field.type.is_ptr && regular && regular->base_type == "char")
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_internal_struct." << string << " = (byte)_external_struct." << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
       else // primitives and enums
         {
            if (!as_generator(
@@ -355,6 +385,20 @@ struct to_external_field_convert_generator
         {
            if (!as_generator(
                  scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ", Eina.Ownership.Unmanaged);\n"
+               ).generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (!field.type.is_ptr && regular && regular->base_type == "bool")
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_external_struct." << string << " = _internal_struct." << string << " != 0;\n"
+               ).generate(sink, std::make_tuple(field_name, field_name), context))
+             return false;
+        }
+      else if (!field.type.is_ptr && regular && regular->base_type == "char")
+        {
+           if (!as_generator(
+                 scope_tab << scope_tab << "_external_struct." << string << " = (char)_internal_struct." << string << ";\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }

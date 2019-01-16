@@ -6,6 +6,7 @@
 #include <utility>
 #include <type_traits>
 #include <tuple>
+#include <iosfwd>
 
 #include <eina_aligned_union.hh>
 
@@ -146,6 +147,17 @@ struct destroy_visitor
    {
       typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type type;
       other.~type();
+   }
+};
+
+struct ostream_visitor
+{
+   std::ostream* s;
+   typedef std::ostream& result_type;
+   template <typename T>
+   std::ostream& operator()(T const& other) const
+   {
+     return *s << other;
    }
 };
 
@@ -294,6 +306,10 @@ private:
      return rhs.type == lhs.type
        && (rhs.type == -1
            || rhs.visit(compare_equal_visitor{&lhs.buffer}));
+   }
+   friend std::ostream& operator<<(std::ostream& s, variant<Args...> const& rhs)
+   {
+     return rhs.visit(ostream_visitor{&s});
    }
   
    int type;

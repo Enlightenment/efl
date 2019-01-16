@@ -17,6 +17,22 @@ public class Libs {
     public const string Eldbus = "@ELDBUS_DL_MONO@";
 
     public const string CustomExports = "@CUSTOM_EXPORTS_MONO_DL_MONO@";
+
+    public const string Libdl = "libdl.so";
+    public const string Kernel32 = "kernel32.dll";
+
+    public static Efl.Eo.NativeModule EflModule = new Efl.Eo.NativeModule(Efl);
+    public static Efl.Eo.NativeModule CoreModule = new Efl.Eo.NativeModule(Ecore);
+    public static Efl.Eo.NativeModule EinaModule = new Efl.Eo.NativeModule(Eina);
+    public static Efl.Eo.NativeModule EoModule = new Efl.Eo.NativeModule(Eo);
+    public static Efl.Eo.NativeModule EvasModule = new Efl.Eo.NativeModule(Evas);
+    public static Efl.Eo.NativeModule EvilModule = new Efl.Eo.NativeModule(Evil);
+    public static Efl.Eo.NativeModule EdjeModule = new Efl.Eo.NativeModule(Edje);
+    public static Efl.Eo.NativeModule ElementaryModule = new Efl.Eo.NativeModule(Elementary);
+    public static Efl.Eo.NativeModule EldbusModule = new Efl.Eo.NativeModule(Eldbus);
+    public static Efl.Eo.NativeModule CustomExportsModule = new Efl.Eo.NativeModule(CustomExports);
+    public static Efl.Eo.NativeModule LibdlModule = new Efl.Eo.NativeModule(Libdl);
+    public static Efl.Eo.NativeModule Kernel32Module = new Efl.Eo.NativeModule(Kernel32);
 }
 
 }
