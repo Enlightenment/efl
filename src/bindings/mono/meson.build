@@ -126,15 +126,24 @@ efl_mono_conf_data.set('EVAS', evas_lib.full_path())
 efl_mono_conf_data.set('ELDBUS', eldbus_lib.full_path())
 efl_mono_conf_data.set('ELEMENTARY', elementary_lib.full_path())
 
-configure_file(input : 'efl_mono.dll.config.in',
-               output : 'efl_mono.dll.config',
-               configuration : efl_mono_conf_data)
+efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
+                                 output : 'efl_mono.dll.config',
+                                 configuration : efl_mono_conf_data)
 
+if (get_option('dotnet'))
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major)
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+    runtime_assemblies : ['System.Private.CoreLib','System.Console','System.Runtime','System.Linq','System.Dynamic.Runtime','System.Security','System.ComponentModel.Primitives','System.Runtime.Extensions','System.Diagnostics.Debug','System.Diagnostics.TraceSource','Microsoft.CSharp','System.Collections']
 )
+else
+efl_mono = library('efl_mono',
+    mono_generator_target + mono_files + [efl_src],
+    install : true,
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+)
+endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 
