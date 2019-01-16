@@ -20,7 +20,8 @@ _edje_var_timer_cb(void *data)
    embryo_program_vm_push(ed->collection->script);
    _edje_embryo_globals_init(ed);
    embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)et->val);
-   ed->var_pool->timers = eina_list_remove(ed->var_pool->timers, et);
+   ed->var_pool->timers = eina_inlist_remove(ed->var_pool->timers,
+                                             EINA_INLIST_GET(et));
    fn = et->func;
    free(et);
    {
@@ -239,8 +240,10 @@ _edje_var_shutdown(Edje *ed)
           }
         free(ed->var_pool->vars);
      }
-   EINA_LIST_FREE(ed->var_pool->timers, et)
+   EINA_INLIST_FREE(ed->var_pool->timers, et)
      {
+        ed->var_pool->timers = eina_inlist_remove(ed->var_pool->timers,
+                                                  EINA_INLIST_GET(et));
         ecore_timer_del(et->timer);
         free(et);
      }
@@ -1006,19 +1009,19 @@ _edje_var_timer_add(Edje *ed, double in, const char *fname, int val)
         free(et);
         return 0;
      }
-   ed->var_pool->timers = eina_list_prepend(ed->var_pool->timers, et);
+   ed->var_pool->timers = eina_inlist_prepend(ed->var_pool->timers,
+                                              EINA_INLIST_GET(et));
    return et->id;
 }
 
 static Edje_Var_Timer *
 _edje_var_timer_find(Edje *ed, int id)
 {
-   Eina_List *l;
    Edje_Var_Timer *et;
 
    if (!ed->var_pool) return NULL;
 
-   EINA_LIST_FOREACH(ed->var_pool->timers, l, et)
+   EINA_INLIST_FOREACH(ed->var_pool->timers, et)
      if (et->id == id) return et;
 
    return NULL;
@@ -1032,7 +1035,8 @@ _edje_var_timer_del(Edje *ed, int id)
    et = _edje_var_timer_find(ed, id);
    if (!et) return;
 
-   ed->var_pool->timers = eina_list_remove(ed->var_pool->timers, et);
+   ed->var_pool->timers = eina_inlist_remove(ed->var_pool->timers,
+                                              EINA_INLIST_GET(et));
    ecore_timer_del(et->timer);
    free(et);
 }
