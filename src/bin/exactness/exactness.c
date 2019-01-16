@@ -591,6 +591,9 @@ main(int argc, char *argv[])
    printf("Finished executing %u out of %u tests.\n",
          _tests_executed,
          eina_inlist_count(EINA_INLIST_GET(test_list)));
+   printf("%u tests executed\n", _tests_executed);
+   printf("%u tests had execution errors\n", eina_list_count(_errors));
+   printf("%u screenshots failed comparison\n", eina_list_count(_compare_errors));
 
    /* Sort the errors and the compare_errors. */
    _errors = eina_list_sort(_errors, 0, (Eina_Compare_Cb) _errors_sort_cb);
@@ -607,7 +610,6 @@ main(int argc, char *argv[])
         report_file = fopen(report_filename, "w+");
         if (report_file)
           {
-             printf("%s %p\n", report_filename, report_file);
              fprintf(report_file,
                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
                    "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Exactness report</title></head><body>");
