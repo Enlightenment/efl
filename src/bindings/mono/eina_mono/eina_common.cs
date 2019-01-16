@@ -95,12 +95,6 @@ public static class MemoryNative {
     }
 }
 
-[StructLayout(LayoutKind.Sequential)]
-public struct ConvertWrapper<T>
-{
-    public T val;
-}
-
 public static class PrimitiveConversion
 {
    public static T PointerToManaged<T>(IntPtr nat)
@@ -111,8 +105,8 @@ public static class PrimitiveConversion
            return default(T);
        }
 
-       var w = Marshal.PtrToStructure<Eina.ConvertWrapper<T> >(nat);
-       return w.val;
+       var w = Marshal.PtrToStructure<T>(nat);
+       return w;
    }
 
    public static IntPtr ManagedToPointerAlloc<T>(T man)
