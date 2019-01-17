@@ -1039,10 +1039,8 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
 
    /* verify that all methods are implemented on the class */
    if (!_db_check_implemented(vals, cl, fh))
-     {
-        eina_hash_free(fh);
-        return EINA_FALSE;
-     }
+     vals->warned = EINA_TRUE;
+
    eina_hash_free(fh);
 
    return EINA_TRUE;
