@@ -1609,29 +1609,29 @@ _blanktime_fallback(Ecore_Drm2_Output *output, int sequence, long *sec, long *us
 EAPI Eina_Bool
 ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec)
 {
-  drmVBlank v;
-  int ret;
-  Eina_Bool success;
+   drmVBlank v;
+   int ret;
+   Eina_Bool success;
 
-  EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
-  EINA_SAFETY_ON_NULL_RETURN_VAL(sec, EINA_FALSE);
-  EINA_SAFETY_ON_NULL_RETURN_VAL(usec, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sec, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(usec, EINA_FALSE);
 
-  memset(&v, 0, sizeof(v));
-  v.request.type = DRM_VBLANK_RELATIVE;
-  v.request.sequence = sequence;
-  ret = sym_drmWaitVBlank(output->fd, &v);
-  success = (ret == 0) && (v.reply.tval_sec > 0 || v.reply.tval_usec > 0);
-  if (!success)
-    {
-       ret = _blanktime_fallback(output, sequence, sec, usec);
-       if (ret) return EINA_FALSE;
-       return EINA_TRUE;
-    }
+   memset(&v, 0, sizeof(v));
+   v.request.type = DRM_VBLANK_RELATIVE;
+   v.request.sequence = sequence;
+   ret = sym_drmWaitVBlank(output->fd, &v);
+   success = (ret == 0) && (v.reply.tval_sec > 0 || v.reply.tval_usec > 0);
+   if (!success)
+     {
+        ret = _blanktime_fallback(output, sequence, sec, usec);
+        if (ret) return EINA_FALSE;
+        return EINA_TRUE;
+     }
 
-  *sec = v.reply.tval_sec;
-  *usec = v.reply.tval_usec;
-  return EINA_TRUE;
+   *sec = v.reply.tval_sec;
+   *usec = v.reply.tval_usec;
+   return EINA_TRUE;
 }
 
 EAPI void
