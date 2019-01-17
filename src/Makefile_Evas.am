@@ -9,7 +9,6 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_canvas_text.eo \
 	lib/evas/canvas/efl_canvas_text_factory.eo \
 	lib/evas/canvas/efl_canvas_group.eo \
-  lib/evas/canvas/efl_canvas_group_object.eo \
 	lib/evas/canvas/efl_canvas_image_internal.eo \
 	lib/evas/canvas/evas_canvas3d_camera.eo\
 	lib/evas/canvas/evas_canvas3d_texture.eo\

@@ -1,7 +1,0 @@
-class Efl.Canvas.Group_Object(Efl.Canvas.Group)
-{
-  [[A class which makes Efl.Canvas.Group instanceable.
-    For further information, please see @Efl.Canvas.Group.
-  ]]
-  data: null;
-}

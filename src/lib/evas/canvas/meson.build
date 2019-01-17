@@ -74,7 +74,6 @@ pub_eo_files = [
   'efl_canvas_vg_gradient_radial.eo',
   'efl_canvas_vg_gradient_linear.eo',
   'efl_canvas_group.eo',
-  'efl_canvas_group_object.eo',
   'efl_gfx_map.eo',
   'efl_canvas_event_grabber.eo',
   'efl_canvas_text.eo'

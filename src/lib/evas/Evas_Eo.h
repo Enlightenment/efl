@@ -179,7 +179,6 @@ struct _Efl_Canvas_Object_Animation_Event
  * @{
  */
 #include "canvas/efl_canvas_group.eo.h"
-#include "canvas/efl_canvas_group_object.eo.h"
 /**
  * @}
  */
