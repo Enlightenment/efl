@@ -775,7 +775,7 @@ _efl_canvas_vg_object_render(Evas_Object *eo_obj EINA_UNUSED,
       We assume the first and last frame images are the most resusable
       in generic scenarios. */
    if (pd->frame_idx == 0 ||
-       (pd->frame_idx == (int) evas_cache_vg_anim_frame_count_get(pd->vg_entry)))
+       (pd->frame_idx == (int) (evas_cache_vg_anim_frame_count_get(pd->vg_entry) - 1)))
      cacheable = EINA_TRUE;
 
    if (pd->vg_entry)
