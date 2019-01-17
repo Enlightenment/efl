@@ -170,7 +170,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
    else pd->state = ELM_ANIMATION_VIEW_STATE_PLAY;
 
    pd->keyframe = progress;
-   evas_object_vg_animated_frame_set(pd->vg, (int) (pd->frame_cnt * progress));
+   evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * progress));
 
    if (pd->auto_repeat)
      {
@@ -495,7 +495,7 @@ _elm_animation_view_keyframe_set(Eo *obj EINA_UNUSED, Elm_Animation_View_Data *p
    pd->keyframe = keyframe;
 
    if (pd->frame_cnt > 0)
-     evas_object_vg_animated_frame_set(pd->vg, (int) (pd->frame_cnt * keyframe));
+     evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * keyframe));
 
    if (pd->transit)
      {
