@@ -1011,8 +1011,10 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    int method, mw, mh;
    void *tinfo;
 
-   if (gl) method = evas_render_method_lookup("gl_drm");
-   else method = evas_render_method_lookup("drm");
+   if (gl)
+     method = evas_render_method_lookup("gl_drm");
+   else
+     method = evas_render_method_lookup("drm");
 
    if (!method) return NULL;
 
