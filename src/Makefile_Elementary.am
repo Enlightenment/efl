@@ -201,7 +201,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_calendar_item.eo \
 	lib/elementary/elm_clock.eo \
 	lib/elementary/elm_colorselector.eo \
-	lib/elementary/elm_combobox.eo \
 	lib/elementary/elm_conformant.eo \
 	lib/elementary/elm_ctxpopup.eo \
 	lib/elementary/elm_dayselector.eo \
