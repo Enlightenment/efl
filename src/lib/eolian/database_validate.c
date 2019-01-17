@@ -1136,7 +1136,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
                    required_classes = eina_list_append(required_classes, required_class);
                }
           }
-        if (!valid && vals->ext_regular) switch (icl->type)
+        if (!valid) switch (icl->type)
           {
            case EOLIAN_CLASS_REGULAR:
            case EOLIAN_CLASS_ABSTRACT:
@@ -1146,7 +1146,8 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
                 snprintf(buf, sizeof(buf), "regular classes ('%s') cannot appear in extensions list of '%s'",
                          icl->base.name, cl->base.name);
                 _obj_error(&cl->base, buf);
-                vals->warned = EINA_TRUE;
+                if (vals->ext_regular)
+                  vals->warned = EINA_TRUE;
                 break;
              }
            default:
