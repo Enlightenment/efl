@@ -957,6 +957,51 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
    _drm_last_tick_get,
 };
 
+#ifdef BUILD_ECORE_EVAS_GL_DRM
+static void *
+_drm_gl_canvas_setup(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata)
+{
+   Evas_Engine_Info_GL_Drm *einfo;
+   char *num;
+
+   einfo = (Evas_Engine_Info_GL_Drm *)evas_engine_info_get(ee->evas);
+   if (!einfo) return NULL;
+
+   einfo->info.vsync = EINA_TRUE;
+
+   num = getenv("EVAS_DRM_VSYNC");
+   if ((num) && (!atoi(num)))
+     einfo->info.vsync = EINA_FALSE;
+
+   einfo->info.dev = edata->dev;
+   einfo->info.bpp = edata->bpp;
+   einfo->info.depth = edata->depth;
+   einfo->info.format = edata->format;
+   einfo->info.rotation = ee->rotation;
+   einfo->info.output = edata->output;
+
+   return einfo;
+}
+#endif
+
+static void *
+_drm_canvas_setup(Ecore_Evas *ee, Ecore_Evas_Engine_Drm_Data *edata)
+{
+   Evas_Engine_Info_Drm *einfo;
+
+   einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
+   if (!einfo) return NULL;
+
+   einfo->info.dev = edata->dev;
+   einfo->info.bpp = edata->bpp;
+   einfo->info.depth = edata->depth;
+   einfo->info.format = edata->format;
+   einfo->info.rotation = ee->rotation;
+   einfo->info.output = edata->output;
+
+   return einfo;
+}
+
 static Ecore_Evas *
 _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bool gl)
 {
@@ -1044,48 +1089,23 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
      evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_POST,
                              _drm_render_updates, ee);
 
-   tinfo = evas_engine_info_get(ee->evas);
 #ifdef BUILD_ECORE_EVAS_GL_DRM
-   if (tinfo && gl)
-     {
-        char *num;
-        Evas_Engine_Info_GL_Drm *einfo = tinfo;
-
-        einfo->info.vsync = EINA_TRUE;
-
-        num = getenv("EVAS_DRM_VSYNC");
-        if ((num) && (!atoi(num)))
-          einfo->info.vsync = EINA_FALSE;
-
-        einfo->info.dev = edata->dev;
-        einfo->info.bpp = edata->bpp;
-        einfo->info.depth = edata->depth;
-        einfo->info.format = edata->format;
-        einfo->info.rotation = ee->rotation;
-        einfo->info.output = edata->output;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          {
-             ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
-             goto eng_err;
-          }
-     }
+   if (gl)
+     tinfo = _drm_gl_canvas_setup(ee, edata);
    else
 #endif
-   if (tinfo)
-     {
-        Evas_Engine_Info_Drm *einfo = tinfo;
+     tinfo = _drm_canvas_setup(ee, edata);
 
-        einfo->info.dev = edata->dev;
-        einfo->info.bpp = edata->bpp;
-        einfo->info.depth = edata->depth;
-        einfo->info.format = edata->format;
-        einfo->info.rotation = ee->rotation;
-        einfo->info.output = edata->output;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          {
-             ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
-             goto eng_err;
-          }
+   if (!tinfo)
+     {
+        ERR("evas_engine_info_get() for engine '%s' failed", ee->driver);
+        goto eng_err;
+     }
+
+   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)tinfo))
+     {
+        ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+        goto eng_err;
      }
 
    ee->prop.window = ecore_drm2_output_crtc_get(edata->output);
