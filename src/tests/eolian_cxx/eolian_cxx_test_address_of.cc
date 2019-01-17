@@ -15,16 +15,14 @@ EFL_START_TEST(eolian_cxx_test_addess_of_conversions)
 {
    efl::eo::eo_init init;
 
-   nonamespace::D d_obj;
+   nonamespace::C c_obj;
 
-   nonamespace::A* a_ptr = &d_obj;
-   nonamespace::B* b_ptr = &d_obj;
-   nonamespace::C* c_ptr = &d_obj;
-   nonamespace::D* d_ptr = &d_obj;
+   nonamespace::A* a_ptr = &c_obj;
+   nonamespace::B* b_ptr = &c_obj;
+   nonamespace::C* c_ptr = &c_obj;
 
    fail_unless(a_ptr == (void*) b_ptr);
    fail_unless(a_ptr == (void*) c_ptr);
-   fail_unless(a_ptr == (void*) d_ptr);
 }
 EFL_END_TEST
 
