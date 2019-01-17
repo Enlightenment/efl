@@ -150,7 +150,7 @@ _evas_cache_vg_entry_free_cb(void *data)
    if (vg_entry->vfd)
      {
         vg_entry->vfd->ref--;
-        if (vg_entry->vfd->ref <= 0)
+        if (vg_entry->vfd->ref <= 0 && !vg_entry->vfd->no_share)
           {
              Eina_Strbuf *hash_key = eina_strbuf_new();
              eina_strbuf_append_printf(hash_key, "%s/%s",
@@ -361,11 +361,12 @@ evas_cache_vg_file_open(const Eina_File *file, const char *key, Eina_Bool mmap)
    hash_key = eina_strbuf_new();
    eina_strbuf_append_printf(hash_key, "%s/%s", eina_file_filename_get(file), key);
    vfd = eina_hash_find(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key));
-   if (!vfd)
+   if (!vfd || vfd->no_share)
      {
         vfd = _vg_load_from_file(file, key, mmap);
         //File exists.
-        if (vfd) eina_hash_add(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vfd);
+        if (vfd && !vfd->no_share)
+          eina_hash_add(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vfd);
      }
    eina_strbuf_free(hash_key);
    return vfd;

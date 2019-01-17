@@ -1524,6 +1524,7 @@ struct _Vg_File_Data
 
    void           *loader_data;            //loader specific local data
 
+   Eina_Bool       no_share : 1;           //Shareable VFD through multiple file open requests.
    Eina_Bool       static_viewbox: 1;
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
 };

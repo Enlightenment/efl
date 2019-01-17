@@ -80,6 +80,7 @@ evas_vg_load_file_open_json(Eina_File *file,
    vfd->h = (int) h;
 
    vfd->loader_data = (void *) lot_anim;
+   vfd->no_share = EINA_TRUE;
 
    return vfd;
 
