@@ -724,7 +724,7 @@ static inline Eina_Bool eina_value_setup(Eina_Value *value,
                                          const Eina_Value_Type *type) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Creates generic value storage.
+ * @brief Empties a generic value storage.
  *
  * @param[in] value Value object
  *
