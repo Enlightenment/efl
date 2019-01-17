@@ -759,14 +759,14 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs)
           {
            case IMPL_STATUS_NONE:
              _eo_parser_log(
-               &impl->base, "unimplemented function '%s' (originally defined at %s:%d:%d)",
+               &cl->base, "unimplemented function '%s' (originally defined at %s:%d:%d)",
                fid->base.name, fid->base.file, fid->base.line, fid->base.column);
              succ = EINA_FALSE;
              continue;
            case IMPL_STATUS_GET:
            case IMPL_STATUS_SET:
              _eo_parser_log(
-               &impl->base, "partially implemented function '%s' (originally defined at %s:%d:%d)",
+               &cl->base, "partially implemented function '%s' (originally defined at %s:%d:%d)",
                fid->base.name, fid->base.file, fid->base.line, fid->base.column);
              succ = EINA_FALSE;
              continue;
@@ -774,7 +774,7 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs)
              continue;
            default:
              _eo_parser_log(
-               &impl->base, "internal error, unregistered function '%s' (originally defined at %s:%d:%d)",
+               &cl->base, "internal error, unregistered function '%s' (originally defined at %s:%d:%d)",
                fid->base.name, fid->base.file, fid->base.line, fid->base.column);
              return EINA_FALSE;
           }
