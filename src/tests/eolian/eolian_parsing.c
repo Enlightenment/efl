@@ -1583,13 +1583,34 @@ EFL_START_TEST(eolian_mixins_require)
    //check that implements contains this one class
    {
       Eolian_Implement *impl;
-      Eina_Iterator *i = eolian_class_extensions_get (cl);
+      Eina_Iterator *i = eolian_class_implements_get(cl);
+      Eina_Array *tmp = eina_array_new(1);
 
       EINA_ITERATOR_FOREACH(i, impl)
         {
-           ck_assert_ptr_eq(eolian_implement_class_get(impl), base);
+           if (eolian_implement_class_get(impl) != cl)
+             {
+                eina_array_push(tmp, eolian_implement_class_get(impl));
+                ck_assert_ptr_eq(eolian_implement_class_get(impl), base);
+             }
         }
+      ck_assert_int_eq(eina_array_count(tmp), 1);
+      eina_array_free(tmp);
       eina_iterator_free(i);
+   }
+   //check that the mixins has the right require
+   {
+      Eina_Iterator *iter = eolian_class_requires_get(cl);
+      Eina_Array *tmp = eina_array_new(1);
+
+      EINA_ITERATOR_FOREACH(iter, cl)
+        {
+           eina_array_push(tmp, cl);
+        }
+      ck_assert_int_eq(eina_array_count(tmp), 1);
+      ck_assert_ptr_eq(eina_array_data_get(tmp, 0), base);
+      eina_array_free(tmp);
+      eina_iterator_free(iter);
    }
    eolian_state_free(eos);
 }
