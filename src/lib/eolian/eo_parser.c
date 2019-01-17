@@ -1017,6 +1017,13 @@ parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
 }
 
 static void
+check_abstract_pure_virtual(Eo_Lexer *ls)
+{
+   if ((ls->klass->type != EOLIAN_CLASS_ABSTRACT) && (ls->klass->type != EOLIAN_CLASS_MIXIN))
+     eo_lexer_syntax_error(ls, "@pure_virtual only allowed in abstract classes or mixins");
+}
+
+static void
 parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
@@ -1047,8 +1054,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    for (;;) switch (ls->t.kw)
      {
       case KW_at_pure_virtual:
-        if (ls->klass->type == EOLIAN_CLASS_INTERFACE)
-          eo_lexer_syntax_error(ls, "@pure_virtual is implicit in interfaces");
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         if (is_get) prop->impl->get_pure_virtual = EINA_TRUE;
         else prop->impl->set_pure_virtual = EINA_TRUE;
@@ -1222,8 +1228,7 @@ parse_property(Eo_Lexer *ls)
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
-        if (ls->klass->type == EOLIAN_CLASS_INTERFACE)
-          eo_lexer_syntax_error(ls, "@pure_virtual is implicit in interfaces");
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;
@@ -1393,8 +1398,7 @@ parse_method(Eo_Lexer *ls)
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
-        if (ls->klass->type == EOLIAN_CLASS_INTERFACE)
-          eo_lexer_syntax_error(ls, "@pure_virtual is implicit in interfaces");
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;

@@ -1,4 +1,4 @@
-class Object_Impl extends Base {
+abstract Object_Impl extends Base {
    methods {
       @property a {
          set {

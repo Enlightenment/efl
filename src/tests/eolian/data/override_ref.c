@@ -92,7 +92,7 @@ _override_class_initializer(Efl_Class *klass)
 static const Efl_Class_Description _override_class_desc = {
    EO_VERSION,
    "Override",
-   EFL_CLASS_TYPE_REGULAR,
+   EFL_CLASS_TYPE_REGULAR_NO_INSTANT,
    sizeof(Override_Data),
    _override_class_initializer,
    NULL,
