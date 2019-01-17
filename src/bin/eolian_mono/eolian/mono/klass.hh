@@ -123,58 +123,57 @@ struct klass
      // Interface class
      if(class_type == "interface")
      {
-     auto iface_cxt = context_add_tag(class_context{class_context::interface}, context);
+       auto iface_cxt = context_add_tag(class_context{class_context::interface}, context);
 
-     if(!as_generator(documentation).generate(sink, cls, iface_cxt))
-       return false;
+       if(!as_generator(documentation).generate(sink, cls, iface_cxt))
+         return false;
 
-     // Mark the interface with the proper native Efl_Class* getter
-     if(!as_generator(lit("[") << name_helpers::interface_native_getter_attr_name(cls) << "]\n")
-        .generate(sink, attributes::unused, iface_cxt))
-       return false;
+       // Mark the interface with the proper native Efl_Class* getter
+       if(!as_generator(lit("[") << name_helpers::klass_native_inherit_name(cls) << "]\n")
+          .generate(sink, attributes::unused, iface_cxt))
+         return false;
 
-     if(!as_generator
+       if(!as_generator
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
          )
         .generate(sink, name_helpers::klass_interface_name(cls), iface_cxt))
-       return false;
-     for(auto first = std::begin(cls.immediate_inherits)
-           , last = std::end(cls.immediate_inherits); first != last; ++first)
-       {
-          if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
-            if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
-              return false;
-       }
+         return false;
+       for(auto first = std::begin(cls.immediate_inherits)
+             , last = std::end(cls.immediate_inherits); first != last; ++first)
+         {
+            if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
+              if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
+                return false;
+         }
 
-     if(!as_generator("\n" << scope_tab << "Efl.Eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
-       return false;
+       if(!as_generator("\n" << scope_tab << "Efl.Eo.IWrapper, IDisposable").generate(sink, attributes::unused, iface_cxt))
+         return false;
 
-     if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
-       return false;
+       if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
+         return false;
 
-     if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
-       return false;
+       if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
+         return false;
 
-     if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
-       return false;
+       if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
+         return false;
 
-     if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
-       return false;
+       if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
+         return false;
 
-     for (auto &&p : cls.parts)
-       if (!as_generator(
+       for (auto &&p : cls.parts)
+         if (!as_generator(
               documentation(1)
               << name_helpers::klass_full_concrete_or_interface_name(p.klass) << " " << utils::capitalize(p.name) << "{ get;}\n"
             ).generate(sink, p, iface_cxt))
+           return false;
+
+       if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, iface_cxt))
          return false;
 
-     if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, iface_cxt))
-       return false;
-
-     // End of interface declaration
-     if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
-
+       // End of interface declaration
+       if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
      // Events arguments go in the top namespace to avoid the Concrete suffix clutter in interface events.
@@ -276,17 +275,6 @@ struct klass
 
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
-
-         // Attribute getter of the native 'Efl_Class *' handle (for proper inheritance from additional explicit interfaces)
-         if(!as_generator(lit("public class ") << name_helpers::interface_native_getter_attr_name(cls) << " : Efl.Eo.NativeGetterAttr\n"
-              << "{\n"
-              << scope_tab << "public override IntPtr GetEflClass()\n"
-              << scope_tab << "{\n"
-              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n"
-              << "}\n")
-            .generate(sink, attributes::unused, concrete_cxt))
-           return false;
        }
 
      // Inheritable class
@@ -298,6 +286,7 @@ struct klass
         if(!as_generator
             (
              documentation
+             << "[" << name_helpers::klass_native_inherit_name(cls) << "]\n"
              << "public " << class_type << " " << name_helpers::klass_concrete_name(cls) << " : "
              << (klass_full_concrete_or_interface_name % ",") // classes
              << (inherit_classes.empty() ? "" : ",")
@@ -359,16 +348,8 @@ struct klass
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
-     std::size_t function_count = get_implementable_function_count(cls);
-
-     int function_registration_index = 0;
-     auto index_generator = [&function_registration_index]
-       {
-         return function_registration_index++;
-       };
-     
      // Native Inherit class
-     if(class_type == "class")
+     //if(class_type == "class")
        {
          auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
@@ -382,21 +363,21 @@ struct klass
 
          if(!as_generator
             (
-             "public " << class_type << " " << native_inherit_name << " " << (root ? "" : (": " + base_name)) <<"{\n"
-             << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
-             << scope_tab << "public " << (root ? "" : "new ") << "Efl_Op_Description[] GetEoOps()\n"
+             "public class " << native_inherit_name << " " << (root ? ": Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
+             // << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
+             << scope_tab << "public " << /*(root ? "" : "new ")*/ "override " << "System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "Efl_Op_Description[] descs = new Efl_Op_Description[" << grammar::int_ << "];\n"
+             << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )
-            .generate(sink, function_count, inative_cxt))
+            .generate(sink, attributes::unused, inative_cxt))
            return false;
 
          // Native wrapper registration
-         if(!as_generator(*(function_registration(index_generator, cls)))
+         if(!as_generator(*(function_registration(cls)))
             .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
 
          if(!root)
-           if(!as_generator(scope_tab << scope_tab << "descs = descs.Concat(base.GetEoOps()).ToArray();\n").generate(sink, attributes::unused, inative_cxt))
+           if(!as_generator(scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
              return false;
 
          if(!as_generator(
@@ -405,32 +386,23 @@ struct klass
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
 
-         if(!as_generator
-            (scope_tab << "public " << (root ? "" : "new " ) << "byte class_initializer(IntPtr klass)\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "var descs = GetEoOps();\n"
-             << scope_tab << scope_tab << "var count = descs.Length;\n"
-             << scope_tab << scope_tab << "IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*count);\n"
-             << scope_tab << scope_tab << "IntPtr ptr = descs_ptr;\n"
-             << scope_tab << scope_tab << "for(int i = 0; i != count; ++i)\n"
-             << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << "Marshal.StructureToPtr(descs[i], ptr, false);\n"
-             << scope_tab << scope_tab << scope_tab << "ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));\n"
-             << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << "Efl_Object_Ops ops;\n"
-             << scope_tab << scope_tab << "ops.descs = descs_ptr;\n"
-             << scope_tab << scope_tab << "ops.count = (UIntPtr)count;\n"
-             << scope_tab << scope_tab << "IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));\n"
-             << scope_tab << scope_tab << "Marshal.StructureToPtr(ops, ops_ptr, false);\n"
-             << scope_tab << scope_tab << "Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);\n"
-             << scope_tab << scope_tab << "EoKlass = klass;\n"
-            ).generate(sink, attributes::unused, inative_cxt)) return false;
+         // Attribute getter of the native 'Efl_Class *' handle (for proper inheritance from additional explicit interfaces)
+         if(!as_generator(
+                 scope_tab << "public override IntPtr GetEflClass()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, inative_cxt))
+           return false;
 
-
-         if(!as_generator(scope_tab << scope_tab << "return 1;\n"
-                          << scope_tab << "}\n")
-            .generate(sink, attributes::unused, inative_cxt)) return false;
-         //
+         if(!as_generator(
+              scope_tab << "public static " << (root ? "" : "new ") << " IntPtr GetEflClassStatic()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, inative_cxt))
+           return false;
+         
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
             .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
@@ -451,8 +423,9 @@ struct klass
      bool root = !helpers::has_regular_ancestor(cls);
      bool is_inherit = is_inherit_context(context);
 
-     std::string class_getter = "return Efl.Eo.Globals.efl_class_get(handle);";
+     std::string class_getter = name_helpers::klass_get_name(cls) + "()";
      std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
+     auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      // The klass field is static but there is no problem if multiple C# classes inherit from this generated one
      // as it is just a simple wrapper, forwarding the Eo calls either to the user API (where C#'s virtual method
@@ -464,7 +437,6 @@ struct klass
              << scope_tab << "public " << (root ? "" : "new ") << "static " << native_inherit_full_name << " nativeInherit = new " << native_inherit_full_name << "();\n"
              ).generate(sink, attributes::unused, context))
             return false;
-          class_getter = "return klass;";
        }
 
      std::string raw_klass_modifier;
@@ -477,7 +449,10 @@ struct klass
                 scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
                 << scope_tab << "public " << raw_klass_modifier << "System.IntPtr NativeClass {\n"
                 << scope_tab << scope_tab << "get {\n"
-                << scope_tab << scope_tab << scope_tab << class_getter << "\n" //return klass; }\n"
+                << scope_tab << scope_tab << scope_tab << "if (((object)this).GetType() == typeof (" << inherit_name << "))\n"
+                << scope_tab << scope_tab << scope_tab << scope_tab << "return " << native_inherit_full_name << ".GetEflClassStatic();\n"
+                << scope_tab << scope_tab << scope_tab << "else\n"
+                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"
             ).generate(sink, attributes::unused, context))
@@ -534,7 +509,8 @@ struct klass
                      scope_tab << "///<summary>Creates a new instance.</summary>\n"
                      << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
                      << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : base(nativeInherit.class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent, ref klass)\n"
+                     << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : "
+                     "base(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << "if (init_cb != null) {\n"
                      << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
@@ -543,7 +519,7 @@ struct klass
                      << scope_tab << "}\n"
 
                      << scope_tab << "///<summary>Internal constructor to forward the wrapper initialization to the root class.</summary>\n"
-                     << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent, ref IntPtr target_klass) : base(class_initializer, klass_name, base_klass, managed_type, parent, ref target_klass) {}\n"
+                     << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(klass_name, base_klass, managed_type, parent) {}\n"
 
                      << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
@@ -559,7 +535,7 @@ struct klass
              scope_tab << "///<summary>Creates a new instance.</summary>\n"
              << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
              << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : this(nativeInherit.class_initializer, \"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent, ref klass)\n"
+             << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : this(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "if (init_cb != null) {\n"
              << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
@@ -567,22 +543,22 @@ struct klass
              << scope_tab << scope_tab << "FinishInstantiation();\n"
              << scope_tab << "}\n"
 
-             << scope_tab << "protected " << inherit_name << "(Efl.Eo.Globals.class_initializer class_initializer, String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent, ref IntPtr target_klass)\n"
+             << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "inherited = this.GetType() != managed_type;\n"
+             << scope_tab << scope_tab << "inherited = ((object)this).GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
              << scope_tab << scope_tab << "if (inherited) {\n"
-             << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.klasses.ContainsKey(((object)this).GetType())) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "target_klass = Efl.Eo.Globals.register_class(class_initializer, klass_name, base_klass, this.GetType());\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (target_klass == System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.register_class(klass_name, base_klass, ((object)this).GetType());\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (actual_klass == System.IntPtr.Zero) {\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "throw new System.InvalidOperationException(\"Failed to initialize class '" << inherit_name << "'\");\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.klasses[((object)this).GetType()] = actual_klass;\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "actual_klass = target_klass;\n"
+             << scope_tab << scope_tab << scope_tab << "else\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"

@@ -24,11 +24,13 @@ class TestInheritance
     {
         override public void IntOut (int x, out int y)
         {
+            Console.WriteLine("IntOut");
             y = 10*x;
         }
 
         public string StringshareTest (string i)
         {
+            Console.WriteLine("StringshareTest");
             return "Hello World";
         }
     }
@@ -44,8 +46,8 @@ class TestInheritance
     {
         var obj = new Inherit2();
         int i = Dummy.InheritHelper.ReceiveDummyAndCallIntOut(obj);
-        string s = Dummy.InheritHelper.ReceiveDummyAndCallInStringshare(obj);
         Test.AssertEquals (50, i);
+        string s = Dummy.InheritHelper.ReceiveDummyAndCallInStringshare(obj);
         Test.AssertEquals ("Hello World", s);
     }
 }
