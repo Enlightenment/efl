@@ -1,4 +1,4 @@
-class Efl.Net.Server_Fd (Efl.Loop_Fd, Efl.Net.Server) {
+abstract Efl.Net.Server_Fd (Efl.Loop_Fd, Efl.Net.Server) {
     [[A generic server based on file descriptors.
 
       @since 1.19
