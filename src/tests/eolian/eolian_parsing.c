@@ -1516,7 +1516,7 @@ EFL_START_TEST(eolian_parts)
    int i = 0;
 
    static const char *part_classes[] = {
-      "Override", "Base", "Parts"
+      "Override", "Parts"
    };
 
    Eolian_State *eos = eolian_state_new();
