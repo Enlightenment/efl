@@ -12,7 +12,6 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool event_redef;
-   Eina_Bool ext_regular;
    Eina_Bool unimplemented;
    Eina_Bool pure_virtual;
 } Validate_State;
@@ -1146,8 +1145,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
                 snprintf(buf, sizeof(buf), "regular classes ('%s') cannot appear in extensions list of '%s'",
                          icl->base.name, cl->base.name);
                 _obj_error(&cl->base, buf);
-                if (vals->ext_regular)
-                  vals->warned = EINA_TRUE;
+                vals->warned = EINA_TRUE;
                 break;
              }
            default:
@@ -1264,7 +1262,6 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       !!getenv("EOLIAN_EVENT_REDEF_WARN"),
-      !!getenv("EOLIAN_CLASS_REGULAR_AS_EXT_WARN"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
       !!getenv("EOLIAN_PURE_VIRTUAL_WARN")
    };
