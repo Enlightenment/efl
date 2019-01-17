@@ -7,7 +7,6 @@
 #include <a.eo.hh>
 #include <b.eo.hh>
 #include <c.eo.hh>
-#include <d.eo.hh>
 
 #include "eolian_cxx_suite.h"
 
