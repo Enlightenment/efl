@@ -100,13 +100,11 @@ group { name: "e/widgets/syscon/main";
          signal: "mouse,down,1*"; source: "base";
          action: STATE_SET "clicked" 0.0;
          target: "base";
-         target: "e.text.label";
       }
       program {
          signal: "mouse,up,1"; source: "base";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "e.text.label";
       }
       program {
          signal: "mouse,clicked,1*"; source: "base";
