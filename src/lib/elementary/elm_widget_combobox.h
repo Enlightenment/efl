@@ -79,4 +79,8 @@ struct _Elm_Combobox_Data
   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
   ELM_COMBOBOX_CHECK(it->base.widget) __VA_ARGS__;
 
+#define ELM_COMBOBOX_CLASS elm_combobox_class_get()
+
+EWAPI const Efl_Class *elm_combobox_class_get(void);
+
 #endif

@@ -52,7 +52,6 @@ blacklisted_files = [
   'efl_object_override.eo',
   'elm_web.eo',
   'elm_map.eo',
-  'elm_combobox.eo',
   'elm_list.eo',
   'elm_genlist.eo',
   'elm_view_list.eo',
