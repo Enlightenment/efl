@@ -30,7 +30,7 @@ struct function_registration_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_registration_generator: " << f.name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Static methods aren't overrideable
+    if(blacklist::is_function_blacklisted(f, context) || f.is_static) // Static methods aren't overrideable
       return true;
     else
       {

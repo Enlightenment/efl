@@ -67,6 +67,11 @@ efl_mono_lib = library('eflcustomexportsmono',
     dependencies : [eo, eina]
 )
 
+beta_option = []
+if (get_option('mono-beta'))
+   beta_option = '-b'
+endif
+
 mono_generator_target = []
 mono_files = []
 foreach lib : mono_sublibs
@@ -88,7 +93,7 @@ foreach lib : mono_sublibs
           mono_generator_target += custom_target('eolian_mono_gen_'+mono_gen_file.underscorify()+'',
             input : join_paths(subdir_file_location, mono_gen_file),
             output : [mono_gen_file + '.cs'],
-            command : [eolian_mono_gen, '-I', meson.current_source_dir(), eolian_include_directories,
+            command : [eolian_mono_gen, beta_option, '-I', meson.current_source_dir(), eolian_include_directories,
                                        '--dllimport', package_name,
                                        '-o', join_paths(meson.current_build_dir(), mono_gen_file + '.cs'),
                                        '@INPUT@'])
@@ -107,7 +112,7 @@ foreach mono_gen_file : legacy_evas_required_by_mono
   mono_generator_target += custom_target('eolian_mono_gen_'+mono_gen_file.underscorify()+'',
             input : join_paths(subdir_file_location, mono_gen_file),
             output : [mono_gen_file + '.cs'],
-            command : [eolian_mono_gen, '-I', meson.current_source_dir(), eolian_include_directories,
+            command : [eolian_mono_gen, beta_option, '-I', meson.current_source_dir(), eolian_include_directories,
                                        '--dllimport', 'evas',
                                        '-o', join_paths(meson.current_build_dir(), mono_gen_file + '.cs'),
                                        '@INPUT@'])

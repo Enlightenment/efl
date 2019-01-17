@@ -32,7 +32,7 @@ struct native_function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "native_function_definition_generator: " << f.c_name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Only Concrete classes implement static methods.
+    if(blacklist::is_function_blacklisted(f, context) || f.is_static) // Only Concrete classes implement static methods.
       return true;
     else
       {
@@ -138,7 +138,7 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f, context))
       return true;
 
     if(!as_generator
@@ -213,7 +213,7 @@ struct property_wrapper_definition_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
    {
-      if (blacklist::is_property_blacklisted(property))
+      if (blacklist::is_property_blacklisted(property, context))
         return true;
 
       bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;

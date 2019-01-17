@@ -2,7 +2,9 @@
 #define EOLIAN_MONO_BLACKLIST_HH
 
 #include "grammar/klass_def.hpp"
+#include "grammar/context.hpp"
 #include "name_helpers.hh"
+#include "generation_contexts.hh"
 
 namespace eolian_mono {
 
@@ -49,6 +51,19 @@ inline bool is_function_blacklisted(std::string const& c_name)
     ;
 }
 
+template<typename Context>
+inline bool is_function_blacklisted(attributes::function_def const& func, Context context)
+{
+  auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+  auto c_name = func.c_name;
+
+  if (func.is_beta && !options.want_beta)
+    return true;
+
+  return is_function_blacklisted(c_name);
+}
+
+
 // Blacklist structs that require some kind of manual binding.
 inline bool is_struct_blacklisted(std::string const& full_name)
 {
@@ -85,9 +100,17 @@ inline bool is_property_blacklisted(std::string const& name)
         || name == "Efl.Text.Text";
 }
 
-inline bool is_property_blacklisted(attributes::property_def const& property)
+template<typename Context>
+inline bool is_property_blacklisted(attributes::property_def const& property, Context context)
 {
     auto name = name_helpers::klass_full_concrete_or_interface_name(property.klass) + "." + name_helpers::property_managed_name(property);
+
+    if (property.getter.is_engaged())
+      if (is_function_blacklisted(*property.getter, context))
+        return true;
+    if (property.setter.is_engaged())
+      if (is_function_blacklisted(*property.setter, context))
+        return true;
     return is_property_blacklisted(name);
 }
 

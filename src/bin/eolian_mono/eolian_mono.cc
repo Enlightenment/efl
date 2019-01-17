@@ -47,6 +47,7 @@ struct options_type
    mutable Eolian_Unit const* unit;
    int v_major;
    int v_minor;
+   bool want_beta;
    std::map<const std::string, std::string> references_map;
 };
 
@@ -144,7 +145,9 @@ run(options_type const& opts)
                                                                                      opts.references_map},
                                                         efl::eolian::grammar::context_null());
 
-   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, lib_context);
+   auto options_context = efl::eolian::grammar::context_add_tag(eolian_mono::options_context{opts.want_beta}, lib_context);
+
+   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, options_context);
 
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
@@ -273,6 +276,7 @@ _usage(const char *progname)
      << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: efl::ecore::file]" << std::endl
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
+     << "  -b, --beta              Enable @beta methods." << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -302,9 +306,10 @@ opts_get(int argc, char **argv)
        { "vmaj", required_argument, 0, 'M' },
        { "vmin", required_argument, 0, 'm' },
        { "references", required_argument, 0, 'r'},
+       { "beta", no_argument, 0, 'b'},
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vh";
+   const char* options = "I:D:o:c:M:m:ar:vhb";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -355,6 +360,10 @@ opts_get(int argc, char **argv)
           {
              _print_version();
              if (argc == 2) exit(EXIT_SUCCESS);
+          }
+        else if (c == 'b')
+          {
+             opts.want_beta = true;
           }
      }
    if (optind == argc-1)

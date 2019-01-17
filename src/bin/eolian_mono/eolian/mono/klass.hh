@@ -71,13 +71,14 @@ static bool generate_equals_method(OutputIterator sink, Context const &context)
 }
 
 /* Get the actual number of functions of a class, checking for blacklisted ones */
+template<typename Context>
 static std::size_t
-get_implementable_function_count(grammar::attributes::klass_def const& cls)
+get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
 {
    auto methods = helpers::get_all_implementable_methods(cls);
-   return std::count_if(methods.cbegin(), methods.cend(), [](grammar::attributes::function_def const& func)
+   return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
      {
-        return !blacklist::is_function_blacklisted(func.c_name) && !func.is_static;
+        return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
      });
 }
 
