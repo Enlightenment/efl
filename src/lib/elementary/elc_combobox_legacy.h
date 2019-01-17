@@ -48,5 +48,3 @@ EAPI void elm_combobox_hover_begin(Elm_Combobox *obj);
  * @ingroup Elm_Combobox_Group
  */
 EAPI void elm_combobox_hover_end(Elm_Combobox *obj);
-
-#include "elm_combobox.eo.legacy.h"
