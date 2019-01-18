@@ -152,12 +152,8 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 }
 
 static unsigned int
-_elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, unsigned int col)
+_elm_code_widget_status_type_get(Elm_Code_Widget_Data *pd, Elm_Code_Line *line, unsigned int col)
 {
-   Elm_Code_Widget_Data *pd;
-
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
    if (line->status != ELM_CODE_STATUS_TYPE_DEFAULT)
      return line->status;
 
@@ -421,7 +417,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].codepoint = unichr;
         cells[x].bold = 0;
         cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(pd, line, x - gutter + 1);
 
         charwidth = 1;
         if (unichr == '\t')
@@ -429,7 +425,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         for (i = x + 1; i < x + charwidth && i < (unsigned int) w; i++)
           {
              cells[i].codepoint = 0;
-             cells[i].bg = _elm_code_widget_status_type_get(widget, line, i - gutter + 1);
+             cells[i].bg = _elm_code_widget_status_type_get(pd, line, i - gutter + 1);
           }
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
@@ -438,7 +434,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      {
         cells[x].codepoint = 0;
         cells[x].bold = 0;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(pd, line, x - gutter + 1);
      }
 
    _elm_code_widget_fill_line_gutter(widget, cells, w, line);
