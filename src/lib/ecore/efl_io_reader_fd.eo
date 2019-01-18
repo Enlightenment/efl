@@ -1,4 +1,4 @@
-mixin Efl.Io.Reader_Fd (Efl.Io.Reader) {
+mixin Efl.Io.Reader_Fd extends Efl.Io.Reader {
     [[Reads fd using read(2).
 
       @since 1.19
