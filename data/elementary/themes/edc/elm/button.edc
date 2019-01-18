@@ -323,6 +323,15 @@ group { name: "elm/button/base/anchor";
          desc { "default";
             color: 0 0 0 0;
          }
+         desc { "pressed"; inherit;
+            inherit: "default";
+         }
+         desc { "disabled"; inherit;
+            inherit: "default";
+         }
+         desc { "hidden"; inherit;
+            inherit: "default";
+         }
       }
       rect { "icon_clip";
          desc { "default";

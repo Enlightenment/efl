@@ -217,6 +217,11 @@ group { name: "e/widgets/toolbar/item";
             }
             fixed: 0 1;
          }
+         description { state: "noicon" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            text.min: 0 0;
+         }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
             color: 96 96 96 255;

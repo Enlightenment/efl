@@ -406,7 +406,7 @@ group { name: "e/pointer/enlightenment/plus/color";
    programs {
       program { name: "fade1";
          signal: "load"; source: "";
-         action: STATE_SET "clicked" 0.0;
+         action: STATE_SET "faded" 0.0;
          transition: SINUSOIDAL 0.5;
          target: "add";
          after: "fade2";
