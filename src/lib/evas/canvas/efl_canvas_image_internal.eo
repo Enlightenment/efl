@@ -1,7 +1,7 @@
-abstract Efl.Canvas.Image_Internal (Efl.Canvas.Object, Efl.Canvas.Filter.Internal,
+abstract Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Efl.Canvas.Filter.Internal,
                                     Efl.Gfx.Image, Efl.Gfx.Buffer,
                                     Efl.Gfx.Fill, Efl.Gfx.View,
-                                    Efl.Orientation, Efl.File)
+                                    Efl.Orientation, Efl.File
 {
    [[Efl canvas internal image class]]
    data: Evas_Image_Data;
