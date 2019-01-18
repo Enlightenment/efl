@@ -79,7 +79,7 @@ struct native_function_definition_generator
 
     if(!as_generator
        (scope_tab
-        << " private "
+        << " private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
@@ -102,7 +102,7 @@ struct native_function_definition_generator
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
-        << "(Efl.Eo.Globals.efl_super(obj, " << "GetEflClass())" << *(", " << argument) << ");\n"
+        << "(Efl.Eo.Globals.efl_super(obj, " << "Efl.Eo.Globals.efl_class_get(obj))" << *(", " << argument) << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
