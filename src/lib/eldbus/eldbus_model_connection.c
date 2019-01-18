@@ -70,7 +70,7 @@ _eldbus_model_connection_efl_model_children_slice_get(Eo *obj,
         return efl_loop_future_resolved(obj, v);
      }
 
-   p = efl_loop_promise_new(obj, NULL, _eldbus_eina_promise_cancel, NULL);
+   p = efl_loop_promise_new(obj);
 
    slice = calloc(1, sizeof (Eldbus_Children_Slice_Promise));
    slice->p = p;

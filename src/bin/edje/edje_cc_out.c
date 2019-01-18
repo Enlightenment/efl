@@ -750,10 +750,38 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
+        Edje_Part *part;
+
+        part = pc->parts[et->id];
+        /* verify existence of description in part */
+        if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
+          {
+             if ((!eina_streq(ep->state, "custom")) &&
+               ((!eina_streq(ep->state, "default")) || (!EINA_DBL_EQ(ep->value, 0.0))))
+               {
+                  Edje_Part_Collection_Directory_Entry *de;
+                  Eina_Bool found = EINA_FALSE;
+                  for (i = 0; i < part->other.desc_count; i++)
+                    {
+                       Edje_Part_Description_Common *ed = part->other.desc[i];
+                       if (eina_streq(ed->state.name, ep->state) && EINA_DBL_EQ(ep->value, ed->state.value))
+                         {
+                            found = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!found)
+                    {
+                       de = eina_hash_find(edje_collections_lookup, &pc->id);
+                       error_and_abort(NULL, "GROUP %s - state '%s:%g' does not exist for part '%s'; set in program '%s'",
+                         de->entry, ep->state, ep->value, part->name, ep->name);
+                    }
+               }
+          }
         if (((ep->action == EDJE_ACTION_TYPE_STATE_SET) ||
              (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)) &&
             (et->id < (int)pc->parts_count) &&
-            (pc->parts[et->id]->type == EDJE_PART_TYPE_MESH_NODE) &&
+            (part->type == EDJE_PART_TYPE_MESH_NODE) &&
             (strstr(ep->signal, "mouse")))
           {
              for (i = 0; (i < pc->parts_count) && (ep->source_3d_id < 0); i++)

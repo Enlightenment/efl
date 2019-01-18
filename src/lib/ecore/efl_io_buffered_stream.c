@@ -351,7 +351,7 @@ _efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Io_Buffered_Stream_Data *pd, Efl
    EINA_SAFETY_ON_NULL_RETURN(io);
    EINA_SAFETY_ON_TRUE_RETURN(pd->inner_io != NULL);
 
-   pd->is_closer = efl_isa(io, EFL_IO_CLOSER_MIXIN);
+   pd->is_closer = efl_isa(io, EFL_IO_CLOSER_INTERFACE);
    is_reader = efl_isa(io, EFL_IO_READER_INTERFACE);
    is_writer = efl_isa(io, EFL_IO_WRITER_INTERFACE);
 

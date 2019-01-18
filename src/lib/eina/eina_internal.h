@@ -42,6 +42,7 @@
 #endif
 
 #include "eina_prefix.h"
+#include "eina_promise.h"
 
 typedef struct _Eina_Vpath_Interface_User Eina_Vpath_Interface_User;
 
@@ -98,7 +99,6 @@ EAPI void eina_vpath_interface_app_set(const char *app_name, Eina_Prefix *p);
  * If you do NOT call this api the virtual paths for usr.* will be unset.
  */
 EAPI void eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user);
-
 
 void eina_xdg_env_init(void);
 

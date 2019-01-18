@@ -23,6 +23,10 @@ struct malloc_deleter
   {
     // how to free binbuf?
   }
+  void operator()(Eina_Promise*) const
+  {
+    // workaround until we manually handle efl_loop_promise_new
+  }
 };
 
 template <typename T>

@@ -5172,14 +5172,14 @@ EAPI void
 _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
                             Eina_Bool in, Eina_Bool force_out)
 {
-   Efl_Input_Device *present;
+   Eina_List *present;
 
    if (!mouse)
      mouse = evas_default_device_get(ee->evas,
                                      EFL_INPUT_DEVICE_TYPE_MOUSE);;
 
    EINA_SAFETY_ON_NULL_RETURN(mouse);
-   present = eina_list_data_find(ee->mice_in, mouse);
+   present = eina_list_data_find_list(ee->mice_in, mouse);
 
    if (in)
      {
@@ -5191,7 +5191,7 @@ _ecore_evas_mouse_inout_set(Ecore_Evas *ee, Efl_Input_Device *mouse,
      }
    else
      {
-        if (present) ee->mice_in = eina_list_remove(ee->mice_in, mouse);
+        if (present) ee->mice_in = eina_list_remove_list(ee->mice_in, present);
         else if (!present && !force_out) return;
         efl_event_callback_del(mouse, EFL_EVENT_DEL,
                                _ecore_evas_mouse_del_cb, ee);

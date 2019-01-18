@@ -743,7 +743,7 @@ _elm_panel_content_set(Eo *obj, Elm_Panel_Data *sd, const char *part, Evas_Objec
              ERR("elm.swallow.event is being used for panel internally. Don't touch this part!");
              return EINA_FALSE;
           }
-        if (strcmp(part, "elm.swallow.content") || (content == sd->bx))
+        if (strcmp(part, "elm.swallow.content"))
           {
              Eina_Bool int_ret = EINA_TRUE;
              int_ret = efl_content_set(efl_part(efl_super(obj, MY_CLASS), part), content);
@@ -856,7 +856,7 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
      CRI("Failed to set layout!");
    else
      {
-        elm_layout_content_set(obj, "elm.swallow.content", priv->bx);
+        efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), priv->bx);
 
         if (edje_object_part_exists
             (wd->resize_obj, "elm.swallow.event"))
@@ -1319,8 +1319,10 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 
    if (scrollable)
      {
-        elm_layout_content_unset(obj, "elm.swallow.content");
+        efl_content_unset(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"));
 
+        //Hide previous resize object
+        evas_object_hide(sd->panel_edje);
         elm_widget_resize_object_set(obj, NULL);
         elm_widget_sub_object_add(obj, sd->panel_edje);
 
@@ -1434,8 +1436,9 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 
         elm_widget_resize_object_set(obj, sd->panel_edje);
 
+        evas_object_hide(sd->scr_ly);
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");
-        elm_layout_content_set(obj, "elm.swallow.content", sd->bx);
+        efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), sd->bx);
         if (sd->content) elm_widget_sub_object_add(obj, sd->content);
      }
 }

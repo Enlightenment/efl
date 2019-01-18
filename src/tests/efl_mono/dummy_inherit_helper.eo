@@ -1,0 +1,17 @@
+class Dummy.Inherit_Helper extends Efl.Object
+{
+  methods {
+    receive_dummy_and_call_int_out @class {
+      params {
+        @in x: Dummy.Test_Object;
+      }
+      return: int;
+    }
+    receive_dummy_and_call_in_stringshare @class {
+      params {
+        @in x: Dummy.Inherit_Iface;
+      }
+      return: stringshare;
+    }
+  }
+}

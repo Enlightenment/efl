@@ -1462,6 +1462,19 @@ EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 EAPI const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
 
 /*
+ * @brief Returns an iterator to the required classes of this mixin
+ *
+ * For none mixins this will return an empty iterator, for mixins this retuns a iterator that
+ * carries all the classes that are required by this passed mixin.
+ *
+ * @param[in] klass the class
+ * @return the iterator
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_class_requires_get(const Eolian_Class *klass);
+
+/*
  * @brief Returns an iterator to the class extensions
  *
  * For regular classes, extensions are interfaces/mixins for the class, i.e.

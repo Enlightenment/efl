@@ -45,6 +45,10 @@ struct eolian_state_context {
     const Eolian_State *state;
 };
 
+struct options_context {
+    bool want_beta;
+};
+
 }
 
 #endif

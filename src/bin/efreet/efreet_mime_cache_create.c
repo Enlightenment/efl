@@ -296,7 +296,7 @@ store_cache(const char *out)
      goto write_error;
    EINA_LIST_FOREACH(mimes_str_offsets, l, ptr)
      {
-        val = (int)((long)ptr) + str_start;
+        val = (int)((size_t)ptr) + str_start;
         if (fwrite(&val, sizeof(val), 1, f) != 1)
           goto write_error;
      }
@@ -307,12 +307,12 @@ store_cache(const char *out)
    ll = extn_mimes_sorted;
    EINA_LIST_FOREACH(extn_mimes_str_offsets, l, ptr)
      {
-        val = (int)((long)ptr) + str_start + mimes_str_len;
+        val = (int)((size_t)ptr) + str_start + mimes_str_len;
         if (fwrite(&val, sizeof(val), 1, f) != 1)
           goto write_error;
         s = eina_hash_find(extn_mimes, ll->data);
         ptr = find_off(s, mimes_sorted, mimes_str_offsets);
-        val = (int)((long)ptr) + str_start;
+        val = (int)((size_t)ptr) + str_start;
         if (fwrite(&val, sizeof(val), 1, f) != 1)
           goto write_error;
         ll = ll->next;
@@ -324,12 +324,12 @@ store_cache(const char *out)
    ll = glob_mimes_sorted;
    EINA_LIST_FOREACH(glob_mimes_str_offsets, l, ptr)
      {
-        val = (int)((long)ptr) + str_start + mimes_str_len + extn_mimes_str_len;
+        val = (int)((size_t)ptr) + str_start + mimes_str_len + extn_mimes_str_len;
         if (fwrite(&val, sizeof(val), 1, f) != 1)
           goto write_error;
         s = eina_hash_find(glob_mimes, ll->data);
         ptr = find_off(s, mimes_sorted, mimes_str_offsets);
-        val = (int)((long)ptr) + str_start;
+        val = (int)((size_t)ptr) + str_start;
         if (fwrite(&val, sizeof(val), 1, f) != 1)
           goto write_error;
         ll = ll->next;

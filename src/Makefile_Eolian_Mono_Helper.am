@@ -8,7 +8,11 @@ EOLIAN_MONO = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eolian_mono/eolian_mono$
 _EOLIAN_MONO_DEP = bin/eolian_mono/eolian_mono${EXEEXT}
 endif
 
+if HAVE_CSHARP_BETA
+EOLIAN_MONO_FLAGS = -b -M @VMAJ@ -m @VMIN@
+else
 EOLIAN_MONO_FLAGS = -M @VMAJ@ -m @VMIN@
+endif
 
 AM_V_EOLMONO = $(am__v_EOLMONO_@AM_V@)
 am__v_EOLMONO_ = $(am__v_EOLMONO_@AM_DEFAULT_V@)

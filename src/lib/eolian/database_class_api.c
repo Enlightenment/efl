@@ -56,6 +56,12 @@ eolian_class_parent_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Iterator *
+eolian_class_requires_get(const Eolian_Class *cl)
+{
+   return eina_list_iterator_new(cl->requires);
+}
+
+EAPI Eina_Iterator *
 eolian_class_extensions_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);

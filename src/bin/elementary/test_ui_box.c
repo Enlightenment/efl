@@ -113,6 +113,30 @@ alignv_slider_cb(void *data, const Efl_Event *event)
 }
 
 static void
+alignh_btn_slider_cb(void *data, const Efl_Event *event)
+{
+   double av, val;
+   Eo *win = data, *btn;
+
+   btn = efl_key_wref_get(win, "button");
+   val = elm_slider_value_get(event->object);
+   efl_gfx_size_hint_align_get(btn, NULL, &av);
+   efl_gfx_size_hint_align_set(btn, val, av);
+}
+
+static void
+alignv_btn_slider_cb(void *data, const Efl_Event *event)
+{
+   double ah, val;
+   Eo *win = data, *btn;
+
+   btn = efl_key_wref_get(win, "button");
+   val = elm_slider_value_get(event->object);
+   efl_gfx_size_hint_align_get(btn, &ah, NULL);
+   efl_gfx_size_hint_align_set(btn, ah, val);
+}
+
+static void
 flow_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
@@ -245,7 +269,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* weights radio group */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_pack(hbox, bx);
 
    chk = o = elm_radio_add(win);
@@ -298,7 +323,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* misc */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
 
@@ -352,7 +378,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* user min size setter */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
 
@@ -378,7 +405,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* inner box padding */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
 
@@ -404,7 +432,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* outer margin */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bx, 0, 1);
    efl_pack(hbox, bx);
 
@@ -430,7 +459,8 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    /* Box align */
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_gfx_size_hint_align_set(bx, 0, -1);
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_pack(hbox, bx);
 
@@ -466,6 +496,46 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
+   /* Button align */
+   bx = efl_add(EFL_UI_BOX_CLASS, win,
+                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
+   efl_gfx_size_hint_align_set(bx, 0, 0.5);
+   efl_gfx_size_hint_fill_set(bx, EINA_FALSE, EINA_TRUE);
+   efl_gfx_size_hint_weight_set(bx, 1, 1);
+   efl_pack(hbox, bx);
+
+   o = elm_label_add(win);
+   elm_object_text_set(o, "Button align");
+   efl_pack(bx, o);
+   efl_gfx_entity_visible_set(o, 1);
+
+   o = elm_slider_add(win);
+   elm_slider_indicator_format_set(o, "%.1f");
+   elm_slider_indicator_show_set(o, 1);
+   elm_slider_horizontal_set(o, 0);
+   efl_gfx_size_hint_align_set(o, 0.5, -1);
+   efl_gfx_size_hint_weight_set(o, 1, 1);
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, alignv_btn_slider_cb, win);
+   elm_slider_min_max_set(o, 0.0, 1.0);
+   elm_slider_step_set(o, 0.1);
+   elm_slider_value_set(o, 0.5);
+   efl_pack(bx, o);
+   efl_gfx_entity_visible_set(o, 1);
+
+   o = elm_slider_add(win);
+   elm_slider_indicator_format_set(o, "%.1f");
+   elm_slider_indicator_show_set(o, 1);
+   elm_slider_horizontal_set(o, 1);
+   efl_gfx_size_hint_align_set(o, 0.5, -1);
+   efl_gfx_size_hint_weight_set(o, 1, 0);
+   efl_gfx_size_hint_min_set(o, EINA_SIZE2D(100, 0));
+   efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, alignh_btn_slider_cb, win);
+   elm_slider_min_max_set(o, -0.1, 1.0);
+   elm_slider_step_set(o, 0.1);
+   elm_slider_value_set(o, 0.5);
+   efl_pack(bx, o);
+   efl_gfx_entity_visible_set(o, 1);
+
 
    /* contents */
    f = elm_frame_add(win);
@@ -483,14 +553,17 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_gfx_size_hint_weight_set(bx, 1, 1);
    efl_content_set(f, bx);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "Btn1");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "Btn1");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_align_set(o, 0.5, 0.5);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "Button 2");
-   efl_gfx_size_hint_align_set(o, -1, -1);
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "Button 2");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -501,15 +574,19 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "Min size");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "Min size");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_gfx_size_hint_align_set(o, 0.5, 1.0);
    efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 1));
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "Quit!");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "Quit!");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_gfx_size_hint_align_set(o, 0.5, 0.0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
@@ -521,26 +598,33 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "Button with a quite long text.");
-   efl_gfx_size_hint_align_set(o, -1, -1);
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_key_wref_set(win, "button", o);
+   efl_text_set(o, "Button with a quite long text.");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
    efl_gfx_size_hint_max_set(o, EINA_SIZE2D(200, 100));
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "BtnA");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "BtnA");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_gfx_size_hint_aspect_set(o, EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 2));
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "BtnB");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "BtnB");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
-   objects[i++] = o = elm_button_add(win);
-   elm_object_text_set(o, "BtnC");
+   objects[i++] = o = efl_add(EFL_UI_BUTTON_CLASS, bx);
+   efl_text_set(o, "BtnC");
+   efl_gfx_size_hint_weight_set(o, 0, 0);
+   efl_gfx_size_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 

@@ -55,7 +55,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
                   efl_ref_count(pd->source), \
                   efl_io_reader_can_read_get(pd->source), \
                   efl_io_reader_eos_get(pd->source), \
-                  efl_isa(pd->source, EFL_IO_CLOSER_MIXIN) ? \
+                  efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE) ? \
                   efl_io_closer_closed_get(pd->source) : 0); \
             if (!pd->destination) \
               DBG("destination=NULL"); \
@@ -65,7 +65,7 @@ static void _efl_io_copier_read(Eo *o, Efl_Io_Copier_Data *pd);
                   efl_class_name_get(efl_class_get(pd->destination)), \
                   efl_ref_count(pd->destination), \
                   efl_io_writer_can_write_get(pd->destination), \
-                  efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN) ? \
+                  efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE) ? \
                   efl_io_closer_closed_get(pd->destination) : 0); \
          } \
     } \
@@ -418,7 +418,7 @@ _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
                                     _efl_io_copier_source_resized, o);
              pd->progress.total = 0;
           }
-        if (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+        if (efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE))
           {
              efl_event_callback_del(pd->source, EFL_IO_CLOSER_EVENT_CLOSED,
                                     _efl_io_copier_source_closed, o);
@@ -441,7 +441,7 @@ _efl_io_copier_source_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Reader *source)
              _efl_io_copier_source_size_apply(o, pd);
           }
 
-        if (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+        if (efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE))
           {
              efl_io_closer_close_on_exec_set(pd->source, efl_io_closer_close_on_exec_get(o));
              efl_io_closer_close_on_invalidate_set(pd->source, efl_io_closer_close_on_invalidate_get(o));
@@ -505,7 +505,7 @@ _efl_io_copier_destination_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Writer *des
    if (pd->destination)
      {
         efl_event_callback_array_del(pd->destination, destination_cbs(), o);
-        if (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+        if (efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE))
           {
              efl_event_callback_del(pd->destination, EFL_IO_CLOSER_EVENT_CLOSED,
                                     _efl_io_copier_destination_closed, o);
@@ -520,7 +520,7 @@ _efl_io_copier_destination_set(Eo *o, Efl_Io_Copier_Data *pd, Efl_Io_Writer *des
         pd->destination = efl_ref(destination);
         efl_event_callback_array_add(pd->destination, destination_cbs(), o);
 
-        if (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+        if (efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE))
           {
              efl_io_closer_close_on_exec_set(pd->destination, efl_io_closer_close_on_exec_get(o));
              efl_io_closer_close_on_invalidate_set(pd->destination, efl_io_closer_close_on_invalidate_get(o));
@@ -656,7 +656,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
              pd->progress.total = 0;
           }
         efl_event_callback_array_del(pd->source, source_cbs(), o);
-        if (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN) &&
+        if (efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE) &&
             !efl_io_closer_closed_get(pd->source))
           {
              efl_event_callback_del(pd->source, EFL_IO_CLOSER_EVENT_CLOSED,
@@ -668,7 +668,7 @@ _efl_io_copier_efl_io_closer_close(Eo *o, Efl_Io_Copier_Data *pd)
    if (pd->destination)
      {
         efl_event_callback_array_del(pd->destination, destination_cbs(), o);
-        if (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN) &&
+        if (efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE) &&
             !efl_io_closer_closed_get(pd->destination))
           {
              efl_event_callback_del(pd->destination, EFL_IO_CLOSER_EVENT_CLOSED,
@@ -793,10 +793,10 @@ _efl_io_copier_done_get(const Eo *o, Efl_Io_Copier_Data *pd)
        pd->source,
        pd->source ? efl_class_name_get(pd->source) : "",
        pd->source ? efl_io_reader_eos_get(pd->source) : 1,
-       pd->source ? (efl_isa(pd->source, EFL_IO_CLOSER_MIXIN) ? efl_io_closer_closed_get(pd->source) : 0) : 1,
+       pd->source ? (efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE) ? efl_io_closer_closed_get(pd->source) : 0) : 1,
        pd->destination,
        pd->destination ? efl_class_name_get(pd->destination) : "",
-       pd->destination ? (efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN) ? efl_io_closer_closed_get(pd->destination) : 0) : 1);
+       pd->destination ? (efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE) ? efl_io_closer_closed_get(pd->destination) : 0) : 1);
 
    return pd->done;
 }
@@ -896,10 +896,10 @@ _efl_io_copier_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Io_Copier_
    if (pd->close_on_exec == close_on_exec) return EINA_TRUE;
    pd->close_on_exec = close_on_exec;
 
-   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE))
      efl_io_closer_close_on_exec_set(pd->source, close_on_exec);
 
-   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE))
      efl_io_closer_close_on_exec_set(pd->destination, close_on_exec);
 
    return EINA_TRUE;
@@ -917,10 +917,10 @@ _efl_io_copier_efl_io_closer_close_on_invalidate_set(Eo *o EINA_UNUSED, Efl_Io_C
    if (pd->close_on_invalidate == close_on_invalidate) return;
    pd->close_on_invalidate = close_on_invalidate;
 
-   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_MIXIN))
+   if (pd->source && efl_isa(pd->source, EFL_IO_CLOSER_INTERFACE))
      efl_io_closer_close_on_invalidate_set(pd->source, close_on_invalidate);
 
-   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_MIXIN))
+   if (pd->destination && efl_isa(pd->destination, EFL_IO_CLOSER_INTERFACE))
      efl_io_closer_close_on_invalidate_set(pd->destination, close_on_invalidate);
 }
 

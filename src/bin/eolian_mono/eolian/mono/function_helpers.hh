@@ -99,7 +99,7 @@ struct function_definition_epilogue_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
       if (!as_generator(
-                  scope_tab << scope_tab << "Eina.Error.RaiseIfOccurred();\n"
+                  scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
                   << *(scope_tab << scope_tab << convert_out_assign)
                   << *(scope_tab << scope_tab << convert_in_ptr_assign)
                   << scope_tab << scope_tab << convert_return

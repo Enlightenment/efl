@@ -187,26 +187,6 @@ struct _Eina_Future_Scheduler {
  */
 typedef void (*Eina_Promise_Cancel_Cb) (void *data, const Eina_Promise *dead_promise);
 
-/*
- * @typedef Eina_Promise_Data_Set_Cb Eina_Promise_Data_Set_Cb.
- * @ingroup eina_promise
- * 
- * A callback used to intercept eina_promise_data_set().
- * 
- * Used internally by EFL - please do not use.
- */
-typedef void (*Eina_Promise_Data_Set_Cb) (Eina_Promise *p, void *data);
-
-/*
- * @typedef Eina_Promise_Data_Free_Cb_Set_Cb Eina_Promise_Data_Free_Cb_Set_Cb.
- * @ingroup eina_promise
- * 
- * A callback used to intercept eina_promise_data_set_cb_set().
- * 
- * Used internally by EFL - please do not use.
- */
-typedef void (*Eina_Promise_Data_Free_Cb_Set_Cb) (Eina_Promise *p, Eina_Free_Cb free_cb);
-
 /**
  * @typedef Eina_Future_Success_Cb Eina_Future_Success_Cb.
  * @ingroup eina_future
@@ -555,7 +535,6 @@ struct _Eina_Future_Desc {
  * @see eina_promise_continue_new()
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  * @see #Eina_Future_Scheduler
  * @see #Eina_Future_Scheduler_Entry
@@ -622,61 +601,12 @@ EAPI Eina_Promise *eina_promise_new(Eina_Future_Scheduler *scheduler, Eina_Promi
  * @see eina_promise_new()
  * @see eina_promise_resolve()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  * @see #Eina_Future_Scheduler
  * @see #Eina_Future_Scheduler_Entry
  * @see #Eina_Future_Scheduler_Cb
  */
 EAPI Eina_Promise *eina_promise_continue_new(const Eina_Future *dead_future, Eina_Promise_Cancel_Cb cancel_cb, const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
-
-/**
- * Gets the data attached to the promise.
- *
- * @return The data passed to eina_promise_new() or @c NULL on error.
- * @see eina_promise_new()
- * @see eina_promise_data_set()
- */
-EAPI void *eina_promise_data_get(const Eina_Promise *p) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the data attached to the promise.
- *
- * Set the data passed to eina_promise_new().
- * @see eina_promise_new()
- * @see eina_promise_data_get()
- */
-EAPI void eina_promise_data_set(Eina_Promise *p, void *data) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the free callback used when the data attached on the promise is freed just before the destruction of the promise itself.
- *
- * @param[in] p The promise to set the free callback on.
- * @param[in] free_cb The free callback.
- */
-EAPI void eina_promise_data_free_cb_set(Eina_Promise *p, Eina_Free_Cb free_cb);
-
-/**
- * Sets a data set intercept function that can alter the behavior of
- * eina_promise_data_set(). Please do not use this as it is only used
- * internally inside EFL and may be used to slightly alter a promise
- * behavior and if used on these promises may remove EFL's override
- * 
- * @param[in] p The promise to set the data set callback on
- * @param[in] data_set_cb The callabck to intercept the data set
- */
-EAPI void eina_promise_data_set_cb_set(Eina_Promise *p, Eina_Promise_Data_Set_Cb data_set_cb);
-
-/**
- * Sets a data free cb set intercept function that can alter the behavior of
- * eina_promise_data_free_cb_set(). Please do not use this as it is only used
- * internally inside EFL and may be used to slightly alter a promise
- * behavior and if used on these promises may remove EFL's override
- * 
- * @param[in] p The promise to set the data set callback on
- * @param[in] data_free_cb_set_cb The callabck to intercept the data free cb set
- */
-EAPI void eina_promise_data_free_cb_set_cb_set(Eina_Promise *p, Eina_Promise_Data_Free_Cb_Set_Cb data_free_cb_set_cb);
 
 /**
  * Resolves a promise.
@@ -696,7 +626,6 @@ EAPI void eina_promise_data_free_cb_set_cb_set(Eina_Promise *p, Eina_Promise_Dat
  *
  * @see eina_promise_new()
  * @see eina_promise_reject()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  */
 EAPI void eina_promise_resolve(Eina_Promise *p, Eina_Value value) EINA_ARG_NONNULL(1);
@@ -714,7 +643,6 @@ EAPI void eina_promise_resolve(Eina_Promise *p, Eina_Value value) EINA_ARG_NONNU
  *
  * @see eina_promise_new()
  * @see eina_promise_resolve()
- * @see eina_promise_data_get()
  * @see eina_promise_as_value()
  */
 EAPI void eina_promise_reject(Eina_Promise *p, Eina_Error err) EINA_ARG_NONNULL(1);

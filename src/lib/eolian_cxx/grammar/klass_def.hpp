@@ -1061,11 +1061,12 @@ struct klass_def
             , std::string klass_get_name)
     : eolian_name(_eolian_name), cxx_name(_cxx_name)
     , namespaces(_namespaces)
-    , functions(_functions), properties(_properties), inherits(_inherits), type(_type), unit(unit)
-    , klass_get_name(klass_get_name)
+    , functions(_functions), properties(_properties), inherits(_inherits), type(_type)
+    , klass_get_name(klass_get_name), unit(unit)
   {}
-  klass_def(Eolian_Class const* klass, Eolian_Unit const* unit) : unit(unit)
-    , klass_get_name( ::eolian_class_c_get_function_name_get(klass))
+  klass_def(Eolian_Class const* klass, Eolian_Unit const* unit)
+    : klass_get_name( ::eolian_class_c_get_function_name_get(klass))
+    , unit(unit)
   {
      for(efl::eina::iterator<const char> namespace_iterator( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)

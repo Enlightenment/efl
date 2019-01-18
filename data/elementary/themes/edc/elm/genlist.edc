@@ -5066,7 +5066,7 @@ group { "elm/genlist/item/edit/default"; nomouse;
       }
       program {
          signal: "elm,state,odd";
-         action: STATE_SET "odd" 1.0;
+         action: STATE_SET "odd" 0.0;
          target: "base";
       }
       program {

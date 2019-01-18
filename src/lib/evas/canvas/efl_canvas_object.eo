@@ -608,6 +608,7 @@ abstract Efl.Canvas.Object (Efl.Loop_Consumer, Efl.Gfx.Entity, Efl.Gfx.Color, Ef
       Efl.Gfx.Size_Hint.hint_max { get; set; }
       Efl.Gfx.Size_Hint.hint_margin { get; set; }
       Efl.Gfx.Size_Hint.hint_weight { get; set; }
+      Efl.Gfx.Size_Hint.hint_fill { get; set; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_Consumer.loop { get; }

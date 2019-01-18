@@ -1,9 +1,9 @@
 <configuration>
-  <dllmap dll=\"eina\" target=\"@EINA@\"/>
-  <dllmap dll=\"efl\" target=\"@EFL@\"/>
-  <dllmap dll=\"ecore\" target=\"@ECORE@\"/>
-  <dllmap dll=\"eo\" target=\"@EO@\"/>
-  <dllmap dll=\"evas\" target=\"@EVAS@\"/>
-  <dllmap dll=\"eldbus\" target=\"@ELDBUS@\"/>
-  <dllmap dll=\"elementary\" target=\"@ELEMENTARY@\"/>
+  <dllmap dll="eina" target="@EINA@"/>
+  <dllmap dll="efl" target="@EFL@"/>
+  <dllmap dll="ecore" target="@ECORE@"/>
+  <dllmap dll="eo" target="@EO@"/>
+  <dllmap dll="evas" target="@EVAS@"/>
+  <dllmap dll="eldbus" target="@ELDBUS@"/>
+  <dllmap dll="elementary" target="@ELEMENTARY@"/>
 </configuration>

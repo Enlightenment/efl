@@ -135,19 +135,13 @@ public abstract class BasicMessageArgument
     public void AppendTo(eldbus.Message msg)
     {
         if (!InternalAppendTo(msg))
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not append basic type to eldbus.Message");
-        }
     }
 
     public void AppendTo(eldbus.MessageIterator iter)
     {
         if (!InternalAppendTo(iter))
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not append basic type to eldbus.MessageIterator");
-        }
     }
 
     public abstract char TypeCode {get;}

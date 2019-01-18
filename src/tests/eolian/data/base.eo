@@ -1,4 +1,4 @@
-class Base {
+abstract Base {
    methods {
       @property z {
            values {

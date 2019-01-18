@@ -22,7 +22,6 @@ pub_legacy_eo_files = [
   'elm_calendar_item.eo',
   'elm_clock.eo',
   'elm_colorselector.eo',
-  'elm_combobox.eo',
   'elm_conformant.eo',
   'elm_ctxpopup.eo',
   'elm_dayselector.eo',

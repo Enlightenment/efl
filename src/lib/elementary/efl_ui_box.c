@@ -123,9 +123,6 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
-
-   // new defaults: fill - no expand
-   evas_object_size_hint_align_set(obj, -1, -1);
 }
 
 EOLIAN static void

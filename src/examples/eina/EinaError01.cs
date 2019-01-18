@@ -37,7 +37,7 @@ public class ExampleEinaError01
         try
         {
             testFunc(-1, "abc");
-            Eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfUnhandledException();
         }
         catch(Efl.EflException e)
         {
@@ -58,7 +58,7 @@ public class ExampleEinaError01
         {
             testFunc(42, "abc");
 
-            Eina.Error.RaiseIfOccurred();
+            Eina.Error.RaiseIfUnhandledException();
 
             err = Eina.Error.Get();
             WriteLine($"Really no error? {err == Eina.Error.NO_ERROR}.");

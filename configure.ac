@@ -1349,6 +1349,17 @@ EFL_LIB_END_OPTIONAL([Eo_Js])
 #### End of Eo JS
 
 #### Efl C Sharp Bindings
+want_csharp_beta="no"
+AC_ARG_ENABLE([csharp-beta],
+  [AS_HELP_STRING([--enable-csharp-beta],[enable C Sharp bindings. @<:@default=disabled@:>@])],
+  [
+    if test "x${enableval}" = "xyes" ; then
+      want_csharp_beta="yes"
+    else
+      want_csharp_beta="no"
+    fi
+  ],
+  [want_csharp_beta="no"])
 
 want_csharp="no"
 AC_ARG_ENABLE([csharp-bindings],
@@ -1371,6 +1382,11 @@ AM_CONDITIONAL([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"])
 AC_DEFINE_IF([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"],
   [1], [Compiling bindings for C Sharp])
 AC_SUBST([want_csharp])
+
+AM_CONDITIONAL([HAVE_CSHARP_BETA], [test "x${want_csharp_beta}" = "xyes"])
+AC_DEFINE_IF([HAVE_CSHARP_BETA], [test "x${want_csharp_beta}" = "xyes"],
+  [1], [Compiling bindings for C Sharp with beta methods, properties and classes])
+AC_SUBST([want_csharp_beta])
 
 if test "x${have_windows}" = "xyes"; then
   eflmonodlldir="$prefix/bin"

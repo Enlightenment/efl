@@ -38,7 +38,7 @@ group { name: "elm/gengrid/item/default/default";
       } \
       program { \
          signal: "elm,state,odd"; source: "elm"; \
-         action: STATE_SET "odd" 1.0; \
+         action: STATE_SET "odd" 0.0; \
          target: "base"; \
       } \
       program { \

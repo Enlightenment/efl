@@ -34,7 +34,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    ::elm::Calendar cal2(instantiate, win);
    //cal2.size_hint_weight_set(EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   //cal2.size_hint_align_set(EVAS_HINT_FILL, EVAS_HINT_FILL);
+   //cal2.size_hint_fill_set(true, true);
    current_time = time(NULL) +2 * SECS_DAY;
    localtime_r(&current_time, &selected_time);
    // cal2.selected_time_set(&selected_time);

@@ -14,7 +14,7 @@ public struct Error : IComparable<Error>
         get { return MsgGet(this); }
     }
 
-    public static Error EFL_ERROR;
+    public static Error UNHANDLED_EXCEPTION;
 
     public static Error NO_ERROR = new Error(0);
     public static Error EPERM = new Error(1);
@@ -39,9 +39,9 @@ public struct Error : IComparable<Error>
         return "Eina.Error(" + code + ")";
     }
 
-    internal static void Init()
+    static Error()
     {
-        EFL_ERROR = eina_error_msg_register("Managed Code Error");
+        UNHANDLED_EXCEPTION = eina_error_msg_register("Unhandled C# exception occurred.");
     }
 
     [DllImport(efl.Libs.Eina)] static extern Error eina_error_msg_register(string msg);
@@ -65,11 +65,16 @@ public struct Error : IComparable<Error>
         return Eina.StringConversion.NativeUtf8ToManagedString(cstr);
     }
 
-    public static void RaiseIfOccurred()
+    /// <summary>Raises an exception if an unhandled exception occurred before switching
+    /// back to the native code. For example, in an event handler.</summary>
+    public static void RaiseIfUnhandledException()
     {
         Error e = Get();
-        Clear();
-        Raise(e);
+        if (e == UNHANDLED_EXCEPTION)
+        {
+            Clear();
+            Raise(e);
+        }
     }
 
     public static void Raise(Error e)

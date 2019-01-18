@@ -422,13 +422,13 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    o_bg = efl_add(EFL_UI_BG_CLASS, box,
                   efl_file_set(efl_added, buf, NULL),
                   efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND),
-                  efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+                  efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                   efl_pack(box, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                   efl_gfx_size_hint_weight_set(efl_added, EFL_GFX_SIZE_HINT_EXPAND, 0.0),
-                  efl_gfx_size_hint_align_set(efl_added, EFL_GFX_SIZE_HINT_FILL, EFL_GFX_SIZE_HINT_FILL),
+                  efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                   efl_pack(box, efl_added));
 
    rdg = rd = efl_add(EFL_UI_RADIO_CLASS, hbox,

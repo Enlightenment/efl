@@ -100,7 +100,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    up.autorepeat_initial_timeout_set(1.0);
    up.autorepeat_gap_timeout_set(0.5);
    up.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
-   up.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.0);
+   up.hint_fill_set(true, false);
+   up.hint_align_set(0.5, 0.0);
    box.pack_end(up);
 
    auto wmid = mid._get_wref();
@@ -180,7 +181,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    left.autorepeat_initial_timeout_set(1.0);
    left.autorepeat_gap_timeout_set(0.5);
    left.hint_weight_set(0.0, EFL_GFX_SIZE_HINT_EXPAND);
-   left.hint_align_set(0.0, EFL_GFX_SIZE_HINT_FILL);
+   left.hint_fill_set(false, true);
+   left.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(left);
    efl::eolian::event_add(efl::ui::Clickable::repeated_event, left, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, left, btn_cursors_release);
@@ -199,7 +201,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    right.autorepeat_initial_timeout_set(1.0);
    right.autorepeat_gap_timeout_set(0.5);
    right.hint_weight_set(0.0, EFL_GFX_SIZE_HINT_EXPAND);
-   right.hint_align_set(0.0, EFL_GFX_SIZE_HINT_FILL);
+   right.hint_fill_set(false, true);
+   right.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(right);
    efl::eolian::event_add(efl::ui::Clickable::repeated_event, right, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, right, btn_cursors_release);
@@ -212,7 +215,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    down.autorepeat_initial_timeout_set(1.0);
    down.autorepeat_gap_timeout_set(0.5);
    down.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
-   down.hint_align_set(EFL_GFX_SIZE_HINT_FILL, 0.0);
+   down.hint_fill_set(true, false);
+   down.hint_align_set(0.5, 0.0);
    box.pack_end(down);
    efl::eolian::event_add(efl::ui::Clickable::repeated_event, down, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, down, btn_cursors_release);

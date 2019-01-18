@@ -44,7 +44,7 @@ class Ecore.Audio.In (Ecore.Audio)
             channels: int; [[The number of channels]]
          }
       }
-      @property preloaded @pure_virtual {
+      @property preloaded {
          [[Preloaded state of the input
 
            @since 1.8
@@ -82,7 +82,7 @@ class Ecore.Audio.In (Ecore.Audio)
 
            @since 1.8
          ]]
-         set @pure_virtual {
+         set {
          }
          get {
          }
@@ -134,7 +134,7 @@ class Ecore.Audio.In (Ecore.Audio)
             @in len: size; [[The amount of samples to read]]
          }
       }
-      seek @pure_virtual {
+      seek {
          [[Seeks within the input
 
            @since 1.8
@@ -153,6 +153,9 @@ class Ecore.Audio.In (Ecore.Audio)
       Efl.Object.constructor;
       Efl.Object.destructor;
       Ecore.Audio.vio_set;
+      @empty .length {set;}
+      @empty .preloaded {set; get;}
+      @empty .seek;
    }
    events {
       in,looped: void; [[Called when an input has looped.]]

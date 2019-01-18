@@ -1,4 +1,4 @@
-class Ector.GL.Buffer (Efl.Object, Ector.Buffer)
+class Ector.GL.Buffer extends Efl.Object implements Ector.Buffer
 {
    [[Ector GL buffer class]]
    data: null;

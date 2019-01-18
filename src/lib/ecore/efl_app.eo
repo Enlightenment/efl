@@ -39,6 +39,7 @@ class Efl.App (Efl.Loop)
    events {
       pause: void; [[Called when the application is not going be displayed or otherwise used by a user for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
+      standby: void; [[Called when the application's windows are all destroyed]]
       terminate: void; [[Called before starting the shutdown of the application]]
       signal,usr1: void; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
       signal,usr2: void; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]

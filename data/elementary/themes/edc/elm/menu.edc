@@ -1134,12 +1134,12 @@ group { name: "elm/hover/base/main_menu_submenu/default";
       program { name: "show";
          signal: "elm,action,show"; source: "elm";
          action: STATE_SET "visible" 0.0;
-         target: "base";
+         target: "top";
       }
       program { name: "hide";
          signal: "elm,action,hide"; source: "elm";
          action: STATE_SET "default" 0.0;
-         target: "base";
+         target: "top";
       }
       program { name: "bottomshow";
          signal: "elm,action,slot,bottom,show"; source: "elm";

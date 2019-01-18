@@ -143,7 +143,7 @@ group { name: "elm/list/item/default";
       }
       program {
          signal: "elm,state,odd"; source: "elm";
-         action: STATE_SET "odd" 1.0;
+         action: STATE_SET "odd" 0.0;
          target: "base";
       }
       program {
@@ -454,7 +454,7 @@ group { name: "elm/list/h_item/default";
       }
       program {
          signal: "elm,state,odd"; source: "elm";
-         action: STATE_SET "odd" 1.0;
+         action: STATE_SET "odd" 0.0;
          target: "base";
       }
       program {

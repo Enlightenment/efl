@@ -62,6 +62,7 @@ typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Size                   Evas_Size;
 typedef struct _Evas_Aspect                 Evas_Aspect;
 typedef struct _Evas_Border                 Evas_Border;
+typedef struct _Evas_Bool_Pair              Evas_Bool_Pair;
 typedef struct _Evas_Double_Pair            Evas_Double_Pair;
 typedef struct _Evas_Size_Hints             Evas_Size_Hints;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
@@ -890,12 +891,13 @@ struct _Evas_Public_Data
    Evas_Device   *default_mouse;
    Evas_Device   *default_keyboard;
 
+   Eina_List     *rendering;
+
    unsigned char  changed : 1;
    unsigned char  delete_me : 1;
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
    Eina_Bool      is_frozen : 1;
-   Eina_Bool      rendering : 1;
    Eina_Bool      inside_post_render : 1;
    Eina_Bool      devices_modified : 1;
 };
@@ -932,6 +934,11 @@ struct _Evas_Border
    Evas_Coord l, r, t, b;
 };
 
+struct _Evas_Bool_Pair
+{
+   Eina_Bool x, y;
+};
+
 struct _Evas_Double_Pair
 {
    double x, y;
@@ -944,6 +951,7 @@ struct _Evas_Size_Hints
    Evas_Aspect aspect;
    Evas_Double_Pair align, weight;
    Evas_Border padding;
+   Evas_Bool_Pair fill;
    Evas_Display_Mode dispmode;
 };
 
@@ -1186,7 +1194,6 @@ struct _Evas_Object_Protected_Data
       Eina_Bool                ctor : 1; // used legacy constructor
       Eina_Bool                visible_set : 1; // visibility manually set
       Eina_Bool                weight_set : 1; // weight manually set
-      Eina_Bool                align_set : 1; // align manually set
       Eina_Bool                finalized : 1; // object fully constructed
    } legacy;
 

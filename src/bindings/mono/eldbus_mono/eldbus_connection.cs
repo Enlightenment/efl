@@ -192,10 +192,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_connection_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_connection_send");
-        }
 
         msg.Ref();
 
@@ -224,10 +221,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_name_request(Handle, bus, flags, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_request");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -245,10 +239,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_name_release(Handle, bus, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_release");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -266,10 +257,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_name_owner_get(Handle, bus, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_get");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -287,10 +275,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_name_owner_has(Handle, bus, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_has");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -305,10 +290,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_names_list(Handle, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_list");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -323,10 +305,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_names_activatable_list(Handle, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_activatable_list");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -341,10 +320,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_hello(Handle, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_hello");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -362,10 +338,7 @@ public class Connection : IDisposable
         var pending_hdl = eldbus_name_start(Handle, bus, flags, cb_wrapper, cb_data);
 
         if(pending_hdl == IntPtr.Zero)
-        {
-            Eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_start");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }

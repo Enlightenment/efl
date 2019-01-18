@@ -32,7 +32,7 @@ struct native_function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "native_function_definition_generator: " << f.c_name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Only Concrete classes implement static methods.
+    if(blacklist::is_function_blacklisted(f, context) || f.is_static) // Only Concrete classes implement static methods.
       return true;
     else
       {
@@ -71,7 +71,11 @@ struct native_function_definition_generator
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
 
-    std::string klass_inherit_name = name_helpers::klass_inherit_name(*klass);
+    std::string klass_cast_name;
+    if (klass->type != attributes::class_type::interface_)
+      klass_cast_name = name_helpers::klass_inherit_name(*klass);
+    else
+      klass_cast_name = name_helpers::klass_interface_name(*klass);
 
     if(!as_generator
        (scope_tab
@@ -89,16 +93,16 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << scope_tab << scope_tab << scope_tab << "try {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_inherit_name << ")wrapper)." << string
+        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "") << "((" << klass_cast_name << ")wrapper)." << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
         << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.EFL_ERROR);\n"
+        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
         << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
         << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
-        << "(Efl.Eo.Globals.efl_super(obj, " << "EoKlass)" << *(", " << argument) << ");\n"
+        << "(Efl.Eo.Globals.efl_super(obj, " << "GetEflClass())" << *(", " << argument) << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"
        )
@@ -134,7 +138,7 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f, context))
       return true;
 
     if(!as_generator
@@ -209,7 +213,7 @@ struct property_wrapper_definition_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
    {
-      if (blacklist::is_property_blacklisted(property))
+      if (blacklist::is_property_blacklisted(property, context))
         return true;
 
       bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;

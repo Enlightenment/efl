@@ -2985,11 +2985,13 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if ((!_elm_win_list) &&
-       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+   if (!_elm_win_list)
      {
-        _elm_win_flush_cache_and_exit(obj);
+       if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED)
+         _elm_win_flush_cache_and_exit(obj);
      }
+   if (!_elm_win_list)
+     efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
 }
 
 EOLIAN static void
@@ -7385,7 +7387,7 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
           }
      }
    efl_gfx_entity_visible_set(bg, 1);
-   efl_gfx_size_hint_align_set(bg, -1, -1);
+   efl_gfx_size_hint_fill_set(bg, EINA_TRUE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bg, 1, 1);
    efl_wref_add(bg, &sd->bg);
    return EINA_TRUE;

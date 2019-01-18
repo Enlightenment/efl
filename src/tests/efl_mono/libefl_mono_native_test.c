@@ -8,9 +8,20 @@
 #include <Ecore.h>
 #include <Eo.h>
 
+#ifdef EOAPI
 #undef EOAPI
+#endif
+
+#ifdef EWAPI
+#undef EWAPI
+#endif
+
+#ifdef EAPI
 #undef EAPI
+#endif
+
 #define EOAPI EAPI EAPI_WEAK
+#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # ifdef EFL_BUILD
@@ -39,6 +50,8 @@
 #include "dummy_child.eo.h"
 #include "dummy_test_iface.eo.h"
 #include "dummy_another_iface.eo.h"
+#include "dummy_inherit_iface.eo.h"
+#include "dummy_inherit_helper.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 
@@ -71,6 +84,13 @@ typedef struct Dummy_Child_Data
 {
 } Dummy_Child_Data;
 
+typedef struct Dummy_Inherit_Helper_Data
+{
+} Dummy_Inherit_Helper_Data;
+
+typedef struct Dummy_Inherit_Iface_Data
+{
+} Dummy_Inherit_Iface_Data;
 
 static
 void *_new_int(int v)
@@ -328,6 +348,14 @@ Eina_Bool _dummy_test_object_eina_rw_slice_out(EINA_UNUSED Eo *obj, EINA_UNUSED 
   if (!slice) return EINA_FALSE;
   slice->len = 3;
   slice->mem = memdup(base_seq, 3);
+  return EINA_TRUE;
+}
+
+Eina_Bool _dummy_test_object_eina_rw_slice_inout(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Rw_Slice *slice)
+{
+  if (!slice) return EINA_FALSE;
+  for (size_t i = 0; i < slice->len; i++)
+    slice->bytes[i] += (uint8_t)i;
   return EINA_TRUE;
 }
 
@@ -3833,7 +3861,7 @@ Eina_Future* _dummy_test_object_get_future(EINA_UNUSED Eo *obj, Dummy_Test_Objec
     return eina_future_new(pd->promise);
 }
 
-void _dummy_test_object_fulfill_promise(Eo *obj, Dummy_Test_Object_Data *pd, int data)
+void _dummy_test_object_fulfill_promise(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, int data)
 {
     if (pd->promise == NULL)
       {
@@ -3846,7 +3874,7 @@ void _dummy_test_object_fulfill_promise(Eo *obj, Dummy_Test_Object_Data *pd, int
     eina_promise_resolve(pd->promise, v);
 }
 
-void _dummy_test_object_reject_promise(Eo *obj, Dummy_Test_Object_Data *pd, Eina_Error err)
+void _dummy_test_object_reject_promise(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, Eina_Error err)
 {
     if (pd->promise == NULL)
       {
@@ -3857,7 +3885,7 @@ void _dummy_test_object_reject_promise(Eo *obj, Dummy_Test_Object_Data *pd, Eina
     eina_promise_reject(pd->promise, err);
 }
 
-Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj, Dummy_Test_Object_Data *pd, Eina_Accessor *acc)
+Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test_Object_Data *pd, Eina_Accessor *acc)
 {
    if (pd->list_for_accessor)
      eina_list_free(pd->list_for_accessor);
@@ -3872,17 +3900,17 @@ Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj, Dummy_Test_Object_Data
    return eina_list_accessor_new(pd->list_for_accessor);
 }
 
-void _dummy_test_object_dummy_test_iface_emit_test_conflicted(Eo *obj, Dummy_Test_Object_Data *pd)
+void _dummy_test_object_dummy_test_iface_emit_test_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_CONFLICTED, NULL);
 }
 
-void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd)
+void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, NULL);
 }
 
-void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dummy_Test_Object_Data *pd)
+void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_ANOTHER_IFACE_EVENT_CONFLICTED, NULL);
 }
@@ -3920,9 +3948,24 @@ _dummy_child_class_destructor(Efl_Class *klass)
     (void)klass;
 }
 
+// Inherit
+int _dummy_inherit_helper_receive_dummy_and_call_int_out(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+{
+  int v = 8;
+  dummy_test_object_int_out (x, 5, &v);
+  return v;
+}
+
+const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+{
+  return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
+}
+
 #include "dummy_test_object.eo.c"
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
 #include "dummy_test_iface.eo.c"
 #include "dummy_another_iface.eo.c"
+#include "dummy_inherit_helper.eo.c"
+#include "dummy_inherit_iface.eo.c"
 

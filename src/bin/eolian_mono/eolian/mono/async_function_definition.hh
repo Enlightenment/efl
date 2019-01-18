@@ -48,7 +48,7 @@ struct async_function_declaration_generator
   {
     if (f.is_static)
       return true;
-    if (blacklist::is_function_blacklisted(f.c_name))
+    if (blacklist::is_function_blacklisted(f, context))
       return true;
     if (!f.return_type.original_type.visit(is_future{}))
       return true;
@@ -76,7 +76,7 @@ struct async_function_definition_generator
 
     if(do_super && f.is_static) // Static methods goes only on Concrete classes.
       return true;
-    if(blacklist::is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f, context))
       return true;
     if(!f.return_type.original_type.visit(is_future{}))
       return true;

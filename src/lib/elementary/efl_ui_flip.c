@@ -2137,7 +2137,7 @@ _update_front_back(Eo *obj, Efl_Ui_Flip_Data *pd)
 static void
 _content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
-   evas_object_smart_member_add(content, obj);
+   elm_widget_sub_object_add(obj, content);
 
    if (!pd->front.content)
      {
@@ -2158,7 +2158,7 @@ _content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
    int index, count;
    Eina_Bool state;
 
-   evas_object_smart_member_del(content);
+   elm_widget_sub_object_del(obj, content);
    // if its not the front or back object just return.
    if ((pd->front.content != content) ||
        (pd->back.content != content))
@@ -2213,6 +2213,7 @@ EOLIAN static Eina_Bool
 _efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
    pd->content_list = eina_list_remove(pd->content_list, content);
+   pd->content_list = eina_list_remove(pd->content_list, content);
    _content_removed(obj, pd, content);
    return EINA_TRUE;
 }
@@ -2221,6 +2222,7 @@ EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    _content_removed(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -2228,6 +2230,7 @@ _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subo
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2236,6 +2239,7 @@ _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
 
@@ -2245,6 +2249,7 @@ _efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_E
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2253,6 +2258,7 @@ _efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Ent
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2261,6 +2267,7 @@ _efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2271,6 +2278,7 @@ _efl_ui_flip_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Enti
 {
    Efl_Gfx_Entity *existing = NULL;
    existing = eina_list_nth(pd->content_list, index);
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;

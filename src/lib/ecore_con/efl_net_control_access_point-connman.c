@@ -726,13 +726,11 @@ static void
 _efl_net_control_access_point_connect_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eina_Promise *promise = data;
-   Efl_Object *o = eina_promise_data_get(promise);
-   Efl_Net_Control_Access_Point_Data *pd = efl_data_scope_get(o, MY_CLASS);
+   Efl_Net_Control_Access_Point_Data *pd = eldbus_pending_data_get(pending, ".object");
    const char *err_name, *err_msg;
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
 
-   pd->pending = eina_list_remove(pd->pending, pending);
    if (eldbus_message_error_get(msg, &err_name, &err_msg))
      {
         Eina_Error err = EINVAL;
@@ -741,7 +739,7 @@ _efl_net_control_access_point_connect_cb(void *data, const Eldbus_Message *msg, 
           err = EINPROGRESS;
         else if (strcmp(err_name, "net.connman.Error.AlreadyConnected") == 0)
           err = EALREADY;
-        WRN("Could not Connect %p: %s=%s", o, err_name, err_msg);
+        WRN("Could not Connect: %s=%s", err_name, err_msg);
 
         eina_promise_reject(promise, err);
         return;
@@ -750,20 +748,29 @@ _efl_net_control_access_point_connect_cb(void *data, const Eldbus_Message *msg, 
    eina_promise_resolve(promise, EINA_VALUE_EMPTY);
 }
 
-static void
-_efl_net_control_access_point_connect_promise_del(void *data, Efl_Loop_Consumer *consumer EINA_UNUSED, const Eina_Promise *dead_ptr)
+static Eina_Value
+_efl_net_control_access_point_connect_promise_del(Efl_Loop_Consumer *consumer EINA_UNUSED, void *data, Eina_Error error)
 {
-   Eldbus_Pending *p = data;
-   Efl_Net_Control_Access_Point_Data *pd;
+   if (error == ECANCELED)
+     {
+        Eldbus_Pending *p = data;
 
-   p = eina_promise_data_get(dead_ptr);
-   if (!p) return; /* already gone, nothing to do */
+        DBG("cancel pending connect %p", p);
+        eldbus_pending_cancel(p);
+     }
+
+   return eina_value_error_init(error);
+}
+
+static void
+_efl_net_control_access_point_connect_promise_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Net_Control_Access_Point_Data *pd;
+   Eldbus_Pending *p = data;
 
    pd = eldbus_pending_data_get(p, ".object");
 
    pd->pending = eina_list_remove(pd->pending, p);
-   DBG("cancel pending connect %p", p);
-   eldbus_pending_cancel(p);
 }
 
 EOLIAN static Eina_Future *
@@ -773,7 +780,7 @@ _efl_net_control_access_point_connect(Eo *o, Efl_Net_Control_Access_Point_Data *
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = efl_loop_promise_new(o, o, _efl_net_control_access_point_connect_promise_del, NULL);
+   promise = efl_loop_promise_new(o);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);
@@ -785,7 +792,10 @@ _efl_net_control_access_point_connect(Eo *o, Efl_Net_Control_Access_Point_Data *
    pd->pending = eina_list_append(pd->pending, p);
    eldbus_pending_data_set(p, ".object", pd);
 
-   return efl_future_then(o, f);
+   return efl_future_then(o, f,
+                          .data = p,
+                          .error = _efl_net_control_access_point_connect_promise_del,
+                          .free = _efl_net_control_access_point_connect_promise_clean);
 
  error_dbus:
    eina_promise_reject(promise, ENOSYS);

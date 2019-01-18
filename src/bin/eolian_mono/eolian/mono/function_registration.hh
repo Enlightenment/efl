@@ -20,21 +20,21 @@
 
 namespace eolian_mono {
 
-template <typename I>
+// template <typename I>
 struct function_registration_generator
 {
-  I index_generator;
+  // I index_generator;
   attributes::klass_def const* klass;
   
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_registration_generator: " << f.name << std::endl;
-    if(blacklist::is_function_blacklisted(f.c_name) || f.is_static) // Static methods aren't overrideable
+    if(blacklist::is_function_blacklisted(f, context) || f.is_static) // Static methods aren't overrideable
       return true;
     else
       {
-    auto index = index_generator();
+    // auto index = index_generator();
 
     if(!as_generator(
             scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
@@ -43,12 +43,13 @@ struct function_registration_generator
       return false;
 
     if(!as_generator
+       (scope_tab << scope_tab << "descs.Add(new Efl_Op_Description() {"
 #ifdef _WIN32
-       (scope_tab << scope_tab << "descs[" << index << "].api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\");\n"
+        << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else
-       (scope_tab << scope_tab << "descs[" << index << "].api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\");\n"
+        << "api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\")"
 #endif
-        << scope_tab << scope_tab << "descs[" << index << "].func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate);\n"
+        ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
        )
        .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
       return false;
@@ -59,10 +60,9 @@ struct function_registration_generator
   
 struct function_registration_parameterized
 {
-  template <typename I>
-  function_registration_generator<I> operator()(I i, attributes::klass_def const& klass) const
+  function_registration_generator operator()(attributes::klass_def const& klass) const
   {
-    return {i, &klass};
+    return {&klass};
   }
 } const function_registration;
 
@@ -70,15 +70,15 @@ struct function_registration_parameterized
 
 namespace efl { namespace eolian { namespace grammar {
 
-template <typename I>
-struct is_eager_generator< ::eolian_mono::function_registration_generator<I>> : std::true_type {};
-template <typename I>
-struct is_generator< ::eolian_mono::function_registration_generator<I>> : std::true_type {};
+template <>
+struct is_eager_generator< ::eolian_mono::function_registration_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::function_registration_generator> : std::true_type {};
 
 namespace type_traits {
 
-template <typename I>
-struct attributes_needed< ::eolian_mono::function_registration_generator<I>> : std::integral_constant<int, 1> {};
+template <>
+struct attributes_needed< ::eolian_mono::function_registration_generator> : std::integral_constant<int, 1> {};
 }
       
 } } }

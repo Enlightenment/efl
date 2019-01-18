@@ -261,14 +261,12 @@ group { name:"e/modules/tasks/item";
          signal: "mouse,down,1"; source: "event";
          action: STATE_SET "clicked" 0.0;
          target: "base";
-         target: "e.text.label";
          target: "sel_label";
       }
       program {
          signal: "mouse,up,1"; source: "event";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "e.text.label";
          target: "sel_label";
       }
       program {
