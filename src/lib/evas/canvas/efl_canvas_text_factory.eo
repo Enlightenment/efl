@@ -1,4 +1,4 @@
-interface Efl.Canvas.Text_Factory ()
+interface Efl.Canvas.Text_Factory
 {
    [[Object factory that creates Efl.Canvas.Object objects.
 

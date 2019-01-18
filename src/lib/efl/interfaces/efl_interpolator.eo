@@ -1,4 +1,4 @@
-interface Efl.Interpolator ()
+interface Efl.Interpolator
 {
    [[Efl interpolator interface]]
    methods {

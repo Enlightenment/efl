@@ -10,7 +10,7 @@ enum Efl.Gfx.Image_Animation_Controller_Loop_Hint {
 
 /* FIXME: rename to Efl.Gfx.Image_Animation_Controller when eo/eolian are fixed */
 
-interface Efl.Gfx.Image_Animation_Controller ()
+interface Efl.Gfx.Image_Animation_Controller
 {
    [[Efl animated image interface]]
    eo_prefix: efl_gfx_image;

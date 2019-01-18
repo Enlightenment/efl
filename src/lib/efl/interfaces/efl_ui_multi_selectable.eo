@@ -9,7 +9,7 @@ enum Efl.Ui.Select_Mode {
    none [[Last value of select mode. child cannot be selected at all.]]
 }
 
-interface Efl.Ui.Multi_Selectable ()
+interface Efl.Ui.Multi_Selectable
 {
    [[Efl UI Multi selectable interface.
      The container have to control select property of multiple chidren.]]

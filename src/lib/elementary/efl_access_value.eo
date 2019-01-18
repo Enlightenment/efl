@@ -1,4 +1,4 @@
-interface Efl.Access.Value ()
+interface Efl.Access.Value
 {
    [[Elementary Access value interface]]
    methods {

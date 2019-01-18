@@ -1,6 +1,6 @@
 import efl_input_types;
 
-interface Efl.Input.State ()
+interface Efl.Input.State
 {
    [[Efl input state interface]]
    eo_prefix: efl_input;

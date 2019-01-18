@@ -1,4 +1,4 @@
-interface Dummy.Test_Iface ()
+interface Dummy.Test_Iface
 {
    methods {
       emit_test_conflicted {

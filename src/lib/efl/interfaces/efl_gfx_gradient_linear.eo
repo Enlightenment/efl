@@ -1,4 +1,4 @@
-interface Efl.Gfx.Gradient_Linear (Efl.Gfx.Gradient)
+interface Efl.Gfx.Gradient_Linear extends Efl.Gfx.Gradient
 {
    [[Efl graphics gradient linear interface]]
    methods {
