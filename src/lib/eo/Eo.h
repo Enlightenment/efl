@@ -910,9 +910,12 @@ EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
  * @brief Check if an object "is a" klass.
  * @param obj The object to check
  * @param klass The klass to check against.
- * @return @c EINA_TRUE if obj implements klass, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if obj implements klass or is an Efl_Class which inherits
+ * from/implements klass, @c EINA_FALSE otherwise.
  *
  * Notice: This function does not support composite objects.
+ * Note: that an Efl_Class is also an Efl_Object, so if you pass an Efl_Class
+ * as obj, it will check if that class contain klass.
  */
 EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 

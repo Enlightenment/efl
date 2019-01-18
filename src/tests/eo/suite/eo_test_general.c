@@ -327,6 +327,8 @@ EFL_START_TEST(efl_data_safe_fetch)
    fail_if(!efl_isa(obj, SIMPLE_CLASS));
    fail_if(!efl_isa(obj, SIMPLE2_CLASS));
    fail_if(!efl_isa(obj, SIMPLE3_CLASS));
+   fail_if(!efl_isa(SIMPLE3_CLASS, SIMPLE_CLASS));
+   fail_if(!efl_isa(SIMPLE_CLASS, SIMPLE_CLASS));
    fail_if(!efl_data_scope_safe_get(obj, SIMPLE_CLASS));
    fail_if(!efl_data_scope_safe_get(obj, SIMPLE3_CLASS));
    fail_if(efl_data_scope_safe_get(obj, SIMPLE2_CLASS) != NULL);
