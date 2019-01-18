@@ -1,9 +1,9 @@
 import elm_general;
 
-class Elm.Hoversel (Efl.Ui.Button_Legacy, Efl.Ui.Selectable,
+class Elm.Hoversel extends Efl.Ui.Button_Legacy implements Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
                     Efl.Access.Widget.Action,
-                    Efl.Ui.Legacy)
+                    Efl.Ui.Legacy
 {
    [[Elementary hoversel class]]
    legacy_prefix: elm_hoversel;

@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Composition_Adapter (Efl.Object, Efl.Ui.Focus.Object)
+class Efl.Ui.Focus.Composition_Adapter extends Efl.Object implements Efl.Ui.Focus.Object
 {
    [[EFL UI Focus Composition Adapter class]]
    methods {

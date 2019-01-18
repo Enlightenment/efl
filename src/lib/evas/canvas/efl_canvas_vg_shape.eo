@@ -1,4 +1,4 @@
-class Efl.Canvas.Vg.Shape (Efl.Canvas.Vg.Node, Efl.Gfx.Shape)
+class Efl.Canvas.Vg.Shape extends Efl.Canvas.Vg.Node implements Efl.Gfx.Shape
 {
    [[Efl vector graphics shape class]]
    legacy_prefix: evas_vg_shape;

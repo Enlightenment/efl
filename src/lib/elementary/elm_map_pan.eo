@@ -1,4 +1,4 @@
-class Elm.Map.Pan (Elm.Pan)
+class Elm.Map.Pan extends Elm.Pan
 {
    [[Elementary map pan class]]
    legacy_prefix: elm_map_pan;

@@ -1,4 +1,4 @@
-class Elm.View.Form (Efl.Object)
+class Elm.View.Form extends Efl.Object
 {
     [[Elementary view form class]]
     methods {

@@ -1,4 +1,4 @@
-class Elm.Grid (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
+class Elm.Grid extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Efl.Ui.Legacy
 {
    [[Elementary grid class]]
    legacy_prefix: elm_grid;

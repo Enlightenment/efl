@@ -1,4 +1,4 @@
-class Efl.Model_Composite_Boolean_Children (Efl.Model_Composite)
+class Efl.Model_Composite_Boolean_Children extends Efl.Model_Composite
 {
    [[Efl model composite boolean children class]]
    methods {

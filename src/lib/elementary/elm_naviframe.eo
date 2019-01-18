@@ -1,4 +1,4 @@
-class Elm.Naviframe (Efl.Ui.Layout, Efl.Access.Widget.Action, Efl.Ui.Legacy)
+class Elm.Naviframe extends Efl.Ui.Layout implements Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary naviframe class]]
    legacy_prefix: elm_naviframe;

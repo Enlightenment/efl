@@ -1,4 +1,4 @@
-class Elm.Menu.Item(Elm.Widget.Item, Efl.Access.Selection, Efl.Ui.Legacy)
+class Elm.Menu.Item extends Elm.Widget.Item implements Efl.Access.Selection, Efl.Ui.Legacy
 {
    [[Elementary menu item class]]
    legacy_prefix: elm_menu_item;

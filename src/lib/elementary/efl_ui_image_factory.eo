@@ -1,4 +1,4 @@
-class Efl.Ui.Image_Factory (Efl.Ui.Caching_Factory)
+class Efl.Ui.Image_Factory extends Efl.Ui.Caching_Factory
 {
    [[Efl UI image factory class]]
    implements {

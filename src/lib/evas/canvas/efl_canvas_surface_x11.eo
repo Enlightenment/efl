@@ -5,7 +5,7 @@ struct Efl.Canvas.Surface_X11_Pixmap
    pixmap: ulong;  [[X11 Pixmap ID.]]
 }
 
-class Efl.Canvas.Surface_X11 (Efl.Canvas.Surface)
+class Efl.Canvas.Surface_X11 extends Efl.Canvas.Surface
 {
    [[Native X11 surface for Efl canvas]]
 

@@ -1,7 +1,7 @@
-class Edje.Edit (Efl.Canvas.Layout)
+class Edje.Edit extends Efl.Canvas.Layout
 {
    [[Edje editing class to access edje object internals.
-   
+
    This was intended ONLY for use in an actual edje editor program. Unless
    you are writing one of these, do NOT use this API here.
    ]]

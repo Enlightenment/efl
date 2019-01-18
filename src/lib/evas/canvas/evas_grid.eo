@@ -1,4 +1,4 @@
-class Evas.Grid (Efl.Canvas.Group)
+class Evas.Grid extends Efl.Canvas.Group
 {
    [[Evas grid class]]
    legacy_prefix: evas_object_grid;

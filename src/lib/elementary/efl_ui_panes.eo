@@ -1,5 +1,5 @@
-class Efl.Ui.Panes (Efl.Ui.Layout, Efl.Ui.Direction,
-                    Efl.Ui.Clickable)
+class Efl.Ui.Panes extends Efl.Ui.Layout implements Efl.Ui.Direction,
+                    Efl.Ui.Clickable
 {
    [[Elementary panes class]]
    legacy_prefix: elm_panes;

@@ -6,9 +6,9 @@ struct Efl.Ui.List_View_Item_Event
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.List_View (Efl.Ui.Layout, Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
+class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager)
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager
 {
    methods {
       @property relayout {

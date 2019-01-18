@@ -1,4 +1,4 @@
-class Efl.Ui.Win_Legacy (Efl.Ui.Win, Efl.Ui.Legacy)
+class Efl.Ui.Win_Legacy extends Efl.Ui.Win implements Efl.Ui.Legacy
 {
    [[Efl UI window class]]
    data: null;

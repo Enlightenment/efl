@@ -4,7 +4,7 @@ type @extern Evas_Object_Box_Layout: __undefined_type; [[Evas object box layout 
 type @extern Eina_Free_Cb: __undefined_type; [[Eina free callback type]] /* FIXME: Function pointers are not supported  */
 type @extern va_list: __undefined_type; [[va_list type]] /* FIXME: va_list is not supported */
 
-class Evas.Box (Efl.Canvas.Group)
+class Evas.Box extends Efl.Canvas.Group
 {
    [[Evas box class]]
    legacy_prefix: evas_object_box;

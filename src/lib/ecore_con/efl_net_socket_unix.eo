@@ -1,4 +1,4 @@
-class Efl.Net.Socket_Unix (Efl.Net.Socket_Fd) {
+class Efl.Net.Socket_Unix extends Efl.Net.Socket_Fd {
     [[A base UNIX socket.
 
       This is the common class and takes an existing FD, usually

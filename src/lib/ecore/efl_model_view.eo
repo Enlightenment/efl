@@ -17,7 +17,7 @@ function EflModelViewPropertySet {
    return: future<any_value_ptr>; [[The value that was finally set.]]
 };
 
-class Efl.Model_View (Efl.Model_Composite)
+class Efl.Model_View extends Efl.Model_Composite
 {
    [[Efl model providing helpers for custom properties used when linking a model to a view and you need to generate/adapt values for display.
 

@@ -1,4 +1,4 @@
-class Efl.Ui.Popup_Part_Backwall (Efl.Ui.Layout_Part, Efl.File)
+class Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
 {
    [[Efl UI Popup internal part backwall class]]
    data: null;

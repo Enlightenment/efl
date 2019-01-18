@@ -5,9 +5,9 @@ type @extern Ecore_Con_Eet_Raw_Data_Cb: __undefined_type; [[Ecore connection eet
 struct @extern Eet.Data.Descriptor; [[Eet data descriptor data structure]]
 struct Ecore.Con.Reply; [[Ecore connection reply data structure]]
 
-class Ecore.Con.Eet.Base (Efl.Object) {
+class Ecore.Con.Eet.Base extends Efl.Object {
    [[Ecore Connection Eet Base class.
-   
+
    This class provides Eet data serialization features to Ecore Connection objects.]]
 
    methods {

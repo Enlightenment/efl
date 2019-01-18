@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Gengrid.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Focus.Object, Efl.Ui.Legacy)
+class Elm.Gengrid.Item extends Elm.Widget.Item.Static_Focus implements Efl.Ui.Focus.Object, Efl.Ui.Legacy
 {
       [[Elementary gengrid item class]]
       legacy_prefix: elm_gengrid_item;

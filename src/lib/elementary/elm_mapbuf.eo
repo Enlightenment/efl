@@ -1,4 +1,4 @@
-class Elm.Mapbuf (Efl.Ui.Widget, Efl.Content, Efl.Ui.Legacy)
+class Elm.Mapbuf extends Efl.Ui.Widget implements Efl.Content, Efl.Ui.Legacy
 {
    [[Elementary mapbuf class]]
    legacy_prefix: elm_mapbuf;

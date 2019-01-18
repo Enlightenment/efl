@@ -1,5 +1,4 @@
-class Efl.Ui.Pan (Efl.Canvas.Group,
-                  Efl.Content)
+class Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
 {
    [[Elementary pan class]]
    methods {

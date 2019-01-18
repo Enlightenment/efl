@@ -1,4 +1,4 @@
-class Ecore.Audio.Out (Ecore.Audio)
+class Ecore.Audio.Out extends Ecore.Audio
 {
    [[Ecore Audio output object.]]
 

@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.View.List (Efl.Object)
+class Elm.View.List extends Efl.Object
 {
     [[Elementary view list class]]
     methods {

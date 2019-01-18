@@ -1,4 +1,4 @@
-class Ector.Software.Buffer (Efl.Object, Ector.Software.Buffer.Base)
+class Ector.Software.Buffer extends Efl.Object implements Ector.Software.Buffer.Base
 {
    [[Ector software buffer class]]
    data: null;

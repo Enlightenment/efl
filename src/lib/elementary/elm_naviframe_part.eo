@@ -1,4 +1,4 @@
-class Elm.Naviframe.Part (Efl.Ui.Layout_Part_Legacy)
+class Elm.Naviframe.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary naviframe internal part class]]
    data: null;

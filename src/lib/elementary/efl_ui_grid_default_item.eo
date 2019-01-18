@@ -1,9 +1,9 @@
 
-class Efl.Ui.Grid_Default_Item (Efl.Ui.Grid_Item,
+class Efl.Ui.Grid_Default_Item extends Efl.Ui.Grid_Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
                                 Efl.Ui.L10n,
-                                Efl.Content)
+                                Efl.Content
 {
    [[Grid Default Item class.
      This class need to be sub object of list widget.

@@ -1,4 +1,4 @@
-class Efl.Ui.Radio_Legacy (Efl.Ui.Radio, Efl.Ui.Legacy)
+class Efl.Ui.Radio_Legacy extends Efl.Ui.Radio implements Efl.Ui.Legacy
 {
    [[Elementary radio class]]
    data: null;

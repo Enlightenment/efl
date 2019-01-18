@@ -39,7 +39,7 @@ enum Ecore.Exe_Flags
    isolate_io = 1024, [[Try and isolate stdin/out and err of the process so it isn't shared with the parent.]]
 }
 
-class Ecore.Exe (Efl.Object, Efl.Control)
+class Ecore.Exe extends Efl.Object implements Efl.Control
 {
    [[Ecore.Exe is responsible for managing portable process spawning.
 

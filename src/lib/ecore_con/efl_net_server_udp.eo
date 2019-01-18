@@ -1,4 +1,4 @@
-class Efl.Net.Server_Udp (Efl.Net.Server_Ip) {
+class Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
     [[A UDP server.
 
       @since 1.19

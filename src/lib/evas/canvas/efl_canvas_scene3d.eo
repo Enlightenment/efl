@@ -1,4 +1,4 @@
-class Efl.Canvas.Scene3d (Efl.Canvas.Image_Internal)
+class Efl.Canvas.Scene3d extends Efl.Canvas.Image_Internal
 {
    [[A UI view for EFL Canvas 3D.]]
    data: null;

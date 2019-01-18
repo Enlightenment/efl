@@ -1,4 +1,4 @@
-class Elm.Web.None (Elm.Web, Efl.Ui.Legacy)
+class Elm.Web.None extends Elm.Web implements Efl.Ui.Legacy
 {
    [[Elementary web module class]]
    implements {

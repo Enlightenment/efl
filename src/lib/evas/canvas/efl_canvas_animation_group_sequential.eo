@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Group_Sequential (Efl.Canvas.Animation_Group)
+class Efl.Canvas.Animation_Group_Sequential extends Efl.Canvas.Animation_Group
 {
    [[Efl group sequential animation class]]
    data: null;

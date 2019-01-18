@@ -5,7 +5,7 @@ enum Efl.Ui.Text_Scroller_Mode
    multiline = 1,
 }
 
-class Efl.Ui.Internal_Text_Scroller (Efl.Ui.Scroller)
+class Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
 {
    [[Internal-usage text scroller class.
 

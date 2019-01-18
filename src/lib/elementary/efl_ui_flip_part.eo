@@ -1,4 +1,4 @@
-class Efl.Ui.Flip_Part (Efl.Ui.Widget_Part, Efl.Content)
+class Efl.Ui.Flip_Part extends Efl.Ui.Widget_Part implements Efl.Content
 {
    [[Efl UI flip internal class]]
    data: null;

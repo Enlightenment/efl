@@ -2,9 +2,9 @@
 struct @extern Elm.Photocam.Error;
 struct @extern Elm.Photocam.Progress;
 
-class Efl.Ui.Image_Zoomable (Efl.Ui.Image, Efl.Ui.Zoom,
+class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
                              Efl.Ui.Scrollable_Interactive,
-                             Efl.Ui.Scrollbar)
+                             Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
    legacy_prefix: elm_photocam;

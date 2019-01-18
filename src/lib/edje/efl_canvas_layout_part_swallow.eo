@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Part_Swallow (Efl.Canvas.Layout_Part, Efl.Content)
+class Efl.Canvas.Layout_Part_Swallow extends Efl.Canvas.Layout_Part implements Efl.Content
 {
    [[Represents a SWALLOW part of an Edje object.
 

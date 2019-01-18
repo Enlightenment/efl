@@ -1,4 +1,4 @@
-class Efl.Divisor_Interpolator (Efl.Object, Efl.Interpolator)
+class Efl.Divisor_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Efl divisor interpolator class]]
    data: Efl_Divisor_Interpolator_Data;

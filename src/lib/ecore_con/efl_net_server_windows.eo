@@ -1,4 +1,4 @@
-class Efl.Net.Server_Windows (Efl.Loop_Consumer, Efl.Net.Server) {
+class Efl.Net.Server_Windows extends Efl.Loop_Consumer implements Efl.Net.Server {
     [[A Windows NamedPipe server.
 
       The @Efl.Net.Server.serve method calls CreateNamedPipe()

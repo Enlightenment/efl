@@ -1,2 +1,2 @@
-class Aux_B(Aux_C) {
+class Aux_B extends Aux_C  {
 }

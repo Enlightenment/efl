@@ -1,4 +1,4 @@
-class Elm.List.Item(Elm.Widget.Item, Efl.Ui.Legacy)
+class Elm.List.Item extends Elm.Widget.Item implements Efl.Ui.Legacy
 {
    [[Elementary list item class]]
    legacy_prefix: elm_list_item;

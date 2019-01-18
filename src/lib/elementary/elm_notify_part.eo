@@ -1,5 +1,5 @@
-class Elm.Notify.Part (Efl.Ui.Widget_Part, Efl.Content, Efl.Text,
-                       Efl.Ui.L10n)
+class Elm.Notify.Part extends Efl.Ui.Widget_Part implements Efl.Content, Efl.Text,
+                       Efl.Ui.L10n
 {
    [[Elementary notification internel part class]]
    data: null;

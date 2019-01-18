@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Part_Table (Efl.Object, Efl.Pack_Table)
+class Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Table
 {
    [[Represents a Table created as part of a layout.
 

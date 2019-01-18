@@ -1,4 +1,4 @@
-class Efl.Thread (Efl.Task, Efl.ThreadIO)
+class Efl.Thread extends Efl.Task implements Efl.ThreadIO
 {
    methods {
    }

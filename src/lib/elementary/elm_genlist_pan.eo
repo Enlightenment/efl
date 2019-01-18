@@ -1,4 +1,4 @@
-class Elm.Genlist.Pan (Elm.Pan)
+class Elm.Genlist.Pan extends Elm.Pan
 {
    [[Elementary genlist pan class]]
    legacy_prefix: elm_genlist_pan;

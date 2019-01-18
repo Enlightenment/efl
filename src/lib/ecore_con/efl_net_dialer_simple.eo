@@ -1,4 +1,4 @@
-class Efl.Net.Dialer_Simple (Efl.Net.Socket_Simple, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Simple extends Efl.Net.Socket_Simple implements Efl.Net.Dialer {
     [[Connects to a remote server offering an easy to use, buffered I/O.
 
       The simple dialer is based on @Efl.Net.Socket_Simple, which

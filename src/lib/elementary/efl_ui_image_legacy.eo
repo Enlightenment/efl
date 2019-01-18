@@ -1,4 +1,4 @@
-class Efl.Ui.Image_Legacy (Efl.Ui.Image, Efl.Ui.Legacy)
+class Efl.Ui.Image_Legacy extends Efl.Ui.Image implements Efl.Ui.Legacy
 {
    [[ Efl UI image class]]
    data: null;

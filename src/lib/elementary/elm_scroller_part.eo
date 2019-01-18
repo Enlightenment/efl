@@ -1,4 +1,4 @@
-class Elm.Scroller.Part (Efl.Ui.Layout_Part_Legacy)
+class Elm.Scroller.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary scroller internal part class]]
    data: null;

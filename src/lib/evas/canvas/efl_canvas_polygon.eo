@@ -1,4 +1,4 @@
-class Efl.Canvas.Polygon (Efl.Canvas.Object)
+class Efl.Canvas.Polygon extends Efl.Canvas.Object
 {
    [[Low-level polygon object]]
 

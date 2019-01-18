@@ -1,4 +1,4 @@
-class Efl.Model_Composite_Boolean (Efl.Model_Composite)
+class Efl.Model_Composite_Boolean extends Efl.Model_Composite
 {
    [[Efl model composite boolean class]]
    methods {

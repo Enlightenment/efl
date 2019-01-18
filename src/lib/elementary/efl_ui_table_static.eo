@@ -1,4 +1,4 @@
-class Efl.Ui.Table_Static (Efl.Ui.Table)
+class Efl.Ui.Table_Static extends Efl.Ui.Table
 {
    [[Efl UI table static class]]
    data: null;

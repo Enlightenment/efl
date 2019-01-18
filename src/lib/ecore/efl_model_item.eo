@@ -1,4 +1,4 @@
-class Efl.Model_Item (Efl.Model_Loop)
+class Efl.Model_Item extends Efl.Model_Loop
 {
    [[
      Generic model that allows any property to be manually set.

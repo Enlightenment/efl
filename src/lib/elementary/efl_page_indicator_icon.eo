@@ -1,4 +1,4 @@
-class Efl.Page.Indicator_Icon (Efl.Page.Indicator)
+class Efl.Page.Indicator_Icon extends Efl.Page.Indicator
 {
    [[Icon type page indicator
 

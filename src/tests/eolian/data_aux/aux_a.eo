@@ -1,4 +1,4 @@
-class Aux_A(Aux_C) {
+class Aux_A extends Aux_C  {
     methods {
         baz {}
     }

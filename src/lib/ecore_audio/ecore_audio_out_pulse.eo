@@ -1,4 +1,4 @@
-class Ecore.Audio.Out.Pulse (Ecore.Audio.Out)
+class Ecore.Audio.Out.Pulse extends Ecore.Audio.Out
 {
    [[Ecore audio ouput for PulseAudio.]]
    eo_prefix: ecore_audio_obj_out_pulse;

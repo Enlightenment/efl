@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout_Part (Efl.Object, Efl.Gfx.Entity, Efl.Ui.Drag)
+class Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity, Efl.Ui.Drag
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 

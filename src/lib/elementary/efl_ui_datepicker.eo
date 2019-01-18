@@ -1,4 +1,4 @@
-class Efl.Ui.Datepicker (Efl.Ui.Layout)
+class Efl.Ui.Datepicker extends Efl.Ui.Layout
 {
    [[Datepicker widget
 

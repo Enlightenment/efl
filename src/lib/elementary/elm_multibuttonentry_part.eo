@@ -1,4 +1,4 @@
-class Elm.Multibuttonentry_Part (Efl.Ui.Layout_Part_Legacy)
+class Elm.Multibuttonentry_Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary multibuttonentry internal part class]]
    data: null;

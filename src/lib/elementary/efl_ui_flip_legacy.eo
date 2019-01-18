@@ -1,4 +1,4 @@
-class Efl.Ui.Flip_Legacy (Efl.Ui.Flip, Efl.Ui.Legacy)
+class Efl.Ui.Flip_Legacy extends Efl.Ui.Flip implements Efl.Ui.Legacy
 {
    [[Efl UI flip class]]
    data: null;

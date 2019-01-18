@@ -1,4 +1,4 @@
-class Efl.Canvas.Gesture_Long_Tap (Efl.Canvas.Gesture)
+class Efl.Canvas.Gesture_Long_Tap extends Efl.Canvas.Gesture
 {
    [[EFL Gesture Long Tap class]]
    eo_prefix: efl_gesture_long_tap;

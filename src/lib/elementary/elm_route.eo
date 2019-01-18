@@ -1,4 +1,4 @@
-class Elm.Route (Efl.Ui.Widget, Efl.Ui.Legacy)
+class Elm.Route extends Efl.Ui.Widget implements Efl.Ui.Legacy
 {
    [[Elementary route class]]
    legacy_prefix: elm_route;

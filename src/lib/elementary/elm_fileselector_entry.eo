@@ -1,5 +1,5 @@
-class Elm.Fileselector_Entry (Efl.Ui.Layout, Elm.Interface.Fileselector,
-                              Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
+class Elm.Fileselector_Entry extends Efl.Ui.Layout implements Elm.Interface.Fileselector,
+                              Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary fileselector entry class]]
    event_prefix: elm_fileselector_entry;

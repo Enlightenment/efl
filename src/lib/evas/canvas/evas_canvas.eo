@@ -1,7 +1,7 @@
 import efl_input_types;
 
-class Evas.Canvas (Efl.Loop_Consumer, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
-                   Efl.Canvas.Pointer)
+class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
+                   Efl.Canvas.Pointer
 {
    [[Evas canvas class]]
    legacy_prefix: evas;

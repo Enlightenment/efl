@@ -1,4 +1,4 @@
-class Efl.Net.Dialer_Ssl (Efl.Net.Socket_Ssl, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Ssl extends Efl.Net.Socket_Ssl implements Efl.Net.Dialer {
     [[Connects to a remote SSL server using TCP.
 
       This creates an internal @Efl.Net.Dialer_Tcp and once connected

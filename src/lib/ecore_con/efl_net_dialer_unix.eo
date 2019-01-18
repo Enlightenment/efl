@@ -1,4 +1,4 @@
-class Efl.Net.Dialer_Unix (Efl.Net.Socket_Unix, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Unix extends Efl.Net.Socket_Unix implements Efl.Net.Dialer {
     [[Connects to a local AF_UNIX server.
 
       The dial address is a file system path (portable) or
