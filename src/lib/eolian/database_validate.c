@@ -715,7 +715,14 @@ _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool
    EINA_LIST_FOREACH(icl->callables, l, impl)
      {
         Impl_Status ost = (Impl_Status)eina_hash_find(fs, &impl->foo_id);
-        Eina_Bool extd = _extend_impl(fs, impl, !allow_impl);
+        Eina_Bool extd = (ost != IMPL_STATUS_FULL);
+        if (icl->type == EOLIAN_CLASS_REGULAR)
+          /* stuff coming from full classes is assumed to be already checked
+           * so we are sure that everything is implemented or composite'd
+           */
+          eina_hash_set(fs, &impl->foo_id, (void *)IMPL_STATUS_FULL);
+        else
+          extd = _extend_impl(fs, impl, !allow_impl);
         if (extd)
           {
              /* we had an unimplementation in the list, replace
@@ -739,7 +746,7 @@ _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool
 }
 
 static Eina_Bool
-_db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs)
+_db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs, Eina_Hash *cs)
 {
    if (cl->type != EOLIAN_CLASS_REGULAR)
      return EINA_TRUE;
@@ -753,8 +760,14 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs)
    Eolian_Implement *impl;
    EINA_LIST_FOREACH(cl->callables, l, impl)
      {
-        Impl_Status st = (Impl_Status)eina_hash_find(fs, &impl->foo_id);
         const Eolian_Function *fid = impl->foo_id;
+        Impl_Status st = (Impl_Status)eina_hash_find(fs, &fid);
+        /* found an interface this func was originally defined in in the
+         * composite list; in that case, ignore it and assume it will come
+         * from a composite object later
+         */
+        if (eina_hash_find(cs, &fid->klass))
+          continue;
         switch (st)
           {
            case IMPL_STATUS_NONE:
@@ -880,8 +893,9 @@ end:
 
 static Eina_Bool
 _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
-                 Eolian_Class **out_cl)
+                 Eolian_Class **out_cl, Eina_Bool iface_only)
 {
+   char buf[PATH_MAX];
    if (!succ)
      {
         eina_stringshare_del(in_cl);
@@ -891,8 +905,21 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
    if (!icl)
      {
         succ = EINA_FALSE;
-        char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "unknown inherit '%s' (incorrect case?)", in_cl);
+        _obj_error(&cl->base, buf);
+     }
+   else if (iface_only && (icl->type != EOLIAN_CLASS_INTERFACE))
+     {
+        succ = EINA_FALSE;
+        snprintf(buf, sizeof(buf), "non-interface class '%s' in composite list", icl->base.name);
+        _obj_error(&cl->base, buf);
+     }
+   else if (iface_only && !_get_impl_class(cl, icl->base.name))
+     {
+        /* TODO: optimize check using a lookup hash later */
+        succ = EINA_FALSE;
+        snprintf(buf, sizeof(buf), "interface '%s' not found within the inheritance tree of '%s'",
+                 icl->base.name, cl->base.name);
         _obj_error(&cl->base, buf);
      }
    else
@@ -919,7 +946,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
 
    if (cl->parent_name)
      {
-        succ = _db_swap_inherit(cl, succ, cl->parent_name, &cl->parent);
+        succ = _db_swap_inherit(cl, succ, cl->parent_name, &cl->parent, EINA_FALSE);
         if (succ)
           {
              /* fill if not found, but do not return right away because
@@ -933,7 +960,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
    EINA_LIST_FREE(il, inn)
      {
         Eolian_Class *out_cl = NULL;
-        succ = _db_swap_inherit(cl, succ, inn, &out_cl);
+        succ = _db_swap_inherit(cl, succ, inn, &out_cl, EINA_FALSE);
         if (!succ)
           continue;
         cl->extends = eina_list_append(cl->extends, out_cl);
@@ -945,7 +972,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
         EINA_LIST_FREE(rl, inn)
           {
              Eolian_Class *out_cl = NULL;
-             succ = _db_swap_inherit(cl, succ, inn, &out_cl);
+             succ = _db_swap_inherit(cl, succ, inn, &out_cl, EINA_FALSE);
              if (succ && !(out_cl->type == EOLIAN_CLASS_REGULAR || out_cl->type == EOLIAN_CLASS_ABSTRACT))
                {
                   char buf[PATH_MAX];
@@ -964,11 +991,29 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
           }
      }
 
+   /* a set of interfaces for quick checks */
+   Eina_Hash *ch = eina_hash_pointer_new(NULL);
+
+   il = cl->composite;
+   cl->composite = NULL;
+   EINA_LIST_FREE(il, inn)
+     {
+        Eolian_Class *out_cl = NULL;
+        succ = _db_swap_inherit(cl, succ, inn, &out_cl, EINA_TRUE);
+        if (!succ)
+          continue;
+        cl->composite = eina_list_append(cl->composite, out_cl);
+        eina_hash_set(ch, &out_cl, out_cl);
+     }
+
    /* failed on the way, no point in filling further
     * the failed stuff will get dropped so it's ok if it's inconsistent
     */
    if (!succ)
-     return EINA_FALSE;
+     {
+        eina_hash_free(ch);
+        return EINA_FALSE;
+     }
 
    eina_hash_add(fhash, &cl->base.name, cl);
 
@@ -977,10 +1022,18 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
 
    /* make sure impls/ctors are filled first, but do it only once */
    if (!_db_fill_implements(cl, fh))
-     return EINA_FALSE;
+     {
+        eina_hash_free(ch);
+        eina_hash_free(fh);
+        return EINA_FALSE;
+     }
 
    if (!_db_fill_ctors(cl))
-     return EINA_FALSE;
+     {
+        eina_hash_free(ch);
+        eina_hash_free(fh);
+        return EINA_FALSE;
+     }
 
    /* fill callables list with stuff from inheritance tree, the current
     * class stuff is already filled in _db_fill_implements, this is needed
@@ -994,10 +1047,11 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
      _db_fill_callables(cl, icl, fh, EINA_FALSE);
 
    /* verify that all methods are implemented on the class */
-   if (!_db_check_implemented(vals, cl, fh))
+   if (!_db_check_implemented(vals, cl, fh, ch))
      vals->warned = EINA_TRUE;
 
    eina_hash_free(fh);
+   eina_hash_free(ch);
 
    return EINA_TRUE;
 }

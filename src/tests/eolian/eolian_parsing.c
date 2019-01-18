@@ -1633,6 +1633,21 @@ EFL_START_TEST(eolian_class_requires_classes)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_class_unimpl)
+{
+   Eolian_State *eos = eolian_state_new();
+
+   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
+
+   setenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN", "1", 1);
+   const Eolian_Unit *unit = eolian_state_file_parse(eos, TESTS_SRC_DIR"/data/unimpl.eo");
+   unsetenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN");
+   fail_if(!unit);
+
+   eolian_state_free(eos);
+}
+EFL_END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1658,4 +1673,5 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_parts);
    tcase_add_test(tc, eolian_mixins_require);
    tcase_add_test(tc, eolian_class_requires_classes);
+   tcase_add_test(tc, eolian_class_unimpl);
 }

@@ -31,6 +31,7 @@ database_class_del(Eolian_Class *cl)
    EINA_LIST_FREE(cl->parts, pt) database_part_del(pt);
    eina_list_free(cl->requires);
    eina_list_free(cl->callables);
+   eina_list_free(cl->composite);
 
    if (cl->legacy_prefix) eina_stringshare_del(cl->legacy_prefix);
    if (cl->eo_prefix) eina_stringshare_del(cl->eo_prefix);
