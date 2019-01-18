@@ -27,6 +27,8 @@
 // possible hash functions, by using SIMD instructions, or by
 // compromising on hash quality.
 
+#pragma GCC visibility push(default)
+
 #include "city.h"
 
 #include <algorithm>
@@ -305,3 +307,5 @@ uint128 CityHash128(const char *s, size_t len) {
     return CityHash128WithSeed(s, len, uint128(k0, k1));
   }
 }
+
+#pragma GCC visibility pop

@@ -1,4 +1,4 @@
-class Efl.Net.Socket_Tcp (Efl.Net.Socket_Fd) {
+class Efl.Net.Socket_Tcp extends Efl.Net.Socket_Fd {
     [[A base TCP socket.
 
       This is the common class and takes an existing FD, usually

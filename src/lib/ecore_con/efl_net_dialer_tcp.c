@@ -42,6 +42,17 @@ typedef struct _Efl_Net_Dialer_Tcp_Data
    double timeout_dial;
 } Efl_Net_Dialer_Tcp_Data;
 
+static void
+_efl_net_dialer_tcp_async_stop(Efl_Net_Dialer_Tcp_Data *pd)
+{
+   if (pd->connect.thread)
+     {
+        ecore_thread_cancel(pd->connect.thread);
+        ecore_thread_wait(pd->connect.thread, 1);
+        pd->connect.thread = NULL;
+     }
+}
+
 EOLIAN static Eo*
 _efl_net_dialer_tcp_efl_object_constructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED)
 {
@@ -63,11 +74,8 @@ _efl_net_dialer_tcp_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
         efl_event_thaw(o);
      }
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
+
 
    efl_invalidate(efl_super(o, MY_CLASS));
 }
@@ -82,16 +90,12 @@ _efl_net_dialer_tcp_efl_object_destructor(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 }
 
 static Eina_Value
-_efl_net_dialer_tcp_connect_timeout(Eo *o, const Eina_Value v)
+_efl_net_dialer_tcp_connect_timeout(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Net_Dialer_Tcp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    Eina_Error err = ETIMEDOUT;
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
@@ -103,9 +107,9 @@ _efl_net_dialer_tcp_connect_timeout(Eo *o, const Eina_Value v)
 static void
 _timeout_schedule(Eo *o, Efl_Net_Dialer_Tcp_Data *pd)
 {
-   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial),
-                                  .success = _efl_net_dialer_tcp_connect_timeout,
-                                  .storage = &pd->connect.timeout);
+   efl_future_then(o, efl_loop_timeout(efl_loop_get(o), pd->timeout_dial),
+                   .success = _efl_net_dialer_tcp_connect_timeout,
+                   .storage = &pd->connect.timeout);
 }
 
 static void
@@ -155,7 +159,7 @@ _efl_net_dialer_tcp_connected(void *data, const struct sockaddr *addr, socklen_t
 }
 
 EOLIAN static Eina_Error
-_efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_UNUSED, const char *address)
+_efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, const char *address)
 {
    const char *proxy_env = NULL, *no_proxy_env = NULL;
 
@@ -164,11 +168,7 @@ _efl_net_dialer_tcp_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Tcp_Data *pd EINA_
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_io_closer_closed_get(o), EBADF);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_loop_fd_get(o) >= 0, EALREADY);
 
-   if (pd->connect.thread)
-     {
-        ecore_thread_cancel(pd->connect.thread);
-        pd->connect.thread = NULL;
-     }
+   _efl_net_dialer_tcp_async_stop(pd);
 
    if (!pd->proxy)
      {
@@ -241,6 +241,8 @@ EOLIAN static void
 _efl_net_dialer_tcp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Tcp_Data *pd, Eina_Bool connected)
 {
    if (pd->connect.timeout) eina_future_cancel(pd->connect.timeout);
+   // This has to be done before the state check as there could be a connection in progress that need to be canceled
+   if (!connected) _efl_net_dialer_tcp_async_stop(pd);
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);

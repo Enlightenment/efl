@@ -40,8 +40,8 @@ struct _Eet_Dictionary
    unsigned char *all_hash;
    unsigned char *all_allocated;
 
-   Eina_Hash  *converts;
-   Eina_Spinlock   mutex;
+   Eina_Hash     *converts;
+   Eina_RWLock    rwlock;
 
    int         size;
    int         offset;

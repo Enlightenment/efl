@@ -51,15 +51,15 @@ struct _Eina_Bezier
  * @brief Sets the values of the points of the given floating
  * point cubic bezier curve.
  *
- * @param b[out] The floating point bezier.
- * @param start_x[in] The x coordinate of the start point.
- * @param start_y[in] The y coordinate of the start point.
- * @param ctrl_start_x[in] The x coordinate of the 1st control point.
- * @param ctrl_start_y[in] The y coordinate of the 1st control point.
- * @param ctrl_end_x[in] The X coordinate of the 2nd control point.
- * @param ctrl_end_y[in] The Y coordinate of the 2nd control point.
- * @param end_x[in] The X coordinate of the end point.
- * @param end_y[in] The Y coordinate of the end point.
+ * @param[out] b The floating point bezier.
+ * @param[in] start_x The x coordinate of the start point.
+ * @param[in] start_y The y coordinate of the start point.
+ * @param[in] ctrl_start_x The x coordinate of the 1st control point.
+ * @param[in] ctrl_start_y The y coordinate of the 1st control point.
+ * @param[in] ctrl_end_x The X coordinate of the 2nd control point.
+ * @param[in] ctrl_end_y The Y coordinate of the 2nd control point.
+ * @param[in] end_x The X coordinate of the end point.
+ * @param[in] end_y The Y coordinate of the end point.
  *
  * @p b. No check is done on @p b.
  * @since 1.16

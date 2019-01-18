@@ -1,4 +1,4 @@
-class Efl.Net.Socket_Fd (Efl.Loop_Fd, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Net.Socket) {
+class Efl.Net.Socket_Fd extends Efl.Loop_Fd implements Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Net.Socket {
     [[A base implementation for sockets over filedescriptors (fd)
 
       This is the common class and takes an existing FD, usually

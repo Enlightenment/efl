@@ -301,10 +301,10 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  * @details This macro allows a convenient way to loop over all elements in an
  *          accessor, very similar to EINA_LIST_FOREACH().
  *
- * @param accessor The accessor to use
- * @param counter A counter used by eina_accessor_data_get() when
- *                iterating over the container.
- * @param data A pointer to store the data \n
+ * @param[in] accessor The accessor to use
+ * @param[out] counter A counter used by eina_accessor_data_get() when
+ *             iterating over the container.
+ * @param[out] data A pointer to store the data \n
  *             It must be a pointer to support getting
  *             its address since eina_accessor_data_get() requires a pointer.
  *

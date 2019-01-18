@@ -23,9 +23,9 @@ enum Elm.Toolbar_Shrink_Mode
    last [[Indicates error if returned by elm_toolbar_shrink_mode_get()]]
 }
 
-class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
+class Elm.Toolbar extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
@@ -353,7 +353,7 @@ class Elm.Toolbar (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Elm.Interface_Scroll
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.focused_item { get; }

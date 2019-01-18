@@ -1717,7 +1717,7 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
 }
 
-static Eina_Value _efl_net_dialer_http_pending_close(Eo *o, Eina_Value value);
+static Eina_Value _efl_net_dialer_http_pending_close(Eo *o, void *data, Eina_Value value);
 
 EOLIAN static Eina_Error
 _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
@@ -1732,9 +1732,9 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
      {
         if ((!pd->pending_close) && (pd->easy))
           {
-             efl_future_Eina_FutureXXX_then(o, efl_loop_job(efl_loop_get(o)),
-                                            .success = _efl_net_dialer_http_pending_close,
-                                            .storage = &pd->pending_close);
+             efl_future_then(o, efl_loop_job(efl_loop_get(o)),
+                             .success = _efl_net_dialer_http_pending_close,
+                             .storage = &pd->pending_close);
              DBG("dialer=%p closed from CURL callback, schedule close job=%p", o, pd->pending_close);
           }
         return 0;
@@ -1766,7 +1766,7 @@ _efl_net_dialer_http_efl_io_closer_close(Eo *o, Efl_Net_Dialer_Http_Data *pd)
 }
 
 static Eina_Value
-_efl_net_dialer_http_pending_close(Eo *o, const Eina_Value value EINA_UNUSED)
+_efl_net_dialer_http_pending_close(Eo *o, void *data EINA_UNUSED, const Eina_Value value EINA_UNUSED)
 {
    Efl_Net_Dialer_Http_Data *pd = efl_data_scope_get(o, MY_CLASS);
 

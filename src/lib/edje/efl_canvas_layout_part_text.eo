@@ -1,11 +1,37 @@
-class Efl.Canvas.Layout_Part_Text (Efl.Canvas.Layout_Part, Efl.Text,
-Efl.Text_Markup, Efl.Text_Cursor)
+enum Efl.Canvas.Layout_Part_Text_Expand
+{
+   [[Text layout policy to enforce. If none is set, min/max descriptions
+     are taken in considerations solely.
+   ]]
+   none = 0, [[No policy. Use default description parameters.]]
+   min_x = 1,
+   min_y  = 1 << 1,
+   max_x  = 1 << 2,
+   max_y  = 1 << 3,
+}
+
+class Efl.Canvas.Layout_Part_Text extends Efl.Canvas.Layout_Part implements Efl.Text,
+Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
 {
    [[Represents a TEXT part of a layout
 
      Its lifetime is limited to one function call only, unless an extra
      reference is explicitly held.
    ]]
+   methods {
+        @property text_expand {
+           [[Sizing policy for text parts.
+
+            This will determine whether to consider height or width
+            constraints, if text-specific behaviors occur (such as ellipsis,
+            line-wrapping etc.
+           ]]
+           values {
+              type: Efl.Canvas.Layout_Part_Text_Expand;
+           }
+        }
+
+   }
    data: null;
    implements {
       Efl.Text.text { set; get; }
@@ -24,5 +50,26 @@ Efl.Text_Markup, Efl.Text_Cursor)
       Efl.Text_Cursor.cursor_content { get; }
       Efl.Text_Cursor.cursor_geometry { get; }
       Efl.Text_Markup.cursor_markup_insert;
+      Efl.Text_Format.ellipsis { set; get; }
+      Efl.Text_Format.wrap { set; get; }
+      Efl.Text_Font.font { set; get; }
+      Efl.Text_Style.normal_color { set; get; }
+      Efl.Text_Style.backing_type { set; get; }
+      Efl.Text_Style.backing_color { set; get;}
+      Efl.Text_Style.underline_type { set; }
+      Efl.Text_Style.underline_color { set; get; }
+      Efl.Text_Style.underline2_color { set; get; }
+      Efl.Text_Style.underline_dashed_color { set; get; }
+      Efl.Text_Style.underline_height { set; }
+      Efl.Text_Style.underline_dashed_width { set; }
+      Efl.Text_Style.underline_dashed_gap { set; }
+      Efl.Text_Style.strikethrough_type { set; }
+      Efl.Text_Style.strikethrough_color { set; get; }
+      Efl.Text_Style.effect_type { set; }
+      Efl.Text_Style.shadow_direction { set; }
+      Efl.Text_Style.outline_color { set; get; }
+      Efl.Text_Style.shadow_color { set; get; }
+      Efl.Text_Style.glow_color { set; get; }
+      Efl.Text_Style.glow2_color { set; get; }
    }
 }

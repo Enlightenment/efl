@@ -1,6 +1,5 @@
 #define EFL_GFX_FILTER_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
-#define EVAS_VG_BETA
 
 #include "edje_private.h"
 
@@ -939,6 +938,9 @@ _edje_recalc_do(Edje *ed)
 {
    unsigned short i;
    Eina_Bool need_calc;
+#ifdef EDJE_CALC_CACHE
+   Eina_Bool need_reinit_state = EINA_FALSE;
+#endif
 
 // XXX: dont need this with current smart calc infra. remove me later
 //   ed->postponed = EINA_FALSE;
@@ -947,6 +949,16 @@ _edje_recalc_do(Edje *ed)
    if (!ed->dirty) return;
    ed->dirty = EINA_FALSE;
    ed->state++;
+
+   /* Avoid overflow problem */
+   if (ed->state == USHRT_MAX)
+     {
+        ed->state = 0;
+#ifdef EDJE_CALC_CACHE
+        need_reinit_state = EINA_TRUE;
+#endif
+     }
+
    for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *ep;
@@ -954,6 +966,15 @@ _edje_recalc_do(Edje *ed)
         ep = ed->table_parts[i];
         ep->calculated = FLAG_NONE; // FIXME: this is dubious (see below)
         ep->calculating = FLAG_NONE;
+#ifdef EDJE_CALC_CACHE
+        if (need_reinit_state)
+          {
+             ep->state = 0;
+             ep->param1.state = 0;
+             if (ep->param2)
+               ep->param2->state = 0;
+          }
+#endif
      }
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -1118,7 +1139,6 @@ _edje_part_dragable_calc(Edje *ed EINA_UNUSED, Edje_Real_Part *ep, FLOAT_T *x, F
 void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
 {
-   Evas_Coord ex = 0, ey = 0;
    /* check whether this part is dragable at all */
    if (!ep->drag) return;
    if (ep->drag->down.count > 0) return;
@@ -1128,8 +1148,6 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
     * value we would set foo to, because it would depend on the
     * size of the dragable...
     */
-   if (ep->object)
-     evas_object_geometry_get(ep->object, &ex, &ey, NULL, NULL);
 
    if (NEQ(ep->drag->x, x) || ep->drag->tmp.x)
      {
@@ -3818,7 +3836,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    Edje_Real_Part *confine_to = NULL;
    Edje_Real_Part *threshold = NULL;
    FLOAT_T pos = ZERO, pos2;
-   Edje_Calc_Params lp3 = { {0} };
+   Edje_Calc_Params lp3 = { { 0 } };
    Evas_Coord mmw = 0, mmh = 0;
    Eina_Bool map_colors_free = EINA_FALSE;
 
@@ -4634,14 +4652,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         switch (ep->part->type)
           {
            case EDJE_PART_TYPE_IMAGE:
-           {
-              Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image *)chosen_desc;
+               {
+                  Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image *)chosen_desc;
 
-              evas_object_image_scale_hint_set(ep->object,
-                                               img_desc->image.scale_hint);
+                  evas_object_image_scale_hint_set(ep->object,
+                                                   img_desc->image.scale_hint);
+               }
+             /* No break here as we share the rest of the code for all types. Intended fall-through*/
              EINA_FALLTHROUGH;
-              /* No break here as we share the rest of the code for all types. Intended fall-through*/
-           }
 
            case EDJE_PART_TYPE_PROXY:
              EINA_FALLTHROUGH;
@@ -4976,14 +4994,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table *)chosen_desc);
              break;
 
-           case EDJE_PART_TYPE_TEXTBLOCK:
-             _edje_textblock_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text *)chosen_desc);
-             break;
-
            case EDJE_PART_TYPE_VECTOR:
              _edje_svg_recalc_apply(ed, ep, pf, (Edje_Part_Description_Vector *)chosen_desc, pos);
              break;
 
+           case EDJE_PART_TYPE_TEXTBLOCK:
            case EDJE_PART_TYPE_EXTERNAL:
            case EDJE_PART_TYPE_RECTANGLE:
            case EDJE_PART_TYPE_SWALLOW:

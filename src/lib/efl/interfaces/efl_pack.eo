@@ -1,4 +1,4 @@
-interface Efl.Pack (Efl.Container)
+interface Efl.Pack extends Efl.Container
 {
    [[API common to all UI container objects.]]
    methods

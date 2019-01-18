@@ -22,7 +22,7 @@ static const char *_ecore_fb_li_kbd_syms[144 * 7] =
  * operation with a byte that only has the relevant bit set.
  * eg. to check for the 12th bit, we do (array[1] & 1<<4).
  * Moved to static inline in order to force compiler to otimized
- * the unsued part away or force a link error if long has an unexpected
+ * the unused part away or force a link error if long has an unexpected
  * size.
  *                                                - bigeasy
  */

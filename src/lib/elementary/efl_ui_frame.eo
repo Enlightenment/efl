@@ -1,5 +1,5 @@
-class Efl.Ui.Frame (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
-                    Efl.Ui.Translatable, Efl.Content)
+class Efl.Ui.Frame extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
+                    Efl.Content
 {
    [[Frame widget
 
@@ -58,7 +58,7 @@ class Efl.Ui.Frame (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Text, Efl.Text_M
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
    }

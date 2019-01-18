@@ -1,6 +1,6 @@
-class Elm.Flipselector (Efl.Ui.Layout.Object, Efl.Ui.Range,
+class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range,
                         Efl.Access.Widget.Action,
-                        Efl.Ui.Selectable, Efl.Ui.Legacy)
+                        Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary flipselector class]]
    legacy_prefix: elm_flipselector;

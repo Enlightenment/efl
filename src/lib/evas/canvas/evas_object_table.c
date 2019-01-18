@@ -330,6 +330,7 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
    Evas_Object_Table_Option *opt;
    Evas_Coord minw, minh, o_minw, o_minh;
    Eina_Bool expand_h, expand_v;
+   Eina_Bool fill_h, fill_v;
 
    o_minw = 0;
    o_minh = 0;
@@ -350,6 +351,8 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
            (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
         evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
         evas_object_size_hint_weight_get(child, &weightw, &weighth);
+        //only for Efl.Ui.Table
+        efl_gfx_size_hint_fill_get(child, &fill_h, &fill_v);
 
         child_minw = opt->min.w + opt->pad.l + opt->pad.r;
         child_minh = opt->min.h + opt->pad.t + opt->pad.b;
@@ -375,13 +378,13 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
              expand_v = 1;
           }
 
-        opt->fill_h = 0;
+        opt->fill_h = fill_h;
         if (opt->align.h < 0.0)
           {
              opt->align.h = 0.5;
              opt->fill_h = 1;
           }
-        opt->fill_v = 0;
+        opt->fill_v = fill_v;
         if (opt->align.v < 0.0)
           {
              opt->align.v = 0.5;
@@ -979,10 +982,9 @@ _evas_table_efl_canvas_group_group_calculate(Eo *o, Evas_Table_Data *priv)
 EAPI Evas_Object *
 evas_object_table_add(Evas *evas)
 {
-   MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   evas = evas_find(evas);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -1418,7 +1420,7 @@ _evas_table_child_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv, unsigned s
 }
 
 EOLIAN static Eina_Bool
-_evas_table_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
+_evas_table_efl_ui_i18n_mirrored_get(const Eo *o EINA_UNUSED, Evas_Table_Data *priv)
 {
    return priv->is_mirrored;
 }
@@ -1430,7 +1432,7 @@ evas_object_table_mirrored_get(const Eo *obj)
 }
 
 EOLIAN static void
-_evas_table_efl_ui_base_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
+_evas_table_efl_ui_i18n_mirrored_set(Eo *o, Evas_Table_Data *priv, Eina_Bool mirrored)
 {
    if (priv->is_mirrored != mirrored)
      {

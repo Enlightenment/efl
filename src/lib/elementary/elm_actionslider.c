@@ -113,18 +113,18 @@ _mirroredness_change_eval(Evas_Object *obj)
      (wd->resize_obj, "elm.drag_button_base", 1.0 - pos, 0.5);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_actionslider_efl_ui_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
 {
    Eina_Bool mirrored;
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
    mirrored = elm_object_mirrored_get(obj);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (elm_object_mirrored_get(obj) != mirrored)
      _mirroredness_change_eval(obj);
@@ -299,7 +299,7 @@ _drag_button_up_cb(void *data,
           (obj, EFL_UI_EVENT_SELECTED, (char *)center);
 
         ecore_animator_del(sd->button_animator);
-        sd->button_animator = ecore_animator_add(_button_animator, obj);
+        sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 
         return;
      }
@@ -359,7 +359,7 @@ _drag_button_up_cb(void *data,
           sd->final_position = 0;
      }
    ecore_animator_del(sd->button_animator);
-   sd->button_animator = ecore_animator_add(_button_animator, obj);
+   sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 }
 
 static void
@@ -433,7 +433,7 @@ _track_move_cb(void *data,
           }
      }
    ecore_animator_del(sd->button_animator);
-   sd->button_animator = ecore_animator_add(_button_animator, obj);
+   sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
 }
 
 static void

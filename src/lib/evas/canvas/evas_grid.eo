@@ -1,4 +1,4 @@
-class Evas.Grid (Efl.Canvas.Group)
+class Evas.Grid extends Efl.Canvas.Group
 {
    [[Evas grid class]]
    legacy_prefix: evas_object_grid;
@@ -118,6 +118,6 @@ class Evas.Grid (Efl.Canvas.Group)
    }
    implements {
       Efl.Object.constructor;
-      Efl.Ui.Base.mirrored {get; set;}
+      Efl.Ui.I18n.mirrored {get; set;}
    }
 }

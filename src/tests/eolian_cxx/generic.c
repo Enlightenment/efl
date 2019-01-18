@@ -9,6 +9,7 @@
 #define GENERIC_PROTECTED
 
 #include "generic.eo.h"
+#include "generic_interface.eo.h"
 
 #include <check.h>
 
@@ -138,3 +139,4 @@ static void _generic_beta_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNU
 {
 }
 #include "generic.eo.c"
+#include "generic_interface.eo.c"

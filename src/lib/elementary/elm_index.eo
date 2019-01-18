@@ -1,5 +1,5 @@
-class Elm.Index (Efl.Ui.Layout.Object, Efl.Ui.Direction,
-                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
+class Elm.Index extends Efl.Ui.Layout implements Efl.Ui.Direction,
+                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[elementary index class]]
    legacy_prefix: elm_index;

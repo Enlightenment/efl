@@ -283,7 +283,6 @@ bin/edje/edje_convert.c \
 bin/edje/edje_data_convert.c \
 bin/edje/edje_convert_main.c \
 lib/edje/edje_convert.c \
-tests/edje/edje_tests_helpers.h \
 tests/edje/data/complex_layout.edc \
 tests/edje/data/test_layout.edc \
 tests/edje/data/test_parens.edc \
@@ -301,6 +300,7 @@ tests/edje/data/test_signals.edc \
 tests/edje/data/test_signal_callback_del_full.edc \
 tests/edje/data/test_text_cursor.edc \
 tests/edje/data/test_textblock.edc \
+tests/edje/data/test_text.edc \
 tests/edje/data/filter.lua
 
 
@@ -318,7 +318,12 @@ TESTS += tests/edje/edje_suite
 
 tests_edje_edje_suite_SOURCES = \
 tests/edje/edje_suite.c \
+tests/edje/edje_test_container.c \
 tests/edje/edje_test_edje.c \
+tests/edje/edje_test_features.c \
+tests/edje/edje_test_signal.c \
+tests/edje/edje_test_swallow.c \
+tests/edje/edje_test_text.c \
 tests/edje/edje_suite.h
 
 tests/edje/data/%.edj: tests/edje/data/%.edc bin/edje/edje_cc${EXEEXT}
@@ -346,6 +351,7 @@ EDJE_TEST_FILES = tests/edje/data/test_layout.edj \
                      tests/edje/data/test_signal_callback_del_full.edj \
                      tests/edje/data/test_text_cursor.edj \
                      tests/edje/data/test_textblock.edj \
+                     tests/edje/data/test_text.edj \
                      $(NULL)
 
 CLEANFILES += $(EDJE_TEST_FILES)
@@ -360,7 +366,7 @@ tests_edje_edje_suite_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ $(EDJE_TEST_FILES)
 
 endif
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 edje_eolian_lua = $(edje_eolian_files:%.eo=%.eo.lua)
 

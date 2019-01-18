@@ -31,7 +31,7 @@ enum Edje.Cursor {
    selection_begin, [[Selection begin cursor state]]
    selection_end,   [[Selection end cursor state]]
    preedit_start,   [[Pre-edit start cursor state]]
-   preedit_end,     [[Pre-edit end cursor starge]]
+   preedit_end,     [[Pre-edit end cursor state]]
    user,            [[User cursor state]]
    user_extra       [[User extra cursor state]]
 }
@@ -70,7 +70,7 @@ enum Edje.Input_Panel.Lang {
 }
 
 enum Edje.Input_Panel.Return_Key_Type {
-   [[Input panel retrun key types]]
+   [[Input panel return key types]]
    default, [[Default
 
               @since 1.2]]

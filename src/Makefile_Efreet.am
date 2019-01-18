@@ -11,6 +11,8 @@ EFREET_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/efreet\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DPACKAGE_SYSCONF_DIR=\"$(sysconfdir)\" \
 -DDATA_DIR=\"$(datadir)\" \
 -DLOCALE_DIR=\"@LOCALE_DIR@\" \
 @EFREET_CFLAGS@
@@ -43,7 +45,9 @@ lib/efreet/efreet_uri.c \
 lib/efreet/efreet_cache.c \
 lib/efreet/efreet_private.h \
 lib/efreet/efreet_xml.h \
-lib/efreet/efreet_cache_private.h
+lib/efreet/efreet_cache_private.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 lib_efreet_libefreet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
 lib_efreet_libefreet_la_LIBADD = @EFREET_LIBS@ @EVIL_LIBS@
@@ -228,6 +232,7 @@ tests/efreet/efreet_test_efreet.c \
 tests/efreet/efreet_test_efreet_cache.c
 
 tests_efreet_efreet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@ \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efreet\"
 tests_efreet_efreet_suite_LDADD = @CHECK_LIBS@ @USE_EFREET_LIBS@
 tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@

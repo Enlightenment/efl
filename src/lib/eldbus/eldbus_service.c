@@ -1305,7 +1305,7 @@ _eldbus_method_call(Eldbus_Method const* method, Eldbus_Service_Interface* iface
 {
   if(method->flags & ELDBUS_METHOD_FLAG_HAS_DATA)
     {
-      Eldbus_Method_Data_Cb cb = (Eldbus_Method_Data_Cb)method->cb;
+      Eldbus_Method_Data_Cb cb = (void *)method->cb;
       return cb(((Eldbus_Method2 const*)method)->data, iface, msg);
     }
   else

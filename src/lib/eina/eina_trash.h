@@ -60,8 +60,8 @@ static inline void  eina_trash_init(Eina_Trash **trash) EINA_ARG_NONNULL(1);
  *          you can push it in a trash for a later use. This function just
  *          provide a fast way to push a now unused pointer into a trash.
  *
- * @param[in] trash A pointer to an Eina_Trash
- * @param data An unused pointer big enough to put a (void*)
+ * @param[in,out] trash A pointer to an Eina_Trash
+ * @param[in] data An unused pointer big enough to put a (void*)
  *
  * @note Do not use the pointer after insertion or bad things will
  *       happens.
@@ -90,8 +90,8 @@ static inline void *eina_trash_pop(Eina_Trash **trash) EINA_ARG_NONNULL(1) EINA_
  * @details This macro allows the cleaning of @a trash in an easy way. It
  *          removes all the pointers from @a trash until it's empty.
  *
- * @param trash The trash to clean
- * @param data The pointer extracted from the trash
+ * @param[in,out] trash The trash to clean
+ * @param[out] data The pointer extracted from the trash
  *
  * @note This macro can be used for freeing the data in the trash, like in
  *       the following example:

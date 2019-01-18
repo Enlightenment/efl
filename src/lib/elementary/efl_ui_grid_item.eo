@@ -1,0 +1,12 @@
+
+abstract Efl.Ui.Grid_Item extends Efl.Ui.Item
+{
+   implements {
+      //Efl.Object
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      //Efl.Canvas
+      Efl.Canvas.Group.group_calculate;
+   }
+}

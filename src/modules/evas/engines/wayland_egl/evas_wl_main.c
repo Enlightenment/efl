@@ -7,6 +7,7 @@ static Outbuf *_evas_gl_wl_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static struct wl_display *display = NULL;
 static int win_count = 0;
+static unsigned char gl_context_valid = 0;
 
 Outbuf *
 eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap_Mode swap_mode)
@@ -55,7 +56,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    config_attrs[n++] = 1;
 
    config_attrs[n++] = EGL_ALPHA_SIZE;
-   config_attrs[n++] = gw->alpha;
+   config_attrs[n++] = 8 * !!gw->alpha;
    config_attrs[n++] = EGL_DEPTH_SIZE;
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_STENCIL_SIZE;
@@ -214,10 +215,11 @@ eng_window_use(Outbuf *gw)
    glsym_evas_gl_preload_render_lock(eng_preload_make_current, gw);
    if ((gw) && (!gw->gl_context)) return;
 
-   if (_evas_gl_wl_window)
+   if ((_evas_gl_wl_window) && (!gl_context_valid))
      {
         if (eglGetCurrentContext() != _evas_gl_wl_window->egl_context)
           force = EINA_TRUE;
+        gl_context_valid = 1;
      }
 
    if ((_evas_gl_wl_window != gw) || (force))
@@ -517,6 +519,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer_
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
    ecore_wl2_display_flush(ob->wl2_disp);
+   gl_context_valid = 0;
 }
 
 Evas_Engine_GL_Context *

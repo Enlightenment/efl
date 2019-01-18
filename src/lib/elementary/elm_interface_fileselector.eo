@@ -25,7 +25,7 @@ enum Elm.Fileselector.Sort
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Elm.Interface.Fileselector (Efl.Ui.View)
+interface Elm.Interface.Fileselector extends Efl.Ui.View
 {
    [[Elementary fileselector interface]]
    eo_prefix: elm_interface_fileselector;

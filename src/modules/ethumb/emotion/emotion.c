@@ -69,13 +69,11 @@ _resize_movie(struct _emotion_plugin *_plugin)
 
    if (_plugin->edje_frame)
      {
-        evas_object_resize(_plugin->edje_frame, fw, fh);
-        evas_object_move(_plugin->edje_frame, fx, fy);
+        evas_object_geometry_set(_plugin->edje_frame, fx, fy, fw, fh);
      }
    else
      {
-        evas_object_resize(_plugin->video, fw, fh);
-        evas_object_move(_plugin->video, fx, fy);
+        evas_object_geometry_set(_plugin->video, fx, fy, fw, fh);
      }
    emotion_object_audio_mute_set(_plugin->video, 1);
 }

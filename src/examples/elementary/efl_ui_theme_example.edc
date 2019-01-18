@@ -1,0 +1,190 @@
+collections {
+   group { "efl/button:custom";
+      alias: "efl/button";
+      parts {
+         rect { "border";
+            desc { "default";
+               color: 0 0 0 255;
+            }
+            desc { "in";
+               color: 50 180 180 255;
+            }
+         }
+         rect { "base";
+            mouse_events: 1;
+            desc { "default";
+               rel1.to: "border";
+               rel1.offset: 1 1;
+               rel2.to: "border";
+               rel2.offset: -2 -2;
+            }
+            desc { "disabled";
+               inherit: "default";
+               color: 230 230 230 255;
+            }
+         }
+         swallow { "efl.swallow.content";
+            mouse_events: 0;
+            desc { "default";
+               fixed: 1 0;
+               hid;
+               align: 0.0 0.5;
+               rel1.offset: 4 4;
+               rel2.offset: 3 -5;
+               rel2.relative: 0.0 1.0;
+            }
+            desc { "visible";
+               inherit: "default";
+               vis;
+               aspect: 1.0 1.0;
+               aspect_preference: VERTICAL;
+               rel2.offset: 4 -5;
+            }
+            desc { "icononly";
+               inherit: "default";
+               fixed: 0 0;
+               vis;
+               align: 0.5 0.5;
+               aspect: 1.0 1.0;
+               aspect_preference: VERTICAL;
+               rel2.offset: -5 -5;
+               rel2.relative: 1.0 1.0;
+            }
+         }
+         text { "efl.text";
+            mouse_events: 0;
+            scale: 1;
+            desc { "default";
+               vis;
+               rel1.to_x: "efl.swallow.content";
+               rel1.relative: 1.0 0.0;
+               rel1.offset: 0 4;
+               rel2.offset: -5 -5;
+               color: 0 0 0 255;
+               text {
+                  font: "Sans";
+                  size: 10;
+                  min: 0 0;
+                  text_class: "button";
+               }
+            }
+            desc { "visible";
+               inherit: "default";
+               vis;
+               text.min: 1 1;
+               text.ellipsis: -1;
+            }
+            desc { "disabled";
+               inherit: "default";
+            }
+            desc { "disabled_visible";
+               inherit: "default";
+               vis;
+               text.min: 1 1;
+               text.ellipsis: -1;
+         }
+      }
+      programs {
+         program { "button_mouse_in";
+            signal: "mouse,in";
+            source: "base";
+            action: STATE_SET "in" 0.0;
+            target: "border";
+         }
+         program { "button_mouse_out";
+            signal: "mouse,out";
+            source: "base";
+            action: STATE_SET "default" 0.0;
+            target: "border";
+         }
+         program { "button_unclick";
+            signal: "mouse,up,1";
+            source: "base";
+            action: SIGNAL_EMIT "efl,action,click" "";
+         }
+         program { "button_click";
+            signal: "mouse,down,1";
+            source: "base";
+         }
+         program { "text_show";
+            signal: "efl,state,text,visible";
+            source: "efl";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"efl.swallow.content", st, 30, vl);
+               if (!strcmp(st, "icononly"))
+                 set_state(PART:"efl.swallow.content", "visible", 0.0);
+               set_state(PART:"efl.text", "visible", 0.0);
+            }
+         }
+         program { "text_hide";
+            signal: "efl,state,text,hidden";
+            source: "efl";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"efl.swallow.content", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                 set_state(PART:"efl.swallow.content", "icononly", 0.0);
+               set_state(PART:"efl.text", "default", 0.0);
+            }
+         }
+         program { "icon_show";
+            signal: "efl,state,icon,visible";
+            source: "efl";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"efl.text", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                 set_state(PART:"efl.swallow.content", "visible", 0.0);
+               else
+                 set_state(PART:"efl.swallow.content", "icononly", 0.0);
+            }
+         }
+         program { "icon_hide";
+            signal: "efl,state,icon,hidden";
+            source: "efl";
+            action: STATE_SET "default" 0.0;
+            target: "efl.swallow.content";
+         }
+         program { "disable";
+            signal: "efl,state,disabled";
+            source: "efl";
+            action: STATE_SET "disabled" 0.0;
+            target: "base";
+            after: "disable_text";
+         }
+         program { "disable_text";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"efl.text", st, 30, vl);
+               if (!strcmp(st, "visible"))
+                 set_state(PART:"efl.text", "disabled_visible", 0.0);
+               else if (!strcmp(st, "default"))
+                 set_state(PART:"efl.text", "disabled", 0.0);
+            }
+         }
+         program { "enable";
+            signal: "efl,state,enabled";
+            source: "efl";
+            action: STATE_SET "default" 0.0;
+            target: "base";
+            after: "enable_text";
+         }
+         program { "enable_text";
+            script {
+               new st[31];
+               new Float:vl;
+               get_state(PART:"efl.text", st, 30, vl);
+               if (!strcmp(st, "disabled_visible"))
+                 set_state(PART:"efl.text", "visible", 0.0);
+               else if (!strcmp(st, "disabled"))
+                 set_state(PART:"efl.text", "default", 0.0);
+            }
+         }
+      }
+   }
+}

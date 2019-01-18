@@ -14,8 +14,7 @@
 typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
-   Eina_List *adapters;
-   Efl_Ui_Focus_Manager *registered, *custom_manager;
+   Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
@@ -26,7 +25,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    Efl_Ui_Focus_Manager *manager;
 
    //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
-   if (elm_object_focus_custom_chain_get(obj)) return;
+   if (elm_widget_is_legacy(obj) && elm_object_focus_custom_chain_get(obj)) return;
 
    if (pd->custom_manager)
      manager = pd->custom_manager;
@@ -39,6 +38,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
         Eina_List *safed = NULL;
         Efl_Ui_Focus_Object *o;
 
+        pd->old_manager = manager;
         //remove all of them
         EINA_LIST_FREE(pd->registered_targets, o)
           {
@@ -75,6 +75,21 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
 
         efl_ui_focus_manager_calc_update_order(manager, obj, eina_list_clone(pd->targets_ordered));
      }
+   else
+     {
+        Efl_Ui_Focus_Object *o;
+
+        EINA_LIST_FREE(pd->registered_targets, o)
+          {
+             efl_ui_focus_manager_calc_unregister(pd->old_manager, o);
+
+             if (efl_isa(o, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS))
+               {
+                  efl_ui_focus_composition_adapter_focus_manager_parent_set(o, NULL);
+                  efl_ui_focus_composition_adapter_focus_manager_object_set(o, NULL);
+               }
+          }
+     }
 }
 static void
 _del(void *data, const Efl_Event *ev)
@@ -86,7 +101,6 @@ _del(void *data, const Efl_Event *ev)
 EOLIAN static void
 _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composition_Data *pd, Eina_List *logical_order)
 {
-   Efl_Ui_Focus_Composition_Adapter *adapter;
    Evas_Object *elem;
    Eina_List *n;
 
@@ -98,12 +112,6 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
 
    pd->order = eina_list_free(pd->order);
    pd->order = logical_order;
-
-   //get rid of all adapter objects
-   EINA_LIST_FREE(pd->adapters, adapter)
-     {
-        efl_unref(adapter);
-     }
 
    //now build a composition_elements list
    EINA_LIST_FOREACH(logical_order, n, elem)
@@ -209,6 +217,15 @@ _efl_ui_focus_composition_logical_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Foc
    return pd->logical;
 }
 
+EOLIAN static void
+_efl_ui_focus_composition_efl_object_invalidate(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
+{
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   efl_ui_focus_composition_elements_set(obj, NULL);
+}
+
+
 #include "efl_ui_focus_composition.eo.c"
 
 typedef struct {
@@ -226,9 +243,8 @@ _canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _new_geom(void *data, const Efl_Event *event)
 {
-   efl_event_callback_call(data, event->desc, event->info);
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, event->info);
 }
-
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
     {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},

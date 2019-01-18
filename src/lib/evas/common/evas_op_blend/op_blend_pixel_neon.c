@@ -5,7 +5,7 @@
 
 #ifdef BUILD_NEON
 static void
-_op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
+_op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c EINA_UNUSED, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
    uint16x8_t ad00_16x8;
    uint16x8_t ad01_16x8;
@@ -355,7 +355,7 @@ _op_blend_p_dp_neon(DATA32 *s, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l)
 
 	  : // output regs
 	  // Input
-          :  [e] "r" (d + l), [d] "r" (d), [s] "r" (s), [c] "r" (c),
+          :  [e] "r" (d + l), [d] "r" (d), [s] "r" (s), /*[c] "r" (c),*/
 			[tmp] "r" (7)
           : "q0", "q1", "q2","q3", "q4","q5","q6", "q7","q8","memory" // clobbered
    );

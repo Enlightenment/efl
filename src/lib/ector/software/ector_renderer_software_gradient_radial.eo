@@ -1,4 +1,4 @@
-class Ector.Renderer.Software.Gradient.Radial (Ector.Renderer.Software, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial)
+class Ector.Renderer.Software.Gradient.Radial extends Ector.Renderer.Software implements Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial
 {
    [[Ector software renderer gradient radial]]
    eo_prefix: ector_renderer_software_gradient_radial;

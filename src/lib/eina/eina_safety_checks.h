@@ -220,69 +220,77 @@ EAPI void _eina_safety_error(const char *file, const char *func, int line, const
 /**
  * @def EINA_SAFETY_ON_NULL_RETURN
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
+ * @param[in] exp The expression to be evaluated.
  */
 #define EINA_SAFETY_ON_NULL_RETURN(exp) \
   do { (void)(!(exp)); } while (0)
+
 /**
  * @def EINA_SAFETY_ON_NULL_RETURN_VAL
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param val The value to be returned.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] val The value to be returned.
  */
 #define EINA_SAFETY_ON_NULL_RETURN_VAL(exp, val) \
   do { if (0 && !(exp)) { (void)val; } } while (0)
+
 /**
  * @def EINA_SAFETY_ON_NULL_GOTO
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param label The label to jump to.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] label The label to jump to.
  */
 #define EINA_SAFETY_ON_NULL_GOTO(exp, label) \
   do { if (0 && (exp) == NULL) { goto label; } } while (0)
+
 /**
  * @def EINA_SAFETY_ON_TRUE_RETURN
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
+ * @param[in] exp The expression to be evaluated.
  */
 #define EINA_SAFETY_ON_TRUE_RETURN(exp) \
   do { (void)(exp); } while (0)
+
 /**
  * @def EINA_SAFETY_ON_TRUE_RETURN_VAL
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param val The value to be returned.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] val The value to be returned.
  */
 #define EINA_SAFETY_ON_TRUE_RETURN_VAL(exp, val) \
   do { if (0 && (exp)) { (void)val; } } while (0)
+
 /**
  * @def EINA_SAFETY_ON_TRUE_GOTO
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param label The label to jump to.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] label The label to jump to.
  */
 #define EINA_SAFETY_ON_TRUE_GOTO(exp, label) \
   do { if (0 && (exp)) { goto label; } } while (0)
+
 /**
  * @def EINA_SAFETY_ON_FALSE_RETURN
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
+ * @param[in] exp The expression to be evaluated.
  */
 #define EINA_SAFETY_ON_FALSE_RETURN(exp) \
   do { (void)(!(exp)); } while (0)
+
 /**
  * @def EINA_SAFETY_ON_FALSE_RETURN_VAL
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param val The value to be returned.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] val The value to be returned.
  */
 #define EINA_SAFETY_ON_FALSE_RETURN_VAL(exp, val) \
   do { if (0 && !(exp)) { (void)val; } } while (0)
+
 /**
  * @def EINA_SAFETY_ON_FALSE_GOTO
  * @brief The macro doesn't do anything unless EINA_SAFETY_CHECKS is defined.
- * @param exp The expression to be evaluated.
- * @param label The label to jump to.
+ * @param[in] exp The expression to be evaluated.
+ * @param[in] label The label to jump to.
  */
 #define EINA_SAFETY_ON_FALSE_GOTO(exp, label) \
   do { if (0 && !(exp)) { goto label; } } while (0)

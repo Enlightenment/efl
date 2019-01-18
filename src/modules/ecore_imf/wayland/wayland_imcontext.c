@@ -634,8 +634,8 @@ text_input_keysym(void *data,
    strcpy((char *)e->key, key);
    strcpy((char *)e->string, string);
 
-   e->window = ecore_wl2_window_id_get(imcontext->window);
-   e->event_window = ecore_wl2_window_id_get(imcontext->window);
+   e->window = (Ecore_Window)imcontext->window;
+   e->event_window = (Ecore_Window)imcontext->window;
    e->timestamp = time;
 
    e->modifiers = 0;
@@ -906,8 +906,7 @@ wayland_im_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 
    if (window != NULL)
      {
-        imcontext->window =
-          ecore_wl2_display_window_find(ewd, (Ecore_Window)window);
+        imcontext->window = window;
      }
 }
 

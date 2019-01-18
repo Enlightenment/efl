@@ -1,4 +1,4 @@
-class Ns.Colourable (Efl.Object)
+class Ns.Colourable extends Efl.Object
 {
     [[Colourable class.]]
     data: Colourable_Data;

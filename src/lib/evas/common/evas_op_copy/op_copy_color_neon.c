@@ -1,6 +1,16 @@
 /* copy color --> dst */
 
 #ifdef BUILD_NEON
+
+#ifndef BUILD_NEON_INTRINSICS
+extern void
+pixman_composite_src_n_8888_asm_neon (int32_t   w,
+                                      int32_t   h,
+                                      uint32_t *dst,
+                                      int32_t   dst_stride,
+                                      uint32_t  src);
+#endif
+
 static void
 _op_copy_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA32 *d, int l) {
 #ifdef BUILD_NEON_INTRINSICS
@@ -11,88 +21,7 @@ _op_copy_c_dp_neon(DATA32 *s EINA_UNUSED, DATA8 *m EINA_UNUSED, DATA32 c, DATA32
                         d++;
                      });
 #else
-#define AP "COPY_C_DP_"
-   uint32_t *e = d + l, *tmp;
-   asm volatile (
-      ".fpu neon					\n\t"
-
-		"vdup.i32 	q0,	%[c]		\n\t"
-
-		// Can we do 32 byte?
-		"andS		%[tmp],	%[d], $0x1f	\n\t"
-		"beq		"AP"quadstart		\n\t"
-
-		// Can we do at least 16 byte?
-		"andS		%[tmp], %[d], $0x4	\n\t"
-		"beq		"AP"dualstart		\n\t"
-
-	// Only once
-	AP"singleloop:					\n\t"
-		"vst1.32	d0[0],  [%[d]]		\n\t"
-		"add		%[d], #4		\n\t"
-
-	// Up to 3 times
-	AP"dualstart:					\n\t"
-		"sub		%[tmp], %[e], %[d]	\n\t"
-		"cmp		%[tmp], #32		\n\t"
-		"blt		"AP"loopout		\n\t"
-
-	AP"dualloop:					\n\t"
-		"vstr.32	d0, [%[d]]		\n\t"
-
-		"add		%[d], #8		\n\t"
-		"andS		%[tmp], %[d], $0x1f	\n\t"
-		"bne		"AP"dualloop		\n\t"
-
-
-	AP"quadstart:					\n\t"
-		"sub		%[tmp], %[e], %[d]	\n\t"
-		"cmp		%[tmp], #32		\n\t"
-		"blt		"AP"loopout		\n\t"
-
-		"vmov		q1, q0			\n\t"
-		"sub		%[tmp],%[e],#31		\n\t"
-
-	AP "quadloop:					\n\t"
-		"vstm		%[d]!,	{d0,d1,d2,d3}	\n\t"
-
-		"cmp		%[tmp], %[d]		\n\t"
-                "bhi		"AP"quadloop		\n\t"
-
-
-	AP "loopout:					\n\t"
-		"cmp 		%[d], %[e]		\n\t"
-                "beq 		"AP"done		\n\t"
-		"sub		%[tmp],%[e], %[d]	\n\t"
-		"cmp		%[tmp],$0x04		\n\t"
-		"beq		"AP"singleloop2		\n\t"
-
-	AP "dualloop2:					\n\t"
-		"sub		%[tmp],%[e],#7		\n\t"
-	AP "dualloop2int:				\n\t"
-		"vstr.64	d0, [%[d]]		\n\t"
-
-		"add		%[d], #8		\n\t"
-		"cmp 		%[tmp], %[d]		\n\t"
-		"bhi 		"AP"dualloop2int	\n\t"
-
-		// Single ??
-		"cmp 		%[e], %[d]		\n\t"
-		"beq		"AP"done		\n\t"
-
-	AP "singleloop2:				\n\t"
-		"vst1.32	d0[0], [%[d]]		\n\t"
-
-	AP "done:\n\t"
-		// Output
-		: [tmp] "=r" (tmp)
-		// Input
-		: [c] "r" (c), [e] "r" (e), [d] "r" (d)
-		// Clobbered
-		: "q0","q1","memory"
-
-
-   );
+   pixman_composite_src_n_8888_asm_neon(l,1,d,l,c);
 #endif
 }
 

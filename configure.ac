@@ -1,4 +1,4 @@
-EFL_VERSION([1], [20], [99], [dev])
+EFL_VERSION([1], [21], [99], [dev])
 AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
@@ -17,12 +17,13 @@ AH_BOTTOM([
 
 AM_INIT_AUTOMAKE([1.6 dist-xz no-dist-gzip -Wall color-tests subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
-
+AM_CONDITIONAL([HAVE_AM_16], [test $(echo "${am__api_version}"|cut -d. -f2) -ge 16])
 # Due to a bug in automake 1.14 we need to use this after AM_INIT_AUTOMAKE
 # http://debbugs.gnu.org/cgi/bugreport.cgi?bug=15981
 AC_USE_SYSTEM_EXTENSIONS
 
 CFOPT_WARNING=""
+CXXFLAGS="${CXXFLAGS} -Wno-shadow" # No shadow warnings
 
 #### Apply configuring with legacy api's only, eo api's or both.
 
@@ -286,7 +287,15 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([win32-dll disable-static pic-only])
 EFL_INIT
 
-if ! test "x${have_win32}" = "xyes" ; then
+if test "x${have_win32}" = "xyes" ; then
+    # We should be using ${CXX} here, but there is a bug in
+    # autotools macro and CXX is always set to g++ even if
+    # it's not found. So we are using an internal variable
+    # that does the work for now, may get broken in the future.
+    if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+       AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+    fi
+else
    CXXFLAGS="${CXXFLAGS} -fPIC -DPIC"
    LDFLAGS="${LDFLAGS} -fPIC -DPIC"
 fi
@@ -336,13 +345,6 @@ AM_CONDITIONAL([BUILD_EFL_NATIVE], [test "x${cross_compiling}" = "xno"])
 
 if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
    AC_MSG_ERROR([efl requires a c99-capable compiler])
-fi
-# We should be using ${CXX} here, but there is a bug in
-# autotools macro and CXX is always set to g++ even if
-# it's not found. So we are using an internal variable
-# that does the work for now, may get broken in the future.
-if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
-   AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
 fi
 
 AC_SYS_LARGEFILE
@@ -655,6 +657,7 @@ case $host_cpu in
            AC_DEFINE([BUILD_NEON], [1], [Build NEON Code])
            AC_DEFINE([BUILD_NEON_INTRINSICS], [1], [Build NEON Intrinsics])
            build_cpu_neon="yes"
+           build_cpu_neon_intrinsics="yes"
        	 ],[
 	   AC_MSG_RESULT([no])
            build_cpu_neon="no"
@@ -662,6 +665,9 @@ case $host_cpu in
     fi
     ;;
 esac
+
+AM_CONDITIONAL([BUILD_NEON], [test "${build_cpu_neon}" = "yes"])
+AM_CONDITIONAL([BUILD_NEON_INTRINSICS], [test "${build_cpu_neon_intrinsics}" = "yes"])
 
 AC_SUBST([ALTIVEC_CFLAGS])
 AC_SUBST([SSE3_CFLAGS])
@@ -798,7 +804,7 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lmsvcr100])
 
 ### Checks for header files
 
@@ -900,7 +906,7 @@ case "${build_profile}" in
      ;;
 
    release)
-     with_max_log_level="3"
+     with_max_log_level=""
      have_stringshare_usage="no"
      want_valgrind="no"
      want_debug_malloc="no"
@@ -1126,15 +1132,25 @@ EFL_LIB_END([Eina])
 #### Eina CXX
 EFL_LIB_START([Eina_Cxx])
 
-EFL_CXX_COMPILE_STDCXX_11([ext])
 AC_ARG_ENABLE([cxx-bindings],
    [AS_HELP_STRING([--disable-cxx-bindings],[disable C++11 bindings. @<:@default=enabled@:>@])],
    [want_cxx11="${enableval}"], [want_cxx11="yes"])
 
-if test "x${HAVE_CXX11}" = "x1" -a "x${want_cxx11}" = "xyes"; then
-  have_cxx11="yes"
-else
-  have_cxx11="no"
+have_cxx11="no"
+if test "x${want_cxx11}" = "xyes"; then
+  EFL_CXX_COMPILE_STDCXX_11([ext])
+  if test "x${HAVE_CXX11}" = "x1" ; then
+
+    # We should be using ${CXX} here, but there is a bug in
+    # autotools macro and CXX is always set to g++ even if
+    # it's not found. So we are using an internal variable
+    # that does the work for now, may get broken in the future.
+    if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+       AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+    fi
+
+    have_cxx11="yes"
+  fi
 fi
 
 AM_CONDITIONAL([HAVE_CXX], [test "x${have_cxx11}" = "xyes"])
@@ -1333,6 +1349,17 @@ EFL_LIB_END_OPTIONAL([Eo_Js])
 #### End of Eo JS
 
 #### Efl C Sharp Bindings
+want_csharp_beta="no"
+AC_ARG_ENABLE([csharp-beta],
+  [AS_HELP_STRING([--enable-csharp-beta],[enable C Sharp bindings. @<:@default=disabled@:>@])],
+  [
+    if test "x${enableval}" = "xyes" ; then
+      want_csharp_beta="yes"
+    else
+      want_csharp_beta="no"
+    fi
+  ],
+  [want_csharp_beta="no"])
 
 want_csharp="no"
 AC_ARG_ENABLE([csharp-bindings],
@@ -1355,6 +1382,11 @@ AM_CONDITIONAL([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"])
 AC_DEFINE_IF([HAVE_CSHARP], [test "x${want_csharp}" = "xyes"],
   [1], [Compiling bindings for C Sharp])
 AC_SUBST([want_csharp])
+
+AM_CONDITIONAL([HAVE_CSHARP_BETA], [test "x${want_csharp_beta}" = "xyes"])
+AC_DEFINE_IF([HAVE_CSHARP_BETA], [test "x${want_csharp_beta}" = "xyes"],
+  [1], [Compiling bindings for C Sharp with beta methods, properties and classes])
+AC_SUBST([want_csharp_beta])
 
 if test "x${have_windows}" = "xyes"; then
   eflmonodlldir="$prefix/bin"
@@ -2955,44 +2987,6 @@ AC_CHECK_LIB([m], [lround],
 )
 
 
-# Evas cserve2
-
-AC_ARG_ENABLE([cserve],
-   [AS_HELP_STRING([--enable-cserve],[enable shared cache server (cserve2). @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_cserve2="yes"
-    else
-       want_evas_cserve2="no"
-       CFOPT_WARNING="xyes"
-    fi
-   ],
-   [want_evas_cserve2="yes"])
-
-if test "x${want_evas_image_loader_generic}" = "xyes" || test "x${want_evas_cserve2}" = "xyes" ; then
-   EFL_ADD_LIBS([EVAS], [${requirements_libs_shm}])
-fi
-
-# cserve2 only works on Linux so far.
-
-if test "x${efl_func_shm_open}" = "xno" ; then
-   want_evas_cserve2="no"
-fi
-
-if test "x${want_evas_cserve2}" = "xyes"; then
-   if test "x${ac_cv_header_sys_epoll_h}" = "xno" || test "x${ac_cv_header_sys_inotify_h}" = "xno" || test "x${ac_cv_header_sys_signalfd_h}" = "xno"; then
-      want_evas_cserve2="no"
-   else
-      EVAS_CSERVE2_SLAVE_LIBS="${EFLALL_COV_LIBS} ${EFL_LIBS} ${requirements_libs_shm}"
-      AC_SUBST([EVAS_CSERVE2_SLAVE_LIBS])
-   fi
-fi
-
-AC_DEFINE_IF([EVAS_CSERVE2],
-   [test "x${want_evas_cserve2}" = "xyes"],
-   [1], [Shared cache server.])
-AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
-
 ### Configuration
 
 ## Tile rotation
@@ -3030,7 +3024,6 @@ esac
 EFL_ADD_FEATURE([EVAS], [fontconfig])
 EFL_ADD_FEATURE([EVAS], [fribidi])
 EFL_ADD_FEATURE([EVAS], [harfbuzz])
-EFL_ADD_FEATURE([EVAS], [cserve], [${want_evas_cserve2}])
 EFL_ADD_FEATURE([EVAS], [tile-rotate])
 EFL_ADD_FEATURE([EVAS], [dither-mask], [${build_evas_dither_mask}])
 EFL_ADD_FEATURE([EVAS], [hyphen])
@@ -3096,6 +3089,16 @@ have_rsvg="no"
 ### Check needed dependency for each generic loader
 if test "x${want_poppler}" = "xyes"; then
    PKG_CHECK_MODULES([POPPLER], [poppler-cpp >= 0.12], [have_poppler="yes"])
+fi
+
+if test "x${have_poppler}" = "xyes" ; then
+   # We should be using ${CXX} here, but there is a bug in
+   # autotools macro and CXX is always set to g++ even if
+   # it's not found. So we are using an internal variable
+   # that does the work for now, may get broken in the future.
+   if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+      AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+   fi
 fi
 
 if test "x${want_spectre}" = "xyes"; then
@@ -3609,8 +3612,6 @@ EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [ecore])
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eo])
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [efl])
 EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [eina])
-EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [evas])
-EFL_INTERNAL_DEPEND_PKG([ECORE_COCOA], [emile])
 
 ### Checks for header files
 
@@ -3949,8 +3950,22 @@ EFL_INTERNAL_DEPEND_PKG([ELPUT], [eina])
 
 EFL_DEPEND_PKG([ELPUT], [LIBINPUT], [libinput >= 1.7.0 xkbcommon >= 0.3.0 libudev])
 
+AC_ARG_ENABLE([elogind],
+   [AS_HELP_STRING([--enable-elogind],[enable elogind support.@<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_elogind="yes"
+    else
+       want_elogind="no"
+    fi
+   ], [
+    want_elogind="no"
+   ])
+
 EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_systemd}], [SYSTEMD], [libsystemd])
+EFL_OPTIONAL_DEPEND_PKG([ELPUT], [${want_elogind}], [ELOGIND], [libelogind])
 EFL_ADD_FEATURE([ELPUT], [systemd-logind], [${want_systemd}])
+EFL_ADD_FEATURE([ELPUT], [elogind], [${want_elogind}])
 
 EFL_ADD_LIBS([ELPUT], [-lm])
 
@@ -4823,6 +4838,16 @@ AC_ARG_ENABLE([physics],
    ],
    [want_physics="yes"])
 
+if test "x${want_physics}" = "xyes" ; then
+  # We should be using ${CXX} here, but there is a bug in
+  # autotools macro and CXX is always set to g++ even if
+  # it's not found. So we are using an internal variable
+  # that does the work for now, may get broken in the future.
+  if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
+     AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
+  fi
+fi
+
 EFL_LIB_START_OPTIONAL([EPhysics], [test "${want_physics}" = "yes"])
 
 ### Additional options to configure
@@ -5189,17 +5214,28 @@ AC_ARG_ENABLE([elua],
        want_elua="no"
     fi
    ],
-   [want_elua="no"])
+   [want_elua="yes"])
+
+# turn this into an AC_ARG_ENABLE when bindings are reenabled
+want_lua_bindings="no"
+
 have_elua="yes"
+have_lua_bindings="yes"
+
 if test "${want_lua_old}" = "yes" -o "x$want_elua" = "xno"; then
   have_elua="no"
 fi
 
+if test "x$have_elua" = "xno" -o "x$want_lua_bindings" = "xno"; then
+  have_lua_bindings="no"
+fi
+
+AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
+AM_CONDITIONAL([HAVE_LUA_BINDINGS], [test "x${have_lua_bindings}" = "xyes"])
+
 EFL_LIB_START_OPTIONAL([Elua], [test "${have_elua}" = "yes"])
 
 ### Default values
-
-AM_CONDITIONAL([HAVE_ELUA], [test "x${have_elua}" = "xyes"])
 
 ### Additional options to configure
 
@@ -5562,9 +5598,7 @@ AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS([geteuid getuid getpwent])
 
-if test "x${want_quicklaunch}" != "xno"; then
-   AC_CHECK_FUNCS([fork clearenv])
-fi
+AC_CHECK_FUNCS([fork clearenv])
 
 build_quicklaunch="no"
 if test "x${ac_cv_func_fork}" = "xyes" -a "x${efl_func_dlopen}" = "xyes"; then
@@ -5718,24 +5752,7 @@ src/bindings/mono/efl_mono/efl_libs.csv
 src/benchmarks/eina/Makefile
 src/benchmarks/eo/Makefile
 src/benchmarks/evas/Makefile
-src/examples/eina/Makefile
-src/examples/eina_cxx/Makefile
-src/examples/eet/Makefile
-src/examples/evas/Makefile
-src/examples/ecore/Makefile
-src/examples/ecore_avahi/Makefile
-src/examples/eio/Makefile
-src/examples/eldbus/Makefile
-src/examples/ephysics/Makefile
-src/examples/edje/Makefile
-src/examples/emotion/Makefile
-src/examples/emile/Makefile
-src/examples/ethumb_client/Makefile
-src/examples/elua/Makefile
-src/examples/eolian_cxx/Makefile
-src/examples/efl_mono/Makefile
-src/examples/elocation/Makefile
-src/examples/elementary/Makefile
+src/examples/Makefile
 src/lib/eina/eina_config.h
 src/lib/efl/Efl_Config.h
 src/lib/elementary/Elementary_Options.h
@@ -6127,14 +6144,6 @@ if test -n "$CFOPT_WARNING"; then
     echo "You disabled Gstreamer 1.x support. You likely don't want to do"
     echo "this as it will heavily limit your media support options and render"
     echo "some functionality as useless, leading to visible application bugs."
-    echo "_____________________________________________________________________"
-  fi
-  if test "x${want_evas_cserve2}" = "xno"; then
-    echo "_____________________________________________________________________"
-    echo "Evas Cserve is built and on by default and no testing is done"
-    echo "for the old non-cserve2 code paths, so by disabling this you"
-    echo "may be introducing bugs. Be aware of this and be prepared to"
-    echo "deal with the bugs as a result of this."
     echo "_____________________________________________________________________"
   fi
   if test "x${want_audio}" = "xno"; then

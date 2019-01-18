@@ -176,11 +176,11 @@ struct _Eina_Lines_Iterator
 
 /**
  * @brief Determines if a path is relative or absolute.
- * The implementation simply chekcs if the first char in the path is '/'.  If it
+ * The implementation simply checks if the first char in the path is '/'.  If it
  * is not, the path is considered relative.
  *
- * @param path The path to check.
-
+ * @param[in] path The path to check.
+ *
  * @return EINA_TRUE if the path is relative, EINA_FALSE otherwise.
  *
  */
@@ -192,8 +192,8 @@ Eina_Bool eina_file_path_relative(const char *path);
  * be appended to the current working directory.  Presumably, this will be a
  * relative path.
  *
- * @param path The path to append to the current directory.
- * @param len The length of @p path.
+ * @param[in] path The path to append to the current directory.
+ * @param[in] len The length of @p path.
  *
  * @return A pointer to a string that contains the absolute path to the current
  * working directory plus any path you send in.
@@ -204,7 +204,7 @@ Eina_Tmpstr *eina_file_current_directory_get(const char *path, size_t len);
 /**
  * @brief Cleans up Eina after a file is no longer needed.
  *
- * @param path The path of the file.
+ * @param[in,out] path The path of the file.
  *
  * @return On success, it will return the @p path string.  If @p path is @c NULL,
  * it will return and empty string.
@@ -215,7 +215,7 @@ char *eina_file_cleanup(Eina_Tmpstr *path);
 /**
  * @brief Closes and cleans up after an Eina file.
  *
- * @param file The path of the file.
+ * @param[in,out] file The path of the file.
  *
  */
 void eina_file_clean_close(Eina_File *file);
@@ -223,7 +223,7 @@ void eina_file_clean_close(Eina_File *file);
 /**
  * @brief Closes a file from the OS perspective.
  *
- * @param file The path of the file.
+ * @param[in,out] file The path of the file.
  *
  */
 void eina_file_real_close(Eina_File *file);
@@ -234,8 +234,8 @@ void eina_file_real_close(Eina_File *file);
  * the memory maps for the file.  If the file has shrunk, it also adds any mapped
  * regions past the end of the file to the dead_map.
  *
- * @param file The file.
- * @param length The current length of the file after the change.
+ * @param[in,out] file The file.
+ * @param[in] length The current length of the file after the change.
  *
  */
 void eina_file_flush(Eina_File *file, unsigned long int length);
@@ -247,10 +247,10 @@ void eina_file_flush(Eina_File *file, unsigned long int length);
  * the map is part of the dead_map, @p free_func will be called to handle the actual
  * deallocation.
  *
- * @param file The file.
- * @param map The memory mapped region that is to be freed.
- * @param free_func A pointer to a function that will be called to free up the
- * resources used by the map.
+ * @param[in,out] file The file.
+ * @param[in,out] map The memory mapped region that is to be freed.
+ * @param[in] free_func A pointer to a function that will be called to
+ *            free up the resources used by the map.
  *
  */
 void eina_file_common_map_free(Eina_File *file, void *map,
@@ -267,20 +267,20 @@ extern int _eina_file_log_dom;
 
 // Common function to handle virtual file
 /**
- * @brief Map the entire contents fo a virtual file to a buffer.
+ * @brief Map the entire contents of a virtual file to a buffer.
  *
- * @param file The virtual file to map in memory
- *
+ * @param[in] file The virtual file to map in memory
+ * @return The buffer
  */
 void *eina_file_virtual_map_all(Eina_File *file);
 
 /**
  * @brief Map a part of a virtual file to a buffer.
  *
- * @param file The virtual file to map in memory
- * @param offset The offset inside the file to start mapping
- * @param length The length of the region to map
- *
+ * @param[in,out] file The virtual file to map in memory
+ * @param[in] offset The offset inside the file to start mapping
+ * @param[in] length The length of the region to map
+ * @return The buffer
  */
 void *eina_file_virtual_map_new(Eina_File *file,
                                 unsigned long int offset, unsigned long int length);
@@ -288,8 +288,8 @@ void *eina_file_virtual_map_new(Eina_File *file,
 /**
  * @brief Unref and unmap memory if possible.
  *
- * @param file The file handler to unmap memory from.
- * @param map Memory map to unref and unmap.
+ * @param[in,out] file The file handler to unmap memory from.
+ * @param[in,out] map Memory map to unref and unmap.
  *
  */
 void eina_file_virtual_map_free(Eina_File *file, void *map);
@@ -297,10 +297,10 @@ void eina_file_virtual_map_free(Eina_File *file, void *map);
 // Common hash function
 /**
  * @brief Get the length of a map key.
- * @warning This function is not yet implemented.  At present it ony returns
+ * @warning This function is not yet implemented.  At present it only returns
  * @code sizeof (unsigned long int) * 2 @endcode
  *
- * @param key The key for which length will be calculated.
+ * @param[in] key The key for which length will be calculated.
  *
  * @return The length of the key.
  *
@@ -312,10 +312,10 @@ unsigned int eina_file_map_key_length(const void *key);
  * The implementation assumes that @p key1 and @p key2 are both pointers to an
  * array with 2 elements, as is the case with the Eina file map keys.
  *
- * @param key1 The first key.
- * @param key1_length The length of the first key.
- * @param key2 The second key.
- * @param key2_length The length of the second key.
+ * @param[in] key1 The first key.
+ * @param[in] key1_length The length of the first key.
+ * @param[in] key2 The second key.
+ * @param[in] key2_length The length of the second key.
  *
  * @return Positive number if Key1 > Key2, else a negative number.  Will return
  * zero if both elements of the key are exactly the same.
@@ -327,8 +327,8 @@ int eina_file_map_key_cmp(const unsigned long long int *key1, int key1_length,
 /**
  * @brief Creates a hash from a map key.
  *
- * @param key A pointer to the key.
- * @param key_length The length of the key.
+ * @param[in] key A pointer to the key.
+ * @param[in] key_length The length of the key.
  *
  * @return A key hash.
  *

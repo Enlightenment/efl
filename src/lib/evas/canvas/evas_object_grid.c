@@ -273,10 +273,9 @@ _evas_object_grid_smart_set_user(Evas_Smart_Class *sc)
 EAPI Evas_Object *
 evas_object_grid_add(Evas *evas)
 {
-   MAGIC_CHECK(evas, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   evas = evas_find(evas);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -480,13 +479,13 @@ _evas_grid_children_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 }
 
 EOLIAN static Eina_Bool
-_evas_grid_efl_ui_base_mirrored_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
+_evas_grid_efl_ui_i18n_mirrored_get(const Eo *o EINA_UNUSED, Evas_Grid_Data *priv)
 {
    return priv->is_mirrored;
 }
 
 EOLIAN static void
-_evas_grid_efl_ui_base_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
+_evas_grid_efl_ui_i18n_mirrored_set(Eo *o EINA_UNUSED, Evas_Grid_Data *priv, Eina_Bool mirrored)
 {
    mirrored = !!mirrored;
    if (priv->is_mirrored != mirrored)

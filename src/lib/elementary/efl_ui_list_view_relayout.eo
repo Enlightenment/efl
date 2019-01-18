@@ -1,0 +1,30 @@
+interface Efl.Ui.List_View_Relayout extends Efl.Interface
+{
+   methods {
+      layout_do {
+         params {
+            modeler: Efl.Ui.List_View_Model;
+            first: int;
+            children: Efl.Ui.List_View_Seg_Array;
+         }
+      }
+      content_created {
+         params {
+            item: ptr(Efl.Ui.List_View_Layout_Item);
+         }
+      }
+      @property model {
+         [[Model that is/will be ]]
+         set {}
+         values {
+            model: Efl.Model; [[Efl model]]
+         }
+      }
+      @property elements {
+         get {}
+         values {
+            elements: list<Efl.Gfx.Entity>; [[The order to use]]
+         }
+      }
+   }
+}

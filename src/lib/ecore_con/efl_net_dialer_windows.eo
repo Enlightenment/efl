@@ -1,10 +1,10 @@
-class Efl.Net.Dialer_Windows (Efl.Net.Socket_Windows, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Windows extends Efl.Net.Socket_Windows implements Efl.Net.Dialer {
     [[Connects to a Windows NamedPipe server.
 
       The dial address will have "\\\\.\\pipe\\" prepended as required by
       Windows CreateNamedPipe().
 
-      \@note Proxies are meaningless, thus are not implemented.
+      Note: Proxies are meaningless, thus are not implemented.
 
       @since 1.19
     ]]

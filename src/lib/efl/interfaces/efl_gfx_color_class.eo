@@ -19,7 +19,7 @@ interface Efl.Gfx.Color_Class
               Setting color emits a signal "color_class,set" with source being
               the given color.
 
-              Note: These color values are expected to be premultiplied by \@p a.]]
+              Note: These color values are expected to be premultiplied by $a.]]
             return: bool; [[$true if setting the color succeeded, $false otherwise]]
          }
          get {
@@ -32,7 +32,7 @@ interface Efl.Gfx.Color_Class
               the third is the text shadow. (Note that the second two only apply
               to text parts).
 
-              Note: These color values are expected to be premultiplied by \@p a.]]
+              Note: These color values are expected to be premultiplied by $a.]]
             return: bool; [[$true if getting the color succeeded, $false otherwise]]
          }
          keys {

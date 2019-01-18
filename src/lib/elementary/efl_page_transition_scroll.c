@@ -405,6 +405,8 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
           }
         pi->pos = pi->id - (pd->side_page_num + 1);
 
+        if (!target) return;
+
         EINA_RECTANGLE_SET(&pi->temp,
                            target->geometry.x,
                            target->geometry.y,

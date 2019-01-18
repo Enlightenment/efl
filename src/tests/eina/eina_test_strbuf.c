@@ -487,16 +487,16 @@ EFL_START_TEST(eina_test_strbuf_tolower)
    eina_strbuf_append(buf, "UPPER");
    eina_strbuf_tolower(buf);
    str = eina_strbuf_string_get(buf);
-   fail_unless(str || strcmp(str, "upper"));
+   fail_unless(str && !strcmp(str, "upper"));
 
    eina_strbuf_tolower(buf);
    str = eina_strbuf_string_get(buf);
-   fail_unless(str || strcmp(str, "upper"));
+   fail_unless(str && !strcmp(str, "upper"));
 
    eina_strbuf_append(buf, "1@ ");
    eina_strbuf_tolower(buf);
    str = eina_strbuf_string_get(buf);
-   fail_unless(str || strcmp(str, "upper1@ "));
+   fail_unless(str && !strcmp(str, "upper1@ "));
 
    eina_strbuf_free(buf);
 }

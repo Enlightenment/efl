@@ -1,7 +1,7 @@
 import efl_input_types;
 
-class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
-                   Efl.Loop_Consumer, Efl.Canvas.Pointer)
+class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
+                   Efl.Canvas.Pointer
 {
    [[Evas canvas class]]
    legacy_prefix: evas;
@@ -460,33 +460,6 @@ class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interfa
          ]]
          return: bool; [[$true if the canvas will render, $false otherwise.]]
       }
-      render2 {
-         [[Render the given Evas canvas using the new rendering infra.
-
-           This is experimental and will change over time until noted here.
-
-           This function only returns $true when a frame will be rendered.
-           If the previous frame is still rendering, $false will be
-           returned so the users know not to wait for the updates
-           callback and just return to their main loop.
-
-           @since 1.14
-         ]]
-         return: bool; [[$true if the canvas will render, $false otherwise.]]
-      }
-      render2_updates {
-         [[Render the given Evas canvas using the new rendering infra.
-
-           This is experimental and will change over time until noted here.
-
-           @since 1.15
-         ]]
-         return: list<ptr(Eina.Rect)> @owned @warn_unused; [[
-            A newly allocated list of updated rectangles of the canvas
-            ($Eina.Rect structs). Free this list with
-            \@ref evas_render_updates_free.
-         ]]
-      }
       focus_out {
          [[Inform the evas that it lost the focus from the default seat.]]
       }
@@ -724,7 +697,7 @@ class Evas.Canvas (Efl.Object, Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interfa
          */
          return: list<ptr(Eina.Rect)> @owned @warn_unused; [[
             A newly allocated list of updated rectangles of the canvas
-            ($Eina.Rect structs). Free this list with
+            (@Eina.Rect structs). Free this list with
             \@ref evas_render_updates_free.
          ]]
       }

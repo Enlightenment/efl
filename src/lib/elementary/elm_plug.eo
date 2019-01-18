@@ -1,4 +1,4 @@
-class Elm.Plug (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Legacy)
+class Elm.Plug extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Legacy
 {
    [[Elementary plug class]]
    legacy_prefix: elm_plug;

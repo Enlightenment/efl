@@ -1,9 +1,9 @@
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
 
-class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Text_Interactive)
+                 Efl.Ui.Selectable, Efl.Text_Interactive
 {
    [[Efl UI text class]]
    methods {
@@ -59,7 +59,7 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
          }
       }
       @property cnp_mode {
-         /* FIXME: Efl.Selection_Format does not allow markup without images! */
+         /* FIXME: Efl.Ui.Selection_Format does not allow markup without images! */
          set {
             [[Control pasting of text and images for the widget.
 
@@ -78,7 +78,7 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
             ]]
          }
          values {
-            format: Efl.Selection_Format; [[Format for copy & paste.]]
+            format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {
@@ -321,6 +321,7 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
@@ -334,9 +335,9 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.on_disabled_update;
-      Efl.Ui.Widget.widget_sub_object_del;
-      Elm.Interface_Scrollable.policy { set; }
-      Elm.Interface_Scrollable.bounce_allow { set; }
+      //Efl.Ui.Widget.widget_sub_object_del;
+      //Elm.Interface_Scrollable.policy { set; }
+      //Elm.Interface_Scrollable.bounce_allow { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Text.access_text { get; }
@@ -363,9 +364,9 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
       Efl.Access.Editable.Text.paste;
       Efl.File.file { get; set; }
       Efl.Text_Interactive.editable { set; }
+      Efl.Part.part_get;
    }
    events {
-      activated: void; [[Called when entry is activated]]
       changed: void; [[Called when entry changes]]
       /* FIXME: Sometimes it can be NULL but @nullable does not work on events */
       changed,user: Efl.Ui.Text_Change_Info;
@@ -383,12 +384,5 @@ class Efl.Ui.Text (Efl.Ui.Layout.Object, Elm.Interface_Scrollable, Efl.Ui.Clicka
       anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
       anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
-      /* FIXME: Nobody emits these
-      anchor,clicked: void; [[Called when anchor is clicked]]
-      rejected: void; [[Called when entry is rejected]]
-      maxlength,reached: void; [[Called when maximum entry length has been reached]]
-      text,set,done; [[Called when text set finished]]
-      cursor,changed: void; [[Called on cursor changed]]
-      */
    }
 }

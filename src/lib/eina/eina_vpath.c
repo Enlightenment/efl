@@ -160,12 +160,16 @@ _eina_vpath_interface_sys_init(void)
    // $HOME / ~/ etc.
    home = eina_environment_home_get();
    if (!home)
-     home = _fallback_home_dir();
+     {
+        char *home2 = _fallback_home_dir();
+        _eina_vpath_data_add("home", home2);
+        free(home2);
+     }
+   else
+     _eina_vpath_data_add("home", home);
 
    // tmp dir - system wide
    tmp = eina_environment_tmp_get();
-
-   _eina_vpath_data_add("home", home);
    _eina_vpath_data_add("tmp", tmp);
 }
 
@@ -175,6 +179,7 @@ eina_vpath_init(void)
    vpath_data = eina_hash_string_superfast_new((Eina_Free_Cb)eina_stringshare_del);
 
    _eina_vpath_interface_sys_init();
+   eina_xdg_env_init();
 
    _eina_vpath_log_dom = eina_log_domain_register("vpath", "cyan");
    return EINA_TRUE;
@@ -188,9 +193,44 @@ eina_vpath_shutdown(void)
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_fetch_user_homedir(char **str, const char *name, const char *error)
+{
+  *str = NULL;
+#ifdef HAVE_GETPWENT
+  struct passwd *pwent;
+
+  pwent = getpwnam(name);
+  if (!pwent)
+    {
+       ERR("User %s not found\nThe string was: %s", name, error);
+       return EINA_FALSE;
+    }
+  *str = pwent->pw_dir;
+
+  return EINA_TRUE;
+#else
+  ERR("User fetching is disabled on this system\nThe string was: %s", error);
+  return EINA_FALSE;
+#endif
+}
+
+
 EAPI char *
 eina_vpath_resolve(const char* path)
 {
+   char buf[PATH_MAX];
+
+   if (eina_vpath_resolve_snprintf(buf, sizeof(buf), path) > 0)
+     return strdup(buf);
+   return NULL;
+}
+
+EAPI int
+eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
+{
+   va_list args;
+   char *path;
    // XXX: implement parse of path then look up in hash if not just create
    // object where path and result are the same and return that with
    // path set and result set to resolved path - return obj handler calls
@@ -200,29 +240,25 @@ eina_vpath_resolve(const char* path)
    /* FIXME: not working for WIndows */
    // /* <- full path
 
-   if (!path) return NULL;
+   path = alloca(size + 1);
+
+   va_start(args, format);
+   vsnprintf(path, size, format, args);
+   va_end(args);
 
    if (path[0] == '~')
      {
+        char *home = NULL;
         // ~/ <- home directory
         if (path[1] == '/')
           {
-             char buf[PATH_MAX];
-             const char *home = eina_hash_find(vpath_data, "home");
-
-             if (home)
-               {
-                  snprintf(buf, sizeof(buf), "%s%s", home, path + 1);
-                  return strdup(buf);
-               }
+             home = eina_hash_find(vpath_data, "home");
+             path ++;
           }
-#ifdef HAVE_GETPWENT
         // ~username/ <- homedir of user "username"
         else
           {
-             const char *p;
-             struct passwd pwent, *pwent2 = NULL;
-             char *name, buf[PATH_MAX], pwbuf[8129];
+             char *p, *name;
 
              for (p = path + 1; *p; p++)
                {
@@ -231,22 +267,21 @@ eina_vpath_resolve(const char* path)
              name = alloca(p - path);
              strncpy(name, path + 1, p - path - 1);
              name[p - path - 1] = 0;
-             if (!getpwnam_r(name, &pwent, pwbuf, sizeof(pwbuf), &pwent2))
-               {
-                  if ((pwent2) && (pwent.pw_dir))
-                    {
-                       return strdup(buf);
-                    }
-               }
+
+             if (!_fetch_user_homedir(&home, name, path))
+               return 0;
+             path = p;
            }
-#endif /* HAVE_GETPWENT */
-   return NULL;
+         if (home)
+           {
+              return snprintf(str, size, "%s%s", home, path);
+           }
     }
   // (:xxx:)/* ... <- meta hash table
   else if ((path[0] == '(') && (path[1] == ':'))
     {
        const char *p, *end, *meta;
-       char *name, buf[PATH_MAX];
+       char *name;
        int max_len = strlen(path);
        Eina_Bool found = EINA_FALSE;
 
@@ -264,13 +299,13 @@ eina_vpath_resolve(const char* path)
        if (!found)
          {
             ERR("(: Needs to have a matching ':)'\nThe string was: %s", path);
-            return NULL;
+            return 0;
          }
 
        if (*p != '/')
          {
             ERR("A / is expected after :)\nThe string was: %s", path);
-            return NULL;
+            return 0;
          }
 
        if (found)
@@ -281,25 +316,24 @@ eina_vpath_resolve(const char* path)
             meta = _eina_vpath_data_get(name);
             if (meta)
               {
-                 snprintf(buf, sizeof(buf), "%s%s", meta, end + 2);
-                 return strdup(buf);
+                 return snprintf(str, size, "%s%s", meta, end + 2);
               }
             else
               {
                  ERR("Meta key '%s' was not registered!\nThe string was: %s", name, path);
-                 return NULL;
+                 return 0;
               }
          }
     }
    //just return the path, since we assume that this is a normal path
    else
     {
-       return strdup(path);
+       return snprintf(str, size, "%s", path);
     }
 
    ERR("The path has to start with either '~/' or '(:NAME:)/' or be a normal path \nThe string was: %s", path);
 
-   return NULL;
+   return 0;
 }
 
 EAPI void

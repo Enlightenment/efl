@@ -92,17 +92,8 @@ _format_string_check(const char *fmt)
 static void
 _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
-   const Eina_Value_Type *type = eina_value_type_get(&value);
    Efl_Ui_Format_Data *sd = data;
    Eina_Value copy;
-
-   if (type == EINA_VALUE_TYPE_TM)
-     {
-        struct tm v;
-        eina_value_get(&value, &v);
-        eina_strbuf_append_strftime(str, sd->template, &v);
-        return;
-     }
 
    if (sd->format_type == FORMAT_TYPE_DOUBLE)
      {
@@ -130,7 +121,7 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
      }
    else if (sd->format_type == FORMAT_TYPE_STATIC)
      {
-        eina_strbuf_append(str, sd->template);
+        eina_strbuf_append_printf(str, "%s", sd->template);
      }
    else
      {

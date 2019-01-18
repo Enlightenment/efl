@@ -1,12 +1,12 @@
 import efl_ui_list_item;
 
-class Efl.Ui.List (Efl.Ui.Layout.Object,
+class Efl.Ui.List extends Efl.Ui.Layout implements
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
-                   Efl.Ui.Multi_Selectable)
+                   Efl.Ui.Multi_Selectable
 {
    [[Simple list widget with Pack interface.]]
    methods {
@@ -78,14 +78,7 @@ class Efl.Ui.List (Efl.Ui.Layout.Object,
       //Efl.Pack.pack_align { get; set; }
 
       //Efl.Ui.Scrollable
-      Efl.Ui.Scrollable_Interactive.scroll;
-      Efl.Ui.Scrollable_Interactive.content_size{ get; }
-      Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }
-      Efl.Ui.Scrollable_Interactive.bounce_enabled { set; get; }
-      Efl.Ui.Scrollable_Interactive.scroll_freeze { get; set; }
-      Efl.Ui.Scrollable_Interactive.scroll_hold { get; set; }
       Efl.Ui.Scrollable_Interactive.match_content { set; }
-      Efl.Ui.Scrollbar.bar_mode { get; set; }
 
       //Efl.Ui.Multi_Selectable
       Efl.Ui.Multi_Selectable.select_mode {get; set;}

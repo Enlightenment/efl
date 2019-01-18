@@ -1,5 +1,3 @@
-#define ELM_INTERNAL_API_ARGESFSDFEFC
-
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif

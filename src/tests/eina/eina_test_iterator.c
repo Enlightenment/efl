@@ -453,7 +453,7 @@ struct _Eina_Rbtree_Int
 };
 
 static Eina_Rbtree_Direction
-eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right)
+eina_rbtree_int_cmp(const Eina_Rbtree_Int *left, const Eina_Rbtree_Int *right, void *data EINA_UNUSED)
 {
    fail_if(!left);
    fail_if(!right);
@@ -612,6 +612,48 @@ EFL_START_TEST(eina_iterator_rbtree_simple)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eina_iterator_carray_length)
+{
+   unsigned int array[] = { 1, 4, 9, 16 };
+   Eina_Iterator *it;
+   unsigned int j = 1;
+   unsigned int i = 0;
+
+   it = EINA_C_ARRAY_ITERATOR_NEW(array);
+   EINA_ITERATOR_FOREACH(it, i)
+     {
+        fail_if(i != j * j);
+        j++;
+     }
+   fail_if(j < EINA_C_ARRAY_LENGTH(array));
+   eina_iterator_free(it);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eina_iterator_multi)
+{
+   unsigned int array1[] = { 1, 4, 9, 16 };
+   unsigned int array2[] = { 25, 36, 49, 64 };
+   unsigned int array3[] = { 81, 100, 121, 144 };
+   Eina_Iterator *it;
+   unsigned int i;
+   unsigned int j = 1;
+
+   it = eina_multi_iterator_new(EINA_C_ARRAY_ITERATOR_NEW(array1),
+                                EINA_C_ARRAY_ITERATOR_NEW(array2),
+                                EINA_C_ARRAY_ITERATOR_NEW(array3));
+   EINA_ITERATOR_FOREACH(it, i)
+     {
+        fail_if(i != j * j);
+        j++;
+     }
+   fail_if(j < EINA_C_ARRAY_LENGTH(array1)
+             + EINA_C_ARRAY_LENGTH(array2)
+             + EINA_C_ARRAY_LENGTH(array3));
+   eina_iterator_free(it);
+}
+EFL_END_TEST
+
 void
 eina_test_iterator(TCase *tc)
 {
@@ -623,4 +665,6 @@ eina_test_iterator(TCase *tc)
    tcase_add_test(tc, eina_iterator_rbtree_simple);
    tcase_add_test(tc, eina_iterator_filter_simple);
    tcase_add_test(tc, eina_iterator_filter_free);
+   tcase_add_test(tc, eina_iterator_carray_length);
+   tcase_add_test(tc, eina_iterator_multi);
 }

@@ -1,5 +1,5 @@
 group "Elm_Config" struct {
-  value "config_version" int: 131089;
+  value "config_version" int: 131092;
   value "entry_select_allow" uchar: 1;
   value "engine" string: "";
   value "vsync" uchar: 0;
@@ -7,20 +7,24 @@ group "Elm_Config" struct {
   value "thumbscroll_threshold" int: 24;
   value "thumbscroll_hold_threshold" int: 100;
   value "thumbscroll_momentum_threshold" double: 100.0;
-  value "thumbscroll_flick_distance_tolerance" int: 1000;
-  value "thumbscroll_friction" double: 1.0;
+  value "thumbscroll_flick_distance_tolerance" int: 3000;
+  value "thumbscroll_friction" double: 0.95;
+  value "thumbscroll_momentum_animation_duration_min_limit" double: 0.3;
+  value "thumbscroll_momentum_animation_duration_max_limit" double: 1.3;
+  // will not be used
   value "thumbscroll_min_friction" double: 0.3;
   value "thumbscroll_friction_standard" double: 3000.0;
+  //
   value "thumbscroll_bounce_friction" double: 0.5;
   value "thumbscroll_bounce_enable" uchar: 1;
   value "thumbscroll_acceleration_threshold" double: 2000.0;
   value "thumbscroll_acceleration_time_limit" double: 0.5;
   value "thumbscroll_acceleration_weight" double: 1.5;
+  value "thumbscroll_border_friction" double: 0.5;
+  value "thumbscroll_sensitivity_friction" double: 0.7;
   value "page_scroll_friction" double: 0.5;
   value "bring_in_scroll_friction" double: 0.5;
   value "zoom_friction" double: 0.5;
-  value "thumbscroll_border_friction" double: 0.5;
-  value "thumbscroll_sensitivity_friction" double: 0.7;
   value "scroll_smooth_start_enable" uchar: 1;
   value "scroll_smooth_amount" double: 1.0;
   value "scroll_smooth_time_window" double: 0.15;
@@ -2624,6 +2628,29 @@ group "Elm_Config" struct {
               value "key" string: "KP_Down";
               value "action" string: "move";
               value "params" string: "down";
+           }
+        }
+     }
+     group "Elm_Config_Bindings_Widget" struct {
+        value "name" string: "Efl.Ui.Tab_Bar";
+        group "key_bindings" list {
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "Return";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "KP_Enter";
+              value "action" string: "select";
+              value "params" string: "";
+           }
+           group "Elm_Config_Binding_Key" struct {
+              value "context" int: 0;
+              value "key" string: "space";
+              value "action" string: "select";
+              value "params" string: "";
            }
         }
      }

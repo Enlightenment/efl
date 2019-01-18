@@ -1,6 +1,6 @@
 import efl_ui;
 
-mixin Efl.Access.Widget.Action (Efl.Access.Action)
+mixin Efl.Access.Widget.Action extends Efl.Access.Action
 {
    [[Access widget action mixin]]
    data: null;

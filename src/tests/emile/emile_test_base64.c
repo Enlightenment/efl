@@ -15,19 +15,19 @@ static const struct {
    unsigned int len;
    Eina_Bool not;
 } base64_tests[] = {
-  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", "YW55IGNhcm5hbCBwbGVhc3VyZS4", 20 },
-  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZQ==", "YW55IGNhcm5hbCBwbGVhc3VyZQ", 19 },
-  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3Vy", "YW55IGNhcm5hbCBwbGVhc3Vy", 18 },
-  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3U=", "YW55IGNhcm5hbCBwbGVhc3U", 17 },
-  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhcw==", "YW55IGNhcm5hbCBwbGVhcw", 16 },
-  { "pleasure.", "cGxlYXN1cmUu", "cGxlYXN1cmUu", 9 },
-  { "leasure.", "bGVhc3VyZS4=", "bGVhc3VyZS4", 8 },
-  { "easure.", "ZWFzdXJlLg==", "ZWFzdXJlLg", 7 },
-  { "asure.", "YXN1cmUu", "YXN1cmUu", 6 },
-  { "sure.", "c3VyZS4=", "c3VyZS4", 5 },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZS4=", "YW55IGNhcm5hbCBwbGVhc3VyZS4", 20, EINA_FALSE },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3VyZQ==", "YW55IGNhcm5hbCBwbGVhc3VyZQ", 19, EINA_FALSE },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3Vy", "YW55IGNhcm5hbCBwbGVhc3Vy", 18, EINA_FALSE },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhc3U=", "YW55IGNhcm5hbCBwbGVhc3U", 17, EINA_FALSE },
+  { "any carnal pleasure.", "YW55IGNhcm5hbCBwbGVhcw==", "YW55IGNhcm5hbCBwbGVhcw", 16, EINA_FALSE },
+  { "pleasure.", "cGxlYXN1cmUu", "cGxlYXN1cmUu", 9, EINA_FALSE },
+  { "leasure.", "bGVhc3VyZS4=", "bGVhc3VyZS4", 8, EINA_FALSE },
+  { "easure.", "ZWFzdXJlLg==", "ZWFzdXJlLg", 7, EINA_FALSE },
+  { "asure.", "YXN1cmUu", "YXN1cmUu", 6, EINA_FALSE },
+  { "sure.", "c3VyZS4=", "c3VyZS4", 5, EINA_FALSE },
   /* The following 2 cases are manually generated for -/ testing*/
-  { "aabc123!?", "YWFiYzEyMyE/", "YWFiYzEyMyE_", 9 },
-  { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", "YWJjMTIzIT8kKiYoKSctPUB-", 18 }
+  { "aabc123!?", "YWFiYzEyMyE/", "YWFiYzEyMyE_", 9, EINA_FALSE },
+  { "abc123!?$*&()'-=@~", "YWJjMTIzIT8kKiYoKSctPUB+", "YWJjMTIzIT8kKiYoKSctPUB-", 18, EINA_FALSE }
 };
 
 EFL_START_TEST(emile_test_base64_normal)

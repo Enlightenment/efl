@@ -1014,7 +1014,7 @@ EAPI void ecore_evas_msg_send(Ecore_Evas *ee, int msg_domain, int msg_id, void *
  * @brief Sets a callback for parent Ecore_Evas message.
  *
  * @param ee The Ecore_Evas to set callbacks on
- * @param func_parent_handle The handle to be called when message arive.
+ * @param func_parent_handle The handle to be called when message arrive.
  *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.8.0
@@ -1029,7 +1029,7 @@ EAPI void ecore_evas_callback_msg_parent_handle_set(Ecore_Evas *ee, void (*func_
  * @brief Sets a callback for child Ecore_Evas message.
  *
  * @param ee The Ecore_Evas to set callbacks on
- * @param func_handle  The handle to be called when message arive
+ * @param func_handle  The handle to be called when message arrive
  *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.8.0
@@ -3078,8 +3078,8 @@ EAPI void           ecore_evas_x11_shape_input_rectangle_set(Ecore_Evas *ee, int
  * @param ee The Ecore_Evas
  * @param x The X coordinate of the rectangular area to add.
  * @param y The Y coordinate of the rectangular area to add.
- * @param w The width of the rectangluar area to add.
- * @param h The height of the rectangluar area to add.
+ * @param w The width of the rectangular area to add.
+ * @param h The height of the rectangular area to add.
  *
  * Ecore_Evas may apply (orthogonal) rotations if needed, via an internal
  * call to _ecore_evas_x11_convert_rectangle_with_angle().  Note that

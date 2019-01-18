@@ -4,7 +4,7 @@ type @extern Evas_Object_Box_Layout: __undefined_type; [[Evas object box layout 
 type @extern Eina_Free_Cb: __undefined_type; [[Eina free callback type]] /* FIXME: Function pointers are not supported  */
 type @extern va_list: __undefined_type; [[va_list type]] /* FIXME: va_list is not supported */
 
-class Evas.Box (Efl.Canvas.Group)
+class Evas.Box extends Efl.Canvas.Group
 {
    [[Evas box class]]
    legacy_prefix: evas_object_box;
@@ -345,7 +345,7 @@ class Evas.Box (Efl.Canvas.Group)
            evas_object_box_option_property_set. See its documentation for
            more details.]]
 
-         return: bool; [[$ture on success, $false on failure.]]
+         return: bool; [[$true on success, $false on failure.]]
          params {
             @in opt: ptr(Evas_Object_Box_Option) @nonull; [[The box option structure bound to the child box element
                                                          to set a property on.]]
@@ -379,7 +379,7 @@ class Evas.Box (Efl.Canvas.Group)
            Note: This call will trigger the box's
            _Evas_Object_Box_Api.remove_at smart function.]]
 
-         return: bool; [[$ture on success, $false on failure.]]
+         return: bool; [[$true on success, $false on failure.]]
          params {
             @in pos: uint; [[The numeric position (starting from $0) of the child
                              object to be removed.]]
@@ -392,7 +392,7 @@ class Evas.Box (Efl.Canvas.Group)
            This is a variable argument list variant of the
            evas_object_box_option_property_get. See its documentation for
            more details.]]
-         return: bool;  [[$ture on success, $false on failure.]]
+         return: bool;  [[$true on success, $false on failure.]]
          params {
             @in opt: ptr(Evas_Object_Box_Option) @nonull; [[The box option structure bound to the child box element
                                                          to get a property from.]]

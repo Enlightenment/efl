@@ -1,4 +1,4 @@
-class Elm.Slideshow.Item(Elm.Widget.Item)
+class Elm.Slideshow.Item extends Elm.Widget.Item
 {
    [[Elementary slideshow class]]
    legacy_prefix: elm_slideshow_item;

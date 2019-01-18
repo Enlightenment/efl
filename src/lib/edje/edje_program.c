@@ -4,7 +4,6 @@ static void _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Messa
 static void _edje_param_copy(Edje *ed, Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
 static void _edje_param_set(Edje *ed, Edje_Real_Part *part, const char *param, const char *value);
 
-Eina_List *_edje_animators = NULL;
 static double _edje_transition_duration_scale = 0;
 
 static Eina_Bool
@@ -1252,6 +1251,7 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
    Efl_Input_Device *seat = NULL;
    char buf[128];
    char *sname;
+   const char *s;
 
    if (dev) seat = efl_input_device_seat_get(dev);
    if (seat)
@@ -1267,7 +1267,9 @@ _edje_seat_emit(Edje *ed, Efl_Input_Device *dev, const char *sig, const char *sr
     * the signal belongs to a seat */
    if (!seat) return;
 
-   snprintf(buf, sizeof(buf), "seat,%s,%s", _edje_seat_name_get(ed, seat), sig);
+   s = _edje_seat_name_get(ed, seat);
+   if (!s) s = "";
+   snprintf(buf, sizeof(buf), "seat,%s,%s", s, sig);
    _edje_emit_full_data(ed, buf, src, mdata);
    _edje_signal_data_free(mdata);
 }

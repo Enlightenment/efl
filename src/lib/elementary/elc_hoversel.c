@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -52,7 +52,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_hoversel_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
+_elm_hoversel_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Eo *it;
    Eina_List *l;
@@ -60,17 +60,17 @@ _elm_hoversel_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Ho
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Eina_List *l;
    Elm_Object_Item *eo_item;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
    char buf[4096];
    const char *style;
@@ -86,7 +86,7 @@ _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    elm_widget_theme_style_set(obj, buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    elm_widget_theme_style_set(obj, style);
 
@@ -707,6 +707,7 @@ _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
+   legacy_object_focus_handle(obj);
 
    return obj;
 }

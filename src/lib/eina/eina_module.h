@@ -112,7 +112,7 @@ extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
 /**
  * @brief Returns a new module.
  *
- * @param file The name of the file module to load.
+ * @param[in] file The name of the file module to load.
  * @return A new module. If @p file is @c NULL, or if it does not exist,
  * the function returns @c NULL, otherwise, it allocates an Eina_Module,
  * stores a duplicate string of @p file, sets its reference to @c 0 and
@@ -129,7 +129,7 @@ EAPI Eina_Module *
 /**
  * @brief Deletes a module.
  *
- * @param module The module to delete.
+ * @param[in,out] module The module to delete.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function calls eina_module_unload() if @p module has been previously
@@ -143,7 +143,7 @@ EAPI Eina_Bool
 /**
  * @brief Loads a module.
  *
- * @param module The module to load.
+ * @param[in,out] module The module to load.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function load the shared file object passed in
@@ -164,7 +164,7 @@ EAPI Eina_Bool
 /**
  * @brief Unloads a module.
  *
- * @param module The module to load.
+ * @param[in,out] module The module to load.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function unload the module @p module that has been previously
@@ -181,8 +181,8 @@ EAPI Eina_Bool
 /**
  * @brief Retrieves the data associated with a symbol.
  *
- * @param module The module.
- * @param symbol The symbol.
+ * @param[in] module The module.
+ * @param[in] symbol The symbol.
  * @return The data associated with the symbol, or @c NULL on failure.
  *
  * This function returns the data associated with @p symbol of @p module. @p
@@ -196,7 +196,7 @@ EAPI void *
 /**
  * @brief Returns the file name associated with the module.
  *
- * @param module The module.
+ * @param[in] module The module.
  * @return The file name.
  *
  * This function returns the file name passed in eina_module_new(). If
@@ -209,8 +209,9 @@ EAPI const char *
 /**
  * @brief Defines if on module load we should expose all symbol
  *
- * @param module The module to turn off/on symbol to be exposed
- * @param global @c ture to turn on symbol to be exposed, @c false otherwise
+ * @param[in,out] module The module to turn off/on symbol to be exposed
+ * @param[in] global @c true to turn on symbol to be exposed, @c false otherwise
+ *
  * @since 1.11
  */
 EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) EINA_ARG_NONNULL(1);
@@ -219,8 +220,8 @@ EAPI void eina_module_symbol_global_set(Eina_Module *module, Eina_Bool global) E
  * @brief Returns the path built from the location of a library and a
  * given sub directory.
  *
- * @param symbol The symbol to search for.
- * @param sub_dir The subdirectory to append.
+ * @param[in] symbol The symbol to search for.
+ * @param[in] sub_dir The subdirectory to append.
  * @return The built path on success, @c NULL otherwise.
  *
  * This function returns the path built by concatenating the path of
@@ -236,8 +237,8 @@ EAPI char *
  * @brief Returns the path built from the value of an environment variable and a
  * given sub directory.
  *
- * @param env The environment variable to expand.
- * @param sub_dir The subdirectory to append.
+ * @param[in] env The environment variable to expand.
+ * @param[in] sub_dir The subdirectory to append.
  * @return The built path on success, @c NULL otherwise.
  *
  * This function returns the path built by concatenating the value of
@@ -253,9 +254,9 @@ EAPI char *
 /**
  * @brief Gets an array of modules found on the directory path matching an arch type.
  *
- * @param array The array that stores the list of the modules.
- * @param path The directory's path to search for modules.
- * @param arch The architecture string.
+ * @param[in,out] array The array that stores the list of the modules.
+ * @param[in] path The directory's path to search for modules.
+ * @param[in] arch The architecture string.
  * @return The array of modules found in @p path matching @p arch.
  *
  * This function adds to @p array the module names found in @p path
@@ -269,11 +270,11 @@ EAPI Eina_Array *
 /**
  * @brief Gets a list of modules found on the directory path.
  *
- * @param array The array that stores the list of the modules.
- * @param path The directory's path to search for modules.
- * @param recursive Iterate recursively on the path.
- * @param cb Callback function to call on each module.
- * @param data Data passed to the callback function.
+ * @param[in,out] array The array that stores the list of the modules.
+ * @param[in] path The directory's path to search for modules.
+ * @param[in] recursive Iterate recursively on the path.
+ * @param[in] cb Callback function to call on each module.
+ * @param[in] data Data passed to the callback function.
  * @return The array of modules found in @p path.
  *
  * This function adds to @p array the list of modules found in
@@ -291,7 +292,7 @@ EAPI Eina_Array *
 /**
  * @brief Loads every module on the list of modules.
  *
- * @param array The array of modules to load.
+ * @param[in,out] array The array of modules to load.
  *
  * This function calls eina_module_load() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
@@ -302,7 +303,7 @@ EAPI void
 /**
  * @brief Unloads every module on the list of modules.
  *
- * @param array The array of modules to unload.
+ * @param[in,out] array The array of modules to unload.
  *
  * This function calls eina_module_unload() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
@@ -313,7 +314,7 @@ EAPI void
 /**
  * @p Frees every module on the list of modules.
  *
- * @param array The array of modules to free.
+ * @param[in,out] array The array of modules to free.
  *
  * This function calls eina_module_free() on each element found in
  * @p array. If @p array is @c NULL, this function does nothing.
@@ -324,8 +325,8 @@ EAPI void
 /**
  * @brief Finds a module in array.
  *
- * @param array The array to find the module.
- * @param module The name of module to be searched.
+ * @param[in] array The array to find the module.
+ * @param[in] module The name of module to be searched.
  * @return The module to find on success, @c NULL otherwise.
  *
  * This function finds a @p module in @p array.

@@ -69,7 +69,7 @@ _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA
 
    EINA_LIST_FOREACH(data->arguments, it, argument)
      {
-        Eina_Stringshare *name;
+        Eina_Slstr *name;
         const Eina_Value *value;
         const char *signature;
         Eina_Bool ret;
@@ -77,11 +77,10 @@ _eldbus_model_method_call(Eo *obj EINA_UNUSED, Eldbus_Model_Method_Data *pd EINA
         if (ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_IN != argument->direction)
           continue;
 
-        name = eina_array_data_get(data->properties_array, i);
-        if (!name) continue;
+        name = eina_slstr_printf(ARGUMENT_FORMAT, i);
         EINA_SAFETY_ON_NULL_GOTO(name, on_error);
 
-        value = eina_hash_find(data->properties_hash, name);
+        value = eina_hash_find(data->properties, name);
         EINA_SAFETY_ON_NULL_GOTO(value, on_error);
 
         signature = argument->type;

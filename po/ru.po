@@ -4,12 +4,12 @@
 # Danny Moshnakov <dm@agent.co.il>, 2012.
 # Igor Murzov <garik@efl.so>, 2015.
 #
-#: src/lib/elementary/elm_config.c:4150
+#: src/lib/elementary/elm_config.c:4306
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 1.11\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2018-04-25 14:22+0900\n"
+"POT-Creation-Date: 2018-12-06 14:49+0000\n"
 "PO-Revision-Date: 2015-02-07 15:16+0300\n"
 "Last-Translator: Игорь Мурзов <garik@efl.so>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -240,172 +240,171 @@ msgstr "Изображения"
 msgid "Videos"
 msgstr "Видео"
 
-#: src/lib/elementary/elc_fileselector.c:1907
+#: src/lib/elementary/elc_fileselector.c:1799
 msgid "Up"
 msgstr "Вверх"
 
-#: src/lib/elementary/elc_fileselector.c:1921
+#: src/lib/elementary/elc_fileselector.c:1813
 msgid "Home"
 msgstr "Дом"
 
-#: src/lib/elementary/elc_fileselector.c:1940
+#: src/lib/elementary/elc_fileselector.c:1832
 msgid "Search"
 msgstr "Поиск"
 
-#: src/lib/elementary/elc_fileselector.c:2232
+#: src/lib/elementary/elc_fileselector.c:2104
 msgid "OK"
 msgstr "ОК"
 
-#: src/lib/elementary/elc_fileselector.c:2242
-#: src/lib/elementary/elm_entry.c:1731 src/lib/elementary/elm_entry.c:1756
+#: src/lib/elementary/elc_fileselector.c:2114
+#: src/lib/elementary/elm_entry.c:1739 src/lib/elementary/elm_entry.c:1764
 msgid "Cancel"
 msgstr "Отмена"
 
-#: src/lib/elementary/elc_hoversel.c:437 src/lib/elementary/efl_ui_button.c:192
-#: src/lib/elementary/efl_ui_check.c:159 src/lib/elementary/elm_gengrid.c:1503
-#: src/lib/elementary/elm_genlist.c:1751 src/lib/elementary/elm_list.c:2172
-#: src/lib/elementary/efl_ui_radio.c:176
-#: src/lib/elementary/elm_segment_control.c:529
-#: src/lib/elementary/elm_spinner.c:1032 src/lib/elementary/elm_toolbar.c:2278
+#: src/lib/elementary/elc_hoversel.c:438 src/lib/elementary/efl_ui_button.c:208
+#: src/lib/elementary/efl_ui_check.c:188 src/lib/elementary/elm_gengrid.c:1523
+#: src/lib/elementary/elm_genlist.c:1764 src/lib/elementary/elm_list.c:2185
+#: src/lib/elementary/efl_ui_radio.c:201
+#: src/lib/elementary/elm_segment_control.c:528
+#: src/lib/elementary/elm_spinner.c:1041 src/lib/elementary/elm_toolbar.c:2291
 msgid "State: Disabled"
 msgstr "Состояние: Отключено"
 
-#: src/lib/elementary/elc_hoversel.c:650
+#: src/lib/elementary/elc_hoversel.c:651
 msgid "Hoversel"
 msgstr ""
 
-#: src/lib/elementary/elc_multibuttonentry.c:676
+#: src/lib/elementary/elc_multibuttonentry.c:682
 msgid "multi button entry label"
 msgstr "метка многокопочного элемента"
 
-#: src/lib/elementary/elc_multibuttonentry.c:698
+#: src/lib/elementary/elc_multibuttonentry.c:704
 msgid "multi button entry item"
 msgstr "кнопка многокопочного элемента"
 
-#: src/lib/elementary/elc_multibuttonentry.c:1579
+#: src/lib/elementary/elc_multibuttonentry.c:1586
 msgid "multi button entry"
 msgstr "многокнопочный элемент"
 
-#: src/lib/elementary/elc_naviframe.c:432
-#: src/lib/elementary/elc_naviframe.c:460
+#: src/lib/elementary/elc_naviframe.c:408
+#: src/lib/elementary/elc_naviframe.c:436
 msgid "Title"
 msgstr "Заголовок"
 
-#: src/lib/elementary/elc_naviframe.c:439
+#: src/lib/elementary/elc_naviframe.c:415
 #, fuzzy
 msgid "Subtitle"
 msgstr "Заголовок"
 
-#: src/lib/elementary/elc_naviframe.c:1026
-#: src/lib/elementary/elc_naviframe.c:1244
+#: src/lib/elementary/elc_naviframe.c:968
+#: src/lib/elementary/elc_naviframe.c:1186
 msgid "Back"
 msgstr "Назад"
 
-#: src/lib/elementary/elc_naviframe.c:1342
+#: src/lib/elementary/elc_naviframe.c:1358
 msgid "Next"
 msgstr "Вперёд"
 
-#: src/lib/elementary/elc_popup.c:305 src/lib/elementary/elc_popup.c:969
+#: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:992
 msgid "Popup Title"
 msgstr "Заголовок всплывающего окна"
 
-#: src/lib/elementary/elc_popup.c:315 src/lib/elementary/elc_popup.c:1045
+#: src/lib/elementary/elc_popup.c:330 src/lib/elementary/elc_popup.c:1068
 msgid "Popup Body Text"
 msgstr "Текст всплывающего окна"
 
-#: src/lib/elementary/elc_popup.c:1817
+#: src/lib/elementary/elc_popup.c:1842
 msgid "Alert"
 msgstr ""
 
-#: src/lib/elementary/elm_bubble.c:162
+#: src/lib/elementary/elm_bubble.c:163
 msgid "Bubble"
 msgstr "Облачко"
 
-#: src/lib/elementary/efl_ui_button.c:62
+#: src/lib/elementary/efl_ui_button.c:71
 msgid "Clicked"
 msgstr "Нажато"
 
-#: src/lib/elementary/efl_ui_button.c:219
+#: src/lib/elementary/efl_ui_button.c:250
 msgid "Button"
 msgstr "Кнопка"
 
-#: src/lib/elementary/elm_calendar.c:228
-#: src/lib/elementary/efl_ui_calendar.c:198
+#: src/lib/elementary/elm_calendar.c:225
+#: src/lib/elementary/efl_ui_calendar.c:193
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elementary/elm_calendar.c:234
+#: src/lib/elementary/elm_calendar.c:231
 msgid "%B"
 msgstr "%B"
 
-#: src/lib/elementary/elm_calendar.c:240
+#: src/lib/elementary/elm_calendar.c:237
 msgid "%Y"
 msgstr "%Y"
 
-#: src/lib/elementary/elm_calendar.c:365
-#: src/lib/elementary/efl_ui_calendar.c:245
+#: src/lib/elementary/elm_calendar.c:363
+#: src/lib/elementary/efl_ui_calendar.c:240
 msgid "calendar item"
 msgstr "элемент календаря"
 
-#: src/lib/elementary/elm_calendar.c:392
-#: src/lib/elementary/efl_ui_calendar.c:272
+#: src/lib/elementary/elm_calendar.c:391
+#: src/lib/elementary/efl_ui_calendar.c:267
 msgid "calendar decrement month button"
 msgstr "кнопка календаря для уменьшения месяца"
 
-#: src/lib/elementary/elm_calendar.c:398
+#: src/lib/elementary/elm_calendar.c:397
 msgid "calendar decrement year button"
 msgstr "кнопка календаря для уменьшения года"
 
-#: src/lib/elementary/elm_calendar.c:404
-#: src/lib/elementary/efl_ui_calendar.c:278
+#: src/lib/elementary/elm_calendar.c:403
+#: src/lib/elementary/efl_ui_calendar.c:273
 msgid "calendar increment month button"
 msgstr "кнопка календаря для увеличения месяца"
 
-#: src/lib/elementary/elm_calendar.c:410
+#: src/lib/elementary/elm_calendar.c:409
 msgid "calendar increment year button"
 msgstr "кнопка календаря для увеличения года"
 
-#: src/lib/elementary/elm_calendar.c:415
-#: src/lib/elementary/efl_ui_calendar.c:283
+#: src/lib/elementary/elm_calendar.c:414
+#: src/lib/elementary/efl_ui_calendar.c:278
 msgid "calendar month"
 msgstr "месяц календаря"
 
-#: src/lib/elementary/elm_calendar.c:420
-#: src/lib/elementary/efl_ui_calendar.c:286
+#: src/lib/elementary/elm_calendar.c:419
 msgid "calendar year"
 msgstr "год календаря"
 
-#: src/lib/elementary/efl_ui_check.c:66 src/lib/elementary/efl_ui_check.c:172
-#: src/lib/elementary/efl_ui_radio.c:119 src/lib/elementary/efl_ui_radio.c:177
+#: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:201
+#: src/lib/elementary/efl_ui_radio.c:136 src/lib/elementary/efl_ui_radio.c:202
 msgid "State: On"
 msgstr "Состояния: Включено"
 
-#: src/lib/elementary/efl_ui_check.c:77 src/lib/elementary/efl_ui_check.c:184
-#: src/lib/elementary/efl_ui_radio.c:179
+#: src/lib/elementary/efl_ui_check.c:96 src/lib/elementary/efl_ui_check.c:213
+#: src/lib/elementary/efl_ui_radio.c:204
 msgid "State: Off"
 msgstr "Состояние: Выключено"
 
-#: src/lib/elementary/efl_ui_check.c:168 src/lib/elementary/efl_ui_check.c:181
+#: src/lib/elementary/efl_ui_check.c:197 src/lib/elementary/efl_ui_check.c:210
 msgid "State"
 msgstr "Состояние"
 
-#: src/lib/elementary/efl_ui_check.c:293
+#: src/lib/elementary/efl_ui_check.c:349
 msgid "Check"
 msgstr "Флажок"
 
-#: src/lib/elementary/elm_clock.c:306
+#: src/lib/elementary/elm_clock.c:309
 msgid "clock increment button for am,pm"
 msgstr "кнопка часов для увеличения am,pm"
 
-#: src/lib/elementary/elm_clock.c:314
+#: src/lib/elementary/elm_clock.c:317
 msgid "clock decrement button for am,pm"
 msgstr "кнопка часов для уменьшения am,pm"
 
-#: src/lib/elementary/elm_clock.c:703
+#: src/lib/elementary/elm_clock.c:714
 msgid "State: Editable"
 msgstr "Состояние: Редактируемо"
 
-#: src/lib/elementary/elm_clock.c:738
+#: src/lib/elementary/elm_clock.c:749
 msgid "Clock"
 msgstr "Часы"
 
@@ -429,7 +428,7 @@ msgstr ""
 msgid "A:"
 msgstr ""
 
-#: src/lib/elementary/elm_colorselector.c:1706
+#: src/lib/elementary/elm_colorselector.c:1707
 msgid "color selector palette item"
 msgstr "элемент выбора цвета палитры"
 
@@ -439,11 +438,11 @@ msgstr "элемент выбора цвета палитры"
 #. but if this is a right-to-left language like arabic, Farsi,
 #. Hebrew, etc. then change this string to be "default:RTL"
 #.
-#: src/lib/elementary/elm_config.c:4173
+#: src/lib/elementary/elm_config.c:4329
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elementary/elm_dayselector.c:402
+#: src/lib/elementary/elm_dayselector.c:437
 msgid "day selector item"
 msgstr "элемент выбора дня"
 
@@ -451,29 +450,25 @@ msgstr "элемент выбора дня"
 msgid "diskselector item"
 msgstr "элемент диска выбора"
 
-#: src/lib/elementary/elm_entry.c:1721
+#: src/lib/elementary/elm_entry.c:1729
 msgid "Cut"
 msgstr "Вырезать"
 
-#: src/lib/elementary/elm_entry.c:1724
+#: src/lib/elementary/elm_entry.c:1732
 msgid "Copy"
 msgstr "Копировать"
 
-#: src/lib/elementary/elm_entry.c:1728 src/lib/elementary/elm_entry.c:1750
+#: src/lib/elementary/elm_entry.c:1736 src/lib/elementary/elm_entry.c:1758
 msgid "Paste"
 msgstr "Вставить"
 
-#: src/lib/elementary/elm_entry.c:1743
+#: src/lib/elementary/elm_entry.c:1751
 msgid "Select"
 msgstr "Выбрать"
 
-#: src/lib/elementary/elm_entry.c:3892
+#: src/lib/elementary/elm_entry.c:3910
 msgid "Entry"
 msgstr "Запись"
-
-#: src/lib/elementary/elm_gengrid.c:1533
-msgid "Gengrid Item"
-msgstr "Элемент сетки"
 
 #: src/lib/elementary/elm_index.c:95
 msgid "Index"
@@ -483,96 +478,99 @@ msgstr "Алфавитный указатель"
 msgid "Index Item"
 msgstr "Элемент алфавитного указателя"
 
-#: src/lib/elementary/elm_label.c:405
+#: src/lib/elementary/elm_label.c:403
 msgid "Label"
 msgstr "Метка"
 
-#: src/lib/elementary/elm_panel.c:83
+#: src/lib/elementary/elm_panel.c:84
 msgid "state: opened"
 msgstr "состояние: открыто"
 
-#: src/lib/elementary/elm_panel.c:84
+#: src/lib/elementary/elm_panel.c:85
 msgid "state: closed"
 msgstr "состояние: закрыто"
 
-#: src/lib/elementary/elm_panel.c:124
+#: src/lib/elementary/elm_panel.c:127
 msgid "A panel is open"
 msgstr "Панель открыта"
 
-#: src/lib/elementary/elm_panel.c:126
+#: src/lib/elementary/elm_panel.c:129
 msgid "Double tap to close panel menu"
 msgstr "Двойной щелчок, чтобы закрыть меню панели"
 
-#: src/lib/elementary/elm_panel.c:178
+#: src/lib/elementary/elm_panel.c:181
 msgid "panel button"
 msgstr "кнопка панели"
 
-#: src/lib/elementary/efl_ui_progressbar.c:353
+#: src/lib/elementary/efl_ui_progressbar.c:397
 msgid "progressbar"
 msgstr "индикатор выполнения"
 
-#: src/lib/elementary/efl_ui_radio.c:201
+#: src/lib/elementary/efl_ui_radio.c:231
 msgid "Radio"
 msgstr "Радио флажок"
 
-#: src/lib/elementary/elm_segment_control.c:532
-#: src/lib/elementary/elm_toolbar.c:2280
+#: src/lib/elementary/elm_segment_control.c:531
+#: src/lib/elementary/elm_toolbar.c:2293
 msgid "State: Selected"
 msgstr "Состояние: Выбрано"
 
-#: src/lib/elementary/elm_segment_control.c:534
+#: src/lib/elementary/elm_segment_control.c:533
 msgid "State: Unselected"
 msgstr "Состояние: Невыбрано"
 
-#: src/lib/elementary/elm_segment_control.c:548
+#: src/lib/elementary/elm_segment_control.c:547
 msgid "Segment Control Item"
 msgstr "Элемент сегментного элемента управления"
 
-#: src/lib/elementary/efl_ui_slider.c:1186
+#: src/lib/elementary/efl_ui_slider.c:681
 msgid "slider"
 msgstr "бегунок"
 
-#: src/lib/elementary/elm_spinner.c:1062
+#: src/lib/elementary/elm_spinner.c:1071
 msgid "incremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1068
+#: src/lib/elementary/elm_spinner.c:1077
 msgid "decremented"
 msgstr ""
 
-#: src/lib/elementary/elm_spinner.c:1101 src/lib/elementary/elm_spinner.c:1168
+#: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1177
 msgid "spinner"
 msgstr "счётчик"
 
-#: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1151
+#: src/lib/elementary/elm_spinner.c:1119 src/lib/elementary/elm_spinner.c:1160
 msgid "spinner increment button"
 msgstr "кнопка увеличения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1113 src/lib/elementary/elm_spinner.c:1160
+#: src/lib/elementary/elm_spinner.c:1122 src/lib/elementary/elm_spinner.c:1169
 msgid "spinner decrement button"
 msgstr "кнопка уменьшения счётчика"
 
-#: src/lib/elementary/elm_spinner.c:1115
+#: src/lib/elementary/elm_spinner.c:1124
 #, fuzzy
 msgid "spinner text"
 msgstr "счётчик"
 
-#: src/lib/elementary/elm_toolbar.c:1735 src/lib/elementary/elm_toolbar.c:2337
+#: src/lib/elementary/elm_toolbar.c:1750 src/lib/elementary/elm_toolbar.c:2352
 msgid "Selected"
 msgstr "Выбрано"
 
-#: src/lib/elementary/elm_toolbar.c:2276
+#: src/lib/elementary/elm_toolbar.c:2289
 msgid "Separator"
 msgstr "Разделитель"
 
-#: src/lib/elementary/elm_toolbar.c:2282
+#: src/lib/elementary/elm_toolbar.c:2295
 msgid "Has menu"
 msgstr "С меню"
 
-#: src/lib/elementary/elm_toolbar.c:2332
+#: src/lib/elementary/elm_toolbar.c:2347
 msgid "Unselected"
 msgstr "Невыбрано"
 
-#: src/lib/elementary/elm_toolbar.c:2349
+#: src/lib/elementary/elm_toolbar.c:2364
 msgid "Toolbar Item"
 msgstr "Элемент панели инструментов"
+
+#~ msgid "Gengrid Item"
+#~ msgstr "Элемент сетки"

@@ -152,10 +152,10 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
 /**
  * @brief Inserts a new node inside an existing red black tree.
  *
- * @param root The root of an existing valid red black tree.
- * @param node The new node to insert.
- * @param cmp The callback that is able to compare two nodes.
- * @param data Private data to help the compare function.
+ * @param[in,out] root The root of an existing valid red black tree.
+ * @param[in] node The new node to insert.
+ * @param[in] cmp The callback that is able to compare two nodes.
+ * @param[in] data Private data to help the compare function.
  * @return The new root of the red black tree.
  *
  * This function inserts a new node in a valid red black tree. @c NULL is
@@ -167,10 +167,10 @@ EAPI Eina_Rbtree          *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbt
 /**
  * @brief Removes a node from an existing red black tree.
  *
- * @param root The root of a valid red black tree.
- * @param node The node to remove from the tree.
- * @param cmp The callback that is able to compare two nodes.
- * @param data Private data to help the compare function.
+ * @param[in,out] root The root of a valid red black tree.
+ * @param[in] node The node to remove from the tree.
+ * @param[in] cmp The callback that is able to compare two nodes.
+ * @param[in] data Private data to help the compare function.
  * @return The new root of the red black tree.
  *
  * This function removes a new node in a valid red black tree that should
@@ -182,20 +182,20 @@ EAPI Eina_Rbtree          *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbt
 /**
  * @brief Deletes all nodes from a valid red black tree.
  *
- * @param root The root of a valid red black tree.
- * @param func The callback that will free each node.
- * @param data Private data to help the compare function.
+ * @param[in,out] root The root of a valid red black tree.
+ * @param[in] func The callback that will free each node.
+ * @param[in] data Private data to help the compare function.
  */
 EAPI void                  eina_rbtree_delete(Eina_Rbtree *root, Eina_Rbtree_Free_Cb func, void *data) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Searches tree for a key using a comparison function.
  *
- * @param root The root of a valid red black tree.
- * @param key The key value to search for.
- * @param length The length of the specified key.
- * @param cmp Callback routine to compare two nodes.
- * @param data Private data to help the compare function.
+ * @param[in,out] root The root of a valid red black tree.
+ * @param[in] key The key value to search for.
+ * @param[in] length The length of the specified key.
+ * @param[in] cmp Callback routine to compare two nodes.
+ * @param[in] data Private data to help the compare function.
  *
  * @return The first matching node found in the red black tree, or
  * @p root if nothing was found.
@@ -206,7 +206,7 @@ static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, co
 /**
  * @brief Returns a new prefix iterator associated with a rbtree.
  *
- * @param root The root of rbtree.
+ * @param[in] root The root of rbtree.
  * @return A new iterator.
  *
  * This function returns a newly allocated iterator associated with @p
@@ -226,7 +226,7 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_prefix(const Eina_Rbtree *root) 
 /**
  * @brief Returns a new prefix iterator associated with a rbtree.
  *
- * @param root The root of rbtree.
+ * @param[in] root The root of rbtree.
  * @return A new iterator.
  *
  * This function returns a newly allocated iterator associated with @p
@@ -246,7 +246,7 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_infix(const Eina_Rbtree *root) E
 /**
  * @brief Returns a new prefix iterator associated with a rbtree.
  *
- * @param root The root of rbtree.
+ * @param[in] root The root of rbtree.
  * @return A new iterator.
  *
  * This function returns a newly allocated iterator associated with @p

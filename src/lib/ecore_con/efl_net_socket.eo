@@ -1,4 +1,4 @@
-interface Efl.Net.Socket (Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+interface Efl.Net.Socket extends Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
     [[The basic socket interface.
 
       This is built upon the three core Input/Output interfaces:

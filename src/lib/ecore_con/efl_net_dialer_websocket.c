@@ -735,7 +735,7 @@ _efl_net_dialer_websocket_job_receive(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 }
 
 static Eina_Value
-_efl_net_dialer_websocket_job(Eo *o, const Eina_Value v)
+_efl_net_dialer_websocket_job(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Net_Dialer_Websocket_Data *pd = efl_data_scope_get(o, MY_CLASS);
 
@@ -764,9 +764,9 @@ _efl_net_dialer_websocket_job_schedule(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
    loop = efl_loop_get(o);
    if (!loop) return;
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_job(loop),
-                                  .success = _efl_net_dialer_websocket_job,
-                                  .storage = &pd->job);
+   efl_future_then(o, efl_loop_job(loop),
+                   .success = _efl_net_dialer_websocket_job,
+                   .storage = &pd->job);
 }
 
 static void
@@ -1486,7 +1486,7 @@ _efl_net_dialer_websocket_binary_send(Eo *o, Efl_Net_Dialer_Websocket_Data *pd, 
 }
 
 static Eina_Value
-_efl_net_dialer_websocket_close_request_timeout(Eo *o, const Eina_Value v)
+_efl_net_dialer_websocket_close_request_timeout(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    DBG("server did not close the TCP socket, timeout");
    efl_event_callback_call(o, EFL_IO_CLOSER_EVENT_CLOSED, NULL);
@@ -1504,9 +1504,9 @@ _efl_net_dialer_websocket_close_request(Eo *o, Efl_Net_Dialer_Websocket_Data *pd
    if (pd->close_timeout)
      eina_future_cancel(pd->close_timeout);
 
-   efl_future_Eina_FutureXXX_then(o, efl_loop_timeout(efl_loop_get(o), 2.0),
-                                  .success = _efl_net_dialer_websocket_close_request_timeout,
-                                  .storage = &pd->close_timeout);
+   efl_future_then(o, efl_loop_timeout(efl_loop_get(o), 2.0),
+                   .success = _efl_net_dialer_websocket_close_request_timeout,
+                   .storage = &pd->close_timeout);
 
    efl_io_writer_can_write_set(o, EINA_FALSE);
 

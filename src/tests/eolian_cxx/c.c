@@ -5,6 +5,7 @@
 #include <Eo.h>
 
 #include "a.eo.h"
+#include "b.eo.h"
 #include "c.eo.h"
 
 struct _C_Data

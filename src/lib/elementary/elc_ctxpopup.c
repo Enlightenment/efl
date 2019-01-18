@@ -7,7 +7,7 @@
 #define EFL_UI_WIDGET_PROTECTED
 //#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -50,7 +50,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_ui_l10n_translation_update(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_List *l;
    Elm_Object_Item *it;
@@ -60,7 +60,7 @@ _elm_ctxpopup_efl_ui_translatable_translation_update(Eo *obj, Elm_Ctxpopup_Data 
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool
@@ -575,8 +575,7 @@ _elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
    evas_object_geometry_get(sd->parent, NULL, NULL, &parent_size.x, &parent_size.y);
    evas_object_resize(sd->bg, parent_size.x, parent_size.y);
 
-   evas_object_move(wd->resize_obj, rect.x, rect.y);
-   evas_object_resize(wd->resize_obj, rect.w, rect.h);
+   evas_object_geometry_set(wd->resize_obj, rect.x, rect.y, rect.w, rect.h);
 
    _show_signals_emit(obj, sd->dir);
 
@@ -668,13 +667,13 @@ _on_content_resized(void *data,
 }
 
 //FIXME: lost the content size when theme hook is called.
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    elm_widget_theme_object_set
      (obj, sd->bg, "ctxpopup", "bg", elm_widget_style_get(obj));
@@ -1060,7 +1059,9 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 
    //Background
    priv->bg = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default");
+   if (!elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
+     CRI("ctxpopup(%p) failed to set theme [efl/ctxpopup/bg/default]!", obj);
+
    edje_object_signal_callback_add
      (priv->bg, "elm,action,click", "*", _bg_clicked_cb, obj);
    evas_object_smart_member_add(priv->bg, obj);
@@ -1101,7 +1102,7 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Elm_Object_Item *it;
 
-   evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
+   if (sd->content) evas_object_event_callback_del(sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    _parent_detach(obj);
 
    //clear the items before clearing the ctxpopup as this will remove the list and all items
@@ -1169,8 +1170,7 @@ _elm_ctxpopup_hover_parent_set(Eo *obj, Elm_Ctxpopup_Data *sd, Evas_Object *pare
    evas_object_geometry_get(parent, &x, &y, &w, &h);
    if (parent && efl_isa(parent, EFL_UI_WIN_CLASS))
      x = y = 0;
-   evas_object_move(sd->bg, x, y);
-   evas_object_resize(sd->bg, w, h);
+   evas_object_geometry_set(sd->bg, x, y, w, h);
 
    if (sd->visible) elm_layout_sizing_eval(obj);
 }

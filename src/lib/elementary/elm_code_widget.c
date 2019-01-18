@@ -152,16 +152,12 @@ _elm_code_widget_fill_line_token(Evas_Textgrid_Cell *cells, int count, int start
 }
 
 static unsigned int
-_elm_code_widget_status_type_get(Elm_Code_Widget *widget, Elm_Code_Line *line, unsigned int col)
+_elm_code_widget_status_type_get(Elm_Code_Widget_Data *pd, Elm_Code_Line *line, unsigned int col)
 {
-   Elm_Code_Widget_Data *pd;
-
-   pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
-
    if (line->status != ELM_CODE_STATUS_TYPE_DEFAULT)
      return line->status;
 
-   if (pd->editable && pd->focussed && pd->cursor_line == line->number)
+   if (pd->editable && pd->focused && pd->cursor_line == line->number)
      return ELM_CODE_STATUS_TYPE_CURRENT;
 
    if (pd->line_width_marker > 0 && pd->line_width_marker == col-1)
@@ -312,33 +308,48 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 }
 
 static void
+_elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
+{
+   Evas_Coord cx, cy, cw, ch;
+
+   elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
+
+   if (!pd->cursor_rect)
+     {
+        pd->cursor_rect = elm_layout_add(widget);
+
+        if (!elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget)))
+          CRI("Failed to set layout!");
+        elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
+     }
+
+   evas_object_geometry_set(pd->cursor_rect, cx, cy, cw/8, ch);
+   evas_object_show(pd->cursor_rect);
+}
+
+static void
 _elm_code_widget_fill_cursor(Elm_Code_Widget *widget, unsigned int number, int gutter, int w)
 {
    Elm_Code_Widget_Data *pd;
-   Evas_Coord cx, cy, cw, ch;
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   if (pd->visible && pd->editable && pd->focussed && pd->cursor_line == number)
+   if (pd->visible && pd->editable && pd->focused && pd->cursor_line == number)
      {
         if (pd->cursor_col + gutter - 1 >= (unsigned int) w)
           return;
 
-        elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
-
-        if (!pd->cursor_rect)
+        if (pd->selection && !pd->selection->in_progress)
           {
-             pd->cursor_rect = elm_layout_add(widget);
+             Elm_Code_Line *line = elm_code_file_line_get(pd->code->file, number);
+             if (!line)
+               return;
 
-             if (!elm_layout_theme_set(pd->cursor_rect, "entry", "cursor", elm_widget_style_get(widget)))
-               CRI("Failed to set layout!");
-             elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
-
-             evas_object_resize(pd->cursor_rect, cw/8, ch);
+             if (!elm_code_widget_line_visible_get(widget, line))
+               return;
           }
 
-        evas_object_move(pd->cursor_rect, cx, cy);
-        evas_object_show(pd->cursor_rect);
+        _elm_code_widget_cursor_update(widget, pd);
      }
 }
 
@@ -406,7 +417,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         cells[x].codepoint = unichr;
         cells[x].bold = 0;
         cells[x].fg = ELM_CODE_TOKEN_TYPE_DEFAULT;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(pd, line, x - gutter + 1);
 
         charwidth = 1;
         if (unichr == '\t')
@@ -414,7 +425,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
         for (i = x + 1; i < x + charwidth && i < (unsigned int) w; i++)
           {
              cells[i].codepoint = 0;
-             cells[i].bg = _elm_code_widget_status_type_get(widget, line, i - gutter + 1);
+             cells[i].bg = _elm_code_widget_status_type_get(pd, line, i - gutter + 1);
           }
 
         _elm_code_widget_fill_whitespace(widget, unichr, &cells[x]);
@@ -423,7 +434,7 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      {
         cells[x].codepoint = 0;
         cells[x].bold = 0;
-        cells[x].bg = _elm_code_widget_status_type_get(widget, line, x - gutter + 1);
+        cells[x].bg = _elm_code_widget_status_type_get(pd, line, x - gutter + 1);
      }
 
    _elm_code_widget_fill_line_gutter(widget, cells, w, line);
@@ -435,6 +446,26 @@ _elm_code_widget_fill_line(Elm_Code_Widget *widget, Elm_Code_Line *line)
      _elm_code_widget_fill_whitespace(widget, '\n', &cells[length + gutter]);
 
    evas_object_textgrid_update_add(grid, 0, 0, w, 1);
+}
+
+static void
+_elm_code_widget_cursor_selection_set(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
+{
+   unsigned int end_line, end_col;
+
+   end_line = pd->selection->end_line;
+   end_col = pd->selection->end_col;
+
+   if (pd->selection->type == ELM_CODE_WIDGET_SELECTION_KEYBOARD)
+     return;
+
+   if ((pd->selection->start_line == pd->selection->end_line && pd->selection->end_col > pd->selection->start_col) ||
+       (pd->selection->start_line < pd->selection->end_line))
+     {
+        end_col++;
+     }
+
+   elm_code_widget_cursor_position_set(widget, end_line, end_col);
 }
 
 static void
@@ -462,7 +493,11 @@ _elm_code_widget_fill_range(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd,
         if (line)
           _elm_code_widget_fill_line(widget, line);
      }
+
+   if (pd->selection)
+     _elm_code_widget_cursor_selection_set(widget, pd);
 }
+
 static void
 _elm_code_widget_fill_update(Elm_Code_Widget *widget, unsigned int first_row, unsigned int last_row,
                              Elm_Code_Line *newline)
@@ -570,16 +605,8 @@ static void
 _elm_code_widget_selection_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Elm_Code_Widget *widget;
-   Elm_Code_Widget_Selection_Data *selection;
 
    widget = (Elm_Code_Widget *)data;
-
-   if (!elm_code_widget_selection_is_empty(widget))
-     {
-        selection = elm_code_widget_selection_normalized_get(widget);
-        elm_code_widget_cursor_position_set(widget, selection->start_line, selection->start_col);
-        free(selection);
-     }
 
    _elm_code_widget_refresh(widget, NULL);
 }
@@ -681,7 +708,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
      pd->cursor_col = elm_code_widget_line_text_column_width_to_position(widget, line_obj, position);
 
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CURSOR_CHANGED, widget);
-   _elm_code_widget_cursor_ensure_visible(widget);
+   if (!pd->selection || (pd->selection && pd->selection->in_progress))
+     _elm_code_widget_cursor_ensure_visible(widget);
 
    if (oldrow != pd->cursor_line)
      _elm_code_widget_refresh(widget, line_obj);
@@ -809,10 +837,13 @@ _elm_code_widget_line_status_toggle(Elm_Code_Widget *widget EINA_UNUSED, Elm_Cod
         elm_box_pack_after(pd->gridbox, status, grid);
         evas_object_data_set(grid, "status", status);
 
-        text = malloc((strlen(template) + strlen(line->status_text) + 1) * sizeof(char));
-        sprintf(text, template, line->status_text);
-        elm_object_text_set(status, text);
-        free(text);
+        if (line->status_text)
+          {
+             text = malloc((strlen(template) + strlen(line->status_text) + 1) * sizeof(char));
+             sprintf(text, template, line->status_text);
+             elm_object_text_set(status, text);
+             free(text);
+          }
      }
 }
 
@@ -901,6 +932,7 @@ _popup_menu_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (pd->hoversel) evas_object_del(pd->hoversel);
 
    pd->hoversel = elm_hoversel_add(obj);
+   elm_object_tree_focus_allow_set(pd->hoversel, EINA_FALSE);
    elm_widget_sub_object_add(obj, pd->hoversel);
    top = elm_widget_top_get(obj);
 
@@ -1139,6 +1171,11 @@ _elm_code_widget_mouse_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
    if (!pd->selection)
      if (col > 0 && row <= elm_code_file_lines_get(pd->code->file))
        elm_code_widget_selection_start(widget, row, col);
+
+   _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_MOUSE);
+   _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
+
+
    elm_code_widget_selection_end(widget, row, col);
 }
 
@@ -1160,6 +1197,8 @@ _elm_code_widget_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 
    if (pd->selection)
      {
+        _elm_code_widget_selection_in_progress_set(widget, EINA_FALSE);
+
         if (pd->selection->start_line == pd->selection->end_line &&
             pd->selection->start_col == pd->selection->end_col)
           elm_code_widget_selection_clear(widget);
@@ -1518,7 +1557,8 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 {
    Elm_Code *code;
    Elm_Code_Line *line, *oldline;
-   unsigned int row, col, oldlength, position;
+   Eina_Bool cursor_move = EINA_TRUE;
+   unsigned int row, col, oldlength, position = 0;
 
    code = elm_obj_code_widget_code_get(widget);
    elm_obj_code_widget_cursor_position_get(widget, &row, &col);
@@ -1529,6 +1569,9 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
         elm_code_widget_selection_start(widget, row, col);
         elm_code_widget_selection_end(widget, row + 1, 0);
         _elm_code_widget_change_selection_add(widget);
+
+        if (col >= line->length)
+          cursor_move = EINA_FALSE;
 
         elm_code_line_merge_down(line);
      }
@@ -1544,8 +1587,19 @@ _elm_code_widget_backspaceline(Elm_Code_Widget *widget, Eina_Bool nextline)
 
         elm_code_line_merge_up(line);
      }
+
    elm_code_widget_selection_clear(widget);
-// TODO construct and pass a change object
+
+   line = elm_code_file_line_get(code->file, row - 1);
+   if (line && cursor_move)
+     {
+        if (position)
+          elm_code_widget_cursor_position_set(widget, row - 1, position);
+        else
+          elm_code_widget_cursor_position_set(widget, row - 1, line->length + 1);
+     }
+
+   // TODO construct and pass a change object
    efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
@@ -1717,6 +1771,9 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
              if (!pd->selection)
                elm_code_widget_selection_start(widget, pd->cursor_line, pd->cursor_col - (backwards?1:0));
 
+             _elm_code_widget_selection_type_set(widget, ELM_CODE_WIDGET_SELECTION_KEYBOARD);
+             _elm_code_widget_selection_in_progress_set(widget, EINA_TRUE);
+
              if (pd->selection && pd->selection->start_line == pd->selection->end_line)
                {
                   if ((pd->selection->end_col == pd->selection->start_col && !backwards) ||
@@ -1757,6 +1814,7 @@ _elm_code_widget_key_down_cb(void *data, Evas *evas EINA_UNUSED,
                adjust = (pd->selection->end_line > pd->selection->start_line);
 
              elm_code_widget_selection_end(widget, pd->cursor_line, pd->cursor_col - (adjust?1:0));
+             _elm_code_widget_selection_in_progress_set(widget, EINA_FALSE);
           }
      }
 
@@ -1788,8 +1846,9 @@ _elm_code_widget_focused_event_cb(void *data, Evas_Object *obj,
    widget = (Elm_Code_Widget *)data;
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   pd->focussed = EINA_TRUE;
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
+   pd->focused = EINA_TRUE;
+   if (pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,focus", "elm");
 
    _elm_code_widget_refresh(obj, NULL);
 }
@@ -1804,8 +1863,9 @@ _elm_code_widget_unfocused_event_cb(void *data, Evas_Object *obj,
    widget = (Elm_Code_Widget *)data;
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
-   pd->focussed = EINA_FALSE;
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
+   pd->focused = EINA_FALSE;
+   if (pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,unfocus", "elm");
 
   _elm_code_widget_refresh(obj, NULL);
 }
@@ -1929,7 +1989,7 @@ _elm_code_widget_ensure_n_grid_rows(Elm_Code_Widget *widget, int rows)
 
    for (i = existing; i < rows; i++)
      {
-        grid = evas_object_textgrid_add(pd->gridbox);
+        grid = evas_object_textgrid_add(evas_object_evas_get(pd->gridbox));
         evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, 0.0);
         evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, 0.0);
         evas_object_show(grid);
@@ -2053,7 +2113,7 @@ _elm_code_widget_lines_visible_get(Eo *obj, Elm_Code_Widget_Data *pd)
 }
 
 EOLIAN static void
-_elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
+_elm_code_widget_font_set(Eo *obj, Elm_Code_Widget_Data *pd,
                           const char *name, Evas_Font_Size size)
 {
    Eina_List *item;
@@ -2070,6 +2130,10 @@ _elm_code_widget_font_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Data *pd,
      {
         evas_object_textgrid_font_set(grid, face, size * elm_config_scale_get());
      }
+
+   if (pd->cursor_rect && (eina_list_count(pd->grids) >= pd->cursor_line))
+     _elm_code_widget_cursor_update(obj, pd);
+
    if (pd->font_name)
      eina_stringshare_del((char *)pd->font_name);
    pd->font_name = eina_stringshare_add(face);
@@ -2231,6 +2295,8 @@ _elm_code_widget_tab_inserts_spaces_set(Eo *obj EINA_UNUSED, Elm_Code_Widget_Dat
                                         Eina_Bool spaces)
 {
    pd->tab_inserts_spaces = spaces;
+   if (!spaces)
+     elm_code_widget_code_get(obj)->config.indent_style_efl = EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
@@ -2275,15 +2341,15 @@ _elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    if (!efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)))
-     return EFL_UI_THEME_APPLY_FAILED;
+     return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _elm_code_widget_theme_refresh(obj, pd);
 
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 EOLIAN static int
@@ -2312,7 +2378,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
      elm_widget_theme_klass_set(obj, "code");
    elm_widget_theme_element_set(obj, "layout");
 
-   elm_object_focus_allow_set(obj, EINA_TRUE);
+   legacy_object_focus_handle(obj);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
    if (!elm_widget_theme_object_set(obj, wd->resize_obj,
@@ -2331,7 +2398,7 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    evas_object_event_callback_add(scroller, EVAS_CALLBACK_MOUSE_DOWN,
                                   _elm_code_widget_scroller_clicked_cb, obj);
 
-   background = elm_bg_add(scroller);
+   background = evas_object_rectangle_add(evas_object_evas_get(scroller));
    evas_object_size_hint_weight_set(background, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(background, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(background);

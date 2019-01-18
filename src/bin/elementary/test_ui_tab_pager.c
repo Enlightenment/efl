@@ -3,7 +3,6 @@
 #endif
 #include <Elementary.h>
 
-#define TAB_PAGE_NUM 5
 #define TAB_LABEL_COUNT 15
 #define TAB_ICON_COUNT 9
 
@@ -22,6 +21,9 @@ typedef struct _Tab_Change_Data {
    Eo *label_check;
    Eo *icon_check;
 } Tab_Change_Data;
+
+static int tab_label_count;
+static int tab_icon_count;
 
 static void _current_cb(void *data, Evas_Object *obj, void *event_info);
 static void _pack_cb(void *data, Evas_Object *obj, void *event_info);
@@ -44,14 +46,14 @@ static char *tab_icons[] = {
 
 static char *tab_label_get()
 {
-	int index = rand() % (TAB_LABEL_COUNT - 1);
-	return tab_labels[index];
+	if (tab_label_count == TAB_LABEL_COUNT) tab_label_count = 0;
+	return tab_labels[tab_label_count++];
 }
 
 static char *tab_icon_get()
 {
-	int index = rand() % (TAB_ICON_COUNT - 1);
-	return tab_icons[index];
+	if (tab_icon_count == TAB_ICON_COUNT) tab_icon_count = 0;
+	return tab_icons[tab_icon_count++];
 }
 
 static void
@@ -79,15 +81,15 @@ content_add(Eo *parent, char *text)
 {
    Eo *page;
    char buf[PATH_MAX];
-   page = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, parent);
+   page = efl_add(EFL_UI_LAYOUT_CLASS, parent);
 
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
 
-   page = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, parent,
+   page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
                   efl_file_set(efl_added, buf, "page_layout"),
                   efl_text_set(efl_part(efl_added, "text"), text),
                   efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                  efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
+                  efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE));
 
    return page;
 }
@@ -126,7 +128,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del_cb, ad));
 
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
-   layout = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win,
+   layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
                     efl_file_set(efl_added, buf, "tab_page_layout"),
                     efl_content_set(win, efl_added));
 
@@ -144,7 +146,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    tp = efl_add(EFL_UI_TAB_PAGER_CLASS, layout,
                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
+                efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                 efl_ui_pager_page_size_set(efl_added, EINA_SIZE2D(-1, -1)),
                 efl_ui_pager_padding_set(efl_added, 20),
                 efl_content_set(efl_part(layout, "tab_pager"), efl_added));
@@ -157,6 +159,9 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    efl_ui_pager_transition_set(tp, tran);
 */
 
+   tab_label_count = 0;
+   tab_icon_count = 0;
+
    for (i = 0 ; i < 3 ; i ++)
    {
       page = tab_page_add(tp);
@@ -165,7 +170,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    efl_ui_pager_current_page_set(tp, 0);
 
-   ad = calloc(1, sizeof(ad));
+   ad = (App_Data*)calloc(1, sizeof(App_Data));
    ad->navi = navi;
    ad->tab_pager = tp;
 

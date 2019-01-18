@@ -527,46 +527,29 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
    _retval = EXIT_FAILURE;
 }
 
-static char *
-_socket_home_get(void)
-{
-   // get possible debug daemon socket directory base
-   char *ret = NULL;
-   const char *dir = getenv("XDG_RUNTIME_DIR");
-   if (!dir) dir = eina_environment_home_get();
-   if (!dir) dir = eina_environment_tmp_get();
-   if (dir)
-     {
-        ret = calloc(1024, 1);
-        strncpy(ret, dir, 1023);
-     }
-   return ret;
-}
-
 static Eina_Bool
 _local_server_create(void)
 {
    Eo *loop;
    Eina_Error err;
-   char *socket_path = _socket_home_get();
    mode_t mask = 0;
    char path[512];
    Eina_Bool ret = EINA_FALSE;
 
-   snprintf(path, sizeof(path) - 1, "%s/%s", socket_path, LOCAL_SERVER_PATH);
+   eina_vpath_resolve_snprintf(path, sizeof(path), "(:usr.run:)/%s", LOCAL_SERVER_PATH);
    if (mkdir(path, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_PATH");
         goto end;
      }
-   snprintf(path, sizeof(path) - 1, "%s/%s/%s", socket_path, LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
+   eina_vpath_resolve_snprintf(path, sizeof(path), "(:usr.run:)/%s/%s", LOCAL_SERVER_PATH, LOCAL_SERVER_NAME);
    if (mkdir(path, S_IRWXU) < 0 && errno != EEXIST)
      {
         perror("mkdir SERVER_NAME");
         goto end;
      }
    mask = umask(S_IRWXG | S_IRWXO);
-   snprintf(path, sizeof(path) - 1, "%s/%s/%s/%i", socket_path,
+   eina_vpath_resolve_snprintf(path, sizeof(path) - 1, "(:usr.run:)/%s/%s/%i",
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
 
    loop = efl_main_loop_get();
@@ -610,7 +593,6 @@ end:
         efl_del(_local_server);
         _local_server = NULL;
      }
-   free(socket_path);
    return ret;
 }
 

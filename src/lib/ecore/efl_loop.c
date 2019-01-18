@@ -61,7 +61,7 @@ static void _clean_old_environ(void);
 EAPI Eo *
 efl_main_loop_get(void)
 {
-   return efl_app_loop_main_get(EFL_APP_CLASS);
+   return efl_app_main_get(EFL_APP_CLASS);
 }
 
 EOLIAN static void
@@ -76,7 +76,6 @@ _efl_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
    return _ecore_main_loop_iterate_may_block(obj, pd, may_block);
 }
 
-// FIXME: This should return an Eina_Value, but that doesn't work at the moment
 EOLIAN static Eina_Value *
 _efl_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
@@ -365,25 +364,13 @@ _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 
-static void
-_efl_loop_arguments_cleanup(Eina_Array *arga)
-{
-   Eina_Stringshare *s;
-
-   while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
-   eina_array_free(arga);
-}
-
 static Eina_Value
-_efl_loop_arguments_send(void *data, const Eina_Value v,
-                         const Eina_Future *dead EINA_UNUSED)
+_efl_loop_arguments_send(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 
 {
    static Eina_Bool initialization = EINA_TRUE;
    Efl_Loop_Arguments arge;
    Eina_Array *arga = data;
-
-   if (v.type == EINA_VALUE_TYPE_ERROR) goto on_error;
 
    arge.argv = arga;
    arge.initialization = initialization;
@@ -391,9 +378,17 @@ _efl_loop_arguments_send(void *data, const Eina_Value v,
 
    efl_event_callback_call(efl_main_loop_get(),
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
-on_error:
-   _efl_loop_arguments_cleanup(arga);
    return v;
+}
+
+static void
+_efl_loop_arguments_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Eina_Array *arga = data;
+   Eina_Stringshare *s;
+
+   while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
+   eina_array_free(arga);
 }
 
 // It doesn't make sense to send those argument to any other mainloop
@@ -402,7 +397,6 @@ on_error:
 EAPI void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
-   Eina_Future *job;
    Eina_Array *arga;
    int i = 0;
 
@@ -414,18 +408,18 @@ ecore_loop_arguments_send(int argc, const char **argv)
         efl_task_arg_append(efl_main_loop_get(), argv[i]);
      }
 
-   job = eina_future_then(efl_loop_job(efl_main_loop_get()),
-                          _efl_loop_arguments_send, arga);
-   efl_future_Eina_FutureXXX_then(efl_main_loop_get(), job);
+   efl_future_then(efl_main_loop_get(), efl_loop_job(efl_main_loop_get()),
+                   .success = _efl_loop_arguments_send,
+                   .free = _efl_loop_arguments_cleanup,
+                   .data = arga);
 }
 
 static Eina_Future *
 _efl_loop_job(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   Eina_Future_Scheduler *sched = efl_loop_future_scheduler_get(obj);
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then
-     (obj, eina_future_resolved(sched, EINA_VALUE_EMPTY));
+   return efl_future_then(obj,
+                          eina_future_resolved(efl_loop_future_scheduler_get(obj), EINA_VALUE_EMPTY));
 }
 
 EOLIAN static void
@@ -481,7 +475,7 @@ _efl_loop_idle(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    d->promise = p;
 
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+   return efl_future_then(obj, eina_future_new(p));
 
 idler_error:
    d->idler = NULL;
@@ -546,7 +540,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
    d->promise = p;
 
    // NOTE: Eolian should do efl_future_then() to bind future to object.
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));
+   return efl_future_then(obj, eina_future_new(p));
 
 timer_error:
    d->timer = NULL;
@@ -906,12 +900,5 @@ efl_loop_future_scheduler_get(const Eo *obj)
 
 #define EFL_LOOP_EXTRA_OPS \
   EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process)
-
-EAPI Eina_Promise *
-efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb cancel_cb, const void *data)
-{
-   return eina_promise_new(efl_loop_future_scheduler_get(obj),
-                           cancel_cb, data);
-}
 
 #include "efl_loop.eo.c"

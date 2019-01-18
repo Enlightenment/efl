@@ -68,7 +68,6 @@ struct _Eio_Model_Data
    Eina_Error error;
 
    Eina_Bool listed : 1;
-   Eina_Bool delete_me : 1;
 };
 
 #endif

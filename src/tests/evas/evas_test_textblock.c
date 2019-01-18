@@ -105,8 +105,9 @@ while (0)
 EFL_START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
+   Evas_Textblock_Cursor *cur2;
    Evas_Coord x, y, w, h;
-   size_t i, len;
+   size_t i, j, len;
    Evas_Coord nw, nh;
    Evas_BiDi_Direction dir;
    const char *buf = "This is a<br/> test.<ps/>Lets see if this works.<ps/>עוד פסקה.";
@@ -973,6 +974,27 @@ EFL_START_TEST(evas_textblock_cursor)
           }
         evas_textblock_cursor_free(cur2);
      }
+
+   /* Testing for grapheme cluster */
+   cur2 = evas_object_textblock_cursor_new(tb);
+   evas_object_textblock_text_markup_set(tb, "ഹലോ");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_pos_set(cur2, 0);
+
+   i = j = 0;
+   while (evas_textblock_cursor_cluster_next(cur)) i++;
+   ck_assert_int_eq(i, 2);
+
+   while (evas_textblock_cursor_char_next(cur2)) j++;
+   ck_assert_int_eq(j, 4);
+
+   i = j = 0;
+   while (evas_textblock_cursor_cluster_prev(cur)) i++;
+   ck_assert_int_eq(i, 2);
+
+   while (evas_textblock_cursor_char_prev(cur2)) j++;
+   ck_assert_int_eq(j, 4);
+
    END_TB_TEST();
 }
 EFL_END_TEST
@@ -2695,23 +2717,26 @@ EFL_START_TEST(evas_textblock_geometries)
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
-   ck_assert_int_eq(eina_list_count(rects), 3);
+   ck_assert_int_eq(eina_list_count(rects), 2);
 
      {
-        Evas_Coord y1, y2;
+        Evas_Coord x1, y1, x2, y2;
         void *tmp = tr;
-        /* We have 3 rectangles */
+        /* We have 2 rectangles */
         Eina_Iterator *itr = it;
         fail_if (!eina_iterator_next(itr, &tmp));
         tr = tmp;
+        x1 = tr->x;
         y1 = tr->y;
         fail_if (!eina_iterator_next(itr, &tmp));
         tr = tmp;
+        x2 = tr->x;
         y2 = tr->y;
 
-        /* Basically it means that the "extending" rectangle should not somehow
-         * reach the second line in this example. */
-        ck_assert_int_eq(y1, y2);
+        /* These rectangles must be placed without overlapping.
+         * In this test case, we expect to see a rect for each line. */
+        fail_if((x1 == x2) && (y1 == y2));
+        ck_assert_int_ne(y1, y2);
         eina_iterator_free(it);
      }
 
@@ -4043,7 +4068,7 @@ EFL_START_TEST(evas_textblock_obstacle)
       "This is an example text to demonstrate the textblock object"
       " with obstacle objects support."
       " Any evas object <item size=72x16></item>can register itself as an obstacle to the textblock"
-      " object. Upon registring, it affects the layout of the text in"
+      " object. Upon registering, it affects the layout of the text in"
       " certain situations. Usually, when the obstacle shows above the text"
       " area, it will cause the layout of the text to split and move"
       " parts of it, so that all text area is apparent.";
@@ -4123,6 +4148,9 @@ EFL_START_TEST(evas_textblock_hyphenation)
    Evas_Coord w, fw;
 
    const char *buf = "Automati-";
+
+   setenv("EVAS_DICTS_HYPHEN_DIR", TESTS_DIC_DIR, 1);
+
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    evas_object_resize(tb, w, 100);
@@ -4176,8 +4204,6 @@ EFL_START_TEST(evas_textblock_hyphenation)
 
    evas_object_textblock_text_markup_set(tb, buf);
    _hyphenation_width_stress(tb, cur);
-
-   setenv("EVAS_DICTS_HYPHEN_DIR", TESTS_DIC_DIR, 1);
 
    buf = "europäi-";
    evas_object_textblock_text_markup_set(tb, buf);
@@ -4537,7 +4563,7 @@ EFL_START_TEST(efl_canvas_text_simple)
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_canvas_text_cursor)
+EFL_START_TEST(efl_text)
 {
    START_TB_TEST();
 
@@ -4570,6 +4596,55 @@ EFL_START_TEST(efl_canvas_text_cursor)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_text_cursor)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+   int pos;
+
+   const char *buf = "abcdefghij";
+   efl_text_set(txt, buf);
+   fail_if(strcmp(efl_text_get(txt), buf));
+
+   efl_text_cursor_line_jump_by(txt, cur, -1);
+   pos = efl_text_cursor_position_get(txt, cur);
+   ck_assert_int_eq(pos, 0);
+   efl_text_cursor_line_jump_by(txt, cur, 1);
+   pos = efl_text_cursor_position_get(txt, cur);
+   ck_assert_int_eq(pos, 10);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
+
+EFL_START_TEST(efl_canvas_text_markup)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+   Efl_Text_Cursor_Cursor *start, *end;
+   char *res;
+
+   start = efl_text_cursor_new(txt);
+   end   = efl_text_cursor_new(txt);
+
+   efl_text_set(txt, "\n\n\n");
+
+   efl_text_cursor_position_set(txt, start, 1);
+   efl_text_cursor_position_set(txt, end, 2);
+   res = efl_text_markup_range_get(txt, start, end);
+   ck_assert_str_eq(res, "<br>");
+   free(res);
+
+   efl_text_set(txt, "a\u2029bc\ndef\n\u2029");
+   efl_text_cursor_position_set(txt, start, 2);
+   efl_text_cursor_position_set(txt, end, 5);
+   res = efl_text_markup_range_get(txt, start, end);
+   ck_assert_str_eq(res, "bc<br>");
+   free(res);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4599,6 +4674,8 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
    tcase_add_test(tc, efl_canvas_text_simple);
+   tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
+   tcase_add_test(tc, efl_canvas_text_markup);
 }
 

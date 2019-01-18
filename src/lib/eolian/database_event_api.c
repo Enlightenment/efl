@@ -14,6 +14,13 @@ eolian_event_type_get(const Eolian_Event *event)
    return event->type;
 }
 
+EAPI const Eolian_Class *
+eolian_event_class_get(const Eolian_Event *event)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(event, NULL);
+   return event->klass;
+}
+
 EAPI const Eolian_Documentation *
 eolian_event_documentation_get(const Eolian_Event *event)
 {

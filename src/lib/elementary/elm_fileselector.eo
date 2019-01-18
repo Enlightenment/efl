@@ -1,6 +1,6 @@
-class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
-                        Efl.Access.Widget.Action,
-                        Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy)
+class Elm.Fileselector extends Efl.Ui.Layout implements Elm.Interface.Fileselector,
+                        Efl.Access.Widget.Action, Efl.Ui.Focus.Composition,
+                        Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary fileselector class]]
    legacy_prefix: elm_fileselector;
@@ -37,7 +37,6 @@ class Elm.Fileselector (Efl.Ui.Layout.Object, Elm.Interface.Fileselector,
       Efl.Object.constructor;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.focus_state_apply;
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.selected_model { get; set; }
       Elm.Interface.Fileselector.custom_filter_append;

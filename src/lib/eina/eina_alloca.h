@@ -42,11 +42,12 @@
 #   ifdef  __cplusplus
 extern "C"
 #   endif
+
 /**
  * @brief Allocates memory in the stack frame of the caller, so that it
  * is automatically freed when the caller returns.
  *
- * @param size Number of bytes of space to allocate.
+ * @param[in] size Number of bytes of space to allocate.
  * @return Pointer to beginning of the allocated space.
  *
  * @see alloca(3) for more details.

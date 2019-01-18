@@ -5,7 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -50,7 +50,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_diskselector_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
+_elm_diskselector_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Diskselector_Data *sd)
 {
    Elm_Diskselector_Item_Data *it;
    Eina_List *l;
@@ -811,18 +811,18 @@ _theme_data_get(Evas_Object *obj)
    else sd->minh = -1;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item_Data *it;
    Evas_Object *blank;
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
@@ -1417,6 +1417,7 @@ _elm_diskselector_efl_object_constructor(Eo *obj, Elm_Diskselector_Data *_pd EIN
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   legacy_object_focus_handle(obj);
 
    return obj;
 }

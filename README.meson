@@ -1,0 +1,51 @@
+# BUILDING EFL WITH MESON
+
+ Building, testing, installing:
+    mkdir build
+    cd build
+    meson ..
+    ninja all
+    ninja test
+    sudo ninja install
+
+In autotools there have been a few flags that are used to disable loaders. In meson the following four disbler arrays are used:
+
+   emotion-generic-loaders-disabler
+
+   emotion-loaders-disabler
+
+   ecore-imf-loaders-disabler
+
+   evas-loaders-disabler
+
+Autotools options that are converted are:
+
+  --disable-poppler -> Disable pdf loader
+  --disable-spectre -> Disable ps loader
+  --disable-libraw -> Disable raw loader
+  --disable-librsvg -> Disable svg loader
+  --disable-xcf -> Disable xcf loader
+  --disable-xim -> Disable xim loader
+  --disable-scim -> Disable scim loader
+  --disable-ibus -> Disable ibus loader
+  --enable-xine -> Disable xine loader
+  --enable-libvlc -> Disable vlc loader
+  --disable-librsvg -> Disable svg loader
+
+The following options are dropped as they did not affect compilation
+  --enable-lua-old
+  --enable-cancel-ok
+  --enable-debug
+  --disable-quick-launch
+  --enable-tile-rotate
+
+The following options are merged into the pixman option
+  --enable-pixman-font
+  --enable-pixman-rect
+  --enable-pixman-line
+  --enable-pixman-poly
+  --enable-pixman-image
+  --enable-pixman-image-scale-sample
+
+
+--disable-valgrind Is dropped, and handled due to the build profile, this can be handled with --buildtype release or plain.

@@ -1,0 +1,12 @@
+class Aux_A extends Aux_C  {
+    methods {
+        baz {}
+    }
+    events {
+        test2: void;
+    }
+    implements {
+        Aux_C.foo;
+        Aux_C.bar;
+    }
+}

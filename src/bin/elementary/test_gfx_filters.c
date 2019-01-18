@@ -238,8 +238,8 @@ _code_changed_hack(void *data, const Efl_Event *ev EINA_UNUSED)
    Eina_Future *f;
 
    f = eina_future_then(efl_loop_job(efl_loop_get(data)),
-                        _code_changed, data);
-   efl_future_Eina_FutureXXX_then(data, f);
+                        _code_changed, data, NULL);
+   efl_future_then(data, f);
 }
 
 static void
@@ -346,7 +346,8 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, -1.0, 0.0));
+                     efl_gfx_size_hint_align_set(efl_added, 0.5, 0.0),
+                     efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE));
       efl_pack(box, box2);
 
       /* FIXME: Efl.Ui.Text doesn't work as expected. */
@@ -375,7 +376,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       o = efl_add(EFL_UI_BUTTON_CLASS, win,
                   efl_text_set(efl_added, "Flip"),
                   efl_gfx_size_hint_weight_set(efl_added, 0.0, 1.0),
-                  efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
+                  efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                   efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _flip_click, win));
       efl_pack(box2, o);
    }
@@ -384,7 +385,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, -1.0, 0.5),
+                     efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                      efl_pack_padding_set(efl_added, 5, 5, 1),
                      efl_gfx_size_hint_margin_set(efl_added, 5, 5, 5, 5),
                      efl_pack_align_set(efl_added, 0, 0.5));
@@ -453,7 +454,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                     efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                     efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                      efl_pack_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 
@@ -469,7 +470,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
                          efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                          efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
-                         efl_gfx_size_hint_align_set(efl_added, -1.0, -1.0),
+                         efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                          efl_pack_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 

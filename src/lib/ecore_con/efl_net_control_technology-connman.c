@@ -348,15 +348,11 @@ static void
 _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eina_Promise *promise = data;
-   Eo *o = eldbus_pending_data_get(eina_promise_data_get(promise), ".object");
-   Efl_Net_Control_Technology_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const char *err_name, *err_msg;
 
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   pd->pending = eina_list_remove(pd->pending, pending);
    if (eldbus_message_error_get(msg, &err_name, &err_msg))
      {
+        Eo *o = eldbus_pending_data_get(pending, ".object");
         Eina_Error err = EINVAL;
 
         if (strcmp(err_name, "net.connman.Error.NotSupported") == 0)
@@ -370,26 +366,29 @@ _efl_net_control_technology_scan_cb(void *data, const Eldbus_Message *msg, Eldbu
    eina_promise_resolve(promise, EINA_VALUE_EMPTY);
 }
 
+static Eina_Value
+_efl_net_control_technology_scan_promise_cancel(Eo *o EINA_UNUSED, void *data, Eina_Error error)
+{
+   Eldbus_Pending *p = data;
+
+   if (error == ECANCELED)
+     {
+        DBG("cancel pending scan %p", p);
+        eldbus_pending_cancel(p);
+     }
+
+   return eina_value_error_init(error);
+}
+
 static void
-_efl_net_control_technology_scan_promise_del(void *data, const Eina_Promise *dead_ptr)
+_efl_net_control_technology_scan_promise_del(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Eldbus_Pending *p = data;
    Efl_Net_Control_Technology_Data *pd;
-   Eo *o;
 
-   if (!p) return ;
-
-   o = eldbus_pending_data_get(p, ".object");
    pd = efl_data_scope_get(o, MY_CLASS);
 
-   EINA_SAFETY_ON_NULL_RETURN(pd);
-
-   p = eina_promise_data_get(dead_ptr);
-   if (!p) return; /* already gone, nothing to do */
-
    pd->pending = eina_list_remove(pd->pending, p);
-   DBG("cancel pending scan %p", p);
-   eldbus_pending_cancel(p);
 }
 
 EOLIAN static Eina_Future *
@@ -399,8 +398,7 @@ _efl_net_control_technology_scan(Eo *o, Efl_Net_Control_Technology_Data *pd)
    Eina_Promise *promise;
    Eina_Future *f = NULL;
 
-   promise = eina_promise_new(efl_loop_future_scheduler_get(o),
-                              _efl_net_control_technology_scan_promise_del, NULL);
+   promise = efl_loop_promise_new(o);
    EINA_SAFETY_ON_NULL_RETURN_VAL(promise, NULL);
 
    f = eina_future_new(promise);
@@ -410,14 +408,16 @@ _efl_net_control_technology_scan(Eo *o, Efl_Net_Control_Technology_Data *pd)
    EINA_SAFETY_ON_NULL_GOTO(p, error_dbus);
 
    pd->pending = eina_list_append(pd->pending, p);
-   eina_promise_data_set(promise, p);
    eldbus_pending_data_set(p, ".object", o);
 
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f,
+                          .error = _efl_net_control_technology_scan_promise_cancel,
+                          .free = _efl_net_control_technology_scan_promise_del,
+                          .data = p);
 
  error_dbus:
    eina_promise_reject(promise, ENOSYS);
-   return efl_future_Eina_FutureXXX_then(o, f);
+   return efl_future_then(o, f);
 }
 
 const char *

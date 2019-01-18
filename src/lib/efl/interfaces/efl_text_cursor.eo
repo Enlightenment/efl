@@ -9,7 +9,7 @@ enum Efl.Text_Cursor_Get_Type {
    selection_begin, [[Selection begin cursor state]]
    selection_end,   [[Selection end cursor state]]
    preedit_start,   [[Pre-edit start cursor state]]
-   preedit_end,     [[Pre-edit end cursor starge]]
+   preedit_end,     [[Pre-edit end cursor state]]
    user,            [[User cursor state]]
    user_extra       [[User extra cursor state]]
 }
@@ -145,6 +145,20 @@ interface Efl.Text_Cursor {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
+      cursor_cluster_next {
+         [[Advances to the next grapheme cluster]]
+         legacy: null;
+         params {
+            /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
+         }
+      }
+      cursor_cluster_prev {
+         [[Advances to the previous grapheme cluster]]
+         legacy: null;
+         params {
+            /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
+         }
+      }
       cursor_paragraph_char_first {
          [[Advances to the first character in this paragraph]]
          legacy: null;
@@ -225,6 +239,17 @@ interface Efl.Text_Cursor {
       }
       cursor_coord_set {
          [[Set cursor coordinates]]
+         legacy: null;
+         params {
+            /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
+            @in x: int; [[X coord to set by.]]
+            @in y: int; [[Y coord to set by.]]
+         }
+      }
+      cursor_cluster_coord_set {
+         [[Set cursor coordinates according to grapheme clusters.
+           It does not allow to put a cursor to the middle of a grapheme cluster.
+	 ]]
          legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]

@@ -50,6 +50,8 @@ struct _Elm_Transit
         double current;
         double revert_start;
         double revert_elapsed;
+        double revert_paused;
+        double revert_delayed;
      } time;
    struct
      {
@@ -58,7 +60,10 @@ struct _Elm_Transit
         Eina_Bool reverse;
      } repeat;
    double progress;
-   double revert_begin_progress, revert_duration, total_revert_time;
+   double inter_progress;
+   double revert_begin_progress;
+   double revert_duration;
+   double total_revert_time;
    unsigned int effects_pending_del;
    int walking;
    double v[4];
@@ -192,8 +197,8 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
    //recover the states of the object.
    if (!transit->state_keep)
      {
-        evas_object_move(obj, obj_data->state.x, obj_data->state.y);
-        evas_object_resize(obj, obj_data->state.w, obj_data->state.h);
+        evas_object_geometry_set(obj, obj_data->state.x, obj_data->state.y,
+                                 obj_data->state.w, obj_data->state.h);
         evas_object_color_set(obj, obj_data->state.r, obj_data->state.g,
                               obj_data->state.b, obj_data->state.a);
         if (obj_data->state.visible) evas_object_show(obj);
@@ -299,7 +304,7 @@ _transit_del(Elm_Transit *transit)
    free(transit);
 }
 
-//If the transit is deleted then EINA_FALSE is retruned.
+//If the transit is deleted then EINA_FALSE is returned.
 static Eina_Bool
 _transit_animate_op(Elm_Transit *transit, double progress)
 {
@@ -334,12 +339,11 @@ _transit_animate_cb(void *data)
    double elapsed_time, duration, revert_progress;
 
    transit->time.current = ecore_loop_time_get();
-   elapsed_time = transit->time.current - transit->time.begin - 2 * transit->total_revert_time;
-   duration = transit->time.duration + transit->time.delayed;
-   if (elapsed_time > duration)
-     elapsed_time = duration;
-
+   elapsed_time = (transit->time.current - transit->time.begin - transit->time.delayed)
+      - (2 * transit->total_revert_time);
+   duration = transit->time.duration;
    transit->progress = elapsed_time / duration;
+
    if (transit->revert_mode && transit->revert_begin_progress == 0)
      {
         transit->revert_begin_progress = transit->progress;
@@ -348,10 +352,14 @@ _transit_animate_cb(void *data)
 
    if (transit->revert_mode)
      {
-        transit->time.revert_elapsed = transit->time.current - transit->time.revert_start;
+        transit->time.revert_elapsed =
+           (transit->time.current - transit->time.revert_start - transit->time.revert_delayed);
         revert_progress = transit->time.revert_elapsed / duration;
         transit->progress = transit->revert_begin_progress - revert_progress;
      }
+
+   /* Intervention Progress */
+   transit->progress += transit->inter_progress;
 
    switch (transit->tween_mode)
      {
@@ -405,17 +413,16 @@ _transit_animate_cb(void *data)
    /* Reverse? */
    if (transit->repeat.reverse) transit->progress = 1 - transit->progress;
 
-   if (transit->time.duration > 0)
-     {
-        if (!_transit_animate_op(transit, transit->progress))
-          return ECORE_CALLBACK_CANCEL;
-     }
+   if (!_transit_animate_op(transit, transit->progress))
+     return ECORE_CALLBACK_CANCEL;
 
    if (transit->revert_mode && (transit->progress <= 0 || transit->progress >= 1))
      {
         transit->revert_mode = EINA_FALSE;
         transit->time.begin = ecore_loop_time_get();
+        transit->time.revert_delayed = 0;
         transit->total_revert_time = 0;
+        transit->inter_progress = 0;
         if ((transit->repeat.count >= 0) &&
             (transit->repeat.current == transit->repeat.count) &&
             ((!transit->auto_reverse) || transit->repeat.reverse))
@@ -429,7 +436,9 @@ _transit_animate_cb(void *data)
      }
 
    /* Not end. Keep going. */
-   if (elapsed_time < duration || transit->revert_mode) return ECORE_CALLBACK_RENEW;
+   if ((!transit->repeat.reverse && transit->progress < 1) ||
+        (transit->repeat.reverse && transit->progress > 0) ||
+        transit->revert_mode) return ECORE_CALLBACK_RENEW;
 
    /* Repeat and reverse and time done! */
    if ((transit->repeat.count >= 0) &&
@@ -450,7 +459,9 @@ _transit_animate_cb(void *data)
    else transit->repeat.reverse = EINA_TRUE;
 
    transit->time.begin = ecore_loop_time_get();
+   transit->time.delayed = 0;
    transit->total_revert_time = 0;
+   transit->inter_progress = 0;
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -561,7 +572,6 @@ elm_transit_add(void)
 
    transit->v[0] = 1.0;
    transit->v[1] = 0.0;
-   transit->revert_mode = EINA_FALSE;
    transit->smooth = EINA_TRUE;
 
    return transit;
@@ -740,6 +750,13 @@ elm_transit_repeat_times_set(Elm_Transit *transit, int repeat)
 }
 
 EAPI int
+elm_transit_current_repeat_times_get(const Elm_Transit *transit)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
+   return transit->repeat.current;
+}
+
+EAPI int
 elm_transit_repeat_times_get(const Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit, 0);
@@ -790,11 +807,6 @@ EAPI void
 elm_transit_duration_set(Elm_Transit *transit, double duration)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
-   if (transit->animator)
-     {
-        WRN("elm_transit does not allow one to set the duration time in operating! : transit=%p", transit);
-        return;
-     }
    transit->time.duration = duration;
 }
 
@@ -834,14 +846,25 @@ elm_transit_go(Elm_Transit *transit)
 
    ELM_SAFE_FREE(transit->go_in_timer, ecore_timer_del);
 
+   Ecore_Evas *ee, *first_ee = NULL;
    Eina_List *elist;
-   Evas_Object *obj;
+   Evas_Object *obj, *first = NULL;
+   Eina_Bool same = EINA_TRUE;
 
    ELM_SAFE_FREE(transit->animator, ecore_animator_del);
 
+   if (transit->objs)
+     {
+        first = eina_list_data_get(transit->objs);
+        first_ee = ecore_evas_ecore_evas_get(evas_object_evas_get(first));
+     }
    EINA_LIST_FOREACH(transit->objs, elist, obj)
-     _transit_obj_data_save(obj);
-
+     {
+        _transit_obj_data_save(obj);
+        ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        if (ee != first_ee)
+          same = EINA_FALSE;
+     }
    if (!transit->event_enabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
@@ -850,11 +873,18 @@ elm_transit_go(Elm_Transit *transit)
 
    transit->time.paused = 0;
    transit->time.delayed = 0;
+   transit->time.revert_paused = 0;
+   transit->time.revert_delayed = 0;
    transit->total_revert_time = 0;
    transit->revert_mode = EINA_FALSE;
    transit->time.begin = ecore_loop_time_get();
-   transit->animator = ecore_animator_add(_transit_animate_cb, transit);
 
+   if (!same || !first)
+     transit->animator = ecore_animator_add(_transit_animate_cb, transit);
+   else
+     transit->animator = ecore_evas_animator_add(first,
+                                                 _transit_animate_cb,
+                                                 transit);
    _transit_animate_cb(transit);
 }
 
@@ -876,18 +906,34 @@ elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused)
 
    if (paused)
      {
-        if (transit->time.paused > 0)
-          return;
+        if (transit->revert_mode)
+          {
+             if (transit->time.revert_paused > 0)return;
+             transit->time.revert_paused = ecore_loop_time_get();
+          }
+        else
+          {
+             if (transit->time.paused > 0)return;
+             transit->time.paused = ecore_loop_time_get();
+          }
         ecore_animator_freeze(transit->animator);
-        transit->time.paused = ecore_loop_time_get();
      }
    else
      {
-        if (transit->time.paused == 0)
-          return;
-        ecore_animator_thaw(transit->animator);
-        transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
-        transit->time.paused = 0;
+        if (transit->revert_mode)
+          {
+             if (transit->time.revert_paused == 0) return;
+             ecore_animator_thaw(transit->animator);
+             transit->time.revert_delayed += (ecore_loop_time_get() - transit->time.revert_paused);
+             transit->time.revert_paused = 0;
+          }
+        else
+          {
+             if (transit->time.paused == 0) return;
+             ecore_animator_thaw(transit->animator);
+             transit->time.delayed += (ecore_loop_time_get() - transit->time.paused);
+             transit->time.paused = 0;
+          }
      }
 }
 
@@ -900,6 +946,17 @@ elm_transit_paused_get(const Elm_Transit *transit)
      return EINA_FALSE;
 
    return EINA_TRUE;
+}
+
+EAPI void
+elm_transit_progress_value_set(Elm_Transit *transit, double progress)
+{
+   ELM_TRANSIT_CHECK_OR_RETURN(transit);
+
+   if (progress < 0) progress = 0;
+   else if (progress > 1) progress = 1;
+
+   transit->inter_progress = (progress - transit->progress);
 }
 
 EAPI double

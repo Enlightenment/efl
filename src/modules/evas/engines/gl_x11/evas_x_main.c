@@ -38,6 +38,39 @@ static Eina_Hash *_evas_gl_visuals = NULL;
 
 static int win_count = 0;
 static Eina_Bool initted = EINA_FALSE;
+static unsigned char gl_context_valid = 0;
+
+#if 0
+static double
+_time_get(void)
+{
+   struct timespec t;
+
+   if (clock_gettime(CLOCK_MONOTONIC, &t))
+     {
+        fprintf(stderr, "Failed to get monotonic clock time...");
+        return 0.0;
+     }
+
+   return (double)t.tv_sec + (((double)t.tv_nsec) / 1000000000.0);
+}
+
+static void
+measure(int inout, const char *what)
+{
+   static double t0 = 0.0;
+   double t;
+
+   if (inout == 0) t0 = _time_get();
+   else if (inout ==1)
+     {
+        t = _time_get() - t0;
+        printf("%s: %1.2f\n", what, t * 1000.0);
+     }
+}
+#else
+# define measure(x, y)
+#endif
 
 Eina_Bool
 eng_init(void)
@@ -345,6 +378,13 @@ try_gles2:
         eng_window_free(gw);
         return NULL;
      }
+   // nvidia drivers in egl/gles mode dont need re-creating of the
+   // eglimage ... and doign so is super slow on them, so avoid the
+   // multi buffer path - as it's only for nvidia and this fixes
+   // the performance regression there, it's fairly safe to do
+   // as it's not universal across all drivers.
+   if (strstr((const char *)vendor, "NVIDIA"))
+     gw->detected.no_multi_buffer_native = 1;
 
    eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_DEPTH_SIZE, &val);
    gw->detected.depth_buffer_size = val;
@@ -698,17 +738,19 @@ eng_window_use(Outbuf *gw)
    if ((gw) && (!gw->gl_context)) return;
 
 #ifdef GL_GLES
-   if (xwin)
+   if ((xwin) && (!gl_context_valid))
      {
         if ((evas_eglGetCurrentDisplay() != xwin->egl_disp) ||
             (evas_eglGetCurrentContext() != xwin->egl_context))
           force_use = EINA_TRUE;
+        gl_context_valid = 1;
      }
 #else
-   if (xwin)
+   if ((xwin) && (!gl_context_valid))
      {
         if (glXGetCurrentContext() != xwin->context)
            force_use = EINA_TRUE;
+        gl_context_valid = 1;
      }
 #endif
    if ((xwin != gw) || (force_use))
@@ -1389,6 +1431,7 @@ eng_outbuf_swap_mode(Outbuf *ob)
      {
         Render_Output_Swap_Mode swap_mode;
         eina_evlog("+gl_query_surf_swap_mode", ob, 0.0, NULL);
+        measure(0, "query age");
 #ifdef GL_GLES
         EGLint age = 0;
 
@@ -1399,12 +1442,10 @@ eng_outbuf_swap_mode(Outbuf *ob)
         unsigned int age = 0;
 
         if (glsym_glXQueryDrawable)
-          {
-             if (glsym_glXQueryDrawable(ob->disp, ob->glxwin,
-                                        GLX_BACK_BUFFER_AGE_EXT, &age) < 1)
-               age = 0;
-          }
+          glsym_glXQueryDrawable(ob->disp, ob->glxwin,
+                                 GLX_BACK_BUFFER_AGE_EXT, &age);
 #endif
+        measure(1, "query age");
         if (age == 1) swap_mode = MODE_COPY;
         else if (age == 2) swap_mode = MODE_DOUBLE;
         else if (age == 3) swap_mode = MODE_TRIPLE;
@@ -1608,13 +1649,19 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
                   _convert_to_glcoords(&result[i], ob, r->x, r->y, r->w, r->h);
                   i += 4;
                }
+             measure(0, "swap with damage");
              glsym_eglSwapBuffersWithDamage(ob->egl_disp,
                                             ob->egl_surface,
                                             result, num);
+             measure(1, "swap with damage");
           }
      }
    else
-     eglSwapBuffers(ob->egl_disp, ob->egl_surface);
+     {
+        measure(0, "swap");
+        eglSwapBuffers(ob->egl_disp, ob->egl_surface);
+        measure(1, "swap");
+     }
 
 //xx   if (!safe_native) eglWaitGL();
 //   if (eglGetError() != EGL_SUCCESS)
@@ -1657,9 +1704,9 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
      }
 #endif
    // XXX: if partial swaps can be done use re->rects
-//   measure(0, "swap");
+   measure(0, "swap");
    glXSwapBuffers(ob->disp, ob->glxwin);
-//   measure(1, "swap");
+   measure(1, "swap");
 #endif
    // clear out rects after swap as we may use them during swap
 
@@ -1667,6 +1714,7 @@ eng_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_R
 
  end:
    glsym_evas_gl_preload_render_unlock(eng_preload_make_current, ob);
+   gl_context_valid = 0;
 }
 
 Evas_Engine_GL_Context *

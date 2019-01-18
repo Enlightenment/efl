@@ -48,11 +48,11 @@ _key_down(void *data, const Efl_Event *ev)
    testdata *td = data;
    char str[1024];
 
-   // FIXME: By default the elm_win object is the focussed object
+   // FIXME: By default the elm_win object is the focused object
    // this means that evas callbacks will transfer the KEY_UP/KEY_DOWN events
    // to the elm_win. So, we get two key_down & two key_up events:
    // 1. ecore_evas -> evas -> elm_win forward -> here
-   // 2. ecore_evas -> evas -> focussed obj (elm_win) -> here
+   // 2. ecore_evas -> evas -> focused obj (elm_win) -> here
 
    sprintf(str, "key=%s keyname=%s string=%s compose=%s",
            efl_input_key_get(ev->info),
@@ -94,7 +94,7 @@ _key_up(void *data, const Efl_Event *ev)
 
    if (td->f) eina_future_cancel(td->f);
    td->f = efl_loop_timeout(efl_provider_find(ev->object, EFL_LOOP_CLASS), 0.5);
-   eina_future_then(td->f, _ecore_timeout_cb, td);
+   eina_future_then(td->f, _ecore_timeout_cb, td, NULL);
 }
 
 static void

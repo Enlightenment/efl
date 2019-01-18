@@ -1,5 +1,9 @@
 language: c
-
+cache:
+  directories:
+    - $HOME/cachedir
+    - $HOME/.ccache
+    - $HOME/autom4te.cache
 sudo: required
 dist: trusty
 
@@ -8,57 +12,132 @@ os:
   - osx
 
 env:
-  -
-  - DISTRO=Ubuntu1804
-  - DISTRO=Fedora28 CI_BUILD_TYPE=wayland
-  - DISTRO=Fedora28 CI_BUILD_TYPE=misc
-  - DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
-  - DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
-  - DISTRO=Debian91
-  - DISTRO=Archlinux
+  global:
+    - MAKEFLAGS="-j5 -rR"
+    - EIO_MONITOR_POLL=1
+    - CC="ccache gcc"
+    - CXX="ccache g++"
+
+jobs:
+  include:
+    - env:
+      - os: linux
+      - DISTRO=Fedora28-mingw
+      - CI_BUILD_TYPE=mingw
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-enabled
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-disabled
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-enabled
+      - BUILDSYSTEM=ninja
+    - env:
+      - os: linux
+      - DISTRO=Fedora28
+      - CI_BUILD_TYPE=options-disabled
+      - BUILDSYSTEM=ninja
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Ubuntu1804
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Fedora28
+        - CI_BUILD_TYPE=release-ready
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Debian91
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Ubuntu1804
+        - BUILDSYSTEM=ninja
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Fedora28
+        - CI_BUILD_TYPE=release-ready
+        - BUILDSYSTEM=ninja
+    - if: type = cron
+      env:
+        - os: linux
+        - DISTRO=Debian91
+        - BUILDSYSTEM=ninja
+  exclude:
+    - os: linux
 
 services:
   - docker
 
-matrix:
-  fast_finish: true
-  exclude:
-    - os: osx
-      env: DISTRO=Ubuntu1804
-    - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=wayland
-    - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=misc
-    - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=misc-disabled
-    - os: osx
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
-    - os: osx
-      env: DISTRO=Debian91
-    - os: osx
-      env: DISTRO=Archlinux
-
-    - os: linux
-      env:
-  allow_failures:
-    - os: linux
-      env: DISTRO=Fedora28 CI_BUILD_TYPE=release-ready
-
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-deps.sh ; fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        rm -rf $HOME/Library/Caches/Homebrew
+        rm -rf $HOME/cachedir/Homebrew/Homebrew
+        mv $HOME/cachedir/Homebrew $HOME/Library/Caches/Homebrew
+        .ci/ci-osx-deps.sh
+      fi
 
 before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
         docker pull stefanschmidt1/ci-support-files:$DISTRO
       fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+        docker version
+        docker run --cidfile $HOME/cid -t -d -v `pwd`:/src -v $HOME/.ccache:/root/.ccache -w /src stefanschmidt1/ci-support-files:$DISTRO bash
+        cp $HOME/cachedir/config.cache . || true
+      fi
+
+  - .ci/ci-ccache-stats.sh
+  - |
+       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+         cp $HOME/cachedir/config.cache . || true
+       fi
+
 
 script:
+  - .ci/ci-configure.sh "$CI_BUILD_TYPE"
+  - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
+  #- .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
-        docker run -v `pwd`:/src -w /src stefanschmidt1/ci-support-files:$DISTRO /src/.ci/ci-linux-build.sh $CI_BUILD_TYPE
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
+          .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
       fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then .ci/ci-osx-build.sh ; fi
+  #- .ci/ci-make-install.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
+  #- |
+      #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
+        #true
+      #elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
+        #docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
+      #fi
+before_cache:
+  - .ci/ci-ccache-stats.sh
+  - |
+       mkdir -p $HOME/cachedir
+       if [[ "$TRAVIS_OS_NAME" == "linux" ]] ; then
+         sudo chown travis:travis $HOME/.ccache
+         mkdir -p $HOME/cachedir/
+         sudo cp config.cache $HOME/cachedir/
+         sudo chown travis:travis $HOME/cachedir/config.cache
+         sudo chown travis:travis $HOME/autom4te.cache
+       else
+         cp config.cache $HOME/cachedir
+         mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
+       fi
 
 after_success:
   - |
@@ -75,8 +154,9 @@ notifications:
       - "chat.freenode.net#edevelop"
     on_success: change
     on_failure: always
+    on_cancel: never
     template:
-      - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message}"
+      - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message} (%{elapsed_time})"
       - "Commit: %{commit_subject} (%{commit}) from %{author}"
       - "Change view : %{compare_url}"
       - "Build details : %{build_url}"

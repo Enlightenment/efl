@@ -15,6 +15,7 @@
 typedef struct {
    Eo *adapter;
    Eina_Bool realized;
+   Eina_Bool in_unrealize;
 } Elm_Widget_Item_Static_Focus_Data;
 
 static void
@@ -52,7 +53,13 @@ _grid_realized_cb(void *data, const Efl_Event *ev)
    is_group = (itc && itc->item_style && !strcmp(itc->item_style, "group_index"));
 
    if (!elm_object_item_disabled_get(data) && !is_group)
-     efl_ui_focus_object_prepare_logical(data);
+     {
+        Elm_Widget_Item_Data *wpd = efl_data_scope_get(data, ELM_WIDGET_ITEM_CLASS);
+
+        //first prepare the container
+        efl_ui_focus_object_prepare_logical(wpd->widget);
+        efl_ui_focus_object_prepare_logical(data);
+     }
 }
 
 static void
@@ -67,7 +74,9 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         //only delete the adapter when not focused, this will lead to awfull artifacts
         if (!efl_ui_focus_object_focus_get(pd->adapter))
           {
+             pd->in_unrealize = EINA_TRUE;
              efl_del(pd->adapter);
+             pd->in_unrealize = EINA_FALSE;
           }
         pd->realized = EINA_FALSE;
      }
@@ -98,6 +107,11 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
           {
              next_widget = NULL;
           }
+        //check if this is the item block representation of genlist
+        else if (efl_isa(next_widget, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS) && efl_ui_focus_object_focus_parent_get(next_widget) == wpd->widget)
+          {
+             next_widget = NULL;
+          }
         logical_child = next_widget;
      }
 
@@ -115,9 +129,12 @@ _elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive
      }
    else if (logical_child && logical_child != pd->adapter)
      {
-        efl_ui_focus_manager_calc_unregister(wpd->widget, pd->adapter);
-        efl_del(pd->adapter);
-        pd->adapter = NULL;
+        if (!pd->in_unrealize)
+          {
+             efl_del(pd->adapter);
+             pd->adapter = NULL;
+          }
+
      }
 
    //genlist sometimes changes views when doing quick scrolls so reset the view in every possible call

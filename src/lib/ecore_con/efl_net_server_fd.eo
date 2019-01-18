@@ -1,4 +1,4 @@
-class Efl.Net.Server_Fd (Efl.Loop_Fd, Efl.Net.Server) {
+abstract Efl.Net.Server_Fd extends Efl.Loop_Fd implements Efl.Net.Server {
     [[A generic server based on file descriptors.
 
       @since 1.19
@@ -14,13 +14,13 @@ class Efl.Net.Server_Fd (Efl.Loop_Fd, Efl.Net.Server) {
               It will replace @Efl.Net.Server.serve, thus if this is
               used, this method will return EALREADY.
 
-              \@note The parameter 'address' given to this function is
+              Note: The parameter 'address' given to this function is
               only used to validate the next socket available. It
               doesn't search for a socket with the given address. Thus
               the socket to be used is the next unused one : order
               matters if using multiple servers!
 
-              \@note subclasses must validate the socket and return
+              Note: subclasses must validate the socket and return
               EINVAL prior to call the base class with
               Efl.Object.super. They must also emit "serving" when
               ready. For instance stream protocols may need to check

@@ -3593,8 +3593,8 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  * @param e The given canvas.
  * @return The created vector object handle.
  *
- * The shape object hirarchy can be added to the evas_object_vg by accessing
- * the rootnode of the vg canvas and adding the hirarchy as child to the root
+ * The shape object hierarchy can be added to the evas_object_vg by accessing
+ * the root node of the vg canvas and adding the hierarchy as child to the root
  * node.
  *
  * @see evas_obj_vg_root_node_get()
@@ -3606,7 +3606,7 @@ EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_N
 #include "canvas/efl_canvas_vg_object.eo.legacy.h"
 #include "canvas/efl_canvas_vg_container.eo.legacy.h"
 /**
- * Creates a new vector shape object \.
+ * Creates a new vector shape object.
  *
  * @param parent The given vector container object.
  * @return The created vector shape object handle.
@@ -3616,7 +3616,7 @@ EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_N
 EAPI Efl_VG* evas_vg_shape_add(Efl_VG *parent);
 
 /**
- * Creates a new vector container object \.
+ * Creates a new vector container object.
  *
  * @param parent The given vector container object.
  * @return The created vector container object handle.

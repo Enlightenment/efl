@@ -66,7 +66,7 @@ static void _evas_async_events_fd_blocking_set(Eina_Bool blocking EINA_UNUSED);
 static void
 _async_events_pipe_read_cb(void *data EINA_UNUSED, void *buf, unsigned int len)
 {
-   if (wakeup != *(int*)buf || sizeof(int) != len)
+   if (!buf || wakeup != *(int*)buf || sizeof(int) != len)
      return;
 
    Evas_Event_Async *ev;

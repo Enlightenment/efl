@@ -4,7 +4,6 @@
 elm_public_eolian_files = \
 	lib/elementary/efl_ui_widget.eo \
 	lib/elementary/efl_ui_bg.eo \
-	lib/elementary/efl_ui_bg_widget.eo \
 	lib/elementary/efl_ui_button.eo \
 	lib/elementary/efl_ui_calendar.eo \
 	lib/elementary/efl_ui_calendar_item.eo \
@@ -14,7 +13,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_stack.eo \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
-	lib/elementary/efl_ui_layout_object.eo \
+	lib/elementary/efl_ui_layout.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/efl_ui_navigation_bar.eo \
 	lib/elementary/efl_ui_navigation_bar_part.eo \
@@ -30,6 +29,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_datepicker.eo \
 	lib/elementary/efl_ui_timepicker.eo \
 	lib/elementary/efl_ui_tags.eo \
+	lib/elementary/efl_ui_panel.eo \
 	lib/elementary/efl_ui_video.eo \
 	lib/elementary/efl_ui_win.eo \
 	lib/elementary/efl_ui_win_inlined.eo \
@@ -42,21 +42,22 @@ elm_public_eolian_files = \
 	lib/elementary/efl_text_interactive.eo \
 	lib/elementary/efl_ui_text.eo \
 	lib/elementary/efl_ui_popup.eo \
-	lib/elementary/efl_ui_popup_part.eo \
-	lib/elementary/efl_ui_popup_alert.eo \
-	lib/elementary/efl_ui_popup_alert_part.eo \
-	lib/elementary/efl_ui_popup_alert_scroll.eo \
-	lib/elementary/efl_ui_popup_alert_scroll_part.eo \
-	lib/elementary/efl_ui_popup_alert_text.eo \
-	lib/elementary/efl_ui_popup_alert_text_part.eo \
-	lib/elementary/efl_ui_popup_anchor.eo \
+	lib/elementary/efl_ui_popup_part_backwall.eo \
+	lib/elementary/efl_ui_alert_popup.eo \
+	lib/elementary/efl_ui_alert_popup_part.eo \
+	lib/elementary/efl_ui_scroll_alert_popup.eo \
+	lib/elementary/efl_ui_scroll_alert_popup_part.eo \
+	lib/elementary/efl_ui_text_alert_popup.eo \
+	lib/elementary/efl_ui_text_alert_popup_part.eo \
+	lib/elementary/efl_ui_anchor_popup.eo \
 	lib/elementary/efl_ui_text_editable.eo \
 	lib/elementary/efl_ui_text_async.eo \
 	lib/elementary/efl_ui_text_factory_images.eo \
 	lib/elementary/efl_ui_text_factory_emoticons.eo \
 	lib/elementary/efl_ui_text_factory_fallback.eo \
 	lib/elementary/efl_ui_textpath.eo \
-	lib/elementary/efl_ui_translatable.eo \
+	lib/elementary/efl_ui_textpath_legacy.eo \
+	lib/elementary/efl_ui_l10n.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
@@ -77,11 +78,11 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_layout_part_table.eo \
 	lib/elementary/efl_ui_layout_part_bg.eo \
 	lib/elementary/efl_ui_layout_part_legacy.eo \
-	lib/elementary/efl_ui_view_list.eo \
-	lib/elementary/efl_ui_view_list_model.eo \
-	lib/elementary/efl_ui_view_list_pan.eo \
-	lib/elementary/efl_ui_view_list_segarray.eo \
-	lib/elementary/efl_ui_view_list_relayout.eo \
+	lib/elementary/efl_ui_list_view.eo \
+	lib/elementary/efl_ui_list_view_model.eo \
+	lib/elementary/efl_ui_list_view_pan.eo \
+	lib/elementary/efl_ui_list_view_seg_array.eo \
+	lib/elementary/efl_ui_list_view_relayout.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
 	lib/elementary/efl_ui_list_default_item_part_icon.eo \
@@ -89,6 +90,11 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_default_item.eo \
 	lib/elementary/efl_ui_list_empty_item.eo \
 	lib/elementary/efl_ui_list.eo \
+	lib/elementary/efl_ui_grid_item.eo \
+	lib/elementary/efl_ui_grid_default_item_part_icon.eo \
+	lib/elementary/efl_ui_grid_default_item_part_end.eo \
+	lib/elementary/efl_ui_grid_default_item.eo \
+	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
 	lib/elementary/elm_slider.eo \
@@ -110,9 +116,10 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_value.eo \
 	lib/elementary/efl_access_widget_action.eo \
 	lib/elementary/efl_access_window.eo \
+	lib/elementary/efl_ui_theme.eo \
 	lib/elementary/efl_config_global.eo \
 	lib/elementary/elm_code_widget.eo \
-	lib/elementary/efl_selection.eo \
+	lib/elementary/efl_ui_selection.eo \
 	lib/elementary/efl_ui_dnd.eo \
 	lib/elementary/efl_ui_dnd_container.eo \
 	lib/elementary/efl_ui_focus_manager_window_root.eo \
@@ -126,6 +133,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_tab_page.eo \
 	lib/elementary/efl_ui_tab_page_part_tab.eo \
 	lib/elementary/efl_ui_widget_focus_manager.eo \
+	lib/elementary/efl_ui_text_part.eo \
+	lib/elementary/efl_ui_caching_factory.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -155,6 +164,7 @@ elm_public_eolian_files += \
 # Private classes (not exposed or shipped)
 elm_private_eolian_files = \
 	lib/elementary/efl_ui_internal_text_interactive.eo \
+	lib/elementary/efl_ui_internal_text_scroller.eo \
 	lib/elementary/efl_ui_focus_composition_adapter.eo \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
@@ -163,7 +173,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_model_state.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
-	lib/elementary/efl_selection_manager.eo \
+	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \
 	$(NULL)
 
@@ -172,7 +182,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_button_legacy.eo \
 	lib/elementary/efl_ui_check_legacy.eo \
 	lib/elementary/efl_ui_radio_legacy.eo \
-	lib/elementary/efl_ui_bg_widget_legacy.eo \
+	lib/elementary/efl_ui_bg_legacy.eo \
 	lib/elementary/efl_ui_video_legacy.eo \
 	lib/elementary/efl_ui_frame_legacy.eo \
 	lib/elementary/efl_ui_panes_legacy.eo \
@@ -191,7 +201,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_calendar_item.eo \
 	lib/elementary/elm_clock.eo \
 	lib/elementary/elm_colorselector.eo \
-	lib/elementary/elm_combobox.eo \
 	lib/elementary/elm_conformant.eo \
 	lib/elementary/elm_ctxpopup.eo \
 	lib/elementary/elm_dayselector.eo \
@@ -275,14 +284,14 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
-	lib/elementary/efl_ui_view_list_precise_layouter.eo \
+	lib/elementary/efl_ui_list_view_precise_layouter.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
 	lib/elementary/elm_general.eot \
 	lib/elementary/efl_ui.eot \
-	lib/elementary/efl_ui_view_list_types.eot \
-	lib/elementary/efl_selection_types.eot \
+	lib/elementary/efl_ui_list_view_types.eot \
+	lib/elementary/efl_ui_selection_types.eot \
 	lib/elementary/efl_ui_dnd_types.eot
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
@@ -336,7 +345,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_box.h \
 	lib/elementary/elm_widget_bubble.h \
 	lib/elementary/efl_ui_button_private.h \
-	lib/elementary/efl_ui_bg_widget_private.h \
+	lib/elementary/efl_ui_bg_private.h \
 	lib/elementary/elm_widget_calendar.h \
 	lib/elementary/efl_ui_calendar_private.h \
 	lib/elementary/efl_ui_check_private.h \
@@ -365,10 +374,10 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_widget_icon.h \
 	lib/elementary/efl_ui_widget_image.h \
 	lib/elementary/efl_ui_popup_private.h \
-	lib/elementary/efl_ui_popup_alert_private.h \
-	lib/elementary/efl_ui_popup_alert_scroll_private.h \
-	lib/elementary/efl_ui_popup_alert_text_private.h \
-	lib/elementary/efl_ui_popup_anchor_private.h \
+	lib/elementary/efl_ui_alert_popup_private.h \
+	lib/elementary/efl_ui_scroll_alert_popup_private.h \
+	lib/elementary/efl_ui_text_alert_popup_private.h \
+	lib/elementary/efl_ui_anchor_popup_private.h \
 	lib/elementary/elm_widget_index.h \
 	lib/elementary/elm_widget_inwin.h \
 	lib/elementary/elm_widget_label.h \
@@ -406,6 +415,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_datepicker_private.h \
 	lib/elementary/efl_ui_timepicker_private.h \
 	lib/elementary/efl_ui_tags_private.h \
+	lib/elementary/efl_ui_panel_private.h \
 	lib/elementary/elm_widget_table.h \
 	lib/elementary/elm_widget_thumb.h \
 	lib/elementary/elm_widget_toolbar.h \
@@ -413,8 +423,10 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_item_private.h \
 	lib/elementary/efl_ui_list_item_private.h \
 	lib/elementary/efl_ui_list_private.h \
-	lib/elementary/efl_ui_view_list_private.h \
-	lib/elementary/efl_ui_view_list_segarray.h \
+	lib/elementary/efl_ui_grid_item_private.h \
+	lib/elementary/efl_ui_grid_private.h \
+	lib/elementary/efl_ui_list_view_private.h \
+	lib/elementary/efl_ui_list_view_seg_array.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -630,6 +642,8 @@ includesub_HEADERS = \
 	lib/elementary/elm_sys_notify.h \
 	lib/elementary/elm_table.h \
 	lib/elementary/elm_table_legacy.h \
+	lib/elementary/elm_textpath.h \
+	lib/elementary/elm_textpath_legacy.h \
 	lib/elementary/elm_theme.h \
 	lib/elementary/elm_thumb.h \
 	lib/elementary/elm_thumb_common.h \
@@ -682,7 +696,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/efl_ui_legacy.c \
 	lib/elementary/efl_ui_bg.c \
-	lib/elementary/efl_ui_bg_widget.c \
 	lib/elementary/elm_box.c \
 	lib/elementary/elm_bubble.c \
 	lib/elementary/efl_ui_button.c \
@@ -715,6 +728,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_flip.c \
 	lib/elementary/efl_ui_internal_text_interactive.c \
 	lib/elementary/efl_ui_internal_text_interactive.h \
+	lib/elementary/efl_ui_internal_text_scroller.c \
+	lib/elementary/efl_ui_internal_text_scroller.h \
 	lib/elementary/elm_flipselector.c \
 	lib/elementary/elm_font.c \
 	lib/elementary/efl_ui_frame.c \
@@ -742,7 +757,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_interface_scrollable.c \
 	lib/elementary/elm_inwin.c \
 	lib/elementary/elm_label.c \
-	lib/elementary/efl_ui_layout_object.c \
+	lib/elementary/efl_ui_layout.c \
 	lib/elementary/efl_ui_layout_pack.c \
 	lib/elementary/elm_list.c \
 	lib/elementary/elm_main.c \
@@ -774,6 +789,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_datepicker.c \
 	lib/elementary/efl_ui_timepicker.c \
 	lib/elementary/efl_ui_tags.c \
+	lib/elementary/efl_ui_panel.c \
 	lib/elementary/elm_slideshow.c \
 	lib/elementary/elm_spinner.c \
 	lib/elementary/elm_store.c \
@@ -807,10 +823,10 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_box_layout.c \
 	lib/elementary/efl_ui_box_private.h \
 	lib/elementary/efl_ui_popup.c \
-	lib/elementary/efl_ui_popup_alert.c \
-	lib/elementary/efl_ui_popup_alert_scroll.c \
-	lib/elementary/efl_ui_popup_alert_text.c \
-	lib/elementary/efl_ui_popup_anchor.c \
+	lib/elementary/efl_ui_alert_popup.c \
+	lib/elementary/efl_ui_scroll_alert_popup.c \
+	lib/elementary/efl_ui_text_alert_popup.c \
+	lib/elementary/efl_ui_anchor_popup.c \
 	lib/elementary/efl_ui_table.c \
 	lib/elementary/efl_ui_table_static.c \
 	lib/elementary/efl_ui_table_private.h \
@@ -839,16 +855,19 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_default_item.c \
 	lib/elementary/efl_ui_list_empty_item.c \
 	lib/elementary/efl_ui_list.c \
-	lib/elementary/efl_ui_view_list.c \
-	lib/elementary/efl_ui_view_list_precise_layouter.c \
-	lib/elementary/efl_ui_view_list_segarray.c \
+	lib/elementary/efl_ui_grid_item.c \
+	lib/elementary/efl_ui_grid_default_item.c \
+	lib/elementary/efl_ui_grid.c \
+	lib/elementary/efl_ui_list_view.c \
+	lib/elementary/efl_ui_list_view_precise_layouter.c \
+	lib/elementary/efl_ui_list_view_seg_array.c \
 	lib/elementary/efl_ui_layout_factory.c \
 	lib/elementary/efl_ui_scroller.c \
 	lib/elementary/efl_ui_scroll_manager.c \
 	lib/elementary/efl_ui_pan.c \
-	lib/elementary/efl_selection_manager.c \
-	lib/elementary/efl_selection_manager_private.h \
-	lib/elementary/efl_selection.c \
+	lib/elementary/efl_ui_selection_manager.c \
+	lib/elementary/efl_ui_selection_manager_private.h \
+	lib/elementary/efl_ui_selection.c \
 	lib/elementary/efl_datetime_manager.c \
 	lib/elementary/efl_ui_dnd.c \
 	lib/elementary/elm_focus_legacy.c \
@@ -865,6 +884,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_tab_bar.c \
 	lib/elementary/efl_ui_tab_page.c \
 	lib/elementary/efl_ui_widget_focus_manager.c \
+	lib/elementary/efl_ui_caching_factory.c \
 	$(NULL)
 
 
@@ -1048,6 +1068,7 @@ bin/elementary/test_ui_spin_button.c \
 bin/elementary/test_ui_datepicker.c \
 bin/elementary/test_ui_timepicker.c \
 bin/elementary/test_ui_tags.c \
+bin/elementary/test_ui_panel.c \
 bin/elementary/test_slideshow.c \
 bin/elementary/test_spinner.c \
 bin/elementary/test_store.c \
@@ -1133,6 +1154,7 @@ bin/elementary/elm_prefs_cc_handlers.c
 bin_elementary_elm_prefs_cc_LDADD = @USE_ELEMENTARY_LIBS@
 bin_elementary_elm_prefs_cc_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 bin_elementary_elm_prefs_cc_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib/elementary \
 -I$(top_builddir)/src/lib/elementary \
@@ -1480,7 +1502,6 @@ TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 
 tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_suite.c \
-	tests/elementary/elm_test_helper.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
 	tests/elementary/elm_test_colorselector.c \
@@ -1561,9 +1582,13 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_common.c \
 	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c
+	tests/elementary/elm_test_focus_sub.c \
+	tests/elementary/efl_ui_test_grid.c \
+	tests/elementary/elm_test_widget_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \
 	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
@@ -1576,12 +1601,13 @@ tests_elementary_elm_suite_CPPFLAGS = \
 	@ELEMENTARY_CFLAGS@
 
 tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
-tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
+tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 
 tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_suite.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \
 	-DELM_IMAGE_DATA_DIR=\"${top_srcdir}/data/elementary\" \
@@ -1594,10 +1620,10 @@ tests_elementary_efl_ui_suite_CPPFLAGS = \
 	@ELEMENTARY_CFLAGS@
 
 tests_elementary_efl_ui_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
-tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@ $(top_builddir)/data/elementary/objects/test.edj
+tests_elementary_efl_ui_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 endif
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 elementary_eolian_lua = $(elm_public_eolian_files:%.eo=%.eo.lua)
 
@@ -1626,7 +1652,6 @@ endif
 
 EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
-tests/elementary/elm_test_helper.h \
 lib/elementary/Elementary_Options.h.in \
 lib/elementary/elm_code_widget_text.c \
 lib/elementary/elm_code_widget_undo.c

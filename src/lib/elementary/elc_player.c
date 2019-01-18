@@ -185,12 +185,12 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
    elm_object_disabled_set(sl, elm_widget_disabled_get(obj));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _update_theme_button(obj, sd->forward, "forward");
    _update_theme_button(obj, sd->info, "info");

@@ -1,0 +1,13 @@
+class Dummy.Numberwrapper extends Efl.Object {
+   methods {
+      @property number {
+         get {
+         }
+         set {
+         }
+         values {
+             n: int;
+         }
+      }
+   }
+}

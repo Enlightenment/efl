@@ -1,4 +1,5 @@
 import efl_gfx_types;
+import eina_types;
 
 enum Efl.Gfx.Image_Content_Hint
 {
@@ -20,26 +21,26 @@ enum Efl.Gfx.Image_Scale_Hint
 enum Efl.Gfx.Image_Scale_Type
 {
    [[Enumeration that defines scale types of an image.]]
-   fill,        [[Scale the image so that it matches 
+   fill,        [[Scale the image so that it matches
                   the object's area exactly.
                   The image's aspect ratio might be changed.]]
    fit_inside,  [[Scale the image
                   so that it fits inside the object's area
                   while maintaining the aspect ratio.
                   At least one of the dimensions of the image
-                  should be equal to the corresponding dimension 
+                  should be equal to the corresponding dimension
                   of the object.]]
    fit_outside, [[Scale the image
                   so that it covers the entire object area
                   while maintaining the aspect ratio.
                   At least one of the dimensions of the image
-                  should be equal to the corresponding 
+                  should be equal to the corresponding
                   dimension of the object.]]
    tile,        [[Tile image at its original size.]]
    none         [[Not scale the image]]
 }
 
-interface Efl.Gfx.Image ()
+interface Efl.Gfx.Image
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
 

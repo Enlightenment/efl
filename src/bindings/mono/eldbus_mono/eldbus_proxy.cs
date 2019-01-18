@@ -133,10 +133,7 @@ public class Proxy : IDisposable
         CheckHandle();
         var ptr = eldbus_proxy_object_get(Handle);
         if (ptr == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_proxy_object_get");
-        }
         return new eldbus.Object(ptr, false);
     }
 
@@ -156,10 +153,7 @@ public class Proxy : IDisposable
 
         var ptr = eldbus_proxy_method_call_new(Handle, member);
         if (ptr == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_method_call_new");
-        }
         return new eldbus.Message(ptr, false);
     }
 
@@ -176,10 +170,7 @@ public class Proxy : IDisposable
         var pending_hdl = eldbus_proxy_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_proxy_send");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -189,10 +180,7 @@ public class Proxy : IDisposable
         CheckHandle();
         var ptr = eldbus_proxy_send_and_block(Handle, msg.Handle, timeout);
         if (ptr == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_send_and_block");
-        }
         return new eldbus.Message(ptr, true);
     }
 

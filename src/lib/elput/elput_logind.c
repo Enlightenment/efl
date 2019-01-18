@@ -1,6 +1,6 @@
 #include "elput_private.h"
 
-#ifdef HAVE_SYSTEMD
+#if defined(HAVE_SYSTEMD) || defined(HAVE_ELOGIND)
 
 static void
 _logind_session_active_cb_free(void *data EINA_UNUSED, void *event)

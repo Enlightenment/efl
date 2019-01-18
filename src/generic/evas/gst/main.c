@@ -2,7 +2,9 @@
 # include <config.h>
 #endif
 
-#include <sys/mman.h>
+#ifdef HAVE_SHM_OPEN
+# include <sys/mman.h>
+#endif
 #include <fcntl.h>
 #include <unistd.h>
 

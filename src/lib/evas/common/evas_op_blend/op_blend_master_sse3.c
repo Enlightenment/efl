@@ -1,6 +1,13 @@
 #define NEED_SSE3 1
 
-#include "evas_common_private.h"
+#include "Eina.h"
+
+#include "evas_common_types.h"
+
+EAPI void evas_common_cpu_end_opt(void);
+
+#include "config.h"
+#include "evas_blend_ops.h"
 
 #ifdef BUILD_SSE3
 static __m128i A_MASK_SSE3;

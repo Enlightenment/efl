@@ -62,35 +62,20 @@ EAPI int efl_loop_exit_code_process(Eina_Value *value);
  */
 EAPI Eina_Future_Scheduler *efl_loop_future_scheduler_get(const Eo *obj);
 
-/**
- * @brief Create a promise attached to the current loop
- *
- * @param[in] An object which will provide a loop, either by being a loop or a loop consumer
- * @param cancel_cb A callback used to inform that the promise was canceled. Use
- * this callback to @c free @p data. @p cancel_cb must not be @c NULL !
- * @param data Data to @p cancel_cb.
- * @return A promise or @c NULL on error.
- *
- * @see eina_promise_new()
- */
-EAPI Eina_Promise *efl_loop_promise_new(const Eo *obj, Eina_Promise_Cancel_Cb cancel_cb, const void *data);
-
 #include "efl_loop_fd.eo.h"
 #include "efl_loop_handler.eo.h"
 
-#include "efl_interpolator.eo.h"
-#include "efl_interpolator_linear.eo.h"
-#include "efl_interpolator_accelerate.eo.h"
-#include "efl_interpolator_decelerate.eo.h"
-#include "efl_interpolator_sinusoidal.eo.h"
-#include "efl_interpolator_divisor.eo.h"
-#include "efl_interpolator_bounce.eo.h"
-#include "efl_interpolator_spring.eo.h"
-#include "efl_interpolator_cubic_bezier.eo.h"
+#include "efl_linear_interpolator.eo.h"
+#include "efl_accelerate_interpolator.eo.h"
+#include "efl_decelerate_interpolator.eo.h"
+#include "efl_sinusoidal_interpolator.eo.h"
+#include "efl_divisor_interpolator.eo.h"
+#include "efl_bounce_interpolator.eo.h"
+#include "efl_spring_interpolator.eo.h"
+#include "efl_cubic_bezier_interpolator.eo.h"
 
 /* We ue the factory pattern here, so you shouldn't call eo_add directly. */
 EAPI Eo *efl_main_loop_get(void);
-EAPI Eo *efl_app_get(void);
 
 /**
  * @}
@@ -124,6 +109,7 @@ EAPI Eo *efl_app_get(void);
  * @{
  */
 
+#include "efl_model_loop.eo.h"
 #include "efl_model_item.eo.h"
 #include "efl_model_container.eo.h"
 #include "efl_model_container_item.eo.h"
@@ -132,6 +118,7 @@ EAPI Eo *efl_app_get(void);
 #include "efl_model_composite_boolean_children.eo.h"
 #include "efl_model_composite_selection.eo.h"
 #include "efl_model_composite_selection_children.eo.h"
+#include "efl_model_view.eo.h"
 
 /**
  * @}

@@ -1,5 +1,0 @@
-FROM fedora:26
-
-# Install
-RUN dnf update --assumeyes
-RUN dnf install --assumeyes bullet-devel libpng-devel libjpeg-turbo-devel gstreamer1-devel gstreamer1-plugins-base-devel zlib-devel luajit-devel libtiff-devel openssl-devel libcurl-devel dbus-devel glibc-devel fontconfig-devel freetype-devel fribidi-devel pulseaudio-libs-devel libsndfile-devel libX11-devel libXau-devel libXcomposite-devel libXdamage-devel libXdmcp-devel libXext-devel libXfixes-devel libXinerama-devel libXrandr-devel libXrender-devel libXScrnSaver-devel libXtst-devel libXcursor-devel libXp-devel libXi-devel mesa-libGL-devel giflib-devel libmount-devel libblkid-devel systemd-devel poppler-cpp-devel poppler-devel LibRaw-devel libspectre-devel librsvg2-devel autoconf automake gcc gcc-c++ gettext-devel findutils tar xz libtool make

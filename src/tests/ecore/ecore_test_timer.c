@@ -173,7 +173,6 @@ EFL_END_TEST
 typedef struct _Test_Inside_Call
 {
    Ecore_Timer *t;
-   double start;
    int it;
 } Test_Inside_Call;
 
@@ -182,9 +181,7 @@ _timeri_cb(void *data)
 {
    Test_Inside_Call *c = data;
 
-   fail_if(fabs((ecore_time_get() - c->start) - 0.011) > 0.01);
    ecore_timer_reset(c->t);
-   c->start = ecore_time_get();
 
    c->it--;
 
@@ -194,14 +191,21 @@ _timeri_cb(void *data)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+timeout_timer_cb()
+{
+   ck_abort();
+   return EINA_FALSE;
+}
+
 EFL_START_TEST(ecore_test_timer_inside_call)
 {
    Test_Inside_Call *c;
 
    c = malloc(sizeof(Test_Inside_Call));
-   c->start = ecore_time_get();
    c->it = 5;
    c->t = ecore_timer_add(0.01, _timeri_cb, c);
+   ecore_timer_add(1.0, timeout_timer_cb, NULL);
 
    fail_if(!c->t, "Error add timer\n");
 
@@ -248,10 +252,47 @@ EFL_START_TEST(ecore_test_ecore_main_loop_timer)
 }
 EFL_END_TEST
 
+static int count = 0;
+
+static Eina_Bool
+_timer_cb(void *data)
+{
+   count++;
+   int num = (intptr_t) data;
+   fail_if (num != count, "Error timer is called out of order");
+   if (count == 8) ecore_main_loop_quit();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+EFL_START_TEST(ecore_test_timer_in_order)
+{
+   Ecore_Timer *timer;
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 1);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 2);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 3);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 4);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 5);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 6);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 7);
+   fail_if(timer == NULL);
+   timer = ecore_timer_add(0.001, _timer_cb, (void *) 8);
+   fail_if(timer == NULL);
+
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
   tcase_add_test(tc, ecore_test_timer_inside_call);
   tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
   tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
+  tcase_add_test(tc, ecore_test_timer_in_order);
 }

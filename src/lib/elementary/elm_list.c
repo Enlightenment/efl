@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 
@@ -678,7 +678,7 @@ static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params EINA_UN
 }
 
 EOLIAN static void
-_elm_list_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
+_elm_list_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -686,7 +686,7 @@ _elm_list_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_List_D
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -778,6 +778,11 @@ _elm_list_mode_set_internal(Evas_Object *obj)
         sd->scr_minw = EINA_TRUE;
         sd->scr_minh = EINA_TRUE;
      }
+   else if (sd->mode == ELM_LIST_COMPRESS)
+     {
+        sd->scr_minw = EINA_FALSE;
+        sd->scr_minh = EINA_FALSE;
+     }
 
    elm_layout_sizing_eval(obj);
 }
@@ -851,6 +856,7 @@ _items_fix(Evas_Object *obj)
      }
 
    _elm_list_walk(obj, sd); // watch out "return" before unwalk!
+   sd->fixing_now = EINA_TRUE;
 
    eina_array_step_set(&walk, sizeof (walk), 8);
 
@@ -1018,14 +1024,12 @@ _items_fix(Evas_Object *obj)
         if (it->icon)
           {
              evas_object_size_hint_min_set(it->icon, minw[0], minh[0]);
-             evas_object_size_hint_max_set(it->icon, 99999, 99999);
              edje_object_part_swallow
                 (VIEW(it), "elm.swallow.icon", it->icon);
           }
         if (it->end)
           {
              evas_object_size_hint_min_set(it->end, minw[1], minh[1]);
-             evas_object_size_hint_max_set(it->end, 99999, 99999);
              edje_object_part_swallow
                 (VIEW(it), "elm.swallow.end", it->end);
           }
@@ -1036,6 +1040,7 @@ _items_fix(Evas_Object *obj)
         efl_unref(eo_it);
      }
 
+   sd->fixing_now = EINA_FALSE;
    _elm_list_unwalk(obj, sd);
 
    //focus highlight in_theme is set by list item theme.
@@ -1046,12 +1051,20 @@ _items_fix(Evas_Object *obj)
 static void
 _size_hints_changed_cb(void *data,
                        Evas *e EINA_UNUSED,
-                       Evas_Object *obj EINA_UNUSED,
+                       Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
    ELM_LIST_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    if (sd->delete_me) return;
 
+   /* FIXME: Looks it updates items_fix() unnecessarily.
+      when resize_obj, box finished sizing, then
+      it can call _items_fix() one time at the end. */
+   if (sd->fixing_now)
+     {
+        if ((obj != wd->resize_obj) && (obj != sd->box)) return;
+     }
    _items_fix(data);
    elm_layout_sizing_eval(data);
 }
@@ -1105,15 +1118,15 @@ _mirrored_set(Evas_Object *obj,
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_list_efl_ui_widget_theme_apply(Eo *obj, Elm_List_Data *sd)
 {
    Elm_Object_Item *eo_it;
    Eina_List *n;
 
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -2423,8 +2436,9 @@ _elm_list_efl_canvas_group_group_del(Eo *obj, Elm_List_Data *sd)
    evas_object_event_callback_del
      (sd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb);
 
-   EINA_LIST_FREE(sd->items, eo_it)
-     efl_del(eo_it);
+   while (sd->items)
+     /* will be removed from list in _elm_list_item_elm_widget_item_del_pre */
+     efl_del(eina_list_data_get(sd->items));
 
    sd->selected = eina_list_free(sd->selected);
 
@@ -2488,6 +2502,7 @@ _elm_list_efl_object_constructor(Eo *obj, Elm_List_Data *sd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
 
    return obj;
 }
@@ -3181,6 +3196,12 @@ _elm_list_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_List_Data
         return EINA_TRUE;
      }
    return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_elm_list_efl_ui_widget_focus_state_apply(Eo *obj, Elm_List_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+{
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
 }
 
 /* Standard widget overrides */

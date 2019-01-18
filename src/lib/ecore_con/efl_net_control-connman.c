@@ -362,43 +362,63 @@ _efl_net_control_agent_request_peer_authorization(const Eldbus_Service_Interface
 }
 
 static const Eldbus_Service_Interface_Desc _efl_net_control_agent_desc = {
-  .interface = "net.connman.Agent",
-  .methods = (const Eldbus_Method []){
-     {
-       .member = "Release",
-       .cb = _efl_net_control_agent_release,
-     },
-     {
-       .member = "ReportError",
-       .in = ELDBUS_ARGS({"o", "service"}, {"s", "message"}),
-       .cb = _efl_net_control_agent_report_error,
-     },
-     {
-       .member = "RequestBrowser",
-       .in = ELDBUS_ARGS({"o", "service"}, {"s", "url"}),
-       .cb = _efl_net_control_agent_request_browser,
-     },
-     {
-       .member = "RequestInput",
-       .in = ELDBUS_ARGS({"o", "service"}, {"a{sv}", "fields"}),
-       .cb = _efl_net_control_agent_request_input,
-     },
-     {
-       .member = "Cancel",
-       .cb = _efl_net_control_agent_cancel,
-     },
-     {
-       .member = "ReportPeerError",
-       .in = ELDBUS_ARGS({"o", "peer"}, {"s", "message"}),
-       .cb = _efl_net_control_agent_report_peer_error,
-     },
-     {
-       .member = "RequestPeerAuthorization",
-       .in = ELDBUS_ARGS({"o", "peer"}, {"a{sv}", "fields"}),
-       .cb = _efl_net_control_agent_request_peer_authorization,
-     },
-     { }
+   .interface = "net.connman.Agent",
+   .methods = (const Eldbus_Method []) {
+        {
+           .member = "Release",
+           .in = NULL,
+           .out = NULL,
+           .cb = _efl_net_control_agent_release,
+           .flags = 0
+        },
+        {
+           .member = "ReportError",
+           .in = ELDBUS_ARGS({"o", "service"}, {"s", "message"}),
+           .out = NULL,
+           .cb = _efl_net_control_agent_report_error,
+           .flags = 0
+        },
+        {
+           .member = "RequestBrowser",
+           .in = ELDBUS_ARGS({"o", "service"}, {"s", "url"}),
+           .out = NULL,
+           .cb = _efl_net_control_agent_request_browser,
+           .flags = 0
+        },
+        {
+           .member = "RequestInput",
+           .in = ELDBUS_ARGS({"o", "service"}, {"a{sv}", "fields"}),
+           .out = NULL,
+           .cb = _efl_net_control_agent_request_input,
+           .flags = 0
+        },
+        {
+           .member = "Cancel",
+           .in = NULL,
+           .out = NULL,
+           .cb = _efl_net_control_agent_cancel,
+           .flags = 0
+        },
+        {
+           .member = "ReportPeerError",
+           .in = ELDBUS_ARGS({"o", "peer"}, {"s", "message"}),
+           .out = NULL,
+           .cb = _efl_net_control_agent_report_peer_error,
+           .flags = 0
+        },
+        {
+           .member = "RequestPeerAuthorization",
+           .in = ELDBUS_ARGS({"o", "peer"}, {"a{sv}", "fields"}),
+           .out = NULL,
+           .cb = _efl_net_control_agent_request_peer_authorization,
+           .flags = 0
+        },
+        { NULL, NULL, NULL, NULL, 0 }
    },
+   .signals = NULL,
+   .properties = NULL,
+   .default_get = NULL,
+   .default_set = NULL
 };
 
 static void

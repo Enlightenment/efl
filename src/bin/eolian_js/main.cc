@@ -385,7 +385,6 @@ void separate_functions(Eolian_Class const* klass, Eolian_Function_Type t, bool 
                 strcmp("inputs_get", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("constructor", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("render_updates", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
-                strcmp("render2_updates", ::eolian_function_name_get(function)) != 0 && // TODO: remove this
                 strcmp("efl_canvas_surface_x11_pixmap_set", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
                 strcmp("efl_canvas_surface_x11_pixmap_get", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this
                 strcmp("efl_canvas_surface_native_buffer_set", ::eolian_function_full_c_name_get(function, t, EINA_FALSE)) != 0 && // TODO: remove this

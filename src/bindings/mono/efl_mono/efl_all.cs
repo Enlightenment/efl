@@ -4,9 +4,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using static efl.UnsafeNativeMethods;
+using static Efl.UnsafeNativeMethods;
 
-namespace efl {
+namespace Efl {
 
 static class UnsafeNativeMethods {
     [DllImport(efl.Libs.Ecore)] public static extern void ecore_init();
@@ -28,15 +28,15 @@ public enum Components {
 public static class All {
     private static bool InitializedUi = false;
 
-    public static void Init(efl.Components components=Components.Basic) {
-        eina.Config.Init();
-        efl.eo.Config.Init();
+    public static void Init(Efl.Components components=Components.Basic) {
+        Eina.Config.Init();
+        Efl.Eo.Config.Init();
         ecore_init();
         evas_init();
         eldbus.Config.Init();
 
         if (components == Components.Ui) {
-            efl.ui.Config.Init();
+            Efl.Ui.Config.Init();
             InitializedUi = true;
         }
     }
@@ -48,17 +48,17 @@ public static class All {
         System.GC.WaitForPendingFinalizers();
 
         if (InitializedUi)
-            efl.ui.Config.Shutdown();
+            Efl.Ui.Config.Shutdown();
         eldbus.Config.Shutdown();
         evas_shutdown();
         ecore_shutdown();
-        efl.eo.Config.Shutdown();
-        eina.Config.Shutdown();
+        Efl.Eo.Config.Shutdown();
+        Eina.Config.Shutdown();
     }
 }
 
 // Placeholder. Will move to elm_config.cs later
-namespace ui {
+namespace Ui {
 
 public static class Config {
     public static void Init() {
@@ -70,7 +70,7 @@ public static class Config {
 #endif
         elm_init(0, IntPtr.Zero);
 
-        elm_policy_set((int)elm.Policy.Quit, (int)elm.policy.Quit.Last_window_hidden);
+        elm_policy_set((int)Elm.Policy.Quit, (int)Elm.PolicyQuit.LastWindowHidden);
     }
     public static void Shutdown() {
         elm_shutdown();

@@ -1,4 +1,4 @@
-class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Text_Interactive)
+class Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Text implements Efl.Text_Interactive
 {
    [[An internal object in charge of the interactive aspect of the text widget.
 
@@ -10,5 +10,6 @@ class Efl.Ui.Internal.Text.Interactive (Efl.Canvas.Text, Efl.Text_Interactive)
       Efl.Text_Interactive.selection_allowed { get; set; }
       Efl.Text_Interactive.selection_cursors { get; }
       Efl.Text_Interactive.editable { get; set; }
+      Efl.Text_Interactive.select_none;
    }
 }

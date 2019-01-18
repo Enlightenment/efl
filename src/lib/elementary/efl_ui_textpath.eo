@@ -4,9 +4,10 @@ enum Efl.Ui.Textpath_Direction {
     ccw [[Counter-clockwise]]
 }
 
-class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
+class Efl.Ui.Textpath extends Efl.Ui.Layout implements Efl.Text, Efl.Gfx.Path
 {
    [[Efl Ui Textpath class]]
+   legacy_prefix: elm_textpath;
    methods {
       circle_set {
          [[Set a circle with given center, radius, and start angle.]]
@@ -39,6 +40,7 @@ class Efl.Ui.Textpath (Efl.Ui.Layout.Object, Efl.Object, Efl.Text, Efl.Gfx.Path)
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Gfx.Path.commit;
       Efl.Canvas.Group.group_calculate;
       Efl.Text.text {get; set;}
       Efl.Part.part_get;

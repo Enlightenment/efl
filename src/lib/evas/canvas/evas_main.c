@@ -4,9 +4,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 #include "evas_image_private.h"
 #include "evas_polygon_private.h"
@@ -48,11 +45,13 @@ evas_init(void)
      return --_evas_init_count;
 #endif
 
-   if (!eina_init())
-     goto shutdown_evil;
+   EINA_SAFETY_ON_FALSE_GOTO(eina_init(), shutdown_evil);
 
-   if (!eet_init())
-     goto shutdown_eet;
+   EINA_SAFETY_ON_FALSE_GOTO(eet_init(), shutdown_eet);
+#ifdef BUILD_LOADER_EET
+   /* additional init refcount; cannot fail */
+   eet_init();
+#endif
 
    _evas_log_dom_global = eina_log_domain_register
      ("evas_main", EVAS_DEFAULT_LOG_COLOR);
@@ -62,35 +61,17 @@ evas_init(void)
         goto shutdown_eina;
      }
 
-   efl_object_init();
+   EINA_SAFETY_ON_FALSE_GOTO(efl_object_init(), shutdown_eo);
 
-#ifdef BUILD_LOADER_EET
-   eet_init();
-#endif
-
-   ecore_init();
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_init(), shutdown_ecore);
 
    evas_module_init();
-   if (!evas_async_events_init())
-     goto shutdown_module;
-#ifdef EVAS_CSERVE2
-   int cs2 = 0;
-   {
-      const char *env;
-      env = getenv("EVAS_CSERVE2");
-      if (env && atoi(env))
-        {
-           cs2 = evas_cserve2_init();
-           if (!cs2) goto shutdown_async_events;
-        }
-   }
-#endif
+   EINA_SAFETY_ON_FALSE_GOTO(evas_async_events_init(), shutdown_module);
    _evas_preload_thread_init();
    evas_filter_init();
    evas_cache_vg_init();
 
-   if (!evas_thread_init())
-     goto shutdown_filter;
+   EINA_SAFETY_ON_FALSE_GOTO(evas_thread_init(), shutdown_filter);
 
    evas_common_init();
 
@@ -106,23 +87,20 @@ evas_init(void)
  shutdown_filter:
    evas_filter_shutdown();
    _evas_preload_thread_shutdown();
-#ifdef EVAS_CSERVE2
-   if (cs2) evas_cserve2_shutdown();
- shutdown_async_events:
-   evas_async_events_shutdown();
-#endif
- shutdown_module:
+shutdown_module:
    evas_module_shutdown();
+shutdown_ecore:
+   efl_object_shutdown();
+shutdown_eo:
+   eina_log_domain_unregister(_evas_log_dom_global);
+shutdown_eet:
 #ifdef BUILD_LOADER_EET
    eet_shutdown();
 #endif
-   efl_object_shutdown();
-   eina_log_domain_unregister(_evas_log_dom_global);
- shutdown_eet:
    eet_shutdown();
- shutdown_eina:
+shutdown_eina:
    eina_shutdown();
- shutdown_evil:
+shutdown_evil:
 #ifdef _WIN32
    evil_shutdown();
 #endif
@@ -147,10 +125,6 @@ evas_shutdown(void)
 
    evas_focus_shutdown();
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     evas_cserve2_shutdown();
-#endif
    evas_cache_vg_shutdown();
 
    evas_font_path_global_clear();
@@ -215,6 +189,12 @@ _evas_key_mask_free(void *data)
    free(data);
 }
 
+static void
+list_free(void *list)
+{
+   eina_list_free(list);
+}
+
 EOLIAN static Eo *
 _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
 {
@@ -230,7 +210,7 @@ _evas_canvas_efl_object_constructor(Eo *eo_obj, Evas_Public_Data *e)
    e->framespace.h = 0;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
    e->current_event = EVAS_CALLBACK_LAST;
-   e->name_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_list_free);
+   e->name_hash = eina_hash_string_superfast_new(list_free);
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
@@ -1250,20 +1230,20 @@ evas_output_method_set(Evas *eo_e, int render_method)
         return;
      }
 
-   e->default_seat = efl_ref(evas_device_add_full(eo_e, "default", "The default seat",
-                                                  NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
-                                                  EVAS_DEVICE_SUBCLASS_NONE));
+   e->default_seat = evas_device_add_full(eo_e, "default", "The default seat",
+                                          NULL, NULL, EVAS_DEVICE_CLASS_SEAT,
+                                          EVAS_DEVICE_SUBCLASS_NONE);
    evas_device_seat_id_set(e->default_seat, 1);
-   e->default_mouse = efl_ref(evas_device_add_full(eo_e, "Mouse",
-                                                   "The default mouse",
-                                                   e->default_seat, NULL,
-                                                   EVAS_DEVICE_CLASS_MOUSE,
-                                                   EVAS_DEVICE_SUBCLASS_NONE));
-   e->default_keyboard = efl_ref(evas_device_add_full(eo_e, "Keyboard",
-                                                      "The default keyboard",
-                                                      e->default_seat, NULL,
-                                                      EVAS_DEVICE_CLASS_KEYBOARD,
-                                                      EVAS_DEVICE_SUBCLASS_NONE));
+   e->default_mouse = evas_device_add_full(eo_e, "Mouse",
+                                           "The default mouse",
+                                           e->default_seat, NULL,
+                                           EVAS_DEVICE_CLASS_MOUSE,
+                                           EVAS_DEVICE_SUBCLASS_NONE);
+   e->default_keyboard = evas_device_add_full(eo_e, "Keyboard",
+                                              "The default keyboard",
+                                              e->default_seat, NULL,
+                                              EVAS_DEVICE_CLASS_KEYBOARD,
+                                              EVAS_DEVICE_SUBCLASS_NONE);
 }
 
 EAPI int
@@ -1907,6 +1887,7 @@ _evas_canvas_efl_canvas_scene_smart_objects_calculate(Eo *eo_e, Evas_Public_Data
 EAPI void
 evas_smart_objects_calculate(Eo *eo_e)
 {
+   EINA_SAFETY_ON_NULL_RETURN(eo_e);
    evas_call_smarts_calculate(eo_e);
 }
 

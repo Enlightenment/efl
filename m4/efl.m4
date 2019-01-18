@@ -26,7 +26,6 @@ m4_define([v_maj], [$1])dnl
 m4_define([v_min], [$2])dnl
 m4_define([v_mic], [$3])dnl
 m4_define([dev_version], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
-m4_define([v_time], m4_esyscmd([(git log --format=%ci -1 2>/dev/null || date -u -d@${SOURCE_DATE_EPOCH:-$(date +%s)} "+%Y-%m-%d %H:%M:%S %z") | tr -d '\n']))dnl
 m4_define([v_rev], m4_if($4, dev, [dev_version], [0]))dnl
 m4_define([v_rel], [])dnl
 m4_define([def_build_profile], m4_if($4, dev, [dev], [release]))dnl
@@ -103,14 +102,12 @@ AC_DEFINE_UNQUOTED([VMAJ], [v_maj], [Major version])dnl
 AC_DEFINE_UNQUOTED([VMIN], [v_min], [Minor version])dnl
 AC_DEFINE_UNQUOTED([VMIC], [v_mic], [Micro version])dnl
 AC_DEFINE_UNQUOTED([VREV], [v_rev], [Revison])dnl
-AC_DEFINE([VTIME], ["v_time"], [Last source reconfigure])dnl
 VMAJ=v_maj
 VMIN=v_min
 VMIC=v_mic
 AC_SUBST([VMAJ])dnl
 AC_SUBST([VMIN])dnl
 AC_SUBST([VMIC])dnl
-AC_SUBST([VTIME])dnl
 dnl
 dnl TODO: warning - lt_cur:
 dnl the previous code assumed v_maj + v_min, but this will be a problem when
@@ -188,9 +185,9 @@ case "m4_defn([DOWNOTHER])" in
       ;;
 esac
 requirements_pc_[]m4_defn([DOWNEFL])="${depname} >= ${PACKAGE_VERSION} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-requirements_cflags_[]m4_defn([DOWNEFL])="-I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
-requirements_internal_libs_[]m4_defn([DOWNEFL])="lib/${libdirname}/lib${libname}.la ${requirements_internal_libs_[][]m4_defn([DOWNEFL])}"
-requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_public_libs_[]m4_defn([DOWNOTHER])} ${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])}"
+requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_[][]m4_defn([DOWNEFL])} -I\$(top_srcdir)/src/lib/${libdirname} -I\$(top_builddir)/src/lib/${libdirname}"
+requirements_internal_libs_[]m4_defn([DOWNEFL])="${requirements_internal_libs_[][]m4_defn([DOWNEFL])} lib/${libdirname}/lib${libname}.la"
+requirements_internal_deps_libs_[]m4_defn([DOWNEFL])="${requirements_internal_deps_libs_[][]m4_defn([DOWNEFL])} ${requirements_public_libs_[]m4_defn([DOWNOTHER])}"
 m4_popdef([DOWNOTHER])dnl
 m4_popdef([DOWNEFL])dnl
 ])
@@ -224,10 +221,10 @@ dnl the given EFL will use/depend on system crypto settings
 AC_DEFUN([EFL_CRYPTO_DEPEND],
 [dnl
 m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
-requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_crypto} ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_crypto} ${requirements_pc_deps_[][]m4_defn([DOWNEFL])}"
-requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_crypto} ${requirements_libs_[][]m4_defn([DOWNEFL])}"
-requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_crypto} ${requirements_cflags_[][]m4_defn([DOWNEFL])}"
+requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[][]m4_defn([DOWNEFL])} ${requirements_pc_crypto}"
+requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_[][]m4_defn([DOWNEFL])} ${requirements_pc_deps_crypto}"
+requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[][]m4_defn([DOWNEFL])} ${requirements_libs_crypto}"
+requirements_cflags_[]m4_defn([DOWNEFL])="${requirements_cflags_[][]m4_defn([DOWNEFL])} ${requirements_cflags_crypto}"
 m4_popdef([DOWNEFL])dnl
 ])
 
@@ -245,8 +242,8 @@ m4_pushdef([DOWNNAME], m4_translit([$2], [-A-Z], [_a-z]))dnl
 
    EFL_PKG_CHECK_STRICT([$3], [
       AC_DEFINE([HAVE_]m4_defn([UPNAME]), [1], [Have `]m4_defn([DOWNNAME])[' pkg-config installed.])
-      requirements_pc_[]m4_defn([DOWNEFL])="$3 ${requirements_pc_[][]m4_defn([DOWNEFL])}"
-      requirements_pc_deps_[]m4_defn([DOWNEFL])="$3 ${requirements_pc_deps_[]m4_defn([DOWNEFL])}"
+      requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[][]m4_defn([DOWNEFL])} $3"
+      requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_[]m4_defn([DOWNEFL])} $3"
       have_[]m4_defn([DOWNNAME])="yes"
 
       $4

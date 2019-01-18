@@ -36,6 +36,8 @@ _children_removed_cb(void *data EINA_UNUSED, const Efl_Event* event)
    eina_value_free(path);
 }
 
+static Eina_Bool started_up = EINA_FALSE;
+
 static Eina_Value
 _children_get(void *data,
               const Eina_Value v,
@@ -57,7 +59,7 @@ _children_get(void *data,
         str = eina_value_to_string(path);
         fail_if(str == NULL);
 
-        if (strcmp(temp_filename, str) == 0)
+        if (started_up && strcmp(temp_filename, str) == 0)
           {
              children_deleted = EINA_TRUE;
              efl_model_child_del(filemodel, child);
@@ -65,6 +67,17 @@ _children_get(void *data,
         free(str);
         eina_value_free(path);
      }
+
+   if (!started_up)
+     {
+        int fd;
+
+        if ((fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename)) > 0)
+          {
+             close(fd);
+          }
+     }
+   started_up = EINA_TRUE;
 
    return v;
 }
@@ -76,28 +89,12 @@ _children_added_cb(void *d EINA_UNUSED, const Efl_Event* event)
    Eina_Future *future;
 
    future = efl_model_children_slice_get(event->object, evt->index, 1);
-   eina_future_then(future, _children_get, event->object);
-}
-
-static Eina_Value
-_create_file(void *data EINA_UNUSED,
-             const Eina_Value v,
-             const Eina_Future *dead_future EINA_UNUSED)
-{
-   int fd;
-
-   if((fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename)) > 0)
-     {
-        close(fd);
-     }
-
-   return v;
+   eina_future_then(future, _children_get, event->object, NULL);
 }
 
 EFL_START_TEST(eio_model_test_test_monitor_add)
 {
    Eo *filemodel = NULL;
-   Eina_Future* future;
 
    tmpdir = eina_environment_tmp_get();
 
@@ -108,10 +105,6 @@ EFL_START_TEST(eio_model_test_test_monitor_add)
 
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_ADDED, &_children_added_cb, filemodel);
    efl_event_callback_add(filemodel, EFL_MODEL_EVENT_CHILD_REMOVED, &_children_removed_cb, NULL);
-
-   future = efl_model_children_slice_get(filemodel, 0, efl_model_children_count_get(filemodel));
-
-   eina_future_then(future, &_create_file, NULL);
 
    ecore_main_loop_begin();
 

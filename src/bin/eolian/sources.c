@@ -267,6 +267,50 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
    eina_strbuf_free(iter_param);
 }
 
+static int
+_gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_ownership, Eina_Strbuf *param_call)
+{
+   Eolian_Function_Parameter *pr;
+   int owners = 0;
+
+   EINA_ITERATOR_FOREACH(itr, pr)
+     {
+        const Eolian_Type *type, *inner_type;
+
+        type = eolian_parameter_type_get(pr);
+        inner_type = eolian_type_base_type_get(type);
+
+        //check if they should be freed or just ignored
+        if (!eolian_type_is_owned(type) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
+          {
+             eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
+             continue;
+          }
+
+        owners ++;
+
+        eina_strbuf_reset(param_call);
+
+        if (eolian_parameter_direction_get(pr) == EOLIAN_INOUT_PARAM)
+          eina_strbuf_append_char(param_call, '*');
+        eina_strbuf_append(param_call, eolian_parameter_name_get(pr));
+
+        //check if we might want to free or handle the children
+        if (!inner_type || !eolian_type_is_owned(inner_type))
+          {
+             _generate_normal_free(&fallback_free_ownership, type, param_call, "");
+          }
+        else if (inner_type && eolian_type_is_owned(inner_type))
+          {
+             _generate_iterative_free(&fallback_free_ownership, type, inner_type, pr, param_call);
+          }
+      }
+   eina_iterator_free(itr);
+
+   return owners;
+}
+
+
 static void
 _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
@@ -356,50 +400,23 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
    else
      {
           Eina_Iterator *itr;
-          Eolian_Function_Parameter *pr;
           int owners = 0;
           Eina_Strbuf *param_call;
 
           param_call = eina_strbuf_new();
 
           if (is_prop)
-            itr = eolian_property_values_get(fid, ftype);
-          else
-            itr = eolian_function_parameters_get(fid);
-
-          EINA_ITERATOR_FOREACH(itr, pr)
             {
-               const Eolian_Type *type, *inner_type;
-
-               type = eolian_parameter_type_get(pr);
-               inner_type = eolian_type_base_type_get(type);
-
-               //check if they should be freed or just ignored
-               if (!eolian_type_is_owned(type) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
-                 {
-                    eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
-                    continue;
-                 }
-
-               owners ++;
-
-               eina_strbuf_reset(param_call);
-
-               if (eolian_parameter_direction_get(pr) == EOLIAN_INOUT_PARAM)
-                 eina_strbuf_append_char(param_call, '*');
-               eina_strbuf_append(param_call, eolian_parameter_name_get(pr));
-
-               //check if we might want to free or handle the children
-               if (!inner_type || !eolian_type_is_owned(inner_type))
-                 {
-                    _generate_normal_free(&fallback_free_ownership, type, param_call, "");
-                 }
-               else if (inner_type && eolian_type_is_owned(inner_type))
-                 {
-                    _generate_iterative_free(&fallback_free_ownership, type, inner_type, pr, param_call);
-                 }
+               itr = eolian_property_values_get(fid, ftype);
+               owners += _gen_function_param_fallback(itr, fallback_free_ownership, param_call);
+               itr = eolian_property_keys_get(fid, ftype);
+               owners += _gen_function_param_fallback(itr, fallback_free_ownership, param_call);
             }
-          eina_iterator_free(itr);
+          else
+            {
+               itr = eolian_function_parameters_get(fid);
+               owners += _gen_function_param_fallback(itr, fallback_free_ownership, param_call);
+            }
 
           if (owners == 0)
             {
@@ -981,11 +998,17 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
 
    /* inherits in EFL_DEFINE_CLASS */
    {
-      const Eolian_Class *icl;
-      Eina_Iterator *itr = eolian_class_inherits_get(cl);
+      const Eolian_Class *icl = eolian_class_parent_get(cl);
       /* no inherits, NULL parent */
-      if (!itr)
+      if (!icl)
         eina_strbuf_append(buf, ", NULL");
+      else
+        {
+           Eina_Stringshare *mname = eolian_class_c_name_get(icl);
+           eina_strbuf_append_printf(buf, ", %s", mname);
+           eina_stringshare_del(mname);
+        }
+      Eina_Iterator *itr = eolian_class_extensions_get(cl);
       EINA_ITERATOR_FOREACH(itr, icl)
         {
            Eina_Stringshare *mname = eolian_class_c_name_get(icl);
@@ -1096,7 +1119,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
    if (!impl_same_class)
      eo_gen_class_names_get(eolian_implement_class_get(impl), NULL, NULL, &ocnamel);
 
-   char fname[256], iname[256];
+   char fname[256 + 128], iname[256];
    if (!impl_same_class)
      snprintf(iname, sizeof(iname), "%s_%s", cnamel, ocnamel);
    else

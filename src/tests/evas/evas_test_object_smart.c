@@ -175,7 +175,46 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
 }
 EFL_END_TEST
 
+
+void
+_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ck_abort_msg("This function should be not called");
+}
+
+EFL_START_TEST(evas_object_smart_clipped_smart_move)
+{
+   Evas *evas;
+   Evas_Smart *smart;
+   Evas_Object *smart_obj, *smart_child;
+
+   evas = _setup_evas();
+
+   Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("MyClass");
+   evas_object_smart_clipped_smart_set(&sc);
+   sc.move = NULL;
+
+   smart = evas_smart_class_new(&sc);
+   fail_if(!smart);
+
+   smart_obj = evas_object_smart_add(evas, smart);
+   fail_if(!smart_obj);
+
+   smart_child = evas_object_box_add(evas);
+   evas_object_smart_member_add(smart_child, smart_obj);
+
+   evas_object_event_callback_add(smart_child, EVAS_CALLBACK_MOVE, _move_cb, NULL);
+   evas_object_move(smart_obj, 100, 100);
+
+   evas_object_smart_member_del(smart_child);
+   evas_object_del(smart_child);
+   evas_object_del(smart_obj);
+   evas_free(evas);
+}
+EFL_END_TEST
+
 void evas_test_object_smart(TCase *tc)
 {
    tcase_add_test(tc, evas_object_smart_paragraph_direction);
+   tcase_add_test(tc, evas_object_smart_clipped_smart_move);
 }

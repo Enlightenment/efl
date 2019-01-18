@@ -121,10 +121,7 @@ public class Object : System.IDisposable
         var handle = eldbus_object_get(conn.Handle, bus, path);
 
         if (handle == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_object_get");
-        }
 
         InitNew(handle, true);
     }
@@ -169,10 +166,7 @@ public class Object : System.IDisposable
         var conn = eldbus_object_connection_get(Handle);
 
         if (conn == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Connection' object from eldbus_object_connection_get");
-        }
 
         return new eldbus.Connection(conn, false);
     }
@@ -216,10 +210,7 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_send");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -231,10 +222,7 @@ public class Object : System.IDisposable
         var hdl = eldbus_object_method_call_new(Handle, _interface, member);
 
         if (hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_object_method_call_new");
-        }
 
         return new eldbus.Message(hdl, false);
     }
@@ -249,10 +237,7 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_peer_ping(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_ping");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -267,10 +252,7 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_peer_machine_id_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_machine_id_get");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -285,10 +267,7 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_introspect(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_introspect");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -303,10 +282,7 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_managed_objects_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_managed_objects_get");
-        }
 
         return new eldbus.Pending(pending_hdl, false);
     }

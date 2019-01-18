@@ -3,6 +3,7 @@
 #endif
 
 #include <Ecore.h>
+#include <Ecore_File.h>
 #include <Ecore_Evas.h>
 #include <Ecore_Getopt.h>
 #include <Edje.h>
@@ -344,7 +345,7 @@ _headers_write(const char *filename)
 
    free(str);
 
-   snprintf(buf, sizeof(buf), C_HEADER, filename);
+   snprintf(buf, sizeof(buf), C_HEADER, ecore_file_file_get(filename));
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      return EINA_FALSE;
 

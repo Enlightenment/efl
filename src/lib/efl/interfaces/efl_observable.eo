@@ -1,6 +1,6 @@
 import efl_types;
 
-class Efl.Observable (Efl.Object) {
+class Efl.Observable extends Efl.Object {
    [[Efl observable class]]
    methods {
       observer_add {
@@ -38,7 +38,7 @@ class Efl.Observable (Efl.Object) {
          [[Return a new iterator associated with a group of observers.
 
            @since 1.19]]
-         return: iterator<Efl.Observer> @owned; [[Iterator for observers group]] 
+         return: iterator<Efl.Observer> @owned; [[Iterator for observers group]]
          params {
             @in key: string; [[A key to classify observer groups]]
          }

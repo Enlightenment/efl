@@ -75,7 +75,7 @@
  *          out file size and type.
  *
  * @warning All functions in this group are @b blocking, which means they may
- *          take a long time to return, use them carefully.
+ *          take a long time to return; use them carefully.
  *
  * See an example @ref eina_file_example_01_page "here".
  *
@@ -105,9 +105,9 @@ typedef struct _Eina_File_Line Eina_File_Line;
  * @typedef Eina_File_Dir_List_Cb
  * @brief Type for a callback to be called when iterating over the files of a
  *        directory.
- * @param name The file name EXCLUDING the path
- * @param path The path passed to eina_file_dir_list()
- * @param data The data passed to eina_file_dir_list()
+ * @param[in] name The file name EXCLUDING the path
+ * @param[in] path The path passed to eina_file_dir_list()
+ * @param[in] data The data passed to eina_file_dir_list()
  */
 typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *data);
 
@@ -145,7 +145,7 @@ typedef enum {
   EINA_FILE_WILLNEED,   /**< Advise need for all the mapped memory */
   EINA_FILE_POPULATE,   /**< Request for all the mapped memory */
   EINA_FILE_DONTNEED,   /**< Indicate that the memory is no longer needed. This may result in the memory being removed from any caches if applicable. @since 1.8 */
-  EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not suceed if the filesystem does not support it. @since 1.8 */
+  EINA_FILE_REMOVE      /**< This memory is to be released and any content will be lost. Subsequent accesses will succeed but return fresh memory as if accessed for the first time. This may not succeed if the filesystem does not support it. @since 1.8 */
 } Eina_File_Populate;
 
 /* Why do this? Well PATH_MAX may vary from when eina itself is compiled
@@ -240,7 +240,7 @@ struct _Eina_File_Line
  * @def EINA_FILE_DIR_LIST_CB
  * @brief The macro to cast to an #Eina_File_Dir_List_Cb.
  * @details This macro casts @p function to #Eina_File_Dir_List_Cb.
- * @param function The function to cast
+ * @param[in] function The function to cast
  *
  */
 #define EINA_FILE_DIR_LIST_CB(function) ((Eina_File_Dir_List_Cb)function)
@@ -288,7 +288,7 @@ EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG
  *          only fetched when advancing the iterator, which means there is very little
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  * @return An #Eina_Iterator that walks over the files and directories
  *         in @p dir. On failure, it returns @c NULL.
  *
@@ -309,7 +309,7 @@ EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_A
  *          dir is only fetched when advancing the iterator, which means there is
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  *
  * @return An #Eina_Iterator that walks over the files and
  *         directories in @p dir. On failure, it returns @c NULL.
@@ -409,7 +409,7 @@ EAPI Eina_Bool eina_file_mkdtemp(const char *templatename, Eina_Tmpstr **path) E
  *          @p dir is only fetched when advancing the iterator, which means there is
  *          cost associated with creating the list and stopping halfway through it.
  *
- * @param [in] dir The name of the directory to list
+ * @param[in] dir The name of the directory to list
  *
  * @return An Eina_Iterator that walks over the files and
  *         directories in @p dir. On failure, it returns @c NULL.
@@ -514,7 +514,7 @@ eina_file_virtualize(const char *virtual_name, const void *data, unsigned long l
 /**
  * @brief Tells if a file is a real file or only exists in memory.
  *
- * @param file The file to test
+ * @param[in] file The file to test
  * @return #EINA_TRUE if the file is a virtual file
  *
  * @since 1.8
@@ -527,7 +527,7 @@ eina_file_virtual(Eina_File *file) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
  * @details All current map continue to exist. You need to manually delete
  *          and recreate them to have the new correct mapping.
  *
- * @param file The file to refresh
+ * @param[in,out] file The file to refresh
  * @return #EINA_TRUE if the file has changed
  *
  * @since 1.8
@@ -537,7 +537,7 @@ EAPI Eina_Bool eina_file_refresh(Eina_File *file);
 /**
  * @brief Duplicates a read-only handler of a previously open file.
  *
- * @param file To duplicate a reference to
+ * @param[in] file To duplicate a reference to
  * @return #Eina_File handle of the duplicated file
  *
  * @note Opens a file in read-only mode.
@@ -699,12 +699,12 @@ EAPI Eina_Bool eina_file_map_faulted(Eina_File *file, void *map);
  * @details This function is similar to eina_str_join_len(), but the separator
  *          is '\' on Windows and '/' otherwise.
  *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param a First path to use.
- * @param a_len length of @p a.
- * @param b Second path to use.
- * @param b_len length of @p b.
+ * @param[out] dst The buffer to store the result.
+ * @param[in] size Size (in byte) of the buffer.
+ * @param[in] a First path to use.
+ * @param[in] a_len length of @p a.
+ * @param[in] b Second path to use.
+ * @param[in] b_len length of @p b.
  * @return The number of characters printed.
  *
  * @see eina_str_join_len()
@@ -725,10 +725,10 @@ static inline size_t eina_file_path_join_len(char *dst,
  *          the length of @p a and @p b using strlen(). The path separator is
  *          '\' on Windows and '/' otherwise.
  *
- * @param dst The buffer to store the result.
- * @param size Size (in byte) of the buffer.
- * @param a First string to use.
- * @param b Second string to use.
+ * @param[out] dst The buffer to store the result.
+ * @param[in] size Size (in byte) of the buffer.
+ * @param[in] a First string to use.
+ * @param[in] b Second string to use.
  * @return The number of characters printed.
  *
  * @see eina_file_path_join_len()
@@ -746,8 +746,8 @@ static inline size_t eina_file_path_join(char *dst,
  * @details This function is a wrapper around the unlink() system call. It removes a link to
  *          a file.
  *
- * @param pathname File name to unlink.
- * @return #EINA_TRUE if the unlink was successfull, #EINA_FALSE otherwise..
+ * @param[in] pathname File name to unlink.
+ * @return #EINA_TRUE if the unlink was successful, #EINA_FALSE otherwise..
  *
  * @since 1.19
  */
@@ -758,8 +758,8 @@ EAPI Eina_Bool eina_file_unlink(const char *pathname);
  * @details This function is a wrapper around the fnctl() system call. It makes sure
  *          that the fd will be closed whenever exec is called.
  *
- * @param fd File descriptor to enforce close on exec on.
- * @param on #EINA_TRUE will turn close on exec on, #EINA_FALSE will turn it off.
+ * @param[in] fd File descriptor to enforce close on exec on.
+ * @param[in] on #EINA_TRUE will turn close on exec on, #EINA_FALSE will turn it off.
  * @return #EINA_TRUE if it will be closed on exec, #EINA_FALSE otherwise..
  *
  * @since 1.20

@@ -1,0 +1,9 @@
+import eina_types;
+
+class Dummy.Child extends Dummy.Test_Object {
+
+   implements {
+      class.constructor;
+      class.destructor;
+   }
+}

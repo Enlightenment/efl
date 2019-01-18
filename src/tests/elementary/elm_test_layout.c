@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_layout_legacy_type_check)
+EFL_START_TEST(elm_layout_test_legacy_type_check)
 {
    Evas_Object *win, *layout;
    const char *type;
@@ -41,14 +41,14 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_layout_swallows)
+EFL_START_TEST(elm_layout_test_swallows)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly, *bt, *bt2;
 
    win = win_add(NULL, "layout", ELM_WIN_BASIC);
 
-   ly = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_show(ly);
@@ -82,7 +82,7 @@ _propagated_cb(void *data EINA_UNUSED,
    return v;
 }
 
-EFL_START_TEST(elm_layout_model_connect)
+EFL_START_TEST(elm_layout_test_model_connect)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
@@ -94,7 +94,7 @@ EFL_START_TEST(elm_layout_model_connect)
 
    win = win_add(NULL, "layout", ELM_WIN_BASIC);
 
-   ly = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win);
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
    elm_layout_file_set(ly, buf, "layout");
    evas_object_show(ly);
@@ -103,7 +103,7 @@ EFL_START_TEST(elm_layout_model_connect)
    ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
    ck_assert(!!eina_value_set(&v, text_value));
    f = efl_model_property_set(model, "text_property", &v);
-   eina_future_then(f, _propagated_cb, NULL);
+   eina_future_then(f, _propagated_cb, NULL, NULL);
 
    efl_ui_model_connect(ly, "text", "text_property");
    efl_ui_view_model_set(ly, model);
@@ -119,8 +119,8 @@ EFL_END_TEST
 
 void elm_test_layout(TCase *tc)
 {
-   tcase_add_test(tc, elm_layout_legacy_type_check);
+   tcase_add_test(tc, elm_layout_test_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, elm_layout_swallows);
-   tcase_add_test(tc, elm_layout_model_connect);
+   tcase_add_test(tc, elm_layout_test_swallows);
+   tcase_add_test(tc, elm_layout_test_model_connect);
 }

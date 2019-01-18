@@ -34,8 +34,6 @@ mixin Efl.Gfx.Color
 
               Use null pointers on the components you're not interested
               in: they'll be ignored by the function.
-
-              See the full \@ref Example_Evas_Object_Manipulation "example".
             ]]
          }
          values {

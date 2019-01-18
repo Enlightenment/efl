@@ -118,6 +118,17 @@ eina_environment_tmp_get(void)
      }
    if (!tmp) tmp = "/tmp";
 #endif
+
+#if defined(__MACH__) && defined(__APPLE__)
+   if (tmp && tmp[strlen(tmp) -1] == '/')
+     {
+        char *tmp2 = strdup(tmp);
+        tmp2[strlen(tmp2) - 1] = 0x0;
+        tmp = tmp2;
+        return tmp;
+     }
+#endif
+
    tmp = strdup(tmp);
    return tmp;
 }

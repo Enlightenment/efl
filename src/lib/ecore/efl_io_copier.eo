@@ -1,10 +1,10 @@
 import eina_types;
 
-class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
+class Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
     [[Copy from an @Efl.Io.Reader source to @Efl.Io.Writer destination.
 
       During usage it will keep reference to @.source and
-      @.destination objects, automatically relasing them on
+      @.destination objects, automatically releasing them on
       destruction.
 
       By default the read-write process is done based on fixed-size
@@ -25,7 +25,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
           reported as data when it's read from @.source).
 
         - The "line" event is only emitted when @.line_delimiter is
-          set and not empty. It's simiar to "data".
+          set and not empty. It's similar to "data".
 
         - The "done" event is emitted if @.source is
           @Efl.Io.Reader.eos $true and all data was written to
@@ -346,7 +346,7 @@ class Efl.Io.Copier (Efl.Loop_Consumer, Efl.Io.Closer) {
               This function may also emit "progress" and "error"
               events.
 
-              \@note this function may block the main loop execution
+              Note: this function may block the main loop execution
               until operations are complete! This is bad for usability as
               user interface or other operations may freeze. A better
               approach is to operate asynchronously and wait for the

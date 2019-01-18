@@ -13,6 +13,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_INTERFACE_FILESELECTOR_BETA
 #define EFL_PART_PROTECTED
+#define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
 #include "Eio_Eo.h"
@@ -104,7 +105,7 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 {
    Eina_List *tmp = NULL;
 
-#define A(p) tmp = eina_list_append(tmp, p);
+#define A(p) if (p) tmp = eina_list_append(tmp, p);
 
    A(pd->up_button)
    A(pd->home_button)
@@ -119,7 +120,7 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 
 #undef A
 
-   efl_ui_focus_manager_calc_update_order(efl_ui_focus_object_focus_manager_get(obj), obj, tmp);
+   efl_ui_focus_composition_elements_set(obj, tmp);
 }
 
 void
@@ -226,16 +227,16 @@ _model_str_property_set(Efl_Model *model, const char *property_name, const char 
    return efl_model_property_set(model, property_name, eina_value_string_new(property_value));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_fileselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 {
    const char *style;
    const char *data;
    char buf[1024];
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -1030,8 +1031,8 @@ _populate(Evas_Object *obj,
    if (efl_model_children_count_get(model))
      {
         future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-        future = eina_future_then(future, _process_children_cb, lreq);
-        efl_future_Eina_FutureXXX_then(obj, future);
+        future = eina_future_then(future, _process_children_cb, lreq, NULL);
+        efl_future_then(obj, future);
      }
    else
      {
@@ -1497,7 +1498,7 @@ _on_text_activated(void *data, const Efl_Event *event)
    efl_key_data_set(fs, _text_activated_path_key, eina_stringshare_add(path));
    efl_key_ref_set(fs, _text_activated_model_key, model);
    efl_ref(fs);
-   eina_future_then(future, _on_text_activated_set_path_then, fs);
+   eina_future_then(future, _on_text_activated_set_path_then, fs, NULL);
 
    elm_object_focus_set(event->object, EINA_FALSE);
 }
@@ -1686,8 +1687,8 @@ _resource_created(void *data, const Efl_Event *event)
      return;
 
    f = efl_model_children_slice_get(sd->model, evt->index, 1);
-   f = eina_future_then(f, _resource_created_then, fs);
-   efl_future_Eina_FutureXXX_then(fs, f);
+   f = eina_future_then(f, _resource_created_then, fs, NULL);
+   efl_future_then(fs, f);
 }
 
 static void
@@ -1939,6 +1940,7 @@ EOLIAN static Eo *
 _elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   legacy_child_focus_handle(obj);
    sd->obj = obj;
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -1950,19 +1952,14 @@ _elm_fileselector_efl_object_constructor(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _from_efl_event_call(Elm_Fileselector *fs, const Efl_Event_Description *evt_desc, Efl_Model *model)
 {
-   Legacy_Event_Path_Then_Data *evt_data;
    Eina_Value *fetch;
    char *path;
-
-   evt_data = calloc(1, sizeof(Legacy_Event_Path_Then_Data));
-   evt_data->eo_obj = fs;
-   evt_data->evt_desc = evt_desc;
 
    // Call legacy smart callback with path
    fetch = efl_model_property_get(model, "path");
    path = eina_value_to_string(fetch);
 
-   _event_to_legacy_call(evt_data->eo_obj, evt_data->evt_desc, path);
+   _event_to_legacy_call(fs, evt_desc, path);
 
    // Call Eo event with model
    return efl_event_callback_call(fs, evt_desc, model);
@@ -2982,16 +2979,6 @@ EOLIAN static Elm_Fileselector_Sort
 _elm_fileselector_elm_interface_fileselector_sort_method_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Data *sd)
 {
    return sd->sort_type;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Fileselector_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect)
-{
-   Eina_Bool ret = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
-
-   _focus_chain_update(obj, pd);
-
-   return ret;
 }
 
 static Eina_Bool

@@ -127,6 +127,7 @@
  *
  * @{
  */
+typedef Eo Evas_Textblock;
 
 /**
  * @typedef Evas_Textblock_Style
@@ -155,6 +156,14 @@ typedef struct _Efl_Text_Cursor_Cursor       Evas_Textblock_Cursor;
  * XXX: Adapter for legacy.
  */
 typedef struct _Evas_Textblock_Node_Format Evas_Object_Textblock_Node_Format;
+
+/**
+ * @typedef Evas_Textblock_Node_Format
+ * A format node.
+ *
+ * XXX: Adapter for legacy.
+ */
+typedef struct _Evas_Textblock_Node_Format Evas_Textblock_Node_Format;
 
 /**
  * @typedef Evas_Textblock_Rectangle
@@ -596,6 +605,22 @@ EAPI Eina_Bool evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *obj);
 EAPI Eina_Bool evas_textblock_cursor_char_next(Evas_Textblock_Cursor *obj);
 
 /**
+ * @brief Advances the cursor one grapheme cluster backwards.
+ *
+ * @return @c true on success, @c false otherwise.
+ */
+EAPI Eina_Bool evas_textblock_cursor_cluster_prev(Evas_Textblock_Cursor *obj);
+
+/**
+ * @brief Advances the cursor one grapheme cluster forward.
+ *
+ * @return @c true on success, @c false otherwise.
+ *
+ * @ingroup Evas_Textblock_Cursor
+ */
+EAPI Eina_Bool evas_textblock_cursor_cluster_next(Evas_Textblock_Cursor *obj);
+
+/**
  * @brief Advances to the start of the next text node
  *
  * @return @c true if managed to advance, @c false otherwise
@@ -849,6 +874,16 @@ EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_new(const Evas_Object *
  * @return @c true on success, @c false otherwise.
  */
 EAPI Eina_Bool evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *obj, Evas_Coord x, Evas_Coord y);
+
+/**
+ * @brief Sets the position of the cursor according to the X and Y coordinates and
+ * grapheme clusters of text.
+ *
+ * @param[in] y y coord to set by.
+ *
+ * @return @c true on success, @c false otherwise.
+ */
+EAPI Eina_Bool evas_textblock_cursor_cluster_coord_set(Evas_Textblock_Cursor *obj, Evas_Coord x, Evas_Coord y);
 
 /**
  * Free the cursor and unassociate it from the object.

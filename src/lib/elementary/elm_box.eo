@@ -1,4 +1,4 @@
-class Elm.Box (Efl.Ui.Widget, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
+class Elm.Box extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Efl.Ui.Legacy
 {
    [[Elementary box class]]
    legacy_prefix: elm_box;

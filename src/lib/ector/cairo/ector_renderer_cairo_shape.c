@@ -75,19 +75,15 @@ struct _Ector_Renderer_Cairo_Shape_Data
    cairo_path_t *path;
 };
 
-static void
-_ector_renderer_cairo_shape_path_changed(void *data, const Efl_Event *event)
+EOLIAN static void
+_ector_renderer_cairo_shape_efl_gfx_path_commit(Eo *obj EINA_UNUSED,
+                                                Ector_Renderer_Cairo_Shape_Data *pd)
 {
-   Ector_Renderer_Cairo_Shape_Data *pd = data;
-   Efl_Gfx_Path_Change_Event *ev = event->info;
-
-   if (!pd->path) return;
-   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
-               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
-     return;
-
-   cairo_path_destroy(pd->path);
-   pd->path = NULL;
+   if (pd->path)
+     {
+        cairo_path_destroy(pd->path);
+        pd->path = NULL;
+     }
 }
 
 static Eina_Bool
@@ -97,13 +93,6 @@ _ector_renderer_cairo_shape_ector_renderer_prepare(Eo *obj, Ector_Renderer_Cairo
    const double *pts = NULL;
 
    ector_renderer_prepare(efl_super(obj, ECTOR_RENDERER_CAIRO_SHAPE_CLASS));
-
-   if (pd->shape->fill)
-     ector_renderer_prepare(pd->shape->fill);
-   if (pd->shape->stroke.fill)
-     ector_renderer_prepare(pd->shape->stroke.fill);
-   if (pd->shape->stroke.marker)
-     ector_renderer_prepare(pd->shape->stroke.marker);
 
    // shouldn't this be moved to the cairo base object?
    if (!pd->parent)
@@ -262,9 +251,7 @@ _ector_renderer_cairo_shape_efl_object_constructor(Eo *obj, Ector_Renderer_Cairo
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
 
-   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _ector_renderer_cairo_shape_path_changed, pd);
-
-    return obj;
+   return obj;
 }
 
 static Efl_Object *

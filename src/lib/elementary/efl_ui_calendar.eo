@@ -8,7 +8,7 @@ enum Efl.Ui.Calendar_Weekday
    ]]
    sunday, [[Sunday weekday]]
    monday, [[Monday weekday]]
-   tuesday, [[Tusday weekday]]
+   tuesday, [[Tuesday weekday]]
    wednesday, [[Wednesday weekday]]
    thursday, [[Thursday weekday]]
    friday, [[Friday weekday]]
@@ -16,7 +16,7 @@ enum Efl.Ui.Calendar_Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format)
+class Efl.Ui.Calendar extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format
 {
    [[Calendar widget
 
@@ -55,7 +55,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Acces
             ]]
          }
          values {
-            min: Efl.Time; [[Time structure containing the minmum date.]]
+            min: Efl.Time; [[Time structure containing the minimum date.]]
          }
       }
       @property date_max {
@@ -112,6 +112,7 @@ class Efl.Ui.Calendar (Efl.Ui.Layout.Object, Efl.Ui.Focus.Composition, Efl.Acces
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.format_string { set; get;}
    }
    events {
       changed: void; [[Emitted when the selected date in the calendar is changed]]

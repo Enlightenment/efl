@@ -44,7 +44,7 @@ struct @extern Eina.Matrix3 {
 
 type @extern Eina.Unicode: uint32; [[Eina unicode type]]
 
-struct @extern Eina.File.Direct.Info; [[Eina file direct information data structure]]
+struct @extern Eina.File_Direct_Info; [[Eina file direct information data structure]]
 /*{
    path_lenght:    size_t;              [[Size of the whole path]]
    name_length:    size_t;              [[Size of the filename/basename component]]
@@ -77,7 +77,7 @@ struct @extern Eina.Rw_Slice {
     mem: void_ptr; [[Pointer to memory segment]]
 }
 
-struct @extern Eina.Value.Type; [[Eina value type]]
+struct @extern Eina.Value_Type; [[Eina value type]]
 
 struct @extern Eina.Stat {
     [[The structure to store some file statistics.]]
@@ -98,6 +98,8 @@ struct @extern Eina.Stat {
     ctime    : ulong; [[The tilestamp when the file was created]]
     ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
 }
+
+struct @extern Eina.Promise; [[Eina promise type]]
 
 /* FIXME: This definitely shouldn't be here. */
 type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]

@@ -1,4 +1,4 @@
-class Efl.Ui.Tab_Pager (Efl.Ui.Pager)
+class Efl.Ui.Tab_Pager extends Efl.Ui.Pager
 {
    [[Tab Pager class]]
    methods {

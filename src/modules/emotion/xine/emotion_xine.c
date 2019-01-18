@@ -1281,7 +1281,7 @@ _em_fd_ev_active(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
                               xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED))) &&
                            (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_AUDIO) &&
                                xine_get_stream_info(ev->stream, XINE_STREAM_INFO_AUDIO_HANDLED)))
-                          ev->anim = ecore_animator_add(_em_audio_only_poller, ev);
+                          ev->anim = ecore_evas_animator_add(ev->obj, _em_audio_only_poller, ev);
                        _emotion_playback_started(ev->obj);
 		       break;
 		     case 5: /* stop done */

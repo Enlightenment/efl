@@ -41,6 +41,11 @@
   efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
+#ifndef CLAMP
+# define CLAMP(x, min, \
+               max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+#endif
+
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
@@ -90,7 +95,19 @@ static void
 _elm_pan_update(Elm_Pan_Smart_Data *psd)
 {
    if (psd->content)
-     evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
+     {
+        Efl_Ui_Focus_Manager *manager;
+
+        manager = psd->interface_object;
+
+        efl_ui_focus_manager_dirty_logic_freeze(manager);
+        evas_object_move(psd->content, psd->x - psd->px, psd->y - psd->py);
+        efl_ui_focus_manager_dirty_logic_unfreeze(manager);
+        //XXX: hack, right now there is no api in efl_ui_focus_manager_sub.eo to mark it dirty
+        // If we have moved the content, then emit this event, in order to ensure that the focus_manager_sub
+        // logic tries to fetch the viewport again
+        efl_event_callback_call(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
+     }
 }
 
 EOLIAN static void
@@ -339,7 +356,6 @@ static Evas_Coord _elm_scroll_page_y_get(
 #define RIGHT              1
 #define UP                 2
 #define DOWN               3
-#define EVTIME             1
 //#define SCROLLDBG 1
 /* smoothness debug calls - for debugging how much smooth your app is */
 #define SMOOTHDBG          1
@@ -1401,9 +1417,8 @@ _elm_scroll_bounce_x_animator(void *data, const Efl_Event *event EINA_UNUSED)
         r = 1.0;
         if (sid->down.momentum_animator)
           {
-             ed = abs((int)(sid->down.dx * (_elm_config->thumbscroll_friction +
-                                            sid->down.extra_time) - sid->down.b0x));
-             md = abs((int)(_elm_config->thumbscroll_friction * 5 * w));
+             ed = abs((int)(sid->down.dx * _elm_config->thumbscroll_momentum_friction - sid->down.b0x));
+             md = abs((int)(_elm_config->thumbscroll_momentum_friction * 5 * w));
              if (ed > md) r = (double)(md) / (double)ed;
           }
         x = sid->down.b2x + (int)((double)(dx - odx) * r);
@@ -1455,9 +1470,8 @@ _elm_scroll_bounce_y_animator(void *data, const Efl_Event *event EINA_UNUSED)
         r = 1.0;
         if (sid->down.momentum_animator)
           {
-             ed = abs((int)(sid->down.dy * (_elm_config->thumbscroll_friction +
-                                            sid->down.extra_time) - sid->down.b0y));
-             md = abs((int)(_elm_config->thumbscroll_friction * 5 * h));
+             ed = abs((int)(sid->down.dy * _elm_config->thumbscroll_momentum_friction - sid->down.b0y));
+             md = abs((int)(_elm_config->thumbscroll_momentum_friction * 5 * h));
              if (ed > md) r = (double)(md) / (double)ed;
           }
         y = sid->down.b2y + (int)((double)(dy - ody) * r);
@@ -1762,7 +1776,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
 }
 
 EOLIAN static void
-_elm_interface_scrollable_efl_ui_base_mirrored_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
+_elm_interface_scrollable_efl_ui_i18n_mirrored_set(Eo *obj, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool mirrored)
 {
    Evas_Coord wx;
 
@@ -2002,8 +2016,8 @@ _scroll_wheel_post_event_go(Elm_Scrollable_Smart_Interface_Data *sid, int x, int
         Eina_Future *f;
 
         f = eina_future_then(efl_loop_job(efl_loop_get(sid->obj)),
-                             _scroll_wheel_post_event_job, sid);
-        efl_future_Eina_FutureXXX_then(sid->obj, f);
+                             _scroll_wheel_post_event_job, sid, NULL);
+        efl_future_then(sid->obj, f);
      }
    else
      {
@@ -2258,7 +2272,7 @@ _paging_is_enabled(Elm_Scrollable_Smart_Interface_Data *sid)
 static void
 _elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   double t, at, dt, p, r;
+   double t, dt, p;
    Elm_Scrollable_Smart_Interface_Data *sid = data;
    Evas_Coord x, y, dx, dy, px, py, maxx, maxy, minx, miny;
    Eina_Bool no_bounce_x_end = EINA_FALSE, no_bounce_y_end = EINA_FALSE;
@@ -2270,23 +2284,16 @@ _elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
      }
 
    t = ecore_loop_time_get();
-   dt = t - sid->down.anim_start;
+
+   if (sid->down.anim_dur == 0) dt = 1.0;
+   else dt = (t - sid->down.anim_start) / sid->down.anim_dur;
+
    if (dt >= 0.0)
      {
-        r = _elm_config->thumbscroll_min_friction / _elm_config->thumbscroll_friction;
-        at = (double)sqrt(
-           (sid->down.dx * sid->down.dx) + (sid->down.dy * sid->down.dy));
-        at = at < ((1.0 - r) * _elm_config->thumbscroll_friction_standard) ?
-           at : (1.0 - r) * _elm_config->thumbscroll_friction_standard;
-        at = ((at / _elm_config->thumbscroll_friction_standard) + r) *
-           (_elm_config->thumbscroll_friction + sid->down.extra_time);
-        dt = dt / at;
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
-        dx = (sid->down.dx * (_elm_config->thumbscroll_friction +
-                              sid->down.extra_time) * p);
-        dy = (sid->down.dy * (_elm_config->thumbscroll_friction +
-                              sid->down.extra_time) * p);
+        dx = sid->down.dx * p;
+        dy = sid->down.dy * p;
         sid->down.ax = dx;
         sid->down.ay = dy;
         x = sid->down.sx - dx;
@@ -2332,6 +2339,7 @@ _elm_scroll_momentum_animator(void *data, const Efl_Event *event EINA_UNUSED)
              sid->down.ay = 0;
              sid->down.pdx = 0;
              sid->down.pdy = 0;
+             sid->down.anim_dur = 0;
              if (sid->content_info.resized)
                _elm_scroll_wanted_region_set(sid->obj);
           }
@@ -2596,6 +2604,109 @@ _elm_scroll_scroll_to_x(Elm_Scrollable_Smart_Interface_Data *sid,
    sid->bouncemex = EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_scroll_running_momentum_speed_get(Elm_Scrollable_Smart_Interface_Data *sid, double *vx, double *vy)
+{
+   double p = 0;
+   int remain_x = 0, remain_y = 0;
+   double remain_dur = 0;
+
+   p = (ecore_loop_time_get() -  sid->down.anim_start) / sid->down.anim_dur;
+
+   // if momentum animation is not running now
+   if ( p > 1.0 || p < 0)
+     {
+        if (vx) *vx = 0;
+        if (vy) *vy = 0;
+        return EINA_FALSE;
+     }
+
+   // calculate current velecity from remain distance and time
+   remain_x = sid->down.dx -  sid->down.dx * p;
+   remain_y = sid->down.dy -  sid->down.dy * p;
+   remain_dur = sid->down.anim_dur -  sid->down.anim_dur * p;
+
+   if (vx) *vx = remain_x / remain_dur;
+   if (vy) *vy = remain_y / remain_dur;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_scroll_momentum_calc(int dx, int dy, double dt, double *vx, double *vy, int *dist_x, int *dist_y, double *dur)
+{
+   int n = 0;
+   double vel = 0, vel_x = 0, vel_y = 0;
+   double fvel = 0, fvel_x = 0, fvel_y = 0;
+   int distance_x = 0 , distance_y = 0;
+   int sign_dx = 0, sign_dy = 0;
+   int sign_vx = 0, sign_vy = 0;
+
+
+   double r = _elm_config->thumbscroll_momentum_friction;
+   const int min_px = 3;
+
+   if ( dt == 0 ) return EINA_FALSE;
+
+   // store sign value of distance
+   sign_dx = (dx > 0) - (dx < 0);
+   sign_dy = (dy > 0) - (dy < 0);
+
+   if (vx) sign_vx = (*vx > 0) - (*vx < 0);
+   if (vy) sign_vy = (*vy > 0) - (*vy < 0);
+
+   // scale factor must be below 1.0
+   if ( r >=  1 ) r = 0.99;
+
+   if (vx && (sign_dx == sign_vx)) vel_x = *vx;
+   if (vy && (sign_dy == sign_vy)) vel_y = *vy;
+
+   // calculate time based velecity (unit : px/second)
+   vel_x += dx / dt;
+   vel_y += dy / dt;
+
+  vel_x *= _elm_config->thumbscroll_sensitivity_friction;
+  vel_y *= _elm_config->thumbscroll_sensitivity_friction;
+
+   vel = sqrt((vel_x * vel_x) + (vel_y * vel_y));
+
+   // calculate frame based velecity (unit : px/frame)
+   fvel_x = vel_x * (1/60.0);
+   fvel_y = vel_y * (1/60.0);
+   fvel = vel * (1/60.0);
+
+   if (abs((int) fvel) < _elm_config->thumbscroll_threshold ) return EINA_FALSE;
+
+   // calculate a number of frames to reach min_px when it follows a geometric sequence with scale factor r
+   n = log(min_px/fvel) / log(r);
+
+   distance_x = fvel_x * (( 1 - pow(r, n)) / (1 - r));
+   distance_y = fvel_y * (( 1 - pow(r, n)) / (1 - r));
+
+   // remove sign of distance
+   distance_x = abs(distance_x);
+   distance_y = abs(distance_y);
+
+   // clamp distance by thumbscroll_momentum_distance_max
+   distance_x = CLAMP(distance_x, 0, _elm_config->thumbscroll_momentum_distance_max);
+   distance_y = CLAMP(distance_y, 0, _elm_config->thumbscroll_momentum_distance_max);
+
+   // restore sign
+   distance_x *= sign_dx;
+   distance_y *= sign_dy;
+
+   if (dist_x) *dist_x = distance_x;
+   if (dist_y) *dist_y = distance_y;
+
+   if (vx) *vx = vel_x;
+   if (vy) *vy = vel_y;
+
+   // convert to time based animation duration
+   if (dur) *dur = CLAMP((n / 60.0), _elm_config->thumbscroll_momentum_animation_duration_min_limit, _elm_config->thumbscroll_momentum_animation_duration_max_limit);
+
+   return EINA_TRUE;
+}
+
 static void
 _elm_scroll_mouse_up_event_cb(void *data,
                               Evas *e,
@@ -2644,11 +2755,10 @@ _elm_scroll_mouse_up_event_cb(void *data,
                   double t, at, dt;
                   Evas_Coord ax, ay, dx, dy, vel;
 
-#ifdef EVTIME
+                  double vel_x, vel_y, dur;
+                  Evas_Coord dist_x, dist_y;
+
                   t = ev->timestamp / 1000.0;
-#else
-                  t = ecore_loop_time_get();
-#endif
 
                   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                   ax = ev->canvas.x;
@@ -2673,66 +2783,31 @@ _elm_scroll_mouse_up_event_cb(void *data,
                   ax /= (i + 1);
                   ay /= (i + 1);
                   at /= (i + 1);
-                  at /= _elm_config->thumbscroll_sensitivity_friction;
+
                   dx = ev->canvas.x - ax;
                   dy = ev->canvas.y - ay;
-                  if (at > 0)
+
+                  _elm_scroll_running_momentum_speed_get(sid, &vel_x, &vel_y);
+
+                  if (at > 0 && _elm_scroll_momentum_calc(dx, dy, at, &vel_x, &vel_y, &dist_x, &dist_y, &dur))
                     {
-                       vel = sqrt((dx * dx) + (dy * dy)) / at;
-                       if ((_elm_config->thumbscroll_friction > 0.0) &&
+                       vel = sqrt((vel_x * vel_x) + (vel_y * vel_y));
+
+                       if ((_elm_config->thumbscroll_momentum_friction > 0.0) &&
                            (vel > _elm_config->thumbscroll_momentum_threshold))
                          {
-                            Evas_Coord max_d;
                             int minx, miny, mx, my, px, py;
-                            double tt = 0.0, dtt = 0.0;
+                            double dtt = 0.0;
 
                             elm_obj_pan_pos_min_get
                                   (sid->pan_obj, &minx, &miny);
                             elm_obj_pan_pos_max_get
                                   (sid->pan_obj, &mx, &my);
                             elm_obj_pan_pos_get(sid->pan_obj, &px, &py);
-                            max_d = _elm_config->thumbscroll_flick_distance_tolerance;
-                            if (dx > 0)
-                              {
-                                 if (dx > max_d) dx = max_d;
-                                 sid->down.dx = (sin((M_PI * (double)dx / max_d)
-                                                     - (M_PI / 2)) + 1) * max_d / at;
-                              }
-                            else
-                              {
-                                 if (dx < -max_d) dx = -max_d;
-                                 sid->down.dx = (sin((M_PI * (double)dx / max_d)
-                                                     + (M_PI / 2)) - 1) * max_d / at;
-                              }
-                            if (dy > 0)
-                              {
-                                 if (dy > max_d) dy = max_d;
-                                 sid->down.dy = (sin((M_PI * (double)dy / max_d)
-                                                     - (M_PI / 2)) + 1) * max_d / at;
-                              }
-                            else
-                              {
-                                 if (dy < -max_d) dy = -max_d;
-                                 sid->down.dy = (sin((M_PI * (double)dy / max_d)
-                                                     + (M_PI / 2)) - 1) * max_d / at;
-                              }
-                            if (((sid->down.dx > 0) && (sid->down.pdx > 0)) ||
-                                ((sid->down.dx < 0) && (sid->down.pdx < 0)) ||
-                                ((sid->down.dy > 0) && (sid->down.pdy > 0)) ||
-                                ((sid->down.dy < 0) && (sid->down.pdy < 0)))
-                              {
-                                 tt = ecore_loop_time_get();
-                                 dtt = tt - sid->down.anim_start;
 
-                                 if (dtt < 0.0) dtt = 0.0;
-                                 else if (dtt >
-                                          _elm_config->thumbscroll_friction)
-                                   dtt = _elm_config->thumbscroll_friction;
-                                 sid->down.extra_time =
-                                   _elm_config->thumbscroll_friction - dtt;
-                              }
-                            else
-                              sid->down.extra_time = 0.0;
+                            sid->down.dx = dist_x;
+                            sid->down.dy = dist_y;
+                            sid->down.anim_dur = dur;
 
                             if (abs(sid->down.dx) > _elm_config->thumbscroll_acceleration_threshold &&
                                 (dtt < _elm_config->thumbscroll_acceleration_time_limit) &&
@@ -2953,11 +3028,8 @@ _elm_scroll_mouse_down_event_cb(void *data,
      }
    if (ev->button == 1)
      {
-        sid->down.hist.est_timestamp_diff =
+        sid->down.est_timestamp_diff =
           ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
-        sid->down.hist.tadd = 0.0;
-        sid->down.hist.dxsum = 0.0;
-        sid->down.hist.dysum = 0.0;
         sid->down.now = EINA_TRUE;
         sid->down.dragged = EINA_FALSE;
         sid->down.dir_x = EINA_FALSE;
@@ -2970,12 +3042,7 @@ _elm_scroll_mouse_down_event_cb(void *data,
         sid->down.locked = EINA_FALSE;
         memset(&(sid->down.history[0]), 0,
                sizeof(sid->down.history[0]) * 60);
-#ifdef EVTIME
         sid->down.history[0].timestamp = ev->timestamp / 1000.0;
-        sid->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-        sid->down.history[0].timestamp = ecore_loop_time_get();
-#endif
         sid->down.dragged_began_timestamp = sid->down.history[0].timestamp;
         sid->down.history[0].x = ev->canvas.x;
         sid->down.history[0].y = ev->canvas.y;
@@ -3197,7 +3264,7 @@ _elm_scroll_hold_enterer(void *data)
              double t;
           } pos[100];
 
-        tdiff = sid->down.hist.est_timestamp_diff;
+        tdiff = sid->down.est_timestamp_diff;
         tnow = ecore_loop_time_get();
         twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
@@ -3404,12 +3471,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
 #endif
    memmove(&(sid->down.history[1]), &(sid->down.history[0]),
            sizeof(sid->down.history[0]) * (60 - 1));
-#ifdef EVTIME
    sid->down.history[0].timestamp = ev->timestamp / 1000.0;
-   sid->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-   sid->down.history[0].timestamp = ecore_loop_time_get();
-#endif
    sid->down.history[0].x = ev->cur.canvas.x;
    sid->down.history[0].y = ev->cur.canvas.y;
 
@@ -3525,11 +3587,7 @@ _elm_scroll_mouse_move_event_cb(void *data,
                {
                   sid->down.x = ev->cur.canvas.x;
                   sid->down.y = ev->cur.canvas.y;
-#ifdef EVTIME
                   sid->down.dragged_began_timestamp = ev->timestamp / 1000.0;
-#else
-                  sid->down.dragged_began_timestamp = ecore_loop_time_get();
-#endif
                }
 
              if (!sid->down.dragged)
@@ -4142,6 +4200,8 @@ _elm_interface_scrollable_scrollable_content_set(Eo *obj, Elm_Scrollable_Smart_I
    if (!sid->pan_obj)
      {
         o = _elm_pan_add(evas_object_evas_get(obj));
+        ELM_PAN_DATA_GET_OR_RETURN(o, pd);
+        pd->interface_object = obj;
         sid->pan_obj = o;
         efl_event_callback_add
           (o, ELM_PAN_EVENT_CHANGED, _elm_scroll_pan_changed_cb, sid);
@@ -4749,12 +4809,12 @@ _elm_interface_scrollable_content_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_S
    sid->loop_h = loop_h;
    sid->loop_v = loop_v;
 
-   if(sid->loop_h)
+   if (sid->loop_h)
      edje_object_signal_emit(sid->edje_obj, "elm,loop_x,set", "elm");
    else
      edje_object_signal_emit(sid->edje_obj, "elm,loop_x,unset", "elm");
 
-   if(sid->loop_v)
+   if (sid->loop_v)
      edje_object_signal_emit(sid->edje_obj, "elm,loop_y,set", "elm");
    else
      edje_object_signal_emit(sid->edje_obj, "elm,loop_y,unset", "elm");

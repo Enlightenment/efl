@@ -67,7 +67,7 @@
 # include "efl_ui_widget_focus_manager.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
 # include "elm_widget_item_static_focus.eo.h"
-#include "efl_selection_manager.eo.h"
+#include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
 
 # ifdef HAVE_LANGINFO_H
@@ -108,6 +108,7 @@ typedef struct _Elm_Config_Bindings_Widget   Elm_Config_Bindings_Widget;
 typedef struct _Elm_Config_Binding_Key   Elm_Config_Binding_Key;
 typedef struct _Elm_Config_Binding_Modifier  Elm_Config_Binding_Modifier;
 typedef struct _Elm_Module               Elm_Module;
+typedef struct _Efl_Ui_Theme_Data        Efl_Ui_Theme_Data;
 
 struct _Edje_Signal_Data
 {
@@ -142,13 +143,19 @@ struct _Elm_Theme
    Elm_Theme  *ref_theme;
    Eina_List  *referrers;
    const char *theme;
-   int         ref;
    Eina_Hash  *cache_style_load_failed;
 
    /* these only exist to preserve compat with bad elm_theme_XYZ_list_get() api */
    Eina_List *overlay_items;
    Eina_List *theme_items;
    Eina_List *extension_items;
+
+   Efl_Ui_Theme *eo_theme; //for accessing through the Eo interface
+};
+
+struct _Efl_Ui_Theme_Data
+{
+   Elm_Theme *th;
 };
 
 /* increment this whenever we change config enough that you need new
@@ -159,7 +166,7 @@ struct _Elm_Theme
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0011
+# define ELM_CONFIG_FILE_GENERATION 0x0014
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -183,6 +190,7 @@ extern const char *_elm_engines[];
 # define ELM_WAYLAND_EGL       (_elm_engines[10])
 # define ELM_DRM               (_elm_engines[11])
 # define ELM_SOFTWARE_DDRAW    (_elm_engines[12])
+# define ELM_GL_DRM            (_elm_engines[13])
 
 # define ELM_FONT_TOKEN_STYLE  ":style="
 
@@ -221,14 +229,21 @@ struct _Elm_Config_Flags
    Eina_Bool thumbscroll_threshold : 1;
    Eina_Bool thumbscroll_hold_threshold : 1;
    Eina_Bool thumbscroll_momentum_threshold : 1;
-   Eina_Bool thumbscroll_flick_distance_tolerance : 1;
-   Eina_Bool thumbscroll_friction : 1;
-   Eina_Bool thumbscroll_min_friction : 1;
-   Eina_Bool thumbscroll_friction_standard : 1;
    Eina_Bool thumbscroll_bounce_friction : 1;
    Eina_Bool thumbscroll_acceleration_threshold : 1;
    Eina_Bool thumbscroll_acceleration_time_limit : 1;
    Eina_Bool thumbscroll_acceleration_weight : 1;
+   //new
+   Eina_Bool thumbscroll_momentum_friction : 1;
+   Eina_Bool thumbscroll_momentum_distance_max : 1;
+   Eina_Bool thumbscroll_momentum_animation_duration_min_limit : 1;
+   Eina_Bool thumbscroll_momentum_animation_duration_max_limit : 1;
+   //deprecated
+   Eina_Bool thumbscroll_flick_distance_tolerance : 1;
+   Eina_Bool thumbscroll_friction : 1;
+   Eina_Bool thumbscroll_min_friction : 1;
+   Eina_Bool thumbscroll_friction_standard : 1;
+   //
    Eina_Bool page_scroll_friction : 1;
    Eina_Bool bring_in_scroll_friction : 1;
    Eina_Bool zoom_friction : 1;
@@ -339,6 +354,7 @@ struct _Elm_Config_Flags
    Eina_Bool icon_theme : 1;
    Eina_Bool entry_select_allow : 1; // unused
    Eina_Bool drag_anim_duration : 1;
+   Eina_Bool win_no_border : 1;
 };
 
 struct _Elm_Config
@@ -354,14 +370,21 @@ struct _Elm_Config
    int           thumbscroll_threshold;
    int           thumbscroll_hold_threshold;
    double        thumbscroll_momentum_threshold;
-   int           thumbscroll_flick_distance_tolerance;
-   double        thumbscroll_friction;
-   double        thumbscroll_min_friction;
-   double        thumbscroll_friction_standard;
    double        thumbscroll_bounce_friction;
    double        thumbscroll_acceleration_threshold;
    double        thumbscroll_acceleration_time_limit;
    double        thumbscroll_acceleration_weight;
+   //
+   int           thumbscroll_momentum_distance_max;
+   double        thumbscroll_momentum_friction;
+   double        thumbscroll_momentum_animation_duration_min_limit;
+   double        thumbscroll_momentum_animation_duration_max_limit;
+   //deprecated
+   int           thumbscroll_flick_distance_tolerance;
+   double        thumbscroll_friction;
+   double        thumbscroll_min_friction;
+   double        thumbscroll_friction_standard;
+   //
    double        page_scroll_friction;
    double        bring_in_scroll_friction;
    double        zoom_friction;
@@ -477,6 +500,7 @@ struct _Elm_Config
    Eina_Bool     offline;
    int  powersave;
    double        drag_anim_duration;
+   unsigned char win_no_border;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
@@ -535,6 +559,10 @@ void                 _elm_prefs_shutdown(void);
 void                 _elm_prefs_data_init(void);
 void                 _elm_prefs_data_shutdown(void);
 
+/* init functions for dnd and cnp */
+Eo*                  _efl_ui_selection_manager_get(Eo *obj);
+void                 _efl_ui_dnd_shutdown(void);
+
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
 void                 _elm_ews_wm_rescale(Elm_Theme *th,
@@ -550,7 +578,7 @@ void                 _elm_win_standard_init(Eo *win);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
-Efl_Ui_Theme_Apply      _elm_theme_object_set(Evas_Object *parent,
+Efl_Ui_Theme_Apply_Result      _elm_theme_object_set(Evas_Object *parent,
                                            Evas_Object *o,
                                            const char *clas,
                                            const char *group,
@@ -558,7 +586,7 @@ Efl_Ui_Theme_Apply      _elm_theme_object_set(Evas_Object *parent,
 Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o,
                                                 const char *group,
                                                 const char *style);
-Efl_Ui_Theme_Apply      _elm_theme_set(Elm_Theme *th,
+Efl_Ui_Theme_Apply_Result      _elm_theme_set(Elm_Theme *th,
                                     Evas_Object *o,
                                     const char *clas,
                                     const char *group,
@@ -572,6 +600,7 @@ Eina_File           *_elm_theme_group_file_find(Elm_Theme *th,
                                                 const char *group);
 void                 _elm_theme_parse(Elm_Theme *th,
                                       const char *theme);
+void                 _elm_theme_init(void);
 void                 _elm_theme_shutdown(void);
 
 void                 _elm_module_init(void);
@@ -604,7 +633,7 @@ void                 _elm_config_sub_init(void);
 void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
 Eina_Bool            _elm_config_save(Elm_Config *cfg, const char *profile);
-void                 _elm_config_reload(void);
+void                 _elm_config_reload(Eina_Bool on_flush);
 size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
                                                    const char *fmt, ...)
                                                    EINA_PRINTF(3, 4);
@@ -864,5 +893,25 @@ efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
       default: return !!def_val;
      }
 }
+
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the passed manager object is active, "focused" is emitted, if it gets inactive "unfocused" is emitted
+ */
+void legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager, Efl_Ui_Focus_Manager *emittee);
+
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the children of the passed object are getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
+ */
+void legacy_child_focus_handle(Efl_Ui_Focus_Object *object);
+
+/**
+ * This function sets up handlers for emitting "unfocused" / "focused" events.
+ * Once the passed object is getting focus, "focused" will be emitted on the object, "unfocused" otherwise.
+ */
+void legacy_object_focus_handle(Efl_Ui_Focus_Object *object);
+
+void _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal);
 
 #endif

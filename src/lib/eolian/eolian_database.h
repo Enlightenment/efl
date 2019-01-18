@@ -180,13 +180,19 @@ struct _Eolian_Class
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
-   Eina_List *inherits; /* Eolian_Class */
+   union {
+      Eolian_Class *parent;
+      Eina_Stringshare *parent_name;
+   };
+   Eina_List *extends; /* Eolian_Class */
    Eina_List *properties; /* Eolian_Function */
    Eina_List *methods; /* Eolian_Function */
    Eina_List *implements; /* Eolian_Implement */
    Eina_List *constructors; /* Eolian_Constructor */
    Eina_List *events; /* Eolian_Event */
    Eina_List *parts; /* Eolian_Part */
+   Eina_List *requires; /* a list of required other classes only used internally */
+   Eina_List *callables; /* internal for now */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
 };
@@ -290,6 +296,7 @@ struct _Eolian_Implement
 {
    Eolian_Object base;
    const Eolian_Class *klass;
+   const Eolian_Class *implklass;
    const Eolian_Function *foo_id;
    Eolian_Documentation *common_doc;
    Eolian_Documentation *get_doc;
@@ -309,6 +316,7 @@ struct _Eolian_Constructor
    Eolian_Object base;
    const Eolian_Class *klass;
    Eina_Bool is_optional: 1;
+   Eina_Bool is_ctor_param : 1;
 };
 
 struct _Eolian_Event

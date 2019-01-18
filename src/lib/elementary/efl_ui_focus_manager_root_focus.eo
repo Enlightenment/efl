@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager_Root_Focus(Efl.Ui.Focus.Manager_Calc) {
+class Efl.Ui.Focus.Manager_Root_Focus extends Efl.Ui.Focus.Manager_Calc  {
   [[ This class ensures that the root is at least focusable, if nothing else is focusable]]
   methods {
      @property canvas_object {
@@ -20,6 +20,7 @@ class Efl.Ui.Focus.Manager_Root_Focus(Efl.Ui.Focus.Manager_Calc) {
     Efl.Ui.Focus.Manager.fetch;
     Efl.Ui.Focus.Manager.logical_end;
     Efl.Ui.Focus.Manager.border_elements {get;}
+    Efl.Ui.Focus.Manager.viewport_elements {get;}
     Efl.Ui.Focus.Manager.request_move;
     Efl.Ui.Focus.Manager.move;
     Efl.Object.constructor;

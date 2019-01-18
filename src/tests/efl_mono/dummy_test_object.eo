@@ -1,0 +1,1689 @@
+import eina_types;
+
+type Dummy.MyInt: int;
+
+enum Dummy.SampleEnum {
+   v0,
+   v1,
+   v2,
+   v3,
+   v4,
+}
+
+struct Dummy.StructSimple
+{
+   fbyte: byte;
+   fubyte: ubyte;
+   fchar: char;
+   fshort: short;
+   fushort: ushort;
+   fint: int;
+   fuint: uint;
+   flong: long;
+   fulong: ulong;
+   fllong: llong;
+   fullong: ullong;
+   fint8: int8;
+   fuint8: uint8;
+   fint16: int16;
+   fuint16: uint16;
+   fint32: int32;
+   fuint32: uint32;
+   fint64: int64;
+   fuint64: uint64;
+   fssize: ssize;
+   fsize: size;
+   fintptr: intptr;
+   // fuintptr: uintptr; // TODO
+   fptrdiff: ptrdiff;
+   ffloat: float;
+   fdouble: double;
+   fbool: bool;
+   fvoid_ptr: void_ptr;
+   fenum: Dummy.SampleEnum;
+   // fboolptr: ptr(bool); // TODO
+   // fbyteptr: ptr(byte);
+   // fubyteptr: ptr(ubyte);
+   // fcharptr: ptr(char);
+   // fuint8ptr: ptr(uint8);
+   // fint16ptr: ptr(int16);
+   // fuint64ptr: ptr(uint64);
+   // fssizeptr: ptr(ssize);
+   // fsizeptr: ptr(size);
+   // fintptrptr: ptr(intptr);
+   // fptrdiffptr: ptr(ptrdiff);
+   // ffloatptr: ptr(float);
+   // fdoubleptr: ptr(double);
+   // fvoid_ptrptr: ptr(void_ptr);
+   // fenumptr: ptr(Dummy.SampleEnum);
+   fstring: string;
+   fmstring: mstring;
+   fstringshare: stringshare;
+   fmyint: Dummy.MyInt;
+}
+
+struct Dummy.StructComplex {
+   farray: array<ptr(int)>;
+   finarray: inarray<int>;
+   flist: list<string>;
+   finlist: inlist<ptr(int)>;
+   fhash: hash<string, string>;
+   fiterator: iterator<ptr(int)>;
+   fany_value: any_value;
+   fany_value_ptr: any_value_ptr;
+   fbinbuf: ptr(Eina.Binbuf);
+   fslice: Eina.Slice;
+   // fslice: ptr(Eina.Slice); // TODO
+   fobj: Dummy.Numberwrapper;
+}
+
+function Dummy.SimpleCb {
+   params {
+      a: int;
+   }
+   return: int;
+};
+
+function Dummy.FormatCb {
+   params {
+      @in str: strbuf;
+      @in value: const(any_value);
+   }
+};
+
+class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface, Dummy.Another_Iface {
+
+   parts {
+      part_one: Dummy.Test_Object; [[ Part number one. ]]
+      part_two: Dummy.Test_Object; [[ Part number two. ]]
+   }
+   methods {
+      return_object {
+         return: Dummy.Test_Object;
+      }
+
+      int_out {
+         params {
+            @in x: int;
+            @out y: int;
+         }
+      }
+
+      int_ptr_out {
+         params {
+            @in x: int;
+            @out y: ptr(int);
+         }
+      }
+
+      in_stringshare {
+         params {
+            @in v: stringshare;
+         }
+         return: stringshare @owned;
+      }
+      in_own_stringshare {
+         params {
+            @in v: stringshare @owned;
+         }
+         return: stringshare @owned;
+      }
+
+      out_stringshare {
+         params {
+            @out v: stringshare;
+         }
+      }
+      out_own_stringshare {
+         params {
+            @out v: stringshare @owned;
+         }
+      }
+
+      return_stringshare {
+         return: stringshare;
+      }
+      return_own_stringshare {
+         return: stringshare @owned;
+      }
+
+      in_string {
+         params {
+            @in str: string;
+         }
+         return: string @owned;
+      }
+
+      in_own_string {
+         params {
+            @in str: mstring @owned;
+         }
+         return: mstring @owned;
+      }
+
+      return_string {
+         return: string;
+      }
+
+      return_own_string {
+         return: string @owned;
+      }
+
+      out_string {
+         params {
+            @out str: string;
+         }
+      }
+
+      out_own_string {
+         params {
+            @out str: string @owned;
+         }
+      }
+
+      call_in_string {
+        params {
+            @in str: string;
+        }
+      }
+
+      call_in_own_string {
+        params {
+            @in str: mstring @owned;
+        }
+      }
+
+      call_return_string {
+         return: string;
+      }
+
+      call_return_own_string {
+         return: string @owned;
+      }
+
+      call_out_string {
+         return: string;
+      }
+
+      call_out_own_string {
+         return: string @owned;
+      }
+
+      // Stringshare virtual helpers
+      call_in_stringshare {
+        params {
+            @in str: stringshare;
+        }
+      }
+
+      call_in_own_stringshare {
+        params {
+            @in str: stringshare @owned;
+        }
+      }
+
+      call_return_stringshare {
+         return: stringshare;
+      }
+
+      call_return_own_stringshare {
+         return: stringshare @owned;
+      }
+
+      call_out_stringshare {
+         return: stringshare;
+      }
+
+      call_out_own_stringshare {
+         return: stringshare @owned;
+      }
+
+      eina_slice_in {
+         params {
+            @in slice: Eina.Slice;
+         }
+         return: bool;
+      }
+
+      eina_rw_slice_in {
+         params {
+            @in slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
+      eina_slice_out {
+         params {
+            @out slice: Eina.Slice;
+         }
+         return: bool;
+      }
+
+      eina_rw_slice_out {
+         params {
+            @out slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
+      eina_rw_slice_inout {
+         params {
+            @inout slice: Eina.Rw_Slice;
+         }
+         return: bool;
+      }
+
+      /*
+      eina_slice_return {
+         return: Eina.Slice;
+      }
+
+      eina_rw_slice_return {
+         return: Eina.Rw_Slice;
+      }
+      */
+
+      eina_binbuf_in {
+         params {
+            @in binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+
+      call_eina_binbuf_in {
+         params {
+            @in binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+
+      eina_binbuf_in_own {
+         params {
+            @in binbuf: ptr(Eina.Binbuf) @owned;
+         }
+         return: bool;
+      }
+
+      call_eina_binbuf_in_own {
+        params {
+            @in str: ptr(Eina.Binbuf) @owned;
+        }
+        return: bool;
+      }
+
+      check_binbuf_in_own {
+         return: bool;
+      }
+
+      eina_binbuf_out {
+         params {
+            @out binbuf: ptr(Eina.Binbuf);
+         }
+         return: bool;
+      }
+
+      call_eina_binbuf_out {
+         return: ptr(Eina.Binbuf);
+      }
+
+      check_binbuf_out {
+         return: bool;
+      }
+
+      eina_binbuf_out_own {
+         params {
+            @out binbuf: ptr(Eina.Binbuf) @owned;
+         }
+         return: bool;
+      }
+
+      call_eina_binbuf_out_own {
+         return: ptr(Eina.Binbuf) @owned;
+      }
+
+      eina_binbuf_return {
+         return: ptr(Eina.Binbuf);
+      }
+
+      call_eina_binbuf_return {
+         return: ptr(Eina.Binbuf);
+      }
+
+      check_binbuf_return {
+         return: bool;
+      }
+
+      eina_binbuf_return_own {
+         return: ptr(Eina.Binbuf) @owned;
+      }
+
+      call_eina_binbuf_return_own {
+         return: ptr(Eina.Binbuf) @owned;
+      }
+
+      /* Eina Array */
+
+      /* Integer */
+      eina_array_int_in {
+         params {
+            @in arr: array<ptr(int)>;
+         }
+         return: bool;
+      }
+
+      eina_array_int_in_own {
+         params {
+            @in arr: array<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_array_int_in_own {
+         return: bool;
+      }
+
+      eina_array_int_out {
+         params {
+            @out arr: array<ptr(int)>;
+         }
+         return: bool;
+      }
+      check_eina_array_int_out {
+         return: bool;
+      }
+
+      eina_array_int_out_own {
+         params {
+            @out arr: array<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_array_int_return {
+         return: array<ptr(int)>;
+      }
+      check_eina_array_int_return {
+         return: bool;
+      }
+
+      eina_array_int_return_own {
+         return: array<ptr(int) @owned> @owned;
+      }
+
+      /* String */
+      eina_array_str_in {
+         params {
+            @in arr: array<string>;
+         }
+         return: bool;
+      }
+
+      eina_array_str_in_own {
+         params {
+            @in arr: array<string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_array_str_in_own {
+         return: bool;
+      }
+
+      eina_array_str_out {
+         params {
+            @out arr: array<string>;
+         }
+         return: bool;
+      }
+      check_eina_array_str_out {
+         return: bool;
+      }
+
+      eina_array_str_out_own {
+         params {
+            @out arr: array<string @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_array_str_return {
+         return: array<string>;
+      }
+      check_eina_array_str_return {
+         return: bool;
+      }
+
+      eina_array_str_return_own {
+         return: array<string @owned> @owned;
+      }
+
+      /* Object */
+      eina_array_obj_in {
+         params {
+            @in arr: array<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_array_obj_in_own {
+         params {
+            @in arr: array<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_array_obj_in_own {
+         return: bool;
+      }
+
+      eina_array_obj_out {
+         params {
+            @out arr: array<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_array_obj_out {
+         return: bool;
+      }
+
+      eina_array_obj_out_own {
+         params {
+            @out arr: array<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_array_obj_return {
+         return: array<Dummy.Numberwrapper>;
+      }
+      check_eina_array_obj_return {
+         return: bool;
+      }
+
+      eina_array_obj_return_own {
+         return: array<Dummy.Numberwrapper @owned> @owned;
+      }
+
+      eina_array_obj_return_in {
+         params {
+            @in arr: array<Dummy.Numberwrapper>;
+         }
+         return: array<Dummy.Numberwrapper>;
+     }
+
+      /* Eina Inarray */
+
+      /* Integer */
+      eina_inarray_int_in {
+         params {
+            @in arr: inarray<ptr(int)>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_int_in_own {
+         params {
+            @in arr: inarray<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inarray_int_in_own {
+         return: bool;
+      }
+
+      eina_inarray_int_out {
+         params {
+            @out arr: inarray<ptr(int)>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_int_out {
+         return: bool;
+      }
+
+      eina_inarray_int_out_own {
+         params {
+            @out arr: inarray<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inarray_int_return {
+         return: inarray<int>;
+      }
+      check_eina_inarray_int_return {
+         return: bool;
+      }
+
+      eina_inarray_int_return_own {
+         return: inarray<ptr(int) @owned> @owned;
+      }
+
+      /* String */
+      eina_inarray_str_in {
+         params {
+            @in arr: inarray<string>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_str_in_own {
+         params {
+            @in arr: inarray<string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inarray_str_in_own {
+         return: bool;
+      }
+
+      eina_inarray_str_out {
+         params {
+            @out arr: inarray<string>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_str_out {
+         return: bool;
+      }
+
+      eina_inarray_str_out_own {
+         params {
+            @out arr: inarray<string @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inarray_str_return {
+         return: inarray<string>;
+      }
+      check_eina_inarray_str_return {
+         return: bool;
+      }
+
+      eina_inarray_str_return_own {
+         return: inarray<string @owned> @owned;
+      }
+
+      /* Object */
+      eina_inarray_obj_in {
+         params {
+            @in arr: inarray<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_inarray_obj_in_own {
+         params {
+            @in arr: inarray<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inarray_obj_in_own {
+         return: bool;
+      }
+
+      eina_inarray_obj_out {
+         params {
+            @out arr: inarray<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_inarray_obj_out {
+         return: bool;
+      }
+
+      eina_inarray_obj_out_own {
+         params {
+            @out arr: inarray<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inarray_obj_return {
+         return: inarray<Dummy.Numberwrapper>;
+      }
+      check_eina_inarray_obj_return {
+         return: bool;
+      }
+
+      eina_inarray_obj_return_own {
+         return: inarray<Dummy.Numberwrapper @owned> @owned;
+      }
+
+      eina_inarray_obj_return_in {
+         params {
+            @in arr: inarray<Dummy.Numberwrapper>;
+         }
+         return: inarray<Dummy.Numberwrapper>;
+     }
+
+      /* Eina List */
+
+      /* Integer */
+      eina_list_int_in {
+         params {
+            @in lst: list<ptr(int)>;
+         }
+         return: bool;
+      }
+
+      eina_list_int_in_own {
+         params {
+            @in lst: list<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_list_int_in_own {
+         return: bool;
+      }
+
+      eina_list_int_out {
+         params {
+            @out lst: list<ptr(int)>;
+         }
+         return: bool;
+      }
+      check_eina_list_int_out {
+         return: bool;
+      }
+
+      eina_list_int_out_own {
+         params {
+            @out lst: list<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_list_int_return {
+         return: list<ptr(int)>;
+      }
+      check_eina_list_int_return {
+         return: bool;
+      }
+
+      eina_list_int_return_own {
+         return: list<ptr(int) @owned> @owned;
+      }
+
+      /* String */
+      eina_list_str_in {
+         params {
+            @in lst: list<string>;
+         }
+         return: bool;
+      }
+
+      eina_list_str_in_own {
+         params {
+            @in lst: list<string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_list_str_in_own {
+         return: bool;
+      }
+
+      eina_list_str_out {
+         params {
+            @out lst: list<string>;
+         }
+         return: bool;
+      }
+      check_eina_list_str_out {
+         return: bool;
+      }
+
+      eina_list_str_out_own {
+         params {
+            @out lst: list<string @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_list_str_return {
+         return: list<string>;
+      }
+      check_eina_list_str_return {
+         return: bool;
+      }
+
+      eina_list_str_return_own {
+         return: list<string @owned> @owned;
+      }
+
+      /* Object */
+      eina_list_obj_in {
+         params {
+            @in lst: list<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_list_obj_in_own {
+         params {
+            @in lst: list<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_list_obj_in_own {
+         return: bool;
+      }
+
+      eina_list_obj_out {
+         params {
+            @out lst: list<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_list_obj_out {
+         return: bool;
+      }
+
+      eina_list_obj_out_own {
+         params {
+            @out lst: list<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_list_obj_return {
+         return: list<Dummy.Numberwrapper>;
+      }
+      check_eina_list_obj_return {
+         return: bool;
+      }
+
+      eina_list_obj_return_own {
+         return: list<Dummy.Numberwrapper @owned> @owned;
+      }
+
+      eina_list_obj_return_in {
+         params {
+            @in lst: list<Dummy.Numberwrapper>;
+         }
+         return: list<Dummy.Numberwrapper>;
+      }
+
+      /* Eina Inlist */
+
+      /* Integer */
+      eina_inlist_int_in {
+         params {
+            @in lst: inlist<int>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_int_in_own {
+         params {
+            @in lst: inlist<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inlist_int_in_own {
+         return: bool;
+      }
+
+      eina_inlist_int_out {
+         params {
+            @out lst: inlist<int>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_int_out {
+         return: bool;
+      }
+
+      eina_inlist_int_out_own {
+         params {
+            @out lst: inlist<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inlist_int_return {
+         return: inlist<int>;
+      }
+      check_eina_inlist_int_return {
+         return: bool;
+      }
+
+      eina_inlist_int_return_own {
+         return: inlist<ptr(int) @owned> @owned;
+      }
+
+      /* String */
+      eina_inlist_str_in {
+         params {
+            @in lst: inlist<string>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_str_in_own {
+         params {
+            @in lst: inlist<string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inlist_str_in_own {
+         return: bool;
+      }
+
+      eina_inlist_str_out {
+         params {
+            @out lst: inlist<string>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_str_out {
+         return: bool;
+      }
+
+      eina_inlist_str_out_own {
+         params {
+            @out lst: inlist<string @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inlist_str_return {
+         return: inlist<string>;
+      }
+      check_eina_inlist_str_return {
+         return: bool;
+      }
+
+      eina_inlist_str_return_own {
+         return: inlist<string @owned> @owned;
+      }
+
+      /* Object */
+      eina_inlist_obj_in {
+         params {
+            @in lst: inlist<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_inlist_obj_in_own {
+         params {
+            @in lst: inlist<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_inlist_obj_in_own {
+         return: bool;
+      }
+
+      eina_inlist_obj_out {
+         params {
+            @out lst: inlist<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_inlist_obj_out {
+         return: bool;
+      }
+
+      eina_inlist_obj_out_own {
+         params {
+            @out lst: inlist<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_inlist_obj_return {
+         return: inlist<Dummy.Numberwrapper>;
+      }
+      check_eina_inlist_obj_return {
+         return: bool;
+      }
+
+      eina_inlist_obj_return_own {
+         return: inlist<Dummy.Numberwrapper @owned> @owned;
+      }
+
+      eina_inlist_obj_return_in {
+         params {
+            @in lst: inlist<Dummy.Numberwrapper>;
+         }
+         return: inlist<Dummy.Numberwrapper>;
+      }
+
+
+      // Eina Hash //
+
+      // Integer //
+      eina_hash_int_in {
+         params {
+            @in hsh: hash<ptr(int), ptr(int)>;
+         }
+         return: bool;
+      }
+
+      eina_hash_int_in_own {
+         params {
+            @in hsh: hash<ptr(int), ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_int_in_own {
+         return: bool;
+      }
+
+      eina_hash_int_out {
+         params {
+            @out hsh: hash<ptr(int), ptr(int)>;
+         }
+         return: bool;
+      }
+      check_eina_hash_int_out {
+         return: bool;
+      }
+
+      eina_hash_int_out_own {
+         params {
+            @out hsh: hash<ptr(int), ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_int_out_own {
+         return: bool;
+      }
+
+      eina_hash_int_return {
+         return: hash<ptr(int), ptr(int)>;
+      }
+      check_eina_hash_int_return {
+         return: bool;
+      }
+
+      eina_hash_int_return_own {
+         return: hash<ptr(int), ptr(int) @owned> @owned;
+      }
+      check_eina_hash_int_return_own {
+         return: bool;
+      }
+
+      // String //
+      eina_hash_str_in {
+         params {
+            @in hsh: hash<string, string>;
+         }
+         return: bool;
+      }
+
+      eina_hash_str_in_own {
+         params {
+            @in hsh: hash<string, string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_str_in_own {
+         return: bool;
+      }
+
+      eina_hash_str_out {
+         params {
+            @out hsh: hash<string, string>;
+         }
+         return: bool;
+      }
+      check_eina_hash_str_out {
+         return: bool;
+      }
+
+      eina_hash_str_out_own {
+         params {
+            @out hsh: hash<string, string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_str_out_own {
+         return: bool;
+      }
+
+      eina_hash_str_return {
+         return: hash<string, string>;
+      }
+      check_eina_hash_str_return {
+         return: bool;
+      }
+
+      eina_hash_str_return_own {
+         return: hash<string, string @owned> @owned;
+      }
+      check_eina_hash_str_return_own {
+         return: bool;
+      }
+
+      // Object //
+      eina_hash_obj_in {
+         params {
+            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @out nwk2: Dummy.Numberwrapper;
+            @out nwv2: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_in_own {
+         params {
+            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @out nwk2: Dummy.Numberwrapper;
+            @out nwv2: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_in_own {
+         params {
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_out {
+         params {
+            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_out {
+         params {
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_out_own {
+         params {
+            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+      check_eina_hash_obj_out_own {
+         return: bool;
+      }
+
+      eina_hash_obj_return {
+         params {
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
+         }
+         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
+      }
+      check_eina_hash_obj_return {
+         params {
+            @in nwk1: Dummy.Numberwrapper;
+            @in nwv1: Dummy.Numberwrapper;
+            @in nwk2: Dummy.Numberwrapper;
+            @in nwv2: Dummy.Numberwrapper;
+         }
+         return: bool;
+      }
+
+      eina_hash_obj_return_own {
+         params {
+            @out nwk: Dummy.Numberwrapper;
+            @out nwv: Dummy.Numberwrapper;
+         }
+         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+      }
+      check_eina_hash_obj_return_own {
+         return: bool;
+      }
+
+      /* Eina Iterator */
+
+      /* Integer */
+      eina_iterator_int_in {
+         params {
+            @in itr: iterator<ptr(int)>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_int_in_own {
+         params {
+            @in itr: iterator<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_iterator_int_in_own {
+         return: bool;
+      }
+
+      eina_iterator_int_out {
+         params {
+            @out itr: iterator<ptr(int)>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_int_out {
+         return: bool;
+      }
+
+      eina_iterator_int_out_own {
+         params {
+            @out itr: iterator<ptr(int) @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_iterator_int_return {
+         return: iterator<ptr(int)>;
+      }
+      check_eina_iterator_int_return {
+         return: bool;
+      }
+
+      eina_iterator_int_return_own {
+         return: iterator<ptr(int) @owned> @owned;
+      }
+
+      /* String */
+      eina_iterator_str_in {
+         params {
+            @in itr: iterator<string>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_str_in_own {
+         params {
+            @in itr: iterator<string @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_iterator_str_in_own {
+         return: bool;
+      }
+
+      eina_iterator_str_out {
+         params {
+            @out itr: iterator<string>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_str_out {
+         return: bool;
+      }
+
+      eina_iterator_str_out_own {
+         params {
+            @out itr: iterator<string @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_iterator_str_return {
+         return: iterator<string>;
+      }
+      check_eina_iterator_str_return {
+         return: bool;
+      }
+
+      eina_iterator_str_return_own {
+         return: iterator<string @owned> @owned;
+      }
+
+      /* Object */
+      eina_iterator_obj_in {
+         params {
+            @in itr: iterator<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_obj_in_own {
+         params {
+            @in itr: iterator<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_iterator_obj_in_own {
+         return: bool;
+      }
+
+      eina_iterator_obj_out {
+         params {
+            @out itr: iterator<Dummy.Numberwrapper>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_obj_out {
+         return: bool;
+      }
+
+      eina_iterator_obj_out_own {
+         params {
+            @out itr: iterator<Dummy.Numberwrapper @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_iterator_obj_return {
+         return: iterator<Dummy.Numberwrapper>;
+      }
+      check_eina_iterator_obj_return {
+         return: bool;
+      }
+
+      eina_iterator_obj_return_own {
+         return: iterator<Dummy.Numberwrapper @owned> @owned;
+      }
+
+     /* Function Pointer */
+
+     set_callback {
+         params {
+            cb: Dummy.SimpleCb;
+         }
+      }
+
+      call_callback {
+         params {
+            a: int;
+         }
+         return: int;
+      }
+
+      call_set_callback {
+      }
+
+      raises_eina_error {
+
+      }
+
+      children_raise_error {
+
+      }
+      call_children_raise_error {
+
+      }
+
+      error_ret_set {
+         params {
+            error: Eina.Error;
+         }
+      }
+
+      returns_error {
+         return: Eina.Error;
+      }
+
+      /* Eina Values */
+      set_value_ptr {
+         params {
+            value: any_value_ptr;
+         }
+      }
+
+      set_value_ptr_own {
+         params {
+            value: any_value_ptr @owned;
+         }
+      }
+
+      set_value {
+         params {
+            value: any_value;
+         }
+      }
+
+      call_set_value {
+         params {
+            value: const(any_value);
+         }
+      }
+
+      get_value_ptr_own {
+         return: any_value_ptr @owned;
+      }
+
+      get_value_ptr {
+         return: any_value_ptr;
+      }
+
+      /* Commented out due to issues regarding eolian treatment of any_value.
+       * Somehow eolian is giving 0 as the default value when declaring the function below,
+       * leading to compiler errors.
+       */
+      /* get_value {
+         return: any_value;
+      }
+      */
+
+      clear_value {
+      }
+
+      out_value_ptr {
+         params {
+            @out value: any_value_ptr;
+         }
+      }
+
+      out_value_ptr_own {
+         params {
+            @out value: any_value_ptr @owned;
+         }
+      }
+
+      out_value {
+         params {
+            @out value: any_value;
+         }
+      }
+
+      /* Structs */
+
+      struct_simple_in {
+         params {
+            @in simple: Dummy.StructSimple;
+         }
+         return: bool;
+      }
+
+      struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Dummy.StructSimple);
+         }
+         return: bool;
+      }
+
+      struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Dummy.StructSimple) @owned;
+         }
+         return: Dummy.StructSimple;
+      }
+
+      struct_simple_out {
+         params {
+            @out simple: Dummy.StructSimple;
+         }
+         return: bool;
+      }
+
+      struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Dummy.StructSimple);
+         }
+         return: Dummy.StructSimple;
+      }
+
+      struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Dummy.StructSimple) @owned;
+         }
+         return: Dummy.StructSimple;
+      }
+
+      struct_simple_return {
+         return: Dummy.StructSimple;
+      }
+
+      struct_simple_ptr_return {
+         return: ptr(Dummy.StructSimple);
+      }
+
+      struct_simple_ptr_return_own {
+         return: ptr(Dummy.StructSimple) @owned;
+      }
+
+      call_struct_simple_in {
+         params {
+            @in simple: Dummy.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_in {
+         params {
+            @in simple: ptr(Dummy.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_in_own {
+         params {
+            @in simple: ptr(Dummy.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_out {
+         params {
+            @out simple: Dummy.StructSimple;
+         }
+      }
+
+      call_struct_simple_ptr_out {
+         params {
+            @out simple: ptr(Dummy.StructSimple);
+         }
+      }
+
+      call_struct_simple_ptr_out_own {
+         params {
+            @out simple: ptr(Dummy.StructSimple) @owned;
+         }
+      }
+
+      call_struct_simple_return {
+         return: Dummy.StructSimple;
+      }
+
+      call_struct_simple_ptr_return {
+         return: ptr(Dummy.StructSimple);
+      }
+
+      call_struct_simple_ptr_return_own {
+         return: ptr(Dummy.StructSimple) @owned;
+      }
+
+      struct_complex_in {
+         params {
+            @in complex: Dummy.StructComplex;
+         }
+         return: bool;
+      }
+
+      struct_complex_ptr_in {
+         params {
+            @in complex: ptr(Dummy.StructComplex);
+         }
+         return: bool;
+      }
+
+      struct_complex_ptr_in_own {
+         params {
+            @in complex: ptr(Dummy.StructComplex) @owned;
+         }
+         return: bool;
+      }
+
+      struct_complex_out {
+         params {
+            @out complex: Dummy.StructComplex;
+         }
+         return: bool;
+      }
+
+      // struct_complex_ptr_out {
+      //    params {
+      //       @out complex: ptr(Dummy.StructComplex);
+      //    }
+      //    return: bool;
+      // }
+      //
+      // struct_complex_ptr_out_own {
+      //    params {
+      //       @out complex: ptr(Dummy.StructComplex) @owned;
+      //    }
+      //    return: bool;
+      // }
+
+      struct_complex_return {
+         return: Dummy.StructComplex;
+      }
+
+      // struct_complex_ptr_return {
+      //    return: ptr(Dummy.StructComplex);
+      // }
+      //
+      // struct_complex_ptr_return_own {
+      //    return: ptr(Dummy.StructComplex) @owned;
+      // }
+
+      emit_event_with_string {
+         params {
+            @in data: string;
+         }
+      }
+      emit_event_with_bool {
+         params {
+            @in data: bool;
+         }
+      }
+      emit_event_with_int {
+         params {
+            @in data: int;
+         }
+      }
+      emit_event_with_uint {
+         params {
+            @in data: uint;
+         }
+      }
+      emit_event_with_obj {
+         params {
+            @in data: Dummy.Test_Object;
+         }
+      }
+
+      emit_event_with_error {
+         params {
+            @in data: Eina.Error;
+         }
+      }
+
+      emit_event_with_struct {
+         params {
+            @in data: Dummy.StructSimple;
+         }
+      }
+
+      emit_event_with_struct_complex {
+         params {
+            @in data: Dummy.StructComplex;
+         }
+      }
+
+      append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
+      call_append_to_strbuf {
+         params {
+            @in buf: strbuf;
+            @in str: string;
+         }
+      }
+
+      call_format_cb {
+         params {
+            @in str: strbuf;
+            @in value: const(any_value);
+            @in func: Dummy.FormatCb;
+         }
+      }
+
+      bypass_typedef {
+         params {
+            @in data: Dummy.MyInt;
+            @out receiver: Dummy.MyInt;
+         }
+
+         return: Dummy.MyInt;
+      }
+
+      @property klass_prop @class {
+         get {}
+         set {}
+         values {
+            prop: int;
+         }
+      }
+
+      /* Futures */
+
+      get_future {
+         return: future<any_value_ptr>;
+      }
+
+      fulfill_promise {
+         params {
+            @in data: int;
+         }
+      }
+
+      reject_promise {
+         params {
+            @in error: Eina.Error;
+         }
+      }
+
+      /* Accessors */
+      clone_accessor {
+         params {
+            @in acc: accessor<ptr(int)>;
+         }
+         return: accessor<ptr(int)> @owned;
+      }
+
+      @property setter_only {
+         set {}
+         values {
+           prop: int;
+         }
+      }
+
+      get_setter_only {
+         return: int;
+      }
+   }
+   implements {
+      class.constructor;
+      class.destructor;
+      Efl.Object.constructor;
+      Efl.Part.part_get;
+      Dummy.Test_Iface.emit_test_conflicted;
+      Dummy.Test_Iface.emit_nonconflicted;
+      Dummy.Test_Iface.iface_prop { get; set; }
+      Dummy.Another_Iface.emit_another_conflicted;
+   }
+   events {
+      evt,with,string @hot: string;
+      evt,with,bool: bool;
+      evt,with,int @hot: int;
+      evt,with,uint @hot: uint;
+      evt,with,obj @hot: Dummy.Test_Object;
+      evt,with,error @hot: Eina.Error;
+      evt,with,struct @hot: Dummy.StructSimple;
+      evt,with,struct,complex @hot: Dummy.StructComplex;
+   }
+}

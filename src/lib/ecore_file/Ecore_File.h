@@ -195,7 +195,7 @@ EAPI Eina_Bool      ecore_file_is_dir       (const char *file);
  *
  * This function creates the directory @p dir, with the mode S_IRUSR |
  * S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH on UNIX
- * (mode is unsued on Windows). On success, it returns @c EINA_TRUE,
+ * (mode is unused on Windows). On success, it returns @c EINA_TRUE,
  * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool      ecore_file_mkdir        (const char *dir);
@@ -379,7 +379,7 @@ EAPI const char    *ecore_file_file_get     (const char *path);
  * @param  file The name of the file.
  * @return The directory name.
  *
- * This function returns the directory where @p file resides as anewly
+ * This function returns the directory where @p file resides as newly
  * allocated string. If @p file is @c NULL or on error, this function
  * returns @c NULL. When not needed anymore, the returned value must
  * be freed.
@@ -537,7 +537,7 @@ EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
  * monitored by ecore_file_monitor_add(). @p em must be the value
  * returned by ecore_file_monitor_add(). If @p em is @c NULL, or none
  * of the notify methods (Inotify, Windows notification or polling) is
- * availablethis function does nothing.
+ * available this function does nothing.
  */
 EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *em);
 
@@ -665,7 +665,7 @@ EAPI void      ecore_file_download_abort_all(void);
 
 /**
  * @brief Aborts the given download job and call the completion_cb
- * callbck with a status of 1 (error).
+ * callback with a status of 1 (error).
  *
  * @param job The download job to abort.
  *

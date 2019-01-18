@@ -4,10 +4,18 @@
 /**
  * Structure holding the info about a selected region.
  */
+typedef enum
+{
+   ELM_CODE_WIDGET_SELECTION_KEYBOARD,
+   ELM_CODE_WIDGET_SELECTION_MOUSE,
+} Elm_Code_Widget_Selection_Type;
+
 typedef struct
 {
    unsigned int start_line, end_line;
    unsigned int start_col, end_col;
+   Elm_Code_Widget_Selection_Type type;
+   Eina_Bool in_progress;
 } Elm_Code_Widget_Selection_Data;
 
 typedef struct
@@ -24,7 +32,7 @@ typedef struct
    unsigned int cursor_line, cursor_col;
    Evas_Object *cursor_rect;
 
-   Eina_Bool visible, editable, focussed;
+   Eina_Bool visible, editable, focused;
    Eina_Bool show_line_numbers;
    unsigned int line_width_marker, tabstop;
    Eina_Bool show_whitespace, tab_inserts_spaces;
@@ -67,5 +75,9 @@ void _elm_code_widget_selection_delete_no_undo(Elm_Code_Widget *widget);
 void _elm_code_widget_undo_change_add(Evas_Object *widget, Elm_Code_Widget_Change_Info *info);
 
 void _elm_code_widget_change_selection_add(Evas_Object *widget);
+
+void _elm_code_widget_selection_in_progress_set(Evas_Object *widget, Eina_Bool state);
+
+void _elm_code_widget_selection_type_set(Evas_Object *widget, Elm_Code_Widget_Selection_Type type);
 
 #endif

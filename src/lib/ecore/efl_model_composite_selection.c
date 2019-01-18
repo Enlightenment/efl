@@ -9,6 +9,7 @@
 
 #include "efl_model_composite_selection.eo.h"
 #include "efl_model_accessor_view_private.h"
+#include "efl_model_composite_private.h"
 
 typedef struct _Efl_Model_Composite_Selection_Data Efl_Model_Composite_Selection_Data;
 typedef struct _Efl_Model_Composite_Selection_Children_Data Efl_Model_Composite_Selection_Children_Data;
@@ -39,10 +40,9 @@ _efl_model_composite_selection_efl_object_constructor(Eo *obj,
 }
 
 static Eina_Value
-_commit_change(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Model_Composite_Selection_Data *pd;
-   Efl_Model *child = data;
    Eina_Value *vc = NULL;
    Eina_Value *selected = NULL;
    Eina_Bool selflag = EINA_FALSE;
@@ -84,16 +84,12 @@ _commit_change(void *data, const Eina_Value v, const Eina_Future *dead_future EI
    return v;
 }
 
-static Eina_Value
-_clear_child(void *data,
-	     const Eina_Value v,
+static void
+_clear_child(Eo *child,
+             void *data EINA_UNUSED,
 	     const Eina_Future *dead_future EINA_UNUSED)
 {
-   Efl_Model *child = data;
-
    efl_del(child);
-
-   return v;
 }
 
 static Efl_Model *
@@ -125,14 +121,12 @@ _check_child_change(Efl_Model *child, Eina_Bool value)
 
    if (prevflag & value)
      {
-        r = eina_future_resolved(efl_loop_future_scheduler_get(child),
-                                 eina_value_bool_init(value));
+        r = efl_loop_future_resolved(child, eina_value_bool_init(value));
      }
    else
      {
         r = efl_model_property_set(child, "selected", eina_value_bool_new(!!value));
-        r = eina_future_then(r, _commit_change, child);
-	r = eina_future_then(r, _clear_child, child);
+        r = efl_future_then(child, r, .success = _commit_change, .free = _clear_child);
      }
 
    return r;
@@ -151,9 +145,9 @@ _unselect_child(Efl_Model *child)
 }
 
 static Eina_Value
-_select_slice_then(void *data EINA_UNUSED,
-                   const Eina_Value v,
-                   const Eina_Future *dead_future EINA_UNUSED)
+_select_slice_then(Eo *obj EINA_UNUSED,
+                   void *data EINA_UNUSED,
+                   const Eina_Value v)
 {
    Efl_Model *child = NULL;
    Eina_Future *r;
@@ -169,9 +163,9 @@ _select_slice_then(void *data EINA_UNUSED,
 }
 
 static Eina_Value
-_unselect_slice_then(void *data EINA_UNUSED,
-                     const Eina_Value v,
-                     const Eina_Future *dead_future EINA_UNUSED)
+_unselect_slice_then(Eo *obj EINA_UNUSED,
+                     void *data EINA_UNUSED,
+                     const Eina_Value v)
 {
    Efl_Model *child = NULL;
    Eina_Future *r;
@@ -186,6 +180,17 @@ _unselect_slice_then(void *data EINA_UNUSED,
    return v;
 }
 
+static Eina_Iterator *
+_efl_model_composite_selection_efl_model_properties_get(const Eo *obj,
+                                                        Efl_Model_Composite_Selection_Data *pd EINA_UNUSED)
+{
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_SELECTION_CLASS,
+                                        NULL,
+                                        "selected", "exclusive");
+   return props;
+}
+
 static Eina_Future *
 _efl_model_composite_selection_efl_model_property_set(Eo *obj,
                                                       Efl_Model_Composite_Selection_Data *pd,
@@ -196,14 +201,18 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
    if (!strcmp("exclusive", property))
      {
         Eina_Bool exclusive = pd->exclusive;
+        Eina_Bool changed;
 
         vf = eina_value_bool_init(exclusive);
         eina_value_convert(value, &vf);
         eina_value_bool_get(&vf, &exclusive);
 
+        changed = (!pd->exclusive != !exclusive);
         pd->exclusive = !!exclusive;
 
-        return eina_future_resolved(efl_loop_future_scheduler_get(obj), vf);
+        if (changed) efl_model_properties_changed(obj, "exclusive");
+
+        return efl_loop_future_resolved(obj, vf);
      }
 
    if (!strcmp("selected", property))
@@ -216,14 +225,15 @@ _efl_model_composite_selection_efl_model_property_set(Eo *obj,
         success &= eina_value_convert(value, &vl);
         success &= eina_value_ulong_get(&vl, &l);
         if (!success)
-          return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-        return efl_future_Eina_FutureXXX_then(obj,
-                                              eina_future_then(efl_model_children_slice_get(obj, l, 1),
-                                                               _select_slice_then, obj));
+        return efl_future_then(obj, efl_model_children_slice_get(obj, l, 1),
+                               .success = _select_slice_then,
+                               .success_type = EINA_VALUE_TYPE_ARRAY);
      }
 
-   return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_SELECTION_CLASS), property, value);
+   return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_SELECTION_CLASS),
+                                 property, value);
 }
 
 static Eina_Value *
@@ -262,33 +272,45 @@ _regenerate_error(void *data,
 }
 
 static Eina_Value
-_untangle_array(void *data,
-                const Eina_Value v,
-                const Eina_Future *dead_future EINA_UNUSED)
+_untangle_array(void *data EINA_UNUSED,
+                const Eina_Value v)
 {
-   Efl_Model *child = data;
    Eina_Value va = EINA_VALUE_EMPTY;
-   Eina_Future *f;
-
-   if (v.type == EINA_VALUE_TYPE_ERROR)
-     {
-        // We need to roll back the change, which means in this
-        // case to unselect this child as this is the only case
-        // where we could end up here.
-        Eina_Error *error = calloc(1, sizeof (Eina_Error));
-
-        f = efl_model_property_set(efl_super(child, EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS),
-                                   "selected", eina_value_bool_new(EINA_FALSE));
-        // Once this is done, we need to repropagate the error
-        eina_value_error_get(&v, error);
-        f = eina_future_then(f, _regenerate_error, error);
-
-        return eina_future_as_value(f);
-     }
 
    // Only return the commit change, not the result of the unselect
    eina_value_array_get(&v, 0, &va);
    return va;
+}
+
+static Eina_Iterator *
+_efl_model_composite_selection_children_efl_model_properties_get(const Eo *obj,
+                                                                 Efl_Model_Composite_Selection_Children_Data *pd EINA_UNUSED)
+{
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS,
+                                        NULL,
+                                        "selected");
+   return props;
+}
+
+static Eina_Value
+_untangle_error(void *data, Eina_Error err)
+{
+   Efl_Model *child = data;
+   Eina_Future *f;
+
+   // We need to roll back the change, which means in this
+   // case to unselect this child as this is the only case
+   // where we could end up here.
+   Eina_Error *error = calloc(1, sizeof (Eina_Error));
+
+   f = efl_model_property_set(efl_super(child, EFL_MODEL_COMPOSITE_SELECTION_CHILDREN_CLASS),
+                              "selected", eina_value_bool_new(EINA_FALSE));
+   // Once this is done, we need to repropagate the error
+   *error = err;
+   f = eina_future_then(f, _regenerate_error, error, NULL);
+
+   return eina_future_as_value(f);
 }
 
 static Eina_Future *
@@ -318,11 +340,11 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
    eina_value_flush(&lvb);
 
    if (!success)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj), EFL_MODEL_ERROR_INCORRECT_VALUE);
+     return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
    // Nothing changed
    if (newflag == prevflag)
-     return eina_future_resolved(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_resolved(obj,
                                  eina_value_bool_init(newflag));
 
    ve = efl_model_property_get(efl_parent_get(obj), "exclusive");
@@ -355,9 +377,9 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
           }
         else
           {
+             Eo *parent;
              Eina_Value *vs;
              unsigned long selected = 0;
-             Eina_Bool success;
 
              // In this case we need to first unselect the previously selected one
              // and then commit the change to this one.
@@ -374,22 +396,26 @@ _efl_model_composite_selection_children_efl_model_property_set(Eo *obj,
              eina_value_free(vs);
 
              if (!success)
-               return eina_future_rejected(efl_loop_future_scheduler_get(obj),
-                                           EFL_MODEL_ERROR_INCORRECT_VALUE);
+               return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
              // There was, need to unselect the previous one along setting the new value
+             parent = efl_parent_get(obj);
              chain = eina_future_all(chain,
-                                     eina_future_then(efl_model_children_slice_get(efl_parent_get(obj), selected, 1),
-                                                      _unselect_slice_then, NULL));
+                                     efl_future_then(parent, efl_model_children_slice_get(parent, selected, 1),
+                                                     .success = _unselect_slice_then,
+                                                     .success_type = EINA_VALUE_TYPE_ARRAY));
 
-             chain = eina_future_then(chain, _untangle_array, obj);
+             chain = eina_future_then_easy(chain,
+                                           .success_type = EINA_VALUE_TYPE_ARRAY,
+                                           .success = _untangle_array,
+                                           .data = obj,
+                                           .error = _untangle_error);
           }
      }
 
  commit_change:
-   chain = eina_future_then(chain, _commit_change, obj);
-
-   return efl_future_Eina_FutureXXX_then(obj, chain);
+   return efl_future_then(obj, chain,
+                          .success = _commit_change);
 }
 
 typedef struct _Selection_Children_Request Selection_Children_Request;
@@ -401,17 +427,14 @@ struct _Selection_Children_Request
 };
 
 static Eina_Value
-_slice_get(void *data,
-           const Eina_Value v,
-           const Eina_Future *dead_future EINA_UNUSED)
+_slice_get(Eo *o EINA_UNUSED,
+           void *data,
+           const Eina_Value v)
 {
    Selection_Children_Request *req = data;
    unsigned int length, it;
    Eo *composited = NULL;
    Eina_Value r = EINA_VALUE_EMPTY;
-
-   if (v.type == EINA_VALUE_TYPE_ERROR)
-     goto error;
 
    eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
 
@@ -425,11 +448,18 @@ _slice_get(void *data,
         eina_value_array_append(&r, compositing);
      }
 
- error:
+   return r;
+}
+
+static void
+_slice_clean(Eo *o EINA_UNUSED,
+             void *data,
+             const Eina_Future *dead_future EINA_UNUSED)
+{
+   Selection_Children_Request *req = data;
+
    efl_unref(req->parent);
    free(req);
-
-   return r;
 }
 
 static Eina_Future *
@@ -441,16 +471,19 @@ _efl_model_composite_selection_efl_model_children_slice_get(Eo *obj,
    Eina_Future *f;
 
    req = calloc(1, sizeof (Selection_Children_Request));
-   if (!req) return eina_future_rejected(efl_loop_future_scheduler_get(obj), ENOMEM);
+   if (!req) return efl_loop_future_rejected(obj, ENOMEM);
    req->parent = efl_ref(obj);
    req->start = start;
 
    // NOTE: We do jump on purpose EFL_MODEL_COMPOSITE_BOOLEAN_CLASS here
    f = efl_model_children_slice_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CLASS),
                                     start, count);
-   f = eina_future_then(f, _slice_get, req);
 
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return efl_future_then(obj, f,
+                          .success_type = EINA_VALUE_TYPE_ARRAY,
+                          .success = _slice_get,
+                          .free = _slice_clean,
+                          .data = req);
 }
 
 #include "efl_model_composite_selection.eo.c"

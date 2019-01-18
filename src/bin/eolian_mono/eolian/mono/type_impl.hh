@@ -117,7 +117,7 @@ struct visitor_generate
               }}
            , {"Eina.Error", nullptr, [&] // Eina.Error
               {
-                return regular_type_def{" eina.Error", regular.base_qualifier, {}};
+                return regular_type_def{" Eina.Error", regular.base_qualifier, {}};
               }} // TODO
            , {"string", nullptr, [&]
               {
@@ -139,16 +139,16 @@ struct visitor_generate
               }}
            , {"strbuf", nullptr, [&]
               {
-                return regular_type_def{" eina.Strbuf", regular.base_qualifier, {}};
+                return regular_type_def{" Eina.Strbuf", regular.base_qualifier, {}};
               }}
            , {"any_value", true, [&]
-              { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
               }}
            , {"any_value", false, [&]
-              { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
               }}
            , {"any_value_ptr", nullptr, [&] 
-              { return regular_type_def{" eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
               }} // FIXME add proper support for any_value_ptr
         };
         std::string full_type_name = name_helpers::type_full_eolian_name(regular);
@@ -237,7 +237,10 @@ struct visitor_generate
    }
    bool operator()(attributes::klass_name klass) const
    {
-     return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
+     if(klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
+       return as_generator(string).generate(sink, name_helpers::klass_full_concrete_name(klass), *context);
+     else
+       return as_generator(string).generate(sink, name_helpers::klass_full_interface_name(klass), *context);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
@@ -255,51 +258,51 @@ struct visitor_generate
         {"list", nullptr, nullptr, [&]
          {
            complex_type_def c = complex;
-           c.outer.base_type = "eina.List";
+           c.outer.base_type = "Eina.List";
            return c;
          }}
         , {"inlist", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
-           c.outer.base_type = "eina.Inlist";
+           c.outer.base_type = "Eina.Inlist";
            return c;
          }}
         , {"array", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
-           c.outer.base_type = "eina.Array";
+           c.outer.base_type = "Eina.Array";
            return c;
          }}
         , {"inarray", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
-           c.outer.base_type = "eina.Inarray";
+           c.outer.base_type = "Eina.Inarray";
            return c;
          }}
         , {"hash", nullptr, nullptr
            , [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "eina.Hash";
+             c.outer.base_type = "Eina.Hash";
              return c;
          }}
         , {"future", nullptr, nullptr, [&]
            {
-             (*this)(regular_type_def{" eina.Future", complex.outer.base_qualifier, {}});
+             (*this)(regular_type_def{" Eina.Future", complex.outer.base_qualifier, {}});
              return attributes::type_def::variant_type();
            }           
           }
         , {"iterator", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "eina.Iterator";
+             c.outer.base_type = "Eina.Iterator";
              return c;
            }           
           }
         , {"accessor", nullptr, nullptr, [&]
            {
              complex_type_def c = complex;
-             c.outer.base_type = "eina.Accessor";
+             c.outer.base_type = "Eina.Accessor";
              return c;
            }           
           }

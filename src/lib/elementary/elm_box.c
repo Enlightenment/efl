@@ -57,15 +57,15 @@ _child_removed_cb_proxy(void *data, const Efl_Event *event)
    efl_event_callback_legacy_call(box, ELM_BOX_EVENT_CHILD_REMOVED, child);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_box_efl_ui_widget_theme_apply(Eo *obj, Elm_Box_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
    evas_object_smart_calculate(wd->resize_obj);
 
    return int_ret;
@@ -79,6 +79,7 @@ _sizing_eval(Evas_Object *obj)
    ELM_BOX_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   if (!efl_alive_get(obj)) return;
    if (sd->delete_me) return;
 
    evas_object_size_hint_combined_min_get(wd->resize_obj, &minw, &minh);
@@ -257,7 +258,7 @@ _transition_layout_animation_start(Evas_Object *obj,
      (obj, ELM_BOX_EVENT_CHILD_REMOVED, _transition_layout_child_removed, layout_data);
 
    if (!layout_data->animator)
-     layout_data->animator = ecore_animator_add(transition_animation_cb, obj);
+     layout_data->animator = ecore_evas_animator_add(obj, transition_animation_cb, obj);
 
    layout_data->animation_ended = EINA_FALSE;
 
@@ -296,8 +297,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
         cur_y = y + tad->start.y + ((tad->end.y - tad->start.y) * progress);
         cur_w = tad->start.w + ((tad->end.w - tad->start.w) * progress);
         cur_h = tad->start.h + ((tad->end.h - tad->start.h) * progress);
-        evas_object_move(tad->obj, cur_x, cur_y);
-        evas_object_resize(tad->obj, cur_w, cur_h);
+        evas_object_geometry_set(tad->obj, cur_x, cur_y, cur_w, cur_h);
      }
 }
 

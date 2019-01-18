@@ -1,14 +1,17 @@
 import efl_types;
 
-class Efl.App (Efl.Loop)
+class Efl.App extends Efl.Loop
 {
    [[ ]]
    methods {
-      @property loop_main @class {
-         [[ Points to the main loop instance of the application. ]]
+      @property app_main @class {
+         [[ Returns the app object that is representing this process
+
+            Note: This function call only works in the main loop thread of the process.
+         ]]
          get {}
          values {
-            main_loop: Efl.Loop; [[Application main loop]]
+            app : Efl.App; [[Application for this process]]
          }
       }
       @property build_efl_version {
@@ -36,6 +39,7 @@ class Efl.App (Efl.Loop)
    events {
       pause: void; [[Called when the application is not going be displayed or otherwise used by a user for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
+      standby: void; [[Called when the application's windows are all destroyed]]
       terminate: void; [[Called before starting the shutdown of the application]]
       signal,usr1: void; [[System specific, but on unix maps to SIGUSR1 signal to the process - only called on main loop object]]
       signal,usr2: void; [[System specific, but on unix maps to SIGUSR2 signal to the process - only called on main loop object]]

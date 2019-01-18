@@ -1,8 +1,5 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
 
 #include "evas_engine.h"
 #include "../software_generic/evas_native_common.h"
@@ -252,11 +249,6 @@ eng_image_native_set(void *engine EINA_UNUSED, void *image, void *native)
             im->native.func.free(im);
       }
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     evas_cache2_image_close(ie);
-   else
-#endif
    evas_cache_image_drop(ie);
    im = im2;
 

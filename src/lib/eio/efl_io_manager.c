@@ -119,7 +119,7 @@ _efl_io_manager_direct_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -143,9 +143,8 @@ _efl_io_manager_direct_ls(const Eo *obj,
 
    ecore_thread_local_data_add(h->thread, ".info", info, NULL, EINA_TRUE);
    ecore_thread_local_data_add(h->thread, ".info_data", info_data, info_free_cb, EINA_TRUE);
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -162,7 +161,7 @@ _efl_io_manager_stat_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -186,9 +185,8 @@ _efl_io_manager_stat_ls(const Eo *obj,
 
    ecore_thread_local_data_add(h->thread, ".info", info, NULL, EINA_TRUE);
    ecore_thread_local_data_add(h->thread, ".info_data", info_data, info_free_cb, EINA_TRUE);
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -204,7 +202,7 @@ _efl_io_manager_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -217,9 +215,8 @@ _efl_io_manager_ls(const Eo *obj,
 
    ecore_thread_local_data_add(h->thread, ".paths", paths, NULL, EINA_TRUE);
    ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -256,7 +253,7 @@ _efl_io_manager_stat(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -265,9 +262,8 @@ _efl_io_manager_stat(const Eo *obj,
                             _future_file_error_cb,
                             p);
    if (!h) goto end;
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -285,7 +281,7 @@ _efl_io_manager_xattr_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -299,12 +295,11 @@ _efl_io_manager_xattr_ls(const Eo *obj,
    // There is no race condition here as all the callback are called in the main loop after this
    ecore_thread_local_data_add(h->thread, ".paths", paths, NULL, EINA_TRUE);
    ecore_thread_local_data_add(h->thread, ".paths_data", paths_data, paths_free_cb, EINA_TRUE);
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
-   return efl_future_Eina_FutureXXX_then(obj, future);;
+   return efl_future_then(obj, future);;
 }
 
 static void
@@ -336,7 +331,7 @@ _efl_io_manager_xattr_set(Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -348,9 +343,8 @@ _efl_io_manager_xattr_set(Eo *obj,
                           _future_file_error_cb,
                           p);
    if (!h) goto end;
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -366,7 +360,7 @@ _efl_io_manager_xattr_get(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -375,10 +369,8 @@ _efl_io_manager_xattr_get(const Eo *obj,
                           _future_file_error_cb,
                           p);
    if (!h) goto end;
-   eina_promise_data_set(p, h);
 
-   /* XXX const */
-   return efl_future_Eina_FutureXXX_then((Eo *)obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -405,7 +397,7 @@ _efl_io_manager_open(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -414,9 +406,8 @@ _efl_io_manager_open(const Eo *obj,
                      _future_file_error_cb,
                      p);
    if (!h) goto end;
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;
@@ -431,7 +422,7 @@ _efl_io_manager_close(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj, _efl_io_manager_future_cancel, NULL);
+   p = efl_loop_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -440,9 +431,8 @@ _efl_io_manager_close(const Eo *obj,
                       _future_file_error_cb,
                       p);
    if (!h) goto end;
-   eina_promise_data_set(p, h);
 
-   return efl_future_Eina_FutureXXX_then(obj, future);
+   return _efl_io_manager_future(obj, future, h);
 
  end:
    return future;

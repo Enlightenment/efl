@@ -43,11 +43,13 @@ _timeout(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNU
    return v;
 }
 
-static void
-_promise_cancel(void *data, const Eina_Promise *dead EINA_UNUSED)
+static Eina_Value
+_promise_cancel(Eo *o EINA_UNUSED, void *data, Eina_Error error)
 {
    Ctx *ctx = data;
-   if (ctx->timer) eina_future_cancel(ctx->timer);
+
+   if (error == ECANCELED && ctx->timer) eina_future_cancel(ctx->timer);
+   return eina_value_error_init(error);
 }
 
 static Ctx *
@@ -56,7 +58,7 @@ _promise_ctx_new(Efl_Loop *loop, Eina_Value *v)
    Ctx *ctx;
    ctx = calloc(1, sizeof(Ctx));
    EINA_SAFETY_ON_NULL_GOTO(ctx, err_ctx);
-   ctx->p = efl_loop_promise_new(loop, _promise_cancel, ctx);
+   ctx->p = efl_loop_promise_new(loop, NULL);
    EINA_SAFETY_ON_NULL_GOTO(ctx->p, err_timer);
    ctx->value = v;
    return ctx;
@@ -76,7 +78,7 @@ _future_get(Ctx *ctx, Efl_Loop *loop)
    EINA_SAFETY_ON_NULL_GOTO(f, err_future);
    ctx->timer = eina_future_then(efl_loop_timeout(loop, 0.1), _timeout, ctx);
    EINA_SAFETY_ON_NULL_GOTO(ctx->timer, err_timer);
-   return f;
+   return efl_future_then(loop, f, .error = _promise_cancel, .data = ctx);
 
  err_timer:
    eina_future_cancel(f);

@@ -76,6 +76,12 @@ _edje_module_handle_load(const char *module)
    return NULL;
 }
 
+static void
+module_free(void *mod)
+{
+   eina_module_free(mod);
+}
+
 void
 _edje_module_init(void)
 {
@@ -83,7 +89,7 @@ _edje_module_init(void)
    unsigned int i;
    unsigned int j;
 
-   _registered_modules = eina_hash_string_small_new(EINA_FREE_CB(eina_module_free));
+   _registered_modules = eina_hash_string_small_new(module_free);
 
 #ifdef NEED_RUN_IN_TREE
 #if defined(HAVE_GETUID) && defined(HAVE_GETEUID)

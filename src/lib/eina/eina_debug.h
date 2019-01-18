@@ -56,12 +56,12 @@ typedef struct _Eina_Debug_Session Eina_Debug_Session;
  *
  * A callback invoked when a specific packet is received.
  *
- * @param session the session
- * @param srcid the source id
- * @param buffer the packet payload data. It doesn't contain any transport information.
- * @param size the packet payload size
+ * @param[in,out] session the session
+ * @param[in] srcid the source id
+ * @param[in] buffer the packet payload data. It doesn't contain any transport information.
+ * @param[in] size the packet payload size
  *
- * return true on success, false if the connection seems compromised
+ * @return True on success, false if the connection seems compromised.
  */
 typedef Eina_Bool (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void *buffer, int size);
 
@@ -75,8 +75,8 @@ typedef Eina_Bool (*Eina_Debug_Cb)(Eina_Debug_Session *session, int srcid, void 
  * layer should not try to send more requests until a new connection is
  * established.
  *
- * @param data data pointer given when registering opcodes
- * @param status EINA_TRUE if opcodes have been received from the daemon, EINA_FALSE otherwise.
+ * @param[in,out] data data pointer given when registering opcodes
+ * @param[in] status EINA_TRUE if opcodes have been received from the daemon, EINA_FALSE otherwise.
  */
 typedef void (*Eina_Debug_Opcode_Status_Cb)(void *data, Eina_Bool status);
 
@@ -86,12 +86,12 @@ typedef void (*Eina_Debug_Opcode_Status_Cb)(void *data, Eina_Bool status);
  * Dispatcher callback prototype used to override the default dispatcher of a
  * session.
  *
- * @param session the session
- * @param buffer the packet received
+ * @param[in,out] session the session
+ * @param[in] buffer the packet received
  *
  * The given packet is the entire data received, including the header.
  *
- * return the return result of the invoked callback
+ * @return The return result of the invoked callback.
  */
 typedef Eina_Bool (*Eina_Debug_Dispatch_Cb)(Eina_Debug_Session *session, void *buffer);
 
@@ -167,9 +167,9 @@ EAPI void eina_debug_disable(void);
 /**
  * @brief Connect to the local daemon
  *
- * @param is_master true if the application is a debugger. EINA_FALSE otherwise.
+ * @param[in] is_master true if the application is a debugger. EINA_FALSE otherwise.
  *
- * @return the session on success or NULL otherwise
+ * @return The session on success or NULL otherwise.
  */
 EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
 
@@ -178,17 +178,16 @@ EAPI Eina_Debug_Session *eina_debug_local_connect(Eina_Bool is_master);
  *
  * This function connects to localhost:port.
  *
- * @param port the port to connect to
+ * @param[in] port the port to connect to
  *
- * @return the session on success or NULL otherwise
+ * @return The session on success or NULL otherwise.
  */
 EAPI Eina_Debug_Session *eina_debug_remote_connect(int port);
 
 /**
  * @brief Terminate the session
  *
- * @param session the session to terminate
- *
+ * @param[in,out] session the session to terminate
  */
 EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
 
@@ -199,17 +198,17 @@ EAPI void eina_debug_session_terminate(Eina_Debug_Session *session);
  * use the default dispatcher there.
  * All the packets received in this session will use this dispatcher.
  *
- * @param session the session
- * @disp_cb the new dispatcher for the given session
+ * @param[in,out] session the session
+ * @param[in] disp_cb the new dispatcher for the given session
  */
 EAPI void eina_debug_session_dispatch_override(Eina_Debug_Session *session, Eina_Debug_Dispatch_Cb disp_cb);
 
 /**
  * @brief Get the dispatcher of a specific session
  *
- * @param session the session
+ * @param[in,out] session the session
  *
- * @return the session dispatcher
+ * @return The session dispatcher.
  */
 EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *session);
 
@@ -220,28 +219,27 @@ EAPI Eina_Debug_Dispatch_Cb eina_debug_session_dispatch_get(Eina_Debug_Session *
  * the correct callback according to the opcode.
  * This is the default dispatcher.
  *
- * @param session the session
- * @param buffer the packet
+ * @param[in,out] session the session
+ * @param[in] buffer the packet
  *
- * return true on success, false if the connection seems compromised
+ * @return True on success, false if the connection seems compromised.
  */
 EAPI Eina_Bool eina_debug_dispatch(Eina_Debug_Session *session, void *buffer);
 
 /**
  * @brief Set data to a session
  *
- * @param session the session
- * @param data the data to set
- *
+ * @param[in,out] session the session
+ * @param[in] data the data to set
  */
 EAPI void eina_debug_session_data_set(Eina_Debug_Session *session, void *data);
 
 /**
  * @brief Get the data attached to a session
  *
- * @param session the session
+ * @param[in,out] session the session
  *
- * @return the data of the session
+ * @return The data of the session.
  */
 EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
 
@@ -254,10 +252,10 @@ EAPI void *eina_debug_session_data_get(Eina_Debug_Session *session);
  * On the reception from the daemon, status_cb function is invoked to inform
  * the requester that the opcodes can now be used.
  *
- * @param session the session
- * @param ops the operations to register
- * @param status_cb a function to call when the opcodes are received
- * @param status_data the data to give to status_cb
+ * @param[in,out] session the session
+ * @param[in] ops the operations to register
+ * @param[in] status_cb a function to call when the opcodes are received
+ * @param[in] status_data the data to give to status_cb
  */
 EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
       const Eina_Debug_Opcode ops[],
@@ -268,31 +266,31 @@ EAPI void eina_debug_opcodes_register(Eina_Debug_Session *session,
  *
  * The packet will be treated by the debug thread itself.
  *
- * @param session the session to use to send the packet
- * @param dest_id the destination id to send the packet to
- * @param op the opcode for this packet
- * @param data payload to send
- * @param size payload size
+ * @param[in,out] session the session to use to send the packet
+ * @param[in] dest_id the destination id to send the packet to
+ * @param[in] op the opcode for this packet
+ * @param[in] data payload to send
+ * @param[in] size payload size
  *
- * @return the number of sent bytes
+ * @return The number of sent bytes.
  */
 EAPI int eina_debug_session_send(Eina_Debug_Session *session, int dest_id, int op, void *data, int size);
 
 /**
  * @brief Add a timer
  *
- * @param timeout_ms timeout in ms
- * @param cb callback to call when the timeout is reached
- * @param data user data
+ * @param[in] timeout_ms timeout in ms
+ * @param[in] cb callback to call when the timeout is reached
+ * @param[in] data user data
  *
- * @return the timer handle, NULL on error
+ * @return The timer handle, NULL on error.
  */
 EAPI Eina_Debug_Timer *eina_debug_timer_add(unsigned int timeout_ms, Eina_Debug_Timer_Cb cb, void *data);
 
 /**
  * @brief Delete a timer
  *
- * @param timer the timer to delete
+ * @param[in,out] timer the timer to delete
  *
  * If the timer reaches the end and has not be renewed, trying to delete it will lead to a crash, as
  * it has already been deleted internally.

@@ -41,7 +41,6 @@ _efl_net_dialer_simple_inner_io_error(void *data, const Efl_Event *event)
 {
    Eo *o = data;
    efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, event->info);
-   efl_event_callback_call(o, EFL_IO_BUFFERED_STREAM_EVENT_ERROR, event->info);
 }
 
 static void

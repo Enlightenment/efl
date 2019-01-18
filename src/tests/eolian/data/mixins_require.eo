@@ -1,0 +1,13 @@
+import base;
+import class_simple;
+
+mixin Mixins.Require requires Base {
+  methods {
+    test {
+
+    }
+  }
+  implements {
+    Base.constructor;
+  }
+}

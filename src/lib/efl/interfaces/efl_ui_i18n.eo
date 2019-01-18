@@ -1,0 +1,43 @@
+interface Efl.Ui.I18n
+{
+   [[A common Internationalization interface for UI objects.]]
+   eo_prefix: efl_ui;
+   methods {
+      @property mirrored {
+         [[Whether this object should be mirrored.
+
+           If mirrored, an object is in RTL (right to left) mode instead of LTR
+           (left to right).
+         ]]
+         values {
+            rtl: bool(false); [[$true for RTL, $false for LTR (default).]]
+         }
+      }
+      @property mirrored_automatic {
+         [[Whether the property @.mirrored should be set automatically.
+
+           If enabled, the system or application configuration will be used
+           to set the value of @.mirrored.
+
+           This property may be implemented by high-level widgets (in Efl.Ui)
+           but not by low-level widgets (in @Efl.Canvas.Scene) as the configuration
+           should affect only high-level widgets.
+         ]]
+         values {
+            automatic: bool(true); [[Whether the widget uses automatic mirroring]]
+         }
+      }
+      @property language {
+         [[The (human) language for this object.]]
+         set {
+            [[Sets the language for this object.]]
+         }
+         get {
+            [[Gets the language for this object.]]
+         }
+         values {
+            language: string; [[The current language.]]
+          }
+      }
+   }
+}

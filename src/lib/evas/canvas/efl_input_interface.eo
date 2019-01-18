@@ -1,4 +1,4 @@
-interface Efl.Input.Interface ()
+interface Efl.Input.Interface
 {
    [[An object implementing this interface can send pointer events.
 

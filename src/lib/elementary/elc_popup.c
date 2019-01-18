@@ -6,7 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -65,7 +65,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_notify_cb,
 static void  _on_content_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 EOLIAN static void
-_elm_popup_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
+_elm_popup_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
    Eina_List *l;
@@ -73,8 +73,8 @@ _elm_popup_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Popup
    EINA_LIST_FOREACH(sd->items, l, it)
       elm_wdg_item_translate(EO_OBJ(it));
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
-   efl_ui_translatable_translation_update(sd->main_layout);
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(sd->main_layout);
 }
 
 static void
@@ -365,7 +365,7 @@ _populate_theme_scroll(Elm_Popup_Data *sd)
    sd->theme_scroll = EINA_FALSE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
@@ -439,7 +439,7 @@ _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    /* access */
    if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
 
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 static void
@@ -503,6 +503,14 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         else
           evas_object_size_hint_min_set(sd->spacer, minw, minh);
 
+        if (sd->main_layout)
+          {
+             Evas *ev = evas_object_evas_get(sd->main_layout);
+             if (evas_smart_objects_calculating_get(ev))
+               evas_object_smart_calculate(sd->main_layout);
+             else
+               evas_object_smart_need_recalculate_set(sd->main_layout, EINA_TRUE);
+          }
        return;
      }
 
@@ -1540,6 +1548,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
+   legacy_object_focus_handle(obj);
 
    return obj;
 }

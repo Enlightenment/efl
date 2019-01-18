@@ -245,17 +245,6 @@ static int cur_image_entry;
 
 static void data_write_images(void);
 
-static void
-print_error(const char *fmt, ...)
-{
-   va_list ap;
-
-   va_start(ap, fmt);
-   eina_log_vprint(_edje_cc_log_dom, EINA_LOG_LEVEL_CRITICAL,
-                   "unknown", "unknown", 0, fmt, ap);
-   va_end(ap);
-}
-
 void
 error_and_abort(Eet_File *ef EINA_UNUSED, const char *fmt, ...)
 {
@@ -385,6 +374,12 @@ data_part_lookup_free(Part_Lookup *pl)
    free(pl);
 }
 
+static void
+list_free(void *list)
+{
+   eina_list_free(list);
+}
+
 void
 data_setup(void)
 {
@@ -394,7 +389,7 @@ data_setup(void)
    part_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
                                     EINA_KEY_CMP(_part_lookup_key_cmp),
                                     EINA_KEY_HASH(_part_lookup_key_hash),
-                                    EINA_FREE_CB(eina_list_free),
+                                    EINA_FREE_CB(list_free),
                                     8);
    part_pc_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_part_lookup_key_length),
                                        EINA_KEY_CMP(_part_lookup_key_pc_cmp),
@@ -600,7 +595,7 @@ check_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Description_Commo
 }
 
 static void
-_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef EINA_UNUSED, Eina_Bool ns_required)
+_part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef, Eina_Bool ns_required)
 {
    char buf[1024], *p;
    size_t len;
@@ -625,7 +620,7 @@ _part_namespace_verify(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef EIN
    if ((!ns_required) && (!p)) return;
 
    if (strncmp(ep->name, buf, len))
-     print_error("Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
+     error_and_abort(ef, "Part '%s' from group %s is not properly namespaced (should begin with '%s.')!", ep->name, de->entry, buf);
 }
 
 static void
@@ -691,7 +686,7 @@ check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef EINA_UNUSED, const char *sig, const char *src)
+_program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef, const char *sig, const char *src)
 {
    char buf[1024], *p;
    size_t len;
@@ -714,7 +709,7 @@ _program_signal_namespace_verify(Edje_Part_Collection *pc, Eet_File *ef EINA_UNU
    if (eina_strlcpy(buf, de->entry, len + 1) >= sizeof(buf)) return;
 
    if (strncmp(sig, buf, len))
-     print_error("SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
+     error_and_abort(ef, "SIGNAL_EMIT (%s:%s) does not match group namespace (%s)!", sig, src, de->entry);
 }
 
 static void
@@ -755,10 +750,38 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
    EINA_LIST_FOREACH(ep->targets, l, et)
      {
+        Edje_Part *part;
+
+        part = pc->parts[et->id];
+        /* verify existence of description in part */
+        if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
+          {
+             if ((!eina_streq(ep->state, "custom")) &&
+               ((!eina_streq(ep->state, "default")) || (!EINA_DBL_EQ(ep->value, 0.0))))
+               {
+                  Edje_Part_Collection_Directory_Entry *de;
+                  Eina_Bool found = EINA_FALSE;
+                  for (i = 0; i < part->other.desc_count; i++)
+                    {
+                       Edje_Part_Description_Common *ed = part->other.desc[i];
+                       if (eina_streq(ed->state.name, ep->state) && EINA_DBL_EQ(ep->value, ed->state.value))
+                         {
+                            found = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!found)
+                    {
+                       de = eina_hash_find(edje_collections_lookup, &pc->id);
+                       error_and_abort(NULL, "GROUP %s - state '%s:%g' does not exist for part '%s'; set in program '%s'",
+                         de->entry, ep->state, ep->value, part->name, ep->name);
+                    }
+               }
+          }
         if (((ep->action == EDJE_ACTION_TYPE_STATE_SET) ||
              (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)) &&
             (et->id < (int)pc->parts_count) &&
-            (pc->parts[et->id]->type == EDJE_PART_TYPE_MESH_NODE) &&
+            (part->type == EDJE_PART_TYPE_MESH_NODE) &&
             (strstr(ep->signal, "mouse")))
           {
              for (i = 0; (i < pc->parts_count) && (ep->source_3d_id < 0); i++)
@@ -895,7 +918,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread EINA_UNUSED)
    void *m = NULL;
    int bytes = 0;
    char buf[EINA_PATH_MAX];
-   char buf2[EINA_PATH_MAX];
+   char buf2[EINA_PATH_MAX + EINA_PATH_MAX + 128];
    size_t size;
 
    f = eina_file_open(fc->fn->file, 0);
@@ -1732,12 +1755,17 @@ data_thread_mo(void *data, Ecore_Thread *thread EINA_UNUSED)
    void *m = NULL;
    int bytes = 0;
 
-   // Search the mo file in all the -md ( mo directory )
-   EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+   if (mw->mo_path)
+     f = eina_file_open(mw->mo_path, 0);
+   if (!f)
      {
-        snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
-        f = eina_file_open(mo_path, 0);
-        if (f) break;
+        // Search the mo file in all the -md ( mo directory )
+        EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
+          {
+             snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
+             f = eina_file_open(mo_path, 0);
+             if (f) break;
+          }
      }
    if (!f)
      {
@@ -1830,7 +1858,7 @@ data_write_mo(Eet_File *ef, int *mo_num)
         int i;
         char *po_entry;
         char *sub_str;
-        char buf[EINA_PATH_MAX];
+        char buf[EINA_PATH_MAX + PATH_MAX + PATH_MAX + 128];
         Eina_List *ll;
         char *dir_path = NULL;
         char mo_path[PATH_MAX];
@@ -1854,10 +1882,13 @@ data_write_mo(Eet_File *ef, int *mo_num)
                   sub_str[1] = 'm';
                   EINA_LIST_FOREACH(mo_dirs, ll, dir_path)
                     {
-                       snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, mw->mo_entry->mo_src);
                        snprintf((char *)po_path, sizeof(po_path), "%s/%s/%s", dir_path, mw->mo_entry->locale, po_entry);
                        if (ecore_file_exists(po_path))
                          {
+                            char *mo_dir = ecore_file_dir_get(eet_file_get(ef));
+                            snprintf((char *)mo_path, sizeof(mo_path), "%s/%s", mo_dir, mw->mo_entry->locale);
+                            ecore_file_mkpath(mo_path);
+                            snprintf((char *)mo_path, sizeof(mo_path), "%s/%s/%s", mo_dir, mw->mo_entry->locale, mw->mo_entry->mo_src);
                             snprintf(buf, sizeof(buf), "msgfmt -o %s %s", mo_path, po_path);
                             mw2 = malloc(sizeof(Mo_Write));
                             if (mw2)
@@ -1868,9 +1899,10 @@ data_write_mo(Eet_File *ef, int *mo_num)
                                  ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                          _exe_del_cb, mw2);
                               }
+                            free(mo_dir);
                          }
                        else
-                         error_and_abort(mw->ef, "Invalid .po file \"%s\".", po_path);
+                         error_and_abort(mw->ef, "Non-existent .po file specified: \"%s\".", po_path);
                     }
                   free(mw);
                }
@@ -2368,7 +2400,7 @@ data_write_scripts(Eet_File *ef)
         Code *cd = eina_list_data_get(l);
         Script_Write *sc;
         int fd;
-        char buf[EINA_PATH_MAX];
+        char buf[EINA_PATH_MAX + PATH_MAX + PATH_MAX + 128];
 
         if (cd->is_lua)
           continue;

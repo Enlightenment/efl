@@ -909,9 +909,25 @@ EAPI Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
  *
  * @param[in] unit The unit.
  *
+ * @see eolian_unit_file_path_get
+ *
  * @ingroup Eolian
  */
 EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get the full file path a unit is associated with.
+ *
+ * This will be `NULL` if not associated with a file (like the master unit
+ * within `Eolian_State`).
+ *
+ * @param[in] unit The unit.
+ *
+ * @see eolian_unit_file_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an object in a unit by name.
@@ -1430,14 +1446,49 @@ EAPI Eina_Stringshare* eolian_class_event_prefix_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns an iterator to the inherited classes.
+ * @brief Get the parent class of a class
+ *
+ * This is the class the class inherits from. It only applies to classes,
+ * as Eo follows a single-inheritance model with interfaces. This will be
+ * NULL for any non-class (i.e. interface or mixin).
+ *
+ * @param[in] klass the class
+ * @return the parent
+ *
+ * @see eolian_class_extensions_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
+
+/*
+ * @brief Returns an iterator to the required classes of this mixin
+ *
+ * For none mixins this will return an empty iterator, for mixins this retuns a iterator that
+ * carries all the classes that are required by this passed mixin.
  *
  * @param[in] klass the class
  * @return the iterator
  *
  * @ingroup Eolian
  */
-EAPI Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
+EAPI Eina_Iterator *eolian_class_requires_get(const Eolian_Class *klass);
+
+/*
+ * @brief Returns an iterator to the class extensions
+ *
+ * For regular classes, extensions are interfaces/mixins for the class, i.e.
+ * everything past the parent class. For interfaces/mixins, this is everything
+ * in the inherits list.
+ *
+ * @param[in] klass the class
+ * @return the iterator
+ *
+ * @see eolian_class_parent_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_class_extensions_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns an iterator to functions of a class.
@@ -1824,12 +1875,34 @@ eolian_implement_name_get(const Eolian_Implement *impl)
 /*
  * @brief Get the class of an overriding function (implement).
  *
+ * This is always the class specified in the implement name, i.e. if a class
+ * B overrides a method from a class A, the returned class will be A. There
+ * is another API to get the overriding class.
+ *
  * @param[in] impl the handle of the implement
  * @return the class handle or NULL.
+ *
+ * @see eolian_implement_implementing_class_get
  *
  * @ingroup Eolian
  */
 EAPI const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
+
+/*
+ * @brief Get the implementing class of an overriding function (implement).
+ *
+ * This is always the class that is implementing the function, override or
+ * not. That is, if class B overrides a method from class A, this will return
+ * the B class. There is another API to get the original class.
+ *
+ * @param[in] impl the handle of the implement
+ * @return the class handle or NULL.
+ *
+ * @see eolian_implement_class_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_implement_implementing_class_get(const Eolian_Implement *impl);
 
 /*
  * @brief Get the function of an implement.
@@ -1973,6 +2046,16 @@ EAPI const Eolian_Function *eolian_constructor_function_get(const Eolian_Constru
 EAPI Eina_Bool eolian_constructor_is_optional(const Eolian_Constructor *ctor);
 
 /*
+ * @brief Checks if a constructor is tagged as a constructor parameter.
+ *
+ * @param[in] ctor the handle of the constructor
+ * @return EINA_TRUE if a constructor parameter, EINA_FALSE if not (or if input is NULL).
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_constructor_is_ctor_param(const Eolian_Constructor *ctor);
+
+/*
  * @brief Get an iterator to the constructing functions defined in a class.
  *
  * @param[in] klass the class.
@@ -2014,6 +2097,16 @@ eolian_event_name_get(const Eolian_Event *event)
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
+
+/*
+ * @brief Get the class of an event.
+ *
+ * @param[in] event the event handle
+ * @return the class or NULL
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Class *eolian_event_class_get(const Eolian_Event *event);
 
 /*
  * @brief Get the documentation of an event.

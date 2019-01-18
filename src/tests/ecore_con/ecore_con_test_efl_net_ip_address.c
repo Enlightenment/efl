@@ -118,7 +118,7 @@ _timeout(void *data,
     { \
        Eina_Bool _did_timeout = EINA_FALSE; \
        Eina_Future *_timeout_future = efl_loop_timeout(efl_main_loop_get(), t); \
-       eina_future_then(_timeout_future, _timeout, &_did_timeout); \
+       eina_future_then(_timeout_future, _timeout, &_did_timeout, NULL); \
        mark_point(); \
        ecore_main_loop_begin(); \
        if (!_did_timeout) eina_future_cancel(_timeout_future); \
@@ -239,7 +239,7 @@ _resolve(struct resolve_ctx *ctx, const char *address, int family, int flags)
    ctx->future = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS,
                                             address, family, flags);
    ck_assert_ptr_ne(ctx->future, NULL);
-   ctx->future = eina_future_then(ctx->future, _resolve_done, ctx);
+   ctx->future = eina_future_then(ctx->future, _resolve_done, ctx, NULL);
 
    LOOP_WITH_TIMEOUT(10);
 }

@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Bar (Efl.Ui.Layout.Object, Efl.Content, Efl.Text, Efl.Ui.Translatable)
+class Efl.Ui.Navigation_Bar extends Efl.Ui.Layout implements Efl.Content, Efl.Text
 {
    [[Navigation_Bar widget.
 
@@ -24,7 +24,7 @@ class Efl.Ui.Navigation_Bar (Efl.Ui.Layout.Object, Efl.Content, Efl.Text, Efl.Ui
       Efl.Content.content { set; get; }
       Efl.Content.content_unset;
       Efl.Text.text { set; get; }
-      Efl.Ui.Translatable.translatable_text { set; get; }
+      Efl.Ui.L10n.l10n_text { set; get; }
       Efl.Part.part_get;
    }
 }

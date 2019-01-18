@@ -27,22 +27,6 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
-#ifndef _WIN32
-static const char *
-_ecore_con_local_path_get(void)
-{
-   static char *homedir = NULL;
-   if (homedir) return homedir;
-
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-   if (getuid() == geteuid()) homedir = getenv("XDG_RUNTIME_DIR");
-#endif
-   if (!homedir) homedir = (char *)eina_environment_home_get();
-   if (!homedir) homedir = (char *)eina_environment_tmp_get();
-   return homedir;
-}
-#endif
-
 EAPI char *
 ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
 {
@@ -84,26 +68,11 @@ ecore_con_local_path_new(Eina_Bool is_system, const char *name, int port)
 
    if (!is_system)
      {
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        if (getuid() == geteuid())
-#endif
-          homedir = _ecore_con_local_path_get();
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
-        else
-          {
-             struct passwd *pw = getpwent();
-
-             if ((!pw) || (!pw->pw_dir)) homedir = "/tmp";
-             else homedir = pw->pw_dir;
-          }
-#endif
-
         if (port < 0)
-           snprintf(buf, sizeof(buf), "%s/.ecore/%s",
-                    homedir, name);
+          eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/.ecore/%s", name);
         else
-           snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i",
-                    homedir, name, port);
+          eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/.ecore/%s/%i", name, port);
+
         return strdup(buf);
      }
    else

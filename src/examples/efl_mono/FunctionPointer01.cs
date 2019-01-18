@@ -12,10 +12,10 @@ public class ExampleFunctionPointer01
 
     public static void Main()
     {
-        eina.Config.Init();
-        efl.eo.Config.Init();
+        Eina.Config.Init();
+        Efl.Eo.Config.Init();
 
-        var obj = new example.Numberwrapper();
+        var obj = new Example.Numberwrapper();
 
         // Set internal value
         obj.SetNumber(12);

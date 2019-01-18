@@ -44,6 +44,7 @@ tests/elput/elput_suite.h
 
 tests_elput_elput_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elput\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elput\" \
 @CHECK_CFLAGS@ \

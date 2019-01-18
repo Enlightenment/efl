@@ -70,6 +70,8 @@
 #include "eina_hash.h"
 #include "eina_stringshare.h"
 #include "eina_debug_private.h"
+#include "eina_vpath.h"
+#include "eina_internal.h"
 
 #ifdef EINA_HAVE_PTHREAD_SETNAME
 # ifndef __linux__
@@ -334,7 +336,7 @@ _callbacks_register_cb(Eina_Debug_Session *session, int src_id EINA_UNUSED, void
    memcpy(&info_64, buffer, sizeof(uint64_t));
    // cast to a ptr, so on 32bit we just take the lower 32bits and on 64
    // we take all of it so we're fine
-   info = (_opcode_reply_info *)info_64;
+   info = (_opcode_reply_info *)(uintptr_t)info_64;
 
    if (!info) return EINA_FALSE;
    EINA_LIST_FOREACH(session->opcode_reply_infos, itr, info2)
@@ -442,16 +444,6 @@ _opcodes_unregister_all(Eina_Debug_Session *session)
      }
 }
 
-static const char *
-_socket_home_get()
-{
-   // get possible debug daemon socket directory base
-   const char *dir = getenv("XDG_RUNTIME_DIR");
-   if (!dir) dir = eina_environment_home_get();
-   if (!dir) dir = eina_environment_tmp_get();
-   return dir;
-}
-
 #define LENGTH_OF_SOCKADDR_UN(s) \
    (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 #endif
@@ -504,9 +496,9 @@ EAPI Eina_Debug_Session *
 eina_debug_local_connect(Eina_Bool is_master)
 {
 #ifndef _WIN32
-   char buf[4096];
    int fd, socket_unix_len, curstate = 0;
    struct sockaddr_un socket_unix;
+   char buf[sizeof(socket_unix.sun_path)];
 
    if (is_master) return eina_debug_remote_connect(REMOTE_SERVER_PORT);
 
@@ -514,7 +506,7 @@ eina_debug_local_connect(Eina_Bool is_master)
    //   ~/.ecore/efl_debug/0
    // or maybe
    //   /var/run/UID/.ecore/efl_debug/0
-   snprintf(buf, sizeof(buf), "%s/%s/%s/%i", _socket_home_get(),
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/%s/%s/%i",
          LOCAL_SERVER_PATH, LOCAL_SERVER_NAME, LOCAL_SERVER_PORT);
    // create the socket
    fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -528,7 +520,8 @@ eina_debug_local_connect(Eina_Bool is_master)
    // sa that it's a unix socket and where the path is
    memset(&socket_unix, 0, sizeof(socket_unix));
    socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path) - 1);
+   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   socket_unix.sun_path[sizeof(socket_unix.sun_path) - 1] = 0;
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    // actually connect to efl_debugd service
    if (connect(fd, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)

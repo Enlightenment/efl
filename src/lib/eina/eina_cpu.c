@@ -49,7 +49,7 @@
 #include "eina_log.h"
 #include "eina_cpu.h"
 
-#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__arm__) || defined(__aarch64__)) && defined(__linux__)
 # include <sys/auxv.h>
 # include <asm/hwcap.h>
 #endif
@@ -126,16 +126,31 @@ void _x86_simd(Eina_Cpu_Features *features)
 }
 #endif
 
-#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__arm__) || defined(__aarch64__)) && defined(__linux__)
 static void
 _arm_cpu_features(Eina_Cpu_Features *features)
 {
-   unsigned long aux;
+   unsigned long aux = getauxval(AT_HWCAP);
+# if defined(__aarch64__)
+   *features |= EINA_CPU_NEON;
+# endif
+# ifdef HWCAP_NEON
+   if (aux & HWCAP_NEON) *features |= EINA_CPU_NEON;
+# endif
+# ifdef HWCAP_SVE
+   if (aux & HWCAP_SVE) *features |= EINA_CPU_SVE;
+# endif
+}
+#endif
 
-   aux = getauxval(AT_HWCAP);
-
-   if (aux & HWCAP_NEON)
-     *features |= EINA_CPU_NEON;
+#if defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__POWERPC__) && defined(__VEC__)) && defined(__linux__)
+static void
+_ppc_cpu_features(Eina_Cpu_Features *features)
+{
+# ifdef PPC_FEATURE_HAS_ALTIVEC
+   unsigned long aux = getauxval(AT_HWCAP);
+   if (aux & PPC_FEATURE_HAS_ALTIVEC) *features |= EINA_CPU_ALTIVEC;
+# endif
 }
 #endif
 
@@ -157,7 +172,7 @@ eina_cpu_init(void)
 {
 #if defined(__i386__) || defined(__x86_64__)
    _x86_simd(&eina_cpu_features);
-#elif defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && defined(__arm__) && defined(__linux__)
+#elif defined(HAVE_SYS_AUXV_H) && defined(HAVE_ASM_HWCAP_H) && (defined(__arm__) || defined(__aarch64__)) && defined(__linux__)
    _arm_cpu_features(&eina_cpu_features);
 #endif
 

@@ -118,6 +118,22 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 }
 
 static inline int
+evas_object_is_on_plane(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   if (obj->func->is_on_plane)
+     return obj->func->is_on_plane(eo_obj, obj, obj->private_data);
+   return 0;
+}
+
+static inline int
+evas_object_plane_changed(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+{
+   if (obj->func->plane_changed)
+     return obj->func->plane_changed(eo_obj, obj, obj->private_data);
+   return 0;
+}
+
+static inline int
 evas_event_freezes_through(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->freeze_events) return 1;
@@ -291,12 +307,9 @@ evas_object_clip_dirty(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Da
    evas_object_clip_dirty_do(obj);
 }
 
-extern Eina_Bool evas_render2_use;
-
 static inline void
 evas_object_async_block(Evas_Object_Protected_Data *obj)
 {
-   if (!evas_render2_use) return ;
    if (EVAS_OBJECT_DATA_VALID(obj))
      {
         eina_lock_take(&(obj->layer->evas->lock_objects));
@@ -307,7 +320,6 @@ evas_object_async_block(Evas_Object_Protected_Data *obj)
 static inline void
 evas_canvas_async_block(Evas_Public_Data *e)
 {
-   if (!evas_render2_use) return ;
    if (e)
      {
         eina_lock_take(&(e->lock_objects));

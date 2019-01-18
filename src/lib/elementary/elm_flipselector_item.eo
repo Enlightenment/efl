@@ -1,4 +1,4 @@
-class Elm.Flipselector.Item(Elm.Widget.Item)
+class Elm.Flipselector.Item extends Elm.Widget.Item
 {
    [[Elementary flipselector item class]]
    legacy_prefix: elm_flipselector_item;

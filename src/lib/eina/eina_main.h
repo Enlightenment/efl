@@ -94,13 +94,13 @@ EAPI extern Eina_Error EINA_ERROR_NOT_IMPLEMENTED;
  *
  *  @li @c EINA_LOG_ABORT_LEVEL=LEVEL, where level is an integer such
  *      as 0 (critical) to 4 (debug). This will cause any messages at
- *      that level or less (ie: if 4, then messages at level 0 also
+ *      that level or lower (i.e.: if 4, then messages at level 0 also
  *      apply) to abort(3) the application if @c EINA_LOG_ABORT=1 was
  *      defined.
  *
  *  @li @c EINA_LOG_BACKTRACE=LEVEL, where level is an integer such as
  *      0 (critical) to 4 (debug). This will cause any messages at
- *      that level or less (ie: if 4, then messages at level 0 also
+ *      that level or lower (i.e.: if 4, then messages at level 0 also
  *      apply) to dump a backtrace. Note that if systemd-journal is
  *      used, it's going to the journal as well.
  *

@@ -83,7 +83,7 @@ typedef struct _Opaque Opaque;
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Docs_Group
  */
 EAPI int docs_meth(Docs *obj, int a, float *b, long *c);
 
@@ -97,7 +97,7 @@ EAPI int docs_meth(Docs *obj, int a, float *b, long *c);
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Docs_Group
  */
 EAPI void docs_prop_set(Docs *obj, int val);
 
@@ -112,7 +112,7 @@ EAPI void docs_prop_set(Docs *obj, int val);
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Docs_Group
  */
 EAPI int docs_prop_get(const Docs *obj);
 

@@ -8,7 +8,26 @@ struct Efl.Event_Description {
     restart: bool; [[$true if when the event is triggered again from a callback it'll start from where it was]]
 }
 
-abstract Efl.Object ()
+
+type Efl.Callback_Priority : short;
+[[
+  Callback priority. Range is -32k - 32k. The lower the number, the higher the priority.
+
+  This is used to insert an event handler relative to the existing stack of sorted event
+  handlers according to that priority. All event handlers always have a priority. If not
+  specified @Efl.Callback_Priority_Default is to be assumed.
+
+  See @Efl.Callback_Priority_Before @Efl.Callback_Priority_Default  @Efl.Callback_Priority_After
+ ]]
+
+const Efl.Callback_Priority_Before : Efl.Callback_Priority = -100;
+[[Slightly more prioritized than default.]]
+const Efl.Callback_Priority_Default : Efl.Callback_Priority = 0;
+[[Default priority.]]
+const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
+[[Slightly less prioritized than default.]]
+
+abstract Efl.Object
 {
    [[Abstract Efl object class]]
    eo_prefix: efl;
@@ -129,6 +148,17 @@ abstract Efl.Object ()
             finalized: bool; [[$true if the object is invalidated, $false otherwise]]
          }
       }
+      @property invalidating {
+         [[True if the object is about to be invalidated, and the invalidation of the children is already happening.
+
+           Note this is true before the invalidate call on the object.
+         ]]
+         get {
+         }
+         values {
+            invalidating: bool; [[$true if the object is invalidating, $false otherwise]]
+         }
+      }
       provider_find @const {
         [[Searches upwards in the object tree for a provider which knows the given class/interface.
 
@@ -140,7 +170,7 @@ abstract Efl.Object ()
           If this is not done the class cannot be found up in the object tree.
         ]]
         params {
-          klass : const(Efl.Object); [[The class identifier to search for]]
+          klass : const(Efl.Class); [[The class identifier to search for]]
         }
         return : Efl.Object; [[Object from the provider list]]
       }
@@ -218,18 +248,35 @@ abstract Efl.Object ()
            under certain conditions to block a certain event.
          ]]
       }
-      event_callback_forwarder_add {
-         [[Add an event callback forwarder for an event and an object.]]
+      event_callback_forwarder_priority_add {
+         [[Add an event callback forwarder that will make this object emit an event whenever another
+         object ($source) emits it. The event is said to be forwarded from $source to this object.
+
+         The event is unaffected on $source and behave like any other event being propagated on
+         any object and will trigger all the handler registered on $source like nothing special
+         happened.
+
+         This allow object that hide internally another object to easily be able to propagate an event
+         without the need to add custom handler.
+
+         Note: The priority is used to make sure that you are intercepting the event when you expect
+         by inserting a handler at the right position in the stack of event handler on the object that
+         emit the event.]]
          params {
             @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
-            @in new_obj: Efl.Object; [[The object to emit events from]]
+            @in priority: Efl.Callback_Priority; [[The priority at which to insert the event forwarder handler
+            in the existing list of handler on the source of event object. The lower the number, the higher
+            the priority. As a shortcut @Efl.Callback_Priority_Before,
+            @Efl.Callback_Priority_Default and @Efl.Callback_Priority_After can be used. See
+            @Efl.Callback_Priority for more details.]]
+            @in source: Efl.Object @nonull; [[The object which emits the initial event]]
          }
       }
       event_callback_forwarder_del {
-         [[Remove an event callback forwarder for an event and an object.]]
+         [[Remove an event callback forwarder for a specified event and object.]]
          params {
             @cref desc: Efl.Event_Description; [[The description of the event to listen to]]
-            @in new_obj: Efl.Object; [[The object to emit events from]]
+            @in new_obj: Efl.Object @nonull; [[The object to emit events from]]
          }
       }
       children_iterator_new {

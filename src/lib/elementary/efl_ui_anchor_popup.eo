@@ -1,0 +1,42 @@
+class Efl.Ui.Anchor_Popup extends Efl.Ui.Popup
+{
+   [[EFL UI Anchor Popup class]]
+   methods {
+      @property anchor {
+         set {
+            [[Set anchor popup to follow an anchor object.
+              If anchor object is moved or parent window is resized, the anchor popup moves to the new position.
+              If anchor object is set to NULL, the anchor popup stops following the anchor object.
+              When the popup is moved by using gfx_position_set, anchor is set NULL.
+              ]]
+         }
+         get {
+            [[Returns the anchor object which the popup is following.]]
+         }
+         values {
+            anchor: Efl.Canvas.Object; [[The object which popup is following.]]
+         }
+      }
+      @property align_priority @beta {
+         set {
+            [[Set the align priority of a popup.]]
+         }
+         get {
+            [[Get the align priority of a popup.]]
+         }
+         values {
+            first: Efl.Ui.Popup_Align;  [[First align priority]]
+            second: Efl.Ui.Popup_Align; [[Second align priority]]
+            third: Efl.Ui.Popup_Align;  [[Third align priority]]
+            fourth: Efl.Ui.Popup_Align; [[Fourth align priority]]
+            fifth: Efl.Ui.Popup_Align;  [[Fifth align priority]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Gfx.Entity.position { set; }
+   }
+}

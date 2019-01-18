@@ -1,4 +1,4 @@
-class Efl.Loop_Message_Future_Handler (Efl.Loop_Message_Handler)
+class Efl.Loop_Message_Future_Handler extends Efl.Loop_Message_Handler
 {
    [[ Internal use for future on an efl loop - replacing legacy ecore events ]]
    methods {

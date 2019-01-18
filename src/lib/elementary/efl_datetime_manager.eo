@@ -1,12 +1,12 @@
 import efl_types;
 
-class Efl.Datetime.Manager (Efl.Object)
+class Efl.Datetime.Manager extends Efl.Object
 {
    [[Efl datetime manager class for Datepicker and Timepicker]]
    methods {
       @property value {
          [[The value of a date, time for Datepicker or Timepicker.
-            
+
            The value for Datepicker contains year, month, and day. (tm_year, tm_mon, and tm_mday in Efl_Time)
            The value for Timepicker contains hour, and min. (tm_hour, and tm_min in Efl_Time)
          ]]
@@ -20,7 +20,7 @@ class Efl.Datetime.Manager (Efl.Object)
       }
       @property format {
          [[The format of date or time.
-		    
+
            Default format is taken as per the system locale settings.
          ]]
          set {

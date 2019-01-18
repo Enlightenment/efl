@@ -1,0 +1,28 @@
+
+class Efl.Ui.Grid_Default_Item extends Efl.Ui.Grid_Item implements
+                                Efl.Text,
+                                Efl.Text_Markup,
+                                Efl.Ui.L10n,
+                                Efl.Content
+{
+   [[Grid Default Item class.
+     This class need to be sub object of list widget.
+     text and contents can be appliable by efl_text,
+     efl_content or efl_part APIs.]]
+   data: null;
+   parts {
+     icon: Efl.Ui.Grid_Default_Item_Part_Icon; [[]]
+     end: Efl.Ui.Grid_Default_Item_Part_End; [[]]
+   }
+   implements {
+      //Efl.Object
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Text.text { get; set; }
+      Efl.Text_Markup.markup { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Part.part_get;
+   }
+}

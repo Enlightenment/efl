@@ -286,7 +286,7 @@ EAPI void eina_matrix3_values_set(Eina_Matrix3 *m,
  * @param[out] yz The sixth coefficient value.
  * @param[out] zx The seventh coefficient value.
  * @param[out] zy The eighth coefficient value.
- * @param[out] zz The nineth coefficient value.
+ * @param[out] zz The ninth coefficient value.
  *
  * This function gets the values of the coefficients of the matrix
  * @p m. No check is done on @p m.
@@ -313,7 +313,7 @@ EAPI void eina_matrix3_values_get(const Eina_Matrix3 *m,
  * @param[out] yz The sixth coefficient value.
  * @param[out] zx The seventh coefficient value.
  * @param[out] zy The eighth coefficient value.
- * @param[out] zz The nineth coefficient value.
+ * @param[out] zz The nine-th coefficient value.
  *
  * This function gets the values of the coefficients of the matrix
  * @p m. No check is done on @p m.
@@ -421,7 +421,7 @@ EAPI void eina_matrix3_identity(Eina_Matrix3 *t);
 /**
  * @brief Calculates the determinant of the given matrix.
  *
- * @param m[in] The matrix.
+ * @param[in] m The matrix.
  * @return The determinant.
  *
  * This function returns the determinant of the matrix @p m. No check
@@ -729,7 +729,7 @@ EAPI Eina_Matrix_Type eina_matrix4_type_get(const Eina_Matrix4 *m);
  * @param[in] yy The sixth coefficient value.
  * @param[in] yz The seventh coefficient value.
  * @param[in] yw The eighth coefficient value.
- * @param[in] zx The nineth coefficient value.
+ * @param[in] zx The ninth coefficient value.
  * @param[in] zy The tenth coefficient value.
  * @param[in] zz The eleventh coefficient value.
  * @param[in] zw The twelfth coefficient value.
@@ -764,7 +764,7 @@ EAPI void eina_matrix4_values_set(Eina_Matrix4 *m,
  * @param[out] yy The sixth coefficient value.
  * @param[out] yz The seventh coefficient value.
  * @param[out] yw The eighth coefficient value.
- * @param[out] zx The nineth coefficient value.
+ * @param[out] zx The ninth coefficient value.
  * @param[out] zy The tenth coefficient value.
  * @param[out] zz The eleventh coefficient value.
  * @param[out] zw The twelfth coefficient value.

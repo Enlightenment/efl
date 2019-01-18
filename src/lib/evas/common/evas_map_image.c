@@ -1,9 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 #include "evas_blend_private.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 #ifdef BUILD_NEON
 #include <arm_neon.h>
 #endif
@@ -757,14 +754,7 @@ evas_common_map_rgba_cb(RGBA_Image *src, RGBA_Image *dst,
    int          i;
 
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-     {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_load_data(&src->cache_entry);
-        else
-#endif
-          evas_cache_image_load_data(&src->cache_entry);
-     }
+     evas_cache_image_load_data(&src->cache_entry);
 
    evas_common_image_colorspace_normalize(src);
    if ((!src->image.data) || (!dst->image.data)) return;
@@ -804,14 +794,7 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
    Eina_Bool ret = EINA_FALSE;
 
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-     {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_load_data(&src->cache_entry);
-        else
-#endif
-          evas_cache_image_load_data(&src->cache_entry);
-     }
+     evas_cache_image_load_data(&src->cache_entry);
 
    evas_common_image_colorspace_normalize(src);
 

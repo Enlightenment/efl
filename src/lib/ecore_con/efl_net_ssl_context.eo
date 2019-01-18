@@ -1,6 +1,6 @@
 import efl_net_ssl_types;
 
-class Efl.Net.Ssl.Context (Efl.Object) {
+class Efl.Net.Ssl.Context extends Efl.Object {
     [[A SSL Context that is used to start a SSL socket wrapper.
 
       The context will contain common configurations such as
@@ -11,7 +11,7 @@ class Efl.Net.Ssl.Context (Efl.Object) {
       @Efl.Object.finalize in order to define the mandatory
       operational parameters.
 
-      \@note All setter methods must be called before @Efl.Object.finalize.
+      Note: All setter methods must be called before @Efl.Object.finalize.
 
       @since 1.19
     ]]

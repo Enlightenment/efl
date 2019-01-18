@@ -11,9 +11,9 @@ mixin Efl.Ui.Dnd {
               - EFL_UI_DND_EVENT_DRAG_DONE
          ]]
          params {
-            @in format: Efl.Selection_Format; [[The data format]]
+            @in format: Efl.Ui.Selection_Format; [[The data format]]
             @in data: Eina.Slice; [[The drag data]]
-            @in action: Efl.Selection_Action; [[Action when data is transferred]]
+            @in action: Efl.Ui.Selection_Action; [[Action when data is transferred]]
             @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
@@ -21,7 +21,7 @@ mixin Efl.Ui.Dnd {
       drag_action_set {
          [[Set the action for the drag]]
          params {
-            @in action: Efl.Selection_Action; [[Drag action]]
+            @in action: Efl.Ui.Selection_Action; [[Drag action]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
@@ -32,21 +32,21 @@ mixin Efl.Ui.Dnd {
          }
       }
       drop_target_add {
-         [[Make the current object as drop targert.
+         [[Make the current object as drop target.
            There are four events emitted:
             - EFL_UI_DND_EVENT_DRAG_ENTER
             - EFL_UI_DND_EVENT_DRAG_LEAVE
             - EFL_UI_DND_EVENT_DRAG_POS
             - EFL_UI_DND_EVENT_DRAG_DROP.]]
          params {
-            @in format: Efl.Selection_Format; [[Accepted data format]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
       drop_target_del {
          [[Delete the dropable status from object]]
          params {
-            @in format: Efl.Selection_Format; [[Accepted data format]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
             @in seat: uint; [[Specified seat for multiple seats case.]]
          }
       }
@@ -58,6 +58,6 @@ mixin Efl.Ui.Dnd {
       drag,enter: void; [[called when the drag object enters this object]]
       drag,leave: void; [[called when the drag object leaves this object]]
       drag,pos: Efl.Dnd.Drag_Pos; [[called when the drag object changes drag position]]
-      drag,drop: Efl.Selection_Data; [[called when the drag object dropped on this object]]
+      drag,drop: Efl.Ui.Selection_Data; [[called when the drag object dropped on this object]]
    }
 }

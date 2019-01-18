@@ -13,6 +13,8 @@
 
 #include "edje_private.h"
 
+#include "canvas/evas_canvas.eo.h"
+
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
 #include "Edje_Edit.h"
 
@@ -289,7 +291,9 @@ _edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, con
 EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   evas = evas_find(evas);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -12437,7 +12441,7 @@ _edje_edit_embryo_rebuild(Edje_Edit *eed)
    Eina_Tmpstr *tmp_out;
    char embryo_cc_path[PATH_MAX] = "";
    char inc_path[PATH_MAX] = "";
-   char buf[4096];
+   char buf[PATH_MAX + PATH_MAX + PATH_MAX + 128];
    Eina_Iterator *it;
    Program_Script *ps;
    Edje_Part_Collection *edc;

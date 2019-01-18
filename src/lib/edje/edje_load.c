@@ -82,7 +82,7 @@ _edje_extract_mo_files(Edje *ed)
    for (i = 0; i < ed->file->mo_dir->mo_entries_count; i++)
      {
         Edje_Mo *mo_entry;
-        char out[PATH_MAX];
+        char out[PATH_MAX + PATH_MAX + 128];
         char outdir[PATH_MAX];
         char *sub_str;
         char *mo_src;
@@ -1645,6 +1645,25 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                               }
                             eina_stringshare_del(eud->u.string.text);
                             break;
+
+                          case EDJE_USER_TEXT_STYLE:
+                              {
+                                 Edje_Part_Text_Prop *prop;
+                                 EINA_LIST_FREE(eud->u.text_style.props, prop)
+                                   {
+                                      _canvas_layout_user_text_apply(eud, obj,
+                                            prop);
+                                      free(prop);
+                                   }
+                              }
+                            break;
+                          case EDJE_USER_TEXT_EXPAND:
+                              {
+                                 efl_canvas_layout_part_text_expand_set(
+                                       efl_part(obj, eud->part),
+                                       eud->u.text_expand.expand);
+                              }
+                            break;
                          }
                        if (eud) _edje_user_definition_remove(eud, child);
                     }
@@ -1840,10 +1859,15 @@ _edje_object_collect(Edje *ed)
              edje_object_part_unswallow(NULL, eud->u.swallow.child);
              break;
 
+           case EDJE_USER_TEXT_STYLE:
+             _canvas_layout_user_text_collect(ed, eud);
+             break;
+
            case EDJE_USER_DRAG_STEP:
            case EDJE_USER_DRAG_PAGE:
            case EDJE_USER_DRAG_VALUE:
            case EDJE_USER_DRAG_SIZE:
+           case EDJE_USER_TEXT_EXPAND:
              break;
           }
      }
@@ -1993,12 +2017,11 @@ _edje_file_del(Edje *ed)
                           // fallthrough intentional
                           case EDJE_PART_TYPE_GROUP:
                             evas_object_del(rp->typedata.swallow->swallowed_object);
-
+                            rp->typedata.swallow->swallowed_object = NULL;
                           default:
                             break;
                          }
                        _edje_real_part_swallow_clear(ed, rp);
-                       rp->typedata.swallow->swallowed_object = NULL;
                     }
                   free(rp->typedata.swallow);
                   rp->typedata.swallow = NULL;
@@ -2077,7 +2100,6 @@ _edje_file_del(Edje *ed)
         EINA_LIST_FREE(ed->actions, runp)
           free(runp);
      }
-   _edje_animators = eina_list_remove(_edje_animators, ed);
    efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
    ecore_animator_del(ed->animator);
    ed->animator = NULL;

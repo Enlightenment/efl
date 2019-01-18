@@ -134,6 +134,7 @@ _ecore_event_message_handler_type_new(Eo *obj EINA_UNUSED, Ecore_Event_Message_H
    tmp = realloc(pd->handlers, sizeof(Eina_Inlist *) * (evnum + 1));
    if (!tmp) return 0;
    pd->handlers = tmp;
+   pd->handlers[ECORE_EVENT_NONE] = NULL;
    pd->handlers[evnum] = NULL;
    pd->event_type_count = evnum;
    return evnum;
@@ -290,7 +291,7 @@ EOLIAN static Efl_Object *
 _ecore_event_message_handler_efl_object_constructor(Eo *obj, Ecore_Event_Message_Handler_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   pd->event_type_count = -1;
+   pd->event_type_count = 0;
    pd->current_event_type = -1;
    return obj;
 }
@@ -314,7 +315,7 @@ _ecore_event_message_handler_efl_object_destructor(Eo *obj, Ecore_Event_Message_
           {
              free(h);
           }
-        for (i = 0; i <= pd->event_type_count; i++)
+        for (i = 1; i <= pd->event_type_count; i++)
           {
              EINA_INLIST_FREE(pd->handlers[i], h)
                {

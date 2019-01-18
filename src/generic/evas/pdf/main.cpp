@@ -2,7 +2,9 @@
 # include <config.h>
 #endif
 
-#include <sys/mman.h>
+#ifdef HAVE_SHM_OPEN
+# include <sys/mman.h>
+#endif
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -315,8 +317,11 @@ main(int argc, char **argv)
 
    if (!head_only)
      {
-        if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+#ifdef HAVE_SHM_OPEN
+        if (shm_fd >= 0)
+          printf("shmfile %s\n", shmfile);
         else
+#endif
           {
              // could also to "tmpfile %s\n" like shmfile but just
              // a mmaped tmp file on the system

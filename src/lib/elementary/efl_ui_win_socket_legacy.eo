@@ -1,4 +1,4 @@
-class Efl.Ui.Win_Socket_Legacy (Efl.Ui.Win_Socket, Efl.Ui.Legacy)
+class Efl.Ui.Win_Socket_Legacy extends Efl.Ui.Win_Socket implements Efl.Ui.Legacy
 {
    [[Elementary window socket class]]
    data: null;

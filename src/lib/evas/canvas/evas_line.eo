@@ -1,4 +1,4 @@
-class Evas.Line (Efl.Canvas.Object)
+class Evas.Line extends Efl.Canvas.Object
 {
    [[Evas line class]]
    legacy_prefix: evas_object_line;

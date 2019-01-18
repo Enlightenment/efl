@@ -97,7 +97,7 @@ static void          _ecore_imf_xim_feedback_attr_add(Eina_List **attrs,
 static void          _ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx);
 static void          _ecore_imf_xim_ic_client_window_set(Ecore_IMF_Context *ctx,
                                                         Ecore_X_Window window);
-static int           _ecore_imf_xim_preedit_start_call(XIC xic,
+static void          _ecore_imf_xim_preedit_start_call(XIC xic,
                                                       XPointer client_data,
                                                       XPointer call_data);
 static void          _ecore_imf_xim_preedit_done_call(XIC xic,
@@ -172,19 +172,23 @@ _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
           {
              Ecore_X_Display *dsp;
              dsp = ecore_x_display_get();
-             XUnregisterIMInstantiateCallback(dsp,
-                                              NULL, NULL, NULL,
-                                              _ecore_imf_xim_instantiate_cb,
-                                              (XPointer)imf_context_data->im_info);
+             if (dsp)
+               XUnregisterIMInstantiateCallback(dsp,
+                                                NULL, NULL, NULL,
+                                                _ecore_imf_xim_instantiate_cb,
+                                                (XPointer)imf_context_data->im_info);
           }
         else if (imf_context_data->im_info->im)
           {
-             XIMCallback im_destroy_callback;
-             im_destroy_callback.client_data = NULL;
-             im_destroy_callback.callback = NULL;
-             XSetIMValues(imf_context_data->im_info->im,
-                          XNDestroyCallback, &im_destroy_callback,
-                          NULL);
+             if (ecore_x_display_get())
+               {
+                  XIMCallback im_destroy_callback;
+                  im_destroy_callback.client_data = NULL;
+                  im_destroy_callback.callback = NULL;
+                  XSetIMValues(imf_context_data->im_info->im,
+                               XNDestroyCallback, &im_destroy_callback,
+                               NULL);
+               }
           }
      }
 
@@ -481,6 +485,7 @@ _ecore_imf_context_xim_input_panel_show(Ecore_IMF_Context *ctx)
    DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
+   if (!ecore_x_display_get()) return;
    ecore_x_e_virtual_keyboard_state_set
         (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
 }
@@ -492,6 +497,7 @@ _ecore_imf_context_xim_input_panel_hide(Ecore_IMF_Context *ctx)
    DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
+   if (!ecore_x_display_get()) return;
    ecore_x_e_virtual_keyboard_state_set
         (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
 }
@@ -595,15 +601,18 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
         xev.send_event = 0;
         xev.display = dsp;
         xev.window = win;
-        xev.root = ecore_x_window_root_get(win);
+        xev.root = dsp ? ecore_x_window_root_get(win) : 0;
         xev.subwindow = win;
         xev.time = ev->timestamp;
         xev.x = xev.x_root = 0;
         xev.y = xev.y_root = 0;
         xev.state = 0;
-        xev.state |= _ecore_x_event_reverse_modifiers(ev->modifiers);
-        xev.state |= _ecore_x_event_reverse_locks(ev->locks);
-        xev.keycode = _ecore_imf_xim_keycode_get(dsp, ev->keyname);
+        if (dsp)
+          {
+             xev.state |= _ecore_x_event_reverse_modifiers(ev->modifiers);
+             xev.state |= _ecore_x_event_reverse_locks(ev->locks);
+             xev.keycode = _ecore_imf_xim_keycode_get(dsp, ev->keyname);
+          }
         xev.same_screen = True;
 
         if (ic)
@@ -791,7 +800,8 @@ _ecore_imf_xim_shutdown(void)
         XIM_Im_Info *info = open_ims->data;
         Ecore_X_Display *display = ecore_x_display_get();
 
-        _ecore_imf_xim_info_im_shutdown(display, EINA_FALSE, info);
+        if (display)
+          _ecore_imf_xim_info_im_shutdown(display, EINA_FALSE, info);
      }
 
    if (_ecore_imf_xim_log_dom >= 0)
@@ -853,7 +863,7 @@ _ecore_imf_xim_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
    free(imf_context_data);
 }
 
-static int
+static void
 _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
                                  XPointer client_data,
                                  XPointer call_data EINA_UNUSED)
@@ -862,14 +872,13 @@ _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
 
    DBG("ctx=%p, imf_context_data=%p", ctx, imf_context_data);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, -1);
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->finalizing == EINA_FALSE)
      {
         ecore_imf_context_preedit_start_event_add(ctx);
         ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
      }
-   return -1;
 }
 
 static void
@@ -1103,6 +1112,7 @@ _ecore_imf_xim_ic_get(Ecore_IMF_Context *ctx)
    imf_context_data = ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, NULL);
 
+   if (!ecore_x_display_get()) return NULL;
    ic = imf_context_data->ic;
    if (!ic)
      {
@@ -1341,17 +1351,20 @@ _ecore_imf_xim_info_im_init(XIM_Im_Info *info)
         if (!XSetLocaleModifiers(""))
           WRN("Unable to set locale modifiers with XSetLocaleModifiers()");
         dsp = ecore_x_display_get();
-        info->im = XOpenIM(dsp, NULL, NULL, NULL);
-        if (!info->im)
+        if (dsp)
           {
-             XRegisterIMInstantiateCallback(dsp,
-                                            NULL, NULL, NULL,
-                                            _ecore_imf_xim_instantiate_cb,
-                                            (XPointer)info);
-             info->reconnecting = EINA_TRUE;
-             return;
+             info->im = XOpenIM(dsp, NULL, NULL, NULL);
+             if (!info->im)
+               {
+                  XRegisterIMInstantiateCallback(dsp,
+                                                 NULL, NULL, NULL,
+                                                 _ecore_imf_xim_instantiate_cb,
+                                                 (XPointer)info);
+                  info->reconnecting = EINA_TRUE;
+                  return;
+               }
+             _ecore_imf_xim_im_setup(info);
           }
-        _ecore_imf_xim_im_setup(info);
      }
 }
 

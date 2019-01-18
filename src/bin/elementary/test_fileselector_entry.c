@@ -65,25 +65,25 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-create_dir_struct(void)
+_create_dir_struct(void)
 {
    FILE *fp;
    int ret = 0;
 
-   ret = mkdir("/tmp/test_fs_bt", S_IRWXU);
+   ret = mkdir("/tmp/test_fs_en", S_IRWXU);
    if (ret < 0) return;
-   fp = fopen("/tmp/test_fs_bt/a_file.txt", "w");
+   fp = fopen("/tmp/test_fs_en/a_file.txt", "w");
    if (fp) fclose(fp);
-   fp = fopen("/tmp/test_fs_bt/k_file.txt", "w");
+   fp = fopen("/tmp/test_fs_en/k_file.txt", "w");
    if (fp) fclose(fp);
-   fp = fopen("/tmp/test_fs_bt/m_file.txt", "w");
+   fp = fopen("/tmp/test_fs_en/m_file.txt", "w");
    if (fp) fclose(fp);
 
-   ret = mkdir("/tmp/test_fs_bt/a_subdir", S_IRWXU);
+   ret = mkdir("/tmp/test_fs_en/a_subdir", S_IRWXU);
    if (ret < 0) return;
-   fp = fopen("/tmp/test_fs_bt/a_subdir/d_sub_file.txt", "w");
+   fp = fopen("/tmp/test_fs_en/a_subdir/d_sub_file.txt", "w");
    if (fp) fclose(fp);
-   fp = fopen("/tmp/test_fs_bt/a_subdir/j_sub_file.txt", "w");
+   fp = fopen("/tmp/test_fs_en/a_subdir/j_sub_file.txt", "w");
    if (fp) fclose(fp);
 }
 
@@ -190,14 +190,14 @@ test_fileselector_entry(void *data       EINA_UNUSED,
 
    elm_box_pack_end(bxx, vbox);
 
-   create_dir_struct(); /* Create a dir struct in /tmp */
+   _create_dir_struct(); /* Create a dir struct in /tmp */
 
    /* file selector entry */
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "file");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_en = elm_fileselector_entry_add(win);
-   elm_fileselector_path_set(fs_en, "/tmp/test_fs_bt");
+   elm_fileselector_path_set(fs_en, "/tmp/test_fs_en");
    elm_object_text_set(fs_en, "Select a file");
    elm_object_part_content_set(fs_en, "button icon", ic);
    evas_object_size_hint_weight_set(fs_en, EVAS_HINT_EXPAND, 0.0);

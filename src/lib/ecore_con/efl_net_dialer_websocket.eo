@@ -47,7 +47,7 @@ struct Efl.Net.Dialer_Websocket_Closed_Reason {
     message: string; [[Textual closing reason message]]
 }
 
-class Efl.Net.Dialer_Websocket (Efl.Loop_Consumer, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dialer {
     [[WebSocket Dialer (Client).
 
       The WebSocket Protocol (https://tools.ietf.org/html/rfc6455) is
@@ -292,7 +292,7 @@ class Efl.Net.Dialer_Websocket (Efl.Loop_Consumer, Efl.Net.Dialer) {
               system, create a cookie jar and pass its path to this
               property.
 
-              \@note that whenever this property is set, even if to the
+              Note: that whenever this property is set, even if to the
               same value, it will flush all cookies to the previously
               set file, then erase all known cookies, then use the new
               file (if any).

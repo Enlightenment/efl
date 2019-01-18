@@ -69,7 +69,7 @@ typedef struct _Ecore_Wl2_Input_Devices
    Eo *keyboard_dev;
    Eo *touch_dev;
    Eo *seat_dev;
-   int window_id;
+   Ecore_Wl2_Window *window;
 } Ecore_Wl2_Input_Devices;
 
 struct _Ecore_Wl2_Display
@@ -147,6 +147,7 @@ struct _Ecore_Wl2_Aux_Hint
 
 struct _Ecore_Wl2_Frame_Cb_Handle
 {
+   EINA_INLIST;
    Ecore_Wl2_Window *win;
    Ecore_Wl2_Frame_Cb cb;
    void *data;
@@ -173,7 +174,7 @@ struct _Ecore_Wl2_Window
 
    Ecore_Wl2_Surface *wl2_surface;
 
-   int id, rotation, surface_id;
+   int rotation, surface_id;
    const char *title;
    const char *class;
    const char *role;
@@ -221,7 +222,7 @@ struct _Ecore_Wl2_Window
 
    Eina_Inlist *subsurfs;
    Eina_List *supported_aux_hints;
-   Eina_List *frame_callbacks;
+   Eina_Inlist *frame_callbacks;
 
    Eina_List *outputs;
 
@@ -509,7 +510,7 @@ struct _Ecore_Wl2_Input
    {
       Ecore_Wl2_Offer *offer;
       uint32_t enter_serial;
-      Ecore_Window window_id;
+      Ecore_Wl2_Window *window;
    } drag, selection;
 
    unsigned int seat_version;
@@ -523,7 +524,7 @@ struct _Ecore_Wl2_Input
 
 typedef struct Ecore_Wl2_Event_Window_WWW
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    int x_rel;
    int y_rel;
    uint32_t timestamp;
@@ -531,7 +532,7 @@ typedef struct Ecore_Wl2_Event_Window_WWW
 
 typedef struct Ecore_Wl2_Event_Window_WWW_Drag
 {
-   unsigned int window;
+   Ecore_Wl2_Window *window;
    Eina_Bool dragging;
 } Ecore_Wl2_Event_Window_WWW_Drag;
 

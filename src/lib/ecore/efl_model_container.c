@@ -84,12 +84,8 @@ _efl_model_container_efl_object_destructor(Eo *obj,
 {
    Eina_Stringshare *key;
    Eina_Iterator *it;
-   Efl_Model *child;
 
-   EINA_LIST_FREE(sd->childrens, child)
-     {
-        if (child) efl_parent_set(child, NULL);
-     }
+   eina_list_free(sd->childrens);
 
    it = eina_hash_iterator_key_new(sd->properties);
    EINA_ITERATOR_FOREACH(it, key)
@@ -199,7 +195,7 @@ _efl_model_container_child_property_add(Eo *obj,
 
    for (i = children_count; i < in_count; ++i)
      {
-        Efl_Model_Children_Event cevt;
+        Efl_Model_Children_Event cevt = { 0 };
         Efl_Model *child;
 
         child = efl_add(EFL_MODEL_CONTAINER_ITEM_CLASS, obj,
@@ -225,20 +221,10 @@ _efl_model_container_child_property_add(Eo *obj,
    return EINA_FALSE;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_container_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Data *sd)
 {
-   Eina_Iterator *it;
-   Eina_Array *r;
-   Eina_Stringshare *s;
-
-   r = eina_array_new(1);
-   it = eina_hash_iterator_key_new(sd->properties);
-   EINA_ITERATOR_FOREACH(it, s)
-     eina_array_push(r, eina_stringshare_ref(s));
-   eina_iterator_free(it);
-
-   return r;
+   return eina_hash_iterator_key_new(sd->properties);
 }
 
 static Eina_Future *
@@ -247,7 +233,7 @@ _efl_model_container_efl_model_property_set(Eo *obj,
                                             const char *property EINA_UNUSED,
                                             Eina_Value *value EINA_UNUSED)
 {
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_rejected(obj,
                                EFL_MODEL_ERROR_NOT_FOUND);
 }
 
@@ -268,7 +254,7 @@ _efl_model_container_efl_model_children_slice_get(Eo *obj,
    Eina_Value v;
 
    v = efl_model_list_value_get(sd->childrens, start, count);
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+   return efl_loop_future_resolved(obj, v);
 }
 
 static unsigned int

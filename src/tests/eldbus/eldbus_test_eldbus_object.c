@@ -92,11 +92,11 @@ static const Eldbus_Method methods[] = {
         "GetMachineId", NULL,
         ELDBUS_ARGS({"s", "machine_id"}), NULL, 0
       },
-      { }
+      { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc iface_desc = {
-   "org.freedesktop.DBus.Peer", methods, NULL
+   "org.freedesktop.DBus.Peer", methods, NULL, NULL, NULL, NULL
 };
 
 static void

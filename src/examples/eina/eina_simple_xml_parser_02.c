@@ -7,14 +7,14 @@
 
 
 static Eina_Bool
-_xml_attribute_parse_cb(void *data, const char *key, const char *value)
+_xml_attribute_parse_cb(void *data EINA_UNUSED, const char *key, const char *value)
 {
    printf("attributes, key = %s, value = %s\n", key, value);
    return EINA_TRUE;
 }
 
 static Eina_Bool
-_xml_tag_parse_cb(void *data, Eina_Simple_XML_Type type, const char *content,
+_xml_tag_parse_cb(void *data EINA_UNUSED, Eina_Simple_XML_Type type, const char *content,
                   unsigned offset EINA_UNUSED, unsigned int length)
 {
    if (length == 0) return EINA_FALSE;

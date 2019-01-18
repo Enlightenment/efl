@@ -1,8 +1,12 @@
 //Compile with:
 // gcc -o emotion_generic_subtitle_example emotion_generic_subtitle_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eo`
 
-#define EFL_EO_API_SUPPORT
-#define EFL_BETA_API_SUPPORT
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Ecore.h>
 #include <Ecore_Evas.h>

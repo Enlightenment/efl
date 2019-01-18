@@ -15,7 +15,7 @@
 /**
  * @brief Enables or disables safe mmaped IO handling.
  *
- * @param enabled The enabled state (to enable, pass #EINA_TRUE)
+ * @param[in] enabled The enabled state (to enable, pass #EINA_TRUE)
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This enables (if possible on your platform) a signal handler for

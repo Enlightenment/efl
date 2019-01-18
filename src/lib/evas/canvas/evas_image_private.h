@@ -18,9 +18,6 @@
 #include <math.h>
 
 #include "evas_private.h"
-#ifdef EVAS_CSERVE2
-#include "../cserve2/evas_cs2_private.h"
-#endif
 #include "../common/evas_convert_color.h"
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
@@ -96,6 +93,11 @@ struct _Evas_Object_Image_State
    Eina_Bool      opaque : 1;
 };
 
+#define EVAS_IMAGE_PRELOAD_NONE 0x00
+#define EVAS_IMAGE_PRELOADING 0x01
+#define EVAS_IMAGE_PRELOADED 0x04
+#define EVAS_IMAGE_PRELOAD_CANCEL 0x08
+
 struct _Evas_Image_Data
 {
    const Evas_Object_Image_State *cur;
@@ -120,12 +122,13 @@ struct _Evas_Image_Data
       short          w, h;
    } file_size;
 
+   unsigned char     preload;  //See above EVAS_IMAGE_PRELOAD***
+
    Eina_Bool         changed : 1;
    Eina_Bool         dirty_pixels : 1;
    Eina_Bool         filled : 1;
    Eina_Bool         filled_set : 1;
    Eina_Bool         proxyrendering : 1;
-   Eina_Bool         preloading : 1;
    Eina_Bool         video_surface : 1;
    Eina_Bool         video_visible : 1;
    Eina_Bool         created : 1;
@@ -145,6 +148,7 @@ struct _Evas_Image_Data
    Eina_Bool         legacy_type : 1;
    Eina_Bool         skip_head : 1;
    Eina_Bool         can_scanout : 1;
+   Eina_Bool         plane_status : 1;
 };
 
 /* shared functions between legacy and new eo classes */
@@ -159,8 +163,6 @@ void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, i
 /* Efl.File */
 Eina_Bool _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key);
 void _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key);
-Eina_Bool _evas_image_file_set(Eo *eo_obj, const char *file, const char *key);
-void _evas_image_file_get(const Eo *eo_obj, const char **file, const char **key);
 
 /* Efl.Image.Load */
 Efl_Gfx_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);

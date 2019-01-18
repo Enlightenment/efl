@@ -767,7 +767,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 {
    int rend = 0;
    Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-   static int render2 = -1;
 
    if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
        (edata->sync_counter) && (!edata->sync_began) &&
@@ -782,42 +781,20 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 
    rend = ecore_evas_render_prepare(ee);
 
-   if (render2 == -1)
+   if (!ee->can_async_render)
      {
-        if (getenv("RENDER2")) render2 = 1;
-        else render2 = 0;
+        Eina_List *updates = evas_render_updates(ee->evas);
+        rend = _render_updates_process(ee, updates);
+        evas_render_updates_free(updates);
      }
-   if (render2)
+   else if (evas_render_async(ee->evas))
      {
-        if (!ee->can_async_render)
-          {
-             Eina_List *updates = evas_render2_updates(ee->evas);
-             rend = _render_updates_process(ee, updates);
-             evas_render_updates_free(updates);
-          }
-        else
-          {
-             ee->in_async_render = EINA_TRUE;
-             if (evas_render2(ee->evas)) rend = 1;
-             else ee->in_async_render = EINA_FALSE;
-          }
+        EDBG("ee=%p started asynchronous render.", ee);
+        ee->in_async_render = EINA_TRUE;
+        rend = 1;
      }
-   else
-     {
-        if (!ee->can_async_render)
-          {
-             Eina_List *updates = evas_render_updates(ee->evas);
-             rend = _render_updates_process(ee, updates);
-             evas_render_updates_free(updates);
-          }
-        else if (evas_render_async(ee->evas))
-          {
-             EDBG("ee=%p started asynchronous render.", ee);
-             ee->in_async_render = EINA_TRUE;
-             rend = 1;
-          }
-        else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
-     }
+   else if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+
    return rend;
 }
 
@@ -1650,18 +1627,22 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!edata->configured)
+   if ((e->from_wm) || (ee->prop.override))
      {
-        if (edata->fully_obscured)
+        if (!edata->configured)
           {
-             /* FIXME: round trip */
-             if (!ecore_x_screen_is_composited(edata->screen_num))
+             if (edata->fully_obscured)
+               {
+                  /* FIXME: round trip */
+                  if (!ecore_x_screen_is_composited(edata->screen_num))
+                    ee->draw_block = EINA_FALSE;
+               }
+             else
                ee->draw_block = EINA_FALSE;
           }
-        else
-          ee->draw_block = EINA_FALSE;
+        edata->configure_coming = 0;
+        edata->configured = 1;
      }
-   edata->configured = 1;
    if (edata->direct_resize) return ECORE_CALLBACK_PASS_ON;
 
    pointer = evas_default_device_get(ee->evas, EFL_INPUT_DEVICE_TYPE_MOUSE);
@@ -1671,7 +1652,6 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
 
    if (edata->configure_reqs > 0) edata->configure_reqs--;
 
-   edata->configure_coming = 0;
    if ((e->from_wm) || (ee->prop.override))
      {
         if ((ee->x != e->x) || (ee->y != e->y))

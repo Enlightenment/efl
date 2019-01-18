@@ -1,7 +1,6 @@
-class Parts (Override, Base) {
+class Parts extends Override {
    parts {
       part1: Override; [[Part 1]]
-      part2: Base; [[Part 2]]
-      part3: Parts; [[Part 3]]
+      part2: Parts; [[Part 2]]
    }
 }

@@ -1,0 +1,33 @@
+import eina_types;
+
+class Efl.Ui.Scroll_Alert_Popup extends Efl.Ui.Alert_Popup
+{
+   [[EFL UI Scroll Alert Popup class]]
+   methods {
+      @property expandable @beta {
+         set {
+            [[Set the expandable max size of popup.
+
+              If the given max_size is -1, then a popup appears with its size.
+              However, if the given max_size is bigger than 0 the popup size is up to the given max_size. If popup content's min size is bigger than the given max_size the scroller appears in the popup content area.
+            ]]
+         }
+         get {
+            [[Get the expandable max size of popup.
+
+              If the given max_size is -1, then popup appears with its size.
+              However, if the given max_size is bigger than 0 the popup size is up to the given max_size. If popup content's min size is bigger than the given max_size the scroller appears in the popup content area.
+            ]]
+         }
+         values {
+            max_size: Eina.Size2D; [[A 2D max size in pixel units.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Part.part_get;
+      Efl.Ui.Popup.popup_size { set;}
+   }
+}

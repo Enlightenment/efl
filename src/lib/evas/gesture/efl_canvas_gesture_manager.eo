@@ -1,4 +1,4 @@
-class Efl.Canvas.Gesture_Manager (Efl.Object)
+class Efl.Canvas.Gesture_Manager extends Efl.Object
 {
    [[EFL Gesture Manager class]]
    eo_prefix: efl_gesture_manager;

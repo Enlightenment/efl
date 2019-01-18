@@ -6,7 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
 #include <Elementary.h>
@@ -34,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 #undef ELM_PRIV_MENU_SIGNALS
 
 EOLIAN static void
-_elm_menu_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
+_elm_menu_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
 {
    Elm_Menu_Item_Data *it;
    Eina_List *l;
@@ -169,8 +169,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
    if (sd->menu_bar && (y_p < py))
      y_p = py;
 
-   evas_object_move(parent_it->submenu.location, x_p, y_p);
-   evas_object_resize(parent_it->submenu.location, bw, h_p);
+   evas_object_geometry_set(parent_it->submenu.location, x_p, y_p, bw, h_p);
    evas_object_size_hint_min_set(parent_it->submenu.location, bw, h_p);
    evas_object_size_hint_max_set(parent_it->submenu.location, bw, h_p);
    elm_hover_target_set(parent_it->submenu.hv, parent_it->submenu.location);
@@ -232,10 +231,10 @@ _sizing_eval(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;
@@ -243,7 +242,7 @@ _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    char style[1024];
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (sd->menu_bar)
       snprintf(style, sizeof(style), "main_menu/%s", elm_widget_style_get(obj));

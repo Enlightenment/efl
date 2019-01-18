@@ -1,6 +1,6 @@
 import eina_types;
 
-mixin Efl.Io.Closer {
+interface Efl.Io.Closer {
     [[Generic interface for objects that can close themselves.
 
       This interface allows external objects to transparently close an
@@ -12,10 +12,8 @@ mixin Efl.Io.Closer {
       @since 1.19
     ]]
 
-    data: null;
-
     methods {
-        close @pure_virtual {
+        close {
             [[Closes the Input/Output object.
 
               This operation will be executed immediately and may or
@@ -32,11 +30,7 @@ mixin Efl.Io.Closer {
 
         @property closed {
             [[If true will notify object was closed.]]
-            get @pure_virtual { }
-            set {
-                [[If true, calls close()]]
-                return: bool; [[$true if could close, $false if already closed or errors.]]
-            }
+            get { }
             values {
                 is_closed: bool; [[$true if closed, $false otherwise]]
             }
@@ -49,8 +43,8 @@ mixin Efl.Io.Closer {
               so they are not inherited by the processes (children or
               self) doing exec().
             ]]
-            get @pure_virtual { }
-            set @pure_virtual {
+            get { }
+            set {
                 [[If $true, will close on exec() call.]]
                 return: bool; [[$true if could set, $false if not supported or failed.]]
             }
@@ -65,8 +59,8 @@ mixin Efl.Io.Closer {
               If the object was disconnected from its parent (including the main loop) without close,
 	      this property will state whenever it should be closed or not.
             ]]
-            get @pure_virtual { }
-            set @pure_virtual { }
+            get { }
+            set { }
             values {
                 close_on_invalidate: bool; [[$true if close on invalidate, $false otherwise]]
             }

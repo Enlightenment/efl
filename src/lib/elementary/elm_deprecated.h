@@ -59,7 +59,31 @@ EINA_DEPRECATED EAPI void         elm_scrolled_entry_file_get(const Evas_Object 
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_file_save(Evas_Object *obj);
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_autosave_get(const Evas_Object *obj);
+
+/**
+ * This function sets the entry to textonly mode.
+ *
+ * @param obj The entry object
+ * @param textonly the mode of textonly.
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Entry
+ */
+
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
+
+/**
+ * This function gets the current textonly mode of the entry.
+ *
+ * @param obj The entry object
+ * @return @c EINA_TRUE textonly mode, @c EINA_FALSE not textonly mode
+ *
+ * @deprecated
+ *
+ * @ingroup Elm_Entry
+ */
+
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj);
 
 /**

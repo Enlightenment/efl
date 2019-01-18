@@ -45,7 +45,7 @@ enum Efl.Gfx.Path_Command_Type {
 enum Efl.Gfx.Cap {
   [[These values determine how the end of opened sub-paths are rendered in a
     stroke.
-    $ref efl_gfx_shape_stroke_cap_set()
+    @Efl.Gfx.Shape.stroke_cap.set
     @since 1.14
   ]]
   butt = 0,  [[The end of lines is rendered as a full stop on the last point itself.]]
@@ -57,7 +57,7 @@ enum Efl.Gfx.Cap {
 enum Efl.Gfx.Join
 {
   [[These values determine how two joining lines are rendered in a stroker.
-    $ref efl_gfx_shape_stroke_join_set()
+    @Efl.Gfx.Shape.stroke_join.set
     @since 1.14
   ]]
   miter = 0, [[Used to render rounded line joins. Circular arcs are used to join two lines smoothly.]]
@@ -69,7 +69,7 @@ enum Efl.Gfx.Join
 enum Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
-    $ref efl_gfx_gradient_spread_set()
+    @Efl.Gfx.Gradient.spread.set
     @since 1.14
   ]]
   pad, [[The area is filled with the closest stop color. This is the default.]]
@@ -89,7 +89,7 @@ enum Efl.Gfx.Fill_Rule
 
 struct Efl.Gfx.Dash {
   [[Type describing dash.
-    $ref efl_gfx_shape_stroke_dash_set()
+    @Efl.Gfx.Shape.stroke_dash.set
     @since 1.14
   ]]
   length: double;  [[Dash drawing length.]]
@@ -143,8 +143,8 @@ struct Efl.Gfx.Shape_Public
 enum Efl.Gfx.Border_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]
-   none = 0, [[Image's center region is $b not to be rendered]]
-   default = 1, [[Image's center region is to be $b blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
+   none = 0, [[Image's center region is $not to be rendered]]
+   default = 1, [[Image's center region is to be $blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
 }
 

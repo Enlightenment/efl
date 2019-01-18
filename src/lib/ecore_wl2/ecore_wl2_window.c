@@ -54,10 +54,10 @@ _ecore_wl2_window_activate_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Activate));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_ACTIVATE, ev, NULL, NULL);
 }
 
@@ -69,10 +69,10 @@ _ecore_wl2_window_deactivate_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Deactivate));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_DEACTIVATE, ev, NULL, NULL);
 }
 
@@ -84,8 +84,8 @@ _ecore_wl2_window_configure_send(Ecore_Wl2_Window *win)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure));
    if (!ev) return;
 
-   ev->win = win->id;
-   ev->event_win = win->id;
+   ev->win = win;
+   ev->event_win = win;
 
    if ((win->set_config.geometry.w == win->def_config.geometry.w) &&
        (win->set_config.geometry.h == win->def_config.geometry.h))
@@ -124,7 +124,7 @@ _configure_complete(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Configure_Complete));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE, ev, NULL, NULL);
 
 }
@@ -139,7 +139,7 @@ _www_surface_end_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->dragging = 0;
 
    ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
@@ -153,7 +153,7 @@ _www_surface_start_drag(void *data, struct www_surface *www_surface EINA_UNUSED)
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW_Drag));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->dragging = 1;
 
    ecore_event_add(_ecore_wl2_event_window_www_drag, ev, NULL, NULL);
@@ -167,7 +167,7 @@ _www_surface_status(void *data, struct www_surface *www_surface EINA_UNUSED, int
 
    ev = malloc(sizeof(Ecore_Wl2_Event_Window_WWW));
    EINA_SAFETY_ON_NULL_RETURN(ev);
-   ev->window = window->id;
+   ev->window = window;
    ev->x_rel = x_rel;
    ev->y_rel = y_rel;
    ev->timestamp = timestamp;
@@ -304,17 +304,16 @@ static const struct xdg_popup_listener _xdg_popup_listener =
 static void
 _ecore_wl2_window_xdg_popup_create(Ecore_Wl2_Window *win)
 {
+   int gw, gh;
    struct xdg_positioner *pos;
 
    EINA_SAFETY_ON_NULL_RETURN(win->parent);
    pos = xdg_wm_base_create_positioner(win->display->wl.xdg_wm_base);
    if (!pos) return;
 
-   xdg_positioner_set_anchor_rect(pos, win->set_config.geometry.x,
-                                      win->set_config.geometry.y,
-                                      1, 1);
-   xdg_positioner_set_size(pos, win->set_config.geometry.w,
-                               win->set_config.geometry.h);
+   ecore_wl2_window_geometry_get(win, NULL, NULL, &gw, &gh);
+   xdg_positioner_set_anchor_rect(pos, 0, 0, 1, 1);
+   xdg_positioner_set_size(pos, gw, gh);
    xdg_positioner_set_anchor(pos, XDG_POSITIONER_ANCHOR_TOP_LEFT);
    xdg_positioner_set_gravity(pos, ZXDG_POSITIONER_V6_ANCHOR_BOTTOM |
                                   ZXDG_POSITIONER_V6_ANCHOR_RIGHT);
@@ -408,20 +407,18 @@ _ecore_wl2_window_shell_surface_init(Ecore_Wl2_Window *window)
      {
         if (window->uuid)
           {
+             int gx, gy, gw, gh;
+
              zwp_e_session_recovery_set_uuid(window->display->wl.session_recovery,
                                              window->surface, window->uuid);
+
+             ecore_wl2_window_geometry_get(window, &gx, &gy, &gw, &gh);
              if (window->xdg_surface)
                xdg_surface_set_window_geometry(window->xdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                               gx, gy, gw, gh);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                                   gx, gy, gw, gh);
 
              ecore_wl2_window_opaque_region_set(window,
                                                 window->opaque.x,
@@ -465,7 +462,7 @@ _surface_leave(void *data, struct wl_surface *surf EINA_UNUSED, struct wl_output
         ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Offscreen));
         if (ev)
           {
-             ev->win = win->id;
+             ev->win = win;
              ecore_event_add(ECORE_WL2_EVENT_WINDOW_OFFSCREEN, ev, NULL, NULL);
           }
      }
@@ -514,10 +511,10 @@ _ecore_wl2_window_show_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Show));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_SHOW, ev, NULL, NULL);
 }
 
@@ -529,10 +526,10 @@ _ecore_wl2_window_hide_send(Ecore_Wl2_Window *window)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Hide));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    if (window->parent)
-     ev->parent_win = window->parent->id;
-   ev->event_win = window->id;
+     ev->parent_win = window->parent;
+   ev->event_win = window;
    ecore_event_add(ECORE_WL2_EVENT_WINDOW_HIDE, ev, NULL, NULL);
 }
 
@@ -540,7 +537,6 @@ EAPI Ecore_Wl2_Window *
 ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h)
 {
    Ecore_Wl2_Window *win;
-   static int _win_id = 1;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(display, NULL);
    if (display->pid) CRI("CANNOT CREATE WINDOW WITH SERVER DISPLAY");
@@ -552,7 +548,6 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
 
    win->display = display;
    win->parent = parent;
-   win->id = _win_id++;
 
    win->set_config.geometry.x = x;
    win->set_config.geometry.y = y;
@@ -571,13 +566,6 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    _ecore_wl2_window_surface_create(win);
 
    return win;
-}
-
-EAPI int
-ecore_wl2_window_id_get(Ecore_Wl2_Window *window)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(window, -1);
-   return window->id;
 }
 
 EAPI struct wl_surface *
@@ -1008,7 +996,7 @@ ecore_wl2_window_title_set(Ecore_Wl2_Window *window, const char *title)
 
    eina_stringshare_replace(&window->title, title);
    if (!window->title) return;
-   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
+   if (!window->xdg_toplevel && !window->zxdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_title(window->xdg_toplevel, window->title);
@@ -1024,7 +1012,7 @@ ecore_wl2_window_class_set(Ecore_Wl2_Window *window, const char *clas)
 
    eina_stringshare_replace(&window->class, clas);
    if (!window->class) return;
-   if (!window->xdg_toplevel && !window->xdg_toplevel) return;
+   if (!window->xdg_toplevel && !window->zxdg_toplevel) return;
 
    if (window->xdg_toplevel)
      xdg_toplevel_set_app_id(window->xdg_toplevel, window->class);
@@ -1082,35 +1070,6 @@ ecore_wl2_window_iconified_set(Ecore_Wl2_Window *window, Eina_Bool iconified)
         if (window->zxdg_toplevel)
           zxdg_toplevel_v6_set_minimized(window->zxdg_toplevel);
         ecore_wl2_display_flush(window->display);
-     }
-   else
-     {
-        if (window->xdg_toplevel)
-          {
-             struct wl_array states;
-             uint32_t *s;
-
-             wl_array_init(&states);
-             s = wl_array_add(&states, sizeof(*s));
-             *s = XDG_TOPLEVEL_STATE_ACTIVATED;
-             _xdg_toplevel_cb_configure(window, window->xdg_toplevel,
-                                         window->set_config.geometry.w,
-                                         window->set_config.geometry.h, &states);
-             wl_array_release(&states);
-          }
-        if (window->zxdg_toplevel)
-          {
-             struct wl_array states;
-             uint32_t *s;
-
-             wl_array_init(&states);
-             s = wl_array_add(&states, sizeof(*s));
-             *s = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
-             _zxdg_toplevel_cb_configure(window, window->zxdg_toplevel,
-                                         window->set_config.geometry.w,
-                                         window->set_config.geometry.h, &states);
-             wl_array_release(&states);
-          }
      }
 }
 
@@ -1257,7 +1216,7 @@ ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot,
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;
@@ -1276,7 +1235,7 @@ ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1296,7 +1255,7 @@ ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot)
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Request));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = 0;
    ev->h = 0;
@@ -1316,7 +1275,7 @@ ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, in
    ev = calloc(1, sizeof(Ecore_Wl2_Event_Window_Rotation_Change_Done));
    if (!ev) return;
 
-   ev->win = window->id;
+   ev->win = window;
    ev->rotation = rot;
    ev->w = w;
    ev->h = h;
@@ -1459,13 +1418,13 @@ _frame_cb(void *data, struct wl_callback *callback, uint32_t timestamp)
 {
    Ecore_Wl2_Frame_Cb_Handle *cb;
    Ecore_Wl2_Window *window;
-   Eina_List *l, *ll;
+   Eina_Inlist *l;
 
    window = data;
    window->commit_pending = EINA_FALSE;
    wl_callback_destroy(callback);
    window->callback = NULL;
-   EINA_LIST_FOREACH_SAFE(window->frame_callbacks, l, ll, cb)
+   EINA_INLIST_FOREACH_SAFE(window->frame_callbacks, l, cb)
      cb->cb(window, timestamp, cb->data);
 }
 
@@ -1595,7 +1554,7 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         /* The elm mouse cursor bits do some harmless but weird stuff that
          * can hit this, silence the warning for that case only. */
         if (window->type != ECORE_WL2_WINDOW_TYPE_NONE)
-          ERR("Commit before previous commit processed");
+          WRN("Commit before previous commit processed");
      }
    if (!window->pending.configure)
      {
@@ -1606,18 +1565,15 @@ ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush)
         /* Dispatch any state we've been saving along the way */
         if (window->pending.geom)
           {
+             int gx, gy, gw, gh;
+
+             ecore_wl2_window_geometry_get(window, &gx, &gy, &gw, &gh);
              if (window->xdg_toplevel)
                xdg_surface_set_window_geometry(window->xdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                               gx, gy, gw, gh);
              if (window->zxdg_surface)
                zxdg_surface_v6_set_window_geometry(window->zxdg_surface,
-                                                   window->set_config.geometry.x,
-                                                   window->set_config.geometry.y,
-                                                   window->set_config.geometry.w,
-                                                   window->set_config.geometry.h);
+                                                   gx, gy, gw, gh);
           }
         if (window->pending.opaque || window->pending.input)
           _regions_set(window);
@@ -1696,7 +1652,7 @@ ecore_wl2_window_frame_callback_add(Ecore_Wl2_Window *window, Ecore_Wl2_Frame_Cb
    callback->data = data;
    callback->win = window;
    window->frame_callbacks =
-     eina_list_append(window->frame_callbacks, callback);
+     eina_inlist_append(window->frame_callbacks, EINA_INLIST_GET(callback));
    return callback;
 }
 
@@ -1706,7 +1662,7 @@ ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
    EINA_SAFETY_ON_NULL_RETURN(handle);
 
    handle->win->frame_callbacks =
-     eina_list_remove(handle->win->frame_callbacks, handle);
+     eina_inlist_remove(handle->win->frame_callbacks, EINA_INLIST_GET(handle));
    free(handle);
 }
 

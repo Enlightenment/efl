@@ -4,7 +4,7 @@ struct Callback_Event
   field2: list<int*>;
 }
 
-class Callback (Efl.Object)
+class Callback extends Efl.Object
 {
    data: Callback_Data;
    events {

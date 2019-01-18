@@ -1,4 +1,4 @@
-class Efl.Canvas.Vg.Gradient_Linear (Efl.Canvas.Vg.Gradient, Efl.Gfx.Gradient_Linear)
+class Efl.Canvas.Vg.Gradient_Linear extends Efl.Canvas.Vg.Gradient implements Efl.Gfx.Gradient_Linear
 {
    [[Efl vector graphics gradient linear class]]
    legacy_prefix: evas_vg_gradient_linear;

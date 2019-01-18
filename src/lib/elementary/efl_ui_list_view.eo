@@ -1,0 +1,102 @@
+import elm_general;
+
+struct Efl.Ui.List_View_Item_Event
+{
+   layout: Efl.Ui.Layout;
+   child: Efl.Model;
+   index: int;
+}
+class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
+                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager
+{
+   methods {
+      @property relayout {
+         values {
+            object: Efl.Ui.List_View_Relayout;
+         }
+      }
+      @property homogeneous {
+         get {
+           [[Get whether the homogeneous mode is enabled.]]
+         }
+         set {
+           [[Enable/disable homogeneous mode.]]
+         }
+         values {
+            homogeneous: bool; [[Assume the items within the genlist are of
+                                 the same height and width. Default is $false.]]
+         }
+      }
+      @property select_mode {
+         [[Listview select mode.]]
+         get {}
+         set {}
+         values {
+            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode.]]
+         }
+      }
+      @property default_style {
+         values {
+            style: stringshare;
+         }
+      }
+      @property layout_factory {
+         [[Listview layout factory set.]]
+         set {}
+         values {
+            factory: Efl.Ui.Factory; [[The factory.]]
+         }
+      }
+   }
+   events {
+      item,realized : Efl.Ui.List_View_Item_Event;
+      item,unrealized : Efl.Ui.List_View_Item_Event;
+      item,focused : Efl.Ui.List_View_Item_Event;
+      item,unfocused : Efl.Ui.List_View_Item_Event;
+      item,highlighted : Efl.Ui.List_View_Item_Event;
+      item,unhighlighted : Efl.Ui.List_View_Item_Event;
+      item,selected : Efl.Ui.List_View_Item_Event;
+      item,unselected : Efl.Ui.List_View_Item_Event;
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      // Smart obj
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_calculate;
+
+      Efl.Ui.List_View_Model.load_range { set;}
+      Efl.Ui.List_View_Model.realize;
+      Efl.Ui.List_View_Model.unrealize;
+      Efl.Ui.List_View_Model.model_size { get; }
+      Efl.Ui.List_View_Model.min_size { get; set; }
+
+      // Widget
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Composition.prepare;
+      Efl.Ui.View.model { get; set; }
+
+//      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
+//      Elm.Interface.Atspi_Accessible.children { get; }
+//      Elm.Interface.Atspi_Widget.Action.elm_actions { get; }
+//      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Access.Object.access_children { get; }
+      Efl.Access.Selection.selected_children_count { get; }
+      Efl.Access.Selection.selected_child { get; }
+      Efl.Access.Selection.selected_child_deselect;
+      Efl.Access.Selection.child_select;
+      Efl.Access.Selection.child_deselect;
+      Efl.Access.Selection.is_child_selected;
+      Efl.Access.Selection.all_children_select;
+      Efl.Access.Selection.access_selection_clear;
+   }
+}

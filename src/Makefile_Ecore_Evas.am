@@ -272,7 +272,8 @@ endif
 if BUILD_ECORE_EVAS_VNC_SERVER
 VNCSERVERSOURCES = \
 modules/ecore_evas/vnc_server/ecore_evas_vnc_server.c \
-modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.c
+modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.c \
+modules/ecore_evas/vnc_server/ecore_evas_vnc_server_fb_keymap.h
 ecoreevasenginevncserverpkgdir = $(libdir)/ecore_evas/vnc_server/$(MODULE_ARCH)
 ecoreevasenginevncserverpkg_LTLIBRARIES = modules/ecore_evas/vnc_server/module.la
 

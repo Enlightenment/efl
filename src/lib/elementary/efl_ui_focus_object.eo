@@ -17,23 +17,23 @@ mixin Efl.Ui.Focus.Object
             }
         }
         @property focus {
-            [[This is called by the manager and should never be called by
-              anyone else.
-
-             It can be used by configuring a focus object to adapt to
-             any changes that are required.
-
-             The function emits the focus state events, if focus is
-             different to the previous state.
-            ]]
             get {
-
+              [[Returns whether the widget is currently focused or not.]]
             }
             set @protected {
+              [[This is called by the manager and should never be called by
+                anyone else.
+
+                It can be used by configuring a focus object to adapt to
+                any changes that are required.
+
+                The function emits the focus state events, if focus is
+                different to the previous state.
+            ]]
 
             }
             values {
-                focus : bool; [[The state in which the object should be put]]
+                focus : bool; [[The focused state of the object]]
             }
         }
         @property focus_manager {
@@ -54,11 +54,17 @@ mixin Efl.Ui.Focus.Object
                 logical_parent : Efl.Ui.Focus.Object; [[The focus parent.]]
             }
         }
+        @property child_focus @protected {
+            [[set if a child of this element has focus or not.]]
+            values {
+               child_focus : bool;
+            }
+        }
         prepare_logical {
             [[Tells the object that its children will be queried soon by the given manager.
               The call will be a NOP if there is already a active preprare_logical call on this object
 
-              Deleting manager items in this call will result in undefied behaviour and may cause your system to crash.
+              Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
             ]]
         }
         prepare_logical_none_recursive @protected {
@@ -81,5 +87,7 @@ mixin Efl.Ui.Focus.Object
                                                  the parent for this object.]]
         logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
                                                 parent should be used.]]
+        child_focus,changed: bool; [[Emitted if child_focus has changed]]
+        focus_geometry,changed: void; [[Emitted if focus geometry of this object has changed]]
     }
 }

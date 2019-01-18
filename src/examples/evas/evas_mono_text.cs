@@ -22,19 +22,19 @@ class TestMain
     static int HEIGHT = 240;
 
     private EcoreEvas ecore_evas;
-    private efl.canvas.IObject canvas;
-    private efl.canvas.IRectangle bg;
-    private evas.Text text;
-    private evas.Image border;
+    private Efl.Canvas.Object canvas;
+    private Efl.Canvas.Rectangle bg;
+    private Evas.Text text;
+    private Evas.Image border;
 
     public TestMain(String border_file) {
         ecore_evas = new EcoreEvas();
-        eina.Size2D size = new eina.Size2D();
-        eina.Position2D position = new eina.Position2D();
+        Eina.Size2D size = new Eina.Size2D();
+        Eina.Position2D position = new Eina.Position2D();
         canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        bg = new efl.canvas.Rectangle(canvas);
+        bg = new Efl.Canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         position.X = 0;
         position.Y = 0;
@@ -45,10 +45,11 @@ class TestMain
         bg.SetVisible(true);
         bg.SetKeyFocus(true);
 
+        /* ((Efl.Input.Interface)bg).KeyDownEvt += On_KeyDown; */
         bg.KeyDownEvt += On_KeyDown;
 
-        text = new evas.Text(canvas);
-        text.SetStyle(evas.Text_Style_Type.OutlineSoftShadow);
+        text = new Evas.Text(canvas);
+        text.SetStyle(Evas.TextStyleType.OutlineSoftShadow);
 
         text.SetColor(0, 0, 0, 255);
         text.SetGlowColor(255, 0, 0, 255);
@@ -65,13 +66,13 @@ class TestMain
         text.SetPosition(position);
         text.SetVisible(true);
 
-        efl.font.Size font_size = 0;
+        Efl.Font.Size font_size = 0;
         String font = String.Empty;
         text.GetFont(out font, out font_size);
         Console.WriteLine("Adding text object with font {0} and size {1}", font, size);
 
         // setup border
-        border = new evas.Image(canvas);
+        border = new Evas.Image(canvas);
         border.SetFile(border_file, null);
         border.SetBorder(3, 3, 3, 3);
         border.SetBorderCenterFill(0);
@@ -87,15 +88,15 @@ class TestMain
 
     }
 
-    private void On_KeyDown(object sender, efl.input.Interface.KeyDownEvt_Args e)
+    private void On_KeyDown(object sender, Efl.Input.InterfaceKeyDownEvt_Args e)
     {
         var key = e.arg.GetKey();
 
         if (key == "h") {
             Console.WriteLine(commands);
         } else if (key == "t") {
-            evas.Text_Style_Type type = text.GetStyle();
-            type = (evas.Text_Style_Type)(((int)type + 1) % 10); // 10 hardcoded from C example
+            Evas.TextStyleType type = text.GetStyle();
+            type = (Evas.TextStyleType)(((int)type + 1) % 10); // 10 hardcoded from C example
             text.SetStyle(type);
         }
     }
@@ -107,19 +108,19 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl.All.Init();
+        Efl.All.Init();
 
         String border_path = "./src/examples/evas/resources/images/red.png";
 
         if (args.Length >= 1)
             border_path = args[0];
 
-        efl.Loop loop = new efl.Loop();
+        Efl.Loop loop = new Efl.Loop();
         TestMain t = new TestMain(border_path);
 
         loop.Begin();
 
-        efl.All.Shutdown();
+        Efl.All.Shutdown();
     }
 }
 

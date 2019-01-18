@@ -5,9 +5,6 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 #include "evas_common_private.h"
 #include "evas_macros.h"
 
@@ -244,14 +241,6 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
              data = evas_xlib_swapper_buffer_map(buf->priv.swapper, &bpl,
                                                  &(ww), &(hh));
              // To take stride into account, we do use bpl as the real image width, but return the real useful one.
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
-                                                         bpl / bpp, hh, data,
-                                                         buf->priv.destination_alpha,
-                                                         EVAS_COLORSPACE_ARGB8888);
-             else
-#endif
              im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
                                                       bpl / bpp, hh, data,
                                                       buf->priv.destination_alpha,
@@ -262,11 +251,6 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
         rect = eina_rectangle_new(x, y, w, h);
         if (!eina_array_push(&buf->priv.onebuf_regions, rect))
           {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&im->cache_entry);
-             else
-#endif
              evas_cache_image_drop(&im->cache_entry);
              eina_rectangle_free(rect);
              return NULL;
@@ -286,11 +270,6 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
 
         rect = eina_rectangle_new(x, y, w, h);
         if (!rect) return NULL;
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
-        else
-#endif
         im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         if (!im)
           {
@@ -298,11 +277,6 @@ evas_software_xlib_swapbuf_new_region_for_update(Outbuf *buf, int x, int y, int 
              return NULL;
           }
         im->cache_entry.flags.alpha |= buf->priv.destination_alpha ? 1 : 0;
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_surface_alloc(&im->cache_entry, w, h);
-        else
-#endif
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
         im->extended_info = rect;
         buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
@@ -343,14 +317,7 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
         im = buf->priv.onebuf;
         buf->priv.onebuf = NULL;
         if (im)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&im->cache_entry);
-             else
-#endif
-             evas_cache_image_drop(&im->cache_entry);
-          }
+          evas_cache_image_drop(&im->cache_entry);
      }
    else
      {
@@ -398,11 +365,6 @@ evas_software_xlib_swapbuf_flush(Outbuf *buf, Tilebuf_Rect *surface_damage EINA_
                   result[i].h = w;
                }
              eina_rectangle_free(rect);
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&im->cache_entry);
-             else
-#endif
              evas_cache_image_drop(&im->cache_entry);
              i++;
           }

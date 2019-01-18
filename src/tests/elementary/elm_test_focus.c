@@ -32,7 +32,10 @@ EFL_START_TEST(focus_register_twice)
    );
 
    fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
-   fail_if(efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
+   //same confguration don't error out
+   fail_if(!efl_ui_focus_manager_calc_register(m, r2, r1, NULL));
+   //different confidurations error out
+   fail_if(efl_ui_focus_manager_calc_register(m, r2, r1, r1));
 
    efl_unref(r1);
    efl_unref(m);
@@ -861,7 +864,7 @@ EFL_START_TEST(test_pop_history_element)
    ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_TRUE);
 
    efl_ui_focus_manager_pop_history_stack(m);
-   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), NULL);
+   ck_assert_ptr_eq(efl_ui_focus_manager_focus_get(m), c1);
    ck_assert_int_eq(efl_ui_focus_object_focus_get(c2), EINA_FALSE);
 
    efl_ui_focus_manager_focus_set(m, c1);
@@ -963,6 +966,146 @@ EFL_START_TEST(redirect_unregister_entrypoint)
 }
 EFL_END_TEST
 
+static void
+_child_focus_changed(void *data, const Efl_Event *ev)
+{
+   Eina_Bool *flag = data;
+
+   *flag = EINA_TRUE;
+
+   printf("%s\n", efl_class_name_get(ev->object));
+}
+
+EFL_START_TEST(test_events_child_focus)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *root, *c1, *c2, *c3, *c4, *c5, *c6;
+   Eina_Bool froot = EINA_FALSE, fc1 = EINA_FALSE, fc2 = EINA_FALSE,
+             fc3 = EINA_FALSE, fc4 = EINA_FALSE, fc5 = EINA_FALSE, fc6 = EINA_FALSE;
+
+   m = elm_focus_test_manager_new(&root);
+   c1 = elm_focus_test_object_new("child1", 0, 0, 20, 20);
+   efl_parent_set(c1, root);
+   c2 = elm_focus_test_object_new("child2", 0, 0, 20, 20);
+   efl_parent_set(c2, root);
+   c3 = elm_focus_test_object_new("child3", 0, 0, 20, 20);
+   efl_parent_set(c3, c2);
+   c4 = elm_focus_test_object_new("child4", 0, 0, 20, 20);
+   efl_parent_set(c4, c2);
+   c5 = elm_focus_test_object_new("child5", 0, 0, 20, 20);
+   efl_parent_set(c5, root);
+   c6 = elm_focus_test_object_new("child6", 0, 0, 20, 20);
+   efl_parent_set(c6, c5);
+
+   efl_ui_focus_manager_calc_register(m, c1, root, NULL);
+   efl_ui_focus_manager_calc_register_logical(m, c2, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c3, c2, NULL);
+   efl_ui_focus_manager_calc_register(m, c4, c2, NULL);
+   efl_ui_focus_manager_calc_register_logical(m, c5, root, NULL);
+   efl_ui_focus_manager_calc_register(m, c6, c5, NULL);
+
+   //   c3  c4  c6
+   //    \  |   |
+   //     \ |   |
+   //   c1  c2  c5
+   //    \  |  /
+   //     root
+
+   efl_ui_focus_manager_focus_set(m, c4);
+
+   ck_assert_int_eq(froot, EINA_FALSE);
+   ck_assert_int_eq(fc1, EINA_FALSE);
+   ck_assert_int_eq(fc2, EINA_FALSE);
+   ck_assert_int_eq(fc3, EINA_FALSE);
+   ck_assert_int_eq(fc4, EINA_FALSE);
+   ck_assert_int_eq(fc5, EINA_FALSE);
+   ck_assert_int_eq(fc6, EINA_FALSE);
+
+   efl_event_callback_add(root, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &froot);
+   efl_event_callback_add(c1, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc1);
+   efl_event_callback_add(c2, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc2);
+   efl_event_callback_add(c3, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc3);
+   efl_event_callback_add(c4, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc4);
+   efl_event_callback_add(c5, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc5);
+   efl_event_callback_add(c6, EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, _child_focus_changed, &fc6);
+   efl_ui_focus_manager_focus_set(m, c1);
+
+   ck_assert_int_eq(froot, EINA_FALSE);
+   ck_assert_int_eq(fc1, EINA_FALSE);
+   ck_assert_int_eq(fc2, EINA_TRUE);
+   ck_assert_int_eq(fc3, EINA_FALSE);
+   ck_assert_int_eq(fc4, EINA_FALSE);
+   ck_assert_int_eq(fc5, EINA_FALSE);
+   ck_assert_int_eq(fc6, EINA_FALSE);
+   froot = EINA_FALSE;
+   fc1 = EINA_FALSE;
+   fc2 = EINA_FALSE;
+   fc3 = EINA_FALSE;
+   fc4 = EINA_FALSE;
+   fc5 = EINA_FALSE;
+   fc6 = EINA_FALSE;
+
+   efl_ui_focus_manager_focus_set(m, c6);
+
+   ck_assert_int_eq(froot, EINA_FALSE);
+   ck_assert_int_eq(fc1, EINA_FALSE);
+   ck_assert_int_eq(fc2, EINA_FALSE);
+   ck_assert_int_eq(fc3, EINA_FALSE);
+   ck_assert_int_eq(fc4, EINA_FALSE);
+   ck_assert_int_eq(fc5, EINA_TRUE);
+   ck_assert_int_eq(fc6, EINA_FALSE);
+   froot = EINA_FALSE;
+   fc1 = EINA_FALSE;
+   fc2 = EINA_FALSE;
+   fc3 = EINA_FALSE;
+   fc4 = EINA_FALSE;
+   fc5 = EINA_FALSE;
+   fc6 = EINA_FALSE;
+
+   efl_ui_focus_manager_focus_set(m, c3);
+
+   ck_assert_int_eq(froot, EINA_FALSE);
+   ck_assert_int_eq(fc1, EINA_FALSE);
+   ck_assert_int_eq(fc2, EINA_TRUE);
+   ck_assert_int_eq(fc3, EINA_FALSE);
+   ck_assert_int_eq(fc4, EINA_FALSE);
+   ck_assert_int_eq(fc5, EINA_TRUE);
+   ck_assert_int_eq(fc6, EINA_FALSE);
+}
+EFL_END_TEST
+
+
+EFL_START_TEST(viewport_check)
+{
+   Efl_Ui_Focus_Manager *m;
+   Efl_Ui_Focus_Object *middle, *east, *west, *north, *south, *root;
+   Eina_List *list = NULL;
+   Eina_Iterator *iter;
+   Efl_Ui_Focus_Object *obj;
+
+   elm_focus_test_setup_cross(&middle, &south, &north, &east, &west);
+
+   m = elm_focus_test_manager_new(&root);
+   efl_ui_focus_manager_calc_register(m, middle, root, NULL);
+   efl_ui_focus_manager_calc_register(m, south, root, NULL);
+   efl_ui_focus_manager_calc_register(m, north, root, NULL);
+   efl_ui_focus_manager_calc_register(m, east, root, NULL);
+   efl_ui_focus_manager_calc_register(m, west, root, NULL);
+
+   iter = efl_ui_focus_manager_viewport_elements_get(m, EINA_RECT(80, 0, 100, 100));
+
+   EINA_ITERATOR_FOREACH(iter, obj)
+     {
+        list = eina_list_append(list, obj);
+     }
+
+   eina_iterator_free(iter);
+
+   ck_assert(eina_list_count(list) == 1);
+   ck_assert_ptr_eq(eina_list_data_get(list), east);
+}
+EFL_END_TEST
+
 void elm_test_focus(TCase *tc)
 {
     tcase_add_test(tc, focus_register_twice);
@@ -993,4 +1136,6 @@ void elm_test_focus(TCase *tc)
     tcase_add_test(tc, test_pop_history_element);
     tcase_add_test(tc, test_request_move);
     tcase_add_test(tc, redirect_unregister_entrypoint);
+    tcase_add_test(tc, test_events_child_focus);
+    tcase_add_test(tc, viewport_check);
 }

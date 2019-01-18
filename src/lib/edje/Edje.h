@@ -39,7 +39,7 @@ collection consists of a list of visual parts, as well as a list of
 programs. A program is a conditionally run program that if a
 particular event occurs (a button is pressed, a mouse enters or leaves
 a part) will trigger an action that may affect other parts. In this
-way a part collection can be "programmed" via its file as to hilight
+way a part collection can be "programmed" via its file as to highlight
 buttons when the mouse passes over them or show hidden parts when a
 button is clicked somewhere etc. The actions performed in changing
 from one state to another are also allowed to transition over a period

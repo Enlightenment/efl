@@ -19,6 +19,8 @@
 #include "Emotion.h"
 #include "emotion_private.h"
 
+#include "canvas/evas_canvas.eo.h"
+
 #ifdef _WIN32
 # define FMT_UCHAR "%c"
 #else
@@ -230,7 +232,9 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
 EAPI Evas_Object *
 emotion_object_add(Evas *evas)
 {
-   return efl_add(MY_CLASS, evas_find(evas), efl_canvas_object_legacy_ctor(efl_added));
+   evas = evas_find(evas);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(evas, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(MY_CLASS, evas, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -1514,7 +1518,8 @@ _emotion_frame_new(Evas_Object *obj)
    Efl_Canvas_Video_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   if (!sd->anim) sd->anim = ecore_animator_add(_emotion_frame_anim, obj);
+   if (!sd->anim)
+     sd->anim = ecore_evas_animator_add(obj, _emotion_frame_anim, obj);
 }
 
 EAPI void

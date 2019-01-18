@@ -5,15 +5,34 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_combobox.h"
 #include "elm_entry.eo.h"
-#include "elm_combobox.eo.h"
 #include "elm_genlist.eo.h"
 #include "elm_hover.eo.h"
+
+EOAPI void elm_obj_combobox_hover_begin(Eo *obj);
+EOAPI void elm_obj_combobox_hover_end(Eo *obj);
+
+static const Efl_Event_Description _ELM_COMBOBOX_EVENT_DISMISSED =
+   EFL_EVENT_DESCRIPTION("dismissed");
+static const Efl_Event_Description _ELM_COMBOBOX_EVENT_EXPANDED =
+   EFL_EVENT_DESCRIPTION("expanded");
+static const Efl_Event_Description _ELM_COMBOBOX_EVENT_ITEM_SELECTED =
+   EFL_EVENT_DESCRIPTION("item,selected");
+static const Efl_Event_Description _ELM_COMBOBOX_EVENT_ITEM_PRESSED =
+   EFL_EVENT_DESCRIPTION("item,pressed");
+static const Efl_Event_Description _ELM_COMBOBOX_EVENT_FILTER_DONE =
+   EFL_EVENT_DESCRIPTION("filter,done");
+
+#define ELM_COMBOBOX_EVENT_DISMISSED (&(_ELM_COMBOBOX_EVENT_DISMISSED))
+#define ELM_COMBOBOX_EVENT_EXPANDED (&(_ELM_COMBOBOX_EVENT_EXPANDED))
+#define ELM_COMBOBOX_EVENT_ITEM_SELECTED (&(_ELM_COMBOBOX_EVENT_ITEM_SELECTED))
+#define ELM_COMBOBOX_EVENT_ITEM_PRESSED (&(_ELM_COMBOBOX_EVENT_ITEM_PRESSED))
+#define ELM_COMBOBOX_EVENT_FILTER_DONE (&(_ELM_COMBOBOX_EVENT_FILTER_DONE))
 
 #define MY_CLASS ELM_COMBOBOX_CLASS
 
@@ -50,25 +69,25 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_combobox_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
+_elm_combobox_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_Data *sd)
 {
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
-   efl_ui_translatable_translation_update(sd->genlist);
-   efl_ui_translatable_translation_update(sd->entry);
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(sd->genlist);
+   efl_ui_l10n_translation_update(sd->entry);
 
    if (sd->hover)
-     efl_ui_translatable_translation_update(sd->hover);
+     efl_ui_l10n_translation_update(sd->hover);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 {
    const char *style;
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Eina_Bool mirrored;
    char buf[128];
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
    style = eina_stringshare_add(elm_widget_style_get(obj));
 
@@ -78,7 +97,7 @@ _elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    eina_stringshare_replace(&(wd->style), buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    eina_stringshare_replace(&(wd->style), style);
 
@@ -574,9 +593,58 @@ _elm_combobox_efl_gfx_entity_size_set(Eo *obj, Elm_Combobox_Data *pd, Eina_Size2
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_combobox, Elm_Combobox_Data)
 
-/* Internal EO APIs and hidden overrides */
+EOAPI EFL_FUNC_BODY_CONST(elm_obj_combobox_expanded_get, Eina_Bool, 0);
+EOAPI EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_begin);
+EOAPI EFL_VOID_FUNC_BODY(elm_obj_combobox_hover_end);
 
-#define ELM_COMBOBOX_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
+static Eina_Bool
+_elm_combobox_class_initializer(Efl_Class *klass)
+{
+   EFL_OPS_DEFINE(ops,
+      EFL_OBJECT_OP_FUNC(elm_obj_combobox_expanded_get, _elm_combobox_expanded_get),
+      EFL_OBJECT_OP_FUNC(elm_obj_combobox_hover_begin, _elm_combobox_hover_begin),
+      EFL_OBJECT_OP_FUNC(elm_obj_combobox_hover_end, _elm_combobox_hover_end),
+      EFL_OBJECT_OP_FUNC(efl_constructor, _elm_combobox_efl_object_constructor),
+      EFL_OBJECT_OP_FUNC(efl_gfx_entity_visible_set, _elm_combobox_efl_gfx_entity_visible_set),
+      EFL_OBJECT_OP_FUNC(efl_gfx_entity_size_set, _elm_combobox_efl_gfx_entity_size_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_combobox_efl_ui_widget_theme_apply),
+      EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_combobox_efl_ui_l10n_translation_update),
+      EFL_OBJECT_OP_FUNC(efl_ui_widget_event, _elm_combobox_efl_ui_widget_widget_event),
+      EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_combobox_efl_ui_autorepeat_autorepeat_supported_get),
+      EFL_OBJECT_OP_FUNC(elm_obj_genlist_filter_set, _elm_combobox_elm_genlist_filter_set),
+      EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_combobox_efl_access_widget_action_elm_actions_get),
+      EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
+   );
 
-#include "elm_combobox.eo.c"
+   return efl_class_functions_set(klass, &ops, NULL);
+}
+
+static const Efl_Class_Description _elm_combobox_class_desc = {
+   EO_VERSION,
+   "Elm.Combobox",
+   EFL_CLASS_TYPE_REGULAR,
+   sizeof(Elm_Combobox_Data),
+   _elm_combobox_class_initializer,
+   _elm_combobox_class_constructor,
+   NULL
+};
+
+EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_UI_SELECTABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+
+EAPI Eina_Bool
+elm_combobox_expanded_get(const Elm_Combobox *obj)
+{
+   return elm_obj_combobox_expanded_get(obj);
+}
+
+EAPI void
+elm_combobox_hover_begin(Elm_Combobox *obj)
+{
+   elm_obj_combobox_hover_begin(obj);
+}
+
+EAPI void
+elm_combobox_hover_end(Elm_Combobox *obj)
+{
+   elm_obj_combobox_hover_end(obj);
+}

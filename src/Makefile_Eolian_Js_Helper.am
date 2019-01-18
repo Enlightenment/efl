@@ -14,3 +14,5 @@ SUFFIXES += .eo.js.cc
 
 %.eo.js.cc: %.eo $(_EOLIAN_JS_DEP)
 	$(AM_V_EOLJS)$(EOLIAN_JS) $(EOLIAN_FLAGS) -o $@ $<
+
+../%.eo.js.cc: %.eo $(_EOLIAN_JS_DEP)

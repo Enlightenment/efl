@@ -7,9 +7,7 @@ mixin Efl.Gfx.Path
    methods {
       @property path {
          [[Set the list of commands and points to be used to create the
-           content of shape.
-
-           See \@ref efl_gfx_path interface for how to create a command list.
+           content of path.
 
            @since 1.18
          ]]
@@ -51,7 +49,7 @@ mixin Efl.Gfx.Path
       }
       /* FIXME: Return a new object!!! */
       copy_from {
-        [[Copy the shape data from the object specified.
+        [[Copy the path data from the object specified.
 
           @since 1.18
         ]]
@@ -69,7 +67,7 @@ mixin Efl.Gfx.Path
         }
       }
       reset {
-        [[Reset the shape data of the shape object.
+        [[Reset the path data of the path object.
 
           @since 1.18
         ]]
@@ -282,8 +280,27 @@ mixin Efl.Gfx.Path
           @in with: const(Efl.Object); [[Object]]
         }
       }
-   }
-   events {
-      changed: Efl.Gfx.Path_Change_Event; [[Graphics path was changed.]]
+      reserve {
+        [[Reserve path commands buffer in advance. If you know the count of
+          path commands coming, you can reserve commands buffer in advance
+          to avoid buffer growing job.
+
+          @since 1.22
+        ]]
+        params {
+          @in cmd_count: uint; [[Commands count to reserve]]
+          @in pts_count: uint; [[Pointers count to reserve]]
+        }
+      }
+      commit @pure_virtual {
+        [[Request to update the path object.
+
+          One path object may get appending several path calls (such as
+          append_cubic, append_rect, etc) to construct the final path data.
+          Here commit means all path data is prepared and now object
+          could update its own internal status based on the last path
+          information.
+        ]]
+      }
    }
 }

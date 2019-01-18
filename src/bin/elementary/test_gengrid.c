@@ -1615,6 +1615,13 @@ _gengrid_focus_item_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 static void
+_gengrid_focus_cb(void *data, Evas_Object *obj EINA_UNUSED,
+                       void *event_info)
+{
+   printf("%s: %p\n", (char *)data, event_info);
+}
+
+static void
 _gengrid_focus_popup_close_cb(void *data, Evas_Object *obj EINA_UNUSED,
                               void *event_info EINA_UNUSED)
 {
@@ -1787,6 +1794,8 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_size_hint_min_set(gengrid, 0, ELM_SCALE_SIZE(620));
    elm_box_pack_end(in_bx, gengrid);
    evas_object_show(gengrid);
+   evas_object_smart_callback_add(gengrid, "focused", _gengrid_focus_cb, "focused");
+   evas_object_smart_callback_add(gengrid, "unfocused", _gengrid_focus_cb, "unfocused");
    evas_object_smart_callback_add(gengrid, "item,focused", _gengrid_focus_item_cb, "item,focused");
    evas_object_smart_callback_add(gengrid, "item,unfocused", _gengrid_focus_item_cb, "item,unfocused");
    evas_object_smart_callback_add(gengrid, "selected", _gengrid_focus_item_cb, "selected");
@@ -1806,6 +1815,8 @@ test_gengrid_focus(void *data EINA_UNUSED,
    evas_object_size_hint_min_set(gengrid2, 0, ELM_SCALE_SIZE(620));
    elm_box_pack_end(in_bx, gengrid2);
    evas_object_show(gengrid2);
+   evas_object_smart_callback_add(gengrid2, "focused", _gengrid_focus_cb, "focused");
+   evas_object_smart_callback_add(gengrid2, "unfocused", _gengrid_focus_cb, "unfocused");
    evas_object_smart_callback_add(gengrid2, "item,focused", _gengrid_focus_item_cb, "item,focused");
    evas_object_smart_callback_add(gengrid2, "item,unfocused", _gengrid_focus_item_cb, "item,unfocused");
    evas_object_smart_callback_add(gengrid2, "selected", _gengrid_focus_item_cb, "selected");

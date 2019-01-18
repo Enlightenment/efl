@@ -209,6 +209,34 @@ struct _Efl_Appthread_Data
    void *thdat;
 };
 
+struct _Ecore_Animator
+{
+   EINA_INLIST;
+
+   Ecore_Task_Cb     func;
+   void             *data;
+
+   double            start, run;
+   Ecore_Timeline_Cb run_func;
+   void             *run_data;
+
+   void             *ee;
+
+   Eina_Bool         delete_me : 1;
+   Eina_Bool         suspended : 1;
+   Eina_Bool         just_added : 1;
+};
+
+typedef struct _Ecore_Evas_Object_Animator_Interface
+{
+   Ecore_Animator *(*timeline_add)(void *obj, double runtime, Ecore_Timeline_Cb func, const void *data);
+   Ecore_Animator *(*add)(void *obj, Ecore_Task_Cb func, const void *data);
+   void (*freeze)(Ecore_Animator *animator);
+   void (*thaw)(Ecore_Animator *animator);
+   void *(*del)(Ecore_Animator *animator);
+} Ecore_Evas_Object_Animator_Interface;
+
+EAPI void ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *iface);
 
 #define EVAS_FRAME_QUEUING        1 /* for test */
 

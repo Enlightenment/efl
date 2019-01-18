@@ -13,8 +13,14 @@
 #include <sys/time.h>
 
 #ifdef HAVE_FORK
-#include <sys/types.h>
-#include <sys/wait.h>
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+# include <sys/wait.h>
+#endif
+#include <signal.h>
+#include <Eina.h>
 #endif
 
 #ifndef EINA_UNUSED
@@ -53,6 +59,8 @@ struct _Efl_Test_Case
    const char *test_case;
    void (*build)(TCase *tc);
 };
+
+static int timeout_pid = 0;
 
 static void
 _efl_tests_list(const Efl_Test_Case *etc)
@@ -199,10 +207,12 @@ _timing_end(void)
 
 # define EFL_START_TEST(TEST_NAME) \
   START_TEST(TEST_NAME) \
+  { \
   _timing_start();
 
 # define EFL_END_TEST \
   _timing_end(); \
+  } \
   END_TEST
 
 #else
@@ -244,6 +254,29 @@ _efl_suite_run_end(SRunner *sr, const char *name)
    return failed_count;
 }
 
+#ifdef HAVE_FORK
+static EINA_UNUSED Eina_Hash *fork_map;
+
+EINA_UNUSED static int
+_efl_suite_wait_on_fork(int *num_forks, Eina_Bool *timeout)
+{
+   int status = 0, ret, pid;
+   pid = waitpid(0, &status, 0);
+   if (WIFEXITED(status))
+     ret = WEXITSTATUS(status);
+   else
+     ret = 1;
+   if (pid == timeout_pid)
+     *timeout = EINA_TRUE;
+   else
+     {
+        eina_hash_del_by_key(fork_map, &pid);
+        (*num_forks)--;
+     }
+   return ret;
+}
+#endif
+
 EINA_UNUSED static int
 _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, const Efl_Test_Case *etc, SFun init, SFun shutdown)
 {
@@ -254,8 +287,9 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    int do_fork;
    int num_forks = 0;
    int can_fork = 0;
+   Eina_Bool timeout_reached = EINA_FALSE;
 #ifdef ENABLE_TIMING_INFO
-   double tstart, tcstart;
+   double tstart = 0.0, tcstart = 0.0;
    int timing = _timing_enabled();
 
    if (timing)
@@ -277,9 +311,20 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
 #ifdef HAVE_FORK
         if (do_fork && can_fork)
           {
+             if (!timeout_pid)
+               {
+                  timeout_pid = fork();
+                  if (!timeout_pid)
+                    execl("/bin/sh", "/bin/sh", "-c", PACKAGE_BUILD_DIR "/src/tests/timeout", (char *)NULL);
+               }
+             if (num_forks == eina_cpu_count())
+               failed_count += _efl_suite_wait_on_fork(&num_forks, &timeout_reached);
+             if (timeout_reached) break;
              pid = fork();
              if (pid > 0)
                {
+                  if (!fork_map) fork_map = eina_hash_int32_new(NULL);
+                  eina_hash_add(fork_map, &pid, etc[i].test_case);
                   num_forks++;
 #ifdef ENABLE_TIMING_INFO
                   if (timing)
@@ -315,18 +360,40 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
      }
 
 #ifdef HAVE_FORK
-   if (num_forks)
+   if (num_forks && (!timeout_reached))
      {
         do
           {
-             int status = 0;
-             waitpid(0, &status, 0);
-             failed_count += WEXITSTATUS(status);
-          } while (--num_forks);
+             failed_count += _efl_suite_wait_on_fork(&num_forks, &timeout_reached);
+          } while (num_forks && (!timeout_reached));
+        if (timeout_reached)
+          {
+             Eina_Iterator *it;
+             const char *testname;
+             it = eina_hash_iterator_data_new(fork_map);
+             timeout_pid = 0;
+             printf("FAILSAFE TIMEOUT REACHED!\n");
+             fflush(stdout);
+             EINA_ITERATOR_FOREACH(it, testname)
+               printf("STILL RUNNING: %s\n", testname);
+             fflush(stdout);
+             eina_iterator_free(it);
+             failed_count++;
+          }
      }
    else
 #endif
      failed_count = _efl_suite_run_end(sr, NULL);
+
+#ifdef HAVE_FORK
+   if (timeout_pid)
+     {
+        kill(timeout_pid, SIGKILL);
+        timeout_pid = 0;
+     }
+   eina_hash_free(fork_map);
+   fork_map = NULL;
+#endif
 
 #ifdef ENABLE_TIMING_INFO
    if (timing)

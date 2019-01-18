@@ -192,7 +192,7 @@ _efl_net_control_access_point_configuration_proxy_get(const Eo *obj EINA_UNUSED,
 EOLIAN static Eina_Future *
 _efl_net_control_access_point_connect(Eo *obj EINA_UNUSED, Efl_Net_Control_Access_Point_Data *pd EINA_UNUSED)
 {
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_rejected(obj,
                                EINA_ERROR_NOT_IMPLEMENTED);
 }
 

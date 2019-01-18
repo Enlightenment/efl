@@ -6,7 +6,7 @@
 #define ELM_WIDGET_ITEM_PROTECTED
 //#define ELM_INTERFACE_ATSPI_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -71,7 +71,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
 );
 
 EOLIAN static void
-_elm_multibuttonentry_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
+_elm_multibuttonentry_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -79,7 +79,7 @@ _elm_multibuttonentry_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static char *
@@ -91,7 +91,7 @@ _format_count(int count, void *data EINA_UNUSED)
    return strdup(buf);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    const char *str;
@@ -100,9 +100,9 @@ _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Da
    Elm_Object_Item *eo_item;
    double pad_scale;
 
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    str = elm_layout_data_get(obj, "horizontal_pad");
    if (str) hpad = atoi(str);
@@ -1391,11 +1391,11 @@ _box_layout_cb(Evas_Object *o,
              linew = ww;
           }
 
-        evas_object_move(obj,
-                         ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
-                         + (Evas_Coord)(((double)(ww - ow)) * ax),
-                         yy + (Evas_Coord)(((double)(hh - oh)) * ay));
-        evas_object_resize(obj, ow, oh);
+        evas_object_geometry_set(obj,
+                                 ((!rtl) ? (xx) : (x + (w - (xx - x) - ww)))
+                                 + (Evas_Coord)(((double)(ww - ow)) * ax),
+                                 yy + (Evas_Coord)(((double)(hh - oh)) * ay),
+                                 ow, oh);
 
         xx += ww;
         xx += priv->pad.h;
@@ -1647,53 +1647,15 @@ elm_multibuttonentry_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-static void
-_legacy_focused(void *data, const Efl_Event *ev)
-{
-   Efl_Ui_Focus_Object *new_focus;
-   Eina_Bool meaningful_focus_in = EINA_FALSE, meaningful_focus_out = EINA_FALSE;
-   ELM_MULTIBUTTONENTRY_DATA_GET(data, pd);
-
-   new_focus = efl_ui_focus_manager_focus_get(ev->object);
-
-   if (efl_isa(ev->info, EFL_UI_WIDGET_CLASS) && elm_widget_parent_get(ev->info) == pd->box)
-     {
-        meaningful_focus_out = EINA_TRUE;
-     }
-
-   if (efl_isa(new_focus, EFL_UI_WIDGET_CLASS) && elm_widget_parent_get(new_focus) == pd->box)
-     {
-        meaningful_focus_in = EINA_TRUE;
-     }
-
-   if (meaningful_focus_in && !meaningful_focus_out)
-     {
-        evas_object_smart_callback_call(data, "focused", NULL);
-     }
-
-   if (!meaningful_focus_in && meaningful_focus_out)
-     {
-        evas_object_smart_callback_call(data, "unfocused", NULL);
-     }
-}
-
-static void
-_legacy_manager_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   efl_event_callback_del(ev->info, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-   efl_event_callback_add(efl_ui_focus_object_focus_manager_get(ev->object), EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _legacy_focused, ev->object);
-}
-
 EOLIAN static Eo *
 _elm_multibuttonentry_efl_object_constructor(Eo *obj, Elm_Multibuttonentry_Data *sd EINA_UNUSED)
 {
+
+   legacy_child_focus_handle(obj);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PANEL);
-
-   //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }

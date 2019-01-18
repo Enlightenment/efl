@@ -3376,7 +3376,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
  * @param size_ret pointer to the an int to be filled with the decoded size.
  * @return NULL on failure, or a valid encoded data chunk on success.
  *
- * This function takes a data structutre in memory and encodes it into a
+ * This function takes a data structure in memory and encodes it into a
  * serialised chunk of data that can be decoded again by
  * eet_data_descriptor_decode(). This is useful for being able to transmit
  * data structures across sockets, pipes, IPC or shared file mechanisms,
@@ -4222,7 +4222,7 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
  * @param size_ret pointer to the an int to be filled with the decoded size.
  * @return NULL on failure, or a valid encoded data chunk on success.
  *
- * This function takes a data structutre in memory and encodes it into a
+ * This function takes a data structure in memory and encodes it into a
  * serialised chunk of data that can be decoded again by
  * eet_data_descriptor_decode(). This is useful for being able to transmit
  * data structures across sockets, pipes, IPC or shared file mechanisms,

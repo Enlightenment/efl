@@ -1,5 +1,5 @@
-class Elm.Thumb (Efl.Ui.Layout.Object, Efl.File, Efl.Ui.Clickable,
-                 Efl.Ui.Draggable, Efl.Ui.Legacy)
+class Elm.Thumb extends Efl.Ui.Layout implements Efl.File, Efl.Ui.Clickable,
+                 Efl.Ui.Draggable, Efl.Ui.Legacy
 {
    [[Elementary thumbnail class]]
    legacy_prefix: elm_thumb;

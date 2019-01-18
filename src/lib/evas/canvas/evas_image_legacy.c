@@ -25,8 +25,9 @@ struct _Evas_Image_Legacy_Pixels_Entry
 EAPI Evas_Object *
 evas_object_image_add(Evas *eo_e)
 {
+   eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(EVAS_IMAGE_CLASS, evas_find(eo_e),
+   return efl_add(EVAS_IMAGE_CLASS, eo_e,
                  efl_gfx_fill_auto_set(efl_added, EINA_FALSE),
                  efl_canvas_object_legacy_ctor(efl_added));
 }
@@ -34,8 +35,9 @@ evas_object_image_add(Evas *eo_e)
 EAPI Evas_Object *
 evas_object_image_filled_add(Evas *eo_e)
 {
+   eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   return efl_add(EVAS_IMAGE_CLASS, evas_find(eo_e),
+   return efl_add(EVAS_IMAGE_CLASS, eo_e,
                  efl_canvas_object_legacy_ctor(efl_added));
 }
 
@@ -65,10 +67,8 @@ EAPI void
 evas_object_image_preload(Evas_Object *eo_obj, Eina_Bool cancel)
 {
    EVAS_IMAGE_API(eo_obj);
-   if (cancel)
-     _evas_image_load_async_cancel(eo_obj);
-   else
-     _evas_image_load_async_start(eo_obj);
+   if (cancel) _evas_image_load_async_cancel(eo_obj);
+   else _evas_image_load_async_start(eo_obj);
 }
 
 EAPI Eina_Bool
@@ -984,7 +984,11 @@ evas_object_image_video_surface_caps_get(const Evas_Object *eo_obj)
    EVAS_IMAGE_LEGACY_API(eo_obj, 0);
 
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   return (!o->video_surface ? 0 : o->pixels->video_caps);
+
+   /* The generic hardware plane code calls this function on
+    * non-video surfaces, return stacking check for those to
+    * allow them to use common video surface code */
+   return (!o->video_surface ? EVAS_VIDEO_SURFACE_STACKING_CHECK : o->pixels->video_caps);
 }
 
 /* deprecated */
@@ -1082,15 +1086,15 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
 
    evas_object_async_block(obj);
    o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   if ((o->preloading) && (o->engine_data))
-     {
-        o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
-     }
    if (!o->engine_data) return NULL;
    if (o->video_surface)
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    if (o->cur->cspace == to_cspace) return NULL;
+   if ((o->preload & EVAS_IMAGE_PRELOADING) && (o->engine_data))
+     {
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_TRUE);
+     }
    data = NULL;
    engine_data = ENFN->image_data_get(ENC, o->engine_data, 0, &data, &o->load_error, NULL);
    result = _evas_image_data_convert_internal(o, data, to_cspace);
@@ -1111,13 +1115,12 @@ evas_object_image_reload(Evas_Object *eo_obj)
 
    evas_object_async_block(obj);
    o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
-   if ((o->preloading) && (o->engine_data))
+   if ((!o->cur->f) || (o->pixels_checked_out > 0)) return;
+   if ((o->preload & EVAS_IMAGE_PRELOADING) && (o->engine_data))
      {
-        o->preloading = EINA_FALSE;
-        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj);
+        o->preload = EVAS_IMAGE_PRELOAD_NONE;
+        ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_TRUE);
      }
-   if ((!o->cur->f) ||
-       (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = ENFN->image_dirty_region(ENC, o->engine_data, 0, 0, o->cur->image.w, o->cur->image.h);
 

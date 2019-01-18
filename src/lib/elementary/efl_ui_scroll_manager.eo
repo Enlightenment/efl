@@ -1,30 +1,30 @@
-class Efl.Ui.Scroll.Manager (Efl.Object,
-                             Efl.Ui.Base,
+class Efl.Ui.Scroll.Manager extends Efl.Object implements
+                             Efl.Ui.I18n,
                              Efl.Ui.Scrollable_Interactive,
-                             Efl.Ui.Scrollbar)
+                             Efl.Ui.Scrollbar
 {
    [[Efl ui scroll manager class]]
    event_prefix: efl_ui;
    eo_prefix: efl_ui_scroll_manager;
    methods {
       @property pan @protected {
-    [[This is the internal canvas object managed by scroll manager.
-       
+    [[This is the internal pan object managed by scroll manager.
+
       This property is protected as it is meant for scrollable object
-      implementations only, to set and access the internal canvas object.
+      implementations only, to set and access the internal pan object.
       If pan is set to NULL, scrolling does not work.
     ]]
          set {
          }
          values {
-            pan: Efl.Canvas.Object @nullable; [[Pan object]]
+            pan: Efl.Ui.Pan @nullable; [[Pan object]]
          }
       }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Base.mirrored { set; }
+      Efl.Ui.I18n.mirrored { set; }
       Efl.Ui.Scrollable_Interactive.content_pos { set; get; }
       Efl.Ui.Scrollable_Interactive.content_size{ get; }
       Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }

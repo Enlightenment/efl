@@ -1,4 +1,4 @@
-class Ector.Renderer.GL.Gradient.Radial (Ector.Renderer.GL, Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial, Efl.Gfx.Path)
+class Ector.Renderer.GL.Gradient.Radial extends Ector.Renderer.GL implements Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial, Efl.Gfx.Path
 {
    [[Ector GL renderer gradient radial]]
    eo_prefix: ector_renderer_gl_gradient_radial;

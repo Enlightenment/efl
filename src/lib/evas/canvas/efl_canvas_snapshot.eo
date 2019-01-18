@@ -1,4 +1,4 @@
-class Efl.Canvas.Snapshot (Efl.Canvas.Image_Internal)
+class Efl.Canvas.Snapshot extends Efl.Canvas.Image_Internal
 {
    [[Low-level snapshot image object.
 

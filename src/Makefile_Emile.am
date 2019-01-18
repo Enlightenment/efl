@@ -88,6 +88,7 @@ tests/emile/emile_suite.h
 
 tests_emile_emile_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/emile\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/emile\" \
 @CHECK_CFLAGS@ \

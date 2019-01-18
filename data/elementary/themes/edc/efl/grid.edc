@@ -1,0 +1,269 @@
+group { "efl/grid";
+   inherit: "efl/scroller";
+}
+
+group { "efl/view_grid";
+   inherit: "efl/grid";
+}
+
+group { "efl/grid_item";
+   data.item: "selectraise" "on";
+   data.item: "focusraise" "on";
+   images.image: "bevel_dark_out.png" COMP;
+   images.image: "shadow_rounded_horiz.png" COMP;
+   images.image: "vgrad_med_dark.png" COMP;
+   images.image: "bevel_out.png" COMP;
+   images.image: "shine.png" COMP;
+   parts {
+
+      // BASE PARTS //
+      rect { "event";
+         desc { "default";
+            color: 0 0 0 0;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      rect { "base"; mouse;
+         desc { "default";
+         }
+      }
+      image { "bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_dark_out.png";
+            image.border: 2 2 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+         }
+      }
+      image { "sel_shadow"; nomouse;
+         desc { "default";
+            image.normal: "shadow_rounded_horiz.png";
+            image.border: 0 0 9 9;
+            rel1.offset: 0 -4;
+            rel2.offset: -1 5;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_base"; nomouse;
+         desc { "default";
+            image.normal: "vgrad_med_dark.png";
+            fill.smooth: 0;
+            hid;
+            TILED_HORIZ(120)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      image { "sel_bevel"; nomouse;
+         desc { "default";
+            image.normal: "bevel_out.png";
+            image.border: 2 2 2 2;
+            image.middle: 0;
+            fill.smooth: 0;
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      // BASE PARTS //
+
+      // TEXT PARTS //
+      text { "efl.text"; nomouse;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc { "default";
+            fixed: 0 1;
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 5 -5;
+            rel2.relative: 1.0 1.0;
+            rel2.offset: -5 -5;
+            color: FN_COL_DEFAULT;
+            color_class: "grid_item";
+            align: 0.5 1.0;
+            text { font: FN; size: 10;
+               min: 0 1;
+               align: 0.5 1.0;
+               text_class: "grid_item";
+            }
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      text { "label2"; nomouse;
+         effect: SHADOW BOTTOM;
+         scale: 1;
+         desc { "default";
+            rel1.to: "efl.text";
+            rel2.to: "efl.text";
+            color: FN_COL_DISABLE;
+            color_class: "grid_item_disabled";
+            text { font: FN; size: 10;
+               text_source: "efl.text";
+               align: 0.5 1.0;
+               text_class: "grid_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      text { "label3"; nomouse;
+         effect: GLOW;
+         scale: 1;
+         desc { "default";
+            rel1.offset: -2 -2;
+            rel1.to: "efl.text";
+            rel2.offset: 1 0;
+            rel2.to: "efl.text";
+            color: FN_COL_HIGHLIGHT;
+            color_class: "grid_item_selected";
+            text { font: FN; size: 10;
+               text_source: "efl.text";
+               align: 0.5 1.0;
+               text_class: "grid_item";
+            }
+            hid;
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+         desc { "disabled";
+            inherit: "default";
+            hid;
+         }
+      }
+      // TEXT PARTS //
+
+      // CONTENT PARTS //
+      rect { "icon_area";
+         desc { "default";
+            fixed: 1 0;
+            rel1.offset: 2 2;
+            rel2.to_y: "efl.text";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 -3;
+         }
+         desc { "disabled";
+            inherit: "default";
+            color: 255 255 255 64;
+         }
+      }
+      swallow { "efl.icon";
+         clip_to: "icon_area";
+         desc { "default";
+            rel1.to: "icon_area";
+            rel2.to: "icon_area";
+         }
+      }
+      swallow { "efl.end";
+         clip_to: "icon_area";
+         desc { "default";
+            fixed: 1 1;
+            align: 1.0 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -3 2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 2;
+         }
+      }
+      // CONTENT PARTS //
+
+      // TOP PARTS //
+      image { "sel_shine"; nomouse;
+         desc { "default";
+            image.normal: "shine.png";
+            rel1.offset: 0 -2;
+            rel1.to: "sel_base";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -1 2;
+            rel2.to: "sel_base";
+            hid;
+            FIXED_SIZE(69, 5)
+         }
+         desc { "selected";
+            inherit: "default";
+            vis;
+         }
+      }
+      rect { "event_block";
+         desc { "default";
+            color: 0 0 0 0;
+            hid;
+         }
+         desc { "disabled";
+            inherit: "default";
+            vis;
+         }
+      }
+      // TOP PARTS //
+   }
+   programs {
+      program {
+         signal: "efl,state,selected"; source: "efl";
+         action: STATE_SET "selected";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "efl,state,unselected"; source: "efl";
+         action: STATE_SET "default";
+         target: "sel_shadow";
+         target: "sel_base";
+         target: "sel_bevel";
+         target: "sel_shine";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+      }
+      program {
+         signal: "efl,state,disabled"; source: "efl";
+         action: STATE_SET "disabled";
+         target: "event";
+         target: "event_block";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "icon_area";
+      }
+      program {
+         signal: "efl,state,enabled"; source: "efl";
+         action: STATE_SET "default";
+         target: "event";
+         target: "event_block";
+         target: "efl.text";
+         target: "label2";
+         target: "label3";
+         target: "icon_area";
+      }
+   }
+}

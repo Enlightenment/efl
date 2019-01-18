@@ -1,6 +1,6 @@
 #include "efl_canvas_surface.h"
 
-#define MY_CLASS EFL_CANVAS_SURFACE_MIXIN
+#define MY_CLASS EFL_CANVAS_SURFACE_CLASS
 
 EOLIAN static Eo *
 _efl_canvas_surface_efl_object_constructor(Eo *eo, Efl_Canvas_Surface_Data *pd)

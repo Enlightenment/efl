@@ -74,14 +74,14 @@ enum Efl.Net.Control.Access_Point_Proxy_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy.]]
 }
 
-class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
+class Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
     [[An access point for network connectivity.
 
       The @Efl.Net.Control.Manager is composed of multiple technologies, each
       create access points to allow configuration and connection.
 
       An application requiring only a network connection can just
-      use a \@Efl.Net.Session instead.
+      use a @Efl.Net.Session instead.
 
       @since 1.19
     ]]
@@ -177,7 +177,7 @@ class Efl.Net.Control.Access_Point (Efl.Loop_Consumer) {
               first (most priority), then use 0. To move as the last
               priority, use UINT32_MAX or the last known priority + 1.
 
-              \@note Only stored access points may be reordered
+              Note: Only stored access points may be reordered
               among themselves. Those that are not remembered will
               always come last in a random order defined by the backend.
             ]]

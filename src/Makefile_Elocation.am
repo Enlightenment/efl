@@ -33,6 +33,7 @@ if EFL_ENABLE_TESTS
 #tests/elocation/elocation_suite.c
 
 #tests_elocation_elocation_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 #-DTESTS_WD=\"`pwd`\" \
 #-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elocation\" \
 #-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elocation\" \

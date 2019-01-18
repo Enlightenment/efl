@@ -464,22 +464,24 @@ EFL_START_TEST(ecore_test_ecore_con_dns)
 {
    Ecore_Con_Server *client;
    Ecore_Event_Handler *e_err;
+   Ecore_Event_Handler *e_del;
    Ecore_Event_Handler *e_add;
    Eina_Bool err_check = EINA_FALSE;
 
    e_add = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _dns_add_del, (void *) &err_check);
    e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ERROR, _dns_err, (void *) &err_check);
    /* For timeout */
-   e_err = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, _dns_add_del, (void *) &err_check);
+   e_del = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, _dns_add_del, (void *) &err_check);
 
    client = ecore_con_server_connect(ECORE_CON_REMOTE_TCP,
                                      "wongsub.wrongdns.lan", 1234, NULL);
    fail_if (client == NULL);
-   ecore_con_server_timeout_set(client, 5.0);
+   ecore_con_server_timeout_set(client, 1.0); // No point for a long timeout as we know it is wrong
 
    ecore_main_loop_begin();
    fail_if (err_check != EINA_FALSE);
    fail_if (ecore_event_handler_del(e_err) != (void *) &err_check);
+   fail_if (ecore_event_handler_del(e_del) != (void *) &err_check);
    fail_if (ecore_event_handler_del(e_add) != (void *) &err_check);
 }
 EFL_END_TEST
@@ -491,6 +493,8 @@ EFL_START_TEST(ecore_test_ecore_con_shutdown_bef_init)
 
    ret = ecore_con_shutdown();
    fail_if(ret != 0);
+
+   ecore_con_init();
 }
 EFL_END_TEST
 

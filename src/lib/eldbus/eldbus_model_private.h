@@ -39,12 +39,6 @@ struct _Eldbus_Model_Data
 /* logging support */
 extern int eldbus_model_log_dom;
 
-static inline void
-_eldbus_eina_promise_cancel(void *data EINA_UNUSED,
-                            const Eina_Promise *dead_ptr EINA_UNUSED)
-{
-}
-
 #define ELDBUS_MODEL_ON_ERROR_EXIT_PROMISE_SET(exp, promise, err, v)    \
   do                                                                    \
     {                                                                   \

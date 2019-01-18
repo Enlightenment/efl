@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+#ifdef NEED_RUN_IN_TREE
+# include "../../static_libs/buildsystem/buildsystem.h"
+#endif
+
 #include "ecore_wl2_private.h"
 
 /* local variables */
@@ -66,6 +70,32 @@ _ecore_wl2_surface_modules_init(void)
 {
    const char *mod_dir;
 
+#ifdef NEED_RUN_IN_TREE
+#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+   if (getuid() == geteuid())
+#endif
+     {
+        char path[PATH_MAX];
+        //when running in tree we are ignoring all the settings
+        //and just load the intree module that we have build
+        if (bs_mod_get(path, sizeof(path), "ecore_wl2/engines","dmabuf"))
+          {
+             Eina_Module *local_module = eina_module_new(path);
+             EINA_SAFETY_ON_NULL_RETURN_VAL(local_module, EINA_FALSE);
+
+             if (!eina_module_load(local_module))
+               {
+                  ERR("Cannot load module %s", path);
+                  eina_module_free(local_module);
+                  local_module = NULL;
+                  return EINA_FALSE;
+               }
+             eina_module_free(local_module);
+             local_module = NULL;
+             return EINA_TRUE;
+          }
+     }
+#endif
    supplied_modules = eina_module_arch_list_get(NULL,
                                                 PACKAGE_LIB_DIR"/ecore_wl2/engines",
                                                 MODULE_ARCH);

@@ -601,11 +601,11 @@ _entry_show_cb(void *data,
    ELM_SPINNER_DATA_GET(data, sd);
 
    _entry_show(sd);
+   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
+   evas_object_hide(sd->text_button);
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   elm_layout_signal_emit(data, "elm,state,button,inactive", "elm");
-   evas_object_hide(sd->text_button);
 }
 
 static void
@@ -1220,6 +1220,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
 
         priv->text_button = elm_button_add(obj);
         elm_object_style_set(priv->text_button, "spinner/default");
+        elm_widget_can_focus_set(priv->text_button, _elm_config->access_mode);
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
@@ -1298,15 +1299,15 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
    if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
      {
         CRI("Failed to set layout!");
-        return EFL_UI_THEME_APPLY_FAILED;
+        return EFL_UI_THEME_APPLY_RESULT_FAIL;
      }
 
    if (edje_object_part_exists(wd->resize_obj, "elm.swallow.dec_button"))
@@ -1350,7 +1351,7 @@ _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_SUCCESS;
+   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
@@ -1409,6 +1410,7 @@ EOLIAN static Eo *
 _elm_spinner_efl_object_constructor(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   legacy_child_focus_handle(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
@@ -1595,6 +1597,7 @@ EOLIAN static void
 _elm_spinner_editable_set(Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, Eina_Bool editable)
 {
    sd->editable = editable;
+   elm_widget_can_focus_set(sd->text_button, editable | _elm_config->access_mode);
 }
 
 EOLIAN static Eina_Bool

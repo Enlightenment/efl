@@ -7,7 +7,7 @@
 #define EFL_ACCESS_SELECTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 
 #include <Elementary.h>
@@ -87,6 +87,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
                       Elm_Toolbar_Data *sd,
                       Evas_Coord *iw,
                       Evas_Coord vw,
+                      Eina_Bool usage_bx_more,
                       Eina_Bool *more)
 {
    Elm_Toolbar_Item_Data *it, *prev;
@@ -125,11 +126,22 @@ _items_visibility_fix(Elm_Toolbar *obj,
              evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
              if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) *iw += cih;
              else *iw += ciw;
-             it->prio.visible = (*iw <= vw);
+             //expand is the case where the bx_more stuff is used and the prio.visible is completly ignored.
+             //if this is the case - then every item in there is just visible in the box - nothing (beside the items in the other box is hidden)
+             if (!usage_bx_more)
+               {
+                  it->prio.visible = (*iw <= vw);
+                  if (!it->prio.visible)
+                    *more = EINA_TRUE;
+               }
+             else
+               {
+                  it->prio.visible = EINA_TRUE;
+               }
+
              it->in_box = sd->bx;
              if (!it->separator) count++;
-             if (!it->prio.visible)
-               *more = EINA_TRUE;
+
           }
         else
           {
@@ -386,12 +398,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, EINA_FALSE, &more);
           }
         evas_object_geometry_get
           (sd->VIEW(more_item), NULL, NULL, &more_w, &more_h);
@@ -467,12 +479,12 @@ _resize_job(void *data)
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
           {
              h = vh;
-             _items_visibility_fix(obj, sd, &ih, vh, &more);
+             _items_visibility_fix(obj, sd, &ih, vh, EINA_FALSE, &more);
           }
         else
           {
              w = vw;
-             _items_visibility_fix(obj, sd, &iw, vw, &more);
+             _items_visibility_fix(obj, sd, &iw, vw, EINA_FALSE, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         if ((!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE) && (ih > vh)) ||
@@ -510,9 +522,9 @@ _resize_job(void *data)
           w = (vw >= mw) ? vw : mw;
 
         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-          _items_visibility_fix(obj, sd, &ih, vh, &more);
+          _items_visibility_fix(obj, sd, &ih, vh, EINA_TRUE, &more);
         else
-          _items_visibility_fix(obj, sd, &iw, vw, &more);
+          _items_visibility_fix(obj, sd, &iw, vw, EINA_TRUE, &more);
 
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
         evas_object_box_remove_all(sd->bx_more, EINA_FALSE);
@@ -1466,18 +1478,18 @@ _elm_toolbar_highlight_in_theme(Evas_Object *obj)
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
    double scale = 0;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
-   if (sd->delete_me) return EFL_UI_THEME_APPLY_SUCCESS;
+   if (sd->delete_me) return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
 
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
@@ -1670,14 +1682,14 @@ _elm_toolbar_item_elm_widget_item_part_content_unset(Eo *eo_item EINA_UNUSED, El
 }
 
 EOLIAN static void
-_elm_toolbar_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
 
    EINA_INLIST_FOREACH(sd->items, it)
      elm_wdg_item_translate(EO_OBJ(it));
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 static void
@@ -1889,8 +1901,7 @@ _item_transition_start
    it->trans = elm_transit_add();
    elm_transit_object_add(it->trans, it->proxy);
    evas_object_geometry_get(VIEW(sd->reorder_empty), &tx, &ty, NULL, NULL);
-   evas_object_move(it->proxy, x, y);
-   evas_object_resize(it->proxy, w, h);
+   evas_object_geometry_set(it->proxy, x, y, w, h);
    evas_object_show(it->proxy);
 
    elm_transit_effect_translation_add(it->trans, 0, 0, tx - x, 0);
@@ -2089,8 +2100,7 @@ _item_reorder_start(Elm_Toolbar_Item_Data *item)
      (Evas_Object_Event_Cb)_mouse_up_reorder, item);
 
    evas_object_geometry_get(VIEW(item), &x, &y, &w, &h);
-   evas_object_resize(item->proxy, w, h);
-   evas_object_move(item->proxy, x, y);
+   evas_object_geometry_set(item->proxy, x, y, w, h);
    evas_object_show(item->proxy);
 
    elm_interface_scrollable_hold_set(WIDGET(item), EINA_TRUE);
@@ -2403,6 +2413,7 @@ _item_new(Evas_Object *obj,
    WIDGET_ITEM_DATA_SET(EO_OBJ(it), data);
 
    VIEW_SET(it, elm_layout_add(obj));
+   _efl_ui_focus_event_redirector(VIEW(it), eo_it);
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
    evas_object_data_set(VIEW(it), "item", it);
    efl_access_object_access_type_set(VIEW(it), EFL_ACCESS_TYPE_DISABLED);
@@ -2969,6 +2980,7 @@ _elm_toolbar_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd EINA_
 EOLIAN static Eo *
 _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
 {
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
@@ -4057,6 +4069,12 @@ _elm_toolbar_efl_ui_focus_composition_prepare(Eo *obj, Elm_Toolbar_Data *pd)
      }
 
    efl_ui_focus_composition_elements_set(obj, order);
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_toolbar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Item_Data *pd)
+{
+   return WIDGET(pd);
 }
 
 

@@ -177,8 +177,8 @@ typedef struct _Eina_Tile_Grid_Slicer Eina_Tile_Grid_Slicer;
 /**
  * @brief Creates a new tiler with @p w width and @p h height.
  *
- * @param w Width of the tiler
- * @param h Height of the tiler
+ * @param[in] w Width of the tiler
+ * @param[in] h Height of the tiler
  * @return The newly created tiler
  *
  * @see eina_tiler_free()
@@ -188,7 +188,7 @@ EAPI Eina_Tiler        *eina_tiler_new(int w, int h);
 /**
  * @brief Frees a tiler.
  *
- * @param t The tiler to free.
+ * @param[in] t The tiler to free.
  *
  * This function frees @p t. It does not free the memory allocated for the
  * elements of @p t.
@@ -198,9 +198,9 @@ EAPI void               eina_tiler_free(Eina_Tiler *t);
 /**
  * @brief Sets the size of tiles for a tiler.
  *
- * @param t The tiler whose tile size will be set.
- * @param w Width of the tiles.
- * @param h Height of the tiles.
+ * @param[in,out] t The tiler whose tile size will be set.
+ * @param[in] w Width of the tiles.
+ * @param[in] h Height of the tiles.
  *
  * @warning @p w and @p h @b must be greater than zero, otherwise tile size
  * won't be changed.
@@ -211,9 +211,9 @@ EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
 /**
  * @brief Changes the size of the area covered by the tiler.
  *
- * @param t The tiler whose area size will be set.
- * @param w Width of the area.
- * @param h Height of the area.
+ * @param[in,out] t The tiler whose area size will be set.
+ * @param[in] w Width of the area.
+ * @param[in] h Height of the area.
  *
  * @since 1.8
  *
@@ -224,9 +224,9 @@ EAPI void               eina_tiler_area_size_set(Eina_Tiler *t, int w, int h);
 /**
  * @brief Gets the size of the area covered by the tiler.
  *
- * @param t The tiler whose area size will be fetched.
- * @param w Width of the area.
- * @param h Height of the area.
+ * @param[in] t The tiler whose area size will be fetched.
+ * @param[out] w Width of the area.
+ * @param[out] h Height of the area.
  *
  * @since 1.8
  */
@@ -235,8 +235,8 @@ EAPI void               eina_tiler_area_size_get(const Eina_Tiler *t, int *w, in
 /**
  * @brief Defines if we need to follow a strict grid of tile or a loose one.
  *
- * @param t The tiler to apply the strict rules to.
- * @param strict Define if it will be strict or loose
+ * @param[in,out] t The tiler to apply the strict rules to.
+ * @param[in] strict Define if it will be strict or loose
  *
  * By default it will be loose.
  *
@@ -247,7 +247,7 @@ EAPI void               eina_tiler_strict_set(Eina_Tiler *t, Eina_Bool strict);
 /**
  * @brief Tells if a tiler is empty or not.
  *
- * @param t The tiler to apply the strict rules to.
+ * @param[in] t The tiler to apply the strict rules to.
  * @return #EINA_TRUE when empty, #EINA_FALSE when not.
  *
  * @since 1.8
@@ -257,8 +257,8 @@ EAPI Eina_Bool          eina_tiler_empty(const Eina_Tiler *t);
 /**
  * @brief Adds a rectangle to a tiler.
  *
- * @param t The tiler in which to add a container.
- * @param r The rectangle to be added.
+ * @param[in,out] t The tiler in which to add a container.
+ * @param[in] r The rectangle to be added.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_tiler_rect_del()
@@ -268,8 +268,8 @@ EAPI Eina_Bool          eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle 
 /**
  * @brief Removes a rectangle from a tiler.
  *
- * @param t The tiler in which to add a container.
- * @param r The rectangle to be removed.
+ * @param[in,out] t The tiler in which to add a container.
+ * @param[in] r The rectangle to be removed.
  *
  * @see eina_tiler_rect_add()
  * @see eina_tiler_clear()
@@ -279,7 +279,7 @@ EAPI void               eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle 
 /**
  * @brief Removes all rectangles from tiles.
  *
- * @param t The tiler to clear.
+ * @param[in,out] t The tiler to clear.
  *
  * @see eina_tiler_rect_del()
  */
@@ -288,7 +288,7 @@ EAPI void               eina_tiler_clear(Eina_Tiler *t);
 /**
  * @brief Creates a iterator to access the tilers calculated rectangles.
  *
- * @param t The tiler to iterate over.
+ * @param[in] t The tiler to iterate over.
  * @return A iterator containing Eina_Rectangle.
  */
 EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
@@ -296,12 +296,12 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
 /**
  * @brief Creates a new Eina_Iterator that iterates over a list of tiles.
  *
- * @param   x X axis coordinate.
- * @param   y Y axis coordinate.
- * @param   w Width.
- * @param   h Height.
- * @param   tile_w Tile width.
- * @param   tile_h Tile height.
+ * @param[in] x X axis coordinate.
+ * @param[in] y Y axis coordinate.
+ * @param[in] w Width.
+ * @param[in] h Height.
+ * @param[in] tile_w Tile width.
+ * @param[in] tile_h Tile height.
  * @return  A pointer to the Eina_Iterator. @c NULL on failure.
  *
  * The region defined by @a x, @a y, @a w, @a h will be divided in to a grid of
@@ -317,8 +317,8 @@ EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, 
 /**
  * @brief Gets the union of two tilers.
  *
- * @param   dst The first tiler, will store the result.
- * @param   src The second tiler.
+ * @param[in,out] dst The first tiler, will store the result.
+ * @param[in] src The second tiler.
  * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function gets the union of tilers @p dst and @p src.
@@ -330,8 +330,8 @@ EAPI Eina_Bool          eina_tiler_union(Eina_Tiler *dst, Eina_Tiler *src);
 /**
  * @brief Subtracts two tilers.
  *
- * @param   dst The first tiler, will store the result.
- * @param   src The second tiler.
+ * @param[in,out] dst The first tiler, will store the result.
+ * @param[in] src The second tiler.
  * @return  #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function subtracts two tilers @p dst and @p src.
@@ -343,8 +343,8 @@ EAPI Eina_Bool          eina_tiler_subtract(Eina_Tiler *dst, Eina_Tiler *src);
 /**
  * @brief Gets the intersection of two tilers.
  *
- * @param   t1 The first tile.
- * @param   t2 The second tiler.
+ * @param[in] t1 The first tile.
+ * @param[in] t2 The second tiler.
  * @return  A pointer of intersection result. @c NULL if intersection doesn't exist.
  *
  * This function gets the intersection of two tilers @p t1 and @p t2.
@@ -356,9 +356,9 @@ EAPI Eina_Tiler        *eina_tiler_intersection(Eina_Tiler *t1, Eina_Tiler *t2);
 /**
  * @brief Gets whether two tilers are equal in rects or not.
  *
- * @param   t1 The first tiler.
- * @param   t2 The second tiler.
- * @return  #EINA_TRUE is equal, #EINA_FALSE is inequal.
+ * @param[in] t1 The first tiler.
+ * @param[in] t2 The second tiler.
+ * @return  #EINA_TRUE if equal, #EINA_FALSE if unequal.
  *
  * This function gets result of comparison for @p t1 and @p t2.
  * It returns #EINA_TRUE if tilers are equal.
@@ -369,8 +369,8 @@ EAPI Eina_Bool           eina_tiler_equal(const Eina_Tiler *t1, const Eina_Tiler
 /**
  * @brief Iterates over the tiles set by eina_tile_grid_slicer_setup().
  *
- * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
- * @param   rect Pointer to a struct Eina_Tile_Grid_Info *.
+ * @param[in,out] slc Pointer to an Eina_Tile_Grid_Slicer struct.
+ * @param[out] rect Pointer to a struct Eina_Tile_Grid_Info *.
  * @return  #EINA_TRUE if the current rect is valid. #EINA_FALSE if there
  * are no more rects to iterate over (and thus the current one isn't valid).
  *
@@ -385,13 +385,13 @@ static inline Eina_Bool eina_tile_grid_slicer_next(Eina_Tile_Grid_Slicer *slc, c
 /**
  * @brief Sets up an Eina_Tile_Grid_Slicer struct.
  *
- * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
- * @param   x X axis coordinate.
- * @param   y Y axis coordinate.
- * @param   w Width.
- * @param   h Height.
- * @param   tile_w Tile width.
- * @param   tile_h Tile height.
+ * @param[out] slc Pointer to an Eina_Tile_Grid_Slicer struct.
+ * @param[in] x X axis coordinate.
+ * @param[in] y Y axis coordinate.
+ * @param[in] w Width.
+ * @param[in] h Height.
+ * @param[in] tile_w Tile width.
+ * @param[in] tile_h Tile height.
  * @return  A pointer to the Eina_Iterator, @c NULL on failure.
  *
  * The region defined by @a x, @a y, @a w, @a h will be divided into a grid of

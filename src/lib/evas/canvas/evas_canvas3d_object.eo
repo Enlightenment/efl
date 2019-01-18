@@ -1,6 +1,6 @@
 import evas_canvas3d_types;
 
-class Evas.Canvas3D.Object (Efl.Object)
+abstract Evas.Canvas3D.Object extends Efl.Object
 {
    [[Evas 3D canvas object class]]
    data: Evas_Canvas3D_Object_Data;

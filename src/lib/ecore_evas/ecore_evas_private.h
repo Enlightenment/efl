@@ -333,6 +333,13 @@ struct _Ecore_Evas
    unsigned int animator_count;
 
    struct {
+      Eina_Inlist *active;
+      Eina_Inlist *deleted;
+      Eina_Inlist *suspended;
+      Eina_Inlist *run_list;
+   } ee_anim;
+
+   struct {
       unsigned char avoid_damage;
       unsigned char resize_shape : 1;
       unsigned char shaped : 1;
@@ -489,6 +496,14 @@ EAPI Eina_Bool ecore_evas_render(Ecore_Evas *ee);
 
 EAPI Evas *ecore_evas_evas_new(Ecore_Evas *ee, int w, int h);
 EAPI void ecore_evas_done(Ecore_Evas *ee, Eina_Bool single_window);
+
+#ifdef IPA_YLNO_ESU_LANRETNI_MLE
+EAPI Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+EAPI Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+#else
+#define _wayland_shm_new DONT_USE_INTERNAL_API
+#define _wayland_egl_new DONT_USE_INTERNAL_API
+#endif
 
 static inline Eina_Bool
 ecore_evas_render_prepare(Ecore_Evas *ee)

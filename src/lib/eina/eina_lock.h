@@ -199,7 +199,7 @@ static inline Eina_Lock_Result eina_lock_release(Eina_Lock *mutex);
 /**
  * @brief Prints debug information about a lock.
  * @details This function prints debug information for @p mutex.  The information is
- *          platform dependant.  On POSIX systems it prints the address of @p mutex,
+ *          platform dependent.  On POSIX systems it prints the address of @p mutex,
  *          lock state, thread number and a backtrace.
  *
  * @param[in] mutex The #Eina_Lock to print debug info for.
@@ -221,7 +221,7 @@ EAPI void eina_lock_debug(const Eina_Lock *mutex);
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * Condition variables are used to coordinate actions between threads.  See
- * <a href="https://computing.llnl.gov/tutorials/pthreads/#ConVarOverview"> Condition Varable Overview </a>
+ * <a href="https://computing.llnl.gov/tutorials/pthreads/#ConVarOverview"> Condition Variable Overview </a>
  * for an introduction to condition variables and their use.
  *
  * @see eina_condition_free()
@@ -252,7 +252,7 @@ static inline void eina_condition_free(Eina_Condition *cond);
 static inline Eina_Bool eina_condition_wait(Eina_Condition *cond);
 
 /**
- * @brief Causes a thread to wait until signalled by the condition or a
+ * @brief Causes a thread to wait until signaled by the condition or a
  *        timeout is reached.
  * @details This function makes a thread block until either a signal is sent to it via
  *          @p cond or @p t seconds have passed.
@@ -292,7 +292,7 @@ static inline Eina_Bool eina_condition_broadcast(Eina_Condition *cond);
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @note If there is more than one thread waiting on this condition, one of them is
- *       signalled, but which one is undefined.
+ *       signaled, but which one is undefined.
  *
  * @see eina_condition_broadcast()
  */
@@ -642,12 +642,12 @@ static inline void eina_spinlock_free(Eina_Spinlock *spinlock);
  * @brief Definition for the macro that doesn't do anything unless @c EINA_HAVE_DEBUG_THREADS is defined.
  * @param[in] val The value to be returned
  */
-# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)
+# define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val) do {} while(0)
 /**
  * @def EINA_MAIN_LOOP_CHECK_RETURN
  * @brief Definition for the macro that doesn't do anything unless @c EINA_HAVE_DEBUG_THREADS is defined.
  */
-# define EINA_MAIN_LOOP_CHECK_RETURN
+# define EINA_MAIN_LOOP_CHECK_RETURN do {} while(0)
 #endif
 
 /**

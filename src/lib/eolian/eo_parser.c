@@ -30,7 +30,7 @@
 static void
 error_expected(Eo_Lexer *ls, int token)
 {
-   char  buf[256];
+   char  buf[256 + 128];
    char tbuf[256];
    eo_lexer_token_to_str(token, tbuf);
    snprintf(buf, sizeof(buf), "'%s' expected", tbuf);
@@ -85,7 +85,7 @@ check_match(Eo_Lexer *ls, int what, int who, int where, int col)
           error_expected(ls, what);
         else
           {
-             char  buf[256];
+             char  buf[256 + 256 + 128];
              char tbuf[256];
              char vbuf[256];
              eo_lexer_token_to_str(what, tbuf);
@@ -139,18 +139,20 @@ _eolian_decl_name_get(Eolian_Object *obj)
            default:
              break;
           }
+        goto end;
       case EOLIAN_OBJECT_VARIABLE:
         return "variable";
       default:
         break;
      }
+end:
    return "unknown";
 }
 
 static void
 redef_error(Eo_Lexer *ls, Eolian_Object *obj, Eolian_Object *nobj)
 {
-   char buf[256], fbuf[256] = { '\0' };
+   char buf[256 + 128], fbuf[256] = { '\0' };
    if (ls->filename != obj->file)
      snprintf(fbuf, sizeof(fbuf), "%s:%d:%d", obj->file, obj->line, obj->column);
    else
@@ -1015,6 +1017,13 @@ parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
 }
 
 static void
+check_abstract_pure_virtual(Eo_Lexer *ls)
+{
+   if ((ls->klass->type != EOLIAN_CLASS_ABSTRACT) && (ls->klass->type != EOLIAN_CLASS_MIXIN))
+     eo_lexer_syntax_error(ls, "@pure_virtual only allowed in abstract classes or mixins");
+}
+
+static void
 parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
@@ -1045,6 +1054,7 @@ parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
    for (;;) switch (ls->t.kw)
      {
       case KW_at_pure_virtual:
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         if (is_get) prop->impl->get_pure_virtual = EINA_TRUE;
         else prop->impl->set_pure_virtual = EINA_TRUE;
@@ -1183,7 +1193,7 @@ parse_property(Eo_Lexer *ls)
    prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(prop->base, ls, ls->line_number, ls->column, FUNCTION);
    impl = calloc(1, sizeof(Eolian_Implement));
-   impl->klass = ls->klass;
+   impl->klass = impl->implklass = ls->klass;
    impl->foo_id = prop;
    FILL_BASE(impl->base, ls, ls->line_number, ls->column, IMPLEMENT);
    prop->impl = impl;
@@ -1218,6 +1228,7 @@ parse_property(Eo_Lexer *ls)
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;
@@ -1347,7 +1358,7 @@ parse_method(Eo_Lexer *ls)
    meth->get_scope = meth->set_scope = EOLIAN_SCOPE_PUBLIC;
    FILL_BASE(meth->base, ls, ls->line_number, ls->column, FUNCTION);
    impl = calloc(1, sizeof(Eolian_Implement));
-   impl->klass = ls->klass;
+   impl->klass = impl->implklass = ls->klass;
    impl->foo_id = meth;
    FILL_BASE(impl->base, ls, ls->line_number, ls->column, IMPLEMENT);
    meth->impl = impl;
@@ -1387,6 +1398,7 @@ parse_method(Eo_Lexer *ls)
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
+        check_abstract_pure_virtual(ls);
         CASE_LOCK(ls, virtp, "pure_virtual qualifier");
         eo_lexer_get(ls);
         break;
@@ -1655,10 +1667,17 @@ parse_constructor(Eo_Lexer *ls)
                                                   ls->klass->base.name,
                                                   ls->t.value.s);
         eo_lexer_get(ls);
-        if (ls->t.kw == KW_at_optional)
+        while (ls->t.kw == KW_at_optional || ls->t.kw == KW_at_ctor_param)
           {
+             if (ls->t.kw == KW_at_optional)
+               {
+                  ctor->is_optional = EINA_TRUE;
+               }
+             if (ls->t.kw == KW_at_ctor_param)
+               {
+                  ctor->is_ctor_param = EINA_TRUE;
+               }
              eo_lexer_get(ls);
-             ctor->is_optional = EINA_TRUE;
           }
         check_next(ls, ';');
         return;
@@ -1679,10 +1698,17 @@ parse_constructor(Eo_Lexer *ls)
         if (ls->t.token != '.') break;
         eo_lexer_get(ls);
      }
-   if (ls->t.kw == KW_at_optional)
+   while (ls->t.kw == KW_at_optional || ls->t.kw == KW_at_ctor_param)
      {
+        if (ls->t.kw == KW_at_optional)
+          {
+             ctor->is_optional = EINA_TRUE;
+          }
+        if (ls->t.kw == KW_at_ctor_param)
+          {
+             ctor->is_ctor_param = EINA_TRUE;
+          }
         eo_lexer_get(ls);
-        ctor->is_optional = EINA_TRUE;
      }
    check_next(ls, ';');
    ctor->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
@@ -1935,8 +1961,9 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 }
 
 static void
-_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
+_inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf, Eina_Bool parent)
 {
+   char ebuf[PATH_MAX];
    const char *iname;
    char *fnm;
    eina_strbuf_reset(buf);
@@ -1946,7 +1973,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
    fnm = database_class_to_filename(iname);
    if (compare_class_file(fnm, ls->filename))
      {
-        char ebuf[PATH_MAX];
         free(fnm);
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "class '%s' cannot inherit from itself",
@@ -1956,7 +1982,6 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
      }
    if (!eina_hash_find(ls->state->filenames_eo, fnm))
      {
-        char ebuf[PATH_MAX];
         free(fnm);
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "unknown inherit '%s'", iname);
@@ -1965,25 +1990,51 @@ _inherit_dep(Eo_Lexer *ls, Eina_Strbuf *buf)
      }
 
    Eina_Stringshare *inames = eina_stringshare_add(iname), *oiname = NULL;
-   Eina_List *l;
    /* never allow duplicate inherits */
-   EINA_LIST_FOREACH(ls->klass->inherits, l, oiname)
+   if (!parent)
      {
-        if (inames == oiname)
+        Eina_List *l;
+        if (inames == ls->klass->parent_name)
+          goto inherit_dup;
+        EINA_LIST_FOREACH(ls->klass->extends, l, oiname)
           {
-             char ebuf[PATH_MAX];
-             free(fnm);
-             eina_stringshare_del(inames);
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "duplicate inherit '%s'", iname);
-             eo_lexer_syntax_error(ls, ebuf);
-             return;
+             if (inames == oiname)
+               goto inherit_dup;
           }
      }
    database_defer(ls->state, fnm, EINA_TRUE);
-   ls->klass->inherits = eina_list_append(ls->klass->inherits, inames);
+   if (parent)
+     ls->klass->parent_name = inames;
+   else
+     ls->klass->extends = eina_list_append(ls->klass->extends, inames);
    free(fnm);
    eo_lexer_context_pop(ls);
+   return;
+
+inherit_dup:
+   free(fnm);
+   eina_stringshare_del(inames);
+   eo_lexer_context_restore(ls);
+   snprintf(ebuf, sizeof(ebuf), "duplicate inherit '%s'", iname);
+   eo_lexer_syntax_error(ls, ebuf);
+}
+
+static void
+_requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
+{
+   const char *required;
+   char *fnm;
+
+   eo_lexer_context_push(ls);
+   parse_name(ls, buf);
+   required = eina_strbuf_string_get(buf);
+   fnm = database_class_to_filename(required);
+
+   ls->klass->requires = eina_list_append(ls->klass->requires, eina_stringshare_add(required));
+   database_defer(ls->state, fnm, EINA_TRUE);
+   eo_lexer_context_pop(ls);
+
+   free(fnm);
 }
 
 static void
@@ -2020,22 +2071,50 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
      }
    eo_lexer_context_pop(ls);
    eo_lexer_dtor_pop(ls);
+
+   Eina_Bool is_reg = (type == EOLIAN_CLASS_REGULAR) || (type == EOLIAN_CLASS_ABSTRACT);
    if (ls->t.token != '{')
      {
         line = ls->line_number;
         col = ls->column;
-        check_next(ls, '(');
-        if (ls->t.token != ')')
+        Eina_Strbuf *ibuf = eina_strbuf_new();
+        eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
+        /* new inherits syntax, keep alongside old for now */
+        if (ls->t.kw == KW_requires)
           {
-              Eina_Strbuf *ibuf = eina_strbuf_new();
-              eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), ibuf);
-              _inherit_dep(ls, ibuf);
-              while (test_next(ls, ','))
-                _inherit_dep(ls, ibuf);
-              eo_lexer_dtor_pop(ls);
+             if (type != EOLIAN_CLASS_MIXIN)
+               {
+                  eo_lexer_syntax_error(ls, "\"requires\" keyword is only needed for mixin classes");
+               }
+             eo_lexer_get(ls);
+             do
+               _requires_add(ls, ibuf);
+             while (test_next(ls, ','));
           }
-        check_match(ls, ')', '(', line, col);
+
+        if (ls->t.kw == KW_extends || (is_reg && (ls->t.kw == KW_implements)))
+          {
+             Eina_Bool ext = (ls->t.kw == KW_extends);
+             eo_lexer_get(ls);
+             if (is_reg && ext)
+               {
+                  /* regular class can have a parent, but just one */
+                  _inherit_dep(ls, ibuf, EINA_TRUE);
+                  /* if not followed by implements, we're done */
+                  if (ls->t.kw != KW_implements)
+                    {
+                       eo_lexer_dtor_pop(ls);
+                       goto inherit_done;
+                    }
+                  eo_lexer_get(ls);
+               }
+             do
+               _inherit_dep(ls, ibuf, EINA_FALSE);
+             while (test_next(ls, ','));
+          }
+        eo_lexer_dtor_pop(ls);
      }
+inherit_done:
    line = ls->line_number;
    col = ls->column;
    check_next(ls, '{');

@@ -92,12 +92,12 @@ listing(void *data,
    if (efl_model_children_count_get(filemodel) == 0)
      {
         future = efl_loop_job(efl_provider_find(filemodel, EFL_LOOP_CLASS));
-        future = eina_future_then(future, listing, filemodel);
+        future = eina_future_then(future, listing, filemodel, NULL);
      }
    else
      {
         future = efl_model_children_slice_get(filemodel, 0, efl_model_children_count_get(filemodel));
-        future = eina_future_then(future, &promise_then_accessor, NULL);
+        future = eina_future_then(future, &promise_then_accessor, NULL, NULL);
      }
 
    return eina_future_as_value(future);
@@ -122,8 +122,8 @@ setup_waiter(Efl_Model *model)
 
    if (listingf) return ;
    listingf = efl_loop_job(loop);
-   listingf = eina_future_then(listingf, listing, model);
-   listingf = eina_future_then(listingf, clearup, NULL);
+   listingf = eina_future_then(listingf, listing, model, NULL);
+   listingf = eina_future_then(listingf, clearup, NULL, NULL);
 }
 
 static void

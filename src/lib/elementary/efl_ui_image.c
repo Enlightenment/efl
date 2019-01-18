@@ -77,6 +77,18 @@ _prev_img_del(Efl_Ui_Image_Data *sd)
 }
 
 static void
+_recover_status(Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   int r, g, b, a;
+   Evas_Object *pclip = efl_canvas_object_clip_get(obj);
+   if (pclip) efl_canvas_object_clip_set(sd->img, pclip);
+
+   efl_gfx_color_get(obj, &r, &g, &b, &a);
+   efl_gfx_color_set(sd->img, r, g, b, a);
+   efl_gfx_entity_visible_set(sd->img, sd->show);
+}
+
+static void
 _on_image_preloaded(void *data,
                     Evas *e EINA_UNUSED,
                     Evas_Object *obj,
@@ -143,7 +155,6 @@ _img_new(Evas_Object *obj)
    evas_object_image_scale_hint_set(img, EVAS_IMAGE_SCALE_HINT_STATIC);
    evas_object_event_callback_add
      (img, EVAS_CALLBACK_IMAGE_PRELOADED, _on_image_preloaded, sd);
-
    evas_object_smart_member_add(img, obj);
    elm_widget_sub_object_add(obj, img);
 
@@ -170,6 +181,14 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 
         //1. Get the original image size (iw x ih)
         evas_object_image_size_get(img, &iw, &ih);
+
+        //Exception Case
+        if ((iw == 0) || (ih == 0) || (sd->img_w == 0) || (sd->img_h == 0))
+          {
+             evas_object_resize(img, 0, 0);
+             evas_object_resize(sd->hit_rect, 0, 0);
+             return;
+          }
 
         iw = ((double)iw) * sd->scale;
         ih = ((double)ih) * sd->scale;
@@ -268,19 +287,9 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
           }
      }
 done:
-   evas_object_move(img, x, y);
-   evas_object_resize(img, w, h);
+   evas_object_geometry_set(img, x, y, w, h);
 
-   evas_object_move(sd->hit_rect, x, y);
-   evas_object_resize(sd->hit_rect, w, h);
-}
-
-static void
-_efl_ui_image_internal_sizing_eval(Evas_Object *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
-{
-   if (!sd->img) return;
-   _image_sizing_eval(sd, sd->img);
-   if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
+   evas_object_geometry_set(sd->hit_rect, x, y, w, h);
 }
 
 static inline void
@@ -472,27 +481,23 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
                          const Eina_File *f,
                          const char *group)
 {
-   Evas_Object *pclip;
-
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
    _prev_img_del(sd);
 
    if (!sd->edje)
      {
-        pclip = evas_object_clip_get(sd->img);
         evas_object_del(sd->img);
 
         /* Edje object instead */
         sd->img = edje_object_add(evas_object_evas_get(obj));
+        _recover_status(obj, sd);
+        sd->edje = EINA_TRUE;
         evas_object_smart_member_add(sd->img, obj);
-        if (sd->show) evas_object_show(sd->img);
-        evas_object_clip_set(sd->img, pclip);
      }
 
    _async_cancel(sd);
 
-   sd->edje = EINA_TRUE;
    if (!sd->async_enable)
      {
         if (f)
@@ -572,9 +577,6 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
    evas_object_event_callback_add
       (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
 
-   /* starts as an Evas image. may switch to an Edje object */
-   priv->img = _img_new(obj);
-
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;
    priv->aspect_fixed = EINA_TRUE;
@@ -586,8 +588,6 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
    priv->align_y = 0.5;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   _efl_ui_image_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -596,6 +596,7 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    if (elm_widget_is_legacy(obj))
      efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
                             _on_size_hints_changed, sd);
+   ecore_job_del(sd->sizing_job);
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
    _prev_img_del(sd);
@@ -657,7 +658,7 @@ _efl_ui_image_show(Eo *obj, Efl_Ui_Image_Data *sd)
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_TRUE);
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOADING) return;
-   efl_gfx_entity_visible_set(sd->img, EINA_TRUE);
+   if (sd->img) efl_gfx_entity_visible_set(sd->img, EINA_TRUE);
    _prev_img_del(sd);
 }
 
@@ -666,7 +667,7 @@ _efl_ui_image_hide(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    sd->show = EINA_FALSE;
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), EINA_FALSE);
-   efl_gfx_entity_visible_set(sd->img, EINA_FALSE);
+   if (sd->img) efl_gfx_entity_visible_set(sd->img, EINA_FALSE);
    _prev_img_del(sd);
 }
 
@@ -698,7 +699,7 @@ _efl_ui_image_efl_gfx_color_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int
    efl_gfx_color_set(efl_super(obj, MY_CLASS), r, g, b, a);
 
    evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
-   evas_object_color_set(sd->img, r, g, b, a);
+   if (sd->img) evas_object_color_set(sd->img, r, g, b, a);
    if (sd->prev_img) evas_object_color_set(sd->prev_img, r, g, b, a);
 }
 
@@ -710,20 +711,20 @@ _efl_ui_image_efl_canvas_object_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Ob
 
    efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
 
-   evas_object_clip_set(sd->img, clip);
+   if (sd->img) evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_image_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _efl_ui_image_sizing_eval(obj);
 
@@ -737,31 +738,23 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-// TODO: remove this function after using the widget's scale value instead of image's scale value, 
-
 static void
-_efl_ui_image_internal_scale_set(Evas_Object *obj, Efl_Ui_Image_Data *sd, double scale)
+_sizing_eval_cb(void *data)
 {
-   sd->scale = scale;
-   _efl_ui_image_internal_sizing_eval(obj, sd);
-}
-
-void
-_efl_ui_image_sizing_eval(Evas_Object *obj)
-{
+   Evas_Object *obj = data;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Eina_Size2D sz;
    double ts;
 
    EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
 
-   _efl_ui_image_internal_sizing_eval(obj, sd);
-   efl_gfx_image_smooth_scale_set(obj, sd->smooth);
+   sd->sizing_job = NULL;
 
+   // TODO: remove this function after using the widget's scale value instead of image's scale value,
    if (sd->no_scale)
-     _efl_ui_image_internal_scale_set(obj, sd, 1.0);
+     sd->scale = 1.0;
    else
-     _efl_ui_image_internal_scale_set(obj, sd, efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
+     sd->scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get();
 
    ts = sd->scale;
    sd->scale = 1.0;
@@ -801,6 +794,28 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
 
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+
+   //Retained way. Nothing does, if either way hasn't been changed.
+   if (!sd->edje)
+     {
+        efl_orientation_set(sd->img, sd->orient);
+        efl_orientation_flip_set(sd->img, sd->flip);
+     }
+
+   if (sd->img)
+   {
+      _image_sizing_eval(sd, sd->img);
+      if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
+   }
+}
+
+void
+_efl_ui_image_sizing_eval(Evas_Object *obj)
+{
+   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->sizing_job) ecore_job_del(sd->sizing_job);
+   sd->sizing_job = ecore_job_add(_sizing_eval_cb, obj);
 }
 
 static void
@@ -816,25 +831,17 @@ _efl_ui_image_load_size_set_internal(Evas_Object *obj, Efl_Ui_Image_Data *sd)
 static void
 _efl_ui_image_file_set_do(Evas_Object *obj)
 {
-   Evas_Object *pclip = NULL;
-
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
    ELM_SAFE_FREE(sd->prev_img, evas_object_del);
-   if (sd->img)
-     {
-        pclip = evas_object_clip_get(sd->img);
-        sd->prev_img = sd->img;
-     }
 
+   sd->prev_img = sd->img;
    sd->img = _img_new(obj);
-
-   evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
-
-   evas_object_clip_set(sd->img, pclip);
+   _recover_status(obj, sd);
 
    sd->edje = EINA_FALSE;
-
+   evas_object_image_smooth_scale_set(sd->img, sd->smooth);
+   evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
    _efl_ui_image_load_size_set_internal(obj, sd);
 }
 
@@ -866,7 +873,7 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
@@ -972,7 +979,7 @@ _efl_ui_image_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
    if (!sd->remote.copier) return;
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.binbuf) eina_binbuf_free(sd->remote.binbuf);
@@ -1111,7 +1118,7 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
-   if (sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
      evas_object_image_preload(sd->img, EINA_TRUE);
 
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
@@ -1242,7 +1249,11 @@ _efl_ui_image_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image
 {
    int tw, th;
 
-   if (efl_isa(sd->img, EFL_CANVAS_LAYOUT_CLASS))
+   if (!sd->img)
+     {
+        tw = 0; th = 0;
+     }
+   else if (efl_isa(sd->img, EFL_CANVAS_LAYOUT_CLASS))
      edje_object_size_min_get(sd->img, &tw, &th);
    else
      evas_object_image_size_get(sd->img, &tw, &th);
@@ -1253,7 +1264,7 @@ _efl_ui_image_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image
 EOLIAN static Eina_Size2D
 _efl_ui_image_efl_gfx_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
-   if (sd->edje)
+   if (!sd->img || sd->edje)
      return EINA_SIZE2D(0, 0);
 
    return efl_gfx_image_size_get(sd->img);
@@ -1271,6 +1282,8 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_load_controller_load_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
 {
    sd->load_size = sz;
+
+   if (!sd->img) return;
    _efl_ui_image_load_size_set_internal(obj, sd);
 }
 
@@ -1297,8 +1310,6 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
    if (sd->edje) return;
    if (sd->orient == orient) return;
 
-   efl_orientation_set(sd->img, orient);
-
    sd->orient = orient;
    _efl_ui_image_sizing_eval(obj);
 }
@@ -1315,8 +1326,6 @@ _efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip 
 {
    if (sd->edje) return;
    if (sd->flip == flip) return;
-
-   efl_orientation_flip_set(sd->img, flip);
 
    sd->flip = flip;
    _efl_ui_image_sizing_eval(obj);
@@ -2121,6 +2130,9 @@ elm_image_object_get(const Evas_Object *obj)
 {
    EFL_UI_IMAGE_CHECK(obj) NULL;
    EFL_UI_IMAGE_DATA_GET(obj, sd);
+   if (!sd->img)
+     sd->img = _img_new((Evas_Object *)obj);
+
    return sd->img;
 }
 

@@ -1,0 +1,24 @@
+class Efl.Cubic_Bezier_Interpolator extends Efl.Object implements Efl.Interpolator
+{
+   [[Efl cubic_bezier interpolator class]]
+   data: Efl_Cubic_Bezier_Interpolator_Data;
+   methods {
+      @property factors {
+         [[Factors property]]
+         set {
+         }
+         get {
+         }
+         values {
+            factor1: double; [[First factor of the interpolation function.]]
+            factor2: double; [[Second factor of the interpolation function.]]
+            factor3: double; [[Third factor of the interpolation function.]]
+            factor4: double; [[Fourth factor of the interpolation function.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Interpolator.interpolate;
+   }
+}

@@ -1,9 +1,6 @@
 #include "evas_common_private.h" /* Also includes international specific stuff */
 #include "evas_private.h"
 #include "evas_blend_private.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 #include "region.h"
 
@@ -414,6 +411,7 @@ struct _Evas_Thread_Command_Ector_Surface
    Ector_Surface *ector;
    void *pixels;
    int x, y;
+   Eina_Bool clear;
 };
 
 // declare here as it is re-used
@@ -463,12 +461,7 @@ eng_context_dup(void *data EINA_UNUSED, void *context)
    if (ctx->clip.mask)
      {
         Image_Entry *im = ctx->clip.mask;
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_ref(im);
-        else
-#endif
-          evas_cache_image_ref(im);
+        evas_cache_image_ref(im);
      }
 
    return ctx;
@@ -492,14 +485,7 @@ eng_context_clip_image_unset(void *data EINA_UNUSED, void *context)
         if (ctx->clip.async)
           evas_unref_queue_image_put(ctx->clip.evas, ie);
         else
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(ie);
-             else
-#endif
-               evas_cache_image_drop(ie);
-          }
+          evas_cache_image_drop(ie);
         ctx->clip.mask = NULL;
      }
 }
@@ -529,14 +515,7 @@ eng_context_clip_image_set(void *data EINA_UNUSED, void *context, void *surface,
      {
         Image_Entry *ie = surface;
         if (!noinc)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_ref(ie);
-             else
-#endif
-               evas_cache_image_ref(ie);
-          }
+          evas_cache_image_ref(ie);
         RECTS_CLIP_TO_RECT(ctx->clip.x, ctx->clip.y, ctx->clip.w, ctx->clip.h,
                            x, y, ie->w, ie->h);
      }
@@ -553,14 +532,7 @@ eng_context_clip_image_get(void *data EINA_UNUSED, void *context, void **ie, int
 
         *ie = im;
         if (im)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_ref(im);
-             else
-#endif
-               evas_cache_image_ref(im);
-          }
+          evas_cache_image_ref(im);
      }
    if (x) *x = ctx->clip.mask_x;
    if (y) *y = ctx->clip.mask_y;
@@ -1040,10 +1012,6 @@ eng_image_can_region_get(void *data EINA_UNUSED, void *image)
 {
    Image_Entry *im;
    if (!image) return EINA_FALSE;
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     return EINA_FALSE;
-#endif
    im = image;
    return ((Evas_Image_Load_Func*) im->info.loader)->do_region;
 }
@@ -1172,11 +1140,6 @@ eng_image_native_set(void *data EINA_UNUSED, void *image, void *native)
           im->native.func.free(im);
      }
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(ie))
-     evas_cache2_image_close(ie);
-   else
-#endif
    evas_cache_image_drop(ie);
 
    if (ns->type == EVAS_NATIVE_SURFACE_WL_DMABUF)
@@ -1200,26 +1163,6 @@ static void *
 eng_image_mmap(void *data EINA_UNUSED, Eina_File *f, const char *key, int *error, Evas_Image_Load_Opts *lo)
 {
    *error = EVAS_LOAD_ERROR_NONE;
-#ifdef EVAS_CSERVE2
-   // FIXME: Need to pass fd to make that useful, so just get the filename for now.
-   if (evas_cserve2_use_get() && !eina_file_virtual(f))
-     {
-        Image_Entry *ie;
-        ie = evas_cache2_image_open(evas_common_image_cache2_get(),
-                                    eina_file_filename_get(f), key, lo, error);
-        if (ie)
-          {
-            *error = evas_cache2_image_open_wait(ie);
-            if ((*error != EVAS_LOAD_ERROR_NONE) && ie->animated.animated)
-              {
-                 evas_cache2_image_close(ie);
-                 goto use_local_cache;
-              }
-          }
-        return ie;
-     }
-use_local_cache:
-#endif
 
    return evas_common_load_image_from_mmap(f, key, lo, error);
 }
@@ -1227,40 +1170,18 @@ use_local_cache:
 static void *
 eng_image_new_from_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        Evas_Cache2 *cache = evas_common_image_cache2_get();
-        return evas_cache2_image_data(cache, w, h, image_data, alpha, cspace);
-     }
-#endif
    return evas_cache_image_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
 }
 
 static void *
 eng_image_new_from_copied_data(void *data EINA_UNUSED, int w, int h, DATA32 *image_data, int alpha, Evas_Colorspace cspace)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        Evas_Cache2 *cache = evas_common_image_cache2_get();
-        return evas_cache2_image_copied_data(cache, w, h, image_data, alpha,
-                                             cspace);
-     }
-#endif
    return evas_cache_image_copied_data(evas_common_image_cache_get(), w, h, image_data, alpha, cspace);
 }
 
 static void
 eng_image_free(void *data EINA_UNUSED, void *image)
 {
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
-     {
-        evas_cache2_image_close(image);
-        return;
-     }
-#endif
    evas_cache_image_drop(image);
 }
 
@@ -1268,13 +1189,6 @@ static void *
 eng_image_ref(void *data EINA_UNUSED, void *image)
 {
    if (!image) return NULL;
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(image))
-     {
-        evas_cache2_image_ref(image);
-        return image;
-     }
-#endif
    evas_cache_image_ref(image);
    return image;
 }
@@ -1294,10 +1208,6 @@ eng_image_size_set(void *data EINA_UNUSED, void *image, int w, int h)
 {
    Image_Entry *im = image;
    if (!im) return NULL;
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
-     return evas_cache2_image_size_set(im, w, h);
-#endif
    return evas_cache_image_size_set(im, w, h);
 }
 
@@ -1306,10 +1216,6 @@ eng_image_dirty_region(void *data EINA_UNUSED, void *image, int x, int y, int w,
 {
    Image_Entry *im = image;
    if (!im) return NULL;
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
-     return evas_cache2_image_dirty(im, x, y, w, h);
-#endif
    return evas_cache_image_dirty(im, x, y, w, h);
 }
 
@@ -1329,24 +1235,6 @@ eng_image_data_get(void *data EINA_UNUSED, void *image, int to_write, DATA32 **i
         return NULL;
      }
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     {
-        error = evas_cache2_image_load_data(&im->cache_entry);
-        if (err) *err = error;
-
-        if (to_write)
-          {
-             im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
-             if (!im)
-               {
-                  if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                  return NULL;
-               }
-          }
-     }
-   else
-#endif
    error = evas_cache_image_load_data(&im->cache_entry);
 
    switch (im->cache_entry.space)
@@ -1425,14 +1313,6 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 	     im2 = eng_image_new_from_data(data, w, h, image_data,
 					   eng_image_alpha_get(data, image),
 					   eng_image_colorspace_get(data, image));
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               {
-                  evas_cache2_image_close(&im->cache_entry);
-                  im = im2;
-                  break;
-               }
-#endif
              evas_cache_image_drop(&im->cache_entry);
 	     im = im2;
 	  }
@@ -2181,12 +2061,7 @@ eng_image_orient_set(void *data EINA_UNUSED, void *image, Evas_Image_Orient orie
                                          EVAS_COLORSPACE_ARGB8888);
    if (!im_new) return im;
 
-#if EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(im))
-     evas_cache2_image_load_data(im);
-   else
-#endif
-     evas_cache_image_load_data(im);
+   evas_cache_image_load_data(im);
 
    pixels_in = evas_cache_image_pixels(im);
    pixels_out = evas_cache_image_pixels(im_new);
@@ -2336,32 +2211,17 @@ eng_image_data_preload_request(void *data EINA_UNUSED, void *image, const Eo *ta
    RGBA_Image *im = image;
    if (!im) return;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     {
-        evas_cache2_image_preload_data(&im->cache_entry, target);
-        return;
-     }
-#endif
-   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+   evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL);
 }
 
 static void
-eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_cancel(void *data EINA_UNUSED, void *image, const Eo *target, Eina_Bool force)
 {
    RGBA_Image *im = image;
 
    if (!im) return;
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     {
-        evas_cache2_image_preload_cancel(&im->cache_entry, target);
-        return;
-     }
-#endif
-
-   evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_cache_image_preload_cancel(&im->cache_entry, target, force);
 }
 
 static void
@@ -2500,12 +2360,7 @@ eng_image_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, 
           {
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
                {
-#if EVAS_CSERVE2
-                  if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-                    evas_cache2_image_load_data(&im->cache_entry);
-                  else
-#endif
-                    evas_cache_image_load_data(&im->cache_entry);
+                  evas_cache_image_load_data(&im->cache_entry);
                   if (!im->cache_entry.flags.loaded)
                     {
                        if (im->native.func.unbind)
@@ -2527,10 +2382,6 @@ eng_image_draw(void *engine EINA_UNUSED, void *data EINA_UNUSED, void *context, 
 #ifdef BUILD_PIPE_RENDER
    else if ((cpunum > 1))
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_load_data(&im->cache_entry);
-#endif
         evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im),
                                                   surface, context, smooth,
                                                   src_x, src_y, src_w, src_h,
@@ -2853,12 +2704,7 @@ eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *su
          */
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
           {
-#if EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_load_data(&im->cache_entry);
-             else
-#endif
-               evas_cache_image_load_data(&im->cache_entry);
+             evas_cache_image_load_data(&im->cache_entry);
 
              if (!im->cache_entry.flags.loaded) return EINA_FALSE;
           }
@@ -2884,17 +2730,7 @@ static void *
 eng_image_map_surface_new(void *data EINA_UNUSED, int w, int h, int alpha)
 {
    void *surface;
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        surface = evas_cache2_image_copied_data(evas_common_image_cache2_get(),
-                                                w, h, NULL, alpha,
-                                                EVAS_COLORSPACE_ARGB8888);
-        if (!surface) return NULL;
-        evas_cache2_image_pixels(surface);
-        return surface;
-     }
-#endif
+
    surface = evas_cache_image_copied_data(evas_common_image_cache_get(),
                                           w, h, NULL, alpha,
                                           EVAS_COLORSPACE_ARGB8888);
@@ -3103,12 +2939,7 @@ eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, i
        {
           DATA32 *pixel;
 
-#ifdef EVAS_CSERVE2
-          if (evas_cserve2_use_get())
-            evas_cache2_image_load_data(&im->cache_entry);
-          else
-#endif
-            evas_cache_image_load_data(&im->cache_entry);
+          evas_cache_image_load_data(&im->cache_entry);
 
           if (!im->cache_entry.flags.loaded)
             {
@@ -4407,7 +4238,7 @@ eng_ector_buffer_wrap(void *data, Evas *e EINA_UNUSED, void *engine_image)
 }
 
 static Ector_Buffer *
-eng_ector_buffer_new(void *data EINA_UNUSED, Evas *evas, int width, int height,
+eng_ector_buffer_new(void *data, Evas *evas, int width, int height,
                      Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags EINA_UNUSED)
 {
    Ector_Buffer *buf;
@@ -4463,8 +4294,8 @@ _draw_thread_ector_draw(void *data)
 
 static void
 eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
-                        void *context, void *remove EINA_UNUSED,
-                        Ector_Renderer *renderer, Eina_Array *clips, Eina_Bool do_async)
+                        void *context, Ector_Renderer *renderer,
+                        Eina_Array *clips, Eina_Bool do_async)
 {
    RGBA_Image *dst = surface;
    RGBA_Draw_Context *dc = context;
@@ -4570,7 +4401,7 @@ _draw_thread_ector_surface_set(void *data)
         x = ector_surface->x;
         y = ector_surface->y;
         // clear the surface before giving to ector
-        memset(pixels, 0, (w * h * 4));
+        if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
      }
 
    ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
@@ -4581,20 +4412,21 @@ _draw_thread_ector_surface_set(void *data)
 
 static void
 eng_ector_begin(void *engine EINA_UNUSED, void *surface,
-                void *context EINA_UNUSED, void *remove EINA_UNUSED,
-                Ector_Surface *ector, int x, int y, Eina_Bool do_async)
+                void *context EINA_UNUSED, Ector_Surface *ector,
+                int x, int y, Eina_Bool clear, Eina_Bool do_async)
 {
    if (do_async)
      {
         Evas_Thread_Command_Ector_Surface *nes;
 
         nes = eina_mempool_malloc(_mp_command_ector_surface, sizeof (Evas_Thread_Command_Ector_Surface));
-        if (!nes) return ;
+        if (!nes) return;
 
         nes->ector = ector;
         nes->pixels = surface;
         nes->x = x;
         nes->y = y;
+        nes->clear = clear;
 
         QCMD(_draw_thread_ector_surface_set, nes);
      }
@@ -4609,7 +4441,7 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
         w = sf->cache_entry.w;
         h = sf->cache_entry.h;
         // clear the surface before giving to ector
-        memset(pixels, 0, (w * h * 4));
+        if (clear) memset(pixels, 0, (w * h * 4));
 
         ector_buffer_pixels_set(ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
@@ -4617,9 +4449,11 @@ eng_ector_begin(void *engine EINA_UNUSED, void *surface,
 }
 
 static void
-eng_ector_end(void *engine EINA_UNUSED, void *surface EINA_UNUSED,
-              void *context EINA_UNUSED, void *remove EINA_UNUSED,
-              Ector_Surface *ector, Eina_Bool do_async)
+eng_ector_end(void *engine EINA_UNUSED,
+              void *surface EINA_UNUSED,
+              void *context EINA_UNUSED,
+              Ector_Surface *ector,
+              Eina_Bool do_async)
 {
    if (do_async)
      {
@@ -4915,7 +4749,7 @@ glue_sym_init(void)
    //------------------------------------------------//
    // Use eglGetProcAddress
 #define FINDSYM(dst, sym, typ) \
-   if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
+   if (!dst) dst = dlsym(gl_lib_handle, sym); \
    if (!dst)  \
      { \
         ERR("Symbol not found: %s", sym); \
@@ -4953,12 +4787,12 @@ gl_sym_init(void)
 
    //------------------------------------------------//
 #define FINDSYM(dst, sym, typ) do { \
-   if (!dst) dst = (typeof(dst))dlsym(gl_lib_handle, sym); \
-   if (!dst && _sym_OSMesaGetProcAddress) dst = (typeof(dst))_sym_OSMesaGetProcAddress(sym); \
+   if (!dst) dst = dlsym(gl_lib_handle, sym); \
+   if (!dst && _sym_OSMesaGetProcAddress) dst = (void *)_sym_OSMesaGetProcAddress(sym); \
    if (!dst) DBG("Symbol not found: %s", sym); \
    } while (0)
 #define FALLBAK(dst, typ) do { \
-   if (!dst) { dst = (typeof(dst))sym_missing; ok = EINA_FALSE; } \
+   if (!dst) { dst = (void *)sym_missing; ok = EINA_FALSE; } \
    } while (0)
 
    //------------------------------------------------------//

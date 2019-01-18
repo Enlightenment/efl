@@ -82,27 +82,6 @@ _elm_scroller_proxy_set(Evas_Object *obj, Elm_Scroller_Data *sd, Evas_Object *pr
    evas_object_image_source_set(proxy, content);
    evas_object_show(proxy);
 }
-//describe position of rect2 relative to rect1
-// 1 = top outside
-// 2 = left outside
-// 4 = bottom outside
-// 8 = right outside
-static char
-_intersect_direction(Eina_Rectangle *rect1, Eina_Rectangle *rect2)
-{
-   char ret = 0;
-
-   if (rect1->y > rect2->y)
-     ret |= 1;
-   if (rect1->x > rect2->x)
-     ret |= 2;
-   if (rect1->y + rect1->h < rect2->y + rect2->h)
-     ret |= 4;
-   if (rect1->x + rect1->w < rect2->x + rect2->w)
-     ret |= 8;
-
-   return ret;
-}
 
 static Eina_Bool
 _key_action_move(Evas_Object *obj, const char *params)
@@ -133,41 +112,72 @@ _key_action_move(Evas_Object *obj, const char *params)
    evas_object_geometry_get(sd->content, NULL, NULL, &max_x, &max_y);
 
    {
-      Efl_Ui_Focus_Object *focused;
+      Efl_Ui_Focus_Direction focus_dir = 0;
+      Efl_Ui_Focus_Object *focused, *next_target;
       Eina_Rectangle focused_geom, viewport;
+      Eina_Bool scroller_adjustment = EINA_FALSE;
+
+      if (!strcmp(dir, "prior"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_PREVIOUS;
+      else if (!strcmp(dir, "next"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_NEXT;
+      else if (!strcmp(dir, "left"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_LEFT;
+      else if (!strcmp(dir, "right"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_RIGHT;
+      else if (!strcmp(dir, "up"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_UP;
+      else if (!strcmp(dir, "down"))
+        focus_dir = EFL_UI_FOCUS_DIRECTION_DOWN;
+      else return EINA_FALSE;
 
       focused = efl_ui_focus_manager_focus_get(obj);
+      next_target = efl_ui_focus_manager_request_move(obj, focus_dir, focused, EINA_FALSE);
 
+      //logical movement is handled by focus directly
       if (focused &&
-          (!strcmp(dir, "next") ||
-           !strcmp(dir, "prior")))
+          (focus_dir == EFL_UI_FOCUS_DIRECTION_NEXT ||
+           focus_dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS))
         return EINA_FALSE;
 
-      if (focused &&
-          (!strcmp(dir, "left") ||
-           !strcmp(dir, "right") ||
-           !strcmp(dir, "up") ||
-           !strcmp(dir, "down")))
+      //check if a object that is focused is lapping out of the viewport
+      // if this is the case, and the object is lapping out of the viewport in
+      // the direction we want to move, then move the scroller
+      if (focused)
         {
-           char relative;
+           Eina_Rectangle_Outside relative;
 
            evas_object_geometry_get(focused,
                  &focused_geom.x, &focused_geom.y, &focused_geom.w, &focused_geom.h);
            elm_interface_scrollable_content_viewport_geometry_get(obj,
                  &viewport.x, &viewport.y, &viewport.w, &viewport.h);
 
-           relative = _intersect_direction(&viewport, &focused_geom);
+           relative = eina_rectangle_outside_position(&viewport, &focused_geom);
 
            //now precisly check if the direction is also lapping out
-           if ((!strcmp(dir, "up") && !(relative & 1)) ||
-               (!strcmp(dir, "left") && !(relative & 2)) ||
-               (!strcmp(dir, "down") && !(relative & 4)) ||
-               (!strcmp(dir, "right") && !(relative & 8)))
+           if ((focus_dir == EFL_UI_FOCUS_DIRECTION_UP && (relative & EINA_RECTANGLE_OUTSIDE_TOP)) ||
+               (focus_dir == EFL_UI_FOCUS_DIRECTION_LEFT && (relative & EINA_RECTANGLE_OUTSIDE_LEFT)) ||
+               (focus_dir == EFL_UI_FOCUS_DIRECTION_DOWN && (relative & EINA_RECTANGLE_OUTSIDE_BOTTOM)) ||
+               (focus_dir == EFL_UI_FOCUS_DIRECTION_RIGHT && (relative & EINA_RECTANGLE_OUTSIDE_RIGHT)))
              {
-                //focus will handle that
-                return EINA_FALSE;
+                scroller_adjustment = EINA_TRUE;
              }
         }
+        //check if there is a next target in the direction where we want to move
+        //if not, and the scroller is not at its max in that relation,
+        //then move the scroller instead of the focus
+        if (!next_target)
+          {
+             if ((focus_dir == EFL_UI_FOCUS_DIRECTION_UP && (y != 0)) ||
+                 (focus_dir == EFL_UI_FOCUS_DIRECTION_LEFT && (x != 0)) ||
+                 (focus_dir == EFL_UI_FOCUS_DIRECTION_DOWN && (y != max_y)) ||
+                 (focus_dir == EFL_UI_FOCUS_DIRECTION_RIGHT && (x != max_x)))
+               {
+                  scroller_adjustment = EINA_TRUE;
+               }
+          }
+        if (!scroller_adjustment)
+          return EINA_FALSE;
    }
 
    elm_interface_scrollable_paging_get(obj, NULL, NULL, &pagesize_h, &pagesize_v);
@@ -388,12 +398,12 @@ _mirrored_set(Evas_Object *obj,
    efl_ui_mirrored_set(obj, mirrored);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_scroller_efl_ui_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -888,7 +898,9 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED, _focused_element, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focused_element, obj);
+   legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
+
    return obj;
 }
 

@@ -75,6 +75,8 @@ struct _Outbuf
       unsigned char msaa;
 #ifndef GL_GLES
       Eina_Bool     loose_binding : 1;
+#else
+      Eina_Bool     no_multi_buffer_native : 1;
 #endif
    } detected;
 
@@ -155,7 +157,7 @@ extern unsigned int   (*glsym_eglSetDamageRegionKHR)  (EGLDisplay a, EGLSurface 
 # define GLX_BACK_BUFFER_AGE_EXT 0x20f4
 #endif
 
-extern int      (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d);
+extern void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d);
 extern void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c);
 extern int      (*glsym_glXSwapIntervalSGI) (int a);
 extern int      (*glsym_glXGetVideoSync)    (unsigned int *a);

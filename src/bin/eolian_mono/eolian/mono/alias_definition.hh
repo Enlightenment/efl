@@ -33,7 +33,7 @@ struct alias_definition_generator
      if (!name_helpers::open_namespaces(sink, alias.namespaces, context))
        return false;
 
-     std::string const& alias_name = alias.eolian_name;
+     std::string const alias_name = utils::remove_all(alias.eolian_name, '_');
      if (!as_generator(
                  "public struct " << alias_name << " {\n"
                  << scope_tab << "private " << type << " payload;\n"

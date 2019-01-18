@@ -149,6 +149,7 @@ elementary/themes/edc/elm/textpath.edc \
 elementary/themes/edc/elm/thumb.edc \
 elementary/themes/edc/elm/toolbar.edc \
 elementary/themes/edc/elm/tooltip.edc \
+elementary/themes/edc/elm/uiclock.edc \
 elementary/themes/edc/elm/video.edc \
 elementary/themes/edc/elm/win.edc \
 \
@@ -1021,9 +1022,11 @@ elementary/themes/edc/efl/uiclock.edc \
 elementary/themes/edc/efl/cursor.edc \
 elementary/themes/edc/efl/focus.edc \
 elementary/themes/edc/efl/frame.edc \
+elementary/themes/edc/efl/grid.edc \
 elementary/themes/edc/efl/navigation_bar.edc \
 elementary/themes/edc/efl/navigation_layout.edc \
 elementary/themes/edc/efl/tags.edc \
+elementary/themes/edc/efl/panel.edc \
 elementary/themes/edc/efl/nstate.edc \
 elementary/themes/edc/efl/panes.edc \
 elementary/themes/edc/efl/photocam.edc \

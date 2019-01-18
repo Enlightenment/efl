@@ -4,8 +4,6 @@
 
 #include <libgen.h>
 
-#define ELM_INTERNAL_API_ARGESFSDFEFC
-
 #include "elm_suite.h"
 #include "Elementary.h"
 

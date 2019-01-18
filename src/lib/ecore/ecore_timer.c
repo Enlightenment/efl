@@ -327,14 +327,12 @@ _efl_loop_timer_efl_object_event_freeze(Eo *obj, Efl_Loop_Timer_Data *timer)
    // Timer already frozen
    if (timer->frozen) return;
 
-   if (EINA_UNLIKELY(!timer->initialized))
-     {
-        ERR("Attempt freezing an non unfinalized timer.");
-        return;
-     }
-
    now = efl_loop_time_get(timer->loop);
-   timer->pending = timer->at - now;
+   /* only if timer interval has been set */
+   if (timer->initialized)
+     timer->pending = timer->at - now;
+   else
+     timer->pending = 0.0;
    timer->at = 0.0;
    timer->frozen = 1;
 
@@ -369,6 +367,7 @@ _efl_loop_timer_efl_object_event_thaw(Eo *obj, Efl_Loop_Timer_Data *timer)
    efl_event_thaw(efl_super(obj, MY_CLASS));
 
    if (!timer->frozen) return; // Timer not frozen
+   timer->frozen = 0;
 
    if (timer->loop_data)
      {
@@ -461,11 +460,20 @@ _efl_loop_timer_util_delay(Efl_Loop_Timer_Data *timer, double add)
 EOLIAN static void
 _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Object *parent)
 {
+   Eina_Inlist *first;
+
    efl_parent_set(efl_super(obj, EFL_LOOP_TIMER_CLASS), parent);
 
    if ((!pd->constructed) || (!pd->finalized)) return;
 
-   _efl_loop_timer_util_loop_clear(pd);
+   // Remove the timer from all possible pending list
+   first = eina_inlist_first(EINA_INLIST_GET(pd));
+   if (first == pd->loop_data->timers)
+     pd->loop_data->timers = eina_inlist_remove
+       (pd->loop_data->timers, EINA_INLIST_GET(pd));
+   else if (first == pd->loop_data->suspended)
+     pd->loop_data->suspended = eina_inlist_remove
+       (pd->loop_data->suspended, EINA_INLIST_GET(pd));
 
    if (efl_invalidated_get(obj)) return;
 
@@ -555,7 +563,7 @@ _efl_loop_timer_next_get(Eo *obj, Efl_Loop_Data *pd)
 static inline void
 _efl_loop_timer_reschedule(Efl_Loop_Timer_Data *timer, double when)
 {
-   if (timer->frozen) return;
+   if (timer->frozen || efl_invalidated_get(timer->object)) return;
 
    if (timer->loop_data &&
        (EINA_INLIST_GET(timer)->next || EINA_INLIST_GET(timer)->prev))
@@ -650,12 +658,14 @@ _efl_loop_timer_set(Efl_Loop_Timer_Data *timer, double at, double in)
 {
    if (!timer->loop_data) return;
    timer->loop_data->timers_added = 1;
-   timer->at = at;
    timer->in = in;
    timer->just_added = 1;
    timer->initialized = 1;
-   timer->frozen = 0;
-   timer->pending = 0.0;
+   if (!timer->frozen)
+     {
+        timer->at = at;
+        timer->pending = 0.0;
+     }
    _efl_loop_timer_util_instanciate(timer->loop_data, timer);
 }
 

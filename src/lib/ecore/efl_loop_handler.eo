@@ -1,4 +1,4 @@
-enum Efl.Loop.Handler.Flags {
+enum Efl.Loop_Handler_Flags {
    [[ A set of flags that can be OR'd together to indicate which are
    desired ]]
    none = 0, [[ No I/O is desired (generally useless) ]]
@@ -7,7 +7,7 @@ enum Efl.Loop.Handler.Flags {
    error = 4, [[ Error channel input is desired ]]
 }
 
-class Efl.Loop_Handler (Efl.Object)
+class Efl.Loop_Handler extends Efl.Object
 {
    [[ An object that describes an low-level source of I/O to listen to
    for available data to be read or written, depending on the OS and data
@@ -20,11 +20,11 @@ class Efl.Loop_Handler (Efl.Object)
          set { }
          get { }
          values {
-            flags: Efl.Loop.Handler.Flags; [[ The flags that indicate what kind of I/O should be listened for like read, write or error channels. ]]
+            flags: Efl.Loop_Handler_Flags; [[ The flags that indicate what kind of I/O should be listened for like read, write or error channels. ]]
          }
       }
       @property fd {
-         [[ Controls a file desciptor to listen to for I/O, which points
+         [[ Controls a file descriptor to listen to for I/O, which points
          to a data pipe such as a device, socket or pipe etc. ]]
          set { }
          get { }

@@ -15,7 +15,7 @@ class TestMain
 
     static int Main(string[] args)
     {
-        efl.All.Init();
+        Efl.All.Init();
 
         bool pass = true;
 

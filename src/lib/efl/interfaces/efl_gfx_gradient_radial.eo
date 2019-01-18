@@ -1,4 +1,4 @@
-interface Efl.Gfx.Gradient_Radial (Efl.Gfx.Gradient)
+interface Efl.Gfx.Gradient_Radial extends Efl.Gfx.Gradient
 {
    [[Efl graphics gradient radial interface]]
    methods {

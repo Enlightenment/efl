@@ -39,7 +39,7 @@ struct _Elm_Calendar_Data
    double                   interval, first_interval;
    int                      spin_speed;
    int                      today_it, selected_it, focused_it;
-   Ecore_Timer             *spin_month, *spin_year, *update_timer;
+   Ecore_Timer             *update_timer, *spin_timer;
    Elm_Calendar_Format_Cb   format_func;
    const char              *weekdays[ELM_DAY_LAST];
    struct tm                current_time, selected_time, shown_time, date_min, date_max;
@@ -62,8 +62,7 @@ struct _Elm_Calendar_Data
    Eina_Bool                double_spinners : 1;
    Eina_Bool                filling : 1;
    Eina_Bool                weekdays_set : 1;
-   Eina_Bool                month_repeated : 1;
-   Eina_Bool                year_repeated : 1;
+   Eina_Bool                month_btn_clicked : 1;
 };
 
 struct _Elm_Calendar_Mark

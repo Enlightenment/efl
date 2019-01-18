@@ -71,7 +71,7 @@
  *
  * A queue of pointers to free in the future. You may create custom free
  * queues of your own to defer freeing, use the main free queue where the
- * mainloop will free thnigs as it iterates, or eina will free everything
+ * mainloop will free things as it iterates, or eina will free everything
  * on shut down.
  * 
  */
@@ -90,7 +90,7 @@ typedef enum _Eina_FreeQ_Type
     * safety purposes only.
     *
     * As this type of free queue is thread-safe, the free functions used must
-    * also be thread-safe (eg. libc free()).
+    * also be thread-safe (e.g.. libc free()).
     *
     * @since 1.19
     */
@@ -132,7 +132,7 @@ eina_freeq_new(Eina_FreeQ_Type type);
 /**
  * @brief Free a free queue and anything that is queued in it.
  *
- * @param fq The free queue to free and clear.
+ * @param[in,out] fq The free queue to free and clear.
  * 
  * @since 1.19
  */
@@ -142,7 +142,7 @@ eina_freeq_free(Eina_FreeQ *fq);
 /**
  * @brief Query the type of a free queue.
  *
- * @param fq The free queue to inspect.
+ * @param[in] fq The free queue to inspect.
  *
  * @since 1.19
  */
@@ -162,9 +162,9 @@ eina_freeq_main_get(void);
 /**
  * @brief Set the maximum number of free pointers this queue is allowed
  *
- * @param fq The free queue to alter
- * @param count The maximum number of items allowed, negative values mean
- *              no limit
+ * @param[in,out] fq The free queue to alter
+ * @param[in] count The maximum number of items allowed, negative values
+ *            mean no limit
  *
  * This will alter the maximum number of pointers allowed in the given free
  * queue. If more items are added to the free queue than are allowed,
@@ -173,7 +173,7 @@ eina_freeq_main_get(void);
  * called.
  *
  * @note Setting a maximum count on a postponed free queue leads to undefined
- *       behaviour.
+ *       behavior.
  *
  * @since 1.19
  */
@@ -183,7 +183,7 @@ eina_freeq_count_max_set(Eina_FreeQ *fq, int count);
 /**
  * @brief Get the maximum number of free pointers this queue is allowed
  *
- * @param fq The free queue to query
+ * @param[in] fq The free queue to query
  * @return The maximum number of free items allowed or -1 for infinity
  * 
  * @since 1.19
@@ -194,8 +194,8 @@ eina_freeq_count_max_get(Eina_FreeQ *fq);
 /**
  * @brief Set the maximum amount of memory allowed
  *
- * @param fq The free queue to alter
- * @param mem The maximum memory in bytes
+ * @param[in,out] fq The free queue to alter
+ * @param[in] mem The maximum memory in bytes
  *
  * This will alter the maximum amount of memory allowed for pointers stored
  * in the free queue. The size used is the size give, so items given that
@@ -206,7 +206,7 @@ eina_freeq_count_max_get(Eina_FreeQ *fq);
  * memory used by items in the queue is below or at the limit.
  *
  * @note Setting a memory limit on a postponed free queue leads to undefined
- *       behaviour.
+ *       behavior.
  * 
  * @since 1.19
  */
@@ -216,7 +216,7 @@ eina_freeq_mem_max_set(Eina_FreeQ *fq, size_t mem);
 /**
  * @brief Get the maximum amount of memory allowed
  *
- * @param fq The free queue to query
+ * @param[in] fq The free queue to query
  * @return The maximum amount of memory in bytes
  *
  * @since 1.19
@@ -227,7 +227,7 @@ eina_freeq_mem_max_get(Eina_FreeQ *fq);
 /**
  * @brief Clear out all queued items to be freed by freeing them
  *
- * @param fq The free queue to clear
+ * @param[in,out] fq The free queue to clear
  *
  * This will free and thus remove all queued items from the free queue when
  * this function is called. When it returns the free queue should be
@@ -241,8 +241,8 @@ eina_freeq_clear(Eina_FreeQ *fq);
 /**
  * @brief Reduce the number of items in the free queue by up to @p count
  *
- * @param fq The free queue to reduce in item count
- * @param count The number of items to try and free
+ * @param[in,out] fq The free queue to reduce in item count
+ * @param[in] count The number of items to try and free
  *
  * This will attempt to free up to @p count items from the given free queue
  * and thus reduce the amount of memory it is holding on to. This function
@@ -257,7 +257,7 @@ eina_freeq_reduce(Eina_FreeQ *fq, int count);
 /**
  * @brief Return if there are any items pending a free in the free queue
  *
- * @param fq The free queue to query
+ * @param[in] fq The free queue to query
  * @raturn EINA_TRUE if there are items to free, EINA_FALSE otherwise
  * 
  * @since 1.19
@@ -268,10 +268,10 @@ eina_freeq_ptr_pending(Eina_FreeQ *fq);
 /**
  * @brief Add a pointer with free function and size to the free queue
  *
- * @param fq The free queue to add the pointer to
- * @param ptr The pointer to free
- * @param free_func The function used to free the pointer with
- * @param size The size of the data the pointer points to
+ * @param[in,out] fq The free queue to add the pointer to
+ * @param[in] ptr The pointer to free
+ * @param[in] free_func The function used to free the pointer with
+ * @param[in] size The size of the data the pointer points to
  *
  * This adds the given @p ptr pointer to the queue to be freed later on.
  * The function @p free_func will be used, or if this is NULL, it is assumed
@@ -312,9 +312,9 @@ eina_freeq_ptr_add(Eina_FreeQ *fq, void *ptr, void (*free_func) (void *ptr), siz
 /**
  * @brief Add a pointer to the main free queue
  *
- * @param ptr The pointer to free
- * @param free_func The function used to free the pointer with
- * @param size The size of the data the pointer points to
+ * @param[in] ptr The pointer to free
+ * @param[in] free_func The function used to free the pointer with
+ * @param[in] size The size of the data the pointer points to
  * 
  * This is the same as eina_freeq_ptr_add() but the main free queue is
  * fetched by eina_freeq_main_get().
@@ -330,7 +330,7 @@ eina_freeq_ptr_main_add(void *ptr, void (*free_func) (void *ptr), size_t size)
 /**
  * @brief Convenience macro for well known structures and types
  *
- * @param ptr The pointer to free
+ * @param[in] ptr The pointer to free
  * 
  * This is the same as eina_freeq_ptr_main_add() but the free function is
  * assumed to be the libc free() function, and size is provided by
@@ -344,7 +344,7 @@ eina_freeq_ptr_main_add(void *ptr, void (*free_func) (void *ptr), size_t size)
 /**
  * @brief Convenience macro for well known structures and types
  *
- * @param ptr The pointer to free
+ * @param[in] ptr The pointer to free
  * 
  * This is the same as eina_freeq_ptr_main_add() but the free function is
  * assumed to be the libc free() function, and size is provided by

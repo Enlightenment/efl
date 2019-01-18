@@ -284,8 +284,8 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
              if (indent > 0)
                elm_code_line_text_insert(line, 0, indent_text, indent);
 
-             elm_obj_code_widget_cursor_position_set(widget, row, indent + 1);
-             elm_obj_code_widget_cursor_position_get(widget, &row, &col);
+             col = elm_code_widget_line_text_column_width_to_position(widget, line, indent + 1);
+             elm_obj_code_widget_cursor_position_set(widget, row, col);
           }
      }
 

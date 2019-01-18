@@ -1,4 +1,4 @@
-class Ector.Renderer.Software.Shape (Ector.Renderer.Software, Ector.Renderer.Shape)
+class Ector.Renderer.Software.Shape extends Ector.Renderer.Software implements Ector.Renderer.Shape
 {
    [[Ector software renderer shape class]]
    eo_prefix: ector_renderer_software_shape;
@@ -6,8 +6,9 @@ class Ector.Renderer.Software.Shape (Ector.Renderer.Software, Ector.Renderer.Sha
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.Software.op_fill;
+      Ector.Renderer.mask { set; }
       Ector.Renderer.crc { get; }
-      Efl.Gfx.Path.path { set; }
+      Efl.Gfx.Path.commit;
       Efl.Object.constructor;
       Efl.Object.destructor;
    }

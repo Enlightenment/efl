@@ -13,11 +13,11 @@ public static class TestParts
 {
     public static void basic_part_test()
     {
-        test.ITesting t = new test.Testing();
+        var t = new Dummy.TestObject();
         do_part_test(t);
     }
 
-    private class Child : test.TestingInherit
+    private class Child : Dummy.TestObject
     {
         public Child() : base(null) {}
     }
@@ -27,14 +27,14 @@ public static class TestParts
         do_part_test(t);
     }
 
-    private static void do_part_test(test.ITesting t)
+    private static void do_part_test(Dummy.TestObject t)
     {
-        var p1 = t.Part1;
-        var p2 = t.Part2;
-        Test.Assert(p1 is test.Testing);
-        Test.AssertEquals("part1", p1.GetName());
-        Test.Assert(p2 is test.Testing);
-        Test.AssertEquals("part2", p2.GetName());
+        var p1 = t.PartOne;
+        var p2 = t.PartTwo;
+        Test.Assert(p1 is Dummy.TestObject);
+        Test.AssertEquals("part_one", p1.GetName());
+        Test.Assert(p2 is Dummy.TestObject);
+        Test.AssertEquals("part_two", p2.GetName());
     }
 }
 

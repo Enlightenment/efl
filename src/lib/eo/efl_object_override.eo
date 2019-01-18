@@ -1,4 +1,4 @@
-abstract Efl.Object_Override ()
+abstract Efl.Object_Override
 {
    [[A special class to pass to #eo_super() when using #eo_override()
 

@@ -32,10 +32,10 @@ EFL_START_TEST(efl_ui_test_init)
    _efl_startup_time = ecore_time_unix_get();
    _EFL_APP_VERSION_SET();
    fail_if(!ecore_init());
-   efl_event_callback_add(efl_app_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL);
+   efl_event_callback_add(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL);
    fail_if(!ecore_init_ex(argc, argv));
    __EFL_MAIN_CONSTRUCTOR;
-   ret__ = efl_loop_begin(efl_app_get());
+   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
    real__ = efl_loop_exit_code_process(ret__);
    __EFL_MAIN_DESTRUCTOR;
    ecore_shutdown_ex();

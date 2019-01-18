@@ -1,0 +1,20 @@
+interface Dummy.Test_Iface
+{
+   methods {
+      emit_test_conflicted {
+      }
+      emit_nonconflicted {
+      }
+      @property iface_prop {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+   }
+   events {
+      conflicted: void;
+      nonconflicted: void;
+   }
+}

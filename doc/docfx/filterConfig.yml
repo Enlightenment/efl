@@ -1,0 +1,7 @@
+apiRules:
+- include:
+    uidRegex: ^Efl
+- include:
+    uidRegex: ^Eina
+- exclude:
+    uidRegex: ^.*

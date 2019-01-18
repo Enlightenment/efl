@@ -1,8 +1,7 @@
-class Efl.Ui.Scroller (Efl.Ui.Layout.Object,
+class Efl.Ui.Scroller extends Efl.Ui.Layout implements
                        Efl.Ui.Scrollable_Interactive,
                        Efl.Ui.Scrollbar,
-                       Efl.Content,
-                       Efl.Ui.Drag)
+                       Efl.Content
 {
    [[Efl ui scroller class]]
    implements {
@@ -11,13 +10,6 @@ class Efl.Ui.Scroller (Efl.Ui.Layout.Object,
       Efl.Object.destructor;
       Efl.Content.content { set; }
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Scrollable_Interactive.content_size{ get; }
-      Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }
-      Efl.Ui.Scrollable_Interactive.bounce_enabled { set; get; }
-      Efl.Ui.Scrollable_Interactive.scroll_freeze { get; set; }
-      Efl.Ui.Scrollable_Interactive.scroll_hold { get; set; }
       Efl.Ui.Scrollable_Interactive.match_content { set; }
-      Efl.Ui.Scrollbar.bar_mode { get; set; }
-      Efl.Ui.Scrollable_Interactive.scroll;
    }
 }

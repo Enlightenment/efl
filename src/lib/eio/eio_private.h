@@ -545,10 +545,20 @@ Eio_File * _eio_file_xattr(const char *path,
 void _eio_string_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 void _eio_direct_notify(void *data, Ecore_Thread *thread EINA_UNUSED, void *msg_data);
 
-static inline void
-_efl_io_manager_future_cancel(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+static inline Eina_Value
+_efl_io_manager_future_cancel(Eo *o EINA_UNUSED, void *data, Eina_Error error)
 {
-   eio_file_cancel(data);
+   if (error == ECANCELED) eio_file_cancel(data);
+
+   return eina_value_error_init(error);
+}
+
+static inline Eina_Future *
+_efl_io_manager_future(const Eo *o, Eina_Future *f, Eio_File *h)
+{
+   return efl_future_then(o, f,
+                          .error = _efl_io_manager_future_cancel,
+                          .data = h);
 }
 
 EINA_VALUE_STRUCT_DESC_DEFINE(_eina_stat_desc,

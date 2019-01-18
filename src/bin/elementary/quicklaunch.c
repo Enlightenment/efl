@@ -132,7 +132,9 @@ handle_run(int fd, unsigned long bytes)
      }
 
    argv = alloca(argc * sizeof(char *));
+#ifdef HAVE_ENVIRON
    if (envnum > 0) envir = alloca(envnum * sizeof(char *));
+#endif
    off = ((unsigned long *)(buf))[2 + argc + envnum] - sizeof(unsigned long);
    cwd = (char *)(buf + off);
 
@@ -182,8 +184,8 @@ main(int argc, char **argv)
    char buf[PATH_MAX];
    struct sigaction action;
    const char *domain;
-   char *rundir;
    int ret = 0;
+   size_t len;
 
    if (!eina_init())
      {
@@ -204,9 +206,7 @@ main(int argc, char **argv)
         if (!domain) domain = getenv("DISPLAY");
         if (!domain) domain = "unknown";
      }
-   rundir = getenv("XDG_RUNTIME_DIR");
-   if (!rundir) rundir = "/tmp";
-   snprintf(buf, sizeof(buf), "%s/elm-ql-%i", rundir, getuid());
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/elm-ql-%i", getuid());
    if (stat(buf, &st) < 0)
      {
         ret = mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -216,7 +216,7 @@ main(int argc, char **argv)
              exit(-1);
           }
      }
-   snprintf(buf, sizeof(buf), "%s/elm-ql-%i/%s", rundir, getuid(), domain);
+   eina_vpath_resolve_snprintf(buf, sizeof(buf), "(:usr.run:)/elm-ql-%i/%s", getuid(), domain);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
@@ -240,7 +240,14 @@ main(int argc, char **argv)
         exit(-1);
      }
    socket_unix.sun_family = AF_UNIX;
-   strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
+   len = strlen(buf);
+   if (len > sizeof(socket_unix.sun_path))
+     {
+        CRI("socket path '%s' is too long for buffer", buf);
+        exit(-1);
+     }
+   memcpy(socket_unix.sun_path, buf, len);
+   if (len < sizeof(socket_unix.sun_path)) socket_unix.sun_path[len] = 0;
    socket_unix_len = LENGTH_OF_SOCKADDR_UN(&socket_unix);
    if (bind(sock, (struct sockaddr *)&socket_unix, socket_unix_len) < 0)
      {
@@ -340,10 +347,10 @@ main(int argc, char **argv)
      {
         int fd;
         struct sockaddr_un client;
-        socklen_t len;
+        socklen_t slen;
 
-        len = sizeof(struct sockaddr_un);
-        fd = accept(sock, (struct sockaddr *)&client, &len);
+        slen = sizeof(struct sockaddr_un);
+        fd = accept(sock, (struct sockaddr *)&client, &slen);
 
         DBG("Accepting connection.");
         elm_quicklaunch_sub_init(argc, argv);

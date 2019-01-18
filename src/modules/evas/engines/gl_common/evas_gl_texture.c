@@ -1523,11 +1523,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         async->tex = tex;
         async->tex->references++;
         async->im = im;
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&async->im->cache_entry))
-          evas_cache2_image_ref(&async->im->cache_entry);
-        else
-#endif
         evas_cache_image_ref(&async->im->cache_entry);
         async->unpack_row_length = tex->gc->shared->info.unpack_row_length;
 
@@ -1536,11 +1531,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 
         // Failed to start asynchronous upload, likely due to preload not being supported by the backend
         async->tex->references--;
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&async->im->cache_entry))
-          evas_cache2_image_close(&async->im->cache_entry);
-        else
-#endif
         evas_cache_image_drop(&async->im->cache_entry);
         free(async);
 

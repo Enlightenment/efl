@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace eina {
+namespace Eina {
 
 public class Stringshare {
     [DllImport(efl.Libs.Eina)] public static extern System.IntPtr

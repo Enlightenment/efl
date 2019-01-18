@@ -287,13 +287,10 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *p
      {
         Gfx_Map_Point *ps = calloc(1, count * sizeof(Gfx_Map_Point));
         if (!ps) return m;
-        if (count == 4)
-          {
-             ps[0].u = 0.0; ps[0].v = 0.0;
-             ps[1].u = 1.0; ps[1].v = 0.0;
-             ps[2].u = 1.0; ps[2].v = 1.0;
-             ps[3].u = 0.0; ps[3].v = 1.0;
-          }
+        ps[0].u = 0.0; ps[0].v = 0.0;
+        ps[1].u = 1.0; ps[1].v = 0.0;
+        ps[2].u = 1.0; ps[2].v = 1.0;
+        ps[3].u = 0.0; ps[3].v = 1.0;
         MAPCOW_WRITE(pd, points, ps);
      }
 

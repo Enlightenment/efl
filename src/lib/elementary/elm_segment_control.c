@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
@@ -28,7 +28,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EOLIAN static void
-_elm_segment_control_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
+_elm_segment_control_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Segment_Control_Data *sd)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -36,7 +36,7 @@ _elm_segment_control_efl_ui_translatable_translation_update(Eo *obj EINA_UNUSED,
    EINA_LIST_FOREACH(sd->items, l, it)
      elm_wdg_item_translate(it);
 
-   efl_ui_translatable_translation_update(efl_super(obj, MY_CLASS));
+   efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -98,8 +98,7 @@ _position_items(Elm_Segment_Control_Data *sd)
    EINA_LIST_FOREACH(sd->items, l, eo_item)
      {
         ELM_SEGMENT_ITEM_DATA_GET(eo_item, it);
-        evas_object_move(VIEW(it), pos, by);
-        evas_object_resize(VIEW(it), sd->item_width, bh);
+        evas_object_geometry_set(VIEW(it), pos, by, sd->item_width, bh);
         if (rtl) pos -= sd->item_width;
         else pos += sd->item_width;
      }
@@ -216,16 +215,16 @@ _update_list(Elm_Segment_Control_Data *sd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_List *l;
    Eina_Bool rtl;
    Elm_Object_Item *eo_item;
 
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    rtl = efl_ui_mirrored_get(obj);
 
@@ -597,6 +596,7 @@ _elm_segment_control_item_efl_object_constructor(Eo *obj, Elm_Segment_Control_It
    parent = efl_parent_get(obj);
 
    VIEW_SET(it, edje_object_add(evas_object_evas_get(parent)));
+   _efl_ui_focus_event_redirector(VIEW(it), obj);
    edje_object_scale_set(VIEW(it),efl_gfx_entity_scale_get(WIDGET(it)) *
                          elm_config_scale_get());
    evas_object_smart_member_add(VIEW(it), parent);
@@ -818,6 +818,12 @@ EOLIAN static Eina_Rect
 _elm_segment_control_item_efl_ui_focus_object_focus_geometry_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
 {
    return efl_gfx_entity_geometry_get(VIEW(pd));
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_elm_segment_control_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EINA_UNUSED, Elm_Segment_Control_Item_Data *pd)
+{
+   return WIDGET(pd);
 }
 
 /* Internal EO APIs and hidden overrides */

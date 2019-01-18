@@ -25,7 +25,7 @@
  * @until strbuf_reset
  * @until strbuf_reset
  *
- * Next we use the printf family of functions to create a formated string,
+ * Next we use the printf family of functions to create a formatted string,
  * add, remove and replace some content:
  * @until strbuf_string_get
  * @until strbuf_string_get
@@ -36,13 +36,15 @@
  *
  * @example eina_strbuf_01.c
  */
+
 /**
  * @addtogroup Eina_String_Buffer_Group String Buffer
  *
- * @brief These functions provide string buffers management.
+ * @brief These functions provide string buffer management.
  *
  * The String Buffer data type is designed to be a mutable string,
- * allowing to append, prepend or insert a string to a buffer.
+ * allowing the appending, prepending or insertion of a string to a
+ * buffer.
  *
  * For more information see @ref tutorial_strbuf "this example".
  */
@@ -68,10 +70,10 @@ typedef struct _Eina_Strbuf Eina_Strbuf;
 /**
  * @brief Creates a new string buffer.
  *
- * @return Newly allocated string buffer instance.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_strbuf_free().
+ * This function creates a new string buffer. To free the resources, use
+ * eina_strbuf_free().
  *
  * @see eina_strbuf_free()
  * @see eina_strbuf_append()
@@ -80,56 +82,59 @@ typedef struct _Eina_Strbuf Eina_Strbuf;
 EAPI Eina_Strbuf *eina_strbuf_new(void) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates a new string buffer using the passed string. The passed
- * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
+ * @brief Creates a new string buffer using the passed string.
  *
- * @param str The string to manage
- * @return Newly allocated string buffer instance.
+ * @param[in] str The string to manage.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_strbuf_free().
+ * This function creates a new string buffer.  The passed string is used
+ * directly as the buffer, it's effectively the inverse of
+ * eina_strbuf_string_steal().  The passed string must be malloc'd.
+ * To free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_free()
  * @see eina_strbuf_append()
  * @see eina_strbuf_string_get()
+ *
  * @since 1.1.0
  */
 EAPI Eina_Strbuf *eina_strbuf_manage_new(char *str) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates a new string buffer using the passed string. The passed
- * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string must be malloc'd.
+ * @brief Creates a new string buffer using the passed string.
  *
- * @param str The string to manage
- * @param length The length of the string.
- * @return Newly allocated string buffer instance.
+ * @param[in] str The string to manage.
+ * @param[in] length The length of the string.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_strbuf_free().
+ * This function creates a new string buffer. The passed string is used
+ * directly as the buffer, it's effectively the inverse of
+ * eina_strbuf_string_steal(). The passed string must be malloc'd.  To
+ * free the resources, use eina_strbuf_free().
  *
  * @see eina_strbuf_manage_new()
+ *
  * @since 1.2.0
  */
 EAPI Eina_Strbuf *eina_strbuf_manage_new_length(char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates a new string buffer using the passed string. The passed
- * string is used directly as the buffer, it's somehow the opposite function of
- * @ref eina_strbuf_string_steal . The passed string is expected to be static or
- * otherwise on the stack rather than the malloc'd string required by
- * @ref eina_strbuf_manage_new_length .
+ * @brief Creates a new string buffer using the passed string.
  *
- * @param str The string to manage
- * @param length The length of the string.
- * @return Newly allocated string buffer instance.
+ * @param[in] str The string to manage.
+ * @param[in] length The length of the string.
+ * @return Newly allocated string buffer instance, or @c NULL on error.
  *
- * This function creates a new string buffer. On error, @c NULL is
- * returned. To free the resources, use eina_strbuf_free().
+ * This function creates a new string buffer. The passed string is used
+ * directly as the buffer, it's effectively the inverse of
+ * eina_strbuf_string_steal(). The passed string is expected to be static
+ * or otherwise on the stack rather than the malloc'd string required by
+ * eina_strbuf_manage_new_length().  To free the resources, use
+ * eina_strbuf_free().
  *
  * @see eina_strbuf_manage_new()
  * @see eina_strbuf_manage_new_length()
+ *
  * @since 1.9.0
  */
 EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_t length) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
@@ -137,7 +142,7 @@ EAPI Eina_Strbuf *eina_strbuf_manage_read_only_new_length(const char *str, size_
 /**
  * @brief Frees a string buffer.
  *
- * @param buf The string buffer to free.
+ * @param[in,out] buf The string buffer to free.
  *
  * This function frees the memory of @p buf. @p buf must have been
  * created by eina_strbuf_new().
@@ -147,25 +152,24 @@ EAPI void eina_strbuf_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 /**
  * @brief Resets a string buffer.
  *
- * @param buf The string buffer to reset.
+ * @param[in,out] buf The string buffer.
  *
- * This function reset @p buf: the buffer len is set to 0, and the
- * string is set to '\\0'. No memory is free'd.
+ * This function resets @p buf: the buffer len is set to 0, and the
+ * string data is set to '\\0'. No memory is freed.
  */
 EAPI void eina_strbuf_reset(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Appends a string to a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to append to.
- * @param str The string to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure such as if
+ * @p str could not be appended.
  *
  * This function appends @p str to @p buf. It computes the length of
  * @p str, so is slightly slower than eina_strbuf_append_length(). If
- * the length is known beforehand, consider using that variant. If
- * @p buf can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * the length is known beforehand, consider using that variant.
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
@@ -175,13 +179,11 @@ EAPI Eina_Bool eina_strbuf_append(Eina_Strbuf *buf, const char *str) EINA_ARG_NO
 /**
  * @brief Appends an escaped string to a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to append to.
- * @param str The string to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be appended.
  *
- * This function escapes and then appends the string @p str to @p buf. If @p str
- * can not be appended, #EINA_FALSE is returned, otherwise, #EINA_TRUE is
- * returned.
+ * This function escapes and then appends the string @p str to @p buf.
  */
 EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EINA_ARG_NONNULL(1, 2);
 
@@ -189,19 +191,17 @@ EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EIN
  * @brief Appends a string to a buffer, reallocating as necessary,
  * limited by the given length.
  *
- * @param buf The string buffer to append to.
- * @param str The string to append.
- * @param maxlen The maximum number of characters to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to append.
+ * @param[in] maxlen The maximum number of characters to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be appended.
  *
  * This function appends at most @p maxlen characters of @p str to
  * @p buf. It can't append more than the length of @p str. It
  * computes the length of @p str, so it is slightly slower than
  * eina_strbuf_append_length(). If the length is known beforehand,
  * consider using that variant (@p maxlen should then be checked so
- * that it is greater than the size of @p str). If @p str can not be
- * appended, #EINA_FALSE is returned, otherwise, #EINA_TRUE is
- * returned.
+ * that it is greater than the size of @p str).
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_length()
@@ -209,19 +209,18 @@ EAPI Eina_Bool eina_strbuf_append_escaped(Eina_Strbuf *buf, const char *str) EIN
 EAPI Eina_Bool eina_strbuf_append_n(Eina_Strbuf *buf, const char *str, size_t maxlen) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Appends a string of exact length to a buffer, reallocating as necessary.
+ * @brief Appends a string of exact length to a buffer, reallocating as
+ * necessary.
  *
- * @param buf The string buffer to append to.
- * @param str The string to append.
- * @param length The exact length to use.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to append.
+ * @param[in] length The exact length to use.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be appended.
  *
  * This function appends @p str to @p buf. @p str must be of size at
  * most @p length. It is slightly faster than eina_strbuf_append() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_stringshare. If @p buf
- * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * with strings of known size, such as eina_stringshare.
  *
  * @see eina_stringshare_length()
  * @see eina_strbuf_append()
@@ -232,12 +231,11 @@ EAPI Eina_Bool eina_strbuf_append_length(Eina_Strbuf *buf, const char *str, size
 /**
  * @brief Append a slice to a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to append to.
- * @param slice The slice to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] slice The slice to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p slice could not be appended.
  *
- * This function appends @p slice to @p buf. If @p buf can't append
- * it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function appends @p slice to @p buf.
  *
  * @since 1.19.0
  */
@@ -246,18 +244,18 @@ EAPI Eina_Bool eina_strbuf_append_slice(Eina_Strbuf *buf, const Eina_Slice slice
 /**
  * @brief Appends an Eina_Strbuf to a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to append to.
- * @param data The string buffer to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] data The string buffer to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p data could not be appended.
  *
  * This function appends @p data to @p buf. @p data must be allocated and
  * different from @c NULL. It is slightly faster than eina_strbuf_append() as
- * it does not compute the size of @p str. If @p buf can't append it,
- * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * it does not compute the size of @p str.
  *
  * @see eina_strbuf_append()
  * @see eina_strbuf_append_n()
  * @see eina_strbuf_append_length()
+ *
  * @since 1.9.0
  */
 EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *data) EINA_ARG_NONNULL(1, 2);
@@ -266,36 +264,37 @@ EAPI Eina_Bool eina_strbuf_append_buffer(Eina_Strbuf *buf, const Eina_Strbuf *da
  * @brief Appends a character to a string buffer, reallocating as
  * necessary.
  *
- * @param buf The string buffer to append to.
- * @param c The char to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] c The character to append.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p c could not be appended.
  *
- * This function inserts @p c to @p buf. If it can not insert it, #EINA_FALSE
- * is returned, otherwise #EINA_TRUE is returned.
+ * This function appends @p c to @p buf.
  */
 EAPI Eina_Bool eina_strbuf_append_char(Eina_Strbuf *buf, char c) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Appends a string to a buffer, reallocating as necessary.
+ * @brief Appends data elements to a buffer using printf-style formatting.
  *
- * @param buf The string buffer to append to.
- * @param fmt The string to append.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt A formatting string.
+ * @param[in] ... Variable list of data parameters to be appended.
+ * @return #EINA_TRUE on success, #EINA_FALSE if formatted string could
+ * not be appended.
  *
- * This function appends the string defined by the format @p fmt to @p buf. @p
- * fmt must be of a valid format for printf family of functions. If it can't
- * insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function appends the string defined by the format @p fmt to @p
+ * buf, reallocating as necessary. @p fmt must be of a valid format for
+ * the printf family of functions.
  *
  * @see eina_strbuf_append()
  */
 EAPI Eina_Bool eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 3);
 
 /**
- * @brief Appends a string to a buffer, reallocating as necessary.
+ * @brief Appends data elements to a string buffer using a va_list.
  *
- * @param buf The string buffer to append to.
- * @param fmt The string to append.
- * @param args The variable arguments.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt A formatting string.
+ * @param[in] args The variable arguments.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_strbuf_append_printf()
@@ -303,71 +302,66 @@ EAPI Eina_Bool eina_strbuf_append_printf(Eina_Strbuf *buf, const char *fmt, ...)
 EAPI Eina_Bool eina_strbuf_append_vprintf(Eina_Strbuf *buf, const char *fmt, va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Inserts a string to a buffer, reallocating as necessary.
+ * @brief Inserts a string into a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to insert.
- * @param str The string to insert.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to insert.
+ * @param[in] pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be inserted.
  *
- * This function inserts @p str to @p buf at position @p pos. It
+ * This function inserts @p str into @p buf at position @p pos. It
  * computes the length of @p str, so is slightly slower than
- * eina_strbuf_insert_length(). If  the length is known beforehand,
- * consider using that variant. If @p buf can't insert it, #EINA_FALSE
- * is returned, otherwise #EINA_TRUE is returned.
+ * eina_strbuf_insert_length(). If the length is known beforehand,
+ * consider using that variant.
  */
 EAPI Eina_Bool eina_strbuf_insert(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Inserts an escaped string to a buffer, reallocating as
+ * @brief Inserts an escaped string into a buffer, reallocating as
  * necessary.
  *
- * @param buf The string buffer to insert to.
- * @param str The string to insert.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to insert.
+ * @param[in] pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be inserted.
  *
- * This function escapes and inserts the string @p str to @p buf at
- * position @p pos. If @p buf can't insert @p str, #EINA_FALSE is
- * returned, otherwise #EINA_TRUE is returned.
+ * This function escapes and inserts the string @p str into @p buf at
+ * position @p pos.
  */
 EAPI Eina_Bool eina_strbuf_insert_escaped(Eina_Strbuf *buf, const char *str, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Inserts a string to a buffer, reallocating as necessary. Limited by maxlen.
+ * @brief Inserts a string of a maximum length into a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to insert to.
- * @param str The string to insert.
- * @param maxlen The maximum number of chars to insert.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to insert.
+ * @param[in] maxlen The maximum number of chars to insert.
+ * @param[in] pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be inserted.
  *
- * This function inserts @p str to @p buf at position @p pos, with at
- * most @p maxlen bytes. The number of inserted characters can not be
+ * This function inserts @p str into @p buf at position @p pos, with at
+ * most @p maxlen bytes. The number of inserted characters cannot be
  * greater than the length of @p str. It computes the length of
  * @p str, so is slightly slower than eina_strbuf_insert_length(). If the
  * length is known beforehand, consider using that variant (@p maxlen
  * should then be checked so that it is greater than the size of
- * @p str). If @p str can not be inserted, #EINA_FALSE is returned,
- * otherwise, #EINA_TRUE is returned.
+ * @p str).
  */
 EAPI Eina_Bool eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t maxlen, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Inserts a string of exact length to a buffer, reallocating as necessary.
+ * @brief Inserts a string of an exact length into a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to insert to.
- * @param str The string to insert.
- * @param length The exact length to use.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to insert.
+ * @param[in] length The exact length to use.
+ * @param[in] pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p string could not be inserted.
  *
- * This function inserts @p str to @p buf. @p str must be of size at
- * most @p length. It is slightly faster than eina_strbuf_insert() as
+ * This function inserts @p str into @p buf. @p str must be no longer
+ * than @p length. It is slightly faster than eina_strbuf_insert() as
  * it does not compute the size of @p str. It is useful when dealing
- * with strings of known size, such as eina_strngshare. If @p buf
- * can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * with strings of known size, such as eina_stringshare.
  *
  * @see eina_stringshare_length()
  * @see eina_strbuf_insert()
@@ -376,58 +370,54 @@ EAPI Eina_Bool eina_strbuf_insert_n(Eina_Strbuf *buf, const char *str, size_t ma
 EAPI Eina_Bool eina_strbuf_insert_length(Eina_Strbuf *buf, const char *str, size_t length, size_t pos) EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Insert a slice to a buffer, reallocating as necessary.
+ * @brief Insert a slice into a buffer, reallocating as necessary.
  *
- * @param buf The string buffer to insert to.
- * @param slice The slice to insert.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] slice The slice to insert.
+ * @param[in] pos The position to insert the string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p slice could not be inserted.
  *
- * This function inserts @p slice to @p buf at position @p pos. If @p
- * buf can't insert it, #EINA_FALSE is returned, otherwise #EINA_TRUE
- * is returned.
+ * This function inserts @p slice into @p buf at position @p pos.
  *
  * @since 1.19.0
  */
 EAPI Eina_Bool eina_strbuf_insert_slice(Eina_Strbuf *buf, const Eina_Slice slice, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Inserts a character to a string buffer, reallocating as
+ * @brief Inserts a character into a string buffer, reallocating as
  * necessary.
  *
- * @param buf The string buffer to insert to.
- * @param c The char to insert.
- * @param pos The position to insert the char.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] c The character to insert.
+ * @param[in] pos The position to insert the character.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p c could not be inserted.
  *
- * This function inserts @p c to @p buf at position @p pos. If @p buf
- * can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This function inserts @p c into @p buf at position @p pos.
  */
 EAPI Eina_Bool eina_strbuf_insert_char(Eina_Strbuf *buf, char c, size_t pos) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Inserts a string to a buffer, reallocating as necessary.
+ * @brief Inserts data elements into a buffer using printf-style formatting.
  *
- * @param buf The string buffer to insert.
- * @param fmt The string to insert.
- * @param pos The position to insert the string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The string to insert.
+ * @param[in] pos The position to insert the string.
+ * @param[in] ... Variable list of data parameters to be inserted.
+ * @return #EINA_TRUE on success, #EINA_FALSE if the string could not be inserted.
  *
- * This function inserts a string as described by the format @p fmt to @p buf at
+ * This function inserts a string as described by the format @p fmt into @p buf at
  * the position @p pos. @p fmt must be of a valid format for printf family of
- * functions. If it can't insert it, #EINA_FALSE is returned,
- * otherwise #EINA_TRUE is returned.
+ * functions.
  */
 EAPI Eina_Bool eina_strbuf_insert_printf(Eina_Strbuf *buf, const char *fmt, size_t pos, ...) EINA_ARG_NONNULL(1, 2) EINA_PRINTF(2, 4);
 
 /**
- * @brief Inserts a string to a buffer, reallocating as necessary.
+ * @brief Inserts data elements into a buffer using a va_list.
  *
- * @param buf The string buffer to insert.
- * @param fmt The string to insert.
- * @param pos The position to insert the string.
- * @param args The variable arguments.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The string to insert.
+ * @param[in] pos The position to insert the string.
+ * @param[in] args The variable arguments.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_strbuf_insert_printf
@@ -436,118 +426,103 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
 
 /**
  * @def eina_strbuf_prepend(buf, str)
- * @brief Prepends the given string to the given buffer.
+ * @brief Prepends a string to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param str The string to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be prepended.
  *
- * This macro is calling eina_strbuf_insert() at position 0. If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert() with position 0.
  */
-#define eina_strbuf_prepend(buf, str)                eina_strbuf_insert(buf, str, 0)
+#define eina_strbuf_prepend(buf, str) eina_strbuf_insert(buf, str, 0)
 
 /**
  * @def eina_strbuf_prepend_escaped(buf, str)
- * @brief Prepends the given escaped string to the given buffer.
+ * @brief Prepends an escaped string to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param str The string to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_escaped() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_escaped() with position 0.
  */
-#define eina_strbuf_prepend_escaped(buf, str)        eina_strbuf_insert_escaped(buf, str, 0)
+#define eina_strbuf_prepend_escaped(buf, str) eina_strbuf_insert_escaped(buf, str, 0)
 
 /**
  * @def eina_strbuf_prepend_n(buf, str)
- * @brief Prepends the given escaped string to the given buffer.
+ * @brief Prepends an escaped string to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param str The string to prepend.
- * @param maxlen The maximum number of chars to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to prepend.
+ * @param[in] maxlen The maximum number of chars to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_n() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_n() with position 0.
  */
-#define eina_strbuf_prepend_n(buf, str, maxlen)      eina_strbuf_insert_n(buf, str, maxlen, 0)
+#define eina_strbuf_prepend_n(buf, str, maxlen) eina_strbuf_insert_n(buf, str, maxlen, 0)
 
 /**
  * @def eina_strbuf_prepend_length(buf, str)
- * @brief Prepends the given escaped string to the given buffer.
+ * @brief Prepends an escaped string to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param str The string to prepend.
- * @param length The exact length to use.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The string to prepend.
+ * @param[in] length The exact length to use.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_length() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_length() with position 0.
  */
 #define eina_strbuf_prepend_length(buf, str, length) eina_strbuf_insert_length(buf, str, length, 0)
 
 /**
  * @def eina_strbuf_prepend_char(buf, str)
- * @brief Prepends the given character to the given buffer.
+ * @brief Prepends a character to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param c The character to prepend.
+ * @param[in,out] buf The string buffer.
+ * @param[in] c The character to prepend.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This macro is calling eina_strbuf_insert_char() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE
- * is returned.
+ * This macro simply calls eina_strbuf_insert_char() with position 0.
  */
-#define eina_strbuf_prepend_char(buf, c)             eina_strbuf_insert_char(buf, c, 0)
+#define eina_strbuf_prepend_char(buf, c) eina_strbuf_insert_char(buf, c, 0)
 
 /**
  * @def eina_strbuf_prepend_printf(buf, fmt, ...)
- * @brief Prepends the given string to the given buffer.
+ * @brief Prepends data elements to the given buffer using printf-style formatting.
  *
- * @param buf The string buffer to prepend to.
- * @param fmt The string to prepend.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The string to prepend.
+ * @param[in] ... Variable list of data elements to prepend.
+ * @return #EINA_TRUE on success, #EINA_FALSE if data could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_printf() at position 0. If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_printf() with position 0.
  */
-#define eina_strbuf_prepend_printf(buf, fmt, ...)    eina_strbuf_insert_printf(buf, fmt, 0, ## __VA_ARGS__)
+#define eina_strbuf_prepend_printf(buf, fmt, ...) eina_strbuf_insert_printf(buf, fmt, 0, ## __VA_ARGS__)
 
 /**
  * @def eina_strbuf_prepend_vprintf(buf, fmt, args)
  * @brief Prepends the given string to the given buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param fmt The string to prepend.
- * @param args The variable arguments.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The string to prepend.
+ * @param[in] args The variable arguments.
+ * @return #EINA_TRUE on success, #EINA_FALSE if data could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_vprintf() at position 0.If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_vprintf() with position 0.
  */
 #define eina_strbuf_prepend_vprintf(buf, fmt, args)  eina_strbuf_insert_vprintf(buf, fmt, 0, args)
 
 /**
- * @brief Removes a slice of the given string buffer.
+ * @brief Removes a section from the given string buffer.
  *
- * @param buf The string buffer to remove a slice.
- * @param start The initial (inclusive) slice position to start
- *        removing, in bytes.
- * @param end The final (non-inclusive) slice position to finish
- *        removing, in bytes.
+ * @param[in,out] buf The string buffer.
+ * @param[in] start The initial (inclusive) byte position to start removal.
+ * @param[in] end The final (non-inclusive) byte position to end removal.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function removes a slice of @p buf, starting at @p start
  * (inclusive) and ending at @p end (non-inclusive). Both values are
- * in bytes. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
+ * in bytes.
  */
 
 EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end) EINA_ARG_NONNULL(1);
@@ -555,14 +530,14 @@ EAPI Eina_Bool eina_strbuf_remove(Eina_Strbuf *buf, size_t start, size_t end) EI
 /**
  * @brief Retrieves a pointer to the contents of a string buffer.
  *
- * @param buf The string buffer.
+ * @param[in] buf The string buffer.
  * @return The current string in the string buffer.
  *
  * This function returns the string contained in @p buf. The returned
  * value must not be modified and will no longer be valid if @p buf is
- * modified. In other words, any eina_strbuf_append() or similar will
- * make that pointer invalid. The pointer returned by this function <b>must
- * not</b> be freed.
+ * modified. In other words, calling eina_strbuf_append() or similar
+ * functions will make this pointer invalid. The pointer returned by
+ * this function <b>must not</b> be freed.
  *
  * @see eina_strbuf_string_steal()
  */
@@ -571,8 +546,8 @@ EAPI const char *eina_strbuf_string_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL
 /**
  * @brief Steals the contents of a string buffer.
  *
- * @param buf The string buffer to steal.
- * @return The current string in the string buffer.
+ * @param[in,out] buf The string buffer.
+ * @return The string that was contained in @p buf.
  *
  * This function returns the string contained in @p buf. @p buf is
  * then initialized and does not own the returned string anymore. The
@@ -586,7 +561,7 @@ EAPI char *eina_strbuf_string_steal(Eina_Strbuf *buf) EINA_MALLOC EINA_WARN_UNUS
 /**
  * @brief Frees the contents of a string buffer but not the buffer.
  *
- * @param buf The string buffer to free the string of.
+ * @param[in,out] buf The string buffer.
  *
  * This function frees the string contained in @p buf without freeing
  * @p buf.
@@ -594,160 +569,160 @@ EAPI char *eina_strbuf_string_steal(Eina_Strbuf *buf) EINA_MALLOC EINA_WARN_UNUS
 EAPI void eina_strbuf_string_free(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrieves the length of the string buffer content.
+ * @brief Retrieves the length of the string buffer's content.
  *
- * @param buf The string buffer.
+ * @param[in,out] buf The string buffer.
  * @return The current length of the string, in bytes.
  *
  * This function returns the length of @p buf.
  */
-EAPI size_t    eina_strbuf_length_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
-
+EAPI size_t eina_strbuf_length_get(const Eina_Strbuf *buf) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Replaces the n-th string with an other string.
+ * @brief Replaces a substring in the buffer with another string.
  *
- * @param buf The string buffer to work with.
- * @param str The string to replace.
- * @param with The replacing string.
- * @param n The number of the fitting string.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The text to match.
+ * @param[in] with The replacement string.
+ * @param[in] n The indexed occurrence to be replaced.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function replaces the n-th occurrence of @p str in @p buf with
- * @p with. It returns #EINA_FALSE on failure, #EINA_TRUE otherwise.
+ * @p with.
  */
 EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char *with, unsigned int n) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @def eina_strbuf_replace_first(buf, str, with)
- * @brief Prepends the given character to the given buffer.
+ * @brief Replaces the first occurrence of a substring with another string.
  *
- * @param buf The string buffer to work with.
- * @param str The string to replace.
- * @param with The replaceing string.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The text to match.
+ * @param[in] with The replacement string.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p str could not be
+ * replaced in @p buf.
  *
- * This macro is calling eina_strbuf_replace() with the n-th occurrence
- * equal to @c 1. If @p buf can't replace it, #EINA_FALSE is returned,
- * otherwise #EINA_TRUE is returned.
+ * This macro simply calls eina_strbuf_replace() with @p n
+ * equal to @c 1.
  */
 #define eina_strbuf_replace_first(buf, str, with) eina_strbuf_replace(buf, str, with, 1)
 
-
 /**
- * @brief Replaces all strings with another string.
-
- * @param buf The string buffer to work with.
- * @param str The string to replace.
- * @param with The replacement string.
- * @return How often the string was replaced.
+ * @brief Replaces all matching substrings with another string.
+ *
+ * @param[in,out] buf The string buffer.
+ * @param[in] str The text to match.
+ * @param[in] with The replacement string.
+ * @return Number of replacements made, or @c 0 on failure.
  *
  * This function replaces all the occurrences of @p str in @p buf with
- * the string @p with. This function returns the number of times @p str
- * has been replaced. On failure, it returns @c 0.
+ * the string @p with.
  */
 EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Trims the string buffer.
-
- * @param buf The string buffer to work with.
  *
- * This function skips whitespaces at the beginning and the end of the buffer.
+ * @param[in,out] buf The string buffer.
+ *
+ * This function removes whitespace at the beginning and end of the
+ * buffer's string.
  */
 EAPI void eina_strbuf_trim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Left trims the string buffer.
-
- * @param buf The string buffer to work with.
  *
- * This function skips whitespaces in the beginning of the buffer.
+ * @param[in,out] buf The string buffer.
+ *
+ * This function removes whitespace at the beginning of the buffer's
+ * string.
  */
 EAPI void eina_strbuf_ltrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Right trims the string buffer.
-
- * @param buf The string buffer to work with.
  *
- * This function skips whitespaces in the end of the buffer.
+ * @param[in,out] buf The string buffer.
+ *
+ * This function removes whitespace at the end of the buffer's string.
  */
 EAPI void eina_strbuf_rtrim(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Converts the string to lower case.
  *
- * @param buf The string buffer to work with.
+ * @param[in,out] buf The string buffer.
  *
- * This function converts all the characters in the strbuf to lower case.
+ * This function converts all the characters in the buffer's string to
+ * lower case.
  *
  * @since 1.17
  */
 EAPI void eina_strbuf_tolower(Eina_Strbuf *buf) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Obtains substring from the src.
+ * @brief Obtains substring from a source string buffer.
  *
- * @param buf The src string.
- * @param pos The position in the source string from which the substring
- *            should be created. The first character is denoted by a
- *            value of 0 (not 1).
- * @param len The length from pos that should be copied to substring.
+ * @param[in] buf The string buffer.
+ * @param[in] pos The (0-based) position where the substring starts.
+ * @param[in] len The length from @p pos that should be copied.
+ * @return A string buffer containing the substring, or @c NULL if
+ * invalid parameters were specified.
  *
- * This function creates a Eina_Strbuf which is a substring of buf which
- * is passed from pos position with len length.
- * If buf is NULL then returns NULL.
- * If len is 0, then an empty strbuf is returned.
+ * This function creates a Eina_Strbuf containing a copy of a substring
+ * of buf starting at @p pos with @p len length.  If len is 0, then an
+ * empty strbuf will be returned.
  *
  * @since 1.17
  */
 EAPI Eina_Strbuf * eina_strbuf_substr_get(Eina_Strbuf *buf, size_t pos, size_t len) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Gets a read-only slice representing the current strbuf contents.
+ * @brief Gets a read-only slice of the buffer contents.
  *
- * @param buf The source string.
- * @return A read-only slice for the current contents. It may become
- *         invalid as soon as the @a buf is changed.
+ * @param[in] buf The string buffer.
+ * @return A read-only slice of the current contents. It may become
+ * invalid as soon as @p buf is changed.
  *
  * @since 1.19
  */
 EAPI Eina_Slice eina_strbuf_slice_get(const Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief Gets a read-write slice representing the current strbuf contents.
+ * @brief Gets a read-write slice of the buffer contents.
  *
- * @param buf The source string.
+ * @param[in] buf The string buffer.
  * @return A read-write slice for the current contents. It may become
- *         invalid as soon as the @a buf is changed with calls such as
- *         eina_strbuf_append(), eina_strbuf_remove()
+ * invalid as soon as the @p buf is changed, such as through calls like
+ * eina_strbuf_append() or eina_strbuf_remove().
  *
  * @since 1.19.0
  */
 EAPI Eina_Rw_Slice eina_strbuf_rw_slice_get(const Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
-
 /**
- * @brief Gets the string of the buffer and free the buffer
+ * @brief Frees the buffer, returning its old contents.
  *
- * @param buf The buffer to get the string from and which will be freed
- *
- * @return The string contained by buf. The caller must release the memory of the returned string by calling
- * free().
+ * @param[in,out] buf The string buffer.
+ * @return The string contained by buf. The caller must release the
+ * memory of the returned string by calling free().
  *
  * @since 1.19
  */
 EAPI char* eina_strbuf_release(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * @brief append the given buffer based on strftime output.
+ * @brief Appends a strftime-style timestamp to the buffer.
  *
- * @param tm Pointer to a tm structure needed by strftime.
- * @param fmt String containing format specifiers needed by strftime.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The formatting string.
+ * @param[in] tm The time value.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This will add append buffer of exact required size based on strftime output
+ * This function appends a timestamp to the buffer, formatted using
+ * strftime.  A string of the exact size required by strftime's output
+ * is added to the end.
  *
  * Example usage:
  * @code
@@ -759,21 +734,24 @@ EAPI char* eina_strbuf_release(Eina_Strbuf *buf) EINA_WARN_UNUSED_RESULT EINA_AR
  * eina_strbuf_append_strftime(buf, "%I:%M%p", info);
  * //after use
  * eina_strbuf_free(buf);
- * @endcode #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @endcode
  *
  * @since 1.21
  */
 EAPI Eina_Bool eina_strbuf_append_strftime(Eina_Strbuf *buf, const char *fmt, const struct tm *tm);
 
 /**
- * @brief insert the given buffer based on strftime output at given position
+ * @brief Inserts a strftime-style timestamp into the buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param fmt String containing format specifiers needed by strftime.
- * @param tm Pointer to a tm structure needed by strftime.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The formatting string.
+ * @param[in] tm The time value.
+ * @param[in] pos The position in the buffer to insert the timestamp.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This will add append buffer of exact required size based on strftime output
+ * This function inserts a timestamp into the buffer, formatted using
+ * strftime.  The buffer's length will be increased by the exact amount
+ * required by strftime's output.
  *
  * Example usage:
  * @code
@@ -793,20 +771,18 @@ EAPI Eina_Bool eina_strbuf_insert_strftime(Eina_Strbuf *buf, const char *fmt, co
 
 /**
  * @def eina_strbuf_prepend_strftime(buf, fmt, tm)
- * @brief Prepends the given string to the given buffer.
+ * @brief Prepends a strftime-style timestamp to the buffer.
  *
- * @param buf The string buffer to prepend to.
- * @param fmt The string to prepend.
- * @param tm The variable arguments.
- * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ * @param[in,out] buf The string buffer.
+ * @param[in] fmt The formatting string.
+ * @param[in] tm The time value.
+ * @return #EINA_TRUE on success, #EINA_FALSE if @p tm could not be prepended.
  *
- * This macro is calling eina_strbuf_insert_strftime() at position 0. If @p buf
- * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
- * returned.
+ * This macro simply calls eina_strbuf_insert_strftime() with position 0.
  *
  * @since 1.21
  */
-#define eina_strbuf_prepend_strftime(buf, fmt, tm)                eina_strbuf_insert_strftime(buf, fmt, tm, 0)
+#define eina_strbuf_prepend_strftime(buf, fmt, tm) eina_strbuf_insert_strftime(buf, fmt, tm, 0)
 
 /**
  * @}

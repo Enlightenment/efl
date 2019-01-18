@@ -581,7 +581,16 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
                   if (_path_absolute_check(info_dl.dli_fname))
                     {
                        INF("dladdr for symbol=%p: %s", symbol, info_dl.dli_fname);
-                       STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+                       char *rlink = realpath(info_dl.dli_fname, NULL);
+                       if (rlink)
+                         {
+                            IF_FREE_NULL(pfx->exe_path);
+                            pfx->exe_path = rlink;
+                         }
+                       else
+                         {
+                            STRDUP_REP(pfx->exe_path, info_dl.dli_fname);
+                         }
                        from_lib = EINA_TRUE;
                     }
                   else

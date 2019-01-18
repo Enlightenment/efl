@@ -1,0 +1,20 @@
+mono_files += files(
+  'eina_config.cs',
+  'eina_array.cs',
+  'eina_hash.cs',
+  'eina_list.cs',
+  'eina_inarray.cs',
+  'eina_inlist.cs',
+  'eina_iterator.cs',
+  'eina_container_common.cs',
+  'eina_common.cs',
+  'eina_log.cs',
+  'eina_binbuf.cs',
+  'eina_slice.cs',
+  'eina_stringshare.cs',
+  'eina_error.cs',
+  'eina_value.cs',
+  'eina_promises.cs',
+  'eina_accessor.cs',
+  'eina_strbuf.cs'
+)

@@ -43,15 +43,18 @@ efl_ecore_evas_mono_files = \
 # is custom built instead of through _LTLIBRARIES/_LIBRARIES
 lib_efl_mono_libefl_mono_dll_sources = \
 	bindings/mono/efl_mono/efl_all.cs \
+	bindings/mono/efl_mono/efl_csharp_application.cs \
 	$(efl_eo_mono_files) \
 	$(efl_eina_mono_files) \
 	$(efl_eldbus_mono_files) \
 	$(efl_ecore_evas_mono_files)
 
 efl_mono_test_files = \
-	tests/efl_mono/test_testing.eo \
-	tests/efl_mono/test_child.eo \
-	tests/efl_mono/test_numberwrapper.eo \
+	tests/efl_mono/dummy_test_object.eo \
+	tests/efl_mono/dummy_test_iface.eo \
+	tests/efl_mono/dummy_another_iface.eo \
+	tests/efl_mono/dummy_child.eo \
+	tests/efl_mono/dummy_numberwrapper.eo \
 	tests/efl_mono/mono_test_driver.sh
 
 EXTRA_DIST2 += \
@@ -186,7 +189,8 @@ lib/evas/canvas/efl_canvas_image.eo.cs \
 lib/evas/canvas/evas_table.eo.cs \
 lib/evas/canvas/evas_text.eo.cs \
 $(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
-lib/eo/eina_types.eot.cs
+lib/eo/eina_types.eot.cs \
+lib/ecore/efl_loop_timer.eo.cs
 
 efl_mono_files_gen =\
 $(efl_eolian_mono_files) \
@@ -383,12 +387,24 @@ tests_efl_mono_libefl_mono_native_test_la_LDFLAGS = -rpath $(abs_top_builddir)/t
 tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ELDBUS_INTERNAL_LIBS@
 tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
 
-tests/efl_mono/libefl_mono_native_test.c: tests/efl_mono/test_testing.eo.h tests/efl_mono/test_testing.eo.c tests/efl_mono/test_child.eo.h tests/efl_mono/test_child.eo.c tests/efl_mono/test_numberwrapper.eo.h tests/efl_mono/test_numberwrapper.eo.c
+tests/efl_mono/libefl_mono_native_test.c: \
+	tests/efl_mono/dummy_test_object.eo.h \
+	tests/efl_mono/dummy_test_object.eo.c \
+	tests/efl_mono/dummy_test_iface.eo.h \
+	tests/efl_mono/dummy_test_iface.eo.c \
+	tests/efl_mono/dummy_another_iface.eo.h \
+	tests/efl_mono/dummy_another_iface.eo.c \
+	tests/efl_mono/dummy_child.eo.h \
+	tests/efl_mono/dummy_child.eo.c \
+	tests/efl_mono/dummy_numberwrapper.eo.h \
+	tests/efl_mono/dummy_numberwrapper.eo.c
 
 # Intermediate C Sharp test DLL
-efl_mono_test_eolian_mono_files = tests/efl_mono/test_testing.eo.cs \
-tests/efl_mono/test_child.eo.cs \
-tests/efl_mono/test_numberwrapper.eo.cs
+efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
+tests/efl_mono/dummy_test_iface.eo.cs \
+tests/efl_mono/dummy_another_iface.eo.cs \
+tests/efl_mono/dummy_child.eo.cs \
+tests/efl_mono/dummy_numberwrapper.eo.cs
 
 tests/efl_mono/libefl_mono_test.dll: $(efl_mono_test_eolian_mono_files) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_native_test.la tests/efl_mono/libefl_mono_test.dll.config
 	@rm -f tests/efl_mono/libefl_mono_test.dll
@@ -448,7 +464,9 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Strings.cs \
      tests/efl_mono/Structs.cs \
      tests/efl_mono/Value.cs \
-     tests/efl_mono/ValueEolian.cs
+     tests/efl_mono/ValueEolian.cs \
+     tests/efl_mono/EinaTestData.cs \
+     tests/efl_mono/StructHelpers.cs
 
 tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll tests/efl_mono/efl_mono$(EXEEXT).config
 	@rm -f $@
@@ -460,7 +478,7 @@ tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport "@DLIB_PREFIX_MONO@efl_mono_native_test@DLIB_SUFFIX_MONO@" -o $@ $(ALL_EO_REFS) $<
 
-CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/test_testing.eo.cs tests/efl_mono/test_child.eo.cs tests/efl_mono/test_numberwrapper.eo.cs tests/efl_mono/test_testing.eo.c tests/efl_mono/test_child.eo.c tests/efl_mono/test_numberwrapper.eo.c tests/efl_mono/test_testing.eo.h tests/efl_mono/test_child.eo.h tests/efl_mono/test_numberwrapper.eo.h tests/efl_mono/efl_mono.config
+CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/dummy_test_object.eo.cs tests/efl_mono/dummy_child.eo.cs tests/efl_mono/dummy_numberwrapper.eo.cs tests/efl_mono/dummy_test_object.eo.c tests/efl_mono/dummy_child.eo.c tests/efl_mono/dummy_numberwrapper.eo.c tests/efl_mono/dummy_test_object.eo.h tests/efl_mono/dummy_child.eo.h tests/efl_mono/dummy_numberwrapper.eo.h tests/efl_mono/efl_mono.config
 
 endif
 

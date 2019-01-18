@@ -4,7 +4,7 @@ import elm_interface_scrollable;
 struct @extern Elm.Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
 struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
 
-class Elm.Code_Widget (Efl.Ui.Layout.Object, Efl.Access.Text)
+class Elm.Code_Widget extends Efl.Ui.Layout implements Efl.Access.Text
 {
    [[Elementary code widget]]
    eo_prefix: elm_obj_code_widget;

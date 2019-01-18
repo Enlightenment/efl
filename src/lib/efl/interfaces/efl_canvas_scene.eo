@@ -1,7 +1,7 @@
 import efl_input_device;
 import efl_gfx_types;
 
-interface Efl.Canvas.Scene ()
+interface Efl.Canvas.Scene
 {
    [[Common interface for window and some internal classes in EFL.]]
    methods {
@@ -17,7 +17,7 @@ interface Efl.Canvas.Scene ()
               much higher one.
 
             ]]
-            return: bool; [[$true on success, $false otherwise]] 
+            return: bool; [[$true on success, $false otherwise]]
          }
          values {
             max: Eina.Size2D; [[The maximum image size (in pixels).]]
@@ -105,7 +105,7 @@ interface Efl.Canvas.Scene ()
            objects, acting only on the ones at the "top level", with
            regard to object parenting.
          ]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to objects]] 
+         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to objects]]
          params {
             @in rect: Eina.Rect; [[The rectangular region.]]
             @in include_pass_events_objects: bool; [[

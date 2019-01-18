@@ -1,6 +1,6 @@
 import efl_canvas_gesture_types;
 
-abstract Efl.Canvas.Gesture(Efl.Object)
+abstract Efl.Canvas.Gesture extends Efl.Object
 {
    [[EFL Gesture abstract class]]
    eo_prefix: efl_gesture;

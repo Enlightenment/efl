@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Parent_Provider_Gen(Efl.Object, Efl.Ui.Focus.Parent_Provider) {
+class Efl.Ui.Focus.Parent_Provider_Gen extends Efl.Object implements Efl.Ui.Focus.Parent_Provider {
    [[EFL UI Focus Parent Provider Gen class]]
    methods {
       @property content_item_map {

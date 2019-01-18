@@ -31,7 +31,7 @@
  * index is always correct. Also once a pointer is unregistered the index
  * won't be served back for 2^8 on 32 bits system and 2^28 on 64 bits system
  * for that specific slot. Finally we guarantee that the lower 2 bits of the
- * returned index are actually never used and completly ignored by our API.
+ * returned index are actually never used and completely ignored by our API.
  * So you can safely store whatever information you want in it, we will ignore
  * it and treat as if it wasn't there.
  *
@@ -65,7 +65,7 @@ typedef struct _Eina_Safepointer Eina_Safepointer;
 /**
  * @brief Register a pointer and get an Eina_Safepointer that maps to it.
  *
- * @param target The pointer to register.
+ * @param[in] target The pointer to register.
  * @return A valid pointer that is an index to the mapped pointer.
  *
  * @note It will return @c NULL on error or if @p target is @c NULL.
@@ -82,7 +82,7 @@ EAPI const Eina_Safepointer *eina_safepointer_register(const void *target);
 /**
  * @brief Unregister an Eina_Safepointer and the pointer that maps to it.
  *
- * @param safe The index to unregister from the mapping.
+ * @param[in] safe The index to unregister from the mapping.
  *
  * @note This function will ignore the lower 2 bits of the given pointer.
  *
@@ -93,7 +93,7 @@ EAPI void  eina_safepointer_unregister(const Eina_Safepointer *safe);
 /**
  * @brief Get the associated pointer from an Eina_Safepointer mapping.
  *
- * @param safe The Eina_Safepointer index to lookup at.
+ * @param[in] safe The Eina_Safepointer index to lookup at.
  * @return The pointer registered with that index or @c NULL in any other case.
  *
  * @note It is always safe to ask for a pointer for any value of the mapping.

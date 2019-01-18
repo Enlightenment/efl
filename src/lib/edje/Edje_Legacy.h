@@ -797,7 +797,7 @@ EINA_DEPRECATED EAPI void         edje_extern_object_min_size_set (Evas_Object *
  * This sets the maximum size restriction for the object.
  *
  */
-EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
+EINA_DEPRECATED EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
 
 /**
  * @deprecated use evas_object_size_hint_aspect_set() instead.
@@ -814,7 +814,7 @@ EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord 
  * retaining the relative scale of both aspect width and height.
  *
  */
-EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
+EINA_DEPRECATED EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
 /**
  * @brief Sets the @b EDJ file (and group within it) to load an Edje
@@ -846,6 +846,8 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
  * @param[in] file The path to the EDJ file to load @p from
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
  */
 EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const char *group);
 
@@ -866,6 +868,8 @@ EAPI Eina_Bool edje_object_file_set(Evas_Object *obj, const char *file, const ch
  * @param[out] file The path to the EDJ file to load @p from
  * @param[out] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
  */
 EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const char **group);
 
@@ -895,12 +899,14 @@ EAPI void edje_object_file_get(const Evas_Object *obj, const char **file, const 
  *
  * @see edje_object_add()
  * @see edje_object_file_get()
- * @see edje_object_mmap_set()
  * @since 1.8
  *
  * @param[in] file The Eina.File pointing to the EDJ file to load @p from
  * @param[in] group The name of the group, in @p file, which implements an
 Edje object
+ *
+ * @ingroup Edje_Object
+ *
  */
 EAPI Eina_Bool edje_object_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group);
 
@@ -2969,7 +2975,7 @@ EAPI Eina_Bool edje_object_part_exists(const Evas_Object *obj, const char *part)
  *
  * @brief Functions that deal with 3D projection of an 2D object.
  *
- * Perspective is a graphical tool that makes objets represented in 2D
+ * Perspective is a graphical tool that makes objects represented in 2D
  * look like they have a 3D appearance.
  *
  * Edje allows us to use perspective on any edje object. This group of
@@ -3129,6 +3135,20 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  * @ingroup Edje_Object
  */
 EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
+
+
+/**
+ * @brief Gets the description of an object color class.
+ *
+ * This function gets the description of a color class in use by an object.
+ *
+ * @param[in] color_class Color class description
+ *
+ * @return The description of the target color class or @c null if not found
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
 
 typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
 #define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE

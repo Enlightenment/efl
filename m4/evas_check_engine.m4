@@ -175,33 +175,6 @@ AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
 
 ])
 
-dnl use: EVAS_CHECK_ENGINE_DEP_DIRECT3D(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_ENGINE_DEP_DIRECT3D],
-[
-
-evas_engine_[]$1[]_cflags=""
-evas_engine_[]$1[]_libs=""
-
-AC_CHECK_HEADERS([d3d9.h d3dx9.h],
-   [
-    have_dep="yes"
-    evas_engine_[]$1[]_libs="-ld3d9 -ld3dx9 -lgdi32"
-   ],
-   [have_dep="no"; break])
-
-if test "x$3" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_libs_evas="${evas_engine_[]$1[]_libs} ${requirements_libs_evas}"
-fi
-
-AC_SUBST([evas_engine_$1_cflags])
-AC_SUBST([evas_engine_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$4], [$5])
-
-])
-
-
 dnl use: EVAS_CHECK_ENGINE_DEP_GL_COCOA(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_COCOA],

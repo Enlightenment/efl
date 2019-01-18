@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Contracts;
 
-namespace eina { // Manual wrappers around eina functions
+namespace Eina { // Manual wrappers around eina functions
 
 public class Log
 {
@@ -53,22 +53,17 @@ public class Log
 
     private static int domain = -1;
 
-    internal static void Init(String name="mono", String color="\033[32;1m")
+    static Log()
     {
-        if (domain == -1)
-          {
-              // Maybe move this check outside when other eina stuff get support?
-              domain = eina_log_domain_register(name, color);
-              if (domain < 0)
-                Console.WriteLine("Error: Couldn't register Eina log domain for name {0}.", name);
-              else
-                Info($"Registered mono domain with number {domain}");
-          }
+        const String name="mono";
+        const String color="\033[32;1m";
+
+        // Maybe move this check outside when other eina stuff get support?
+        domain = eina_log_domain_register(name, color);
+        if (domain < 0)
+          Console.WriteLine("Error: Couldn't register Eina log domain for name {0}.", name);
         else
-          {
-              Warning("Trying to initialize the log system again.");
-              // TODO Export the domain registration to the binding user to allow custom domains.
-          }
+          Info($"Registered mono domain with number {domain}");
     }
 
     private static void EnsureDomainRegistered()

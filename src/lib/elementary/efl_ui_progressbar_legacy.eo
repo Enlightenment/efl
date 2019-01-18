@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar_Legacy (Efl.Ui.Progressbar, Efl.Ui.Legacy)
+class Efl.Ui.Progressbar_Legacy extends Efl.Ui.Progressbar implements Efl.Ui.Legacy
 {
    [[Elementary progressbar class]]
    data: null;

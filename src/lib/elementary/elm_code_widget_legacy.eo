@@ -1,4 +1,4 @@
-class Elm.Code_Widget_Legacy (Elm.Code_Widget, Efl.Ui.Legacy)
+class Elm.Code_Widget_Legacy extends Elm.Code_Widget implements Efl.Ui.Legacy
 {
    [[Elementary code widget]]
    data: null;

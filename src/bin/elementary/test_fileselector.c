@@ -511,13 +511,33 @@ _edje_filter(const char *path, Eina_Bool dir,
    return EINA_FALSE;
 }
 
+static void
+_create_dir_struct(void)
+{
+   FILE *fp;
+   if (mkdir("/tmp/test_fs", S_IRWXU) < 0)
+     printf("make dir /tmp/test_fs failed!\n");
+   fp = fopen("/tmp/test_fs/a_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs/k_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs/m_file.txt", "w");
+   if (fp) fclose(fp);
+
+   if (mkdir("/tmp/test_fs/a_subdir", S_IRWXU) < 0)
+     printf("make dir /tmp/test_fs/a_subdir failed!\n");
+   fp = fopen("/tmp/test_fs/a_subdir/d_sub_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs/a_subdir/j_sub_file.txt", "w");
+   if (fp) fclose(fp);
+}
+
 void
 test_fileselector(void *data       EINA_UNUSED,
                   Evas_Object *obj EINA_UNUSED,
                   void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *fs, *box, *vbox, *sep;
-   const char * home_env;
 
    /* Set the locale according to the system pref.
     * If you don't do so the file selector will order the files list in
@@ -538,6 +558,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
+   _create_dir_struct(); /* Create a dir struct in /tmp */
    fs = elm_fileselector_add(box);
    evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -548,9 +569,7 @@ test_fileselector(void *data       EINA_UNUSED,
    elm_fileselector_is_save_set(fs, EINA_TRUE);
    /* make the file list a tree with dir expandable in place */
    elm_fileselector_expandable_set(fs, EINA_FALSE);
-   /* start the fileselector in the home dir */
-   home_env = eina_environment_home_get();
-   elm_fileselector_path_set(fs, home_env);
+   elm_fileselector_path_set(fs, "/tmp/test_fs");
 
    /* provides suggested name (just for showing) */
    elm_fileselector_current_name_set(fs, "No name");

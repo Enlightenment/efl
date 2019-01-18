@@ -12,6 +12,7 @@ struct _Item_Calc
    Evas_Object *obj;
    double weight[2];
    double align[2];
+   Eina_Bool fill[2];
    Eina_Size2D max, want, aspect;
    int pad[4];
    Efl_Gfx_Size_Hint_Aspect aspect_type;
@@ -76,9 +77,40 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         efl_gfx_size_hint_weight_get(o, &item->weight[0], &item->weight[1]);
         efl_gfx_size_hint_align_get(o, &item->align[0], &item->align[1]);
         efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
+        efl_gfx_size_hint_fill_get(o, &item->fill[0], &item->fill[1]);
         item->max = efl_gfx_size_hint_max_get(o);
         item->want = efl_gfx_size_hint_combined_min_get(o);
         efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect);
+
+        if (item->weight[0] < 0) item->weight[0] = 0;
+        if (item->weight[1] < 0) item->weight[1] = 0;
+
+        if (EINA_DBL_EQ(item->align[0], -1))
+          {
+             item->align[0] = 0.5;
+             item->fill[0] = EINA_TRUE;
+          }
+        else if (item->align[0] < 0)
+          {
+             item->align[0] = 0;
+          }
+        if (EINA_DBL_EQ(item->align[1], -1))
+          {
+             item->align[1] = 0.5;
+             item->fill[1] = EINA_TRUE;
+          }
+        else if (item->align[1] < 0)
+          {
+             item->align[1] = 0;
+          }
+        if (item->align[0] > 1) item->align[0] = 1;
+        if (item->align[1] > 1) item->align[1] = 1;
+
+        if (item->want.w < 0) item->want.w = 0;
+        if (item->want.h < 0) item->want.h = 0;
+
+        if (item->max.w < 0) item->max.w = INT_MAX;
+        if (item->max.h < 0) item->max.h = INT_MAX;
 
         if (item->aspect.w <= 0 || item->aspect.h <= 0)
           {
@@ -102,7 +134,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 
              if (horiz)
                {
-                  if ((item->align[1] < 0) && (h < boxh))
+                  if (item->fill[1] && (h < boxh))
                     {
                        double w1, h1;
                        h1 = item->max.h > 0 ? MIN(boxh, item->max.h) : boxh;
@@ -113,7 +145,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                }
              else
                {
-                  if ((item->align[0] < 0) && (w < boxw))
+                  if (item->fill[0] && (w < boxw))
                     {
                        double w1, h1;
                        w1 = item->max.w > 0 ? MIN(boxw, item->max.w) : boxw;
@@ -125,20 +157,6 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              item->want.w = w;
              item->want.h = h;
           }
-
-        if (item->weight[0] < 0) item->weight[0] = 0;
-        if (item->weight[1] < 0) item->weight[1] = 0;
-
-        if (item->align[0] < 0) item->align[0] = -1;
-        if (item->align[1] < 0) item->align[1] = -1;
-        if (item->align[0] > 1) item->align[0] = 1;
-        if (item->align[1] > 1) item->align[1] = 1;
-
-        if (item->want.w < 0) item->want.w = 0;
-        if (item->want.h < 0) item->want.h = 0;
-
-        if (item->max.w < 0) item->max.w = INT_MAX;
-        if (item->max.h < 0) item->max.h = INT_MAX;
         if (item->max.w < item->want.w) item->max.w = item->want.w;
         if (item->max.h < item->want.h) item->max.h = item->want.h;
 
@@ -319,12 +337,12 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              w = w - item->pad[0] - item->pad[1];
              h = h - item->pad[2] - item->pad[3];
 
-             if (item->align[0] < 0)
+             if (item->fill[0])
                x = cx + (cw - w) * 0.5 + item->pad[0];
              else
                x = cx + (cw - w) * item->align[0] + item->pad[0];
 
-             if (item->align[1] < 0)
+             if (item->fill[1])
                y = cy + (ch - h) * 0.5 + item->pad[2];
              else
                y = cy + (ch - h) * item->align[1] + item->pad[2];
@@ -335,15 +353,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              if (item->max.w < INT_MAX)
                {
                   w = MIN(MAX(item->want.w - item->pad[0] - item->pad[1], item->max.w), cw);
-                  if (item->align[0] < 0)
-                    {
-                       // bad case: fill+max are not good together
-                       x = cx + ((cw - w) * box_align[0]) + item->pad[0];
-                    }
-                  else
-                    x = cx + ((cw - w) * item->align[0]) + item->pad[0];
+                  x = cx + ((cw - w) * item->align[0]) + item->pad[0];
                }
-             else if (item->align[0] < 0)
+             else if (item->fill[0])
                {
                   // fill x
                   w = cw - item->pad[0] - item->pad[1];
@@ -362,15 +374,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
              if (item->max.h < INT_MAX)
                {
                   h = MIN(MAX(item->want.h - item->pad[2] - item->pad[3], item->max.h), ch);
-                  if (item->align[1] < 0)
-                    {
-                       // bad case: fill+max are not good together
-                       y = cy + ((ch - h) * box_align[1]) + item->pad[2];
-                    }
-                  else
-                    y = cy + ((ch - h) * item->align[1]) + item->pad[2];
+                  y = cy + ((ch - h) * item->align[1]) + item->pad[2];
                }
-             else if (item->align[1] < 0)
+             else if (item->fill[1])
                {
                   // fill y
                   h = ch - item->pad[2] - item->pad[3];

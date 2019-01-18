@@ -17,10 +17,6 @@
 
 #include "Evas_Engine_GL_Generic.h"
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
-
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
@@ -275,14 +271,7 @@ eng_image_alpha_set(void *engine, void *image, int has_alpha)
         Evas_GL_Image *im_new;
 
         if (!im->im->image.data)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->im->cache_entry))
-               evas_cache2_image_load_data(&im->im->cache_entry);
-             else
-#endif
-               evas_cache_image_load_data(&im->im->cache_entry);
-          }
+          evas_cache_image_load_data(&im->im->cache_entry);
         evas_gl_common_image_alloc_ensure(im);
         im_new = evas_gl_common_image_new_from_copied_data
            (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
@@ -902,12 +891,7 @@ eng_image_data_get(void *engine, void *image, int to_write, DATA32 **image_data,
           }
      }
 
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->im->cache_entry))
-     error = evas_cache2_image_load_data(&im->im->cache_entry);
-   else
-#endif
-     error = evas_cache_image_load_data(&im->im->cache_entry);
+   error = evas_cache_image_load_data(&im->im->cache_entry);
 
    if (err) *err = error;
    if (error != EVAS_LOAD_ERROR_NONE)
@@ -1132,17 +1116,11 @@ eng_image_data_preload_request(void *engine EINA_UNUSED, void *image, const Eo *
    im = (RGBA_Image *)gim->im;
    if (!im) return;
 
-   evas_gl_common_image_preload_watch(gim);
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     evas_cache2_image_preload_data(&im->cache_entry, target);
-   else
-#endif
-     evas_cache_image_preload_data(&im->cache_entry, target, NULL, NULL, NULL);
+   evas_cache_image_preload_data(&im->cache_entry, target, evas_gl_common_image_preload_done, gim);
 }
 
 static void
-eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *target)
+eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *target, Eina_Bool force)
 {
    Evas_GL_Image *gim = image;
    RGBA_Image *im;
@@ -1153,12 +1131,7 @@ eng_image_data_preload_cancel(void *engine EINA_UNUSED, void *image, const Eo *t
    if (!im) return;
 
    evas_gl_common_image_preload_unwatch(gim);
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->cache_entry))
-     evas_cache2_image_preload_cancel(&im->cache_entry, target);
-   else
-#endif
-     evas_cache_image_preload_cancel(&im->cache_entry, target);
+   evas_cache_image_preload_cancel(&im->cache_entry, target, force);
 //   if (gim->tex) evas_gl_preload_target_unregister(gim->tex, (Eo*) target);
 }
 
@@ -2183,12 +2156,7 @@ eng_pixel_alpha_get(void *image, int x, int y, DATA8 *alpha, int src_region_x, i
        {
           DATA32 *pixel;
 
-#ifdef EVAS_CSERVE2
-          if (evas_cserve2_use_get() && evas_cache2_image_cached(&im->im->cache_entry))
-            evas_cache2_image_load_data(&im->im->cache_entry);
-          else
-#endif
-            evas_cache_image_load_data(&im->im->cache_entry);
+          evas_cache_image_load_data(&im->im->cache_entry);
           if (!im->im->cache_entry.flags.loaded)
             {
                ERR("im %p has no pixels loaded yet", im);
@@ -2541,25 +2509,72 @@ eng_ector_buffer_wrap(void *engine EINA_UNUSED, Evas *evas, void *engine_image)
                   evas_ector_buffer_engine_image_set(efl_added, evas, im));
 }
 
+//FIXME: Currently Ector GL doens't work properly. Use software instead.
+#include "../software_generic/evas_ector_software.h"
+
 static Ector_Buffer *
 eng_ector_buffer_new(void *engine, Evas *evas, int w, int h,
                      Efl_Gfx_Colorspace cspace, Ector_Buffer_Flag flags)
 {
-   return efl_add(EVAS_ECTOR_GL_BUFFER_CLASS, evas,
-                  evas_ector_gl_buffer_prepare(efl_added, engine, w, h, cspace, flags));
+   /* FIXME: This condition is tricky, this buffer could be used for masking
+    * buffer by vector, Require to use software drawing.
+    */
+   if (flags != (ECTOR_BUFFER_FLAG_DRAWABLE | ECTOR_BUFFER_FLAG_CPU_READABLE | ECTOR_BUFFER_FLAG_CPU_WRITABLE))
+      {
+         return efl_add(EVAS_ECTOR_GL_BUFFER_CLASS, evas,
+                        evas_ector_gl_buffer_prepare(efl_added, engine, w, h, cspace, flags));
+      }
+   else
+     {
+        Ector_Buffer *buf;
+        Image_Entry *ie;
+        void *pixels;
+        int pxs;
+
+        if (cspace == EFL_GFX_COLORSPACE_ARGB8888)
+          pxs = 4;
+        else if (cspace == EFL_GFX_COLORSPACE_GRY8)
+          pxs = 1;
+        else
+          {
+             ERR("Unsupported colorspace: %d", (int) cspace);
+             return NULL;
+          }
+
+        // alloc buffer
+        ie = evas_cache_image_copied_data(evas_common_image_cache_get(), w, h,
+                                          NULL, EINA_TRUE, cspace);
+        if (!ie) return NULL;
+        pixels = ((RGBA_Image *) ie)->image.data;
+        memset(pixels, 0, w * h * pxs);
+
+        if (!efl_domain_current_push(EFL_ID_DOMAIN_SHARED))
+          {
+             evas_cache_image_drop(ie);
+             return NULL;
+          }
+
+        buf = efl_add_ref(EVAS_ECTOR_SOFTWARE_BUFFER_CLASS, NULL,
+                          evas_ector_buffer_engine_image_set(efl_added, engine, ie));
+        efl_domain_current_pop();
+
+        evas_cache_image_drop(ie);
+
+        return buf;
+     }
 }
 
 static void
-eng_ector_renderer_draw(void *engine EINA_UNUSED, void *output,
-                        void *context EINA_UNUSED, void *surface EINA_UNUSED,
-                        Ector_Renderer *renderer, Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
+eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
+                        void *context EINA_UNUSED, Ector_Renderer *renderer,
+                        Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_cairo|| !use_gl)
+   if (use_cairo || !use_gl)
      {
         int w, h;
         Eina_Rectangle *r;
         Eina_Array *c = eina_array_new(4);
-        Evas_GL_Image *glimg = output;
+        Evas_GL_Image *glimg = surface;
 
         eng_image_size_get(engine, glimg, &w, &h);
         eina_array_push(c, eina_rectangle_new(0, 0, w, h));
@@ -2635,21 +2650,22 @@ eng_ector_surface_cache_drop(void *engine, void *key)
 }
 
 static void
-eng_ector_begin(void *engine, void *output,
-                void *context EINA_UNUSED, void *surface EINA_UNUSED,
-                Ector_Surface *ector, int x, int y, Eina_Bool do_async EINA_UNUSED)
+eng_ector_begin(void *engine, void *surface,
+                void *context EINA_UNUSED, Ector_Surface *ector,
+                int x, int y, Eina_Bool clear, Eina_Bool do_async EINA_UNUSED)
 {
    if (use_cairo|| !use_gl)
      {
         int w, h, stride;
-        Evas_GL_Image *glim = output;
+        Evas_GL_Image *glim = surface;
         DATA32 *pixels;
         int load_err;
 
         glim = eng_image_data_get(engine, glim, EINA_TRUE, &pixels, &load_err,NULL);
         eng_image_stride_get(engine, glim, &stride);
         eng_image_size_get(engine, glim, &w, &h);
-        memset(pixels, 0, stride * h);
+
+        if (clear) memset(pixels, 0, stride * h);
 
         // it just uses the software backend to draw for now
         ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
@@ -2662,13 +2678,15 @@ eng_ector_begin(void *engine, void *output,
 }
 
 static void
-eng_ector_end(void *engine, void *output,
-              void *context EINA_UNUSED, void *surface EINA_UNUSED,
-              Ector_Surface *ector, Eina_Bool do_async EINA_UNUSED)
+eng_ector_end(void *engine,
+              void *surface,
+              void *context EINA_UNUSED,
+              Ector_Surface *ector,
+              Eina_Bool do_async EINA_UNUSED)
 {
    if (use_cairo || !use_gl)
      {
-        Evas_GL_Image *glim = output;
+        Evas_GL_Image *glim = surface;
         DATA32 *pixels;
         int load_err;
 

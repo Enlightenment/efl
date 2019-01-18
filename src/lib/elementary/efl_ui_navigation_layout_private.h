@@ -4,7 +4,7 @@
 typedef struct _Efl_Ui_Navigation_Layout_Data Efl_Ui_Navigation_Layout_Data;
 struct _Efl_Ui_Navigation_Layout_Data
 {
-   Efl_Ui_Layout_Object *bar;
+   Efl_Ui_Layout *bar;
 };
 
 #define EFL_UI_NAVIGATION_LAYOUT_DATA_GET_OR_RETURN(o, ptr, ...) \

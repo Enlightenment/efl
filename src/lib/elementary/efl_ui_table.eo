@@ -1,5 +1,5 @@
-class Efl.Ui.Table (Efl.Ui.Widget, Efl.Pack_Table, Efl.Pack_Layout,
-                   Efl.Ui.Direction)
+class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
+                   Efl.Ui.Direction
 {
    [[Efl UI table class]]
    implements {

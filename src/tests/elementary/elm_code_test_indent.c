@@ -2,8 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define ELM_INTERNAL_API_ARGESFSDFEFC
-
 #include "elm_suite.h"
 #include "Elementary.h"
 #include "elm_code_indent.h"
@@ -77,12 +75,33 @@ EFL_START_TEST (elm_code_indent_simple_braces)
    elm_init(1, args);
    code = elm_code_create();
    file = elm_code_file_new(code);
+   code->config.indent_style_efl = EINA_TRUE;
 
    _indent_check(file, "if() {", "     ");
    _indent_check(file, "}", "");
 
    _indent_check(file, "  {", "     ");
    _indent_check(file, "  }", "");
+
+   elm_shutdown();
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_code_indent_tab_simple_braces)
+{
+   Elm_Code *code;
+   Elm_Code_File *file;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+   code->config.indent_style_efl = EINA_FALSE;
+
+   _indent_check(file, "if() {", "\t");
+   _indent_check(file, "}", "");
+
+   _indent_check(file, "\t{", "\t\t");
+   _indent_check(file, "\t}", "\t");
 
    elm_shutdown();
 }
@@ -101,7 +120,7 @@ EFL_START_TEST (elm_code_indent_matching_braces)
    code = elm_code_create();
    file = elm_code_file_new(code);
 
-   elm_code_file_line_append(file, "", 8, NULL);
+   elm_code_file_line_append(file, "", 0, NULL);
    line = elm_code_file_line_get(file, 1);
 
    elm_code_file_line_insert(file, 1, "   if ()", 8, NULL);
@@ -110,17 +129,53 @@ EFL_START_TEST (elm_code_indent_matching_braces)
 
    elm_code_file_line_insert(file, 2, "     {", 6, NULL);
    str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_int_eq(str_len, 5);
    ck_assert_strn_eq(str, "     ", str_len);
 
    elm_code_file_line_insert(file, 3, "        if (){", 14, NULL);
    str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_int_eq(str_len, 8);
    ck_assert_strn_eq(str, "        ", str_len);
 
    elm_code_file_line_insert(file, 4, "        }", 9, NULL);
    str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_int_eq(str_len, 5);
    ck_assert_strn_eq(str, "     ", str_len);
 
    elm_code_file_line_insert(file, 5, "     }", 6, NULL);
+   str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_strn_eq(str, "", str_len);
+
+   elm_code_free(code);
+   elm_shutdown();
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_code_indent_tab_matching_braces)
+{
+   Elm_Code_File *file;
+   Elm_Code_Line *line;
+   Elm_Code *code;
+   const char *str;
+   unsigned int str_len;
+
+   elm_init(1, NULL);
+   code = elm_code_create();
+   file = elm_code_file_new(code);
+
+   elm_code_file_line_append(file, "", 0, NULL);
+   line = elm_code_file_line_get(file, 1);
+
+   elm_code_file_line_insert(file, 1, "\tif ()", 6, NULL);
+   str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_strn_eq(str, "", str_len);
+
+   elm_code_file_line_insert(file, 2, "\t{", 2, NULL);
+   str = elm_code_line_indent_matching_braces_get(line, &str_len);
+   ck_assert_int_eq(str_len, 1);
+   ck_assert_strn_eq(str, "\t", str_len);
+
+   elm_code_file_line_insert(file, 3, "\t}", 2, NULL);
    str = elm_code_line_indent_matching_braces_get(line, &str_len);
    ck_assert_strn_eq(str, "", str_len);
 
@@ -170,7 +225,9 @@ void elm_code_test_indent(TCase *tc)
 {
    tcase_add_test(tc, elm_code_indent_whitespace_test);
    tcase_add_test(tc, elm_code_indent_comments_test);
+   tcase_add_test(tc, elm_code_indent_tab_simple_braces);
    tcase_add_test(tc, elm_code_indent_simple_braces);
    tcase_add_test(tc, elm_code_indent_matching_braces);
+   tcase_add_test(tc, elm_code_indent_tab_matching_braces);
    tcase_add_test(tc, elm_code_indent_startswith_keyword);
 }

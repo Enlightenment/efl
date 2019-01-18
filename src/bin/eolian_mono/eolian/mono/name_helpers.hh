@@ -32,9 +32,9 @@ namespace name_helpers {
 namespace attributes = efl::eolian::grammar::attributes;
 
 namespace detail {
-inline bool is_iequal(std::string const& lhs, std::string const& rhs)
+inline bool is_equal(std::string const& lhs, std::string const& rhs)
 {
-  return strcasecmp(lhs.c_str(), rhs.c_str()) == 0;
+  return lhs == rhs;
 }
 }
 
@@ -45,21 +45,21 @@ inline std::string identity(std::string const& str)
 
 inline std::string escape_keyword(std::string const& name)
 {
-  using detail::is_iequal;
-  if(is_iequal(name, "delete")
-     || is_iequal(name, "do")
-     || is_iequal(name,  "lock")
-     || is_iequal(name, "event")
-     || is_iequal(name, "in")
-     || is_iequal(name, "object")
-     || is_iequal(name, "interface")
-     || is_iequal(name, "string")
-     || is_iequal(name, "internal")
-     || is_iequal(name, "fixed")
-     || is_iequal(name, "base"))
+  using detail::is_equal;
+  if(is_equal(name, "delete")
+     || is_equal(name, "do")
+     || is_equal(name, "lock")
+     || is_equal(name, "event")
+     || is_equal(name, "in")
+     || is_equal(name, "object")
+     || is_equal(name, "interface")
+     || is_equal(name, "string")
+     || is_equal(name, "internal")
+     || is_equal(name, "fixed")
+     || is_equal(name, "base"))
     return "kw_" + name;
 
-  if (is_iequal(name, "Finalize"))
+  if (is_equal(name, "Finalize"))
     return name + "Add"; // Eo's Finalize is actually the end of efl_add.
   return name;
 }
@@ -169,27 +169,34 @@ void reorder_verb(std::vector<std::string> &names)
 
 inline std::string managed_namespace(std::string const& ns)
 {
-  return utils::to_lowercase(escape_keyword(ns));
+  return escape_keyword(utils::remove_all(ns, '_'));
 }
 
-inline std::string managed_method_name(attributes::function_def const& f)
+inline std::string managed_method_name(std::string const& klass, std::string const& name)
 {
-  std::vector<std::string> names = utils::split(f.name, '_');
+  std::vector<std::string> names = utils::split(name, '_');
 
   name_helpers::reorder_verb(names);
 
   std::string candidate = escape_keyword(utils::to_pascal_case(names));
 
   // Some eolian methods have the same name as their parent class
-  if (candidate == f.klass.eolian_name)
+  if (candidate == klass)
       candidate = "Do" + candidate;
 
   return candidate;
 }
 
+inline std::string managed_method_name(attributes::function_def const& f)
+{
+  return managed_method_name(f.klass.eolian_name, f.name);
+}
+
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
 {
-   return join_namespaces(alias.namespaces, '.') + alias.eolian_name;
+
+   std::string eolian_name = utils::remove_all(alias.eolian_name, '_');
+   return join_namespaces(alias.namespaces, '.') + eolian_name;
 }
 
 inline std::string managed_async_method_name(attributes::function_def const& f)
@@ -208,7 +215,7 @@ inline std::string type_full_eolian_name(attributes::regular_type_def const& typ
 
 inline std::string type_full_managed_name(attributes::regular_type_def const& type)
 {
-   return join_namespaces(type.namespaces, '.', managed_namespace) + type.base_type;
+   return join_namespaces(type.namespaces, '.', managed_namespace) + utils::remove_all(type.base_type, '_');
 }
 
 inline std::string struct_full_eolian_name(attributes::struct_def const& struct_)
@@ -216,9 +223,22 @@ inline std::string struct_full_eolian_name(attributes::struct_def const& struct_
    return join_namespaces(struct_.namespaces, '.') + struct_.cxx_name;
 }
 
-inline std::string enum_managed_name(attributes::enum_def const& enum_)
+template<typename T>
+inline std::string typedecl_managed_name(T const& item)
 {
-   return enum_.cxx_name;
+   return utils::remove_all(item.cxx_name, '_');
+}
+
+inline std::string typedecl_managed_name(attributes::function_def const& func)
+{
+   return utils::remove_all(func.name, '_');
+}
+
+
+inline std::string enum_field_managed_name(std::string name)
+{
+   std::vector<std::string> names = utils::split(name, '_');
+   return utils::to_pascal_case(names);
 }
 
 inline std::string to_field_name(std::string const& in)
@@ -226,50 +246,135 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
-// Class name translation (interface/concrete/inherit/etc)
-template<typename T>
-inline std::string klass_interface_name(T const& klass)
+inline std::string property_managed_name(const std::string name)
 {
-  return "I" + klass.eolian_name;
+  auto names = utils::split(name, '_');
+  // No need to escape keyword here as it will be capitalized and already
+  // namespaced inside the owner class.
+  return utils::to_pascal_case(names);
 }
 
-template<typename T>
-inline std::string klass_full_interface_name(T const& klass)
+inline std::string property_managed_name(attributes::property_def const& property)
 {
-  return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_interface_name(klass);
+  return property_managed_name(property.name);
 }
+
+inline std::string managed_part_name(attributes::part_def const& part)
+{
+  std::vector<std::string> names = utils::split(part.name, '_');
+  return utils::to_pascal_case(names);
+}
+
+// Class name translation (interface/concrete/inherit/etc)
+struct klass_interface_name_generator
+{
+
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    return utils::remove_all(klass.eolian_name, '_');
+  }
+
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} const klass_interface_name;
+
+struct klass_full_interface_name_generator
+{
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_interface_name(klass);
+  }
+
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} const klass_full_interface_name;
 
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  return klass.eolian_name;
+  std::string name = utils::remove_all(klass.eolian_name, '_');
+  if (klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
+    return name;
+  return name + "Concrete";
 }
 
-template<typename T>
-inline std::string klass_full_concrete_name(T const& klass)
+struct klass_full_concrete_name_generator
 {
-  return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_concrete_name(klass);
-}
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    return join_namespaces(klass.namespaces, '.', managed_namespace) + klass_concrete_name(klass);
+  }
+
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} const klass_full_concrete_name;
+
+struct klass_full_concrete_or_interface_name_generator
+{
+  template <typename T>
+  std::string operator()(T const& klass) const
+  {
+    switch(klass.type)
+    {
+    case attributes::class_type::abstract_:
+    case attributes::class_type::regular:
+      return klass_full_concrete_name(klass);
+    default:
+      return klass_full_interface_name(klass);
+    }
+  }
+
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator, attributes::unused_type, Context const&) const
+  {
+    return true;
+  }
+
+  template <typename OutputIterator, typename Attr, typename Context>
+  bool generate(OutputIterator sink, Attr const& attribute, Context const& context) const
+  {
+    return as_generator((*this).operator()<Attr>(attribute)).generate(sink, attributes::unused, context);
+  }
+} const klass_full_concrete_or_interface_name;
 
 template<typename T>
 inline std::string klass_inherit_name(T const& klass)
 {
-  return klass.eolian_name + "Inherit";
+  return klass_concrete_name(klass);
 }
 
 template<typename T>
 inline std::string klass_native_inherit_name(T const& klass)
 {
-  return klass.eolian_name + "NativeInherit";
+  return klass_concrete_name(klass) + "NativeInherit";
+}
+
+template<typename T>
+inline std::string klass_full_native_inherit_name(T const& klass)
+{
+  return klass_full_concrete_name(klass) + "NativeInherit";
 }
 
 template<typename T>
 inline std::string klass_get_name(T const& clsname)
 {
-  return utils::to_lowercase(join_namespaces(clsname.namespaces, '_') + clsname.eolian_name + "_class_get");
+  return clsname.klass_get_name;
 }
 
-inline std::string klass_get_full_name(attributes::klass_name const& clsname)
+template<typename T>
+inline std::string klass_get_full_name(T const& clsname)
 {
   return klass_full_concrete_name(clsname) + "." + klass_get_name(clsname);
 }
@@ -282,17 +387,20 @@ inline std::string managed_event_name(std::string const& name)
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
-   return name_helpers::managed_event_name(evt.name) + "_Args";
+   std::string ret;
+     ret = klass_interface_name(evt.klass);
+   return ret + name_helpers::managed_event_name(evt.name) + "_Args";
 }
 
 inline std::string managed_event_args_name(attributes::event_def evt)
 {
-   return klass_full_concrete_name(evt.klass) + "." + managed_event_args_short_name(evt);
+   return join_namespaces(evt.klass.namespaces, '.', managed_namespace) +
+          managed_event_args_short_name(evt);
 }
 
 inline std::string translate_inherited_event_name(const attributes::event_def &evt, const attributes::klass_def &klass)
 {
-   return join_namespaces(klass.namespaces, '_') + klass.cxx_name + "_" + managed_event_name(evt.name);
+   return join_namespaces(klass.namespaces, '_') + klass_interface_name(klass) + "_" + managed_event_name(evt.name);
 }
 
 // Open/close namespaces
@@ -318,4 +426,34 @@ bool close_namespaces(OutputIterator sink, std::vector<std::string> const& names
 
 } // namespace eolian_mono
 
+
+namespace efl { namespace eolian { namespace grammar {
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::true_type {};
+
+template <>
+struct is_eager_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
+template <>
+struct is_generator<eolian_mono::name_helpers::klass_full_concrete_name_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed<struct ::eolian_mono::name_helpers::klass_full_concrete_or_interface_name_generator> : std::integral_constant<int, 1> {};
+}
+      
+} } }
+      
 #endif

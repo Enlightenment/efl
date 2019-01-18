@@ -2,9 +2,9 @@ import efl_text_types;
 
 struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
 
-abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
+abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Size_Hint,
-                            Efl.Gfx.Map, Efl.Loop_Consumer, Efl.Ui.Base, Efl.Canvas.Pointer)
+                            Efl.Gfx.Map, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -93,7 +93,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
 
               If $freeze is $false, events will be processed on that
               object as normal.
-            
+
               Warning: If you block only key/mouse up events with this API,
               you can't be sure of the state of any objects that have only
               key/mouse down events.
@@ -140,7 +140,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
 
               The visibility of an object affects the objects that are
               clipped by it, so if the object clipping others is not shown
-              (as in \@ref evas_object_show), the objects clipped by it will
+              (as in @Efl.Gfx.Entity.visible), the objects clipped by it will
               not be shown  either.
 
               If $obj was being clipped by another object when this function
@@ -173,7 +173,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
 
               If $repeat is $true, it will make events on $obj to also be
               repeated for the next lower object in the objects' stack (see
-              see \@ref evas_object_below_get).
+              see @Efl.Gfx.Stack.below).
 
               If $repeat is $false, events occurring on $obj will be
               processed only on it.
@@ -244,10 +244,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
            at the same time. This function adds a new seat to the focus list. In other words,
            after the seat is added to the list this object will now be also focused by this new seat.
 
-           This function generates an \@ref EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_IN event.
-
-           \@note The old focus APIs ( \@ref evas_object_focus_get, \@ref evas_object_focus_set,
-           @.key_grab) will still work, however they will only act on the default seat.
+           Note: The old focus APIs still work, however they will only act on the default seat.
 
            @since 1.19
          ]]
@@ -260,8 +257,6 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
       seat_focus_del {
          [[ Remove a seat from the focus list.
 
-            Removing an seat from the focus list is an unfocus operation, thus it will generate an
-            \@ref EFL_CANVAS_OBJECT_EVENT_FOCUS_DEVICE_OUT event.
             @since 1.19
          ]]
          params {
@@ -354,7 +349,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
 
               If $pass is $true, it will make events on $obj to be ignored.
               They will be triggered on the next lower object (that is not
-              set to pass events), instead (see \@ref evas_object_below_get).
+              set to pass events), instead (see @Efl.Gfx.Stack.below).
 
               If $pass is $false events will be processed on that object
               as normal.
@@ -455,6 +450,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
          return: bool @warn_unused; [[$true if any object is clipped by $obj, $false otherwise]]
       }
       key_grab {
+         /* FIXME: can't reference Eolian object, .eo file not being installed */
          [[Requests $keyname key events be directed to $obj.
 
            Key grabs allow one or more objects to receive key events for
@@ -463,16 +459,13 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
            events for the given keys.
 
            $keyname is a platform dependent symbolic name for the key
-           pressed (see \@ref Evas_Keys for more information).
+           pressed.
 
            $modifiers and $not_modifiers are bit masks of all the
            modifiers that must and mustn't, respectively, be pressed along
            with $keyname key in order to trigger this new key grab.
            Modifiers can be things such as Shift and Ctrl as well as
-           user defined types via \@ref evas_key_modifier_add. Retrieve
-           them with \@ref evas_key_modifier_mask_get or use 0 for empty
-           masks.
-
+           user defined types via \@ref evas_key_modifier_add.
            $exclusive will make the given object the only one permitted to
            grab the given key. If given $true, subsequent calls on this
            function with different $obj arguments will fail, unless the key
@@ -480,16 +473,13 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
 
            Warning: Providing impossible modifier sets creates undefined
            behavior.
-
-           See also @.key_ungrab, @.key_focus.get, @.key_focus.set,
-           \@ref evas_focus_get, \@ref evas_key_modifier_add.
          ]]
          return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
             @in keyname: string @nonull; [[The key to request events for.]]
-            @in modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+            @in modifiers: Efl.Input.Modifier; [[A combination of modifier
                               keys that must be present to trigger the event.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combinaison of modifier
+            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
                           keys that must not be present to trigger the event.]]
             @in exclusive: bool; [[Request that the $obj is the only object
                                    receiving the $keyname events.]]
@@ -618,6 +608,7 @@ abstract Efl.Canvas.Object (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.S
       Efl.Gfx.Size_Hint.hint_max { get; set; }
       Efl.Gfx.Size_Hint.hint_margin { get; set; }
       Efl.Gfx.Size_Hint.hint_weight { get; set; }
+      Efl.Gfx.Size_Hint.hint_fill { get; set; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_Consumer.loop { get; }

@@ -1,5 +1,5 @@
-class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
-                        Efl.Access.Value, Efl.Access.Widget.Action)
+class Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Composition, Efl.Ui.Direction,
+                          Efl.Access.Widget.Action
 {
    [[A Button Spin.
 
@@ -68,6 +68,7 @@ class Efl.Ui.Spin_Button (Efl.Ui.Spin, Efl.Ui.Focus.Composition,
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Range.range_value { set; }
+      Efl.Ui.Direction.direction { get; set; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }

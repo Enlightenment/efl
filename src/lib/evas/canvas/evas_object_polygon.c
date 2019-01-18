@@ -32,8 +32,6 @@ static void evas_object_polygon_render_post(Evas_Object *eo_obj,
                                             Evas_Object_Protected_Data *obj,
                                             void *type_private_data);
 
-static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_polygon_is_opaque(Evas_Object *eo_obj,
@@ -58,12 +56,8 @@ static const Evas_Object_Func object_func =
      evas_object_polygon_render,
      evas_object_polygon_render_pre,
      evas_object_polygon_render_post,
-     evas_object_polygon_id_get,
-     evas_object_polygon_visual_id_get,
      evas_object_polygon_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
      NULL,
      NULL,
      evas_object_polygon_is_opaque,
@@ -74,8 +68,7 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL,
-     NULL, // render_prepare
-     NULL
+     NULL    // render_prepare
 };
 
 /* the actual api call to add a rect */
@@ -84,10 +77,9 @@ static const Evas_Object_Func object_func =
 EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   return efl_add(MY_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
+   e = evas_find(e);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(MY_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -416,20 +408,6 @@ evas_object_polygon_render_post(Evas_Object *eo_obj EINA_UNUSED,
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
-}
-
-static unsigned int evas_object_polygon_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Polygon_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_POLYGON;
-}
-
-static unsigned int evas_object_polygon_visual_id_get(Evas_Object *eo_obj)
-{
-   Efl_Canvas_Polygon_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SHAPE;
 }
 
 static void *evas_object_polygon_engine_data_get(Evas_Object *eo_obj)

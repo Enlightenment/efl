@@ -305,7 +305,7 @@ eina_log_pid_get(void)
 static inline void
 eina_log_print_level_name_get(int level, const char **p_name)
 {
-   static char buf[4];
+   static char buf[12];
    /* NOTE: if you change this, also change
     *    eina_log_print_level_name_color_get()
     *    eina_log_level_name_get() (at eina_inline_log.x)
@@ -330,7 +330,7 @@ eina_log_print_level_name_color_get_win32_console(int level,
                                                   const char **p_name,
                                                   int *p_color)
 {
-   static char buf[4];
+   static char buf[12];
    /* NOTE: if you change this, also change:
     *   eina_log_print_level_name_get()
     */
@@ -355,7 +355,7 @@ eina_log_print_level_name_color_get_posix(int level,
                                           const char **p_name,
                                           const char **p_color)
 {
-   static char buf[4];
+   static char buf[12];
    /* NOTE: if you change this, also change:
     *   eina_log_print_level_name_get()
     */

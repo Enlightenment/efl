@@ -94,7 +94,7 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " eina.Strbuf");
+                return replace_base_type(r, " Eina.Strbuf");
               }}
            , {"Binbuf", true, [&]
               {
@@ -115,9 +115,9 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 if (is_ptr)
-                    r.base_type = " eina.Value";
+                    r.base_type = " Eina.Value";
                 else
-                    r.base_type = " eina.Value_Native";
+                    r.base_type = " Eina.ValueNative";
                 return r;
                }}
            , {"any_value", false, [&]
@@ -125,23 +125,23 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 if (is_ptr)
-                    r.base_type = " eina.Value";
+                    r.base_type = " Eina.Value";
                 else
-                    r.base_type = " eina.Value_Native";
+                    r.base_type = " Eina.ValueNative";
                 return r;
                }}
            , {"any_value_ptr", true, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
-                r.base_type = " eina.Value";
+                r.base_type = " Eina.Value";
                 return r;
                }}
            , {"any_value_ptr", false, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
-                r.base_type = " eina.Value";
+                r.base_type = " Eina.Value";
                 return r;
                }}
            , {"void", nullptr, [&]

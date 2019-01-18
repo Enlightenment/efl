@@ -1,4 +1,4 @@
-class Ecore.Con.Eet.Client.Obj (Ecore.Con.Eet.Base) {
+class Ecore.Con.Eet.Client.Obj extends Ecore.Con.Eet.Base {
    [[Ecore Connection Eet Client class.]]
 
    eo_prefix: ecore_con_eet_client_obj;

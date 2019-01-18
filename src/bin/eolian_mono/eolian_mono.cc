@@ -47,6 +47,7 @@ struct options_type
    mutable Eolian_Unit const* unit;
    int v_major;
    int v_minor;
+   bool want_beta;
    std::map<const std::string, std::string> references_map;
 };
 
@@ -125,17 +126,29 @@ run(options_type const& opts)
          }
      }()};
 
-   if (!as_generator("using System;\nusing System.Runtime.InteropServices;\nusing System.Collections.Generic;\n")
+   if (!as_generator("#pragma warning disable CS1591\n").generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
+     throw std::runtime_error("Failed to generate pragma to disable missing docs");
+
+   if (!as_generator("using System;\n"
+                     "using System.Runtime.InteropServices;\n"
+                     "using System.Collections.Generic;\n"
+                     "using System.Linq;\n"
+                     "using System.ComponentModel;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
         throw std::runtime_error("Failed to generate file preamble");
      }
 
-   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
+   auto lib_context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
                                                                                      opts.v_major,
                                                                                      opts.v_minor,
                                                                                      opts.references_map},
                                                         efl::eolian::grammar::context_null());
+
+   auto options_context = efl::eolian::grammar::context_add_tag(eolian_mono::options_context{opts.want_beta}, lib_context);
+
+   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, options_context);
+
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
          if (eolian_typedecl_type_get(tp) == EOLIAN_TYPEDECL_FUNCTION_POINTER)
@@ -172,7 +185,8 @@ run(options_type const& opts)
            , enum_last; enum_iterator != enum_last; ++enum_iterator)
      {
         efl::eolian::grammar::attributes::enum_def enum_(&*enum_iterator, opts.unit);
-        if (!eolian_mono::enum_definition.generate(iterator, enum_, efl::eolian::grammar::context_null()))
+        auto enum_cxt = context_add_tag(class_context{class_context::enums}, context);
+        if (!eolian_mono::enum_definition.generate(iterator, enum_, enum_cxt))
           {
              throw std::runtime_error("Failed to generate enum");
           }
@@ -262,6 +276,7 @@ _usage(const char *progname)
      << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: efl::ecore::file]" << std::endl
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
+     << "  -b, --beta              Enable @beta methods." << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -291,9 +306,10 @@ opts_get(int argc, char **argv)
        { "vmaj", required_argument, 0, 'M' },
        { "vmin", required_argument, 0, 'm' },
        { "references", required_argument, 0, 'r'},
+       { "beta", no_argument, 0, 'b'},
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vh";
+   const char* options = "I:D:o:c:M:m:ar:vhb";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -344,6 +360,10 @@ opts_get(int argc, char **argv)
           {
              _print_version();
              if (argc == 2) exit(EXIT_SUCCESS);
+          }
+        else if (c == 'b')
+          {
+             opts.want_beta = true;
           }
      }
    if (optind == argc-1)

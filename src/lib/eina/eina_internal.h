@@ -42,6 +42,7 @@
 #endif
 
 #include "eina_prefix.h"
+#include "eina_promise.h"
 
 typedef struct _Eina_Vpath_Interface_User Eina_Vpath_Interface_User;
 
@@ -74,7 +75,7 @@ EAPI void __eina_promise_cancel_all(void);
 EAPI void __eina_promise_cancel_data(void *data);
 
 /**
- * Make the app specific paths accessable as virtual path
+ * Make the app specific paths accessible as virtual path
  *
  * This will create :
  *   - app.dir
@@ -98,6 +99,8 @@ EAPI void eina_vpath_interface_app_set(const char *app_name, Eina_Prefix *p);
  * If you do NOT call this api the virtual paths for usr.* will be unset.
  */
 EAPI void eina_vpath_interface_user_set(Eina_Vpath_Interface_User *user);
+
+void eina_xdg_env_init(void);
 
 #undef EAPI
 #define EAPI

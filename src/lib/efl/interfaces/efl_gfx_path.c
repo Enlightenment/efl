@@ -22,9 +22,16 @@ struct _Efl_Gfx_Path_Data
 
    unsigned int commands_count;
    unsigned int points_count;
+
+   unsigned int reserved_pts_cnt;   //Reserved Points Count
+   unsigned int reserved_cmd_cnt;   //Reserved Commands Count
+
    char *path_data;
    Eina_Bool convex;
 };
+
+static void _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd, char *from, char *to, double pos);
+static void _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd);
 
 static inline unsigned int
 _efl_gfx_path_command_length(Efl_Gfx_Path_Command command)
@@ -65,8 +72,6 @@ efl_gfx_path_grow(Efl_Gfx_Path_Command command,
                   Efl_Gfx_Path_Data *pd,
                   double **offset_point)
 {
-   Efl_Gfx_Path_Command *cmd_tmp;
-   double *pts_tmp;
    unsigned int cmd_length = 0, pts_length = 0;
 
    cmd_length = pd->commands_count ? pd->commands_count : 1;
@@ -75,27 +80,38 @@ efl_gfx_path_grow(Efl_Gfx_Path_Command command,
    if (_efl_gfx_path_command_length(command))
      {
         pts_length += _efl_gfx_path_command_length(command);
-        pts_tmp = realloc(pd->points, pts_length * sizeof (double));
-        if (!pts_tmp) return EINA_FALSE;
 
-        pd->points = pts_tmp;
+        //grow up twice
+        if (pts_length > pd->reserved_pts_cnt)
+          {
+             double *pts_tmp = realloc(pd->points, sizeof(double) * (pts_length * 2));
+             if (!pts_tmp) return EINA_FALSE;
+             pd->reserved_pts_cnt = pts_length * 2;
+             pd->points = pts_tmp;
+          }
+
         *offset_point =
            pd->points + pts_length - _efl_gfx_path_command_length(command);
      }
 
-   cmd_tmp = realloc(pd->commands,
-                     (cmd_length + 1) * sizeof (Efl_Gfx_Path_Command));
-   if (!cmd_tmp) return EINA_FALSE;
-   pd->commands = cmd_tmp;
+   //grow up twice
+   if ((cmd_length + 1) > pd->reserved_cmd_cnt)
+     {
+        Efl_Gfx_Path_Command *cmd_tmp =
+           realloc(pd->commands, (cmd_length  * 2) * sizeof (Efl_Gfx_Path_Command));
+        if (!cmd_tmp) return EINA_FALSE;
+        pd->reserved_cmd_cnt = (cmd_length * 2);
+        pd->commands = cmd_tmp;
+     }
+
    pd->commands_count = cmd_length + 1;
    pd->points_count = pts_length;
 
    // Append the command
-   cmd_tmp[cmd_length - 1] = command;
+   pd->commands[cmd_length - 1] = command;
 
    // NULL terminate the stream
-   cmd_tmp[cmd_length] = EFL_GFX_PATH_COMMAND_TYPE_END;
-
+   pd->commands[cmd_length] = EFL_GFX_PATH_COMMAND_TYPE_END;
    pd->convex = EINA_FALSE;
 
    return EINA_TRUE;
@@ -148,24 +164,18 @@ _efl_gfx_path_current_search(const Efl_Gfx_Path_Command *cmd,
 
 EOLIAN static void
 _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
-                  const Efl_Gfx_Path_Command *commands,
-                  const double *points)
+                       const Efl_Gfx_Path_Command *commands,
+                       const double *points)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
+   if (!commands)
+     {
+         _efl_gfx_path_reset(obj, pd);
+         return;
+     }
+
    Efl_Gfx_Path_Command *cmds;
    double *pts;
    unsigned int cmds_length = 0, pts_length = 0;
-
-   if (!commands)
-     {
-        free(pd->commands);
-        pd->commands = NULL;
-        free(pd->points);
-        pd->points = NULL;
-        pd->current.x = pd->current.y = 0;
-        pd->current_ctrl.x = pd->current_ctrl.y = 0;
-        goto end;
-     }
 
    _efl_gfx_path_length(commands, &cmds_length, &pts_length);
 
@@ -181,15 +191,16 @@ _efl_gfx_path_path_set(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->commands_count = cmds_length;
    pd->points_count = pts_length;
 
-   memcpy(pd->commands, commands, sizeof (Efl_Gfx_Path_Command) * cmds_length);
-   memcpy(pd->points, points, sizeof (double) * pts_length);
+   //full reserved memory
+   pd->reserved_cmd_cnt = cmds_length;
+   pd->reserved_pts_cnt = pts_length;
+
+   memcpy(pd->commands, commands, sizeof(Efl_Gfx_Path_Command) * cmds_length);
+   memcpy(pd->points, points, sizeof(double) * pts_length);
 
    _efl_gfx_path_current_search(pd->commands, pd->points,
                                 &pd->current.x, &pd->current.y,
                                 &pd->current_ctrl.x, &pd->current_ctrl.y);
-
- end:
-   efl_event_callback_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 EOLIAN static void
@@ -275,14 +286,10 @@ interpolate(double from, double to, double pos_map)
    return (from * (1.0 - pos_map)) + (to * pos_map);
 }
 
-static void _path_interpolation(Eo *obj, Efl_Gfx_Path_Data *pd, char *from, char *to, double pos);
-static void _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd);
-
 EOLIAN static Eina_Bool
 _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
                           const Eo *from, const Eo *to, double pos_map)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    Efl_Gfx_Path_Data *from_pd, *to_pd;
    Efl_Gfx_Path_Command *cmds;
    double interv;    //interpolated value
@@ -344,6 +351,8 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
 
         pd->points_count = from_pd->points_count;
         pd->commands_count = from_pd->commands_count;
+        pd->reserved_cmd_cnt = from_pd->commands_count;
+        pd->reserved_pts_cnt = from_pd->points_count;
 
         interv = interpolate(from_pd->current.x, to_pd->current.x, pos_map);
         pd->current.x = interv;
@@ -360,8 +369,6 @@ _efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Path_Data *pd,
         pd->current_ctrl.y = interv;
 
    }
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 
    return EINA_TRUE;
 }
@@ -380,17 +387,36 @@ _efl_gfx_path_equal_commands(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
+_efl_gfx_path_reserve(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd,
+                      unsigned int cmd_count, unsigned int pts_count)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
+   if (pd->reserved_cmd_cnt < cmd_count)
+      {
+         //+1 for path close.
+         pd->reserved_cmd_cnt = cmd_count + 1;
+         pd->commands = realloc(pd->commands, sizeof(Efl_Gfx_Path_Command) * pd->reserved_cmd_cnt);
+      }
 
+   if (pd->reserved_pts_cnt < pts_count)
+      {
+         pd->reserved_pts_cnt = pts_count;
+         pd->points = realloc(pd->points, sizeof(double) * pts_count);
+      }
+}
+
+EOLIAN static void
+_efl_gfx_path_reset(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd)
+{
    free(pd->commands);
+   pd->reserved_cmd_cnt = 0;
    pd->commands = NULL;
    pd->commands_count = 0;
 
    free(pd->points);
+   pd->reserved_pts_cnt = 0;
    pd->points = NULL;
    pd->points_count = 0;
+
    free(pd->path_data);
    pd->path_data = NULL;
 
@@ -399,15 +425,13 @@ _efl_gfx_path_reset(Eo *obj, Efl_Gfx_Path_Data *pd)
    pd->current_ctrl.x = 0;
    pd->current_ctrl.y = 0;
    pd->convex = EINA_FALSE;
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 EOLIAN static void
-_efl_gfx_path_append_move_to(Eo *obj, Efl_Gfx_Path_Data *pd,
-                              double x, double y)
+_efl_gfx_path_append_move_to(Eo *obj EINA_UNUSED,
+                             Efl_Gfx_Path_Data *pd,
+                             double x, double y)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO, pd, &offset_point))
@@ -418,15 +442,13 @@ _efl_gfx_path_append_move_to(Eo *obj, Efl_Gfx_Path_Data *pd,
 
    pd->current.x = x;
    pd->current.y = y;
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 EOLIAN static void
-_efl_gfx_path_append_line_to(Eo *obj, Efl_Gfx_Path_Data *pd,
-                              double x, double y)
+_efl_gfx_path_append_line_to(Eo *obj EINA_UNUSED,
+                             Efl_Gfx_Path_Data *pd,
+                             double x, double y)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_LINE_TO, pd, &offset_point))
@@ -437,17 +459,15 @@ _efl_gfx_path_append_line_to(Eo *obj, Efl_Gfx_Path_Data *pd,
 
    pd->current.x = x;
    pd->current.y = y;
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 EOLIAN static void
-_efl_gfx_path_append_cubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
-                               double ctrl_x0, double ctrl_y0,
-                               double ctrl_x1, double ctrl_y1,
-                               double x, double y)
+_efl_gfx_path_append_cubic_to(Eo *obj EINA_UNUSED,
+                              Efl_Gfx_Path_Data *pd,
+                              double ctrl_x0, double ctrl_y0,
+                              double ctrl_x1, double ctrl_y1,
+                              double x, double y)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    double *offset_point;
 
    if (!efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO,
@@ -465,8 +485,6 @@ _efl_gfx_path_append_cubic_to(Eo *obj, Efl_Gfx_Path_Data *pd,
    pd->current.y = y;
    pd->current_ctrl.x = ctrl_x1;
    pd->current_ctrl.y = ctrl_y1;
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 EOLIAN static void
@@ -1050,14 +1068,10 @@ _efl_gfx_path_append_arc(Eo *obj, Efl_Gfx_Path_Data *pd,
 }
 
 EOLIAN static void
-_efl_gfx_path_append_close(Eo *obj, Efl_Gfx_Path_Data *pd)
+_efl_gfx_path_append_close(Eo *obj EINA_UNUSED, Efl_Gfx_Path_Data *pd)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    double *offset_point;
-
    efl_gfx_path_grow(EFL_GFX_PATH_COMMAND_TYPE_CLOSE, pd, &offset_point);
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 static void
@@ -1235,7 +1249,7 @@ process_command(Eo *obj, Efl_Gfx_Path_Data *pd, char cmd, double *arr, int count
       case 'q':
       case 't':
         {
-           for(i=0; i<count; i += 2)
+           for(i = 0; i < count - 1; i += 2)
              {
                 arr[i] = arr[i] + *cur_x;
                 arr[i+1] = arr[i+1] + *cur_y;
@@ -1504,7 +1518,6 @@ error:
 EOLIAN static void
 _efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
 {
-   Efl_Gfx_Path_Change_Event ev = { EFL_GFX_CHANGE_FLAG_PATH };
    Efl_Gfx_Path_Data *from;
 
    if (obj == dup_from) return;
@@ -1514,8 +1527,6 @@ _efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
    pd->convex = from->convex;
 
    _efl_gfx_path_path_set(obj, pd, from->commands, from->points);
-
-   efl_event_callback_legacy_call(obj, EFL_GFX_PATH_EVENT_CHANGED, &ev);
 }
 
 #include "interfaces/efl_gfx_path.eo.c"

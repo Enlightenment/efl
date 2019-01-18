@@ -3,7 +3,6 @@
 
 #include <Elementary.h>
 
-#define ELM_INTERNAL_API_ARGESFSDFEFC
 #include "elm_priv.h"
 #include "elm_widget_prefs.h"
 

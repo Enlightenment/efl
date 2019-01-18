@@ -506,6 +506,15 @@ group { "efl/text/anchor";
 }
 
 group { "efl/text";
+   data {
+      item: "font.name" "Sans";
+      item: "font.size" "10";
+      item: "style.color" "#fff";
+
+      item: "guide.font.name" "Sans";
+      item: "guide.font.size" "10";
+      item: "guide.style.color" "#666";
+   }
    sounds {
       sample { name: "key-tap1" LOSSY 64;
          source: "kbd-tap.wav";
@@ -536,25 +545,21 @@ group { "efl/text";
             rel2.offset: -2 -2;
          }
       }
-      part { name: "efl.guide"; type: TEXTBLOCK; mouse_events: 0;
-         scale: 1;
-         description { state: "default" 0.0;
-            rel1.to: "efl.text";
-            rel2.to: "efl.text";
-            text { style: "efl_ui_text_guide_style";
-               min: 0 1;
-               align: 0.0 0.0;
-            }
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
-         }
-      }
       part { name: "efl.text"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             /* we gotta use 0 0 here, because of scrolled entries */
+            fixed: 0 0;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "efl.text_guide"; type: SWALLOW;
+         scale: 1;
+         description { state: "default" 0.0;
             fixed: 0 0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;

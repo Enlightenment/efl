@@ -18,12 +18,12 @@ struct Efl.Ui.Image_Error
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
+class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation,
                  Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
-                 Efl.Layout.Group, Efl.Layout.Signal)
+                 Efl.Layout.Group, Efl.Layout.Signal
 {
    [[ Efl UI image class]]
    event_prefix: efl_ui_image;
@@ -107,7 +107,6 @@ class Efl.Ui.Image (Efl.Ui.Widget, Efl.Ui.Clickable, Efl.Ui.Draggable,
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
-      //Efl.Canvas.Layout_Group.group_data { get; }
       Efl.Layout.Calc.calc_size_min;
       Efl.Layout.Calc.calc_force;
       Efl.Canvas.Object.clip { set; }

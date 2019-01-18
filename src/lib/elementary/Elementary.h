@@ -160,8 +160,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
 # include <efl_ui_focus_util.eo.h>
-# include <efl_ui_textpath.eo.h>
-# include <efl_ui_translatable.eo.h>
+# include <efl_ui_l10n.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
 # include <elm_interface_scrollable.h>
@@ -269,6 +268,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_spinner.h>
 #include <elm_store.h>
 #include <elm_table.h>
+#include <elm_textpath.h>
 #include <elm_theme.h>
 #include <elm_thumb.h>
 #include <elm_toolbar.h>
@@ -280,7 +280,8 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_win.h>
 
 #ifdef EFL_EO_API_SUPPORT
-# include <efl_selection_types.eot.h>
+# include <efl_ui_selection_types.eot.h>
+# include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget.eo.h>
 # include <efl_ui_widget_part.eo.h>
@@ -294,7 +295,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_win_part.eo.h>
 # include <efl_ui_bg.eo.h>
-# include <efl_ui_bg_widget.eo.h>
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_box_stack.eo.h>
@@ -307,10 +307,11 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_popup.eo.h>
-# include <efl_ui_popup_alert.eo.h>
-# include <efl_ui_popup_alert_scroll.eo.h>
-# include <efl_ui_popup_alert_text.eo.h>
-# include <efl_ui_popup_anchor.eo.h>
+# include <efl_ui_alert_popup.eo.h>
+# include <efl_ui_scroll_alert_popup.eo.h>
+# include <efl_ui_text_alert_popup.eo.h>
+# include <efl_ui_anchor_popup.eo.h>
+# include <efl_ui_popup_part_backwall.eo.h>
 # include <efl_ui_text_factory_images.eo.h>
 # include <efl_ui_text_factory_emoticons.eo.h>
 # include <efl_ui_text_factory_fallback.eo.h>
@@ -322,6 +323,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_datepicker.eo.h>
 # include <efl_ui_timepicker.eo.h>
 # include <efl_ui_tags.eo.h>
+# include <efl_ui_panel.eo.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>
@@ -333,18 +335,24 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_list_default_item.eo.h>
 # include <efl_ui_list_empty_item.eo.h>
 # include <efl_ui_list.eo.h>
-# include <efl_ui_view_list_types.eot.h>
-# include <efl_ui_view_list_segarray.h>
-# include <efl_ui_view_list_segarray.eo.h>
-# include <efl_ui_view_list_model.eo.h>
-# include <efl_ui_view_list_relayout.eo.h>
-# include <efl_ui_view_list.eo.h>
-# include <efl_ui_view_list_pan.eo.h>
+# include <efl_ui_grid_item.eo.h>
+# include <efl_ui_grid_default_item_part_icon.eo.h>
+# include <efl_ui_grid_default_item_part_end.eo.h>
+# include <efl_ui_grid_default_item.eo.h>
+# include <efl_ui_grid.eo.h>
+# include <efl_ui_list_view_types.eot.h>
+# include <efl_ui_list_view_seg_array.h>
+# include <efl_ui_list_view_seg_array.eo.h>
+# include <efl_ui_list_view_model.eo.h>
+# include <efl_ui_list_view_relayout.eo.h>
+# include <efl_ui_list_view.eo.h>
+# include <efl_ui_list_view_pan.eo.h>
+# include <efl_ui_caching_factory.eo.h>
+# include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>
 # include <efl_ui_dnd_types.eot.h>
-# include <efl_ui_pan.eo.h>
-# include <efl_selection.eo.h>
+# include <efl_ui_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
 # include <efl_ui_navigation_bar.eo.h>

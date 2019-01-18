@@ -5,6 +5,7 @@
 #include <Efl_Core.h>
 
 #include "efl_model_composite_boolean_children.eo.h"
+#include "efl_model_composite_private.h"
 
 typedef struct _Efl_Model_Composite_Boolean_Data Efl_Model_Composite_Boolean_Data;
 typedef struct _Efl_Model_Composite_Boolean_Children_Data Efl_Model_Composite_Boolean_Children_Data;
@@ -67,23 +68,15 @@ _efl_model_composite_boolean_children_efl_object_finalize(Eo *obj,
    return obj;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_composite_boolean_children_efl_model_properties_get(const Eo *obj,
                                                                Efl_Model_Composite_Boolean_Children_Data *pd)
 {
-   Eina_Iterator *it;
-   Eina_Stringshare *s;
-   Eina_Array *r;
-
-   r = efl_model_properties_get(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS));
-   if (!r) r = eina_array_new(1);
-
-   it = eina_hash_iterator_key_new(pd->parent->values);
-   EINA_ITERATOR_FOREACH(it, s)
-     eina_array_push(r, s);
-   eina_array_push(r, "child.index");
-
-   return r;
+   EFL_MODEL_COMPOSITE_PROPERTIES_SUPER(props,
+                                        obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS,
+                                        eina_hash_iterator_key_new(pd->parent->values),
+                                        "child.index");
+   return props;
 }
 
 static Eina_Value *
@@ -112,9 +105,9 @@ _efl_model_composite_boolean_children_efl_model_property_get(const Eo *obj,
    if ((pd->index >> 3) >= v->buffer_count)
      flag = v->default_value;
    else
-     flag = v->buffer[pd->index >> 3] & (1 << pd->index & 0x7);
+     flag = v->buffer[pd->index >> 3] & (((unsigned char)1) << (pd->index & 0x7));
 
-   return eina_value_uchar_new(!!flag);
+   return eina_value_bool_new(!!flag);
 }
 
 static Eina_Future *
@@ -128,10 +121,10 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
    Eina_Bool flag;
 
    if (!property)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
    if (strcmp(property, "child.index") == 0)
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_READ_ONLY);
 
    s = eina_stringshare_add(property);
@@ -142,12 +135,12 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
      return efl_model_property_set(efl_super(obj, EFL_MODEL_COMPOSITE_BOOLEAN_CHILDREN_CLASS),
                                    property, value);
 
-   eina_value_setup(&b, EINA_VALUE_TYPE_UCHAR);
+   eina_value_setup(&b, EINA_VALUE_TYPE_BOOL);
    if (!eina_value_convert(value, &b))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
    if (!eina_value_get(value, &flag))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_UNKNOWN);
 
    eina_value_flush(&b);
@@ -160,7 +153,7 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
         unsigned char *tmp;
 
         tmp = realloc(v->buffer, rcount);
-        if (!tmp) return eina_future_rejected(efl_loop_future_scheduler_get(obj), ENOMEM);
+        if (!tmp) return efl_loop_future_rejected(obj, ENOMEM);
         v->buffer = tmp;
         memset(v->buffer + v->buffer_count, 0, rcount - v->buffer_count);
         v->buffer_count = rcount;
@@ -168,12 +161,15 @@ _efl_model_composite_boolean_children_efl_model_property_set(Eo *obj,
 
    // It is assumed that during slice get the buffer is properly sized
    if (flag)
-     v->buffer[pd->index >> 3] |= 1 << (pd->index & 0x7);
+     v->buffer[pd->index >> 3] |= ((unsigned char)1) << (pd->index & 0x7);
    else
-     v->buffer[pd->index >> 3] &= ~(1 << (pd->index & 0x7));
+     v->buffer[pd->index >> 3] &= ~(((unsigned char)1) << (pd->index & 0x7));
 
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj),
-                               eina_value_uchar_init(!!flag));
+   // Calling "properties,changed" event
+   efl_model_properties_changed(obj, property);
+
+   // Return fulfilled future
+   return efl_loop_future_resolved(obj, eina_value_bool_init(!!flag));
 }
 
 /**************** efl_model_composite_boolean **************/
@@ -185,15 +181,12 @@ struct _Efl_Model_Slice_Request
 };
 
 static Eina_Value
-_efl_model_composite_boolean_then(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_efl_model_composite_boolean_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 {
    Efl_Model_Slice_Request *req = data;
    unsigned int i, len;
    Eina_Value r = EINA_VALUE_EMPTY;
    Eo *target = NULL;
-
-   if (eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY)
-     goto on_error;
 
    eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
 
@@ -210,11 +203,16 @@ _efl_model_composite_boolean_then(void *data, const Eina_Value v, const Eina_Fut
         eina_value_array_append(&r, composite);
      }
 
- on_error:
+   return r;
+}
+
+static void
+_efl_model_composite_boolean_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Model_Slice_Request *req = data;
+
    efl_unref(req->parent);
    free(req);
-
-   return r;
 }
 
 static void
@@ -228,6 +226,8 @@ _boolean_value_free(void *data)
    free(value->buffer);
    value->buffer = NULL;
    value->buffer_count = 0;
+
+   free(value);
 }
 
 static Eo *
@@ -292,13 +292,15 @@ _efl_model_composite_boolean_efl_model_children_slice_get(Eo *obj,
                                     start, count);
 
    req = malloc(sizeof (Efl_Model_Slice_Request));
-   if (!req) return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   if (!req) return efl_loop_future_rejected(obj,
                                          ENOMEM);
    req->parent = efl_ref(obj);
    req->start = start;
 
-   return efl_future_Eina_FutureXXX_then(obj,
-                                         eina_future_then(f, _efl_model_composite_boolean_then, req));
+   return efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                          .success = _efl_model_composite_boolean_then,
+                          .free = _efl_model_composite_boolean_clean,
+                          .data = req);
 }
 
 #include "efl_model_composite_boolean.eo.c"

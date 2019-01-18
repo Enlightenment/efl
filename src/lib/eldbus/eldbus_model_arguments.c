@@ -12,8 +12,6 @@
 #define MY_CLASS ELDBUS_MODEL_ARGUMENTS_CLASS
 #define MY_CLASS_NAME "Eldbus_Model_Arguments"
 
-#define ARGUMENT_FORMAT "arg%u"
-
 static void _eldbus_model_arguments_properties_load(Eldbus_Model_Arguments_Data *);
 static void _eldbus_model_arguments_unload(Eldbus_Model_Arguments_Data *);
 static Eina_Bool _eldbus_model_arguments_is_input_argument(Eldbus_Model_Arguments_Data *, const char *);
@@ -31,8 +29,8 @@ static Efl_Object*
 _eldbus_model_arguments_efl_object_constructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
    pd->obj = obj;
-   pd->properties_array = NULL;
-   pd->properties_hash = eina_hash_string_superfast_new(EINA_FREE_CB(_eldbus_model_arguments_hash_free));
+   // We do keep strings here as some of our API are looking for arg%u as a key instead of just indexes.
+   pd->properties = eina_hash_string_superfast_new(EINA_FREE_CB(_eldbus_model_arguments_hash_free));
    pd->pending_list = NULL;
    pd->proxy = NULL;
    pd->arguments = NULL;
@@ -72,7 +70,7 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
 {
    _eldbus_model_arguments_unload(pd);
 
-   eina_hash_free(pd->properties_hash);
+   eina_hash_free(pd->properties);
 
    eina_stringshare_del(pd->name);
    eldbus_proxy_unref(pd->proxy);
@@ -80,14 +78,14 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _eldbus_model_arguments_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                                  Eldbus_Model_Arguments_Data *pd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
 
    _eldbus_model_arguments_properties_load(pd);
-   return pd->properties_array;
+   return eina_hash_iterator_key_new(pd->properties);
 }
 
 static void
@@ -96,30 +94,25 @@ _eldbus_model_arguments_properties_load(Eldbus_Model_Arguments_Data *pd)
    unsigned int arguments_count;
    unsigned int i;
 
-   if (pd->properties_array)
-     return;
+   if (eina_hash_population(pd->properties) > 0)
+     return ;
 
    arguments_count = eina_list_count(pd->arguments);
-
-   pd->properties_array = eina_array_new(arguments_count);
-   EINA_SAFETY_ON_NULL_RETURN(pd->properties_array);
 
    for (i = 0; i < arguments_count; ++i)
      {
         Eldbus_Introspection_Argument *arg;
         const Eina_Value_Type *type;
-        Eina_Stringshare *name;
+        Eina_Slstr *name;
         Eina_Value *value;
 
-        name = eina_stringshare_printf(ARGUMENT_FORMAT, i);
+        name = eina_slstr_printf(ARGUMENT_FORMAT, i);
         if (!name) continue;
-
-        eina_array_push(pd->properties_array, name);
 
         arg = eina_list_nth(pd->arguments, i);
         type = _dbus_type_to_eina_value_type(arg->type[0]);
         value = eina_value_new(type);
-        eina_hash_add(pd->properties_hash, name, value);
+        eina_hash_add(pd->properties, name, value);
      }
 }
 
@@ -144,17 +137,17 @@ _eldbus_model_arguments_efl_model_property_set(Eo *obj,
    if (!ret) goto on_error;
 
    err = EFL_MODEL_ERROR_NOT_FOUND;
-   prop_value = eina_hash_find(pd->properties_hash, property);
+   prop_value = eina_hash_find(pd->properties, property);
    if (!prop_value) goto on_error;
 
    eina_value_flush(prop_value);
    eina_value_copy(value, prop_value);
 
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_resolved(obj,
                                eina_value_reference_copy(value));
 
  on_error:
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
+   return efl_loop_future_rejected(obj, err);
 }
 
 static Eina_Value *
@@ -168,7 +161,7 @@ _eldbus_model_arguments_efl_model_property_get(const Eo *obj, Eldbus_Model_Argum
 
    _eldbus_model_arguments_properties_load(pd);
 
-   value = eina_hash_find(pd->properties_hash, property);
+   value = eina_hash_find(pd->properties, property);
    if (!value) return eina_value_error_new(EFL_MODEL_ERROR_NOT_FOUND);
 
    ret = _eldbus_model_arguments_is_output_argument(pd, property);
@@ -193,19 +186,7 @@ _eldbus_model_arguments_unload(Eldbus_Model_Arguments_Data *pd)
    EINA_LIST_FREE(pd->pending_list, pending)
      eldbus_pending_cancel(pending);
 
-   if (pd->properties_array)
-     {
-        Eina_Stringshare *property;
-        Eina_Array_Iterator it;
-        unsigned int i;
-
-        EINA_ARRAY_ITER_NEXT(pd->properties_array, i, property, it)
-          eina_stringshare_del(property);
-        eina_array_free(pd->properties_array);
-        pd->properties_array = NULL;
-     }
-
-   eina_hash_free_buckets(pd->properties_hash);
+   eina_hash_free_buckets(pd->properties);
 }
 
 Eina_Bool
@@ -219,6 +200,7 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    Eina_Value *value_struct;
    Eina_Array *changed_properties;
    unsigned int i = 0;
+   Eina_Stringshare *property;
    Eina_Bool result = EINA_FALSE;
 
    _eldbus_model_arguments_properties_load(pd);
@@ -244,16 +226,14 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
      {
         if (ELDBUS_INTROSPECTION_ARGUMENT_DIRECTION_IN != argument->direction)
           {
-             Eina_Stringshare *property;
              Eina_Bool ret;
 
-             property = eina_array_data_get(pd->properties_array, i);
-             EINA_SAFETY_ON_NULL_GOTO(property, on_error);
-
-             ret = _eldbus_model_arguments_property_set(pd, value_struct, property);
-             EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
+             property = eina_stringshare_printf(ARGUMENT_FORMAT, i);
 
              ret = eina_array_push(changed_properties, property);
+             EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
+
+             ret = _eldbus_model_arguments_property_set(pd, value_struct, property);
              EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
           }
 
@@ -269,6 +249,8 @@ eldbus_model_arguments_process_arguments(Eldbus_Model_Arguments_Data *pd,
    result = EINA_TRUE;
 
 on_error:
+   while ((property = eina_array_pop(changed_properties)))
+     eina_stringshare_del(property);
    eina_array_free(changed_properties);
    eina_value_free(value_struct);
 
@@ -286,7 +268,7 @@ _eldbus_model_arguments_property_set(Eldbus_Model_Arguments_Data *pd,
 
    _eldbus_model_arguments_properties_load(pd);
 
-   prop_value = eina_hash_find(pd->properties_hash, property);
+   prop_value = eina_hash_find(pd->properties, property);
    EINA_SAFETY_ON_NULL_RETURN_VAL(prop_value, EINA_FALSE);
 
    ret = eina_value_struct_value_get(value_struct, "arg0", &value);
@@ -311,7 +293,7 @@ _eldbus_model_arguments_is(Eldbus_Model_Arguments_Data *pd,
    _eldbus_model_arguments_properties_load(pd);
 
    i = _eldbus_model_arguments_argument_index_get(pd, argument);
-   if (i >= eina_array_count(pd->properties_array))
+   if ((i > 0x7fffffff) || ((int)i >= eina_hash_population(pd->properties)))
      {
         WRN("Argument not found: %s", argument);
         return false;
@@ -339,18 +321,11 @@ _eldbus_model_arguments_is_output_argument(Eldbus_Model_Arguments_Data *pd, cons
 static unsigned int
 _eldbus_model_arguments_argument_index_get(Eldbus_Model_Arguments_Data *pd, const char *argument)
 {
-   Eina_Stringshare *name;
-   Eina_Array_Iterator it;
    unsigned int i = 0;
-   _eldbus_model_arguments_properties_load(pd);
 
-   EINA_ARRAY_ITER_NEXT(pd->properties_array, i, name, it)
-     {
-        if (strcmp(name, argument) == 0)
-          return i;
-     }
-
-   return ++i;
+   if (sscanf(argument, ARGUMENT_FORMAT, &i) > 0)
+     return i;
+   return eina_hash_population(pd->properties);
 }
 
 #include "eldbus_model_arguments.eo.c"

@@ -1,0 +1,48 @@
+class Efl.Ui.Caching_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
+{
+   [[Efl Ui Factory that provides object caching.
+
+     This factory handles caching of one type of object and automatically empties the cache
+     when the application goes into pause.
+
+     Creating objects is costly and time consuming, keeping a few on hand for when you next will need them helps a lot.
+     This is what this factory caching infrastructure provides. It will create the object from the class defined on it and
+     set the parent and the model as needed for all created items. The View has to release the Item using the
+     release function of the Factory interface for all of this to work properly.
+
+     The cache might decide to flush itself when the application event pause is triggered.
+   ]]
+   methods {
+      @property item_class {
+         [[Define the class of the item returned by this factory.]]
+         get {}
+         set {}
+         values {
+            klass: const(Efl.Class); [[The class identifier to create item from.]]
+         }
+      }
+      @property memory_limit {
+         [[Define the maxium size in Bytes that all the object waiting on standby in the cache take. They must provide the @Efl.Cached.Item interface for an accurate accounting.]]
+         get {}
+         set {}
+         values {
+            limit: uint; [[When set to zero, there is no limit on the amount of memory the cache will use.]]
+         }
+      }
+      @property items_limit {
+         [[Define how many maximum number of items are waiting on standby in the cache.]]
+         get {}
+         set {}
+         values {
+            limit: uint; [[When set to zero, there is no limit to the amount of items stored in the cache.]]
+         }
+      }
+   }
+
+   implements {
+      Efl.Ui.Factory.create;
+      Efl.Ui.Factory.release;
+      Efl.Object.invalidate;
+      Efl.Object.parent { set; }
+   }
+}

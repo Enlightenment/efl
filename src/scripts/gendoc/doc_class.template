@@ -10,7 +10,7 @@ ${BEST_SINCE(obj=cls)}$
 
 ${OBJECT_STATIC_CONTENT(obj=cls, section='description')}$
 
-<!--(if len(list(cls.inherits)) > 0)-->
+<!--(if len(list(cls.extensions)) > 0)-->
 ===== Inheritance =====
 
   <!--(for inherit in cls.hierarchy)-->
@@ -19,25 +19,25 @@ ${OBJECT_STATIC_CONTENT(obj=cls, section='description')}$
 
 ++++ Full hierarchy |
 
-  <!--(for inherit in cls.inherits)-->
+  <!--(for inherit in cls.extensions)-->
   * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-    <!--(for inherit in inherit.inherits)-->
+    <!--(for inherit in inherit.extensions)-->
     * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-      <!--(for inherit in inherit.inherits)-->
+      <!--(for inherit in inherit.extensions)-->
       * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-        <!--(for inherit in inherit.inherits)-->
+        <!--(for inherit in inherit.extensions)-->
         * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-          <!--(for inherit in inherit.inherits)-->
+          <!--(for inherit in inherit.extensions)-->
           * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-            <!--(for inherit in inherit.inherits)-->
+            <!--(for inherit in inherit.extensions)-->
             * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-              <!--(for inherit in inherit.inherits)-->
+              <!--(for inherit in inherit.extensions)-->
               * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-                <!--(for inherit in inherit.inherits)-->
+                <!--(for inherit in inherit.extensions)-->
                 * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-                  <!--(for inherit in inherit.inherits)-->
+                  <!--(for inherit in inherit.extensions)-->
                   * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
-                    <!--(for inherit in inherit.inherits)-->
+                    <!--(for inherit in inherit.extensions)-->
                     * ${CLS_LINK(cls=inherit)}$ //(${CLS_TYPE(cls=inherit)}$)//
                     <!--(end)-->
                   <!--(end)-->
@@ -72,7 +72,7 @@ ${IMPLEMENT_FULL(impl=impl, cls=cls)}$
 \\
   <!--(end)-->
 <!--(else)-->
-No Methods defined in this class.
+No methods defined in this class.
 <!--(end)-->
 
 ===== Inherited members =====
@@ -85,7 +85,7 @@ No Methods defined in this class.
 | ${BEST_SUMMARY(obj=impl)}$ |
   <!--(end)-->
 <!--(else)-->
-No inherits defined in this class.
+No extensions defined in this class.
 <!--(end)-->
 
 ===== Events =====

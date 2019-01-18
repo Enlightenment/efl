@@ -198,8 +198,7 @@ _image_place(Evas_Object *obj,
         if (ow > gw) ax = (ow - gw) / 2;
         if (oh > gh) ay = (oh - gh) / 2;
      }
-   evas_object_move(sd->img, ox + 0 - px + ax, oy + 0 - py + ay);
-   evas_object_resize(sd->img, gw, gh);
+   evas_object_geometry_set(sd->img, ox + 0 - px + ax, oy + 0 - py + ay, gw, gh);
 
    if (sd->show_item)
      {
@@ -360,10 +359,9 @@ _grid_place(Evas_Object *obj,
                   yy = (gh * yy) / g->h;
                   hh = ((gh * (ty + hh)) / g->h) - yy;
                }
-             evas_object_move(g->grid[tn].img,
-                              ox + xx - px + ax,
-                              oy + yy - py + ay);
-             evas_object_resize(g->grid[tn].img, ww, hh);
+             evas_object_geometry_set(g->grid[tn].img,
+                                      ox + xx - px + ax,
+                                      oy + yy - py + ay, ww, hh);
           }
      }
 }
@@ -923,17 +921,17 @@ _efl_ui_image_zoomable_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Image
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_image_zoomable_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Eina_Bool fdo = EINA_FALSE;
 
    if (sd->stdicon)
      _internal_efl_ui_image_zoomable_icon_set(obj, sd->stdicon, &fdo, EINA_TRUE);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
 
@@ -1849,6 +1847,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
+   efl_composite_attach(obj, priv->smanager);
 
    efl_ui_mirrored_set(priv->smanager, efl_ui_mirrored_get(obj));
    efl_ui_scrollable_bounce_enabled_set(priv->smanager, bounce, bounce);
@@ -1971,7 +1970,7 @@ _efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Dat
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
-
+   legacy_object_focus_handle(obj);
    return obj;
 }
 
@@ -2831,7 +2830,7 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
      {
         if (sd->f) eina_file_close(sd->f);
         eina_stringshare_replace(&sd->file, eina_file_filename_get(f));
-        sd->f = f;
+        sd->f = eina_file_dup(f);
 
         return _img_proxy_set(o, sd, NULL, f, buf, resize);
      }

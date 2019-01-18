@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Model_Container (Efl.Loop_Consumer, Efl.Model)
+class Efl.Model_Container extends Efl.Model_Loop
 {
    [[
      Class used to create data models from Eina containers.
@@ -19,7 +19,7 @@ class Efl.Model_Container (Efl.Loop_Consumer, Efl.Model)
          params {
             name: string; [[Property name]]
          }
-         return: ptr(const(Eina.Value.Type)); [[Property type]]
+         return: ptr(const(Eina.Value_Type)); [[Property type]]
       }
       child_property_values_get {
          [[Gets the values for the given property.]]
@@ -40,7 +40,7 @@ class Efl.Model_Container (Efl.Loop_Consumer, Efl.Model)
            Value type is required for compatibility with the @Efl.Model API.]]
          params {
             name: string; [[Property name]]
-            @cref type: Eina.Value.Type; [[Property type]]
+            @cref type: Eina.Value_Type; [[Property type]]
             values: iterator<const(void_ptr)> @owned; [[Values to be added]]
          }
          return: bool; [[$true on success, $false otherwise]]

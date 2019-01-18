@@ -317,6 +317,7 @@ EFL_START_TEST(eina_file_map_new_test)
    int test_file2_name_part_size = strlen(test_file2_name_part);
    int test_dirname_size;
    int start_point_final, last_chunk_size;
+   size_t size;
 
    Eina_Tmpstr *test_dirname = get_eina_test_file_tmp_dir();
    fail_if(test_dirname == NULL);
@@ -340,7 +341,9 @@ EFL_START_TEST(eina_file_map_new_test)
    last_chunk_size = big_buffer_size - iteration_number * template_size - file_min_offset;
    //calculating start point for final iteration_number
    start_point_final = iteration_number * template_size;
-   strncpy ((big_buffer + start_point_final), template, last_chunk_size);
+   size = strlen(template);
+   if (size > (size_t)last_chunk_size) size = last_chunk_size;
+   memcpy((big_buffer + start_point_final), template, size);
    // set last element of big_buffer in '\0' - end of string
    big_buffer[big_buffer_size - file_min_offset] = '\0';
    // check big_buffer valid length

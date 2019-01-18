@@ -192,7 +192,6 @@ _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
           {
              Eina_Promise *p = pd->promise;
              int exit_code = efl_task_exit_code_get(obj);
-             pd->promise = NULL;
              if ((exit_code != 0) && (!(efl_task_flags_get(obj) &
                                         EFL_TASK_FLAGS_NO_EXIT_CODE_ERROR)))
                {
@@ -280,14 +279,23 @@ _cb_exe_in(void *data, const Efl_Event *event EINA_UNUSED)
    efl_io_writer_can_write_set(obj, EINA_TRUE);
 }
 
-static void
-_run_cancel_cb(void *data, const Eina_Promise *dead_promise EINA_UNUSED)
+static Eina_Value
+_run_cancel_cb(Efl_Loop_Consumer *consumer, void *data EINA_UNUSED, Eina_Error error)
 {
-   Eo *obj = data;
-   Efl_Exe_Data *pd = efl_data_scope_get(obj, MY_CLASS);
-   pd->promise = NULL;
-   efl_task_end(obj);
+   if (error == ECANCELED) efl_task_end(consumer);
+
+   return eina_value_error_init(error);
 }
+
+static void
+_run_clean_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,
+              void *data,
+              const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Exe_Data *pd = data;
+   pd->promise = NULL;
+}
+
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -428,7 +436,8 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
              return NULL;
           }
         pd->fd.in = pipe_stdin[1];
-        fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
+        if (fcntl(pd->fd.in, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
         pd->fd.in_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
@@ -446,7 +455,8 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
              return NULL;
           }
         pd->fd.out = pipe_stdout[0];
-        fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
+        if (fcntl(pd->fd.out, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
         pd->fd.out_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
@@ -483,9 +493,11 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
                                               EFL_LOOP_HANDLER_FLAGS_READ));
         _ecore_signal_pid_unlock();
         pd->run = EINA_TRUE;
-        pd->promise = efl_loop_promise_new(obj, _run_cancel_cb, obj);
-        Eina_Future *f = eina_future_new(pd->promise);
-        return efl_future_Eina_FutureXXX_then(obj, f);
+        pd->promise = efl_loop_promise_new(obj);
+        return efl_future_then(obj, eina_future_new(pd->promise),
+                               .data = pd,
+                               .error = _run_cancel_cb,
+                               .free = _run_clean_cb);
      }
    // this code is in the child here, and is temporary setup until we
    // exec() the child to replace everything.

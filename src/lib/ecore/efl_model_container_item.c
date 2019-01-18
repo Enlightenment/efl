@@ -25,7 +25,7 @@ _efl_model_container_item_efl_object_invalidate(Eo *obj, Efl_Model_Container_Ite
    sd->index = 0;
 }
 
-static Eina_Array *
+static Eina_Iterator *
 _efl_model_container_item_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Model_Container_Item_Data *sd)
 {
    // FIXME: Not to sure here, shouldn't we extend a child of the parent actually ?
@@ -58,12 +58,12 @@ _efl_model_container_item_efl_model_property_set(Eo *obj,
 
    if (!cpd || !cpd->values ||
        sd->index >= eina_array_count_get(cpd->values))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_NOT_FOUND);
 
    eina_value_setup(&v,cpd->type);
    if (!eina_value_convert(value, &v))
-     return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+     return efl_loop_future_rejected(obj,
                                  EFL_MODEL_ERROR_INCORRECT_VALUE);
 
    // FIXME: This is trying to optimize and avoid the use of Eina_Value,
@@ -80,13 +80,13 @@ _efl_model_container_item_efl_model_property_set(Eo *obj,
 
    free(data);
 
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+   return efl_loop_future_resolved(obj, v);
 
  on_error:
    eina_value_flush(&v);
    free(data);
 
-   return eina_future_rejected(efl_loop_future_scheduler_get(obj),
+   return efl_loop_future_rejected(obj,
                                EFL_MODEL_ERROR_UNKNOWN);
 }
 
@@ -132,7 +132,7 @@ _efl_model_container_item_efl_model_children_slice_get(Eo *obj,
                                                        unsigned int start EINA_UNUSED,
                                                        unsigned int count EINA_UNUSED)
 {
-   return eina_future_resolved(efl_loop_future_scheduler_get(obj), EINA_VALUE_EMPTY);
+   return efl_loop_future_resolved(obj, EINA_VALUE_EMPTY);
 }
 
 EOLIAN static unsigned int

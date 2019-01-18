@@ -43,23 +43,8 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Animator
-{
-   EINA_INLIST;
-
-   Ecore_Task_Cb     func;
-   void             *data;
-
-   double            start, run;
-   Ecore_Timeline_Cb run_func;
-   void             *run_data;
-
-   Eina_Bool         delete_me : 1;
-   Eina_Bool         suspended : 1;
-   Eina_Bool         just_added : 1;
-};
-
 static int _ecore_anim_log_dom = -1;
+static Eina_Bool _ee_animators_setup = EINA_FALSE;
 
 #ifdef ERR
 # undef ERR
@@ -86,7 +71,7 @@ static int _ecore_anim_log_dom = -1;
 #endif
 #define CRI(...) EINA_LOG_DOM_CRIT(_ecore_anim_log_dom, __VA_ARGS__)
 
-static Eina_Bool _do_tick(void);
+static void _do_tick(void);
 static Eina_Bool _ecore_animator_run(void *data);
 
 static int animators_delete_me = 0;
@@ -109,6 +94,12 @@ static volatile int timer_event_is_busy = 0;
 static Eina_Spinlock tick_queue_lock;
 static int           tick_queue_count = 0;
 static Eina_Bool     tick_skip = EINA_FALSE;
+
+#ifndef _WIN32
+extern volatile int exit_signal_received;
+#endif
+
+static Ecore_Evas_Object_Animator_Interface _anim_iface;
 
 static void
 _tick_send(signed char val)
@@ -367,7 +358,11 @@ _timer_tick_notify(void *data EINA_UNUSED, Ecore_Thread *thread EINA_UNUSED, voi
         if ((!tick_skip) || (tick_queued == 1))
           {
              ecore_loop_time_set(*t);
-             _do_tick();
+#ifndef _WIN32
+             if (!exit_signal_received)
+#endif
+               _do_tick();
+             _ecore_animator_flush();
           }
         pt = *t;
      }
@@ -481,7 +476,7 @@ _end_tick(void)
      end_tick_cb((void *)end_tick_data);
 }
 
-static Eina_Bool
+static void
 _do_tick(void)
 {
    Ecore_Animator *animator;
@@ -510,9 +505,6 @@ _do_tick(void)
           }
         else animator->just_added = EINA_FALSE;
      }
-   if (!_ecore_animator_flush())
-     return ECORE_CALLBACK_CANCEL;
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Ecore_Animator *
@@ -521,10 +513,7 @@ _ecore_animator_add(Ecore_Task_Cb func,
 {
    Ecore_Animator *animator;
 
-   if (EINA_UNLIKELY(!eina_main_loop_is()))
-     {
-        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-     }
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    if (!func)
      {
@@ -826,6 +815,8 @@ ecore_animator_del(Ecore_Animator *animator)
    if (!animator) return NULL;
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
+   if (animator->ee) return _anim_iface.del(animator);
+
    if (animator->delete_me)
      {
         data = animator->data;
@@ -866,28 +857,36 @@ EAPI void
 ecore_animator_freeze(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!animator) return ;
-   if (animator->delete_me) return ;
-   if (!animator->suspended)
+   if (!animator) return;
+   if (animator->delete_me) return;
+   if (animator->suspended) return;
+
+   if (animator->ee)
      {
-        animator->suspended = EINA_TRUE;
-        animators_suspended++;
-        if (!_have_animators()) _end_tick();
+        _anim_iface.freeze(animator);
+        return;
      }
+   animator->suspended = EINA_TRUE;
+   animators_suspended++;
+   if (!_have_animators()) _end_tick();
 }
 
 EAPI void
 ecore_animator_thaw(Ecore_Animator *animator)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (!animator) return ;
+   if (!animator) return;
    if (animator->delete_me) return;
-   if (animator->suspended)
+   if (!animator->suspended) return;
+
+   if (animator->ee)
      {
-        animator->suspended = EINA_FALSE;
-        animators_suspended--;
-        if (_have_animators()) _begin_tick();
+        _anim_iface.thaw(animator);
+        return;
      }
+   animator->suspended = EINA_FALSE;
+   animators_suspended--;
+   if (_have_animators()) _begin_tick();
 }
 
 EAPI void
@@ -936,7 +935,12 @@ EAPI void
 ecore_animator_custom_tick(void)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
-   if (src == ECORE_ANIMATOR_SOURCE_CUSTOM) _do_tick();
+   if (src != ECORE_ANIMATOR_SOURCE_CUSTOM) return;
+#ifndef _WIN32
+   if (!exit_signal_received)
+#endif
+     _do_tick();
+   _ecore_animator_flush();
 }
 
 void
@@ -1035,4 +1039,37 @@ _ecore_animator_init(void)
      {
         EINA_LOG_ERR("Ecore was unable to create a log domain.");
      }
+}
+
+void
+ecore_evas_object_animator_init(Ecore_Evas_Object_Animator_Interface *iface)
+{
+   _anim_iface = *iface;
+   _ee_animators_setup = EINA_TRUE;
+}
+
+Ecore_Animator *
+ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data)
+{
+   Ecore_Animator *anim = NULL;
+
+   if (_ee_animators_setup)
+     anim = _anim_iface.timeline_add(evo, runtime, func, data);
+
+   if (anim) return anim;
+
+   return ecore_animator_timeline_add(runtime, func, data);
+}
+
+Ecore_Animator *
+ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data)
+{
+   Ecore_Animator *anim = NULL;
+
+   if (_ee_animators_setup)
+     anim = _anim_iface.add(evo, func, data);
+
+   if (anim) return anim;
+
+   return ecore_animator_add(func, data);
 }

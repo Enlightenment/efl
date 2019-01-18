@@ -2,7 +2,7 @@ group { "efl/list";
    inherit: "efl/scroller";
 }
 
-group { "efl/view_list";
+group { "efl/list_view";
    inherit: "efl/list";
 }
 

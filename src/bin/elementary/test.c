@@ -179,6 +179,8 @@ void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_scroller3(void *data, Evas_Object *obj, void *event_info);
 void test_scroller4(void *data, Evas_Object *obj, void *event_info);
 void test_scroller5(void *data, Evas_Object *obj, void *event_info);
+void test_scroller6(void *data, Evas_Object *obj, void *event_info);
+void test_scroller7(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
@@ -187,6 +189,8 @@ void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
 void test_ui_datepicker(void *data, Evas_Object *obj, void *event_info);
 void test_ui_timepicker(void *data, Evas_Object *obj, void *event_info);
 void test_ui_tags(void *data, Evas_Object *obj, void *event_info);
+void test_ui_panel(void *data, Evas_Object *obj, void *event_info);
+void test_ui_panel2(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
 void test_index3(void *data, Evas_Object *obj, void *event_info);
@@ -256,6 +260,7 @@ void test_focus_object_policy(void *data, Evas_Object *obj, void *event_info);
 void test_focus4(void *data, Evas_Object *obj, void *event_info);
 void test_focus5(void *data, Evas_Object *obj, void *event_info);
 void test_focus6(void *data, Evas_Object *obj, void *event_info);
+void test_focus7(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 void test_flipselector(void *data, Evas_Object *obj, void *event_info);
 void test_diskselector(void *data, Evas_Object *obj, void *event_info);
 void test_colorselector(void *data, Evas_Object *obj, void *event_info);
@@ -287,10 +292,10 @@ void test_datetime(void *data, Evas_Object *obj, void *event_info);
 void test_ui_clock(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_ui_popup(void *data, Evas_Object *obj, void *event_info);
-void test_ui_popup_alert(void *data, Evas_Object *obj, void *event_info);
-void test_ui_popup_alert_scroll(void *data, Evas_Object *obj, void *event_info);
-void test_ui_popup_alert_text(void *data, Evas_Object *obj, void *event_info);
-void test_ui_popup_anchor(void *data, Evas_Object *obj, void *event_info);
+void test_ui_alert_popup(void *data, Evas_Object *obj, void *event_info);
+void test_ui_scroll_alert_popup(void *data, Evas_Object *obj, void *event_info);
+void test_ui_text_alert_popup(void *data, Evas_Object *obj, void *event_info);
+void test_ui_anchor_popup(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 void test_image(void *data, Evas_Object *obj, void *event_info);
 void test_image_scale_type(void *data, Evas_Object *obj, void *event_info);
@@ -332,14 +337,15 @@ void test_colorclass(void *data, Evas_Object *obj, void *event_info);
 void test_code_welcome(void *data, Evas_Object *obj, void *event_info);
 void test_code_editor(void *data, Evas_Object *obj, void *event_info);
 void test_code_syntax(void *data, Evas_Object *obj, void *event_info);
+void test_code_syntax_tabbed(void *data, Evas_Object *obj, void *event_info);
 void test_code_mirror(void *data, Evas_Object *obj, void *event_info);
 void test_code_log(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff(void *data, Evas_Object *obj, void *event_info);
 void test_code_diff_inline(void *data, Evas_Object *obj, void *event_info);
 
 void test_efl_ui_text(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_text_inputfield(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_text_label(void *data, Evas_Object *obj, void *event_info);
-void test_efl_ui_text_async(void *data, Evas_Object *obj, void *event_info);
 void test_ui_text_item_factory(void *data, Evas_Object *obj, void *event_info);
 void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
@@ -374,7 +380,8 @@ static void _list_udpate(void);
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
 static Eina_List *tests;
-static Eina_Bool eo_only = EINA_FALSE;
+static Eina_Bool hide_legacy = EINA_FALSE;
+static Eina_Bool hide_beta = EINA_FALSE;
 
 struct elm_test
 {
@@ -425,9 +432,16 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_eo_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_legacy_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   eo_only = elm_check_state_get(obj);
+   hide_legacy = elm_check_state_get(obj);
+   _list_udpate();
+}
+
+static void
+_beta_chk_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   hide_beta = elm_check_state_get(obj);
    _list_udpate();
 }
 
@@ -470,7 +484,9 @@ _menu_create(const char *option_str)
    _clear_menu();
    EINA_LIST_FOREACH(tests, l, t)
      {
-        if (eo_only && !t->is_eo)
+        if (hide_legacy && !t->is_eo)
+          continue;
+        if (hide_beta && t->is_eo)
           continue;
         if (option_str &&
             !(strcasestr(t->name, option_str) || strcasestr(t->category, option_str)))
@@ -724,10 +740,17 @@ my_win_main(const char *autorun, Eina_Bool test_win_only)
    elm_object_focus_set(en, EINA_TRUE);
    entry = en;
 
-   chk = elm_check_add(win); // Nstate for All/Eo only/Legacy only?
+   chk = elm_check_add(win); // Check for hiding beta api
+   elm_object_text_set(chk, "Hide beta");
+   elm_check_state_set(chk, hide_beta);
+   evas_object_smart_callback_add(chk, "changed", _beta_chk_changed, NULL);
+   elm_box_pack_end(bx1, chk);
+   evas_object_show(chk);
+
+   chk = elm_check_add(win); // Check for hiding legacy api
    elm_object_text_set(chk, "Hide Legacy");
-   elm_check_state_set(chk, eo_only);
-   evas_object_smart_callback_add(chk, "changed", _eo_chk_changed, NULL);
+   elm_check_state_set(chk, hide_legacy);
+   evas_object_smart_callback_add(chk, "changed", _legacy_chk_changed, NULL);
    elm_box_pack_end(bx1, chk);
    evas_object_show(chk);
 
@@ -842,15 +865,16 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry Emoticon", test_entry_emoticon);
    ADD_TEST(NULL, "Entries", "Entry Password", test_entry_password);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text", test_efl_ui_text);
+   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Input Field", test_efl_ui_text_inputfield);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text Label", test_efl_ui_text_label);
-   ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Text.Async", test_efl_ui_text_async);
    ADD_TEST_EO(NULL, "Entries", "Ui.Text Item Factory", test_ui_text_item_factory);
    ADD_TEST_EO(NULL, "Entries", "Efl.Ui.Tags", test_ui_tags);
 
    //------------------------------//
+   ADD_TEST(NULL, "Advanced Entries", "Code Entry Markup", test_code_welcome);
+   ADD_TEST(NULL, "Advanced Entries", "Code Editor", test_code_editor);
    ADD_TEST(NULL, "Advanced Entries", "Code Syntax", test_code_syntax);
-   ADD_TEST(NULL, "Advanced Entries", "Entry Markup", test_code_welcome);
-   ADD_TEST(NULL, "Advanced Entries", "Text Editor", test_code_editor);
+   ADD_TEST(NULL, "Advanced Entries", "Code Syntax (Tabbed)", test_code_syntax_tabbed);
    ADD_TEST(NULL, "Advanced Entries", "Mirrored Editor", test_code_mirror);
    ADD_TEST(NULL, "Advanced Entries", "Logger", test_code_log);
    ADD_TEST(NULL, "Advanced Entries", "Diff Comparison", test_code_diff);
@@ -1041,6 +1065,8 @@ add_tests:
    ADD_TEST(NULL, "Scroller", "Scroller 3", test_scroller3);
    ADD_TEST(NULL, "Scroller", "Page Scroller", test_scroller4);
    ADD_TEST(NULL, "Scroller", "Scroller on Popup", test_scroller5);
+   ADD_TEST(NULL, "Scroller", "Scroller 6", test_scroller6);
+   ADD_TEST(NULL, "Scroller", "Scroller 7", test_scroller7);
    ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller", test_efl_ui_scroller);
 
    //------------------------------//
@@ -1079,10 +1105,10 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Tooltip 4", test_tooltip4);
    ADD_TEST(NULL, "Popups", "Popup", test_popup);
    ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup", test_ui_popup);
-   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert", test_ui_popup_alert);
-   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Scroll", test_ui_popup_alert_scroll);
-   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Text", test_ui_popup_alert_text);
-   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Anchor", test_ui_popup_anchor);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert", test_ui_alert_popup);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Scroll", test_ui_scroll_alert_popup);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Alert.Text", test_ui_text_alert_popup);
+   ADD_TEST_EO(NULL, "Popups", "Efl.Ui.Popup.Anchor", test_ui_anchor_popup);
 
    //------------------------------//
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
@@ -1124,6 +1150,7 @@ add_tests:
    ADD_TEST(NULL, "Focus", "Focus 4", test_focus4);
    ADD_TEST(NULL, "Focus", "Focus 5", test_focus5);
    ADD_TEST(NULL, "Focus", "Focus 6", test_focus6);
+   ADD_TEST(NULL, "Focus", "Focus 7", test_focus7);
 
    //------------------------------//
    ADD_TEST(NULL, "Naviframe", "Naviframe", test_naviframe);
@@ -1140,6 +1167,8 @@ add_tests:
    ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
    ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panes", test_panes_minsize);
+   ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel", test_ui_panel);
+   ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel Scrollable", test_ui_panel2);
 
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
@@ -1314,7 +1343,9 @@ efl_main(void *data EINA_UNUSED,
     * ex:  elementary_test "Box Vert 2" */
    if (eina_array_count(arge->argv) == 2)
      {
-        if (!strcmp(eina_array_data_get(arge->argv, 0), "--help"))
+        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--help")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-help")) ||
+            (!strcmp(eina_array_data_get(arge->argv, 1), "-h")))
           {
              efl_loop_quit(ev->object,
                            eina_value_string_init("Usages:\n"
@@ -1325,7 +1356,7 @@ efl_main(void *data EINA_UNUSED,
                                                   "$ elementary_test -to Button\n\n"));
              return ;
           }
-        autorun = eina_array_data_get(arge->argv, 0);
+        autorun = eina_array_data_get(arge->argv, 1);
      }
    else if (eina_array_count(arge->argv) == 3)
      {

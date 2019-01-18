@@ -10,11 +10,11 @@ using System.Security;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
-using static eina.EinaNative.UnsafeNativeMethods;
-using static eina.TraitFunctions;
+using static Eina.EinaNative.UnsafeNativeMethods;
+using static Eina.TraitFunctions;
 
 
-namespace eina {
+namespace Eina {
 
 namespace EinaNative {
 
@@ -37,6 +37,12 @@ struct Value_List
 
 [SuppressUnmanagedCodeSecurityAttribute]
 static internal class UnsafeNativeMethods {
+
+    [DllImport(efl.Libs.Eina)]
+    internal static extern IntPtr eina_value_new(IntPtr type);
+
+    [DllImport(efl.Libs.Eina)]
+    internal static extern void eina_value_free(IntPtr type);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -264,11 +270,11 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_optional_pget(IntPtr handle, out eina.EinaNative.Value_Array output);
+    internal static extern bool eina_value_optional_pget(IntPtr handle, out Eina.EinaNative.Value_Array output);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_optional_pget(IntPtr handle, out eina.EinaNative.Value_List output);
+    internal static extern bool eina_value_optional_pget(IntPtr handle, out Eina.EinaNative.Value_List output);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -319,11 +325,11 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_Array ptr);
+    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref Eina.EinaNative.Value_Array ptr);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref eina.EinaNative.Value_List ptr);
+    internal static extern bool eina_value_pset_wrapper(IntPtr handle, ref Eina.EinaNative.Value_List ptr);
 
     [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -388,25 +394,15 @@ static internal class UnsafeNativeMethods {
 
 /// <summary>Struct for passing Values by value to Unmanaged functions.</summary>
 [StructLayout(LayoutKind.Sequential)]
-public struct Value_Native
+public struct ValueNative
 {
     public IntPtr Type;
     public IntPtr Value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
-}
 
-
-/// <summary>Exception for trying to access flushed values.</summary>
-[Serializable]
-public class ValueFlushedException : Exception
-{
-    /// <summary> Default constructor.</summary>
-    public ValueFlushedException() : base () { }
-    /// <summary> Most commonly used contructor.</summary>
-    public ValueFlushedException(string msg) : base(msg) { }
-    /// <summary> Wraps an inner exception.</summary>
-    public ValueFlushedException(string msg, Exception inner) : base(msg, inner) { }
-    /// <summary> Serializable constructor.</summary>
-    protected ValueFlushedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    public override string ToString()
+    {
+        return $"ValueNative<Type:0x{Type.ToInt64():x}, Value:0x{Value.ToInt64():x}>";
+    }
 }
 
 /// <summary>Exception for failures when setting an container item.</summary>
@@ -571,7 +567,7 @@ static class ValueTypeBridge
 
     private static void LoadTypes()
     {
-        eina.Config.Init(); // Make sure eina is initialized.
+        Eina.Config.Init(); // Make sure eina is initialized.
 
         ManagedToNative.Add(ValueType.SByte, type_sbyte());
         NativeToManaged.Add(type_sbyte(), ValueType.SByte);
@@ -658,9 +654,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     // Ok EINA_VALUE_TYPE_DOUBLE: double -- double
     // EINA_VALUE_TYPE_STRINGSHARE: const char * -- string
     // Ok EINA_VALUE_TYPE_STRING: const char * -- string
-    // Ok EINA_VALUE_TYPE_ARRAY: Eina_Value_Array -- eina.Array?
-    // Ok EINA_VALUE_TYPE_LIST: Eina_Value_List -- eina.List?
-    // EINA_VALUE_TYPE_HASH: Eina_Value_Hash -- eina.Hash?
+    // Ok EINA_VALUE_TYPE_ARRAY: Eina_Value_Array -- Eina.Array?
+    // Ok EINA_VALUE_TYPE_LIST: Eina_Value_List -- Eina.List?
+    // EINA_VALUE_TYPE_HASH: Eina_Value_Hash -- Eina.Hash?
     // EINA_VALUE_TYPE_TIMEVAL: struct timeval -- FIXME
     // EINA_VALUE_TYPE_BLOB: Eina_Value_Blob -- FIXME
     // EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct -- FIXME
@@ -670,12 +666,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary> Whether this wrapper owns (can free) the native value. </summary>
     public Ownership Ownership { get; protected set;}
     private bool Disposed;
-    /// <summary> Whether this wrapper has already freed the native value. </summary>
-    public bool Flushed { get; protected set;}
     /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
     public bool Optional {
         get {
-            return GetValueType() == eina.ValueType.Optional;
+            return GetValueType() == Eina.ValueType.Optional;
         }
         /* protected set {
             // Should we expose this?
@@ -689,7 +683,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public bool Empty {
         get {
             SanityChecks();
-            return GetValueType() == eina.ValueType.Empty;
+            return GetValueType() == Eina.ValueType.Empty;
         }
     }
 
@@ -705,9 +699,19 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
     }
 
+    private static IntPtr Alloc()
+    {
+        return eina_value_new(type_int32());
+    }
+
+    private static void Free(IntPtr ptr)
+    {
+        eina_value_free(ptr);
+    }
+
     // Constructor to be used by the "FromContainerDesc" methods.
     private Value() {
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
     }
 
@@ -722,9 +726,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (type.IsContainer())
             throw new ArgumentException("To use container types you must provide a subtype");
 
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         if (this.Handle == IntPtr.Zero)
-            throw new OutOfMemoryException("Failed to allocate memory for eina.Value");
+            throw new OutOfMemoryException("Failed to allocate memory for Eina.Value");
 
         // Initialize to EINA_VALUE_EMPTY before performing any other operation on this value.
         MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
@@ -739,55 +743,344 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!containerType.IsContainer())
             throw new ArgumentException("First type must be a container type.");
 
-        this.Handle = MemoryNative.Alloc(eina_value_sizeof());
+        this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
 
         Setup(containerType, subtype, step);
     }
 
-    /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
-    public Value(Value_Native value)
+    /// <summary>Deep copies the given eina Value</summary>
+    public Value(Value v)
     {
-        IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+        Handle = Alloc();
+        if (!eina_value_copy(v.Handle, this.Handle))
+            throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+
+        Disposed = false;
+        Ownership = Ownership.Managed;
+    }
+
+    /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
+    public Value(ValueNative value)
+    {
+        IntPtr tmp = IntPtr.Zero;
         try {
-            Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
+            this.Handle = Alloc();
             if (value.Type == IntPtr.Zero) // Got an EINA_VALUE_EMPTY by value.
-            {
-                this.Handle = tmp;
-                tmp = IntPtr.Zero;
-            }
+                MemoryNative.Memset(this.Handle, 0, Marshal.SizeOf(typeof(ValueNative)));
             else
             {
-                this.Handle = MemoryNative.Alloc(Marshal.SizeOf(typeof(Value_Native)));
+                // We allocate this intermediate ValueNative using malloc to allow freeing with
+                // free(), avoiding a call to eina_value_flush that would wipe the underlying value contents
+                // for pointer types like string.
+                tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(ValueNative)));
+                Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
+                this.Handle = Alloc();
 
                 // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
                 if (!eina_value_copy(tmp, this.Handle))
                     throw new System.InvalidOperationException("Failed to copy value to managed memory.");
             }
         } catch {
-            MemoryNative.Free(this.Handle);
+            Free(this.Handle);
             throw;
         } finally {
-            MemoryNative.Free(tmp);
+            if (tmp != IntPtr.Zero)
+                MemoryNative.Free(tmp);
         }
 
         this.Ownership = Ownership.Managed;
     }
 
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(byte x) : this(ValueType.Byte)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(sbyte x) : this(ValueType.SByte)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(short x) : this(ValueType.Short)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(ushort x) : this(ValueType.UShort)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(int x) : this(ValueType.Int32)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(uint x) : this(ValueType.UInt32)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(long x) : this(ValueType.Long)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(ulong x) : this(ValueType.ULong)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(float x) : this(ValueType.Float)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(double x) : this(ValueType.Double)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
+    /// <summary>Type-specific constructor, for convenience.</summary>
+    public Value(string x) : this(ValueType.String)
+    {
+        if (!Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+    }
+
     /// <summary>Implicit conversion from managed value to native struct representation.</summary>
-    public static implicit operator Value_Native(Value v)
+    public static implicit operator ValueNative(Value v)
     {
         return v.GetNative();
     }
 
     /// <summary>Implicit conversion from native struct representation to managed wrapper.</summary>
-    public static implicit operator Value(Value_Native v)
+    public static implicit operator Value(ValueNative v)
     {
         return new Value(v);
     }
 
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(byte x)
+    {
+        var v = new Eina.Value(ValueType.Byte);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator byte(Value v)
+    {
+        byte b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(sbyte x)
+    {
+        var v = new Eina.Value(ValueType.SByte);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator sbyte(Value v)
+    {
+        sbyte b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(short x)
+    {
+        var v = new Eina.Value(ValueType.Short);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator short(Value v)
+    {
+        short b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(ushort x)
+    {
+        var v = new Eina.Value(ValueType.UShort);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator ushort(Value v)
+    {
+        ushort b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(int x)
+    {
+        var v = new Eina.Value(ValueType.Int32);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator int(Value v)
+    {
+        int b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(uint x)
+    {
+        var v = new Eina.Value(ValueType.UInt32);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator uint(Value v)
+    {
+        uint b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(long x)
+    {
+        var v = new Eina.Value(ValueType.Long);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator long(Value v)
+    {
+        long b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(ulong x)
+    {
+        var v = new Eina.Value(ValueType.ULong);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator ulong(Value v)
+    {
+        ulong b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(float x)
+    {
+        var v = new Eina.Value(ValueType.Float);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator float(Value v)
+    {
+        float b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(double x)
+    {
+        var v = new Eina.Value(ValueType.Double);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator double(Value v)
+    {
+        double b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator Value(string x)
+    {
+        var v = new Eina.Value(ValueType.String);
+        if (!v.Set(x))
+            throw new InvalidOperationException("Couldn't set value.");
+        return v;
+    }
+
+    /// <summary>Implicit conversion.</summary>
+    public static implicit operator string(Value v)
+    {
+        string b;
+        if (!v.Get(out b))
+            throw new InvalidOperationException("Couldn't get value.");
+        return b;
+    }
+
     /// <summary>Creates an Value instance from a given array description.</summary>
-    private static Value FromArrayDesc(eina.EinaNative.Value_Array arrayDesc)
+    private static Value FromArrayDesc(Eina.EinaNative.Value_Array arrayDesc)
     {
         Value value = new Value();
         value.Setup(ValueType.Array, ValueType.String); // Placeholder values to be overwritten by the following pset call.
@@ -797,7 +1090,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Creates an Value instance from a given array description.</summary>
-    private static Value FromListDesc(eina.EinaNative.Value_List listDesc)
+    private static Value FromListDesc(Eina.EinaNative.Value_List listDesc)
     {
         Value value = new Value();
         value.Setup(ValueType.List, ValueType.String); // Placeholder values to be overwritten by the following pset call.
@@ -834,10 +1127,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
 
         if (!Disposed && (Handle != IntPtr.Zero)) {
-            if (!Flushed && !Empty)
-                eina_value_flush_wrapper(this.Handle);
-
-            MemoryNative.Free(this.Handle);
+            // No need to call flush as eina_value_free already calls it for us.
+            Free(this.Handle);
         }
         Disposed = true;
     }
@@ -864,7 +1155,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw new ObjectDisposedException(base.GetType().Name);
 
         // Can't call setup with Empty value type (would give an eina error)
-        if (type == eina.ValueType.Empty)
+        if (type == Eina.ValueType.Empty)
         {
             // Need to cleanup as it may point to payload outside the underlying Eina_Value (like arrays and strings).
             if (!Empty)
@@ -878,10 +1169,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (type.IsContainer())
             throw new ArgumentException("To setup a container you must provide a subtype.");
 
-        bool ret = eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
-        if (ret)
-            Flushed = false;
-        return ret;
+        return eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
     }
 
     public bool Setup(ValueType containerType, ValueType subtype, uint step=0) {
@@ -896,9 +1184,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 break;
         }
 
-        if (ret)
-            Flushed = false;
-
         return ret;
     }
 
@@ -906,8 +1191,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
             throw new ObjectDisposedException(GetType().Name);
-        if (Flushed)
-            throw new ValueFlushedException("Trying to use value that has been flushed. Setup it again.");
     }
 
     private void ContainerSanityChecks(int targetIndex=-1)
@@ -945,20 +1228,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             throw new InvalidValueTypeException("Value is not an Optional one");
     }
 
-    /// <summary>Releases the memory stored by this value. It can be reused by calling setup again.
-    /// </summary>
-    public void Flush()
+    /// <summary>Get a ValueNative struct with the *value* pointed by this Eina.Value.</summary>
+    public ValueNative GetNative()
     {
-        if (Disposed)
-            throw new ObjectDisposedException(GetType().Name);
-        eina_value_flush_wrapper(this.Handle);
-        Flushed = true;
-    }
-
-    /// <summary>Get a Value_Native struct with the *value* pointed by this eina.Value.</summary>
-    public Value_Native GetNative()
-    {
-        Value_Native value = (Value_Native)Marshal.PtrToStructure(this.Handle, typeof(Value_Native));
+        ValueNative value = (ValueNative)Marshal.PtrToStructure(this.Handle, typeof(ValueNative));
         return value;
     }
 
@@ -973,7 +1246,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_uchar(this.Handle, value);
     }
 
@@ -988,7 +1261,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_char(this.Handle, value);
     }
 
@@ -1003,7 +1276,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_short(this.Handle, value);
     }
 
@@ -1018,7 +1291,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_ushort(this.Handle, value);
     }
 
@@ -1034,7 +1307,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_uint(this.Handle, value);
     }
 
@@ -1050,7 +1323,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_int(this.Handle, value);
     }
 
@@ -1066,7 +1339,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_ulong(this.Handle, value);
     }
 
@@ -1082,7 +1355,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_long(this.Handle, value);
     }
 
@@ -1098,7 +1371,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
 
         return eina_value_set_wrapper_float(this.Handle, value);
     }
@@ -1115,7 +1388,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsNumeric())
             throw (new ArgumentException(
-                        "Trying to set numeric value on a non-numeric eina.Value"));
+                        "Trying to set numeric value on a non-numeric Eina.Value"));
         return eina_value_set_wrapper_double(this.Handle, value);
     }
 
@@ -1131,13 +1404,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         if (!GetValueType().IsString())
             throw (new ArgumentException(
-                        "Trying to set non-string value on a string eina.Value"));
+                        "Trying to set non-string value on a string Eina.Value"));
         // No need to worry about ownership as eina_value_set will copy the passed string.
         return eina_value_set_wrapper_string(this.Handle, value);
     }
 
     /// <summary>Stores the given error value.</summary>
-    public bool Set(eina.Error value)
+    public bool Set(Eina.Error value)
     {
         SanityChecks();
 
@@ -1177,7 +1450,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     Marshal.StructureToPtr(value_list, ptr_val, false);
                     break;
                 default:
-                    throw new InvalidValueTypeException("Only containers can be passed as raw eina.Values");
+                    throw new InvalidValueTypeException("Only containers can be passed as raw Eina.Values");
             }
 
             return eina_value_optional_pset(this.Handle, native_type, ptr_val);
@@ -1304,8 +1577,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return true;
     }
 
-    /// <summary>Gets the currently stored value as an eina.Error.</summary>
-    public bool Get(out eina.Error value)
+    /// <summary>Gets the currently stored value as an Eina.Error.</summary>
+    public bool Get(out Eina.Error value)
     {
         SanityChecks();
         bool ret;
@@ -1320,7 +1593,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return ret;
     }
 
-    /// <summary>Gets the currently stored value as an complex (e.g. container) eina.Value.</summary>
+    /// <summary>Gets the currently stored value as an complex (e.g. container) Eina.Value.</summary>
     public bool Get(out Value value)
     {
         SanityChecks();
@@ -1334,14 +1607,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         switch (managedType) {
             case ValueType.Array:
-                eina.EinaNative.Value_Array array_desc;
+                Eina.EinaNative.Value_Array array_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out array_desc))
                     return false;
                 value = Value.FromArrayDesc(array_desc);
                 break;
             case ValueType.List:
-                eina.EinaNative.Value_List list_desc;
+                Eina.EinaNative.Value_List list_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out list_desc))
                     return false;
@@ -1406,8 +1679,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             return this.CompareTo(other) == 0;
         } catch (ObjectDisposedException) {
             return false;
-        } catch (ValueFlushedException) {
-            return false;
         }
     }
 
@@ -1456,7 +1727,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return str;
     }
 
-    /// <summary>Empties an optional eina.Value, freeing what was previously contained.</summary>
+    /// <summary>Empties an optional Eina.Value, freeing what was previously contained.</summary>
     public bool Reset()
     {
         OptionalSanityChecks();

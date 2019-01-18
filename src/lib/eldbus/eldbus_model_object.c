@@ -124,11 +124,10 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
         Eina_Value v;
 
         v = efl_model_list_value_get(pd->childrens, start, count);
-        return eina_future_resolved(efl_loop_future_scheduler_get(obj), v);
+        return efl_loop_future_resolved(obj, v);
      }
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(obj),
-                        _eldbus_eina_promise_cancel, NULL);
+   p = efl_loop_promise_new(obj);
 
    slice = calloc(1, sizeof(struct _Eldbus_Children_Slice_Promise));
    slice->p = p;
@@ -139,7 +138,7 @@ _eldbus_model_object_efl_model_children_slice_get(Eo *obj EINA_UNUSED,
 
    if (!pd->pendings)
      _eldbus_model_object_introspect(obj, pd, pd->bus, pd->path);
-   return efl_future_Eina_FutureXXX_then(obj, eina_future_new(p));;
+   return efl_future_then(obj, eina_future_new(p));;
 }
 
 static unsigned int

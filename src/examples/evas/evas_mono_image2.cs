@@ -10,19 +10,19 @@ class TestMain
 
     static void Main(string[] args)
     {
-        efl.All.Init();
+        Efl.All.Init();
 
-        efl.Loop loop = new efl.Loop();
+        Efl.Loop loop = new Efl.Loop();
 
         EcoreEvas ecore_evas = new EcoreEvas();
 
-        eina.Size2D size = new eina.Size2D();
-        eina.Position2D pos = new eina.Position2D();
+        Eina.Size2D size = new Eina.Size2D();
+        Eina.Position2D pos = new Eina.Position2D();
         
-        efl.canvas.IObject canvas = ecore_evas.canvas;
+        Efl.Canvas.Object canvas = ecore_evas.canvas;
         canvas.SetVisible(true);
 
-        efl.canvas.Rectangle bg = new efl.canvas.Rectangle(canvas);
+        Efl.Canvas.Rectangle bg = new Efl.Canvas.Rectangle(canvas);
         bg.SetColor(255, 255, 255, 255);
         pos.X = 0;
         pos.Y = 0;
@@ -33,7 +33,7 @@ class TestMain
         bg.SetVisible(true);
 
         string path = args[0];
-        evas.Image logo = new evas.Image(canvas);
+        Evas.Image logo = new Evas.Image(canvas);
         logo.SetFillAuto(true);
 
         // TODO add preloaded support (depends on events)
@@ -53,7 +53,7 @@ class TestMain
             pixels[i] = generator.Next();
         }
 
-        evas.Image noise_img = new evas.Image(canvas);
+        Evas.Image noise_img = new Evas.Image(canvas);
         size.W = WIDTH / 4;
         size.H = HEIGHT / 4;
         noise_img.SetSize(size);
@@ -66,7 +66,7 @@ class TestMain
         noise_img.SetVisible(true);
         Console.WriteLine("Creating noise image with sizez %d, %d", WIDTH/4, HEIGHT/4);
 
-        efl.canvas.Proxy proxy_img = new efl.canvas.Proxy(canvas);
+        Efl.Canvas.Proxy proxy_img = new Efl.Canvas.Proxy(canvas);
         proxy_img.SetSource(noise_img);
         pos.X = WIDTH / 2;
         pos.Y = HEIGHT / 2;

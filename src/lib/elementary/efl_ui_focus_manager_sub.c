@@ -53,7 +53,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    manager = efl_ui_focus_object_focus_manager_get(obj);
    logical = obj;
-   borders = efl_ui_focus_manager_border_elements_get(obj);
+   borders = efl_ui_focus_manager_viewport_elements_get(obj, efl_gfx_entity_geometry_get(obj));
 
    selection = NULL;
    EINA_ITERATOR_FOREACH(borders, node)
@@ -63,8 +63,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
    eina_iterator_free(borders);
 
    //elements which are not in the current border elements
-   tmp = eina_list_clone(pd->current_border);
-   tmp = _set_a_without_b(tmp , selection);
+   tmp = _set_a_without_b(pd->current_border, selection);
 
    EINA_LIST_FREE(tmp, node)
      {
@@ -73,8 +72,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
      }
 
    //set of the elements which are new without those which are currently registered
-   tmp = eina_list_clone(selection);
-   tmp = _set_a_without_b(tmp, pd->current_border);
+   tmp = _set_a_without_b(selection, pd->current_border);
 
    EINA_LIST_FREE(tmp, node)
      {
@@ -84,6 +82,7 @@ _border_flush(Eo *obj, Efl_Ui_Focus_Manager_Sub_Data *pd)
 
    eina_list_free(pd->current_border);
    pd->current_border = selection;
+   pd->self_dirty = EINA_FALSE;
 }
 
 static void
@@ -105,7 +104,7 @@ _parent_manager_pre_flush(void *data, const Efl_Event *ev EINA_UNUSED)
 {
     MY_DATA(data, pd);
 
-    //if (!pd->self_dirty) return; //we are not interested
+    if (!pd->self_dirty) return; //we are not interested
 
     _border_flush(data, pd);
 }
@@ -116,12 +115,27 @@ _redirect_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    //if (efl_ui_focus_manager_redirect_get(ev->object) != data) return;
 
    MY_DATA(data, pd);
+
    _border_flush(data, pd);
+}
+
+static void
+_freeze_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   if (ev->info)
+     {
+        efl_ui_focus_manager_dirty_logic_freeze(data);
+     }
+   else
+     {
+        efl_ui_focus_manager_dirty_logic_unfreeze(data);
+     }
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(parent_manager,
     {EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, _parent_manager_pre_flush},
-    {EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, _redirect_changed_cb}
+    {EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, _redirect_changed_cb},
+    {EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, _freeze_changed_cb}
 );
 
 static void
@@ -198,6 +212,9 @@ _efl_ui_focus_manager_sub_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Manager_S
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_event_callback_array_add(obj, self_manager(), obj);
+
+   pd->self_dirty = EINA_TRUE;
+
    return obj;
 }
 

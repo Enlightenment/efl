@@ -1,3 +1,95 @@
+2016-12-15  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.am (include_HEADERS): Move graphemebreakdef.h to
+	EXTRA_DIST.
+	(EXTRA_DIST): Add graphemebreakdef.h and test_skips.h.
+
+2016-12-14  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c: Adjust documentation comment.
+	* src/wordbreak.c: Ditto.
+	* src/graphemebreak.c: Ditto.
+
+2016-12-14  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* Doxyfile (FULL_PATH_NAMES): Set to `NO'.
+	(DOT_IMAGE_FORMAT): Set to `svg'.
+	(SEARCHENGINE): Set to `YES'.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	Update for the libunibreak 4.0 release.
+	* NEWS: Add information about libunibreak 4.0.
+	* Doxyfile (PROJECT_NUMBER): Change to `4.0'.
+	* configure.ac (AC_INIT): Change the library version to `4.0'.
+	* src/Makefile.am (libunibreak_la_LDFLAGS): Set the version-info to
+	`4:0:1'.
+	* src/unibreakbase.h (UNIBREAK_VERSION): Set to 0x0400.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.am (include_HEADERS): Add a missing file
+	graphemebreakdef.h.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* bootstrap: Add a missing `--copy' argument to glibtoolize.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* README.md: Update for grapheme break and links.
+	* LICENCE: Add Andreas Röver and update copyright information.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* Doxyfile (EXCLUDE): Add `src/tests.c'.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/wordbreak.c: Update Unicode version and link information.
+	* src/wordbreak.h: Ditto.
+	* src/wordbreakdef.h: Ditto.
+	* src/graphemebreak.c: Ditto.
+	* src/graphemebreak.h: Ditto.
+	* src/graphemebreakdef.h: Ditto.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/linebreak.c: Remove `@version' and update copyright header.
+	* src/linebreak.h: Ditto.
+	* src/linebreakdef.c: Ditto.
+	* src/linebreakdef.h: Ditto.
+	* src/wordbreak.c: Ditto.
+	* src/wordbreak.h: Ditto.
+	* src/wordbreakdef.h: Ditto.
+	* src/graphemebreak.c: Ditto.
+	* src/graphemebreak.h: Ditto.
+	* src/graphemebreakdef.h: Ditto.
+	* src/unibreakbase.c: Ditto.
+	* src/unibreakbase.h: Ditto.
+	* src/unibreakdef.c: Ditto.
+	* src/unibreakdef.h: Ditto.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.msvc: Add graphemebreak.c.
+	* src/graphemebreak.c: Add a workaround of stdbool.h for MSVC
+	versions earlier than 2013.
+	* src/graphemebreak.h: Make include order consistent.
+	* src/linebreak.c (ends_with): Make the code compile under C89.
+
+2016-12-10  Wu Yongwei  <wuyongwei@gmail.com>
+
+	* src/Makefile.gcc (CFILES): Add graphemebreak.c.
+	(graphemebreakdata): New phony target.
+	(GraphemeBreakProperty.txt): New target.
+	(distclean): Add WordBreakProperty.txt and GraphemeBreakProperty.txt
+	as well.
+
+2016-12-05  Tom Hacohen  <tom@stosb.com>
+
+	* src/test_skips.h: New file.
+
 2016-12-04  Wu Yongwei  <wuyongwei@gmail.com>
 
 	Simpify implementation about RI pairing.

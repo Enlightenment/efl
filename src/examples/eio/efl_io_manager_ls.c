@@ -60,7 +60,6 @@ void list_files(void *data)
 int main(int argc, char const *argv[])
 {
    const char *path;
-   Ecore_Job *job;
 
    eio_init();
    ecore_init();
@@ -70,7 +69,7 @@ int main(int argc, char const *argv[])
    if (argc > 1)
      path = argv[1];
 
-   job = ecore_job_add(&list_files, path);
+   ecore_job_add(&list_files, path);
 
    ecore_main_loop_begin();
 

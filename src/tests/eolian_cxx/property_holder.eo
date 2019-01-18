@@ -1,0 +1,42 @@
+class Property_Holder extends Efl.Object
+{
+   methods {
+      some_method {
+         return: int;
+      }
+
+      @property prop_simple {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+
+      @property getter_only {
+         get {}
+         values {
+            data: int;
+         }
+      }
+
+      @property setter_only {
+         set {}
+         values {
+            data: int;
+         }
+      }
+
+      @property prop_with_key {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+
+         keys {
+            key: string;
+         }
+      }
+   }
+}

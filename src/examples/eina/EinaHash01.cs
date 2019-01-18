@@ -4,9 +4,9 @@ public class ExampleEinaHash01
 {
     public static void Main()
     {
-        eina.Config.Init();
+        Eina.Config.Init();
 
-        var phone_book = new eina.Hash<string, string>();
+        var phone_book = new Eina.Hash<string, string>();
 
         // Add initial entries to our hash
         phone_book.Add("Wolfgang Amadeus Mozart", "+01 23 456-78910");

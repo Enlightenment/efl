@@ -591,11 +591,6 @@ _ecore_pipe_handler_call(Ecore_Pipe *p,
                          unsigned char *buf,
                          size_t len)
 {
-   // on windows we seem to get a pipe wake with no data. don't pass on
-   // zero data as there is nothing useful to do with it... and it causes
-   // segfaults
-   if ((!buf) || (!len)) return;
-
    void *data = (void*) p->data;
 
    // clear all values of pipe first.

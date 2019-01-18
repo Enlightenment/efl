@@ -45,10 +45,7 @@ ecore_job_add(Ecore_Cb    func,
 {
    Ecore_Job *job;
 
-   if (EINA_UNLIKELY(!eina_main_loop_is()))
-     {
-        EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-     }
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
 
    if (!func)
      {

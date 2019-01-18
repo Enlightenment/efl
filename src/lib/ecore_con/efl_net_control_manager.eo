@@ -65,13 +65,13 @@ struct Efl.Net.Control.Agent_Browser_Url {
     url: string; [[The URL to point the browser at.]]
 }
 
-class Efl.Net.Control.Manager (Efl.Loop_Consumer) {
+class Efl.Net.Control.Manager extends Efl.Loop_Consumer {
     [[Controls network connectivity.
 
       This class and its child objects are only useful to implement
       control of the network connectivity. If your application only
       needs to request access to the network, use
-      \@Efl.Net.Session instead.
+      @Efl.Net.Session instead.
 
       Network connectivity is defined on top of technologies that
       provide access points. A technology can be "ethernet", "wifi",
@@ -142,7 +142,7 @@ class Efl.Net.Control.Manager (Efl.Loop_Consumer) {
 
               - online means verified connectivity.
 
-              \@note if there is no backend for this class, then state
+              Note: if there is no backend for this class, then state
               will always be online, however @.access_points and
               @.technologies will be empty iterators (valid pointers
               but no items in them).

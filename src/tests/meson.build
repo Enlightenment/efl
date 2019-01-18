@@ -1,0 +1,1 @@
+executable('timeout', 'timeout.c')

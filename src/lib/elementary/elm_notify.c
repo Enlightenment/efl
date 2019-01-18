@@ -20,7 +20,7 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
-static Efl_Ui_Theme_Apply
+static Efl_Ui_Theme_Apply_Result
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
@@ -96,8 +96,7 @@ _notify_move_to_orientation(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_C
    x = x + ((w - minw) * ax);
    y = y + ((h - minh) * ay);
 
-   evas_object_move(sd->notify, x, y);
-   evas_object_resize(sd->notify, minw, minh);
+   evas_object_geometry_set(sd->notify, x, y, minw, minh);
 }
 
 static void
@@ -137,16 +136,15 @@ _sizing_eval(Evas_Object *obj)
         x = 0;
         y = 0;
      }
-   evas_object_move(obj, x, y);
-   evas_object_resize(obj, w, h);
+   evas_object_geometry_set(obj, x, y, w, h);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -712,14 +710,14 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_notify, ELM_NOTIFY, Elm_Notify_Data)
 ELM_PART_CONTENT_DEFAULT_GET(elm_notify, "default")
 
 EOLIAN static const char *
-_elm_notify_part_efl_ui_translatable_translatable_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
+_elm_notify_part_efl_ui_l10n_l10n_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
 }
 
 EOLIAN static void
-_elm_notify_part_efl_ui_translatable_translatable_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
+_elm_notify_part_efl_ui_l10n_l10n_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *label, const char *domain)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    elm_widget_part_translatable_text_set(pd->obj, pd->part, label, domain);

@@ -281,11 +281,14 @@ _stop_cpu_thread(void)
      {
         usleep(1000);
         eina_lock_take(&_sysmon_lock);
-        if (_eina_debug_cpu_active == -1) break;
+        if (_eina_debug_cpu_active == -1)
+          {
+             _eina_debug_cpu_active = 0;
+             eina_lock_release(&_sysmon_lock);
+             break;
+          }
         eina_lock_release(&_sysmon_lock);
      }
-   _eina_debug_cpu_active = 0;
-   eina_lock_release(&_sysmon_lock);
 }
 
 static Eina_Bool

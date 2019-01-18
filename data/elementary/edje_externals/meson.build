@@ -1,0 +1,11 @@
+custom_target('edje_cc_edje_externals',
+  input : 'icons.edc',
+  output : '@BASENAME@.edj',
+  command : edje_cc_exe + [ '-beta',
+            '-id', join_paths(meson.current_source_dir()),
+            '-id', elm_themes_image_include,
+            '@INPUT@', '@OUTPUT@'],
+  depends : edje_cc,
+  install : true,
+  install_dir : join_paths(dir_data, 'elementary', 'edje_externals'),
+)

@@ -1,6 +1,6 @@
 import efl_net_ip_address;
 
-class Efl.Net.Socket_Udp (Efl.Net.Socket_Fd) {
+class Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
     [[A base UDP socket.
 
       This is the common class and takes an existing FD, usually
@@ -153,7 +153,7 @@ class Efl.Net.Socket_Udp (Efl.Net.Socket_Fd) {
               If no address is provided or bind is not called, a
               random port is bound automatically to any address.
 
-              \@note IP and PORT must be all numeric, no name
+              Note: IP and PORT must be all numeric, no name
               resolution is applied.
             ]]
             get { }

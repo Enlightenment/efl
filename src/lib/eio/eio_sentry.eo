@@ -5,7 +5,7 @@ struct Eio.Sentry.Event
   source: string; [[The original monitored path.]]
 }
 
-class Eio.Sentry (Efl.Object)
+class Eio.Sentry extends Efl.Object
 {
   [[Monitors files and directories for changes.]]
 

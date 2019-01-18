@@ -9,13 +9,14 @@
 #define EFL_GFX_SIZE_HINT_PROTECTED
 #define EFL_CANVAS_OBJECT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
-#define EFL_UI_TRANSLATABLE_PROTECTED
+#define EFL_UI_L10N_PROTECTED
 #define EFL_UI_WIN_INLINED_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_UI_WIN_BETA
 #define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 #define EFL_PART_PROTECTED
+#define IPA_YLNO_ESU_LANRETNI_MLE
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -43,6 +44,9 @@
 #define MY_CLASS_NAME_LEGACY "elm_win"
 
 #define FRAME_OBJ_THEME_MIN_VERSION 119
+
+Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
 
 static const Elm_Win_Trap *trap = NULL;
 
@@ -99,6 +103,7 @@ struct _Efl_Ui_Win_Data
       Ecore_X_Window       xwin;
       Ecore_Event_Handler *client_message_handler;
       Ecore_Event_Handler *property_handler;
+      Eina_Bool shaped : 1;
    } x;
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
@@ -197,7 +202,7 @@ struct _Efl_Ui_Win_Data
       int         *rots; /* indicates available rotations */
       unsigned int count; /* number of elements in available rotations */
       Eina_Bool    wm_supported : 1; /* set true when the window manager support window rotation */
-      Eina_Bool    use : 1; /* set ture when application use window manager rotation. */
+      Eina_Bool    use : 1; /* set true when application use window manager rotation. */
    } wm_rot;
 
    void *trap_data;
@@ -371,7 +376,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
-static Efl_Ui_Theme_Apply _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
+static Efl_Ui_Theme_Apply_Result _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
@@ -444,7 +449,7 @@ elm_process_state_get(void)
 }
 
 static void
-_elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
+_elm_win_apply_alpha(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Bool enabled;
 
@@ -462,16 +467,13 @@ _elm_win_apply_alpha(Eo *obj, Efl_Ui_Win_Data *sd)
         if (sd->x.xwin)
           {
              enabled |= (sd->csd.need && !sd->fullscreen);
-             if (enabled)
+             if (!ecore_x_screen_is_composited(0))
                {
-                  if (!ecore_x_screen_is_composited(0))
-                    elm_win_shaped_set(obj, enabled);
-                  else
-                    TRAP(sd, alpha_set, enabled);
+                  if (enabled || (!sd->x.shaped))
+                    TRAP(sd, shaped_set, enabled);
                }
              else
                TRAP(sd, alpha_set, enabled);
-             _elm_win_xwin_update(sd);
           }
         else
 #else
@@ -964,8 +966,7 @@ _elm_win_resize_job(void *data)
         int fx, fy, fw, fh;
 
         evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
-        evas_object_move(sd->frame_obj, -fx, -fy);
-        evas_object_resize(sd->frame_obj, w + fw, h + fh);
+        evas_object_geometry_set(sd->frame_obj, -fx, -fy, w + fw, h + fh);
      }
 
    if (sd->main_menu)
@@ -997,16 +998,14 @@ _elm_win_pre_render(Ecore_Evas *ee)
      {
         int mw, mh;
 
-        edje_object_thaw(sd->frame_obj);
-        evas_object_show(sd->frame_obj);
+        if (sd->type != ELM_WIN_FAKE)
+          {
+             edje_object_thaw(sd->frame_obj);
+             evas_object_show(sd->frame_obj);
+          }
+
         _elm_win_frame_style_update(sd, 1, 1);
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-
-        /* set this to handle ecore-evas engine code which incorrectly
-         * assumes that a client resize call is the same as a server resize
-         * event, or which has no server event
-         */
-        sd->deferred_resize_job = EINA_TRUE;
 
         if (sd->frame_obj)
           {
@@ -1025,7 +1024,11 @@ _elm_win_pre_render(Ecore_Evas *ee)
           ecore_x_window_shape_input_rectangle_set(sd->x.xwin, 0, 0, 0, 0);
 #endif
         sd->first_draw = EINA_TRUE;
-        if (sd->shot.info) _shot_handle(sd);
+        /* set this to handle ecore-evas engine code which incorrectly
+         * assumes that a client resize call is the same as a server resize
+         * event, or which has no server event
+         */
+        sd->deferred_resize_job = EINA_TRUE;
      }
    if (sd->deferred_resize_job)
      {
@@ -1482,6 +1485,7 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
 
    _config_profile_lock = EINA_TRUE;
    _elm_config_profile_set(sd->profile.name);
+   _config_profile_lock = EINA_FALSE;
 
    /* update sub ee */
    Ecore_Evas *ee2;
@@ -1537,6 +1541,7 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
    int w, h;
 
    if (!sd->frame_obj) return;
+   if (!sd->csd.need) return;
    _elm_win_frame_geometry_adjust(sd);
    evas_object_geometry_get(sd->frame_obj, &ox, &oy, &ow, &oh);
    if (elm_widget_is_legacy(sd->obj))
@@ -1546,10 +1551,10 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
 
    if (!_elm_win_framespace_set(sd, cx, cy, ow - cw, oh - ch) && (!force)) return;
    _elm_win_frame_geometry_adjust(sd);
-   if (sd->first_draw)
-     evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
-   else
-     w = ow, h = oh;
+
+   if (!sd->first_draw) return;
+
+   evas_object_geometry_get(sd->obj, NULL, NULL, &w, &h);
    if (w && h)
      TRAP(sd, resize, w, h);
 }
@@ -1794,7 +1799,7 @@ _evas_event_key_cb(void *data, const Efl_Event *ev)
    if (!evdata || evdata->win_fed)
      return;
 
-   // evas_callbacks will send the event to the focussed object (ie. this win)
+   // evas_callbacks will send the event to the focused object (ie. this win)
    if (evas_focus_get(evas_object_evas_get(win)) == win)
      return;
 
@@ -2379,6 +2384,22 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
           }
         _elm_win_state_eval(NULL);
      }
+
+   if (sd->shot.info) _shot_handle(sd);
+
+   if (!sd->first_draw) return;
+   if (sd->frame_obj)
+     {
+        evas_object_show(sd->frame_obj);
+     }
+   if (sd->img_obj)
+     {
+        evas_object_show(sd->img_obj);
+     }
+   if (sd->pointer.obj)
+     {
+        evas_object_show(sd->pointer.obj);
+     }
 }
 
 static void
@@ -2655,7 +2676,7 @@ _elm_win_focus_target_get(Evas_Object *obj)
 {
    Evas_Object *o = obj;
 
-   do
+   while (o)
      {
         if (elm_widget_is(o))
           {
@@ -2664,7 +2685,6 @@ _elm_win_focus_target_get(Evas_Object *obj)
           }
         o = elm_widget_parent_widget_get(o);
      }
-   while (o);
 
    return o;
 }
@@ -2965,11 +2985,13 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if ((!_elm_win_list) &&
-       (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED))
+   if (!_elm_win_list)
      {
-        _elm_win_flush_cache_and_exit(obj);
+       if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED)
+         _elm_win_flush_cache_and_exit(obj);
      }
+   if (!_elm_win_list)
+     efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
 }
 
 EOLIAN static void
@@ -3065,6 +3087,13 @@ _efl_ui_win_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz
      }
 
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   /* if window is hidden during a resize,
+    * revert to initial state where pre-render triggers recalc and other resizes are deferred
+    */
+   if (efl_gfx_entity_visible_get(obj)) return;
+   if (!sd->first_draw) return;
+   sd->first_draw = EINA_FALSE;
+   edje_object_freeze(sd->frame_obj);
 }
 
 static void
@@ -3206,8 +3235,7 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
              mw = 32;
              mh = 32;
           }
-        evas_object_move(sd->pointer.obj, 0, 0);
-        evas_object_resize(sd->pointer.obj, mw, mh);
+        evas_object_geometry_set(sd->pointer.obj, 0, 0, mw, mh);
         if (elm_widget_is_legacy(obj))
           edje_object_part_geometry_get(sd->pointer.obj,
                                         "elm.swallow.hotspot",
@@ -3538,7 +3566,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    double wx, wy;
 
    evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
-   if ((!minw) && (!minh)) return;
+   if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
    // If content has a weight, make resizable
    efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
@@ -3583,6 +3611,12 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
+
+   if (sd->deferred_resize_job)
+     _elm_win_resize_job(sd->obj);
+
+   /* do not need to go below. if you go, ee could become 0. */
+   if ((!minw) && (!minh)) return;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    w = ow;
@@ -3700,7 +3734,7 @@ _elm_win_translate(void)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     efl_ui_translatable_translation_update(obj);
+     efl_ui_l10n_translation_update(obj);
 }
 
 
@@ -4337,7 +4371,7 @@ _elm_win_wl_configure(void *data, int t EINA_UNUSED, void *event)
 {
    Ecore_Wl2_Event_Window_Configure *ev = event;
    ELM_WIN_DATA_GET(data, sd);
-   if (ecore_wl2_window_id_get(sd->wl.win) != (int)ev->win) return ECORE_CALLBACK_RENEW;
+   if (sd->wl.win != ev->win) return ECORE_CALLBACK_RENEW;
 
    if (sd->resizing && (!ev->edges)) sd->resizing = EINA_FALSE;
    return ECORE_CALLBACK_RENEW;
@@ -4597,7 +4631,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         if (!efl_finalized_get(sd->obj)) return;
         if (EINA_LIKELY(sd->type == ELM_WIN_FAKE))
           return;
-        CRI("Window has no frame object!");
+        if (!_elm_config->win_no_border)
+          CRI("Window has no frame object!");
         return;
      }
 
@@ -4614,6 +4649,8 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
         sd->csd.need_menu = EINA_FALSE;
         sd->csd.need_indicator = EINA_FALSE;
      }
+   else if (_elm_config->win_no_border)
+     sd->csd.need_borderless = EINA_TRUE;
    else
      {
         sd->csd.need_shadow = sd->csd.need && (!sd->maximized);
@@ -4630,11 +4667,18 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    else
 #endif
    focus = ecore_evas_focus_get(sd->ee);
-   bg_solid = sd->csd.need_bg_solid;
    bg_standard = sd->csd.need_bg_standard;
    unresizable = sd->csd.need_unresizable;
    menu = sd->csd.need_menu;
    indicator = sd->csd.need_indicator;
+   bg_solid = sd->csd.need_bg_solid;
+   /* Set background transparent if window supports alpha.
+    * If alpha window does not emit signal to show background rectangle, then
+    * the background color set by _efl_ui_win_part_color_set cannot be applied
+    * because the background rectangle remains hidden.
+    */
+   if (alpha && bg_solid && !(sd->csd.cur_bg_solid))
+     edje_object_color_class_set(sd->frame_obj, "elm/win/background", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
    /* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
     * At the moment, E Wayland uses SSD for its internal windows. Which means
@@ -4932,7 +4976,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    Eina_Stringshare *accel = NULL;
    Eina_Bool is_gl_accel;
    int i, p = 0;
-   int parent_id = 0;
+   Ecore_Window parent_id = 0;
 
    Efl_Ui_Win_Data tmp_sd;
 
@@ -5068,6 +5112,10 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         else if ((disp) && (!strcmp(disp, "fb")))
           {
 #ifdef HAVE_ELEMENTARY_DRM
+             if (is_gl_accel)
+               {
+                  enginelist[p++] = ELM_GL_DRM;
+               }
              enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
@@ -5124,6 +5172,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                   enginelist[p++] = ELM_WAYLAND_EGL;
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
+                  enginelist[p++] = ELM_GL_DRM;
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_FB
@@ -5190,6 +5239,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                   enginelist[p++] = ELM_WAYLAND_EGL;
 #endif
 #ifdef HAVE_ELEMENTARY_DRM
+                  enginelist[p++] = ELM_GL_DRM;
                   enginelist[p++] = ELM_DRM;
 #endif
 #ifdef HAVE_ELEMENTARY_SDL
@@ -5233,9 +5283,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                     tmp_sd.ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 0, 0);
                }
              else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
-               tmp_sd.ee = ecore_evas_wayland_shm_new(NULL, parent_id, 0, 0, 0, 0, 0);
+               tmp_sd.ee = _wayland_shm_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
-               tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0);
+               tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))
@@ -5254,6 +5304,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
                tmp_sd.ee = ecore_evas_buffer_new(1, 1);
              else if (!strcmp(enginelist[i], ELM_DRM))
                tmp_sd.ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1);
+             else if (!strcmp(enginelist[i], ELM_GL_DRM))
+               tmp_sd.ee = ecore_evas_gl_drm_new(NULL, 0, 0, 0, 1, 1);
              else if (!strncmp(enginelist[i], "shot:", 5))
                {
                   tmp_sd.ee = ecore_evas_buffer_new(1, 1);
@@ -5499,7 +5551,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
             ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
              ((engine) &&
-              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))))
+              ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))
+              || (!strcmp(engine, ELM_GL_DRM))))))
           {
              Evas_Object *o;
              Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
@@ -5568,7 +5621,8 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         _elm_win_count++;
 
         if ((engine) &&
-            ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))))
+            ((!strcmp(engine, ELM_SOFTWARE_FB)) || (!strcmp(engine, ELM_DRM))
+             || (!strcmp(engine, ELM_GL_DRM))))
           {
              TRAP(sd, fullscreen_set, 1);
           }
@@ -5580,7 +5634,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
            case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
            default: break;
           }
-        _elm_win_frame_add(sd, element, style);
+
+        if (!_elm_config->win_no_border)
+          _elm_win_frame_add(sd, element, style);
 
         if (sd->indimode != EFL_UI_WIN_INDICATOR_OFF)
           _indicator_add(sd);
@@ -6049,7 +6105,8 @@ _efl_ui_win_fullscreen_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool f
    // YYY: handle if sd->img_obj
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
-        (!strcmp(engine_name, ELM_DRM))))
+        (!strcmp(engine_name, ELM_DRM)) ||
+        (!strcmp(engine_name, ELM_GL_DRM))))
      {
         // these engines... can ONLY be fullscreen
         return;
@@ -6074,7 +6131,8 @@ _efl_ui_win_fullscreen_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 
    if (engine_name &&
        ((!strcmp(engine_name, ELM_SOFTWARE_FB)) ||
-        (!strcmp(engine_name, ELM_DRM))))
+        (!strcmp(engine_name, ELM_DRM)) ||
+        (!strcmp(engine_name, ELM_GL_DRM))))
      {
         // these engines... can ONLY be fullscreen
         return EINA_TRUE;
@@ -6828,16 +6886,16 @@ _efl_ui_win_efl_ui_widget_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED,
    return sd->focus_highlight.enabled;
 }
 
-static Efl_Ui_Theme_Apply
+static Efl_Ui_Theme_Apply_Result
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    Eina_Bool ret = EINA_FALSE, prev_alpha;
    const char *s;
 
    int_ret = elm_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
                                        elm_widget_style_get(obj));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
@@ -6846,7 +6904,7 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
    ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
 
-   if (!ret) int_ret = EFL_UI_THEME_APPLY_FAILED;
+   if (!ret) int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    prev_alpha = sd->theme_alpha;
    s = edje_object_data_get(sd->legacy.edje, "alpha");
@@ -6857,17 +6915,17 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_win_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
    int_ret = _elm_win_theme_internal(obj, sd) & int_ret;
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 
    return int_ret;
@@ -7304,16 +7362,32 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
      return EINA_FALSE;
    if (elm_widget_is_legacy(sd->obj))
      {
-        if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
-          return EINA_FALSE;
+        if (!_elm_config->win_no_border)
+          {
+             if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.background", bg))
+               return EINA_FALSE;
+          }
+        else
+          {
+             if (!edje_object_part_swallow(sd->legacy.edje, "elm.swallow.background", bg))
+               return EINA_FALSE;
+          }
      }
    else
      {
-        if (!edje_object_part_swallow(sd->frame_obj, "efl.background", bg))
-          return EINA_FALSE;
+        if (!_elm_config->win_no_border)
+          {
+             if (!edje_object_part_swallow(sd->frame_obj, "efl.background", bg))
+               return EINA_FALSE;
+          }
+        else
+          {
+             if (!edje_object_part_swallow(sd->legacy.edje, "efl.background", bg))
+               return EINA_FALSE;
+          }
      }
    efl_gfx_entity_visible_set(bg, 1);
-   efl_gfx_size_hint_align_set(bg, -1, -1);
+   efl_gfx_size_hint_fill_set(bg, EINA_TRUE, EINA_TRUE);
    efl_gfx_size_hint_weight_set(bg, 1, 1);
    efl_wref_add(bg, &sd->bg);
    return EINA_TRUE;
@@ -7334,7 +7408,15 @@ _elm_win_bg_must_swallow(Efl_Ui_Win_Data *sd)
         sd->legacy.bg_must_swallow = 1;
         sd->legacy.bg_must_swallow_init = 1;
 
-        bg = elm_bg_add(sd->obj);
+        if (sd->legacy.ctor)
+          bg = elm_bg_add(sd->obj);
+        else
+          {
+             // Note: This code path is probably not necessary (custom legacy
+             // theme but efl_add'ed window -- all efl_add'ed widgets would
+             // use default theme)
+             bg = efl_add(EFL_UI_BG_CLASS, sd->obj);
+          }
         wd = efl_data_scope_get(bg, EFL_UI_WIDGET_CLASS);
         if (wd)
           {
@@ -7376,7 +7458,7 @@ _elm_win_standard_init(Eo *obj)
              // Note: This code path is probably not necessary (custom legacy
              // theme but efl_add'ed window -- all efl_add'ed widgets would
              // use default theme)
-             bg = efl_add(EFL_UI_BG_WIDGET_CLASS, obj);
+             bg = efl_add(EFL_UI_BG_CLASS, obj);
           }
         _elm_win_bg_set(sd, bg);
      }
@@ -7632,8 +7714,16 @@ elm_win_cocoa_window_get(const Evas_Object *obj)
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return NULL;
 
+#if HAVE_ELEMENTARY_COCOA
+   if (sd->cocoa.win) return sd->cocoa.win;
+   if (sd->ee) return _elm_ee_cocoa_win_get(sd->ee);
+   if (sd->parent) return elm_win_cocoa_window_get(sd->parent);
+#endif
+
    Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    return _elm_ee_cocoa_win_get(ee);
+
+   return NULL;
 }
 
 EAPI Ecore_Win32_Window *
@@ -8249,9 +8339,12 @@ elm_win_shaped_set(Evas_Object *obj, Eina_Bool shaped)
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return;
 
-   TRAP(sd, shaped_set, shaped);
+   shaped = !!shaped;
+
 #ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
+   if (sd->x.shaped == shaped) return;
+   sd->x.shaped = shaped;
+   TRAP(sd, shaped_set, shaped);
 #endif
 }
 
@@ -8413,14 +8506,14 @@ _elm_win_window_id_get(Efl_Ui_Win_Data *sd)
 {
 #if HAVE_ELEMENTARY_WL2
    if (sd->wl.win)
-     return (Ecore_Window)ecore_wl2_window_id_get(sd->wl.win);
+     return (Ecore_Window)sd->wl.win;
    if (sd->parent)
      {
         Ecore_Wl2_Window *parent;
 
         parent = elm_win_wl_window_get(sd->parent);
         if (parent)
-          return (Ecore_Window)ecore_wl2_window_id_get(parent);
+          return (Ecore_Window)parent;
      }
 #endif
 #ifdef HAVE_ELEMENTARY_X
@@ -8585,8 +8678,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    EINA_LIST_FOREACH(p->children, l, opt)
      {
         child = opt->obj;
-        evas_object_move(child, x, y);
-        evas_object_resize(child, w, h);
+        evas_object_geometry_set(child, x, y, w, h);
      }
 
    efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
@@ -8607,8 +8699,7 @@ _elm_win_legacy_init(Efl_Ui_Win_Data *sd)
    else
      edje_object_part_swallow(sd->legacy.edje, "efl.contents", sd->legacy.box);
 
-   evas_object_move(sd->legacy.edje, 0, 0);
-   evas_object_resize(sd->legacy.edje, 1, 1);
+   evas_object_geometry_set(sd->legacy.edje, 0, 0, 1, 1);
    if (sd->type != ELM_WIN_FAKE)
      {
         edje_object_update_hints_set(sd->legacy.edje, EINA_TRUE);
@@ -8698,6 +8789,7 @@ elm_win_socket_listen(Efl_Ui_Win *obj, const char *svcname, int svcnum, Eina_Boo
 EAPI Eina_Bool
 elm_win_focus_get(const Efl_Ui_Win *obj)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EINA_FALSE);
    return efl_ui_focus_object_focus_get(obj);
 }
 

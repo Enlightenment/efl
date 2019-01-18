@@ -1,4 +1,4 @@
-class Ector.Renderer.Software (Ector.Renderer)
+abstract Ector.Renderer.Software extends Ector.Renderer
 {
    [[Ector software renderer class]]
    data: null;

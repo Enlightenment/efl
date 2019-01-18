@@ -1895,6 +1895,9 @@ EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
  * @param thread The thread to wait on.
  * @param wait Maximum time to wait before exiting anyway.
  * @return EINA_TRUE if the thread execution is over.
+ *
+ * Note: This function should only be called in the main loop.
+ *
  */
 EAPI Eina_Bool ecore_thread_wait(Ecore_Thread *thread, double wait);
 

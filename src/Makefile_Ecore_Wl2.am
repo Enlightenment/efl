@@ -26,7 +26,9 @@ static_libs/libdrm/exynos_drmif.h \
 static_libs/libdrm/i915_drm.h \
 static_libs/libdrm/intel_bufmgr.h \
 static_libs/libdrm/vc4_drm.h \
-static_libs/libdrm/LICENSE
+static_libs/libdrm/LICENSE \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
 
 
 nodist_lib_ecore_wl2_libecore_wl2_la_SOURCES = \
@@ -51,6 +53,8 @@ lib_ecore_wl2_libecore_wl2_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 @ECORE_WL2_CFLAGS@ \
 -I$(top_srcdir)/src/static_libs/libdrm \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DMODULE_ARCH=\"$(MODULE_ARCH)\"
 lib_ecore_wl2_libecore_wl2_la_LIBADD = @ECORE_WL2_LIBS@
 lib_ecore_wl2_libecore_wl2_la_DEPENDENCIES = @ECORE_WL2_INTERNAL_LIBS@
@@ -74,9 +78,7 @@ lib/ecore_wl2/efl-aux-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-client-protocol.h \
 lib/ecore_wl2/efl-hints-protocol.c
 
-EXTRA_DIST2 += lib/ecore_wl2/window_v6.x
-
-DMABUFSOURCES = lib/ecore_wl2/ecore_wl2_surface_module_dmabuf.c
+DMABUFSOURCES = modules/ecore_wl2/engines/dmabuf/ecore_wl2_surface_module_dmabuf.c
 ecorewl2enginedmabufpkgdir = $(libdir)/ecore_wl2/engines/dmabuf/$(MODULE_ARCH)
 ecorewl2enginedmabufpkg_LTLIBRARIES = modules/ecore_wl2/engines/dmabuf/module.la
 
@@ -87,7 +89,12 @@ $(install_ecorewl2enginedmabufpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecore_wl2_engines_dmabuf_module_la_SOURCES = $(DMABUFSOURCES)
 modules_ecore_wl2_engines_dmabuf_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WL2_CFLAGS@
-modules_ecore_wl2_engines_dmabuf_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_wl2_engines_dmabuf_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@ @USE_ECORE_WL2_LIBS@
+modules_ecore_wl2_engines_dmabuf_module_la_DEPENDENCIES = lib/ecore_wl2/libecore_wl2.la
 modules_ecore_wl2_engines_dmabuf_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 endif
+
+#We want this in the release tarball even if the builder isn't compiling
+#wayland support.
+EXTRA_DIST2 += lib/ecore_wl2/window_v6.x

@@ -13,7 +13,7 @@ static int _evas_vg_loader_eet_log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_evas_vg_loader_eet_log_dom, __VA_ARGS__)
 
 static Vg_File_Data*
-evas_vg_load_file_data_eet(const char *file, const char *key, int *error EINA_UNUSED)
+evas_vg_load_file_open_eet(const char *file, const char *key, int *error EINA_UNUSED)
 {
    Eet_Data_Descriptor *svg_node_eet;
    Svg_Node *node;
@@ -38,12 +38,25 @@ evas_vg_load_file_data_eet(const char *file, const char *key, int *error EINA_UN
      {
         *error = EVAS_LOAD_ERROR_NONE;
      }
+   return vg_common_svg_create_vg_node(node);
+}
 
-   return vg_common_create_vg_node(node);
+static Eina_Bool
+evas_vg_load_file_close_eet(Vg_File_Data *vfd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+evas_vg_load_file_data_eet(Vg_File_Data *vfd EINA_UNUSED)
+{
+   return EINA_TRUE;
 }
 
 static Evas_Vg_Load_Func evas_vg_load_eet_func =
 {
+   evas_vg_load_file_open_eet,
+   evas_vg_load_file_close_eet,
    evas_vg_load_file_data_eet
 };
 

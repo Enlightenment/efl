@@ -1,9 +1,10 @@
-mixin Ector.Renderer.Gradient (Efl.Gfx.Gradient)
+mixin Ector.Renderer.Gradient requires Efl.Object extends Efl.Gfx.Gradient
 {
    [[Ector gradient renderer mixin]]
    eo_prefix: ector_renderer_gradient;
    implements {
       Efl.Gfx.Gradient.stop { get; set; }
       Efl.Gfx.Gradient.spread { get; set; }
+      Efl.Object.invalidate;
    }
 }

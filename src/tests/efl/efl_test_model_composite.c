@@ -25,9 +25,9 @@
 #include <Efl.h>
 #include <Ecore.h>
 
-const int child_number = 3;
-const int base_ints[] = { 41, 42, 43 };
-const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
+static const int child_number = 3;
+static const int base_ints[] = { 41, 42, 43 };
+static const Eina_Bool base_selections[] = { EINA_FALSE, EINA_FALSE, EINA_TRUE };
 
 static Eina_Value
 _children_slice_get_then(void *data EINA_UNUSED,
@@ -126,7 +126,7 @@ EFL_START_TEST(efl_test_model_composite_boolean)
    ck_assert(!!model);
 
    future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-   eina_future_then(future, _children_slice_get_then, NULL);
+   eina_future_then(future, _children_slice_get_then, NULL, NULL);
 
    ecore_main_loop_begin();
 }
@@ -166,11 +166,11 @@ EFL_START_TEST(efl_test_model_composite_selection)
                    efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
    future = efl_model_property_set(model, "selected", eina_value_int_new(2));
-   eina_future_then(future, _wait_propagate, NULL);
+   eina_future_then(future, _wait_propagate, NULL, NULL);
    ecore_main_loop_begin();
 
    future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-   eina_future_then(future, _selection_children_slice_get_then, NULL);
+   eina_future_then(future, _selection_children_slice_get_then, NULL, NULL);
 
    ecore_main_loop_begin();
 }

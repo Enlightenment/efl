@@ -95,7 +95,7 @@ int _eina_file_log_dom = -1;
  */
 #ifdef HAVE_DIRENT_H
 static long
-_eina_name_max(DIR *dirp)
+_eina_name_max(DIR *dirp EINA_UNUSED)
 {
    long name_max;
 

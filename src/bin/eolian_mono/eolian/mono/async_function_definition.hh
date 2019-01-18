@@ -48,13 +48,13 @@ struct async_function_declaration_generator
   {
     if (f.is_static)
       return true;
-    if (blacklist::is_function_blacklisted(f.c_name))
+    if (blacklist::is_function_blacklisted(f, context))
       return true;
     if (!f.return_type.original_type.visit(is_future{}))
       return true;
 
     if (!as_generator(
-            scope_tab << "System.Threading.Tasks.Task<eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") <<
+            scope_tab << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") <<
                                     " System.Threading.CancellationToken token=default(System.Threading.CancellationToken));\n"
         ).generate(sink, f.parameters, context))
       return false;
@@ -76,7 +76,7 @@ struct async_function_definition_generator
 
     if(do_super && f.is_static) // Static methods goes only on Concrete classes.
       return true;
-    if(blacklist::is_function_blacklisted(f.c_name))
+    if(blacklist::is_function_blacklisted(f, context))
       return true;
     if(!f.return_type.original_type.visit(is_future{}))
       return true;
@@ -89,10 +89,10 @@ struct async_function_definition_generator
     std::transform(f.parameters.begin(), f.parameters.end(), std::back_inserter(param_forwarding), parameter_forwarding);
 
     if(!as_generator(
-            scope_tab << "public System.Threading.Tasks.Task<eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token)\n"
+            scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token=default(System.Threading.CancellationToken))\n"
             << scope_tab << "{\n"
-            << scope_tab << scope_tab << "eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ",") << ");\n"
-            << scope_tab << scope_tab << "return efl.eo.Globals.WrapAsync(future, token);\n"
+            << scope_tab << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ",") << ");\n"
+            << scope_tab << scope_tab << "return Efl.Eo.Globals.WrapAsync(future, token);\n"
             << scope_tab << "}\n"
         ).generate(sink, std::make_tuple(f.parameters, param_forwarding), context))
       return false;

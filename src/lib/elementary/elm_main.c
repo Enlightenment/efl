@@ -41,13 +41,27 @@ Eina_Bool _use_build_config;
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
 
+static void
+_focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, NULL);
+}
+
+void
+_efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal)
+{
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_MOVE, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _focus_ev_redirect_cb, goal);
+}
+
 void
 _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj)
 {
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED , obj);
+   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
+   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
 
 void
@@ -55,8 +69,9 @@ _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj
 {
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUSED , obj);
+   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
+   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
 
 Eina_Bool
@@ -390,17 +405,20 @@ elm_init(int argc, char **argv)
 {
    _elm_init_count++;
    if (_elm_init_count > 1) return _elm_init_count;
-   elm_quicklaunch_init(argc, argv ? argv : (char**) bcargv);
-   elm_quicklaunch_sub_init(argc, argv ? argv : (char**) bcargv);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_quicklaunch_init(argc, argv ? argv : (char**) bcargv), --_elm_init_count);
+   EINA_SAFETY_ON_FALSE_GOTO(elm_quicklaunch_sub_init(argc, argv ? argv : (char**) bcargv), shutdown_ql);
 
    _prefix_shutdown();
 
+   /* this is fine if it fails */
    _elm_clouseau_load();
 
    system_handlers[0] =
      ecore_event_handler_add(ECORE_EVENT_MEMORY_STATE, _sys_memory_changed, NULL);
    system_handlers[1] =
      ecore_event_handler_add(ECORE_EVENT_LOCALE_CHANGED, _sys_lang_changed, NULL);
+
+   ELM_CNP_EVENT_SELECTION_CHANGED = ecore_event_type_new();
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
      _elm_atspi_bridge_init();
@@ -419,6 +437,9 @@ elm_init(int argc, char **argv)
    _elm_startup_time = _efl_startup_time;
 
    return _elm_init_count;
+shutdown_ql:
+   elm_quicklaunch_shutdown();
+   return --_elm_init_count;
 }
 
 EAPI int
@@ -655,7 +676,7 @@ _elm_unneed_elocation(void)
 #ifdef ELM_ELOCATION
    if (!_elm_need_elocation) return;
    _elm_need_elocation = EINA_FALSE;
-   eldbus_shutdown();
+   elocation_shutdown();
 #endif
 }
 
@@ -724,22 +745,18 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    _use_build_config = !!getenv("EFL_RUN_IN_TREE");
-   eina_init();
+   EINA_SAFETY_ON_FALSE_GOTO(eina_init(), fail_eina);
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
-   if (!_elm_log_dom)
-     {
-        EINA_LOG_ERR("could not register elementary log domain.");
-        _elm_log_dom = EINA_LOG_DOMAIN_GLOBAL;
-     }
+   EINA_SAFETY_ON_TRUE_GOTO(_elm_log_dom < 0, fail_eina_log);
 
-   eet_init();
-   ecore_init();
-   ecore_event_init();
-   edje_init();
-   eio_init();
+   EINA_SAFETY_ON_FALSE_GOTO(eet_init(), fail_eet);
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_init(), fail_ecore);
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_event_init(), fail_ecore_event);
+   EINA_SAFETY_ON_FALSE_GOTO(edje_init(), fail_edje);
+   EINA_SAFETY_ON_FALSE_GOTO(eio_init(), fail_eio);
 
 #ifdef HAVE_ELEMENTARY_EMAP
-   emap_init();
+   EINA_SAFETY_ON_FALSE_GOTO(emap_init(), fail_emap);
 #endif
 
    memset(_elm_policies, 0, sizeof(_elm_policies));
@@ -747,8 +764,9 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    ELM_EVENT_PROCESS_BACKGROUND = ecore_event_type_new();
    ELM_EVENT_PROCESS_FOREGROUND = ecore_event_type_new();
 
-   if (!ecore_file_init())
-     ERR("Elementary cannot init ecore_file");
+   EINA_SAFETY_ON_FALSE_GOTO(ecore_file_init(), fail_ecore_file);
+
+   _elm_theme_init();
 
    _elm_exit_handler =
      ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
@@ -781,6 +799,28 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    if (quicklaunch_on)
      _elm_init_count++;
    return _elm_ql_init_count;
+
+fail_ecore_file:
+#ifdef HAVE_ELEMENTARY_EMAP
+   emap_shutdown();
+fail_emap:
+#endif
+   eio_shutdown();
+fail_eio:
+   edje_shutdown();
+fail_edje:
+   ecore_event_shutdown();
+fail_ecore_event:
+   ecore_shutdown();
+fail_ecore:
+   eet_shutdown();
+fail_eet:
+   eina_log_domain_unregister(_elm_log_dom);
+   _elm_log_dom = -1;
+fail_eina_log:
+   eina_shutdown();
+fail_eina:
+   return --_elm_ql_init_count;
 }
 
 EAPI int
@@ -793,19 +833,34 @@ elm_quicklaunch_sub_init(int    argc,
 
    if (!quicklaunch_on)
      {
-        ecore_evas_init(); // FIXME: check errors
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_init_ex(argc, argv), ql_sub_ecore);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_evas_init(), ql_sub_ee);
         elm_color_class_init();
         _elm_module_init();
         _elm_config_sub_init();
-        ecore_imf_init();
-        ecore_con_init();
-        ecore_con_url_init();
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_imf_init(), ql_sub_imf);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_con_init(), ql_sub_ecore_con);
+        EINA_SAFETY_ON_FALSE_GOTO(ecore_con_url_init(), ql_sub_ecore_con_url);
         _elm_prefs_initted = _elm_prefs_init();
-        _elm_ews_wm_init();
-
-        ecore_init_ex(argc, argv);
+        EINA_SAFETY_ON_FALSE_GOTO(_elm_ews_wm_init(), ql_sub_ews);;
      }
    return _elm_sub_init_count;
+ql_sub_ews:
+   if (_elm_prefs_initted) _elm_prefs_shutdown();
+   ecore_con_url_shutdown();
+ql_sub_ecore_con_url:
+   ecore_con_shutdown();
+ql_sub_ecore_con:
+   ecore_imf_shutdown();
+ql_sub_imf:
+   ecore_evas_shutdown();
+   _elm_module_shutdown();
+   _elm_config_sub_shutdown();
+ql_sub_ee:
+   ecore_shutdown_ex();
+ql_sub_ecore:
+   _elm_config_shutdown();
+   return --_elm_sub_init_count;
 }
 
 EAPI int
@@ -828,6 +883,7 @@ elm_quicklaunch_sub_shutdown(void)
         _elm_module_shutdown();
         if (_elm_prefs_initted)
           _elm_prefs_shutdown();
+        _efl_ui_dnd_shutdown();
         elm_color_class_shutdown();
      }
 
@@ -877,7 +933,7 @@ elm_quicklaunch_shutdown(void)
    ecore_shutdown();
    eet_shutdown();
 
-   if ((_elm_log_dom > -1) && (_elm_log_dom != EINA_LOG_DOMAIN_GLOBAL))
+   if (_elm_log_dom > -1)
      {
         eina_log_domain_unregister(_elm_log_dom);
         _elm_log_dom = -1;
@@ -1206,12 +1262,16 @@ elm_quicklaunch_fallback(int    argc,
 {
    int ret;
    char cwd[PATH_MAX];
-   elm_quicklaunch_init(argc, argv);
-   elm_quicklaunch_sub_init(argc, argv);
+   /* return nonzero on failure */
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_quicklaunch_init(argc, argv), 1);
+   EINA_SAFETY_ON_FALSE_GOTO(elm_quicklaunch_sub_init(argc, argv), fallback_ql);
    elm_quicklaunch_prepare(argc, argv, getcwd(cwd, sizeof(cwd)));
    ret = qr_main(argc, argv);
    exit(ret);
    return ret;
+fallback_ql:
+   elm_quicklaunch_shutdown();
+   return 1;
 }
 
 EAPI char *
@@ -1417,7 +1477,7 @@ elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part,
      {
         if (!part)
           part = efl_ui_widget_default_text_part_get(obj);
-        else if (efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))
+        else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
            _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
 
         elm_widget_part_translatable_text_set(obj, part, text, domain);
@@ -1425,9 +1485,9 @@ elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part,
    else
      {
         if (!part)
-           efl_ui_translatable_text_set(obj, text, domain);
+           efl_ui_l10n_text_set(obj, text, domain);
         else
-           efl_ui_translatable_text_set(efl_part(obj, part), text, domain);
+           efl_ui_l10n_text_set(efl_part(obj, part), text, domain);
      }
 }
 
@@ -1439,7 +1499,7 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
      {
         if (!part)
           part = efl_ui_widget_default_text_part_get(obj);
-        else if (efl_isa(obj, EFL_UI_LAYOUT_OBJECT_CLASS))
+        else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
            _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
 
         return elm_widget_part_translatable_text_get(obj, part, NULL);
@@ -1447,9 +1507,9 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
    else
      {
         if (!part)
-          return efl_ui_translatable_text_get(obj, NULL);
+          return efl_ui_l10n_text_get(obj, NULL);
         else
-          return efl_ui_translatable_text_get(efl_part(obj, part), NULL);
+          return efl_ui_l10n_text_get(efl_part(obj, part), NULL);
      }
 }
 

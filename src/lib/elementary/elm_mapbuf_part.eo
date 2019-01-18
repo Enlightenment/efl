@@ -1,4 +1,4 @@
-class Elm.Mapbuf.Part (Efl.Ui.Widget_Part, Efl.Content)
+class Elm.Mapbuf.Part extends Efl.Ui.Widget_Part implements Efl.Content
 {
    [[Elementary mapbuf internal part class]]
    data: null;

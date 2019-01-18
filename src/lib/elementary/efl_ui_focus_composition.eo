@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
+mixin Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
    [[This defines the inheriting widget as Composition widget.
 
      A composition widget is a widget that's the logical parent of another set of widgets which can be used for interaction.
@@ -46,6 +46,7 @@ mixin Efl.Ui.Focus.Composition (Efl.Interface, Efl.Ui.Widget) {
       }
    }
    implements {
+      Efl.Object.invalidate;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Object.prepare_logical_none_recursive;
       @empty .prepare;

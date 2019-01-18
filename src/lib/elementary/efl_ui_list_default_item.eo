@@ -1,9 +1,8 @@
 
-class Efl.Ui.List_Default_Item (Efl.Ui.List_Item,
+class Efl.Ui.List_Default_Item extends Efl.Ui.List_Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
-                                Efl.Ui.Translatable,
-                                Efl.Content)
+                                Efl.Content
 {
    [[List Default Item class.
      This class need to be sub object of list widget.
@@ -16,7 +15,7 @@ class Efl.Ui.List_Default_Item (Efl.Ui.List_Item,
       Efl.Object.destructor;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.Translatable.translatable_text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part_get;

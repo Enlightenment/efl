@@ -255,10 +255,44 @@ EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void
  */
 EAPI void *ecore_timer_del(Ecore_Timer *timer);
 
+/**
+ * Pauses a running timer.
+ *
+ * @param timer The timer to be paused.
+ *
+ * @remarks The timer callback won't be called while the timer is paused. The remaining
+ *          time until the timer expires will be saved, so the timer can be resumed with
+ *          that same remaining time to expire, instead of expiring instantly.  Use
+ *          ecore_timer_thaw() to resume it.
+ *
+ * @note Nothing happens if the timer was already paused.
+ *
+ * @see ecore_timer_thaw()
+ */
 EAPI void ecore_timer_freeze(Ecore_Timer *timer);
 
+/**
+ * @brief Return whether the timer is freezing.
+ *
+ * @return True if the timer object is freezed, false otherwise.
+ *
+ * @see ecore_timer_freeze(), ecore_timer_thaw()
+ */
 EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
 
+/**
+ * @brief Resumes a frozen (paused) timer.
+ *
+ * @remarks The timer will be resumed from its previous relative position in time. That
+ *          means, if it had X seconds remaining until expire when it was paused, it will
+ *          be started now with those same X seconds remaining to expire again. But
+ *          notice that the interval time won't be touched by this call or by
+ *          ecore_timer_freeze().
+ *
+ * @param[in] timer The timer to be resumed.
+ *
+ * @see ecore_timer_freeze()
+ */
 EAPI void ecore_timer_thaw(Ecore_Timer *timer);
 
 #include "efl_loop_timer.eo.legacy.h"
@@ -390,5 +424,10 @@ EAPI void *ecore_job_del(Ecore_Job *obj);
 /**
  * @}
  */
+
+#ifdef EFL_BETA_API_SUPPORT
+EAPI Ecore_Animator *ecore_evas_animator_timeline_add(void *evo, double runtime, Ecore_Timeline_Cb func, const void *data);
+EAPI Ecore_Animator *ecore_evas_animator_add(void *evo, Ecore_Task_Cb func, const void *data);
+#endif /* EFL_BETA_API_SUPPORT */
 
 #endif

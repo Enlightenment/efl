@@ -200,7 +200,7 @@ SUITE_RUNNER_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/bindings/js/eo_js \
 -DTESTS_WD=\"`pwd`\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl_js\" \
--DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/src/tests/efl_js\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl_js\" \
 @CHECK_CFLAGS@ \
 @EFL_JS_CFLAGS@ \
@@ -251,7 +251,14 @@ tests_efl_js_libbenchmark_object_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/e
 tests_efl_js_libbenchmark_object_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@
 tests_efl_js_libbenchmark_object_la_LIBTOOLFLAGS = --tag=disable-static
 
-tests/efl_js/tests_efl_js_libbenchmark_object_la-benchmark_object_impl.l$(OBJEXT): tests/efl_js/benchmark_object.eo.js.cc tests/efl_js/benchmark_object.eo.c tests/efl_js/benchmark_object.eo.h
+if HAVE_AM_16
+TESTS_EFL_JS_OBJNAME = 
+else
+TESTS_EFL_JS_OBJNAME = tests_efl_js_
+endif
+
+
+tests/efl_js/$(TESTS_EFL_JS_OBJNAME)libbenchmark_object_la-benchmark_object_impl.l$(OBJEXT): tests/efl_js/benchmark_object.eo.js.cc tests/efl_js/benchmark_object.eo.c tests/efl_js/benchmark_object.eo.h
 else
 check_PROGRAMS += \
 tests/efl_js/eina_js_suite \

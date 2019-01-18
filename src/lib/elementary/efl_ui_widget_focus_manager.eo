@@ -1,4 +1,4 @@
-mixin Efl.Ui.Widget_Focus_Manager (Efl.Interface, Efl.Ui.Widget, Efl.Ui.Focus.Manager)
+mixin Efl.Ui.Widget_Focus_Manager requires Efl.Ui.Widget extends Efl.Ui.Focus.Manager
 {
   methods {
       focus_manager_create @protected @pure_virtual {

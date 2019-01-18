@@ -869,8 +869,7 @@ _elm_access_object_highlight(Evas_Object *obj)
                                   _access_obj_hilight_resize_cb, NULL);
    evas_object_raise(o);
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   evas_object_move(o, x, y);
-   evas_object_resize(o, w, h);
+   evas_object_geometry_set(o, x, y, w, h);
 
    widget = _elm_access_widget_target_get(obj);
    if (widget)
@@ -965,8 +964,7 @@ _access_object_register(Evas_Object *obj, Evas_Object *parent)
                                   _content_move, ao);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   evas_object_move(ao, x, y);
-   evas_object_resize(ao, w, h);
+   evas_object_geometry_set(ao, x, y, w, h);
    evas_object_show(ao);
 
    /* register access object */
@@ -1209,8 +1207,7 @@ _elm_access_widget_item_register(Elm_Widget_Item_Data *item)
                                   _content_move, ao);
 
    evas_object_geometry_get(ho, &x, &y, &w, &h);
-   evas_object_move(ao, x, y);
-   evas_object_resize(ao, w, h);
+   evas_object_geometry_set(ao, x, y, w, h);
    evas_object_show(ao);
 
    // register access object

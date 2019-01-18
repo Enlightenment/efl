@@ -1,4 +1,4 @@
-class Efl.Ui.Nstate(Efl.Ui.Button)
+class Efl.Ui.Nstate extends Efl.Ui.Button
 {
    [[Efl UI nstate class]]
    methods {

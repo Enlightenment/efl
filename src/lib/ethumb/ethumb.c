@@ -173,9 +173,18 @@ _ethumb_plugins_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
+                       Eina_Module *m;
+
                        bs_mod_get(buf, sizeof(buf), "ethumb", *itr);
-                       _plugins = eina_module_list_get(_plugins, buf,
-                                                       EINA_FALSE, NULL, NULL);
+
+                       m = eina_module_new(buf);
+
+                       if (!m) continue;
+
+                       if (!_plugins)
+                         _plugins = eina_array_new(1);
+
+                       eina_array_push(_plugins, m);
                     }
                   goto load;
                }

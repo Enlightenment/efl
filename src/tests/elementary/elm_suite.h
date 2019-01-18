@@ -2,8 +2,18 @@
 #define _ELM_SUITE_H
 
 #include <check.h>
-#include "elm_test_helper.h"
 #include "../efl_check.h"
+#define ck_assert_strn_eq(s1, s2, len)          \
+  {                                             \
+    char expected[len+1], actual[len+1];        \
+                                                \
+    strncpy(expected, s1, len);                 \
+    expected[len] = '\0';                       \
+    strncpy(actual, s2, len);                   \
+    actual[len] = '\0';                         \
+                                                \
+    ck_assert_str_eq(expected, actual);         \
+  }
 
 #include <Evas.h>
 void elm_test_init(TCase *tc);
@@ -73,6 +83,11 @@ void elm_test_spinner(TCase *tc);
 void elm_test_plug(TCase *tc);
 void elm_test_focus(TCase *tc);
 void elm_test_focus_sub(TCase *tc);
+void elm_test_widget_focus(TCase *tc);
+/* FIXME : This test must move efl_ui_suite when it ready *
+ * EFL_UI_TEST BEGIN */
+void efl_ui_test_grid(TCase *tc);
+/* EFL_UI_TEST END */
 
 void elm_code_file_test_load(TCase *tc);
 void elm_code_file_test_memory(TCase *tc);
@@ -88,5 +103,6 @@ void elm_code_test_widget_selection(TCase *tc);
 void elm_code_test_widget_undo(TCase *tc);
 
 Evas_Object *win_add();
+Evas_Object *win_add_focused();
 
 #endif /* _ELM_SUITE_H */

@@ -7,7 +7,7 @@ enum Efl.Net.Dialer_Http_Primary_Mode {
     upload, [[HTTP upload mode]]
 }
 
-class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
+class Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, Efl.Io.Sizer {
     [[HTTP Dialer (Client).
 
       The effective URL in use, if @.allow_redirects is $true will be
@@ -323,7 +323,7 @@ class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
               system, create a cookie jar and pass its path to this
               property.
 
-              \@note that whenever this property is set, even if to the
+              Note: that whenever this property is set, even if to the
               same value, it will flush all cookies to the previously
               set file, then erase all known cookies. It will then use the new
               file (if any).

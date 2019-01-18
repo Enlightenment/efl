@@ -305,6 +305,16 @@ efreet_dirs_init(void)
     xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", getenv("APPDATA"));
 #else
     xdg_config_dirs = efreet_dirs_get("XDG_CONFIG_DIRS", "/etc/xdg");
+
+    Eina_Stringshare *path = eina_stringshare_printf("%s/xdg", PACKAGE_SYSCONF_DIR);
+    if ((!eina_list_data_find(xdg_config_dirs, path)) && ecore_file_exists(path))
+      {
+         xdg_config_dirs = eina_list_append(xdg_config_dirs, path);
+      }
+    else
+      {
+         eina_stringshare_del(path);
+      }
 #endif
 
     /* xdg_runtime_dir */

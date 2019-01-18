@@ -33,15 +33,15 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_io_file.eo \
         lib/ecore/efl_io_copier.eo \
         lib/ecore/efl_io_buffered_stream.eo \
-	lib/ecore/efl_interpolator.eo \
-	lib/ecore/efl_interpolator_linear.eo \
-	lib/ecore/efl_interpolator_accelerate.eo \
-	lib/ecore/efl_interpolator_decelerate.eo \
-	lib/ecore/efl_interpolator_sinusoidal.eo \
-	lib/ecore/efl_interpolator_divisor.eo \
-	lib/ecore/efl_interpolator_bounce.eo \
-	lib/ecore/efl_interpolator_spring.eo \
-	lib/ecore/efl_interpolator_cubic_bezier.eo \
+	lib/ecore/efl_linear_interpolator.eo \
+	lib/ecore/efl_accelerate_interpolator.eo \
+	lib/ecore/efl_decelerate_interpolator.eo \
+	lib/ecore/efl_sinusoidal_interpolator.eo \
+	lib/ecore/efl_divisor_interpolator.eo \
+	lib/ecore/efl_bounce_interpolator.eo \
+	lib/ecore/efl_spring_interpolator.eo \
+	lib/ecore/efl_cubic_bezier_interpolator.eo \
+	lib/ecore/efl_model_loop.eo \
 	lib/ecore/efl_model_item.eo \
 	lib/ecore/efl_model_container.eo \
 	lib/ecore/efl_model_container_item.eo \
@@ -49,7 +49,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_model_composite_boolean_children.eo \
 	lib/ecore/efl_model_composite_selection.eo \
 	lib/ecore/efl_model_composite_selection_children.eo \
-	lib/ecore/efl_model_composite.eo
+	lib/ecore/efl_model_composite.eo \
+	lib/ecore/efl_model_view.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -118,6 +119,7 @@ lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
+lib/ecore/efl_model_loop.c \
 lib/ecore/efl_model_item.c \
 lib/ecore/efl_model_container.c \
 lib/ecore/efl_model_container_item.c \
@@ -125,17 +127,18 @@ lib/ecore/efl_model_container_private.h \
 lib/ecore/efl_model_composite.c \
 lib/ecore/efl_model_composite_boolean.c \
 lib/ecore/efl_model_composite_selection.c \
+lib/ecore/efl_model_composite_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
-lib/ecore/efl_interpolator.c \
-lib/ecore/efl_interpolator_linear.c \
-lib/ecore/efl_interpolator_accelerate.c \
-lib/ecore/efl_interpolator_decelerate.c \
-lib/ecore/efl_interpolator_sinusoidal.c \
-lib/ecore/efl_interpolator_divisor.c \
-lib/ecore/efl_interpolator_bounce.c \
-lib/ecore/efl_interpolator_spring.c \
-lib/ecore/efl_interpolator_cubic_bezier.c \
+lib/ecore/efl_model_view.c \
+lib/ecore/efl_linear_interpolator.c \
+lib/ecore/efl_accelerate_interpolator.c \
+lib/ecore/efl_decelerate_interpolator.c \
+lib/ecore/efl_sinusoidal_interpolator.c \
+lib/ecore/efl_divisor_interpolator.c \
+lib/ecore/efl_bounce_interpolator.c \
+lib/ecore/efl_spring_interpolator.c \
+lib/ecore/efl_cubic_bezier_interpolator.c \
 lib/ecore/efl_task.c \
 lib/ecore/efl_exe.c \
 lib/ecore/efl_thread.c \
@@ -286,48 +289,47 @@ tests/ecore/ecore_test_ecore_input.c \
 tests/ecore/ecore_test_ecore_file.c \
 tests/ecore/ecore_test_job.c \
 tests/ecore/ecore_test_args.c \
+tests/ecore/ecore_test_pipe.c \
 tests/ecore/ecore_suite.h
 
 tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
 @CHECK_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @ECORE_AUDIO_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
-@ECORE_X_CFLAGS@ \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
-@ECORE_WAYLAND_CFLAGS@ \
-@ECORE_WAYLAND_SRV_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
 @ECORE_FB_CFLAGS@ \
-@ECORE_INPUT_CFLAGS@
+@ECORE_INPUT_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
+@ECORE_WAYLAND_CFLAGS@ \
+@ECORE_WAYLAND_SRV_CFLAGS@
 
 tests_ecore_ecore_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_ECORE_LIBS@ \
 @USE_ECORE_AUDIO_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
-@USE_ECORE_X_LIBS@ \
 @USE_ECORE_IMF_LIBS@ \
 @USE_ECORE_EVAS_LIBS@ \
-@USE_ECORE_WAYLAND_LIBS@ \
 @USE_ECORE_FB_LIBS@ \
-@ECORE_WAYLAND_SRV_LIBS@ \
-@ECORE_DRM_LIBS@ \
-@USE_ECORE_INPUT_LIBS@
+@USE_ECORE_INPUT_LIBS@ \
+@USE_ECORE_X_LIBS@ \
+@USE_ECORE_WAYLAND_LIBS@ \
+@ECORE_WAYLAND_SRV_LIBS@
 tests_ecore_ecore_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_AUDIO_INTERNAL_LIBS@ \
 @USE_ECORE_FILE_INTERNAL_LIBS@ \
-@USE_ECORE_X_INTERNAL_LIBS@ \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
 @USE_ECORE_EVAS_INTERNAL_LIBS@ \
-@USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
-@USE_ECORE_DRM_INTERNAL_LIBS@ \
 @USE_ECORE_FB_INTERNAL_LIBS@ \
-@USE_ECORE_INPUT_INTERNAL_LIBS@
+@USE_ECORE_INPUT_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@ \
+@USE_ECORE_WAYLAND_INTERNAL_LIBS@
 
 tests_ecore_efl_app_suite_SOURCES = \
 tests/ecore/efl_app_test_loop.c \
@@ -338,45 +340,43 @@ tests/ecore/efl_app_suite.c \
 tests/ecore/efl_app_suite.h
 
 tests_ecore_efl_app_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
 @CHECK_CFLAGS@ \
 @ECORE_CFLAGS@ \
 @ECORE_AUDIO_CFLAGS@ \
 @ECORE_FILE_CFLAGS@ \
-@ECORE_X_CFLAGS@ \
 @ECORE_IMF_CFLAGS@ \
 @ECORE_EVAS_CFLAGS@ \
-@ECORE_WAYLAND_CFLAGS@ \
-@ECORE_WAYLAND_SRV_CFLAGS@ \
-@ECORE_DRM_CFLAGS@ \
 @ECORE_FB_CFLAGS@ \
-@ECORE_INPUT_CFLAGS@
+@ECORE_INPUT_CFLAGS@ \
+@ECORE_X_CFLAGS@ \
+@ECORE_WAYLAND_CFLAGS@ \
+@ECORE_WAYLAND_SRV_CFLAGS@
 
 tests_ecore_efl_app_suite_LDADD = \
 @CHECK_LIBS@ \
 @USE_ECORE_LIBS@ \
 @USE_ECORE_AUDIO_LIBS@ \
 @USE_ECORE_FILE_LIBS@ \
-@USE_ECORE_X_LIBS@ \
 @USE_ECORE_IMF_LIBS@ \
 @USE_ECORE_EVAS_LIBS@ \
-@USE_ECORE_WAYLAND_LIBS@ \
 @USE_ECORE_FB_LIBS@ \
-@ECORE_WAYLAND_SRV_LIBS@ \
-@ECORE_DRM_LIBS@ \
-@USE_ECORE_INPUT_LIBS@
+@USE_ECORE_INPUT_LIBS@ \
+@USE_ECORE_X_LIBS@ \
+@USE_ECORE_WAYLAND_LIBS@ \
+@ECORE_WAYLAND_SRV_LIBS@
 tests_ecore_efl_app_suite_DEPENDENCIES = \
 @USE_ECORE_INTERNAL_LIBS@ \
 @USE_ECORE_AUDIO_INTERNAL_LIBS@ \
 @USE_ECORE_FILE_INTERNAL_LIBS@ \
-@USE_ECORE_X_INTERNAL_LIBS@ \
 @USE_ECORE_IMF_INTERNAL_LIBS@ \
 @USE_ECORE_EVAS_INTERNAL_LIBS@ \
-@USE_ECORE_WAYLAND_INTERNAL_LIBS@ \
-@USE_ECORE_DRM_INTERNAL_LIBS@ \
 @USE_ECORE_FB_INTERNAL_LIBS@ \
-@USE_ECORE_INPUT_INTERNAL_LIBS@
+@USE_ECORE_INPUT_INTERNAL_LIBS@ \
+@USE_ECORE_X_INTERNAL_LIBS@ \
+@USE_ECORE_WAYLAND_INTERNAL_LIBS@
 
 if HAVE_ECORE_X
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_x.c
@@ -384,10 +384,6 @@ endif
 
 if HAVE_ECORE_AUDIO
 tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_audio.c
-endif
-
-if HAVE_ECORE_DRM
-tests_ecore_ecore_suite_SOURCES += tests/ecore/ecore_test_ecore_drm.c
 endif
 
 if HAVE_ECORE_FB
@@ -400,7 +396,7 @@ EXTRA_DIST2 += \
 tests/ecore/sample.wav \
 tests/ecore/sample.ogg
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 ecore_eolian_lua = $(ecore_eolian_files:%.eo=%.eo.lua)
 

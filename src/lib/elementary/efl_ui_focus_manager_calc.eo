@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
+class Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus.Manager {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get an other registered object in each
@@ -95,6 +95,7 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         Efl.Ui.Focus.Manager.manager_focus {get; set;}
         Efl.Ui.Focus.Manager.redirect {set; get;}
         Efl.Ui.Focus.Manager.border_elements {get;}
+        Efl.Ui.Focus.Manager.viewport_elements {get;}
         Efl.Ui.Focus.Manager.root {set; get;}
         Efl.Ui.Focus.Manager.request_subchild;
         Efl.Ui.Focus.Manager.fetch;
@@ -102,6 +103,8 @@ class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
         Efl.Ui.Focus.Manager.reset_history;
         Efl.Ui.Focus.Manager.pop_history_stack;
         Efl.Ui.Focus.Manager.setup_on_first_touch;
+        Efl.Ui.Focus.Manager.dirty_logic_freeze;
+        Efl.Ui.Focus.Manager.dirty_logic_unfreeze;
         Efl.Object.constructor;
         Efl.Object.finalize;
         Efl.Object.provider_find;

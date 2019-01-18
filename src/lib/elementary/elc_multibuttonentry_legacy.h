@@ -1,4 +1,5 @@
-typedef Eo Elm_Multibuttonentry;
+#include "elm_multibuttonentry_item.eo.legacy.h"
+#include "elm_multibuttonentry.eo.legacy.h"
 
 /**
  * @brief Add a new multibuttonentry to the parent
@@ -27,6 +28,3 @@ EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent);
  * @ingroup Multibuttonentry
  */
  EAPI void elm_multibuttonentry_format_function_set(Eo *obj, Elm_Multibuttonentry_Format_Cb format_function, const void *data);
-
-#include "elm_multibuttonentry_item.eo.legacy.h"
-#include "elm_multibuttonentry.eo.legacy.h"

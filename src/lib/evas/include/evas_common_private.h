@@ -1,9 +1,9 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
-#ifdef HAVE_CONFIG_H
+//#ifdef HAVE_CONFIG_H
 #include "config.h"  /* so that EAPI in Evas.h is correctly defined */
-#endif
+//#endif
 
 #ifdef STDC_HEADERS
 # include <stdlib.h>
@@ -391,13 +391,9 @@ extern EAPI int _evas_log_dom_global;
 
 #include "../file/evas_module.h"
 
-typedef unsigned long long		DATA64;
-typedef unsigned int			DATA32;
-typedef unsigned short			DATA16;
-typedef unsigned char                   DATA8;
+#include "evas_common_types.h"
 
 typedef struct _Image_Entry             Image_Entry;
-typedef struct _Image_Entry_Task        Image_Entry_Task;
 typedef struct _Image_Entry_Flags       Image_Entry_Flags;
 typedef struct _Image_Entry_Frame       Image_Entry_Frame;
 typedef struct _Image_Timestamp         Image_Timestamp;
@@ -443,21 +439,13 @@ typedef int FPc;
 // one fp unit
 #define FP1 (1 << (FP))
 
-typedef void (*RGBA_Gfx_Func)    (DATA32 *src, DATA8 *mask, DATA32 col, DATA32 *dst, int len);
-typedef void (*RGBA_Gfx_Pt_Func) (DATA32 src, DATA8 mask, DATA32 col, DATA32 *dst);
 typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
 typedef void (*Evas_Render_Done_Cb)(void *);
 
-typedef void (*Evas_Engine_Thread_Task_Cb)(void *engine_data, Image_Entry *ie, void *custom_data);
-
 #include "../cache/evas_cache.h"
-#ifdef EVAS_CSERVE2
-#include "../cache2/evas_cache2.h"
-#endif
-
 #include "../common/evas_font_draw.h"
 
 /*****************************************************************************/
@@ -515,7 +503,8 @@ typedef enum _CPU_Features
    CPU_FEATURE_VIS     = (1 << 4),
    CPU_FEATURE_VIS2    = (1 << 5),
    CPU_FEATURE_NEON    = (1 << 6),
-   CPU_FEATURE_SSE3    = (1 << 7)
+   CPU_FEATURE_SSE3    = (1 << 7),
+   CPU_FEATURE_SVE     = (1 << 8)
 } CPU_Features;
 
 /*****************************************************************************/
@@ -561,9 +550,10 @@ struct _Evas_Cache_Target
    EINA_INLIST;
    const Eo *target;
    void *data;
-   void (*simple_cb) (void *data);
-   void *simple_data;
-   Eina_Bool delete_me;
+   void (*preloaded_cb) (void *data); //Call when preloading done.
+   void *preloaded_data;
+   Eina_Bool delete_me : 1;
+   Eina_Bool preload_cancel : 1;
 };
 
 struct _Image_Timestamp
@@ -576,13 +566,6 @@ struct _Image_Timestamp
 #endif
 };
 
-struct _Image_Entry_Task
-{
-   Evas_Engine_Thread_Task_Cb cb;
-   const void *engine_data;
-   const void *custom_data;
-};
-
 struct _Image_Entry
 {
    EINA_INLIST;
@@ -590,9 +573,6 @@ struct _Image_Entry
    int                    magic;
 
    Evas_Cache_Image      *cache;
-#ifdef EVAS_CSERVE2
-   Evas_Cache2           *cache2;
-#endif
 
    const char            *cache_key;
 
@@ -601,7 +581,6 @@ struct _Image_Entry
 
    Evas_Cache_Target     *targets;
    Evas_Preload_Pthread  *preload;
-   Eina_List             *tasks; // FIXME: Tasks are not used: always NULL func
 
    Image_Timestamp        tstamp;
 
@@ -643,7 +622,6 @@ struct _Image_Entry
 
    SLK(lock);
    SLK(lock_cancel);
-   SLK(lock_task);
 
    /* for animation feature */
    Evas_Image_Animated   animated;
@@ -655,9 +633,6 @@ struct _Image_Entry
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
-#ifdef EVAS_CSERVE2
-   unsigned int           open_rid, load_rid, preload_rid;
-#endif
    int                    server_id;
    int                    connect_num;
    int                    channel;

@@ -1,0 +1,12 @@
+struct Efl.Ui.List_View_Layout_Item {
+   layout: Efl.Ui.Layout;
+   layout_request: future<Efl.Ui.Layout>;
+   children: Efl.Model;
+   index_offset: int;
+   tree_node: void_ptr;
+   min: Eina.Size2D;
+   size: Eina.Size2D;
+   pos: Eina.Position2D;
+}
+
+struct @extern Efl.Ui.List_View_Seg_Array_Node; [[ ]]

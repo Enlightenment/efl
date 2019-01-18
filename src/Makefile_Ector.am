@@ -118,6 +118,8 @@ lib/ector/software/ector_renderer_software_gradient_linear.c \
 lib/ector/software/ector_renderer_software_gradient_radial.c \
 lib/ector/software/ector_renderer_software_shape.c \
 lib/ector/software/ector_software_gradient.c \
+lib/ector/software/ector_software_gradient_sse3.c \
+lib/ector/software/ector_software_gradient.h \
 lib/ector/software/ector_software_rasterizer.c \
 lib/ector/software/ector_software_surface.c \
 lib/ector/software/ector_software_buffer.c \

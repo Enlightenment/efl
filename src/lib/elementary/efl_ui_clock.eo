@@ -16,7 +16,7 @@ enum Efl.Ui.Clock_Type
    ampm    = 7, [[Indicates AM/PM field .]]
 }
 
-class Efl.Ui.Clock (Efl.Ui.Layout.Object)
+class Efl.Ui.Clock extends Efl.Ui.Layout
 {
    [[Efl UI clock class]]
    methods {
@@ -226,7 +226,7 @@ class Efl.Ui.Clock (Efl.Ui.Layout.Object)
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
    }
    events {
       changed: void; [[Called when clock changed]]

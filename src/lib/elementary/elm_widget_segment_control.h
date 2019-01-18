@@ -16,7 +16,7 @@
  *
  * @section elm-segment-control-class The Elementary Segment control Class
  *
- * Elementary, besides having the @ref SegmentControl widget, exposes
+ * Elementary, besides having the @ref Elm_Segment_Control widget, exposes
  * its foundation -- the Elementary Segment control Class -- in order
  * to create other widgets which are a segment control with some more
  * logic on top.

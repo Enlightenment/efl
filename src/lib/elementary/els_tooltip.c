@@ -654,19 +654,24 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if ((py + cy) > (ch / 2)) ty = cy + py - 1 - th;
         else ty = cy + py + 1;
      }
-   if (ow > 1) rel_x = (double)((ox + (ow / 2)) - ((tx - cx) + (tw / 2))) /
-     (double)(ow / 2);
-   else rel_x = 0.0;
-   if (oh > 1) rel_y = (double)((oy + (oh / 2)) - ((ty - cy) + (th / 2))) /
-     (double)(oh / 2);
-   else rel_y = 0.0;
+
+   if (inside_eventarea)
+     {
+        rel_x = (px - (tx - cx)) / (double)tw;
+        rel_y = (py - (ty - cy)) / (double)th;
+     }
+   else
+     {
+        rel_x = (ox + (ow / 2) - (tx - cx)) / (double)tw;
+        rel_y = (oy + (oh / 2) - (ty - cy)) / (double)th;
+     }
+
    tx += basex;
    ty += basey;
    // XXX: if this is a window for toolkit this relies on abs positioning
    // and this is not portable to wayland so we need relative positioning
    // implemented lower down for this
-   evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
-   evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
+   evas_object_geometry_set(tt->tt_win ? : tt->tooltip, tx, ty, tw, th);
    TTDBG("FINAL: tx=%d,ty=%d,tw=%d,th=%d\n", tx, ty, tw, th);
    evas_object_show(tt->tooltip);
 

@@ -401,7 +401,7 @@ EAPI int eina_inarray_remove(Eina_Inarray *array,
  * @brief Removes the last member of the array.
  *
  * @param[in] array The array object
- * @return The data poped out of the array
+ * @return The data popped out of the array
  *
  * @note The data could be considered valid only until any other operation touched the Inarray.
  *

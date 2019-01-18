@@ -41,6 +41,8 @@ elm_code_line_indent_get(Elm_Code_Line *line)
    unsigned int prevlength, count = 0;
    char *buf, *ptr;
    char next, last;
+   const char *indent = "\t";
+   Eina_Bool eflindent = ((Elm_Code *)line->file->parent)->config.indent_style_efl;
 
    if (line->number <= 1)
      return strdup("");
@@ -62,10 +64,14 @@ elm_code_line_indent_get(Elm_Code_Line *line)
    strncpy(buf, prevtext, count);
    buf[count] = '\0';
 
-   if (elm_code_line_indent_startswith_keyword(prevline))
+   if (eflindent)
      {
-        strcpy(buf + count, "  ");
-        count += 2;
+        indent = "   ";
+        if (elm_code_line_indent_startswith_keyword(prevline))
+          {
+             strcpy(buf + count, "  ");
+             count += 2;
+          }
      }
 
    if (count < prevlength)
@@ -97,17 +103,16 @@ elm_code_line_indent_get(Elm_Code_Line *line)
              else
                strcpy(buf + count, "*");
           }
-        // VERY simple handling of braces
-        else if (last == '{')
+        // Simple handling of braces
+        else if (last == '{' || (!eflindent && elm_code_line_indent_startswith_keyword(prevline)))
           {
-             strcpy(buf + count, "   ");
+             strcpy(buf + count, indent);
           }
         else if (last == '}')
           {
-             if (count >= 2)
-               buf[count-2] = '\0';
-             else if (count >= 1)
-               buf[count-1] = '\0';
+             unsigned int offset = strlen(indent) - 1;
+             if (count >= offset)
+               buf[count-offset] = '\0';
           }
      }
    return buf;

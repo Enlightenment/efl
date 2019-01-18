@@ -141,7 +141,7 @@ evas_vg_save_file_svg(Vg_File_Data *evg_data, const char *file, const char *key 
         return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 
-   root = vg_common_create_svg_node(evg_data);
+   root = vg_common_svg_create_svg_node(evg_data);
    buf = eina_strbuf_new();
    _svg_node_printf(root, buf);
    fprintf(f, "%s\n", eina_strbuf_string_get(buf));

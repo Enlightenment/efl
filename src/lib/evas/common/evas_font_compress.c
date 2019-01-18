@@ -1,9 +1,5 @@
 #include "evas_font_private.h"
 
-#ifdef EVAS_CSERVE2
-# include "../cserve2/evas_cs2_private.h"
-#endif
-
 // XXX:
 // XXX: adapt cserve2 to this!
 // XXX:

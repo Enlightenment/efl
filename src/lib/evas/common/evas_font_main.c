@@ -1,10 +1,6 @@
 #include "evas_font_private.h"
 #include "evas_font_draw.h"
 
-#ifdef EVAS_CSERVE2
-# include "../cserve2/evas_cs2_private.h"
-#endif
-
 #include FT_OUTLINE_H
 #include FT_SYNTHESIS_H
 #include FT_BITMAP_H
@@ -535,24 +531,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         fg = _fash_gl_find(fi->fash, idx);
         if (fg == (void *)(-1)) return NULL;
         else if (fg)
-          {
-#ifdef EVAS_CSERVE2
-             if (fi->cs2_handler)
-               {
-                  if (evas_cserve2_font_glyph_used(fi->cs2_handler, idx,
-                                                   fi->hinting))
-                    return fg;
-                  else
-                    {
-                       _glyph_free(fg);
-                       _fash_gl_add(fi->fash, idx, NULL);
-                    }
-               }
-             else return fg;
-#else
-             return fg;
-#endif
-          }
+          return fg;
      }
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
@@ -623,11 +602,6 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    if (!fi->fash) fi->fash = _fash_gl_new();
    if (fi->fash) _fash_gl_add(fi->fash, idx, fg);
 
-#ifdef EVAS_CSERVE2
-   if (fi->cs2_handler)
-     evas_cserve2_font_glyph_request(fi->cs2_handler, idx, fi->hinting);
-#endif
-
 //   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
    return fg;
 }
@@ -639,23 +613,6 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
    FT_Error error;
    RGBA_Font_Int *fi = fg->fi;
    FT_BitmapGlyph fbg;
-
-#ifdef EVAS_CSERVE2
-   if (fi->cs2_handler)
-     {
-        fg->glyph_out = evas_cserve2_font_glyph_bitmap_get(fi->cs2_handler,
-                                                           fg->index,
-                                                           fg->fi->hinting);
-        if (!fg->glyph_out)
-          {
-             if (!fi->fash) fi->fash = _fash_gl_new();
-             if (fi->fash) _fash_gl_add(fi->fash, fg->index, (void *)(-1));
-             free(fg);
-             return EINA_FALSE;
-          }
-        return EINA_TRUE;
-     }
-#endif
 
    /* no cserve2 case */
    if (fg->glyph_out)

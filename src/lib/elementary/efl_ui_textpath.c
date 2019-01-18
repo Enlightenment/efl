@@ -544,17 +544,10 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
 }
 
 static void
-_path_changed_cb(void *data, const Efl_Event *event)
+_efl_ui_textpath_efl_gfx_path_commit(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   Efl_Gfx_Path_Change_Event *ev = event->info;
-   EFL_UI_TEXTPATH_DATA_GET(data, sd);
-
-   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
-               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
-     return;
-
-   _path_data_get(data, sd, EINA_TRUE);
-   _sizing_eval(sd);
+   _path_data_get(obj, pd, EINA_TRUE);
+   _sizing_eval(pd);
 }
 
 static Eina_Bool
@@ -594,8 +587,6 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
 
    evas_object_smart_member_add(priv->text_obj, obj);
    elm_widget_sub_object_add(obj, priv->text_obj);
-
-   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _path_changed_cb, obj);
 }
 
 EOLIAN static Efl_Object *
@@ -655,13 +646,13 @@ _efl_ui_textpath_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Da
    return edje_object_part_text_get(pd->text_obj, "efl.text");
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   Efl_Ui_Theme_Apply ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",
                                elm_widget_style_get(obj));
@@ -714,6 +705,7 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
                                 radius * 2,  start_angle, 360);
      }
 
+   _path_data_get(obj, pd, EINA_TRUE);
    _sizing_eval(pd);
 }
 
@@ -758,3 +750,32 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Dat
       EFL_CANVAS_GROUP_ADD_OPS(efl_ui_textpath)
 
 #include "efl_ui_textpath.eo.c"
+
+#include "efl_ui_textpath_legacy.eo.h"
+
+#define MY_CLASS_NAME_LEGACY "elm_textpath"
+/* Legacy APIs */
+
+static void
+_efl_ui_textpath_legacy_class_constructor(Efl_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
+
+EOLIAN static Eo *
+_efl_ui_textpath_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_TEXTPATH_LEGACY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   return obj;
+}
+
+EAPI Evas_Object *
+elm_textpath_add(Evas_Object *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
+}
+
+#include "efl_ui_textpath_legacy.eo.c"
+

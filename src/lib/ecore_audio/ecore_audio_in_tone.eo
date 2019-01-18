@@ -1,4 +1,4 @@
-class Ecore.Audio.In.Tone (Ecore.Audio.In)
+class Ecore.Audio.In.Tone extends Ecore.Audio.In
 {
    [[Ecore Audio tone input.]]
    eo_prefix: ecore_audio_obj_in_tone;

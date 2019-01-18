@@ -13,6 +13,7 @@
 #include <Ecore.h>
 #include <Ecore_Getopt.h>
 #include <Ecore_Evas.h>
+#include <Ecore_File.h>
 
 #include "Edje.h"
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
@@ -432,7 +433,7 @@ _write_headers(const char *filename)
 
    free(str);
 
-   snprintf(buf, sizeof(buf), C_HEADER, filename);
+   snprintf(buf, sizeof(buf), C_HEADER, ecore_file_file_get(filename));
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      return EINA_FALSE;
 

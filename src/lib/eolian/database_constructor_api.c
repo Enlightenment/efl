@@ -29,3 +29,10 @@ eolian_constructor_is_optional(const Eolian_Constructor *ctor)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, EINA_FALSE);
    return ctor->is_optional;
 }
+
+EAPI Eina_Bool
+eolian_constructor_is_ctor_param(const Eolian_Constructor *ctor)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctor, EINA_FALSE);
+   return ctor->is_ctor_param;
+}

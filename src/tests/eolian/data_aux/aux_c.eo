@@ -1,0 +1,9 @@
+class Aux_C {
+    methods {
+        foo {}
+        bar {}
+    }
+    events {
+        test: void;
+    }
+}

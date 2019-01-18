@@ -1,0 +1,45 @@
+import efl_ui_selection_types;
+
+mixin Efl.Ui.Selection {
+   [[Efl Ui Selection class]]
+   data: null;
+   methods {
+      selection_set {
+         [[Set the selection data to the object]]
+         params {
+            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
+            @in data: Eina.Slice;
+            @in seat: uint;[[Specified seat for multiple seats case.]]
+         }
+         return: future<void>; [[Future for tracking when the selection is lost]]
+      }
+      selection_get {
+         [[Get the data from the object that has selection]]
+         params {
+            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
+            @in data_func: Efl.Ui.Selection_Data_Ready; [[Data ready function pointer]]
+            @in seat: uint;[[Specified seat for multiple seats case.]]
+         }
+      }
+      selection_clear {
+         [[Clear the selection data from the object]]
+         params {
+            @in type: Efl.Ui.Selection_Type; [[Selection Type]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      has_owner {
+         [[Determine whether the selection data has owner]]
+         params {
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+         return: bool; [[EINA_TRUE if there is object owns selection, otherwise EINA_FALSE]]
+      }
+   }
+   events {
+      selection,changed: Efl.Ui.Selection_Changed; [[Called when display server's selection has changed]]
+   }
+}

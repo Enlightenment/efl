@@ -1,7 +1,7 @@
 enum Efl.Access.Type
 {
    [[Type of accessibility object]]
-   regular, [[default accessibile object]]
+   regular, [[default accessible object]]
    disabled, [[skip object and its children in accessibility hierarchy]]
    skipped [[skip object in accessibility hierarchy]]
 }
@@ -239,7 +239,7 @@ struct Efl.Access.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-mixin Efl.Access.Object (Efl.Interface, Efl.Object)
+mixin Efl.Access.Object requires Efl.Object
 {
    [[Accessibility accessible mixin]]
    eo_prefix: efl_access_object;
@@ -310,10 +310,7 @@ mixin Efl.Access.Object (Efl.Interface, Efl.Object)
          }
       }
       attributes_clear {
-         [[Removes all attributes in accessible object.
-
-           \@internal
-         ]]
+         [[Removes all attributes in accessible object.]]
       }
       @property reading_info_type @protected {
          get {

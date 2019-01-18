@@ -1,0 +1,48 @@
+import efl_ui_list_view_types;
+
+interface Efl.Ui.List_View_Model extends Efl.Interface
+{
+   methods {
+      @property load_range {
+         set {}
+         values {
+            first: int;
+            count: int;
+         }
+      }
+      realize {
+         params {
+            item: ptr(Efl.Ui.List_View_Layout_Item);
+         }
+         return: ptr(Efl.Ui.List_View_Layout_Item);
+      }
+      unrealize {
+         params {
+            item: ptr(Efl.Ui.List_View_Layout_Item);
+         }
+      }
+      // @property visible_range {
+      //    set {}
+      //    values {
+      //       first: int;
+      //       count: int;
+      //    }
+      // }
+      @property model_size {
+         get {}
+         values {
+            s: int;
+         }
+      }
+      @property min_size {
+         [[Minimal content size.]]
+         set {}
+         get {}
+         values {
+            min: Eina.Size2D;
+         }
+      }
+
+
+   }
+}

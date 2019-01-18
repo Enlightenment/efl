@@ -22,9 +22,6 @@ static const Efl_Test_Case etc[] = {
   { "Ecore_Animators", ecore_test_animator },
   { "Eina_Thread_Queue", ecore_test_ecore_thread_eina_thread_queue },
   { "Eina_Thread_Queue", ecore_test_ecore_thread_eina_thread_queue2 },
-#if HAVE_ECORE_DRM
-  { "Ecore_Drm", ecore_test_ecore_drm },
-#endif
 #if HAVE_ECORE_FB
   { "Ecore_Fb", ecore_test_ecore_fb },
 #endif
@@ -32,6 +29,7 @@ static const Efl_Test_Case etc[] = {
   { "Ecore_File", ecore_test_ecore_file },
   { "Ecore_Job", ecore_test_ecore_job },
   { "Ecore_Args", ecore_test_ecore_args },
+  { "Ecore_Pipe", ecore_test_ecore_pipe },
   { NULL, NULL }
 };
 

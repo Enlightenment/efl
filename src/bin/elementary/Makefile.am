@@ -136,6 +136,7 @@ test_ui_buttonspin.c \
 test_ui_datepicker.c \
 test_ui_timepicker.c \
 test_ui_tags.c \
+test_ui_panel.c \
 test_store.c \
 test_sys_notify.c \
 test_systray.c \

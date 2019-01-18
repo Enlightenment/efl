@@ -1,4 +1,10 @@
-interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
+struct Efl.Ui.Factory_Item_Created_Event {
+   [[EFL Ui Factory event structure provided when an item was just created.]]
+   model: Efl.Model; [[The model already set on the new item.]]
+   item: Efl.Gfx.Entity; [[The item that was just created.]]
+}
+
+interface Efl.Ui.Factory extends Efl.Ui.Model.Connect
 {
    [[Efl UI factory interface]]
    methods {
@@ -8,7 +14,7 @@ interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
             model: Efl.Model; [[Efl model]]
             parent: Efl.Gfx.Entity; [[Efl canvas]]
          }
-         return: Efl.Gfx.Entity; [[Created UI object]]
+         return: future<Efl.Gfx.Entity>; [[Created UI object]]
       }
       release {
          [[Release a UI object and disconnect from models.]]
@@ -23,5 +29,8 @@ interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
             factory: Efl.Ui.Factory; [[Efl factory]]
          }
       }
+   }
+   events {
+      created: Efl.Ui.Factory_Item_Created_Event; [[Event triggered when an item has been successfully created.]]
    }
 }

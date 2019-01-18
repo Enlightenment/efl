@@ -8,8 +8,8 @@ enum Elm.Panel.Orient
    right [[Panel (dis)appears from the right]]
 }
 
-class Elm.Panel (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Elm.Interface_Scrollable,
-                 Efl.Access.Widget.Action, Efl.Ui.Legacy)
+class Elm.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable,
+                 Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary panel class]]
    legacy_prefix: elm_panel;
@@ -85,6 +85,7 @@ class Elm.Panel (Efl.Ui.Layout.Object, Efl.Ui.Focus.Layer, Elm.Interface_Scrolla
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.I18n.mirrored { set; }
       Efl.Part.part_get;
    }
    events {

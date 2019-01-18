@@ -135,19 +135,13 @@ public abstract class BasicMessageArgument
     public void AppendTo(eldbus.Message msg)
     {
         if (!InternalAppendTo(msg))
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not append basic type to eldbus.Message");
-        }
     }
 
     public void AppendTo(eldbus.MessageIterator iter)
     {
         if (!InternalAppendTo(iter))
-        {
-            eina.Error.RaiseIfOccurred();
             throw new SEHException("Eldbus: could not append basic type to eldbus.MessageIterator");
-        }
     }
 
     public abstract char TypeCode {get;}
@@ -503,8 +497,8 @@ public static class Common
     public static void RaiseNullHandle()
     {
         if (NullHandleError == 0)
-            NullHandleError = eina.Error.Register("Eldbus: null handle");
-        eina.Error.Raise(NullHandleError);
+            NullHandleError = Eina.Error.Register("Eldbus: null handle");
+        Eina.Error.Raise(NullHandleError);
     }
 
     public delegate void Eldbus_Message_Cb(IntPtr data, IntPtr msg, IntPtr pending);
@@ -526,7 +520,7 @@ public static class Common
         MessageDelegate dlgt = Marshal.GetDelegateForFunctionPointer(data, typeof(MessageDelegate)) as MessageDelegate;
         if (dlgt == null)
         {
-            eina.Log.Error("Eldbus: invalid delegate pointer from Eldbus_Message_Cb");
+            Eina.Log.Error("Eldbus: invalid delegate pointer from Eldbus_Message_Cb");
             return;
         }
 
@@ -540,7 +534,7 @@ public static class Common
         }
         catch(Exception e)
         {
-            eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
+            Eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
             return;
         }
 
@@ -550,12 +544,12 @@ public static class Common
         }
         catch(Exception e)
         {
-            eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
+            Eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
         }
     }
 
     private static Eldbus_Message_Cb message_cb_wrapper = null;
-    private static eina.Error NullHandleError = 0;
+    private static Eina.Error NullHandleError = 0;
 }
 
 }

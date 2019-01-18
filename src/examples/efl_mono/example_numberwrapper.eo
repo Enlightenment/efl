@@ -5,7 +5,7 @@ function NumberCb {
    return: int;
 };
 
-class Example.Numberwrapper (Efl.Object) {
+class Example.Numberwrapper extends Efl.Object {
    methods {
       @property number {
          get {

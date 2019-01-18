@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 
 #ifdef HAVE_PRCTL
 # include <sys/prctl.h>
@@ -451,65 +452,89 @@ _drm_link(void)
 
 #define DRM_HAVE_NVIDIA 1
 
+static Eina_Bool
+glob_match(const char *glob, const char *str)
+{
+   if (!glob) return EINA_TRUE;
+   if (!str) return EINA_FALSE;
+   if (!fnmatch(glob, str, 0)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
 static int
 _drm_init(int *flags)
 {
+   // whitelist of known-to-work drivers
+   struct whitelist_card
+     {
+        const char *name_glob;
+        const char *desc_glob;
+        const char *date_glob;
+        int drm_ver_min_maj;
+        int drm_ver_min_min;
+        int kernel_ver_min_maj;
+        int kernel_ver_min_min;
+     };
+   static const struct whitelist_card whitelist[] = {
+      { "exynos",  "*Samsung*", NULL,                 1,  6,    3,  0 },
+      { "i915",    "*Intel*",   NULL,                 1,  6,    3, 14 },
+      { "radeon",  "*Radeon*",  NULL,                 2, 39,    3, 14 },
+      { "amdgpu",  "*AMD*",     NULL,                 3,  0,    4,  9 },
+      { "nouveau", "*nVidia*",  "201[23456789]*",     1,  3,    4,  9 },
+      { "nouveau", "*nVidia*",  "202[0123456789]*",   1,  3,    4,  9 },
+      { NULL, NULL, NULL, 0, 0, 0, 0 }
+   };
+   int i;
    struct stat st;
    char buf[512];
    Eina_Bool ok = EINA_FALSE;
    int vmaj = 0, vmin = 0;
+   FILE *fp;
 
    // vboxvideo 4.3.14 is crashing when calls drmWaitVBlank()
    // https://www.virtualbox.org/ticket/13265
    // also affects 4.3.12
-   if (stat("/sys/module/vboxvideo", &st) == 0)
-     {
-/*
-        FILE *fp = fopen("/sys/module/vboxvideo/version", "rb");
-        if (fp)
-          {
-             if (fgets(buf, sizeof(buf), fp))
-               {
-                  if (eina_str_has_prefix(buf, "4.3.14"))
-                    {
-                       fclose(fp);
-                       return 0;
-                    }
-               }
-             fclose(fp);
-          }
- */
-        return 0;
-     }
+   if (stat("/sys/module/vboxvideo", &st) == 0) return 0;
+
    // only do this on new kernels = let's say 3.14 and up. 3.16 definitely
    // works
+   fp = fopen("/proc/sys/kernel/osrelease", "rb");
+   if (fp)
      {
-        FILE *fp = fopen("/proc/sys/kernel/osrelease", "rb");
-        if (fp)
+        if (fgets(buf, sizeof(buf), fp))
           {
-             if (fgets(buf, sizeof(buf), fp))
+             if (sscanf(buf, "%i.%i.%*s", &vmaj, &vmin) == 2)
                {
-                  if (sscanf(buf, "%i.%i.%*s", &vmaj, &vmin) == 2)
-                    {
-                       if (vmaj >= 3) ok = EINA_TRUE;
-                    }
+                  if (vmaj >= 3) ok = EINA_TRUE;
                }
-             fclose(fp);
           }
-        if (!ok) return 0;
+        fclose(fp);
      }
+   if (!ok) return 0;
    ok = EINA_FALSE;
 
    snprintf(buf, sizeof(buf), "/dev/dri/card1");
    if (stat(buf, &st) == 0)
      {
         // XXX: 2 dri cards - ambiguous. unknown device for screen
+        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+          fprintf(stderr, "You have 2 DRI cards. Don't know which to use for vsync\n");
         return 0;
      }
    snprintf(buf, sizeof(buf), "/dev/dri/card0");
-   if (stat(buf, &st) != 0) return 0;
+   if (stat(buf, &st) != 0)
+     {
+        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+          fprintf(stderr, "Cannot find device card 0 (/de/dri/card0)\n");
+        return 0;
+     }
    drm_fd = open(buf, O_RDWR | O_CLOEXEC);
-   if (drm_fd < 0) return 0;
+   if (drm_fd < 0)
+     {
+        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+          fprintf(stderr, "Cannot open device card 0 (/de/dri/card0)\n");
+        return 0;
+     }
 
    if (!getenv("ECORE_VSYNC_DRM_ALL"))
      {
@@ -520,6 +545,8 @@ _drm_init(int *flags)
         drmverbroken = (drmVersionBroken *)drmver;
         if (!drmver)
           {
+             if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+               fprintf(stderr, "Cannot get dri version info from drmGetVersion()\n");
              close(drm_fd);
              return 0;
           }
@@ -549,96 +576,10 @@ _drm_init(int *flags)
                        drmver->version_major, drmver->version_minor,
                        drmver->name, drmver->date, drmver->desc);
           }
+
         if ((((drmver->version_major == 1) &&
-              (drmver->version_minor >= 6)) ||
+              (drmver->version_minor >= 3)) ||
              (drmver->version_major > 1)) &&
-            (drmver->name > (char *)4000L) &&
-            (drmver->date_len < 200))
-          {
-             // whitelist of known-to-work drivers
-             if ((!strcmp(drmver->name, "exynos")) &&
-                 (strstr(drmver->desc, "Samsung")))
-               {
-                  if (((vmaj >= 3) && (vmin >= 0)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted exynos OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-             if ((!strcmp(drmver->name, "i915")) &&
-                 (strstr(drmver->desc, "Intel Graphics")))
-               {
-                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted intel OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-             if ((!strcmp(drmver->name, "radeon")) &&
-                 (strstr(drmver->desc, "Radeon")) &&
-                 (((drmver->version_major == 2) &&
-                   (drmver->version_minor >= 39)) ||
-                  (drmver->version_major > 2)))
-               {
-                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted radeon OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-          }
-        if ((((drmverbroken->version_major == 1) &&
-              (drmverbroken->version_minor >= 6)) ||
-             (drmverbroken->version_major > 1)) &&
-            (drmverbroken->name > (char *)4000L) &&
-            (drmverbroken->date_len < 200))
-          {
-             // whitelist of known-to-work drivers
-             if ((!strcmp(drmverbroken->name, "exynos")) &&
-                 (strstr(drmverbroken->desc, "Samsung")))
-               {
-                  if (((vmaj >= 3) && (vmin >= 0)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted exynos OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-             if ((!strcmp(drmverbroken->name, "i915")) &&
-                 (strstr(drmverbroken->desc, "Intel Graphics")))
-               {
-                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted intel OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-             if ((!strcmp(drmverbroken->name, "radeon")) &&
-                 (strstr(drmverbroken->desc, "Radeon")) &&
-                 (((drmver->version_major == 2) &&
-                   (drmver->version_minor >= 39)) ||
-                  (drmver->version_major > 2)))
-               {
-                  if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
-                    {
-                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
-                         fprintf(stderr, "Whitelisted radeon OK\n");
-                       ok = EINA_TRUE;
-                       goto checkdone;
-                    }
-               }
-          }
-        if ((drmver->version_major >= 0) &&
-            (drmver->version_minor >= 0) &&
             (drmver->name > (char *)4000L) &&
             (drmver->date_len < 200))
           {
@@ -647,22 +588,65 @@ _drm_init(int *flags)
                {
                   if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
                     {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "You have nVidia binary drivers - no vsync\n");
                        *flags |= DRM_HAVE_NVIDIA;
                        goto checkdone;
                     }
                }
+             for (i = 0; whitelist[i].name_glob; i++)
+               {
+                  if ((glob_match(whitelist[i].name_glob, drmver->name)) &&
+                      (glob_match(whitelist[i].desc_glob, drmver->desc)) &&
+                      (glob_match(whitelist[i].date_glob, drmver->date)) &&
+                      ((drmver->version_major > whitelist[i].drm_ver_min_maj) ||
+                       ((drmver->version_major == whitelist[i].drm_ver_min_maj) &&
+                        (drmver->version_minor >= whitelist[i].drm_ver_min_min))) &&
+                      ((vmaj > whitelist[i].kernel_ver_min_maj) ||
+                       ((vmaj == whitelist[i].kernel_ver_min_maj) &&
+                        (vmin >= whitelist[i].kernel_ver_min_min))))
+                    {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "Whitelisted %s OK\n",
+                                 whitelist[i].name_glob);
+                       ok = EINA_TRUE;
+                       goto checkdone;
+                    }
+               }
           }
-        if ((drmverbroken->version_major >= 0) &&
-            (drmverbroken->version_minor >= 0) &&
-            (drmverbroken->name > (char *)4000L) &&
-            (drmverbroken->date_len < 200))
+        else if ((((drmverbroken->version_major == 1) &&
+                   (drmverbroken->version_minor >= 3)) ||
+                  (drmverbroken->version_major > 1)) &&
+                 (drmverbroken->name > (char *)4000L) &&
+                 (drmverbroken->date_len < 200))
           {
              if ((!strcmp(drmverbroken->name, "nvidia-drm")) &&
                  (strstr(drmverbroken->desc, "NVIDIA DRM driver")))
                {
                   if (((vmaj >= 3) && (vmin >= 14)) || (vmaj >= 4))
                     {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "You have nVidia binary drivers - no vsync\n");
                        *flags |= DRM_HAVE_NVIDIA;
+                       goto checkdone;
+                    }
+               }
+             for (i = 0; whitelist[i].name_glob; i++)
+               {
+                  if ((glob_match(whitelist[i].name_glob, drmverbroken->name)) &&
+                      (glob_match(whitelist[i].desc_glob, drmverbroken->desc)) &&
+                      (glob_match(whitelist[i].date_glob, drmverbroken->date)) &&
+                      ((drmverbroken->version_major > whitelist[i].drm_ver_min_maj) ||
+                       ((drmverbroken->version_major == whitelist[i].drm_ver_min_maj) &&
+                        (drmverbroken->version_minor >= whitelist[i].drm_ver_min_min))) &&
+                      ((vmaj > whitelist[i].kernel_ver_min_maj) ||
+                       ((vmaj == whitelist[i].kernel_ver_min_maj) &&
+                        (vmin >= whitelist[i].kernel_ver_min_min))))
+                    {
+                       if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+                         fprintf(stderr, "Whitelisted %s OK\n",
+                                 whitelist[i].name_glob);
+                       ok = EINA_TRUE;
                        goto checkdone;
                     }
                }
@@ -683,6 +667,8 @@ checkdone:
 
    if (!_drm_tick_schedule())
      {
+        if (getenv("ECORE_VSYNC_DRM_VERSION_DEBUG"))
+          fprintf(stderr, "Cannot schedule vblank tick.event...\n");
         close(drm_fd);
         drm_fd = -1;
         return 0;

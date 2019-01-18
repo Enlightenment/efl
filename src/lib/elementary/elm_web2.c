@@ -100,7 +100,7 @@ _elm_web_efl_object_constructor(Eo *obj, Elm_Web_Data *sd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _elm_web_smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_HTML_CONTAINER);
-
+   legacy_object_focus_handle(obj);
    return obj;
 }
 
@@ -185,7 +185,7 @@ _convert_web_zoom_mode(Elm_Web_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, E
 EAPI void
 elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode)
 {
-   Efl_Ui_Zoom_Mode new_mode;
+   Efl_Ui_Zoom_Mode new_mode = EFL_UI_ZOOM_MODE_MANUAL;;
 
    _convert_web_zoom_mode(&mode, &new_mode, EINA_FALSE);
 
@@ -196,7 +196,7 @@ EAPI Elm_Web_Zoom_Mode
 elm_web_zoom_mode_get(const Evas_Object *obj)
 {
    Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
-   Elm_Web_Zoom_Mode mode;
+   Elm_Web_Zoom_Mode mode = ELM_WEB_ZOOM_MODE_MANUAL;
 
    _convert_web_zoom_mode(&mode, &new_mode, EINA_TRUE);
 

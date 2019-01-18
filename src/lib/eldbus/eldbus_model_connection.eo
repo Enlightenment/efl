@@ -1,4 +1,4 @@
-class Eldbus.Model.Connection (Eldbus.Model) {
+class Eldbus.Model.Connection extends Eldbus.Model {
     [[Eldbus model connection class]]
 
     implements {

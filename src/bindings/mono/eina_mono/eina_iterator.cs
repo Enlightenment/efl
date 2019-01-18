@@ -4,10 +4,10 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
-using static eina.TraitFunctions;
-using static eina.IteratorNativeFunctions;
+using static Eina.TraitFunctions;
+using static Eina.IteratorNativeFunctions;
 
-namespace eina {
+namespace Eina {
 
 public static class IteratorNativeFunctions
 {

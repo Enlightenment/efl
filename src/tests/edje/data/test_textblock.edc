@@ -11,6 +11,7 @@ collections {
             description { state: "default" 0.0;
                min: 300 300;
                text {
+                  text: "Bye";
                   style: "tb_style";
                }
             }

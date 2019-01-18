@@ -40,13 +40,13 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_grid_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_grid_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 

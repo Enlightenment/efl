@@ -35,6 +35,7 @@ collections {
 #include "edc/elm/access.edc"
 #include "edc/elm/photo.edc"
 #include "edc/elm/focus.edc"
+#include "edc/elm/uiclock.edc"
 #include "edc/elm/player.edc"
 #include "edc/elm/thumb.edc"
 #include "edc/elm/pointer.edc"
@@ -173,6 +174,7 @@ collections {
 // XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
 #include "edc/efl/list.edc"
+#include "edc/efl/grid.edc"
 // XXX: mobile mode needs different entry setup
 #include "edc/efl/text.edc"
 #include "edc/efl/frame.edc"
@@ -184,6 +186,7 @@ collections {
 #include "edc/efl/video.edc"
 #include "edc/efl/focus.edc"
 #include "edc/efl/tags.edc"
+#include "edc/efl/panel.edc"
 #include "edc/efl/tooltip.edc"
 #include "edc/efl/photocam.edc"
 #include "edc/efl/progress.edc"

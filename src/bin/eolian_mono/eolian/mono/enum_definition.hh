@@ -27,16 +27,15 @@ struct enum_definition_generator
         (
          "public enum " << string << "\n{\n"
          )
-        .generate(sink, name_helpers::enum_managed_name(enum_), context))
+        .generate(sink, name_helpers::typedecl_managed_name(enum_), context))
        return false;
 
      // iterate enum fiels
      for(auto first = std::begin(enum_.fields)
              , last = std::end(enum_.fields); first != last; ++first)
        {
-          auto name = (*first).name;
+          auto name = name_helpers::enum_field_managed_name((*first).name);
           auto literal = (*first).value.literal;
-          name[0] = std::toupper(name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
                documentation << string << " = " << string << ",\n"

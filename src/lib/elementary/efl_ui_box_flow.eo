@@ -1,4 +1,4 @@
-class Efl.Ui.Box_Flow (Efl.Ui.Box, Efl.Pack_Layout)
+class Efl.Ui.Box_Flow extends Efl.Ui.Box
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
    methods {

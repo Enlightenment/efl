@@ -630,7 +630,6 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
         id->intvl_from = val;
         if (user_event)
           {
-             efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(pd->delay);
              pd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
@@ -642,7 +641,6 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
         id->intvl_to = val2;
         if (user_event)
           {
-             efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(pd->delay);
              pd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
@@ -806,12 +804,12 @@ _elm_slider_theme_group_get(Evas_Object *obj, Elm_Slider_Data *sd)
    return eina_strbuf_release(new_group);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_slider_efl_ui_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2, EFL_UI_THEME_APPLY_FAILED);
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2, EFL_UI_THEME_APPLY_RESULT_FAIL);
    char *group;
 
    group = _elm_slider_theme_group_get(obj, sd);
@@ -822,7 +820,7 @@ _elm_slider_efl_ui_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
      }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (_is_horizontal(sd2->dir))
      evas_object_size_hint_min_set
@@ -1044,6 +1042,8 @@ _elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func
 
    if (sd->format_cb_data && sd->format_free_cb)
      sd->format_free_cb(sd->format_cb_data);
+
+   if (efl_invalidated_get(obj)) return;
 
    sd->format_cb = func;
    sd->format_cb_data = func_data;

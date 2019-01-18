@@ -207,7 +207,7 @@ _nominatim_url_cb(const Evas_Object *obj,
                   double lat)
 {
    char **str;
-   char buf[PATH_MAX];
+   char buf[PATH_MAX + 256];
    unsigned int ele, idx;
    char search_url[PATH_MAX];
 
@@ -440,8 +440,7 @@ _obj_place(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   evas_object_move(obj, x, y);
-   evas_object_resize(obj, w, h);
+   evas_object_geometry_set(obj, x, y, w, h);
    evas_object_show(obj);
 }
 
@@ -686,7 +685,7 @@ _grid_item_create(Grid *g,
                   Evas_Coord y)
 {
    char buf[PATH_MAX];
-   char buf2[PATH_MAX];
+   char buf2[PATH_MAX + 128];
    Grid_Item *gi;
    char *url;
 
@@ -1009,9 +1008,8 @@ _track_place(Elm_Map_Data *sd)
                  (ymin > py + oh && ymax > py + oh))
                {
                   //display the route
-                  evas_object_move(route, xmin - px, ymin - py);
-                  evas_object_resize(route, xmax - xmin, ymax - ymin);
-
+                  evas_object_geometry_set(route, xmin - px, ymin - py,
+                                           xmax - xmin, ymax - ymin);
                   evas_object_raise(route);
                   _obj_rotate(sd, route);
                   evas_object_show(route);
@@ -1609,6 +1607,8 @@ _overlay_default_content_update(Overlay_Default *ovl,
    if (ovl->content == content) return;
    evas_object_del(ovl->content);
    ovl->content = content;
+   evas_object_smart_member_add(ovl->content, ovl->wsd->pan_obj);
+   evas_object_stack_above(ovl->content, ovl->wsd->sep_maps_overlays);
 
    if (ovl->content)
      evas_object_event_callback_add(ovl->content, EVAS_CALLBACK_MOUSE_DOWN,
@@ -1882,8 +1882,7 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    evas_object_del(ovl->icon);
    ovl->icon = icon;
    // For using proxy, it should have size and be shown but moved away to hide.
-   evas_object_resize(icon, 32, 32);
-   evas_object_move(icon, -9999, -9999);
+   evas_object_geometry_set(icon, -9999, -9999, 32, 32);
    evas_object_show(icon);
 
    // Update class members' class icons
@@ -3214,7 +3213,7 @@ _name_request(const Evas_Object *obj,
 {
    char *url;
    Elm_Map_Name *name;
-   char *fname, fname2[PATH_MAX];
+   char *fname, fname2[PATH_MAX + 128];
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
@@ -3278,7 +3277,7 @@ _name_list_request(const Evas_Object *obj,
 {
    char *url;
    Elm_Map_Name_List *name_list;
-   char *fname, fname2[PATH_MAX];
+   char *fname, fname2[PATH_MAX + 128];
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
@@ -3978,13 +3977,13 @@ _elm_map_pan_class_constructor(Efl_Class *klass)
 
 #include "elm_map_pan.eo.c"
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
 
    elm_widget_theme_object_set
@@ -4300,8 +4299,15 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
+   legacy_object_focus_handle(obj);
 
    return obj;
+}
+
+EOLIAN static double
+_elm_map_efl_ui_zoom_zoom_level_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+{
+   return sd->zoom;
 }
 
 EOLIAN static void
@@ -4318,7 +4324,6 @@ _elm_map_efl_ui_zoom_zoom_level_set(Eo *obj, Elm_Map_Data *sd, double zoom)
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
-   efl_ui_zoom_level_set(efl_super(obj, MY_CLASS), zoom);
 }
 
 EAPI void
@@ -4333,8 +4338,14 @@ elm_map_zoom_get(const Eo *obj)
    return efl_ui_zoom_level_get(obj);
 }
 
+EOLIAN static Efl_Ui_Zoom_Mode
+_elm_map_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+{
+   return sd->mode;
+}
+
 EOLIAN static void
-_elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode mode)
+_elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj EINA_UNUSED, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode mode)
 {
    if ((mode == EFL_UI_ZOOM_MODE_MANUAL) && (sd->mode == !!mode)) return;
 
@@ -4343,7 +4354,6 @@ _elm_map_efl_ui_zoom_zoom_mode_set(Eo *obj, Elm_Map_Data *sd, Efl_Ui_Zoom_Mode m
    sd->calc_job.zoom_mode_set = _zoom_mode_set;
 
    evas_object_smart_changed(sd->pan_obj);
-   efl_ui_zoom_mode_set(efl_super(obj, MY_CLASS), mode);
 }
 
 static inline void
@@ -4373,7 +4383,7 @@ _convert_map_zoom_mode(Elm_Map_Zoom_Mode *legacy_mode, Efl_Ui_Zoom_Mode *mode, E
 EAPI void
 elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 {
-   Efl_Ui_Zoom_Mode new_mode;
+   Efl_Ui_Zoom_Mode new_mode = EFL_UI_ZOOM_MODE_MANUAL;
 
    _convert_map_zoom_mode(&mode, &new_mode, EINA_FALSE);
 
@@ -4383,8 +4393,8 @@ elm_map_zoom_mode_set(Eo *obj, Elm_Map_Zoom_Mode mode)
 EAPI Elm_Map_Zoom_Mode
 elm_map_zoom_mode_get(const Eo *obj)
 {
-   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);;
-   Elm_Map_Zoom_Mode mode;
+   Efl_Ui_Zoom_Mode new_mode = efl_ui_zoom_mode_get(obj);
+   Elm_Map_Zoom_Mode mode = ELM_MAP_ZOOM_MODE_MANUAL;
 
    _convert_map_zoom_mode(&mode, &new_mode, EINA_TRUE);
 
@@ -4621,7 +4631,7 @@ _elm_map_route_add(Eo *obj, Elm_Map_Data *sd, Elm_Map_Route_Type type, Elm_Map_R
    char *url;
    char *type_name;
    Elm_Map_Route *route;
-   char fname[PATH_MAX], fname2[PATH_MAX];
+   char fname[PATH_MAX], fname2[PATH_MAX + 128];
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 

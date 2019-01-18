@@ -331,6 +331,19 @@ _eio_build_st_done(void *data, Eio_File *handler EINA_UNUSED, const Eina_Stat *s
 }
 
 static void
+_eio_build_st_done_clobber(void *data, Eio_File *handler, const Eina_Stat *stat)
+{
+   Eio_Model *model = data;
+   Eio_Model *parent;
+
+   efl_ref(model);
+   _eio_build_st_done(data, handler, stat);
+   parent = efl_parent_get(model);
+   efl_model_child_del(parent, model);
+   efl_unref(model);
+}
+
+static void
 _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 {
    Eio_Model *model = data;
@@ -345,6 +358,19 @@ _eio_build_st_error(void *data, Eio_File *handler EINA_UNUSED, int error)
 }
 
 static void
+_eio_build_st_error_clobber(void *data, Eio_File *handler, int error)
+{
+   Eio_Model *model = data;
+   Eio_Model *parent;
+
+   efl_ref(model);
+   _eio_build_st_error(data, handler, error);
+   parent = efl_parent_get(model);
+   efl_model_child_del(parent, model);
+   efl_unref(model);
+}
+
+static void
 _eio_build_st(const Eio_Model *model, Eio_Model_Data *pd)
 {
    if (pd->st) return ;
@@ -352,6 +378,19 @@ _eio_build_st(const Eio_Model *model, Eio_Model_Data *pd)
    if (pd->error) return ;
 
    pd->request.stat = eio_file_direct_stat(pd->path, _eio_build_st_done, _eio_build_st_error, efl_ref(model));
+}
+
+static void
+_eio_build_st_then_clobber(const Eio_Model *model, Eio_Model_Data *pd)
+{
+   if (pd->st) return ;
+   if (pd->request.stat) return ;
+   if (pd->error) return ;
+
+   pd->request.stat = eio_file_direct_stat(pd->path,
+                                           _eio_build_st_done_clobber,
+                                           _eio_build_st_error_clobber,
+                                           efl_ref(model));
 }
 
 static Eina_List *delayed_queue = NULL;
@@ -367,32 +406,34 @@ _delayed_flush(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_event_callback_del(ev->object, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
 }
 
-static void
-_cancel_request(void *data, const Eina_Promise *dead_ptr EINA_UNUSED)
+static Eina_Value
+_cancel_request(Eo *model EINA_UNUSED, void *data, Eina_Error error)
 {
    delayed_queue = eina_list_remove_list(delayed_queue, data);
+
+   return eina_value_error_init(error);
 }
 
 static Eina_Future *
-_build_delay(Efl_Loop *loop)
+_build_delay(Eio_Model *model)
 {
    Eina_Promise *p;
 
-   p = eina_promise_new(efl_loop_future_scheduler_get(loop),
-                        _cancel_request, NULL);
+   p = efl_loop_promise_new(model);
 
    if (!delayed_queue)
      {
         // Remove callback, just in case it is still there.
-        efl_event_callback_del(loop, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
-        efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+        efl_event_callback_del(efl_loop_get(model), EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+        efl_event_callback_add(efl_loop_get(model), EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
         // FIXME: It would be nice to be able to build a future directly to be triggered on one event
      }
 
    delayed_queue = eina_list_append(delayed_queue, p);
-   eina_promise_data_set(p, eina_list_last(delayed_queue));
 
-   return eina_future_new(p);
+   return efl_future_then(model, eina_future_new(p),
+                          .error = _cancel_request,
+                          .data = eina_list_last(delayed_queue));
 }
 
 static void
@@ -415,9 +456,9 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
    // Make sure that we are not over consuming time in the main loop
    if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
      {
-        Eina_Future *f = eina_future_then(_build_delay(pd->loop),
-                                          _eio_build_mime_now, model);
-        return eina_future_as_value(efl_future_Eina_FutureXXX_then(model, f));
+        Eina_Future *f = eina_future_then(_build_delay(model),
+                                          _eio_build_mime_now, model, NULL);
+        return eina_future_as_value(efl_future_then(model, f));
      }
 
    pd->mime_type = efreet_mime_type_get(pd->path);
@@ -442,11 +483,11 @@ _eio_build_mime(const Efl_Object *model, Eio_Model_Data *pd)
    if (pd->mime_type) return ;
    if (pd->request.mime) return ;
 
-   efl_wref_add(efl_provider_find(model, EFL_LOOP_CLASS), &pd->loop);
+   efl_wref_add(efl_loop_get(model), &pd->loop);
 
    f = efl_loop_job(pd->loop);
-   f = eina_future_then(f, _eio_build_mime_now, model);
-   pd->request.mime = efl_future_Eina_FutureXXX_then(model, f);
+   f = eina_future_then(f, _eio_build_mime_now, model, NULL);
+   pd->request.mime = efl_future_then(model, f);
 }
 
 static Eina_Value *
@@ -538,7 +579,7 @@ _property_size_cb(const Eo *obj, Eio_Model_Data *pd)
      return eina_value_error_new(pd->error);
 
    _eio_build_st(obj, pd);
-   return eina_value_ulong_new(EAGAIN);
+   return eina_value_error_new(EAGAIN);
 }
 
 static Eina_Value *
@@ -592,18 +633,11 @@ static struct {
 /**
  * Interfaces impl.
  */
-static Eina_Array *
+static Eina_Iterator *
 _eio_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                     Eio_Model_Data *pd EINA_UNUSED)
 {
-   Eina_Array *r;
-   unsigned int i;
-
-   r = eina_array_new(4);
-   for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
-     eina_array_push(r, properties[i].name);
-
-   return r;
+   return EINA_C_ARRAY_ITERATOR_NEW(properties);
 }
 
 static Eina_Value *
@@ -629,7 +663,6 @@ _eio_model_efl_model_property_set(Eo *obj,
                                   Eio_Model_Data *pd,
                                   const char *property, Eina_Value *value)
 {
-   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
    const char *path;
    Eina_Future *f;
    Eina_Value s = EINA_VALUE_EMPTY;
@@ -652,8 +685,7 @@ _eio_model_efl_model_property_set(Eo *obj,
 
    if (finalized)
      {
-        Eina_Promise *p = eina_promise_new(efl_loop_future_scheduler_get(loop),
-                                           _efl_io_manager_future_cancel, NULL);
+        Eina_Promise *p = efl_loop_promise_new(obj);
         f = eina_future_new(p);
 
         pd->request.move = eio_file_move(pd->path, path,
@@ -661,20 +693,20 @@ _eio_model_efl_model_property_set(Eo *obj,
                                          _eio_move_done_cb, _eio_file_error_cb, p);
 
         ecore_thread_local_data_add(pd->request.move->thread, ".pd", pd, NULL, EINA_TRUE);
-        eina_promise_data_set(p, pd->request.move);
+
+        f = _efl_io_manager_future(obj, f, pd->request.move);
 
         // FIXME: turn on monitor in the finalize stage or after move
      }
    else
      {
-        f = eina_future_resolved(efl_loop_future_scheduler_get(loop),
-                                 eina_value_string_init(pd->path));
+        f = efl_loop_future_resolved(obj, eina_value_string_init(pd->path));
      }
 
-   return efl_future_Eina_FutureXXX_then(obj, f);
+   return f;
 
  on_error:
-   return eina_future_rejected(efl_loop_future_scheduler_get(loop), err);
+   return efl_loop_future_rejected(obj, err);
 }
 
 static void
@@ -769,8 +801,8 @@ _eio_model_efl_model_children_count_get(const Eo *obj, Eio_Model_Data *pd)
 
         f = efl_io_manager_direct_ls(iom, pd->path, EINA_FALSE,
                                      (void*) obj, _eio_model_children_list, NULL);
-        f = eina_future_then(f, _eio_model_children_list_on, pd);
-        pd->request.listing = efl_future_Eina_FutureXXX_then(obj, f);
+        f = eina_future_then(f, _eio_model_children_list_on, pd, NULL);
+        pd->request.listing = efl_future_then(obj, f);
      }
 
    return eina_list_count(pd->files);
@@ -853,8 +885,7 @@ _eio_model_efl_model_child_del(Eo *obj EINA_UNUSED,
 
    if (type == EINA_FILE_UNKNOWN)
      {
-        child_pd->delete_me = EINA_TRUE;
-        _eio_build_st(child, child_pd);
+        _eio_build_st_then_clobber(child, child_pd);
         return ;
      }
 

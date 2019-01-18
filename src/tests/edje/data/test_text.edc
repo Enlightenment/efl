@@ -1,0 +1,41 @@
+collections {
+   styles {
+      style { name: "tbstyle";
+         base: "";
+      }
+   }
+   group { name: "test";
+       parts {
+           textblock { "text"; nomouse;
+               desc { "default";
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
+                   text {
+                       style: "tbstyle";
+                       font: FN; size: 10;
+                       align: 0.5 0.5;
+                       min: 0 0;
+                   }
+                   visible: 1;
+               }
+           }
+       }
+   }
+   group { name: "test2";
+       parts {
+           textblock { "text"; nomouse;
+               desc { "default";
+                   rel1.relative: 0.0 0.0;
+                   rel2.relative: 1.0 1.0;
+                   text {
+                       style: "tbstyle";
+                       font: FN; size: 10;
+                       align: 0.5 0.5;
+                       min: 0 0;
+                   }
+                   visible: 1;
+               }
+           }
+       }
+   }
+}

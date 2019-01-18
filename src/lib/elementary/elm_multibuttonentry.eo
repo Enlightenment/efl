@@ -1,7 +1,7 @@
 type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type; [[Elementary multibuttonentry item filter callback type]]
 type Elm_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttonentry format callback type]]
 
-class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legacy)
+class Elm.Multibuttonentry extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Legacy
 {
    [[Elementary multibuttonentry class]]
    legacy_prefix: elm_multibuttonentry;
@@ -180,7 +180,7 @@ class Elm.Multibuttonentry (Efl.Ui.Layout.Object, Efl.Ui.Clickable, Efl.Ui.Legac
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Translatable.translation_update;
+      Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Object.access_children { get; }
       Efl.Part.part_get;

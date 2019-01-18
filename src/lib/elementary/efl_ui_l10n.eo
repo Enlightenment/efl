@@ -1,0 +1,58 @@
+interface Efl.Ui.L10n
+{
+   [[Interface for all translatable text APIs.
+
+     This is intended for translation of human readable on-screen text strings
+     but may also be used in text-to-speech situations.
+   ]]
+   methods {
+      @property l10n_text {
+         [[A unique string to be translated.
+           
+           Often this will be a human-readable string (e.g. in English) but it
+           can also be a unique string identifier that must then be
+           translated to the current locale with $dgettext() or any similar
+           mechanism.
+
+           Setting this property will enable translation for this object or
+           part.
+         ]]
+         set {
+            [[Sets the new untranslated string and domain for this object.]]
+         }
+         get {
+            values {
+               domain: string @optional; [[A translation domain. If $null
+                  this means the default domain is used.]]
+            }
+            return: string; [[This returns the untranslated value of $label.
+               The translated string can usually be retrieved with
+               @Efl.Text.text.get.]]
+         }
+         values {
+            label: string; [[A unique (untranslated) string.]]
+            domain: string @optional; [[A translation domain. If $null this
+               uses the default domain (eg. set by $textdomain()).]]
+         }
+      }
+      translation_update @protected {
+         [[Requests this object to update its text strings for the current
+           locale.
+
+           Currently strings are translated with $dgettext, so support for
+           this function may depend on the platform. It is up to the application
+           to provide its own translation data.
+
+           This function is a hook meant to be implemented by any object that
+           supports translation. This can be called whenever a new object is
+           created or when the current locale changes, for instance. This should
+           only trigger further calls to @.translation_update to children
+           objects.
+         ]]
+      }
+   }
+   events {
+      /* FIXME: Shouldn't language,change be here? */
+   }
+}
+

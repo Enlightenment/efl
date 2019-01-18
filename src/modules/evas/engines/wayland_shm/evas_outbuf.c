@@ -1,8 +1,5 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
 #include "evas_engine.h"
 
 #define RED_MASK 0xff0000
@@ -57,12 +54,7 @@ _evas_outbuf_free(Outbuf *ob)
 
         rect = img->extended_info;
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_close(&img->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&img->cache_entry);
+        evas_cache_image_drop(&img->cache_entry);
 
         eina_rectangle_free(rect);
      }
@@ -91,12 +83,7 @@ _evas_outbuf_idle_flush(Outbuf *ob)
         rect = img->extended_info;
         eina_rectangle_free(rect);
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_close(&img->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&img->cache_entry);
+        evas_cache_image_drop(&img->cache_entry);
      }
    else
      {
@@ -107,12 +94,7 @@ _evas_outbuf_idle_flush(Outbuf *ob)
                eina_list_remove_list(ob->priv.prev_pending_writes, 
                                      ob->priv.prev_pending_writes);
              rect = img->extended_info;
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&img->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&img->cache_entry);
+             evas_cache_image_drop(&img->cache_entry);
 
              eina_rectangle_free(rect);
           }
@@ -160,14 +142,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
         img = ob->priv.onebuf;
         ob->priv.onebuf = NULL;
         if (img)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&img->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&img->cache_entry);
-          }
+          evas_cache_image_drop(&img->cache_entry);
      }
    else
      {
@@ -225,12 +200,7 @@ _evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf
 
              eina_rectangle_free(rect);
 
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&img->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&img->cache_entry);
+             evas_cache_image_drop(&img->cache_entry);
 
              i++;
           }
@@ -319,25 +289,11 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
                   return NULL;
                }
 
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               {
-                  img = (RGBA_Image *)
-                    evas_cache2_image_data(evas_common_image_cache2_get(),
-                                           bw, bh, data,
-                                           ob->priv.destination_alpha,
-                                           EVAS_COLORSPACE_ARGB8888);
-               }
-             else
-#endif
-               {
-                  img = (RGBA_Image *)
-                    evas_cache_image_data(evas_common_image_cache_get(),
-                                          bw, bh, data,
-                                          ob->priv.destination_alpha,
-                                          EVAS_COLORSPACE_ARGB8888);
-
-               }
+             img = (RGBA_Image *)
+               evas_cache_image_data(evas_common_image_cache_get(),
+                                     bw, bh, data,
+                                     ob->priv.destination_alpha,
+                                     EVAS_COLORSPACE_ARGB8888);
 
              ob->priv.onebuf = img;
              if (!img) return NULL;
@@ -348,12 +304,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
 
         if (!eina_array_push(&ob->priv.onebuf_regions, rect))
           {
-#ifdef EVAS_CSERVE2
-             if (evas_cserve2_use_get())
-               evas_cache2_image_close(&img->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&img->cache_entry);
+             evas_cache_image_drop(&img->cache_entry);
 
              eina_rectangle_free(rect);
              return NULL;
@@ -373,12 +324,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
         if (!(rect = eina_rectangle_new(x, y, w, h)))
           return NULL;
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          img = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
-        else
-#endif
-          img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+        img = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
 
         if (!img)
           {
@@ -390,12 +336,7 @@ _evas_outbuf_update_region_new(Outbuf *ob, int x, int y, int w, int h, int *cx, 
         img->cache_entry.h = h;
         img->cache_entry.flags.alpha |= ob->priv.destination_alpha ? 1 : 0;
 
-#ifdef EVAS_CSERVE2
-        if (evas_cserve2_use_get())
-          evas_cache2_image_surface_alloc(&img->cache_entry, w, h);
-        else
-#endif
-          evas_cache_image_surface_alloc(&img->cache_entry, w, h);
+        evas_cache_image_surface_alloc(&img->cache_entry, w, h);
 
         img->extended_info = rect;
 

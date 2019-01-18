@@ -122,7 +122,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    // FIXME: layout EO API
    snprintf(buf, sizeof(buf), "%s/objects/test_masking.edj", elm_app_data_dir_get());
-   ly = efl_add(EFL_UI_LAYOUT_OBJECT_CLASS, win,
+   ly = efl_add(EFL_UI_LAYOUT_CLASS, win,
                 efl_file_set(efl_added, buf, "masking"));
    efl_pack(box, ly);
 

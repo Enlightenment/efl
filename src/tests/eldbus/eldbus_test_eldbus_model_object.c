@@ -29,12 +29,17 @@ _teardown(void)
 
 EFL_START_TEST(properties_get)
 {
-   const Eina_Array *properties = NULL;
+   Eina_Iterator *properties = NULL;
    properties = efl_model_properties_get(object);
    ck_assert_ptr_ne(NULL, properties);
 
    const unsigned int expected_properties_count = 1;
-   unsigned int actual_properties_count = eina_array_count(properties);
+   unsigned int actual_properties_count = 0;
+   const char *prop;
+
+   EINA_ITERATOR_FOREACH(properties, prop)
+     actual_properties_count++;
+   eina_iterator_free(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
 EFL_END_TEST
@@ -84,13 +89,13 @@ EFL_START_TEST(property_set)
    eina_value_set(&value, 1);
 
    future = efl_model_property_set(object, "nonexistent", &value);
-   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_NOT_FOUND);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_NOT_FOUND, NULL);
 
    ecore_main_loop_begin();
 
    // UNIQUE_NAME_PROPERTY is read-only
    future = efl_model_property_set(object, UNIQUE_NAME_PROPERTY, &value);
-   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_READ_ONLY);
+   eina_future_then(future, _expect_error, &EFL_MODEL_ERROR_READ_ONLY, NULL);
 
    ecore_main_loop_begin();
 
@@ -120,7 +125,7 @@ _count_changed(void *data EINA_UNUSED, const Efl_Event *ev)
    Eina_Future *f;
 
    f = efl_loop_job(efl_provider_find(ev->object, EFL_LOOP_CLASS));
-   eina_future_then(f, _leave, NULL);
+   eina_future_then(f, _leave, NULL, NULL);
 }
 
 EFL_START_TEST(children_count)
@@ -186,7 +191,7 @@ EFL_START_TEST(child_del)
    fail_if(expected_children_count == 0);
 
    future = efl_model_children_slice_get(object, 0, 1);
-   eina_future_then(future, _one_child, &child);
+   eina_future_then(future, _one_child, &child, NULL);
 
    ecore_main_loop_begin();
 

@@ -92,6 +92,24 @@
 
 #include "eina_config.h"
 
+#ifndef __WORDSIZE
+# if defined(__OPENBSD__) && (INTPTR_MAX == INT32_MAX)
+#  define __WORDSIZE 32
+# else
+#  define __WORDSIZE 64
+# endif
+#endif
+
+/* Do not turn the following #define as meaning EFL64. We are only
+   interested to know if sizeof (void*) == 64bits or not. Those means
+   something else.
+
+   defined(__x86_64__) || defined(__x86_64) || defined(__amd64__) || defined(__amd64)
+ */
+#if defined(_WIN64) || defined(__LP64__) || defined(_LP64) || defined(__ppc64__)
+# define EFL64
+#endif
+
 #ifdef EINA_UNUSED
 # undef EINA_UNUSED
 #endif
@@ -312,7 +330,7 @@
  * @def EINA_ARG_NONNULL
  * Used to warn when the specified arguments of the function are @c NULL.
  *
- * @param ... Ordinals of the parameters to check for nullity (1..n)
+ * @param[in] ... Ordinals of the parameters to check for nullity (1..n)
  *
  * @return Nothing, but Doxygen will complain if it's not documented :-P
  *
@@ -343,21 +361,21 @@
 
 /**
  * @def EINA_PRINTF
- * @param fmt The format to be used.
- * @param arg The argument to be used.
+ * @param[in] fmt The format to be used.
+ * @param[in] arg The argument to be used.
  */
 # define EINA_PRINTF(fmt, arg)
 
 /**
  * @def EINA_SCANF
- * @param fmt The format to be used.
- * @param arg The argument to be used.
+ * @param[in] fmt The format to be used.
+ * @param[in] arg The argument to be used.
  */
 # define EINA_SCANF(fmt, arg)
 
 /**
  * @def EINA_FORMAT
- * @param fmt The format to be used.
+ * @param[in] fmt The format to be used.
  */
 # define EINA_FORMAT(fmt)
 
@@ -375,13 +393,13 @@
 
 /**
  * @def EINA_UNLIKELY
- * @param exp The expression to be used.
+ * @param[in] exp The expression to be used.
  */
 # define EINA_UNLIKELY(exp) exp
 
 /**
  * @def EINA_LIKELY
- * @param exp The expression to be used.
+ * @param[in] exp The expression to be used.
  */
 # define EINA_LIKELY(exp)   exp
 

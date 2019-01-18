@@ -458,7 +458,7 @@ struct marshall_parameter_generator
             ).generate(sink, std::make_tuple(param, param_name), context);
 
       return as_generator(
-               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", Eina_Free_Cb "
+               "IntPtr " << param_name << "_data, " << type << "Internal " << param_name << ", EinaFreeCb "
                << param_name << "_free_cb"
            ).generate(sink, param, context);
    }
@@ -527,7 +527,7 @@ struct argument_invocation_generator
      else if (param.type.original_type.visit(is_fp_visitor{}))
        {
           std::string param_name = escape_keyword(param.param_name);
-          return as_generator("GCHandle.ToIntPtr(" << param_name << "_handle), " << type << "Wrapper.Cb, efl.eo.Globals.free_gchandle")
+          return as_generator("GCHandle.ToIntPtr(" << param_name << "_handle), " << type << "Wrapper.Cb, Efl.Eo.Globals.free_gchandle")
              .generate(sink, param.type, context);
        }
      else
@@ -553,19 +553,19 @@ struct native_convert_in_variable_generator
       if (param.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(param, regular))
         {
            return as_generator(
-                "var " << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << escape_keyword(param.param_name) << ");\n"
+                "var " << string << " = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << escape_keyword(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
         }
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                "var " << string << " = " << type << "_StructConversion.ToExternal(" << escape_keyword(param.param_name) << ");\n"
+                "var " << string << " = " << type << "_StructConversion.ToManaged(" << escape_keyword(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
            return as_generator(
-                "var " << string << " = new eina.Binbuf(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+                "var " << string << " = new Eina.Binbuf(" << escape_keyword(param.param_name) << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, in_variable_name(param.param_name), context);
         }
      else if (param.type.c_type == "Eina_Hash *" || param.type.c_type == "const Eina_Hash *")
@@ -622,7 +622,7 @@ struct convert_in_variable_generator
       if (param.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(param, regular))
         {
            return as_generator(
-                "var " << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(" << escape_keyword(param.param_name) << ");\n"
+                "var " << string << " = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << escape_keyword(param.param_name) << ");\n"
              ).generate(sink, in_variable_name(param.param_name), context);
         }
       else if (helpers::need_struct_conversion(regular))
@@ -813,7 +813,7 @@ struct native_convert_out_variable_generator
               )
         {
            return as_generator(
-               "eina.Binbuf " << string << " = default(eina.Binbuf);\n"
+               "Eina.Binbuf " << string << " = default(Eina.Binbuf);\n"
              ).generate(sink, out_variable_name(param.param_name), context);
         }
       else if (param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
@@ -886,7 +886,7 @@ struct convert_out_assign_generator
       if (param.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion_in_return(param.type, param.direction))
         {
            bool ret = as_generator(
-                string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << out_variable_name(param.param_name) << ");\n"
+                string << " = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(" << out_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
 
            if (param.type.has_own)
@@ -898,7 +898,7 @@ struct convert_out_assign_generator
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                string << " = " << type << "_StructConversion.ToExternal(" << out_variable_name(param.param_name) << ");\n"
+                string << " = " << type << "_StructConversion.ToManaged(" << out_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
@@ -908,7 +908,7 @@ struct convert_out_assign_generator
               )
         {
            return as_generator(
-               string << " = new eina.Binbuf(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
+               string << " = new Eina.Binbuf(" << string << ", " << (param.type.has_own ? "true" : "false") << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Hash *", WANT_OWN, WANT_OUT)
@@ -1002,7 +1002,7 @@ struct convert_in_ptr_assign_generator
       if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                 string << " = " << type << "_StructConversion.ToExternal(" << in_variable_name(param.param_name) << ");\n"
+                 string << " = " << type << "_StructConversion.ToManaged(" << in_variable_name(param.param_name) << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
         }
 
@@ -1032,7 +1032,7 @@ struct convert_return_generator
      if (ret_type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion_in_return(ret_type, attributes::parameter_direction::unknown))
        {
           return as_generator(
-               "var __ret_tmp = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_ret_var);\n"
+               "var __ret_tmp = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(_ret_var);\n"
                << scope_tab << scope_tab << (ret_type.has_own ? ("Marshal.FreeHGlobal(_ret_var);\n"): "\n")
                << scope_tab << scope_tab << "return __ret_tmp;\n"
             ).generate(sink, ret_type, context);
@@ -1040,12 +1040,12 @@ struct convert_return_generator
      else if (helpers::need_struct_conversion(regular))
        {
           return as_generator(
-               "return " << type << "_StructConversion.ToExternal(_ret_var);\n"
+               "return " << type << "_StructConversion.ToManaged(_ret_var);\n"
             ).generate(sink, ret_type, context);
        }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
        {
-           if (!as_generator("var _binbuf_ret = new eina.Binbuf(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"} << ");\n"
+           if (!as_generator("var _binbuf_ret = new Eina.Binbuf(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"} << ");\n"
                              << scope_tab << scope_tab << "return _binbuf_ret;\n")
              .generate(sink, attributes::unused, context))
              return false;
@@ -1104,7 +1104,7 @@ struct native_convert_out_assign_generator
       if (param.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion_in_return(param.type, param.direction))
         {
            return as_generator(
-                string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(" << string << ");\n"
+                string << " = Eina.PrimitiveConversion.ManagedToPointerAlloc(" << string << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (helpers::need_struct_conversion(regular))
@@ -1121,7 +1121,7 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= efl.eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
+                string << "= Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
@@ -1132,7 +1132,7 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= efl.eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
+                string << "= Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
@@ -1251,7 +1251,7 @@ struct native_convert_return_generator
      if (ret_type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion_in_return(ret_type, attributes::parameter_direction::unknown) )
        {
           return as_generator(
-               "return eina.PrimitiveConversion.ManagedToPointerAlloc(_ret_var);\n"
+               "return Eina.PrimitiveConversion.ManagedToPointerAlloc(_ret_var);\n"
             ).generate(sink, attributes::unused, context);
        }
      else if (helpers::need_struct_conversion(regular))
@@ -1270,7 +1270,7 @@ struct native_convert_return_generator
                     return false;
                  }
                return as_generator(
-                    "return efl.eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
+                    "return Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
                  ).generate(sink, attributes::unused, context);
             }
           else
@@ -1288,7 +1288,7 @@ struct native_convert_return_generator
                     return false;
                  }
               return as_generator(
-                   "return efl.eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
+                   "return Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
                 ).generate(sink, attributes::unused, context);
            }
          else

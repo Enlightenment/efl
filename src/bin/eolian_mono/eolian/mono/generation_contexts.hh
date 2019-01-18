@@ -11,6 +11,7 @@ struct class_context
         inherit,
         inherit_native,
         structs,
+        enums,
         function_ptr,
         alias,
     };
@@ -39,6 +40,14 @@ library_context::actual_library_name(const std::string& filename) const
     // Fallback to original behaviour with explicit library name
     return '"' + library_name + '"';
 }
+
+struct eolian_state_context {
+    const Eolian_State *state;
+};
+
+struct options_context {
+    bool want_beta;
+};
 
 }
 

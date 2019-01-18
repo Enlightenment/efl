@@ -21,7 +21,7 @@ struct _Ector_Software_Task
    void *data;
 };
 
-static int count_init = 0;
+static int _count_init = 0;
 static unsigned int current = 0;
 static unsigned int cpu_core = 0;
 static Ector_Software_Thread *ths = NULL;
@@ -69,7 +69,8 @@ _ector_software_init(void)
 {
    int cpu, i;
 
-   if (count_init++) return ;
+   ++_count_init;
+   if (_count_init != 1) return;
 
    cpu = eina_cpu_count() - 1;
    if (cpu < 1)
@@ -106,7 +107,8 @@ _ector_software_shutdown(void)
    Ector_Software_Thread *t;
    unsigned int i;
 
-   if (!--count_init) return ;
+   --_count_init;
+   if (_count_init != 0) return;
 
    if (!ths)
      {

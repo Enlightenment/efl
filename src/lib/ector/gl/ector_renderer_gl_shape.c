@@ -20,18 +20,15 @@ struct _Ector_Renderer_GL_Shape_Data
    GLshort *vertex;
 };
 
-static void
-_ector_renderer_gl_shape_path_changed(void *data, const Efl_Event *event EINA_UNUSED)
+EOLIAN static void
+_ector_renderer_gl_shape_efl_gfx_path_commit(Eo *obj EINA_UNUSED,
+                                             Ector_Renderer_GL_Shape_Data *pd)
 {
-   Ector_Renderer_GL_Shape_Data *pd = data;
-   Efl_Gfx_Path_Change_Event *ev = event->info;
-
-   if (ev && !((ev->what & EFL_GFX_CHANGE_FLAG_MATRIX) ||
-               (ev->what & EFL_GFX_CHANGE_FLAG_PATH)))
-     return;
-
-   free(pd->vertex);
-   pd->vertex = NULL;
+   if (pd->vertex)
+     {
+        free(pd->vertex);
+        pd->vertex = NULL;
+     }
 }
 
 static Eina_Bool
@@ -153,8 +150,6 @@ _ector_renderer_gl_shape_efl_object_constructor(Eo *obj, Ector_Renderer_GL_Shape
    pd->public_shape = efl_data_xref(obj, EFL_GFX_SHAPE_MIXIN, obj);
    pd->shape = efl_data_xref(obj, ECTOR_RENDERER_SHAPE_MIXIN, obj);
    pd->base = efl_data_xref(obj, ECTOR_RENDERER_CLASS, obj);
-
-   efl_event_callback_add(obj, EFL_GFX_PATH_EVENT_CHANGED, _ector_renderer_gl_shape_path_changed, pd);
 
    return obj;
 }

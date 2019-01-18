@@ -131,7 +131,6 @@ static void _efl_ui_scroll_manager_wanted_region_set(Evas_Object *obj);
 #define RIGHT              1
 #define UP                 2
 #define DOWN               3
-#define EVTIME             1
 //#define SCROLLDBG 1
 /* smoothness debug calls - for debugging how much smooth your app is */
 
@@ -520,7 +519,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EIN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_base_mirrored_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool mirrored)
+_efl_ui_scroll_manager_efl_ui_i18n_mirrored_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool mirrored)
 {
    Evas_Coord wx;
 
@@ -739,8 +738,8 @@ _scroll_wheel_post_event_go(Efl_Ui_Scroll_Manager_Data *sd, int x, int y)
         Eina_Future *f;
 
         f = eina_future_then(efl_loop_job(efl_loop_get(sd->obj)),
-                             _scroll_wheel_post_event_job, sd);
-        efl_future_Eina_FutureXXX_then(sd->obj, f);
+                             _scroll_wheel_post_event_job, sd, NULL);
+        efl_future_then(sd->obj, f);
      }
    else
      {
@@ -1014,11 +1013,7 @@ _efl_ui_scroll_manager_mouse_up_event_momentum_eval(Efl_Ui_Scroll_Manager_Data *
    Evas_Coord dx, dy, ax, ay, vel;
    char sdx, sdy;
 
-#ifdef EVTIME
    t = ev->timestamp / 1000.0;
-#else
-   t = ecore_loop_time_get();
-#endif
 
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    ax = ev->canvas.x;
@@ -1135,11 +1130,8 @@ _efl_ui_scroll_manager_mouse_down_event_cb(void *data,
 
    if (ev->button == 1)
      {
-        sd->down.hist.est_timestamp_diff =
+        sd->down.est_timestamp_diff =
           ecore_loop_time_get() - ((double)ev->timestamp / 1000.0);
-        sd->down.hist.tadd = 0.0;
-        sd->down.hist.dxsum = 0.0;
-        sd->down.hist.dysum = 0.0;
         sd->down.now = EINA_TRUE;
         sd->down.dragged = EINA_FALSE;
         sd->down.dir_x = EINA_FALSE;
@@ -1151,12 +1143,7 @@ _efl_ui_scroll_manager_mouse_down_event_cb(void *data,
         sd->down.sy = cur.y;
         memset(&(sd->down.history[0]), 0,
                sizeof(sd->down.history[0]) * 60);
-#ifdef EVTIME
         sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-        sd->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-        sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif
         sd->down.dragged_began_timestamp = sd->down.history[0].timestamp;
         sd->down.history[0].x = ev->canvas.x;
         sd->down.history[0].y = ev->canvas.y;
@@ -1660,11 +1647,7 @@ _efl_ui_scroll_manager_post_event_move_hold_eval(Efl_Ui_Scroll_Manager_Data *sd,
               {
                  sd->down.x = ev->cur.canvas.x;
                  sd->down.y = ev->cur.canvas.y;
-#ifdef EVTIME
                  sd->down.dragged_began_timestamp = ev->timestamp / 1000.0;
-#else
-                 sd->down.dragged_began_timestamp = ecore_loop_time_get();
-#endif
               }
             // TODO 다른조건들도 can_scroll 안쪽으로 넣는다?
             if ((((_efl_ui_scroll_manager_can_scroll(sd, sd->down.hdir) || sd->bounce_horiz) && sd->down.dir_x) ||
@@ -1767,7 +1750,7 @@ _efl_ui_scroll_manager_hold_enterer(void *data)
              double t;
           } pos[100];
 
-        tdiff = sd->down.hist.est_timestamp_diff;
+        tdiff = sd->down.est_timestamp_diff;
         tnow = ecore_loop_time_get();
         twin = _elm_config->scroll_smooth_time_window;
         for (i = 0; i < 60; i++)
@@ -1933,12 +1916,7 @@ _efl_ui_scroll_manager_mouse_move_event_cb(void *data,
 #endif
    memmove(&(sd->down.history[1]), &(sd->down.history[0]),
            sizeof(sd->down.history[0]) * (60 - 1));
-#ifdef EVTIME
    sd->down.history[0].timestamp = ev->timestamp / 1000.0;
-   sd->down.history[0].localtimestamp = ecore_loop_time_get();
-#else
-   sd->down.history[0].timestamp = ecore_loop_time_get();
-#endif
    sd->down.history[0].x = ev->cur.canvas.x;
    sd->down.history[0].y = ev->cur.canvas.y;
    sd->event_info = event_info;
@@ -1965,25 +1943,6 @@ _scroll_event_object_attach(Evas_Object *obj)
      (sd->event_rect, EVAS_CALLBACK_MOUSE_UP,
      _efl_ui_scroll_manager_mouse_up_event_cb, sd);
    evas_object_event_callback_add
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_MOVE,
-     _efl_ui_scroll_manager_mouse_move_event_cb, sd);
-}
-
-static void
-_scroll_event_object_detach(Evas_Object *obj)
-{
-   EFL_UI_SCROLL_MANAGER_DATA_GET_OR_RETURN(obj, sd);
-
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _efl_ui_scroll_manager_wheel_event_cb,
-     sd);
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_DOWN,
-     _efl_ui_scroll_manager_mouse_down_event_cb, sd);
-   evas_object_event_callback_del_full
-     (sd->event_rect, EVAS_CALLBACK_MOUSE_UP,
-     _efl_ui_scroll_manager_mouse_up_event_cb, sd);
-   evas_object_event_callback_del_full
      (sd->event_rect, EVAS_CALLBACK_MOUSE_MOVE,
      _efl_ui_scroll_manager_mouse_move_event_cb, sd);
 }
@@ -2484,8 +2443,6 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
       (sd->pan_obj, EFL_UI_PAN_EVENT_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_del
       (sd->pan_obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
-
-   _scroll_event_object_detach(obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }

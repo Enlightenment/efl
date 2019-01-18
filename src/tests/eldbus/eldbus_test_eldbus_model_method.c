@@ -52,12 +52,17 @@ _teardown(void)
 
 EFL_START_TEST(properties_get)
 {
-   const Eina_Array *properties = NULL;
+   Eina_Iterator *properties = NULL;
    properties = efl_model_properties_get(method);
    ck_assert_ptr_ne(NULL, properties);
 
    const unsigned int expected_properties_count = 3; // a, b and result arguments of 'sum' method
-   const unsigned int actual_properties_count = eina_array_count(properties);
+   unsigned int actual_properties_count = 0;
+   const char *prop;
+
+   EINA_ITERATOR_FOREACH(properties, prop)
+     actual_properties_count++;
+   eina_iterator_free(properties);
    ck_assert_int_eq(expected_properties_count, actual_properties_count);
 }
 EFL_END_TEST
@@ -117,7 +122,7 @@ EFL_START_TEST(property_set)
    Eina_Value dummy = EINA_VALUE_EMPTY;
 
    future = efl_model_property_set(method, ARGUMENT_RESULT, &dummy);
-   eina_future_then(future, _expected_error, NULL);
+   eina_future_then(future, _expected_error, NULL, NULL);
 }
 EFL_END_TEST
 
@@ -138,7 +143,7 @@ EFL_START_TEST(children_slice_get)
    Eina_Future *future;
 
    future = efl_model_children_slice_get(method, 1, 1);
-   eina_future_then(future, _expected_error, &EFL_MODEL_ERROR_NOT_SUPPORTED);
+   eina_future_then(future, _expected_error, &EFL_MODEL_ERROR_NOT_SUPPORTED, NULL);
 
    ecore_main_loop_begin();
 }

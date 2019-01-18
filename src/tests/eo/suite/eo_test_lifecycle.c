@@ -162,6 +162,53 @@ EFL_START_TEST(eo_test_unref_noref)
 }
 EFL_END_TEST
 
+typedef struct {
+  Eo *par;
+  Eina_Bool called;
+} Invalidating_Test_Helper;
+
+static void
+_invalidate2(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Invalidating_Test_Helper *iev = data;
+
+   iev->called = EINA_TRUE;
+   ck_assert_int_eq(efl_invalidating_get(iev->par), EINA_TRUE);
+   ck_assert_int_eq(efl_invalidated_get(iev->par), EINA_FALSE);
+}
+
+EFL_START_TEST(eo_test_invalidating_get)
+{
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+   Invalidating_Test_Helper data = {par, EINA_FALSE};
+
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate2, &data);
+
+   efl_unref(par);
+   ck_assert_int_eq(data.called, EINA_TRUE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_alive_get)
+{
+   Eina_Bool res;
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par,
+      res = efl_alive_get(efl_added)
+   );
+   ck_assert_int_eq(res, 0);
+   ck_assert_int_eq(efl_alive_get(obj), 1);
+   efl_ref(obj);
+   ck_assert_int_eq(efl_alive_get(obj), 1);
+   efl_del(obj);
+   ck_assert_int_eq(efl_alive_get(obj), 0);
+   efl_unref(obj);
+   ck_assert_ptr_eq(efl_class_name_get(obj), NULL);
+
+}
+EFL_END_TEST
+
 void eo_test_lifecycle(TCase *tc)
 {
    tcase_add_test(tc, eo_test_base_del);
@@ -169,4 +216,6 @@ void eo_test_lifecycle(TCase *tc)
    tcase_add_test(tc, eo_test_shutdown_eventting);
    tcase_add_test(tc, eo_test_del_in_noref);
    tcase_add_test(tc, eo_test_unref_noref);
+   tcase_add_test(tc, eo_test_invalidating_get);
+   tcase_add_test(tc, eo_test_alive_get);
 }

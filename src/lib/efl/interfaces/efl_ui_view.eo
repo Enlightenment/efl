@@ -1,4 +1,4 @@
-interface Efl.Ui.View ()
+interface Efl.Ui.View
 {
    [[Efl UI view interface]]
    methods {

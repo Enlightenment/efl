@@ -1150,6 +1150,31 @@ err_obj:
    return NULL;
 }
 
+EAPI size_t
+efl_class_memory_size_get(const Efl_Class *eo_id)
+{
+   const _Efl_Class *klass;
+
+   if (_eo_is_a_class(eo_id))
+     {
+        EO_CLASS_POINTER_GOTO(eo_id, _klass, err_klass);
+        klass = _klass;
+     }
+   else
+     {
+        EO_OBJ_POINTER_GOTO(eo_id, obj, err_obj);
+        klass = obj->klass;
+        EO_OBJ_DONE(eo_id);
+     }
+   return klass->obj_size;
+
+err_klass:
+   _EO_POINTER_ERR(eo_id, "Class (%p) is an invalid ref.", eo_id);
+err_obj:
+   return 0;
+}
+
+
 static void
 _vtable_init(Eo_Vtable *vtable, size_t size)
 {

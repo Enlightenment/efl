@@ -165,4 +165,4 @@ EAPI Elm_Bg_Option elm_bg_option_get(const Evas_Object *obj);
   */
 EAPI void elm_bg_load_size_set(Evas_Object *obj, int w, int h);
 
-#include "efl_ui_bg_widget.eo.legacy.h"
+#include "efl_ui_bg.eo.legacy.h"

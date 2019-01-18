@@ -1,41 +1,42 @@
-class Efl.Canvas.Vg.Shape (Efl.Canvas.Vg.Node, Efl.Gfx.Shape)
+class Efl.Canvas.Vg.Shape extends Efl.Canvas.Vg.Node implements Efl.Gfx.Shape
 {
    [[Efl vector graphics shape class]]
    legacy_prefix: evas_vg_shape;
    methods {
       @property fill {
-          [[Fill of the shape object]]
+         [[Fill of the shape object]]
          set {
-    }
-    get {
-    }
-    values {
-       f: Efl.Canvas.Vg.Node; [[Fill object]]
-    }
+         }
+         get {
+         }
+         values {
+            f: Efl.Canvas.Vg.Node; [[Fill object]]
+         }
       }
       @property stroke_fill {
-          [[Stroke fill of the shape object]]
+         [[Stroke fill of the shape object]]
          set {
-    }
-    get {
-    }
-    values {
-       f: Efl.Canvas.Vg.Node; [[Stroke fill object]]
-    }
+         }
+         get {
+         }
+         values {
+            f: Efl.Canvas.Vg.Node; [[Stroke fill object]]
+         }
       }
       @property stroke_marker {
-          [[Stroke marker of the shape object]]
+         [[Stroke marker of the shape object]]
          set {
-    }
-    get {
-    }
-    values {
-       m: Efl.Canvas.Vg.Node; [[Stroke marker object]]
-    }
+         }
+         get {
+         }
+         values {
+            m: Efl.Canvas.Vg.Node; [[Stroke marker object]]
+         }
       }
    }
    implements {
       Efl.Gfx.Path.interpolate;
+      Efl.Gfx.Path.commit;
       Efl.Duplicate.duplicate;
       Efl.Object.constructor;
       Efl.Object.destructor;

@@ -117,9 +117,9 @@ efl_input_event_instance_get(Eo *klass, Eo *owner)
      }
    else
      {
-        evt = efl_add(klass, owner,
-                      efl_event_callback_add(efl_added, EFL_EVENT_NOREF, _noref_death, NULL),
-                      efl_del_intercept_set(efl_added, _del_hook));
+        evt = efl_add(klass, owner);
+        efl_event_callback_add(evt, EFL_EVENT_NOREF, _noref_death, NULL);
+        efl_del_intercept_set(evt, _del_hook);
      }
 
    return efl_ref(evt);

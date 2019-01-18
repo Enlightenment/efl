@@ -11,17 +11,27 @@
 # include <netinet/in.h>
 #endif
 #include <time.h>
-#include <sys/mman.h>
+#ifdef HAVE_SHM_OPEN
+# include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include <zlib.h>
 
+#ifdef _WIN32
+# include <windows.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
+#ifdef _WIN32
+HANDLE shm_fd = NULL;
+#else
 int shm_fd = -1;
+#endif
 static int shm_size = 0;
 void *shm_addr = NULL;
 char *shmfile = NULL;
@@ -29,7 +39,31 @@ char *shmfile = NULL;
 void
 shm_alloc(unsigned long dsize)
 {
-#ifdef HAVE_SHM_OPEN
+#ifdef _WIN32
+   if (!shmfile) shmfile = malloc(1024);
+   if (!shmfile) goto failed;
+   shmfile[0] = 0;
+   srand(time(NULL));
+   do
+     {
+        snprintf(shmfile, 1024, "/evas-loader.%i.%i",
+                 (int)getpid(), (int)rand());
+        shm_fd = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
+                                   0, dsize, shmfile);
+     }
+   while ((shm_fd == NULL) || (GetLastError() == ERROR_ALREADY_EXISTS));
+
+   shm_addr = MapViewOfFile(shm_fd, FILE_MAP_WRITE, 0, 0, dsize);
+   if (!shm_addr)
+     {
+        free(shmfile);
+        CloseHandle(shm_fd);
+        goto failed;
+     }
+   shm_size = dsize;
+   return;
+failed:
+#elif HAVE_SHM_OPEN
    if (!shmfile) shmfile = malloc(1024);
    if (!shmfile) goto failed;
    shmfile[0] = 0;
@@ -67,7 +101,18 @@ failed:
 void
 shm_free(void)
 {
-#ifdef HAVE_SHM_OPEN
+#ifdef _WIN32
+   if (shm_fd)
+     {
+        UnmapViewOfFile(shm_addr);
+        CloseHandle(shm_fd);
+        free(shmfile);
+        shm_addr = NULL;
+        shm_fd = NULL;
+        shmfile = NULL;
+        return;
+     }
+#elif HAVE_SHM_OPEN
    if (shm_fd >= 0)
      {
         munmap(shm_addr, shm_size);
@@ -81,7 +126,11 @@ shm_free(void)
 #endif
    free(shm_addr);
    shm_addr = NULL;
+#ifdef _WIN32
+   shm_fd = NULL;
+#else
    shm_fd = -1;
+#endif
 }
 
 #ifdef __cplusplus

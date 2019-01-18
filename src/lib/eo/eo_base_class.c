@@ -134,7 +134,7 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
 
-   EO_OBJ_POINTER(obj_id, obj);
+   EO_OBJ_POINTER_RETURN(obj_id, obj);
 
    // Finally invalidate itself if it wasn't done already
    // I am not sure this is a good idea, but it force the
@@ -825,6 +825,16 @@ _efl_object_invalidated_get(const Eo *obj_id, Efl_Object_Data *pd)
    if (!invalidate && pd && pd->parent)
      return efl_invalidated_get(pd->parent);
    return invalidate;
+}
+
+EOLIAN static Eina_Bool
+_efl_object_invalidating_get(const Eo *obj_id, Efl_Object_Data *pd EINA_UNUSED)
+{
+   Eina_Bool invalidating;
+   EO_OBJ_POINTER_RETURN_VAL(obj_id, obj, EINA_TRUE);
+   invalidating = obj->is_invalidating;
+   EO_OBJ_DONE(obj_id);
+   return invalidating;
 }
 
 EOLIAN static Efl_Object *
@@ -1633,6 +1643,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
 
    lookup = NULL;
    callback_already_stopped = pd->callback_stopped;
+   pd->callback_stopped = EINA_FALSE;
    ret = EINA_TRUE;
 
    ev.object = obj_id;
@@ -1795,25 +1806,25 @@ _efl_event_forwarder_callback(void *data, const Efl_Event *event)
      }
 }
 
-/* FIXME: Change default priority? Maybe call later? */
 EOLIAN static void
-_efl_object_event_callback_forwarder_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
-                     const Efl_Event_Description *desc,
-                     Eo *new_obj)
+_efl_object_event_callback_forwarder_priority_add(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
+                                                  const Efl_Event_Description *desc,
+                                                  short priority,
+                                                  Eo *new_obj)
 {
+   EO_OBJ_POINTER_RETURN(new_obj, new_data);
+   EO_OBJ_DONE(new_obj);
 
-   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
-
-   efl_event_callback_add(obj, desc, _efl_event_forwarder_callback, new_obj);
+   efl_event_callback_priority_add(obj, desc, priority, _efl_event_forwarder_callback, new_obj);
 }
 
 EOLIAN static void
 _efl_object_event_callback_forwarder_del(Eo *obj, Efl_Object_Data *pd EINA_UNUSED,
-                     const Efl_Event_Description *desc,
-                     Eo *new_obj)
+                                         const Efl_Event_Description *desc,
+                                         Eo *new_obj)
 {
-
-   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
+   EO_OBJ_POINTER_RETURN(new_obj, new_data);
+   EO_OBJ_DONE(new_obj);
 
    efl_event_callback_del(obj, desc, _efl_event_forwarder_callback, new_obj);
 }
@@ -2070,7 +2081,7 @@ _efl_future_cb(void *data, const Eina_Value value, const Eina_Future *dead_futur
    pd->pending_futures = eina_inlist_remove(pd->pending_futures,
                                             EINA_INLIST_GET(pending));
    efl_ref(o);
-   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, (void*) o);
+   EASY_FUTURE_DISPATCH(ret, value, dead_future, &pending->desc, (void*) o, (void*) pending->desc.data);
    efl_unref(o);
    _efl_pending_future_free(pending);
 
@@ -2137,10 +2148,10 @@ efl_future_chain_array(Eo *obj,
      {
         if (descs[i].error)
           {
-             Eina_Value r = descs[i].error(obj, ENOMEM);
+             Eina_Value r = descs[i].error(obj, (void*) descs[i].data, ENOMEM);
              eina_value_flush(&r);
           }
-        if (descs[i].free) descs[i].free(obj, NULL);
+        if (descs[i].free) descs[i].free(obj, (void*) descs[i].data, NULL);
      }
    return NULL;
 }

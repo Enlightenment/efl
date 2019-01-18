@@ -391,7 +391,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
                }
              l = pp - p;
              tmpstr = alloca(l + 1);
-             strncpy(tmpstr, p, l);
+             memcpy(tmpstr, p, l);
              tmpstr[l] = 0;
              if (l >= (int)sizeof(fl))
                {
@@ -1015,7 +1015,7 @@ get_verbatim_line2(void)
 void
 compile(void)
 {
-   char buf[4096], buf2[4096];
+   char buf[4096 + 4096 + 4096], buf2[4096];
    Eina_Tmpstr *tmpn;
    int fd;
    off_t size;

@@ -9,10 +9,6 @@
 # error gl_x11 should not get compiled if dlsym is not found on the system!
 #endif
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
-
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
@@ -98,7 +94,7 @@ int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
 int      (*glsym_glXWaitVideoSync)   (int a, int b, unsigned int *c) = NULL;
 XID      (*glsym_glXCreatePixmap)    (Display *a, void *b, Pixmap c, const int *d) = NULL;
 void     (*glsym_glXDestroyPixmap)   (Display *a, XID b) = NULL;
-int      (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
+void     (*glsym_glXQueryDrawable)   (Display *a, XID b, int c, unsigned int *d) = NULL;
 int      (*glsym_glXSwapIntervalSGI) (int a) = NULL;
 void     (*glsym_glXSwapIntervalEXT) (Display *s, GLXDrawable b, int c) = NULL;
 void     (*glsym_glXReleaseBuffersMESA)   (Display *a, XID b) = NULL;
@@ -1413,7 +1409,7 @@ eng_gl_symbols(Outbuf *ob)
    // GLX 1.3
    FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL, glsym_func_xid);
    FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL, glsym_func_void);
-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL, glsym_func_int);
+   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL, glsym_func_void);
 
    // swap interval: MESA and SGI take (interval)
    FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control", glsym_func_int);
@@ -1500,31 +1496,46 @@ gl_extn_veto(Render_Engine *re)
                                   eng_get_ob(re)->info->info.screen);
    if (str)
      {
+        const char *str2;
+        char *tmpstr;
+        size_t sz = 0;
+
+        sz = strlen(str);
+        str2 = glXGetClientString(eng_get_ob(re)->info->info.display,
+                                 GLX_EXTENSIONS);
+        if (str2) sz += 1 + strlen(str2);
+        tmpstr = alloca(sz + 1);
+        strcpy(tmpstr, str);
+        if (str2)
+          {
+             strcat(tmpstr, " ");
+             if (str2) strcat(tmpstr, str2);
+          }
         if (getenv("EVAS_GL_INFO"))
-          printf("GLX EXTN:\n%s\n", str);
-        if (!strstr(str, "_texture_from_pixmap"))
+          printf("GLX EXTN:\n%s\n", tmpstr);
+        if (!strstr(tmpstr, "_texture_from_pixmap"))
           {
              glsym_glXBindTexImage = NULL;
              glsym_glXReleaseTexImage = NULL;
           }
-        if (!strstr(str, "GLX_SGI_video_sync"))
+        if (!strstr(tmpstr, "GLX_SGI_video_sync"))
           {
              glsym_glXGetVideoSync = NULL;
              glsym_glXWaitVideoSync = NULL;
           }
-        if (!strstr(str, "GLX_EXT_buffer_age"))
+        if (!strstr(tmpstr, "GLX_EXT_buffer_age"))
           {
              extn_have_buffer_age = 0;
           }
-        if (!strstr(str, "GLX_EXT_swap_control"))
+        if (!strstr(tmpstr, "GLX_EXT_swap_control"))
           {
              glsym_glXSwapIntervalEXT = NULL;
           }
-        if (!strstr(str, "GLX_SGI_swap_control"))
+        if (!strstr(tmpstr, "GLX_SGI_swap_control"))
           {
              glsym_glXSwapIntervalSGI = NULL;
           }
-        if (!strstr(str, "GLX_MESA_release_buffers"))
+        if (!strstr(tmpstr, "GLX_MESA_release_buffers"))
           {
              glsym_glXReleaseBuffersMESA = NULL;
           }
@@ -2550,6 +2561,8 @@ eng_image_native_set(void *engine, void *image, void *native)
                    n->ns_data.x11.multiple_buffer = 0;
                  else
                    n->ns_data.x11.multiple_buffer = 1;
+                 if (ob->detected.no_multi_buffer_native)
+                   n->ns_data.x11.multiple_buffer = 0;
 
                  if (!n->ns_data.x11.surface)
                    {

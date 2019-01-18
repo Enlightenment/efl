@@ -13,10 +13,10 @@ struct Efl.Ui.Widget_Focus_State {
    logical : bool; [[$true if this is registered as logical currently]]
 }
 
-abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
+abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
-                        Efl.Ui.Base, Efl.Ui.Cursor, Efl.Ui.Translatable,
-                        Efl.Selection, Efl.Ui.Dnd)
+                        Efl.Ui.Cursor, Efl.Ui.L10n,
+                        Efl.Ui.Selection, Efl.Ui.Dnd
 {
    [[Efl UI widget abstract class]]
    legacy_prefix: elm_widget;
@@ -78,9 +78,9 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
          ]]
          set @protected {
             [[Can only be called during construction, before finalize.]]
-            return: Efl.Ui.Theme.Apply(0);
+            return: Efl.Ui.Theme_Apply_Result(0);
                [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme.Apply for more information.]]
+                 the values of @Efl.Ui.Theme_Apply_Result for more information.]]
          }
          get {
             [[Returns the current style of a widget.]]
@@ -165,8 +165,8 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
 
            Note: This may not be a display manager window in case of nested
            canvases. If a "real" window is required, then you might want to
-           verify that the returned object is a $Efl.Ui.Win_Inlined, and then
-           get $Efl.Ui.Win_Inlined.inlined_parent to find an object in the
+           verify that the returned object is a @Efl.Ui.Win_Inlined, and then
+           get @Efl.Ui.Win_Inlined.inlined_parent to find an object in the
            master window.
 
            See also @.widget_parent.
@@ -310,7 +310,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
            Note: even widgets not based on layouts may override this method
            to handle widget updates (scale, mirrored mode, etc...).
          ]]
-         return: Efl.Ui.Theme.Apply; [[Indicates success, and if the current
+         return: Efl.Ui.Theme_Apply_Result; [[Indicates success, and if the current
                                        theme or default theme was used.]]
       }
 
@@ -545,7 +545,7 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
             @in current_state : Efl.Ui.Widget_Focus_State;
                [[The focus manager to register with.]]
             @inout configured_state : Efl.Ui.Widget_Focus_State;
-               [[The evalulated Focus state that should be used.]]
+               [[The evaluated Focus state that should be used.]]
             @in redirect : Efl.Ui.Widget;
                [[A redirect that will be set by the elm.widget implementation.]]
          }
@@ -583,13 +583,13 @@ abstract Efl.Ui.Widget (Efl.Canvas.Group, Efl.Access.Object,
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
-      Efl.Ui.Base.mirrored { get; set; }
-      Efl.Ui.Base.mirrored_automatic { get; set; }
+      Efl.Ui.I18n.mirrored { get; set; }
+      Efl.Ui.I18n.mirrored_automatic { get; set; }
       Efl.Ui.Cursor.cursor { get; set; }
       Efl.Ui.Cursor.cursor_style { get; set; }
       Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Translatable.translation_update; [[This implements the calls to $gettext() and $text_set().]]
+      Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
    }
    events {

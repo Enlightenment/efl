@@ -45,17 +45,18 @@
  */
 typedef enum _Eina_Cpu_Features
 {
-   EINA_CPU_MMX = 0x00000001,
-   EINA_CPU_SSE = 0x00000002,
-   EINA_CPU_SSE2 = 0x00000004,
-   EINA_CPU_SSE3 = 0x00000008,
+   EINA_CPU_MMX     = 0x00000001,
+   EINA_CPU_SSE     = 0x00000002,
+   EINA_CPU_SSE2    = 0x00000004,
+   EINA_CPU_SSE3    = 0x00000008,
    /* TODO 3DNow! */
    EINA_CPU_ALTIVEC = 0x00000010,
-   EINA_CPU_VIS = 0x00000020,
-   EINA_CPU_NEON = 0x00000040,
-   EINA_CPU_SSSE3 = 0x00000080,
-   EINA_CPU_SSE41 = 0x00000100,
-   EINA_CPU_SSE42 = 0x00000200
+   EINA_CPU_VIS     = 0x00000020,
+   EINA_CPU_NEON    = 0x00000040,
+   EINA_CPU_SSSE3   = 0x00000080,
+   EINA_CPU_SSE41   = 0x00000100,
+   EINA_CPU_SSE42   = 0x00000200,
+   EINA_CPU_SVE     = 0x00000400
 } Eina_Cpu_Features;
 
 /**
@@ -92,7 +93,7 @@ EAPI int               eina_cpu_page_size(void);
 /**
  * @brief Reverses the byte order of a 16-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 16-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
@@ -103,7 +104,7 @@ static inline unsigned short eina_swap16(unsigned short x);
 /**
  * @brief Reverses the byte order of a 32-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 32-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.
@@ -114,7 +115,7 @@ static inline unsigned int eina_swap32(unsigned int x);
 /**
  * @brief Reverses the byte order of a 64-bit (destination) register.
  *
- * @param x The binary word to swap
+ * @param[in] x The binary word to swap
  * @return A byte order swapped 64-bit integer.  
  *
  * On big endian systems, the number is converted to little endian byte order.

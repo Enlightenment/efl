@@ -1,4 +1,4 @@
-class Efl.Config_Global (Efl.Object, Efl.Config)
+class Efl.Config_Global extends Efl.Object implements Efl.Config
 {
    [[This class is a singleton representing the global configuration for the
      running application.
@@ -77,7 +77,7 @@ class Efl.Config_Global (Efl.Object, Efl.Config)
            encoded in the $options string.
 
            At this point it is not expected that anyone would generally use
-           this API except if you are a destktop environment and so the user
+           this API except if you are a desktop environment and so the user
            base of this API will be enlightenment itself.
 
            @since 1.17
@@ -95,7 +95,7 @@ class Efl.Config_Global (Efl.Object, Efl.Config)
            derived from the current profile.
 
            At this point it is not expected that anyone would generally use
-           this API except if you are a destktop environment and so the user
+           this API except if you are a desktop environment and so the user
            base of this API will be enlightenment itself.
 
            @since 1.17

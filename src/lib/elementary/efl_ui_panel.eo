@@ -1,0 +1,95 @@
+enum Efl.Ui.Panel_Orient
+{
+   [[Panel orientation mode]]
+
+   top, [[Panel (dis)appears from the top]]
+   bottom, [[Panel (dis)appears from the bottom]]
+   left, [[Panel (dis)appears from the left]]
+   right [[Panel (dis)appears from the right]]
+}
+
+struct Efl.Ui.Panel_Scroll_Info
+{
+   [[Panel scroll information]]
+   rel_x: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
+   rel_y: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
+}
+
+class Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content,
+                    Efl.Access.Widget.Action
+{
+   [[Elementary panel class]]
+   methods {
+      @property orient {
+         set {
+            [[Sets the orientation of the panel
+
+              Sets from where the panel will (dis)appear.
+            ]]
+         }
+         get {
+            [[Gets the orientation of the panel.]]
+         }
+         values {
+            orient: Efl.Ui.Panel_Orient; [[The panel orientation.]]
+         }
+      }
+      @property hidden {
+         set {
+            [[Sets the state of the panel.]]
+         }
+         get {
+            [[Gets the state of the panel.]]
+         }
+         values {
+            hidden: bool; [[If $true, the panel will run the animation to disappear.]]
+         }
+      }
+      @property scrollable {
+         set {
+            [[Sets the scrollability of the panel.]]
+         }
+         get {
+            [[Gets the state of the scrollability.
+            ]]
+         }
+         values {
+            scrollable: bool; [[The scrollable state.]]
+         }
+      }
+      @property scrollable_content_size {
+         set {
+            [[Sets the size of the scrollable panel.]]
+         }
+         get {
+            [[Gets the size of the scrollable panel.
+            ]]
+         }
+         values {
+            ratio: double; [[Size ratio]]
+         }
+      }
+      toggle {
+         [[Toggle the hidden state of the panel from code]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Canvas.Group.group_member_add;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.on_access_update;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.interest_region { get; }
+      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.I18n.mirrored { set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+   }
+   events {
+      toggled: void; [[Called when the hidden state was toggled]]
+   }
+}

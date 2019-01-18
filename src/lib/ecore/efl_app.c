@@ -34,10 +34,13 @@ Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
 
 //////////////////////////////////////////////////////////////////////////
 
-EAPI Eo *
-efl_app_get(void)
+EOLIAN static Efl_App*
+_efl_app_app_main_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
 {
-   return efl_main_loop_get();
+   if (_mainloop_singleton) return _mainloop_singleton;
+   _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);
+   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
+   return _mainloop_singleton;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -106,15 +109,6 @@ EFL_CALLBACKS_ARRAY_DEFINE(_event_callback_watch,
                            { EFL_EVENT_CALLBACK_DEL, _cb_event_callback_del });
 
 //////////////////////////////////////////////////////////////////////////
-
-EOLIAN static Efl_Loop *
-_efl_app_loop_main_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
-{
-   if (_mainloop_singleton) return _mainloop_singleton;
-   _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);
-   _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
-   return _mainloop_singleton;
-}
 
 EOLIAN static const Efl_Version *
 _efl_app_build_efl_version_get(const Eo *obj EINA_UNUSED, Efl_App_Data *pd EINA_UNUSED)

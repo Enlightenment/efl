@@ -145,7 +145,7 @@ extern EAPI double _efl_startup_time;
 
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
-#include "efl_selection_types.eot.h"
+#include "efl_ui_selection_types.eot.h"
 
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
@@ -158,7 +158,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_focus_manager_root_focus.eo.h>
 # include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
-# include <efl_ui_translatable.eo.h>
+# include <efl_ui_l10n.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
 # include <efl_access_object.h>
@@ -171,6 +171,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_access_selection.eo.h>
 # include <efl_access_value.eo.h>
 
+# include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_layout_part.eo.h>
@@ -180,7 +181,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_win_part.eo.h>
 # include <efl_ui_bg.eo.h>
-# include <efl_ui_bg_widget.eo.h>
 # include <efl_ui_box.eo.h>
 # include <efl_ui_box_flow.eo.h>
 # include <efl_ui_box_stack.eo.h>
@@ -206,6 +206,8 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_nstate.h>
 # include <efl_ui_calendar.h>
 # include <efl_ui_button_eo.h>
+
+# include "efl_ui_caching_factory.eo.h"
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 # warning Efl.Ui.Multibutton is not available yet without Elementary.h

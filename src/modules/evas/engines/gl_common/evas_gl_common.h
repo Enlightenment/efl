@@ -695,7 +695,7 @@ Evas_GL_Program  *evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
                                                     Eina_Bool alphaonly,
                                                     Shader_Sampling *psam, int *pnomul,
                                                     Shader_Sampling *pmasksam);
-void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p);
+void              evas_gl_common_shader_textures_bind(Evas_GL_Program *p, Eina_Bool recover_prog);
 
 Eina_Bool         evas_gl_common_file_cache_is_dir(const char *file);
 Eina_Bool         evas_gl_common_file_cache_mkdir(const char *dir);
@@ -735,7 +735,7 @@ Evas_GL_Image    *evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_Fil
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, DATA32 *data, int alpha, Evas_Colorspace cspace);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned int h, int alpha, Evas_Colorspace cspace);
 Evas_GL_Image    *evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *im, Evas_Image_Load_Opts *lo, int *error);
-void              evas_gl_common_image_preload_watch(Evas_GL_Image *im);
+void              evas_gl_common_image_preload_done(void *data /*Evas_GL_Image *im*/);
 void              evas_gl_common_image_preload_unwatch(Evas_GL_Image *im);
 Evas_GL_Image    *evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha);
 void              evas_gl_common_image_scale_hint_set(Evas_GL_Image *im, int hint);

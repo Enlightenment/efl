@@ -8,11 +8,14 @@
 #include "elm_suite.h"
 
 static Evas_Object *win, *genlist;
-static Elm_Gen_Item_Class itc;
+static Elm_Gen_Item_Class itc = { .version = ELM_GENLIST_ITEM_CLASS_VERSION };
 static Eo *current;
 static int counter;
 static Efl_Access_Event_Children_Changed_Data ev_data;
 Evas_Object *content;
+
+static int tree_abort_level;
+static int tree_abort;
 
 static void
 verify_item_iteration_api(Elm_Object_Item *parent)
@@ -85,7 +88,7 @@ verify_item_iteration_api(Elm_Object_Item *parent)
      }
 }
 
-EFL_START_TEST (elm_genlist_item_iteration)
+EFL_START_TEST (elm_genlist_test_item_iteration)
 {
    Elm_Object_Item *parent;
    int i;
@@ -116,7 +119,7 @@ EFL_START_TEST (elm_genlist_item_iteration)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_genlist_legacy_type_check)
+EFL_START_TEST (elm_genlist_test_legacy_type_check)
 {
    const char *type;
 
@@ -142,7 +145,7 @@ void test_init(void)
    genlist = elm_genlist_add(win);
 }
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST (elm_genlist_test_atspi_role_get)
 {
    test_init();
 
@@ -155,7 +158,7 @@ EFL_START_TEST (elm_atspi_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_get1)
+EFL_START_TEST(elm_genlist_test_atspi_children_get1)
 {
    test_init();
    Eina_List *children;
@@ -179,7 +182,7 @@ EFL_START_TEST(elm_atspi_children_get1)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_get2)
+EFL_START_TEST(elm_genlist_test_atspi_children_get2)
 {
    test_init();
    Eina_List *children;
@@ -208,7 +211,7 @@ _children_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
    counter++;
 }
 
-EFL_START_TEST(elm_atspi_children_events_add)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_add)
 {
    test_init();
 
@@ -240,7 +243,7 @@ EFL_START_TEST(elm_atspi_children_events_add)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_events_del1)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_del1)
 {
    test_init();
 
@@ -270,7 +273,7 @@ EFL_START_TEST(elm_atspi_children_events_del1)
 }
 EFL_END_TEST
 
-EFL_START_TEST(elm_atspi_children_events_del2)
+EFL_START_TEST(elm_genlist_test_atspi_children_events_del2)
 {
    test_init();
 
@@ -311,7 +314,7 @@ _it_del()
    it_del = 1;
 }
 
-EFL_START_TEST(elm_genlist_item_destroy)
+EFL_START_TEST(elm_genlist_test_item_destroy)
 {
    Elm_Object_Item *git;
 
@@ -327,15 +330,203 @@ EFL_START_TEST(elm_genlist_item_destroy)
 }
 EFL_END_TEST
 
+#define NUM_TREE_ITEMS 10
+
+static Evas_Object *
+genlist_tree_test_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
+{
+   if (!strcmp(part, "elm.swallow.icon"))
+     {
+        Evas_Object *ic = elm_icon_add(obj);
+        elm_image_file_set(ic, ELM_IMAGE_DATA_DIR "/images/logo_small.png", NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_show(ic);
+        return ic;
+     }
+   else if (!strcmp(part, "elm.swallow.end"))
+     {
+        Evas_Object *ck;
+        ck = elm_check_add(obj);
+        evas_object_propagate_events_set(ck, EINA_FALSE);
+        evas_object_show(ck);
+        return ck;
+     }
+   return NULL;
+}
+
+static void
+_focus_set(void *data)
+{
+   elm_genlist_item_selected_set(data, 1);
+   elm_object_item_focus_set(data, 1);
+}
+
+static void
+genlist_tree_test_realize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   evas_object_smart_callback_del(genlist, "realized", genlist_tree_test_realize);
+   ecore_job_add(_focus_set, event_info);
+   elm_object_item_signal_emit(event_info, "elm,action,expand,toggle", "elm");
+}
+
+static void
+genlist_tree_test_realize2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   static unsigned int count;
+
+   if (!elm_genlist_item_parent_get(event_info)) return;
+   if (++count != NUM_TREE_ITEMS) return;
+   evas_object_smart_callback_del(genlist, "realized", genlist_tree_test_realize2);
+   elm_object_item_signal_emit(elm_genlist_first_item_get(genlist), "elm,action,expand,toggle", "elm");
+}
+
+static void
+genlist_tree_test_expand(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   Evas_Object *gl = elm_object_item_widget_get(glit);
+   int i = 0;
+
+   evas_object_smart_callback_add(genlist, "realized", genlist_tree_test_realize2, NULL);
+   for (i = 0; i < NUM_TREE_ITEMS; i++)
+     {
+        elm_genlist_item_append(gl, &itc,
+                                NULL/* item data */,
+                                glit/* parent */,
+                                ELM_GENLIST_ITEM_TREE, NULL/* func */,
+                                NULL/* func data */);
+     }
+}
+
+static void
+_do_quit()
+{
+   itc.func.content_get = NULL;
+   eina_log_abort_on_critical_set(tree_abort);
+   eina_log_abort_on_critical_level_set(tree_abort_level);
+   ecore_main_loop_quit();
+}
+
+static void
+genlist_tree_test_contract(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   ck_assert_int_eq(elm_genlist_item_subitems_count(glit), NUM_TREE_ITEMS);
+   elm_genlist_item_subitems_clear(glit);
+   ecore_job_add(_do_quit, NULL);
+}
+
+static void
+genlist_tree_test_expand_request(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_TRUE);
+}
+
+static void
+genlist_tree_test_contract_request(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_FALSE);
+}
+
+EFL_START_TEST(elm_genlist_test_tree_expand)
+{
+   int i;
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
+
+   itc.func.content_get = genlist_tree_test_content_get;
+
+   genlist = elm_genlist_add(win);
+   elm_genlist_mode_set(genlist, ELM_LIST_COMPRESS);
+   elm_genlist_multi_select_set(genlist, EINA_TRUE);
+
+   evas_object_smart_callback_add(genlist, "expand,request", genlist_tree_test_expand_request, NULL);
+   evas_object_smart_callback_add(genlist, "contract,request", genlist_tree_test_contract_request, NULL);
+   evas_object_smart_callback_add(genlist, "expanded", genlist_tree_test_expand, NULL);
+   evas_object_smart_callback_add(genlist, "contracted", genlist_tree_test_contract, NULL);
+   evas_object_smart_callback_add(genlist, "realized", genlist_tree_test_realize, NULL);
+
+   evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_genlist_item_append(genlist, &itc,
+                           NULL/* item data */, NULL/* parent */,
+                           ELM_GENLIST_ITEM_TREE, NULL/* func */,
+                           NULL/* func data */);
+   for (i = 0; i < 30; i++)
+     elm_genlist_item_append(genlist, &itc,
+                             NULL/* item data */, NULL/* parent */,
+                             0, NULL/* func */,
+                             NULL/* func data */);
+
+   evas_object_show(genlist);
+   evas_object_resize(genlist, 100, 10 + 10 * NUM_TREE_ITEMS);
+   evas_object_show(win);
+   evas_object_resize(win, 100, 10 + 10 * NUM_TREE_ITEMS);
+   tree_abort = eina_log_abort_on_critical_get();
+   tree_abort_level = eina_log_abort_on_critical_level_get();
+   /* this should never trigger errors */
+   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_set(1);
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
+EFL_START_TEST (elm_genlist_test_focus_state)
+{
+   Elm_Object_Item *it;
+   Evas_Object *btn;
+
+   win = win_add_focused(NULL, "genlist", ELM_WIN_BASIC);
+
+   evas_object_show(win);
+
+   btn = elm_button_add(win);
+   evas_object_show(btn);
+   elm_object_focus_set(btn, EINA_TRUE);
+
+   genlist = elm_genlist_add(win);
+
+   it = elm_genlist_item_append(genlist, &itc, NULL, NULL,
+                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   evas_object_show(genlist);
+
+   elm_object_focus_set(genlist, EINA_TRUE);
+   elm_object_item_focus_set(it, EINA_TRUE);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), btn);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), genlist);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_FALSE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_TRUE);
+
+   elm_object_focus_set(genlist, EINA_FALSE);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), genlist);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_FALSE);
+
+   elm_object_focus_set(btn, EINA_TRUE);
+   elm_object_focus_set(genlist, EINA_TRUE);
+   elm_object_item_focus_set(it, EINA_TRUE);
+   evas_object_hide(genlist);
+   ck_assert_ptr_ne(elm_object_focused_object_get(win), genlist);
+   ck_assert_ptr_eq(elm_object_focused_object_get(win), btn);
+   ck_assert_int_eq(elm_object_focus_get(btn), EINA_TRUE);
+   ck_assert_int_eq(elm_object_focus_get(genlist), EINA_FALSE);
+}
+EFL_END_TEST
+
 void elm_test_genlist(TCase *tc)
 {
-   tcase_add_test(tc, elm_genlist_legacy_type_check);
-   tcase_add_test(tc, elm_genlist_item_destroy);
-   tcase_add_test(tc, elm_genlist_item_iteration);
-   tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, elm_atspi_children_get1);
-   tcase_add_test(tc, elm_atspi_children_get2);
-   tcase_add_test(tc, elm_atspi_children_events_add);
-   tcase_add_test(tc, elm_atspi_children_events_del1);
-   tcase_add_test(tc, elm_atspi_children_events_del2);
+   tcase_add_test(tc, elm_genlist_test_legacy_type_check);
+   tcase_add_test(tc, elm_genlist_test_item_destroy);
+   tcase_add_test(tc, elm_genlist_test_item_iteration);
+   tcase_add_test(tc, elm_genlist_test_atspi_role_get);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_get1);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_get2);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_add);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_del1);
+   tcase_add_test(tc, elm_genlist_test_atspi_children_events_del2);
+
+   tcase_add_test(tc, elm_genlist_test_focus_state);
+   tcase_add_test(tc, elm_genlist_test_tree_expand);
 }

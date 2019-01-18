@@ -174,13 +174,21 @@ _evas_gl_common_shader_program_binary_load(Eet_File *ef, unsigned int flags)
      }
 
    p = calloc(1, sizeof(*p));
+
+   GLuint curr_prog = 0;
+   glGetIntegerv(GL_CURRENT_PROGRAM, (GLint *)&curr_prog);
+
    p->flags = flags;
    p->prog = prg;
    p->reset = EINA_TRUE;
    p->bin_saved = EINA_TRUE;
+
+   glUseProgram(prg);
    p->uniform.mvp = glGetUniformLocation(prg, "mvp");
    p->uniform.rotation_id = glGetUniformLocation(prg, "rotation_id");
-   evas_gl_common_shader_textures_bind(p);
+   evas_gl_common_shader_textures_bind(p, EINA_FALSE);
+
+   glUseProgram(curr_prog);
 
 finish:
    if (vtx) glDeleteShader(vtx);
@@ -310,7 +318,7 @@ _evas_gl_common_shader_binary_save(Evas_GL_Shared *shared)
 {
    char bin_dir_path[PATH_MAX];
    char bin_file_path[PATH_MAX];
-   char tmp_file_name[PATH_MAX];
+   char tmp_file_name[PATH_MAX + PATH_MAX + 128];
    int tmpfd = -1, copy;
    Eina_Tmpstr *tmp_file_path = NULL;
    Eet_File *ef = NULL;
@@ -598,7 +606,7 @@ evas_gl_common_shader_generate_and_compile(Evas_GL_Shared *shared, unsigned int 
         shared->needs_shaders_flush = 1;
         p->uniform.mvp = glGetUniformLocation(p->prog, "mvp");
         p->uniform.rotation_id = glGetUniformLocation(p->prog, "rotation_id");
-        evas_gl_common_shader_textures_bind(p);
+        evas_gl_common_shader_textures_bind(p, EINA_TRUE);
         eina_hash_add(shared->shaders_hash, &flags, p);
      }
    else WRN("Failed to compile a shader (flags: %08x)", flags);
@@ -654,7 +662,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
              p = _evas_gl_common_shader_program_binary_load(shared->shaders_cache, autoload[i]);
              if (p)
                {
-                  evas_gl_common_shader_textures_bind(p);
+                  evas_gl_common_shader_textures_bind(p, EINA_TRUE);
                   eina_hash_add(shared->shaders_hash, &autoload[i], p);
                }
           }
@@ -878,7 +886,7 @@ end:
 }
 
 void
-evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
+evas_gl_common_shader_textures_bind(Evas_GL_Program *p, Eina_Bool prog_recover)
 {
    struct {
       const char *name;
@@ -935,6 +943,9 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
 
    if (hastex)
      {
+        GLuint curr_prog = 0;
+        if (prog_recover) glGetIntegerv(GL_CURRENT_PROGRAM, (GLint *)&curr_prog);
+
         glUseProgram(p->prog); // is this necessary??
         for (i = 0; textures[i].name; i++)
           {
@@ -947,6 +958,7 @@ evas_gl_common_shader_textures_bind(Evas_GL_Program *p)
                }
              glUniform1i(loc, p->tex_count++);
           }
+        if (prog_recover) glUseProgram(curr_prog);
      }
 }
 
@@ -981,7 +993,7 @@ evas_gl_common_shader_program_get(Evas_Engine_GL_Context *gc,
              p = _evas_gl_common_shader_program_binary_load(gc->shared->shaders_cache, flags);
              if (p)
                {
-                  evas_gl_common_shader_textures_bind(p);
+                  evas_gl_common_shader_textures_bind(p, EINA_TRUE);
                   eina_hash_add(gc->shared->shaders_hash, &flags, p);
                   goto end;
                }

@@ -18,12 +18,12 @@ namespace eolian_mono {
 
 inline std::string binding_struct_name(attributes::struct_def const& struct_)
 {
-   return struct_.cxx_name;
+    return name_helpers::typedecl_managed_name(struct_);
 }
 
 inline std::string binding_struct_internal_name(attributes::struct_def const& struct_)
 {
-   return struct_.cxx_name + "_StructInternal";
+   return binding_struct_name(struct_) + "_StructInternal";
 }
 
 struct struct_definition_generator
@@ -56,6 +56,8 @@ struct struct_definition_generator
             return false;
        }
 
+      auto struct_name = binding_struct_name(struct_);
+
      // Check whether this is an extern struct without declared fields in .eo file and generate a
      // placeholder field if positive.
      // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
@@ -68,7 +70,6 @@ struct struct_definition_generator
      else
        {
           // Constructor with default parameters for easy struct initialization
-          auto struct_name = binding_struct_name(struct_);
           if(!as_generator(
                       scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
                       << scope_tab << "public " << string << "(\n"
@@ -80,6 +81,16 @@ struct struct_definition_generator
              .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
               return false;
        }
+
+     if(!as_generator(
+            "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
+            << scope_tab << "{\n"
+            << scope_tab << scope_tab << "var tmp = (" << struct_name << "_StructInternal)Marshal.PtrToStructure(ptr, typeof(" << struct_name << "_StructInternal));\n"
+            << scope_tab << scope_tab << "return " << struct_name << "_StructConversion.ToManaged(tmp);\n"
+            << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
 
      if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
 
@@ -115,11 +126,13 @@ struct struct_internal_definition_generator
                               || regular->base_type == "stringshare"
                               || regular->base_type == "any_value_ptr")))
             {
-               if (!as_generator(" internal System.IntPtr " << string << ";\n")
-                   .generate(sink, field_name, context))
+               if (!as_generator("///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 << "public System.IntPtr " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
                  return false;
             }
-          else if (!as_generator(eolian_mono::marshall_annotation(false) << " internal " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+          else if (!as_generator(scope_tab << eolian_mono::marshall_annotation(false) << "\n"
+                                 << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
                    .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
             return false;
        }
@@ -141,7 +154,7 @@ struct struct_internal_definition_generator
                  scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToExternal(struct_);\n"
+                 << scope_tab << scope_tab << "return " << string << "_StructConversion.ToManaged(struct_);\n"
                  << scope_tab << "}\n"
                  << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
                  << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
@@ -174,7 +187,7 @@ struct to_internal_field_convert_generator
       if (klass)
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".raw_handle;\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".NativeHandle;\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -195,7 +208,7 @@ struct to_internal_field_convert_generator
       else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.PrimitiveConversion.ManagedToPointerAlloc(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -209,14 +222,14 @@ struct to_internal_field_convert_generator
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring"))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.MemoryNative.StrDup(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.MemoryNative.StrDup(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (regular && regular->base_type == "stringshare")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_internal_struct." << string << " = eina.Stringshare.eina_stringshare_add(_external_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_internal_struct." << string << " = Eina.Stringshare.eina_stringshare_add(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -272,9 +285,9 @@ struct to_external_field_convert_generator
            if (!as_generator(
                  "\n"
                  << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << interface_name << ") System.Activator.CreateInstance(typeof("
+                 << " = (" << concrete_name << ") System.Activator.CreateInstance(typeof("
                  << concrete_name << "), new System.Object[] {_internal_struct." << string << "});\n"
-                 << scope_tab << scope_tab << "efl.eo.Globals.efl_ref(_internal_struct." << string << ");\n\n")
+                 << scope_tab << scope_tab << "Efl.Eo.Globals.efl_ref(_internal_struct." << string << ");\n\n")
                .generate(sink, std::make_tuple(field_name, field_name, field_name), context))
              return false;
         }
@@ -307,21 +320,21 @@ struct to_external_field_convert_generator
       else if (field.type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = Eina.PrimitiveConversion.PointerToManaged<" << type << ">(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
       else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToExternal(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToManaged(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring" || regular->base_type == "stringshare"))
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = eina.StringConversion.NativeUtf8ToManagedString(_internal_struct." << string << ");\n")
+                 scope_tab << scope_tab << "_external_struct." << string << " = Eina.StringConversion.NativeUtf8ToManagedString(_internal_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -338,14 +351,14 @@ struct to_external_field_convert_generator
       else if (field.type.c_type == "Eina_Value" || field.type.c_type == "const Eina_Value")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ");\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ");\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 scope_tab << scope_tab << "_external_struct." << string << " = new eina.Value(_internal_struct." << string << ", eina.Ownership.Unmanaged);\n"
+                 scope_tab << scope_tab << "_external_struct." << string << " = new Eina.Value(_internal_struct." << string << ", Eina.Ownership.Unmanaged);\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -368,9 +381,10 @@ struct struct_binding_conversion_functions_generator
      // Open conversion class
      if (!as_generator
          (
-          "public static class " << string << "_StructConversion\n{\n"
+          "/// <summary>Conversion class for struct " << name_helpers::typedecl_managed_name(struct_) << "</summary>\n"
+          "public static class " << name_helpers::typedecl_managed_name(struct_) << "_StructConversion\n{\n"
          )
-         .generate(sink, struct_.cxx_name, context))
+         .generate(sink, nullptr, context))
        return false;
 
      // to internal
@@ -404,7 +418,7 @@ struct struct_binding_conversion_functions_generator
      // to external
      if (!as_generator
          (
-          scope_tab << "internal static " << string << " ToExternal(" << string << " _internal_struct)\n"
+          scope_tab << "internal static " << string << " ToManaged(" << string << " _internal_struct)\n"
           << scope_tab << "{\n"
           << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n\n"
          )

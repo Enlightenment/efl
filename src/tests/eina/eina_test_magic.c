@@ -24,12 +24,13 @@
 #include <stdio.h>
 #include <string.h>
 
-#define EINA_MAGIC_DEBUG
-
 #include <Eina.h>
+
 #include "eina_safety_checks.h"
 
 #include "eina_suite.h"
+
+#ifdef EINA_MAGIC_DEBUG
 
 #define EINA_MAGIC_TEST 0x7781fee7
 #define EINA_MAGIC_TEST2 0x42241664
@@ -190,9 +191,12 @@ EFL_START_TEST(eina_magic_simple)
 
 }
 EFL_END_TEST
+#endif
 
-void eina_test_magic(TCase *tc)
+void eina_test_magic(TCase *tc EINA_UNUSED)
 {
+#ifdef EINA_MAGIC_DEBUG
    tcase_add_test(tc, eina_magic_simple);
+#endif
 }
 

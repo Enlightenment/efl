@@ -386,6 +386,8 @@ window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
    int win_x, win_y;
    int sum_x = 0, sum_y = 0;
 
+   if (!ecore_x_display_get()) goto end;
+
    root_window = ecore_x_window_root_get(client_win);
    win = client_win;
 
@@ -397,6 +399,7 @@ window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
         win = ecore_x_window_parent_get(win);
      }
 
+end:
    if (x)
      *x = sum_x;
    if (y)
@@ -1316,6 +1319,7 @@ isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
    EINA_SAFETY_ON_NULL_RETURN(context_scim);
    EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
+   if (!ecore_x_display_get()) return;
    ecore_x_e_virtual_keyboard_state_set
         (context_scim->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
 }
@@ -1329,6 +1333,7 @@ isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
    EINA_SAFETY_ON_NULL_RETURN(context_scim);
    EINA_SAFETY_ON_NULL_RETURN(context_scim->impl);
 
+   if (!ecore_x_display_get()) return;
    ecore_x_e_virtual_keyboard_state_set
         (context_scim->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
 }
@@ -1459,6 +1464,7 @@ panel_slot_process_key_event(int context, const KeyEvent &key)
    EcoreIMFContextISF *ic = find_ic(context);
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " key=" << key.get_key_string() << " ic=" << ic << "\n";
 
+   if (!ecore_x_display_get()) return;
    if (key.is_key_press())
      ecore_x_test_fake_key_press(key.get_key_string().c_str());
 }
@@ -2663,6 +2669,7 @@ slot_beep(IMEngineInstanceBase *si)
    EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *>(si->get_frontend_data());
    EINA_SAFETY_ON_NULL_RETURN(ic);
 
+   if (!ecore_x_display_get()) return;
    if (_focused_ic == ic)
      ecore_x_bell(0);
 }

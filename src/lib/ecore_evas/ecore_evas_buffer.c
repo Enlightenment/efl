@@ -9,6 +9,7 @@
 #include <Ecore.h>
 #include "ecore_private.h"
 #include <Ecore_Input.h>
+#include <Ecore_Input_Evas.h>
 
 #include "Ecore_Evas.h"
 #include "ecore_evas_buffer.h"
@@ -19,6 +20,7 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
 
+   if (!bdata) return;
    if (bdata->image)
      {
         Ecore_Evas *ee2;
@@ -30,11 +32,13 @@ _ecore_evas_buffer_free(Ecore_Evas *ee)
      }
    else
      {
-        bdata->free_func(bdata->data,
-			 bdata->pixels);
+        bdata->free_func(bdata->data, bdata->pixels);
      }
 
    free(bdata);
+   ee->engine.data = NULL;
+
+   ecore_event_evas_shutdown();
 }
 
 static void
@@ -108,6 +112,17 @@ static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x EINA_UNUSED, int y EINA_UNUSED, int w, int h)
 {
    _ecore_evas_resize(ee, w, h);
+}
+
+static void
+_ecore_evas_buffer_ignore_events_set(Ecore_Evas *ee, int val)
+{
+   Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
+
+   if (ee->ignore_events == val) return;
+   ee->ignore_events = val;
+   if (bdata->image)
+     evas_object_pass_events_set(bdata->image, val);
 }
 
 static void
@@ -272,6 +287,7 @@ _ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
 }
@@ -285,6 +301,7 @@ _ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj EINA_UNUSE
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
 }
@@ -298,6 +315,7 @@ _ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_down(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
@@ -311,6 +329,7 @@ _ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_up(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
@@ -341,6 +360,7 @@ _ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNU
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, ev->timestamp, NULL);
 }
@@ -360,6 +380,7 @@ _ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    xx = x;
    yy = y;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
@@ -382,6 +403,7 @@ _ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
    xx = x;
    yy = y;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
@@ -404,6 +426,7 @@ _ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj EINA_UNUS
    xx = x;
    yy = y;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->cur.canvas.xsub - (double)xx) + (double)x;
    yf = (ev->cur.canvas.ysub - (double)yy) + (double)y;
@@ -429,6 +452,7 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
@@ -442,6 +466,7 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, 
    ee = data;
    ev = event_info;
    if (!ee->evas) return;
+   if (ee->ignore_events) return;
    _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
@@ -589,7 +614,7 @@ _ecore_evas_buffer_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y
 
    if (bdata->image)
      _ecore_evas_mouse_move_process((Ecore_Evas*)ee, x, y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
-   else
+   else if (!ee->ignore_events)
      {
         Ecore_Event_Mouse_Move *ev;
 
@@ -683,7 +708,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
+     _ecore_evas_buffer_ignore_events_set,
      _ecore_evas_buffer_alpha_set,
      NULL, //transparent
      NULL, // profiles_set
@@ -723,6 +748,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL, //fn_callback_device_mouse_out_set
      NULL, //fn_pointer_device_xy_get
      _ecore_evas_buffer_prepare,
+     NULL // fn_last_tick_get
 };
 
 static void *
@@ -863,8 +889,18 @@ ecore_evas_buffer_allocfunc_new(int w, int h,
 EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
-    return ecore_evas_buffer_allocfunc_new
+   Ecore_Evas *ee;
+
+   ecore_event_evas_init();
+
+   ee =  ecore_evas_buffer_allocfunc_new
      (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
+
+   if (!ee) ecore_event_evas_shutdown();
+
+   ecore_evas_done(ee, EINA_TRUE);
+
+   return ee;
 }
 
 EAPI const void *
@@ -1051,5 +1087,6 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
      }
 
    _ecore_evas_subregister(ee_target, ee);
+   ecore_event_evas_init();
    return o;
 }

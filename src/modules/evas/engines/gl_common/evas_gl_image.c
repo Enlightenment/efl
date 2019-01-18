@@ -1,21 +1,11 @@
 #include "evas_gl_private.h"
 
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
-
 void
 evas_gl_common_image_alloc_ensure(Evas_GL_Image *im)
 {
    if (!im->im) return;
-#ifdef EVAS_CSERVE2
-   if (evas_cache2_image_cached(&im->im->cache_entry))
-     im->im = (RGBA_Image *)evas_cache2_image_size_set(&im->im->cache_entry,
-                                                        im->w, im->h);
-   else
-#endif
-     im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry,
-                                                      im->w, im->h);
+   im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry,
+                                                    im->w, im->h);
 }
 
 EAPI void
@@ -27,14 +17,7 @@ evas_gl_common_image_all_unload(Evas_Engine_GL_Context *gc)
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
         if (im->im)
-          {
-#ifdef EVAS_CSERVE2
-             if (evas_cache2_image_cached(&im->im->cache_entry))
-               evas_cache2_image_unload_data(&im->im->cache_entry);
-             else
-#endif
-               evas_cache_image_unload_data(&im->im->cache_entry);
-          }
+          evas_cache_image_unload_data(&im->im->cache_entry);
         if (im->tex)
           {
              if (!im->tex->pt->dyn.img)
@@ -150,8 +133,8 @@ _evas_gl_cspace_list_fill(Evas_Engine_GL_Context *gc)
    CS_APPEND(EVAS_COLORSPACE_ARGB8888);
 }
 
-static void
-preload_done(void *data)
+void
+evas_gl_common_image_preload_done(void *data)
 {
    Evas_GL_Image *im = data;
 
@@ -192,26 +175,9 @@ found_cspace:
         im->w = im->im->cache_entry.w;
         im->h = im->im->cache_entry.h;
      }
-   evas_gl_common_image_preload_unwatch(im);
 }
 
-void
-evas_gl_common_image_preload_watch(Evas_GL_Image *im)
-{
-   Evas_Cache_Target *tg;
-
-   if (!im->im) return;
-   tg = calloc(1, sizeof(Evas_Cache_Target));
-   if (tg)
-     {
-        tg->simple_cb = preload_done;
-        tg->simple_data = im;
-        im->im->cache_entry.targets =  (Evas_Cache_Target *)
-          eina_inlist_append(EINA_INLIST_GET(im->im->cache_entry.targets),
-                             EINA_INLIST_GET(tg));
-     }
-}
-
+//FIXME: This is a hacky way. Need an proper interface...
 void
 evas_gl_common_image_preload_unwatch(Evas_GL_Image *im)
 {
@@ -221,7 +187,7 @@ evas_gl_common_image_preload_unwatch(Evas_GL_Image *im)
    if (!im->im) return;
    EINA_INLIST_FOREACH_SAFE(im->im->cache_entry.targets, l2, tg)
      {
-        if ((tg->simple_cb != preload_done) || (tg->simple_data != im))
+        if ((tg->preloaded_cb != evas_gl_common_image_preload_done) || (tg->preloaded_data != im))
           continue;
         tg->delete_me = EINA_TRUE;
         break;
@@ -267,12 +233,7 @@ evas_gl_common_image_new_from_rgbaimage(Evas_Engine_GL_Context *gc, RGBA_Image *
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im)
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&im_im->cache_entry))
-          evas_cache2_image_close(&(im_im->cache_entry));
-        else
-#endif
-          evas_cache_image_drop(&(im_im->cache_entry));
+        evas_cache_image_drop(&(im_im->cache_entry));
         if (error) *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
@@ -324,26 +285,6 @@ Evas_GL_Image *
 evas_gl_common_image_mmap(Evas_Engine_GL_Context *gc, Eina_File *f, const char *key, Evas_Image_Load_Opts *lo, int *error)
 {
    RGBA_Image *im_im;
-
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get() && !eina_file_virtual(f))
-     {
-        im_im = (RGBA_Image *) evas_cache2_image_open
-          (evas_common_image_cache2_get(), eina_file_filename_get(f), key, lo, error);
-        if (im_im)
-          {
-             *error = evas_cache2_image_open_wait(&im_im->cache_entry);
-             if ((*error != EVAS_LOAD_ERROR_NONE)
-                 && im_im->cache_entry.animated.animated)
-               {
-                  evas_cache2_image_close(&im_im->cache_entry);
-                  im_im = NULL;
-               }
-             else
-               return evas_gl_common_image_new_from_rgbaimage(gc, im_im, lo, error);
-          }
-     }
-#endif
 
    im_im = evas_common_load_image_from_mmap(f, key, lo, error);
    if (!im_im) return NULL;
@@ -543,12 +484,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    im->alpha = alpha;
    if (!im->im) return im;
    evas_gl_common_image_alloc_ensure(im);
-#ifdef EVAS_CSERVE2
-   if (evas_cache2_image_cached(&im->im->cache_entry))
-     evas_cache2_image_load_data(&im->im->cache_entry);
-   else
-#endif
-     evas_cache_image_load_data(&im->im->cache_entry);
+   evas_cache_image_load_data(&im->im->cache_entry);
    im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
 
    if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
@@ -583,12 +519,7 @@ evas_gl_common_image_native_enable(Evas_GL_Image *im)
      }
    if (im->im)
      {
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&im->im->cache_entry))
-          evas_cache2_image_close(&im->im->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&im->im->cache_entry);
+        evas_cache_image_drop(&im->im->cache_entry);
         im->im = NULL;
      }
    if (im->tex)
@@ -607,12 +538,7 @@ evas_gl_common_image_native_disable(Evas_GL_Image *im)
 {
    if (im->im)
      {
-#ifdef EVAS_CSERVE2
-        if (!evas_cache2_image_cached(&im->im->cache_entry))
-          evas_cache2_image_close(&im->im->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&im->im->cache_entry);
+        evas_cache_image_drop(&im->im->cache_entry);
         im->im = NULL;
      }
    if (im->tex)
@@ -681,12 +607,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
           }
         if (im->im)
           {
-#ifdef EVAS_CSERVE2
-             if (evas_cache2_image_cached(&im->im->cache_entry))
-               evas_cache2_image_close(&im->im->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&im->im->cache_entry);
+             evas_cache_image_drop(&im->im->cache_entry);
              im->im = NULL;
           }
         if (im->tex)
@@ -701,12 +622,7 @@ evas_gl_common_image_content_hint_set(Evas_GL_Image *im, int hint)
      {
         if (im->im)
           {
-#ifdef EVAS_CSERVE2
-             if (evas_cache2_image_cached(&im->im->cache_entry))
-               evas_cache2_image_close(&im->im->cache_entry);
-             else
-#endif
-               evas_cache_image_drop(&im->im->cache_entry);
+             evas_cache_image_drop(&im->im->cache_entry);
              im->im = NULL;
           }
         if (im->tex)
@@ -775,14 +691,7 @@ evas_gl_common_image_free(Evas_GL_Image *im)
      }
    if (im->tex) evas_gl_common_texture_free(im->tex, EINA_TRUE);
    if (im->im)
-     {
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&im->im->cache_entry))
-          evas_cache2_image_close(&im->im->cache_entry);
-        else
-#endif
-          evas_cache_image_drop(&im->im->cache_entry);
-     }
+     evas_cache_image_drop(&im->im->cache_entry);
 
    free(im);
 }
@@ -842,12 +751,7 @@ evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, un
    if (im->im)
      {
         evas_gl_common_image_alloc_ensure(im);
-#ifdef EVAS_CSERVE2
-        if (evas_cache2_image_cached(&im->im->cache_entry))
-          im->im = (RGBA_Image *)evas_cache2_image_dirty(&im->im->cache_entry, x, y, w, h);
-        else
-#endif
-          im->im = (RGBA_Image *)evas_cache_image_dirty(&im->im->cache_entry, x, y, w, h);
+        im->im = (RGBA_Image *)evas_cache_image_dirty(&im->im->cache_entry, x, y, w, h);
      }
    im->dirty = 1;
 }
@@ -859,12 +763,8 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
    if (!im->im) return;
 
    ie = &im->im->cache_entry;
-   if (!im->tex)
-     {
-        if (ie->preload) return;
-        im->w = ie->w;
-        im->h = ie->h;
-     }
+   if (!im->tex && ie->preload) return;
+
    evas_gl_common_image_alloc_ensure(im);
    // alloc ensure can change im->im, so only get the local variable later.
    ie = &im->im->cache_entry;
@@ -889,7 +789,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
      }
    else
  */
-
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
@@ -907,57 +806,37 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
          if ((im->tex) &&
              ((im->dirty) || (ie->animated.animated) || (ie->flags.updated_data)))
           {
-#ifdef EVAS_CSERVE2
-              if (evas_cache2_image_cached(ie))
-                {
-                   evas_cache2_image_load_data(ie);
-                   evas_gl_common_texture_update(im->tex, im->im);
-                   evas_cache2_image_unload_data(ie);
-                }
-              else
-#endif
-                {
-                   evas_cache_image_load_data(ie);
-                   evas_gl_common_texture_update(im->tex, im->im);
-                   evas_cache_image_unload_data(ie);
-                }
-             ie->flags.updated_data = 0;
+             ie->load_error = evas_cache_image_load_data(ie);
+             evas_gl_common_texture_update(im->tex, im->im);
+             evas_cache_image_unload_data(ie);
           }
-        else if (!im->tex && !ie->load_error)
+        else if (!im->tex &&
+                 ((ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_NONE) ||
+                  (ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED)))
           {
-#ifdef EVAS_CSERVE2
-             if (evas_cache2_image_cached(ie))
-               {
-                  evas_cache2_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
-                  evas_cache2_image_unload_data(ie);
-               }
-             else
-#endif
-               {
-                  evas_cache_image_load_data(ie);
-                  im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
-                  evas_cache_image_unload_data(ie);
-               }
+             ie->load_error = evas_cache_image_load_data(ie);
+             im->tex = evas_gl_common_texture_new(gc, im->im, im->disable_atlas);
+             evas_cache_image_unload_data(ie);
           }
+        ie->flags.updated_data = EINA_FALSE;
         im->dirty = 0;
-        if (!im->tex) return;
-	break;
+        break;
       case EVAS_COLORSPACE_ETC1_ALPHA:
         if ((im->tex) && (im->dirty))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              evas_gl_common_texture_rgb_a_pair_update(im->tex, im->im);
              evas_cache_image_unload_data(ie);
           }
-        else if (!im->tex && !ie->load_error)
+        else if (!im->tex &&
+                 ((ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_NONE) ||
+                  (ie->load_error == EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED)))
           {
-             evas_cache_image_load_data(ie);
+             ie->load_error = evas_cache_image_load_data(ie);
              im->tex = evas_gl_common_texture_rgb_a_pair_new(gc, im->im);
              evas_cache_image_unload_data(ie);
           }
         im->dirty = 0;
-        if (!im->tex) return;
         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
@@ -971,7 +850,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              im->tex = evas_gl_common_texture_yuv_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
-        if (!im->tex) return;
         break;
       case EVAS_COLORSPACE_YCBCR422601_PL:
         if ((im->tex) && (im->dirty))
@@ -984,7 +862,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              im->tex = evas_gl_common_texture_yuy2_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
-        if (!im->tex) return;
         break;
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
         if ((im->tex) && (im->dirty))
@@ -997,7 +874,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              im->tex = evas_gl_common_texture_nv12_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
-        if (!im->tex) return;
         break;
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
         if ((im->tex) && (im->dirty))
@@ -1010,7 +886,6 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
              im->tex = evas_gl_common_texture_nv12tiled_new(gc, im->cs.data, ie->w, ie->h);
              im->dirty = 0;
           }
-        if (!im->tex) return;
         break;
       default:
         ERR("unhandled img format colorspace=%d", im->cs.space);

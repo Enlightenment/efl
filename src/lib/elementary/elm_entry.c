@@ -143,18 +143,24 @@ _file_load(const char *file)
    Eina_File *f;
    char *text = NULL;
    void *tmp = NULL;
+   size_t size;
 
    f = eina_file_open(file, EINA_FALSE);
    if (!f) return NULL;
 
-   tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
-   if (!tmp) goto on_error;
+   size = eina_file_size_get(f);
+   if (size)
+     {
+        tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+        if (!tmp) goto on_error;
+     }
 
-   text = malloc(eina_file_size_get(f) + 1);
+   text = malloc(size + 1);
    if (!text) goto on_error;
 
-   memcpy(text, tmp, eina_file_size_get(f));
-   text[eina_file_size_get(f)] = 0;
+   if (size)
+     memcpy(text, tmp, size);
+   text[size] = 0;
 
    if (eina_file_map_faulted(f, tmp))
      {
@@ -855,22 +861,22 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
-   Efl_Ui_Theme_Apply theme_apply;
+   Efl_Ui_Theme_Apply_Result theme_apply;
    int cursor_pos;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_FAILED);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
    theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
-   if (!theme_apply) return EFL_UI_THEME_APPLY_FAILED;
+   if (!theme_apply) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -882,6 +888,12 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_scale_set
      (wd->resize_obj,
      efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
+   if (sd->scroll)
+     {
+        edje_object_scale_set
+           (sd->entry_edje,
+            efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
+     }
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -951,7 +963,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->scroll)
      {
-        Efl_Ui_Theme_Apply ok = EFL_UI_THEME_APPLY_FAILED;
+        Efl_Ui_Theme_Apply_Result ok = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
         efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -1001,7 +1013,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
-   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_OBJECT_EVENT_THEME_CHANGED, NULL);
+   efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
 
@@ -1399,8 +1411,7 @@ _hoversel_position(Evas_Object *obj)
      cx = w - mw;
    if (cy + mh > h)
      cy = h - mh;
-   evas_object_move(sd->hoversel, x + cx, y + cy);
-   evas_object_resize(sd->hoversel, mw, mh);
+   evas_object_geometry_set(sd->hoversel, x + cx, y + cy, mw, mh);
 }
 
 static void
@@ -1698,6 +1709,7 @@ _menu_call(Evas_Object *obj)
         else elm_widget_scroll_freeze_push(obj);
 
         sd->hoversel = elm_hoversel_add(obj);
+        elm_object_tree_focus_allow_set(sd->hoversel, EINA_FALSE);
         context_menu_orientation = edje_object_data_get
             (sd->entry_edje, "context_menu_orientation");
 
@@ -1916,8 +1928,7 @@ _magnifier_move(void *data)
    if (ty > 0) py += ty;
    if (-(tx - pw) > tw) pw -= (-((tx - pw) + tw));
    if (-(ty - ph) > th) ph -= (-((ty - ph) + th));
-   evas_object_move(sd->mgf_clip, px, py);
-   evas_object_resize(sd->mgf_clip, pw, ph);
+   evas_object_geometry_set(sd->mgf_clip, px, py, pw, ph);
 }
 
 static void
@@ -2587,8 +2598,8 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
    ei.anchor_info = info;
 
    sd->anchor_hover.pop = elm_icon_add(obj);
-   evas_object_move(sd->anchor_hover.pop, info->x, info->y);
-   evas_object_resize(sd->anchor_hover.pop, info->w, info->h);
+   evas_object_geometry_set(sd->anchor_hover.pop,
+                            info->x, info->y, info->w, info->h);
 
    sd->anchor_hover.hover = elm_hover_add(obj);
    evas_object_event_callback_add
@@ -3026,6 +3037,17 @@ _text_append_idler(void *data)
 }
 
 static void
+my_string_copy_truncate(char *dest, const char *src, size_t len)
+{
+   char *p;
+   for (p = dest; len > 0; p++, src++, len--)
+     {
+        *p = *src;
+        if (*src == 0) break;
+     }
+}
+
+static void
 _chars_add_till_limit(Evas_Object *obj,
                       char **text,
                       int can_add,
@@ -3088,8 +3110,8 @@ _chars_add_till_limit(Evas_Object *obj,
                   return;
                }
              can_add = 0;
-             strncpy(new_text, new_text + idx,
-                     current_len - ((new_text + idx) - *text));
+             my_string_copy_truncate(new_text, new_text + idx,
+                                     current_len - ((new_text + idx) - *text));
              current_len -= idx;
              (*text)[current_len] = 0;
           }
@@ -4109,6 +4131,7 @@ _elm_entry_efl_object_constructor(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_ENTRY);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_ADD, _cb_added, NULL);
    efl_event_callback_add(obj, EFL_EVENT_CALLBACK_DEL, _cb_deleted, NULL);
+   legacy_object_focus_handle(obj);
 
    return obj;
 }

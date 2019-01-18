@@ -46,6 +46,7 @@ struct _Elm_Pan_Smart_Data
 {
    Evas_Object                   *self;
    Evas_Object                   *content;
+   Evas_Object                   *interface_object;
    Evas_Coord                     x, y, w, h;
    Evas_Coord                     content_w, content_h, px, py;
 };
@@ -99,22 +100,20 @@ struct _Elm_Scrollable_Smart_Interface_Data
       struct
       {
          Evas_Coord x, y;
-         double     timestamp, localtimestamp;
+         double     timestamp;
       } history[60];
 
-      struct
-      {
-         double tadd, dxsum, dysum;
-         double est_timestamp_diff;
-      } hist;
+      double est_timestamp_diff;
 
       double          dragged_began_timestamp;
       double          anim_start;
       double          anim_start2;
       double          anim_start3;
+      double          anim_dur;
+
       double          onhold_vx, onhold_vy, onhold_tlast,
                       onhold_vxe, onhold_vye;
-      double          extra_time;
+
       double          last_time_x_wheel;
       double          last_time_y_wheel;
 

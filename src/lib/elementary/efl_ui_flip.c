@@ -97,12 +97,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_flip_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    _sizing_eval(obj);
 
@@ -1204,29 +1204,25 @@ _configure(Evas_Object *obj)
      {
         fsize = (double)w * sd->dir_hitsize[0];
         elm_coords_finger_size_adjust(0, NULL, 1, &fsize);
-        evas_object_move(sd->event[0], x, y);
-        evas_object_resize(sd->event[0], w, fsize);
+        evas_object_geometry_set(sd->event[0], x, y, w, fsize);
      }
    if (sd->event[1])
      {
         fsize = (double)w * sd->dir_hitsize[1];
         elm_coords_finger_size_adjust(0, NULL, 1, &fsize);
-        evas_object_move(sd->event[1], x, y + h - fsize);
-        evas_object_resize(sd->event[1], w, fsize);
+        evas_object_geometry_set(sd->event[1], x, y + h - fsize, w, fsize);
      }
    if (sd->event[2])
      {
         fsize = (double)h * sd->dir_hitsize[2];
         elm_coords_finger_size_adjust(1, &fsize, 0, NULL);
-        evas_object_move(sd->event[2], x, y);
-        evas_object_resize(sd->event[2], fsize, h);
+        evas_object_geometry_set(sd->event[2], x, y, fsize, h);
      }
    if (sd->event[3])
      {
         fsize = (double)h * sd->dir_hitsize[3];
         elm_coords_finger_size_adjust(1, &fsize, 0, NULL);
-        evas_object_move(sd->event[3], x + w - fsize, y);
-        evas_object_resize(sd->event[3], fsize, h);
+        evas_object_geometry_set(sd->event[3], x + w - fsize, y, fsize, h);
      }
 }
 
@@ -1636,7 +1632,7 @@ _up_cb(void *data,
    else sd->next_state = !sd->state;
    tm *= 1.0; // FIXME: config for anim time
    ecore_animator_del(sd->animator);
-   sd->animator = ecore_animator_timeline_add(tm, _event_anim, sd);
+   sd->animator = ecore_evas_animator_timeline_add(fl, tm, _event_anim, sd);
    sd->len = tm;
    sd->start = ecore_loop_time_get();
    sd->manual = EINA_TRUE;
@@ -1820,23 +1816,20 @@ _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);
-   evas_object_move(priv->clip, -49999, -49999);
-   evas_object_resize(priv->clip, 99999, 99999);
+   evas_object_geometry_set(priv->clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->clip, obj);
 
    priv->front.clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->front.clip, EINA_TRUE);
    evas_object_data_set(priv->front.clip, "_elm_leaveme", obj);
-   evas_object_move(priv->front.clip, -49999, -49999);
-   evas_object_resize(priv->front.clip, 99999, 99999);
+   evas_object_geometry_set(priv->front.clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->front.clip, obj);
    evas_object_clip_set(priv->front.clip, priv->clip);
 
    priv->back.clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->back.clip, EINA_TRUE);
    evas_object_data_set(priv->back.clip, "_elm_leaveme", obj);
-   evas_object_move(priv->back.clip, -49999, -49999);
-   evas_object_resize(priv->back.clip, 99999, 99999);
+   evas_object_geometry_set(priv->back.clip, -49999, -49999, 99999, 99999);
    evas_object_smart_member_add(priv->back.clip, obj);
    evas_object_clip_set(priv->back.clip, priv->clip);
 
@@ -1897,7 +1890,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
                 Eina_Bool front,
                 Elm_Flip_Mode mode)
 {
-   if (!sd->animator) sd->animator = ecore_animator_add(_animate, obj);
+   if (!sd->animator) sd->animator = ecore_evas_animator_add(obj, _animate, obj);
 
    sd->mode = mode;
    sd->start = ecore_loop_time_get();
@@ -2144,7 +2137,7 @@ _update_front_back(Eo *obj, Efl_Ui_Flip_Data *pd)
 static void
 _content_added(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
-   evas_object_smart_member_add(content, obj);
+   elm_widget_sub_object_add(obj, content);
 
    if (!pd->front.content)
      {
@@ -2165,7 +2158,7 @@ _content_removed(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
    int index, count;
    Eina_Bool state;
 
-   evas_object_smart_member_del(content);
+   elm_widget_sub_object_del(obj, content);
    // if its not the front or back object just return.
    if ((pd->front.content != content) ||
        (pd->back.content != content))
@@ -2220,6 +2213,7 @@ EOLIAN static Eina_Bool
 _efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
 {
    pd->content_list = eina_list_remove(pd->content_list, content);
+   pd->content_list = eina_list_remove(pd->content_list, content);
    _content_removed(obj, pd, content);
    return EINA_TRUE;
 }
@@ -2228,6 +2222,7 @@ EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    _content_removed(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -2235,6 +2230,7 @@ _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subo
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2243,6 +2239,7 @@ _efl_ui_flip_efl_pack_pack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
 
@@ -2252,6 +2249,7 @@ _efl_ui_flip_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_E
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append(pd->content_list, subobj);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2260,6 +2258,7 @@ _efl_ui_flip_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Ent
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2268,6 +2267,7 @@ _efl_ui_flip_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_
 EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;
@@ -2278,6 +2278,7 @@ _efl_ui_flip_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Enti
 {
    Efl_Gfx_Entity *existing = NULL;
    existing = eina_list_nth(pd->content_list, index);
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
    _content_added(obj, pd, subobj);
    return EINA_TRUE;

@@ -93,9 +93,15 @@ _emotion_modules_load(void)
                   const char **itr;
                   for (itr = built_modules; *itr != NULL; itr++)
                     {
+                       Eina_Module *m;
                        bs_mod_get(buf, sizeof(buf), "emotion", *itr);
-                       _emotion_modules = eina_module_list_get(_emotion_modules, buf,
-                                                               EINA_FALSE, NULL, NULL);
+                       m = eina_module_new(buf);
+
+                       if (!m) continue;
+
+                       if (!_emotion_modules)
+                         _emotion_modules = eina_array_new(4);
+                       eina_array_push(_emotion_modules, m);
                     }
                   return;
                }
@@ -313,13 +319,13 @@ _find_mod(const char *name)
    EINA_ARRAY_ITER_NEXT(_emotion_modules, i, m, iterator)
      {
         const char *path = eina_module_file_get(m);
-        const char *p, *p1, *p2;
-        int found, len;
+        const char *p, *p1, *p2, *p3;
+        int found, len, len2;
 
         if ((!path) || (!path[0])) continue;
         // path is /*/modulename/ARCH/module.* - we want "modulename"
         found = 0;
-        p1 = p2 = NULL;
+        p1 = p2 = p3 = NULL;
         for (p = path + strlen(path) - 1;
              p > path;
              p--)
@@ -330,6 +336,7 @@ _find_mod(const char *name)
                   // found == 1 -> p = /module.*
                   // found == 2 -> p = /ARCH/module.*
                   // found == 3 -> p = /modulename/ARCH/module.*
+                  if (found == 1) p3 = p;
                   if (found == 2) p2 = p;
                   if (found == 3)
                     {
@@ -342,9 +349,10 @@ _find_mod(const char *name)
           {
              p1++;
              len = p2 - p1;
-             if (len == inlen)
+             len2 = p3 - (p2 + 1);
+             if (len == inlen || len2 == inlen)
                {
-                  if (!strncmp(p1, name, len)) return m;
+                  if (!strncmp(p1, name, len) || !strncmp(p2 + 1, name, len2)) return m;
                }
           }
      }

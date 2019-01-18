@@ -1,4 +1,4 @@
-class Efl.Ui.Progressbar_Legacy_Part (Efl.Ui.Layout.Part_Content)
+class Efl.Ui.Progressbar_Legacy_Part extends Efl.Ui.Layout_Part_Content
 {
    [[Elementary progressbar internal part class]]
    data: null;

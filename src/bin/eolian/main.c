@@ -14,12 +14,13 @@ enum
    GEN_H_LEGACY = 1 << 1,
    GEN_H_STUB   = 1 << 2,
    GEN_C        = 1 << 3,
-   GEN_C_IMPL   = 1 << 4
+   GEN_C_IMPL   = 1 << 4,
+   GEN_D        = 1 << 5
 };
 
-static const char *_dexts[5] =
+static const char *_dexts[6] =
 {
-  ".h", ".legacy.h", ".stub.h", ".c", ".c"
+  ".h", ".legacy.h", ".stub.h", ".c", ".c", ".d"
 };
 
 static int
@@ -50,6 +51,7 @@ _print_usage(const char *progn, FILE *outf)
                  "  s: Stub C header file (.eo.stub.h/.eot.stub.h)\n"
                  "  c: C source file (.eo.c)\n"
                  "  i: Implementation file (.c, merged with existing)\n"
+                 "  d: Make-style dependencies (.d)\n"
                  "\n"
                  "By default, the 'hc' set is used ('h' for .eot files).\n\n"
                  "The system-wide Eolian directory is scanned for eo files\n"
@@ -98,6 +100,9 @@ _try_set_out(char t, char **outs, const char *val, int *what)
         pos = _get_bit_pos(GEN_C_IMPL);
         *what |= GEN_C_IMPL;
         break;
+      case 'd':
+        pos = _get_bit_pos(GEN_D);
+        *what |= GEN_D;
      }
    if (pos < 0)
      return EINA_FALSE;
@@ -420,12 +425,68 @@ _write_impl(const Eolian_State *eos, const char *ofname, const char *ifname)
    return ret;
 }
 
+static void
+_append_dep_line(Eina_Strbuf *buf, Eina_Strbuf *dbuf, char **outs, int gen_what, int what)
+{
+   if (!(gen_what & what))
+     return;
+   eina_strbuf_append(buf, outs[_get_bit_pos(what)]);
+   eina_strbuf_append_buffer(buf, dbuf);
+}
+
+static Eina_Bool
+_write_deps(const Eolian_State *eos, const char *ofname, const char *ifname,
+            char **outs, int gen_what)
+{
+   INF("generating deps: %s", ofname);
+
+   Eina_Bool ret = EINA_TRUE;
+   Eina_Strbuf *buf = eina_strbuf_new();
+   Eina_Strbuf *dbuf = eina_strbuf_new();
+
+   const Eolian_Unit *un = eolian_state_unit_by_file_get(eos, ifname);
+   if (!un)
+     {
+        ret = EINA_FALSE;
+        goto result;
+     }
+
+   eina_strbuf_append(dbuf, ": ");
+   /* every generated file depends on its .eo/.eot file */
+   eina_strbuf_append(dbuf, eolian_unit_file_path_get(un));
+
+   const Eolian_Unit *dun;
+   Eina_Iterator *deps = eolian_unit_children_get(un);
+   EINA_ITERATOR_FOREACH(deps, dun)
+     {
+        const char *dpath = eolian_unit_file_path_get(dun);
+        if (!dpath)
+          continue;
+        eina_strbuf_append_char(dbuf, ' ');
+        eina_strbuf_append(dbuf, dpath);
+     }
+   eina_iterator_free(deps);
+   eina_strbuf_append_char(dbuf, '\n');
+
+   _append_dep_line(buf, dbuf, outs, gen_what, GEN_H);
+   _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_LEGACY);
+   _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_STUB);
+   _append_dep_line(buf, dbuf, outs, gen_what, GEN_C);
+   _append_dep_line(buf, dbuf, outs, gen_what, GEN_C_IMPL);
+
+   ret = _write_file(ofname, buf);
+result:
+   eina_strbuf_free(dbuf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 int
 main(int argc, char **argv)
 {
    int pret = 1;
 
-   char *outs[5] = { NULL, NULL, NULL, NULL, NULL };
+   char *outs[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
    char *basen = NULL;
    Eina_List *includes = NULL;
 
@@ -477,6 +538,9 @@ main(int argc, char **argv)
                  break;
                case 'i':
                  gen_what |= GEN_C_IMPL;
+                 break;
+               case 'd':
+                 gen_what |= GEN_D;
                  break;
                default:
                  fprintf(stderr, "unknown type: '%c'\n", *wstr);
@@ -575,6 +639,8 @@ main(int argc, char **argv)
      succ = _write_source(eos, outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
    if (succ && (gen_what & GEN_C_IMPL))
      succ = _write_impl(eos, outs[_get_bit_pos(GEN_C_IMPL)], eobn);
+   if (succ && (gen_what & GEN_D))
+     succ = _write_deps(eos, outs[_get_bit_pos(GEN_D)], eobn, outs, gen_what);
 
    if (!succ)
      goto end;

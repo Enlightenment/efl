@@ -1,4 +1,4 @@
-class Elm.Index.Item(Elm.Widget.Item, Efl.Access.Widget.Action, Efl.Ui.Legacy)
+class Elm.Index.Item extends Elm.Widget.Item implements Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary index item class]]
    legacy_prefix: elm_index_item;

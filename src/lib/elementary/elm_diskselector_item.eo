@@ -1,4 +1,4 @@
-class Elm.Diskselector.Item(Elm.Widget.Item, Efl.Ui.Legacy)
+class Elm.Diskselector.Item extends Elm.Widget.Item implements Efl.Ui.Legacy
 {
       [[Elementary diskselector item class]]
       legacy_prefix: elm_diskselector_item;

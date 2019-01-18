@@ -1,0 +1,52 @@
+enum Efl.Ui.Text_Scroller_Mode
+{
+   default = 0,
+   singleline = 0,
+   multiline = 1,
+}
+
+class Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
+{
+   [[Internal-usage text scroller class.
+
+     This class is a special scroller that evaluates its size based on the
+     $Efl.Canvas.Text object it holds. On initialization the object is meant
+     to be passed along a container (so that other objects such as
+     a "guide hint" text object are store in such container.
+   ]]
+   methods {
+      @property scroller_mode {
+         [[Mode of operation for the scroller]]
+         set {
+            [[Sets mode to either default (singleline) or multiline]]
+         }
+         values {
+            mode: Efl.Ui.Text_Scroller_Mode;
+         }
+      }
+      @property viewport_clip {
+         [[The viewport's clip object]]
+         get {
+            [[Gets viewport's clip object]]
+         }
+         values {
+            clip: Efl.Object;
+         }
+      }
+      initialize {
+         [[The Efl.Canvas.Text content of this scroller.
+           This should be called upon constructing the object.
+         ]]
+         params {
+            text_obj: Efl.Canvas.Text @nullable; [[The text object to query]]
+            text_table: Efl.Ui.Table @nullable; [[The table container of
+               the $text_obj]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+   }
+}

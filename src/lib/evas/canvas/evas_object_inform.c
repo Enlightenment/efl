@@ -66,14 +66,23 @@ evas_object_inform_call_image_preloaded(Evas_Object *eo_obj)
    int event_id;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   if (!_evas_object_image_preloading_get(eo_obj)) return;
-   _evas_image_load_post_update(eo_obj, obj);
-   _evas_object_image_preloading_check(eo_obj);
-   _evas_object_image_preloading_set(eo_obj, 0);
 
-   event_id = _evas_object_event_new();
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_PRELOAD);
-   _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+   unsigned char preload = _evas_object_image_preloading_get(eo_obj);
+
+   //Even cancelled, obj needs to draw image.
+   _evas_image_load_post_update(eo_obj, obj);
+
+   if ((preload & EVAS_IMAGE_PRELOADING) ||
+     /* Boom! This cancellation call stack is in the intermediate render sequence. Need better idea.
+          So far, this cancellation is triggered by other non-preload image instances,
+          which doesn't require preloading. So by mechasnim we cancel preload other instances as well.
+          and mimic as it finished preloading done. */
+       (preload & EVAS_IMAGE_PRELOAD_CANCEL))
+     {
+        event_id = _evas_object_event_new();
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_PRELOAD);
+        _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
+     }
 }
 
 void

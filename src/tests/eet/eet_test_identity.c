@@ -156,11 +156,17 @@ EFL_START_TEST(eet_test_identity_open_pkcs8)
 }
 EFL_END_TEST
 
+static int
+pw_cb(char *buf EINA_UNUSED, int size EINA_UNUSED, int rwflag EINA_UNUSED, void *data EINA_UNUSED)
+{
+   return 0;
+}
+
 EFL_START_TEST(eet_test_identity_open_pkcs8_enc)
 {
    Eet_Key *k = NULL;
 
-   k = eet_identity_open(_cert_pem, _key_enc_pem, NULL);
+   k = eet_identity_open(_cert_pem, _key_enc_pem, pw_cb);
    fail_if(k);
 
    if (k)

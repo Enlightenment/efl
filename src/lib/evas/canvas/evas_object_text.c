@@ -103,8 +103,6 @@ static void evas_object_text_render_post(Evas_Object *eo_obj,
 					 Evas_Object_Protected_Data *obj,
 					 void *type_private_data);
 
-static unsigned int evas_object_text_id_get(Evas_Object *eo_obj);
-static unsigned int evas_object_text_visual_id_get(Evas_Object *eo_obj);
 static void *evas_object_text_engine_data_get(Evas_Object *eo_obj);
 
 static int evas_object_text_is_opaque(Evas_Object *eo_obj,
@@ -123,12 +121,8 @@ static const Evas_Object_Func object_func =
      evas_object_text_render,
      evas_object_text_render_pre,
      evas_object_text_render_post,
-     evas_object_text_id_get,
-     evas_object_text_visual_id_get,
      evas_object_text_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
      NULL,
      NULL,
      evas_object_text_is_opaque,
@@ -139,8 +133,7 @@ static const Evas_Object_Func object_func =
      NULL,
      NULL,
      NULL,
-     NULL, // render_prepare
-     NULL
+     NULL // render_prepare
 };
 
 /* the actual api call to add a rect */
@@ -376,10 +369,9 @@ _evas_object_text_vert_advance_get(const Evas_Object *obj EINA_UNUSED,
 EAPI Evas_Object *
 evas_object_text_add(Evas *e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   return efl_add(EVAS_TEXT_CLASS, evas_find(e), efl_canvas_object_legacy_ctor(efl_added));
+   e = evas_find(e);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(e, EVAS_CANVAS_CLASS), NULL);
+   return efl_add(EVAS_TEXT_CLASS, e, efl_canvas_object_legacy_ctor(efl_added));
 }
 
 EOLIAN static Eo *
@@ -433,11 +425,8 @@ _evas_text_font_reload(Eo *eo_obj, Evas_Text_Data *o)
      }
 
    /* DO IT */
-   if (o->font)
-     {
-        evas_font_free(o->font);
-        o->font = NULL;
-     }
+   evas_font_free(o->font);
+   o->font = NULL;
 
    o->font = evas_font_load(obj->layer->evas->font_path,
                             obj->layer->evas->hinting,
@@ -1656,7 +1645,7 @@ evas_object_text_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    if (o->cur.source) eina_stringshare_del(o->cur.source);
    if (o->bidi_delimiters) eina_stringshare_del(o->bidi_delimiters);
    if (o->cur.text) free(o->cur.text);
-   if (o->font && obj->layer && obj->layer->evas)
+   if (obj->layer && obj->layer->evas)
       evas_font_free(o->font);
    o->font = NULL;
    o->cur.utf8_text = NULL;
@@ -2168,22 +2157,6 @@ evas_object_text_render_post(Evas_Object *eo_obj EINA_UNUSED,
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
-}
-
-static unsigned int
-evas_object_text_id_get(Evas_Object *eo_obj)
-{
-   Evas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_TEXT;
-}
-
-static unsigned int
-evas_object_text_visual_id_get(Evas_Object *eo_obj)
-{
-   Evas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
-   if (!o) return 0;
-   return MAGIC_OBJ_SHAPE;
 }
 
 static void *

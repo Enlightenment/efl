@@ -334,7 +334,8 @@ ffi.cdef [[
     const char *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_eo_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_data_type_get(const Eolian_Class *klass);
-    Eina_Iterator *eolian_class_inherits_get(const Eolian_Class *klass);
+    const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
+    Eina_Iterator *eolian_class_extensions_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_functions_get(const Eolian_Class *klass, Eolian_Function_Type func_type);
     Eolian_Function_Type eolian_function_type_get(const Eolian_Function *function_id);
     Eolian_Object_Scope eolian_function_scope_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
@@ -363,6 +364,7 @@ ffi.cdef [[
     Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
+    const Eolian_Class *eolian_implement_implementing_class_get(const Eolian_Implement *impl);
     const Eolian_Function *eolian_implement_function_get(const Eolian_Implement *impl, Eolian_Function_Type *func_type);
     const Eolian_Documentation *eolian_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type f_type);
     Eina_Bool eolian_implement_is_auto(const Eolian_Implement *impl, Eolian_Function_Type ftype);
@@ -377,6 +379,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
     const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
+    const Eolian_Class *eolian_event_class_get(const Eolian_Event *event);
     const Eolian_Documentation *eolian_event_documentation_get(const Eolian_Event *event);
     Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
     Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
@@ -524,6 +527,10 @@ local gen_wrap = function(t)
 end
 
 local object_idx, wrap_object = gen_wrap {
+    object_get = function(self)
+        return cast_obj(self)
+    end,
+
     type_get = function(self)
         return tonumber(eolian.eolian_object_type_get(cast_obj(self)))
     end,
@@ -1185,6 +1192,12 @@ ffi.metatype("Eolian_Implement", {
             return v
         end,
 
+        implementing_class_get = function(self)
+            local v = eolian.eolian_implement_implementing_class_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
         function_get = function(self)
             local tp = ffi.new("Eolian_Function_Type[1]")
             local v = eolian.eolian_implement_function_get(self, tp)
@@ -1244,6 +1257,12 @@ ffi.metatype("Eolian_Event", {
     __index = wrap_object {
         type_get = function(self)
             local v = eolian.eolian_event_type_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
+        class_get = function(self)
+            local v = eolian.eolian_event_class_get(self)
             if v == nil then return nil end
             return v
         end,
@@ -1320,9 +1339,15 @@ M.Class = ffi.metatype("Eolian_Class", {
             return ffi.string(v)
         end,
 
-        inherits_get = function(self)
+        parent_get = function(self)
+            local v = eolian.eolian_class_parent_get(self)
+            if v == nil then return nil end
+            return v
+        end,
+
+        extensions_get = function(self)
             return Ptr_Iterator("const Eolian_Class*",
-                eolian.eolian_class_inherits_get(self))
+                eolian.eolian_class_extensions_get(self))
         end,
 
         functions_get = function(self, func_type)
@@ -1663,25 +1688,21 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
             local reft = M.object_type
             if tp == reft.CLASS then
                 return tp, ffi.cast("const Eolian_Class *", stor[0])
-            elseif tp == reft.FUNC then
+            elseif tp == reft.FUNCTION then
                 return tp, ffi.cast("const Eolian_Class *", stor[0]),
                            ffi.cast("const Eolian_Function *", stor[1])
             elseif tp == reft.EVENT then
                 return tp, ffi.cast("const Eolian_Class *", stor[0]),
                            ffi.cast("const Eolian_Event *", stor[1])
-            elseif tp == reft.ALIAS then
-                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
-            elseif tp == reft.STRUCT then
+            elseif tp == reft.TYPEDECL then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
             elseif tp == reft.STRUCT_FIELD then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
                            ffi.cast("const Eolian_Struct_Type_Field *", stor[1])
-            elseif tp == reft.ENUM then
-                return tp, ffi.cast("const Eolian_Typedecl *", stor[0])
             elseif tp == reft.ENUM_FIELD then
                 return tp, ffi.cast("const Eolian_Typedecl *", stor[0]),
                            ffi.cast("const Eolian_Enum_Type_Field *", stor[1])
-            elseif tp == reft.VAR then
+            elseif tp == reft.VARIABLE then
                 return tp, ffi.cast("const Eolian_Variable *", stor[0])
             else
                 return reft.UNKNOWN

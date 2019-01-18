@@ -6,7 +6,6 @@
 #include <unistd.h>
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
-#include <Efl_Net.h>
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
@@ -67,7 +66,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_app_test_loop_timer_invalid)
 {
-   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_get());
+   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get(EFL_APP_CLASS));
    fail_if(t != NULL);
 }
 EFL_END_TEST

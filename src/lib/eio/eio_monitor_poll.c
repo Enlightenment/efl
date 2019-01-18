@@ -226,7 +226,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
 
         ecore_thread_main_loop_end();
         while (eina_array_count(arr))
-          eina_hash_del_by_key(backend->children, eina_array_pop);
+          eina_hash_del_by_key(backend->children, eina_array_pop(arr));
         eina_array_free(arr);
         eina_iterator_free(it);
      }

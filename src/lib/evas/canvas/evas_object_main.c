@@ -325,9 +325,6 @@ _efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *o
    if (!obj->legacy.weight_set)
      efl_gfx_size_hint_weight_set(eo_obj, 1.0, 1.0);
 
-   if (!obj->legacy.align_set)
-     efl_gfx_size_hint_align_set(eo_obj, -1.0, -1.0);
-
    if (obj->legacy.visible_set /* && ... */)
      {
         obj->legacy.finalized = EINA_TRUE;
@@ -839,6 +836,18 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
    if (!obj->layer) return;
 
    if (obj->is_smart) goto end;
+
+   if (evas_object_is_on_plane(eo_obj, obj))
+     {
+        /* We need some damage to occur if only planes are being updated,
+           or nothing will provoke a page flip.
+         */
+        obj->layer->evas->engine.func->output_redraws_rect_add(ENC,
+                                                                 0, 0, 1, 1);
+        /* Force a pixels get callback for E's benefit :( */
+        evas_object_pixels_get_force(eo_obj, obj);
+        goto end;
+     }
    /* FIXME: was_v isn't used... why? */
    if (!obj->clip.clipees)
      {
@@ -1593,6 +1602,8 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
    obj->size_hints->max.h = -1;
    obj->size_hints->align.x = 0.5;
    obj->size_hints->align.y = 0.5;
+   obj->size_hints->fill.x = 1;
+   obj->size_hints->fill.y = 1;
    obj->size_hints->dispmode = EVAS_DISPLAY_MODE_NONE;
 }
 
@@ -1818,7 +1829,6 @@ _efl_canvas_object_efl_gfx_size_hint_hint_align_set(Eo *eo_obj, Evas_Object_Prot
 
    EVAS_OBJECT_DATA_VALID_CHECK(obj);
    evas_object_async_block(obj);
-   if (!obj->legacy.align_set) obj->legacy.align_set = 1;
    if (EINA_UNLIKELY(!obj->size_hints))
      {
         if (EINA_DBL_EQ(x, 0.5) && EINA_DBL_EQ(y, 0.5)) return;
@@ -1904,6 +1914,49 @@ _efl_canvas_object_efl_gfx_size_hint_hint_margin_set(Eo *eo_obj, Evas_Object_Pro
    obj->size_hints->padding.r = r;
    obj->size_hints->padding.t = t;
    obj->size_hints->padding.b = b;
+
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_gfx_size_hint_hint_fill_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool *x, Eina_Bool *y)
+{
+   if ((!obj->size_hints) || obj->delete_me)
+     {
+        if (x) *x = EINA_TRUE;
+        if (y) *y = EINA_TRUE;
+        return;
+     }
+   if (x) *x = obj->size_hints->fill.x;
+   if (y) *y = obj->size_hints->fill.y;
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_gfx_size_hint_hint_fill_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool x, Eina_Bool y)
+{
+   if (obj->delete_me)
+     return;
+
+   if (obj->legacy.ctor)
+     {
+        ERR("fill_set() not supported. use align_set() with EVAS_HINT_FILL instead.");
+        return;
+     }
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+   evas_object_async_block(obj);
+
+   x = !!x;
+   y = !!y;
+
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (x && y) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
+   if ((obj->size_hints->fill.x == x) && (obj->size_hints->fill.y == y)) return;
+   obj->size_hints->fill.x = x;
+   obj->size_hints->fill.y = y;
 
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
@@ -2033,17 +2086,27 @@ _hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (!evas_object_is_source_invisible(eo_obj, obj)))
           {
              if ((!obj->is_smart) ||
-                 ((obj->map->cur.map) && (obj->map->cur.map->count == 4) && (obj->map->cur.usemap)))
+                 ((obj->map->cur.map) && (obj->map->cur.usemap)))
                {
                   Evas_Object_Pointer_Data *obj_pdata;
-
+                  Eina_Bool mouse_grabbed = EINA_FALSE;
                   EINA_INLIST_FOREACH(obj->events->pointer_grabs, obj_pdata)
                     {
-                       if (!obj_pdata->mouse_grabbed &&
-                           evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->seat->x,
-                                                         obj_pdata->evas_pdata->seat->y,
-                                                         1, 1))
-                         _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
+                       if (obj_pdata->mouse_grabbed > 0)
+                         {
+                            mouse_grabbed = EINA_TRUE;
+                            break;
+                         }
+                    }
+                  if (!mouse_grabbed)
+                    {
+                       EINA_INLIST_FOREACH(obj->events->pointer_grabs, obj_pdata)
+                         {
+                            if (evas_object_is_in_output_rect(eo_obj, obj, obj_pdata->evas_pdata->seat->x,
+                                                              obj_pdata->evas_pdata->seat->y,
+                                                              1, 1))
+                              _evas_canvas_event_pointer_move_event_dispatch(obj->layer->evas, obj_pdata->evas_pdata, NULL);
+                         }
                     }
 /* this is at odds to handling events when an obj is moved out of the mouse
  * ore resized out or clipped out. if mouse is grabbed - regardless of
@@ -2309,6 +2372,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    Eina_Bool propagate_event;
    Eina_Bool repeat_event;
    Eina_Bool clipees_has;
+   Eina_Bool fillx, filly;
 
    visible = efl_gfx_entity_visible_get(eo_obj);
    layer = efl_gfx_stack_layer_get(eo_obj);
@@ -2320,6 +2384,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    //efl_gfx_size_hint_request_get(eo_obj, &requestw, &requesth);
    efl_gfx_size_hint_align_get(eo_obj, &dblx, &dbly);
    efl_gfx_size_hint_weight_get(eo_obj, &dblw, &dblh);
+   efl_gfx_size_hint_fill_get(eo_obj, &fillx, &filly);
    efl_gfx_color_get(eo_obj, &r, &g, &b, &a);
    focus = evas_object_focus_get(eo_obj);
    m = efl_canvas_object_pointer_mode_get(eo_obj);
@@ -2360,6 +2425,10 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    node = EFL_DBG_INFO_LIST_APPEND(group, "Align");
    EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_DOUBLE, dblx);
    EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_DOUBLE, dbly);
+
+   node = EFL_DBG_INFO_LIST_APPEND(group, "Fill");
+   EFL_DBG_INFO_APPEND(node, "x", EINA_VALUE_TYPE_CHAR, fillx);
+   EFL_DBG_INFO_APPEND(node, "y", EINA_VALUE_TYPE_CHAR, filly);
 
    node = EFL_DBG_INFO_LIST_APPEND(group, "Weight");
    EFL_DBG_INFO_APPEND(node, "w", EINA_VALUE_TYPE_DOUBLE, dblw);

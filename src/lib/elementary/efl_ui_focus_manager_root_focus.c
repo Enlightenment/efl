@@ -68,7 +68,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register(Eo *obj, Efl
 {
    if (efl_ui_focus_manager_calc_register(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
-        if (child != pd->rect)
+        if (child != pd->rect && pd->rect_registered)
           _state_eval(obj, pd);
 
         return EINA_TRUE;
@@ -81,7 +81,7 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_register_logical(Eo *
 {
    if (efl_ui_focus_manager_calc_register_logical(efl_super(obj, MY_CLASS), child, parent, redirect))
      {
-        if (redirect)
+        if (redirect && pd->rect_registered)
           _state_eval(obj, pd);
 
         return EINA_TRUE;
@@ -98,7 +98,6 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_calc_unregister(Eo *obj, E
      _state_eval(obj, pd);
 }
 
-
 EOLIAN static void
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *focus)
 {
@@ -106,20 +105,17 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_set(Eo *obj,
    efl_ui_focus_manager_focus_set(efl_super(obj, MY_CLASS), _trap(pd, focus));
 }
 
-
 EOLIAN static Efl_Ui_Focus_Object*
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_manager_focus_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 {
    return _trap(pd, efl_ui_focus_manager_focus_get(efl_super(obj, MY_CLASS)));
 }
 
-
 EOLIAN static Efl_Ui_Focus_Relations *
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *child)
 {
    return efl_ui_focus_manager_fetch(efl_super(obj, MY_CLASS), _trap(pd, child));
 }
-
 
 EOLIAN static Efl_Ui_Focus_Manager_Logical_End_Detail
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_logical_end(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
@@ -134,6 +130,15 @@ _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_logical_end(Eo *obj, Efl_U
 
 EOLIAN static Eina_Iterator *
 _efl_ui_focus_manager_root_focus_efl_ui_focus_manager_border_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
+{
+   if (pd->rect_registered)
+     return eina_list_iterator_new(pd->iterator_list);
+
+   return efl_ui_focus_manager_border_elements_get(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static Eina_Iterator *
+_efl_ui_focus_manager_root_focus_efl_ui_focus_manager_viewport_elements_get(const Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Eina_Rect viewport EINA_UNUSED)
 {
    if (pd->rect_registered)
      return eina_list_iterator_new(pd->iterator_list);
@@ -162,7 +167,6 @@ _efl_ui_focus_manager_root_focus_canvas_object_get(const Eo *obj EINA_UNUSED, Ef
 EOLIAN static void
 _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Canvas_Object *canvas_object)
 {
-
    //if canvas object is NULL trigger it as root
    if (!canvas_object)
      canvas_object = efl_ui_focus_manager_root_get(obj);
@@ -171,7 +175,7 @@ _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager
 
    if (pd->replacement_object)
      {
-        pd->iterator_list = eina_list_remove(pd->iterator_list, pd->replacement_object);
+        pd->iterator_list = eina_list_remove(pd->iterator_list, pd->rect);
         pd->replacement_object = NULL;
      }
 
@@ -179,7 +183,7 @@ _efl_ui_focus_manager_root_focus_canvas_object_set(Eo *obj, Efl_Ui_Focus_Manager
    if (pd->replacement_object)
      {
         efl_ui_focus_composition_adapter_canvas_object_set(pd->rect, pd->replacement_object);
-        pd->iterator_list = eina_list_append(pd->iterator_list, pd->replacement_object);
+        pd->iterator_list = eina_list_append(pd->iterator_list, pd->rect);
      }
 }
 

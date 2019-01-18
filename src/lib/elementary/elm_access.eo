@@ -1,4 +1,4 @@
-class Elm.Access (Efl.Ui.Widget, Efl.Access.Widget.Action)
+class Elm.Access extends Efl.Ui.Widget implements Efl.Access.Widget.Action
 {
    [[Elm abstract accessibility class]]
    legacy_prefix: elm_access;

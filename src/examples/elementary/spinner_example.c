@@ -23,6 +23,18 @@ _delay_changed_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EIN
    printf("Value delay changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
+static void
+_focused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("spinner focused\n");
+}
+
+static void
+_unfocused_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   printf("spinner unfocused\n");
+}
+
 EAPI_MAIN int
 elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
@@ -108,6 +120,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
    elm_spinner_editable_set(sp, EINA_TRUE);
+   evas_object_smart_callback_add(sp, "focused", _focused_cb, NULL);
+   evas_object_smart_callback_add(sp, "unfocused", _unfocused_cb, NULL);
    evas_object_smart_callback_add(sp, "changed", _changed_cb, NULL);
    evas_object_smart_callback_add(sp, "delay,changed", _delay_changed_cb, NULL);
 

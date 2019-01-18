@@ -55,7 +55,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \
       lib/efl/interfaces/efl_pack_table.eo \
-      lib/efl/interfaces/efl_ui_base.eo \
+      lib/efl/interfaces/efl_ui_i18n.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
       lib/efl/interfaces/efl_ui_range.eo \
@@ -77,6 +77,8 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_color_class.eo \
       lib/efl/interfaces/efl_gfx_text_class.eo \
       lib/efl/interfaces/efl_gfx_size_class.eo \
+      lib/efl/interfaces/efl_interpolator.eo \
+      lib/efl/interfaces/efl_cached_item.eo \
       $(efl_eolian_legacy_files) \
       $(NULL)
 
@@ -113,7 +115,7 @@ lib_LTLIBRARIES += lib/efl/libefl.la
 
 lib_efl_libefl_la_SOURCES = \
 lib/efl/interfaces/efl_interfaces_main.c \
-lib/efl/interfaces/efl_model_common.c \
+lib/efl/interfaces/efl_mvvm_common.c \
 lib/efl/interfaces/efl_gfx_path.c \
 lib/efl/interfaces/efl_gfx_shape.c \
 lib/efl/interfaces/efl_input_device.c \
@@ -139,7 +141,7 @@ lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 installed_eflheadersdir = $(includedir)/efl-@VMAJ@
 dist_installed_eflheaders_DATA = \
               lib/efl/Efl_Config.h \
-              lib/efl/Efl_Model_Common.h \
+              lib/efl/Efl_MVVM_Common.h \
               lib/efl/Efl.h
 
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
@@ -147,7 +149,7 @@ nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
 	$(efl_eolian_legacy_files_h)
 
-if HAVE_ELUA
+if HAVE_LUA_BINDINGS
 
 efl_eolian_lua = $(efl_eolian_files:%.eo=%.eo.lua)
 
@@ -198,9 +200,11 @@ tests_efl_efl_suite_SOURCES = \
 tests/efl/efl_suite.c \
 tests/efl/efl_test_model_container.c \
 tests/efl/efl_test_model_composite.c \
+tests/efl/efl_test_model_view.c \
 tests/efl/efl_suite.h
 
 tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/efl\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efl\" \
 @CHECK_CFLAGS@ \

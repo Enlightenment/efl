@@ -14,10 +14,6 @@
 #include <ft2build.h>
 #include FT_TRUETYPE_TABLES_H /* Freetype2 OS/2 font table. */
 
-#ifdef EVAS_CSERVE2
-# include "../cserve2/evas_cs2_private.h"
-#endif
-
 extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
@@ -103,9 +99,6 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
       fonts_use_usage -= fi->usage;
       fi->usage = 0;
     }
-#ifdef EVAS_CSERVE2
-   evas_cserve2_font_free(fi->cs2_handler);
-#endif
    free(fi);
 }
 
@@ -360,21 +353,6 @@ evas_common_font_int_memory_load(const char *source, const char *name, int size,
    _evas_common_font_int_cache_init(fi);
    fi = evas_common_font_int_load_init(fi);
    evas_common_font_int_load_complete(fi);
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi_h,
-                                                 wanted_rend);
-        if (fi->cs2_handler)
-          {
-             if (evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler) != 0)
-               {
-                  evas_cserve2_font_free(fi->cs2_handler);
-                  fi->cs2_handler = NULL;
-               }
-          }
-     }
-#endif
    return fi;
 }
 
@@ -413,21 +391,6 @@ evas_common_font_int_load(const char *name, int size,
    fi->bitmap_scalable = bitmap_scalable;
    _evas_common_font_int_cache_init(fi);
    fi = evas_common_font_int_load_init(fi);
-#ifdef EVAS_CSERVE2
-   if (evas_cserve2_use_get())
-     {
-        fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi_h,
-                                                 wanted_rend);
-        if (fi->cs2_handler)
-          {
-             if (evas_cserve2_font_load_wait((Font_Entry *)fi->cs2_handler) != 0)
-               {
-                  evas_cserve2_font_free(fi->cs2_handler);
-                  fi->cs2_handler = NULL;
-               }
-          }
-     }
-#endif
 //   evas_common_font_int_load_complete(fi);
    return fi;
 }

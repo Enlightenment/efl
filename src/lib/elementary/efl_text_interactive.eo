@@ -1,7 +1,7 @@
 import efl_text_types;
 
-interface Efl.Text_Interactive (Efl.Text, Efl.Text_Font,
-   Efl.Text_Format, Efl.Text_Style)
+interface Efl.Text_Interactive extends Efl.Text, Efl.Text_Font,
+   Efl.Text_Format, Efl.Text_Style
 {
    [[This is an interface interactive text inputs should implement]]
    methods {
@@ -42,6 +42,9 @@ interface Efl.Text_Interactive (Efl.Text, Efl.Text_Font,
             editable: bool; [[If $true, user input will be inserted in the entry,
             if not, the entry is read-only and no user input is allowed.]]
          }
+      }
+      select_none {
+         [[Clears the selection.]]
       }
    }
    events {

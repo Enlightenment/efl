@@ -136,11 +136,22 @@ _edje_user_definition_free(Edje_User_Defined *eud)
         if (rp) _edje_child_remove(eud->ed, rp, child);
         break;
 
+      case EDJE_USER_TEXT_STYLE:
+      {
+         Edje_Part_Text_Prop *prop;
+         EINA_LIST_FREE(eud->u.text_style.props, prop)
+           {
+              free(prop);
+           }
+         break;
+      }
+
       case EDJE_USER_STRING:
       case EDJE_USER_DRAG_STEP:
       case EDJE_USER_DRAG_PAGE:
       case EDJE_USER_DRAG_VALUE:
       case EDJE_USER_DRAG_SIZE:
+      case EDJE_USER_TEXT_EXPAND:
         break;
      }
 
@@ -238,7 +249,7 @@ _edje_language_signal_emit(Edje *ed, Evas_Object *obj, char *signal)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *locale)
+_efl_canvas_layout_efl_ui_i18n_language_set(Eo *obj, Edje *ed, const char *locale)
 {
    const char *lookup;
    char *signal;
@@ -260,7 +271,7 @@ _efl_canvas_layout_efl_ui_base_language_set(Eo *obj, Edje *ed, const char *local
 }
 
 EOLIAN const char *
-_efl_canvas_layout_efl_ui_base_language_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_i18n_language_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    if (!ed->language)
      return _edje_language;
@@ -406,7 +417,7 @@ edje_object_base_scale_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_ui_base_mirrored_get(const Eo *obj EINA_UNUSED, Edje *ed)
+_efl_canvas_layout_efl_ui_i18n_mirrored_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    return ed->is_rtl;
 }
@@ -422,7 +433,7 @@ _edje_object_orientation_inform(Evas_Object *obj)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_ui_base_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
+_efl_canvas_layout_efl_ui_i18n_mirrored_set(Eo *obj, Edje *ed, Eina_Bool rtl)
 {
    unsigned short i;
 
@@ -1993,6 +2004,71 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
                                                  EINA_FALSE, EINA_TRUE);
 }
 
+Edje_User_Defined *
+_edje_user_definition_fetch(Edje *ed,
+                             const char *part, Edje_User_Defined_Type type)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == type && !strcmp(eud->part, part))
+          {
+             return eud;
+          }
+     }
+   eud = _edje_user_definition_new(type, part, ed);
+   return eud;
+}
+
+Edje_User_Defined *
+_edje_user_text_style_definition_fetch(Edje *ed, const char *part)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == EDJE_USER_TEXT_STYLE && !strcmp(eud->part, part))
+          {
+             break;
+          }
+     }
+
+   if (!eud)
+     {
+        eud = _edje_user_definition_new(EDJE_USER_TEXT_STYLE, part, ed);
+        eud->u.text_style.types = EDJE_PART_TEXT_PROP_NONE;
+        eud->u.text_style.props = NULL;
+     }
+
+   return eud;
+}
+
+Edje_User_Defined *
+_edje_user_text_expand_definition_fetch(Edje *ed, const char *part)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+     {
+        if (eud->type == EDJE_USER_TEXT_EXPAND && !strcmp(eud->part, part))
+          {
+             break;
+          }
+     }
+
+   if (!eud)
+     {
+        eud = _edje_user_definition_new(EDJE_USER_TEXT_EXPAND, part, ed);
+        eud->u.text_expand.expand = EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_NONE;
+     }
+
+   return eud;
+}
+
 void
 _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_Text_Type type)
 {
@@ -2080,13 +2156,28 @@ _edje_efl_text_text_get(const Eo *obj EINA_UNUSED, Edje *ed, const char *part,
           {
              const char *entry;
              if (legacy)
-               entry = rp->typedata.text->text;
+               {
+                  if (rp->typedata.text->text)
+                    {
+                       entry = rp->typedata.text->text;
+                    }
+                  else
+                    {
+#ifdef EDJE_CALC_CACHE
+                       if (rp->invalidate || ed->all_part_change)
+#else
+                       if (ed->dirty)
+#endif
+                         _edje_recalc_do(ed);
+                       entry = evas_object_textblock_text_markup_get(rp->object);
+                    }
+               }
              else
                {
                   if (get_markup)
                     {
 #ifdef EDJE_CALC_CACHE
-                       if (rp->invalidate)
+                       if (rp->invalidate || ed->all_part_change)
 #else
                        if (ed->dirty)
 #endif

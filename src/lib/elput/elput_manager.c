@@ -2,7 +2,7 @@
 
 static Elput_Interface *_ifaces[] =
 {
-#ifdef HAVE_SYSTEMD
+#if defined(HAVE_SYSTEMD) || defined(HAVE_ELOGIND)
    &_logind_interface,
 #endif
    NULL,

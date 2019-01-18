@@ -125,7 +125,8 @@ _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
         buffer_size = LZ4_compressBound(etc_data_size);
         buffer = malloc(buffer_size);
         if (!buffer) goto on_error;
-        data_size = LZ4_compressHC((char *) data, (char *) buffer, etc_data_size);
+        data_size = LZ4_compress_HC
+          ((char *)data, (char *)buffer, etc_data_size, buffer_size, 16);
      }
    else
      {
@@ -486,8 +487,11 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
                   if (compress)
                     {
-                       wlen = LZ4_compressHC((char *) buffer, (char *) comp,
-                                             block_count * etc_block_size);
+                       wlen = LZ4_compress_HC
+                         ((char *)buffer, (char *)comp,
+                          block_count * etc_block_size,
+                          LZ4_compressBound(block_count * etc_block_size),
+                          16);
                     }
                   else
                     {

@@ -41,8 +41,7 @@ edje_init(void)
 
    srand(time(NULL));
 
-   if (!eina_init())
-     return --_edje_init_count;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_init(), --_edje_init_count);
 
    _edje_default_log_dom = eina_log_domain_register
        ("edje", EDJE_DEFAULT_LOG_COLOR);
@@ -84,11 +83,10 @@ edje_init(void)
 
    _edje_scale = FROM_DOUBLE(1.0);
    _edje_global_obj = efl_add(EDJE_GLOBAL_CLASS, efl_main_loop_get());
-   if (!_edje_global_obj ||
-       !efl_loop_register(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE, _edje_global_obj) ||
-       !efl_loop_register(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj) ||
-       !efl_loop_register(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj))
-     goto shutdown_efreet;
+   EINA_SAFETY_ON_TRUE_GOTO(!_edje_global_obj, shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_TEXT_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
+   EINA_SAFETY_ON_TRUE_GOTO(!efl_loop_register(efl_main_loop_get(), EFL_GFX_SIZE_CLASS_INTERFACE, _edje_global_obj), shutdown_efreet);
 
    _edje_edd_init();
    _edje_text_init();
@@ -119,7 +117,9 @@ edje_init(void)
      }
 
    _edje_calc_params_map_cow = eina_cow_add("Edje Calc Params Map", sizeof (Edje_Calc_Params_Map), 8, &default_calc_map, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_GOTO(_edje_calc_params_map_cow, shutdown_all);
    _edje_calc_params_physics_cow = eina_cow_add("Edje Calc Params Physics", sizeof (Edje_Calc_Params_Physics), 8, &default_calc_physics, EINA_TRUE);
+   EINA_SAFETY_ON_NULL_GOTO(_edje_calc_params_physics_cow, shutdown_all);
 
    _edje_language = eina_stringshare_add(getenv("LANGUAGE"));
 
@@ -135,6 +135,10 @@ edje_init(void)
    return _edje_init_count;
 
 shutdown_all:
+   eina_cow_del(_edje_calc_params_map_cow);
+   eina_cow_del(_edje_calc_params_physics_cow);
+   _edje_calc_params_map_cow = NULL;
+   _edje_calc_params_physics_cow = NULL;
    eina_mempool_del(_edje_real_part_state_mp);
    eina_mempool_del(_edje_real_part_mp);
    _edje_real_part_state_mp = NULL;
@@ -222,7 +226,10 @@ _edje_shutdown_core(void)
 
 #ifdef HAVE_ECORE_IMF
    if (_need_imf)
-     ecore_imf_shutdown();
+     {
+        ecore_imf_shutdown();
+        _need_imf = EINA_FALSE;
+     }
 #endif
 
 #ifdef HAVE_EPHYSICS

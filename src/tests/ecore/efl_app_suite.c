@@ -6,7 +6,6 @@
 #include <unistd.h>
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
-#include <Efl_Net.h>
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
@@ -18,7 +17,7 @@ EFL_START_TEST(efl_app_test_efl_build_version)
 
    ecore_init();
 
-   app = efl_app_get();
+   app = efl_app_main_get(EFL_APP_CLASS);
    fail_if(!efl_isa(app, EFL_APP_CLASS));
 
    efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);

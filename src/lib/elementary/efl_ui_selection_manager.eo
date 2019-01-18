@@ -1,0 +1,139 @@
+import efl_ui_dnd_types;
+
+class Efl.Ui.Selection_Manager extends Efl.Object {
+   methods {
+      selection_set @beta {
+         [[Set selection]]
+         params {
+            @in owner: Efl.Object; [[Seleciton owner]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection format]]
+            @in data: Eina.Slice; [[Selection data]]
+            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+         }
+         return: future<void>; [[Future for tracking when the selection is lost]]
+      }
+      selection_get @beta {
+         [[Get selection]]
+         params {
+            @in request: const(Efl.Object); [[Seleciton owner]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in format: Efl.Ui.Selection_Format; [[Selection Format]]
+            @in data_func: Efl.Ui.Selection_Data_Ready; [[Data ready function pointer]]
+            @in seat: uint @optional;[[Specified seat for multiple seats case.]]
+         }
+      }
+      selection_clear @beta {
+         params {
+            @in owner: Efl.Object; [[Seleciton owner]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+      }
+      selection_has_owner @beta {
+         [[Check if the request object has selection or not]]
+         params {
+            @in request: Efl.Object; [[Request object]]
+            @in type: Efl.Ui.Selection_Type; [[Selection type]]
+            @in seat: uint @optional; [[Specified seat for multiple seats case.]]
+         }
+         return: bool; [[EINA_TRUE if the request object has selection, otherwise, EINA_FALSE]]
+      }
+     drag_start @beta {
+          [[This starts a drag and drop process at the drag side.
+            During dragging, there are three events emitted as belows:
+               - EFL_UI_DND_EVENT_DRAG_POS
+               - EFL_UI_DND_EVENT_DRAG_ACCEPT
+               - EFL_UI_DND_EVENT_DRAG_DONE
+          ]]
+         params {
+            @in drag_obj: Efl.Object; [[Drag object]]
+            @in format: Efl.Ui.Selection_Format; [[Data format]]
+            @in data: Eina.Slice; [[Data to transfer]]
+            @in action: Efl.Ui.Selection_Action; [[Action when data is transferred]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Function pointer to create icon]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_action_set @beta {
+         [[This sets the action for the drag]]
+         params {
+            @in drag_obj: Efl.Object; [[Drag object]]
+            @in action: Efl.Ui.Selection_Action; [[Drag action]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      drag_cancel @beta {
+         [[This cancels the on-going drag]]
+         params {
+            @in drag_obj: Efl.Object; [[Drag object]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      container_drag_item_add @beta {
+         [[This registers a drag for items in a container. Many items can be
+           dragged at a time. During dragging, there are three events emitted:
+              - EFL_UI_DND_EVENT_DRAG_POS
+              - EFL_UI_DND_EVENT_DRAG_ACCEPT
+              - EFL_UI_DND_EVENT_DRAG_DONE.]]
+         params {
+            @in cont: Efl.Object; [[Container object]]
+            @in time_to_drag: double; [[Time since mouse down happens to drag starts]]
+            @in anim_duration: double; [[animation duration]]
+            @in data_func: Efl.Dnd.Drag_Data_Get; [[Data and its format]]
+            @in item_func: Efl.Dnd.Item_Get; [[Item to determine drag start]]
+            @in icon_func: Efl.Dnd.Drag_Icon_Create; [[Icon used during drag]]
+            @in icon_list_func: Efl.Dnd.Drag_Icon_List_Create; [[Icons used for animations]]
+            @in seat: uint; [[Specified seat for multiple seats case]]
+         }
+      }
+      container_drag_item_del @beta {
+         [[Remove drag function of items in the container object.]]
+         params {
+            @in cont: Efl.Object; [[Container object]]
+            @in seat: uint; [[Specified seat for multiple seats case]]
+         }
+      }
+      drop_target_add @beta {
+         [[Add a dropable target. There are four events emitted:
+              - EFL_UI_DND_DROP_DRAG_ENTER
+              - EFL_UI_DND_DROP_DRAG_LEAVE
+              - EFL_UI_DND_DROP_DRAG_POS
+              - EFL_UI_DND_DROP_DRAG_DROP.]]
+         params {
+            @in target_obj: Efl.Object; [[Drop target]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+      }
+      drop_target_del @beta {
+         [[Remove a dropable target]]
+         params {
+            @in target_obj: Efl.Object; [[Drop target]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data format]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      container_drop_item_add @beta {
+         [[Add dropable target for a container in which items can drop to it]]
+         params {
+            @in cont: Efl.Object; [[Container object]]
+            @in format: Efl.Ui.Selection_Format; [[Accepted data formats]]
+            @in item_func: Efl.Dnd.Item_Get; [[Get item at specific position]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+      container_drop_item_del @beta {
+         [[Remove dropable target for the container]]
+         params {
+            @in cont: Efl.Object; [[Container object]]
+            @in seat: uint; [[Specified seat for multiple seats case.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

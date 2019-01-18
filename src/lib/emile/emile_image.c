@@ -8,6 +8,9 @@
 
 #ifdef _WIN32
 #include <winsock2.h>
+#include <Evil.h>
+#define HAVE_BOOLEAN /* This prevents libjpeg to redefine boolean */
+#define XMD_H /* This prevents libjpeg to redefine INT32 */
 #endif
 
 #ifdef ENABLE_LIBLZ4
@@ -16,18 +19,10 @@
 #include "lz4.h"
 #endif
 
-#ifdef _WIN32
-#define XMD_H /* This prevents libjpeg to redefine INT32 */
-#endif
-
 #include <stdio.h>
 #include <setjmp.h>
 #include <jpeglib.h>
 #include <jerror.h>
-
-#ifdef _WIN32
-#include <Evil.h>
-#endif
 
 #include "rg_etc1.h"
 #include "Emile.h"
@@ -2391,6 +2386,8 @@ _emile_image_bind(Emile_Image *ei,
      return ei;
 
    /* File is not of that format */
+   if (!ei->bin_source)
+     eina_file_close(ei->source.f);
    free(ei);
    return NULL;
 }

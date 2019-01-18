@@ -1,0 +1,8 @@
+class Efl.Ui.Alert_Popup_Part extends Efl.Ui.Layout_Part_Text
+{
+   [[Efl UI Alert Popup internal part class]]
+   data: null;
+   implements {
+      Efl.Text.text { get; set; }
+   }
+}

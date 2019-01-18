@@ -1,0 +1,38 @@
+enum Efl.Ui.Alert_Popup_Button {
+   [[Defines the type of the alert button.]]
+   positive = 0, [[Button having positive meaning. e.g. "Yes"]]
+   negative, [[Button having negative meaning. e.g. "No"]]
+   user [[Button having user-defined meaning. e.g. "Cancel"]]
+}
+
+struct Efl.Ui.Alert_Popup_Button_Clicked_Event {
+   [[Information of clicked event]]
+   button_type: Efl.Ui.Alert_Popup_Button; [[Clicked button type]]
+}
+
+class Efl.Ui.Alert_Popup extends Efl.Ui.Popup
+{
+   [[EFL UI Alert Popup class]]
+   methods {
+      @property button {
+         set {
+            [[Set popup buttons.]]
+         }
+         keys {
+            type: Efl.Ui.Alert_Popup_Button; [[Alert popup button type]]
+         }
+         values {
+            text: string; [[Alert string on button]]
+            icon: Efl.Object; [[Alert icon on button]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Part.part_get;
+   }
+   events {
+      button,clicked: Efl.Ui.Alert_Popup_Button_Clicked_Event; [[Called when alert popup was clicked]]
+   }
+}

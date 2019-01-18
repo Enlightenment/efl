@@ -298,12 +298,12 @@ _hov_show_do(Evas_Object *obj)
    }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply
+EOLIAN static Efl_Ui_Theme_Apply_Result
 _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Efl_Ui_Theme_Apply int_ret = EFL_UI_THEME_APPLY_FAILED;
+   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_FAILED;
+   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
 
@@ -348,8 +348,7 @@ _elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    evas_object_size_hint_min_set(sd->offset, ofs_x, y2 - y);
    evas_object_size_hint_min_set(sd->size, w2, h2);
-   evas_object_move(wd->resize_obj, x, y);
-   evas_object_resize(wd->resize_obj, w, h);
+   evas_object_geometry_set(wd->resize_obj, x, y, w, h);
 }
 
 static void
@@ -697,6 +696,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
+   legacy_child_focus_handle(obj);
 
    return obj;
 }

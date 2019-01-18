@@ -8,6 +8,12 @@
 #include "Evas_Data.h"
 #include "evas_mempool.h"
 
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
+# define UNUSED __attribute__ ((__unused__))
+#else
+# define UNUSED
+#endif
+
 //#define NOPOOL
 
 typedef struct _Pool Pool;
@@ -56,7 +62,7 @@ _evas_mp_pool_free(Pool *p)
 }
 
 void *
-evas_mempool_malloc(Evas_Mempool *pool, int size)
+evas_mempool_malloc(Evas_Mempool *pool, int size UNUSED)
 {
 #ifdef NOPOOL
    return malloc(size);

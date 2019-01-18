@@ -14,22 +14,108 @@
 static void
 _blend_color_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
-   RGBA_Comp_Func_Solid comp_func;
-   Span_Data *data = (Span_Data *)(user_data);
+   Span_Data *sd = user_data;
    uint32_t color, *buffer, *target;
-   const int pix_stride = data->raster_buffer->stride / 4;
+   const int pix_stride = sd->raster_buffer->stride / 4;
 
    // multiply the color with mul_col if any
-   color = DRAW_MUL4_SYM(data->color, data->mul_col);
-   comp_func = efl_draw_func_solid_span_get(data->op, color);
+   color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
+   RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
 
    // move to the offset location
-   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+   buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
+
+    while (count--)
+      {
+          target = buffer + ((pix_stride * spans->y) + spans->x);
+          comp_func(target, spans->len, color, spans->coverage);
+          ++spans;
+      }
+}
+
+static void
+_blend_color_argb_with_maskA(int count, const SW_FT_Span *spans, void *user_data)
+{
+   Span_Data *sd = user_data;
+   const int pix_stride = sd->raster_buffer->stride / 4;
+   Ector_Software_Buffer_Base_Data *mask = sd->mask;
+
+   // multiply the color with mul_col if any
+   uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
+   RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
+
+   // move to the offset location
+   uint32_t *buffer =
+         sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
+   uint32_t *mbuffer = mask->pixels.u32;
+
+   //Temp buffer for intermediate processing
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
 
    while (count--)
      {
-        target = buffer + ((pix_stride * spans->y) + spans->x);
-        comp_func(target, spans->len, color, spans->coverage);
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
+        uint32_t *mtarget =
+              mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *temp = tbuffer;
+        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+        comp_func(temp, spans->len, color, spans->coverage);
+
+        //masking
+        for (int i = 0; i < spans->len; i++)
+          {
+             *temp = draw_mul_256(((*mtarget)>>24), *temp);
+             int alpha = 255 - ((*temp) >> 24);
+             *target = *temp + draw_mul_256(alpha, *target);
+             ++temp;
+             ++mtarget;
+             ++target;
+          }
+        ++spans;
+     }
+}
+
+static void
+_blend_color_argb_with_maskInvA(int count, const SW_FT_Span *spans, void *user_data)
+{
+   Span_Data *sd = user_data;
+   const int pix_stride = sd->raster_buffer->stride / 4;
+   Ector_Software_Buffer_Base_Data *mask = sd->mask;
+
+   // multiply the color with mul_col if any
+   uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
+   RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
+
+   // move to the offset location
+   uint32_t *buffer =
+         sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
+   uint32_t *mbuffer = mask->pixels.u32;
+
+   //Temp buffer for intermediate processing
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
+
+   while (count--)
+     {
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
+        uint32_t *mtarget =
+              mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *temp = tbuffer;
+        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+        comp_func(temp, spans->len, color, spans->coverage);
+
+        //masking
+        for (int i = 0; i < spans->len; i++)
+          {
+             if (*mtarget)
+                *temp = draw_mul_256((255 - ((*mtarget)>>24)), *temp);
+             int alpha = 255 - ((*temp) >> 24);
+             *target = *temp + draw_mul_256(alpha, *target);
+             ++temp;
+             ++mtarget;
+             ++target;
+          }
         ++spans;
      }
 }
@@ -220,8 +306,8 @@ _span_fill_clipRect(int span_count, const SW_FT_Span *spans, void *user_data)
    Eina_Rectangle *rect;
    Eina_Rectangle tmp_rect;
 
-
    clip_count = eina_array_count(clip.clips);
+
    for (i = 0; i < clip_count; i++)
      {
         rect = (Eina_Rectangle *)eina_array_data_get(clip.clips, i);
@@ -267,13 +353,24 @@ _span_fill_clipPath(int span_count, const SW_FT_Span *spans, void *user_data)
 static void
 _adjust_span_fill_methods(Span_Data *spdata)
 {
+   //Blending Function
    switch(spdata->type)
      {
         case None:
-          spdata->unclipped_blend = 0;
+          spdata->unclipped_blend = NULL;
           break;
         case Solid:
-          spdata->unclipped_blend = &_blend_color_argb;
+          {
+             if (spdata->mask)
+                {
+                   if (spdata->mask_op == 2)
+                     spdata->unclipped_blend = &_blend_color_argb_with_maskInvA;
+                   else
+                     spdata->unclipped_blend = &_blend_color_argb_with_maskA;
+                }
+             else
+                spdata->unclipped_blend = &_blend_color_argb;
+           }
           break;
         case LinearGradient:
         case RadialGradient:
@@ -281,23 +378,16 @@ _adjust_span_fill_methods(Span_Data *spdata)
           break;
      }
 
-   // setup clipping
-   if (!spdata->unclipped_blend)
+   // Clipping Function
+   if (spdata->clip.enabled)
      {
-        spdata->blend = 0;
-     }
-   else if (!spdata->clip.enabled)
-     {
-        spdata->blend = spdata->unclipped_blend;
-     }
-   else if (spdata->clip.has_rect_clip)
-     {
-        spdata->blend = &_span_fill_clipRect;
+        if (spdata->clip.type == 0)
+          spdata->blend = &_span_fill_clipRect;
+        else
+          spdata->blend = &_span_fill_clipPath;
      }
    else
-     {
-        spdata->blend = &_span_fill_clipPath;
-     }
+     spdata->blend = spdata->unclipped_blend;
 }
 
 void ector_software_thread_init(Ector_Software_Thread *thread)
@@ -464,7 +554,8 @@ ector_software_rasterizer_generate_stroke_rle_data(Ector_Software_Thread *thread
    return rle_data;
 }
 
-void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle)
+void
+ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle)
 {
    if (rle)
      {
@@ -478,45 +569,53 @@ static
 void _setup_span_fill_matrix(Software_Rasterizer *rasterizer)
 {
    if (rasterizer->transform)
-     {
-        eina_matrix3_inverse(rasterizer->transform, &rasterizer->fill_data.inv);
-     }
+     eina_matrix3_inverse(rasterizer->transform, &rasterizer->fill_data.inv);
    else
-     {
-        eina_matrix3_identity(&rasterizer->fill_data.inv);
-        eina_matrix3_identity(&rasterizer->fill_data.inv);
-     }
+     eina_matrix3_identity(&rasterizer->fill_data.inv);
 }
 
-void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t)
+void
+ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t)
 {
    rasterizer->transform = t;
 }
 
-void ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips)
+void
+ector_software_rasterizer_clip_rect_set(Software_Rasterizer *rasterizer, Eina_Array *clips)
 {
    if (clips)
      {
         rasterizer->fill_data.clip.clips = clips;
-        rasterizer->fill_data.clip.has_rect_clip = EINA_TRUE;
+        rasterizer->fill_data.clip.type = 0;
         rasterizer->fill_data.clip.enabled = EINA_TRUE;
      }
    else
      {
         rasterizer->fill_data.clip.clips = NULL;
-        rasterizer->fill_data.clip.has_rect_clip = EINA_FALSE;
+        rasterizer->fill_data.clip.type = 0;
         rasterizer->fill_data.clip.enabled = EINA_FALSE;
      }
 }
 
-void ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip)
+void
+ector_software_rasterizer_clip_shape_set(Software_Rasterizer *rasterizer, Shape_Rle_Data *clip)
 {
-   rasterizer->fill_data.clip.path = clip;
-   rasterizer->fill_data.clip.has_path_clip = EINA_TRUE;
-   rasterizer->fill_data.clip.enabled = EINA_TRUE;
+   if (clip)
+     {
+        rasterizer->fill_data.clip.path = clip;
+        rasterizer->fill_data.clip.type = 1;
+        rasterizer->fill_data.clip.enabled = EINA_TRUE;
+     }
+   else
+     {
+        rasterizer->fill_data.clip.path = NULL;
+        rasterizer->fill_data.clip.type = 0;
+        rasterizer->fill_data.clip.enabled = EINA_FALSE;
+     }
 }
 
-void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
+void
+ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a)
 {
    rasterizer->fill_data.color = DRAW_ARGB_JOIN(a, r, g, b);
    rasterizer->fill_data.type = Solid;
@@ -529,24 +628,30 @@ void ector_software_rasterizer_linear_gradient_set(Software_Rasterizer *rasteriz
    rasterizer->fill_data.type = LinearGradient;
 }
 
-void ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer,
-                                                   Ector_Renderer_Software_Gradient_Data *radial)
+void
+ector_software_rasterizer_radial_gradient_set(Software_Rasterizer *rasterizer,
+                                              Ector_Renderer_Software_Gradient_Data *radial)
 {
    rasterizer->fill_data.gradient = radial;
    rasterizer->fill_data.type = RadialGradient;
 }
 
-void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
-                                             int x, int y, uint32_t mul_col,
-                                             Efl_Gfx_Render_Op op, Shape_Rle_Data* rle)
+void
+ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
+                                        int x, int y, uint32_t mul_col,
+                                        Efl_Gfx_Render_Op op, Shape_Rle_Data* rle,
+                                        Ector_Buffer *mask,
+                                        int mask_op)
 {
-   // check for NULL rle data
    if (!rle) return;
 
    rasterizer->fill_data.offx = x;
    rasterizer->fill_data.offy = y;
    rasterizer->fill_data.mul_col = mul_col;
    rasterizer->fill_data.op = op;
+   rasterizer->fill_data.mask =
+         mask ? efl_data_scope_get(mask, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN) : NULL;
+   rasterizer->fill_data.mask_op = mask_op;
 
    _setup_span_fill_matrix(rasterizer);
    _adjust_span_fill_methods(&rasterizer->fill_data);

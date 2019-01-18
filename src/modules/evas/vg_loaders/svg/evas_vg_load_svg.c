@@ -2325,9 +2325,21 @@ _update_gradient(Svg_Node *node, Eina_List *grad_list)
           }
      }
 }
+static Eina_Bool
+evas_vg_load_file_data_svg(Vg_File_Data *vfd EINA_UNUSED)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+evas_vg_load_file_close_svg(Vg_File_Data *vfd)
+{
+   if (vfd->root) efl_unref(vfd->root);
+   return EINA_TRUE;
+}
 
 static Vg_File_Data*
-evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *error EINA_UNUSED)
+evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *error EINA_UNUSED)
 {
    Evas_SVG_Loader loader = {
      NULL, NULL, NULL, NULL, NULL, 0, EINA_FALSE
@@ -2371,12 +2383,15 @@ evas_vg_load_file_data_svg(const char *file, const char *key EINA_UNUSED, int *e
         *error = EVAS_LOAD_ERROR_GENERIC;
      }
    free(loader.svg_parse);
-   return vg_common_create_vg_node(loader.doc);
+   eina_file_close(f);
+   return vg_common_svg_create_vg_node(loader.doc);
 }
 
 static Evas_Vg_Load_Func evas_vg_load_svg_func =
 {
-   evas_vg_load_file_data_svg
+   evas_vg_load_file_open_svg,
+   evas_vg_load_file_close_svg,
+   evas_vg_load_file_data_svg,
 };
 
 static int

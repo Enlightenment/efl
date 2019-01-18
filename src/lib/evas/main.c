@@ -56,36 +56,6 @@ evas_debug_input_null(void)
 }
 
 void
-evas_debug_magic_null(void)
-{
-   if (!_evas_debug_init)
-     {
-        _evas_debug_init_from_env();
-     }
-   if ((_evas_debug_show == _EVAS_DEBUG_SHOW) ||
-         (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
-     CRI("Input object is zero'ed out (maybe a freed object or zero-filled RAM)!");
-   if (_evas_debug_abort) abort();
-}
-
-void
-evas_debug_magic_wrong(DATA32 expected, DATA32 supplied)
-{
-   if (!_evas_debug_init)
-     {
-        _evas_debug_init_from_env();
-     }
-   if ((_evas_debug_show == _EVAS_DEBUG_SHOW) ||
-         (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
-     CRI("Input object is wrong type\n"
-	  "    Expected: %08x - %s\n"
-	  "    Supplied: %08x - %s",
-	  expected, evas_debug_magic_string_get(expected),
-	  supplied, evas_debug_magic_string_get(supplied));
-   if (_evas_debug_abort) abort();
-}
-
-void
 evas_debug_generic(const char *str)
 {
    if (!_evas_debug_init)
@@ -96,34 +66,4 @@ evas_debug_generic(const char *str)
          (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
      CRI("%s", str);
    if (_evas_debug_abort) abort();
-}
-
-const char *
-evas_debug_magic_string_get(DATA32 magic)
-{
-   switch (magic)
-     {
-      case MAGIC_EVAS:
-	return "Evas";
-      case MAGIC_OBJ:
-	return "Evas_Object";
-      case MAGIC_OBJ_RECTANGLE:
-	return "Evas_Object (Rectangle)";
-      case MAGIC_OBJ_LINE:
-	return "Evas_Object (Line)";
-      case MAGIC_OBJ_POLYGON:
-	return "Evas_Object (Polygon)";
-      case MAGIC_OBJ_IMAGE:
-	return "Evas_Object (Image)";
-      case MAGIC_OBJ_TEXT:
-	return "Evas_Object (Text)";
-      case MAGIC_OBJ_SMART:
-	return "Evas_Object (Smart)";
-      case MAGIC_EVAS_GL:
-	return "Evas_GL";
-      case MAGIC_MAP:
-	return "Evas_Map";
-      default:
-	return "<UNKNOWN>";
-     };
 }

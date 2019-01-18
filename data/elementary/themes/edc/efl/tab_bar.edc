@@ -484,7 +484,7 @@ group { "efl/tab_bar/tab";
          action:  SIGNAL_EMIT "efl,mouse,out" "efl";
       }
       program { name: "st1";
-         signal: "efl,text,hidden"; source: "efl";
+         signal: "efl,state,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -492,7 +492,7 @@ group { "efl/tab_bar/tab";
          }
       }
       program { name: "st2";
-         signal: "efl,text,visible"; source: "efl";
+         signal: "efl,state,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -500,7 +500,7 @@ group { "efl/tab_bar/tab";
          }
       }
       program { name: "st3";
-         signal: "efl,icon,hidden"; source: "efl";
+         signal: "efl,state,icon,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);
@@ -508,7 +508,7 @@ group { "efl/tab_bar/tab";
          }
       }
       program { name: "st4";
-         signal: "efl,icon,visible"; source: "efl";
+         signal: "efl,state,icon,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -537,16 +537,8 @@ group { "efl/tab_bar/tab";
          target: "shadow1";
          target: "shadow2";
       }
-      program {
-         signal: "efl,state,icon_set,forward"; source: "efl";
-         after: "icon_set,animation";
-      }
-      program {
-         signal: "efl,state,icon_set,backward"; source: "efl";
-         after: "icon_set,animation";
-      }
       program { name: "icon_set,animation";
-         signal: "efl,state,icon_set"; source: "efl";
+         signal: "efl,state,icon_new,set"; source: "efl";
          action: STATE_SET "animation" 0.0;
          target: "icon_clip1";
          target: "icon_clip2";

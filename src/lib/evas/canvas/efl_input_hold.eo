@@ -1,4 +1,4 @@
-class Efl.Input.Hold (Efl.Object, Efl.Input.Event)
+class Efl.Input.Hold extends Efl.Object implements Efl.Input.Event
 {
    [[Event data sent when inputs are put on hold or resumed.]]
    methods {

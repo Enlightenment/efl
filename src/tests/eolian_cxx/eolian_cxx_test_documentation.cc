@@ -22,9 +22,9 @@ using efl::eolian::grammar::attributes::struct_def;
 
 klass_def init_test_data(efl::eolian::eolian_state const& state)
 {
-   ck_assert(::eolian_state_directory_add(state.value, PACKAGE_DATA_DIR));
+   ck_assert(::eolian_state_directory_add(state.value, TESTS_SRC_DIR));
    ck_assert(::eolian_state_all_eot_files_parse(state.value));
-   ck_assert(::eolian_state_file_parse(state.value, PACKAGE_DATA_DIR"/docs.eo"));
+   ck_assert(::eolian_state_file_parse(state.value, TESTS_SRC_DIR"/docs.eo"));
 
    const Eolian_Class *c_klass = ::eolian_state_class_by_name_get(state.value, "Docs");
    ck_assert_ptr_ne(c_klass, NULL);
@@ -144,6 +144,12 @@ EFL_START_TEST(eolian_cxx_test_property_docs)
    ck_assert_str_eq(doc.summary.c_str(), "Set documentation.");
    ck_assert_str_eq(doc.description.c_str(), "");
    ck_assert_str_eq(doc.since.c_str(), "1.17"); // Members inherit from parent *class*
+
+   auto property_iter = klass.properties.begin();
+   auto property = *property_iter;
+   doc = property.documentation;
+   ck_assert_str_eq(doc.summary.c_str(), "Property common documentation.");
+   ck_assert_str_eq(doc.since.c_str(), "1.18");
 }
 EFL_END_TEST
 

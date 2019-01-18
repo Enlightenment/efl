@@ -1,3 +1,5 @@
+if HAVE_LUA_BINDINGS
+
 if HAVE_ELUA_BIN
 ELUA_GEN = @elua_bin@ lualian
 _ELUA_GEN_DEP = @elua_bin@
@@ -22,3 +24,5 @@ SUFFIXES += .lua
 
 %.eo.lua: %.eo ${_ELUA_GEN_DEP}
 	$(AM_V_ELUA)$(ELUA_GEN) $(EOLIAN_FLAGS) -o $@ $<
+
+endif
