@@ -17,7 +17,7 @@ EOLIAN static Eo *
 _efl_ui_image_factory_efl_object_constructor(Eo *obj, Efl_Ui_Image_Factory_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_ui_caching_factory_item_class_set(obj, EFL_UI_IMAGE_CLASS);
+   efl_ui_widget_factory_item_class_set(obj, EFL_UI_IMAGE_CLASS);
 
    pd->property = NULL;
 
