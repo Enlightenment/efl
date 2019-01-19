@@ -210,6 +210,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_button_eo.h>
 
 # include "efl_ui_caching_factory.eo.h"
+# include "efl_ui_widget_factory.eo.h"
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 

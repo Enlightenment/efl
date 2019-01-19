@@ -1,0 +1,28 @@
+class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
+{
+   [[Efl Ui Factory that provides @Efl.Ui.Widget.
+
+     This factory is designed to build @Efl.Ui.Widget and optionally set their
+     @Efl.Ui.Widget.style if it was connected with @Efl.Ui.Model.Connect.connect "$style".
+
+   ]]
+   methods {
+      @property item_class {
+         [[Define the class of the item returned by this factory.]]
+         get {}
+         set {}
+         values {
+            klass: const(Efl.Class); [[The class identifier to create item from.]]
+         }
+      }
+   }
+
+   implements {
+      Efl.Ui.Factory.create;
+      Efl.Ui.Factory.release;
+      Efl.Ui.Model.Connect.connect;
+   }
+   constructors {
+      .item_class;
+   }
+}
