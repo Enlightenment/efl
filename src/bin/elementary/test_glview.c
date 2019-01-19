@@ -249,7 +249,7 @@ draw_gear(GLData *gld, Gear *gear, GLfloat *m,
    gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                              6 * sizeof(GLfloat), NULL);
    gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                             6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat *)));
+                             6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat)));
    gl->glEnableVertexAttribArray(0);
    gl->glEnableVertexAttribArray(1);
    gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, gear->count);
