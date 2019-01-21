@@ -8,7 +8,7 @@ enum Efl.Ui.Animation_View.State
    stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @.stop @since 1.22]]
 }
 
-class Efl.Ui.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.File)
+class Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
 {
    [[Elementary Animation View class]]
    legacy_prefix: elm_animation_view;
