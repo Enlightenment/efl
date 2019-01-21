@@ -29,7 +29,7 @@
  */
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_animation_view_legacy.h"
+#include "efl_ui_animation_view_legacy.h"
 #endif
 /**
  * @}

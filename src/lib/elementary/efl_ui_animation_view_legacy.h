@@ -33,4 +33,4 @@ NULL, otherwise.
 */
 EAPI Eina_Bool        elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const char *key);
 
-#include "elm_animation_view.eo.legacy.h"
+#include "efl_ui_animation_view.eo.legacy.h"
