@@ -5,7 +5,7 @@ struct Efl.Ui.Spin_Special_Value
    label: string; [[String to replace]]
 }
 
-class Efl.Ui.Spin extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Format,
+class Efl.Ui.Spin extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Format,
                    Efl.Access.Value, Efl.Access.Widget.Action
 {
    [[A Spin.
@@ -37,9 +37,9 @@ class Efl.Ui.Spin extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Format,
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Range.range_min_max { get; set; }
-      Efl.Ui.Range.range_step { get; set; }
-      Efl.Ui.Range.range_value { get; set; }
+      Efl.Ui.Range_Display.range_min_max { get; set; }
+      Efl.Ui.Range_Interactive.range_step { get; set; }
+      Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Format.format_cb { set; }
    }
    events {

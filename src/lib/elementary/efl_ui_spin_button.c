@@ -901,7 +901,7 @@ _efl_ui_spin_button_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Ef
 }
 
 EOLIAN static void
-_efl_ui_spin_button_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double val)
+_efl_ui_spin_button_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED, double val)
 {
    efl_ui_range_value_set(efl_super(obj, MY_CLASS), val);
 

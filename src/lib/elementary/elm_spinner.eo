@@ -1,4 +1,4 @@
-class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Focus.Composition,
+class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Focus.Composition,
                    Efl.Access.Value, Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary spinner class]]
@@ -174,9 +174,9 @@ class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Focus.Co
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Range.range_min_max { get; set; }
-      Efl.Ui.Range.range_step { get; set; }
-      Efl.Ui.Range.range_value { get; set; }
+      Efl.Ui.Range_Display.range_min_max { get; set; }
+      Efl.Ui.Range_Interactive.range_step { get; set; }
+      Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
