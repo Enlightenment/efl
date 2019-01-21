@@ -1,4 +1,4 @@
-class Efl.Model_Composite_Selection (Efl.Model_Composite_Boolean)
+class Efl.Model_Composite_Selection extends Efl.Model_Composite_Boolean
 {
    [[Efl model composite selection class]]
    implements {

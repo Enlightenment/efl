@@ -1,4 +1,4 @@
-class Efl.Io.Buffered_Stream (Efl.Loop_Consumer, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer) {
+class Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
     [[A wrapper object offering easy to use buffered streams over existing I/O class.
 
       The buffered stream encapsulates an actual @Efl.Io.Reader or

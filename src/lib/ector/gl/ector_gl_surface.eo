@@ -1,6 +1,6 @@
 import ector_types;
 
-class Ector.GL.Surface (Ector.GL.Buffer, Ector.Surface)
+class Ector.GL.Surface extends Ector.GL.Buffer implements Ector.Surface
 {
    [[Ector GL surface class]]
    eo_prefix: ector_gl_surface;

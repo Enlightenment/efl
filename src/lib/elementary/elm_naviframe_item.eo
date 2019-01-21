@@ -1,6 +1,6 @@
 type Elm_Naviframe_Item_Pop_Cb: __undefined_type; [[Elementary naviframe item pop callback type]]
 
-class Elm.Naviframe.Item(Elm.Widget.Item, Efl.Ui.Legacy)
+class Elm.Naviframe.Item extends Elm.Widget.Item implements Efl.Ui.Legacy
 {
    [[Elementary naviframe item class]]
    legacy_prefix: elm_naviframe_item;

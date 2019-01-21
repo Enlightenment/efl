@@ -1,6 +1,6 @@
 struct @extern cairo_t; [[cairo_t type]]
 
-class Ector.Cairo.Surface (Efl.Object, Ector.Surface)
+class Ector.Cairo.Surface extends Efl.Object implements Ector.Surface
 {
    [[Ector surface on a cairo backend
 

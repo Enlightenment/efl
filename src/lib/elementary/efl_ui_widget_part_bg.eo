@@ -1,4 +1,4 @@
-class Efl.Ui.Widget_Part_Bg (Efl.Ui.Widget_Part, Efl.File, Efl.Gfx.Color, Efl.Gfx.Image)
+class Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File, Efl.Gfx.Color, Efl.Gfx.Image
 {
    [[Elementary widget internal part background class]]
    data: null;

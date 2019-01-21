@@ -1,4 +1,4 @@
-abstract Efl.Loop_Consumer (Efl.Object)
+abstract Efl.Loop_Consumer extends Efl.Object
 {
    [[An Efl.Loop_Consumer is a class which requires one of the parents to provide
      an Efl.Loop interface when performing provider_find. It will enforce this by
@@ -25,7 +25,7 @@ abstract Efl.Loop_Consumer (Efl.Object)
          params {
             result: any_value; [[The value to be delivered.
 
-            Note that the value contents must survive this function scope, that is, do 
+            Note that the value contents must survive this function scope, that is, do
             not use stack allocated blobs, arrays, structures or types that keep
             references to memory you give. Values will be automatically cleaned up using
             \@ref eina_value_flush() once they are unused (no more future or futures returned a new value)]]

@@ -1,6 +1,6 @@
-class Efl.Ui.Progressbar (Efl.Ui.Layout, Efl.Ui.Range, Efl.Ui.Format,
+class Efl.Ui.Progressbar extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Format,
                           Efl.Ui.Direction, Efl.Access.Value,
-                          Efl.Text, Efl.Content, Efl.Text_Markup)
+                          Efl.Text, Efl.Content, Efl.Text_Markup
 {
    [[Elementary progressbar class]]
    methods {

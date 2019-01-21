@@ -1,5 +1,5 @@
-class Elm.Menu (Efl.Ui.Widget, Efl.Ui.Clickable,
-                Efl.Access.Selection, Efl.Ui.Widget_Focus_Manager, Efl.Ui.Legacy)
+class Elm.Menu extends Efl.Ui.Widget implements Efl.Ui.Clickable,
+                Efl.Access.Selection, Efl.Ui.Widget_Focus_Manager, Efl.Ui.Legacy
 {
    [[Elementary menu class]]
    legacy_prefix: elm_menu;

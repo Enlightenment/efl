@@ -1,4 +1,4 @@
-class Efl.Ui.Win_Inlined (Efl.Ui.Win)
+class Efl.Ui.Win_Inlined extends Efl.Ui.Win
 {
    [[An inlined window.
 

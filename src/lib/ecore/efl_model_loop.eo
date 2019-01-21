@@ -1,4 +1,4 @@
-class Efl.Model_Loop (Efl.Loop_Consumer, Efl.Model)
+class Efl.Model_Loop extends Efl.Loop_Consumer implements Efl.Model
 {
    data: null;
    implements {

@@ -1,4 +1,4 @@
-interface Efl.Pack_Linear (Efl.Pack)
+interface Efl.Pack_Linear extends Efl.Pack
 {
    [[API for containers ]]
    eo_prefix: efl_pack;

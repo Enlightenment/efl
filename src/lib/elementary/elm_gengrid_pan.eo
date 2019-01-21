@@ -1,4 +1,4 @@
-class Elm.Gengrid.Pan (Elm.Pan)
+class Elm.Gengrid.Pan extends Elm.Pan
 {
    [[Elementary gengrid pan class]]
    legacy_prefix: elm_gengrid_pan;

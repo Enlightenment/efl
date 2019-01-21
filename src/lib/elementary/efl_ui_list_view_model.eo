@@ -1,6 +1,6 @@
 import efl_ui_list_view_types;
 
-interface Efl.Ui.List_View_Model (Efl.Interface)
+interface Efl.Ui.List_View_Model extends Efl.Interface
 {
    methods {
       @property load_range {

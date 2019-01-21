@@ -1,4 +1,4 @@
-class Efl.Ui.Button_Legacy (Efl.Ui.Button, Efl.Ui.Legacy)
+class Efl.Ui.Button_Legacy extends Efl.Ui.Button implements Efl.Ui.Legacy
 {
    [[Push-button widget
 

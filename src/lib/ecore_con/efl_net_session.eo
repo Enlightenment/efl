@@ -27,7 +27,7 @@ enum Efl.Net.Session_Technology {
     all = (Efl.Net.Session_Technology.ethernet | Efl.Net.Session_Technology.wifi | Efl.Net.Session_Technology.bluetooth | Efl.Net.Session_Technology.cellular | Efl.Net.Session_Technology.vpn | Efl.Net.Session_Technology.gadget), [[All technology types]]
 }
 
-class Efl.Net.Session (Efl.Loop_Consumer) {
+class Efl.Net.Session extends Efl.Loop_Consumer {
     [[Used by application to request network connectivity.
 
       This API is targeted at applications that need access to the

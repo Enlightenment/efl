@@ -1,4 +1,4 @@
-class Efl.Canvas.Gesture_Recognizer_Tap (Efl.Canvas.Gesture_Recognizer)
+class Efl.Canvas.Gesture_Recognizer_Tap extends Efl.Canvas.Gesture_Recognizer
 {
    [[EFL Gesture Recognizer Tap class]]
    data: null;

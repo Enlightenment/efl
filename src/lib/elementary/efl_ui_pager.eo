@@ -5,7 +5,7 @@ enum Efl.Ui.Pager_Loop
    enabled
 }
 
-class Efl.Ui.Pager (Efl.Ui.Layout, Efl.Pack_Linear)
+class Efl.Ui.Pager extends Efl.Ui.Layout implements Efl.Pack_Linear
 {
    [[Pager widget
 

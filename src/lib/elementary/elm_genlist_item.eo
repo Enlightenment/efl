@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Genlist.Item(Elm.Widget.Item.Static_Focus, Efl.Ui.Legacy)
+class Elm.Genlist.Item extends Elm.Widget.Item.Static_Focus implements Efl.Ui.Legacy
 {
    [[Elementary genlist item class]]
    legacy_prefix: elm_genlist_item;

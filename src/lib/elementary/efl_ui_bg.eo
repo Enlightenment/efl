@@ -1,4 +1,4 @@
-class Efl.Ui.Bg (Efl.Ui.Layout, Efl.Gfx.Color, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller)
+class Efl.Ui.Bg extends Efl.Ui.Layout implements Efl.Gfx.Color, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[The bg (background) widget is used for setting (solid) background decorations
    for a window (unless it has transparency enabled) or for any container object. It

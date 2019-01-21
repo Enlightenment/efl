@@ -1,4 +1,4 @@
-class Efl.Ui.Slider_Interval (Efl.Ui.Slider)
+class Efl.Ui.Slider_Interval extends Efl.Ui.Slider
 {
     [[An interval slider.
 

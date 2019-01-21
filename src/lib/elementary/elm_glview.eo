@@ -80,7 +80,7 @@ enum Elm.GLView.Render.Policy
    always    = 2  [[Render always even when it is not visible]]
 }
 
-class Elm.Glview (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy)
+class Elm.Glview extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.Ui.Legacy
 {
    [[Elementary GL view class]]
    legacy_prefix: elm_glview;
@@ -195,7 +195,7 @@ class Elm.Glview (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy)
       Efl.Gfx.View.view_size { get; set; }
    }
    events {
-      created: void; 
+      created: void;
             [[Event dispatched when first render happens.
 
               The callback function gets called once during the

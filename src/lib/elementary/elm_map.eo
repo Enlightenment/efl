@@ -49,9 +49,9 @@ enum Elm.Map.Route_Method
 }
 
 
-class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
+class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
                Efl.Access.Widget.Action,
-               Efl.Ui.Clickable, Efl.Ui.Legacy, Efl.Ui.Zoom)
+               Efl.Ui.Clickable, Efl.Ui.Legacy, Efl.Ui.Zoom
 {
    [[Elementary map class]]
    legacy_prefix: elm_map;
@@ -348,7 +348,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
          [[Add a new line overlay to the map object.
            This overlay has a line type.
 
-           Overlay created with this method can be deleted with 
+           Overlay created with this method can be deleted with
            \@ref elm_map_overlay_del.
          ]]
          return: ptr(Elm_Map_Overlay); [[The created overlay or $null upon failure.]]
@@ -493,7 +493,7 @@ class Elm.Map (Efl.Ui.Widget, Elm.Interface_Scrollable,
            The created overlay has a default style layout before content or
            icon is set. If content or icon is set, those are displayed
            instead of default style layout.
-   
+
            You can set by using \@ref elm_map_overlay_content_set or
            \@ref elm_map_overlay_icon_set. If $null is set, default style
            is shown again.

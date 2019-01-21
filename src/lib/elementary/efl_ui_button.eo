@@ -1,6 +1,6 @@
-class Efl.Ui.Button (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+class Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
                      Efl.Text, Efl.Content,
-                     Efl.Access.Widget.Action)
+                     Efl.Access.Widget.Action
 {
    [[Push-button widget
 

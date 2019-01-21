@@ -1,7 +1,7 @@
-class Elm.Diskselector (Efl.Ui.Widget, Elm.Interface_Scrollable,
+class Elm.Diskselector extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
                         Efl.Access.Widget.Action,
                         Efl.Ui.Clickable, Efl.Ui.Scrollable,
-                        Efl.Ui.Selectable, Efl.Ui.Legacy)
+                        Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary diskselector class]]
    legacy_prefix: elm_diskselector;

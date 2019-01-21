@@ -1,6 +1,6 @@
 import ector_types;
 
-abstract Ector.Renderer.GL (Ector.Renderer)
+abstract Ector.Renderer.GL extends Ector.Renderer
 {
    [[Ector GL renderer abstract class]]
    methods {

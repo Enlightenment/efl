@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Ector.Renderer (Efl.Object)
+abstract Ector.Renderer extends Efl.Object
 {
    [[Ector renderer abstract interface]]
 

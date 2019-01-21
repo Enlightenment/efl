@@ -1,8 +1,8 @@
 import elm_general;
 
-class Elm.Genlist (Efl.Ui.Layout, Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Elm.Genlist extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.Ui.Clickable,
                    Efl.Access.Widget.Action, Efl.Access.Selection,
-                   Efl.Ui.Selectable, Efl.Ui.Legacy)
+                   Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary genlist class]]
    legacy_prefix: elm_genlist;

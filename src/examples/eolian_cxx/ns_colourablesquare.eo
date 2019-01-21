@@ -1,4 +1,4 @@
-class Ns.ColourableSquare (Ns.Colourable)
+class Ns.ColourableSquare extends Ns.Colourable
 {
     data: ColourableSquare_Data;
     methods {

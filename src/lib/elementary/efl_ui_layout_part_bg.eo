@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Part_Bg (Efl.Ui.Widget_Part_Bg)
+class Efl.Ui.Layout_Part_Bg extends Efl.Ui.Widget_Part_Bg
 {
    [[Elementary layout internal part background class]]
    data: null;

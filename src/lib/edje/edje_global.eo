@@ -1,4 +1,4 @@
-class Edje.Global (Efl.Object, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class, Efl.Gfx.Size_Class)
+class Edje.Global extends Efl.Object implements Efl.Gfx.Color_Class, Efl.Gfx.Text_Class, Efl.Gfx.Size_Class
 {
    [[An internal object that manages global color, text and size classes for
      the whole application. Individual edje objects also support the same

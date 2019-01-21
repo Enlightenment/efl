@@ -1,8 +1,8 @@
-class Efl.Ui.Timepicker (Efl.Ui.Layout)
+class Efl.Ui.Timepicker extends Efl.Ui.Layout
 {
    [[Timepicker widget
-   
-     This is a widget which allows the user to pick a time using internal spinner. 
+
+     This is a widget which allows the user to pick a time using internal spinner.
      User can use the internal spinner to select hour, minute, AM/PM or user can input
      value using internal entry.
    ]]

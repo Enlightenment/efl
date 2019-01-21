@@ -28,7 +28,7 @@ enum Efl.Ui.Flip_Interaction
    page [[Page interaction]]
 }
 
-class Efl.Ui.Flip (Efl.Ui.Widget, Efl.Pack_Linear)
+class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[Efl UI flip class]]
    legacy_prefix: elm_flip;

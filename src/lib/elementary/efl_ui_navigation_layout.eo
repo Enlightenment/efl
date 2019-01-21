@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Layout (Efl.Ui.Layout, Efl.Content)
+class Efl.Ui.Navigation_Layout extends Efl.Ui.Layout implements Efl.Content
 {
    [[Navigation_Layout widget.
 

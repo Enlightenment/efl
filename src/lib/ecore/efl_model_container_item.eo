@@ -1,4 +1,4 @@
-class Efl.Model_Container_Item (Efl.Object, Efl.Model)
+class Efl.Model_Container_Item extends Efl.Object implements Efl.Model
 {
    [[
      Used as a child of @Efl.Model_Container.

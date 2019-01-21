@@ -1,4 +1,4 @@
-interface Efl.Ui.Legacy (Efl.Interface)
+interface Efl.Ui.Legacy extends Efl.Interface
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 

@@ -12,7 +12,7 @@ struct Efl.Net.Ip_Address_Resolve_Results {
     results: array<Efl.Net.Ip_Address>; [[The resolved objects. Do not modify this array but you can keep reference to elements using efl_ref() and efl_unref()]]
 }
 
-class Efl.Net.Ip_Address (Efl.Object) {
+class Efl.Net.Ip_Address extends Efl.Object {
     [[An Internet Protocol (IP) Address.
 
       This class is a set of helpers to translate to and from address

@@ -9,7 +9,7 @@ enum Efl.Ui.Zoom_Mode
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Efl.Ui.Zoom ()
+interface Efl.Ui.Zoom
 {
    [[Efl UI zoom interface]]
    event_prefix: efl_ui;

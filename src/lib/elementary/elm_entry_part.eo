@@ -1,4 +1,4 @@
-class Elm.Entry.Part (Efl.Ui.Layout_Part_Legacy)
+class Elm.Entry.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary entry internal part class]]
    data: null;

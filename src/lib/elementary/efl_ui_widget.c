@@ -1469,24 +1469,26 @@ EOLIAN static Eina_Bool
 _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(obj);
+   Elm_Widget_Smart_Data *sdc = NULL;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
+
+   if (_elm_widget_is(sobj))
+     sdc = efl_data_scope_get(sobj, MY_CLASS);
 
    if (sobj == sd->parent_obj)
      {
         /* in this case, sobj must be an elm widget, or something
          * very wrong is happening */
-        if (!_elm_widget_is(sobj)) return EINA_FALSE;
+        if (!sdc) return EINA_FALSE;
 
         if (!elm_widget_sub_object_del(sobj, obj)) return EINA_FALSE;
         WRN("You passed a parent object of obj = %p as the sub object = %p!",
             obj, sobj);
      }
 
-   if (_elm_widget_is(sobj))
+   if (sdc)
      {
-        ELM_WIDGET_DATA_GET(sobj, sdc);
-
         if (sdc->parent_obj == obj) goto end;
         if (sdc->parent_obj)
           {
@@ -1543,10 +1545,8 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    evas_object_data_set(sobj, "elm-parent", obj);
 
    _callbacks_add(sobj, obj);
-   if (_elm_widget_is(sobj))
+   if (sdc)
      {
-        ELM_WIDGET_DATA_GET(sobj, sdc);
-
         /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
          * Due to elementary's scale policy, scale and pscale can be different in
          * some cases. This happens when sobj's previous parent and new parent have

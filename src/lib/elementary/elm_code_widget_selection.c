@@ -74,6 +74,9 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd = efl_data_scope_get(widget, ELM_CODE_WIDGET_CLASS);
 
+   if (pd->selection && (pd->selection->end_line == line) &&
+       (pd->selection->end_col == col)) return;
+
    _elm_code_widget_selection_limit(widget, pd, &line, &col);
    if (!pd->selection)
      {

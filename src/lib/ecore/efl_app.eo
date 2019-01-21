@@ -1,6 +1,6 @@
 import efl_types;
 
-class Efl.App (Efl.Loop)
+class Efl.App extends Efl.Loop
 {
    [[ ]]
    methods {

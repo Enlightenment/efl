@@ -1,4 +1,4 @@
-class Elm.Fileselector.Entry.Part (Efl.Ui.Layout_Part_Legacy)
+class Elm.Fileselector.Entry.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary fileselector entry internal part class]]
    data: null;

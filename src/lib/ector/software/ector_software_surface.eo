@@ -1,4 +1,4 @@
-class Ector.Software.Surface (Ector.Software.Buffer, Ector.Surface)
+class Ector.Software.Surface extends Ector.Software.Buffer implements Ector.Surface
 {
    [[Ector surface software class]]
    eo_prefix: ector_software_surface;

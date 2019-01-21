@@ -1,5 +1,5 @@
-class Elm.Slider (Efl.Ui.Slider_Interval, Efl.Ui.Legacy,
-                  Efl.Text, Efl.Text_Markup, Efl.Ui.Format)
+class Elm.Slider extends Efl.Ui.Slider_Interval implements Efl.Ui.Legacy,
+                  Efl.Text, Efl.Text_Markup, Efl.Ui.Format
 {
    [[Elementary slider class]]
    eo_prefix: elm_obj_slider;

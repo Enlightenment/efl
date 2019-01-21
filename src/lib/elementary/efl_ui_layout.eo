@@ -1,9 +1,9 @@
 import efl_ui;
 
-class Efl.Ui.Layout (Efl.Ui.Widget, Efl.Container, Efl.File,
+class Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
                      Efl.Layout.Calc, Efl.Layout.Signal,
-                     Efl.Layout.Group)
+                     Efl.Layout.Group
 {
    [[Elementary layout class]]
    methods {

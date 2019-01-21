@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Factory (Efl.Ui.Caching_Factory)
+class Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
 {
    [[Efl Ui Layout Factory class]]
    methods {

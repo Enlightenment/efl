@@ -2090,8 +2090,6 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
              do
                _requires_add(ls, ibuf);
              while (test_next(ls, ','));
-             if (ls->t.token == '{')
-               goto inherit_done;
           }
 
         if (ls->t.kw == KW_extends || (is_reg && (ls->t.kw == KW_implements)))
@@ -2113,17 +2111,6 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
              do
                _inherit_dep(ls, ibuf, EINA_FALSE);
              while (test_next(ls, ','));
-          }
-        else
-          {
-             check_next(ls, '(');
-             if (ls->t.token != ')')
-               {
-                   _inherit_dep(ls, ibuf, is_reg);
-                   while (test_next(ls, ','))
-                     _inherit_dep(ls, ibuf, EINA_FALSE);
-               }
-             check_match(ls, ')', '(', line, col);
           }
         eo_lexer_dtor_pop(ls);
      }

@@ -1378,24 +1378,28 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
              if (!elm_layout_content_set(sd->scr_ly, "elm.event_area", sd->scr_event))
                elm_layout_content_set(sd->scr_ly, "event_area", sd->scr_event);
           }
+        else _scrollable_layout_theme_set(obj, sd);
 
         elm_interface_scrollable_content_set(obj, sd->scr_ly);
         sd->freeze = EINA_TRUE;
         elm_layout_content_set(sd->scr_ly, "elm.swallow.content", sd->bx);
         if (sd->content) elm_widget_sub_object_add(sd->scr_ly, sd->content);
 
-        switch (sd->orient)
+        if (sd->hidden)
           {
-           case ELM_PANEL_ORIENT_TOP:
-           case ELM_PANEL_ORIENT_BOTTOM:
-              elm_interface_scrollable_movement_block_set
-                    (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
-              break;
-           case ELM_PANEL_ORIENT_LEFT:
-           case ELM_PANEL_ORIENT_RIGHT:
-              elm_interface_scrollable_movement_block_set
-                    (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
-              break;
+             switch (sd->orient)
+               {
+                case ELM_PANEL_ORIENT_TOP:
+                case ELM_PANEL_ORIENT_BOTTOM:
+                   elm_interface_scrollable_movement_block_set
+                      (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                   break;
+                case ELM_PANEL_ORIENT_LEFT:
+                case ELM_PANEL_ORIENT_RIGHT:
+                   elm_interface_scrollable_movement_block_set
+                      (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                   break;
+               }
           }
 
         elm_interface_scrollable_single_direction_set
@@ -1435,6 +1439,8 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
         elm_widget_sub_object_add(obj, sd->scr_edje);
 
         elm_widget_resize_object_set(obj, sd->panel_edje);
+
+        _orient_set_do(obj);
 
         evas_object_hide(sd->scr_ly);
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");

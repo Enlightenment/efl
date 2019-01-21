@@ -1,4 +1,4 @@
-class Efl.Loop_Timer (Efl.Loop_Consumer)
+class Efl.Loop_Timer extends Efl.Loop_Consumer
 {
    [[Timers are objects that will call a given callback at some point
      in the future and repeat that tick at a given interval.
@@ -55,6 +55,9 @@ class Efl.Loop_Timer (Efl.Loop_Consumer)
    }
    events {
       tick: void; [[Event triggered when the specified time as passed.]]
+   }
+   constructors {
+      .interval;
    }
    implements {
       Efl.Object.constructor;

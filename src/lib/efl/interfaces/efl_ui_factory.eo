@@ -4,7 +4,7 @@ struct Efl.Ui.Factory_Item_Created_Event {
    item: Efl.Gfx.Entity; [[The item that was just created.]]
 }
 
-interface Efl.Ui.Factory (Efl.Ui.Model.Connect)
+interface Efl.Ui.Factory extends Efl.Ui.Model.Connect
 {
    [[Efl UI factory interface]]
    methods {

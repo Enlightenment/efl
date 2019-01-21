@@ -1,4 +1,4 @@
-class Elm.Color.Item(Elm.Widget.Item, Efl.Ui.Focus.Object, Efl.Access.Widget.Action)
+class Elm.Color.Item extends Elm.Widget.Item implements Efl.Ui.Focus.Object, Efl.Access.Widget.Action
 {
    [[Elementary color item class]]
    legacy_prefix: elm_color_item;

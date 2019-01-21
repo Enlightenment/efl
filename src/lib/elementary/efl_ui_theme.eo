@@ -1,4 +1,4 @@
-class Efl.Ui.Theme (Efl.Object)
+class Efl.Ui.Theme extends Efl.Object
 {
    [[Efl Ui Theme class]]
    eo_prefix: efl_ui_theme;

@@ -10,7 +10,7 @@ struct Efl.Ui.Alert_Popup_Button_Clicked_Event {
    button_type: Efl.Ui.Alert_Popup_Button; [[Clicked button type]]
 }
 
-class Efl.Ui.Alert_Popup(Efl.Ui.Popup)
+class Efl.Ui.Alert_Popup extends Efl.Ui.Popup
 {
    [[EFL UI Alert Popup class]]
    methods {

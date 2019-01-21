@@ -1,4 +1,4 @@
-class Efl.Model_Composite_Selection_Children (Efl.Model_Composite_Boolean_Children)
+class Efl.Model_Composite_Selection_Children extends Efl.Model_Composite_Boolean_Children
 {
    [[Efl model composite selection children class]]
    implements {

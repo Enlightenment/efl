@@ -1,5 +1,5 @@
 
-abstract Efl.Ui.Grid_Item (Efl.Ui.Item)
+abstract Efl.Ui.Grid_Item extends Efl.Ui.Item
 {
    implements {
       //Efl.Object

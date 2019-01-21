@@ -1,4 +1,4 @@
-class Elm.Segment_Control (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
+class Elm.Segment_Control extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Efl.Ui.Legacy
 {
    [[Elementary segment control class]]
    legacy_prefix: elm_segment_control;

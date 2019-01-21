@@ -1,5 +1,5 @@
-class Efl.Ui.Frame (Efl.Ui.Layout, Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
-                    Efl.Content)
+class Efl.Ui.Frame extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
+                    Efl.Content
 {
    [[Frame widget
 

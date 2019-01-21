@@ -1,4 +1,4 @@
-class Efl.Page.Indicator (Efl.Object)
+class Efl.Page.Indicator extends Efl.Object
 {
    [[Page indicator
 

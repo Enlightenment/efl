@@ -1,9 +1,9 @@
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
 
-class Efl.Ui.Text (Efl.Ui.Layout, Efl.Ui.Clickable,
+class Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Text_Interactive)
+                 Efl.Ui.Selectable, Efl.Text_Interactive
 {
    [[Efl UI text class]]
    methods {

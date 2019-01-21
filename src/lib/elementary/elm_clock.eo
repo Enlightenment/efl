@@ -18,7 +18,7 @@ enum Elm.Clock.Edit_Mode
    all = (1 << 6) - 1 [[All digits should be editable.]]
 }
 
-class Elm.Clock (Efl.Ui.Layout, Efl.Ui.Focus.Composition, Efl.Ui.Legacy)
+class Elm.Clock extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Efl.Ui.Legacy
 {
    [[Digital clock widget
 

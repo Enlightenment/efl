@@ -12,7 +12,7 @@ enum Efl.Ui.Scrollbar_Direction
    vertical,
    last
 }
-interface Efl.Ui.Scrollbar ()
+interface Efl.Ui.Scrollbar
 {
    methods {
       @property bar_mode {

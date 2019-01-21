@@ -1,4 +1,4 @@
-class Efl.Linear_Interpolator (Efl.Object, Efl.Interpolator)
+class Efl.Linear_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Efl linear interpolator class]]
    data: Efl_Linear_Interpolator_Data;

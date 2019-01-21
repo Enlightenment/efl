@@ -5,7 +5,7 @@ type Elm_Web_Dialog_Confirm: __undefined_type; [[Elementary web dialog confirm t
 type Elm_Web_Dialog_Prompt: __undefined_type; [[Elementary web dialog prompt type]]
 type Elm_Web_Dialog_Alert: __undefined_type; [[Elementary web dialog alert type]]
 
-abstract Elm.Web (Efl.Ui.Widget, Efl.Ui.Legacy, Efl.Ui.Zoom)
+abstract Elm.Web extends Efl.Ui.Widget implements Efl.Ui.Legacy, Efl.Ui.Zoom
 {
    [[Elementary web view class]]
    legacy_prefix: elm_web;

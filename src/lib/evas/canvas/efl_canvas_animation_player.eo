@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Player (Efl.Object, Efl.Player)
+class Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
 {
    [[Efl animation object class]]
    eo_prefix: efl_animation_player;

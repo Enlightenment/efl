@@ -1,7 +1,7 @@
 type @extern Evas.Text_Style_Type : __undefined_type; [[External text style type]]
 
-class Evas.Text (Efl.Canvas.Object, Efl.Text,
-                 Efl.Text_Font, Efl.Canvas.Filter.Internal)
+class Evas.Text extends Efl.Canvas.Object implements Efl.Text,
+                 Efl.Text_Font, Efl.Canvas.Filter.Internal
 {
    [[Evas text class]]
    legacy_prefix: evas_object_text;

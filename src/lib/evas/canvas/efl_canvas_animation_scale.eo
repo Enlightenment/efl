@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Scale (Efl.Canvas.Animation)
+class Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
 {
    [[Efl scale animation class]]
    eo_prefix: efl_animation_scale;

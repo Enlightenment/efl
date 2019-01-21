@@ -1,4 +1,4 @@
-class Elm.Sys_Notify.Dbus (Efl.Object, Elm.Sys_Notify_Interface)
+class Elm.Sys_Notify.Dbus extends Efl.Object implements Elm.Sys_Notify_Interface
 {
    [[Elementary system notification DBus class]]
    legacy_prefix: elm_sys_notify_dbus;

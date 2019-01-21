@@ -1,4 +1,4 @@
-class Efl.Text_Markup_Util () {
+class Efl.Text_Markup_Util {
    [[Utility class for markup, such as conversions
 
      @since 1.21.

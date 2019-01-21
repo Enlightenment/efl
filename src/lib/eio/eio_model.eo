@@ -9,7 +9,7 @@ function EflIoFilter {
   return: int;
 };
 
-class Eio.Model (Efl.Model_Loop)
+class Eio.Model extends Efl.Model_Loop
 {
     [[Eio model class]]
 

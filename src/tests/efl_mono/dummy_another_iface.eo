@@ -1,4 +1,4 @@
-interface Dummy.Another_Iface ()
+interface Dummy.Another_Iface
 {
    methods {
       emit_another_conflicted {

@@ -1,4 +1,4 @@
-class Elm.Atspi.Bridge (Efl.Object)
+class Elm.Atspi.Bridge extends Efl.Object
 {
    [[AT-SPI bridge class]]
    legacy_prefix: elm_atspi_bridge;

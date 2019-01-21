@@ -1,7 +1,7 @@
-class Efl.Ui.Scroller (Efl.Ui.Layout,
+class Efl.Ui.Scroller extends Efl.Ui.Layout implements
                        Efl.Ui.Scrollable_Interactive,
                        Efl.Ui.Scrollbar,
-                       Efl.Content)
+                       Efl.Content
 {
    [[Efl ui scroller class]]
    implements {

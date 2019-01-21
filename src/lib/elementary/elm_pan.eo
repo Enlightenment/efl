@@ -1,4 +1,4 @@
-class Elm.Pan (Efl.Canvas.Group)
+class Elm.Pan extends Efl.Canvas.Group
 {
    [[Elementary pan class]]
    legacy_prefix: elm_pan;

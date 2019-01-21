@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager_Calc (Efl.Object, Efl.Ui.Focus.Manager) {
+class Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus.Manager {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get an other registered object in each

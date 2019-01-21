@@ -1,4 +1,4 @@
-interface Efl.Text_Markup(Efl.Text_Cursor) {
+interface Efl.Text_Markup extends Efl.Text_Cursor {
    [[Markup data that populates the text object's style and format
 
      @since 1.21

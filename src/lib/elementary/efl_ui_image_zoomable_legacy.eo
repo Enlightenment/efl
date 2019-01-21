@@ -1,4 +1,4 @@
-class Efl.Ui.Image_Zoomable_Legacy (Efl.Ui.Image_Zoomable, Efl.Ui.Legacy)
+class Efl.Ui.Image_Zoomable_Legacy extends Efl.Ui.Image_Zoomable implements Efl.Ui.Legacy
 {
    [[Elementary Image Zoomable class]]
    data: null;

@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Efl.Canvas.Vg.Node (Efl.Object, Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path)
+abstract Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
 {
    [[Efl vector graphics abstract class]]
    eo_prefix: efl_canvas_vg_node;

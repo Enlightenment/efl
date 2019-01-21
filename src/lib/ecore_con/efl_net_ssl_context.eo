@@ -1,6 +1,6 @@
 import efl_net_ssl_types;
 
-class Efl.Net.Ssl.Context (Efl.Object) {
+class Efl.Net.Ssl.Context extends Efl.Object {
     [[A SSL Context that is used to start a SSL socket wrapper.
 
       The context will contain common configurations such as

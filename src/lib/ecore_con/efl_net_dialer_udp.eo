@@ -1,4 +1,4 @@
-class Efl.Net.Dialer_Udp (Efl.Net.Socket_Udp, Efl.Net.Dialer) {
+class Efl.Net.Dialer_Udp extends Efl.Net.Socket_Udp implements Efl.Net.Dialer {
     [[Connects to a remote UDP server.
 
       UDP proxies are not supported, not even using SOCKSv5.

@@ -1,4 +1,4 @@
-class Efl.Appthread (Efl.Loop, Efl.ThreadIO)
+class Efl.Appthread extends Efl.Loop implements Efl.ThreadIO
 {
    [[ ]]
    methods {

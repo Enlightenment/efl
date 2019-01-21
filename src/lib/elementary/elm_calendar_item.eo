@@ -1,4 +1,4 @@
-class Elm.Calendar.Item (Efl.Object, Efl.Ui.Focus.Object)
+class Elm.Calendar.Item extends Efl.Object implements Efl.Ui.Focus.Object
 {
     [[Elm Calendar Item class]]
     methods {

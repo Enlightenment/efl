@@ -1,5 +1,5 @@
-class Efl.Ui.Win_Part (Efl.Ui.Widget_Part, Efl.Content, Efl.Gfx.Entity, Efl.Gfx.Color,
-                       Efl.File)
+class Efl.Ui.Win_Part extends Efl.Ui.Widget_Part implements Efl.Content, Efl.Gfx.Entity, Efl.Gfx.Color,
+                       Efl.File
 {
    [[Efl UI window interal part class]]
    data: null;

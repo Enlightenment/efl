@@ -1,4 +1,4 @@
-class Efl.Ui.Textpath_Legacy (Efl.Ui.Textpath, Efl.Ui.Legacy)
+class Efl.Ui.Textpath_Legacy extends Efl.Ui.Textpath implements Efl.Ui.Legacy
 {
    [[Textpath widget]]
    data: null;

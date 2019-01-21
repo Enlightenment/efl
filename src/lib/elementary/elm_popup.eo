@@ -23,7 +23,7 @@ enum Elm.Popup.Orient
 }
 
 
-class Elm.Popup (Efl.Ui.Layout, Efl.Access.Widget.Action, Efl.Ui.Legacy)
+class Elm.Popup extends Efl.Ui.Layout implements Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary popup class]]
    legacy_prefix: elm_popup;

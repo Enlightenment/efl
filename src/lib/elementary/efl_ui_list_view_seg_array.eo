@@ -1,6 +1,6 @@
 import efl_ui_list_view_types;
 
-class Efl.Ui.List_View_Seg_Array (Efl.Object)
+class Efl.Ui.List_View_Seg_Array extends Efl.Object
 {
    methods {
       @property accessor {

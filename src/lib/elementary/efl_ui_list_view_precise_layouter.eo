@@ -1,4 +1,4 @@
-class Efl.Ui.List_View_Precise_Layouter (Efl.Object, Efl.Ui.List_View_Relayout)
+class Efl.Ui.List_View_Precise_Layouter extends Efl.Object implements Efl.Ui.List_View_Relayout
 {
    implements {
       Efl.Object.constructor;

@@ -1,13 +1,13 @@
 import efl_ui_grid_item;
 
-class Efl.Ui.Grid (Efl.Ui.Layout,
+class Efl.Ui.Grid extends Efl.Ui.Layout implements
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Direction,
                    Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
-                   Efl.Ui.Multi_Selectable)
+                   Efl.Ui.Multi_Selectable
 {
    [[Simple grid widget with Pack interface.]]
    methods {

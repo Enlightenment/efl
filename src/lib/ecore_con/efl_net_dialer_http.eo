@@ -7,7 +7,7 @@ enum Efl.Net.Dialer_Http_Primary_Mode {
     upload, [[HTTP upload mode]]
 }
 
-class Efl.Net.Dialer_Http (Efl.Loop_Consumer, Efl.Net.Dialer, Efl.Io.Sizer) {
+class Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, Efl.Io.Sizer {
     [[HTTP Dialer (Client).
 
       The effective URL in use, if @.allow_redirects is $true will be

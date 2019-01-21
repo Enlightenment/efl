@@ -12,8 +12,8 @@ enum Elm.Colorselector.Mode
    all [[All possible color selector is displayed.]]
 }
 
-class Elm.Colorselector (Efl.Ui.Layout, Efl.Ui.Focus.Composition,
-                         Efl.Access.Widget.Action, Efl.Ui.Clickable, Efl.Ui.Legacy)
+class Elm.Colorselector extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition,
+                         Efl.Access.Widget.Action, Efl.Ui.Clickable, Efl.Ui.Legacy
 {
    [[Elementary colorselector class]]
    legacy_prefix: elm_colorselector;

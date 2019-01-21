@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.Hoversel.Item(Elm.Widget.Item, Efl.Ui.Legacy)
+class Elm.Hoversel.Item extends Elm.Widget.Item implements Efl.Ui.Legacy
 {
    [[Elementary hoversel item class]]
    legacy_prefix: elm_hoversel_item;

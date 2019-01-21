@@ -1,4 +1,4 @@
-class Elm.Notify (Efl.Ui.Widget, Efl.Ui.Focus.Layer, Efl.Content, Efl.Ui.Legacy)
+class Elm.Notify extends Efl.Ui.Widget implements Efl.Ui.Focus.Layer, Efl.Content, Efl.Ui.Legacy
 {
    [[Elementary notification class]]
    legacy_prefix: elm_notify;

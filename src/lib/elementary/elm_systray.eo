@@ -22,7 +22,7 @@ enum Elm.Systray.Status
    attention [[Needs Attention]]
 }
 
-class Elm.Systray (Efl.Object)
+class Elm.Systray extends Efl.Object
 {
    [[Elementary systray class]]
    legacy_prefix: elm_systray;
