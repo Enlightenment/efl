@@ -223,7 +223,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_diskselector.h>
 
 //#include <elm_factory.h>
-#include <elm_animation_view.h>
 #include <elm_finger.h>
 #include <elm_flip.h>
 #include <elm_flipselector.h>
@@ -361,6 +360,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
 # include <efl_ui_stack.eo.h>
+# include <efl_ui_animation_view.h>
 
 # ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
 # define _EFL_UI_PAGER_EO_CLASS_TYPE

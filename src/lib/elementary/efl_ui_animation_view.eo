@@ -1,5 +1,5 @@
 
-enum Elm.Animation_View.State
+enum Efl.Ui.Animation_View.State
 {
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file. @since 1.22]]
    play, [[Animation is on playing. see @.play @since 1.22]]
@@ -8,24 +8,23 @@ enum Elm.Animation_View.State
    stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @.stop @since 1.22]]
 }
 
-class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
+class Efl.Ui.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.File)
 {
    [[Elementary Animation View class]]
    legacy_prefix: elm_animation_view;
-   eo_prefix: elm_obj_animation_view;
-   event_prefix: elm_animation_view;
+   event_prefix: efl_ui_animation_view;
    methods {
       @property auto_play {
          [[Animation will be started automatically when it's possible.
 
-           If $auto_play is $true, animation will be started when it's readied.
-           The condition of auto play is when animation view opened file successfully,
+           If @.auto_play is $true, animation will be started when it's readied.
+           The condition of $auto play is when animation view opened file successfully,
            yet to play it plus when the object is visible.
            If animation view is disabled, invisible,
            it turns to pause state then resume animation when it's visible again.
 
            Warning: This auto play will be only affected to the next animation source.
-           So must be called before elm_animation_view_file_set().]]
+           So must be called before setting animation file ]]
          set {
          }
          get {
@@ -37,7 +36,7 @@ class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
       @property auto_repeat {
          [[Turn on/off animation looping.
 
-           If $auto_repeat is $true, it repeats animation when animation frame is reached to
+           If @.auto_repeat is $true, it repeats animation when animation frame is reached to
            end. This auto repeat mode is valid to both play and play_back cases.]]
          set {
          }
@@ -167,7 +166,7 @@ class Elm.Animation_View (Efl.Ui.Widget, Efl.Gfx.View, Efl.Ui.Legacy, Efl.File)
               @since 1.22]]
          }
          values {
-            state: Elm.Animation_View.State; [[Current animation view state]]
+            state: Efl.Ui.Animation_View.State; [[Current animation view state]]
          }
       }
       is_playing_back {

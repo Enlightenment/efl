@@ -1,16 +1,16 @@
-#ifndef ELM_WIDGET_ANIMATION_VIEW_H
-#define ELM_WIDGET_ANIMATION_VIEW_H
+#ifndef EFL_UI_ANIMATION_VIEW_PRIVATE_H
+#define EFL_UI_ANIMATION_VIEW_PRIVATE_H
 
 #include "Elementary.h"
-#include "elm_animation_view.eo.h"
+#include "efl_ui_animation_view.eo.h"
 
-typedef struct _Elm_Animation_View_Data Elm_Animation_View_Data;
+typedef struct _Efl_Ui_Animation_View_Data Efl_Ui_Animation_View_Data;
 
-struct _Elm_Animation_View_Data
+struct _Efl_Ui_Animation_View_Data
 {
-   Eo* obj;                           //Elm_Animation_View Object
+   Eo* obj;                           //Efl_Ui_Animation_View Object
    Eo* vg;                            //Evas_Object_Vg
-   Elm_Animation_View_State state;
+   Efl_Ui_Animation_View_State state;
    Elm_Transit *transit;
    Eina_Stringshare *file;
    double speed;
@@ -25,11 +25,11 @@ struct _Elm_Animation_View_Data
    Eina_Bool auto_repeat : 1;
 };
 
-#define ELM_ANIMATION_VIEW_DATA_GET(o, sd) \
-  Elm_Animation_View_Data * sd = efl_data_scope_get(o, ELM_ANIMATION_VIEW_CLASS)
+#define EFL_UI_ANIMATION_VIEW_DATA_GET(o, sd) \
+  Efl_Ui_Animation_View_Data * sd = efl_data_scope_get(o, EFL_UI_ANIMATION_VIEW_CLASS)
 
-#define ELM_ANIMATION_VIEW_DATA_GET_OR_RETURN(o, ptr)   \
-  ELM_ANIMATION_VIEW_DATA_GET(o, ptr);                  \
+#define EFL_UI_ANIMATION_VIEW_DATA_GET_OR_RETURN(o, ptr)   \
+  EFL_UI_ANIMATION_VIEW_DATA_GET(o, ptr);                  \
   if (EINA_UNLIKELY(!ptr))                              \
     {                                                   \
        ERR("No widget data for object %p (%s)",         \

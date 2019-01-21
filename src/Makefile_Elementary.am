@@ -332,7 +332,7 @@ lib/elementary/Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
-	lib/elementary/elm_widget_animation_view.h \
+	lib/elementary/efl_ui_animation_view_private.h \
 	lib/elementary/elm_gen_common.h \
 	lib/elementary/elm_atspi_bridge.h \
 	lib/elementary/efl_access_object.h \
