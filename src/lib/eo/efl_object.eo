@@ -112,24 +112,30 @@ abstract Efl.Object
       }
       @property event_global_freeze_count @class {
          get {
-            [[Return freeze events of object.
+            [[Return the global count of freeze events.
 
-              Return event freeze count.
+              This is the amount of calls to @.event_global_freeze minus
+              the amount of calls to @.event_global_thaw.
+              EFL will not emit any event while this count is > 0 (Except
+              events marked $hot).
             ]]
          }
          values {
-            fcount: int; [[The event freeze count of the object]]
+            fcount: int; [[The global event freeze count]]
          }
       }
       @property event_freeze_count {
          get {
-            [[Return freeze events of object.
+            [[Return the count of freeze events for this object.
 
-              Return event freeze count.
+              This is the amount of calls to @.event_freeze minus
+              the amount of calls to @.event_thaw.
+              This object will not emit any event while this count is > 0
+              (Except events marked $hot).
             ]]
          }
          values {
-            fcount: int; [[The event freeze count of the object]]
+            fcount: int; [[The event freeze count of this object]]
          }
       }
       @property finalized {
@@ -212,25 +218,34 @@ abstract Efl.Object
       event_thaw {
          [[Thaw events of object.
 
-           Allows event callbacks to be called for an object.
+           Allows event callbacks to be called again for this object after a call
+           to @.event_freeze. The amount of thaws must match the amount of freezes
+           for events to be re-enabled.
          ]]
       }
       event_freeze {
-         [[Freeze events of object.
+         [[Freeze events of this object.
 
-           Prevents event callbacks from being called for an object.
+           Prevents event callbacks from being called for this object. Enable
+           events again using @.event_thaw. Events marked $hot cannot be stopped.
          ]]
       }
       event_global_thaw @class {
-         [[Thaw events of object.
+         [[Gobally thaw events for ALL EFL OBJECTS.
 
-           Allows event callbacks be called for an object.
+           Allows event callbacks to be called for all EFL objects after they have
+           been disabled by @.event_global_freeze. The amount of thaws must match
+           the amount of freezes for events to be re-enabled.
          ]]
       }
       event_global_freeze @class {
-         [[Freeze events of object.
+         [[Globally freeze events for ALL EFL OBJECTS.
 
-           Prevents event callbacks from being called for an object.
+           Prevents event callbacks from being called for all EFL objects.
+           Enable events again using @.event_global_thaw. Events marked $hot
+           cannot be stopped.
+
+           Note: USE WITH CAUTION.
          ]]
       }
       event_callback_stop {
