@@ -542,6 +542,21 @@ group { name: "elm/panel/left/default";
          }
       }
       program {
+         signal: "elm,action,show,no_animate"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.swallow.event";
+         target: "base";
+      }
+      program {
+         signal: "elm,action,show,no_animate"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "default", 0.0);
+            else
+              set_state(PART:"icn", "hidden", 0.0);
+         }
+      }
+      program {
          signal: "edje,state,rtl"; 
          source: "edje";
          script {
@@ -609,6 +624,46 @@ group { name: "elm/panel/left/default";
       program { name: "hide2";
          action: STATE_SET "custom" 0.0;
          transition: ACCELERATE 0.3;
+         target: "base";
+      }
+      program {
+         signal: "elm,action,hide,no_animate"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "elm.swallow.event";
+      }
+      program {
+         signal: "elm,action,hide,no_animate"; source: "elm";
+         script {
+            if (get_int(is_rtl) == 0)
+              set_state(PART:"icn", "hidden", 0.0);
+            else
+              set_state(PART:"icn", "default", 0.0);
+         }
+      }
+      program { name: "hide1_no_animate";
+         signal: "elm,action,hide,no_animate"; source: "elm";
+         script {
+            new x, y, w, h;
+            if (get_int(is_rtl) == 0)
+              {
+                 custom_state(PART:"base", "default", 0.0);
+                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+                 get_geometry(PART:"elm.swallow.event", x, y, w, h);
+                 set_state_val(PART:"base", STATE_REL1_OFFSET, w, 0);
+               }
+            else
+              {
+                 custom_state(PART:"base", "default", 0.0);
+                 set_state_val(PART:"base", STATE_REL1, -1.0, 0.0);
+                 set_state_val(PART:"base", STATE_REL2, -2.0, 1.0);
+                 get_geometry(PART:"elm.swallow.event", x, y, w, h);
+                 set_state_val(PART:"base", STATE_REL2_OFFSET, -w, 0);
+              }
+         }
+         after: "hide2_no_animate";
+      }
+      program { name: "hide2_no_animate";
+         action: STATE_SET "custom" 0.0;
          target: "base";
       }
       program {
