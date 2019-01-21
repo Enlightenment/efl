@@ -156,6 +156,8 @@ class Ecore.Audio.In extends Ecore.Audio
       @empty .length {set;}
       @empty .preloaded {set; get;}
       @empty .seek;
+      @empty Ecore.Audio.source {set; get;}
+      @empty Ecore.Audio.format {set; get;}
    }
    events {
       in,looped: void; [[Called when an input has looped.]]
