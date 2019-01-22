@@ -27,7 +27,7 @@ struct Efl.Access.Text_Attribute
    value: string; [[Text attribute value]]
 }
 
-struct Efl.Access.Text_Range
+struct @free(elm_atspi_text_text_range_free) Efl.Access.Text_Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]

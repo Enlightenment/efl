@@ -15,5 +15,10 @@
  */
 EAPI void elm_atspi_text_text_attribute_free(Efl_Access_Text_Attribute *attr);
 
+/**
+ * @brief Free Efl_Access_Text_Range structure
+ */
+EAPI void elm_atspi_text_text_range_free(Efl_Access_Text_Range *range);
+
 #endif
 #endif
