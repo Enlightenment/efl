@@ -580,7 +580,6 @@ static void
 _item_obj_create(Elm_Menu_Item_Data *item)
 {
    VIEW_SET(item, elm_layout_add(WIDGET(item)));
-   efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_SKIPPED);
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -604,7 +603,6 @@ static void
 _item_separator_obj_create(Elm_Menu_Item_Data *item)
 {
    VIEW_SET(item, elm_layout_add(WIDGET(item)));
-   efl_access_object_access_type_set(VIEW(item), EFL_ACCESS_TYPE_SKIPPED);
    evas_object_size_hint_weight_set
      (VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -627,9 +625,7 @@ _item_submenu_obj_create(Elm_Menu_Item_Data *item)
    char style[1024];
 
    item->submenu.location = elm_icon_add(sd->bx);
-   efl_access_object_access_type_set(item->submenu.location, EFL_ACCESS_TYPE_DISABLED);
    item->submenu.hv = hv = elm_hover_add(sd->bx);
-   efl_access_object_access_type_set(item->submenu.hv, EFL_ACCESS_TYPE_SKIPPED);
    efl_ui_mirrored_set(hv, EINA_FALSE);
    elm_hover_target_set(hv, item->submenu.location);
    elm_hover_parent_set(hv, sd->parent);
@@ -695,10 +691,8 @@ _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    priv->location = elm_icon_add(obj);
-   efl_access_object_access_type_set(priv->location, EFL_ACCESS_TYPE_DISABLED);
 
    priv->hv = elm_hover_add(obj);
-   efl_access_object_access_type_set(priv->hv, EFL_ACCESS_TYPE_SKIPPED);
    efl_ui_mirrored_set(priv->hv, EINA_FALSE);
 
    elm_object_style_set(priv->hv, "menu/default");
@@ -706,7 +700,6 @@ _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
      (priv->hv, ELM_HOVER_EVENT_DISMISSED, _hover_dismissed_cb, obj);
 
    priv->bx = elm_box_add(obj);
-   efl_access_object_access_type_set(priv->bx, EFL_ACCESS_TYPE_SKIPPED);
    efl_ui_mirrored_set(priv->bx, EINA_FALSE);
    evas_object_size_hint_weight_set
      (priv->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1052,7 +1045,6 @@ _elm_menu_item_add(Eo *obj, Elm_Menu_Data *sd, Elm_Object_Item *parent, const ch
    Evas_Object *icon_obj;
 
    icon_obj = elm_icon_add(obj);
-   efl_access_object_access_type_set(icon_obj, EFL_ACCESS_TYPE_DISABLED);
    if (!icon_obj) return NULL;
 
    eo_item = efl_add(ELM_MENU_ITEM_CLASS, obj);

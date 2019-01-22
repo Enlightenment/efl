@@ -4500,7 +4500,6 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
                   efreet_desktop_free(d);
                }
           }
-        efl_access_object_access_type_set(sd->icon, EFL_ACCESS_TYPE_DISABLED);
      }
 
    if (elm_widget_is_legacy(sd->obj))

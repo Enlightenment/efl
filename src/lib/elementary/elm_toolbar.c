@@ -2416,7 +2416,6 @@ _item_new(Evas_Object *obj,
    _efl_ui_focus_event_redirector(VIEW(it), eo_it);
    elm_widget_tree_unfocusable_set(VIEW(it), EINA_TRUE);
    evas_object_data_set(VIEW(it), "item", it);
-   efl_access_object_access_type_set(VIEW(it), EFL_ACCESS_TYPE_DISABLED);
 
    icon_obj = elm_icon_add(VIEW(it));
    efl_parent_set(icon_obj, eo_it);
@@ -2804,7 +2803,6 @@ _elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
    else
      elm_object_signal_emit(priv->more, "elm,orient,horizontal", "elm");
 
-   efl_access_object_access_type_set(priv->more, EFL_ACCESS_TYPE_DISABLED);
    elm_widget_sub_object_add(obj, priv->more);
    evas_object_show(priv->more);
 

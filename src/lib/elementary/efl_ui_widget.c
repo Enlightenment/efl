@@ -5471,21 +5471,11 @@ _efl_ui_widget_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, 
 {
    Eina_List *l, *accs = NULL;
    Evas_Object *widget;
-   Efl_Access_Type type;
 
    EINA_LIST_FOREACH(pd->subobjs, l, widget)
      {
         if (!elm_object_widget_check(widget)) continue;
         if (!efl_isa(widget, EFL_ACCESS_OBJECT_MIXIN)) continue;
-        type = efl_access_object_access_type_get(widget);
-        if (type == EFL_ACCESS_TYPE_DISABLED) continue;
-        if (type == EFL_ACCESS_TYPE_SKIPPED)
-          {
-             Eina_List *children;
-             children = efl_access_object_access_children_get(widget);
-             accs = eina_list_merge(accs, children);
-             continue;
-          }
         accs = eina_list_append(accs, widget);
      }
    return accs;
@@ -5625,11 +5615,7 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
      return _efl_config_obj;
 
    if (klass == EFL_ACCESS_OBJECT_MIXIN)
-     {
-        Efl_Access_Type type = efl_access_object_access_type_get(obj);
-        if (type != EFL_ACCESS_TYPE_SKIPPED)
-          return (Eo*)obj;
-     }
+     return (Eo*)obj;
 
    if (pd->provider_lookup) return NULL;
    pd->provider_lookup = EINA_TRUE;
