@@ -338,7 +338,7 @@ _ecore_evas_modifiers_locks_mask_set(Evas *e, int mask)
 }
 
 static void
-_ecore_evas_extn_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_extn_cb_mouse_in(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -353,14 +353,14 @@ _ecore_evas_extn_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
         memset(&ipc, 0, sizeof(ipc));
 
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_IN, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ecore_evas_extn_cb_mouse_out(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -375,14 +375,14 @@ _ecore_evas_extn_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj 
         memset(&ipc, 0, sizeof(ipc));
 
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_OUT, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_mouse_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Evas_Event_Mouse_Down *ev = event_info;
@@ -405,7 +405,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
           ipc_move.x = x;
           ipc_move.y = y;
           ipc_move.timestamp = ev->timestamp;
-          ipc_move.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+          ipc_move.mask = _ecore_evas_modifiers_locks_mask_get(e);
           ipc_move.event_flags = ev->event_flags;
           ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_MOVE, 0, 0, 0, &ipc_move, sizeof(ipc_move));
        }
@@ -415,7 +415,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
           ipc.b = ev->button;
           ipc.flags = ev->flags;
           ipc.timestamp = ev->timestamp;
-          ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+          ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
           ipc.event_flags = ev->event_flags;
           ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
        }
@@ -423,7 +423,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 }
 
 static void
-_ecore_evas_extn_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_mouse_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -440,14 +440,14 @@ _ecore_evas_extn_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
         ipc.b = ev->button;
         ipc.flags = ev->flags;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_UP, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_mouse_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -468,14 +468,14 @@ _ecore_evas_extn_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         ipc.x = x;
         ipc.y = y;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -492,14 +492,14 @@ _ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *ob
         ipc.direction = ev->direction;
         ipc.z = ev->z;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_WHEEL, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_multi_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -529,7 +529,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         ipc.fy = ev->canvas.ysub;
         ipc.flags = ev->flags;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
      }
@@ -537,7 +537,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
 
 
 static void
-_ecore_evas_extn_cb_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_multi_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -567,14 +567,14 @@ _ecore_evas_extn_cb_multi_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
         ipc.fy = ev->canvas.ysub;
         ipc.flags = ev->flags;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_UP, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_multi_move(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -603,14 +603,14 @@ _ecore_evas_extn_cb_multi_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
         ipc.fx = ev->cur.canvas.xsub;
         ipc.fy = ev->cur.canvas.ysub;
         ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc.mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc.event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
 static void
-_ecore_evas_extn_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_key_down(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -660,14 +660,14 @@ _ecore_evas_extn_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
              p += strlen(p) + 1;
           }
         ipc->timestamp = ev->timestamp;
-        ipc->mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc->mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc->event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_KEY_DOWN, 0, 0, 0, ipc, len);
      }
 }
 
 static void
-_ecore_evas_extn_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+_ecore_evas_extn_cb_key_up(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Ecore_Evas *ee = data;
    Ecore_Evas_Engine_Buffer_Data *bdata = ee->engine.data;
@@ -717,7 +717,7 @@ _ecore_evas_extn_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
              p += strlen(p) + 1;
           }
         ipc->timestamp = ev->timestamp;
-        ipc->mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+        ipc->mask = _ecore_evas_modifiers_locks_mask_get(e);
         ipc->event_flags = ev->event_flags;
         ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_KEY_UP, 0, 0, 0, ipc, len);
      }
