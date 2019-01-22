@@ -150,15 +150,21 @@ _evas_cache_vg_entry_free_cb(void *data)
    if (vg_entry->vfd)
      {
         vg_entry->vfd->ref--;
-        if (vg_entry->vfd->ref <= 0 && !vg_entry->vfd->no_share)
+
+        if (vg_entry->vfd->ref <= 0)
           {
-             Eina_Strbuf *hash_key = eina_strbuf_new();
-             eina_strbuf_append_printf(hash_key, "%s/%s",
-                                       eina_file_filename_get(vg_entry->file),
-                                       vg_entry->key);
-             if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
-               ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
-             eina_strbuf_free(hash_key);
+             if (vg_entry->vfd->no_share)
+               vg_entry->vfd->loader->file_close(vg_entry->vfd);
+             else
+               {
+                  Eina_Strbuf *hash_key = eina_strbuf_new();
+                  eina_strbuf_append_printf(hash_key, "%s/%s",
+                                            eina_file_filename_get(vg_entry->file),
+                                            vg_entry->key);
+                  if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
+                    ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
+                  eina_strbuf_free(hash_key);
+               }
           }
      }
 
