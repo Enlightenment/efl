@@ -16,6 +16,10 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @addtogroup Eina_Value_Value_group
+ * @{
+ */
 
 #ifndef EINA_INLINE_VALUE_UTIL_X_
 #define EINA_INLINE_VALUE_UTIL_X_
@@ -977,6 +981,57 @@ eina_value_error_get(const Eina_Value *v, Eina_Error *err)
    return EINA_FALSE;
 }
 
+/// @brief For internal use only.
+/// @hideinitializer
+#define EINA_VALUE_CONVERT(Compress_Type, Uppercase_Compress_Type, Type) \
+/**
+ @brief Check value type and convert contents.
+ @param v The value to check type and convert contents.
+ @param c Where to store the value contents.
+ @return #EINA_TRUE if type matches and fetched contents,
+ #EINA_FALSE on different type or failures.
+ @since 1.22
+ */                                                                     \
+static inline Eina_Bool                                                 \
+eina_value_##Compress_Type##_convert(const Eina_Value *v, Type *c)      \
+{                                                                       \
+   Eina_Value dst = EINA_VALUE_EMPTY;                                   \
+   Eina_Bool r = EINA_FALSE;                                            \
+                                                                        \
+   EINA_SAFETY_ON_NULL_RETURN_VAL(c, EINA_FALSE);                       \
+   EINA_SAFETY_ON_NULL_RETURN_VAL(v, EINA_FALSE);                       \
+                                                                        \
+   /* Try no conversion first */                                        \
+   if (eina_value_##Compress_Type##_get(v, c)) return EINA_TRUE;        \
+                                                                        \
+   if (!eina_value_setup(&dst, EINA_VALUE_TYPE_##Uppercase_Compress_Type)) return EINA_FALSE; \
+   if (!eina_value_convert(v, &dst)) goto on_error;                     \
+   if (!eina_value_##Compress_Type##_get(&dst, c)) goto on_error;       \
+   r = EINA_TRUE;                                                       \
+                                                                        \
+ on_error:                                                              \
+   eina_value_flush(&dst);                                              \
+   return r;                                                            \
+}
+
+EINA_VALUE_CONVERT(uchar, UCHAR, unsigned char);
+EINA_VALUE_CONVERT(ushort, USHORT, unsigned short);
+EINA_VALUE_CONVERT(uint, UINT, unsigned int);
+EINA_VALUE_CONVERT(ulong, ULONG, unsigned long);
+EINA_VALUE_CONVERT(uint64, UINT64, uint64_t);
+EINA_VALUE_CONVERT(char, CHAR, char);
+EINA_VALUE_CONVERT(short, SHORT, short);
+EINA_VALUE_CONVERT(int, INT, int);
+EINA_VALUE_CONVERT(long, LONG, long);
+EINA_VALUE_CONVERT(int64, INT64, int64_t);
+EINA_VALUE_CONVERT(float, FLOAT, float);
+EINA_VALUE_CONVERT(double, DOUBLE, double);
+EINA_VALUE_CONVERT(bool, BOOL, Eina_Bool);
+EINA_VALUE_CONVERT(string, STRING, const char *);
+EINA_VALUE_CONVERT(stringshare, STRINGSHARE, const char *);
+EINA_VALUE_CONVERT(time, TIMESTAMP, time_t);
+EINA_VALUE_CONVERT(error, ERROR, Eina_Error);
+
 /**
  * @brief Create a new #Eina_Value containing the passed parameter
  * @param val The value to use
@@ -1058,3 +1113,7 @@ eina_value_string_copy(const Eina_Value *val, char **str)
 }
 
 #endif
+
+/**
+ * @}
+ */
