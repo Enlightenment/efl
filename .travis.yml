@@ -26,50 +26,50 @@ jobs:
       - CI_BUILD_TYPE=mingw
     - env:
       - os: linux
-      - DISTRO=Fedora28
+      - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-enabled
     - env:
       - os: linux
-      - DISTRO=Fedora28
+      - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-disabled
     - env:
       - os: linux
-      - DISTRO=Fedora28
+      - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-enabled
       - BUILDSYSTEM=ninja
     - env:
       - os: linux
-      - DISTRO=Fedora28
+      - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-disabled
       - BUILDSYSTEM=ninja
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Ubuntu1804
+        - DISTRO=Ubuntu1810
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Fedora28
+        - DISTRO=Fedora29
         - CI_BUILD_TYPE=release-ready
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Debian91
+        - DISTRO=Debian96
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Ubuntu1804
+        - DISTRO=Ubuntu1810
         - BUILDSYSTEM=ninja
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Fedora28
+        - DISTRO=Fedora29
         - CI_BUILD_TYPE=release-ready
         - BUILDSYSTEM=ninja
     - if: type = cron
       env:
         - os: linux
-        - DISTRO=Debian91
+        - DISTRO=Debian96
         - BUILDSYSTEM=ninja
   exclude:
     - os: linux
