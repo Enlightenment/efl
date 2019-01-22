@@ -1459,7 +1459,8 @@ PREDEFINED             = EINA_MAGIC_DEBUG \
 
 EXPAND_AS_DEFINED      = EINA_VALUE_CONVERT \
                          EINA_VALUE_GET \
-                         EINA_VALUE_INIT
+                         EINA_VALUE_INIT \
+                         EINA_VALUE_NEW
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES (the default) then
 # doxygen's preprocessor will remove all references to function-like macros
