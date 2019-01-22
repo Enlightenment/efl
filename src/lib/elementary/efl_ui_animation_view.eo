@@ -1,11 +1,13 @@
 
 enum Efl.Ui.Animation_View.State
 {
+   //FIXME: This enum is not neccessary in legacy header. but legacy:null command is not working correct.
+   //legacy: null;
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file. @since 1.22]]
-   play, [[Animation is on playing. see @.play @since 1.22]]
-   play_back, [[Animation is on playing back (rewinding). see @.back @since 1.22]]
-   pause, [[Animation has been paused. To continue animation, call @.resume. see @.pause @since 1.22]]
-   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @.stop @since 1.22]]
+   play, [[Animation is on playing. see @Efl.Ui.Animation_View.play @since 1.22]]
+   play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back @since 1.22]]
+   pause, [[Animation has been paused. To continue animation, call @Efl.Ui.Animation_View.resume. see @Efl.Ui.Animation_View.pause @since 1.22]]
+   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @Efl.Ui.Animation_View.stop @since 1.22]]
 }
 
 class Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
@@ -164,6 +166,7 @@ class Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.F
             [[Get current animation view state.
               see @.State
               @since 1.22]]
+            legacy: null;
          }
          values {
             state: Efl.Ui.Animation_View.State; [[Current animation view state]]

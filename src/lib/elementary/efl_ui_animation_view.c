@@ -574,6 +574,12 @@ elm_animation_view_file_set(Elm_Animation_View *obj, const char *file, const cha
    return efl_file_set(obj, file, key);
 }
 
+EAPI Elm_Animation_View_State
+elm_animation_view_state_get(Elm_Animation_View *obj)
+{
+   return efl_ui_animation_view_state_get(obj);
+}
+
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_ANIMATION_VIEW_EXTRA_OPS \
