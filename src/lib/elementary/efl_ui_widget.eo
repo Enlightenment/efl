@@ -579,6 +579,11 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Access.Object.access_children { get; }
       Efl.Access.Object.attributes { get; }
       Efl.Access.Component.focus_grab;
+      Efl.Access.Component.screen_position { get; set; }
+      Efl.Access.Component.contains;
+      Efl.Access.Component.accessible_at_point_get;
+      Efl.Access.Component.extents { get; set; }
+      Efl.Access.Component.z_order { get; }
       Efl.Ui.Focus.Object.focus_manager { get; }
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }

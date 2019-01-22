@@ -1,9 +1,8 @@
 import eina_types;
 
-mixin Efl.Access.Component extends Efl.Gfx.Entity, Efl.Gfx.Stack
+interface Efl.Access.Component
 {
-   [[AT-SPI component mixin]]
-   data: null;
+   [[AT-SPI component interface]]
    methods {
       @property z_order @protected @beta {
          [[Gets the depth at which the component is shown in relation to other

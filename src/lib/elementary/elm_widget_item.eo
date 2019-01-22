@@ -543,5 +543,9 @@ class Elm.Widget.Item extends Efl.Object implements Efl.Access.Object,
            Efl.Access.Object.attributes { get; }
            Efl.Access.Component.extents { get; set; }
            Efl.Access.Component.focus_grab;
+           Efl.Access.Component.screen_position { get; set; }
+           Efl.Access.Component.contains;
+           Efl.Access.Component.accessible_at_point_get;
+           Efl.Access.Component.z_order { get; }
       }
 }
