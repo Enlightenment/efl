@@ -790,6 +790,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
+      Efl.Access.Object.access_parent { get; }
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Input.State.modifier_enabled { get; }

@@ -130,6 +130,7 @@ struct _Efl_Access_Object_Data
    const char    *translation_domain;
    Efl_Access_Role role;
    Efl_Access_Reading_Info_Type reading_info;
+   Efl_Access_Object *access_parent;
 };
 
 typedef struct _Efl_Access_Object_Data Efl_Access_Object_Data;
@@ -145,7 +146,7 @@ _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd
    Eo *chld, *parent = NULL;
    int ret = 0;
 
-   parent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+   parent = efl_access_object_access_parent_get(obj);
    if (!parent) return -1;
 
    children = efl_access_object_access_children_get(parent);
@@ -167,14 +168,16 @@ _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd
 }
 
 
-EOLIAN static Efl_Object *
-_efl_access_object_efl_object_provider_find(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED, const Efl_Object *klass)
+EOLIAN static Efl_Access_Object*
+_efl_access_object_access_parent_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd EINA_UNUSED)
 {
-   if (klass == EFL_ACCESS_OBJECT_MIXIN && efl_isa(obj, klass))
-     {
-        return (Eo*)obj;
-     }
-   return efl_provider_find(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN), klass);
+   return pd->access_parent;
+}
+
+EOLIAN static void
+_efl_access_object_access_parent_set(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd EINA_UNUSED, Efl_Access_Object *parent)
+{
+   pd->access_parent = parent;
 }
 
 EOLIAN Eina_List*

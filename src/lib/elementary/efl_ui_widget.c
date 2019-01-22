@@ -1476,6 +1476,9 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    if (_elm_widget_is(sobj))
      sdc = efl_data_scope_get(sobj, MY_CLASS);
 
+   if (efl_isa(sobj, EFL_ACCESS_OBJECT_MIXIN))
+      efl_access_object_access_parent_set(sobj, obj);
+
    if (sobj == sd->parent_obj)
      {
         /* in this case, sobj must be an elm widget, or something
@@ -1573,13 +1576,6 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 
         elm_widget_display_mode_set(sobj,
               evas_object_size_hint_display_mode_get(obj));
-        if (_elm_config->atspi_mode && !sd->on_create)
-          {
-             Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
-             if (aparent)
-                efl_access_children_changed_added_signal_emit(aparent, sobj);
-          }
      }
 
 end:
@@ -1594,6 +1590,9 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    if (!sobj) return EINA_FALSE;
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
+
+   if (efl_isa(sobj, EFL_ACCESS_OBJECT_MIXIN))
+     efl_access_object_access_parent_set(sobj, NULL);
 
    sobj_parent = evas_object_data_del(sobj, "elm-parent");
    if (sobj_parent && sobj_parent != obj)
@@ -1654,7 +1653,7 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
              Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
+             aparent = efl_access_object_access_parent_get(sobj);
              if (aparent)
                 efl_access_children_changed_del_signal_emit(aparent, sobj);
           }

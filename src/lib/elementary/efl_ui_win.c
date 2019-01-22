@@ -7325,9 +7325,6 @@ _efl_ui_win_efl_object_provider_find(const Eo *obj,
     if (klass == EFL_UI_WIN_CLASS)
       return (Eo *)obj;
 
-   // attach all kinds of windows directly to ATSPI application root object
-   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
-
     if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
       return pd->provider;
 
@@ -8996,6 +8993,13 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
 
    _elm_win_standard_init(win);
    return win;
+}
+
+EOLIAN Efl_Access_Object*
+_efl_ui_win_efl_access_object_access_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+{
+   // attach all kinds of windows directly to ATSPI application root object
+   return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
 }
 
 #include "efl_ui_win_legacy.eo.c"
