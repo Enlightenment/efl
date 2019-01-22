@@ -1,5 +1,4 @@
 class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range,
-                        Efl.Access.Widget.Action,
                         Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary flipselector class]]
@@ -166,7 +165,7 @@ class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range,
       Efl.Ui.Range.range_min_max { get; set; }
       Efl.Ui.Range.range_step { get; set; }
       Efl.Ui.Range.range_value { get; set; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
    events {
       underflowed: void; [[Called when flipselector is underflowed]]

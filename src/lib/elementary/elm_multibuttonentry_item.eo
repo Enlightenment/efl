@@ -1,5 +1,4 @@
 class Elm.Multibuttonentry_Item extends Elm.Widget.Item implements
-                                Efl.Access.Widget.Action,
                                 Efl.Ui.Legacy
 {
    [[Elementary multibuttonentry class]]
@@ -33,6 +32,6 @@ class Elm.Multibuttonentry_Item extends Elm.Widget.Item implements
         Elm.Widget.Item.disable;
         Efl.Access.Object.i18n_name { get; }
         Efl.Access.Object.state_set { get; }
-        Efl.Access.Widget.Action.elm_actions { get; }
+        //Efl.Ui.Widget.access_actions { get; }
    }
 }

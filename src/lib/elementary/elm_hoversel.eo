@@ -2,7 +2,6 @@ import elm_general;
 
 class Elm.Hoversel extends Efl.Ui.Button_Legacy implements Efl.Ui.Selectable,
                     Efl.Ui.Clickable,
-                    Efl.Access.Widget.Action,
                     Efl.Ui.Legacy
 {
    [[Elementary hoversel class]]
@@ -101,7 +100,7 @@ class Elm.Hoversel extends Efl.Ui.Button_Legacy implements Efl.Ui.Selectable,
       Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Access.Object.access_children { get; }
    }
    events {

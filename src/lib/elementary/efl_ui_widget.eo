@@ -14,7 +14,7 @@ struct Efl.Ui.Widget_Focus_State {
 }
 
 abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
-                        Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
+                        Efl.Access.Component, Efl.Access.Action, Efl.Part, Efl.Ui.Focus.Object,
                         Efl.Ui.Cursor, Efl.Ui.L10n,
                         Efl.Ui.Selection, Efl.Ui.Dnd
 {
@@ -551,6 +551,15 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          }
          return: bool; [[Returns whether the widget is registered or not.]]
       }
+      @property access_actions @protected @beta {
+         [[Elementary accessibility actions]]
+         get @pure_virtual {
+         }
+         values {
+            @cref actions: ptr(const(Efl.Access.Action_Data));
+               [[NULL-terminated array of Efl.Access.Action_Data.]]
+         }
+      }
    }
    parts {
       shadow: Efl.Ui.Widget_Part_Shadow;
@@ -584,6 +593,12 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Access.Component.accessible_at_point_get;
       Efl.Access.Component.extents { get; set; }
       Efl.Access.Component.z_order { get; }
+      Efl.Access.Action.action_do;
+      Efl.Access.Action.action_keybinding_get;
+      Efl.Access.Action.action_name { get; }
+      Efl.Access.Action.action_localized_name { get; }
+      Efl.Access.Action.action_description { get; set; }
+      Efl.Access.Action.actions { get; }
       Efl.Ui.Focus.Object.focus_manager { get; }
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }

@@ -6168,7 +6168,7 @@ _action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_entry_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
+_elm_entry_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _action_activate },

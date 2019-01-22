@@ -1,6 +1,5 @@
 class Efl.Ui.Slider extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Direction,
                      Efl.Access.Value,
-                     Efl.Access.Widget.Action,
                      Efl.Content
 {
    [[Elementary slider class]]
@@ -19,7 +18,7 @@ class Efl.Ui.Slider extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Direct
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
    events {
       changed: void; [[Called when slider changed]]

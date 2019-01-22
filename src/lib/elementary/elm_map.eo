@@ -50,7 +50,6 @@ enum Elm.Map.Route_Method
 
 
 class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
-               Efl.Access.Widget.Action,
                Efl.Ui.Clickable, Efl.Ui.Legacy, Efl.Ui.Zoom
 {
    [[Elementary map class]]
@@ -532,7 +531,7 @@ class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
       Elm.Interface_Scrollable.wheel_disabled { set; }

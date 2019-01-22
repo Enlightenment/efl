@@ -3075,7 +3075,7 @@ _elm_list_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_list_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_List_Data *pd EINA_UNUSED)
+_elm_list_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_List_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},

@@ -3051,7 +3051,7 @@ _elm_fileselector_class_destructor(Efl_Class *klass EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_fileselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
+_elm_fileselector_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "select", "select", NULL, _key_action_select },

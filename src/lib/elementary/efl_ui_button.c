@@ -348,7 +348,7 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_get(const Eo *obj EINA_U
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
+_efl_ui_button_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _key_action_activate },

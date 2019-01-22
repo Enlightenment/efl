@@ -4,9 +4,10 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
+#define ELM_WIDGET_ITEM_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -2596,7 +2597,7 @@ _elm_colorselector_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_colorselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
+_elm_colorselector_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Colorselector_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},
@@ -2676,7 +2677,7 @@ _elm_color_item_elm_widget_item_item_focus_get(const Eo *eo_it, Elm_Color_Item_D
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_color_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
+_elm_color_item_elm_widget_item_access_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Color_Item_Data *it EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},

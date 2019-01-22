@@ -1,11 +1,10 @@
 import efl_ui;
 
-mixin Efl.Access.Action
+interface Efl.Access.Action
 {
-   [[Accessible action mixin]]
-   data: null;
+   [[Accessible action interface]]
    methods {
-      @property action_name @protected @pure_virtual @beta {
+      @property action_name @protected @beta {
          [[Gets action name for given id]]
          get {
          }
@@ -27,7 +26,7 @@ mixin Efl.Access.Action
             id: int; [[ID to get localized name for]]
          }
       }
-      @property action_description @protected @pure_virtual @beta {
+      @property action_description @protected @beta {
          [[Action description for given id]]
          get {
          }
@@ -44,21 +43,21 @@ mixin Efl.Access.Action
       @property actions @protected @beta {
          /* C-only, internal API */
          [[Get list of available widget actions]]
-         get @pure_virtual {
+         get {
          }
          values {
             actions: list<ptr(Efl.Access.Action_Data)>;
                [[Contains statically allocated strings.]]
          }
       }
-      action_do @protected @pure_virtual @beta {
+      action_do @protected @beta {
          [[Performs action on given widget.]]
          params {
             @in id: int; [[ID for widget]]
          }
          return: bool; [[$true if action was performed, $false otherwise]]
       }
-      action_keybinding_get @protected @pure_virtual @beta {
+      action_keybinding_get @protected @beta {
          [[Gets configured keybinding for specific action and widget.]]
          params {
             @in id: int; [[ID for widget]]

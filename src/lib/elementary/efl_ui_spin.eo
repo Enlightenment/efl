@@ -6,7 +6,7 @@ struct Efl.Ui.Spin_Special_Value
 }
 
 class Efl.Ui.Spin extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Format,
-                   Efl.Access.Value, Efl.Access.Widget.Action
+                   Efl.Access.Value
 {
    [[A Spin.
 

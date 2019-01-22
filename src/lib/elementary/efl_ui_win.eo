@@ -155,7 +155,7 @@ enum Efl.Ui.Win_Move_Resize_Mode
 }
 
 class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.Window,
-                  Efl.Access.Component, Efl.Access.Widget.Action,
+                  Efl.Access.Component,
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                   Efl.Text, Efl.Config,
                   Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root
@@ -792,7 +792,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Object.access_parent { get; }
       Efl.Access.Component.extents { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Input.State.modifier_enabled { get; }
       Efl.Input.State.lock_enabled { get; }
       Efl.Screen.screen_dpi { get; }

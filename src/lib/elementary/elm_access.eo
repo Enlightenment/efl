@@ -1,4 +1,4 @@
-class Elm.Access extends Efl.Ui.Widget implements Efl.Access.Widget.Action
+class Elm.Access extends Efl.Ui.Widget
 {
    [[Elm abstract accessibility class]]
    legacy_prefix: elm_access;
@@ -9,7 +9,7 @@ class Elm.Access extends Efl.Ui.Widget implements Efl.Access.Widget.Action
       Efl.Object.constructor;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Access.Object.state_set { get; }
    }
 }

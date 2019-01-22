@@ -1,4 +1,4 @@
-class Elm.Naviframe extends Efl.Ui.Layout implements Efl.Access.Widget.Action, Efl.Ui.Legacy
+class Elm.Naviframe extends Efl.Ui.Layout implements Efl.Ui.Legacy
 {
    [[Elementary naviframe class]]
    legacy_prefix: elm_naviframe;
@@ -149,7 +149,7 @@ class Elm.Naviframe extends Efl.Ui.Layout implements Efl.Access.Widget.Action, E
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
       Efl.Layout.Signal.signal_emit;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Ui.Widget.resize_object { set; }
       Efl.Part.part_get;
    }

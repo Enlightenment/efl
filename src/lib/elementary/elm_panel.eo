@@ -9,7 +9,7 @@ enum Elm.Panel.Orient
 }
 
 class Elm.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable,
-                 Efl.Access.Widget.Action, Efl.Ui.Legacy
+                 Efl.Ui.Legacy
 {
    [[Elementary panel class]]
    legacy_prefix: elm_panel;
@@ -84,7 +84,7 @@ class Elm.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interfa
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.interest_region { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Ui.I18n.mirrored { set; }
       Efl.Part.part_get;
    }

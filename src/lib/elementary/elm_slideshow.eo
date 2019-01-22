@@ -1,6 +1,6 @@
 type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item class type]]
 
-class Elm.Slideshow extends Efl.Ui.Layout implements Efl.Access.Widget.Action, Efl.Ui.Legacy
+class Elm.Slideshow extends Efl.Ui.Layout implements Efl.Ui.Legacy
 {
    [[Elementary slideshow class]]
    eo_prefix: elm_obj_slideshow;
@@ -307,7 +307,7 @@ class Elm.Slideshow extends Efl.Ui.Layout implements Efl.Access.Widget.Action, E
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
    events {
       changed: Efl.Object; [[Called when slideshow widget changed]]

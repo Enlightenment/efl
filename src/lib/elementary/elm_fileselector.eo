@@ -1,5 +1,5 @@
 class Elm.Fileselector extends Efl.Ui.Layout implements Elm.Interface.Fileselector,
-                        Efl.Access.Widget.Action, Efl.Ui.Focus.Composition,
+                        Efl.Ui.Focus.Composition,
                         Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary fileselector class]]
@@ -52,7 +52,7 @@ class Elm.Fileselector extends Efl.Ui.Layout implements Elm.Interface.Fileselect
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.mode { get; set; }
       Elm.Interface.Fileselector.current_name { get; set; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Part.part_get;
    }
    events {

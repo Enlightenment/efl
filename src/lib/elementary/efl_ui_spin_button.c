@@ -933,7 +933,7 @@ _efl_ui_spin_button_circulate_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_
 }
 
 EOLIAN static const Efl_Access_Action_Data *
-_efl_ui_spin_button_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "toggle", "toggle", NULL, _key_action_toggle},

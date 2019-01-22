@@ -7242,7 +7242,7 @@ _efl_ui_win_efl_object_debug_name_override(Eo *obj, Efl_Ui_Win_Data *pd, Eina_St
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_efl_ui_win_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+_efl_ui_win_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,previous", "move", "previous", _key_action_move},

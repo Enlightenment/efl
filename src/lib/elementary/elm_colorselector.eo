@@ -13,7 +13,7 @@ enum Elm.Colorselector.Mode
 }
 
 class Elm.Colorselector extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition,
-                         Efl.Access.Widget.Action, Efl.Ui.Clickable, Efl.Ui.Legacy
+                         Efl.Ui.Clickable, Efl.Ui.Legacy
 {
    [[Elementary colorselector class]]
    legacy_prefix: elm_colorselector;
@@ -114,7 +114,7 @@ class Elm.Colorselector extends Efl.Ui.Layout implements Efl.Ui.Focus.Compositio
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Access.Object.access_children { get; }
    }
    events {

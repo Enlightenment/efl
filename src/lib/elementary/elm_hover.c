@@ -844,7 +844,7 @@ _action_dismiss(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_hover_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
+_elm_hover_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "dismiss", NULL, NULL, _action_dismiss},

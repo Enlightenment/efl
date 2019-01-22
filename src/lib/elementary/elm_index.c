@@ -6,6 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_ITEM_BETA
 
 #include <Elementary.h>
 
@@ -1695,7 +1696,7 @@ _elm_index_item_efl_access_object_i18n_name_get(const Eo *eo_it, Elm_Index_Item_
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_index_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
+_elm_index_item_elm_widget_item_access_actions_get(const Eo *eo_it EINA_UNUSED, Elm_Index_Item_Data *data EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", "activate", NULL, _item_action_activate},

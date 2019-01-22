@@ -1,8 +1,7 @@
 import elm_general;
 
 class Elm.Genlist extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.Ui.Clickable,
-                   Efl.Access.Widget.Action, Efl.Access.Selection,
-                   Efl.Ui.Selectable, Efl.Ui.Legacy
+                   Efl.Access.Selection, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[Elementary genlist class]]
    legacy_prefix: elm_genlist;
@@ -544,7 +543,7 @@ class Elm.Genlist extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl
       Elm.Interface_Scrollable.policy { get; set; }
       Efl.Access.Object.access_children { get; }
       Efl.Access.Object.state_set { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
       Efl.Access.Selection.selected_child_deselect;

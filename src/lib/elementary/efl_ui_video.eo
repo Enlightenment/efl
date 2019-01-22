@@ -1,4 +1,4 @@
-class Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access.Widget.Action
+class Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player
 {
    [[Efl UI video class]]
    legacy_prefix: elm_video;
@@ -44,7 +44,7 @@ class Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access.Widge
       Efl.Object.constructor;
       Efl.File.file { get; set; }
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Player.start;
       Efl.Player.stop;
       Efl.Player.play { get; set; }

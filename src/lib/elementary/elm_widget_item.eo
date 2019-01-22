@@ -5,7 +5,7 @@ type Elm_Tooltip_Item_Content_Cb: __undefined_type; [[Elementary tooltip item co
 type Elm_Object_Item_Signal_Cb: __undefined_type; [[Elementary object item signal callback type]]
 
 class Elm.Widget.Item extends Efl.Object implements Efl.Access.Object,
-                      Efl.Access.Component
+                      Efl.Access.Component, Efl.Access.Action
 {
       [[Elementary widget item class]]
       eo_prefix: elm_wdg_item;
@@ -534,6 +534,15 @@ class Elm.Widget.Item extends Efl.Object implements Efl.Access.Object,
                      dir: Efl.Ui.Focus.Direction; [[Focus direction]]
                 }
            }
+           @property access_actions @protected @beta {
+              [[Elementary accessibility actions]]
+              get {
+              }
+              values {
+                 @cref actions: ptr(const(Efl.Access.Action_Data));
+                    [[NULL-terminated array of Efl.Access.Action_Data.]]
+              }
+      }
       }
       implements {
            Efl.Object.constructor;
@@ -547,5 +556,11 @@ class Elm.Widget.Item extends Efl.Object implements Efl.Access.Object,
            Efl.Access.Component.contains;
            Efl.Access.Component.accessible_at_point_get;
            Efl.Access.Component.z_order { get; }
+           Efl.Access.Action.action_do;
+           Efl.Access.Action.action_keybinding_get;
+           Efl.Access.Action.action_name { get; }
+           Efl.Access.Action.action_localized_name { get; }
+           Efl.Access.Action.action_description { get; set; }
+           Efl.Access.Action.actions { get; }
       }
 }

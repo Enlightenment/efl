@@ -680,7 +680,7 @@ _elm_player_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_player_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
+_elm_player_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Player_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,left", "move", "left", _key_action_move},

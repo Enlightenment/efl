@@ -5,8 +5,7 @@ type Elm_Entry_Filter_Cb: __undefined_type; [[Elementary entry filter callback t
 
 class Elm.Entry extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Access.Widget.Action,
-                 Efl.Ui.Legacy
+                 Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Ui.Legacy
 {
    [[Elementary entry class]]
    legacy_prefix: elm_entry;
@@ -896,7 +895,7 @@ class Elm.Entry extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.U
       Efl.Access.Editable.Text.cut;
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.File.file { get; set; }
       Efl.Part.part_get;
    }

@@ -1357,7 +1357,7 @@ _elm_scroller_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Scroller_Data *pd EIN
 
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_scroller_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
+_elm_scroller_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Scroller_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "move,prior", "move", "prior", _key_action_move},

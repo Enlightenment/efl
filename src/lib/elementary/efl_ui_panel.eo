@@ -15,8 +15,7 @@ struct Efl.Ui.Panel_Scroll_Info
    rel_y: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
 }
 
-class Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content,
-                    Efl.Access.Widget.Action
+class Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content
 {
    [[Elementary panel class]]
    methods {
@@ -84,7 +83,7 @@ class Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Inte
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.interest_region { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Ui.I18n.mirrored { set; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;

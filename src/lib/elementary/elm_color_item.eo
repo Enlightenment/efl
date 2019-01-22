@@ -1,4 +1,4 @@
-class Elm.Color.Item extends Elm.Widget.Item implements Efl.Ui.Focus.Object, Efl.Access.Widget.Action
+class Elm.Color.Item extends Elm.Widget.Item implements Efl.Ui.Focus.Object
 {
    [[Elementary color item class]]
    legacy_prefix: elm_color_item;
@@ -48,6 +48,6 @@ class Elm.Color.Item extends Elm.Widget.Item implements Efl.Ui.Focus.Object, Efl
       Efl.Ui.Focus.Object.focus_manager { get; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Elm.Widget.Item.access_actions { get; }
    }
 }

@@ -3,10 +3,11 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_ACCESS_ACTION_PROTECTED
 #define EFL_UI_WIDGET_PROTECTED
 //#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
+#define ELM_WIDGET_ITEM_BETA
 #define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
 
@@ -1515,7 +1516,7 @@ _elm_ctxpopup_item_init(Eo *eo_item,
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_ctxpopup_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
+_elm_ctxpopup_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "escape", "escape", NULL, _key_action_escape},
@@ -1546,7 +1547,7 @@ _item_access_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static const Efl_Access_Action_Data*
-_elm_ctxpopup_item_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Item_Data *sd EINA_UNUSED)
+_elm_ctxpopup_item_elm_widget_item_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Item_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "activate", NULL, NULL, _item_access_action_activate},

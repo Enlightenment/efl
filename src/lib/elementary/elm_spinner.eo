@@ -1,5 +1,5 @@
 class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Focus.Composition,
-                   Efl.Access.Value, Efl.Access.Widget.Action, Efl.Ui.Legacy
+                   Efl.Access.Value, Efl.Ui.Legacy
 {
    [[Elementary spinner class]]
    legacy_prefix: elm_spinner;
@@ -181,7 +181,7 @@ class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Focus.Co
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }
       Efl.Access.Value.increment { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
    events {
       /* FIXME: Colorselector puts Colorselector_Data here! */

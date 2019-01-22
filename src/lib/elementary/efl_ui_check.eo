@@ -1,4 +1,4 @@
-class Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
+class Efl.Ui.Check extends Efl.Ui.Nstate
 {
    [[Check widget
 
@@ -27,6 +27,6 @@ class Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Nstate.value { set; }
       Efl.Access.Object.state_set { get; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
 }

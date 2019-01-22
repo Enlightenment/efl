@@ -883,7 +883,7 @@ _elm_flipselector_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_flipselector_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
+_elm_flipselector_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "flip,up", "flip", "up", _key_action_flip},

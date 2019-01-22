@@ -1,5 +1,4 @@
 class Elm.Diskselector extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
-                        Efl.Access.Widget.Action,
                         Efl.Ui.Clickable, Efl.Ui.Scrollable,
                         Efl.Ui.Selectable, Efl.Ui.Legacy
 {
@@ -208,6 +207,6 @@ class Elm.Diskselector extends Efl.Ui.Widget implements Elm.Interface_Scrollable
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
       Elm.Interface_Scrollable.policy { get; set; }
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
    }
 }

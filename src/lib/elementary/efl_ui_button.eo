@@ -1,6 +1,5 @@
 class Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
-                     Efl.Text, Efl.Content,
-                     Efl.Access.Widget.Action
+                     Efl.Text, Efl.Content
 {
    [[Push-button widget
 
@@ -17,7 +16,7 @@ class Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Au
       Efl.Ui.Autorepeat.autorepeat_supported { get;}
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.widget_event;
-      Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Ui.Widget.access_actions { get; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Text.text { get; set; }

@@ -540,7 +540,7 @@ _elm_combobox_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_elm_combobox_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED,
+_elm_combobox_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED,
                                                                 Elm_Combobox_Data *pd
                                                                 EINA_UNUSED)
 {
@@ -612,7 +612,7 @@ _elm_combobox_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_ui_widget_event, _elm_combobox_efl_ui_widget_widget_event),
       EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_combobox_efl_ui_autorepeat_autorepeat_supported_get),
       EFL_OBJECT_OP_FUNC(elm_obj_genlist_filter_set, _elm_combobox_elm_genlist_filter_set),
-      EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_combobox_efl_access_widget_action_elm_actions_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_widget_access_actions_get, _elm_combobox_efl_ui_widget_access_actions_get),
       EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
    );
 
@@ -629,7 +629,7 @@ static const Efl_Class_Description _elm_combobox_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_UI_SELECTABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_UI_SELECTABLE_INTERFACE, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
 
 EAPI Eina_Bool
 elm_combobox_expanded_get(const Elm_Combobox *obj)

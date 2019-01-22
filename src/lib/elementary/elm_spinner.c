@@ -1652,7 +1652,7 @@ _elm_spinner_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static const Efl_Access_Action_Data *
-_elm_spinner_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
+_elm_spinner_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
       { "toggle", "toggle", NULL, _key_action_toggle},

@@ -818,7 +818,7 @@ _efl_ui_slider_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN const Efl_Access_Action_Data *
-_efl_ui_slider_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
+_efl_ui_slider_efl_ui_widget_access_actions_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *pd EINA_UNUSED)
 {
    static Efl_Access_Action_Data atspi_actions[] = {
           { "drag,left", "drag", "left", _key_action_drag},

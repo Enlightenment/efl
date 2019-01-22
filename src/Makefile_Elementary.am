@@ -114,7 +114,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_selection.eo \
 	lib/elementary/efl_access_text.eo \
 	lib/elementary/efl_access_value.eo \
-	lib/elementary/efl_access_widget_action.eo \
 	lib/elementary/efl_access_window.eo \
 	lib/elementary/efl_ui_theme.eo \
 	lib/elementary/efl_config_global.eo \
@@ -335,7 +334,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_atspi_bridge.h \
 	lib/elementary/efl_access_object.h \
 	lib/elementary/efl_access_text.h \
-	lib/elementary/efl_access_widget_action.h \
+	lib/elementary/efl_access_action.h \
 	lib/elementary/efl_access_window.h \
 	lib/elementary/elm_interface_fileselector.h \
 	lib/elementary/elm_interface_scrollable.h \
@@ -751,7 +750,6 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_access_selection.c \
 	lib/elementary/efl_access_text.c \
 	lib/elementary/efl_access_value.c \
-	lib/elementary/efl_access_widget_action.c \
 	lib/elementary/efl_access_window.c \
 	lib/elementary/elm_interface_fileselector.c \
 	lib/elementary/elm_interface_scrollable.c \
