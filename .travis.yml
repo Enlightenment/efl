@@ -139,15 +139,6 @@ before_cache:
          mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
        fi
 
-after_success:
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$DISTRO" != "" ]]; then
-        docker login -u stefanschmidt1 -p "$DOCKER_PASSWORD"
-        docker tag stefanschmidt1/ci-support-files:$DISTRO stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
-        docker push stefanschmidt1/ci-support-files:$DISTRO
-        docker push stefanschmidt1/ci-support-files:$DISTRO-$TRAVIS_BUILD_NUMBER
-      fi
-
 notifications:
   irc:
     channels:
