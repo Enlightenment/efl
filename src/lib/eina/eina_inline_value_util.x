@@ -675,311 +675,44 @@ eina_value_error_init(Eina_Error err)
    return v;
 }
 
+/// @brief For internal use only.
+/// @hideinitializer
+#define EINA_VALUE_GET(Compress_Type, Uppercase_Compress_Type, Type)    \
 /**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param c Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_uchar_get(const Eina_Value *v, unsigned char *c)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(c, EINA_FALSE);
-   *c = 0;
-   if (v && v->type == EINA_VALUE_TYPE_UCHAR)
-     return eina_value_get(v, c);
-   return EINA_FALSE;
+ @brief Check value type and get contents.
+ @param v The value to check type and get contents.
+ @param c Where to store the value contents.
+ @return #EINA_TRUE if type matches and fetched contents,
+ #EINA_FALSE on different type or failures.
+ @since 1.21
+ */                                                                     \
+static inline Eina_Bool                                                 \
+eina_value_##Compress_Type##_get(const Eina_Value *v, Type *c)          \
+{                                                                       \
+   EINA_SAFETY_ON_NULL_RETURN_VAL(c, EINA_FALSE);                       \
+   *c = 0;                                                              \
+   if (v && v->type == EINA_VALUE_TYPE_##Uppercase_Compress_Type)       \
+     return eina_value_get(v, c);                                       \
+   return EINA_FALSE;                                                   \
 }
 
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param s Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_ushort_get(const Eina_Value *v, unsigned short *s)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(s, EINA_FALSE);
-   *s = 0;
-   if (v && v->type == EINA_VALUE_TYPE_USHORT)
-     return eina_value_get(v, s);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param i Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_uint_get(const Eina_Value *v, unsigned int *i)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(i, EINA_FALSE);
-   *i = 0;
-   if (v && v->type == EINA_VALUE_TYPE_UINT)
-     return eina_value_get(v, i);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param l Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_ulong_get(const Eina_Value *v, unsigned long *l)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
-   *l = 0;
-   if (v && v->type == EINA_VALUE_TYPE_ULONG)
-     return eina_value_get(v, l);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param i Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_uint64_get(const Eina_Value *v, uint64_t *i)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(i, EINA_FALSE);
-   *i = 0;
-   if (v && v->type == EINA_VALUE_TYPE_UINT64)
-     return eina_value_get(v, i);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param c Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_char_get(const Eina_Value *v, char *c)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(c, EINA_FALSE);
-   *c = 0;
-   if (v && v->type == EINA_VALUE_TYPE_CHAR)
-     return eina_value_get(v, c);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param s Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_short_get(const Eina_Value *v, short *s)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(s, EINA_FALSE);
-   *s = 0;
-   if (v && v->type == EINA_VALUE_TYPE_SHORT)
-     return eina_value_get(v, s);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param i Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_int_get(const Eina_Value *v, int *i)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(i, EINA_FALSE);
-   *i = 0;
-   if (v && v->type == EINA_VALUE_TYPE_INT)
-     return eina_value_get(v, i);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param l Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_long_get(const Eina_Value *v, long *l)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(l, EINA_FALSE);
-   *l = 0;
-   if (v && v->type == EINA_VALUE_TYPE_LONG)
-     return eina_value_get(v, l);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param i Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_int64_get(const Eina_Value *v, int64_t *i)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(i, EINA_FALSE);
-   *i = 0;
-   if (v && v->type == EINA_VALUE_TYPE_INT64)
-     return eina_value_get(v, i);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param f Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_float_get(const Eina_Value *v, float *f)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(f, EINA_FALSE);
-   *f = 0.0f;
-   if (v && v->type == EINA_VALUE_TYPE_FLOAT)
-     return eina_value_get(v, f);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param d Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_double_get(const Eina_Value *v, double *d)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(d, EINA_FALSE);
-   *d = 0.0;
-   if (v && v->type == EINA_VALUE_TYPE_DOUBLE)
-     return eina_value_get(v, d);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param b Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_bool_get(const Eina_Value *v, Eina_Bool *b)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(b, EINA_FALSE);
-   *b = EINA_FALSE;
-   if (v && v->type == EINA_VALUE_TYPE_BOOL)
-     return eina_value_get(v, b);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param str Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_string_get(const Eina_Value *v, const char **str)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
-   *str = NULL;
-   if (v && v->type == EINA_VALUE_TYPE_STRING)
-     return eina_value_get(v, str);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param str Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_stringshare_get(const Eina_Value *v, const char **str)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(str, EINA_FALSE);
-   *str = NULL;
-   if (v && v->type == EINA_VALUE_TYPE_STRINGSHARE)
-     return eina_value_get(v, str);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param t Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_time_get(const Eina_Value *v, time_t *t)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(t, EINA_FALSE);
-   *t = 0;
-   if (v && v->type == EINA_VALUE_TYPE_TIMESTAMP)
-     return eina_value_get(v, t);
-   return EINA_FALSE;
-}
-
-/**
- * @brief Check value type and get contents.
- * @param v The value to check type and get contents.
- * @param err Where to store the value contents.
- * @return #EINA_TRUE if type matches and fetched contents,
- * #EINA_FALSE on different type or failures.
- * @since 1.21
- */
-static inline Eina_Bool
-eina_value_error_get(const Eina_Value *v, Eina_Error *err)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(err, EINA_FALSE);
-   *err = 0;
-   if (v && v->type == EINA_VALUE_TYPE_ERROR)
-     return eina_value_get(v, err);
-   return EINA_FALSE;
-}
+EINA_VALUE_GET(uchar, UCHAR, unsigned char);
+EINA_VALUE_GET(ushort, USHORT, unsigned short);
+EINA_VALUE_GET(uint, UINT, unsigned int);
+EINA_VALUE_GET(ulong, ULONG, unsigned long);
+EINA_VALUE_GET(uint64, UINT64, uint64_t);
+EINA_VALUE_GET(char, CHAR, char);
+EINA_VALUE_GET(short, SHORT, short);
+EINA_VALUE_GET(int, INT, int);
+EINA_VALUE_GET(long, LONG, long);
+EINA_VALUE_GET(int64, INT64, int64_t);
+EINA_VALUE_GET(float, FLOAT, float);
+EINA_VALUE_GET(double, DOUBLE, double);
+EINA_VALUE_GET(bool, BOOL, Eina_Bool);
+EINA_VALUE_GET(string, STRING, const char *);
+EINA_VALUE_GET(stringshare, STRINGSHARE, const char *);
+EINA_VALUE_GET(time, TIMESTAMP, time_t);
+EINA_VALUE_GET(error, ERROR, Eina_Error);
 
 /// @brief For internal use only.
 /// @hideinitializer
