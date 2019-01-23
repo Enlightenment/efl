@@ -1156,6 +1156,23 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
    return ret;
 }
 
+EOLIAN static const char*
+_efl_ui_image_efl_layout_group_group_data_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *key)
+{
+  if (sd->edje)
+    return edje_object_data_get(sd->img, key);
+  return NULL;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_layout_group_part_exist_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *part)
+{
+   if (sd->edje)
+     return edje_object_part_exists(sd->img, part);
+   return EINA_FALSE;
+}
+
+
 EOLIAN static void
 _efl_ui_image_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *emission, const char *source)
 {
