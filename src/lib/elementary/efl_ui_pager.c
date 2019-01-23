@@ -17,7 +17,9 @@ _efl_ui_pager_update(Efl_Ui_Pager_Data *pd)
 {
    if (pd->cnt == 0) return;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+
    if (pd->indicator)
      efl_page_indicator_update(pd->indicator, pd->curr.pos);
 }
@@ -732,7 +734,8 @@ _efl_ui_pager_padding_set(Eo *obj EINA_UNUSED,
 {
    pd->page_spec.padding = padding;
 
-   efl_page_transition_padding_size_set(pd->transition, padding);
+   if (pd->transition)
+     efl_page_transition_padding_size_set(pd->transition, padding);
 }
 
 EOLIAN static void
