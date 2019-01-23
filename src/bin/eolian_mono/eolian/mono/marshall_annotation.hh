@@ -221,7 +221,7 @@ struct marshall_native_annotation_visitor_generate
           {"stringshare", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringsharePassOwnershipMarshaler))]";
           }},
-          {"stringshare", false, [&] { return ""; }},
+          {"stringshare", false, [&] { return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringshareKeepOwnershipMarshaler))]"; }},
           {"strbuf", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufPassOwnershipMarshaler))]";
           }},
