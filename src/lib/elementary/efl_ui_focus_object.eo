@@ -70,7 +70,7 @@ mixin Efl.Ui.Focus.Object
         prepare_logical_none_recursive @protected {
             [[]]
         }
-        on_focus_update @protected @pure_virtual {
+        on_focus_update @protected {
            [[Virtual function handling focus in/out events on the widget]]
            return: bool; [[$true if this widget can handle focus, $false otherwise]]
         }
@@ -80,6 +80,7 @@ mixin Efl.Ui.Focus.Object
         @empty .prepare_logical_none_recursive;
         @empty .focus_manager;
         @empty .focus_parent;
+        @empty .on_focus_update;
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
