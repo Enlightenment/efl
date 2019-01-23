@@ -138,11 +138,17 @@ group { name: "e/gadget/wireless/wifi"; nomouse;
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new state = getarg(2), signl = getarg(3);
-            if (state <= 1) {
-               set_state(PART:"wifi-base", "default", 0.0);
-               set_state(PART:"wifi", "default", 0.0);
+            if (state == 0 && signl == 0) {
+               set_state(PART:"clip_wifi", "default", 0.0);
+               set_state(PART:"clip_exclam", "default", 0.0);
+            }
+            else {
+               set_state(PART:"clip_wifi", "wifi", 0.0);
+               set_state(PART:"clip_exclam", "wifi", 0.0);
             }
             if (state == 1) {
+               set_state(PART:"wifi-base", "default", 0.0);
+               set_state(PART:"wifi", "default", 0.0);
                run_program(PROGRAM:"connecting");
                run_program(PROGRAM:"connecting_wifi");
                return;
@@ -274,17 +280,6 @@ group { name: "e/gadget/wireless/wifi"; nomouse;
              in: 0.3 0.0;
              after:  "connecting";
          }
-      }
-      target_group: "clips" "clip_exclam" "clip_wifi";
-      program {
-         signal: "e,state,error"; source: "e";
-         action: STATE_SET "default" 0.0;
-         groups: "clips";
-      }
-      program {
-         signal: "e,state,default"; source: "e";
-         action: STATE_SET "wifi" 0.0;
-         groups: "clips";
       }
    }
 }
