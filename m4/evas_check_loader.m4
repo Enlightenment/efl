@@ -67,7 +67,7 @@ have_dep="no"
 evas_vg_loader_[]$1[]_cflags=""
 evas_vg_loader_[]$1[]_libs=""
 
-AC_CHECK_HEADER([lottieanimation_capi.h], [have_dep="yes"])
+AC_CHECK_HEADER([rlottie_capi.h], [have_dep="yes"])
 
 if test "x${have_dep}"  = "xyes" ; then
    AC_CHECK_LIB([rlottie],
