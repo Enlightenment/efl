@@ -556,7 +556,7 @@ _efl_ui_pager_current_page_set(Eo *obj,
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 
-   if (index >= pd->cnt)
+   if ((index < 0) || (index > (pd->cnt - 1)))
      {
         ERR("page set fail");
         return;
