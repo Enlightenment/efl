@@ -339,7 +339,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->cnt = 0;
    pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
 
-   pd->curr.page = 0;
+   pd->curr.page = -1;
    pd->curr.pos = 0.0;
 
    pd->transition = NULL;
@@ -424,6 +424,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
    pd->cnt++;
+   if (pd->curr.page == -1) pd->curr.page = 0;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
