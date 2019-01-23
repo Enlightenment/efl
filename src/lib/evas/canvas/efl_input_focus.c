@@ -130,6 +130,22 @@ _efl_input_focus_efl_input_event_reset(Eo *obj, Efl_Input_Focus_Data *pd)
    pd->eo = obj;
 }
 
+EOLIAN static void
+_efl_input_focus_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd, Efl_Input_Flags flags)
+{
+   if (flags == EFL_INPUT_FLAGS_SCROLLING)
+     ERR("A focus event cannot be created based on scrolling");
+   else
+     pd->event_flags |= flags;
+}
+
+EOLIAN static Efl_Input_Flags
+_efl_input_focus_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
+{
+   return pd->event_flags;
+}
+
+
 /* Internal EO APIs */
 
 #define EFL_INPUT_FOCUS_EXTRA_CLASS_OPS \
