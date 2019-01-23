@@ -871,4 +871,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       pause: void; [[Called when the window is not going be displayed for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
    }
+   composite {
+      Efl.Config;
+   }
 }
