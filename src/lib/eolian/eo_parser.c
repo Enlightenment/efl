@@ -1819,8 +1819,8 @@ static void
 parse_composite(Eo_Lexer *ls)
 {
    int line, col;
-   if (ls->klass->type != EOLIAN_CLASS_REGULAR)
-     eo_lexer_syntax_error(ls, "composite section only allowed in regular classes");
+   if (ls->klass->type == EOLIAN_CLASS_INTERFACE)
+     eo_lexer_syntax_error(ls, "composite section not allowed in interfaces");
    eo_lexer_get(ls);
    line = ls->line_number, col = ls->column;
    check_next(ls, '{');

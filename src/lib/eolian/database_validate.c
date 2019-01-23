@@ -942,6 +942,24 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
    return succ;
 }
 
+/* this is so we can inherit composite lists into regular classes
+ * it doesn't need to be recursive since the parent/extension already
+ * has its composite stuff filled in from before
+ */
+static void
+_add_composite(Eolian_Class *cl, const Eolian_Class *icl, Eina_Hash *ch)
+{
+   const Eolian_Class *ccl;
+   Eina_List *l;
+   EINA_LIST_FOREACH(icl->composite, l, ccl)
+     {
+        if (eina_hash_find(ch, &ccl))
+          continue;
+        cl->composite = eina_list_append(cl->composite, ccl);
+        eina_hash_add(ch, &ccl, ccl);
+     }
+}
+
 static Eina_Bool
 _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
 {
@@ -1008,6 +1026,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
    /* a set of interfaces for quick checks */
    Eina_Hash *ch = eina_hash_pointer_new(NULL);
 
+   /* replace the composite list with real instances and initial-fill the hash */
    il = cl->composite;
    cl->composite = NULL;
    EINA_LIST_FREE(il, inn)
@@ -1019,6 +1038,18 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
         cl->composite = eina_list_append(cl->composite, out_cl);
         eina_hash_set(ch, &out_cl, out_cl);
      }
+
+   /* parent can be abstract, those are not checked for unimplemented,
+    * plus later we'll be exposing composite as an API, so we need to add
+    * all composite interfaces from everywhere in the inheritance tree anyway
+    */
+   if (cl->parent)
+     _add_composite(cl, cl->parent, ch);
+
+   /* iterate extensions, add any composite stuff into the hash as well */
+   Eolian_Class *icl;
+   EINA_LIST_FOREACH(cl->extends, il, icl)
+     _add_composite(cl, icl, ch);
 
    /* failed on the way, no point in filling further
     * the failed stuff will get dropped so it's ok if it's inconsistent
@@ -1056,7 +1087,6 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash)
    if (cl->parent)
      _db_fill_callables(cl, cl->parent, fh, EINA_TRUE);
 
-   Eolian_Class *icl;
    EINA_LIST_FOREACH(cl->extends, il, icl)
      _db_fill_callables(cl, icl, fh, EINA_FALSE);
 
