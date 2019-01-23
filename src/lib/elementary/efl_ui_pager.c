@@ -385,13 +385,10 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj)
 {
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
-
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
 
    pd->cnt += 1;
@@ -416,13 +413,10 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Pager_Data *pd,
                                        Efl_Gfx_Entity *subobj)
 {
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
-
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
    pd->cnt += 1;
@@ -446,15 +440,12 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
                                           Efl_Ui_Pager_Data *pd,
                                           Efl_Gfx_Entity *subobj,
                                           const Efl_Gfx_Entity *existing)
 {
    int index;
-
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
@@ -476,15 +467,12 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
    int index;
-
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
@@ -506,15 +494,12 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_at(Eo *obj EINA_UNUSED,
                                       Efl_Ui_Pager_Data *pd,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
    Efl_Gfx_Entity *existing = NULL;
-
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
 
    existing = eina_list_nth(pd->content_list, index);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
