@@ -38,11 +38,11 @@ group { name: "e/modules/music-control/popup";
 #ifdef SKIP_NAMESPACE_VALIDATION
    skip_namespace_validation: 1;
 #endif
-   min: 150 50;
-   images.image: "icon_prev.png" COMP;
-   images.image: "icon_next.png" COMP;
-   images.image: "icon_pause.png" COMP;
-   images.image: "icon_play.png" COMP;
+   min: 160 160;
+   images.image: "icon_prev_mono.png" COMP;
+   images.image: "icon_next_mono.png" COMP;
+   images.image: "icon_pause_mono.png" COMP;
+   images.image: "icon_play_mono.png" COMP;
    styles {
       style { name: "music_control_metadata_style";
          base: "font="FN" font_size=10 align=left text_class=tb_plain color=#a0a0a0";
@@ -61,33 +61,43 @@ group { name: "e/modules/music-control/popup";
    parts {
       alias: "cover_swallow" "e.cover_swallow";
       part { name: "cover_bg";
-         scale: 1;
          description { state: "default" 0;
-            min: 80 80;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 0.35 1.0;
+            rel1.relative: 0.25 0.25;
+            rel2.relative: 0.75 0.75;
             image.normal: "efm_drive_cd_icon";
          }
       }
       part { name: "e.cover_swallow"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0;
-            rel1.to: "cover_bg";
-            rel2.to: "cover_bg";
+            rel1.offset: -4 -4;
+            rel2.offset: 3 3;
+            offscale;
+         }
+      }
+      part { name: "player_name_back"; type: RECT;
+         scale: 1;
+         description { state: "default" 0;
+            color: 0 0 0 128;
+            rel1.offset: -4 -4;
+            rel2.offset: 3 3;
+            rel2.to_y: "player_name";
+            offscale;
          }
       }
       part { name: "player_name"; type: TEXT;
          scale : 1;
          description { state: "default" 0;
             align: 0.5 0.0;
-            color: 160 160 160 255;
+            color: 255 255 255 255;
             text.size: 10;
             text.text: "Music player";
+            text.min: 0 1;
             text.font: FNBD;
-            rel1.to: "cover_bg";
-            rel1.relative: 1.0 0.0;
+            rel1.relative: 0.0 0.0;
             rel2.relative: 1.0 0.0;
-            rel1.offset: 8 8;
-            rel2.offset: -9 8;
+            rel1.offset: 8 0;
+            rel2.offset: -9 0;
             offscale;
          }
       }
@@ -100,53 +110,78 @@ group { name: "e/modules/music-control/popup";
                text: "Song Title";
                align: 0.0 0.0;
             }
-            rel1.to: "player_name";
+            rel1.to_y: "player_name";
             rel1.relative: 0.0 1.0;
-            rel1.offset: 0 8;
-            rel2.offset: -1 8;
+            rel1.offset: 8 8;
+            rel2.offset: -9 8;
             offscale;
          }
       }
-      part { name: "previous_btn";
+      part { name: "btn_back"; type: RECT;
          scale: 1;
          description { state: "default" 0;
-            min: 40 40;
-            max: 40 40;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
-            align: 0.0 1.0;
-            rel1.relative: 0.35 0.0;
-            image.normal: "icon_prev.png";
+            color: 0 0 0 128;
+            rel1.to_y: "previous_btn";
+            rel1.offset: -4 -4;
+            rel2.offset: 3 3;
+            offscale;
+         }
+         description { state: "pressed" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 220;
          }
       }
       part { name: "play_btn";
          scale: 1;
          description { state: "default" 0;
-            min: 40 40;
-            max: 40 40;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
+            fixed: 1 1;
+            min: 20 20;
+            max: 20 20;
             align: 0.5 1.0;
-            rel1.relative: 0.35 0.0;
-            image.normal: "icon_pause.png";
+            image.normal: "icon_pause_mono.png";
          }
          description { state: "play" 0.0;
             inherit: "default" 0.0;
-            image.normal: "icon_play.png";
+            image.normal: "icon_play_mono.png";
+         }
+      }
+      part { name: "previous_btn";
+         scale: 1;
+         description { state: "default" 0;
+            fixed: 1 1;
+            min: 20 20;
+            max: 20 20;
+            rel.to: "play_btn";
+            rel1.relative: -1.0 0.0;
+            rel2.relative: 0.0  1.0;
+            image.normal: "icon_prev_mono.png";
          }
       }
       part { name: "next_btn";
          scale: 1;
          description { state: "default" 0;
-            min: 40 40;
-            max: 40 40;
-            aspect: 1.0 1.0; aspect_preference: BOTH;
-            align: 1.0 1.0;
-            rel1.relative: 0.35 0.0;
-            rel1.to: "player_name";
-            image.normal: "icon_next.png";
+            fixed: 1 1;
+            min: 20 20;
+            max: 20 20;
+            rel.to: "play_btn";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 2.0 1.0;
+            image.normal: "icon_next_mono.png";
          }
       }
    }
    programs {
+      program {
+         signal: "mouse,down,1"; source: "*_btn";
+         action: STATE_SET "pressed" 0.0;
+         target: "btn_back";
+      }
+      program {
+         signal: "mouse,up,1"; source: "*_btn";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 1.0;
+         target: "btn_back";
+      }
       program {
          signal: "mouse,clicked,*"; source: "previous_btn";
          action: SIGNAL_EMIT "btn,clicked" "previous";

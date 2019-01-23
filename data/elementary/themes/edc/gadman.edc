@@ -15,8 +15,6 @@ group { name: "e/gadman/popup";
       }
       part { name: "clip"; type: RECT;
          description { state: "default";
-            rel1.to: "e.swallow.content";
-            rel2.to: "e.swallow.content";
          }
       }
    }
