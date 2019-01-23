@@ -9,36 +9,6 @@ interface Efl.Gfx.Size_Hint
    [[Efl graphics size hint interface]]
    event_prefix: efl_gfx_entity;
    methods {
-      @property hint_base {
-         [[Base size for objects with sizing restrictions.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-
-           @.hint_base + N x @.hint_step is what is calculated for object
-           sizing restrictions.
-
-           See also @.hint_step.
-         ]]
-         values {
-            sz: Eina.Size2D; [[Base size (hint) in pixels.]]
-         }
-      }
-      @property hint_step {
-         [[Step size for objects with sizing restrictions.
-
-           This is not a size enforcement in any way, it's just a hint
-           that should be used whenever appropriate.
-
-           Set this to for an object to scale up by steps and not continuously.
-
-           @.hint_base + N x @.hint_step is what is calculated for object
-           sizing restrictions.
-         ]]
-         values {
-            sz: Eina.Size2D; [[Step size (hint) in pixels.]]
-         }
-      }
       @property hint_aspect {
          [[Defines the aspect ratio to respect when scaling this object.
 

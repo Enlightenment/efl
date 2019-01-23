@@ -6427,7 +6427,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_weight_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
+_efl_ui_win_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
    sd->size_base_w = sz.w;
    sd->size_base_h = sz.h;
@@ -6438,13 +6438,13 @@ _efl_ui_win_efl_gfx_size_hint_hint_base_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_gfx_size_hint_hint_base_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_hint_base_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return EINA_SIZE2D(sd->size_base_w, sd->size_base_h);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
+_efl_ui_win_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
    sd->size_step_w = sz.w;
    sd->size_step_h = sz.h;
@@ -6472,7 +6472,7 @@ _efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Si
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_gfx_size_hint_hint_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_hint_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return EINA_SIZE2D(sd->size_step_w, sd->size_step_h);
 }
@@ -8372,14 +8372,14 @@ elm_win_title_get(const Evas_Object *obj)
 EAPI void
 elm_win_size_base_set(Evas_Object *obj, int w, int h)
 {
-   efl_gfx_size_hint_base_set(obj, EINA_SIZE2D(w, h));
+   efl_ui_win_hint_base_set(obj, EINA_SIZE2D(w, h));
 }
 
 EAPI void
 elm_win_size_base_get(const Evas_Object *obj, int *w, int *h)
 {
    Eina_Size2D sz;
-   sz = efl_gfx_size_hint_base_get(obj);
+   sz = efl_ui_win_hint_base_get(obj);
    if (w) *w = sz.w;
    if (h) *h = sz.h;
 }
@@ -8387,14 +8387,14 @@ elm_win_size_base_get(const Evas_Object *obj, int *w, int *h)
 EAPI void
 elm_win_size_step_set(Evas_Object *obj, int w, int h)
 {
-   efl_gfx_size_hint_step_set(obj, EINA_SIZE2D(w, h));
+   efl_ui_win_hint_step_set(obj, EINA_SIZE2D(w, h));
 }
 
 EAPI void
 elm_win_size_step_get(const Evas_Object *obj, int *w, int *h)
 {
    Eina_Size2D sz;
-   sz = efl_gfx_size_hint_step_get(obj);
+   sz = efl_ui_win_hint_step_get(obj);
    if (w) *w = sz.w;
    if (h) *h = sz.h;
 }

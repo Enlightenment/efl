@@ -766,6 +766,36 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
                                                      resize mode.]]
          }
       }
+      @property hint_base {
+         [[Base size for objects with sizing restrictions.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           @.hint_base + N x @.hint_step is what is calculated for object
+           sizing restrictions.
+
+           See also @.hint_step.
+         ]]
+         values {
+            sz: Eina.Size2D; [[Base size (hint) in pixels.]]
+         }
+      }
+      @property hint_step {
+         [[Step size for objects with sizing restrictions.
+
+           This is not a size enforcement in any way, it's just a hint
+           that should be used whenever appropriate.
+
+           Set this to for an object to scale up by steps and not continuously.
+
+           @.hint_base + N x @.hint_step is what is calculated for object
+           sizing restrictions.
+         ]]
+         values {
+            sz: Eina.Size2D; [[Step size (hint) in pixels.]]
+         }
+      }
    }
    implements {
       class.constructor;
@@ -797,8 +827,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
       Efl.Screen.screen_size { get; }
-      Efl.Gfx.Size_Hint.hint_base { get; set; }
-      Efl.Gfx.Size_Hint.hint_step { get; set; }
       Efl.Gfx.Size_Hint.hint_aspect { set; }
       Efl.Gfx.Size_Hint.hint_weight { set; }
       Efl.Gfx.Size_Hint.hint_max { set; }
