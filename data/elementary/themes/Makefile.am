@@ -40,6 +40,7 @@ elementary/themes/edc/comp_effects.edc \
 elementary/themes/edc/conf.edc \
 elementary/themes/edc/connman.edc \
 elementary/themes/edc/cpufreq.edc \
+elementary/themes/edc/cpuclock.edc \
 elementary/themes/edc/cpumonitor.edc \
 elementary/themes/edc/cslider.edc \
 elementary/themes/edc/desklock.edc \
@@ -82,6 +83,7 @@ elementary/themes/edc/syscon.edc \
 elementary/themes/edc/systray.edc \
 elementary/themes/edc/tasks.edc \
 elementary/themes/edc/temperature.edc \
+elementary/themes/edc/thermal.edc \
 elementary/themes/edc/textblock.edc \
 elementary/themes/edc/time.edc \
 elementary/themes/edc/toolbar.edc \

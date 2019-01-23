@@ -1,7 +1,6 @@
-group { name: "e/modules/temperature/main";
+group { name: "e/gadget/thermal/main";
+   alias: "e/gadget/thermal/main_vert";
    images.image: "therm_content.png" COMP;
-   min: 16 16;
-   max: 128 128;
    script {
     public message(Msg_Type:type, id, ...) {
        if ((type == MSG_FLOAT) && (id == 1)) {
@@ -15,20 +14,25 @@ group { name: "e/modules/temperature/main";
     }
    }
    parts {
-      part { name: "base";
+      part { name: "base"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "temp";
-            rel2.to: "temp";
+            aspect: (80 / 160) (80 / 160);
+            aspect_preference: BOTH;
+         }
+      }
+      part { name: "bg";
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
             image.normal: "therm_content.png";
             color: 32 32 32 255;
          }
       }
-      part { name: "temp";
+       part { name: "temp";
          clip_to: "temp_clip";
          description { state: "default" 0.0;
-            aspect: 0.5 0.5; aspect_preference: BOTH;
-            align: 0.5 0.5;
-            max: 80 160;
+            rel1.to: "base";
+            rel2.to: "base";
             image.normal: "therm_content.png";
             color: 51 153 255 255;
          }
@@ -41,26 +45,10 @@ group { name: "e/modules/temperature/main";
             color: 255 0 0 255;
          }
       }
-      part { name: "e.text.reading"; type: TEXT;
-         scale: 1;
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            visible: 0;
-            color: 255 255 255 0;
-            text { font: FN; size: 10;
-               min: 1 1;
-               ellipsis: -1;
-               text_class: "module_small";
-            }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-            color: 255 255 255 255;
-         }
-      }
       part { name: "fade_clip"; type: RECT;
          description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel2.to_x: "base";
             color: 255 255 255 255;
          }
          description { state: "faded" 0.0;
@@ -70,6 +58,8 @@ group { name: "e/modules/temperature/main";
       part { name: "temp_clip"; type: RECT;
          clip_to: "fade_clip";
          description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel2.to_x: "base";
             rel1.to_y: "temp_top";
          }
       }
@@ -82,31 +72,21 @@ group { name: "e/modules/temperature/main";
       }
       part { name: "temp_limit"; type: SPACER;
          description { state: "default" 0.0;
-            rel1.to: "temp";
+            rel1.to_x: "base";
+            rel2.to_x: "base";
             rel1.relative: 0.0 0.1;
-            rel2.to: "temp";
             rel2.relative: 1.0 0.9;
          }
       }
       part { name: "over"; type: RECT;
          description { state: "default" 0.0;
+            rel1.to_x: "base";
+            rel2.to_x: "base";
             color: 0 0 0 0;
          }
       }
    }
    programs {
-      program {
-         signal: "mouse,in"; source: "over";
-         action: STATE_SET "visible" 0.0;
-         transition: LINEAR 0.3;
-         target: "e.text.reading";
-      }
-      program {
-         signal: "mouse,out"; source: "over";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 1.0;
-         target: "e.text.reading";
-      }
       program {
          signal: "e,state,known"; source: "e";
          action: STATE_SET "default" 0.0;
@@ -119,4 +99,3 @@ group { name: "e/modules/temperature/main";
       }
    }
 }
-

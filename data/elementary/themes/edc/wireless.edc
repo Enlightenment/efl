@@ -1,84 +1,83 @@
 group { name: "e/gadget/wireless/ethernet"; nomouse;
-   images.image: "slot_horiz_top.png" COMP;
-   images.image: "slot_horiz_bottom.png" COMP;
-   images.image: "eth.png" COMP;
-   images.image: "exlclam.png" COMP;
-   images.image: "hole_tiny.png" COMP;
-   images.image: "led_tiny_orange.png" COMP;
-   images.image: "led_tiny_green.png" COMP;
-   images.image: "lock_locked.png" COMP;
-   images.image: "lock_insecure.png" COMP;
-
+   images.image: "cloud-conn.png" COMP;
+   images.image: "eth-base.png" COMP;
+   images.image: "eth-top.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new state = getarg(2);
-            if ((state == 1)) {
-               set_state(PART:"led", "default", 0.0);
+            if ((state <= 1)) {
+               set_state(PART:"eth-base", "default", 0.0);
+               set_state(PART:"eth", "default", 0.0);
+            }
+            else if ((state == 1)) {
+               set_state(PART:"eth-base", "default", 0.0);
+               set_state(PART:"eth", "default", 0.0);
                run_program(PROGRAM:"connecting");
                return;
             }
-            else if ((state == 2)) { set_state(PART:"led", "connected", 0.0); }
-            else if ((state == 3)) { set_state(PART:"led", "online", 0.0); }
-            else { set_state(PART:"led", "default", 0.0); }
+            if ((state == 2)) {
+               set_state(PART:"eth-base", "connected", 0.0);
+               set_state(PART:"eth", "connected", 0.0);
+            }
+            else if ((state == 3)) {
+               set_state(PART:"eth-base", "online", 0.0);
+               set_state(PART:"eth", "online", 0.0);
+            }
+            else {
+               set_state(PART:"eth-base", "default", 0.0);
+               set_state(PART:"eth", "default", 0.0);
+            }
          }
       }
    }
    parts {
-      part { name: "slot_bottom";
-         description { state: "default" 0.0;
-            rel1.to: "slot";
-            rel2.relative: 1.0 0.5;
-            rel2.to: "slot";
-            min: 0 3;
-            image.normal: "slot_horiz_bottom.png";
-            fixed: 0 1;
-         }
-      }
-///////////////////////
-      part { name: "exclam_base";
+       part { name: "exclam_base";
          clip_to: "clip_exclam";
          description { state: "default" 0.0;
-            aspect: (71/144) (71/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "exlclam.png";
+            min: 11 10;
+            rel1.relative: (20/160) (50/160);
+            rel2.relative: (135/160) (150/160);
+            aspect: (115/105) (115/105); aspect_preference: BOTH;
+            image.normal: "cloud-conn.png";
          }
       }
 ///////////////////////
-      part { name: "eth_base";
+      part { name: "eth-base";
          clip_to: "clip_eth";
          description { state: "default" 0.0;
-            aspect: (60/144) (60/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "eth.png";
+            min: 6 13;
+            aspect: (60/130) (60/130); aspect_preference: BOTH;
+            rel1.relative: (50/160) (15/160);
+            rel2.relative: (110/160) (145/160);
+            image.normal: "eth-base.png";
+            color: 160 160 160 128;
+         }
+         description { state: "connected" 0.0;
+            inherit: "default" 0.0;
+            color: 160 160 160 255;
+         }
+         description { state: "online" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
          }
       }
-      part { name: "slot";
+      part { name: "eth"; mouse_events: 0;
+         scale: 1;
+         clip_to: "clip_eth";
          description { state: "default" 0.0;
-            rel1.offset: 0 -1;
-            rel1.relative: (21/160) 1.0;
-            rel2.offset: -1 -1;
-            rel2.relative: (140/160) 1.0;
-            align: 0.5 1.0;
-            min: 0 6;
-            image.normal: "slot_horiz_top.png";
-            fixed: 0 1;
+            rel1.to: "eth-base";
+            rel2.to: "eth-base";
+            image.normal: "eth-top.png";
+            color: 160 160 160 128;
          }
-      }
-      part { name: "hole";
-         description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel1.relative: 1.0 1.0;
-            rel2.offset: -4 -4;
-            align: 1.0 1.0;
-            min: 4 4;
-            max: 4 4;
-            image.normal: "hole_tiny.png";
-            fixed: 1 1;
+         description { state: "connected" 0.0;
+            inherit: "default" 0.0;
+            color: 160 160 160 255;
+         }
+         description { state: "online" 0.0;
+            inherit: "default" 0.0;
+            color: 160 160 160 255;
          }
       }
       part { name: "clip_exclam"; type: RECT;
@@ -97,44 +96,19 @@ group { name: "e/gadget/wireless/ethernet"; nomouse;
             visible: 1;
          }
       }
-      part { name: "led";
-         description { state: "default" 0.0;
-            rel1.to: "hole";
-            rel2.to: "hole";
-            min: 10 10;
-            max: 10 10;
-            image.normal: "led_tiny_orange.png";
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "connected" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_orange.png";
-            visible: 1;
-         }
-         description { state: "online" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_green.png";
-            visible: 1;
-         }
-      }
-      part { name: "event"; type: RECT; mouse;
-         description { state: "default" 0.0;
-            color: 0 0 0 0;
-         }
-      }
    }
    
    programs {
+      target_group: "eths" "eth-base" "eth";
       program { name: "connecting";
          action: STATE_SET "connected" 0.0;
-         target: "led";
+         groups: "eths";
          in: 0.3 0.0;
          after:  "connecting2";
       }
       program { name: "connecting2";
          action: STATE_SET "default" 0.0;
-         target: "led";
+         groups: "eths";
          in: 0.3 0.0;
          after:  "connecting";
       }
@@ -153,215 +127,98 @@ group { name: "e/gadget/wireless/ethernet"; nomouse;
 }
 
 group { name: "e/gadget/wireless/wifi"; nomouse;
-   images.image: "slot_horiz_top.png" COMP;
-   images.image: "slot_horiz_bottom.png" COMP;
-   images.image: "wifi_shadow.png" COMP;
-   images.image: "wifi_base.png" COMP;
-   images.image: "wifi_sig_1.png" COMP;
-   images.image: "wifi_sig_2.png" COMP;
-   images.image: "wifi_sig_3.png" COMP;
-   images.image: "exlclam.png" COMP;
-   images.image: "hole_tiny.png" COMP;
-   images.image: "led_tiny_orange.png" COMP;
-   images.image: "led_tiny_green.png" COMP;
-   images.image: "lock_locked.png" COMP;
-   images.image: "lock_insecure.png" COMP;
+   images.image: "cloud-conn.png" COMP;
+   images.image: "wifi-1.png" COMP;
+   images.image: "wifi-2.png" COMP;
+   images.image: "wifi-3.png" COMP;
+   images.image: "wifi-4.png" COMP;
+   images.image: "wifi-5.png" COMP;
 
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
             new state = getarg(2), signl = getarg(3);
             if (state <= 1) {
-               set_state(PART:"wifi_1", "default", 0.0);
-               set_state(PART:"wifi_2", "default", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
-               set_state(PART:"led", "default", 0.0);
+               set_state(PART:"wifi-base", "default", 0.0);
+               set_state(PART:"wifi", "default", 0.0);
             }
             if (state == 1) {
                run_program(PROGRAM:"connecting");
                run_program(PROGRAM:"connecting_wifi");
                return;
             }
-            stop_programs_on(PART:"led");
-            if (signl <= 14) {
-               set_state(PART:"wifi_1", "default", 0.0);
-               set_state(PART:"wifi_2", "default", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
+            set_state(PART:"wifi", "default", float(signl) / 100.0);
+
+            if ((state == 2)) {
+               set_state(PART:"wifi-base", "connected", 0.0);
             }
-            else if (signl <= 28) {
-               set_state(PART:"wifi_1", "partly", 0.0);
-               set_state(PART:"wifi_2", "default", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
-            }
-            else if (signl <= 42) {
-               set_state(PART:"wifi_1", "visible", 0.0);
-               set_state(PART:"wifi_2", "default", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
-            }
-            else if (signl <= 57) {
-               set_state(PART:"wifi_1", "visible", 0.0);
-               set_state(PART:"wifi_2", "partly", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
-            }
-            else if (signl <= 71) {
-               set_state(PART:"wifi_1", "visible", 0.0);
-               set_state(PART:"wifi_2", "visible", 0.0);
-               set_state(PART:"wifi_3", "default", 0.0);
-            }
-            else if (signl <= 85) {
-               set_state(PART:"wifi_1", "visible", 0.0);
-               set_state(PART:"wifi_2", "visible", 0.0);
-               set_state(PART:"wifi_3", "partly", 0.0);
+            else if ((state == 3)) {
+               set_state(PART:"wifi-base", "online", 0.0);
             }
             else {
-               set_state(PART:"wifi_1", "visible", 0.0);
-               set_state(PART:"wifi_2", "visible", 0.0);
-               set_state(PART:"wifi_3", "visible", 0.0);
+               set_state(PART:"wifi-base", "default", 0.0);
             }
-            if ((state == 2)) { set_state(PART:"led", "connected", 0.0); }
-            else if ((state == 3)) { set_state(PART:"led", "online", 0.0); }
-            else { set_state(PART:"led", "default", 0.0); }
          }
       }
    }
    parts {
-      part { name: "slot_bottom";
-         description { state: "default" 0.0;
-            rel1.to: "slot";
-            rel2.relative: 1.0 0.5;
-            rel2.to: "slot";
-            min: 0 3;
-            image.normal: "slot_horiz_bottom.png";
-            fixed: 0 1;
-         }
-      }
-///////////////////////
       part { name: "exclam_base";
          clip_to: "clip_exclam";
          description { state: "default" 0.0;
-            aspect: (71/144) (71/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "exlclam.png";
+            min: 11 10;
+            rel1.relative: (20/160) (50/160);
+            rel2.relative: (135/160) (150/160);
+            aspect: (115/105) (115/105); aspect_preference: BOTH;
+            image.normal: "cloud-conn.png";
          }
       }
 ///////////////////////
-      part { name: "wifi_shadow";
+      part { name: "wifi-base";
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "wifi_shadow.png";
+            min: 14 10;
+            aspect: (140/100) (140/100); aspect_preference: BOTH;
+            rel1.relative: (10/160) (30/160);
+            rel2.relative: (150/160) (130/160);
+            image.normal: "wifi-1.png";
+            color: 160 160 160 255;
+         }
+         description { state: "connected" 0.0;
+            inherit: "default" 0.0;
+            color: 160 160 160 255;
+         }
+         description { state: "online" 0.0;
+            inherit: "default" 0.0;
+            color: 51 153 255 255;
          }
       }
-      part { name: "wifi_base";
+      part { name: "wifi"; mouse_events: 0;
          clip_to: "clip_wifi";
          description { state: "default" 0.0;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "wifi_base.png";
+            rel1.to: "wifi-base";
+            rel2.to: "wifi-base";
+            image.normal: "wifi-1.png";
+            color: 0 0 0 0;
          }
-      }
-      part { name: "wifi_1";
-         clip_to: "clip_wifi";
-         description { state: "default" 0.0;
-            rel1.to: "wifi_base";
-            rel2.to: "wifi_base";
-            image.normal: "wifi_sig_1.png";
-            visible: 0;
-         }
-         description { state: "partly" 0.0;
+         description { state: "default" 0.25;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
-            visible: 1;
+            image.normal: "wifi-2.png";
+            color: 160 160 160 255;
          }
-         description { state: "visible" 0.0;
+         description { state: "default" 0.5;
             inherit: "default" 0.0;
-            visible: 1;
+            image.normal: "wifi-3.png";
+            color: 160 160 160 255;
          }
-      }
-      part { name: "wifi_2";
-         clip_to: "clip_wifi";
-         description { state: "default" 0.0;
-            rel1.to: "wifi_base";
-            rel2.to: "wifi_base";
-            image.normal: "wifi_sig_2.png";
-            visible: 0;
-         }
-         description { state: "partly" 0.0;
+         description { state: "default" 0.75;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
-            visible: 1;
+            image.normal: "wifi-4.png";
+            color: 160 160 160 255;
          }
-         description { state: "visible" 0.0;
+         description { state: "default" 1.0;
             inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "wifi_3";
-         clip_to: "clip_wifi";
-         description { state: "default" 0.0;
-            rel1.to: "wifi_base";
-            rel2.to: "wifi_base";
-            image.normal: "wifi_sig_3.png";
-            visible: 0;
-         }
-         description { state: "partly" 0.0;
-            inherit: "default" 0.0;
-            color: 255 255 255 128;
-            visible: 1;
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
-         }
-      }
-      part { name: "lock";
-         clip_to: "clip_wifi";
-         description { state: "default" 0.0; hid;
-            aspect: (160/144) (160/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "lock_locked.png";
-            link.base: "e,state,unsecured" "e";
-         }
-         desc { "insecure"; inherit; vis;
-            image.normal: "lock_insecure.png";
-            link.base: "e,state,insecure" "e";
-         }
-         desc { "secure"; inherit; vis;
-            link.base: "e,state,secure" "e";
-         }
-      }
-//////////////////////////
-      part { name: "slot";
-         description { state: "default" 0.0;
-            rel1.offset: 0 -1;
-            rel1.relative: (21/160) 1.0;
-            rel2.offset: -1 -1;
-            rel2.relative: (140/160) 1.0;
-            align: 0.5 1.0;
-            min: 0 6;
-            image.normal: "slot_horiz_top.png";
-            fixed: 0 1;
-         }
-      }
-      part { name: "hole";
-         description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel1.relative: 1.0 1.0;
-            rel2.offset: -4 -4;
-            align: 1.0 1.0;
-            min: 4 4;
-            max: 4 4;
-            image.normal: "hole_tiny.png";
-            fixed: 1 1;
+            image.normal: "wifi-5.png";
+            color: 160 160 160 255;
          }
       }
       part { name: "clip_exclam"; type: RECT;
@@ -380,27 +237,6 @@ group { name: "e/gadget/wireless/wifi"; nomouse;
             visible: 1;
          }
       }
-      part { name: "led";
-         description { state: "default" 0.0;
-            rel1.to: "hole";
-            rel2.to: "hole";
-            min: 10 10;
-            max: 10 10;
-            image.normal: "led_tiny_orange.png";
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "connected" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_orange.png";
-            visible: 1;
-         }
-         description { state: "online" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_green.png";
-            visible: 1;
-         }
-      }
       part { name: "event"; type: RECT; mouse;
          description { state: "default" 0.0;
             color: 0 0 0 0;
@@ -409,37 +245,32 @@ group { name: "e/gadget/wireless/wifi"; nomouse;
    }
    programs {
       program { "connecting_wifi";
-         action: STATE_SET "default";
-         targets: "wifi_1" "wifi_2" "wifi_3";
          sequence {
-            action: STATE_SET "partly";
-            target: "wifi_1";
+            action: STATE_SET "default" 0.0;
+            target: "wifi";
             transition: LINEAR 0.085;
-            action: STATE_SET "visible";
-            target: "wifi_1";
+            action: STATE_SET "default" 0.25;
+            target: "wifi";
             transition: LINEAR 0.085;
-            action: STATE_SET "partly";
-            target: "wifi_2";
+            action: STATE_SET "default" 0.50;
+            target: "wifi";
             transition: LINEAR 0.085;
-            action: STATE_SET "visible";
-            target: "wifi_2";
+            action: STATE_SET "default" 0.75;
+            target: "wifi";
             transition: LINEAR 0.085;
-            action: STATE_SET "partly";
-            target: "wifi_3";
-            transition: LINEAR 0.085;
-            action: STATE_SET "visible";
-            target: "wifi_3";
+            action: STATE_SET "default" 1.0;
+            target: "wifi";
             transition: LINEAR 0.085;
             after: "connecting_wifi";
          }
       }
       program { "connecting";
-         action: STATE_SET "connected";
-         target: "led";
+         action: STATE_SET "connected" 0.0;
+         target: "wifi-base";
          in: 0.3 0.0;
          sequence {
-             action: STATE_SET "default";
-             target: "led";
+             action: STATE_SET "default" 0.0;
+             target: "wifi-base";
              in: 0.3 0.0;
              after:  "connecting";
          }
@@ -459,19 +290,14 @@ group { name: "e/gadget/wireless/wifi"; nomouse;
 }
 
 group { name: "e/gadget/wireless/bluetooth"; nomouse;
-   images.image: "slot_horiz_top.png" COMP;
-   images.image: "slot_horiz_bottom.png" COMP;
-   images.image: "exlclam.png" COMP;
-   images.image: "hole_tiny.png" COMP;
-   images.image: "led_tiny_orange.png" COMP;
-   images.image: "led_tiny_green.png" COMP;
+   images.image: "cloud-conn.png" COMP;
    images.image: "bt_base.png" COMP;
    images.image: "bt_sig_1.png" COMP;
    images.image: "bt_sig_2.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
-            new state = getarg(2), signl = getarg(3);
+            new signl = getarg(3);
             if (signl <= 20) {
                set_state(PART:"bt_1", "default", 0.0);
                set_state(PART:"bt_2", "default", 0.0);
@@ -492,38 +318,19 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
                set_state(PART:"bt_1", "visible", 0.0);
                set_state(PART:"bt_2", "visible", 0.0);
             }
-            if ((state == 2)) {
-               set_state(PART:"led", "default", 0.0);
-               run_program(PROGRAM:"connecting");
-               return;
-            }
-            else if ((state == 3)) { return; }
-            else if ((state == 4)) { set_state(PART:"led", "connected", 0.0); }
-            else if ((state == 5)) { set_state(PART:"led", "online", 0.0); }
-            else { set_state(PART:"led", "default", 0.0); }
          }
       }
    }
    parts {
-      part { name: "slot_bottom";
-         description { state: "default" 0.0;
-            rel1.to: "slot";
-            rel2.relative: 1.0 0.5;
-            rel2.to: "slot";
-            min: 0 3;
-            image.normal: "slot_horiz_bottom.png";
-            fixed: 0 1;
-         }
-      }
-///////////////////////
+      ///////////////////////
       part { name: "exclam_base";
          clip_to: "clip_exclam";
          description { state: "default" 0.0;
-            aspect: (71/144) (71/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "exlclam.png";
+            min: 11 10;
+            rel1.relative: (20/160) (50/160);
+            rel2.relative: (135/160) (150/160);
+            aspect: (115/105) (115/105); aspect_preference: BOTH;
+            image.normal: "cloud-conn.png";
          }
       }
 ///////////////////////
@@ -531,9 +338,6 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
          clip_to: "clip_bt";
          description { state: "default" 0.0;
             aspect: (160/144) (160/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
             image.normal: "bt_base.png";
          }
       }
@@ -574,35 +378,12 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
          }
       }
 ///////////////////////
-      part { name: "slot";
-         description { state: "default" 0.0;
-            rel1.offset: 0 -1;
-            rel1.relative: (21/160) 1.0;
-            rel2.offset: -1 -1;
-            rel2.relative: (140/160) 1.0;
-            align: 0.5 1.0;
-            min: 0 6;
-            image.normal: "slot_horiz_top.png";
-            fixed: 0 1;
-         }
-      }
-      part { name: "hole";
-         description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel1.relative: 1.0 1.0;
-            rel2.offset: -4 -4;
-            align: 1.0 1.0;
-            min: 4 4;
-            max: 4 4;
-            image.normal: "hole_tiny.png";
-            fixed: 1 1;
-         }
-      }
       part { name: "clip_exclam"; type: RECT;
          description { state: "default" 0.0;
             visible: 1;
          }
          description { state: "bt" 0.0;
+            visible: 0;
             visible: 0;
          }
       }
@@ -614,27 +395,6 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
             visible: 1;
          }
       }
-      part { name: "led";
-         description { state: "default" 0.0;
-            rel1.to: "hole";
-            rel2.to: "hole";
-            min: 10 10;
-            max: 10 10;
-            image.normal: "led_tiny_orange.png";
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "connected" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_orange.png";
-            visible: 1;
-         }
-         description { state: "online" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_green.png";
-            visible: 1;
-         }
-      }
       part { name: "event"; type: RECT; mouse;
          description { state: "default" 0.0;
             color: 0 0 0 0;
@@ -642,18 +402,6 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
       }
    }
    programs {
-      program { name: "connecting";
-         action: STATE_SET "connected" 0.0;
-         target: "led";
-         in: 0.3 0.0;
-         after:  "connecting2";
-      }
-      program { name: "connecting2";
-         action: STATE_SET "default" 0.0;
-         target: "led";
-         in: 0.3 0.0;
-         after:  "connecting";
-      }
       program {
          signal: "e,state,error"; source: "e";
          action: STATE_SET "default" 0.0;
@@ -670,12 +418,7 @@ group { name: "e/gadget/wireless/bluetooth"; nomouse;
 }
 
 group { name: "e/gadget/wireless/cellular";
-   images.image: "slot_horiz_top.png" COMP;
-   images.image: "slot_horiz_bottom.png" COMP;
-   images.image: "exlclam.png" COMP;
-   images.image: "hole_tiny.png" COMP;
-   images.image: "led_tiny_orange.png" COMP;
-   images.image: "led_tiny_green.png" COMP;
+   images.image: "cloud-conn.png" COMP;
    images.image: "cell_base.png" COMP;
    images.image: "cell_sig_1.png" COMP;
    images.image: "cell_sig_2.png" COMP;
@@ -685,7 +428,7 @@ group { name: "e/gadget/wireless/cellular";
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_INT_SET) && (id == 1)) {
-            new state = getarg(2), signl = getarg(3);
+            new signl = getarg(3);
             if (signl <= 11) {
                set_state(PART:"cell_1", "default", 0.0);
                set_state(PART:"cell_2", "default", 0.0);
@@ -740,37 +483,19 @@ group { name: "e/gadget/wireless/cellular";
                set_state(PART:"cell_3", "visible", 0.0);
                set_state(PART:"cell_4", "visible", 0.0);
             }
-            if ((state == 1)) {
-               set_state(PART:"led", "default", 0.0);
-               run_program(PROGRAM:"connecting");
-               return;
-            }
-            else if ((state == 2)) { set_state(PART:"led", "connected", 0.0); }
-            else if ((state == 3)) { set_state(PART:"led", "online", 0.0); }
-            else { set_state(PART:"led", "default", 0.0); }
          }
       }
    }
    parts {
-      part { name: "slot_bottom"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "slot";
-            rel2.relative: 1.0 0.5;
-            rel2.to: "slot";
-            min: 0 3;
-            image.normal: "slot_horiz_bottom.png";
-            fixed: 0 1;
-         }
-      }
 ///////////////////////
-      part { name: "exclam_base"; mouse_events: 0;
+      part { name: "exclam_base";
          clip_to: "clip_exclam";
          description { state: "default" 0.0;
-            aspect: (71/144) (71/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
-            image.normal: "exlclam.png";
+            min: 11 10;
+            rel1.relative: (20/160) (50/160);
+            rel2.relative: (135/160) (150/160);
+            aspect: (115/105) (115/105); aspect_preference: BOTH;
+            image.normal: "cloud-conn.png";
          }
       }
 ///////////////////////
@@ -778,9 +503,6 @@ group { name: "e/gadget/wireless/cellular";
          clip_to: "clip_cell";
          description { state: "default" 0.0;
             aspect: (160/144) (160/144); aspect_preference: BOTH;
-            align: 0.5 1.0;
-            rel2.relative: 1.0 0.5;
-            rel2.to_y: "slot";
             image.normal: "cell_base.png";
          }
       }
@@ -812,7 +534,7 @@ group { name: "e/gadget/wireless/cellular";
          }
          description { state: "partly" 0.0;
             inherit: "default" 0.0;
-            color: 255 255 255 128;
+                     color: 255 255 255 128;
             visible: 1;
          }
          description { state: "visible" 0.0;
@@ -857,30 +579,6 @@ group { name: "e/gadget/wireless/cellular";
          }
       }
 ///////////////////////
-      part { name: "slot"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: 0 -1;
-            rel1.relative: (21/160) 1.0;
-            rel2.offset: -1 -1;
-            rel2.relative: (140/160) 1.0;
-            align: 0.5 1.0;
-            min: 0 6;
-            image.normal: "slot_horiz_top.png";
-            fixed: 0 1;
-         }
-      }
-      part { name: "hole"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: -4 -4;
-            rel1.relative: 1.0 1.0;
-            rel2.offset: -4 -4;
-            align: 1.0 1.0;
-            min: 4 4;
-            max: 4 4;
-            image.normal: "hole_tiny.png";
-            fixed: 1 1;
-         }
-      }
       part { name: "clip_exclam"; type: RECT;
          description { state: "default" 0.0;
             visible: 1;
@@ -897,47 +595,13 @@ group { name: "e/gadget/wireless/cellular";
             visible: 1;
          }
       }
-      part { name: "led"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.to: "hole";
-            rel2.to: "hole";
-            min: 10 10;
-            max: 10 10;
-            image.normal: "led_tiny_orange.png";
-            fixed: 1 1;
-            visible: 0;
-         }
-         description { state: "connected" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_orange.png";
-            visible: 1;
-         }
-         description { state: "online" 0.0;
-            inherit: "default" 0.0;
-            image.normal: "led_tiny_green.png";
-            visible: 1;
-         }
-      }
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
    }
-
    programs {
-      program { name: "connecting";
-         action: STATE_SET "connected" 0.0;
-         target: "led";
-         in: 0.3 0.0;
-         after:  "connecting2";
-      }
-      program { name: "connecting2";
-         action: STATE_SET "default" 0.0;
-         target: "led";
-         in: 0.3 0.0;
-         after:  "connecting";
-      }
       program {
          signal: "e,state,error"; source: "e";
          action: STATE_SET "default" 0.0;
