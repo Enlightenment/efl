@@ -393,8 +393,8 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
 
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
 
-   pd->cnt += 1;
-   pd->curr.page += 1;
+   pd->cnt++;
+   pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -423,7 +423,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
 
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
-   pd->cnt += 1;
+   pd->cnt++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -456,8 +456,8 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
 
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
 
-   pd->cnt += 1;
-   if (pd->curr.page >= index) pd->curr.page += 1;
+   pd->cnt++;
+   if (pd->curr.page >= index) pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -485,8 +485,8 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
 
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
 
-   pd->cnt += 1;
-   if (pd->curr.page > index) pd->curr.page += 1;
+   pd->cnt++;
+   if (pd->curr.page > index) pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -514,8 +514,8 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj EINA_UNUSED,
    existing = eina_list_nth(pd->content_list, index);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
 
-   pd->cnt += 1;
-   if (pd->curr.page >= index) pd->curr.page += 1;
+   pd->cnt++;
+   if (pd->curr.page >= index) pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
