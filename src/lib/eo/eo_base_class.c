@@ -13,8 +13,6 @@
 #include "eo_private.h"
 #include "eina_promise_private.h"
 
-#define EFL_EVENT_SPECIAL_SKIP 1
-
 EAPI const Efl_Event_Description _EFL_EVENT_CALLBACK_ADD =
     EFL_EVENT_DESCRIPTION_HOT("callback,add");
 
@@ -58,12 +56,10 @@ struct _Efl_Object_Data
    unsigned int               callbacks_count;
 
    unsigned short             event_freeze_count;
-#ifdef EFL_EVENT_SPECIAL_SKIP
    unsigned short             event_cb_efl_event_callback_add_count;
    unsigned short             event_cb_efl_event_callback_del_count;
    unsigned short             event_cb_efl_event_del_count;
    unsigned short             event_cb_efl_event_noref_count;
-#endif
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
@@ -1158,8 +1154,6 @@ _efl_pending_future_new(void)
                               sizeof(Efl_Future_Pending));
 }
 
-#ifdef EFL_EVENT_SPECIAL_SKIP
-
 #define CB_COUNT_INC(cnt) do { if ((cnt) != 0xffff) (cnt)++; } while(0)
 #define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
 
@@ -1190,14 +1184,12 @@ _special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
    else if (it->desc == EFL_EVENT_NOREF)
      CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
 }
-#endif
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
 _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
 {
    unsigned int length;
-#ifdef EFL_EVENT_SPECIAL_SKIP
    const Efl_Callback_Array_Item *it;
 
    if ((*cb)->func_array)
@@ -1206,7 +1198,6 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
           _special_event_count_dec(pd, it);
      }
    else _special_event_count_dec(pd, &((*cb)->items.item));
-#endif
 
    _eo_callback_free(*cb);
 
@@ -1237,12 +1228,10 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
    pd->callbacks = NULL;
    pd->callbacks_count = 0;
    pd->has_destroyed_event_cb = EINA_FALSE;
-#ifdef EFL_EVENT_SPECIAL_SKIP
    pd->event_cb_efl_event_callback_add_count = 0;
    pd->event_cb_efl_event_callback_del_count = 0;
    pd->event_cb_efl_event_del_count = 0;
    pd->event_cb_efl_event_noref_count = 0;
-#endif
 }
 
 static void
@@ -1392,9 +1381,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    if (cb->generation) pd->need_cleaning = EINA_TRUE;
 
    _eo_callbacks_sorted_insert(pd, cb);
-#ifdef EFL_EVENT_SPECIAL_SKIP
    _special_event_count_inc(pd, &(cb->items.item));
-#endif
    if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
      pd->has_destroyed_event_cb = EINA_TRUE;
 
@@ -1500,10 +1487,8 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
 
    _eo_callbacks_sorted_insert(pd, cb);
-#ifdef EFL_EVENT_SPECIAL_SKIP
    for (it = cb->items.item_array; it->func; it++)
      _special_event_count_inc(pd, it);
-#else
    if (!pd->has_destroyed_event_cb)
      {
         for (it = cb->items.item_array; it->func; it++)
@@ -1513,7 +1498,6 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
                break;
             }
      }
-#endif
 
    num = 0;
    for (it = cb->items.item_array; it->func; it++) num++;
@@ -1620,7 +1604,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
    };
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
-#ifdef EFL_EVENT_SPECIAL_SKIP
    else if ((desc == EFL_EVENT_CALLBACK_ADD) &&
             (pd->event_cb_efl_event_callback_add_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_CALLBACK_DEL) &&
@@ -1629,7 +1612,6 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_NOREF) &&
             (pd->event_cb_efl_event_noref_count == 0)) return EINA_FALSE;
-#endif
 
    if (pd->event_frame)
      frame.generation = ((Efl_Event_Callback_Frame*)pd->event_frame)->generation + 1;
