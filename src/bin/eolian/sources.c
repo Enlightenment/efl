@@ -258,6 +258,18 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append(*buf, ");\n");
      }
+   else if (t == EOLIAN_TYPE_BUILTIN_ARRAY)
+     {
+        eina_strbuf_append_printf(*buf, "   while((");
+        eina_strbuf_append_buffer(*buf, iter_param);
+        eina_strbuf_append_printf(*buf, " = eina_array_pop(");
+        eina_strbuf_append_buffer(*buf, param);
+        eina_strbuf_append_printf(*buf, ")))\n");
+        _generate_loop_content(buf, inner_type, iter_param);
+        eina_strbuf_append_printf(*buf, "   eina_array_free(");
+        eina_strbuf_append_buffer(*buf, param);
+        eina_strbuf_append_printf(*buf, ");\n");
+      }
    else
      {
         printf("Error, container unknown?! %d\n", (int)t);
