@@ -389,6 +389,8 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
 
    pd->cnt += 1;
@@ -417,6 +419,8 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Pager_Data *pd,
                                        Efl_Gfx_Entity *subobj)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
    pd->cnt += 1;
@@ -445,6 +449,8 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
                                           Efl_Gfx_Entity *subobj,
                                           const Efl_Gfx_Entity *existing)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
    int index;
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
@@ -472,6 +478,8 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
    int index;
 
    index = eina_list_data_idx(pd->content_list, (void *)existing);
@@ -499,6 +507,8 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj EINA_UNUSED,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
    Efl_Gfx_Entity *existing = NULL;
 
    existing = eina_list_nth(pd->content_list, index);
@@ -591,6 +601,8 @@ _efl_ui_pager_transition_set(Eo *obj,
                              Efl_Ui_Pager_Data *pd,
                              Efl_Page_Transition *transition)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return;
+
    if (pd->transition == transition) return;
 
    if (pd->transition)
