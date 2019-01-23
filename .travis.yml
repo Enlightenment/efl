@@ -35,12 +35,30 @@ jobs:
     - env:
       - os: linux
       - DISTRO=Fedora29
+      - CI_BUILD_TYPE=wayland
+    - env:
+      - os: linux
+      - DISTRO=Fedora29
+      - CI_BUILD_TYPE=default
+    - env:
+      - os: linux
+      - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-enabled
       - BUILDSYSTEM=ninja
     - env:
       - os: linux
       - DISTRO=Fedora29
       - CI_BUILD_TYPE=options-disabled
+      - BUILDSYSTEM=ninja
+    - env:
+      - os: linux
+      - DISTRO=Fedora29
+      - CI_BUILD_TYPE=wayland
+      - BUILDSYSTEM=ninja
+    - env:
+      - os: linux
+      - DISTRO=Fedora29
+      - CI_BUILD_TYPE=default
       - BUILDSYSTEM=ninja
     - if: type = cron
       env:
