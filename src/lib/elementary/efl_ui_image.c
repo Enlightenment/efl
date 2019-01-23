@@ -1217,6 +1217,47 @@ _efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
      }
 }
 
+EOLIAN Eina_Rect
+_efl_ui_image_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje)
+     return efl_layout_calc_parts_extends(sd->img);
+   return efl_gfx_entity_geometry_get(sd->img);
+}
+
+EOLIAN static int
+_efl_ui_image_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje) return edje_object_freeze(sd->img);
+   return 0;
+}
+
+EOLIAN static int
+_efl_ui_image_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje)
+     {
+        int ret = edje_object_thaw(sd->img);
+        elm_layout_sizing_eval(obj);
+        return ret;
+     }
+   return 0;
+}
+
+EOLIAN void
+_efl_ui_image_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool update)
+{
+   if (sd->edje)
+     efl_layout_calc_auto_update_hints_set(sd->img, update);
+}
+
+EOLIAN Eina_Bool
+_efl_ui_image_efl_layout_calc_calc_auto_update_hints_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje) return efl_layout_calc_auto_update_hints_get(sd->img);
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_ui_image_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char **file, const char **key)
 {

@@ -109,7 +109,11 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
       Efl.Layout.Group.group_size_max { get; }
       Efl.Layout.Group.group_data { get; }
       Efl.Layout.Group.part_exist { get; }
+      Efl.Layout.Calc.calc_freeze;
+      Efl.Layout.Calc.calc_thaw;
+      Efl.Layout.Calc.calc_auto_update_hints { get; set; }
       Efl.Layout.Calc.calc_size_min;
+      Efl.Layout.Calc.calc_parts_extends;
       Efl.Layout.Calc.calc_force;
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Group.group_member_add;
