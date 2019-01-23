@@ -197,7 +197,7 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_win_socket_legacy.eo \
 	lib/elementary/efl_ui_win_inlined_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
-	lib/elementary/elm_animation_view.eo \
+	lib/elementary/efl_ui_animation_view.eo \
 	lib/elementary/elm_calendar.eo \
 	lib/elementary/elm_calendar_item.eo \
 	lib/elementary/elm_clock.eo \
@@ -487,8 +487,10 @@ includesub_HEADERS = \
 	lib/elementary/elm_access.h \
 	lib/elementary/elm_actionslider.h \
 	lib/elementary/elm_actionslider_legacy.h \
-	lib/elementary/elm_animation_view.h \
-	lib/elementary/elm_animation_view_legacy.h \
+	lib/elementary/efl_ui_animation_view.h \
+	lib/elementary/efl_ui_animation_view_legacy.h \
+	lib/elementary/efl_ui_animation_view.eo.h \
+	lib/elementary/efl_ui_animation_view.eo.legacy.h \
 	lib/elementary/elm_app.h \
 	lib/elementary/elm_atspi_app_object.h \
 	lib/elementary/elm_authors.h \
@@ -696,7 +698,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elc_scrolled_entry.c \
 	lib/elementary/elm_access.c \
 	lib/elementary/elm_actionslider.c \
-	lib/elementary/elm_animation_view.c \
+	lib/elementary/efl_ui_animation_view.c \
 	lib/elementary/elm_atspi_app_object.c \
 	lib/elementary/elm_atspi_bridge.c \
 	lib/elementary/efl_ui_legacy.c \
