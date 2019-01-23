@@ -451,9 +451,9 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
 {
    if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   int index;
+   int index = eina_list_data_idx(pd->content_list, (void *)existing);
+   if (index == -1) return EINA_FALSE;
 
-   index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
 
    pd->cnt += 1;
@@ -480,9 +480,9 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
 {
    if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   int index;
+   int index = eina_list_data_idx(pd->content_list, (void *)existing);
+   if (index == -1) return EINA_FALSE;
 
-   index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
 
    pd->cnt += 1;
