@@ -19,4 +19,7 @@ mixin Efl.Ui.Widget_Focus_Manager requires Efl.Ui.Widget extends Efl.Ui.Focus.Ma
       Efl.Object.destructor;
       Efl.Ui.Widget.focus_state_apply;
   }
+  composite {
+      Efl.Ui.Focus.Manager;
+  }
 }
