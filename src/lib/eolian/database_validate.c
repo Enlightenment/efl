@@ -713,6 +713,7 @@ _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool
    Eina_Bool allow_impl = parent || (icl->type == EOLIAN_CLASS_MIXIN);
    EINA_LIST_FOREACH(icl->callables, l, impl)
      {
+        Impl_Status ost = (Impl_Status)eina_hash_find(fs, &impl->foo_id);
         /* while regular classes are already fully checked and one may
          * assume that we could just make everything coming from regular
          * classes IMPL_STATUS_FULL, we still need to account for all of
@@ -722,7 +723,6 @@ _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool
          */
         if (_extend_impl(fs, impl, !allow_impl))
           {
-             Impl_Status ost = (Impl_Status)eina_hash_find(fs, &impl->foo_id);
              /* we had an unimplementation in the list, replace
               * instead of appending the new thing to callables
               * this is a corner case, it shouldn't happen much
