@@ -195,12 +195,6 @@ abstract Efl.Object
       invalidate {
          [[Called when parent reference is lost/set to $NULL and switch the state of the object to invalidate.]]
       }
-      noref {
-         [[Triggered when no reference are keeping the object alive.
-
-           The parent can be the last one keeping an object alive and so $noref can happen before $invalidate
-           as it is only impacted by the ref/unref of the object.]]
-      }
       name_find @const {
          [[Find a child object with the given name and return it.
 

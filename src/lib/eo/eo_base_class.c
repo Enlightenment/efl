@@ -189,11 +189,6 @@ _efl_invalidate(_Eo_Object *obj)
    obj->invalidate = EINA_TRUE;
 }
 
-static void
-_efl_object_noref(Eo *obj EINA_UNUSED, Efl_Object_Data *pd EINA_UNUSED)
-{
-}
-
 static inline void
 _efl_object_extension_free(Efl_Object_Extension *ext)
 {

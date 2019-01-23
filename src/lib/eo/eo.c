@@ -1928,7 +1928,7 @@ efl_unref(const Eo *obj_id)
                      ((obj->user_refcount == 1 && !obj->parent) ||
                       (obj->user_refcount == 2 && obj->parent))))
      {
-        // We need to report efl_ref_count correctly during efl_noref, so fake it
+        // We need to report efl_ref_count correctly during EFL_EVENT_NOREF, so fake it
         // by adjusting efl_ref_count while inside efl_unref (This should avoid
         // infinite loop)
         obj->unref_compensate = EINA_TRUE;
@@ -1936,7 +1936,6 @@ efl_unref(const Eo *obj_id)
         // The noref event should happen before any object in the
         // tree get affected by the change in refcount.
         efl_event_callback_call((Eo *) obj_id, EFL_EVENT_NOREF, NULL);
-        efl_noref((Eo *) obj_id);
 
         obj->unref_compensate = EINA_FALSE;
      }
