@@ -29,7 +29,7 @@ evas_static_list = []
 png = dependency('libpng')
 tiff = dependency('libtiff-4')
 giflib = cc.find_library('gif')
-json = dependency('lottie-player', required: get_option('evas-loaders-disabler').contains('json') == false)
+json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
 
 subdir('image_loaders')

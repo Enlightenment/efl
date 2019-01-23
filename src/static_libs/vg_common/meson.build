@@ -5,7 +5,7 @@ vg_common_src = files([
   'vg_common.h',
 ])
 
-json = dependency('lottie-player', required: get_option('evas-loaders-disabler').contains('json') == false)
+json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
 
 if (json.found())
   config_h.set('BUILD_VG_LOADER_JSON', '1')

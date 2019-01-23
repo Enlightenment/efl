@@ -1,4 +1,4 @@
-#include <lottieanimation_capi.h>
+#include <rlottie_capi.h>
 #include "vg_common.h"
 
 #ifdef ERR

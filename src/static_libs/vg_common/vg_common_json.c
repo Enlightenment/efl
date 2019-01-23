@@ -7,7 +7,7 @@
 
 #ifdef BUILD_VG_LOADER_JSON
 
-#include <lottieanimation_capi.h>
+#include <rlottie_capi.h>
 
 static char*
 _get_key_val(void *key)
