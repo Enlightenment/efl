@@ -99,4 +99,8 @@ class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Intera
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.access_selection_clear;
    }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
+   }
 }

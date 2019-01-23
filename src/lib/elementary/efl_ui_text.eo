@@ -385,4 +385,7 @@ class Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
       anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
    }
+   composite {
+      Efl.Text_Interactive;
+   }
 }

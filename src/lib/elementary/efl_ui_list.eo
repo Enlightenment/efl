@@ -83,4 +83,8 @@ class Efl.Ui.List extends Efl.Ui.Layout implements
       //Efl.Ui.Multi_Selectable
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
    }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
+   }
 }
