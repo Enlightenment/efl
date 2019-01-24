@@ -231,11 +231,10 @@ struct Efl.Access.Relation
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-mixin Efl.Access.Object requires Efl.Object
+interface Efl.Access.Object
 {
    [[Accessibility accessible mixin]]
    eo_prefix: efl_access_object;
-   data: Efl_Access_Object_Data;
    methods {
       @property localized_role_name @protected @beta {
          [[Gets an localized string describing accessible object role name.]]
@@ -406,9 +405,6 @@ mixin Efl.Access.Object requires Efl.Object
       relationships_clear @beta {
          [[Removes all relationships in accessible object.]]
       }
-   }
-   implements {
-      Efl.Object.destructor;
    }
    events {
       property,changed: string; [[Called when property has changed]]

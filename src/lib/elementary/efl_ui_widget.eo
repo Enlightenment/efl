@@ -583,10 +583,26 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_member_add;
-      Efl.Access.Object.i18n_name { get; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.access_children { get; }
       Efl.Access.Object.attributes { get; }
+      //TODO remove
+      Efl.Access.Object.access_parent { get; set; }
+      Efl.Access.Object.localized_role_name { get; }
+      Efl.Access.Object.index_in_parent { get; }
+      Efl.Access.Object.i18n_name { get; set; }
+      Efl.Access.Object.attribute_append;
+      Efl.Access.Object.attributes_clear;
+      Efl.Access.Object.reading_info_type { get; set; }
+      Efl.Access.Object.role { get; set; }
+      Efl.Access.Object.role_name { get; }
+      Efl.Access.Object.description { get; set; }
+      Efl.Access.Object.relations_get;
+      Efl.Access.Object.translation_domain { get; set; }
+      Efl.Access.Object.relationship_append;
+      Efl.Access.Object.relationship_remove;
+      Efl.Access.Object.relationships_clear;
+      //TODO end
       Efl.Access.Component.focus_grab;
       Efl.Access.Component.screen_position { get; set; }
       Efl.Access.Component.contains;
