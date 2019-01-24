@@ -3,7 +3,7 @@ ethumb_frame = files('default.edc')
 custom_target('edje_cc_ethumb_frame',
     input : ethumb_frame,
     output : '@BASENAME@.edj',
-    command : edje_cc_exe + [ '-beta',
+    command : edje_cc_exe + [ '-beta', '-fastcomp',
               '-sd', join_paths(meson.current_source_dir()),
               '-id', join_paths(meson.current_source_dir()),
               '-fd', join_paths(meson.current_source_dir()),

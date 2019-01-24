@@ -11,7 +11,7 @@ foreach edc_file : edc_files
     input : edc_file,
     depfile: '@BASENAME@.edj.d',
     output : '@BASENAME@.edj',
-    command : edje_cc_exe + [ '-beta',
+    command : edje_cc_exe + [ '-beta', '-fastcomp',
               '-deps', '@DEPFILE@',
               '-sd', join_paths(meson.current_source_dir(), 'snd'),
               '-id', elm_themes_image_include,
