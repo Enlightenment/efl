@@ -773,14 +773,21 @@ _efl_ui_pager_scroll_block_set(Eo *obj EINA_UNUSED,
    pd->next_block = next;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_pager_loop_mode_set(Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd,
                             Efl_Ui_Pager_Loop loop)
 {
-   pd->loop = loop;
+   if (pd->loop == loop) return EINA_TRUE;
 
-   efl_page_transition_loop_set(pd->transition, loop);
+   if (!pd->transition) return EINA_FALSE;
+
+   if (efl_page_transition_loop_set(pd->transition, loop))
+     {
+        pd->loop = loop;
+        return EINA_TRUE;
+     }
+   else return EINA_FALSE;
 }
 
 EOLIAN static Efl_Ui_Pager_Loop

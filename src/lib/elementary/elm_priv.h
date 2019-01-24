@@ -775,7 +775,7 @@ EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
 EOAPI void			 efl_page_transition_update(Eo *obj, double pos);
 EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, double move);
 EOAPI void			 efl_page_transition_pack_end(Eo *obj, Efl_Gfx_Entity *subobj);
-EOAPI void			 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
+EOAPI Eina_Bool		 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
 
 EOAPI void			 efl_page_indicator_update(Eo *obj, double pos);
 EOAPI void			 efl_page_indicator_pack(Eo *obj, int index);

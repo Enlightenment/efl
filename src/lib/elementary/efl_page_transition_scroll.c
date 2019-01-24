@@ -550,18 +550,25 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
    _page_info_geometry_change(pd, spd);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_page_transition_scroll_loop_set(Eo *obj,
                                      Efl_Page_Transition_Scroll_Data *pd,
                                      Efl_Ui_Pager_Loop loop)
 {
    EFL_PAGE_TRANSITION_DATA_GET(obj, spd);
 
-   if (spd->loop == loop) return;
+   if (loop == efl_ui_pager_loop_mode_get(spd->pager.obj))
+     return EINA_TRUE;
+
+   if ((loop == EFL_UI_PAGER_LOOP_ENABLED) &&
+       (efl_content_count(spd->pager.obj) < (pd->page_info_num - 1)))
+     return EINA_FALSE;
 
    efl_page_transition_loop_set(efl_super(obj, MY_CLASS), loop);
 
    _content_show(pd, spd);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eo *
