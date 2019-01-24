@@ -1898,8 +1898,8 @@ void evas_object_pixels_get_force(Evas_Object *eo_obj, Evas_Object_Protected_Dat
 // Gesture Manager
 void *_efl_canvas_gesture_manager_private_data_get(Eo *obj);
 void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
-void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
-void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type);
 
 //evas focus functions
 void evas_focus_init(void);

@@ -792,12 +792,17 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
    const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
+   void *gd = NULL;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
+
+             _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
+          }
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {
@@ -819,6 +824,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
+   void *gd = NULL;
    int i;
 
    if (!obj->layer ||
@@ -828,7 +834,11 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
    for (i = 0; array[i].desc != NULL; i++)
      {
         if (obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
+
+             _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
+          }
 
         if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
           {

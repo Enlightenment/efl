@@ -106,9 +106,9 @@ _efl_canvas_gesture_manager_private_data_get(Eo *obj)
 }
 
 void
-_efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+_efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type)
 {
-   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Gesture_Manager_Data *pd = data;
    // if there is a recognizer registered for that event then add it to the gesture context
    Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
@@ -119,9 +119,9 @@ _efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Eve
 }
 
 void
-_efl_canvas_gesture_manager_callback_del_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+_efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type)
 {
-   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Gesture_Manager_Data *pd = data;
    // if there is a recognizer registered for that event then add it to the gesture context
    Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
