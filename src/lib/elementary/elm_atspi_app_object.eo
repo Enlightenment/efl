@@ -3,8 +3,18 @@ class Elm.Atspi.App.Object extends Efl.Object implements Efl.Access.Object
    [[AT-SPI application object class]]
    legacy_prefix: elm_atspi_app_object;
    data: Elm_Atspi_App_Object_Data;
+   methods {
+        @property instance @class @beta {
+             get {
+                values {
+                   obj: Elm.Atspi.App.Object;
+                }
+             }
+        }
+   }
    implements {
       Efl.Object.destructor;
+      Efl.Object.constructor;
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Object.description { get; set; }
       Efl.Access.Object.role { get; }

@@ -17,6 +17,7 @@
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 #define EFL_PART_PROTECTED
 #define IPA_YLNO_ESU_LANRETNI_MLE
+#define ELM_ATSPI_APP_OBJECT_BETA
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -2368,9 +2369,8 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (_elm_config->atspi_mode)
      {
-        Eo *root;
         efl_access_window_created_signal_emit(obj);
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        Eo *root = elm_atspi_app_object_instance_get(ELM_ATSPI_APP_OBJECT_CLASS);
         if (root)
            efl_access_children_changed_added_signal_emit(root, obj);
      }
@@ -2438,8 +2438,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
 
    if (_elm_config->atspi_mode)
      {
-        Eo *root;
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        Eo *root = elm_atspi_app_object_instance_get(ELM_ATSPI_APP_OBJECT_CLASS);
         efl_access_window_destroyed_signal_emit(obj);
         if (root)
            efl_access_children_changed_del_signal_emit(root, obj);
@@ -8999,7 +8998,7 @@ EOLIAN Efl_Access_Object*
 _efl_ui_win_efl_access_object_access_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
 {
    // attach all kinds of windows directly to ATSPI application root object
-   return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   return elm_atspi_app_object_instance_get(ELM_ATSPI_APP_OBJECT_CLASS);
 }
 
 #include "efl_ui_win_legacy.eo.c"

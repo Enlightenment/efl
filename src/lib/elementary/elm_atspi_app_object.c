@@ -9,6 +9,7 @@
 #include "elm_priv.h"
 
 extern Eina_List *_elm_win_list;
+static Elm_Atspi_App_Object *instance;
 
 typedef struct _Elm_Atspi_App_Object_Data Elm_Atspi_App_Object_Data;
 
@@ -16,6 +17,20 @@ struct _Elm_Atspi_App_Object_Data
 {
    const char *descr;
 };
+
+EOLIAN static Eo*
+_elm_atspi_app_object_efl_object_constructor(Eo *obj, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
+{
+   if (instance)
+     {
+        ERR("Attempt to crete new instance of Elm_Atspi_App_Object.");
+        return NULL;
+     }
+   obj = efl_constructor(efl_super(obj, ELM_ATSPI_APP_OBJECT_CLASS));
+   instance = obj;
+
+   return obj;
+}
 
 EOLIAN static void
 _elm_atspi_app_object_efl_object_destructor(Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd)
@@ -65,6 +80,14 @@ EOLIAN static Efl_Access_Role
 _elm_atspi_app_object_efl_access_object_role_get(const Eo *obj EINA_UNUSED, Elm_Atspi_App_Object_Data *_pd EINA_UNUSED)
 {
    return EFL_ACCESS_ROLE_APPLICATION;
+}
+
+EOLIAN static Elm_Atspi_App_Object*
+_elm_atspi_app_object_instance_get(const Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED)
+{
+   if (!instance)
+     instance = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
+   return instance;
 }
 
 #include "elm_atspi_app_object.eo.c"

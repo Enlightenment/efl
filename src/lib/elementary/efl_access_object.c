@@ -115,12 +115,6 @@ const char* Access_Name[] = {
     "last defined"
 };
 
-struct _Efl_Access_Event_Handler
-{
-   Efl_Event_Cb cb;
-   void *data;
-};
-
 struct _Efl_Access_Object_Data
 {
    Eina_List     *relations;
@@ -134,9 +128,6 @@ struct _Efl_Access_Object_Data
 };
 
 typedef struct _Efl_Access_Object_Data Efl_Access_Object_Data;
-
-
-static Eo *root;
 
 EOLIAN static int
 _efl_access_object_index_in_parent_get(const Eo *obj, Efl_Access_Object_Data *pd EINA_UNUSED)
@@ -517,15 +508,6 @@ _efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Da
 {
    efl_access_relation_set_free(sd);
    sd->relations = NULL;
-}
-
-EOLIAN Eo*
-_efl_access_object_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
-{
-   if (!root)
-     root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());
-
-   return root;
 }
 
 EOLIAN void
