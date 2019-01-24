@@ -1,0 +1,26 @@
+struct Efl.Ui.Tree_Factory_Item_Event
+{
+   model: Efl.Model;
+   expandable: bool;
+}
+
+class Efl.Ui.Tree_Factory extends Efl.Ui.Layout_Factory
+{
+   [[Efl Ui Tree Factory class]]
+   methods {
+      @property expandable_style {
+         [[Style used to expandable itens]]
+         set {}
+         values {
+            style: string; [[The style to use.]]
+         }
+      }
+   }
+   events {
+      item,create : Efl.Ui.Tree_Factory_Item_Event;
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Ui.Factory.create;
+   }
+}

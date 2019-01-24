@@ -1,0 +1,68 @@
+struct Efl.Ui.Tree_View_Item {
+   layout: Efl.Ui.Layout;
+   layout_request: future<Efl.Ui.Layout>;
+   model: Efl.Model;
+   linearized_offset: int; [[model index]]
+   shallow_offset: int;
+   depth: int;
+   children_count: int; [[ Number of indirect children ]]
+   children_min: Eina.Size2D;
+   children_size: Eina.Size2D;
+   parent: void_ptr; [[Efl.Ui.Tree_View_Item parent]]
+   tree_node: void_ptr;
+   segarray: ptr(Efl_Ui_Tree_View_Seg_Array);
+   expanded: bool;
+   min: Eina.Size2D;
+   size: Eina.Size2D;
+   pos: Eina.Position2D;
+}
+
+interface Efl.Ui.Tree_View_Model extends Efl.Interface
+{
+   methods {
+      @property load_range {
+         set {}
+         values {
+            first: int;
+            count: int;
+         }
+      }
+      realize {
+         params {
+            item: ptr(Efl.Ui.Tree_View_Item);
+         }
+         return: ptr(Efl.Ui.Tree_View_Item);
+      }
+      unrealize {
+         params {
+            item: ptr(Efl.Ui.Tree_View_Item);
+         }
+      }
+      expand {
+         params {
+            item: ptr(Efl.Ui.Tree_View_Item);
+            first: int;
+            count: int;
+         }
+      }
+      contract {
+         params {
+            item: ptr(Efl.Ui.Tree_View_Item);
+         }
+      }
+      @property model_size {
+         get {}
+         values {
+            s: int;
+         }
+      }
+      @property min_size {
+         [[Minimal content size.]]
+         set {}
+         get {}
+         values {
+            min: Eina.Size2D;
+         }
+      }
+   }
+}

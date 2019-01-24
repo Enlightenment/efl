@@ -1,0 +1,96 @@
+import elm_general;
+
+struct Efl.Ui.Tree_View_Item_Event
+{
+   layout: Efl.Ui.Layout;
+   child: Efl.Model;
+   index: int; [[index of the item in thee layout]]
+   depth: int; [[depth of the item in tree layout]]
+}
+
+class Efl.Ui.Tree_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
+                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Tree_View_Model, Efl.Ui.Widget_Focus_Manager
+{
+   methods {
+      @property relayout {
+         get {}
+         set {}
+         values {
+            object: Efl.Ui.Tree_View_Relayout;
+         }
+      }
+      @property layout_factory {
+         [[Treeview layout factory set.]]
+         set {}
+         get {}
+         values {
+            factory: Efl.Ui.Factory; [[The factory.]]
+         }
+      }
+      @property show_root {
+         get {
+           [[Get if root is visible.]]
+         }
+         set {
+           [[Enable/Disable root visiblity.]]
+         }
+         values {
+            show: bool; [[Default is Disabled.]]
+         }
+      }
+   }
+   events {
+      item,realized : Efl.Ui.Tree_View_Item_Event;
+      item,unrealized : Efl.Ui.Tree_View_Item_Event;
+      item,focused : Efl.Ui.Tree_View_Item_Event;
+      item,unfocused : Efl.Ui.Tree_View_Item_Event;
+      item,selected : Efl.Ui.Tree_View_Item_Event;
+      item,unselected : Efl.Ui.Tree_View_Item_Event;
+      item,expanded : Efl.Ui.Tree_View_Item_Event;
+      item,unexpanded : Efl.Ui.Tree_View_Item_Event;
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      // Smart obj
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_calculate;
+
+      Efl.Ui.Tree_View_Model.load_range { set;}
+      Efl.Ui.Tree_View_Model.realize;
+      Efl.Ui.Tree_View_Model.unrealize;
+      Efl.Ui.Tree_View_Model.expand;
+      Efl.Ui.Tree_View_Model.contract;
+      Efl.Ui.Tree_View_Model.model_size { get; }
+      Efl.Ui.Tree_View_Model.min_size { get; set; }
+
+      // Widget
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Composition.prepare;
+      Efl.Ui.View.model { get; set; }
+
+      Efl.Ui.Scrollable_Interactive.viewport_geometry { get; }
+      Efl.Ui.Scrollable_Interactive.content_pos { get; set; }
+      Efl.Ui.Scrollable_Interactive.content_size { get; }
+      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Ui.Scrollbar.bar_mode { get; set; }
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
+      Efl.Access.Object.access_children { get; }
+      Efl.Access.Selection.selected_children_count { get; }
+      Efl.Access.Selection.selected_child { get; }
+      Efl.Access.Selection.selected_child_deselect;
+      Efl.Access.Selection.child_select;
+      Efl.Access.Selection.child_deselect;
+      Efl.Access.Selection.is_child_selected;
+      Efl.Access.Selection.all_children_select;
+      Efl.Access.Selection.access_selection_clear;
+   }
+}

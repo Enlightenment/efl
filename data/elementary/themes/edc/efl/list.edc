@@ -6,6 +6,10 @@ group { "efl/list_view";
    inherit: "efl/list";
 }
 
+group { "efl/tree_view";
+   inherit: "efl/list";
+}
+
 group { "efl/list_item";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";

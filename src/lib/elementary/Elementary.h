@@ -330,6 +330,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_tree_factory.eo.h>
 # include <efl_ui_item.eo.h>
 # include <efl_ui_list_item.eo.h>
 # include <efl_ui_list_default_item_part_icon.eo.h>
@@ -348,6 +349,12 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_list_view_pan.eo.h>
 # include <efl_ui_widget_factory.eo.h>
 # include <efl_ui_caching_factory.eo.h>
+# include <efl_ui_tree_view_seg_array_depth_model.eo.h>
+# include <efl_ui_tree_view_model.eo.h>
+# include <efl_ui_tree_view_relayout.eo.h>
+# include <efl_ui_tree_view_layouter.eo.h>
+# include <efl_ui_tree_view.eo.h>
+# include <efl_ui_tree_view_pan.eo.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 # include <efl_ui_scroller.eo.h>

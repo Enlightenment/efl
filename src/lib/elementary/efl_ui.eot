@@ -104,3 +104,5 @@ enum Efl.Ui.Widget_Orientation_Mode
 
 /* Types for A11Y (internal/beta API) */
 type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
+
+struct Efl_Ui_Tree_View_Seg_Array;

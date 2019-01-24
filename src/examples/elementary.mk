@@ -125,7 +125,8 @@ elementary/efl_ui_list_view_example_2.c \
 elementary/efl_ui_list_view_example_3.c \
 elementary/efl_canvas_layout_text.c \
 elementary/efl_ui_theme_example_01.c \
-elementary/efl_ui_theme_example_02.c
+elementary/efl_ui_theme_example_02.c \
+elementary/tree_view_example_1.c
 
 ELM_SRCS += \
 elementary/bg_cxx_example_01.cc \
@@ -344,7 +345,8 @@ elementary/efl_ui_list_view_example_2 \
 elementary/efl_ui_list_view_example_3 \
 elementary/efl_canvas_layout_text \
 elementary/efl_ui_theme_example_01 \
-elementary/efl_ui_theme_example_02
+elementary/efl_ui_theme_example_02 \
+elementary/tree_view_example_1
 #benchmark3d
 #sphere-hunter
 

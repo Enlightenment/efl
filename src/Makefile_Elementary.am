@@ -81,6 +81,9 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_view.eo \
 	lib/elementary/efl_ui_list_view_model.eo \
 	lib/elementary/efl_ui_list_view_pan.eo \
+	lib/elementary/efl_ui_tree_view.eo \
+	lib/elementary/efl_ui_tree_view_model.eo \
+	lib/elementary/efl_ui_tree_view_pan.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
 	lib/elementary/efl_ui_list_default_item_part_icon.eo \
@@ -180,6 +183,10 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_homogeneous_model.eo \
 	lib/elementary/efl_ui_exact_model.eo \
 	lib/elementary/efl_ui_average_model.eo \
+	lib/elementary/efl_ui_tree_view_seg_array_depth_model.eo \
+	lib/elementary/efl_ui_tree_view_relayout.eo \
+	lib/elementary/efl_ui_tree_view_layouter.eo \
+	lib/elementary/efl_ui_tree_factory.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -431,6 +438,7 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_grid_private.h \
 	lib/elementary/efl_ui_list_view_private.h \
 	lib/elementary/efl_ui_list_view_seg_array.h \
+	lib/elementary/efl_ui_tree_view_private.h \
 	lib/elementary/elm_widget_web.h \
 	lib/elementary/efl_ui_clock.h \
 	lib/elementary/elm_code.h \
@@ -661,6 +669,7 @@ includesub_HEADERS = \
 	lib/elementary/efl_ui_video.h \
 	lib/elementary/efl_ui_video_eo.h \
 	lib/elementary/efl_ui_video_legacy.h \
+	lib/elementary/efl_ui_tree_view_seg_array.h \
 	lib/elementary/elm_view_list.h \
 	lib/elementary/elm_view_form.h \
 	lib/elementary/elm_web.h \
@@ -865,7 +874,12 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_list_view.c \
 	lib/elementary/efl_ui_list_view_precise_layouter.c \
 	lib/elementary/efl_ui_list_view_seg_array.c \
+	lib/elementary/efl_ui_tree_view.c \
+	lib/elementary/efl_ui_tree_view_layouter.c \
+	lib/elementary/efl_ui_tree_view_seg_array.c \
+	lib/elementary/efl_ui_tree_view_seg_array_depth_model.c \
 	lib/elementary/efl_ui_layout_factory.c \
+	lib/elementary/efl_ui_tree_factory.c \
 	lib/elementary/efl_ui_scroller.c \
 	lib/elementary/efl_ui_scroll_manager.c \
 	lib/elementary/efl_ui_pan.c \
