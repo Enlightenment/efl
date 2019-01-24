@@ -128,7 +128,7 @@ interface Elm.Interface.Fileselector extends Efl.Ui.View
          }
       }
       @property current_name {
-          [[ Current name property]]
+          [[ The filename that will be displayed in the filename entry]]
          set {
          }
          get {
