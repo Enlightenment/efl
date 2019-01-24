@@ -815,11 +815,38 @@ _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
 
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
-                              Efl_Ui_Pager_Data *pd EINA_UNUSED,
-                              Efl_Gfx_Entity *subobj EINA_UNUSED)
+                              Efl_Ui_Pager_Data *pd,
+                              Efl_Gfx_Entity *subobj)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
+   if (!subobj) return EINA_FALSE;
+
+   int index = eina_list_data_idx(pd->content_list, subobj);
+   if (index == -1) return EINA_FALSE;
+
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
+   pd->cnt--;
+
+   if (((index == pd->curr.page) && ((index != 0) || (pd->cnt == 0))) ||
+       (index < pd->curr.page))
+     pd->curr.page--;
+
+   //FIXME if the number of pages is not enough after unpacking a page,
+   //      loop mode needs to be disabled
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else
+     {
+        efl_pack_unpack(pd->page_box, subobj);
+        if (pd->curr.page != -1)
+          efl_pack(pd->page_box, eina_list_nth(pd->content_list, pd->curr.page));
+     }
+
+   if (pd->indicator)
+     efl_page_indicator_unpack(pd->indicator, index);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Gfx_Entity *
