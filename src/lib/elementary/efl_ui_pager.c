@@ -727,7 +727,12 @@ _efl_ui_pager_page_size_set(Eo *obj EINA_UNUSED,
    if (pd->transition)
      efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
    else
-     efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
+     {
+        efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
+        efl_gfx_entity_position_set(pd->page_box,
+                                    EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
+                                                    pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
+     }
 }
 
 EOLIAN static int
