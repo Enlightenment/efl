@@ -98,7 +98,7 @@ _selection_done(void *data, const Efl_Event *event EINA_UNUSED)
         _model_event_call
           (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, NULL, NULL);
      }
-
+   eina_stringshare_replace(&sd->fsd.current_name, elm_interface_fileselector_current_name_get(sd->fs));
    del = sd->fsw;
    sd->fs = NULL;
    sd->fsw = NULL;
@@ -628,6 +628,54 @@ _elm_fileselector_button_elm_interface_fileselector_hidden_visible_set(Eo *obj E
 
    if (sd->fs) elm_fileselector_hidden_visible_set(sd->fs, visible);
 }
+
+EOLIAN static void
+_elm_fileselector_button_elm_interface_fileselector_current_name_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, const char *name)
+{
+   eina_stringshare_replace(&sd->fsd.current_name, name);
+   if (sd->fs) elm_fileselector_current_name_set(sd->fs, sd->fsd.current_name);
+}
+
+EOLIAN static const char*
+_elm_fileselector_button_elm_interface_fileselector_current_name_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
+{
+  if (sd->fs)
+    return elm_fileselector_current_name_get(sd->fs);
+
+  return sd->fsd.current_name;
+}
+
+#define FS_USAGE_API(ret)\
+   if (!pd->fs) \
+     { \
+        ERR("This function is only supported when there is a fileselector"); \
+        return ret; \
+     } \
+
+EOLIAN static Eina_Bool
+_elm_fileselector_button_elm_interface_fileselector_custom_filter_append(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
+{
+   FS_USAGE_API(EINA_FALSE)
+
+   return elm_interface_fileselector_custom_filter_append(pd->fs, func, data, filter_name);
+}
+
+EOLIAN static Eina_Bool
+_elm_fileselector_button_elm_interface_fileselector_mime_types_filter_append(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd, const char *mime_types, const char *filter_name)
+{
+   FS_USAGE_API(EINA_FALSE)
+
+   return elm_interface_fileselector_mime_types_filter_append(pd->fs, mime_types, filter_name);
+}
+
+EOLIAN static void
+_elm_fileselector_button_elm_interface_fileselector_filters_clear(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd)
+{
+   FS_USAGE_API()
+
+   elm_interface_fileselector_filters_clear(pd->fs);
+}
+
 
 EOLIAN static Eina_Bool
 _elm_fileselector_button_elm_interface_fileselector_hidden_visible_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)

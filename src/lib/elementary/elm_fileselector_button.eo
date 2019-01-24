@@ -18,6 +18,10 @@ class Elm.Fileselector_Button extends Efl.Ui.Button implements Elm.Interface.Fil
       Elm.Interface.Fileselector.multi_select { get; set; }
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.mode { get; set; }
+      Elm.Interface.Fileselector.current_name { get; set; }
+      Elm.Interface.Fileselector.custom_filter_append;
+      Elm.Interface.Fileselector.mime_types_filter_append;
+      Elm.Interface.Fileselector.filters_clear;
    }
    events {
       /* FIXME: Can be Efl.Model, string and NULL */
