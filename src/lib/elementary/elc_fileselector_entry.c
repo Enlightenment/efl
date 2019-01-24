@@ -241,6 +241,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    efl_ui_mirrored_automatic_set(priv->button, EINA_FALSE);
    efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
+   efl_composite_attach(obj, priv->button);
 
    elm_fileselector_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);

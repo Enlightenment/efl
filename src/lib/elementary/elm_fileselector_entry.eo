@@ -22,4 +22,7 @@ class Elm.Fileselector_Entry extends Efl.Ui.Layout implements Elm.Interface.File
       file,chosen: void; [[Called when a file was chosen in the fileselector]]
       press: void; [[Called when entry was pressed]]
    }
+   composite {
+      Elm.Interface.Fileselector;
+   }
 }
