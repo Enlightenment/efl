@@ -45,9 +45,9 @@ group { name: "e/modules/music-control/popup";
    images.image: "icon_play_mono.png" COMP;
    styles {
       style { name: "music_control_metadata_style";
-         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#a0a0a0";
-         tag: "title" "+ font_size=10 font="FNBD" text_class=tb_big";
-         tag: "tag" "+ font_size=8 color=#888";
+         base: "font="FN" font_size=10 align=left text_class=tb_plain color=#eee";
+         tag: "title" "+ font_size=10 font="FNBD" text_class=tb_big color=#fff";
+         tag: "tag" "+ font_size=8 color=#33399ff";
          tag: "br" "\n";
       }
    }
@@ -109,6 +109,8 @@ group { name: "e/modules/music-control/popup";
                style: "music_control_metadata_style";
                text: "Song Title";
                align: 0.0 0.0;
+               min: 0 0;
+               ellipsis: 0.0;
             }
             rel1.to_y: "player_name";
             rel1.relative: 0.0 1.0;
