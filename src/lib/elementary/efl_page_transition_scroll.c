@@ -127,8 +127,8 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
    Page_Info *pi;
    int content_w;
 
-   content_w = spd->page_spec.sz.w
-      + ((spd->page_spec.sz.w + spd->page_spec.padding) * pd->side_page_num * 2);
+   content_w = (spd->page_spec.sz.w * (pd->side_page_num * 2 + 1))
+      + (spd->page_spec.padding * pd->side_page_num * 2);
 
    if (content_w < spd->pager.w)
      {
