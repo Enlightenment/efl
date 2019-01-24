@@ -6,7 +6,7 @@ EDJE_CC_ELM_FLAGS = \
 -sd $(top_srcdir)/data/elementary/themes/snd \
 -l $(top_srcdir)/COPYING \
 -a $(top_srcdir)/AUTHORS \
--fastdecomp
+-fastcomp
 
 
 elementary_themes_files = \
