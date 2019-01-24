@@ -1896,6 +1896,7 @@ void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
 void evas_object_pixels_get_force(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 // Gesture Manager
+void *_efl_canvas_gesture_manager_private_data_get(Eo *obj);
 void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
 void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
 void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);

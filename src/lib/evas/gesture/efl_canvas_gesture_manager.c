@@ -97,6 +97,14 @@ _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Ma
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
+void *
+_efl_canvas_gesture_manager_private_data_get(Eo *obj)
+{
+   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+
+   return pd;
+}
+
 void
 _efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
 {
