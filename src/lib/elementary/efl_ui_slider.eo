@@ -1,7 +1,6 @@
 class Efl.Ui.Slider extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Direction,
                      Efl.Access.Value,
-                     Efl.Access.Widget.Action,
-                     Efl.Content
+                     Efl.Access.Widget.Action
 {
    [[Elementary slider class]]
    legacy_prefix: null;
