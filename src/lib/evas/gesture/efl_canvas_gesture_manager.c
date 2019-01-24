@@ -352,5 +352,23 @@ _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
      }
 }
 
+Eina_Bool
+_efl_canvas_gesture_manager_watches(const Efl_Event_Description *ev)
+{
+   /* These are a subset of _elm_win_evas_feed_fake_callbacks
+    * in efl_ui_win.c */
+   if ((ev == EFL_EVENT_POINTER_MOVE) ||
+       (ev == EFL_EVENT_POINTER_DOWN) ||
+       (ev == EFL_EVENT_POINTER_UP) ||
+       (ev == EFL_EVENT_POINTER_IN) ||
+       (ev == EFL_EVENT_POINTER_OUT) ||
+       (ev == EFL_EVENT_POINTER_CANCEL) ||
+       (ev == EFL_EVENT_POINTER_WHEEL) ||
+       (ev == EFL_EVENT_FINGER_MOVE) ||
+       (ev == EFL_EVENT_FINGER_DOWN) ||
+       (ev == EFL_EVENT_FINGER_UP))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 #include "efl_canvas_gesture_manager.eo.c"

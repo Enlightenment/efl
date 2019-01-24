@@ -797,7 +797,8 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager)
+        if (obj->layer->evas->gesture_manager &&
+            _efl_canvas_gesture_manager_watches(array[i].desc))
           {
              if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
 
@@ -833,7 +834,8 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager)
+        if (obj->layer->evas->gesture_manager &&
+            _efl_canvas_gesture_manager_watches(array[i].desc))
           {
              if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
 

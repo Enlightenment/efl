@@ -1900,6 +1900,7 @@ void *_efl_canvas_gesture_manager_private_data_get(Eo *obj);
 void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
 void _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type);
 void _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type);
+Eina_Bool _efl_canvas_gesture_manager_watches(const Efl_Event_Description *ev);
 
 //evas focus functions
 void evas_focus_init(void);
