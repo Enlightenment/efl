@@ -409,7 +409,6 @@ mixin Efl.Access.Object requires Efl.Object
    }
    implements {
       Efl.Object.destructor;
-      Efl.Object.invalidate;
    }
    events {
       property,changed: string; [[Called when property has changed]]

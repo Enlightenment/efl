@@ -417,23 +417,6 @@ _on_rel_obj_del(void *data, const Efl_Event *event)
      }
 }
 
-static void
-efl_access_relation_set_free(Efl_Access_Object_Data *sd)
-{
-   Efl_Access_Relation *rel;
-   Eo *obj;
-
-   EINA_LIST_FREE(sd->relations, rel)
-     {
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(rel->objects, l, obj)
-          efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, sd);
-        eina_list_free(rel->objects);
-        free(rel);
-     }
-}
-
 EOLIAN static Eina_Bool
 _efl_access_object_relationship_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd, Efl_Access_Relation_Type type, const Efl_Access_Object *relation)
 {
@@ -506,21 +489,25 @@ _efl_access_object_relationship_remove(Eo *obj EINA_UNUSED, Efl_Access_Object_Da
 EOLIAN static void
 _efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *sd)
 {
-   efl_access_relation_set_free(sd);
-   sd->relations = NULL;
-}
+   Efl_Access_Relation *rel;
 
-EOLIAN void
-_efl_access_object_efl_object_invalidate(Eo *obj, Efl_Access_Object_Data *pd)
-{
-   efl_access_relation_set_free(pd);
+   EINA_LIST_FREE(sd->relations, rel)
+     {
+        Eina_List *l;
 
-   efl_invalidate(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
+        EINA_LIST_FOREACH(rel->objects, l, obj)
+          efl_event_callback_del(obj, EFL_EVENT_DEL, _on_rel_obj_del, sd);
+        eina_list_free(rel->objects);
+        free(rel);
+     }
 }
 
 EOLIAN void
 _efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
 {
+   efl_access_object_attributes_clear(obj);
+   efl_access_object_relationships_clear(obj);
+
    eina_stringshare_del(pd->name);
    eina_stringshare_del(pd->description);
    eina_stringshare_del(pd->translation_domain);
