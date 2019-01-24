@@ -3296,9 +3296,6 @@ _zoom_with_wheel_test(Evas_Object *obj,
          if (st->zoom_wheel->z > 0) /* zoom out */
            st->info.zoom -= (sd->zoom_finger_factor * sd->zoom_wheel_factor);
 
-         if (st->info.zoom < 0.0)
-           st->info.zoom = 0.0;
-
          st->info.momentum = _zoom_momentum_get
              (st, st->zoom_wheel->timestamp, st->info.zoom);
 
