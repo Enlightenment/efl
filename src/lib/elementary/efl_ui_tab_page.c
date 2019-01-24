@@ -26,6 +26,13 @@ _efl_ui_tab_page_efl_content_content_set(Eo *obj, Efl_Ui_Tab_Page_Data *sd, Eo *
    return EINA_TRUE;
 }
 
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_tab_page_efl_content_content_unset(Eo *obj, Efl_Ui_Tab_Page_Data *pd EINA_UNUSED)
+{
+   return efl_content_unset(efl_part(obj, "efl.content"));
+}
+
+
 EOLIAN static Eo *
 _efl_ui_tab_page_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Page_Data *sd)
 {
