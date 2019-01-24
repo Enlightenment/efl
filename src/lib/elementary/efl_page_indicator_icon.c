@@ -80,6 +80,31 @@ _efl_page_indicator_icon_pack(Eo *obj,
 }
 
 EOLIAN static void
+_efl_page_indicator_icon_unpack(Eo *obj,
+                                Efl_Page_Indicator_Icon_Data *pd,
+                                int index)
+{
+   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
+   Eo *item;
+
+   item = eina_list_nth(pd->items, index);
+   pd->items = eina_list_remove(pd->items, item);
+   efl_pack_unpack(spd->idbox, item);
+   efl_del(item);
+
+   if (index == spd->curr_idx) pd->curr = NULL;
+
+   efl_page_indicator_unpack(efl_super(obj, MY_CLASS), index);
+
+   if ((pd->curr == NULL) && (spd->curr_idx != -1))
+     {
+        pd->curr = eina_list_nth(pd->items, spd->curr_idx);
+        eina_value_set(pd->v, 1.0);
+        efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
+     }
+}
+
+EOLIAN static void
 _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
                                                  Efl_Page_Indicator_Icon_Data *pd,
                                                  Eo *pager,
@@ -135,6 +160,8 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
    EFL_OBJECT_OP_FUNC(efl_page_indicator_update, \
                       _efl_page_indicator_icon_update), \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_pack, \
-                      _efl_page_indicator_icon_pack)
+                      _efl_page_indicator_icon_pack), \
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack, \
+                      _efl_page_indicator_icon_unpack)
 
 #include "efl_page_indicator_icon.eo.c"

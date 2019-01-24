@@ -30,6 +30,19 @@ _efl_page_indicator_pack(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
+_efl_page_indicator_unpack(Eo *obj EINA_UNUSED,
+                           Efl_Page_Indicator_Data *pd,
+                           int index)
+{
+   pd->cnt--;
+
+   if ((pd->cnt == 0) ||
+       ((index == pd->curr_idx) && (index != 0)) ||
+       (index < pd->curr_idx))
+     pd->curr_idx--;
+}
+
+EOLIAN static void
 _efl_page_indicator_bind(Eo *obj EINA_UNUSED,
                          Efl_Page_Indicator_Data *pd,
                          Eo *pager,
@@ -57,11 +70,15 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_page_indicator_update,
                           EFL_FUNC_CALL(pos), double pos)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_indicator_pack,
                           EFL_FUNC_CALL(index), int index)
+EOAPI EFL_VOID_FUNC_BODYV(efl_page_indicator_unpack,
+                          EFL_FUNC_CALL(index), int index)
 
 #define EFL_PAGE_INDICATOR_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_update, \
                       _efl_page_indicator_update), \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_pack, \
-                      _efl_page_indicator_pack)
+                      _efl_page_indicator_pack), \
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack, \
+                      _efl_page_indicator_unpack)
 
 #include "efl_page_indicator.eo.c"
