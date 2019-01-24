@@ -584,7 +584,6 @@ _efl_page_transition_scroll_efl_object_invalidate(Eo *obj,
 
    EINA_LIST_FREE(pd->page_infos, pi)
      {
-        efl_del(pi->obj);
         free(pi);
      }
 
