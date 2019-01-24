@@ -57,6 +57,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack_table.eo \
       lib/efl/interfaces/efl_ui_i18n.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
+      lib/efl/interfaces/efl_ui_direction_readonly.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
       lib/efl/interfaces/efl_ui_range_display.eo \
       lib/efl/interfaces/efl_ui_range_interactive.eo \
@@ -132,6 +133,7 @@ lib/efl/interfaces/efl_file.c \
 lib/efl/interfaces/efl_ui_format.c \
 lib/efl/interfaces/efl_gfx_color.c \
 lib/efl/interfaces/efl_text_markup_util.c \
+lib/efl/interfaces/efl_ui_direction_readonly.c \
 $(NULL)
 
 lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
