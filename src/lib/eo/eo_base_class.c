@@ -1158,7 +1158,7 @@ _efl_pending_future_new(void)
 #define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
 
 static inline void
-_special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+_special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
    if      (it->desc == EFL_EVENT_CALLBACK_ADD)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
@@ -1167,13 +1167,22 @@ _special_event_count_inc(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_INC(pd->event_cb_efl_event_del_count);
    else if (it->desc == EFL_EVENT_NOREF)
-     CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
+     {
+        if (pd->event_cb_efl_event_noref_count == 0)
+          {
+             EO_OBJ_POINTER_RETURN(obj_id, obj);
+             obj->noref_event = EINA_TRUE;
+             EO_OBJ_DONE(obj_id);
+          }
+
+        CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
+     }
    else if (it->desc == EFL_EVENT_DESTRUCT)
      pd->has_destroyed_event_cb = EINA_TRUE;
 }
 
 static inline void
-_special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
+_special_event_count_dec(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
    if      (it->desc == EFL_EVENT_CALLBACK_ADD)
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_add_count);
@@ -1182,12 +1191,21 @@ _special_event_count_dec(Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
    else if (it->desc == EFL_EVENT_NOREF)
-     CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
+     {
+        CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
+
+        if (pd->event_cb_efl_event_noref_count == 0)
+          {
+             EO_OBJ_POINTER_RETURN(obj_id, obj);
+             obj->noref_event = EINA_FALSE;
+             EO_OBJ_DONE(obj_id);
+          }
+     }
 }
 
 /* Actually remove, doesn't care about walking list, or delete_me */
 static void
-_eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
+_eo_callback_remove(Eo *obj, Efl_Object_Data *pd, Eo_Callback_Description **cb)
 {
    unsigned int length;
    const Efl_Callback_Array_Item *it;
@@ -1195,9 +1213,9 @@ _eo_callback_remove(Efl_Object_Data *pd, Eo_Callback_Description **cb)
    if ((*cb)->func_array)
      {
         for (it = (*cb)->items.item_array; it->func; it++)
-          _special_event_count_dec(pd, it);
+          _special_event_count_dec(obj, pd, it);
      }
-   else _special_event_count_dec(pd, &((*cb)->items.item));
+   else _special_event_count_dec(obj, pd, &((*cb)->items.item));
 
    _eo_callback_free(*cb);
 
@@ -1235,7 +1253,7 @@ _eo_callback_remove_all(Efl_Object_Data *pd)
 }
 
 static void
-_eo_callbacks_clear(Efl_Object_Data *pd)
+_eo_callbacks_clear(Eo *obj, Efl_Object_Data *pd)
 {
    Eo_Callback_Description **itr;
    unsigned int i = 0;
@@ -1269,7 +1287,7 @@ _eo_callbacks_clear(Efl_Object_Data *pd)
         itr = pd->callbacks + i;
         if (remove_callbacks && (*itr)->delete_me)
           {
-             _eo_callback_remove(pd, itr);
+             _eo_callback_remove(obj, pd, itr);
           }
         else
           {
@@ -1381,7 +1399,7 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    if (cb->generation) pd->need_cleaning = EINA_TRUE;
 
    _eo_callbacks_sorted_insert(pd, cb);
-   _special_event_count_inc(pd, &(cb->items.item));
+   _special_event_count_inc(obj, pd, &(cb->items.item));
    if (EINA_UNLIKELY(desc == EFL_EVENT_DESTRUCT))
      pd->has_destroyed_event_cb = EINA_TRUE;
 
@@ -1410,7 +1428,7 @@ _efl_object_event_callback_clean(Eo *obj, Efl_Object_Data *pd,
    if (pd->event_frame)
      pd->need_cleaning = EINA_TRUE;
    else
-     _eo_callback_remove(pd, cb);
+     _eo_callback_remove(obj, pd, cb);
 
    efl_event_callback_call(obj, EFL_EVENT_CALLBACK_DEL, (void *)array);
 }
@@ -1488,7 +1506,7 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
 
    _eo_callbacks_sorted_insert(pd, cb);
    for (it = cb->items.item_array; it->func; it++)
-     _special_event_count_inc(pd, it);
+     _special_event_count_inc(obj, pd, it);
    if (!pd->has_destroyed_event_cb)
      {
         for (it = cb->items.item_array; it->func; it++)
@@ -1710,7 +1728,7 @@ end:
 
    EVENT_STACK_POP(pd);
 
-   _eo_callbacks_clear(pd);
+   _eo_callbacks_clear(obj_id, pd);
 
    pd->callback_stopped = callback_already_stopped;
 

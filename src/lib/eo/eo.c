@@ -1924,7 +1924,7 @@ efl_unref(const Eo *obj_id)
 
    _efl_ref(obj);
 
-   if (EINA_UNLIKELY((!obj->unref_compensate) &&
+   if (EINA_UNLIKELY((obj->noref_event) && (!obj->unref_compensate) &&
                      ((obj->user_refcount == 1 && !obj->parent) ||
                       (obj->user_refcount == 2 && obj->parent))))
      {
