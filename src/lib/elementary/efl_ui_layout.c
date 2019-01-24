@@ -1777,21 +1777,21 @@ EOLIAN Eina_Size2D
 _efl_ui_layout_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED, Eina_Size2D restricted)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, restricted);
-   return efl_layout_calc_size_min(wd->obj, restricted);
+   return efl_layout_calc_size_min(wd->resize_obj, restricted);
 }
 
 EOLIAN Eina_Rect
 _efl_ui_layout_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, (Eina_Rect){.rect = {0, 0, 0, 0}});
-   return efl_layout_calc_parts_extends(wd->obj);
+   return efl_layout_calc_parts_extends(wd->resize_obj);
 }
 
 EOLIAN void
 _efl_ui_layout_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   efl_layout_calc_force(wd->obj);
+   efl_layout_calc_force(wd->resize_obj);
 }
 
 static Eina_Bool
