@@ -17,23 +17,14 @@ interface Efl.Ui.Zoom
 
    methods {
       @property zoom_animation {
-         set {
-            [[Enable zoom animation
-
-              This sets the zoom animation state to on or off for zoomable. The
-              default is off. This will stop zooming using animation on
-              zoom level changes and change instantly. This will stop any
-              existing animations that are running.
-            ]]
-         }
-         get {
-            [[Disable zoom animation
-
-              This gets the current zoom animation state for the zoomable object.
-            ]]
-         }
+         [[This sets the zoom animation state to on or off for zoomable. The
+           default is off. When $paused is $true, it will stop zooming using
+           animation on zoom level changes and change instantly, stopping any
+           existing animations that are running.]]
+         set {}
+         get {}
          values {
-            paused: bool; [[The pause state.]]
+            paused: bool; [[The paused state.]]
          }
       }
       @property zoom_level {
