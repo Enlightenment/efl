@@ -130,18 +130,6 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
      }
 }
 
-EOLIAN static void
-_efl_page_indicator_icon_efl_object_invalidate(Eo *obj,
-                                               Efl_Page_Indicator_Icon_Data *pd)
-{
-   Eo *item;
-
-   EINA_LIST_FREE(pd->items, item)
-      efl_del(item);
-
-   efl_invalidate(efl_super(obj, MY_CLASS));
-}
-
 
 #define EFL_PAGE_INDICATOR_ICON_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_update, \
