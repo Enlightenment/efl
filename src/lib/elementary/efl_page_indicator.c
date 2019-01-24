@@ -14,18 +14,19 @@
 
 EOLIAN static void
 _efl_page_indicator_update(Eo *obj EINA_UNUSED,
-                           Efl_Page_Indicator_Data *pd EINA_UNUSED,
+                           Efl_Page_Indicator_Data *pd,
                            double pos EINA_UNUSED)
 {
-
+   pd->curr_idx = efl_ui_pager_current_page_get(pd->pager.obj);
 }
 
 EOLIAN static void
 _efl_page_indicator_pack(Eo *obj EINA_UNUSED,
                          Efl_Page_Indicator_Data *pd,
-                         int index EINA_UNUSED)
+                         int index)
 {
    pd->cnt++;
+   if ((pd->curr_idx == -1) || (pd->curr_idx >= index)) pd->curr_idx++;
 }
 
 EOLIAN static void
@@ -40,7 +41,15 @@ _efl_page_indicator_bind(Eo *obj EINA_UNUSED,
    pd->idbox = idbox;
 
    if (pager)
-     pd->cnt = efl_content_count(pd->pager.obj);
+     {
+        pd->cnt = efl_content_count(pd->pager.obj);
+        pd->curr_idx = efl_ui_pager_current_page_get(pd->pager.obj);
+     }
+   else
+     {
+        pd->cnt = 0;
+        pd->curr_idx = -1;
+     }
 }
 
 
