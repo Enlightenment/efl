@@ -8,7 +8,8 @@ class Efl.Ui.Scroller extends Efl.Ui.Layout implements
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Content.content { set; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Scrollable_Interactive.match_content { set; }
    }
