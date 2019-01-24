@@ -166,6 +166,9 @@ group { name: "elm/scroller/base/evas3d";
             inherit: "default" 0.0;
             min: 0 0;
          }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
       }
       part { name: "sb_vbar_a1"; type: RECT;
          clip_to: "sb_vbar";
@@ -224,7 +227,6 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_a1";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_vbar_a1";
          target: "arrow1_vbar";
       }
       program {
@@ -235,13 +237,11 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,up,1"; source: "sb_vbar_a1";
          action: STATE_SET "default" 0.0;
-         target: "sb_vbar_a1";
          target: "arrow1_vbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_a2";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_vbar_a2";
          target: "arrow2_vbar";
       }
       program {
@@ -252,7 +252,6 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,up,1"; source: "sb_vbar_a2";
          action: STATE_SET "default" 0.0;
-         target: "sb_vbar_a2";
          target: "arrow2_vbar";
       }
       program {
@@ -344,6 +343,9 @@ group { name: "elm/scroller/base/evas3d";
             inherit: "default" 0.0;
             min: 0 0;
          }
+         description { state: "clicked" 0.0;
+            inherit: "default" 0.0;
+         }
       }
       part { name: "sb_hbar_a1"; type: RECT;
          clip_to: "sb_hbar";
@@ -402,7 +404,6 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a1";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_hbar_a1";
          target: "arrow1_hbar";
       }
       program {
@@ -413,13 +414,11 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,up,1"; source: "sb_hbar_a1";
          action: STATE_SET "default" 0.0;
-         target: "sb_hbar_a1";
          target: "arrow1_hbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a2";
          action: STATE_SET "clicked" 0.0;
-         target: "sb_hbar_a2";
          target: "arrow2_hbar";
       }
       program {
@@ -430,7 +429,6 @@ group { name: "elm/scroller/base/evas3d";
       program {
          signal: "mouse,up,1"; source: "sb_hbar_a2";
          action: STATE_SET "default" 0.0;
-         target: "sb_hbar_a2";
          target: "arrow2_hbar";
       }
       program {

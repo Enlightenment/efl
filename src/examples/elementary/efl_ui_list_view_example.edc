@@ -35,7 +35,7 @@ group {
       }
       program {
          signal: "efl,state,odd"; source: "efl";
-         action: STATE_SET "odd" 1.0;
+         action: STATE_SET "odd" 0.0;
          target: "base";
       }
       program {
