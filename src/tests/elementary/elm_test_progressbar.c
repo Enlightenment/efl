@@ -26,6 +26,22 @@ EFL_START_TEST(elm_progressbar_legacy_type_check)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_progressbar_custom_unit_check)
+{
+   Evas_Object *win, *progressbar;
+   char format[50];
+
+   snprintf(format, sizeof(format), "%d percent (%d%%)", 50, 50);
+
+   win = win_add(NULL, "progressbar", ELM_WIN_BASIC);
+
+   progressbar = elm_progressbar_add(win);
+   elm_progressbar_unit_format_set(progressbar, format);
+   elm_progressbar_value_set(progressbar, .50);
+   ck_assert(!strcmp(elm_object_part_text_get(progressbar, "elm.text.status"), "50 percent (50%)"));
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *progressbar;
@@ -44,5 +60,6 @@ EFL_END_TEST
 void elm_test_progressbar(TCase *tc)
 {
    tcase_add_test(tc, elm_progressbar_legacy_type_check);
+   tcase_add_test(tc, elm_progressbar_custom_unit_check);
    tcase_add_test(tc, elm_atspi_role_get);
 }
