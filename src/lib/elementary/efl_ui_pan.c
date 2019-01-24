@@ -156,14 +156,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
    if (content == psd->content) return EINA_TRUE;
    if (psd->content)
      {
-        efl_canvas_group_member_del(obj, psd->content);
-        evas_object_event_callback_del_full
-          (psd->content, EVAS_CALLBACK_DEL, _efl_ui_pan_content_del_cb, obj);
-        evas_object_event_callback_del_full
-          (psd->content, EVAS_CALLBACK_RESIZE, _efl_ui_pan_content_resize_cb,
-          obj);
-        psd->content = NULL;
-        psd->content_w = psd->content_h = psd->px = psd->py = 0;
+        efl_content_unset(obj);
      }
    if (!content) goto end;
 
@@ -187,6 +180,30 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
 end:
    efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
    return EINA_TRUE;
+}
+
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_pan_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
+{
+   return pd->content;
+}
+
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
+{
+   Efl_Gfx_Stack *old_content = pd->content;
+
+   efl_canvas_group_member_del(obj, pd->content);
+   evas_object_event_callback_del_full
+     (pd->content, EVAS_CALLBACK_DEL, _efl_ui_pan_content_del_cb, obj);
+   evas_object_event_callback_del_full
+     (pd->content, EVAS_CALLBACK_RESIZE, _efl_ui_pan_content_resize_cb,
+     obj);
+   pd->content = NULL;
+   pd->content_w = pd->content_h = pd->px = pd->py = 0;
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+
+   return old_content;
 }
 
 EOLIAN static void
