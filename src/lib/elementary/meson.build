@@ -105,7 +105,6 @@ pub_legacy_eo_files = [
   'elm_table.eo',
   'elm_thumb.eo',
   'efl_ui_textpath_legacy.eo',
-  'efl_ui_list_view_precise_layouter.eo'
 ]
 
 pub_eo_file_target = []
@@ -207,8 +206,6 @@ pub_eo_files = [
   'efl_ui_list_view.eo',
   'efl_ui_list_view_model.eo',
   'efl_ui_list_view_pan.eo',
-  'efl_ui_list_view_seg_array.eo',
-  'efl_ui_list_view_relayout.eo',
   'efl_ui_item.eo',
   'efl_ui_list_item.eo',
   'efl_ui_list_default_item_part_icon.eo',
@@ -339,6 +336,8 @@ priv_eo_files = [
   'efl_ui_model_state.eo',
   'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
+  'efl_ui_list_view_precise_layouter.eo',
+  'efl_ui_list_view_relayout.eo',
 ]
 
 priv_eo_file_target = []

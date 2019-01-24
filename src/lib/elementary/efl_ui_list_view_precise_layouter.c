@@ -353,7 +353,7 @@ _initilize(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_
    pd->recalc = EINA_TRUE;
    pd->initialized = EINA_TRUE;
 
-   efl_replace(&pd->seg_array, seg_array);
+   pd->seg_array = seg_array;
 
    efl_ui_list_view_model_load_range_set(pd->modeler, 0, pd->count_total); // load all
    efl_event_callback_add(pd->model, EFL_MODEL_EVENT_CHILD_ADDED, _child_added_cb, pd);
@@ -400,7 +400,7 @@ _finalize(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Precise_Layouter_Data *pd)
         efl_ui_list_view_model_min_size_set(pd->modeler, pd->min);
      }
 
-   efl_replace(&pd->seg_array, NULL);
+   pd->seg_array = NULL;
    efl_replace(&pd->modeler, NULL);
 
    pd->initialized = EINA_FALSE;

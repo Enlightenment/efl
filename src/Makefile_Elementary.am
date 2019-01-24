@@ -81,8 +81,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_view.eo \
 	lib/elementary/efl_ui_list_view_model.eo \
 	lib/elementary/efl_ui_list_view_pan.eo \
-	lib/elementary/efl_ui_list_view_seg_array.eo \
-	lib/elementary/efl_ui_list_view_relayout.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
 	lib/elementary/efl_ui_list_default_item_part_icon.eo \
@@ -175,6 +173,8 @@ elm_private_eolian_files = \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \
+	lib/elementary/efl_ui_list_view_relayout.eo \
+	lib/elementary/efl_ui_list_view_precise_layouter.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -284,7 +284,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
-	lib/elementary/efl_ui_list_view_precise_layouter.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
