@@ -17,7 +17,6 @@ pub_legacy_eo_files = [
   'efl_ui_win_socket_legacy.eo',
   'efl_ui_win_inlined_legacy.eo',
   'elm_interface_fileselector.eo',
-  'efl_ui_animation_view.eo',
   'elm_calendar.eo',
   'elm_calendar_item.eo',
   'elm_clock.eo',
@@ -131,6 +130,7 @@ endforeach
 
 pub_eo_files = [
   'efl_ui_widget.eo',
+  'efl_ui_animation_view.eo',
   'efl_ui_bg.eo',
   'efl_ui_button.eo',
   'efl_ui_calendar.eo',
