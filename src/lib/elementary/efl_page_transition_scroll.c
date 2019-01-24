@@ -347,40 +347,48 @@ _efl_page_transition_scroll_update(Eo *obj,
                   curr->content_num = -1;
                   curr->content = NULL;
                   curr->visible = EINA_FALSE;
-
                }
           }
         else
           {
-             tmp_id = (curr_page + curr->pos + cnt) % cnt;
-             if (curr->content_num != tmp_id)
+             tmp_id = curr_page + curr->pos;
+             if (spd->loop == EFL_UI_PAGER_LOOP_ENABLED)
+               tmp_id = (tmp_id + cnt) % cnt;
+
+             if ((abs(curr->pos) < cnt) &&
+                 (tmp_id >= 0) &&
+                 (tmp_id < cnt))
                {
-                  if (curr->content)
+                  tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
+
+                  if (curr->content != tmp)
                     {
-                       efl_pack_unpack(curr->obj, curr->content);
-                       efl_canvas_object_clip_set(curr->content, pd->backclip);
-
-                       curr->content_num = -1;
-                       curr->content = NULL;
-                    }
-
-                  if (!((spd->loop == EFL_UI_PAGER_LOOP_DISABLED)
-                      && ((curr->pos) * (tmp_id - curr_page) < 0)))
-                    {
-                       tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
-
-                       if (tmp)
+                       if (curr->content)
                          {
-                            efl_canvas_object_clip_set(curr->obj, pd->foreclip);
-
-                            efl_pack(curr->obj, tmp);
-                            efl_canvas_object_clip_set(tmp, pd->foreclip);
-
-                            curr->content_num = tmp_id;
-                            curr->content = tmp;
-                            curr->visible = EINA_TRUE;
+                            efl_pack_unpack(curr->obj, curr->content);
+                            efl_canvas_object_clip_set(curr->content, pd->backclip);
                          }
+
+                       efl_canvas_object_clip_set(curr->obj, pd->foreclip);
+
+                       efl_pack(curr->obj, tmp);
+                       efl_canvas_object_clip_set(tmp, pd->foreclip);
+
+                       curr->content_num = tmp_id;
+                       curr->content = tmp;
+                       curr->visible = EINA_TRUE;
                     }
+               }
+             else if (curr->content)
+               {
+                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+
+                  efl_pack_unpack(curr->obj, curr->content);
+                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+
+                  curr->content_num = -1;
+                  curr->content = NULL;
+                  curr->visible = EINA_FALSE;
                }
           }
 
