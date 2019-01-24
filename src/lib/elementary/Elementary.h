@@ -343,7 +343,6 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_grid_default_item.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list_view_types.eot.h>
-# include <efl_ui_list_view_seg_array.h>
 # include <efl_ui_list_view_model.eo.h>
 # include <efl_ui_list_view_relayout.eo.h>
 # include <efl_ui_list_view.eo.h>
