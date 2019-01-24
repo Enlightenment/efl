@@ -1,4 +1,4 @@
-class Elm.Atspi.Bridge extends Efl.Object
+class Elm.Atspi.Bridge extends Efl.Access.Bridge
 {
    [[AT-SPI bridge class]]
    legacy_prefix: elm_atspi_bridge;
@@ -17,6 +17,7 @@ class Elm.Atspi.Bridge extends Efl.Object
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Access.Bridge.access_event_handle;
    }
    events {
       connected: void; [[Connected with AT-SPI2 bus]]

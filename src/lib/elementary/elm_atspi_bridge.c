@@ -11,6 +11,7 @@
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 
 #define EFL_ACCESS_ACTION_BETA
+#define EFL_ACCESS_BRIDGE_PROTECTED
 
 #include "atspi/atspi-constants.h"
 
@@ -95,7 +96,6 @@ typedef struct _Elm_Atspi_Bridge_Data
         Eldbus_Service_Interface *text;
         Eldbus_Service_Interface *value;
    } interfaces;
-   Efl_Access_Event_Handler *event_hdlr;
    Eina_Hash *event_hash;
    Eina_Bool connected : 1;
 } Elm_Atspi_Bridge_Data;
@@ -4368,9 +4368,6 @@ _a11y_connection_shutdown(Eo *bridge)
    if (pd->event_hash) eina_hash_free(pd->event_hash);
    pd->event_hash = NULL;
 
-   efl_access_object_event_handler_del(EFL_ACCESS_OBJECT_MIXIN, pd->event_hdlr);
-   pd->event_hdlr = NULL;
-
    efl_event_callback_legacy_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
    pd->connected = EINA_FALSE;
 }
@@ -4426,15 +4423,22 @@ _interfaces_register(Eo *bridge)
    eldbus_service_object_data_set(pd->interfaces.value, ELM_ATSPI_BRIDGE_CLASS_NAME, bridge);
 }
 
-static void
-_bridge_accessible_event_dispatch(void *data, const Efl_Event *event)
+EOLIAN void
+_elm_atspi_bridge_efl_access_bridge_access_event_handle(Eo *obj, Elm_Atspi_Bridge_Data *data, Efl_Access_Object *access, const Efl_Event_Description *desc, void *event_data)
 {
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(data, pd);
+   Efl_Event event;
 
-   _bridge_object_register(data, event->object);
+   if (!data->connected)
+     return;
 
-   Efl_Event_Cb cb = eina_hash_find(pd->event_hash, &event->desc);
-   return cb ? cb(data, event) : EINA_TRUE;
+   event.object = access;
+   event.desc = desc;
+   event.info = event_data;
+
+   _bridge_object_register(obj, access);
+
+   Efl_Event_Cb cb = eina_hash_find(data->event_hash, &desc);
+   return cb ? cb(obj, &event) : EINA_TRUE;
 }
 
 static void
@@ -4458,9 +4462,6 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    _interfaces_register(obj);
    _event_handlers_register(obj);
    _elm_atspi_bridge_app_register(obj);
-
-   // register accessible object event listener
-   pd->event_hdlr = efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _bridge_accessible_event_dispatch, obj);
 }
 
 static void
@@ -4574,7 +4575,6 @@ _elm_atspi_bridge_shutdown(void)
         efl_unref(_instance);
         _init_count = 0;
      }
-   _efl_access_shutdown();
 }
 
 static Key_Event_Info*
