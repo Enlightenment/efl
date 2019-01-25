@@ -876,7 +876,21 @@ _evas_canvas3d_mesh_efl_file_mmap_set(Eo *obj,
    return EINA_TRUE;
 }
 
-/* FIXME: Imelemnt mmap_get and file_get. */
+EOLIAN void
+_evas_canvas3d_mesh_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
+{
+   ERR("this function is not available for this object");
+   if (file) *file = NULL;
+   if (group) *group = NULL;
+}
+
+EOLIAN void
+_evas_canvas3d_mesh_efl_file_file_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *sd EINA_UNUSED, const char **file, const char **key)
+{
+   ERR("this function is not available for this object");
+   if (file) *file = NULL;
+   if (key) *key = NULL;
+}
 
 EOLIAN static Eina_Bool
 _evas_canvas3d_mesh_efl_file_file_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
