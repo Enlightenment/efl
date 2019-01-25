@@ -36,11 +36,15 @@ _efl_page_indicator_icon_update(Eo *obj,
 
    if (pos < 0)
      pd->adj = eina_list_nth(pd->items, (spd->curr_idx - 1 + spd->cnt) % spd->cnt);
-   else
+   else if (pos > 0)
      pd->adj = eina_list_nth(pd->items, (spd->curr_idx + 1 + spd->cnt) % spd->cnt);
+   else pd->adj = NULL;
 
-   eina_value_set(pd->v, delta);
-   efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
+   if (pd->adj)
+     {
+        eina_value_set(pd->v, delta);
+        efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
+     }
 }
 
 EOLIAN static void
