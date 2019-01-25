@@ -69,6 +69,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     internal bool InternalPush(IntPtr ele)
     {
+        Console.WriteLine("pushing 0x{0:X}", ele);
         return eina_array_push_custom_export_mono(Handle, ele);
     }
 
