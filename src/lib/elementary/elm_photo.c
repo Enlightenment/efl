@@ -325,6 +325,12 @@ _elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
    return obj;
 }
 
+EOLIAN static void
+_elm_photo_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char **file, const char **key EINA_UNUSED)
+{
+   efl_file_get(sd->icon, file, NULL);
+}
+
 EOLIAN static Eina_Bool
 _elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, const char *key EINA_UNUSED)
 {
@@ -335,6 +341,29 @@ _elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, cons
    else
      {
         if (!elm_image_file_set(sd->icon, file, NULL)) return EINA_FALSE;
+     }
+
+   _sizing_eval(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static void
+_elm_photo_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const Eina_File **file, const char **key EINA_UNUSED)
+{
+   efl_file_mmap_get(sd->icon, file, key);
+}
+
+EOLIAN static Eina_Bool
+_elm_photo_efl_file_mmap_set(Eo *obj, Elm_Photo_Data *sd, const Eina_File *file, const char *key EINA_UNUSED)
+{
+   if (!file)
+     {
+        if (!elm_icon_standard_set(sd->icon, "no_photo")) return EINA_FALSE;
+     }
+   else
+     {
+        if (!efl_file_mmap_set(sd->icon, file, NULL)) return EINA_FALSE;
      }
 
    _sizing_eval(obj);
