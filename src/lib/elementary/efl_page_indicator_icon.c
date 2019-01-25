@@ -53,20 +53,13 @@ _efl_page_indicator_icon_pack(Eo *obj,
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
    Eo *item, *existing;
 
-   efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
-
    item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
    elm_widget_theme_object_set(spd->idbox, item,
                                "pager", "indicator", "default");
    efl_gfx_size_hint_align_set(item, 0.5, 0.5);
    efl_gfx_size_hint_weight_set(item, 0, 0);
 
-   if (index == 0)
-     {
-        pd->items = eina_list_prepend(pd->items, item);
-        efl_pack_begin(spd->idbox, item);
-     }
-   else if (index == (spd->cnt - 1))
+   if (index == spd->cnt)
      {
         pd->items = eina_list_append(pd->items, item);
         efl_pack_end(spd->idbox, item);
@@ -77,6 +70,8 @@ _efl_page_indicator_icon_pack(Eo *obj,
         pd->items = eina_list_prepend_relative(pd->items, item, existing);
         efl_pack_before(spd->idbox, item, existing);
      }
+
+   efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
 }
 
 EOLIAN static void
