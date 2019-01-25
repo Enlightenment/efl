@@ -374,6 +374,8 @@ void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
+void test_ui_pager(void *data, Evas_Object *obj, void *event_info);
+void test_ui_pager_scroll(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -1092,6 +1094,8 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Tab Pager", "Efl.Ui.Tab_Pager", test_ui_tab_pager);
+   ADD_TEST_EO(NULL, "Pager", "Efl.Ui.Pager", test_ui_pager);
+   ADD_TEST_EO(NULL, "Scroll Pager", "Efl.Ui.Pager (Scroll)", test_ui_pager_scroll);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
