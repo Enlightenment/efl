@@ -72,6 +72,13 @@ _efl_page_indicator_icon_pack(Eo *obj,
      }
 
    efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
+
+   if (!pd->curr)
+     {
+        pd->curr = eina_list_nth(pd->items, spd->curr_idx);
+        eina_value_set(pd->v, 1.0);
+        efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
+     }
 }
 
 EOLIAN static void
