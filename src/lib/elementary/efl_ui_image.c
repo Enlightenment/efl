@@ -887,6 +887,12 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    return ret;
 }
 
+EOLIAN void
+_efl_ui_image_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const Eina_File **file, const char **group)
+{
+   if (sd->img) efl_file_mmap_get(sd->img, file, group);
+}
+
 static Eina_Bool
 _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
                                    const char *file, const Eina_File *f, const char *key)

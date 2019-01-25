@@ -90,7 +90,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
    implements {
       Efl.Object.constructor;
       Efl.File.file { get; set; }
-      Efl.File.mmap { set; }
+      Efl.File.mmap { get; set; }
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
