@@ -19,8 +19,6 @@ _efl_page_indicator_icon_update(Eo *obj,
                                 double pos)
 {
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item;
-   int page = efl_ui_pager_current_page_get(spd->pager.obj);
    double delta = fabs(pos);
 
    if (pd->curr)
@@ -30,19 +28,19 @@ _efl_page_indicator_icon_update(Eo *obj,
         if (pd->adj) efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
      }
 
-   item = eina_list_nth(pd->items, page);
+   efl_page_indicator_update(efl_super(obj, MY_CLASS), pos);
+
+   pd->curr = eina_list_nth(pd->items, spd->curr_idx);
    eina_value_set(pd->v, (1.0 - delta));
-   efl_layout_signal_message_send(item, 1, *(pd->v));
-   pd->curr = item;
+   efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
 
    if (pos < 0)
-     item = eina_list_nth(pd->items, (page - 1 + spd->cnt) % spd->cnt);
+     pd->adj = eina_list_nth(pd->items, (spd->curr_idx - 1 + spd->cnt) % spd->cnt);
    else
-     item = eina_list_nth(pd->items, (page + 1 + spd->cnt) % spd->cnt);
+     pd->adj = eina_list_nth(pd->items, (spd->curr_idx + 1 + spd->cnt) % spd->cnt);
 
    eina_value_set(pd->v, delta);
-   efl_layout_signal_message_send(item, 1, *(pd->v));
-   pd->adj = item;
+   efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
 }
 
 EOLIAN static void
