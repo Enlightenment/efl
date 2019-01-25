@@ -1309,6 +1309,11 @@ database_validate(const Eolian_Unit *src)
    Eina_Hash *errh = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
+        /* clear, because otherwise if unrelated classes A and B both
+         * had interface C in extensions list without implementing it,
+         * it would only get printed for A
+         */
+        eina_hash_free_buckets(errh);
         if (!_db_fill_inherits(&vals, cl, fhash, errh))
           {
              eina_hash_free(errh);
