@@ -137,5 +137,9 @@ class Evas.Canvas3D.Primitive extends Evas.Canvas3D.Object
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      @empty Evas.Canvas3D.Object.update_notify;
+      @empty Evas.Canvas3D.Object.change_notify;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 }
