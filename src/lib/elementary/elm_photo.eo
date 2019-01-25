@@ -9,5 +9,6 @@ class Elm.Photo extends Efl.Ui.Widget implements Efl.File, Efl.Ui.Clickable, Efl
       Efl.Object.constructor;
       Efl.File.file { set; }
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Draggable.drag_target { get; set; }
    }
 }

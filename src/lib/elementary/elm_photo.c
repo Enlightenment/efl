@@ -74,6 +74,20 @@ _elm_photo_efl_ui_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
    return int_ret;
 }
 
+EOLIAN static void
+_elm_photo_efl_ui_draggable_drag_target_set(Eo *obj EINA_UNUSED,
+                                            Elm_Photo_Data *pd EINA_UNUSED,
+                                            Eina_Bool set EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_elm_photo_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED,
+                                            Elm_Photo_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
 static void
 _icon_move_resize_cb(void *data,
                      Evas *e EINA_UNUSED,
