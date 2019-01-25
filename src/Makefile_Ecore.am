@@ -5,7 +5,8 @@ ecore_eolian_files_legacy = \
 	lib/ecore/ecore_exe.eo \
 	lib/ecore/ecore_event_message.eo \
 	lib/ecore/ecore_event_message_handler.eo \
-	lib/ecore/efl_loop_timer.eo
+	lib/ecore/efl_loop_timer.eo \
+	tests/ecore/ecore_audio_out_test.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_app.eo \

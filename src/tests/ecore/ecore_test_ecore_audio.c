@@ -311,6 +311,9 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_sndfile)
 }
 EFL_END_TEST
 
+#include "ecore_audio_out_test.eo.h"
+#include "ecore_audio_out_test.eo.c"
+
 EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
@@ -319,7 +322,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 
   Eo *in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   Eo *in2 = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
-  Eo *out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  Eo *out = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
 
   fail_if(!in);
   fail_if(!in2);
@@ -418,7 +421,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_vio)
   in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!in);
 
-  out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  out = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
   fail_if(!out);
 
   ecore_audio_obj_vio_set(in, &in_vio, NULL, NULL);
@@ -543,7 +546,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj)
   objs[0] = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!objs[0]);
 
-  objs[1] = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  objs[1] = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
   fail_if(!objs[1]);
 
   for (i=0; i<2; i++) {
