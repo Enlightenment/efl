@@ -3,6 +3,7 @@ import efl_types;
 class Efl.App extends Efl.Loop
 {
    [[ ]]
+   data: null;
    methods {
       @property app_main @class {
          [[ Returns the app object that is representing this process
@@ -46,15 +47,6 @@ class Efl.App extends Efl.Loop
       signal,hup: void; [[System specific, but on unix maps to SIGHUP signal to the process - only called on main loop object]]
    }
    implements {
-      Efl.Object.constructor;
-      Efl.Object.invalidate;
-      Efl.Io.Closer.close;
-      Efl.Io.Closer.closed { get; }
-      Efl.Io.Reader.read;
-      Efl.Io.Reader.can_read { get; set; }
-      Efl.Io.Reader.eos { get; set; }
-      Efl.Io.Writer.write;
-      Efl.Io.Writer.can_write { get; set; }
       Efl.Task.priority { get; set; }
    }
 }
