@@ -406,10 +406,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
      }
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, 0);
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, 0);
 
    return EINA_TRUE;
 }
@@ -436,10 +433,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
      }
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
 
    return EINA_TRUE;
 }
@@ -465,10 +459,7 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
    else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, index);
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, index);
 
    return EINA_TRUE;
 }
@@ -494,10 +485,7 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
    else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, (index + 1));
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, (index + 1));
 
    return EINA_TRUE;
 }
@@ -534,10 +522,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
         else efl_canvas_object_clip_set(subobj, pd->backclip);
 
         if (pd->indicator)
-          {
-             efl_page_indicator_pack(pd->indicator, index);
-             efl_page_indicator_update(pd->indicator, pd->curr.pos);
-          }
+	  efl_page_indicator_pack(pd->indicator, index);
      }
 
    return EINA_TRUE;
