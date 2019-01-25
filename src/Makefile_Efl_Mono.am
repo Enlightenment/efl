@@ -397,14 +397,20 @@ tests/efl_mono/libefl_mono_native_test.c: \
 	tests/efl_mono/dummy_child.eo.h \
 	tests/efl_mono/dummy_child.eo.c \
 	tests/efl_mono/dummy_numberwrapper.eo.h \
-	tests/efl_mono/dummy_numberwrapper.eo.c
+	tests/efl_mono/dummy_numberwrapper.eo.c \
+	tests/efl_mono/dummy_inherit_iface.eo.h \
+	tests/efl_mono/dummy_inherit_iface.eo.c \
+	tests/efl_mono/dummy_inherit_helper.eo.h \
+	tests/efl_mono/dummy_inherit_helper.eo.c
 
 # Intermediate C Sharp test DLL
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
 tests/efl_mono/dummy_another_iface.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
-tests/efl_mono/dummy_numberwrapper.eo.cs
+tests/efl_mono/dummy_numberwrapper.eo.cs \
+tests/efl_mono/dummy_inherit_iface.eo.cs \
+tests/efl_mono/dummy_inherit_helper.eo.cs
 
 tests/efl_mono/libefl_mono_test.dll: $(efl_mono_test_eolian_mono_files) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_native_test.la tests/efl_mono/libefl_mono_test.dll.config
 	@rm -f tests/efl_mono/libefl_mono_test.dll
