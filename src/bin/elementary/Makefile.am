@@ -161,8 +161,6 @@ test_win_wm_rotation.c \
 test_win_dialog.c \
 test_gesture_framework.c \
 test_ui_tab_pager.c \
-test_ui_pager.c \
-test_ui_pager_scroll.c \
 test.h
 
 elementary_test_LDADD = $(top_builddir)/src/lib/libelementary.la \

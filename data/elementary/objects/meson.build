@@ -5,7 +5,6 @@ edc_files = [
   'test_masking.edc',
   'test_tab_pager.edc',
   'test_tooltip.edc',
-  'test_pager.edc',
   'test_prefs.edc',
   'cursors.edc',
   'font_preview.edc',

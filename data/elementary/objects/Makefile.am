@@ -4,7 +4,6 @@ EXTRA_DIST += \
 elementary/objects/test.edc \
 elementary/objects/test_external.edc \
 elementary/objects/test_masking.edc \
-elementary/objects/test_pager.edc \
 elementary/objects/test_prefs.edc \
 elementary/objects/test_prefs.epc \
 elementary/objects/test_tab_pager.edc \

@@ -225,7 +225,6 @@ elementary/objects/cursors.edj \
 elementary/objects/font_preview.edj \
 elementary/objects/postit_ent.edj \
 elementary/objects/multibuttonentry.edj \
-elementary/objects/test_pager.edj \
 elementary/objects/test_prefs.edj \
 elementary/objects/test_prefs.epb \
 elementary/objects/test_focus_style.edj \
@@ -273,11 +272,6 @@ elementary/objects/postit_ent.edj: elementary/objects/postit_ent.edc
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
 
 elementary/objects/multibuttonentry.edj: elementary/objects/multibuttonentry.edc
-	$(AM_V_EDJ) \
-	$(MKDIR_P) elementary/objects/; \
-	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@
-
-elementary/objects/test_pager.edj: elementary/objects/test_pager.edc
 	$(AM_V_EDJ) \
 	$(MKDIR_P) elementary/objects/; \
 	$(EDJE_CC) $(EDJE_CC_FLAGS) $< $@

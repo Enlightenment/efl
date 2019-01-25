@@ -1100,8 +1100,6 @@ bin/elementary/test_win_stack.c \
 bin/elementary/test_win_indicator.c \
 bin/elementary/test_gesture_framework.c \
 bin/elementary/test_ui_tab_pager.c \
-bin/elementary/test_ui_pager.c \
-bin/elementary/test_ui_pager_scroll.c \
 bin/elementary/test.h
 
 bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@
