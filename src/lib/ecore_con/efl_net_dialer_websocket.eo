@@ -325,7 +325,7 @@ class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dial
         Efl.Net.Socket.address_remote { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
-        Efl.Io.Reader.eos { get; }
+        Efl.Io.Reader.eos { get; set; }
         Efl.Io.Writer.write;
         Efl.Io.Writer.can_write { get; set; }
         Efl.Io.Closer.close;
