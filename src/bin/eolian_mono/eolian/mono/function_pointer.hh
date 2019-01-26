@@ -47,9 +47,9 @@ struct function_pointer {
               .generate(sink, std::make_tuple(f, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
-      if (!as_generator(marshall_native_annotation(true)
+      if (!as_generator(marshall_annotation(true) //marshall_native_annotation(true)
                   << "public delegate " << marshall_type(true) << " " << string // public?
-                  << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ");\n")
+                  << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation /*marshall_native_annotation*/ << " " << marshall_parameter)) << ");\n")
               .generate(sink, std::make_tuple(f.return_type, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
 
@@ -80,8 +80,8 @@ struct function_pointer {
                   << scope_tab << "}\n\n"
 
 
-                  << scope_tab << marshall_native_annotation(true)
-                  << scope_tab << "internal static " << marshall_type(true) << " Cb(IntPtr cb_data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ")\n"
+                  << scope_tab << marshall_annotation(true) /*marshall_native_annotation(true)*/
+                  << scope_tab << "internal static " << marshall_type(true) << " Cb(IntPtr cb_data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation /*marshall_native_annotation*/ << " " << marshall_parameter)) << ")\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
