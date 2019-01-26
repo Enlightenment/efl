@@ -242,10 +242,13 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     public bool AddNew(TKey key, TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key, true);
-        var nv = ManagedToNativeAlloc(val);
+        IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
+        IntPtr nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
+        IntPtr gchnv = CopyNativeObject(val, false);
+        IntPtr nv = GetNativePtr<TValue>(gchnv, false);
         var r = eina_hash_add(Handle, nk, nv);
-        NativeFreeRef<TKey>(nk);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
+        FreeNativeIndirection<TValue>(gchnv, false);
         return r;
     }
 
@@ -256,17 +259,20 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     public bool DelByKey(TKey key)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
+        IntPtr nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
         var r = eina_hash_del_by_key(Handle, nk);
-        NativeFreeRef<TKey>(nk, OwnKey && r);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
+        // NativeFreeRef<TKey>(nk, OwnKey && r);
         return r;
     }
 
     public bool DelByValue(TValue val)
     {
-        var nv = ManagedToNativeAlloc(val);
+        IntPtr gchnv = CopyNativeObject(val, false);
+        IntPtr nv = GetNativePtr<TValue>(gchnv, false);
         var r = eina_hash_del_by_data(Handle, nv);
-        NativeFree<TValue>(nv);
+        FreeNativeIndirection<TValue>(gchnv, false);
         return r;
     }
 
@@ -277,42 +283,52 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     public TValue Find(TKey key)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
+        var nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
         var found = eina_hash_find(Handle, nk);
-        NativeFreeRef<TKey>(nk);
+        //NativeFreeRef<TKey>(nk);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         if (found == IntPtr.Zero)
             throw new KeyNotFoundException();
-        return NativeToManaged<TValue>(found);
+
+        return NativeToManaged<TValue>(IndirectNative<TValue>(found, false));
     }
 
     public bool TryGetValue(TKey key, out TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
+        var nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
         var found = eina_hash_find(Handle, nk);
-        NativeFreeRef<TKey>(nk);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         if (found == IntPtr.Zero)
         {
             val = default(TValue);
             return false;
         }
-        val = NativeToManaged<TValue>(found);
+        val = NativeToManaged<TValue>(IndirectNative<TValue>(found, false));
         return true;
     }
 
     public bool ContainsKey(TKey key)
     {
-        var nk = ManagedToNativeAllocRef(key);
+        var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
+        var nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
+        // var nk = ManagedToNativeAllocRef(key);
         var found = eina_hash_find(Handle, nk);
-        NativeFreeRef<TKey>(nk);
+        // NativeFreeRef<TKey>(nk);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         return found != IntPtr.Zero;
     }
 
     public bool Modify(TKey key, TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key);
-        var nv = ManagedToNativeAlloc(val);
+        var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
+        var nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
+        var gchnv = CopyNativeObject<TValue>(val, false);
+        var nv = GetNativePtr<TValue>(gchnv, false);
         var old = eina_hash_modify(Handle, nk, nv);
-        NativeFreeRef<TKey>(nk);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
+        // NativeFreeRef<TKey>(nk);
         if (old == IntPtr.Zero)
         {
             NativeFree<TValue>(nv);
@@ -323,14 +339,100 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return true;
     }
 
+    private static bool ForceRefKey<T>()
+    {
+        return typeof(T) != typeof(string);
+    }
+
+    private static IntPtr CopyNativeObject<T>(T value, bool forceRef)
+    {
+        if (!IsEflObject(typeof(T)) && forceRef)
+        {
+            GCHandle gch = GCHandle.Alloc(new byte[Marshal.SizeOf<T>()], GCHandleType.Pinned);
+            IntPtr pin = gch.AddrOfPinnedObject();
+
+            Console.WriteLine("address pinned: 0x{0:X}", pin.ToInt64());
+
+            ManagedToNativeCopyTo(value, pin);
+
+            return GCHandle.ToIntPtr(gch);
+        }
+        else if(IsEflObject(typeof(T)) && forceRef)
+        {
+            GCHandle gch = GCHandle.Alloc(new byte[Marshal.SizeOf<IntPtr>()], GCHandleType.Pinned);
+            IntPtr pin = gch.AddrOfPinnedObject();
+
+            Console.WriteLine("address pinned: 0x{0:X}", pin.ToInt64());
+
+            ManagedToNativeCopyTo(value, pin);
+
+            return GCHandle.ToIntPtr(gch);
+        }
+        else
+        {
+            return ManagedToNativeAlloc(value);
+        }
+    }
+    private static IntPtr GetNativePtr<T>(IntPtr gchptr, bool forceRef)
+    {
+        if (forceRef)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(gchptr);
+            IntPtr pin = gch.AddrOfPinnedObject();
+
+            Console.WriteLine("address pinned: 0x{0:X}", pin.ToInt64());
+
+            return pin;
+        }
+        else
+        {
+            return gchptr;
+        }
+    }
+    private static void FreeNativeIndirection<T>(IntPtr gchptr, bool forceRef)
+    {
+        if (forceRef)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(gchptr);
+            gch.Free();
+        }
+    }
+
+    private static IntPtr IndirectNative<T>(IntPtr ptr, bool forceRef)
+    {
+        if (forceRef)
+        {
+            IntPtr val = Marshal.ReadIntPtr(ptr);
+            return val;
+        }
+        else
+        {
+            return ptr;
+        }
+    }
+    
     public void Set(TKey key, TValue val)
     {
-        var nk = ManagedToNativeAllocRef(key, true);
-        var nv = ManagedToNativeAlloc(val);
-        var old = eina_hash_set(Handle, nk, nv);
-        NativeFreeRef<TKey>(nk, old != IntPtr.Zero);
-        if (old != IntPtr.Zero && OwnValue)
-            NativeFree<TValue>(old);
+        Console.WriteLine("Set");
+        IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
+        IntPtr nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
+        // Console.WriteLine("key {0}", key);
+        // Console.WriteLine("nk: 0x{0:X}", nk.ToInt64());
+        // if (ForceRefKey<TKey>())
+        // {
+        //     IntPtr ink = Marshal.ReadIntPtr(nk);
+        //     Console.WriteLine("*nk 0x{0:X}", ink.ToInt32());
+        // }
+        
+        IntPtr gchnv = CopyNativeObject(val, false);
+        IntPtr nv = GetNativePtr<TValue>(gchnv, false);
+        IntPtr old = eina_hash_set(Handle, nk, nv);
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
+        FreeNativeIndirection<TValue>(gchnv, false);
+        // NativeFreeRef<TKey>(nk, old != IntPtr.Zero);
+        // if (old != IntPtr.Zero && OwnValue)
+        //     NativeFree<TValue>(old);
+        
     }
 
     public TValue this[TKey key]
@@ -347,11 +449,17 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     public bool Move(TKey key_old, TKey key_new)
     {
-        var nk_old = ManagedToNativeAllocRef(key_old);
-        var nk_new = ManagedToNativeAllocRef(key_new, true);
-        var r = eina_hash_move(Handle, nk_old, nk_new);
-        NativeFreeRef<TKey>(nk_old, OwnKey && r);
-        NativeFreeRef<TKey>(nk_new, !r);
+        IntPtr gchnko = CopyNativeObject(key_old, ForceRefKey<TKey>());
+        IntPtr nko = GetNativePtr<TKey>(gchnko, ForceRefKey<TKey>());
+        IntPtr gchnk = CopyNativeObject(key_new, ForceRefKey<TKey>());
+        IntPtr nk = GetNativePtr<TKey>(gchnk, ForceRefKey<TKey>());
+        // var nk_old = ManagedToNativeAllocRef(key_old);
+        // var nk_new = ManagedToNativeAllocRef(key_new, true);
+        var r = eina_hash_move(Handle, nko, nk);
+        FreeNativeIndirection<TKey>(gchnko, ForceRefKey<TKey>());
+        FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
+        // NativeFreeRef<TKey>(nk_old, OwnKey && r);
+        // NativeFreeRef<TKey>(nk_new, !r);
         return r;
     }
 
@@ -383,9 +491,10 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             for (IntPtr tuplePtr; eina_iterator_next(itr, out tuplePtr);)
             {
                 var tuple = Marshal.PtrToStructure<Eina.HashTupleNative>(tuplePtr);
-                var key = NativeToManagedRef<TKey>(tuple.key);
+                IntPtr key = IndirectNative<TKey>(tuple.key, ForceRefKey<TKey>());
+                var ikey = NativeToManaged<TKey>(tuple.key);
                 var val = NativeToManaged<TValue>(tuple.data);
-                yield return new KeyValuePair<TKey, TValue>(key, val);
+                yield return new KeyValuePair<TKey, TValue>(ikey, val);
             }
         }
         finally
