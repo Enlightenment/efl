@@ -684,8 +684,9 @@ struct klass
          return true;
 
      std::string visibility = is_inherit_context(context) ? "protected " : "private ";
+     bool root = !helpers::has_regular_ancestor(cls);
 
-     if (!helpers::has_regular_ancestor(cls))
+     //if (!helpers::has_regular_ancestor(cls))
        {
          if (!as_generator(scope_tab << visibility << "readonly object eventLock = new object();\n"
                  << scope_tab << visibility << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
@@ -694,13 +695,14 @@ struct klass
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << visibility << "bool add_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
+            scope_tab << visibility << (root ? "new " : "") << "bool add_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 0) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative("
+            << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ", key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
@@ -722,7 +724,8 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative("
+            << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ", key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
