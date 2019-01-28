@@ -75,6 +75,7 @@ static void
 _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 Efl_VG *obj,
                                 Efl_Canvas_Vg_Node_Data *nd,
+                                void *engine, void *output, void *context,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
                                 Ector_Buffer *mask,
@@ -90,9 +91,15 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
-   fill = _evas_vg_render_pre(vg_pd, pd->fill, surface, ctransform, mask, mask_op);
-   stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill, surface, ctransform, mask, mask_op);
-   stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker, surface, ctransform, mask, mask_op);
+   fill = _evas_vg_render_pre(vg_pd, pd->fill,
+                              engine, output, context,
+                              surface, ctransform, mask, mask_op);
+   stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill,
+                                     engine, output, context,
+                                     surface, ctransform, mask, mask_op);
+   stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker,
+                                       engine, output, context,
+                                       surface, ctransform, mask, mask_op);
 
    if (!nd->renderer)
      {
