@@ -7,10 +7,6 @@ cache:
 sudo: required
 dist: trusty
 
-os:
-  - linux
-  - osx
-
 env:
   global:
     - MAKEFLAGS="-j5 -rR"
@@ -20,6 +16,9 @@ env:
 
 jobs:
   include:
+    - os: osx
+      env:
+        - BUILDSYSTEM=ninja
     - env:
       - os: linux
       - DISTRO=Fedora28-mingw
@@ -60,6 +59,8 @@ jobs:
       - DISTRO=Fedora29
       - CI_BUILD_TYPE=default
       - BUILDSYSTEM=ninja
+    - os: osx
+      if: type = cron
     - if: type = cron
       env:
         - os: linux
@@ -89,8 +90,6 @@ jobs:
         - os: linux
         - DISTRO=Debian96
         - BUILDSYSTEM=ninja
-  exclude:
-    - os: linux
 
 services:
   - docker
