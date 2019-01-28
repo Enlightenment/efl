@@ -1,8 +1,4 @@
 group { name: "e/modules/cpufreq/main";
-   alias: "e/gadget/cpuclock/main";
-   alias: "e/gadget/cpuclock/main_vert";
-   alias: "e/modules/cpuclock/main";
-   alias: "e/modules/cpuclock/main_vert";
    images.image: "cpu_base.png" COMP;
    images.image: "cpu_clip1.png" COMP;
    images.image: "cpu_clip2.png" COMP;
@@ -253,21 +249,6 @@ group { name: "e/modules/cpufreq/main";
          signal: "e,state,disabled"; source: "e";
          action: STATE_SET "faded" 0.0;
          target: "fade_clip";
-      }
-   }
-}
-
-group { name: "e/gadget/cpuclock/main";
-   alias: "e/gadget/cpuclock/main_vert";
-   inherit: "e/modules/cpufreq/main";
-   parts {
-      part { name: "readout"; type: TEXT; mouse_events: 0;
-         scale: 1;
-         effect: SHADOW BOTTOM;
-         clip_to: "fade_clip";
-         description { state: "default" 0.0;
-            visible: 0;
-         }
       }
    }
 }
