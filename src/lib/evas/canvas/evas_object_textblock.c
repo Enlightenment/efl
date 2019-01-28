@@ -7890,7 +7890,7 @@ evas_object_textblock_text_markup_prepend(Efl_Text_Cursor_Cursor *cur, const cha
 }
 
 EOLIAN static void
-_efl_canvas_text_efl_text_markup_cursor_markup_insert(Eo *eo_obj,
+_efl_canvas_text_efl_text_markup_interactive_cursor_markup_insert(Eo *eo_obj,
       Efl_Canvas_Text_Data *o EINA_UNUSED,
       Efl_Text_Cursor_Cursor *cur, const char *markup)
 {
@@ -11422,7 +11422,7 @@ _evas_textblock_cursor_range_text_markup_get(const Efl_Text_Cursor_Cursor *cur1,
 }
 
 EOLIAN char *
-_efl_canvas_text_efl_text_markup_markup_range_get(const Eo *eo_obj,
+_efl_canvas_text_efl_text_markup_interactive_markup_range_get(const Eo *eo_obj,
       Efl_Canvas_Text_Data *o EINA_UNUSED, Efl_Text_Cursor_Cursor *start,
       Efl_Text_Cursor_Cursor *end)
 {

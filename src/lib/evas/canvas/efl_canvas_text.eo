@@ -5,7 +5,7 @@ struct Efl.Canvas.Text_Style; [[EFL text style data structure]]
 class Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
                        Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
-                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Ui.I18n
+                       Efl.Text_Annotate, Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Ui.I18n
 {
    [[Efl canvas text class]]
    legacy_prefix: evas_object_textblock;
@@ -353,8 +353,8 @@ class Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       Efl.Text_Annotate.cursor_item_annotation { get; }
       Efl.Text_Annotate.cursor_item_insert;
       Efl.Text_Markup.markup { set; get; }
-      Efl.Text_Markup.cursor_markup_insert;
-      Efl.Text_Markup.markup_range { get;}
+      Efl.Text_Markup_Interactive.cursor_markup_insert;
+      Efl.Text_Markup_Interactive.markup_range { get;}
       Efl.Gfx.Entity.scale { set; }
    }
    events {

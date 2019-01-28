@@ -59,6 +59,7 @@ pub_eo_files = [
   'efl_text_cursor.eo',
   'efl_text_annotate.eo',
   'efl_text_markup.eo',
+  'efl_text_markup_interactive.eo',
   'efl_text_markup_util.eo',
   'efl_gfx_stack.eo',
   'efl_gfx_view.eo',

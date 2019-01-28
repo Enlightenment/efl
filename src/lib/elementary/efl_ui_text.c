@@ -610,7 +610,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
    if (sel_data->format == EFL_UI_SELECTION_FORMAT_MARKUP)
      {
-        efl_text_markup_cursor_markup_insert(obj, cur, buf);
+        efl_text_markup_interactive_cursor_markup_insert(obj, cur, buf);
      }
    else // TEXT
      {
@@ -1161,7 +1161,7 @@ _selection_store(Efl_Ui_Selection_Type seltype,
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
-   sel = efl_text_markup_range_get(obj, start, end);
+   sel = efl_text_markup_interactive_markup_range_get(obj, start, end);
 
    if ((!sel) || (!sel[0])) return;  /* avoid deleting our own selection */
 
