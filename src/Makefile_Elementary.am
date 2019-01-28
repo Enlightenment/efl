@@ -1502,6 +1502,7 @@ check_PROGRAMS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 
 tests_elementary_elm_suite_SOURCES = \
+	tests/elementary/suite_helpers.c \
 	tests/elementary/elm_suite.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
@@ -1584,7 +1585,6 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_test_focus_common.h \
 	tests/elementary/elm_test_focus.c \
 	tests/elementary/elm_test_focus_sub.c \
-	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/elm_test_widget_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
@@ -1605,9 +1605,13 @@ tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
 tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 
 tests_elementary_efl_ui_suite_SOURCES = \
-	tests/elementary/efl_ui_suite.c
+	tests/elementary/suite_helpers.c \
+	tests/elementary/efl_ui_suite.c \
+	tests/elementary/elm_test_init.c \
+	tests/elementary/efl_ui_test_grid.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \

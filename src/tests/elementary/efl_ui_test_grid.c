@@ -4,33 +4,22 @@
 
 #define EFL_ACCESS_OBJECT_BETA
 #include <Elementary.h>
-#include "elm_suite.h"
+#include "efl_ui_suite.h"
 
-static Eo *win, *box;
+static Eo *win;
 static Efl_Ui_Grid *grid;
 
 static void
 grid_setup()
 {
-   //win = win_add();
-   win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-      efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
-      efl_text_set(efl_added, "Efl.Ui.Grid"),
-      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
-   efl_gfx_size_hint_weight_set(box, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_fill_set(box, EINA_TRUE, EINA_TRUE);
-   elm_win_resize_object_add(win, box);
+   win = win_add();
 
-   grid = efl_add(EFL_UI_GRID_CLASS, box);
+   grid = efl_add(EFL_UI_GRID_CLASS, win);
 
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 100));
-   efl_pack_padding_set(grid, 5.0, 5.0, EINA_TRUE);
-   efl_pack_align_set(grid, 0.5, 0.5);
-   efl_pack_end(box, grid);
-
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
+   efl_gfx_entity_size_set(grid, EINA_SIZE2D(500, 50));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 50));
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
 }
 
 static void
