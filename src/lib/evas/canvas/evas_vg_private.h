@@ -64,7 +64,8 @@ struct _Efl_Canvas_Vg_Node_Data
    Efl_Canvas_Vg_Object_Data *vd;
 
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
-         Efl_Canvas_Vg_Node_Data *nd, Ector_Surface *surface,
+         Efl_Canvas_Vg_Node_Data *nd,
+         void *engine, void *output, void *contenxt, Ector_Surface *surface,
          Eina_Matrix3 *ptransform, Ector_Buffer *mask, int mask_op, void *data);
    void *data;
 
@@ -84,7 +85,6 @@ typedef struct _Vg_Mask
    Eina_Rect bound;                    //Mask boundary
    Eina_List *target;                  //Mask target
    int option;                         //Mask option
-   Eina_Bool dirty : 1;                //Need to update mask image.
 } Vg_Mask;
 
 struct _Efl_Canvas_Vg_Container_Data
@@ -138,11 +138,17 @@ efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
 }
 
 static inline Efl_Canvas_Vg_Node_Data *
-_evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child, Ector_Surface *surface, Eina_Matrix3 *transform, Ector_Buffer *mask, int mask_op)
+_evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
+                    void *engine, void *output, void *context,
+                    Ector_Surface *surface,
+                    Eina_Matrix3 *transform,
+                    Ector_Buffer *mask, int mask_op)
 {
    if (!child) return NULL;
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
-   if (nd) nd->render_pre(vg_pd, child, nd, surface, transform, mask, mask_op, nd->data);
+   if (nd) nd->render_pre(vg_pd, child, nd,
+                          engine, output, context, surface,
+                          transform, mask, mask_op, nd->data);
    return nd;
 }
 
