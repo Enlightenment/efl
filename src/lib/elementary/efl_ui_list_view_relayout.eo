@@ -1,5 +1,3 @@
-type @extern Efl_Ui_List_View_Seg_Array:  __undefined_type;
-
 interface Efl.Ui.List_View_Relayout extends Efl.Interface
 {
    methods {

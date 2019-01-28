@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "elm_priv.h"
+#include "efl_ui_list_view_relayout.eo.h"
 #include "efl_ui_list_view_seg_array.h"
 
 #define MY_CLASS EFL_UI_LIST_VIEW_PRECISE_LAYOUTER_CLASS
