@@ -925,6 +925,20 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
    free(output);
 }
 
+/* this function is used to indicate if we are in a multi-gpu situation
+ * and need to calculate vblank sync with high crtc mask */
+static unsigned int
+_output_vblank_pipe(Ecore_Drm2_Output *output)
+{
+   if (output->pipe > 1)
+     return ((output->pipe << DRM_VBLANK_HIGH_CRTC_SHIFT) &
+             DRM_VBLANK_HIGH_CRTC_MASK);
+   else if (output->pipe > 0)
+     return DRM_VBLANK_SECONDARY;
+   else
+     return 0;
+}
+
 EAPI Eina_Bool
 ecore_drm2_outputs_create(Ecore_Drm2_Device *device)
 {
@@ -1619,6 +1633,7 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
 
    memset(&v, 0, sizeof(v));
    v.request.type = DRM_VBLANK_RELATIVE;
+   v.request.type |= _output_vblank_pipe(output);
    v.request.sequence = sequence;
    ret = sym_drmWaitVBlank(output->fd, &v);
    success = (ret == 0) && (v.reply.tval_sec > 0 || v.reply.tval_usec > 0);
