@@ -353,22 +353,6 @@ _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Ob
      }
 
    /* clip me */
-   if ((!clip->clip.clipees) && (clip->cur->visible))
-     {
-        /* Basically it just went invisible */
-        clip->changed = 1;
-        e = clip->layer->evas;
-        e->changed = 1;
-/* i know this was to handle a case where a clip starts having children and
- * stops being a solid colored box - no one ever does that... they hide the clp
- * so dont add damages
-        evas_damage_rectangle_add(e->evas,
-                                  clip->cur->geometry.x + e->framespace.x,
-                                  clip->cur->geometry.y + e->framespace.y,
-                                  clip->cur->geometry.w, clip->cur->geometry.h);
- */
-     }
-
    EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
      state_write->clipper = clip;
    EINA_COW_STATE_WRITE_END(obj, state_write, cur);
