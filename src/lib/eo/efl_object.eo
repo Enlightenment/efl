@@ -107,7 +107,7 @@ abstract Efl.Object
             @since 1.21
          ]]
          params {
-            @in sb: ptr(Eina.Strbuf); [[A string buffer, must not be $null.]]
+            @in sb: strbuf; [[A string buffer, must not be $null.]]
          }
       }
       @property event_global_freeze_count @class {
