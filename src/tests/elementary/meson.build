@@ -120,6 +120,7 @@ efl_ui_suite_src = [
   'efl_ui_suite.c',
   'suite_helpers.c',
   'elm_test_init.c',
+  'efl_ui_test_atspi.c',
   'efl_ui_test_grid.c',
 ]
 

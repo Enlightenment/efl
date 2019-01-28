@@ -1608,6 +1608,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/suite_helpers.c \
 	tests/elementary/efl_ui_suite.c \
 	tests/elementary/elm_test_init.c \
+	tests/elementary/efl_ui_test_atspi.c \
 	tests/elementary/efl_ui_test_grid.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \

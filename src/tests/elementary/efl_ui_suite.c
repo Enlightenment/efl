@@ -12,6 +12,7 @@ static const Efl_Test_Case etc[] = {
   //{ "elm_focus", elm_test_focus},
   //{ "elm_focus_sub", elm_test_focus_sub},
   //{ "elm_widget_focus", elm_test_widget_focus},
+  { "efl_ui_atspi", efl_ui_test_atspi},
   { "efl_ui_grid", efl_ui_test_grid},
   { NULL, NULL }
 };
