@@ -620,6 +620,10 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
               size.h = h;
           }
 
+        //Size is changed, cached data is invalid.
+        if ((size.w != vg_entry->w) || (size.h != vg_entry->h))
+          drop_cache = EINA_TRUE;
+
         vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
         evas_cache_vg_entry_del(pd->vg_entry);
         pd->vg_entry = vg_entry;
@@ -632,21 +636,21 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         w = size.w;
         h = size.h;
 
-        //Size is changed, cached data is invalid.
-        drop_cache = EINA_TRUE;
      }
    root = evas_cache_vg_tree_get(vg_entry, pd->frame_idx);
    if (!root) return;
 
    if (cacheable)
      {
+        //if the size doesn't match, drop previous cache surface.
         if (drop_cache)
-          {
-             //if the size doesn't match, drop previous cache surface.
-             ENFN->ector_surface_cache_drop(engine, (void *) root);
-          }
+          ENFN->ector_surface_cache_drop(engine, (void *) root);
+        //Cache Hit!
         else if (pd->frame_idx == pd->cached_frame_idx)
           buffer = ENFN->ector_surface_cache_get(engine, (void *) root);
+        //Drop invalid one.
+        else
+          ENFN->ector_surface_cache_drop(engine, (void *) root);
      }
 
    if (!buffer)
