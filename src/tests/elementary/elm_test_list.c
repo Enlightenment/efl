@@ -8,7 +8,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_list_legacy_type_check)
+EFL_START_TEST(elm_list_legacy_type_check)
 {
    Evas_Object *win, *list;
    const char *type;
@@ -32,7 +32,7 @@ EFL_END_TEST
 // Skip following tests until Elm_Widget_Item will migrate to Eo infrastructure
 // and following features can be implemented
 
-EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
+EFL_START_TEST(elm_list_atspi_selection_selected_children_count_get)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -58,7 +58,7 @@ EFL_START_TEST (elm_list_atspi_selection_selected_children_count_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_list_atspi_selection_child_select)
+EFL_START_TEST(elm_list_atspi_selection_child_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -77,7 +77,7 @@ EFL_START_TEST (elm_list_atspi_selection_child_select)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
+EFL_START_TEST(elm_list_atspi_selection_selected_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -99,7 +99,7 @@ EFL_START_TEST (elm_list_atspi_selection_selected_child_deselect)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
+EFL_START_TEST(elm_list_atspi_selection_is_child_selected)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -121,7 +121,7 @@ EFL_START_TEST (elm_list_atspi_selection_is_child_selected)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_list_atspi_selection_all_children_select)
+EFL_START_TEST(elm_list_atspi_selection_all_children_select)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
@@ -148,7 +148,7 @@ EFL_START_TEST (elm_list_atspi_selection_all_children_select)
 EFL_END_TEST
 
 
-EFL_START_TEST (elm_list_atspi_selection_clear)
+EFL_START_TEST(elm_list_atspi_selection_clear)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item1, *item2;
@@ -173,7 +173,7 @@ EFL_START_TEST (elm_list_atspi_selection_clear)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_list_atspi_selection_child_deselect)
+EFL_START_TEST(elm_list_atspi_selection_child_deselect)
 {
  Evas_Object *win, *list;
  Elm_Object_Item *item;
@@ -197,7 +197,7 @@ EFL_END_TEST
 
 #endif
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
  Evas_Object *win, *list;
  Efl_Access_Role role;

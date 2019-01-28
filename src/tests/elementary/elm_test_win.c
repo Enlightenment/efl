@@ -63,7 +63,7 @@ _timer_fail_flag_cb(void *data)
    return EINA_FALSE;
 }
 
-EFL_START_TEST (elm_win_legacy_type_check)
+EFL_START_TEST(elm_win_legacy_type_check)
 {
    Evas_Object *win, *win_socket, *win_inlined;
    const char *type;
@@ -100,7 +100,7 @@ EFL_START_TEST (elm_win_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win;
    Efl_Access_Role role;
@@ -114,7 +114,7 @@ EFL_START_TEST (elm_atspi_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_component_screen_position)
+EFL_START_TEST(elm_atspi_component_screen_position)
 {
    Eina_Bool ret;
    int x, y;
@@ -133,7 +133,7 @@ EFL_START_TEST (elm_atspi_component_screen_position)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_win_autohide)
+EFL_START_TEST(elm_win_autohide)
 {
    Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
    if (elm_win_xwindow_get(win))
@@ -154,7 +154,7 @@ EFL_START_TEST (elm_win_autohide)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
+EFL_START_TEST(elm_win_policy_quit_last_window_hidden)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
@@ -177,7 +177,7 @@ EFL_START_TEST (elm_win_policy_quit_last_window_hidden)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_win_autohide_and_policy_quit_last_window_hidden)
+EFL_START_TEST(elm_win_autohide_and_policy_quit_last_window_hidden)
 {
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN);
 
@@ -368,7 +368,7 @@ _inputs_timer3_cb(void *data)
    return ECORE_CALLBACK_DONE;
 }
 
-EFL_START_TEST (efl_ui_win_multi_touch_inputs)
+EFL_START_TEST(efl_ui_win_multi_touch_inputs)
 {
    Eina_Bool fail_flag = EINA_FALSE;
    Eo *win;

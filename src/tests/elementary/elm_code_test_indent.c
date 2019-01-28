@@ -24,7 +24,7 @@ _indent_check(Elm_Code_File *file, const char *prev, const char *expected)
    free(str);
 }
 
-EFL_START_TEST (elm_code_indent_whitespace_test)
+EFL_START_TEST(elm_code_indent_whitespace_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -43,7 +43,7 @@ EFL_START_TEST (elm_code_indent_whitespace_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_comments_test)
+EFL_START_TEST(elm_code_indent_comments_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -66,7 +66,7 @@ EFL_START_TEST (elm_code_indent_comments_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_simple_braces)
+EFL_START_TEST(elm_code_indent_simple_braces)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -87,7 +87,7 @@ EFL_START_TEST (elm_code_indent_simple_braces)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_tab_simple_braces)
+EFL_START_TEST(elm_code_indent_tab_simple_braces)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -107,7 +107,7 @@ EFL_START_TEST (elm_code_indent_tab_simple_braces)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_matching_braces)
+EFL_START_TEST(elm_code_indent_matching_braces)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;
@@ -151,7 +151,7 @@ EFL_START_TEST (elm_code_indent_matching_braces)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_tab_matching_braces)
+EFL_START_TEST(elm_code_indent_tab_matching_braces)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;
@@ -184,7 +184,7 @@ EFL_START_TEST (elm_code_indent_tab_matching_braces)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_indent_startswith_keyword)
+EFL_START_TEST(elm_code_indent_startswith_keyword)
 {
    Elm_Code_File *file;
    Elm_Code *code;

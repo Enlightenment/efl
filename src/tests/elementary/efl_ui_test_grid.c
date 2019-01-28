@@ -52,7 +52,7 @@ grid_item_pack(Eo *grid, int count, Eina_List **l)
 	return EINA_TRUE;
 }
 
-EFL_START_TEST (efl_ui_grid_class_check)
+EFL_START_TEST(efl_ui_grid_class_check)
 {
    const char *class;
 
@@ -63,7 +63,7 @@ EFL_START_TEST (efl_ui_grid_class_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack)
+EFL_START_TEST(efl_ui_grid_pack)
 {
    Efl_Ui_Grid_Item *item;
    int count;
@@ -77,7 +77,7 @@ EFL_START_TEST (efl_ui_grid_pack)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_unpack)
+EFL_START_TEST(efl_ui_grid_unpack)
 {
    Efl_Ui_Grid_Item *item;
    int count;
@@ -94,7 +94,7 @@ EFL_START_TEST (efl_ui_grid_unpack)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_unpack_all)
+EFL_START_TEST(efl_ui_grid_unpack_all)
 {
    Efl_Ui_Grid_Item *item;
    int count_before = 10;
@@ -116,7 +116,7 @@ EFL_START_TEST (efl_ui_grid_unpack_all)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_clear)
+EFL_START_TEST(efl_ui_grid_pack_clear)
 {
    int count_before = 10;
    int count;
@@ -131,7 +131,7 @@ EFL_START_TEST (efl_ui_grid_pack_clear)
 EFL_END_TEST
 
 
-EFL_START_TEST (efl_ui_grid_pack_end)
+EFL_START_TEST(efl_ui_grid_pack_end)
 {
    Efl_Ui_Grid_Item *item, *compare;
    int count_before = 10;
@@ -152,7 +152,7 @@ EFL_START_TEST (efl_ui_grid_pack_end)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_begin)
+EFL_START_TEST(efl_ui_grid_pack_begin)
 {
    Efl_Ui_Grid_Item *item, *compare;
    int count_before = 10;
@@ -173,7 +173,7 @@ EFL_START_TEST (efl_ui_grid_pack_begin)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_after)
+EFL_START_TEST(efl_ui_grid_pack_after)
 {
    Efl_Ui_Grid_Item *item, *after, *compare;
    int count_before = 10;
@@ -198,7 +198,7 @@ EFL_START_TEST (efl_ui_grid_pack_after)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_before)
+EFL_START_TEST(efl_ui_grid_pack_before)
 {
    Efl_Ui_Grid_Item *item, *before, *compare;
    int count_before = 10;
@@ -223,7 +223,7 @@ EFL_START_TEST (efl_ui_grid_pack_before)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_content_count)
+EFL_START_TEST(efl_ui_grid_content_count)
 {
    int count = 10, compare;
 
@@ -235,7 +235,7 @@ EFL_START_TEST (efl_ui_grid_content_count)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_content_iterate)
+EFL_START_TEST(efl_ui_grid_content_iterate)
 {
    int count = 10;
    Efl_Ui_Grid_Item *item;
@@ -288,7 +288,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(grid_scroll_callbacks,
                            { EFL_UI_EVENT_SCROLL_START, grid_scroll_start_cb },
                            { EFL_UI_EVENT_SCROLL_STOP, grid_scroll_stop_cb });
 
-EFL_START_TEST (efl_ui_grid_scroll)
+EFL_START_TEST(efl_ui_grid_scroll)
 {
    Efl_Ui_Grid_Item *item;
    Efl_Loop_Timer *timer;

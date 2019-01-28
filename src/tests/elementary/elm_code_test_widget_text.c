@@ -5,7 +5,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-EFL_START_TEST (elm_code_test_widget_text_tab_width)
+EFL_START_TEST(elm_code_test_widget_text_tab_width)
 {
    Elm_Code *code;
    Elm_Code_Widget *widget;
@@ -27,7 +27,7 @@ EFL_START_TEST (elm_code_test_widget_text_tab_width)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_test_widget_text_position)
+EFL_START_TEST(elm_code_test_widget_text_position)
 {
    Elm_Code *code;
    Elm_Code_File *file;

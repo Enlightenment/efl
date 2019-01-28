@@ -26,7 +26,7 @@ void generate_app(void)
    evas_object_show(g_win);
 }
 
-EFL_START_TEST (test_efl_access_app_obj_name_get)
+EFL_START_TEST(test_efl_access_app_obj_name_get)
 {
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -44,7 +44,7 @@ EFL_START_TEST (test_efl_access_app_obj_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_i18n_name_get)
+EFL_START_TEST(test_efl_access_object_i18n_name_get)
 {
    generate_app();
 
@@ -68,7 +68,7 @@ EFL_START_TEST (test_efl_access_object_i18n_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_i18n_name_set)
+EFL_START_TEST(test_efl_access_object_i18n_name_set)
 {
    generate_app();
 
@@ -91,7 +91,7 @@ EFL_START_TEST (test_efl_access_object_i18n_name_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_role_get)
+EFL_START_TEST(test_efl_access_object_role_get)
 {
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -105,7 +105,7 @@ EFL_START_TEST (test_efl_access_object_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_role_set)
+EFL_START_TEST(test_efl_access_object_role_set)
 {
    generate_app();
    Efl_Access_Role role;
@@ -125,7 +125,7 @@ EFL_START_TEST (test_efl_access_object_role_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_role_name_get)
+EFL_START_TEST(test_efl_access_object_role_name_get)
 {
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -139,7 +139,7 @@ EFL_START_TEST (test_efl_access_object_role_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_localized_role_name_get)
+EFL_START_TEST(test_efl_access_object_localized_role_name_get)
 {
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -153,7 +153,7 @@ EFL_START_TEST (test_efl_access_object_localized_role_name_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_description_set)
+EFL_START_TEST(test_efl_access_object_description_set)
 {
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
 
@@ -181,7 +181,7 @@ EFL_START_TEST (test_efl_access_object_description_set)
 EFL_END_TEST
 
 /* Test if initial description value is NULL */
-EFL_START_TEST (test_efl_access_object_description_get)
+EFL_START_TEST(test_efl_access_object_description_get)
 {
    generate_app();
 
@@ -193,7 +193,7 @@ EFL_START_TEST (test_efl_access_object_description_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_children_and_parent)
+EFL_START_TEST(test_efl_access_children_and_parent)
 {
    generate_app();
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
@@ -217,7 +217,7 @@ EFL_START_TEST (test_efl_access_children_and_parent)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_children_and_parent2)
+EFL_START_TEST(test_efl_access_children_and_parent2)
 {
    generate_app();
    Eo* root = efl_add_ref(ELM_ATSPI_APP_OBJECT_CLASS, NULL);
@@ -244,7 +244,7 @@ EFL_START_TEST (test_efl_access_children_and_parent2)
 EFL_END_TEST
 
 /* Initial value of translation domain should be NULL */
-EFL_START_TEST (test_efl_access_object_translation_domain_get)
+EFL_START_TEST(test_efl_access_object_translation_domain_get)
 {
    generate_app();
 
@@ -257,7 +257,7 @@ EFL_START_TEST (test_efl_access_object_translation_domain_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_translation_domain_set)
+EFL_START_TEST(test_efl_access_object_translation_domain_set)
 {
    generate_app();
 
@@ -277,7 +277,7 @@ EFL_START_TEST (test_efl_access_object_translation_domain_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_relationship_append)
+EFL_START_TEST(test_efl_access_object_relationship_append)
 {
    generate_app();
 
@@ -341,7 +341,7 @@ EFL_START_TEST (test_efl_access_object_relationship_append)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_relationship_remove)
+EFL_START_TEST(test_efl_access_object_relationship_remove)
 {
    generate_app();
 
@@ -423,7 +423,7 @@ EFL_START_TEST (test_efl_access_object_relationship_remove)
 }
 EFL_END_TEST
 
-EFL_START_TEST (test_efl_access_object_relationships_clear)
+EFL_START_TEST(test_efl_access_object_relationships_clear)
 {
    Efl_Access_Relation *rel;
    Eina_Iterator *it;

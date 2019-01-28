@@ -5,7 +5,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-EFL_START_TEST (elm_code_line_create_test)
+EFL_START_TEST(elm_code_line_create_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -26,7 +26,7 @@ EFL_START_TEST (elm_code_line_create_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_line_token_count_test)
+EFL_START_TEST(elm_code_line_token_count_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -51,7 +51,7 @@ EFL_START_TEST (elm_code_line_token_count_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_line_split_test)
+EFL_START_TEST(elm_code_line_split_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;

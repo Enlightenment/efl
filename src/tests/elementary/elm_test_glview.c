@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_glview_legacy_type_check)
+EFL_START_TEST(elm_glview_legacy_type_check)
 {
    Evas_Object *win, *glview;
    const char *type;
@@ -29,7 +29,7 @@ EFL_START_TEST (elm_glview_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *glview;
    Efl_Access_Role role;
