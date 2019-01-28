@@ -4475,7 +4475,7 @@ _elm_map_region_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *lon, do
 }
 
 EOLIAN static void
-_elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
+_elm_map_efl_ui_zoom_zoom_animation_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -4499,7 +4499,7 @@ _elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_map_paused_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_efl_ui_zoom_zoom_animation_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    return sd->paused;
 }
@@ -5502,6 +5502,18 @@ EAPI Eina_Bool
 elm_map_wheel_disabled_get(const Evas_Object *obj)
 {
    return elm_interface_scrollable_wheel_disabled_get(obj);
+}
+
+EAPI void
+elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
+{
+   efl_ui_zoom_animation_set(obj, paused);
+}
+
+EAPI Eina_Bool
+elm_map_paused_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_animation_get(obj);
 }
 
 EOLIAN static Elm_Map_Overlay*
