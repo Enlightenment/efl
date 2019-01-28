@@ -17,14 +17,14 @@ main(int argc, char **argv)
    eina_init();
 
    list = eina_list_append(list, "caprica");
-   list = eina_list_append(list, "sagitarius");
+   list = eina_list_append(list, "sagittarius");
    list = eina_list_append(list, "aerilon");
    list = eina_list_append(list, "gemenon");
 
    list = eina_list_promote_list(list, eina_list_nth_list(list, 2));
    list = eina_list_demote_list(list, eina_list_nth_list(list, 2));
 
-   list = eina_list_remove(list, "sagitarius");
+   list = eina_list_remove(list, "sagittarius");
 
    l = eina_list_data_find_list(list, "aerilon");
    eina_list_data_set(l, "aquarius");

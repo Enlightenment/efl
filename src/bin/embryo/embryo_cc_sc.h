@@ -156,7 +156,7 @@ typedef struct __s_symbol
 
 /*  Possible entries for "usage"
  *
- *  This byte is used as a serie of bits, the syntax is different for
+ *  This byte is used as a series of bits, the syntax is different for
  *  functions and other symbols:
  *
  *  VARIABLE

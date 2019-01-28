@@ -1115,7 +1115,7 @@ EAPI int ecore_exe_run_priority_get(void);
  * @param   data    Data to attach to the returned process handle.
  * @return  A process handle to the spawned process.
  * @note When you use this function you will have no permissions
- * to write or read on the pipe that connects you with the spwaned process.
+ * to write or read on the pipe that connects you with the spawned process.
  * If you need to do that use ecore_exe_pipe_run() with the
  * appropriated flags.
  *
@@ -2507,9 +2507,9 @@ EAPI void ecore_pipe_freeze(Ecore_Pipe *p);
  * @brief Waits from another thread on the read side of a pipe.
  *
  * @param p The pipe to watch on.
- * @param message_count The minimal number of message to wait before exiting.
- * @param wait The amount of time in second to wait before exiting.
- * @return the number of message catched during that wait call.
+ * @param message_count The minimum number of messages to wait for before exiting.
+ * @param wait The amount of time in seconds to wait before exiting.
+ * @return The number of message caught during the wait call.
  * @since 1.1
  *
  * Negative value for @p wait means infite wait.
@@ -2908,7 +2908,7 @@ EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, dou
  * @li ECORE_POS_MAP_SPRING - Start at 0.0 then "wobble" like a spring rest
  * position 1.0, and wobble v2 times, with decay factor of v[0]
  * @li ECORE_POS_MAP_CUBIC_BEZIER - Use an interpolated cubic-bezier curve
- * ajusted with parameters from v[0] to v[3].
+ * adjusted with parameters from v[0] to v[3].
  * @note When not listed v has no effect.
  *
  * @image html ecore-pos-map.png

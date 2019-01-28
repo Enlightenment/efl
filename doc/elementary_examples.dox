@@ -617,7 +617,7 @@
  * project's build system, we're assuming they are the canonical ones.
  *
  * After the program starts, elm_app_info_set() will actually run and
- * then you'll see an intrincasy: Elementary does the prefix lookup @b
+ * then you'll see a problem: Elementary does the prefix lookup @b
  * twice. This is so because of the quicklaunch infrastructure in
  * Elementary (@ref Start), which will register a predefined prefix
  * for possible users of the launch schema. We're not hooking into a
@@ -2112,7 +2112,7 @@
  * We'll start this example in the same way
  * @ref map_example_01 "Map Example 1". Adding a map with buttons to control
  * zoom, so if you didn't read it yet, just do it now. Actually there is
- * a change, that we're aligning buttons to the top, since we wan't a
+ * a change, that we're aligning buttons to the top, since we want a
  * vertical control box this time.
  * @dontinclude map_example_03.c
  * @skipline elm_map_add
@@ -2125,8 +2125,8 @@
  * @skipline horizontal_set
  * @until align_set
  *
- * We'll add an entry with a preliminar address, that I know will
- * find a coordinate, to examplify names work. But you can try
+ * We'll add an entry with a preliminary address, that I know will
+ * find a coordinate, to exemplify how names work. But you can try
  * lots of addresses. From city or country names to pubs, or whatever
  * you want. To try is enough to run the example, type the address and
  * press "Route" button. This button will call a function that will
@@ -2220,7 +2220,7 @@
  * We are just adding the diskselector, so as you can see, defaults for it are:
  * @li Only 3 items visible each time.
  * @li Only 3 characters are displayed for labels on side positions.
- * @li The first added item remains centeres, i.e., it's the selected item.
+ * @li The first added item remains centered, i.e., it's the selected item.
  *
  * To add items, we are just appending it on a loop, using function
  * elm_diskselector_item_append(), that will be better explained on
@@ -2307,7 +2307,7 @@
  * The first parameter of elm_diskselector_item_append() is the diskselector
  * object, that we are receiving as data on our callback function.
  * The second one is a label, the string that will be placed in the center
- * of our item. As we don't wan't icons or callback functions, we can
+ * of our item. As we don't want icons or callback functions, we can
  * send NULL as third, fourth and fifth parameters.
  *
  * <b> Appending an item with icon: </b>
@@ -2543,7 +2543,7 @@
  * The first parameter of elm_list_item_prepend() is the list
  * object, that we are receiving as data on our callback function.
  * The second one is a label, the string that will be placed in the center
- * of our item. As we don't wan't icons or callback functions, we can
+ * of our item. As we don't want icons or callback functions, we can
  * send NULL as third, fourth, fifth and sixth parameters.
  *
  * <b> Appending an item: </b>
@@ -3033,7 +3033,7 @@
  * Note that we set on it both icon and label decorations. It's set to
  * list the contents of the @c "/tmp" directory, too, with
  * elm_fileselector_button_path_set(). What follows are checkboxes to
- * exercise some of its API funtions:
+ * exercise some of its API functions:
  * @dontinclude fileselector_button_example.c
  * @skip ck = elm_check_add
  * @until evas_object_show(en)
@@ -3107,7 +3107,7 @@
  * decorations. It's set to exhibit the path of (and list the contents
  * of, when internal file selector is launched) the @c "/tmp"
  * directory, also, with elm_fileselector_entry_path_set(). What
- * follows are checkboxes to exercise some of its API funtions:
+ * follows are checkboxes to exercise some of its API functions:
  * @dontinclude fileselector_entry_example.c
  * @skip ck = elm_check_add
  * @until callback_add(fs_entry
@@ -3370,7 +3370,7 @@
  * and what to do when the layout theme has its size changed. The full source
  * code for this example can be found at @ref layout_example_03_c.
  *
- * In this exmaple we will use another group from the same layout theme file
+ * In this example we will use another group from the same layout theme file
  * used in @ref layout_example_01. Its instantiation and loading happens in the
  * following lines:
  *
@@ -3909,7 +3909,7 @@
  * It will get the last index item selected's data and find the
  * respective index item handle(#Elm_Object_Item) with elm_index_item_find().
  * We need the latter to query the indexing letter string from, with
- * elm_index_item_letter_get(). Next, comes the delition, itself,
+ * elm_index_item_letter_get(). Next, comes the deletion itself,
  * which will also trigger the @c _index_item_del callback function,
  * as said above.
  *
@@ -4450,7 +4450,7 @@
  *
  * We'll begin by showing a few structures used throught the program. First,
  * the application owns data that holds the main window and the main entry
- * where the editting happens. Then, an auxiliar structure we'll use later
+ * where the editting happens. Then, an auxiliary structure we'll use later
  * when inserting icons in our text.
  * @dontinclude entry_example.c
  * @skip typedef
@@ -5451,7 +5451,7 @@
  * controls will exercise most of the slideshow's API functions.
  *
  * We create the slideshow, itself, first, making it @b loop on its
- * image itens, when in slideshow mode:
+ * image items, when in slideshow mode:
  * @dontinclude slideshow_example.c
  * @skip slideshow = elm_slideshow_add
  * @until evas_object_show
@@ -6218,7 +6218,7 @@
  * @skipline }
  * @skipline }
  *
- * Other @c INT type widget implementations may exist, as is exemplifyed
+ * Other @c INT type widget implementations may exist, as is exemplified
  * on the item that follows.
  *
  * @skip item {

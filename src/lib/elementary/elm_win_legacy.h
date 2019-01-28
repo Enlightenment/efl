@@ -172,7 +172,7 @@ EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const cha
  * This creates a window like elm_win_add() but also puts in a standard
  * background with elm_bg_add(), as well as setting the window title to
  * @p title. The window type created is of type ELM_WIN_DIALOG_BASIC.
- * This tipe of window will be handled in special mode by window managers
+ * This type of window will be handled in special mode by window managers
  * with regards of it's @p parent window.
  *
  * @return The created object, or @c NULL on failure
@@ -356,7 +356,7 @@ EAPI Ecore_Win32_Window *elm_win_win32_window_get(const Evas_Object *obj);
 /**
  * Set the preferred rotation value.
  *
- * This function is used to set the orientation of window @p obj to spicific angle fixed.
+ * This function is used to set the orientation of window @p obj to specific angle fixed.
  *
  * @param obj The window object
  * @param rotation The preferred rotation of the window in degrees (0-360),

@@ -376,7 +376,7 @@ mixin Efl.Access.Object requires Efl.Object
            properties.
 
            Translation domain should be set if the application wants to support i18n
-           for accessibily "name" and "description" properties.
+           for accessibility "name" and "description" properties.
 
            When translation domain is set, values of "name" and "description"
            properties will be translated with the dgettext function using the

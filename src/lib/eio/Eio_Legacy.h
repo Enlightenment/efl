@@ -594,7 +594,7 @@ EAPI Eio_File *eio_file_xattr(const char *path,
                   const void *data);
 
 /**
- * @brief Define an extented attribute on a file/directory.
+ * @brief Define an extended attribute on a file/directory.
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_int The value to link the attribute with.
@@ -616,7 +616,7 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
                       const void *data);
 
 /**
- * @brief Define an extented attribute on a file/directory.
+ * @brief Define an extended attribute on a file/directory.
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_double The value to link the attribute with.
@@ -637,7 +637,7 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
                      Eio_Error_Cb error_cb,
                      const void *data);
 /**
- * @brief Define a string extented attribute on a file/directory.
+ * @brief Define a string extended attribute on a file/directory.
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_string The string to link the attribute with.
@@ -658,7 +658,7 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
                      Eio_Error_Cb error_cb,
                      const void *data);
 /**
- * @brief Define an extented attribute on a file/directory.
+ * @brief Define an extended attribute on a file/directory.
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_data The data to link the attribute with.
@@ -1220,7 +1220,7 @@ EAPI Eio_Monitor *eio_monitor_add(const char *path);
  * @warning Do NOT pass non-stringshared strings to this function!
  *  If you don't know what this means, use eio_monitor_add().
  *
- * This fuction is just like eio_monitor_add(), however the string passed by
+ * This function is just like eio_monitor_add(), however the string passed by
  * argument must be created using eina_stringshare_add().
  */
 EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);

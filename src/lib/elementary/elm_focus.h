@@ -318,7 +318,7 @@ EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 
 /**
- * Get the focus movement policy from a given Elementary objet.
+ * Get the focus movement policy from a given Elementary object.
  *
  * @param obj The Elementary widget to get the information from
  * @return The focus movement policy

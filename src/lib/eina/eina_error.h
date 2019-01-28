@@ -147,7 +147,7 @@ EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNUL
  * @details This function modifies the message associated with @p error and changes
  *          it to @p msg. If the error is previously registered by @ref eina_error_msg_static_register
  *          then the string is not duplicated, otherwise the previous message
- *          is unrefed and @p msg is copied.
+ *          is unref'ed and @p msg is copied.
  *
  * @param[in] error The Eina_Error to change the message of
  * @param[in] msg The description of the error \n

@@ -63,7 +63,7 @@ class Elm.Genlist extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl
               from the left. This is true of course if the selection was
               made by clicking an unfocusable area in an item or selecting
               it with a key movement. Clicking on a focusable widget inside
-              an item will couse this particular item to get focus as usual.
+              an item will cause this particular item to get focus as usual.
             ]]
          }
          get {
@@ -241,12 +241,12 @@ class Elm.Genlist extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl
               will have to recalculate every item height again whenever
               the list width changes!
 
-              Note: Homogeneous mode is for that all items in the genlist
-              same width/height. With @Elm.List.Mode.compress, it makes genlist
-              items to fast initializing. However there's no sub-objects
-              in genlist which can be on the flying resizable (such as
-              TEXTBLOCK). If then, some dynamic esizable objects in
-              genlist would not diplayed properly.
+              Note: Homogeneous mode gives all items in the genlist the
+              same width/height. With @Elm.List.Mode.compress, genlist items
+              initialize fast, but there cannot be any sub-objects in the genlist
+              which require on-the-fly resizing (such as TEXTBLOCK).
+              In this case some dynamic resizable objects in the genlist might not
+              diplay properly.
             ]]
          }
          get {

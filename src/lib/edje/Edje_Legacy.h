@@ -2187,10 +2187,10 @@ EAPI void *edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, co
  * text is to be rejected, freeing it and setting the pointer to @c null will
  * make Edje break out of the filter cycle and reject the inserted text. This
  * function is different from edje_object_text_insert_filter_callback_add() in
- * that the text parameter in the fucn filter is always markup.
+ * that the text parameter in the func filter is always markup.
  *
  * @warning If you use this function with
- * edje_object_text_insert_filter_callback_add() togehter, all
+ * edje_object_text_insert_filter_callback_add() together, all
  * Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions will be
  * executed, and then filtered text will be inserted.
  *

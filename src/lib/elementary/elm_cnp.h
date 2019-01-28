@@ -175,7 +175,7 @@ typedef void (*Elm_Drag_State) (void *data, Evas_Object *obj);
  *
  * @param data Application specific data
  * @param obj The object where the drag started
- * @param accepted TRUE if the droppped-data is accepted on drop
+ * @param accepted TRUE if the dropped data is accepted on drop
  * @since 1.8
  */
 typedef void (*Elm_Drag_Done) (void *data, Evas_Object *obj, Eina_Bool accepted);

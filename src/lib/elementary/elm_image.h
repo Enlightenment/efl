@@ -55,7 +55,7 @@
  *                       if preload is enabled. (since 1.19)
  * @li @c "load,error" - Triggered if an async I/O or decoding error occurred,
  *                       if async open or preload is enabled (since 1.19)
- * @li @c "load,cancel" - Triggered whenener async I/O was cancelled. (since 1.19)
+ * @li @c "load,cancel" - Triggered whenever async I/O was cancelled. (since 1.19)
  *
  * An example of usage for this API follows:
  * @li @ref tutorial_image

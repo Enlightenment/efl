@@ -65,7 +65,7 @@ typedef struct _Elm_Layout_Smart_Data
 
    int                   frozen; /**< Layout freeze counter */
 
-   Eina_Bool             needs_size_calc : 1; /**< This flas is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
+   Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */

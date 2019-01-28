@@ -146,7 +146,7 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            other content is shown as the other side of the flip),
            #ELM_FLIP_ROTATE_YZ_CENTER_AXIS (rotate the currently visible
            content around a diagonal axis in the middle of its height, the
-           other content is hown as the other side of the flip).
+           other content is shown as the other side of the flip).
            #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
            left as if the flip was a cube, the other content is shown as the
            right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the

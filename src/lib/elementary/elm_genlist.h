@@ -199,7 +199,7 @@
  * scroller will scroll horizontally. Otherwise items are expanded to
  * fill the width of the viewport of the scroller. If it is
  * ELM_LIST_LIMIT, items will be expanded to the viewport width
- * if larger than the item, but genlist widget witdh is
+ * if larger than the item, but genlist widget width is
  * limited to the largest item. Do not use ELM_LIST_LIMIT mode with homogeneous
  * mode turned on. ELM_LIST_COMPRESS can be combined with a different style
  * that uses edjes' ellipsis feature (cutting text off like this: "tex...").
