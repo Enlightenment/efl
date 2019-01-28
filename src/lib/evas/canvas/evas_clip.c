@@ -318,7 +318,6 @@ EOLIAN void
 _efl_canvas_object_clip_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;
-   Evas_Public_Data *e;
 
    EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
 
