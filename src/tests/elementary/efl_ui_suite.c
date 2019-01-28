@@ -14,6 +14,7 @@ static const Efl_Test_Case etc[] = {
   //{ "elm_widget_focus", elm_test_widget_focus},
   { "efl_ui_atspi", efl_ui_test_atspi},
   { "efl_ui_grid", efl_ui_test_grid},
+  { "efl_ui_image_zoomable", efl_ui_test_image_zoomable},
   { NULL, NULL }
 };
 

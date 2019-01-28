@@ -18,6 +18,7 @@
 #include <Eo.h>
 void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
+void efl_ui_test_image_zoomable(TCase *tc);
 
 Eo *win_add();
 Eo *win_add_focused();
