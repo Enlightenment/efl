@@ -277,6 +277,19 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (tp->base_type)
              {
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
+                if (kwid == KW_inlist || kwid == KW_inarray)
+                  {
+                     if (database_type_is_ownable(src, tp->base_type, EINA_FALSE))
+                       {
+                          _eo_parser_log(&tp->base_type->base,
+                                         "%s can only contain value types (%s)",
+                                         tp->base.name, tp->base_type->base.name);
+                          return EINA_FALSE;
+                       }
+                     if (!_validate_type(vals, tp->base_type))
+                       return EINA_FALSE;
+                     return _validate(&tp->base);
+                  }
                 if (!tp->freefunc && kwid > KW_void)
                   {
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
