@@ -2190,7 +2190,8 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
         return;
      }
 
-   fseek(f, 0, SEEK_END);
+   if (fseek(f, 0, SEEK_END) < 0)
+     ERR("Error seeking");
    size = ftell(f);
    rewind(f);
 
