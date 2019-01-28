@@ -11,10 +11,6 @@
 
 #define MY_CLASS_NAME "Evas_Text"
 
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
-
 /* save typing */
 #define COL_OBJECT(obj, sub) ARGB_JOIN(obj->sub->color.a, obj->sub->color.r, obj->sub->color.g, obj->sub->color.b)
 #define COL_JOIN(o, sub, color) ARGB_JOIN(o->sub.color.a, o->sub.color.r, o->sub.color.g, o->sub.color.b)

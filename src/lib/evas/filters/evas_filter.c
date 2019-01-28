@@ -16,10 +16,6 @@
 
 #include "evas_filter.h"
 
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
-
 #include "evas_filter_private.h"
 #include <Ector.h>
 #include <software/Ector_Software.h>

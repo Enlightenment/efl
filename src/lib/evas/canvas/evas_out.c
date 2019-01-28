@@ -1,9 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 //#include "evas_cs.h"
-#ifdef EVAS_CSERVE2
-#include "evas_cs2_private.h"
-#endif
 
 static Evas_Public_Data *
 _efl_canvas_output_async_block(Efl_Canvas_Output *output)
