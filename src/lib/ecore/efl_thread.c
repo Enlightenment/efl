@@ -618,8 +618,10 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         pd->fd.out    = pipe_from_thread[0]; // read - output from child
         eina_file_close_on_exec(thdat->fd.in, EINA_TRUE);
         eina_file_close_on_exec(pd->fd.out, EINA_TRUE);
-        fcntl(thdat->fd.in, F_SETFL, O_NONBLOCK);
-        fcntl(pd->fd.out, F_SETFL, O_NONBLOCK);
+        if (fcntl(thdat->fd.in, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
+        if (fcntl(pd->fd.out, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         pd->fd.out_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
                   efl_loop_handler_fd_set(efl_added, pd->fd.out),
@@ -634,8 +636,10 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         thdat->fd.out = pipe_to_thread  [0]; // read - output from parent
         eina_file_close_on_exec(pd->fd.in, EINA_TRUE);
         eina_file_close_on_exec(thdat->fd.out, EINA_TRUE);
-        fcntl(thdat->fd.out, F_SETFL, O_NONBLOCK);
-        fcntl(pd->fd.in, F_SETFL, O_NONBLOCK);
+        if (fcntl(thdat->fd.out, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
+        if (fcntl(pd->fd.in, F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
         pd->fd.in_handler =
           efl_add(EFL_LOOP_HANDLER_CLASS, obj,
                   efl_loop_handler_fd_set(efl_added, pd->fd.in),
@@ -682,10 +686,14 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    thdat->ctrl.out = pipe_to_thread  [0]; // read - output from parent
    pd->ctrl.in     = pipe_to_thread  [1]; // write - input to child
    pd->ctrl.out    = pipe_from_thread[0]; // read - output from child
-   fcntl(thdat->ctrl.in, F_SETFL, O_NONBLOCK);
-   fcntl(thdat->ctrl.out, F_SETFL, O_NONBLOCK);
-   fcntl(pd->ctrl.in, F_SETFL, O_NONBLOCK);
-   fcntl(pd->ctrl.out, F_SETFL, O_NONBLOCK);
+   if (fcntl(thdat->ctrl.in, F_SETFL, O_NONBLOCK) < 0)
+     ERR("can't set pipe to NONBLOCK");
+   if (fcntl(thdat->ctrl.out, F_SETFL, O_NONBLOCK) < 0)
+     ERR("can't set pipe to NONBLOCK");
+   if (fcntl(pd->ctrl.in, F_SETFL, O_NONBLOCK) < 0)
+     ERR("can't set pipe to NONBLOCK");
+   if (fcntl(pd->ctrl.out, F_SETFL, O_NONBLOCK) < 0)
+     ERR("can't set pipe to NONBLOCK");
    eina_file_close_on_exec(pd->ctrl.in, EINA_TRUE);
    eina_file_close_on_exec(pd->ctrl.out, EINA_TRUE);
    eina_file_close_on_exec(thdat->ctrl.in, EINA_TRUE);

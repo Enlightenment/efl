@@ -247,7 +247,9 @@ _ecore_signal_pipe_init(void)
           }
         eina_file_close_on_exec(sig_pipe[0], EINA_TRUE);
         eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
-        fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK);
+        if (fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
+
      }
    _signalhandler_setup();
    if (!sig_pipe_handler)
