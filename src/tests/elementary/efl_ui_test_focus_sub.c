@@ -1,4 +1,4 @@
-#include "elm_test_focus_common.h"
+#include "efl_ui_test_focus_common.h"
 #include "focus_test_sub_main.eo.h"
 
 typedef struct {
@@ -231,7 +231,7 @@ EFL_START_TEST(correct_un_register)
 }
 EFL_END_TEST
 
-void elm_test_focus_sub(TCase *tc)
+void efl_ui_test_focus_sub(TCase *tc)
 {
    tcase_add_test(tc, correct_register);
    tcase_add_test(tc, correct_unregister);

@@ -1,6 +1,6 @@
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 
-#include "elm_test_focus_common.h"
+#include "efl_ui_test_focus_common.h"
 
 #define Q(o,_x,_y,_w,_h) \
   do {\
@@ -13,7 +13,7 @@
   } while (0)
 
 Efl_Ui_Focus_Object*
-elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
+focus_test_object_new(const char *name, int x, int y, int w, int h)
 {
    Efl_Ui_Focus_Object *ret;
 
@@ -26,28 +26,28 @@ elm_focus_test_object_new(const char *name, int x, int y, int w, int h)
 }
 
 void
-elm_focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
+focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
     Efl_Ui_Focus_Object **south,
     Efl_Ui_Focus_Object **north,
     Efl_Ui_Focus_Object **east,
     Efl_Ui_Focus_Object **west)
   {
 
-   *middle = elm_focus_test_object_new("middle", 40, 40, 20, 20);
-   *south = elm_focus_test_object_new("south", 40, 80, 20, 20);
-   *north = elm_focus_test_object_new("north", 40, 0, 20, 20);
-   *east = elm_focus_test_object_new("east", 80, 40, 20, 20);
-   *west = elm_focus_test_object_new("west", 0, 40, 20, 20);
+   *middle = focus_test_object_new("middle", 40, 40, 20, 20);
+   *south = focus_test_object_new("south", 40, 80, 20, 20);
+   *north = focus_test_object_new("north", 40, 0, 20, 20);
+   *east = focus_test_object_new("east", 80, 40, 20, 20);
+   *west = focus_test_object_new("west", 0, 40, 20, 20);
 }
 
 
 Efl_Ui_Focus_Manager*
-elm_focus_test_manager_new(Efl_Ui_Focus_Object **middle)
+focus_test_manager_new(Efl_Ui_Focus_Object **middle)
 {
    Efl_Ui_Focus_Object *root;
    Efl_Ui_Focus_Manager *m;
 
-   root = elm_focus_test_object_new("middle", 40, 40, 20, 20);
+   root = focus_test_object_new("middle", 40, 40, 20, 20);
    m = efl_add_ref(EFL_UI_FOCUS_MANAGER_CALC_CLASS, NULL,
      efl_ui_focus_manager_root_set(efl_added, root)
    );

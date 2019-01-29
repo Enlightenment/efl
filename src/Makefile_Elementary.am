@@ -1581,10 +1581,6 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget_text.c \
 	tests/elementary/elm_code_test_widget_selection.c \
 	tests/elementary/elm_code_test_widget_undo.c \
-	tests/elementary/elm_test_focus_common.c \
-	tests/elementary/elm_test_focus_common.h \
-	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c \
 	tests/elementary/elm_test_widget_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
@@ -1609,6 +1605,10 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_suite.c \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
+	tests/elementary/efl_ui_test_focus_common.c \
+	tests/elementary/efl_ui_test_focus_common.h \
+	tests/elementary/efl_ui_test_focus.c \
+	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \

@@ -81,8 +81,6 @@ void elm_test_panes(TCase *tc);
 void elm_test_slideshow(TCase *tc);
 void elm_test_spinner(TCase *tc);
 void elm_test_plug(TCase *tc);
-void elm_test_focus(TCase *tc);
-void elm_test_focus_sub(TCase *tc);
 void elm_test_widget_focus(TCase *tc);
 
 void elm_code_file_test_load(TCase *tc);
