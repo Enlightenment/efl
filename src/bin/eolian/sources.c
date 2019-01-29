@@ -291,7 +291,9 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
         eina_strbuf_append_char(*buf, ',');
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append(*buf, ")\n");
-        _generate_loop_content(buf, inner_type, iter_param);
+        eina_strbuf_append(*buf, "     {\n");
+        _write_free_call(*buf, eolian_type_free_func_get(type), iter_param, "     ");
+        eina_strbuf_append(*buf, "     }\n");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_ITERATOR)
      {
