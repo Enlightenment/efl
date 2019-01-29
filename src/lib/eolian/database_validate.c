@@ -171,6 +171,25 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
         if (!tp->freefunc && tp->base_type->freefunc)
           tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
         return _validate(&tp->base);
+      case EOLIAN_TYPEDECL_STRUCT_INLIST:
+        if (eina_hash_population(tp->fields) == 1)
+          {
+             Eina_Iterator *itr = eina_hash_iterator_data_new(tp->fields);
+             const Eolian_Struct_Type_Field *sf;
+             if (!eina_iterator_next(itr, (void **)&sf))
+               {
+                  _eo_parser_log(&tp->base, "internal error: failed fetching field");
+                  eina_iterator_free(itr);
+                  return EINA_FALSE;
+               }
+             eina_iterator_free(itr);
+             if (database_type_is_ownable(tp->base.unit, sf->type, EINA_FALSE))
+               {
+                  _eo_parser_log(&sf->base, "single-field inlist struct must contain a value type");
+                  return EINA_FALSE;
+               }
+          }
+        /* fallthrough */
       case EOLIAN_TYPEDECL_STRUCT:
         {
            Cb_Ret rt = { vals, EINA_TRUE };
@@ -1385,6 +1404,10 @@ database_validate(const Eolian_Unit *src)
      return EINA_FALSE;
 
    eina_hash_foreach(src->enums, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
+   if (!rt.succ)
+     return EINA_FALSE;
+
+   eina_hash_foreach(src->inlists, (Eina_Hash_Foreach)_typedecl_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 

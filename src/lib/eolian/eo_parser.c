@@ -133,6 +133,7 @@ _eolian_decl_name_get(Eolian_Object *obj)
              return "type alias";
            case EOLIAN_TYPEDECL_STRUCT:
            case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+           case EOLIAN_TYPEDECL_STRUCT_INLIST:
              return "struct";
            case EOLIAN_TYPEDECL_ENUM:
              return "enum";
@@ -433,13 +434,13 @@ _struct_field_free(Eolian_Struct_Type_Field *def)
 
 static Eolian_Typedecl *
 parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
-             int line, int column, const char *freefunc)
+             int line, int column, const char *freefunc, Eina_Bool is_inlist)
 {
    int bline = ls->line_number, bcolumn = ls->column;
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    def->is_extern = is_extern;
    def->base.name = name;
-   def->type = EOLIAN_TYPEDECL_STRUCT;
+   def->type = is_inlist ? EOLIAN_TYPEDECL_STRUCT_INLIST : EOLIAN_TYPEDECL_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
    if (freefunc)
      {
@@ -475,7 +476,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
      }
    check_match(ls, '}', '{', bline, bcolumn);
    FILL_BASE(def->base, ls, line, column, TYPEDECL);
-   database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def));
+   database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def), is_inlist);
    return def;
 }
 
@@ -2205,8 +2206,10 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
         }
       case KW_struct:
       case KW_enum:
+      case KW_inlist:
         {
            Eina_Bool is_enum = (ls->t.kw == KW_enum);
+           Eina_Bool is_inlist = (ls->t.kw == KW_inlist);
            const char *name;
            int line, col;
            const char *freefunc = NULL;
@@ -2217,6 +2220,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
              {
               case KW_at_extern:
                 CASE_LOCK(ls, extern, "@extern qualifier")
+                if (is_inlist)
+                  eo_lexer_syntax_error(ls, "inlist structs cannot be @extern");
                 eo_lexer_get(ls);
                 break;
               case KW_at_free:
@@ -2254,12 +2259,13 @@ postparams:
                 eo_lexer_context_restore(ls);
                 Eolian_Typedecl tdecl;
                 tdecl.base.type = EOLIAN_OBJECT_TYPEDECL;
-                tdecl.type = is_enum ? EOLIAN_TYPEDECL_ENUM : EOLIAN_TYPEDECL_STRUCT;
+                tdecl.type = is_inlist ? EOLIAN_TYPEDECL_STRUCT_INLIST :
+                  (is_enum ? EOLIAN_TYPEDECL_ENUM : EOLIAN_TYPEDECL_STRUCT);
                 redef_error(ls, decl, &tdecl.base);
              }
            eo_lexer_context_pop(ls);
            eo_lexer_dtor_pop(ls);
-           if (!is_enum && ls->t.token == ';')
+           if (!is_enum && !is_inlist && ls->t.token == ';')
              {
                 Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
                 def->is_extern = has_extern;
@@ -2273,13 +2279,13 @@ postparams:
                 eo_lexer_get(ls);
                 FILL_DOC(ls, def, doc);
                 FILL_BASE(def->base, ls, line, col, TYPEDECL);
-                database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def));
+                database_struct_add(ls->unit, eo_lexer_typedecl_release(ls, def), EINA_FALSE);
                 break;
              }
            if (is_enum)
              parse_enum(ls, name, has_extern, line, col);
            else
-             parse_struct(ls, name, has_extern, line, col, freefunc);
+             parse_struct(ls, name, has_extern, line, col, freefunc, is_inlist);
            break;
         }
       def:
