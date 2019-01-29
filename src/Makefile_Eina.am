@@ -296,7 +296,9 @@ bin_eina_eina_modinfo_eina_modinfo_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 ### Script
 
-bin_SCRIPTS += scripts/eina/eina-bench-cmp
+# disabled because its a pretty useless script that forces python as a
+# a dependency and doesn't parse anything efl or test apps produce
+# bin_SCRIPTS += scripts/eina/eina-bench-cmp
 
 ### Unit tests
 
