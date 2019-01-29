@@ -65,7 +65,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
 
-        if (pd->need_update || id->update_me || id->update_begin)
+        if (pd->need_update || (id && (id->update_me || id->update_begin)))
           {
              // Index begin with zero value :
              id->index = count;
@@ -198,14 +198,14 @@ _item_scroll_internal(Eo *obj,
    if (pd->dir == EFL_UI_DIR_HORIZONTAL)
      {
        ipos.y = view.y;
-       ipos.h = ipos.h;
+       //ipos.h = ipos.h;
 
        // FIXME: align case will not correctly show in the position because of
        //        bar size calculation. there are no certain way to know the scroll calcuation finished.
        if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
          {
             ipos.x = ipos.x + vpos.x - view.x;
-            ipos.w = ipos.w;
+            //ipos.w = ipos.w;
          }
        else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
                 (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
@@ -219,14 +219,14 @@ _item_scroll_internal(Eo *obj,
   else //VERTICAL
     {
        ipos.x = view.x;
-       ipos.w = ipos.w;
+       //ipos.w = ipos.w;
 
        // FIXME: align case will not correctly show in the position because of
        //        bar size calculation. there are no certain way to know the scroll calcuation finished.
        if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
          {
             ipos.y = ipos.y + vpos.y - view.y;
-            ipos.h = ipos.h;
+            //ipos.h = ipos.h;
          }
        else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
                 (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
@@ -711,6 +711,7 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
 
    min = efl_gfx_size_hint_combined_min_get(obj);
    max = efl_gfx_size_hint_max_get(obj);
+   efl_gfx_size_hint_weight_get(obj, &xw, &yw);
 
    if (pd->smanager)
      view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
@@ -923,7 +924,7 @@ _grid_item_deleted(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Efl_Ui_Grid_Item *it = event->object;
-   EFL_UI_GRID_DATA_GET(obj, pd);
+   EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
    _grid_item_unpack_internal(obj, pd, it);
 }
 
@@ -933,8 +934,8 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    //FIXME: This is tricky workaround for set select mode and parent value.
-   EFL_UI_GRID_ITEM_DATA_GET(it, gd);
-   EFL_UI_ITEM_DATA_GET(it, id);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
    id->select_mode = &(pd->select_mode);
    id->parent = obj;
    gd->parent = obj;
@@ -955,11 +956,11 @@ static void
 _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
 {
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it);
-   EFL_UI_GRID_ITEM_DATA_GET(it, ld);
-   EFL_UI_ITEM_DATA_GET(it, id);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
    id->select_mode = NULL;
    id->parent = NULL;
-   ld->parent = NULL;
+   gd->parent = NULL;
 
    pd->items = eina_list_remove(pd->items, it);
    if (efl_ui_item_selected_get(it))
@@ -1039,7 +1040,7 @@ EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
    pd->items = eina_list_append(pd->items, subobj);
 
    pid->update_me = EINA_TRUE;
@@ -1052,7 +1053,7 @@ EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
    pd->items = eina_list_prepend(pd->items, subobj);
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
@@ -1068,7 +1069,7 @@ _efl_ui_grid_efl_pack_linear_pack_before(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(existing, EINA_FALSE);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
@@ -1085,7 +1086,7 @@ _efl_ui_grid_efl_pack_linear_pack_after(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(existing, EINA_FALSE);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_append_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
@@ -1102,7 +1103,7 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    Efl_Ui_Grid_Item *existing = eina_list_nth(pd->items, index);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
