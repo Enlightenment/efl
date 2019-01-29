@@ -242,6 +242,53 @@ _generate_loop_content(Eina_Strbuf **buf, const Eolian_Type *inner_type, const E
    eina_strbuf_append(*buf, "     }\n");
 }
 
+static const Eolian_Typedecl *
+_have_struct_owned_fields(const Eolian_Type *tp)
+{
+   const Eolian_Type *btp = eolian_type_aliased_base_get(tp);
+   const Eolian_Typedecl *tdecl = eolian_type_typedecl_get(btp);
+   if (!tdecl || eolian_typedecl_type_get(tdecl) != EOLIAN_TYPEDECL_STRUCT)
+     return NULL;
+
+   Eina_Iterator *itr = eolian_typedecl_struct_fields_get(tdecl);
+   const Eolian_Struct_Type_Field *sf;
+   EINA_ITERATOR_FOREACH(itr, sf)
+     {
+        const Eolian_Type *ftp = eolian_typedecl_struct_field_type_get(sf);
+        if (eolian_type_is_owned(ftp))
+          {
+             eina_iterator_free(itr);
+             return tdecl;
+          }
+     }
+   eina_iterator_free(itr);
+   return NULL;
+}
+
+static void
+_generate_inarray_loop(Eina_Strbuf **buf, const Eolian_Typedecl *tdecl,
+                       const Eina_Strbuf *iter_param)
+{
+   eina_strbuf_append(*buf, "     {\n");
+   Eina_Iterator *itr = eolian_typedecl_struct_fields_get(tdecl);
+   const Eolian_Struct_Type_Field *sf;
+   Eina_Strbuf *fldbuf = eina_strbuf_new();
+   EINA_ITERATOR_FOREACH(itr, sf)
+     {
+        const Eolian_Type *ftp = eolian_typedecl_struct_field_type_get(sf);
+        if (!eolian_type_is_owned(ftp))
+          continue;
+        eina_strbuf_reset(fldbuf);
+        eina_strbuf_append_buffer(fldbuf, iter_param);
+        eina_strbuf_append(fldbuf, "->");
+        eina_strbuf_append(fldbuf, eolian_typedecl_struct_field_name_get(sf));
+        _generate_normal_free(buf, ftp, fldbuf, "     ");
+     }
+   eina_strbuf_free(fldbuf);
+   eina_iterator_free(itr);
+   eina_strbuf_append(*buf, "     }\n");
+}
+
 static void
 _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolian_Type *inner_type, Eolian_Function_Parameter *parameter, Eina_Strbuf *param)
 {
@@ -276,12 +323,16 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
      }
    else if (t == EOLIAN_TYPE_BUILTIN_INARRAY)
      {
-        eina_strbuf_append_printf(*buf, "   EINA_INARRAY_FOREACH(");
-        eina_strbuf_append_buffer(*buf, param);
-        eina_strbuf_append_char(*buf, ',');
-        eina_strbuf_append_buffer(*buf, iter_param);
-        eina_strbuf_append(*buf, ")\n");
-        _generate_loop_content(buf, inner_type, iter_param);
+        const Eolian_Typedecl *ts = _have_struct_owned_fields(inner_type);
+        if (ts)
+          {
+             eina_strbuf_append_printf(*buf, "   EINA_INARRAY_FOREACH(");
+             eina_strbuf_append_buffer(*buf, param);
+             eina_strbuf_append_char(*buf, ',');
+             eina_strbuf_append_buffer(*buf, iter_param);
+             eina_strbuf_append(*buf, ")\n");
+             _generate_inarray_loop(buf, ts, iter_param);
+          }
         _write_free_call(*buf, "eina_inarray_free", param, "");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_INLIST)
