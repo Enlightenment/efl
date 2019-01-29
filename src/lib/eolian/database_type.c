@@ -257,7 +257,7 @@ Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_T
 {
    if (tp->type != EOLIAN_TYPE_REGULAR)
      return NULL;
-   if (tp->tdecl)
+   if (tp->tdecl && tp->tdecl->type != EOLIAN_TYPEDECL_STRUCT_INLIST)
      return tp->tdecl;
    /* try looking up if it belongs to a struct, enum or an alias... otherwise
     * return NULL, but first check for builtins
@@ -267,7 +267,12 @@ Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *unit, const Eolian_T
      {
         Eolian_Object *decl = eina_hash_find(unit->objects, tp->base.name);
         if (decl && decl->type == EOLIAN_OBJECT_TYPEDECL)
-          return (Eolian_Typedecl *)decl;
+          {
+             Eolian_Typedecl *ret = (Eolian_Typedecl *)decl;
+             if (ret->type == EOLIAN_TYPEDECL_STRUCT_INLIST)
+               return NULL;
+             return ret;
+          }
      }
    return NULL;
 }
