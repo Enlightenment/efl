@@ -25,6 +25,10 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
       OPTS="$OPTS $DISABLED_LINUX_COPTS"
     fi
 
+    if [ "$1" = "wayland" ]; then
+      OPTS="$OPTS $WAYLAND_LINUX_COPTS"
+    fi
+
     if [ "$1" = "release-ready" ]; then
       OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
     fi
@@ -93,6 +97,10 @@ else
 
     if [ "$1" = "options-disabled" ]; then
       OPTS="$OPTS $DISABLED_LINUX_COPTS"
+    fi
+
+    if [ "$1" = "wayland" ]; then
+      OPTS="$OPTS $WAYLAND_LINUX_COPTS"
     fi
 
     if [ "$1" = "release-ready" ]; then

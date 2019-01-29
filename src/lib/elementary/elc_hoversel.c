@@ -245,6 +245,7 @@ _sizing_eval(void *data)
    Eina_Rectangle base, adjusted, parent;
 
    ELM_HOVERSEL_DATA_GET(obj, sd);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
 
    if (sd->resize_job)
      sd->resize_job = NULL;

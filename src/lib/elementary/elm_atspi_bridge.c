@@ -1755,8 +1755,7 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
           {
              eldbus_message_iter_basic_append(iter_struct, 'i', range->start_offset);
              eldbus_message_iter_basic_append(iter_struct, 'i', range->end_offset);
-             range->content = range->content ? range->content : strdup("");
-             eldbus_message_iter_basic_append(iter_struct, 's', range->content);
+             eldbus_message_iter_basic_append(iter_struct, 's', range->content ? range->content : "");
              /* AT-SPI specification requires variant type in return, however
               * ATK or other implementations as well as AT Clients don't use it .
               * To cover spec a dummy value will be returned */
@@ -1768,8 +1767,7 @@ _text_bounded_ranges_get(const Eldbus_Service_Interface *iface, const Eldbus_Mes
                }
              eldbus_message_iter_container_close(iter_array, iter_struct);
           }
-        if (range->content) free(range->content);
-        free(range);
+        elm_atspi_text_text_range_free(range);
      }
 
    eldbus_message_iter_container_close(iter, iter_array);

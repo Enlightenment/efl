@@ -6,6 +6,7 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_WIDGET_PART_BG_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_LAYOUT_CALC_PROTECTED
 
 #include <Elementary.h>
 
@@ -1756,6 +1757,41 @@ _efl_ui_layout_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
    elm_layout_sizing_eval(obj);
 
    return 0;
+}
+
+EOLIAN void
+_efl_ui_layout_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED, Eina_Bool update)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_layout_calc_auto_update_hints_set(wd->resize_obj, update);
+}
+
+EOLIAN Eina_Bool
+_efl_ui_layout_efl_layout_calc_calc_auto_update_hints_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   return efl_layout_calc_auto_update_hints_get(wd->resize_obj);
+}
+
+EOLIAN Eina_Size2D
+_efl_ui_layout_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED, Eina_Size2D restricted)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, restricted);
+   return efl_layout_calc_size_min(wd->resize_obj, restricted);
+}
+
+EOLIAN Eina_Rect
+_efl_ui_layout_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, (Eina_Rect){.rect = {0, 0, 0, 0}});
+   return efl_layout_calc_parts_extends(wd->resize_obj);
+}
+
+EOLIAN void
+_efl_ui_layout_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_layout_calc_force(wd->resize_obj);
 }
 
 static Eina_Bool

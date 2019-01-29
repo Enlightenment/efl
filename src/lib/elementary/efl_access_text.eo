@@ -20,14 +20,14 @@ enum Efl.Access.Text_Clip_Type
    both [[Both clip types]]
 }
 
-struct Efl.Access.Text_Attribute
+struct @free(elm_atspi_text_text_attribute_free) Efl.Access.Text_Attribute
 {
    [[Text attribute]]
    name:  string; [[Text attribute name]]
    value: string; [[Text attribute value]]
 }
 
-struct Efl.Access.Text_Range
+struct @free(elm_atspi_text_text_range_free) Efl.Access.Text_Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]

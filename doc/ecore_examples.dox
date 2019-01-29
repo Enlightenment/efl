@@ -1575,7 +1575,7 @@
  * @skip ecore_main_fd_handler_add
  * @until ;
  *
- * If you don't remenber the parameters of @ref ecore_main_fd_handler_add,
+ * If you don't remember the parameters of @ref ecore_main_fd_handler_add,
  * please check its documentation.
  *
  * Now that we have our handler registered we will start the ecore's main loop:

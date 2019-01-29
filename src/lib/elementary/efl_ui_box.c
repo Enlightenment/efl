@@ -182,6 +182,14 @@ _efl_ui_box_efl_container_content_count(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED
 }
 
 EOLIAN static Eina_Bool
+_efl_ui_box_efl_container_content_remove(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Entity *content)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
+
+   return evas_object_box_remove(wd->resize_obj, content);
+}
+
+EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_pack_clear(Eo *obj, Efl_Ui_Box_Data *pd)
 {
    Eina_Bool ret;

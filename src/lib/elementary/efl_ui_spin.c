@@ -310,7 +310,7 @@ _efl_ui_spin_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Spin_Data *sd, void *fu
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, double min, double max)
+_efl_ui_spin_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, double min, double max)
 {
    if (max < min)
      {
@@ -331,14 +331,14 @@ _efl_ui_spin_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, doubl
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double *min, double *max)
+_efl_ui_spin_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double step)
+_efl_ui_spin_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double step)
 {
    if (step <= 0)
      {
@@ -350,13 +350,13 @@ _efl_ui_spin_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *
 }
 
 EOLIAN static double
-_efl_ui_spin_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
+_efl_ui_spin_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double val)
+_efl_ui_spin_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double val)
 {
    if (val < sd->val_min)
      val = sd->val_min;
@@ -378,7 +378,7 @@ _efl_ui_spin_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double 
 }
 
 EOLIAN static double
-_efl_ui_spin_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
+_efl_ui_spin_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
 {
    return sd->val;
 }

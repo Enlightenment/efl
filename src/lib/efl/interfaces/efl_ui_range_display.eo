@@ -1,6 +1,7 @@
-interface Efl.Ui.Range
+interface Efl.Ui.Range_Display
 {
-   [[Efl UI progress interface]]
+   [[Interface that contains properties regarding the displaying of a range.]]
+   eo_prefix: efl_ui_range;
    methods {
       @property range_value {
          [[Control the range value (in percentage) on a given range widget
@@ -26,7 +27,7 @@ interface Efl.Ui.Range
 
               If actual value is less than $min, it will be updated to $min.
               If it is bigger then $max, will be updated to $max. The actual value
-              can be obtained with @Efl.Ui.Range.range_value.get
+              can be obtained with @Efl.Ui.Range_Display.range_value.get
 
               The minimum and maximum values may be different for each class.
 
@@ -44,22 +45,6 @@ interface Efl.Ui.Range
          values {
             min: double; [[The minimum value.]]
             max: double; [[The maximum value.]]
-         }
-      }
-      @property range_step {
-         [[Control the step used to increment or decrement values for given widget.
-
-           This value will be incremented or decremented to the displayed value.
-
-           By default step value is equal to 1.
-
-           Warning: The step value should be bigger than 0.]]
-         set {
-         }
-         get {
-         }
-         values {
-           step: double; [[The step value.]]
          }
       }
    }

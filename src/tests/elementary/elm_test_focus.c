@@ -144,6 +144,8 @@ EFL_START_TEST(pos_check2)
 
 #undef ck_assert_set_eq
 
+   efl_ui_focus_relation_free(rel);
+
    efl_unref(middle);
    efl_unref(north_east);
    efl_unref(north_west);

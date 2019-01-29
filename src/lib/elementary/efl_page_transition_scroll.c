@@ -64,72 +64,17 @@ _page_info_allocate(Efl_Page_Transition_Scroll_Data *pd,
    pd->tail->next = pd->head;
 }
 
-static void
-_content_show(Efl_Page_Transition_Scroll_Data *pd,
-              Efl_Page_Transition_Data *spd)
-{
-   Eina_List *list;
-   Page_Info *pi;
-   int tmp_id;
-   Eo *tmp;
-   int curr_page, cnt;
-
-   curr_page = efl_ui_pager_current_page_get(spd->pager.obj);
-   cnt = efl_content_count(spd->pager.obj);
-
-   // at this point, the number of visible pages might have been changed,
-   // so empty all boxes and refill them with the right contents.
-   // FIXME make logic efficient: don't have to empty all and fill all the time
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
-     {
-        if (pi->content)
-          {
-             efl_pack_unpack(pi->obj, pi->content);
-             efl_canvas_object_clip_set(pi->content, pd->backclip);
-
-             pi->content_num = -1;
-             pi->content = NULL;
-             pi->visible = EINA_FALSE;
-          }
-        efl_canvas_object_clip_set(pi->obj, pd->backclip);
-     }
-
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
-     {
-        if (pi->vis_page)
-          {
-             tmp_id = (curr_page + pi->pos + cnt) % cnt;
-
-             if ((spd->loop == EFL_UI_PAGER_LOOP_DISABLED)
-                 && ((pi->pos) * (tmp_id - curr_page) < 0)) continue;
-
-             tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
-             if (tmp)
-               {
-                  efl_canvas_object_clip_set(pi->obj, pd->foreclip);
-
-                  efl_pack(pi->obj, tmp);
-                  efl_canvas_object_clip_set(tmp, pd->foreclip);
-
-                  pi->content_num = tmp_id;
-                  pi->content = tmp;
-                  pi->visible = EINA_TRUE;
-               }
-          }
-     }
-}
-
 //FIXME use ecore_job
 static void
 _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
                            Efl_Page_Transition_Data *spd)
 {
-   Eina_List *list;
-   Page_Info *pi;
-   int content_w;
+   Page_Info *curr;
+   Eo *tmp;
+   int content_w, tmp_id, curr_page, cnt;
 
-   content_w = spd->page_spec.sz.w
-      + ((spd->page_spec.sz.w + spd->page_spec.padding) * pd->side_page_num * 2);
+   content_w = (spd->page_spec.sz.w * (pd->side_page_num * 2 + 1))
+      + (spd->page_spec.padding * pd->side_page_num * 2);
 
    if (content_w < spd->pager.w)
      {
@@ -150,36 +95,76 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
 
    efl_gfx_entity_geometry_set(pd->foreclip, (Eina_Rect) pd->viewport);
 
-   // this loop resets the geometry of each page based on the geometry of
-   // the pager object, the page size, and the padding size.
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
+   curr_page = efl_ui_pager_current_page_get(spd->pager.obj);
+   cnt = efl_content_count(spd->pager.obj);
+
+   curr = pd->head;
+   do
      {
-        EINA_RECTANGLE_SET(&pi->geometry,
+        EINA_RECTANGLE_SET(&curr->geometry,
                            spd->pager.x + (spd->pager.w / 2)
-                           + pi->pos * (spd->page_spec.sz.w + spd->page_spec.padding)
+                           + curr->pos * (spd->page_spec.sz.w + spd->page_spec.padding)
                            - (spd->page_spec.sz.w / 2),
                            spd->pager.y + (spd->pager.h / 2) - (spd->page_spec.sz.h / 2),
                            spd->page_spec.sz.w,
                            spd->page_spec.sz.h);
 
-        if (eina_rectangles_intersect(&pi->geometry, &pd->viewport) &&
-            ((pi->id != 0) && (pi->id != (pd->page_info_num - 1))))
+        efl_gfx_entity_geometry_set(curr->obj, (Eina_Rect) curr->geometry);
+
+        if (!eina_rectangles_intersect(&curr->geometry, &pd->viewport))
           {
-             pi->vis_page = EINA_TRUE;
-             pi->visible = EINA_TRUE;
-             efl_canvas_object_clip_set(pi->obj, pd->foreclip);
+             if (curr->visible)
+               {
+                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+
+                  efl_pack_unpack(curr->obj, curr->content);
+                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+
+                  curr->content_num = -1;
+                  curr->content = NULL;
+                  curr->visible = EINA_FALSE;
+               }
           }
         else
           {
-             pi->vis_page = EINA_FALSE;
-             pi->visible = EINA_FALSE;
-             efl_canvas_object_clip_set(pi->obj, pd->backclip);
+             tmp_id = curr_page + curr->pos;
+             if (spd->loop == EFL_UI_PAGER_LOOP_ENABLED)
+               tmp_id = (tmp_id + cnt) % cnt;
+
+             if ((abs(curr->pos) < cnt) &&
+                 (tmp_id >= 0) &&
+                 (tmp_id < cnt))
+               {
+                  if (curr->content_num != tmp_id)
+                    {
+                       tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
+
+                       efl_canvas_object_clip_set(curr->obj, pd->foreclip);
+
+                       efl_pack(curr->obj, tmp);
+                       efl_canvas_object_clip_set(tmp, pd->foreclip);
+
+                       curr->content_num = tmp_id;
+                       curr->content = tmp;
+                       curr->visible = EINA_TRUE;
+                    }
+               }
+             else if (curr->content)
+               {
+                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+
+                  efl_pack_unpack(curr->obj, curr->content);
+                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+
+                  curr->content_num = -1;
+                  curr->content = NULL;
+                  curr->visible = EINA_FALSE;
+               }
           }
 
-        efl_gfx_entity_geometry_set(pi->obj, (Eina_Rect) pi->geometry);
-     }
+        curr = curr->next;
 
-   if (efl_content_count(spd->pager.obj) > 0) _content_show(pd, spd);
+     } while (curr != pd->head);
 }
 
 static void
@@ -299,11 +284,10 @@ _efl_page_transition_scroll_update(Eo *obj,
 {
    EFL_PAGE_TRANSITION_DATA_GET(obj, spd);
 
+   Page_Info *start, *dummy, *curr, *target;
+   Eo *tmp;
    double t;
    int tmp_id, curr_page, cnt;
-   Eo *tmp;
-   Eina_List *list;
-   Page_Info *pi, *tpi;
 
    t = pos;
    if (t < 0) t *= (-1);
@@ -315,70 +299,102 @@ _efl_page_transition_scroll_update(Eo *obj,
    // 1. the geometry of each page needs to be changed
    // 2. if a page gets out of the viewport, it needs to be hidden
    // 3. if a page gets into the viewport, it needs to be shown
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
+
+   if (pos < 0) // if scrolled right, each page takes next page's position
      {
-        if (pos < 0) // if scrolled right, each page takes next page's position
-          tpi = pi->next;
-        else // else if scrolled left, each page takes prev page's position
-          tpi = pi->prev;
+        start = pd->head;
+        dummy = pd->tail;
+     }
+   else // if scrolled left, each page takes prev page's position
+     {
+        start = pd->tail;
+        dummy = pd->head;
+     }
 
-        EINA_RECTANGLE_SET(&pi->temp,
-                           tpi->geometry.x * t + pi->geometry.x * (1 - t),
-                           tpi->geometry.y,
-                           tpi->geometry.w,
-                           tpi->geometry.h);
+   if (dummy->visible)
+     {
+        efl_canvas_object_clip_set(dummy->obj, pd->backclip);
+        efl_pack_unpack(dummy->obj, dummy->content);
+        efl_canvas_object_clip_set(dummy->content, pd->backclip);
 
-        efl_gfx_entity_geometry_set(pi->obj, (Eina_Rect) pi->temp);
+        dummy->content_num = -1;
+        dummy->content = NULL;
+        dummy->visible = EINA_FALSE;
+     }
 
-        if (!pi->vis_page && !tpi->vis_page) continue;
+   curr = start;
+   do
+     {
+        if (pos < 0) target = curr->next;
+        else target = curr->prev;
 
-        if (!eina_rectangles_intersect(&pi->temp, &pd->viewport))
+        EINA_RECTANGLE_SET(&curr->temp,
+                           target->geometry.x * t + curr->geometry.x * (1 - t),
+                           target->geometry.y,
+                           target->geometry.w,
+                           target->geometry.h);
+        efl_gfx_entity_geometry_set(curr->obj, (Eina_Rect) curr->temp);
+
+        if (!eina_rectangles_intersect(&curr->temp, &pd->viewport))
           {
-             if (pi->content)
+             if (curr->visible)
                {
-                  efl_canvas_object_clip_set(pi->obj, pd->backclip);
+                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
 
-                  efl_pack_unpack(pi->obj, pi->content);
-                  efl_canvas_object_clip_set(pi->content, pd->backclip);
+                  efl_pack_unpack(curr->obj, curr->content);
+                  efl_canvas_object_clip_set(curr->content, pd->backclip);
 
-                  pi->content_num = -1;
-                  pi->content = NULL;
-                  pi->visible = EINA_FALSE;
-
+                  curr->content_num = -1;
+                  curr->content = NULL;
+                  curr->visible = EINA_FALSE;
                }
           }
         else
           {
-             tmp_id = (curr_page + pi->pos + cnt) % cnt;
-             if (pi->content_num != tmp_id)
+             tmp_id = curr_page + curr->pos;
+             if (spd->loop == EFL_UI_PAGER_LOOP_ENABLED)
+               tmp_id = (tmp_id + cnt) % cnt;
+
+             if ((abs(curr->pos) < cnt) &&
+                 (tmp_id >= 0) &&
+                 (tmp_id < cnt))
                {
-                  if (pi->content) //FIXME if the content num is the same, do nothing
-                    {
-                       efl_pack_unpack(pi->obj, pi->content);
-                       efl_canvas_object_clip_set(pi->content, pd->backclip);
-
-                       pi->content_num = -1;
-                       pi->content = NULL;
-                    }
-
-                  if ((spd->loop == EFL_UI_PAGER_LOOP_DISABLED)
-                      && ((pi->pos) * (tmp_id - curr_page) < 0)) continue;
                   tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
 
-                  if (tmp)
+                  if (curr->content != tmp)
                     {
-                       efl_canvas_object_clip_set(pi->obj, pd->foreclip);
+                       if (curr->content)
+                         {
+                            efl_pack_unpack(curr->obj, curr->content);
+                            efl_canvas_object_clip_set(curr->content, pd->backclip);
+                         }
 
-                       efl_pack(pi->obj, tmp);
+                       efl_canvas_object_clip_set(curr->obj, pd->foreclip);
+
+                       efl_pack(curr->obj, tmp);
                        efl_canvas_object_clip_set(tmp, pd->foreclip);
 
-                       pi->content_num = tmp_id;
-                       pi->content = tmp;
-                       pi->visible = EINA_TRUE;
+                       curr->content_num = tmp_id;
+                       curr->content = tmp;
+                       curr->visible = EINA_TRUE;
                     }
                }
+             else if (curr->content)
+               {
+                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+
+                  efl_pack_unpack(curr->obj, curr->content);
+                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+
+                  curr->content_num = -1;
+                  curr->content = NULL;
+                  curr->visible = EINA_FALSE;
+               }
           }
-     }
+
+        curr = target;
+
+     } while (target != dummy);
 }
 
 EOLIAN static void
@@ -405,32 +421,20 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
           }
         pi->pos = pi->id - (pd->side_page_num + 1);
 
-        if (!target) return;
-
         EINA_RECTANGLE_SET(&pi->temp,
                            target->geometry.x,
                            target->geometry.y,
                            target->geometry.w,
                            target->geometry.h);
+     }
 
-        if (eina_rectangles_intersect(&pi->temp, &pd->viewport) &&
-            (pi->id != 0) && (pi->id != (pd->page_info_num - 1)))
-          {
-             pi->vis_page = EINA_TRUE;
-             pi->visible = EINA_TRUE;
-             efl_canvas_object_clip_set(pi->obj, pd->foreclip);
-          }
-        else
-          {
-             pi->vis_page = EINA_FALSE;
-             pi->visible = EINA_FALSE;
-             efl_canvas_object_clip_set(pi->obj, pd->backclip);
-             if (pi->content)
-               {
-                  efl_pack_unpack(pi->obj, pi->content);
-                  efl_canvas_object_clip_set(pi->content, pd->backclip);
-               }
-          }
+   EINA_LIST_FOREACH(pd->page_infos, list, pi)
+     {
+        EINA_RECTANGLE_SET(&pi->geometry,
+                           pi->temp.x,
+                           pi->temp.y,
+                           pi->temp.w,
+                           pi->temp.h);
      }
 
    if (EINA_DBL_EQ(pos, 1.0))
@@ -442,15 +446,6 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
      {
         pd->head = pd->head->prev;
         pd->tail = pd->tail->prev;
-     }
-
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
-     {
-        EINA_RECTANGLE_SET(&pi->geometry,
-                           pi->temp.x,
-                           pi->temp.y,
-                           pi->temp.w,
-                           pi->temp.h);
      }
 }
 
@@ -551,18 +546,66 @@ _efl_page_transition_scroll_side_page_num_set(Eo *obj,
    _page_info_geometry_change(pd, spd);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_page_transition_scroll_loop_set(Eo *obj,
                                      Efl_Page_Transition_Scroll_Data *pd,
                                      Efl_Ui_Pager_Loop loop)
 {
    EFL_PAGE_TRANSITION_DATA_GET(obj, spd);
+   int tmp_id, curr_page, cnt;
+   Page_Info *curr;
+   Eo *tmp;
 
-   if (spd->loop == loop) return;
+   if (loop == efl_ui_pager_loop_mode_get(spd->pager.obj))
+     return EINA_TRUE;
+
+   if ((loop == EFL_UI_PAGER_LOOP_ENABLED) &&
+       (efl_content_count(spd->pager.obj) < (pd->page_info_num - 1)))
+     return EINA_FALSE;
 
    efl_page_transition_loop_set(efl_super(obj, MY_CLASS), loop);
 
-   _content_show(pd, spd);
+   curr_page = efl_ui_pager_current_page_get(spd->pager.obj);
+   cnt = efl_content_count(spd->pager.obj);
+
+   curr = pd->head->next;
+   do
+     {
+        tmp_id = curr_page + curr->pos;
+        if ((tmp_id < 0) || (tmp_id >= cnt))
+          {
+             switch (loop)
+               {
+                case EFL_UI_PAGER_LOOP_ENABLED:
+                   tmp_id = (tmp_id + cnt) % cnt;
+                   tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
+
+                   efl_pack(curr->obj, tmp);
+                   efl_canvas_object_clip_set(tmp, pd->foreclip);
+
+                   curr->content_num = tmp_id;
+                   curr->content = tmp;
+                   curr->visible = EINA_TRUE;
+
+                   break;
+
+                case EFL_UI_PAGER_LOOP_DISABLED:
+                   efl_pack_unpack(curr->obj, curr->content);
+                   efl_canvas_object_clip_set(curr->content, pd->backclip);
+
+                   curr->content_num = -1;
+                   curr->content = NULL;
+                   curr->visible = EINA_FALSE;
+
+                   break;
+               }
+          }
+
+        curr = curr->next;
+
+     } while (curr != pd->tail);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eo *
@@ -585,7 +628,6 @@ _efl_page_transition_scroll_efl_object_invalidate(Eo *obj,
 
    EINA_LIST_FREE(pd->page_infos, pi)
      {
-        efl_del(pi->obj);
         free(pi);
      }
 

@@ -14,6 +14,7 @@ struct _Efl_Page_Indicator_Data
    Efl_Ui_Box              *idbox;
 
    int                      cnt;
+   int                      curr_idx;
 };
 
 #define EFL_PAGE_INDICATOR_DATA_GET(o, pd) \

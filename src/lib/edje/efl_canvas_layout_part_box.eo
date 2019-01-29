@@ -1,5 +1,5 @@
 class Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements Efl.Pack_Linear,
-                                  Efl.Ui.Direction
+                                  Efl.Ui.Direction_Readonly
 {
    [[Represents a Box created as part of a layout.
 

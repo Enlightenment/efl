@@ -87,4 +87,8 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       download,done: void; [[Called when photocam download finished]]
       download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
    }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
+   }
 }

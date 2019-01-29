@@ -383,14 +383,20 @@ _efl_access_object_relations_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Da
    return eina_list_iterator_new(pd->relations);
 }
 
+EAPI void
+efl_access_attribute_free(Efl_Access_Attribute *attr)
+{
+   eina_stringshare_del(attr->key);
+   eina_stringshare_del(attr->value);
+   free(attr);
+}
+
 EAPI void efl_access_attributes_list_free(Eina_List *list)
 {
    Efl_Access_Attribute *attr;
    EINA_LIST_FREE(list, attr)
      {
-        eina_stringshare_del(attr->key);
-        eina_stringshare_del(attr->value);
-        free(attr);
+        efl_access_attribute_free(attr);
      }
 }
 
@@ -443,7 +449,7 @@ _efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED
    return ret;
 }
 
-EOLIAN void 
+EOLIAN void
 _efl_access_object_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
 {
    Eina_List *l, *l2;

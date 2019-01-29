@@ -27,16 +27,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Slider sl2(instantiate, win);
    efl::ui::Image ic(instantiate, win);
-   ic.icon_set("home");
+   ic.icon_set("folder");
    ic.scalable_set(false, false);
-   sl2.content_set(ic);
-
-   efl::ui::Image ic2(instantiate, win);
-   ic2.icon_set("folder");
-   ic2.scalable_set(false, false);
    // FIXME: C++ part API needs special reference handling! This will show ERR!
    efl::eo::downcast<efl::Content>(sl2.part_get("elm.swallow.end"))
-         .content_set(ic2);
+         .content_set(ic);
 
    sl2.hint_fill_set(true, false);
    bx.pack_end(sl2);

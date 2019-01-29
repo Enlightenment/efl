@@ -1,4 +1,4 @@
-class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range,
+class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive,
                         Efl.Access.Widget.Action,
                         Efl.Ui.Selectable, Efl.Ui.Legacy
 {
@@ -163,9 +163,9 @@ class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range,
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Range.range_min_max { get; set; }
-      Efl.Ui.Range.range_step { get; set; }
-      Efl.Ui.Range.range_value { get; set; }
+      Efl.Ui.Range_Display.range_min_max { get; set; }
+      Efl.Ui.Range_Interactive.range_step { get; set; }
+      Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {

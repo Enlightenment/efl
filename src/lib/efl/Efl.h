@@ -96,8 +96,10 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_orientation.eo.h"
 #include "interfaces/efl_ui_i18n.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
+#include "interfaces/efl_ui_direction_readonly.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"
-#include "interfaces/efl_ui_range.eo.h"
+#include "interfaces/efl_ui_range_display.eo.h"
+#include "interfaces/efl_ui_range_interactive.eo.h"
 #include "interfaces/efl_ui_autorepeat.eo.h"
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_clickable.eo.h"
@@ -181,6 +183,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_annotate.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+
+EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 
 /**
  * @brief Get a proxy object referring to a part of an object.

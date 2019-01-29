@@ -820,7 +820,7 @@ elm_drag_item_container_add(Evas_Object *obj, double anim_tm, double tm_to_drag,
    di_list = eina_list_append(di_list, di);
    efl_key_data_set(obj, "__cont_drag_item", di_list);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _cont_drag_obj_del_cb, NULL);
-   efl_ui_selection_manager_container_drag_item_add(sel_man, obj, anim_tm, tm_to_drag,
+   efl_ui_selection_manager_container_drag_item_add(sel_man, obj, tm_to_drag, anim_tm,
                                                  di, _cont_drag_data_func, NULL,
                                                  di, _cont_drag_item_func, NULL,
                                                  di, _cont_drag_icon_create, NULL,

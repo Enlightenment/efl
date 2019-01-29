@@ -100,10 +100,6 @@ abstract Ector.Renderer extends Efl.Object
          [[Prepare for rendering]]
          return: bool; [[$true on success, $false otherwise]]
       }
-      done @pure_virtual {
-         [[Done with rendering]]
-         return: bool; [[$true on success, $false otherwise]]
-      }
    }
    implements {
       Efl.Object.destructor;

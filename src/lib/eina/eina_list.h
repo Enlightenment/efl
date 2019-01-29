@@ -167,7 +167,7 @@
  * @until demote
  *
  * Removing elements from a list can be done with ease:
- * @until sagitarius
+ * @until sagittarius
  *
  * To replace an element in the list it is not necessary to remove it and then
  * re-add with the new value, it is possible to just change the value of a node:

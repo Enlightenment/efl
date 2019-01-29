@@ -147,7 +147,7 @@ _elm_web_none_elm_web_bg_color_get(const Eo *obj EINA_UNUSED, Elm_Web_None_Data 
    if (a) *a = 0;
 }
 
-EOLIAN static const char*
+EOLIAN static char*
 _elm_web_none_elm_web_selection_get(const Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
    return NULL;

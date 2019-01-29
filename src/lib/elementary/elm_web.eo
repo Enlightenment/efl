@@ -278,8 +278,7 @@ abstract Elm.Web extends Efl.Ui.Widget implements Efl.Ui.Legacy, Efl.Ui.Zoom
               The string returned must be freed by the user when it's done
               with it.
             ]]
-            /* FIXME: owned const string? */
-            return: string @owned @warn_unused; [[A newly allocated string, or
+            return: mstring @owned @warn_unused; [[A newly allocated string, or
                                                       $null if nothing is selected
                                                       or an error occurred.]]
          }

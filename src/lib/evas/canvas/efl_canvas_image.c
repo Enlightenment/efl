@@ -7,7 +7,7 @@
 Eina_Bool
 _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Evas_Object_Protected_Data *obj;
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
 
@@ -18,6 +18,8 @@ _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key)
         if ((o->cur->key) && (key) && (!strcmp(o->cur->key, key)))
           return EINA_FALSE;
      }
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    _evas_image_init_set(f, key, eo_obj, obj, o, &lo);
    o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);

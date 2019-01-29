@@ -121,6 +121,7 @@ struct _Eo_Object
      Eina_Bool unref_compensate : 1;
      Eina_Bool allow_parent_unref : 1;
 
+     Eina_Bool noref_event : 1;
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;

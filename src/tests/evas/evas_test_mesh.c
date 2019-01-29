@@ -44,6 +44,9 @@
     {                                                                   \
        int set_ok, save_ok;                                             \
        Eina_File *f; \
+       const Eina_File *f_get = NULL; \
+       const char *filename = NULL; \
+       const char *key = NULL; \
        mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
        mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
        fail_if(mesh == NULL);                                           \
@@ -55,11 +58,17 @@
        fail_if(!save_ok);                                               \
        set_ok = efl_file_set(mesh2, buffer, NULL);               \
        fail_if(!set_ok);                                                \
+       efl_file_get(mesh2, &filename, &key);               \
+       fail_if(!!filename);                                                \
+       fail_if(!!key);                                                \
        res = _compare_meshes(mesh, mesh2);                              \
        fail_if(res == 1);                                               \
        f = eina_file_open(file->path, 0); \
        fail_if(!f); \
        set_ok = efl_file_mmap_set(mesh, f, NULL); \
+       efl_file_mmap_get(mesh, &f_get, &key); \
+       fail_if(!!f_get); \
+       fail_if(!!key); \
        eina_file_close(f); \
        save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
        fail_if(!set_ok);                                                \

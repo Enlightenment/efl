@@ -68,6 +68,11 @@ class Efl.Ui.Pager extends Efl.Ui.Layout implements Efl.Pack_Linear
          [[Pager is not scrolled after it's scrolled to the end by default.
            This property gives the option to make a loop through pages.
          ]]
+         set {
+            return: bool; [[$true on success, $false otherwise]]
+         }
+         get {
+         }
          values {
             loop: Efl.Ui.Pager_Loop;
          }

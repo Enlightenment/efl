@@ -56,4 +56,7 @@ class Efl.Ui.Tags extends Efl.Ui.Layout implements Efl.Text, Efl.Ui.Format
       /* FIXME: Not future-proof */
       expand,state,changed: int; [[Called when expanded state changed]]
    }
+   composite {
+      Efl.Text;
+   }
 }

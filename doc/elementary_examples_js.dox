@@ -627,7 +627,7 @@
  * @skip pack_end
  * @until visible
 
- * The second clock shows ther am/pm time, that we also create with
+ * The second clock shows the am/pm time, that we also create with
  * the JS binding method, passing our window object as
  * parent. Setting show_am_pm to true and again choosing the packing
  * method and making clock visible.
@@ -701,7 +701,7 @@
  * @dontinclude separator_example_01.js
 
  * Separator is a very thin object used to separate other objects,
- * wich can be vertical or horizontal.
+ * which can be vertical or horizontal.
 
  * This example shows how to create a window and separate in two
  * parts, each one will be filled with a background color to show the

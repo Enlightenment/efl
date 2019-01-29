@@ -52,7 +52,7 @@ class Elm.List extends Efl.Ui.Layout implements Elm.Interface_Scrollable,
            When enabled, every selection of an item inside the genlist will automatically set focus to
            its first focusable widget from the left. This is true of course if the selection was made by
            clicking an unfocusable area in an item or selecting it with a key movement. Clicking on a
-           focusable widget inside an item will couse this particular item to get focus as usual.]]
+           focusable widget inside an item will cause this particular item to get focus as usual.]]
          set {
          }
          get {

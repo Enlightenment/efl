@@ -7,6 +7,8 @@ class Ecore.Audio.Out.Pulse extends Ecore.Audio.Out
       Efl.Object.constructor;
       Efl.Object.destructor;
       Ecore.Audio.volume { set; }
+      @empty Ecore.Audio.format { set; get; }
+      @empty Ecore.Audio.source { set; get; }
       Ecore.Audio.Out.input_attach;
       Ecore.Audio.Out.input_detach;
    }

@@ -343,7 +343,7 @@ EAPI int                                      evas_textblock_cursor_pos_get(cons
  * Go to the start of the line passed
  *
  * @param cur cursor to update.
- * @param line numer to set.
+ * @param line number to set.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool                                evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line) EINA_ARG_NONNULL(1);

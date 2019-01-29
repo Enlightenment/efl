@@ -988,6 +988,42 @@ struct part_def
       , documentation(::eolian_part_documentation_get(part)) {}
 };
 
+struct constructor_def
+{
+    std::string name;
+    klass_name klass;
+    function_def function;
+    bool is_optional;
+    bool is_ctor_param;
+
+    friend inline bool operator==(constructor_def const& lhs, constructor_def const& rhs)
+    {
+      return lhs.name == rhs.name
+        && lhs.klass == rhs.klass
+        && lhs.function == rhs.function
+        && lhs.is_optional == rhs.is_optional
+        && lhs.is_ctor_param == rhs.is_ctor_param;
+    }
+
+    friend inline bool operator!=(constructor_def const& lhs, constructor_def const& rhs)
+    {
+      return !(lhs == rhs);
+    }
+
+    constructor_def(Eolian_Constructor const* constructor, Eolian_Unit const* unit)
+        : name(::eolian_constructor_name_get(constructor))
+        , klass(::eolian_constructor_class_get(constructor), {})
+        , is_optional(::eolian_constructor_is_optional(constructor))
+        , is_ctor_param(::eolian_constructor_is_ctor_param(constructor))
+    {
+         Eolian_Function const* eo_function = ::eolian_constructor_function_get(constructor);
+         Eolian_Function_Type eo_func_type = ::eolian_function_type_get(eo_function);
+         if (eo_func_type == ::EOLIAN_PROPERTY)
+           eo_func_type = ::EOLIAN_PROP_SET;
+         function = function_def(eo_function, eo_func_type, NULL, unit);
+    }
+};
+
 inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit const* unit);
 
 struct klass_def
@@ -999,6 +1035,7 @@ struct klass_def
   std::vector<std::string> namespaces;
   std::vector<function_def> functions;
   std::vector<property_def> properties;
+  std::vector<constructor_def> constructors;
   std::set<klass_name, compare_klass_name_by_name> inherits;
   class_type type;
   std::vector<event_def> events;
@@ -1197,6 +1234,10 @@ struct klass_def
          } catch(std::exception const&) {}
        }
 
+     for(efl::eina::iterator<Eolian_Constructor const> constructor_iterator(::eolian_class_constructors_get(klass))
+             , constructor_last; constructor_iterator != constructor_last; ++constructor_iterator)
+         constructors.push_back({&*constructor_iterator, unit});
+
      documentation = eolian_class_documentation_get(klass);
   }
 
@@ -1243,6 +1284,22 @@ struct klass_def
         {
            klass_def klass(get_klass(inherit, unit), unit);
            std::copy(klass.events.cbegin(), klass.events.cend(),
+                     std::back_inserter(ret));
+        }
+
+      return ret;
+  }
+
+  std::vector<constructor_def> get_all_constructors() const
+  {
+      std::vector<constructor_def> ret;
+
+      std::copy(constructors.cbegin(), constructors.cend(), std::back_inserter(ret));
+
+      for (auto inherit : inherits)
+        {
+           klass_def klass(get_klass(inherit, unit), unit);
+           std::copy(klass.constructors.cbegin(), klass.constructors.cend(),
                      std::back_inserter(ret));
         }
 

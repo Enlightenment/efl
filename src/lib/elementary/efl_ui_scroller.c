@@ -64,6 +64,26 @@ _efl_ui_scroller_efl_content_content_set(Eo *obj,
    return EINA_TRUE;
 }
 
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_scroller_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroller_Data *pd)
+{
+   return pd->content;
+}
+
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_Data *pd)
+{
+   Efl_Gfx_Entity *old_content = pd->content;
+
+   pd->content = NULL;
+   if (pd->smanager)
+     {
+        efl_ui_scrollbar_bar_visibility_update(pd->smanager);
+     }
+
+   return old_content;
+}
+
 static void
 _efl_ui_scroller_bar_read_and_update(Eo *obj)
 {

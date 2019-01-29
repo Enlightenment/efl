@@ -651,7 +651,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
  *
  * Scrolling with your finger can be smoothed out and the amount to smooth
  * is determined by this parameter. 0.0 means to not smooth at all and
- * 1.0 is to smoth as much as possible.
+ * 1.0 is to smooth as much as possible.
  * 
  * @param amount the amount to smooth from 0.0 to 1.0 with 0.0 being none
  *
@@ -2136,7 +2136,7 @@ EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
  * This determines if elementary will show a focus box indicating the focused
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
- * focus, unless focus display has been expliccitly forced on for the window.
+ * focus, unless focus display has been explicitly forced on for the window.
  *
  * @return The enabled state for auto focus display
  * @since 1.14
@@ -2149,7 +2149,7 @@ EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
  * This determines if elementary will show a focus box indicating the focused
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
- * focus, unless focus display has been expliccitly forced on for the window.
+ * focus, unless focus display has been explicitly forced on for the window.
  *
  * @param enable the auto focus display enabled state
  * @since 1.14

@@ -153,8 +153,10 @@ EAPI extern Elm_Version *elm_version;
 typedef Eo Efl_Ui_Focus_Manager;
 #define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
 
+
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
+EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_manager_window_root.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
@@ -342,10 +344,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_grid_default_item.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list_view_types.eot.h>
-# include <efl_ui_list_view_seg_array.h>
-# include <efl_ui_list_view_seg_array.eo.h>
 # include <efl_ui_list_view_model.eo.h>
-# include <efl_ui_list_view_relayout.eo.h>
 # include <efl_ui_list_view.eo.h>
 # include <efl_ui_list_view_pan.eo.h>
 # include <efl_ui_caching_factory.eo.h>

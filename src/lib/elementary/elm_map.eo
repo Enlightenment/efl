@@ -58,31 +58,6 @@ class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
    eo_prefix: elm_obj_map;
    event_prefix: elm_map;
    methods {
-      @property paused {
-         set {
-            [[Pause or unpause the map.
-
-              This sets the paused state to on ($true) or off ($false)
-              for map.
-
-              The default is off.
-
-              This will stop zooming using animation, changing zoom levels
-              will change instantly. This will stop any existing animations
-              that are running.
-            ]]
-         }
-         get {
-            [[Get a value whether map is paused or not.
-
-              This gets the current paused state for the map object.
-            ]]
-         }
-         values {
-            paused: bool; [[Use $true to pause the map $obj or $false
-                            to unpause it.]]
-         }
-      }
       @property zoom_min {
          set {
             [[Set the minimum zoom of the source.]]
@@ -535,6 +510,7 @@ class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
+      Efl.Ui.Zoom.zoom_animation { get; set; }
       Elm.Interface_Scrollable.wheel_disabled { set; }
    }
    events {

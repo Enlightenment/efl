@@ -71,12 +71,14 @@ _efl_page_transition_curr_page_change(Eo *obj EINA_UNUSED,
 
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_page_transition_loop_set(Eo *obj EINA_UNUSED,
                               Efl_Page_Transition_Data *pd,
                               Efl_Ui_Pager_Loop loop)
 {
    pd->loop = loop;
+
+   return EINA_TRUE;
 }
 
 
@@ -88,7 +90,7 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_page_size_set,
                           EFL_FUNC_CALL(sz), Eina_Size2D sz)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_padding_size_set,
                           EFL_FUNC_CALL(padding), int padding)
-EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_loop_set,
+EOAPI EFL_FUNC_BODYV(efl_page_transition_loop_set, Eina_Bool, 0,
                           EFL_FUNC_CALL(loop), Efl_Ui_Pager_Loop loop)
 
 

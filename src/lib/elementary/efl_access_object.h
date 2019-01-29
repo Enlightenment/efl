@@ -30,6 +30,12 @@
  */
 EAPI void efl_access_attributes_list_free(Eina_List *list);
 
+/**
+ * Free the Efl_Access_Attribute type
+ */
+EAPI void
+efl_access_attribute_free(Efl_Access_Attribute *attr);
+
 #ifdef EFL_EO_API_SUPPORT
 
 /**

@@ -10,7 +10,7 @@ enum Dummy.SampleEnum {
    v4,
 }
 
-struct Dummy.StructSimple
+struct @free(free) Dummy.StructSimple
 {
    fbyte: byte;
    fubyte: ubyte;
@@ -62,7 +62,7 @@ struct Dummy.StructSimple
    fmyint: Dummy.MyInt;
 }
 
-struct Dummy.StructComplex {
+struct @free(free) Dummy.StructComplex {
    farray: array<ptr(int)>;
    finarray: inarray<int>;
    flist: list<string>;
@@ -151,7 +151,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          params {
             @in str: string;
          }
-         return: string @owned;
+         return: mstring @owned;
       }
 
       in_own_string {
@@ -166,7 +166,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       return_own_string {
-         return: string @owned;
+         return: mstring @owned;
       }
 
       out_string {
@@ -177,7 +177,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       out_own_string {
          params {
-            @out str: string @owned;
+            @out str: mstring @owned;
          }
       }
 
@@ -198,7 +198,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       call_return_own_string {
-         return: string @owned;
+         return: mstring @owned;
       }
 
       call_out_string {
@@ -206,7 +206,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       call_out_own_string {
-         return: string @owned;
+         return: mstring @owned;
       }
 
       // Stringshare virtual helpers
@@ -373,7 +373,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_array_int_in_own {
          params {
-            @in arr: array<ptr(int) @owned> @owned;
+            @in arr: array<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -393,7 +393,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_array_int_out_own {
          params {
-            @out arr: array<ptr(int) @owned> @owned;
+            @out arr: array<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -406,7 +406,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_array_int_return_own {
-         return: array<ptr(int) @owned> @owned;
+         return: array<free(ptr(int),free) @owned> @owned;
       }
 
       /* String */
@@ -419,7 +419,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_array_str_in_own {
          params {
-            @in arr: array<string @owned> @owned;
+            @in arr: array<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -439,7 +439,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_array_str_out_own {
          params {
-            @out arr: array<string @owned> @owned;
+            @out arr: array<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -452,7 +452,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_array_str_return_own {
-         return: array<string @owned> @owned;
+         return: array<mstring @owned> @owned;
       }
 
       /* Object */
@@ -520,7 +520,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inarray_int_in_own {
          params {
-            @in arr: inarray<ptr(int) @owned> @owned;
+            @in arr: inarray<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -540,7 +540,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inarray_int_out_own {
          params {
-            @out arr: inarray<ptr(int) @owned> @owned;
+            @out arr: inarray<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -553,7 +553,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_inarray_int_return_own {
-         return: inarray<ptr(int) @owned> @owned;
+         return: inarray<free(ptr(int),free) @owned> @owned;
       }
 
       /* String */
@@ -566,7 +566,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inarray_str_in_own {
          params {
-            @in arr: inarray<string @owned> @owned;
+            @in arr: inarray<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -586,7 +586,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inarray_str_out_own {
          params {
-            @out arr: inarray<string @owned> @owned;
+            @out arr: inarray<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -599,7 +599,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_inarray_str_return_own {
-         return: inarray<string @owned> @owned;
+         return: inarray<mstring @owned> @owned;
       }
 
       /* Object */
@@ -667,7 +667,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_list_int_in_own {
          params {
-            @in lst: list<ptr(int) @owned> @owned;
+            @in lst: list<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -687,7 +687,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_list_int_out_own {
          params {
-            @out lst: list<ptr(int) @owned> @owned;
+            @out lst: list<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -700,7 +700,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_list_int_return_own {
-         return: list<ptr(int) @owned> @owned;
+         return: list<free(ptr(int),free) @owned> @owned;
       }
 
       /* String */
@@ -713,7 +713,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_list_str_in_own {
          params {
-            @in lst: list<string @owned> @owned;
+            @in lst: list<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -733,7 +733,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_list_str_out_own {
          params {
-            @out lst: list<string @owned> @owned;
+            @out lst: list<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -746,7 +746,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_list_str_return_own {
-         return: list<string @owned> @owned;
+         return: list<mstring @owned> @owned;
       }
 
       /* Object */
@@ -814,7 +814,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inlist_int_in_own {
          params {
-            @in lst: inlist<ptr(int) @owned> @owned;
+            @in lst: inlist<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -834,7 +834,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inlist_int_out_own {
          params {
-            @out lst: inlist<ptr(int) @owned> @owned;
+            @out lst: inlist<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -847,7 +847,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_inlist_int_return_own {
-         return: inlist<ptr(int) @owned> @owned;
+         return: inlist<free(ptr(int),free) @owned> @owned;
       }
 
       /* String */
@@ -860,7 +860,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inlist_str_in_own {
          params {
-            @in lst: inlist<string @owned> @owned;
+            @in lst: inlist<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -880,7 +880,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_inlist_str_out_own {
          params {
-            @out lst: inlist<string @owned> @owned;
+            @out lst: inlist<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -893,7 +893,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_inlist_str_return_own {
-         return: inlist<string @owned> @owned;
+         return: inlist<mstring @owned> @owned;
       }
 
       /* Object */
@@ -962,7 +962,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_hash_int_in_own {
          params {
-            @in hsh: hash<ptr(int), ptr(int) @owned> @owned;
+            @in hsh: hash<ptr(int), free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -982,7 +982,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_hash_int_out_own {
          params {
-            @out hsh: hash<ptr(int), ptr(int) @owned> @owned;
+            @out hsh: hash<ptr(int), free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -998,7 +998,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_hash_int_return_own {
-         return: hash<ptr(int), ptr(int) @owned> @owned;
+         return: hash<ptr(int), free(ptr(int),free) @owned> @owned;
       }
       check_eina_hash_int_return_own {
          return: bool;
@@ -1014,7 +1014,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_hash_str_in_own {
          params {
-            @in hsh: hash<string, string @owned> @owned;
+            @in hsh: hash<string, mstring @owned> @owned;
          }
          return: bool;
       }
@@ -1034,7 +1034,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_hash_str_out_own {
          params {
-            @out hsh: hash<string, string @owned> @owned;
+            @out hsh: hash<string, mstring @owned> @owned;
          }
          return: bool;
       }
@@ -1050,7 +1050,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_hash_str_return_own {
-         return: hash<string, string @owned> @owned;
+         return: hash<string, mstring @owned> @owned;
       }
       check_eina_hash_str_return_own {
          return: bool;
@@ -1158,7 +1158,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_iterator_int_in_own {
          params {
-            @in itr: iterator<ptr(int) @owned> @owned;
+            @in itr: iterator<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -1178,7 +1178,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_iterator_int_out_own {
          params {
-            @out itr: iterator<ptr(int) @owned> @owned;
+            @out itr: iterator<free(ptr(int),free) @owned> @owned;
          }
          return: bool;
       }
@@ -1191,7 +1191,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_iterator_int_return_own {
-         return: iterator<ptr(int) @owned> @owned;
+         return: iterator<free(ptr(int),free) @owned> @owned;
       }
 
       /* String */
@@ -1204,7 +1204,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_iterator_str_in_own {
          params {
-            @in itr: iterator<string @owned> @owned;
+            @in itr: iterator<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -1224,7 +1224,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
 
       eina_iterator_str_out_own {
          params {
-            @out itr: iterator<string @owned> @owned;
+            @out itr: iterator<mstring @owned> @owned;
          }
          return: bool;
       }
@@ -1237,7 +1237,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       }
 
       eina_iterator_str_return_own {
-         return: iterator<string @owned> @owned;
+         return: iterator<mstring @owned> @owned;
       }
 
       /* Object */

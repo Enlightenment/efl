@@ -116,6 +116,8 @@ class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Contai
       Efl.File.load_error { get; }
       Efl.File.mmap { get; set; }
       Efl.Container.content_remove;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
       Efl.Player.playable { get; }

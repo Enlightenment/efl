@@ -43,7 +43,8 @@ class Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
-      Efl.Content.content { set; }
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
       Efl.Canvas.Group.group_calculate;
    }
    events {

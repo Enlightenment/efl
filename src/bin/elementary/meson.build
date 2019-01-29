@@ -99,6 +99,8 @@ elementary_test_src = [
   'test_panes.c',
   'test_ui_panes.c',
   'test_ui_panel.c',
+  'test_ui_pager.c',
+  'test_ui_pager_scroll.c',
   'test_part_bg.c',
   'test_part_shadow.c',
   'test_photo.c',

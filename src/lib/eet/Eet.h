@@ -430,7 +430,7 @@ eet_clearcache(void);
  * @until printf
  *
  * More cheating follows. Just like we knew this was an Eet file, we also know
- * what key to read from, and ontop of that we know that the data in it is not
+ * what key to read from, and on top of that we know that the data in it is not
  * compressed.
  * Knowing all this allows us to take some shortcuts.
  * @until read_direct
@@ -1604,7 +1604,7 @@ eet_data_image_read_to_surface_cipher(Eet_File *ef,
  * @param w The expected width in pixels of the pixel surface to decode.
  * @param h The expected height in pixels of the pixel surface to decode.
  * @param row_stride The length of a pixels line in the destination surface.
- * @param cspace The color space of the pixels bsurface.
+ * @param cspace The color space of the pixels surface.
  * @param alpha A pointer to the int to hold the alpha flag.
  * @param comp A pointer to the int to hold the compression amount.
  * @param quality A pointer to the int to hold the quality amount.
@@ -2080,7 +2080,7 @@ eet_identity_print(Eet_Key *key,
  * file path to a 'pem' format file (the same used for siging with
  * eet_identity_open() as a certificate file).
  *
- * @note This function can not be used to provide any security mecanism. You
+ * @note This function can not be used to provide any security mechanism. You
  * need to check your x509 certificate against a chain of trust to have a proper
  * security. This is just a convenience test function.
  * @warning You need to compile signature support in EET.
@@ -3350,7 +3350,7 @@ eet_data_undump(Eet_File *ef,
  *
  * The data to be decoded is stored at the memory pointed to by @p data_in,
  * and is described by the descriptor pointed to by @p edd. The data size is
- * passed in as the value to @p size_in, ande must be greater than 0 to
+ * passed in as the value to @p size_in, and must be greater than 0 to
  * succeed.
  *
  * This function is useful for decoding data structures delivered to the
@@ -4193,7 +4193,7 @@ eet_data_undump_cipher(Eet_File *ef,
  *
  * The data to be decoded is stored at the memory pointed to by @p data_in,
  * and is described by the descriptor pointed to by @p edd. The data size is
- * passed in as the value to @p size_in, ande must be greater than 0 to
+ * passed in as the value to @p size_in, and must be greater than 0 to
  * succeed.
  *
  * This function is useful for decoding data structures delivered to the

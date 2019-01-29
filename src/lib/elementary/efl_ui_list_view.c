@@ -675,7 +675,7 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   pd->seg_array = efl_new(EFL_UI_LIST_VIEW_SEG_ARRAY_CLASS, efl_ui_list_view_seg_array_setup(efl_added, 32));
+   pd->seg_array = efl_ui_list_view_seg_array_setup(32);
 
    efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _list_element_focused, NULL);
 
@@ -703,8 +703,7 @@ _efl_ui_list_view_efl_object_destructor(Eo *obj, Efl_Ui_List_View_Data *pd)
    efl_replace(&pd->relayout, NULL);
    efl_replace(&pd->factory, NULL);
 
-   efl_ui_list_view_seg_array_flush(pd->seg_array);
-   efl_unref(pd->seg_array);
+   efl_ui_list_view_seg_array_free(pd->seg_array);
 
    eina_stringshare_del(pd->style);
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -829,19 +828,6 @@ _efl_ui_list_view_item_select_set(Efl_Ui_List_View_Layout_Item *item, Eina_Bool 
         eina_value_flush(&v);
      }
    eina_stringshare_del(sprop);
-}
-
-static void
-_efl_ui_list_view_relayout_set(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *pd EINA_UNUSED, Efl_Ui_List_View_Relayout *object)
-{
-   if (efl_replace(&pd->relayout, object) && pd->model && pd->relayout)
-     efl_ui_list_view_relayout_model_set(pd->relayout, pd->model);
-}
-
-static Efl_Ui_List_View_Relayout *
-_efl_ui_list_view_relayout_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *pd EINA_UNUSED)
-{
-   return pd->relayout;
 }
 
 static Eina_Value

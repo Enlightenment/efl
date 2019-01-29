@@ -21,13 +21,6 @@ interface Efl.Ui.List_View_Model extends Efl.Interface
             item: ptr(Efl.Ui.List_View_Layout_Item);
          }
       }
-      // @property visible_range {
-      //    set {}
-      //    values {
-      //       first: int;
-      //       count: int;
-      //    }
-      // }
       @property model_size {
          get {}
          values {

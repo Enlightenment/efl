@@ -1442,6 +1442,20 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
 
         _orient_set_do(obj);
 
+        if (sd->hidden)
+          {
+             elm_layout_signal_emit(obj, "elm,action,hide,no_animate", "elm");
+             evas_object_repeat_events_set(obj, EINA_TRUE);
+          }
+        else
+          {
+             elm_layout_signal_emit(obj, "elm,action,show,no_animate", "elm");
+             evas_object_repeat_events_set(obj, EINA_FALSE);
+          }
+
+        elm_widget_tree_unfocusable_set(obj, sd->hidden);
+        edje_object_message_signal_process(sd->panel_edje);
+
         evas_object_hide(sd->scr_ly);
         elm_layout_content_unset(sd->scr_ly, "elm.swallow.content");
         efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), sd->bx);

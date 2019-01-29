@@ -60,7 +60,7 @@
  
  * With this tutorial we'll give you a better view of how the lambda
  * function can and will be constantly use in the C++ bindings. For a
- * more broad aproach you should do a little web research.
+ * more broad approach you should do a little web research.
  
  * The syntax adopted for these examples:
  
@@ -200,7 +200,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -323,7 +323,7 @@
  * @until elm_policy_set
 
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -488,7 +488,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -660,7 +660,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -837,7 +837,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1030,13 +1030,13 @@
 
  * For the up button, we'll set to @p true the autorepeat,
  * autorepeat_initial_timeout, autoreapet_gap_timeout, the size hints
- * for weight and alignement, choose our packing method and making out
+ * for weight and alignment, choose our packing method and making out
  * up button visible.
 
  * @skip up
  * @until visibility
 
- * For this directional buttons we'll have a diferent repeated
+ * For this directional buttons we'll have a different repeated
  * callback that will insure the timeouts of our middle button in the
  * gap and initial timeout that is current setted.
 
@@ -1123,7 +1123,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1258,7 +1258,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1441,7 +1441,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1580,7 +1580,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1825,7 +1825,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -1992,7 +1992,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -2127,7 +2127,7 @@
  * @skip pack_end
  * @until visibility
 
- * The second clock shows ther am/pm time, that we also create with
+ * The second clock shows the am/pm time, that we also create with
  * the C++ binding method, passing our window object as
  * parent. Setting show_am_pm to true and again choosing the packing
  * method and making clock visible.
@@ -2205,7 +2205,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -2419,7 +2419,7 @@
  * @until visibility
 
  * For our second datetime, we'll also set the size hints weight and
- * align, but in this case, the filds YEAR, MONTH and DATE will be not
+ * align, but in this case, the fields YEAR, MONTH and DATE will be not
  * visible, and thus displaying in our datetime the hour, minute and
  * AM/PM. Finally we choose it's packing method and set the visibility
  * of datetime to @p true.
@@ -2513,7 +2513,7 @@
  * @until linked
 
  * In this function we load the vertex/fragment shaders, create the
- * program object and finish our funtion.
+ * program object and finish our function.
 
  * @skip gld
  * @until return 1;
@@ -2585,7 +2585,7 @@
  * @skipline elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -2883,7 +2883,7 @@
  * @skipline elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3031,7 +3031,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3248,7 +3248,7 @@
  * @skipline elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3462,7 +3462,7 @@
  * @skipline elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3604,7 +3604,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3736,7 +3736,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -3997,7 +3997,7 @@
  * @dontinclude separator_cxx_example_01.cc
 
  * Separator is a very thin object used to separate other objects,
- * wich can be vertical or horizontal.
+ * which can be vertical or horizontal.
 
  * This example shows how to create a window and separate in two
  * parts, each one will be filled with a background color to show the
@@ -4031,7 +4031,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -4268,7 +4268,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -4573,7 +4573,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -4874,7 +4874,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -4958,15 +4958,15 @@
 
  * @li row - Row number
 
- * @li colspan - Number of columns that the subobj will occuppy
+ * @li colspan - Number of columns that the subobj will occupy
 
- * @li rowspan - Number of rows that the subobj will occuppy
+ * @li rowspan - Number of rows that the subobj will occupy
  
  * @note All positioning inside the table is relative to rows and
  * columns, so a value of 0 for @a column and @a row, means the top
  * left cell of the table. And for example, value of 2 for @a colspan and @a
- * rowspan indicates that the subobj will occuppy two column and two rows,
- * thus occuppying 4 cells in total.
+ * rowspan indicates that the subobj will occupy two columns and two rows,
+ * thus occupying 4 cells in total.
 
  * Finally we just have to make our window visible. Then run the elm
  * mainloop, starting to handle events and drawing operations.
@@ -5018,7 +5018,7 @@
  * @until elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and
@@ -5075,7 +5075,7 @@
  * @until homogeneous
 
  * For each cell of this table we are going to create a unique @p
- * evas::rectangle, each with diferent colors and sizes.
+ * evas::rectangle, each with different colors and sizes.
 
  * Let's see a snip of the code on how we constructed our rectangles
  * and setted the colors.
@@ -5120,15 +5120,15 @@
 
  * @li row - Row number
 
- * @li colspan - Number of columns that the subobj will occuppy
+ * @li colspan - Number of columns that the subobj will occupy
 
- * @li rowspan - Number of rows that the subobj will occuppy
+ * @li rowspan - Number of rows that the subobj will occupy
  
  * @note All positioning inside the table is relative to rows and
  * columns, so a value of 0 for @a column and @a row, means the top
  * left cell of the table. And for example, value of 2 for @a colspan
- * and @a rowspan indicates that the subobj will occuppy two column
- * and two rows, thus occuppying 4 cells in total.
+ * and @a rowspan indicates that the subobj will occupy two column
+ * and two rows, thus occupying 4 cells in total.
 
  * So for each rectangle we are setting a specific location and how
  * many cells it's occupying, better seem below:
@@ -5202,7 +5202,7 @@
  * @skipline elm_policy_set
  
  * As you can see, the policy we chose was to quit when the last win
- * is hidden as opose to examples with the C bindings where we
+ * is hidden as opposed to examples with the C bindings where we
  * perpetually set it to quit when last win was closed. This changed
  * was necessary because in C++ binding as the elm mainloop stop
  * running all object are destroyed, references are unreferenced and

@@ -1,0 +1,8 @@
+class Ecore.Audio.Out.Test extends Ecore.Audio.Out
+{
+   data: null;
+   implements {
+      @empty Ecore.Audio.source { set; get; }
+      @empty Ecore.Audio.format { set; get; }
+   }
+}

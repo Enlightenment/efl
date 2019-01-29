@@ -545,7 +545,7 @@ EAPI void                   elm_transit_tween_mode_factor_get(const Elm_Transit 
  * ELM_TRANSIT_TWEEN_MODE_SPRING - Start at 0.0 then "wobble" like a spring rest
  * position 1.0, and wobble v[1] times, with decay factor of v[0]
  * ELM_TRANSIT_TWEEN_MODE_BEZIER_CURVE - Use an interpolated cubic-bezier curve
- * ajusted with parameters from v[0] to v[3]
+ * adjusted with parameters from v[0] to v[3]
  *
  * @param transit The transit object.
  * @param v_size The size of the array pointing to v

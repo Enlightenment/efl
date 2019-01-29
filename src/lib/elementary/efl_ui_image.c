@@ -887,6 +887,12 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    return ret;
 }
 
+EOLIAN void
+_efl_ui_image_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const Eina_File **file, const char **group)
+{
+   if (sd->img) efl_file_mmap_get(sd->img, file, group);
+}
+
 static Eina_Bool
 _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
                                    const char *file, const Eina_File *f, const char *key)
@@ -1156,6 +1162,23 @@ _efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file
    return ret;
 }
 
+EOLIAN static const char*
+_efl_ui_image_efl_layout_group_group_data_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *key)
+{
+  if (sd->edje)
+    return edje_object_data_get(sd->img, key);
+  return NULL;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_layout_group_part_exist_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *part)
+{
+   if (sd->edje)
+     return edje_object_part_exists(sd->img, part);
+   return EINA_FALSE;
+}
+
+
 EOLIAN static void
 _efl_ui_image_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char *emission, const char *source)
 {
@@ -1198,6 +1221,47 @@ _efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
         // Ignore restricted here? Combine with min? Hmm...
         return efl_gfx_size_hint_combined_min_get(sd->img);
      }
+}
+
+EOLIAN Eina_Rect
+_efl_ui_image_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje)
+     return efl_layout_calc_parts_extends(sd->img);
+   return efl_gfx_entity_geometry_get(sd->img);
+}
+
+EOLIAN static int
+_efl_ui_image_efl_layout_calc_calc_freeze(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje) return edje_object_freeze(sd->img);
+   return 0;
+}
+
+EOLIAN static int
+_efl_ui_image_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje)
+     {
+        int ret = edje_object_thaw(sd->img);
+        elm_layout_sizing_eval(obj);
+        return ret;
+     }
+   return 0;
+}
+
+EOLIAN void
+_efl_ui_image_efl_layout_calc_calc_auto_update_hints_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool update)
+{
+   if (sd->edje)
+     efl_layout_calc_auto_update_hints_set(sd->img, update);
+}
+
+EOLIAN Eina_Bool
+_efl_ui_image_efl_layout_calc_calc_auto_update_hints_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje) return efl_layout_calc_auto_update_hints_get(sd->img);
+   return EINA_TRUE;
 }
 
 EOLIAN static void

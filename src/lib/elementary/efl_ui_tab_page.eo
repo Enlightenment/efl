@@ -20,6 +20,7 @@ class Efl.Ui.Tab_Page extends Efl.Ui.Layout implements Efl.Content
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part_get;
    }
    events {

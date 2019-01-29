@@ -1300,6 +1300,12 @@ _efl_net_dialer_websocket_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Webso
    efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
 }
 
+EOLIAN static void
+_efl_net_dialer_websocket_efl_io_reader_eos_set(Eo *obj EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd EINA_UNUSED, Eina_Bool is_eos EINA_UNUSED)
+{
+   /* NOP Does not need to be implemented, someone else cannot tell this class to be at the eos. This is done internally and decided within the state of the websocket.*/
+}
+
 EOLIAN static Eina_Bool
 _efl_net_dialer_websocket_efl_io_reader_eos_get(const Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
 {

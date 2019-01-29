@@ -1,5 +1,5 @@
 class Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implements Efl.Content,
-                                      Efl.Pack_Linear, Efl.Ui.Direction,
+                                      Efl.Pack_Linear, Efl.Ui.Direction_Readonly,
                                       Efl.Pack_Table, Efl.Text,
                                       Efl.Text_Markup
 {

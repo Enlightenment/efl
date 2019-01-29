@@ -17,7 +17,9 @@ _efl_ui_pager_update(Efl_Ui_Pager_Data *pd)
 {
    if (pd->cnt == 0) return;
 
-   efl_page_transition_update(pd->transition, pd->curr.pos);
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+
    if (pd->indicator)
      efl_page_indicator_update(pd->indicator, pd->curr.pos);
 }
@@ -337,7 +339,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->cnt = 0;
    pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
 
-   pd->curr.page = 0;
+   pd->curr.page = -1;
    pd->curr.pos = 0.0;
 
    pd->transition = NULL;
@@ -383,17 +385,16 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj)
 {
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
 
-   pd->cnt += 1;
-   pd->curr.page += 1;
+   pd->cnt++;
+   pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -405,25 +406,22 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj,
      }
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, 0);
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, 0);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Pager_Data *pd,
                                        Efl_Gfx_Entity *subobj)
 {
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
-   pd->cnt += 1;
+   pd->cnt++;
+   if (pd->curr.page == -1) pd->curr.page = 0;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
@@ -435,70 +433,59 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj,
      }
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_before(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
                                           Efl_Ui_Pager_Data *pd,
                                           Efl_Gfx_Entity *subobj,
                                           const Efl_Gfx_Entity *existing)
 {
-   int index;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
+   int index = eina_list_data_idx(pd->content_list, (void *)existing);
+   if (index == -1) return EINA_FALSE;
 
-   index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
 
-   pd->cnt += 1;
-   if (pd->curr.page >= index) pd->curr.page += 1;
+   pd->cnt++;
+   if (pd->curr.page >= index) pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
    else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, index);
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, index);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_linear_pack_after(Eo *obj,
+_efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
-   int index;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
+   int index = eina_list_data_idx(pd->content_list, (void *)existing);
+   if (index == -1) return EINA_FALSE;
 
-   index = eina_list_data_idx(pd->content_list, (void *)existing);
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
 
-   pd->cnt += 1;
-   if (pd->curr.page > index) pd->curr.page += 1;
+   pd->cnt++;
+   if (pd->curr.page > index) pd->curr.page++;
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
    else efl_canvas_object_clip_set(subobj, pd->backclip);
 
    if (pd->indicator)
-     {
-        efl_page_indicator_pack(pd->indicator, (index + 1));
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
-     }
+     efl_page_indicator_pack(pd->indicator, (index + 1));
 
    return EINA_TRUE;
 }
@@ -509,25 +496,33 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
-   Efl_Gfx_Entity *existing = NULL;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   efl_parent_set(subobj, obj);
-   elm_widget_sub_object_add(obj, subobj);
-
-   existing = eina_list_nth(pd->content_list, index);
-   pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
-
-   pd->cnt += 1;
-   if (pd->curr.page >= index) pd->curr.page += 1;
-
-   if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
-   else efl_canvas_object_clip_set(subobj, pd->backclip);
-
-   if (pd->indicator)
+   if (index > pd->cnt)
      {
-        efl_page_indicator_pack(pd->indicator, index);
-        efl_page_indicator_update(pd->indicator, pd->curr.pos);
+        return EINA_FALSE;
+     }
+   else if (index == pd->cnt)
+     {
+        _efl_ui_pager_efl_pack_linear_pack_end(obj, pd, subobj);
+     }
+   else
+     {
+        Efl_Gfx_Entity *existing = NULL;
+
+        existing = eina_list_nth(pd->content_list, index);
+        pd->content_list = eina_list_prepend_relative(
+           pd->content_list, subobj, existing);
+
+        pd->cnt++;
+        if (pd->curr.page >= index) pd->curr.page++;
+
+        if (pd->transition)
+          efl_page_transition_update(pd->transition, pd->curr.pos);
+        else efl_canvas_object_clip_set(subobj, pd->backclip);
+
+        if (pd->indicator)
+	  efl_page_indicator_pack(pd->indicator, index);
      }
 
    return EINA_TRUE;
@@ -559,7 +554,7 @@ _efl_ui_pager_current_page_set(Eo *obj,
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
    efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 
-   if (index >= pd->cnt)
+   if ((index < 0) || (index > (pd->cnt - 1)))
      {
         ERR("page set fail");
         return;
@@ -604,6 +599,8 @@ _efl_ui_pager_transition_set(Eo *obj,
                              Efl_Ui_Pager_Data *pd,
                              Efl_Page_Transition *transition)
 {
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return;
+
    if (pd->transition == transition) return;
 
    if (pd->transition)
@@ -715,7 +712,12 @@ _efl_ui_pager_page_size_set(Eo *obj EINA_UNUSED,
    if (pd->transition)
      efl_page_transition_page_size_set(pd->transition, pd->page_spec.sz);
    else
-     efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
+     {
+        efl_gfx_entity_size_set(pd->page_box, pd->page_spec.sz);
+        efl_gfx_entity_position_set(pd->page_box,
+                                    EINA_POSITION2D(pd->x + (pd->w / 2) - (pd->page_spec.sz.w / 2),
+                                                    pd->y + (pd->h / 2) - (pd->page_spec.sz.h / 2)));
+     }
 }
 
 EOLIAN static int
@@ -732,7 +734,8 @@ _efl_ui_pager_padding_set(Eo *obj EINA_UNUSED,
 {
    pd->page_spec.padding = padding;
 
-   efl_page_transition_padding_size_set(pd->transition, padding);
+   if (pd->transition)
+     efl_page_transition_padding_size_set(pd->transition, padding);
 }
 
 EOLIAN static void
@@ -755,14 +758,21 @@ _efl_ui_pager_scroll_block_set(Eo *obj EINA_UNUSED,
    pd->next_block = next;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Bool
 _efl_ui_pager_loop_mode_set(Eo *obj EINA_UNUSED,
                             Efl_Ui_Pager_Data *pd,
                             Efl_Ui_Pager_Loop loop)
 {
-   pd->loop = loop;
+   if (pd->loop == loop) return EINA_TRUE;
 
-   efl_page_transition_loop_set(pd->transition, loop);
+   if (!pd->transition) return EINA_FALSE;
+
+   if (efl_page_transition_loop_set(pd->transition, loop))
+     {
+        pd->loop = loop;
+        return EINA_TRUE;
+     }
+   else return EINA_FALSE;
 }
 
 EOLIAN static Efl_Ui_Pager_Loop
@@ -790,11 +800,38 @@ _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
 
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
-                              Efl_Ui_Pager_Data *pd EINA_UNUSED,
-                              Efl_Gfx_Entity *subobj EINA_UNUSED)
+                              Efl_Ui_Pager_Data *pd,
+                              Efl_Gfx_Entity *subobj)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
+   if (!subobj) return EINA_FALSE;
+
+   int index = eina_list_data_idx(pd->content_list, subobj);
+   if (index == -1) return EINA_FALSE;
+
+   pd->content_list = eina_list_remove(pd->content_list, subobj);
+   pd->cnt--;
+
+   if (((index == pd->curr.page) && ((index != 0) || (pd->cnt == 0))) ||
+       (index < pd->curr.page))
+     pd->curr.page--;
+
+   //FIXME if the number of pages is not enough after unpacking a page,
+   //      loop mode needs to be disabled
+   if (pd->transition)
+     efl_page_transition_update(pd->transition, pd->curr.pos);
+   else
+     {
+        efl_pack_unpack(pd->page_box, subobj);
+        if (pd->curr.page != -1)
+          efl_pack(pd->page_box, eina_list_nth(pd->content_list, pd->curr.page));
+     }
+
+   if (pd->indicator)
+     efl_page_indicator_unpack(pd->indicator, index);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Efl_Gfx_Entity *
