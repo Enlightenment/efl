@@ -31,7 +31,7 @@ EAPI Eina_Iterator *
 eolian_typedecl_struct_fields_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
-   if (tp->type != EOLIAN_TYPEDECL_STRUCT)
+   if (tp->type != EOLIAN_TYPEDECL_STRUCT && tp->type != EOLIAN_TYPEDECL_STRUCT_INLIST)
      return NULL;
    return eina_list_iterator_new(tp->field_list);
 }
@@ -42,7 +42,7 @@ eolian_typedecl_struct_field_get(const Eolian_Typedecl *tp, const char *field)
    Eolian_Struct_Type_Field *sf = NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(field, NULL);
-   if (tp->type != EOLIAN_TYPEDECL_STRUCT)
+   if (tp->type != EOLIAN_TYPEDECL_STRUCT && tp->type != EOLIAN_TYPEDECL_STRUCT_INLIST)
      return NULL;
    sf = eina_hash_find(tp->fields, field);
    if (!sf) return NULL;

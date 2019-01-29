@@ -44,6 +44,7 @@ struct _Eolian_Unit
    Eina_Hash     *aliases;
    Eina_Hash     *structs;
    Eina_Hash     *enums;
+   Eina_Hash     *inlists;
    Eina_Hash     *objects;
 };
 
@@ -57,6 +58,7 @@ typedef struct _Eolian_State_Area
    Eina_Hash *aliases_f;
    Eina_Hash *structs_f;
    Eina_Hash *enums_f;
+   Eina_Hash *inlists_f;
    Eina_Hash *globals_f;
    Eina_Hash *constants_f;
    Eina_Hash *objects_f;
@@ -406,7 +408,7 @@ Eolian_Object_Type database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
 /* types */
 
 void database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
-void database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
+void database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp, Eina_Bool is_inlist);
 void database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
