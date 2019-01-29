@@ -291,6 +291,7 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
    if (!gi)
      {
         gi = calloc(1, sizeof(*gi));
+        if (!gi) return EINA_FALSE;
         gi->col = col;
         gi->row = row;
         gi->col_span = colspan;

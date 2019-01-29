@@ -5825,6 +5825,7 @@ _widget_shadow_part_get(const Eo *part_obj)
    if (!shadow)
      {
         shadow = calloc(1, sizeof(*shadow));
+        if (!shadow) return NULL;
         shadow->widget = pd->obj;
         efl_key_data_set(widget, "__elm_shadow", shadow);
         efl_event_callback_array_add(widget, widget_shadow_cb(), shadow);
