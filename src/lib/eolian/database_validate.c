@@ -301,6 +301,12 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                   {
                      if (!_validate_type(vals, itp))
                        return EINA_FALSE;
+                     /* containers in containers are too complicated */
+                     if (itp->base_type && (kwid != KW_future))
+                       {
+                          _eo_parser_log(&itp->base, "nested containers not allowed");
+                          return EINA_FALSE;
+                       }
                      if ((kwid >= KW_accessor) && (kwid <= KW_list) && (kwid != KW_future))
                        {
                           if (!database_type_is_ownable(src, itp, EINA_TRUE))
@@ -313,6 +319,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                        }
                      itp = itp->next_type;
                   }
+                if (tp->freefunc)
+                  {
+                     _eo_parser_log(&tp->base, "builtin containers cannot have a custom free function");
+                     return EINA_FALSE;
+                  }
                 return _validate(&tp->base);
              }
            /* builtins */
@@ -321,8 +332,16 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              {
                 if (!eo_lexer_is_type_keyword(id))
                   return EINA_FALSE;;
-                if (!tp->freefunc && (id == KW_mstring))
-                  tp->freefunc = eina_stringshare_add("free");
+                if (id == KW_mstring)
+                  {
+                     if (!tp->freefunc)
+                       tp->freefunc = eina_stringshare_add("free");
+                  }
+                else if (tp->freefunc)
+                  {
+                     _eo_parser_log(&tp->base, "builtin primitives cannot have a free function");
+                     return EINA_FALSE;
+                  }
                 return _validate(&tp->base);
              }
            /* user defined */
@@ -341,11 +360,20 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (!tp->owned)
              return _validate(&tp->base);
 
-           /* builtins are not required to have freefuncs, and
+           /* most builtins are not allowed to have freefuncs, and
             * potential ownability has already been validated before
             */
-           if (eolian_type_aliased_base_get(tp)->btype)
-             return _validate(&tp->base);
+           switch (eolian_type_aliased_base_get(tp)->btype)
+             {
+              case EOLIAN_TYPE_BUILTIN_INVALID:
+                break;
+              case EOLIAN_TYPE_BUILTIN_MSTRING:
+              case EOLIAN_TYPE_BUILTIN_INLIST:
+                return _validate(&tp->base);
+              default:
+                _eo_parser_log(&tp->base, "free function overridden on a bad builtin");
+                return EINA_FALSE;
+             }
 
            if (!tp->freefunc)
              {
