@@ -277,7 +277,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (tp->base_type)
              {
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
-                if (kwid == KW_inlist || kwid == KW_inarray)
+                if (kwid == KW_inarray)
                   {
                      if (database_type_is_ownable(src, tp->base_type, EINA_FALSE))
                        {
@@ -288,7 +288,28 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                        }
                      if (!_validate_type(vals, tp->base_type))
                        return EINA_FALSE;
-                     return _validate(&tp->base);
+                     return _validate_ownable(tp);
+                  }
+                else if (kwid == KW_inlist)
+                  {
+                     /* TODO: maybe check typedecl first to avoid potentially
+                      * misleading error messages, but it should be harmless
+                      */
+                     if (!_validate_type(vals, tp->base_type))
+                       return EINA_FALSE;
+                     if (tp->base_type->tdecl->type != EOLIAN_TYPEDECL_STRUCT_INLIST)
+                       {
+                          _eo_parser_log(&tp->base_type->base,
+                                         "inlists can only point at inlist structs");
+                          return EINA_FALSE;
+                       }
+                     /* potential @free() is inherited from the inlist struct
+                      * onto the inlist itself, but the inlist struct type
+                      * is never ownable in itself
+                      */
+                     if (tp->base_type->tdecl->freefunc && !tp->freefunc)
+                       tp->freefunc = eina_stringshare_ref(tp->base_type->tdecl->freefunc);
+                     return _validate_ownable(tp);
                   }
                 if (!tp->freefunc && kwid > KW_void)
                   {
