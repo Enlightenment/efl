@@ -18,6 +18,8 @@ struct _Efl_Ui_Animation_View_Data
    double frame_cnt;
    int repeat_times;
    double frame_duration;
+   double min_progress;
+   double max_progress;
 
    Eina_Bool play_back : 1;
    Eina_Bool auto_play : 1;

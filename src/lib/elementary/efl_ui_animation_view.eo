@@ -188,6 +188,71 @@ class Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.F
             frame_count: int; [[ The number of frames. 0, if it's not animated.]]
          }
       }
+      @property min_progress {
+         [[ The start progress of the play.
+            Default value is 0.
+         ]]
+         set {
+            [[Set start progress of an animation object.
+              @since 1.22]]
+         }
+         get {
+            [[Returns start progress of an animation object.
+              @since 1.22]]
+         }
+         values {
+            min_progress: double; [[ The minimum progress. Value must be 0 ~ 1. ]]
+         }
+      }
+      @property max_progress {
+         [[ The last progress of the play.
+            Default value is 1.
+         ]]
+         set {
+            [[Set last progress of an animation object.
+              @since 1.22]]
+         }
+         get {
+            [[Returns last progress of an animation object.
+              @since 1.22]]
+         }
+         values {
+            max_progress: double; [[ The maximum progress. Value must be 0 ~ 1. ]]
+         }
+      }
+      @property min_frame {
+         [[ The start frame of the play.
+            Default value is 0.
+         ]]
+         set {
+            [[Set minimum frame of an animation object.
+              @since 1.22]]
+         }
+         get {
+            [[Returns minimum frame of an animation object.
+              @since 1.22]]
+         }
+         values {
+            min_frame: int; [[ The minimum frame for play. Value must be 0 ~ @.max_frame ]]
+         }
+      }
+      @property max_frame {
+         [[ The last frame of the play.
+            Default value is @.frame_count - 1
+         ]]
+         set {
+            [[Set maximum frame of an animation object.
+              @since 1.22]]
+         }
+         get {
+            [[Returns maximum frame of an animation object.
+              @since 1.22]]
+         }
+         values {
+            max_frame: int; [[ The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1) ]]
+         }
+      }
+
    }
    implements {
       Efl.Object.constructor;

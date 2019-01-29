@@ -170,7 +170,9 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
    else pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAY;
 
    pd->keyframe = progress;
-   evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * progress));
+   int minframe = (pd->frame_cnt - 1) * pd->min_progress;
+   int maxframe = (pd->frame_cnt - 1) * pd->max_progress;
+   evas_object_vg_animated_frame_set(pd->vg, (int)((maxframe - minframe) * progress) + minframe);
 
    if (pd->auto_repeat)
      {
@@ -199,6 +201,8 @@ _efl_ui_animation_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Animation_View
    priv->vg = vg;
    priv->speed = 1;
    priv->frame_duration = 0;
+   priv->min_progress = 0.0;
+   priv->max_progress = 1.0;
 }
 
 EOLIAN static void
@@ -233,6 +237,18 @@ _efl_ui_animation_view_efl_object_constructor(Eo *obj,
    return obj;
 }
 
+static void
+_update_frame_duration(Efl_Ui_Animation_View_Data *pd)
+{
+   int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
+   int min_frame = (frame_count - 1) * pd->min_progress;
+   int max_frame = (frame_count - 1) * pd->max_progress;
+   double frame_rate = round((double)frame_count / evas_object_vg_animated_frame_duration_get(pd->vg, 0, 0));
+
+   pd->frame_duration = (double)(max_frame - min_frame) / frame_rate;
+   elm_transit_duration_set(pd->transit, pd->frame_duration * (1/pd->speed));
+}
+
 static Eina_Bool
 _ready_play(Efl_Ui_Animation_View_Data *pd)
 {
@@ -250,11 +266,14 @@ _ready_play(Efl_Ui_Animation_View_Data *pd)
         Elm_Transit *transit = elm_transit_add();
         elm_transit_object_add(transit, pd->vg);
         if (pd->auto_repeat) elm_transit_repeat_times_set(transit, -1);
-        elm_transit_duration_set(transit, pd->frame_duration * (1/pd->speed));
         elm_transit_effect_add(transit, _transit_cb, pd, _transit_del_cb);
         elm_transit_progress_value_set(transit, pd->keyframe);
         elm_transit_objects_final_state_keep_set(transit, EINA_TRUE);
         pd->transit = transit;
+        if (pd->min_progress != 0.0 || pd->max_progress != 1.0)
+          _update_frame_duration(pd);
+        else
+          elm_transit_duration_set(transit, pd->frame_duration * (1/pd->speed));
 
         return EINA_TRUE;
      }
@@ -559,6 +578,78 @@ EOLIAN static int
 _efl_ui_animation_view_frame_count_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
 {
    return evas_object_vg_animated_frame_count_get(pd->vg);
+}
+
+EOLIAN static void
+_efl_ui_animation_view_min_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double min_progress)
+{
+   if (min_progress < 0.0 || min_progress > 1.0 || min_progress > pd->max_progress) return;
+
+   pd->min_progress = min_progress;
+   _update_frame_duration(pd);
+}
+
+EOLIAN static double
+_efl_ui_animation_view_min_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+{
+   return pd->min_progress;
+}
+
+EOLIAN static void
+_efl_ui_animation_view_max_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double max_progress)
+{
+   if (max_progress < 0.0 || max_progress > 1.0 || max_progress < pd->min_progress) return;
+
+   pd->max_progress = max_progress;
+   _update_frame_duration(pd);
+}
+
+EOLIAN static double
+_efl_ui_animation_view_max_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+{
+   return pd->max_progress;
+}
+
+EOLIAN static void
+_efl_ui_animation_view_min_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int min_frame)
+{
+   int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
+   if (min_frame < 0) min_frame = 0;
+   else
+     {
+        int max_frame = (frame_count - 1) * pd->max_progress;
+        if (min_frame > max_frame) min_frame = max_frame;
+     }
+
+   pd->min_progress = (double)min_frame / (double)(frame_count - 1);
+   _update_frame_duration(pd);
+}
+
+EOLIAN static int
+_efl_ui_animation_view_min_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+{
+   return pd->min_progress * (evas_object_vg_animated_frame_count_get(pd->vg) - 1);
+}
+
+EOLIAN static void
+_efl_ui_animation_view_max_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int max_frame)
+{
+   int frame_count = evas_object_vg_animated_frame_count_get(pd->vg);
+   if (max_frame > frame_count - 1) max_frame = frame_count - 1;
+   else
+     {
+        int min_frame = (frame_count - 1) * pd->min_progress;
+        if (min_frame > max_frame) max_frame = min_frame;
+     }
+
+   pd->max_progress = (double)max_frame / (double)(frame_count - 1);
+   _update_frame_duration(pd);
+}
+
+EOLIAN static int
+_efl_ui_animation_view_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+{
+   return pd->max_progress * (evas_object_vg_animated_frame_count_get(pd->vg) - 1);
 }
 
 EAPI Elm_Animation_View*
