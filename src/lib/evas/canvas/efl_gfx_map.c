@@ -252,6 +252,7 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *p
    Evas_Map *m;
    int imw, imh;
    int count;
+   Eina_Bool map_alloc = EINA_FALSE;
 
    if (pd->cow == &gfx_map_cow_default)
      return NULL;
@@ -302,7 +303,11 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *p
      }
    else
      {
-        if (!m) m = evas_map_new(count);
+        if (!m)
+          {
+             m = evas_map_new(count);
+             map_alloc = EINA_TRUE;
+          }
         else _evas_map_reset(m);
         m->alpha = pd->cow->alpha;
         m->smooth = pd->cow->smooth;
@@ -357,7 +362,13 @@ _map_calc(const Eo *eo_obj, Evas_Object_Protected_Data *obj, Efl_Gfx_Map_Data *p
                }
              else
                {
-                  EINA_SAFETY_ON_NULL_RETURN_VAL(op->pivot.pivot, NULL);
+                  if (!op->pivot.pivot)
+                    {
+                       EINA_SAFETY_ERROR("safety check failed: op->pivot.pivot == NULL");
+                       if (map_alloc) free(m);
+                       return NULL;
+                    }
+
                   pivot = op->pivot.pivot;
                   px = pivot->geometry.x;
                   py = pivot->geometry.y;
