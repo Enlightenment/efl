@@ -12,7 +12,6 @@ efl_main(void *data EINA_UNUSED,
 {
    Efl_Loop_Arguments *arge = ev->info;
 
-   
    fail_if(!arge->initialization);
    fprintf(stderr, "ARGC %d\n", eina_array_count(arge->argv));
    fail_if(eina_array_count(arge->argv) != 2);
@@ -37,6 +36,7 @@ EFL_START_TEST(efl_ui_test_init)
    __EFL_MAIN_CONSTRUCTOR;
    ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
    real__ = efl_loop_exit_code_process(ret__);
+   fail_if(real__ != 0);
    __EFL_MAIN_DESTRUCTOR;
    ecore_shutdown_ex();
    ecore_shutdown();
