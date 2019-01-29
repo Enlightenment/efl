@@ -956,8 +956,8 @@ static void
 _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
 {
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it);
-   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd);
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id);
    id->select_mode = NULL;
    id->parent = NULL;
    gd->parent = NULL;
