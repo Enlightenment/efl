@@ -187,7 +187,7 @@ void _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orie
 /* Efl.Image_Animation_Controller */
 Eina_Bool _evas_image_animated_get(const Eo *eo_obj);
 int _evas_image_animated_frame_count_get(const Eo *eo_obj);
-Efl_Gfx_Image_Animation_Controller_Loop_Hint _evas_image_animated_loop_type_get(const Eo *eo_obj);
+Efl_Gfx_Frame_Controller_Loop_Hint _evas_image_animated_loop_type_get(const Eo *eo_obj);
 int _evas_image_animated_loop_count_get(const Eo *eo_obj);
 double _evas_image_animated_frame_duration_get(const Eo *eo_obj, int start_frame, int frame_num);
 Eina_Bool _evas_image_animated_frame_set(Eo *eo_obj, int frame_index);

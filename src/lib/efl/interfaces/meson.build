@@ -5,7 +5,7 @@ pub_legacy_eo_files = [
   'efl_gfx_entity.eo',
   'efl_gfx_color.eo',
   'efl_gfx_image.eo',
-  'efl_gfx_image_animation_controller.eo',
+  'efl_gfx_frame_controller.eo',
   'efl_input_device.eo',
   'efl_ui_draggable.eo',
   'efl_ui_clickable.eo',
