@@ -7,6 +7,7 @@
 #include <Ecore.h>
 #include "Eo.h"
 
+#include "ecore_private.h"
 #include "efl_loop_model.eo.h"
 
 typedef struct _Efl_Loop_Model_Watcher_Data Efl_Loop_Model_Watcher_Data;
@@ -104,6 +105,32 @@ _efl_loop_model_efl_model_property_ready_get(Eo *obj, void *pd EINA_UNUSED, cons
                             eina_value_reference_copy(value));
    eina_value_free(value);
    return efl_future_then(obj, f);
+}
+
+static void
+_noref_death(void *data EINA_UNUSED, const Efl_Event *event)
+{
+   efl_event_callback_del(event->object, EFL_EVENT_NOREF, _noref_death, NULL);
+   // For safety reason and in case multiple call to volatile has been made
+   // we check that there is still a parent at this point in EFL_EVENT_NOREF
+   efl_del(event->object);
+}
+
+static void
+_efl_loop_model_volatile_make(Eo *obj, void *pd EINA_UNUSED)
+{
+   // Just to make sure we do not double register this callback, we first remove
+   // any potentially previous one.
+   efl_event_callback_del(obj, EFL_EVENT_NOREF, _noref_death, NULL);
+   efl_event_callback_add(obj, EFL_EVENT_NOREF, _noref_death, NULL);
+}
+
+static void
+_efl_loop_model_efl_object_invalidate(Eo *obj, void *pd EINA_UNUSED)
+{
+   efl_event_callback_del(obj, EFL_EVENT_NOREF, _noref_death, NULL);
+
+   efl_invalidate(efl_super(obj, EFL_LOOP_MODEL_CLASS));
 }
 
 #include "efl_loop_model.eo.c"
