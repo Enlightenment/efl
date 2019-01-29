@@ -32,7 +32,8 @@ __attribute__((__used__)) __attribute__((unused, aligned(1))) = info;
   * @defgroup Eina_Module_Group Module
   *  
   * These macros allow you to define module informations like author/description/version/license.
-  * eina_modinfo can show these informations to users
+  * eina_modinfo - shows information about an eina module.
+  * eina_modinfo pulls out information from the eina modules given on command line.
   *
   * $ eina_modinfo module.so
   * version: 0.1
