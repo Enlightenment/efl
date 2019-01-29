@@ -117,6 +117,10 @@ interface @beta Efl.Model
 
                  See @.children_count.get
 
+                 Note: The returned children will live only as long as the future
+                 itself. Once the future is done, if you want to keep the object
+                 alive, you need to take a reference for yourself.
+
                  @since 1.14
                ]]
             params {
