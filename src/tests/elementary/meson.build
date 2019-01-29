@@ -122,6 +122,7 @@ efl_ui_suite_src = [
   'elm_test_init.c',
   'efl_ui_test_atspi.c',
   'efl_ui_test_grid.c',
+  'efl_ui_test_image.c',
   'efl_ui_test_image_zoomable.c',
   'efl_ui_test_layout.c',
 ]

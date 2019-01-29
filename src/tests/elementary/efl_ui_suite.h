@@ -20,6 +20,7 @@ void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
 void efl_ui_test_image_zoomable(TCase *tc);
 void efl_ui_test_layout(TCase *tc);
+void efl_ui_test_image(TCase *tc);
 
 Eo *win_add();
 Eo *win_add_focused();
