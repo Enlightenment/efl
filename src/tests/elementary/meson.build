@@ -123,6 +123,7 @@ efl_ui_suite_src = [
   'efl_ui_test_atspi.c',
   'efl_ui_test_grid.c',
   'efl_ui_test_image_zoomable.c',
+  'efl_ui_test_layout.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',

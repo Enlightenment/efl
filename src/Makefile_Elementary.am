@@ -1610,7 +1610,8 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \
-	tests/elementary/efl_ui_test_grid.c
+	tests/elementary/efl_ui_test_grid.c \
+	tests/elementary/efl_ui_test_layout.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \
 -DELM_INTERNAL_API_ARGESFSDFEFC=1 \
