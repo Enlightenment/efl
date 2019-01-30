@@ -4,7 +4,7 @@ efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_entity.eo \
 	lib/efl/interfaces/efl_gfx_color.eo \
 	lib/efl/interfaces/efl_gfx_image.eo \
-	lib/efl/interfaces/efl_gfx_image_animation_controller.eo \
+	lib/efl/interfaces/efl_gfx_frame_controller.eo \
 	lib/efl/interfaces/efl_input_device.eo \
         lib/efl/interfaces/efl_ui_draggable.eo \
         lib/efl/interfaces/efl_ui_clickable.eo \

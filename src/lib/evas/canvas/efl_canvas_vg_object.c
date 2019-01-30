@@ -920,7 +920,7 @@ _efl_canvas_vg_object_was_opaque(Evas_Object *eo_obj EINA_UNUSED,
 
 /* animated feature */
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_vg_object_efl_gfx_frame_controller_animated_get(const Eo *eo_obj EINA_UNUSED,
                                                                       Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED EINA_UNUSED)
 {
    //TODO:
@@ -928,23 +928,23 @@ _efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_get(const Eo *
 }
 
 EOLIAN static int
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_count_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_vg_object_efl_gfx_frame_controller_frame_count_get(const Eo *eo_obj EINA_UNUSED,
                                                                                   Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    if (!pd->vg_entry) return 0;
    return evas_cache_vg_anim_frame_count_get(pd->vg_entry);
 }
 
-EOLIAN static Efl_Gfx_Image_Animation_Controller_Loop_Hint
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_loop_type_get(const Eo *eo_obj EINA_UNUSED,
+EOLIAN static Efl_Gfx_Frame_Controller_Loop_Hint
+_efl_canvas_vg_object_efl_gfx_frame_controller_loop_type_get(const Eo *eo_obj EINA_UNUSED,
                                                                                 Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    //TODO:
-   return EFL_GFX_IMAGE_ANIMATION_CONTROLLER_LOOP_HINT_NONE;
+   return EFL_GFX_FRAME_CONTROLLER_LOOP_HINT_NONE;
 }
 
 EOLIAN static int
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_loop_count_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_vg_object_efl_gfx_frame_controller_loop_count_get(const Eo *eo_obj EINA_UNUSED,
                                                                                  Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    //TODO:
@@ -952,7 +952,7 @@ _efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_loop_count_get
 }
 
 EOLIAN static double
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_duration_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_vg_object_efl_gfx_frame_controller_frame_duration_get(const Eo *eo_obj EINA_UNUSED,
                                                                                      Efl_Canvas_Vg_Object_Data *pd,
                                                                                      int start_frame EINA_UNUSED,
                                                                                      int frame_num EINA_UNUSED)
@@ -962,7 +962,7 @@ _efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_duration
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_set(Eo *eo_obj,
+_efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
                                                                             Efl_Canvas_Vg_Object_Data *pd,
                                                                             int frame_index)
 {
@@ -978,7 +978,7 @@ _efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_set(Eo *
 }
 
 EOLIAN static int
-_efl_canvas_vg_object_efl_gfx_image_animation_controller_animated_frame_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_vg_object_efl_gfx_frame_controller_frame_get(const Eo *eo_obj EINA_UNUSED,
                                                                             Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED)
 {
    return pd->frame_idx;
@@ -1004,25 +1004,25 @@ evas_object_vg_add(Evas *e)
 EAPI int
 evas_object_vg_animated_frame_get(const Evas_Object *obj)
 {
-   return efl_gfx_image_animated_frame_get(obj);
+   return efl_gfx_frame_controller_frame_get(obj);
 }
 
 EAPI double
 evas_object_vg_animated_frame_duration_get(const Evas_Object *obj, int start_frame, int frame_num)
 {
-   return efl_gfx_image_animated_frame_duration_get(obj, start_frame, frame_num);
+   return efl_gfx_frame_controller_frame_duration_get(obj, start_frame, frame_num);
 }
 
 EAPI int
 evas_object_vg_animated_frame_count_get(const Evas_Object *obj)
 {
-   return efl_gfx_image_animated_frame_count_get(obj);
+   return efl_gfx_frame_controller_frame_count_get(obj);
 }
 
 EAPI Eina_Bool
 evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index)
 {
-   return efl_gfx_image_animated_frame_set(obj, frame_index);
+   return efl_gfx_frame_controller_frame_set(obj, frame_index);
 }
 
 EAPI Eina_Bool

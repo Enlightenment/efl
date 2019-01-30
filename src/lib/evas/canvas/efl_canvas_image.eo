@@ -1,5 +1,5 @@
 class Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
-                        Efl.Gfx.Image_Load_Controller, Efl.Gfx.Image_Animation_Controller,
+                        Efl.Gfx.Image_Load_Controller, Efl.Gfx.Frame_Controller,
                         Efl.File
 {
    [[Low-level Image object.
@@ -18,12 +18,12 @@ class Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
       Efl.Gfx.Buffer.buffer_unmap;
       Efl.File.mmap { get; set; }
       Efl.File.load_error { get; }
-      Efl.Gfx.Image_Animation_Controller.animated { get; }
-      Efl.Gfx.Image_Animation_Controller.animated_frame { get; set; }
-      Efl.Gfx.Image_Animation_Controller.animated_frame_count { get; }
-      Efl.Gfx.Image_Animation_Controller.animated_loop_type { get; }
-      Efl.Gfx.Image_Animation_Controller.animated_loop_count { get; }
-      Efl.Gfx.Image_Animation_Controller.animated_frame_duration { get; }
+      Efl.Gfx.Frame_Controller.animated { get; }
+      Efl.Gfx.Frame_Controller.frame { get; set; }
+      Efl.Gfx.Frame_Controller.frame_count { get; }
+      Efl.Gfx.Frame_Controller.loop_type { get; }
+      Efl.Gfx.Frame_Controller.loop_count { get; }
+      Efl.Gfx.Frame_Controller.frame_duration { get; }
       Efl.Gfx.Image_Load_Controller.load_async_start;
       Efl.Gfx.Image_Load_Controller.load_async_cancel;
       Efl.Gfx.Image_Load_Controller.load_dpi { get; set; }

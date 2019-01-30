@@ -41,9 +41,9 @@ running_cb(void *data EINA_UNUSED, const Efl_Event *event)
    int i;
    for (i = 0; i < 4; i++)
      {
-        double frameCnt = (double) efl_gfx_image_animated_frame_get(gvg[i]);
+        double frameCnt = (double) efl_gfx_frame_controller_frame_get(gvg[i]);
         int frame = (int) (frameCnt * (progress / 1));
-        efl_gfx_image_animated_frame_set(gvg[i], frame);
+        efl_gfx_frame_controller_frame_set(gvg[i], frame);
      }
 }
 
@@ -109,7 +109,7 @@ main(void)
 
    //Play custom animation
    Eo *anim = efl_add(EFL_CANVAS_ANIMATION_CLASS, evas);
-   efl_animation_duration_set(anim, efl_gfx_image_animated_frame_duration_get(vg, 0, 0));
+   efl_animation_duration_set(anim, efl_gfx_frame_controller_frame_duration_get(vg, 0, 0));
 
    Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, evas);
    efl_animation_player_animation_set(player, anim);

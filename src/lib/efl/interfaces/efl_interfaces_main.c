@@ -15,7 +15,7 @@
 #include "interfaces/efl_control.eo.c"
 #include "interfaces/efl_duplicate.eo.c"
 #include "interfaces/efl_gfx_image.eo.c"
-#include "interfaces/efl_gfx_image_animation_controller.eo.c"
+#include "interfaces/efl_gfx_frame_controller.eo.c"
 #include "interfaces/efl_gfx_image_load_controller.eo.c"
 #include "interfaces/efl_part.eo.c"
 #include "interfaces/efl_playable.eo.c"
