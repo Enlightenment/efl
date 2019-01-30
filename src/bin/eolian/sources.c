@@ -151,9 +151,9 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
 }
 
 static void
-_write_free_call(Eina_Strbuf *buf, const char *ffunc, const Eina_Strbuf *param, const char *indent)
+_write_free_call(Eina_Strbuf *buf, const char *ffunc, const Eina_Strbuf *param, const char *indent, const char *eindent)
 {
-   eina_strbuf_append_printf(buf,"   %s%s(", indent, ffunc);
+   eina_strbuf_append_printf(buf,"   %s%s%s(", indent, eindent, ffunc);
    eina_strbuf_append_buffer(buf, param);
    eina_strbuf_append(buf, ");\n");
 }
@@ -195,22 +195,22 @@ _get_free_func(const Eolian_Type *type)
 }
 
 static void
-_generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Strbuf *param, const char *indent)
+_generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Strbuf *param, const char *indent, const char *eindent)
 {
    const Eolian_Type *btype = eolian_type_aliased_base_get(type);
    Eolian_Type_Builtin_Type t = eolian_type_builtin_type_get(btype);
    switch (t)
      {
       case EOLIAN_TYPE_BUILTIN_FUTURE:
-        _write_free_call(*buf, "(void)", param, indent); break;
+        _write_free_call(*buf, "(void)", param, indent, eindent); break;
       case EOLIAN_TYPE_BUILTIN_HASH:
         eina_strbuf_append_printf(*buf,"   eina_hash_free_cb_set(");
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append(*buf, ",NULL);\n");
-        _write_free_call(*buf, "eina_hash_free", param, indent);
+        _write_free_call(*buf, "eina_hash_free", param, indent, eindent);
         break;
       case EOLIAN_TYPE_BUILTIN_INLIST:
-        _write_free_call(*buf, "(void)", param, indent); break;
+        _write_free_call(*buf, "(void)", param, indent, eindent); break;
       case EOLIAN_TYPE_BUILTIN_ACCESSOR:
       case EOLIAN_TYPE_BUILTIN_ARRAY:
       case EOLIAN_TYPE_BUILTIN_ITERATOR:
@@ -228,18 +228,18 @@ _generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Str
                        eolian_type_short_name_get(type));
                 break;
              }
-           _write_free_call(*buf, ffunc, param, indent);
+           _write_free_call(*buf, ffunc, param, indent, eindent);
            break;
         }
      }
 }
 
 static void
-_generate_loop_content(Eina_Strbuf **buf, const Eolian_Type *inner_type, const Eina_Strbuf *iter_param)
+_generate_loop_content(Eina_Strbuf **buf, const Eolian_Type *inner_type, const Eina_Strbuf *iter_param, const char *indent)
 {
-   eina_strbuf_append(*buf, "     {\n");
-   _generate_normal_free(buf, inner_type, iter_param, "     ");
-   eina_strbuf_append(*buf, "     }\n");
+   eina_strbuf_append_printf(*buf, "     %s{\n", indent);
+   _generate_normal_free(buf, inner_type, iter_param, indent, "     ");
+   eina_strbuf_append_printf(*buf, "     %s}\n", indent);
 }
 
 static const Eolian_Typedecl *
@@ -265,11 +265,16 @@ _have_struct_owned_fields(const Eolian_Type *tp)
    return NULL;
 }
 
+static void _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type,
+                                     const Eolian_Type *inner_type,
+                                     const char *pname, Eina_Strbuf *param,
+                                     const char *indent);
+
 static void
 _generate_inarray_loop(Eina_Strbuf **buf, const Eolian_Typedecl *tdecl,
-                       const Eina_Strbuf *iter_param)
+                       const Eina_Strbuf *iter_param, const char *indent)
 {
-   eina_strbuf_append(*buf, "     {\n");
+   eina_strbuf_append_printf(*buf, "     %s{\n", indent);
    Eina_Iterator *itr = eolian_typedecl_struct_fields_get(tdecl);
    const Eolian_Struct_Type_Field *sf;
    Eina_Strbuf *fldbuf = eina_strbuf_new();
@@ -278,11 +283,20 @@ _generate_inarray_loop(Eina_Strbuf **buf, const Eolian_Typedecl *tdecl,
         const Eolian_Type *ftp = eolian_typedecl_struct_field_type_get(sf);
         if (!eolian_type_is_owned(ftp))
           continue;
+        const char *fldn = eolian_typedecl_struct_field_name_get(sf);
         eina_strbuf_reset(fldbuf);
         eina_strbuf_append_buffer(fldbuf, iter_param);
         eina_strbuf_append(fldbuf, "->");
-        eina_strbuf_append(fldbuf, eolian_typedecl_struct_field_name_get(sf));
-        _generate_normal_free(buf, ftp, fldbuf, "     ");
+        eina_strbuf_append(fldbuf, fldn);
+        const Eolian_Type *btp = eolian_type_aliased_base_get(ftp);
+        const Eolian_Type *itp = eolian_type_base_type_get(btp);;
+        /* inarray loop is always at one level at most so do not respect
+         * extra indent
+         */
+        if (itp && eolian_type_is_owned(itp))
+           _generate_iterative_free(buf, btp, itp, fldn, fldbuf, "     ");
+        else
+           _generate_normal_free(buf, ftp, fldbuf, "     ", "");
      }
    eina_strbuf_free(fldbuf);
    eina_iterator_free(itr);
@@ -290,7 +304,9 @@ _generate_inarray_loop(Eina_Strbuf **buf, const Eolian_Typedecl *tdecl,
 }
 
 static void
-_generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolian_Type *inner_type, Eolian_Function_Parameter *parameter, Eina_Strbuf *param)
+_generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type,
+                         const Eolian_Type *inner_type, const char *pname,
+                         Eina_Strbuf *param, const char *indent)
 {
    Eina_Strbuf *iterator_header, *iter_param;
 
@@ -299,10 +315,10 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
 
    Eolian_Type_Builtin_Type t = eolian_type_builtin_type_get(type);
 
-   eina_strbuf_append_printf(iter_param, "%s_iter", eolian_parameter_name_get(parameter));
+   eina_strbuf_append_printf(iter_param, "%s_iter", pname);
 
    //generate the field definition
-   eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(inner_type, EOLIAN_C_TYPE_DEFAULT));
+   eina_strbuf_append_printf(*buf, "   %s%s", indent, eolian_type_c_type_get(inner_type, EOLIAN_C_TYPE_DEFAULT));
    if(t == EOLIAN_TYPE_BUILTIN_INARRAY
       || t == EOLIAN_TYPE_BUILTIN_INLIST)
      {
@@ -314,77 +330,77 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
 
    if (t == EOLIAN_TYPE_BUILTIN_LIST)
      {
-        eina_strbuf_append_printf(*buf, "   EINA_LIST_FREE(");
+        eina_strbuf_append_printf(*buf, "   %sEINA_LIST_FREE(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_char(*buf, ',');
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append(*buf, ")\n");
-        _generate_loop_content(buf, inner_type, iter_param);
+        _generate_loop_content(buf, inner_type, iter_param, indent);
      }
    else if (t == EOLIAN_TYPE_BUILTIN_INARRAY)
      {
         const Eolian_Typedecl *ts = _have_struct_owned_fields(inner_type);
         if (ts)
           {
-             eina_strbuf_append_printf(*buf, "   EINA_INARRAY_FOREACH(");
+             eina_strbuf_append_printf(*buf, "   %sEINA_INARRAY_FOREACH(", indent);
              eina_strbuf_append_buffer(*buf, param);
              eina_strbuf_append_char(*buf, ',');
              eina_strbuf_append_buffer(*buf, iter_param);
              eina_strbuf_append(*buf, ")\n");
-             _generate_inarray_loop(buf, ts, iter_param);
+             _generate_inarray_loop(buf, ts, iter_param, indent);
           }
-        _write_free_call(*buf, "eina_inarray_free", param, "");
+        _write_free_call(*buf, "eina_inarray_free", param, indent, "");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_INLIST)
      {
-        eina_strbuf_append_printf(*buf, "   EINA_INLIST_FREE(");
+        eina_strbuf_append_printf(*buf, "   %sEINA_INLIST_FREE(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_char(*buf, ',');
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append(*buf, ")\n");
         eina_strbuf_append(*buf, "     {\n");
-        _write_free_call(*buf, eolian_type_free_func_get(type), iter_param, "     ");
+        _write_free_call(*buf, eolian_type_free_func_get(type), iter_param, indent, "     ");
         eina_strbuf_append(*buf, "     }\n");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_ITERATOR)
      {
-        eina_strbuf_append_printf(*buf, "   EINA_ITERATOR_FOREACH(");
+        eina_strbuf_append_printf(*buf, "   %sEINA_ITERATOR_FOREACH(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_char(*buf, ',');
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append(*buf, ")\n");
-        _generate_loop_content(buf, inner_type, iter_param);
-        _write_free_call(*buf, "eina_iterator_free", param, "");
+        _generate_loop_content(buf, inner_type, iter_param, indent);
+        _write_free_call(*buf, "eina_iterator_free", param, indent, "");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_ACCESSOR)
      {
-        eina_strbuf_append_printf(*buf, "   unsigned int %s_i = 0;\n", eolian_parameter_name_get(parameter));
-        eina_strbuf_append_printf(*buf, "   EINA_ACCESSOR_FOREACH(");
+        eina_strbuf_append_printf(*buf, "   %sunsigned int %s_i = 0;\n", pname, indent);
+        eina_strbuf_append_printf(*buf, "   %sEINA_ACCESSOR_FOREACH(", indent);
         eina_strbuf_append_buffer(*buf, param);
-        eina_strbuf_append_printf(*buf, ",%s_i,", eolian_parameter_name_get(parameter));
+        eina_strbuf_append_printf(*buf, ",%s_i,", pname);
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append(*buf, ")\n");
-        _generate_loop_content(buf, inner_type, iter_param);
-        _write_free_call(*buf, "eina_accessor_free", param, "");
+        _generate_loop_content(buf, inner_type, iter_param, indent);
+        _write_free_call(*buf, "eina_accessor_free", param, indent, "");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_HASH)
      {
-        eina_strbuf_append_printf(*buf,"   eina_hash_free_cb_set(");
+        eina_strbuf_append_printf(*buf,"   %seina_hash_free_cb_set(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_printf(*buf, ",%s);\n",_get_free_func(type));
-        eina_strbuf_append_printf(*buf,"   eina_hash_free(");
+        eina_strbuf_append_printf(*buf,"   %seina_hash_free(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append(*buf, ");\n");
      }
    else if (t == EOLIAN_TYPE_BUILTIN_ARRAY)
      {
-        eina_strbuf_append_printf(*buf, "   while((");
+        eina_strbuf_append_printf(*buf, "   %swhile((", indent);
         eina_strbuf_append_buffer(*buf, iter_param);
         eina_strbuf_append_printf(*buf, " = eina_array_pop(");
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_printf(*buf, ")))\n");
-        _generate_loop_content(buf, inner_type, iter_param);
-        eina_strbuf_append_printf(*buf, "   eina_array_free(");
+        _generate_loop_content(buf, inner_type, iter_param, indent);
+        eina_strbuf_append_printf(*buf, "   %seina_array_free(", indent);
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append_printf(*buf, ");\n");
       }
@@ -429,11 +445,12 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         //check if we might want to free or handle the children
         if (!inner_type || !eolian_type_is_owned(inner_type))
           {
-             _generate_normal_free(&fallback_free_ownership, btype, param_call, "");
+             _generate_normal_free(&fallback_free_ownership, btype, param_call, "", "");
           }
         else if (inner_type && eolian_type_is_owned(inner_type))
           {
-             _generate_iterative_free(&fallback_free_ownership, btype, inner_type, pr, param_call);
+             const char *pn = eolian_parameter_name_get(pr);
+             _generate_iterative_free(&fallback_free_ownership, btype, inner_type, pn, param_call, "");
           }
       }
    eina_iterator_free(itr);
