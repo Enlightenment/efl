@@ -85,6 +85,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_duplicate.eo.h"
 #include "interfaces/efl_file.eo.h"
+#include "interfaces/efl_file_save.eo.h"
 #include "interfaces/efl_gfx_image.eo.h"
 #include "interfaces/efl_gfx_frame_controller.eo.h"
 #include "interfaces/efl_gfx_image_load_controller.eo.h"

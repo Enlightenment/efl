@@ -283,7 +283,7 @@ _efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
+_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
 {
    if (pd->vg_entry)
      return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, flags);

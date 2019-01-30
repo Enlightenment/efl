@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File
+class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -75,6 +75,6 @@ class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File
       Efl.Object.destructor;
       // FIXME: Implement mmap only (also fix cache keys)
       Efl.File.file { get; set; }
-      Efl.File.save;
+      Efl.File_Save.save;
    }
 }

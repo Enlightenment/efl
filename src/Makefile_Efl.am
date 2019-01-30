@@ -23,6 +23,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_duplicate.eo \
       lib/efl/interfaces/efl_file.eo \
+      lib/efl/interfaces/efl_file_save.eo \
       lib/efl/interfaces/efl_gfx_image_load_controller.eo \
       lib/efl/interfaces/efl_part.eo \
       lib/efl/interfaces/efl_playable.eo \

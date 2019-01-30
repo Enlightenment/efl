@@ -1,0 +1,29 @@
+import eina_types;
+
+interface Efl.File_Save {
+   [[Efl file saving interface]]
+   methods {
+      save @const {
+         [[Save the given image object's contents to an (image) file.
+
+           The extension suffix on $file will determine which saver
+           module Evas is to use when saving, thus the final file's
+           format. If the file supports multiple data stored in it (Eet ones),
+           you can specify the key to be used as the index of the image in it.
+
+           You can specify some flags when saving the image.  Currently
+           acceptable flags are $quality and $compress. Eg.:
+           "quality=100 compress=9".
+         ]]
+         params {
+            @in file: string @nonull; [[The filename to be used to save the image (extension
+                                              obligatory).]]
+            @in key: string; [[The image key in the file (if an Eet one), or $null,
+                                     otherwise.]]
+            @in flags: string; [[String containing the flags to be used ($null for
+                                       none).]]
+         }
+         return: bool;  [[$true on success, $false otherwise]]
+      }
+   }
+}
