@@ -62,7 +62,6 @@ group { name: "e/modules/notification/main";
             WIN_SHADOW;
          }
       }
-      alias: "e.event.close" "notification.event.close";
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
             rel1.to: "rel1";
@@ -74,7 +73,7 @@ group { name: "e/modules/notification/main";
       }
       part { name: "titleclip"; type: RECT;
          description { state: "default" 0.0;
-            rel2.to_x: "e.event.close";
+            rel2.to_x: "notification.event.close";
             rel2.relative: 0.0 1.0;
          }
       }
@@ -149,7 +148,7 @@ group { name: "e/modules/notification/main";
             rel1.relative: 1.0 0.0;
             rel1.offset: 4 12;
             rel2.relative: 0.0 0.0;
-            rel2.to_x: "e.event.close";
+            rel2.to_x: "notification.event.close";
             rel2.offset: -5 12;
             color: 255 255 255 255;
             align: 0.0 0.0;
@@ -161,18 +160,19 @@ group { name: "e/modules/notification/main";
             fixed: 0 1;
          }
       }
+
       part { name: "close";
          description { state: "default" 0.0;
             image.normal: "border_close.png";
-            rel1.to: "e.event.close";
-            rel2.to: "e.event.close";
+            rel.to: "notification.event.close";
             min: 15 15;
             max: 15 15;
             fixed: 1 1;
+            color: 255 255 255 255;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
-            color: 200 200 200 255;
+            color: 128 128 128 255;
          }
       }
       part { name: "notification.event.close"; type: RECT;
@@ -193,17 +193,17 @@ group { name: "e/modules/notification/main";
    }
    programs {
       program {
-         signal: "mouse,down,1"; source: "e.event.close";
+         signal: "mouse,down,1"; source: "notification.event.close";
          action: STATE_SET "selected" 0.0;
          target: "close";
       }
       program {
-         signal: "mouse,up,1"; source: "e.event.close";
+         signal: "mouse,up,1"; source: "notification.event.close";
          action: STATE_SET "default" 0.0;
          target: "close";
       }
       program {
-         signal: "mouse,clicked,1"; source: "e.event.close";
+         signal: "mouse,clicked,1"; source: "notification.event.close";
          action: SIGNAL_EMIT "notification,close" "theme";
       }
       program {
