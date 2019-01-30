@@ -102,6 +102,10 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          return: Dummy.Test_Object;
       }
 
+      return_null_object {
+         return: Dummy.Test_Object;
+      }
+
       int_out {
          params {
             @in x: int;
