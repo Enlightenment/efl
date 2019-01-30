@@ -2470,21 +2470,26 @@ EAPI Eina_Bool
 efl_domain_switch(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *new_data;
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD) ||
        (domain == EFL_ID_DOMAIN_SHARED))
      {
         ERR("Invalid domain %i being switched to", domain);
         return EINA_FALSE;
      }
-   if (data)
+   if ((data) && (data->local_domain == domain))
+     return EINA_TRUE;
+
+   new_data = _eo_table_data_new(domain);
+   if (!new_data)
      {
-        if (data->local_domain == domain) return EINA_TRUE;
-        _eo_free_ids_tables(data);
+        ERR("Could not allocate domain %i table data", domain);
+        return EINA_FALSE;
      }
-   data = _eo_table_data_new(domain);
-   data->local_domain = domain;
-   data->domain_stack[data->stack_top] = domain;
-   eina_tls_set(_eo_table_data, data);
+   if (data) _eo_free_ids_tables(data);
+   new_data->local_domain = domain;
+   new_data->domain_stack[new_data->stack_top] = domain;
+   eina_tls_set(_eo_table_data, new_data);
    return EINA_TRUE;
 }
 
