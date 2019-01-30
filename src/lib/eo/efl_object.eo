@@ -73,7 +73,7 @@ abstract Efl.Object
          get {
          }
          values {
-           name: string @nullable; [[The name]]
+           name: stringshare @nullable; [[The name]]
          }
       }
       @property comment {
@@ -88,7 +88,7 @@ abstract Efl.Object
          get {
          }
          values {
-           comment: string @nullable; [[The comment]]
+           comment: stringshare @nullable; [[The comment]]
          }
       }
       debug_name_override {
