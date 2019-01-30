@@ -250,7 +250,8 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                       */
                      if (!_validate_type(vals, tp->base_type))
                        return EINA_FALSE;
-                     if (tp->base_type->tdecl->type != EOLIAN_TYPEDECL_STRUCT_INLIST)
+                     if ((tp->base_type->tdecl == NULL) ||
+                         (tp->base_type->tdecl->type != EOLIAN_TYPEDECL_STRUCT_INLIST))
                        {
                           _eo_parser_log(&tp->base_type->base,
                                          "inlists can only point at inlist structs");
