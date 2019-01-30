@@ -121,6 +121,8 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
 
 EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(code, NULL);
+
    Elm_Code_File *ret;
    Eina_File *file;
    Eina_File_Line *line;
@@ -214,7 +216,13 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    free(tmp);
 
    if (have_mode)
-     chmod(path, mode);
+     {
+        if(chmod(path, mode) < 0)
+          {
+             ERR("Error in chmod(%s, %s) - %d(%s)\n", path, mode, errno, strerror(errno));
+             return;
+          }
+     }
 
    if (file->parent)
      {
