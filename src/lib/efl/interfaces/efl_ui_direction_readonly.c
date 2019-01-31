@@ -14,4 +14,4 @@ _efl_ui_direction_readonly_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, E
    EINA_LOG_ERR("This object does not allow setting of a direction");
 }
 
-#include "efl_ui_direction_readonly.eo.c"
+#include "interfaces/efl_ui_direction_readonly.eo.c"
