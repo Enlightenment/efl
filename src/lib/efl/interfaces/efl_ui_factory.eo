@@ -4,7 +4,7 @@ struct Efl.Ui.Factory_Item_Created_Event {
    item: Efl.Gfx.Entity; [[The item that was just created.]]
 }
 
-interface Efl.Ui.Factory extends Efl.Ui.Model.Connect
+interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
 {
    [[Efl UI factory interface]]
    methods {
@@ -20,13 +20,6 @@ interface Efl.Ui.Factory extends Efl.Ui.Model.Connect
          [[Release a UI object and disconnect from models.]]
          params {
             ui_view: Efl.Gfx.Entity; [[Efl canvas]]
-         }
-      }
-      model_connect {
-         [[Connect factory to a model]]
-         params {
-            name: string; [[Model name]]
-            factory: Efl.Ui.Factory; [[Efl factory]]
          }
       }
    }

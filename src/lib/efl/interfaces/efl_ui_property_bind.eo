@@ -1,0 +1,18 @@
+interface Efl.Ui.Property_Bind
+{
+   [[Efl UI Property_Bind interface.
+     view object can have @Efl.Model to manage the data,
+     the interface can help loading and tracking child data from the model property.
+     see @Efl.Model
+     see @Efl.Ui.Factory]]
+   methods {
+      property_bind {
+         [[bind property data with the given key string. when the data is ready or changed,
+           bind the data to the key action and process promised work.]]
+         params {
+            key: string; [[key string for bind model property data]]
+            property: string; [[Model property name]]
+         }
+      }
+   }
+}

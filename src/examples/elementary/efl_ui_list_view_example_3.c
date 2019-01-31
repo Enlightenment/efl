@@ -150,8 +150,8 @@ _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_model_connect(ie->layout, "efl.text", "name");
-   efl_ui_model_connect(ie->layout, "signal/efl,state,%v", "odd_style");
+   efl_ui_property_bind(ie->layout, "efl.text", "name");
+   efl_ui_property_bind(ie->layout, "signal/efl,state,%v", "odd_style");
 }
 
 static void
@@ -163,7 +163,7 @@ _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
    elm_object_focus_allow_set(ie->layout, EINA_TRUE);
    evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_model_connect(ie->layout, "efl.text", "occupation");
+   efl_ui_property_bind(ie->layout, "efl.text", "occupation");
 }
 
 static Efl_Model*
@@ -222,7 +222,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    priv->model = _make_model();
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "efl.text", "filename");
+   efl_ui_property_bind(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    priv->list1 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
@@ -233,8 +233,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_list_view_layout_factory_set(priv->list1, factory);
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "efl.text", "filename");
-   efl_ui_model_connect(factory, "signal/efl,state,%v", "selected");
+   efl_ui_property_bind(factory, "efl.text", "filename");
+   efl_ui_property_bind(factory, "signal/efl,state,%v", "selected");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
    priv->list2 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list2, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);

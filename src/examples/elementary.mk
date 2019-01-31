@@ -64,7 +64,7 @@ elementary/label_example_03.c \
 elementary/layout_example_01.c \
 elementary/layout_example_02.c \
 elementary/layout_example_03.c \
-elementary/layout_model_connect.c \
+elementary/layout_property_bind.c \
 elementary/list_example_01.c \
 elementary/list_example_02.c \
 elementary/list_example_03.c \
@@ -283,7 +283,7 @@ elementary/label_example_03 \
 elementary/layout_example_01 \
 elementary/layout_example_02 \
 elementary/layout_example_03 \
-elementary/layout_model_connect \
+elementary/layout_property_bind \
 elementary/list_example_01 \
 elementary/list_example_02 \
 elementary/list_example_03 \

@@ -149,8 +149,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_canvas_scene.eo.h"
 #include "interfaces/efl_canvas_pointer.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
-#include "interfaces/efl_ui_model_connect.eo.h"
+#include "interfaces/efl_ui_property_bind.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
+#include "interfaces/efl_ui_factory_bind.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
 #include "interfaces/efl_cached_item.eo.h"
 

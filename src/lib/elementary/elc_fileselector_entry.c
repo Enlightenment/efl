@@ -78,7 +78,7 @@ _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
    ELM_FILESELECTOR_ENTRY_DATA_GET(fs, sd);
 
    efl_ui_view_model_set(sd->entry, model);
-   efl_ui_model_connect(sd->entry, "default", "path");
+   efl_ui_property_bind(sd->entry, "default", "path");
 
    path = efl_model_property_get(model, "path");
    file = eina_value_to_string(path);
@@ -422,7 +422,7 @@ _elm_fileselector_entry_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Fileselec
 {
    efl_ui_view_model_set(sd->button, model);
    efl_ui_view_model_set(sd->entry, model);
-   efl_ui_model_connect(sd->entry, "default", "path");
+   efl_ui_property_bind(sd->entry, "default", "path");
 }
 
 EINA_DEPRECATED EAPI const char *

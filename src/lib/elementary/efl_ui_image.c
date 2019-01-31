@@ -1952,20 +1952,20 @@ _efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data
 }
 
 EOLIAN static void
-_efl_ui_image_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Image_Data *pd, const char *name, const char *property)
+_efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd, const char *key, const char *property)
 {
-   if (strcmp(name, "filename") == 0)
+   if (strcmp(key, "filename") == 0)
      {
         pd->property.icon = EINA_FALSE;
         eina_stringshare_replace(&pd->property.file, property);
      }
-   else if (strcmp(name, "icon") == 0)
+   else if (strcmp(key, "icon") == 0)
      {
         pd->property.icon = EINA_TRUE;
         eina_stringshare_replace(&pd->property.file, property);
         eina_stringshare_replace(&pd->property.key, NULL);
      }
-   else if (strcmp(name, "key") == 0)
+   else if (strcmp(key, "key") == 0)
      {
         eina_stringshare_replace(&pd->property.key, property);
      }

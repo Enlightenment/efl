@@ -3,7 +3,7 @@ class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
    [[Efl Ui Factory that provides @Efl.Ui.Widget.
 
      This factory is designed to build @Efl.Ui.Widget and optionally set their
-     @Efl.Ui.Widget.style if it was connected with @Efl.Ui.Model.Connect.connect "$style".
+     @Efl.Ui.Widget.style if it was connected with @Efl.Ui.Property_Bind.property_bind "$style".
 
    ]]
    methods {
@@ -20,7 +20,7 @@ class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
    implements {
       Efl.Ui.Factory.create;
       Efl.Ui.Factory.release;
-      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Property_Bind.property_bind;
    }
    constructors {
       .item_class @optional;

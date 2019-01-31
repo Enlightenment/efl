@@ -33,7 +33,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    model = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "efl.text", "filename");
+   efl_ui_property_bind(factory, "efl.text", "filename");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    li = efl_add(EFL_UI_LIST_VIEW_CLASS, win);
@@ -45,8 +45,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
 
    imgf = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
-   efl_ui_model_connect(imgf, "", "path"); //connect to "path" property
-   efl_ui_factory_model_connect(factory, "efl.icon", imgf);
+   efl_ui_property_bind(imgf, "", "path"); //connect to "path" property
+   efl_ui_factory_bind(factory, "efl.icon", imgf);
 
    elm_win_resize_object_add(win, li);
 

@@ -1,7 +1,7 @@
 import efl_ui;
 
 class Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
-                     Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
+                     Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group
 {
@@ -76,8 +76,8 @@ class Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
       Efl.Container.content_iterate;
       Efl.Part.part_get;
       Efl.Ui.View.model { get; set; }
-      Efl.Ui.Model.Connect.connect;
-      Efl.Ui.Factory.model_connect;
+      Efl.Ui.Property_Bind.property_bind;
+      Efl.Ui.Factory_Bind.factory_bind;
    }
    events {
       theme,changed: void; [[Called when theme changed]]

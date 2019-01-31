@@ -47,11 +47,11 @@ _link_dying(void* data, Efl_Event const* event)
 static Eina_Bool
 _elm_view_widget_add(Elm_View_Form_Data *priv, const char *property, Evas_Object *link)
 {
-   if (!efl_isa(link, EFL_UI_MODEL_CONNECT_INTERFACE)) return EINA_FALSE;
+   if (!efl_isa(link, EFL_UI_PROPERTY_BIND_INTERFACE)) return EINA_FALSE;
    if (!property) property = "default";
 
    efl_ui_view_model_set(link, priv->model);
-   efl_ui_model_connect(link, "default", property);
+   efl_ui_property_bind(link, "default", property);
    efl_event_callback_add(link, EFL_EVENT_DEL, _link_dying, priv);
 
    priv->links = eina_list_append(priv->links, link);

@@ -70,8 +70,9 @@
 #include "interfaces/efl_ui_range_interactive.eo.c"
 #include "interfaces/efl_ui_autorepeat.eo.c"
 #include "interfaces/efl_ui_view.eo.c"
-#include "interfaces/efl_ui_model_connect.eo.c"
+#include "interfaces/efl_ui_property_bind.eo.c"
 #include "interfaces/efl_ui_factory.eo.c"
+#include "interfaces/efl_ui_factory_bind.eo.c"
 
 #include "interfaces/efl_ui_draggable.eo.c"
 #include "interfaces/efl_ui_clickable.eo.c"

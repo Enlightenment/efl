@@ -34,14 +34,14 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
 }
 
 static Eina_Value
-_efl_ui_image_factory_connect(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
+_efl_ui_image_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
 {
    Efl_Gfx_Entity *entity = NULL;
    Efl_Ui_Image_Factory_Data *pd = data;
 
    eina_value_pget(&value, &entity);
 
-   efl_ui_model_connect(entity, "filename", pd->property);
+   efl_ui_property_bind(entity, "filename", pd->property);
 
    return value;
 }
@@ -58,12 +58,12 @@ _efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *
 
    return efl_future_then(obj, f,
                           .success_type = EINA_VALUE_TYPE_OBJECT,
-                          .success = _efl_ui_image_factory_connect,
+                          .success = _efl_ui_image_factory_bind,
                           .data = pd);
 }
 
 EOLIAN static void
-_efl_ui_image_factory_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, const char *name EINA_UNUSED, const char *property)
+_efl_ui_image_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, const char *key EINA_UNUSED, const char *property)
 {
     eina_stringshare_replace(&pd->property, property);
 }

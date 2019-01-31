@@ -116,16 +116,16 @@ _efl_ui_widget_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_ui_widget_factory_efl_ui_model_connect_connect(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
-                                                    const char *name, const char *property)
+_efl_ui_widget_factory_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
+                                                          const char *target, const char *property)
 {
-   if (!strcmp(name, "style"))
+   if (!strcmp(target, "style"))
      {
         eina_stringshare_replace(&pd->style, property);
         return ;
      }
 
-   efl_ui_model_connect(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS), name, property);
+   efl_ui_property_bind(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS), target, property);
 }
 
 #include "efl_ui_widget_factory.eo.c"
