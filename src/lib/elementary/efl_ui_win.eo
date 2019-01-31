@@ -872,9 +872,9 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Part.part_get;
    }
    constructors {
-      .win_name;
-      .win_type;
-      .accel_preference;
+      .win_name @optional;
+      .win_type @optional;
+      .accel_preference @optional;
    }
    events {
       delete,request: void; [[Called when the window receives a delete request]]

@@ -23,6 +23,6 @@ class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
       Efl.Ui.Model.Connect.connect;
    }
    constructors {
-      .item_class;
+      .item_class @optional;
    }
 }
