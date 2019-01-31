@@ -378,7 +378,8 @@ EAPI Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rota
  * Set tap-to-click status
  *
  * @param manager
- * @param status
+ * @param seat
+ * @param enabled
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
  *
@@ -386,7 +387,6 @@ EAPI Eina_Bool elput_input_pointer_rotation_set(Elput_Manager *manager, int rota
  * @since 1.22
  */
 EAPI void elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *seat, Eina_Bool enabled);
-
 
 /**
  * Calibrate input devices for given screen size
