@@ -77,10 +77,9 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    else
      {
         if (bdata->pixels)
-          bdata->free_func(bdata->data,
-                                      bdata->pixels);
-        bdata->pixels = bdata->alloc_func(bdata->data,
-					  ee->w * ee->h * sizeof(int));
+          bdata->free_func(bdata->data, bdata->pixels);
+        bdata->pixels =
+          bdata->alloc_func(bdata->data, ee->w * ee->h * sizeof(int));
         stride = ee->w * sizeof(int);
      }
 
@@ -103,7 +102,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
           }
      }
    if (bdata->image)
-      evas_object_image_data_set(bdata->image, bdata->pixels);
+     evas_object_image_data_set(bdata->image, bdata->pixels);
    else
      bdata->resized = 1;
 }
@@ -176,7 +175,7 @@ _ecore_evas_buffer_prepare(Ecore_Evas *ee)
 
         evas_object_image_size_get(bdata->image, &w, &h);
         if ((w != ee->w) || (h != ee->h))
-           _ecore_evas_resize(ee, w, h);
+          _ecore_evas_resize(ee, w, h);
         bdata->pixels = evas_object_image_data_get(bdata->image, 1);
      }
    else if (bdata->resized)
@@ -522,7 +521,7 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha))) return;
    ee->alpha = alpha;
    if (bdata->image)
-      evas_object_image_alpha_set(bdata->image, ee->alpha);
+     evas_object_image_alpha_set(bdata->image, ee->alpha);
    else
      {
         Evas_Engine_Info_Buffer *einfo;
@@ -665,90 +664,90 @@ _ecore_evas_buffer_pointer_warp(const Ecore_Evas *ee, Evas_Coord x, Evas_Coord y
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
 {
    _ecore_evas_buffer_free,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     _ecore_evas_move,
-     NULL,
-     _ecore_evas_resize,
-     _ecore_evas_move_resize,
-     NULL,
-     NULL,
-     _ecore_evas_show,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     _ecore_evas_buffer_title_set,
-     _ecore_evas_buffer_name_class_set,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     _ecore_evas_buffer_ignore_events_set,
-     _ecore_evas_buffer_alpha_set,
-     NULL, //transparent
-     NULL, // profiles_set
-     _ecore_evas_buffer_profile_set,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _ecore_evas_move,
+   NULL,
+   _ecore_evas_resize,
+   _ecore_evas_move_resize,
+   NULL,
+   NULL,
+   _ecore_evas_show,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _ecore_evas_buffer_title_set,
+   _ecore_evas_buffer_name_class_set,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   _ecore_evas_buffer_ignore_events_set,
+   _ecore_evas_buffer_alpha_set,
+   NULL, //transparent
+   NULL, // profiles_set
+   _ecore_evas_buffer_profile_set,
 
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
 
-     NULL,
-     _ecore_evas_buffer_screen_geometry_get,
-     NULL,  // screen_dpi_get
-     _ecore_evas_buffer_msg_parent_send,
-     _ecore_evas_buffer_msg_send,
+   NULL,
+   _ecore_evas_buffer_screen_geometry_get,
+   NULL,  // screen_dpi_get
+   _ecore_evas_buffer_msg_parent_send,
+   _ecore_evas_buffer_msg_send,
 
-     _ecore_evas_buffer_pointer_xy_get, // pointer_xy_get
-     _ecore_evas_buffer_pointer_warp, // pointer_warp
+   _ecore_evas_buffer_pointer_xy_get, // pointer_xy_get
+   _ecore_evas_buffer_pointer_warp, // pointer_warp
 
-     NULL, // wm_rot_preferred_rotation_set
-     NULL, // wm_rot_available_rotations_set
-     NULL, // wm_rot_manual_rotation_done_set
-     NULL, // wm_rot_manual_rotation_done
+   NULL, // wm_rot_preferred_rotation_set
+   NULL, // wm_rot_available_rotations_set
+   NULL, // wm_rot_manual_rotation_done_set
+   NULL, // wm_rot_manual_rotation_done
 
-     NULL, // aux_hints_set
+   NULL, // aux_hints_set
 
-     NULL, // fn_animator_register
-     NULL, // fn_animator_unregister
+   NULL, // fn_animator_register
+   NULL, // fn_animator_unregister
 
-     NULL, // fn_evas_changed
-     NULL, //fn_focus_device_set
-     NULL, //fn_callback_focus_device_in_set
-     NULL, //fn_callback_focus_device_out_set
-     NULL, //fn_callback_device_mouse_in_set
-     NULL, //fn_callback_device_mouse_out_set
-     NULL, //fn_pointer_device_xy_get
-     _ecore_evas_buffer_prepare,
-     NULL // fn_last_tick_get
+   NULL, // fn_evas_changed
+   NULL, //fn_focus_device_set
+   NULL, //fn_callback_focus_device_in_set
+   NULL, //fn_callback_focus_device_out_set
+   NULL, //fn_callback_device_mouse_in_set
+   NULL, //fn_callback_device_mouse_out_set
+   NULL, //fn_pointer_device_xy_get
+   _ecore_evas_buffer_prepare,
+   NULL // fn_last_tick_get
 };
 
 static void *
@@ -893,8 +892,9 @@ ecore_evas_buffer_new(int w, int h)
 
    ecore_event_evas_init();
 
-   ee =  ecore_evas_buffer_allocfunc_new
-     (w, h, _ecore_evas_buffer_pix_alloc, _ecore_evas_buffer_pix_free, NULL);
+   ee =
+     ecore_evas_buffer_allocfunc_new(w, h, _ecore_evas_buffer_pix_alloc,
+                                     _ecore_evas_buffer_pix_free, NULL);
 
    if (!ee) ecore_event_evas_shutdown();
 
