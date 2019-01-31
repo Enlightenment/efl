@@ -5,9 +5,11 @@
 #include "efl_ui_suite.h"
 #include "efl_ui_model_homogeneous.eo.h"
 #include "efl_ui_model_exact.eo.h"
+#include "efl_ui_model_average.eo.h"
 
 static const int child_number = 3;
 static const int base_ints[] = { 41, 42, 43 };
+static int expected_average[] = { 0, 0, 0 };
 
 static Efl_Model *
 _generate_base_model(void)
@@ -247,9 +249,103 @@ EFL_START_TEST(efl_ui_model_exact_test)
 }
 EFL_END_TEST
 
+static Eina_Value
+_child_updated_average(Efl_Model *model, void *data, const Eina_Value v)
+{
+   Eina_Value *r;
+   int *ex = data;
+   int got = 0;
+
+   r = efl_model_property_get(model, "total.height");
+   ck_assert(eina_value_int_convert(r, &got));
+   ck_assert_int_eq(got, *ex);
+   eina_value_free(r);
+
+   return v;
+}
+
+static Eina_Value
+_children_average_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, const Eina_Value v)
+{
+   unsigned int i, len;
+   Efl_Model *child = NULL;
+   Eina_Future *all[4] = { NULL, NULL, NULL, EINA_FUTURE_SENTINEL };
+   Eina_Future *f;
+
+   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        ck_assert_int_eq(_property_uint_expected(child, "self.width"), 0);
+        ck_assert_int_eq(_property_uint_expected(child, "self.height"), 0);
+     }
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        Eina_Value *v;
+        unsigned int w, h;
+
+        v = efl_model_property_get(child, "test_p_int");
+        eina_value_uint_convert(v, &w);
+        eina_value_uint_convert(v, &h);
+        eina_value_free(v);
+
+        w *= 2;
+        h *= 3;
+
+        all[i] = eina_future_all(efl_model_property_set(child, "self.width", eina_value_uint_new(w)),
+                                 efl_model_property_set(child, "self.height", eina_value_uint_new(h)));
+        all[i] = efl_future_then(model, all[i], .success = _child_should_succeed);
+
+        // The model average is not updated until the property have succeeded, so we have
+        // to wait before we can fetch the property.
+        all[i] = efl_future_then(model, all[i], .success = _child_updated_average, .data = &expected_average[i]);
+     }
+
+   f = eina_future_all_array(all);
+   f = efl_future_then(model, f, .success = _total_succeed, .error = _total_failed);
+   return eina_future_as_value(f);
+}
+
+EFL_START_TEST(efl_ui_model_average_test)
+{
+   Efl_Model_Item *base_model, *model;
+   Eina_Future *future;
+   Eina_Value *ret__;
+   int real__;
+
+   base_model = _generate_base_model();
+
+   model = efl_add_ref(EFL_UI_MODEL_AVERAGE_CLASS, efl_main_loop_get(),
+                       efl_ui_view_model_set(efl_added, base_model));
+   ck_assert(!!model);
+
+   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
+   efl_future_then(model, future, .success = _children_average_slice_get_then);
+
+   ck_assert_int_eq(_property_uint_expected(model, "total.width"), 0);
+   ck_assert_int_eq(_property_uint_expected(model, "total.height"), 0);
+   ck_assert_int_eq(_property_error_expected(model, "item.width"), EAGAIN);
+   ck_assert_int_eq(_property_error_expected(model, "item.height"), EAGAIN);
+
+   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
+   real__ = efl_loop_exit_code_process(ret__);
+   fail_if(real__ != 0);
+
+   ck_assert_int_eq(_property_uint_expected(model, "total.width"), base_ints[2] * 2);
+   ck_assert_int_eq(_property_uint_expected(model, "total.height"), base_ints[0] * 3 + base_ints[1] * 3 + base_ints[2] * 3);
+}
+EFL_END_TEST
+
 void
 efl_ui_model(TCase *tc)
 {
+   // This is done here as some system can not initialize computed value from another data at compile time.
+   expected_average[0] =  base_ints[0] * 3 * 3;
+   expected_average[1] = ((base_ints[0] * 3 + base_ints[1] * 3) * 3) / 2;
+   expected_average[2] = base_ints[0] * 3 + base_ints[1] * 3 + base_ints[2] * 3;
+
    tcase_add_test(tc, efl_ui_model_homogeneous_test);
+   tcase_add_test(tc, efl_ui_model_average_test);
    tcase_add_test(tc, efl_ui_model_exact_test);
 }
