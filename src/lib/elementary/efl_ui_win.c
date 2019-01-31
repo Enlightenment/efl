@@ -272,6 +272,8 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    ctor : 1; /**< legacy constructor: elm_win~add */
    } legacy;
 
+   Eina_Value exit_on_close;
+
    Eina_Bool    first_draw : 1;
    Eina_Bool    deferred_resize_job : 1;
    Eina_Bool    urgent : 1;
@@ -2986,7 +2988,9 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if (!_elm_win_list)
+   if (eina_value_type_get(&sd->exit_on_close))
+     efl_loop_quit(efl_loop_get(obj), sd->exit_on_close);
+   else if (!_elm_win_list)
      {
        if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED)
          _elm_win_flush_cache_and_exit(obj);
@@ -5918,6 +5922,23 @@ EOLIAN static const Evas_Object*
 _efl_ui_win_icon_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->icon;
+}
+
+EOLIAN static const Eina_Value *
+_efl_ui_win_exit_on_close_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return &sd->exit_on_close;
+}
+
+EOLIAN static void
+_efl_ui_win_exit_on_close_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eina_Value *exit_code)
+{
+   const Eina_Value_Type *type = eina_value_type_get(exit_code);
+
+   if (type)
+     eina_value_copy(exit_code, &sd->exit_on_close);
+   else
+     eina_value_flush(&sd->exit_on_close);
 }
 
 /* Only for C API */
