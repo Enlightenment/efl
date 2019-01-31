@@ -92,7 +92,7 @@ public struct EventDescription {
     {
         if (!descriptions.ContainsKey(name))
         {
-            IntPtr data = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, name);
+            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(name);
 
             if (data == IntPtr.Zero) {
                 string error = Eina.StringConversion.NativeUtf8ToManagedString(Efl.Eo.Globals.dlerror());

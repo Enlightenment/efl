@@ -364,9 +364,10 @@ struct klass
 
          if(!as_generator
             (
-             "public class " << native_inherit_name << " " << (root ? ": Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
-             // << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
-             << scope_tab << "public " << /*(root ? "" : "new ")*/ "override " << "System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
+             "public class " << native_inherit_name << " " << (root ? " : Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
+             << scope_tab << "public " << (root ? "" : "new ") << " static Efl.Eo.NativeModule _Module = new Efl.Eo.NativeModule("
+             << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n"
+             << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )

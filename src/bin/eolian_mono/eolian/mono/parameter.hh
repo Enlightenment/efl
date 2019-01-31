@@ -1121,7 +1121,8 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
+                //string << "= Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
+                string << "= " << string << ";\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
@@ -1132,7 +1133,8 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
+                //string << "= Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
+                string << " = " << string << ";\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
@@ -1270,7 +1272,8 @@ struct native_convert_return_generator
                     return false;
                  }
                return as_generator(
-                    "return Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
+                    //"return Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
+                    "return _ret_var;\n"                    
                  ).generate(sink, attributes::unused, context);
             }
           else
@@ -1288,7 +1291,8 @@ struct native_convert_return_generator
                     return false;
                  }
               return as_generator(
-                   "return Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
+                    //"return Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
+                   "return _ret_var;\n"
                 ).generate(sink, attributes::unused, context);
            }
          else

@@ -90,7 +90,7 @@ struct marshall_annotation_visitor_generate
           {"string", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))]";
           }},
-          {"string", false, [&] {
+          {"string", nullptr, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringKeepOwnershipMarshaler))]";
           }},
           {"mstring", true, [&] {
@@ -216,16 +216,17 @@ struct marshall_native_annotation_visitor_generate
           {"string", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringPassOwnershipMarshaler))]";
           }},
-          {"string", false, [&] { return ""; }},
+          {"string", false, [&] {
+                                 return ""; }},
           {"stringshare", true, [&] {
                 return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringsharePassOwnershipMarshaler))]";
           }},
           {"stringshare", false, [&] { return ""; }},
           {"strbuf", true, [&] {
-                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufPassOwnershipMarshaler))]";
+                return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufPassOwnershipMarshaler))]";
           }},
           {"strbuf", false, [&] {
-                return " [MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufKeepOwnershipMarshaler))]";
+                return " [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufKeepOwnershipMarshaler))]";
           }},
         };
 
@@ -234,11 +235,16 @@ struct marshall_native_annotation_visitor_generate
           , [&] (match const& m)
           {
             return (!m.name || *m.name == regular.base_type)
-            && (!m.has_own || *m.has_own == (bool)(regular.base_qualifier & qualifier_info::is_own))
+            && (!m.has_own || *m.has_own == static_cast<bool>(regular.base_qualifier & qualifier_info::is_own))
             ;
           }
           , [&] (std::string const& string)
           {
+            if (is_return)
+            {
+              std::string comment = "// Passed through match table with type " + regular.base_type + " and string is size " + std::to_string(string.size()) + "\n";
+              std::copy(comment.begin(), comment.end(), sink);
+            }
             std::copy(string.begin(), string.end(), sink);
             return true;
           }))

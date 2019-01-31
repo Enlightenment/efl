@@ -47,9 +47,9 @@ struct function_registration_generator
 #ifdef _WIN32
         << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else
-        << "api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\")"
+        << "api_func = Efl.Eo.FunctionInterop.LoadFunctionPointer(_Module.Module, \"" << string << "\")"
 #endif
-        ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
+        << ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
        )
        .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
       return false;
