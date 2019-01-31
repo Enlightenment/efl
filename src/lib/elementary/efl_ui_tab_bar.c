@@ -221,7 +221,12 @@ _tab_add(Eo *obj, const char *label, const char *icon)
    ti->tab = NULL;
    ti->label = eina_stringshare_add(label);
 
-   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj);
+   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj,
+                 efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
+   /* FIXME: This is for tab sizing issue.
+    * Recently, the size_hint_fill API has been added,
+    * but currently tab_bar is not available because it uses evas_object_box.
+    * This should be removed after the box in tab_bar has been replaced by efl.ui.box */
 
    icon_obj = elm_icon_add(tab);
 
