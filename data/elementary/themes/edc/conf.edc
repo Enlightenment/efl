@@ -46,16 +46,11 @@ group { name: "e/modules/conf/main";
    min: 16 16;
    parts {
       part { name: "base"; type: RECT;
-         scale: 1;
          description { state: "default" 0.0;
-            color: 80 80 80 255;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
-            offscale;
+            color: 0 0 0 0;
          }
          description { state: "clicked" 0.0;
             inherit: "default" 0.0;
-            color: 40 40 40 255;
          }
       }
       part { name: "spanner"; mouse_events: 0;
