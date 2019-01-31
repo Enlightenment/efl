@@ -40,6 +40,14 @@ _timer_delete_request_cb(void *data)
 }
 
 static Eina_Bool
+_timer_del_window_cb(void *data)
+{
+   Eo *win = (Eo*) data;
+   evas_object_del(win);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _timer_hide_window_cb(void *data)
 {
    Eo *win = (Eo*) data;
@@ -153,6 +161,29 @@ EFL_START_TEST(elm_win_autohide)
      }
 }
 EFL_END_TEST
+
+EFL_START_TEST (elm_win_test_app_exit_on_windows_close)
+{
+   Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
+   Eo *app = efl_app_main_get(EFL_APP_CLASS);
+   Eina_Value val, *exit_val;
+   int code;
+
+   val = eina_value_int_init(66);
+   efl_ui_win_exit_on_all_windows_closed_set(win, &val);
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
+
+   Eina_Bool fail_flag = EINA_FALSE;
+   ecore_timer_add(_timeout1, _timer_del_window_cb, win);
+   ecore_timer_add(_timeout_fail, _timer_fail_flag_cb, &fail_flag);
+
+   exit_val = efl_loop_begin(efl_loop_get(win));
+   ck_assert(eina_value_int_get(exit_val, &code));
+   ck_assert_int_eq(code, 66);
+   efl_ui_win_exit_on_all_windows_closed_set(app, &EINA_VALUE_EMPTY);
+}
+EFL_END_TEST
+
 
 EFL_START_TEST(elm_win_policy_quit_last_window_hidden)
 {
@@ -405,6 +436,7 @@ void elm_test_win(TCase *tc)
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_atspi_component_screen_position);
    tcase_add_test(tc, elm_win_policy_quit_last_window_hidden);
+   tcase_add_test(tc, elm_win_test_app_exit_on_windows_close);
    tcase_add_test(tc, efl_ui_win_multi_touch_inputs);
 #ifdef HAVE_ELEMENTARY_X
    tcase_add_test(tc, elm_win_autohide);

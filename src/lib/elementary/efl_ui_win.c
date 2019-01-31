@@ -360,6 +360,7 @@ static const Elm_Action key_actions[] = {
 
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
+static Eina_Value exit_on_all_windows_closed;
 
 static Eina_Bool _elm_win_throttle_ok = EINA_FALSE;
 static int _elm_win_count = 0;
@@ -2991,7 +2992,11 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
          _elm_win_flush_cache_and_exit(obj);
      }
    if (!_elm_win_list)
-     efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+     {
+        efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+        if (eina_value_type_get(&exit_on_all_windows_closed))
+          efl_loop_quit(efl_loop_get(obj), exit_on_all_windows_closed);
+     }
 }
 
 EOLIAN static void
@@ -6238,6 +6243,23 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
      }
    _elm_win_frame_style_update(sd, 0, 1);
    //sd->deferred_resize_job = EINA_TRUE;
+}
+
+EOLIAN static const Eina_Value *
+_efl_ui_win_exit_on_all_windows_closed_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   return &exit_on_all_windows_closed;
+}
+
+EOLIAN static void
+_efl_ui_win_exit_on_all_windows_closed_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Eina_Value *exit_code)
+{
+   const Eina_Value_Type *type = eina_value_type_get(exit_code);
+
+   if (type)
+     eina_value_copy(exit_code, &exit_on_all_windows_closed);
+   else
+     eina_value_flush(&exit_on_all_windows_closed);
 }
 
 EOLIAN static void
