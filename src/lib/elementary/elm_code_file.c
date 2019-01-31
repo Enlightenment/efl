@@ -219,7 +219,7 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
      {
         if(chmod(path, mode) < 0)
           {
-             ERR("Error in chmod(%s, %s) - %d(%s)\n", path, mode, errno, strerror(errno));
+             ERR("Error in chmod(%s, %d) - %d(%s)\n", path, mode, errno, strerror(errno));
              return;
           }
      }
