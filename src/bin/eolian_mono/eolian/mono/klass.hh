@@ -365,9 +365,10 @@ struct klass
 
          if(!as_generator
             (
-             "public class " << native_inherit_name << " " << (root ? ": Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
-             // << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
-             << scope_tab << "public " << /*(root ? "" : "new ")*/ "override " << "System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
+             "public class " << native_inherit_name << " " << (root ? " : Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
+             << scope_tab << "public " << (root ? "" : "new ") << " static Efl.Eo.NativeModule _Module = new Efl.Eo.NativeModule("
+             << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n"
+             << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )
@@ -479,8 +480,6 @@ struct klass
 
      return as_generator(
                 scope_tab << visibility << " System.IntPtr handle;\n"
-                << scope_tab << "public Dictionary<String, IntPtr> cached_strings = new Dictionary<String, IntPtr>();" << "\n"
-                << scope_tab << "public Dictionary<String, IntPtr> cached_stringshares = new Dictionary<String, IntPtr>();" << "\n"
                 << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
                 << scope_tab << "public System.IntPtr NativeHandle {\n"
                 << scope_tab << scope_tab << "get { return handle; }\n"
@@ -604,8 +603,6 @@ struct klass
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
-             << scope_tab << "Efl.Eo.Globals.free_dict_values(cached_strings);" << "\n"
-             << scope_tab << "Efl.Eo.Globals.free_stringshare_values(cached_stringshares);" << "\n"
              << scope_tab << scope_tab << "Dispose(true);\n"
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
@@ -682,13 +679,13 @@ struct klass
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << visibility << "bool add_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
+            scope_tab << visibility << "bool add_cpp_event_handler(string lib, string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 0) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
@@ -710,7 +707,8 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative("
+            << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ", key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"

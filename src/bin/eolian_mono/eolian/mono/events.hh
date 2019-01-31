@@ -301,12 +301,15 @@ struct event_definition_generator
    bool generate_event_add_remove(OutputIterator sink, attributes::event_def const &evt, const std::string& event_name, Context context) const
    {
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
+      auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+      attributes::klass_def klass(get_klass(evt.klass, unit), unit);
+      auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       return as_generator(
            scope_tab << "{\n"
            << scope_tab << scope_tab << "add {\n"
            << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(key, this.evt_" << event_name << "_delegate)) {\n"
+           << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(" << library_name << ", key, this.evt_" << event_name << "_delegate)) {\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eventHandlers.AddHandler(" << event_name << "Key , value);\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "} else\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Error adding proxy for event {key}\");\n"

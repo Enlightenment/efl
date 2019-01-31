@@ -24,7 +24,7 @@ struct part_definition_generator
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"
                        << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "Efl.Object obj = efl_part_get(NativeHandle, \"" << part.name << "\");\n"
+                       << scope_tab << scope_tab << scope_tab << "Efl.Object obj = Efl.PartNativeInherit.efl_part_get_ptr.Value.Delegate(NativeHandle, \"" << part.name << "\");\n"
                        << scope_tab << scope_tab << scope_tab << "return " << part_klass_name << ".static_cast(obj);\n"
                        << scope_tab << scope_tab << "}\n"
                        << scope_tab << "}\n"

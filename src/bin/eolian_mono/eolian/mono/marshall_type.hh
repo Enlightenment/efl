@@ -13,8 +13,6 @@ template <typename OutputIterator, typename Context>
 struct marshall_type_visitor_generate;
 template <typename OutputIterator, typename Context>
 struct marshall_annotation_visitor_generate;
-template <typename OutputIterator, typename Context>
-struct marshall_native_annotation_visitor_generate;
 }
 
 /*
@@ -73,26 +71,6 @@ struct marshall_annotation_generator
    bool is_return;
 };
 
-struct marshall_native_annotation_generator
-{
-   marshall_native_annotation_generator(bool is_return = false)
-     : is_return(is_return) {}
-
-   template <typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::type_def const& type, Context const& context) const
-   {
-      return type.original_type.visit(detail::marshall_native_annotation_visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return, type.is_ptr});
-   }
-   template <typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
-   {
-      return param.type.original_type.visit(detail::marshall_native_annotation_visitor_generate<OutputIterator, Context>{sink, &context, param.type.c_type
-            , param.direction != attributes::parameter_direction::in, false, param.type.is_ptr});
-   }
-
-   bool is_return;
-};
-  
 struct marshall_type_terminal
 {
   marshall_type_generator const operator()(bool is_return) const
@@ -120,19 +98,6 @@ marshall_annotation_generator const as_generator(marshall_annotation_terminal)
 }
 
 
-struct marshall_native_annotation_terminal
-{
-  marshall_native_annotation_generator const operator()(bool is_return) const
-  {
-    return marshall_native_annotation_generator(is_return);
-  }
-} const marshall_native_annotation = {};
-
-marshall_native_annotation_generator const as_generator(marshall_native_annotation_terminal)
-{
-  return marshall_native_annotation_generator{};
-}
-  
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -158,23 +123,12 @@ struct is_generator< ::eolian_mono::marshall_annotation_generator> : std::true_t
 template <>
 struct is_generator< ::eolian_mono::marshall_annotation_terminal> : std::true_type {};
 
-template <>
-struct is_eager_generator< ::eolian_mono::marshall_native_annotation_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::marshall_native_annotation_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::marshall_native_annotation_terminal> : std::true_type {};
-
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::marshall_annotation_generator> : std::integral_constant<int, 1> {};  
 template <>
 struct attributes_needed< ::eolian_mono::marshall_annotation_terminal> : std::integral_constant<int, 1> {};  
 
-template <>
-struct attributes_needed< ::eolian_mono::marshall_native_annotation_generator> : std::integral_constant<int, 1> {};
-template <>
-struct attributes_needed< ::eolian_mono::marshall_native_annotation_terminal> : std::integral_constant<int, 1> {};
 }
       
 } } }
