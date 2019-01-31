@@ -901,7 +901,7 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    // Is this item selected
    if (sd->target)
      {
-        const char *target_path = eio_model_path_get(sd->target);
+        const char *target_path = efl_io_model_path_get(sd->target);
 
         if (!strcmp(it_data->path, target_path))
           {
@@ -1314,9 +1314,9 @@ _on_dir_up(void *data, const Efl_Event *event EINA_UNUSED)
    parent = efl_parent_get(sd->model);
    if (!parent) return;
 
-   if (!efl_isa(parent, EIO_MODEL_CLASS))
+   if (!efl_isa(parent, EFL_IO_MODEL_CLASS))
      {
-        const char *path = eio_model_path_get(sd->model);
+        const char *path = efl_io_model_path_get(sd->model);
         char dir[PATH_MAX] = "";
         char *r;
 
@@ -1970,7 +1970,7 @@ _from_legacy_event_call(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, const E
 {
    const Efl_Class *model_cls = NULL;
    if (!sd->model)
-     model_cls = EIO_MODEL_CLASS;
+     model_cls = EFL_IO_MODEL_CLASS;
    else
      model_cls = efl_class_get(sd->model);
 
@@ -2184,8 +2184,8 @@ elm_fileselector_path_set(Evas_Object *obj,
 void
 _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 {
-   Eio_Model *model = efl_add_ref(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, _path),
-                                  efl_event_callback_array_add(efl_added, noref_death(), NULL));
+   Efl_Io_Model *model = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, _path),
+                                     efl_event_callback_array_add(efl_added, noref_death(), NULL));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -2387,7 +2387,7 @@ _elm_fileselector_selected_get_internal(const Evas_Object *obj)
    if (!sd->path) return NULL;
    if (sd->target)
      {
-        return eio_model_path_get(sd->target);
+        return efl_io_model_path_get(sd->target);
      }
 
    Elm_Fileselector_Item_Data *it_data = _selected_item_data_get(sd);
@@ -2463,10 +2463,10 @@ _properties_ready(void *data, const Efl_Event *ev)
           if (!is_dir)
             {
                Efl_Model *parent;
-               const char *path = eio_model_path_get(ev->object);
+               const char *path = efl_io_model_path_get(ev->object);
                char *dir = ecore_file_dir_get(path);
 
-               parent = efl_add_ref(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, dir),
+               parent = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, dir),
                                     efl_event_callback_array_add(efl_added, noref_death(), NULL));
                if (!parent)
                  {
@@ -2503,7 +2503,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *path)
 
    if (stat(path, &st)) return EINA_FALSE;
 
-   pd->target = efl_add_ref(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, path),
+   pd->target = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, path),
                             efl_event_callback_array_add(efl_added, noref_death(), NULL));
    if (!pd->target)
      {
@@ -2540,7 +2540,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
    Eina_Value *value = NULL;
    Eina_Bool dir = EINA_FALSE;
 
-   if (!efl_isa(model, EIO_MODEL_CLASS)) return EINA_FALSE;
+   if (!efl_isa(model, EFL_IO_MODEL_CLASS)) return EINA_FALSE;
 
    efl_event_callback_del(pd->target, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
    efl_replace(&pd->target, model);
@@ -2556,7 +2556,7 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
           eina_value_error_get(value, &err);
           if (err != EAGAIN)
             {
-               ERR("Unexpected error '%s' when setting path '%s'.", eina_value_to_string(value), eio_model_path_get(pd->target));
+               ERR("Unexpected error '%s' when setting path '%s'.", eina_value_to_string(value), efl_io_model_path_get(pd->target));
                goto clean_up;
             }
 
@@ -2576,10 +2576,10 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
     if (!dir)
       {
          Efl_Model *parent;
-         const char *path = eio_model_path_get(pd->target);
+         const char *path = efl_io_model_path_get(pd->target);
          char *d = ecore_file_dir_get(path);
 
-         parent = efl_add_ref(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, d),
+         parent = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, d),
                               efl_event_callback_array_add(efl_added, noref_death(), NULL));
          if (!parent)
            {

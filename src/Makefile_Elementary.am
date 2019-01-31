@@ -169,17 +169,17 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
 	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
-	lib/elementary/efl_ui_model_state.eo \
+	lib/elementary/efl_ui_state_model.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \
 	lib/elementary/efl_ui_list_view_relayout.eo \
 	lib/elementary/efl_ui_list_view_precise_layouter.eo \
-	lib/elementary/efl_ui_model_size.eo \
-	lib/elementary/efl_ui_model_homogeneous.eo \
-	lib/elementary/efl_ui_model_exact.eo \
-	lib/elementary/efl_ui_model_average.eo \
+	lib/elementary/efl_ui_size_model.eo \
+	lib/elementary/efl_ui_homogeneous_model.eo \
+	lib/elementary/efl_ui_exact_model.eo \
+	lib/elementary/efl_ui_average_model.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -890,10 +890,10 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_widget_focus_manager.c \
 	lib/elementary/efl_ui_caching_factory.c \
 	lib/elementary/efl_ui_widget_factory.c \
-	lib/elementary/efl_ui_model_size.c \
-	lib/elementary/efl_ui_model_homogeneous.c \
-	lib/elementary/efl_ui_model_exact.c \
-	lib/elementary/efl_ui_model_average.c \
+	lib/elementary/efl_ui_size_model.c \
+	lib/elementary/efl_ui_homogeneous_model.c \
+	lib/elementary/efl_ui_exact_model.c \
+	lib/elementary/efl_ui_average_model.c \
 	$(NULL)
 
 

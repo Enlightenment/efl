@@ -1,0 +1,19 @@
+class Efl.Ui.Average_Model extends Efl.Ui.Exact_Model
+{
+   [[Class to be used to store object item size for List/Grid View.
+
+   This model provide the same feature as @Efl.Ui.Exact_Model except for the
+   @Efl.Model.property "$total.width" and "$total.height" which reflect an
+   estimated value of the total size by using the currently know size from its
+   children as an average size for all its children. As more children fill
+   "$self.width" and "$self.height", this model will figure out a more precise
+   answer. Once all children size is known, the result will be exact and the same
+   as @Efl.Ui.Exact_Model.
+
+   This model only supporting vertical list at this point.]]
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Model.property { set; get; }
+   }
+}

@@ -111,7 +111,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   priv->model = efl_add(EIO_MODEL_CLASS, win, eio_model_path_set(efl_added, dirname));
+   priv->model = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
 
    genlist = elm_genlist_add(win);
    priv->fileview = efl_add(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));

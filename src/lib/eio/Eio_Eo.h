@@ -7,7 +7,7 @@ extern "C" {
 
 #include "efl_io_manager.eo.h"
 #include "eio_sentry.eo.h"
-#include "eio_model.eo.h"
+#include "efl_io_model.eo.h"
 
 #ifdef __cplusplus
 }

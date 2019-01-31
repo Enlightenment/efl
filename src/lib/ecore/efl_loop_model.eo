@@ -1,0 +1,7 @@
+abstract Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
+{
+   data: null;
+   implements {
+      Efl.Model.property_ready_get;
+   }
+}

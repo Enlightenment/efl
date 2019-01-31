@@ -1,0 +1,20 @@
+class Efl.Ui.Homogeneous_Model extends Efl.Ui.Size_Model
+{
+   [[Class to be used to store object item size for List/Grid View.
+
+   This model provides the properties "$item.width" and "$item.height" which have the
+   same value for all siblings of this object. The first sibling that defines "$self.width"
+   and "$self.height" set them for all other siblings and also set "$item.width" and
+   "$item.height" for the parent (See @Efl.Ui.Size_Model).
+
+   Subsequent attempts to set "$self.width" or "$self.height" will fail with a
+   Read Only error code.
+
+   The properties "$total.width" and "$total.height" are computed from the number of node,
+   the "$self.width" and "$self.height" assuming that the View is a vertical list.]]
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Model.property { set; get; }
+   }
+}

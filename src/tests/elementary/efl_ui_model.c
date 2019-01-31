@@ -3,9 +3,9 @@
 #endif
 
 #include "efl_ui_suite.h"
-#include "efl_ui_model_homogeneous.eo.h"
-#include "efl_ui_model_exact.eo.h"
-#include "efl_ui_model_average.eo.h"
+#include "efl_ui_homogeneous_model.eo.h"
+#include "efl_ui_exact_model.eo.h"
+#include "efl_ui_average_model.eo.h"
 
 static const int child_number = 3;
 static const int base_ints[] = { 41, 42, 43 };
@@ -14,13 +14,13 @@ static int expected_average[] = { 0, 0, 0 };
 static Efl_Model *
 _generate_base_model(void)
 {
-   Efl_Model_Item *base_model, *child;
+   Efl_Generic_Model *base_model, *child;
    Eina_Value v;
    int i;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
-   base_model = efl_add_ref(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
+   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
    ck_assert(!!base_model);
    for (i = 0; i < child_number; ++i)
      {
@@ -148,16 +148,16 @@ _children_homogeneous_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, c
    return eina_future_as_value(f);
 }
 
-EFL_START_TEST(efl_ui_model_homogeneous_test)
+EFL_START_TEST(efl_ui_homogeneous_model_test)
 {
-   Efl_Model_Item *base_model, *model;
+   Efl_Generic_Model *base_model, *model;
    Eina_Value *ret__;
    Eina_Future *future;
    int real__;
 
    base_model = _generate_base_model();
 
-   model = efl_add_ref(EFL_UI_MODEL_HOMOGENEOUS_CLASS, efl_main_loop_get(),
+   model = efl_add_ref(EFL_UI_HOMOGENEOUS_MODEL_CLASS, efl_main_loop_get(),
                        efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
 
@@ -219,16 +219,16 @@ _children_exact_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, const E
    return eina_future_as_value(f);
 }
 
-EFL_START_TEST(efl_ui_model_exact_test)
+EFL_START_TEST(efl_ui_exact_model_test)
 {
-   Efl_Model_Item *base_model, *model;
+   Efl_Generic_Model *base_model, *model;
    Eina_Future *future;
    Eina_Value *ret__;
    int real__;
 
    base_model = _generate_base_model();
 
-   model = efl_add_ref(EFL_UI_MODEL_EXACT_CLASS, efl_main_loop_get(),
+   model = efl_add_ref(EFL_UI_EXACT_MODEL_CLASS, efl_main_loop_get(),
                        efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
 
@@ -307,16 +307,16 @@ _children_average_slice_get_then(Efl_Model *model, void *data EINA_UNUSED, const
    return eina_future_as_value(f);
 }
 
-EFL_START_TEST(efl_ui_model_average_test)
+EFL_START_TEST(efl_ui_average_model_test)
 {
-   Efl_Model_Item *base_model, *model;
+   Efl_Generic_Model *base_model, *model;
    Eina_Future *future;
    Eina_Value *ret__;
    int real__;
 
    base_model = _generate_base_model();
 
-   model = efl_add_ref(EFL_UI_MODEL_AVERAGE_CLASS, efl_main_loop_get(),
+   model = efl_add_ref(EFL_UI_AVERAGE_MODEL_CLASS, efl_main_loop_get(),
                        efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!model);
 
@@ -345,7 +345,7 @@ efl_ui_model(TCase *tc)
    expected_average[1] = ((base_ints[0] * 3 + base_ints[1] * 3) * 3) / 2;
    expected_average[2] = base_ints[0] * 3 + base_ints[1] * 3 + base_ints[2] * 3;
 
-   tcase_add_test(tc, efl_ui_model_homogeneous_test);
-   tcase_add_test(tc, efl_ui_model_average_test);
-   tcase_add_test(tc, efl_ui_model_exact_test);
+   tcase_add_test(tc, efl_ui_homogeneous_model_test);
+   tcase_add_test(tc, efl_ui_average_model_test);
+   tcase_add_test(tc, efl_ui_exact_model_test);
 }

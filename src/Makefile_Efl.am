@@ -203,9 +203,9 @@ TESTS += tests/efl/efl_suite
 
 tests_efl_efl_suite_SOURCES = \
 tests/efl/efl_suite.c \
-tests/efl/efl_test_model_container.c \
-tests/efl/efl_test_model_composite.c \
-tests/efl/efl_test_model_view.c \
+tests/efl/efl_test_container_model.c \
+tests/efl/efl_test_composite_model.c \
+tests/efl/efl_test_view_model.c \
 tests/efl/efl_suite.h
 
 tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

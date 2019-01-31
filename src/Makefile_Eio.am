@@ -2,7 +2,7 @@
 ### Library
 
 eio_eolian_files = \
-        lib/eio/eio_model.eo \
+        lib/eio/efl_io_model.eo \
         lib/eio/efl_io_manager.eo \
         lib/eio/eio_sentry.eo
 
@@ -38,8 +38,8 @@ lib/eio/eio_monitor.c \
 lib/eio/eio_monitor_poll.c \
 lib/eio/eio_single.c \
 lib/eio/eio_xattr.c \
-lib/eio/eio_model.c \
-lib/eio/eio_model_private.h \
+lib/eio/efl_io_model.c \
+lib/eio/efl_io_model_private.h \
 lib/eio/eio_private.h \
 lib/eio/eio_sentry_private.h
 
@@ -74,8 +74,8 @@ TESTS += tests/eio/eio_suite
 
 tests_eio_eio_suite_SOURCES = \
 tests/eio/eio_suite.c \
-tests/eio/eio_model_test_file.c \
-tests/eio/eio_model_test_monitor_add.c \
+tests/eio/efl_io_model_test_file.c \
+tests/eio/efl_io_model_test_monitor_add.c \
 tests/eio/eio_test_monitor.c \
 tests/eio/eio_test_sentry.c \
 tests/eio/eio_test_file.c \

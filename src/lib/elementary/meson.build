@@ -332,15 +332,15 @@ priv_eo_files = [
   'efl_ui_focus_parent_provider.eo',
   'efl_ui_focus_parent_provider_standard.eo',
   'efl_ui_focus_parent_provider_gen.eo',
-  'efl_ui_model_state.eo',
+  'efl_ui_state_model.eo',
   'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
   'efl_ui_list_view_precise_layouter.eo',
   'efl_ui_list_view_relayout.eo',
-  'efl_ui_model_size.eo',
-  'efl_ui_model_homogeneous.eo',
-  'efl_ui_model_exact.eo',
-  'efl_ui_model_average.eo',
+  'efl_ui_size_model.eo',
+  'efl_ui_homogeneous_model.eo',
+  'efl_ui_exact_model.eo',
+  'efl_ui_average_model.eo',
 ]
 
 priv_eo_file_target = []
@@ -909,10 +909,10 @@ elementary_src = [
   'efl_ui_widget_focus_manager.c',
   'efl_ui_caching_factory.c',
   'efl_ui_widget_factory.c',
-  'efl_ui_model_size.c',
-  'efl_ui_model_homogeneous.c',
-  'efl_ui_model_exact.c',
-  'efl_ui_model_average.c',
+  'efl_ui_size_model.c',
+  'efl_ui_homogeneous_model.c',
+  'efl_ui_exact_model.c',
+  'efl_ui_average_model.c'
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

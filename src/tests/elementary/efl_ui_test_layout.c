@@ -22,7 +22,7 @@ EFL_START_TEST(efl_ui_layout_test_model_connect)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
-   Efl_Model_Item *model;
+   Efl_Generic_Model *model;
    Eina_Value v;
    Eina_Future *f;
    const char *part_text;
@@ -35,7 +35,7 @@ EFL_START_TEST(efl_ui_layout_test_model_connect)
    efl_file_set(ly, buf, "layout");
    efl_gfx_entity_visible_set(ly, EINA_TRUE);
 
-   model = efl_add(EFL_MODEL_ITEM_CLASS, win);
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
    ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
    ck_assert(!!eina_value_set(&v, text_value));
    f = efl_model_property_set(model, "text_property", &v);

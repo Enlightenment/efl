@@ -146,7 +146,7 @@ interface Elm.Interface.Fileselector extends Efl.Ui.View
             [[Get the currently selected item's model, in the given file the given file selector widget]]
          }
          values {
-            model: Eio.Model; [[Model to be set, NULL reset it.]]
+            model: Efl.Io.Model; [[Model to be set, NULL reset it.]]
          }
       }
       custom_filter_append {
