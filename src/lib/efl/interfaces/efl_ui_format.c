@@ -38,6 +38,8 @@ _format_string_check(const char *fmt)
         if (itr[1] == '%')
           {
              itr++;
+             if (ret_type == FORMAT_TYPE_STATIC)
+               ret_type = FORMAT_TYPE_STRING;
              continue;
           }
 
@@ -69,7 +71,8 @@ _format_string_check(const char *fmt)
                     }
                   else
                     {
-                       ret_type = FORMAT_TYPE_INVALID;
+                       ERR("Format string '%s' has unknown format element '%c' in format. It must have one format element of type 's', 'f', 'F', 'd', 'u', 'i', 'o', 'x' or 'X'", fmt, *itr);
+                       found = EINA_FALSE;
                        break;
                     }
                }
@@ -121,7 +124,7 @@ _default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
      }
    else if (sd->format_type == FORMAT_TYPE_STATIC)
      {
-        eina_strbuf_append_printf(str, "%s", sd->template);
+        eina_strbuf_append(str, sd->template);
      }
    else
      {
