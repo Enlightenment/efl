@@ -4,7 +4,19 @@ efl_custom_exports_mono_files = \
 
 efl_eo_mono_files = \
 	bindings/mono/eo_mono/iwrapper.cs \
-	bindings/mono/eo_mono/workaround.cs
+	bindings/mono/eo_mono/workaround.cs \
+	bindings/mono/eo_mono/FunctionWrapper.cs \
+	bindings/mono/eo_mono/NativeModule.cs
+
+if HAVE_WINDOWS
+efl_eo_mono_files += \
+        bindings/mono/eo_mono/FunctionWrapper_Windows.cs \
+        bindings/mono/eo_mono/NativeModule_Windows.cs
+else
+efl_eo_mono_files += \
+        bindings/mono/eo_mono/FunctionWrapper_Unix.cs \
+        bindings/mono/eo_mono/NativeModule_Unix.cs
+endif
 
 efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_config.cs \
