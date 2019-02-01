@@ -1,6 +1,6 @@
 import efl_canvas_animation_types;
 
-abstract Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
+class Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
    [[Efl animation class]]
    eo_prefix: efl_animation;
