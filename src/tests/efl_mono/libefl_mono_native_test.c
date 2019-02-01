@@ -82,6 +82,10 @@ typedef struct Dummy_Numberwrapper_Data
 
 typedef struct Dummy_Child_Data
 {
+  int iface_prop;
+  const char* a;
+  double b;
+  Eina_Bool iface_was_set;
 } Dummy_Child_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
@@ -3936,6 +3940,42 @@ int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj
 }
 
 /// Dummy.Child
+
+static Efl_Object *
+_dummy_child_efl_object_constructor(Eo *obj, Dummy_Child_Data *pd)
+{
+    efl_constructor(efl_super(obj, DUMMY_CHILD_CLASS));
+
+    pd->iface_prop = 1984;
+    pd->iface_was_set = EINA_FALSE;
+    return obj;
+}
+
+void _dummy_child_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Child_Data *pd, int value)
+{
+    pd->iface_prop = value;
+    pd->iface_was_set = EINA_TRUE;
+}
+
+int _dummy_child_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj, Dummy_Child_Data *pd)
+{
+    return pd->iface_prop;
+}
+
+void _dummy_child_double_params(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, const char* a, double b)
+{
+    if (pd->a)
+      free((void*)pd->a);
+    pd->a = malloc(sizeof(char)*(strlen(a) + 1));
+    strcpy((char*)pd->a, a);
+
+    pd->b = b;
+}
+
+Eina_Bool _dummy_child_iface_was_set_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->iface_was_set;
+}
 EOLIAN static void
 _dummy_child_class_constructor(Efl_Class *klass)
 {

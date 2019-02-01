@@ -168,11 +168,10 @@ class TestEoEvents
     {
         int received = 0;
         int sent = 42;
-        var obj = new Dummy.TestObject(null, (Dummy.TestObject t) => {
-            t.EvtWithIntEvt += (object sender, Dummy.TestObjectEvtWithIntEvt_Args e) => {
-                received = e.arg;
-            };
-        });
+        var obj = new Dummy.TestObject();
+        obj.EvtWithIntEvt += (object sender, Dummy.TestObjectEvtWithIntEvt_Args e) => {
+            received = e.arg;
+        };
 
         obj.EmitEventWithInt(sent);
 

@@ -2,8 +2,29 @@ import eina_types;
 
 class Dummy.Child extends Dummy.Test_Object {
 
+   methods {
+      double_params {
+         params {
+            @in a: string;
+            @in b: double;
+         }
+      }
+
+      @property iface_was_set {
+        get {}
+        values {
+	  data: bool;
+	}
+      }
+   }
+   constructors {
+      Dummy.Test_Iface.iface_prop @optional;
+      .double_params;
+   }
    implements {
+      Dummy.Test_Iface.iface_prop { get; set; }
       class.constructor;
       class.destructor;
+      Efl.Object.constructor;
    }
 }

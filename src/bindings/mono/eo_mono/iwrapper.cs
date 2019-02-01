@@ -157,6 +157,23 @@ public class Globals {
 
     public delegate byte class_initializer(IntPtr klass);
 
+    public static T GetParamHelper<T>(Nullable<T> v) where T : struct
+    {
+        return v.Value;
+    }
+    public static U GetParamHelper<U>(U v)
+    {
+        return v;
+    }
+    public static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
+    {
+        return v.HasValue;
+    }
+    public static bool ParamHelperCheck<U>(U v)
+    {
+        return v != null;
+    }
+    
     public static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
     {
         ClassDescription description;

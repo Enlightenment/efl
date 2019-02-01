@@ -84,6 +84,29 @@ struct documentation_generator
       return name;
    }
 
+   static std::string function_conversion(attributes::function_def const& func)
+   {
+      attributes::klass_def klass(get_klass(func.klass, func.unit), func.unit);
+      std::string name = name_helpers::klass_full_concrete_or_interface_name(klass);
+      switch (func.type)
+      {
+          // managed_method_name takes care of reordering the function name so the get/set goes first
+          // for properties
+          case attributes::function_type::method:
+          case attributes::function_type::prop_set:
+          case attributes::function_type::prop_get:
+            if (blacklist::is_function_blacklisted(func.c_name))return "";
+            name += ".";
+            name += name_helpers::managed_method_name(klass.eolian_name, func.name);
+            break;
+          default:
+            // No need to deal with property as function_defs are converted to get/set when building a given klass_def.
+            break;
+      }
+
+      return name;
+   }
+
    // Turns an Eolian reference like @Efl.Input.Pointer.tool into a <see> tag
    static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail)
    {
@@ -298,6 +321,31 @@ struct documentation_generator
    bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context) const
    {
       return generate_tag_summary(sink, doc.full_text, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
+   {
+      // Not sure if this is the best way to generate a reference outside the full doc generator.
+      auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+      auto func = ctor.function;
+      auto eolian_klass = get_klass(func.klass, unit);
+      attributes::klass_def klass(eolian_klass, unit);
+      std::string summary;
+
+      if (func.type == attributes::function_type::prop_set)
+          summary = func.property_documentation.summary;
+      else
+          summary = func.documentation.summary;
+
+      for (auto &&param : ctor.function.parameters)
+        {
+          if (!as_generator(
+                      scope_tab << "///<param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See <see cref=\"" << function_conversion(func) << "\"/></param>\n"
+                      ).generate(sink, param, context))
+            return false;
+        }
+      return true;
    }
 };
 
