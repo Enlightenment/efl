@@ -1760,24 +1760,14 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    // Case where we are looking if eo_id is a class that contain klass_id
    if (EINA_UNLIKELY(_eo_is_a_class(eo_id)))
      {
-        const _Efl_Class **kls_itr;
 
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
         EO_CLASS_POINTER_GOTO(eo_id, lookinto, err_class0);
 
-        if (lookinto == klass) return EINA_TRUE;
+        const op_type_funcs *func = _vtable_func_get
+          (&lookinto->vtable, klass->base_id + klass->ops_count);
 
-        kls_itr = lookinto->mro;
-        if (!kls_itr) return EINA_FALSE;
-
-        while (*kls_itr)
-          {
-             if ((*kls_itr) == klass)
-               return EINA_TRUE;
-             kls_itr++;
-          }
-
-        return EINA_FALSE;
+        return (func && (func->func == _eo_class_isa_func));;
      }
 
    domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
