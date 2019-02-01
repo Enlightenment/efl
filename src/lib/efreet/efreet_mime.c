@@ -9,18 +9,6 @@
 #include <sys/mman.h>
 #include <fnmatch.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
-#endif
-
 #include <Ecore.h>
 #include <Ecore_File.h>
 
@@ -1018,7 +1006,7 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                    tshort = 0;
                    memcpy(&tshort, ptr, sizeof(short));
-                   entry->value_len = ntohs(tshort);
+                   entry->value_len = eina_ntohs(tshort);
                    ptr += 2;
 
                    entry->value = NEW(char, entry->value_len);
@@ -1059,20 +1047,20 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
                              if (entry->word_size == 2)
                                {
                                   ((short*)entry->value)[j] =
-                                     ntohs(((short*)entry->value)[j]);
+                                     eina_ntohs(((short*)entry->value)[j]);
 
                                   if (entry->mask)
                                     ((short*)entry->mask)[j] =
-                                       ntohs(((short*)entry->mask)[j]);
+                                       eina_ntohs(((short*)entry->mask)[j]);
                                }
                              else if (entry->word_size == 4)
                                {
                                   ((int*)entry->value)[j] =
-                                     ntohl(((int*)entry->value)[j]);
+                                     eina_ntohl(((int*)entry->value)[j]);
 
                                   if (entry->mask)
                                     ((int*)entry->mask)[j] =
-                                       ntohl(((int*)entry->mask)[j]);
+                                       eina_ntohl(((int*)entry->mask)[j]);
                                }
                           }
                      }

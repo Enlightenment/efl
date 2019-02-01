@@ -104,7 +104,7 @@ _efl_net_ip_address_family_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data 
 EOLIAN static void
 _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uint16_t port)
 {
-   uint16_t *pport, nport = htons(port);
+   uint16_t *pport, nport = eina_htons(port);
 
    EINA_SAFETY_ON_TRUE_RETURN(pd->addr.sa_family == 0);
    if (pd->addr.sa_family == AF_INET6)
@@ -115,7 +115,7 @@ _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uin
    if (*pport == nport) return;
    if (*pport)
      {
-        ERR("port already set to %hu, new %hu", ntohs(*pport), port);
+        ERR("port already set to %hu, new %hu", eina_ntohs(*pport), port);
         return;
      }
 
@@ -133,7 +133,7 @@ _efl_net_ip_address_port_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *p
    else
      pport = &pd->ipv4.sin_port;
 
-   return ntohs(*pport);
+   return eina_ntohs(*pport);
 }
 
 EOLIAN static void
@@ -213,7 +213,7 @@ _efl_net_ip_address_sockaddr_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Dat
    return &pd->addr;
 }
 
-#define IPV4_ADDR_GET(pd) ntohl(pd->ipv4.sin_addr.s_addr)
+#define IPV4_ADDR_GET(pd) eina_ntohl(pd->ipv4.sin_addr.s_addr)
 
 EOLIAN static Eina_Bool
 _efl_net_ip_address_ipv4_class_a_check(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)

@@ -1,14 +1,6 @@
 #include "evas_common_private.h"
 #include "evas_private.h"
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
-#endif /* ifdef _WIN32 */
-
 #ifdef ENABLE_LIBLZ4
 # include <lz4.h>
 # include <lz4hc.h>
@@ -70,8 +62,8 @@ _save_direct_tgv(RGBA_Image *im, const char *file, int compress)
    image_width = im->cache_entry.w + im->cache_entry.borders.l + im->cache_entry.borders.r;
    image_height = im->cache_entry.h + im->cache_entry.borders.t + im->cache_entry.borders.b;
    data = im->image.data8;
-   width = htonl(image_width);
-   height = htonl(image_height);
+   width = eina_htonl(image_width);
+   height = eina_htonl(image_height);
    compress = !!compress;
 
    if ((image_width & 0x3) || (image_height & 0x3))
@@ -219,8 +211,8 @@ evas_image_save_file_tgv(RGBA_Image *im,
 
    image_stride = im->cache_entry.w;
    image_height = im->cache_entry.h;
-   nl_width = htonl(image_stride);
-   nl_height = htonl(image_height);
+   nl_width = eina_htonl(image_stride);
+   nl_height = eina_htonl(image_height);
    compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces

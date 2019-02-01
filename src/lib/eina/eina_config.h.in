@@ -122,6 +122,15 @@
 #endif
 @EINA_CONFIGURE_HAVE_OSX_SEMAPHORE@
 
+#ifndef EINA_HAVE_WORDS_BIGENDIAN
+# undef EINA_HAVE_WORDS_BIGENDIAN
+#endif
+@EINA_CONFIGURE_HAVE_WORDS_BIGENDIAN@
+
+#if ((defined __APPLE_CC__) && (defined __BIG_ENDIAN__)) || (defined EINA_HAVE_WORDS_BIGENDIAN)
+# define EINA_HAVE_BIGENDIAN
+#endif
+
 #include <limits.h>
 
 #endif /* EINA_CONFIG_H_ */

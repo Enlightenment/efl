@@ -9,14 +9,8 @@
 #ifdef HAVE_NETINET_TCP_H
 # include <netinet/tcp.h>
 #endif
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
-#endif
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
 #endif
 #include <errno.h>
 #include <unistd.h>
@@ -108,7 +102,7 @@ tcp_connect(void)
 
    memset(&sa, '\0', sizeof (sa));
    sa.sin_family = AF_INET;
-   sa.sin_port = htons(atoi(PORT));
+   sa.sin_port = eina_htons(atoi(PORT));
    inet_pton(AF_INET, SERVER, &sa.sin_addr);
 
    /* connects to server

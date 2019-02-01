@@ -124,9 +124,9 @@ _efl_net_socket_udp_bind(Eo *o, Efl_Net_Socket_Udp_Data *pd)
      }
 
    if (family == AF_INET)
-     bsa4.sin_port = htons(ul);
+     bsa4.sin_port = eina_htons(ul);
    else
-     bsa6.sin6_port = htons(ul);
+     bsa6.sin6_port = eina_htons(ul);
 
    if (family == AF_INET)
      r = bind(fd, (struct sockaddr *)&bsa4, sizeof(bsa4));
@@ -539,7 +539,7 @@ _efl_net_socket_udp_efl_io_reader_read(Eo *o, Efl_Net_Socket_Udp_Data *pd, Eina_
         if (addr.ss_family == AF_INET)
           {
              const struct sockaddr_in *a = (const struct sockaddr_in *)pd->addr_remote;
-             uint32_t ipv4 = ntohl(a->sin_addr.s_addr);
+             uint32_t ipv4 = eina_ntohl(a->sin_addr.s_addr);
              if ((ipv4 != INADDR_BROADCAST) && (ipv4 != INADDR_ANY) && (!IN_MULTICAST(ipv4)))
                {
                   if ((addrlen != pd->addr_remote_len) ||

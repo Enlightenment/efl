@@ -8,10 +8,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
 #ifdef HAVE_SIGNATURE
 # include <sys/mman.h>
 # ifdef HAVE_GNUTLS
@@ -601,9 +597,9 @@ eet_identity_sign(FILE    *fp,
 
 # endif /* ifdef HAVE_GNUTLS */
    /* Append the signature at the end of the file. */
-   head[0] = (int)htonl ((unsigned int)EET_MAGIC_SIGN);
-   head[1] = (int)htonl ((unsigned int)sign_len);
-   head[2] = (int)htonl ((unsigned int)cert_len);
+   head[0] = (int)eina_htonl ((unsigned int)EET_MAGIC_SIGN);
+   head[1] = (int)eina_htonl ((unsigned int)sign_len);
+   head[2] = (int)eina_htonl ((unsigned int)cert_len);
 
    if (fwrite(head, sizeof(head), 1, fp) != 1)
      {
@@ -675,9 +671,9 @@ eet_identity_check(const void   *data_base,
    memcpy(&sign_len, header+1, sizeof(int));
    memcpy(&cert_len, header+2, sizeof(int));
 
-   magic = ntohl(magic);
-   sign_len = ntohl(sign_len);
-   cert_len = ntohl(cert_len);
+   magic = eina_ntohl(magic);
+   sign_len = eina_ntohl(sign_len);
+   cert_len = eina_ntohl(cert_len);
 
    /* Verify the header */
    if (magic != EET_MAGIC_SIGN)
