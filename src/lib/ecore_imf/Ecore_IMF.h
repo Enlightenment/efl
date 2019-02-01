@@ -88,7 +88,7 @@ extern "C" {
  * static void
  * _imf_event_commit_content_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
  * {
- *    Ecore_IMF_Event_Commit_Content *commit_content = (Ecore_IMF_Event_Commit_Content *)event;
+ *    Ecore_IMF_Event_Commit_Content *commit_content = (Ecore_IMF_Event_Commit_Content *)event_info;
  *    if (!commit_content) return;
  *
  *    // convert URI to filename
