@@ -30,6 +30,10 @@ void efl_ui_test_focus_sub(TCase *tc);
 
 void efl_ui_model(TCase *tc);
 
+void loop_timer_interval_set(Eo *obj, double in);
+
+#define efl_loop_timer_interval_set loop_timer_interval_set
+
 Eo *win_add();
 Eo *win_add_focused();
 #endif

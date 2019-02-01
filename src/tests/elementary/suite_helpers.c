@@ -107,62 +107,87 @@ static const Efl_Test_Case ui_init[] = {
   { NULL, NULL }
 };
 
-#define BUFFER_RENDER_INTERVAL 0.002
+#undef ecore_timer_add
+#define BUFFER_RENDER_INTERVAL 0.005
+#define LOOP_INCREMENT 0.1
+#define TIMER_SCALE ((1.0 / BUFFER_RENDER_INTERVAL) * LOOP_INCREMENT)
+
+void
+loop_timer_interval_set(Eo *obj, double in)
+{
+   efl_loop_timer_interval_set(obj, in * TIMER_SCALE);
+}
+
+Eo *
+timer_add(double in, Ecore_Task_Cb cb, void *data)
+{
+   return ecore_timer_add(in * TIMER_SCALE, cb, data);
+}
 
 static void
-_ui_win_manual_render(void *data, const Efl_Event *ev EINA_UNUSED)
-{
+_win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
+ {
+   double t = ecore_loop_time_get();
+
+   ecore_loop_time_set(t + LOOP_INCREMENT);
    ecore_animator_custom_tick();
    evas_norender(evas_object_evas_get(data));
 }
 
-static Eina_Bool
-_win_manual_render(void *data)
-{
-   ecore_animator_custom_tick();
-   evas_norender(evas_object_evas_get(data));
-   return EINA_TRUE;
-}
-
 static void
-_ui_win_show(void *data EINA_UNUSED, const Efl_Event *ev)
+_loop_iterate(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Eo *timer = efl_add(EFL_LOOP_TIMER_CLASS, ev->object,
-       efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _ui_win_manual_render, ev->object),
-       efl_loop_timer_interval_set(efl_added, BUFFER_RENDER_INTERVAL)
-     );
-   efl_key_data_set(ev->object, "timer", timer);
-}
-
-static void
-_ui_win_hide(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   efl_del(efl_key_data_get(ev->object, "timer"));
-   efl_key_data_set(ev->object, "timer", NULL);
+   efl_loop_iterate(data);
 }
 
 static void
 _win_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   evas_object_data_set(obj, "timer", ecore_timer_add(BUFFER_RENDER_INTERVAL, _win_manual_render, obj));
+   Eo *timer = evas_object_data_get(obj, "timer");
+   efl_event_thaw(timer);
+   efl_event_callback_add(efl_loop_get(obj), EFL_LOOP_EVENT_IDLE, _loop_iterate, efl_parent_get(timer));
 }
 
 static void
 _win_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   ecore_timer_del(evas_object_data_del(obj, "timer"));
+   Eo *timer = evas_object_data_get(obj, "timer");
+   efl_event_freeze(timer);
+   efl_loop_timer_reset(timer);
+   efl_event_callback_del(efl_loop_get(obj), EFL_LOOP_EVENT_IDLE, _loop_iterate, efl_parent_get(timer));
+}
+
+static void
+_ui_win_show(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   _win_show(NULL, NULL, ev->object, NULL);
+}
+
+static void
+_ui_win_hide(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   _win_hide(NULL, NULL, ev->object, NULL);
+   efl_key_data_set(ev->object, "timer", NULL);
 }
 
 static Evas_Object *
 _elm_suite_win_create()
 {
    Evas_Object *win;
+   Eo *loop, *timer;
 
    if (legacy_mode)
      win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
    else
      win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
    if (!buffer) return win;
+   loop = efl_add(EFL_LOOP_CLASS, win);
+   timer = efl_add(EFL_LOOP_TIMER_CLASS, loop,
+     efl_loop_timer_interval_set(efl_added, BUFFER_RENDER_INTERVAL),
+     efl_event_freeze(efl_added),
+     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _win_manual_render, win)
+     );
+   evas_object_data_set(win, "timer", timer);
    ecore_evas_manual_render_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), EINA_TRUE);
    edje_frametime_set(BUFFER_RENDER_INTERVAL);
    ecore_animator_source_set(ECORE_ANIMATOR_SOURCE_CUSTOM);
