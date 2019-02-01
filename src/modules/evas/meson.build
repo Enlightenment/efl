@@ -70,6 +70,7 @@ foreach engine_conf : engines
       if engine == 'software_generic'
         software_generic = declare_dependency(
           include_directories: engine_include_dir,
+          source : engine_src,
           link_with : tmp
         )
       endif
