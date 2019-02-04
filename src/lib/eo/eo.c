@@ -44,6 +44,7 @@ int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
 static unsigned int efl_del_api_generation = 0;
 static Efl_Object_Op _efl_del_api_op_id = 0;
+static Eina_Hash *class_overrides;
 
 typedef enum _Eo_Ref_Op {
    EO_REF_OP_NONE,
@@ -867,6 +868,12 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    Eo_Stack_Frame *fptr = NULL;
 
    if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
+
+   if (class_overrides)
+     {
+        const Efl_Class *override = eina_hash_find(class_overrides, &klass_id);
+        if (override) klass_id = override;
+     }
 
    EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
 
@@ -2594,6 +2601,33 @@ efl_compatible(const Eo *obj, const Eo *obj_target)
    DBG("Object %p and %p are not compatible. Domain %i and %i do not match",
        obj, obj_target, domain1, domain2);
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+efl_class_override_register(const Efl_Class *klass, const Efl_Class *override)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!efl_isa(override, klass), EINA_FALSE);
+   if (!class_overrides)
+     class_overrides = eina_hash_pointer_new(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_overrides, EINA_FALSE);
+
+   eina_hash_set(class_overrides, &klass, override);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override)
+{
+   const Efl_Class *set;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   if (!class_overrides) return EINA_TRUE;
+
+   set = eina_hash_find(class_overrides, &klass);
+   if (set != override) return EINA_FALSE;
+   return eina_hash_del_by_key(class_overrides, &klass);
 }
 
 EAPI Eina_Bool

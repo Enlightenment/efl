@@ -1517,6 +1517,33 @@ EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *k
 EAPI void efl_del(const Eo *obj);
 
 /**
+ * @brief Set an override for a class
+ *
+ * This can be used to override a class with another class such that when @p klass is added
+ * with efl_add(), an object of type @p override is returned.
+ *
+ * @param[in] klass The class to be overridden
+ * @param[in] override The class to override with; must inherit from or implement @p klass
+ * @return Return @c true if the override was successfully set
+ *
+ * @ingroup Efl_Object
+ */
+EAPI Eina_Bool efl_class_override_register(const Efl_Class *klass, const Efl_Class *override);
+
+/**
+ * @brief Unset an override for a class
+ *
+ * This is used to unset a previously-set override on a given class. It will only succeed if
+ * @p override is the currently-set override for @p klass.
+ *
+ * @param[in] klass The class to unset the override from
+ * @param[in] override The class override to be removed
+ * @return Return @c true if the override was successfully unset
+ *
+ * @ingroup Efl_Object
+ */
+EAPI Eina_Bool efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override);
+/**
  * @brief Get a pointer to the data of an object for a specific class.
  *
  * The data reference count is not incremented. The pointer must be used only

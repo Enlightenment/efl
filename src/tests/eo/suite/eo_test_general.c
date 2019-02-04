@@ -1798,11 +1798,38 @@ EFL_START_TEST(efl_object_size)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eo_test_class_replacement)
+{
+   Eo *obj;
+
+   /* test basic override */
+   ck_assert(efl_class_override_register(SIMPLE_CLASS, SIMPLE3_CLASS));
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   ck_assert_ptr_eq(efl_class_get(obj), SIMPLE3_CLASS);
+   efl_unref(obj);
+
+   /* test overriding with non-inheriting class */
+   ck_assert(!efl_class_override_register(SIMPLE_CLASS, SIMPLE2_CLASS));
+
+   /* test removing an invalid override */
+   ck_assert(!efl_class_override_unregister(SIMPLE_CLASS, SIMPLE2_CLASS));
+
+   /* test removing an override */
+   ck_assert(efl_class_override_unregister(SIMPLE_CLASS, SIMPLE3_CLASS));
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   ck_assert_ptr_eq(efl_class_get(obj), SIMPLE_CLASS);
+   efl_unref(obj);
+}
+EFL_END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
    tcase_add_test(tc, eo_singleton);
    tcase_add_test(tc, efl_object_override_tests);
+   tcase_add_test(tc, eo_test_class_replacement);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, efl_data_fetch);
    tcase_add_test(tc, efl_data_safe_fetch);
