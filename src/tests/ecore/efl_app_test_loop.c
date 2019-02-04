@@ -46,11 +46,17 @@ efl_app_test_efl_loop_concentric_fail(void *data EINA_UNUSED, const Efl_Event *e
 }
 
 static void
-loop_idle(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+loop_idle_enter(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    static int num = 0;
 
    if (num++ == 5) efl_loop_quit(efl_main_loop_get(), eina_value_int_init(0));
+}
+
+static void
+loop_idle(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_loop_iterate(data);
 }
 
 static void
@@ -65,8 +71,9 @@ EFL_START_TEST(efl_app_test_efl_loop_concentric)
    int exitcode;
 
    loop = efl_main_loop_get();
-   efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE, loop_idle, NULL);
    loop2 = efl_add(EFL_LOOP_CLASS, loop);
+   efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE, loop_idle, loop2);
+   efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE_ENTER, loop_idle_enter, NULL);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop2,
      efl_loop_timer_interval_set(efl_added, 0.01),
      efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, loop_timer_tick, loop)
