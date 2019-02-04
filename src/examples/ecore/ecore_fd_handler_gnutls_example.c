@@ -15,6 +15,9 @@
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
+#endif
 #include <errno.h>
 #include <unistd.h>
 #include <gnutls/gnutls.h>
