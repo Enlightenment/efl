@@ -133,7 +133,19 @@ configure_file(input : 'efl_mono.dll.config.in',
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major)
+    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
+    cs_args : '-doc:' + join_paths(meson.current_build_dir(), 'libefl_mono.xml')
+)
+
+prog_python = import('python').find_installation('python3')
+
+efl_mono_api = custom_target(
+    'efl_mono_api.txt',
+    input: join_paths(meson.source_root(), 'src', 'scripts', 'efl_mono', 'api_dump.py'),
+    output: 'efl_mono_api.txt',
+    command: [prog_python, '@INPUT@', join_paths(meson.current_build_dir(), 'libefl_mono.xml'), '@OUTPUT@'],
+    depends: [efl_mono],
+    build_by_default : true
 )
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
