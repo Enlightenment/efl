@@ -291,7 +291,7 @@ tests/ecore/ecore_test_args.c \
 tests/ecore/ecore_test_pipe.c \
 tests/ecore/ecore_suite.h
 
-tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/ecore \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
