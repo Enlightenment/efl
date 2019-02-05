@@ -149,7 +149,8 @@ tests/eo/suite/eo_test_value.c \
 tests/eo/suite/eo_test_event.c \
 tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c \
-tests/eo/suite/eo_test_lifecycle.c
+tests/eo/suite/eo_test_lifecycle.c \
+tests/eo/suite/eo_test_reflection.c
 
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \

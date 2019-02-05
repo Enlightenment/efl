@@ -826,6 +826,40 @@ struct _Efl_Class_Description
    void (*class_constructor)(Efl_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Efl_Class *klass); /**< The destructor of the class. */
 };
+/**
+ * Setter type which is used to set an #Eina_Value, this function should access one particular property field
+ */
+typedef void (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
+
+/**
+ * Getter type which is used to get an #Eina_Value, this function should access one particular property field
+ */
+typedef Eina_Value (*Efl_Object_Property_Reflection_Getter)(Eo *obj);
+
+/**
+ * @struct _Efl_Object_Property_Reflection
+ *
+ * This structure holds one line of the reflection table.
+ * The two fields get and set might be NULL,
+ * the property_name is a normal c string containing the name of the property
+ * that the get and set function changes.
+ */
+typedef struct _Efl_Object_Property_Reflection{
+   const char *property_name; /**< The name of the property */
+   Efl_Object_Property_Reflection_Setter set; /**< The function used to set a generic #Eina_Value on this property of the object. */
+   Efl_Object_Property_Reflection_Getter get; /**< The function used to retrieve a generic #Eina_Value from this property of the object. */
+} Efl_Object_Property_Reflection;
+
+/**
+ * @struct _Efl_Object_Property_Reflection_Ops
+ *
+ * This structure holds the reflection table and the size of this table.
+ */
+typedef struct _Efl_Object_Property_Reflection_Ops
+{
+   const Efl_Object_Property_Reflection *table; /**< The reflection table. */
+   size_t count; /**< Number of table lines descriptions. */
+} Efl_Object_Property_Reflection_Ops;
 
 /**
  * @typedef Efl_Class_Description
@@ -860,10 +894,11 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
  * @return True on success, False otherwise.
  *
  * This should only be called from within the initializer function.
- *
+ * The reflection_table contains a getter and setter per property name. Which are called when either
+ * efl_property_reflection_set() or efl_property_reflection_get() is called.
  * @see #EFL_DEFINE_CLASS
  */
-EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const void *reflection_table);
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const Efl_Object_Property_Reflection_Ops *reflection_table);
 
 /**
  * @brief Override Eo functions of this object.
@@ -1944,6 +1979,25 @@ EAPI Eina_Bool efl_manual_free(Eo *obj);
  * @see efl_manual_free_set()
  */
 EAPI Eina_Bool efl_destructed_is(const Eo *obj);
+
+/**
+ * @brief Set the given #Eina_Value to the property with the specified \c property_name.
+ * @param obj The object to set the property on
+ * @param property_name The name of the property to modify.
+ * @param value The value to set, the value passed here will be flushed by the function
+ *
+ */
+EAPI void efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
+
+/**
+ * @brief Retrieve an #Eina_Value containing the current value of the property specified with \c property_name.
+ * @param obj The object to set the property on
+ * @param property_name The name of the property to get.
+ *
+ * @return The value that got returned by the actual property in form of a generic Eina_Value. The user of this API is owning the returned Value.
+ */
+EAPI Eina_Value efl_property_reflection_get(Eo *obj, const char *property_name);
+
 
 /**
  * @addtogroup Efl_Class_Class Eo's Class class.

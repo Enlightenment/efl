@@ -23,12 +23,30 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    efl_event_callback_legacy_call(obj, EV_A_CHANGED, &pd->a);
 }
 
+static void
+_a_set_reflect(Eo *obj, Eina_Value value)
+{
+   int a;
+
+   eina_value_int_convert(&value, &a);
+   simple_a_set(obj, a);
+   eina_value_flush(&value);
+}
+
 static int
 _a_get(Eo *obj EINA_UNUSED, void *class_data)
 {
    Simple_Public_Data *pd = class_data;
 
    return pd->a;
+}
+
+static Eina_Value
+_a_get_reflect(Eo *obj)
+{
+   int a = simple_a_get(obj);
+
+   return eina_value_int_init(a);
 }
 
 static Eina_Bool
@@ -103,8 +121,14 @@ _class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(cops,
          EFL_OBJECT_OP_FUNC(simple_class_hi_print, _class_hi_print),
    );
+   static const Efl_Object_Property_Reflection reflection_table[] = {
+         {"simple_a", _a_set_reflect, _a_get_reflect},
+   };
+   static const Efl_Object_Property_Reflection_Ops ref_ops = {
+         reflection_table, EINA_C_ARRAY_LENGTH(reflection_table)
+   };
 
-   return efl_class_functions_set(klass, &ops, &cops, NULL);
+   return efl_class_functions_set(klass, &ops, &cops, &ref_ops);
 }
 
 static const Efl_Class_Description class_desc = {
