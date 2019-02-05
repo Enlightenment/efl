@@ -2108,13 +2108,11 @@ static_libs/lz4/lz4hc.c \
 static_libs/lz4/lz4hc.h
 endif
 lib_evas_libevas_la_CPPFLAGS += \
--I$(top_srcdir)/src/static_libs/rg_etc \
-@evas_image_loader_tgv_cflags@
+-I$(top_srcdir)/src/static_libs/rg_etc
 if ! ENABLE_LIBLZ4
 lib_evas_libevas_la_CPPFLAGS += \
 -I$(top_srcdir)/src/static_libs/lz4
 endif
-lib_evas_libevas_la_LIBADD += @evas_image_loader_tgv_libs@
 endif
 else
 loadertgvpkgdir = $(libdir)/evas/modules/image_loaders/tgv/$(MODULE_ARCH)
@@ -2140,15 +2138,13 @@ modules_evas_image_loaders_tgv_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 @EVAS_CFLAGS@ \
-@NEON_CFLAGS@ \
-@evas_image_loader_tgv_cflags@
+@NEON_CFLAGS@
 if ! ENABLE_LIBLZ4
 modules_evas_image_loaders_tgv_module_la_CPPFLAGS += \
 -I$(top_srcdir)/src/static_libs/lz4
 endif
 modules_evas_image_loaders_tgv_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@evas_image_loader_tgv_libs@
+@USE_EVAS_LIBS@
 modules_evas_image_loaders_tgv_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_image_loaders_tgv_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_image_loaders_tgv_module_la_LIBTOOLFLAGS = --tag=disable-static
