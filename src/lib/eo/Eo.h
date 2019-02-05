@@ -1008,7 +1008,7 @@ typedef struct _Efl_Domain_Data Efl_Domain_Data;
  * where it's called. Calling it after this point will result in
  * undefined behavior, so be sure to call this immediaetly after a thread
  * begins to execute. You must not change the domain of the main thread.
- * 
+ *
  * @see efl_domain_switch()
  * @see efl_domain_current_get()
  * @see efl_domain_current_set()
@@ -1031,7 +1031,7 @@ EAPI Efl_Id_Domain    efl_domain_get(void);
  * new domain temporarily with efl_domain_current_set(),
  * efl_domain_current_push() or efl_domain_current_pop(),
  * efl_domain_data_adopt() and efl_domain_data_return().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
@@ -1044,7 +1044,7 @@ EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
  * There is actually a stack of domans to use. You can alter this via
  * efl_domain_current_push() and efl_domain_current_pop(). This only gets
  * the domain for the current thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Efl_Id_Domain    efl_domain_current_get(void);
@@ -1058,7 +1058,7 @@ EAPI Efl_Id_Domain    efl_domain_current_get(void);
  * efl_domain_current_push() and efl_domain_current_pop(). The current
  * domain is the one on the top of the stack, so this entry is altered
  * without pushing or popping. This only applies to the calling thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
@@ -1071,7 +1071,7 @@ EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
  * This pushes a domain on the domain stack that can be popped later with
  * efl_domain_current_pop(). If the stack is full this may fail and return
  * EINA_FALSE. This applies only to the calling thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_current_push(Efl_Id_Domain domain);
@@ -1081,7 +1081,7 @@ EAPI Eina_Bool        efl_domain_current_push(Efl_Id_Domain domain);
  *
  * This pops the top domain off the domain stack for the calling thread
  * that was pushed with efl_domain_current_push().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI void             efl_domain_current_pop(void);
@@ -1120,7 +1120,7 @@ EAPI Efl_Domain_Data *efl_domain_data_get(void);
  * your local domain as well, but be aware that creation will require
  * some switch of domain by push, pop or set. Return the domain with
  * efl_domain_data_return() when done.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
@@ -1136,7 +1136,7 @@ EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
  * the current domain is the same one pushed implicitly by
  * efl_domain_data_adopt(). You cannot return your own native local
  * domain, only the one that was adopted by efl_domain_data_adopt().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
@@ -1152,7 +1152,7 @@ EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
  * need to call this if you have objects from multiple domains (an
  * adopted domain with efl_domain_data_adopt() or the shared domain
  * EFL_ID_DOMAIN_SHARED where objects may be accessed by any thread).
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_compatible(const Eo *obj, const Eo *obj_target);
@@ -1685,7 +1685,7 @@ EAPI int efl_ref_count(const Eo *obj);
  * is about to go from a reference count of 1 to 0, thus triggering actual
  * destruction of the object. Instead of going to a reference count of 0 and
  * being destroyed, the object will stay alive with a reference count of 1
- * and this intercept function will be called instead. 
+ * and this intercept function will be called instead.
  * The interceptor function handles any further deletion of of the object
  * from here.
  *
@@ -1700,7 +1700,7 @@ EAPI int efl_ref_count(const Eo *obj);
  * on its owning loop to be destroyed at some time in the future and now
  * set the intercept function to NULL so it is not called again on the next
  * "real deletion".
- * 
+ *
  * @see efl_del_intercept_get()
  * @see efl_unref()
  * @see efl_del()
@@ -1719,7 +1719,7 @@ EAPI void efl_del_intercept_set(Eo *obj, Efl_Del_Intercept del_intercept_func);
  * If you want to override the interceptor be sure to call it after your
  * own interceptor function has finished. It's generally be a bad idea
  * to override these functions however.
- * 
+ *
  * @see efl_del_intercept_set()
  */
 EAPI Efl_Del_Intercept efl_del_intercept_get(const Eo *obj);
@@ -1818,7 +1818,7 @@ EOAPI void *efl_key_data_get(const Eo *obj, const char * key);
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or when the referring object is deleted. If the referenced object 
+ * deleted or when the referring object is deleted. If the referenced object
  * is deleted, then the key is deleted automatically.
  *
  * This is the same key store used by key_data and key_value. Keys are shared
@@ -1833,7 +1833,7 @@ EOAPI void efl_key_ref_set(Eo *obj, const char * key, const Efl_Object *objdata)
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or when the referring object is deleted. If the referenced object is 
+ * deleted or when the referring object is deleted. If the referenced object is
  * deleted then the key is deleted automatically.
  *
  * This is the same key store used by key_data and key_value. Keys are shared
@@ -1908,7 +1908,7 @@ EOAPI Eina_Value *efl_key_value_get(const Eo *obj, const char * key);
  * @param obj the object to work on.
  * @param manual_free indicates if the free is manual (EINA_TRUE) or automatic (EINA_FALSE).
  *
- * The developer is in charge of calling the function efl_manual_free to free the memory 
+ * The developer is in charge of calling the function efl_manual_free to free the memory
  * allocated for this object.
  *
  * Do not use this unless you really know what you are doing. It's used by Evas
