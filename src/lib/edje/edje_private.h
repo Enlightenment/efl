@@ -2425,6 +2425,7 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 						      const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
+Eina_Bool _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data);
 
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);

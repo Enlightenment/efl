@@ -236,7 +236,7 @@ edje_transition_duration_factor_set(double scale)
    _edje_transition_duration_scale = FROM_DOUBLE(scale);
 }
 
-static inline Eina_Bool
+Eina_Bool
 _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
 {
    Edje_Signal_Callback_Group *gp;
