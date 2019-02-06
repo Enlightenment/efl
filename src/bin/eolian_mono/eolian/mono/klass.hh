@@ -496,9 +496,7 @@ struct klass
      auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
 
      if(!as_generator(
-             scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public" << (root ? "" : " new") << " delegate void ConstructingMethod(" << inherit_name << " obj);\n"
-             << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
+             scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
             ).generate(sink, attributes::unused, context))
