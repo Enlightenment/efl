@@ -250,7 +250,7 @@ _output_edid_find(Ecore_Drm2_Output *output, const drmModeConnector *conn)
 }
 
 static int
-_output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm2_Device *dev)
+_output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, int fd)
 {
    drmModeEncoder *enc;
    uint32_t crtc;
@@ -267,7 +267,7 @@ _output_crtc_find(const drmModeRes *res, const drmModeConnector *conn, Ecore_Drm
 
    for (j = 0; j < conn->count_encoders; j++)
      {
-        enc = sym_drmModeGetEncoder(dev->fd, conn->encoders[j]);
+        enc = sym_drmModeGetEncoder(fd, conn->encoders[j]);
         if (!enc) continue;
 
         crtc = enc->crtc_id;
@@ -678,7 +678,7 @@ _output_create(Ecore_Drm2_Device *dev, const drmModeRes *res, const drmModeConne
 
    if (w) *w = 0;
 
-   i = _output_crtc_find(res, conn, dev);
+   i = _output_crtc_find(res, conn, dev->fd);
    if (i < 0) return EINA_FALSE;
 
    output = calloc(1, sizeof(Ecore_Drm2_Output));
@@ -1763,4 +1763,57 @@ ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, ui
      }
 
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_drm2_output_clone_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output *clone)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   if (clone)
+     {
+        if (ecore_drm2_output_possible_crtc_get(output, clone->crtc_id))
+          {
+             output->crtc_id = clone->crtc_id;
+             output->cloned = EINA_TRUE;
+             ret = EINA_TRUE;
+          }
+     }
+   else if (output->cloned)
+     {
+        drmModeRes *res;
+        drmModeConnector *conn;
+        int j = 0, i = 0;
+
+        res = sym_drmModeGetResources(output->fd);
+        if (!res) return EINA_FALSE;
+
+        for (j = 0; j < res->count_connectors; j++)
+          {
+             conn = sym_drmModeGetConnector(output->fd, res->connectors[j]);
+             if (!conn) continue;
+
+             if (conn->connector_id == output->conn_id)
+               {
+                  i = _output_crtc_find(res, conn, output->fd);
+                  if (i < 0)
+                    ret = EINA_FALSE;
+                  else
+                    {
+                       output->crtc_id = res->crtcs[i];
+                       output->cloned = EINA_FALSE;
+                       ret = EINA_TRUE;
+                    }
+               }
+
+             sym_drmModeFreeConnector(conn);
+             if (ret) break;
+          }
+
+        sym_drmModeFreeResources(res);
+     }
+
+   return ret;
 }

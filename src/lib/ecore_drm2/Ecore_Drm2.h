@@ -883,6 +883,19 @@ EAPI void ecore_drm2_output_relative_to_set(Ecore_Drm2_Output *output, const cha
 EAPI const char *ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output);
 
 /**
+ * Set if a given output is cloned
+ *
+ * @param output The output to set as cloned
+ * @param clone The output of which to clone, or NULL to unclone
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.22
+ */
+EAPI Eina_Bool ecore_drm2_output_clone_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output *clone);
+
+/**
  * @defgroup Ecore_Drm2_Fb_Group Drm framebuffer functions
  *
  * Functions that deal with setup of framebuffers
