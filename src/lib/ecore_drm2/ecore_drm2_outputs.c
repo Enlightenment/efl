@@ -859,14 +859,14 @@ next:
           {
              output->connected = EINA_FALSE;
              output->enabled = EINA_FALSE;
-             _output_event_send(output);
           }
         else
           {
              output->connected = EINA_TRUE;
              output->enabled = EINA_TRUE;
-             _output_event_send(output);
           }
+
+        _output_event_send(output);
      }
    free(connected);
 }
