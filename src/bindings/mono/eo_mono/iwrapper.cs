@@ -123,7 +123,7 @@ public class Globals {
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr term);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr extn48, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops, IntPtr reflection_ops);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
@@ -152,7 +152,7 @@ public class Globals {
 
     public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klasses
         = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
-    
+
     public const int RTLD_NOW = 2;
 
     public delegate byte class_initializer(IntPtr klass);
@@ -173,7 +173,7 @@ public class Globals {
     {
         return v != null;
     }
-    
+
     public static IntPtr register_class(String class_name, IntPtr base_klass, System.Type type)
     {
         ClassDescription description;
@@ -189,7 +189,7 @@ public class Globals {
             {
                 return Globals.class_initializer_call(kls, type);
             };
-        
+
         description.class_initializer = Marshal.GetFunctionPointerForDelegate(init);
 
         IntPtr description_ptr = Eina.MemoryNative.Alloc(Marshal.SizeOf(description));
@@ -213,7 +213,7 @@ public class Globals {
     public static List<IntPtr> get_efl_interfaces(System.Type type)
     {
         System.Type base_type = type.BaseType;
-        
+
         var ifaces_lst = new List<IntPtr>();
         var base_ifaces = base_type.GetInterfaces();
         var ifaces = type.GetInterfaces();
@@ -271,7 +271,7 @@ public class Globals {
                     }
                 }
             }
-            
+
             IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*count);
             IntPtr ptr = descs_ptr;
             for(int i = 0; i != count; ++i)
@@ -284,12 +284,12 @@ public class Globals {
             ops.count = (UIntPtr)count;
             IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));
             Marshal.StructureToPtr(ops, ops_ptr, false);
-            Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero);
+            Efl.Eo.Globals.efl_class_functions_set(klass, ops_ptr, IntPtr.Zero, IntPtr.Zero);
             //EoKlass = klass;
         }
         else
             Console.WriteLine("nativeClass == null");
-            
+
        return 1;
     }
     public static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
@@ -363,7 +363,7 @@ public class Globals {
         {
             throw new Exception("Instantiation failed");
         }
-        
+
         Console.WriteLine($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
         Console.WriteLine($"Parent was 0x{parent_ptr.ToInt64()}");
         return eo;
@@ -529,7 +529,7 @@ public interface IWrapper
         get;
     }
     /// <summary>Pointer to internal Eo class.</summary>
-    IntPtr NativeClass 
+    IntPtr NativeClass
     {
         get;
     }

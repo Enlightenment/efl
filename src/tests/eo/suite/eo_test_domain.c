@@ -64,7 +64,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(domain_a_get, _a_get),
          EFL_OBJECT_OP_FUNC(domain_recursive, _recursive)
    );
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 static const Efl_Class_Description class_desc = {

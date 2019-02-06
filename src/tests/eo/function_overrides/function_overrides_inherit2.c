@@ -71,7 +71,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
    );
 
-   return efl_class_functions_set(klass, &ops, &cops);
+   return efl_class_functions_set(klass, &ops, &cops, NULL);
 }
 
 static const Efl_Class_Description class_desc = {

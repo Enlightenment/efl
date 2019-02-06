@@ -50,7 +50,7 @@ _class_simple_class_initializer(Efl_Class *klass)
    copsp = &cops;
 #endif
 
-   return efl_class_functions_set(klass, opsp, copsp);
+   return efl_class_functions_set(klass, opsp, copsp, NULL);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {

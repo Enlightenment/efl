@@ -87,7 +87,7 @@ _custom_table_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _custom_table_calc)
    );
 
-   return efl_class_functions_set(klass, NULL, &class_ops);
+   return efl_class_functions_set(klass, NULL, &class_ops, NULL);
 };
 
 static const Efl_Class_Description custom_table_class_desc = {

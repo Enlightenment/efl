@@ -856,13 +856,14 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
  * @param klass_id the class whose functions we are setting.
  * @param object_ops The function structure we are setting for object functions
  * @param class_ops The function structure we are setting for class functions
+ * @param reflection_table The reflection table to use within eo
  * @return True on success, False otherwise.
  *
  * This should only be called from within the initializer function.
  *
  * @see #EFL_DEFINE_CLASS
  */
-EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops);
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const void *reflection_table);
 
 /**
  * @brief Override Eo functions of this object.

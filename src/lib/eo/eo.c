@@ -819,7 +819,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 }
 
 EAPI Eina_Bool
-efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops)
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const void *reflection_table)
 {
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
    Efl_Object_Ops empty_ops = { 0 };
@@ -982,7 +982,7 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
         // fails or succeeds based on if service is there.
         //
         // until there is a better solution - don't complain here.
-        // 
+        //
         //             ERR("Object of class '%s' - Finalizing the object failed.",
         //                   klass->desc->name);
         goto cleanup;
@@ -1691,7 +1691,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* If functions haven't been set, invoke it with an empty ops structure. */
    if (!klass->functions_set)
      {
-        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
+        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL, NULL);
      }
 
    /* Mark which classes we implement */
