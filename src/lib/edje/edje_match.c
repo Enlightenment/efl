@@ -553,7 +553,10 @@ edje_match_callback_exec_check_finals(const Edje_Signals_Sources_Patterns *ssp,
 
         if (ed->callbacks->flags[idx].delete_me) continue;
 
-        cb->func((void *)ed->callbacks->custom_data[idx], ed->obj, sig, source);
+        if (ed->callbacks->flags[idx].legacy)
+          cb->legacy((void *)ed->callbacks->custom_data[idx], ed->obj, sig, source);
+        else
+          cb->eo((void *)ed->callbacks->custom_data[idx], ed->obj, sig, source);
         if (_edje_block_break(ed))
           {
              r = 0;

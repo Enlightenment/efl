@@ -81,7 +81,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
 
    ed = _edje_fetch(obj);
    if (!ed || ed->delete_me) return;
-   _edje_object_signal_callback_add(ed, emission, source, func, data);
+   _edje_object_signal_callback_add(ed, emission, source, func, NULL, NULL, data);
 }
 
 EAPI void *
@@ -99,7 +99,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
    emission = eina_stringshare_add(emission);
    source = eina_stringshare_add(source);
 
-   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+   // We can cast here as the function won't be used and is just going to be used for comparison
+   ok = _edje_signal_callback_disable(gp, emission, source, func, NULL, NULL, data);
 
    // Legacy only
    if (!ok && !data)
@@ -108,7 +109,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
           {
              if (emission == gp->matches->matches[i].signal &&
                  source == gp->matches->matches[i].source &&
-                 func == gp->matches->matches[i].func &&
+                 func == gp->matches->matches[i].legacy &&
+                 gp->flags[i].legacy &&
                  !gp->flags[i].delete_me)
                {
                   gp->flags[i].delete_me = EINA_TRUE;

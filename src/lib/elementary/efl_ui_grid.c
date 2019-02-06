@@ -435,40 +435,40 @@ _scroll_edje_object_attach(Eo *obj)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    efl_layout_signal_callback_add(obj, "reload", "efl",
-                                  _efl_ui_grid_reload_cb, obj);
+                                  obj, _efl_ui_grid_reload_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag", "efl.dragable.vbar",
-                                  _efl_ui_grid_vbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_vbar_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,set", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,start", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,stop", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,step", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,vbar,press", "efl",
-                                  _efl_ui_grid_vbar_press_cb, obj);
+                                  obj, _efl_ui_grid_vbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,vbar,unpress", "efl",
-                                  _efl_ui_grid_vbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_vbar_unpress_cb, NULL);
 
    efl_layout_signal_callback_add(obj, "drag", "efl.dragable.hbar",
-                                  _efl_ui_grid_hbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_hbar_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,set", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,start", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,stop", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,step", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,press", "efl",
-                                  _efl_ui_grid_hbar_press_cb, obj);
+                                  obj, _efl_ui_grid_hbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,unpress", "efl",
-                                  _efl_ui_grid_hbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_hbar_unpress_cb, NULL);
 }
 
 static void
@@ -477,40 +477,40 @@ _scroll_edje_object_detach(Eo *obj)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    efl_layout_signal_callback_del(obj, "reload", "efl",
-                                  _efl_ui_grid_reload_cb, obj);
+                                  obj, _efl_ui_grid_reload_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag", "efl.dragable.vbar",
-                                  _efl_ui_grid_vbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_vbar_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,set", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,start", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,stop", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,step", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,vbar,press", "efl",
-                                  _efl_ui_grid_vbar_press_cb, obj);
+                                  obj, _efl_ui_grid_vbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,vbar,unpress", "efl",
-                                  _efl_ui_grid_vbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_vbar_unpress_cb, NULL);
 
    efl_layout_signal_callback_del(obj, "drag", "efl.dragable.hbar",
-                                  _efl_ui_grid_hbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_hbar_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,set", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,start", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,stop", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,step", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,press", "efl",
-                                  _efl_ui_grid_hbar_press_cb, obj);
+                                  obj, _efl_ui_grid_hbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,unpress", "efl",
-                                  _efl_ui_grid_hbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_hbar_unpress_cb, NULL);
 }
 
 static void

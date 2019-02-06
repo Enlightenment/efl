@@ -87,7 +87,7 @@ _tab_icon_set_cb(void *data,
    Tab_Info *ti = data;
    _tab_icon_update(ti);
 
-   efl_layout_signal_callback_del(obj, emission, source, _tab_icon_set_cb, ti);
+   efl_layout_signal_callback_del(obj, emission, source, ti, _tab_icon_set_cb, NULL);
    efl_layout_signal_emit(ti->tab, "efl,state,icon,reset", "efl");
 }
 
@@ -129,7 +129,7 @@ _tab_icon_obj_set(Eo *obj,
           (efl_part(ti->tab, "efl.icon_new"), ti->icon);
         efl_layout_signal_emit(ti->tab, "efl,state,icon_new,set", "efl");
         efl_layout_signal_callback_add
-          (ti->tab, "efl,state,icon_set,done", "efl", _tab_icon_set_cb, ti);
+          (ti->tab, "efl,state,icon_set,done", "efl", ti, _tab_icon_set_cb, NULL);
      }
    else
      _tab_icon_update(ti);
@@ -248,7 +248,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
      CRI("Failed to set layout!");
 
    efl_layout_signal_callback_add
-     (tab, "efl,action,click", "efl", _action_click_cb, ti);
+     (tab, "efl,action,click", "efl", ti,_action_click_cb, NULL);
 
    if (ti->icon)
      efl_content_set(efl_part(tab, "efl.icon"), ti->icon);

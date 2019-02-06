@@ -652,11 +652,11 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
    priv->val_max = 1.0;
    priv->step = SLIDER_STEP;
 
-   efl_layout_signal_callback_add(obj, "drag", "*", _drag, obj);
-   efl_layout_signal_callback_add(obj, "drag,start", "*", _drag_start, obj);
-   efl_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop, obj);
-   efl_layout_signal_callback_add(obj, "drag,step", "*", _drag_step, obj);
-   efl_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop, obj);
+   efl_layout_signal_callback_add(obj, "drag", "*", obj, _drag, NULL);
+   efl_layout_signal_callback_add(obj, "drag,start", "*", obj, _drag_start, NULL);
+   efl_layout_signal_callback_add(obj, "drag,stop", "*", obj, _drag_stop, NULL);
+   efl_layout_signal_callback_add(obj, "drag,step", "*", obj, _drag_step, NULL);
+   efl_layout_signal_callback_add(obj, "drag,page", "*", obj, _drag_stop, NULL);
 
    priv->spacer = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
                           efl_gfx_color_set(efl_added, 0, 0, 0, 0),
