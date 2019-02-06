@@ -891,10 +891,7 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
      {
         if (output->prep.atomic_req)
           sym_drmModeAtomicFree(output->prep.atomic_req);
-     }
 
-   if (_ecore_drm2_use_atomic)
-     {
         EINA_LIST_FREE(output->plane_states, pstate)
           free(pstate);
 
