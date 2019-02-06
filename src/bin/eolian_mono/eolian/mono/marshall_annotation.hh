@@ -142,12 +142,22 @@ struct marshall_annotation_visitor_generate
    }
    bool operator()(attributes::klass_name const& klass_name) const
    {
-     const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Efl.Eo.MarshalTest<";
-     const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Efl.Eo.MarshalTest<";
-     return as_generator
-       ((is_return ? return_prefix : no_return_prefix)
-        << string << ", Efl.Eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
-        ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
+     const char *return_prefix = is_return ? "return:" : "";
+     const char *marshal_prefix = "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(";
+
+     std::string name = name_helpers::klass_full_concrete_name(klass_name);
+
+     if (name == "Efl.Class")
+       name = "Efl.Eo.MarshalEflClass";
+     else
+       {
+          auto own = klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag";
+          name = "Efl.Eo.MarshalTest<" + name + ", Efl.Eo." + own + ">";
+       }
+
+     return as_generator(
+             lit("[") << return_prefix << marshal_prefix << name << "))]"
+        ).generate(sink, name, *context);
    }
    bool operator()(attributes::complex_type_def const& c) const
    {
@@ -252,12 +262,22 @@ struct marshall_native_annotation_visitor_generate
    }
    bool operator()(attributes::klass_name const& klass_name) const
    {
-     const char no_return_prefix[] = "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Efl.Eo.MarshalTest<";
-     const char return_prefix[] = "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(Efl.Eo.MarshalTest<";
-     return as_generator
-       ((is_return ? return_prefix : no_return_prefix)
-        << string << ", Efl.Eo." << (klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag") << ">))]"
-        ).generate(sink, name_helpers::klass_full_concrete_name(klass_name), *context);
+     const char *return_prefix = is_return ? "return:" : "";
+     const char *marshal_prefix = "MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(";
+
+     std::string name = name_helpers::klass_full_concrete_name(klass_name);
+
+     if (name == "Efl.Class")
+       name = "Efl.Eo.MarshalEflClass";
+     else
+       {
+          auto own = klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag";
+          name = "Efl.Eo.MarshalTest<" + name + ", Efl.Eo." + own + ">";
+       }
+
+     return as_generator(
+             lit("[") << return_prefix << marshal_prefix << name << "))]"
+        ).generate(sink, name, *context);
    }
    bool operator()(attributes::complex_type_def const& c) const
    {

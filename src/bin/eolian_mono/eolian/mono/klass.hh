@@ -347,6 +347,15 @@ struct klass
                 return false;
            }
 
+         // Copied from nativeinherit class, used when setting up providers.
+         if(!as_generator(
+              scope_tab << "private static " << (root ? "" : "new ") << " IntPtr GetEflClassStatic()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, inherit_cxt))
+           return false;
+
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
@@ -454,7 +463,7 @@ struct klass
                 << scope_tab << scope_tab << scope_tab << "if (((object)this).GetType() == typeof (" << inherit_name << "))\n"
                 << scope_tab << scope_tab << scope_tab << scope_tab << "return " << native_inherit_full_name << ".GetEflClassStatic();\n"
                 << scope_tab << scope_tab << scope_tab << "else\n"
-                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
+                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.ClassRegister.klassFromType[((object)this).GetType()];\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"
             ).generate(sink, attributes::unused, context))
@@ -512,7 +521,7 @@ struct klass
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
                      << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
                      << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") :\n"
-                     << scope_tab << scope_tab << (root ? "this" : "base")  << "(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                     << scope_tab << scope_tab << (root ? "this" : "base")  << "(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
                      << scope_tab << "{\n"
                      << *(scope_tab << scope_tab << constructor_invocation << "\n" )
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -531,7 +540,7 @@ struct klass
      {
          return as_generator(
                      scope_tab << "///<summary>Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
-                     << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(klass_name, base_klass, managed_type, parent) {}\n"
+                     << scope_tab << "protected " << inherit_name << "(IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(base_klass, managed_type, parent) {}\n"
                   ).generate(sink, attributes::unused, context);
 
      }
@@ -539,22 +548,12 @@ struct klass
      // Detailed constructors go only in root classes.
      return as_generator(
              /// Actual root costructor that creates class and instantiates 
-             scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
+             scope_tab << "protected " << inherit_name << "(IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "inherited = ((object)this).GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
              << scope_tab << scope_tab << "if (inherited) {\n"
-             << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.klasses.ContainsKey(((object)this).GetType())) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.register_class(klass_name, base_klass, ((object)this).GetType());\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (actual_klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "throw new System.InvalidOperationException(\"Failed to initialize class '" << inherit_name << "'\");\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.klasses[((object)this).GetType()] = actual_klass;\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "else\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
+             << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(base_klass, ((object)this).GetType());\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"

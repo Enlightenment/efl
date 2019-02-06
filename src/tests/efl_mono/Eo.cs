@@ -400,4 +400,17 @@ class TestInterfaceConcrete
     }
 }
 
+class TestProvider
+{
+    public static void test_find_provider()
+    {
+        // Tests only the direction C# -> C
+        var tmp = new Dummy.Numberwrapper();
+        var obj = new Dummy.TestObject();
+        Dummy.Numberwrapper provider = Dummy.Numberwrapper.static_cast(obj.FindProvider(typeof(Dummy.Numberwrapper)));
+        Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
+        Test.AssertEquals(provider.GetNumber(), 1999);
+    }
+}
+
 }

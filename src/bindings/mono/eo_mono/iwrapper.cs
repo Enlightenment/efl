@@ -26,6 +26,8 @@ public class Globals {
     [DllImport(efl.Libs.Eo)] public static extern int
         efl_ref_count(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
+        efl_class_name_get(IntPtr eo);
+    [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr term);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr term);
@@ -149,9 +151,6 @@ public class Globals {
               System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
-
-    public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klasses
-        = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
 
     public const int RTLD_NOW = 2;
 
@@ -529,6 +528,120 @@ public interface IWrapper
     }
 }
 
+public static class ClassRegister
+{
+    public static System.Type GetManagedType(IntPtr klass)
+    {
+        System.Type t;
+        if (Efl.Eo.ClassRegister.typeFromKlass.TryGetValue(klass, out t))
+            return t;
+
+        // If it isn't on the dictionary then it is a Native binding class
+        IntPtr namePtr = Efl.Eo.Globals.efl_class_name_get(klass);
+        if (namePtr == IntPtr.Zero) {
+            throw new System.InvalidOperationException($"Could not get Native class name. Handle: {klass}");
+        }
+
+        string name = Eina.StringConversion.NativeUtf8ToManagedString(namePtr)
+                      .Replace("_", ""); // Convert Efl C name to C# name
+
+        var curr_asm = typeof(IWrapper).Assembly;
+        t = curr_asm.GetType(name);
+        if (t == null)
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly == curr_asm)
+                    continue;
+
+                t = assembly.GetType(name);
+                if (t != null)
+                    break;
+            }
+            if (t == null) {
+                throw new System.InvalidOperationException($"Could not find the C# binding class for the EFL class: {name}");
+            }
+        }
+        AddToKlassTypeBiDictionary(klass, t); // Cache it in the dictionary
+        return t;
+    }
+
+    public static IntPtr GetKlass(System.Type objectType)
+    {
+        IntPtr klass;
+        if (klassFromType.TryGetValue(objectType, out klass))
+            return klass;
+
+        // Check if it is a Native binding class
+        klass = GetNativeKlassPtr(objectType);
+        if (klass != IntPtr.Zero) {
+            // Add to the dictionary cache
+            AddToKlassTypeBiDictionary(klass, objectType);
+            return klass;
+        }
+
+        // Unregistered Inherited class, let's register it
+        IntPtr baseKlass = GetNativeBaseKlassPtr(objectType);
+        if (baseKlass == IntPtr.Zero)
+            throw new System.InvalidOperationException($"Could not get base C# binding class for Inherited type: {objectType.FullName}");
+        return RegisterKlass(baseKlass, objectType);
+    }
+
+    public static IntPtr GetInheritKlassOrRegister(IntPtr baseKlass, System.Type objectType)
+    {
+        IntPtr klass;
+        if (klassFromType.TryGetValue(objectType, out klass))
+            return klass;
+
+        return RegisterKlass(baseKlass, objectType);
+    }
+
+    private static IntPtr RegisterKlass(IntPtr baseKlass, System.Type objectType)
+    {
+        lock (klassAllocLock) {
+            IntPtr newKlass = Efl.Eo.Globals.register_class(objectType.FullName, baseKlass, objectType);
+            if (newKlass == IntPtr.Zero) {
+                throw new System.InvalidOperationException($"Failed to register class '{objectType.FullName}'");
+            }
+            AddToKlassTypeBiDictionary(newKlass, objectType);
+            return newKlass;
+        }
+    }
+
+    private static IntPtr GetNativeBaseKlassPtr(System.Type objectType)
+    {
+        for (System.Type t = objectType.BaseType; t != null; t = t.BaseType)
+        {
+            var method = t.GetMethod("GetEflClassStatic",
+                                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            if (method != null)
+                return (IntPtr) method.Invoke(null, null);
+        }
+        throw new System.InvalidOperationException($"Class '{objectType.FullName}' is not an Efl object");
+    }
+
+    private static IntPtr GetNativeKlassPtr(System.Type objectType)
+    {
+        var method = objectType.GetMethod("GetEflClassStatic",
+                                          System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+        return (IntPtr) method?.Invoke(null, null);
+    }
+
+    public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
+    {
+        klassFromType[objectType] = klassPtr;
+        typeFromKlass[klassPtr] = objectType;
+    }
+
+    public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
+        = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
+
+    public static System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
+        = new System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type>();
+
+    private static readonly object klassAllocLock = new object();
+}
+
 public interface IOwnershipTag
 {
 }
@@ -584,6 +697,46 @@ public class MarshalTest<T, U> : ICustomMarshaler
             Efl.Eo.Globals.efl_ref(pNativeData);
         return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
 //        return null;
+    }
+}
+
+///<summary>Marshals between System.Type instances and Eo classes (IntPtrs).</summary>
+public class MarshalEflClass : ICustomMarshaler
+{
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        Eina.Log.Debug("MarshalTest.GetInstance cookie " + cookie);
+        return new MarshalEflClass();
+    }
+    public void CleanUpManagedData(object ManagedObj)
+    {
+    }
+
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
+
+    public int GetNativeDataSize()
+    {
+        Eina.Log.Debug("MarshalTest.GetNativeDataSize");
+        return 0;
+    }
+
+    public IntPtr MarshalManagedToNative(object ManagedObj)
+    {
+        Eina.Log.Debug("MarshalTest.MarshallManagedToNative");
+        if (ManagedObj == null)
+            return IntPtr.Zero;
+        var t = (System.Type) ManagedObj;
+        return Efl.Eo.ClassRegister.GetKlass(t);
+    }
+
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
+        Eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
+        if (pNativeData == IntPtr.Zero)
+            return null;
+        return Efl.Eo.ClassRegister.GetManagedType(pNativeData);
     }
 }
 

@@ -1392,6 +1392,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       class.destructor;
       Efl.Object.constructor;
       Efl.Part.part_get;
+      Efl.Object.provider_find;
       Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }

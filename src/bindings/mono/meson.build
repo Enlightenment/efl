@@ -13,6 +13,7 @@ mono_sublibs = [
 ]
 
 blacklisted_files = [
+  'efl_class.eo',
   'efl_canvas_text.eo',
   'efl_canvas_scene3d.eo',
   'evas_canvas3d_camera.eo',

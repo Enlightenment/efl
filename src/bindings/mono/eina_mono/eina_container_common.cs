@@ -530,23 +530,11 @@ public static class TraitFunctions
 
         if (type.IsInterface)
         {
-            string[] names = type.FullName.Split('.');
-            names[names.Count() - 1] = names.Last().Substring(1); // Remove the leading 'I' (What about user-defined interfaces?)
-
-            string fullName = string.Join(".", names);
+            string fullName = type.FullName + "Concrete";
             return type.Assembly.GetType(fullName); // That was our best guess...
         }
 
-
-        System.Type current = type;
-        while (current != null)
-        {
-            if (current.Name.EndsWith("Inherit"))
-                throw new Exception("Inherit-based classes are not currently supported.");
-            current = current.BaseType;
-        }
-
-        return type; // Not inherited neither interface, so it should be a concrete.
+        return type; // Not interface, so it should be a concrete.
     }
 
     public static object RegisterTypeTraits<T>()

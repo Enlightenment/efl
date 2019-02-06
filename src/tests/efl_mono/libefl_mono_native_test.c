@@ -73,6 +73,7 @@ typedef struct Dummy_Test_Object_Data
   Eina_List *list_for_accessor;
   int setter_only;
   int iface_prop;
+  Eo *provider;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -149,6 +150,9 @@ _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
         pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
         pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
      }
+
+   pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
+   dummy_numberwrapper_number_set(pd->provider, 1999);
 
    return obj;
 }
@@ -3918,6 +3922,14 @@ void _dummy_test_object_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dum
 int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
 {
     return pd->iface_prop;
+}
+
+Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const Efl_Class *klass)
+{
+    EINA_LOG_ERR("klass: %p, NUMBERWRAPPER: %p", klass, DUMMY_NUMBERWRAPPER_CLASS);
+    if (klass == DUMMY_NUMBERWRAPPER_CLASS)
+        return pd->provider;
+    return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
 }
 
 /// Dummy.Child
