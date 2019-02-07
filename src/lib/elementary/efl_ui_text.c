@@ -599,8 +599,10 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
                    Efl_Ui_Selection_Data *sel_data)
 {
    Efl_Text_Cursor_Cursor *cur, *start, *end;
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    char *buf = eina_slice_strdup(sel_data->content);
+   size_t len = sel_data->content.len;
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    if (!efl_text_cursor_equal(obj, start, end))
@@ -608,6 +610,10 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
         efl_canvas_text_range_delete(obj, start, end);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   info.insert = EINA_TRUE;
+   info.position = efl_text_cursor_position_get(obj, cur);
+   info.length = len;
+   info.content = buf;
    if (sel_data->format == EFL_UI_SELECTION_FORMAT_MARKUP)
      {
         efl_text_markup_interactive_cursor_markup_insert(obj, cur, buf);
@@ -616,6 +622,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
      {
         efl_text_cursor_text_insert(obj, cur, buf);
      }
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
    free(buf);
 }
 
