@@ -691,7 +691,7 @@ _get_drop_format(Evas_Object *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if ((sd->editable) && (!sd->single_line) && (!sd->password) && (!sd->disabled))
-     return EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+     return EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    return EFL_UI_SELECTION_FORMAT_MARKUP;
 }
 
@@ -2142,7 +2142,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    sd->auto_save = EINA_TRUE;
    sd->editable = EINA_TRUE;
    sd->sel_allow = EINA_TRUE;
-   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
    sd->sel_handler_disabled = EINA_TRUE;
 
@@ -2565,7 +2565,7 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Ui_Selection_Format
    if (sd->cnp_mode == EFL_UI_SELECTION_FORMAT_TEXT)
      dnd_format = EFL_UI_SELECTION_FORMAT_TEXT;
    else if (cnp_mode == EFL_UI_SELECTION_FORMAT_IMAGE)
-     dnd_format |= ELM_SEL_FORMAT_IMAGE;
+     dnd_format |= EFL_UI_SELECTION_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
