@@ -622,11 +622,12 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
 
         //Size is changed, cached data is invalid.
         if ((size.w != vg_entry->w) || (size.h != vg_entry->h))
-          drop_cache = EINA_TRUE;
-
-        vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
-        evas_cache_vg_entry_del(pd->vg_entry);
-        pd->vg_entry = vg_entry;
+          {
+             drop_cache = EINA_TRUE;
+             vg_entry = evas_cache_vg_entry_resize(vg_entry, size.w, size.h);
+             evas_cache_vg_entry_del(pd->vg_entry);
+             pd->vg_entry = vg_entry;
+          }
 
         //update for adjusted pos and size.
         offset.x = w - size.w;
