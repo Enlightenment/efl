@@ -2122,6 +2122,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, obj);
    sd->text_obj = text_obj;
    sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
