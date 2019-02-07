@@ -31,6 +31,7 @@ _elm_code_widget_undo_info_copy(Elm_Code_Widget_Change_Info *info)
    Elm_Code_Widget_Change_Info *copy;
 
    copy = calloc(1, sizeof(*info));
+   if (!copy) return NULL;
    memcpy(copy, info, sizeof(*info));
    copy->content = strndup(info->content, info->length);
 

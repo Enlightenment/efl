@@ -45,7 +45,7 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "efl,action,state,changed", "*", _on_state_changed, obj);
+     (wd->resize_obj, "efl,action,state,changed", "*", obj, _on_state_changed, NULL);
 
    //TODO: Add ATSPI call here
 

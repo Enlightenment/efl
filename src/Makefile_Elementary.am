@@ -133,6 +133,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_widget_focus_manager.eo \
 	lib/elementary/efl_ui_text_part.eo \
 	lib/elementary/efl_ui_caching_factory.eo \
+	lib/elementary/efl_ui_widget_factory.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -168,13 +169,17 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
 	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
-	lib/elementary/efl_ui_model_state.eo \
+	lib/elementary/efl_ui_state_model.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \
 	lib/elementary/efl_ui_list_view_relayout.eo \
 	lib/elementary/efl_ui_list_view_precise_layouter.eo \
+	lib/elementary/efl_ui_size_model.eo \
+	lib/elementary/efl_ui_homogeneous_model.eo \
+	lib/elementary/efl_ui_exact_model.eo \
+	lib/elementary/efl_ui_average_model.eo \
 	$(NULL)
 
 # Legacy classes - not part of public EO API
@@ -891,6 +896,11 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_tab_page.c \
 	lib/elementary/efl_ui_widget_focus_manager.c \
 	lib/elementary/efl_ui_caching_factory.c \
+	lib/elementary/efl_ui_widget_factory.c \
+	lib/elementary/efl_ui_size_model.c \
+	lib/elementary/efl_ui_homogeneous_model.c \
+	lib/elementary/efl_ui_exact_model.c \
+	lib/elementary/efl_ui_average_model.c \
 	$(NULL)
 
 
@@ -1509,6 +1519,7 @@ check_PROGRAMS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 
 tests_elementary_elm_suite_SOURCES = \
+	tests/elementary/suite_helpers.c \
 	tests/elementary/elm_suite.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
@@ -1587,11 +1598,6 @@ tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/elm_code_test_widget_text.c \
 	tests/elementary/elm_code_test_widget_selection.c \
 	tests/elementary/elm_code_test_widget_undo.c \
-	tests/elementary/elm_test_focus_common.c \
-	tests/elementary/elm_test_focus_common.h \
-	tests/elementary/elm_test_focus.c \
-	tests/elementary/elm_test_focus_sub.c \
-	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/elm_test_widget_focus.c
 
 tests_elementary_elm_suite_CPPFLAGS = \
@@ -1612,9 +1618,24 @@ tests_elementary_elm_suite_LDADD = @CHECK_LIBS@ @USE_ELEMENTARY_LIBS@
 tests_elementary_elm_suite_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
 
 tests_elementary_efl_ui_suite_SOURCES = \
-	tests/elementary/efl_ui_suite.c
+	tests/elementary/suite_helpers.c \
+	tests/elementary/suite_helpers.h \
+	tests/elementary/efl_ui_suite.c \
+	tests/elementary/elm_test_init.c \
+	tests/elementary/efl_ui_test_atspi.c \
+	tests/elementary/efl_ui_test_focus_common.c \
+	tests/elementary/efl_ui_test_focus_common.h \
+	tests/elementary/efl_ui_test_focus.c \
+	tests/elementary/efl_ui_test_focus_sub.c \
+	tests/elementary/efl_ui_test_grid.c \
+	tests/elementary/efl_ui_test_image.c \
+	tests/elementary/efl_ui_test_image_zoomable.c \
+	tests/elementary/efl_ui_test_layout.c \
+	tests/elementary/efl_ui_suite.h \
+	tests/elementary/efl_ui_model.c
 
 tests_elementary_efl_ui_suite_CPPFLAGS = \
+-DELM_INTERNAL_API_ARGESFSDFEFC=1 \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 	-DTESTS_BUILD_DIR=\"${top_builddir}/src/tests/elementary\" \
 	-DTESTS_SRC_DIR=\"${top_srcdir}/src/tests/elementary\" \

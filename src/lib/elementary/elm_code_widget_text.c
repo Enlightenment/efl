@@ -67,6 +67,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
      }
 
    ret = malloc(sizeof(char) * (ret_len + 1));
+   if (!ret) goto end;
 
    snprintf(ret, strlen(first) + newline_len + 1, "%s%s", first, newline);
 
@@ -84,6 +85,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
      }
    snprintf(ptr, strlen(last) + 1, "%s", last);
 
+end:
    free(first);
    free(last);
    return ret;

@@ -1,9 +1,11 @@
-class Efl.Ui.Caching_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
+class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
 {
    [[Efl Ui Factory that provides object caching.
 
-     This factory handles caching of one type of object and automatically empties the cache
-     when the application goes into pause.
+     This factory handles caching of one type of object that must be an @Efl.Gfx.Entity with an @Efl.Ui.View interface defined.
+     This factory will rely on its parent class @Efl.Ui.Widget_Factory for creating the subset of class that match @Efl.Ui.Widget
+     interface.
+     The factory will automatically empties the cache when the application goes into pause.
 
      Creating objects is costly and time consuming, keeping a few on hand for when you next will need them helps a lot.
      This is what this factory caching infrastructure provides. It will create the object from the class defined on it and
@@ -13,14 +15,6 @@ class Efl.Ui.Caching_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
      The cache might decide to flush itself when the application event pause is triggered.
    ]]
    methods {
-      @property item_class {
-         [[Define the class of the item returned by this factory.]]
-         get {}
-         set {}
-         values {
-            klass: const(Efl.Class); [[The class identifier to create item from.]]
-         }
-      }
       @property memory_limit {
          [[Define the maxium size in Bytes that all the object waiting on standby in the cache take. They must provide the @Efl.Cached.Item interface for an accurate accounting.]]
          get {}
@@ -42,6 +36,8 @@ class Efl.Ui.Caching_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory
    implements {
       Efl.Ui.Factory.create;
       Efl.Ui.Factory.release;
+      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Widget_Factory.item_class { get; set; }
       Efl.Object.invalidate;
       Efl.Object.parent { set; }
    }

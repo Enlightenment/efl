@@ -1,7 +1,7 @@
 eio_suite_src = [
   'eio_suite.c',
-  'eio_model_test_file.c',
-  'eio_model_test_monitor_add.c',
+  'efl_io_model_test_file.c',
+  'efl_io_model_test_monitor_add.c',
   'eio_test_monitor.c',
   'eio_test_sentry.c',
   'eio_test_file.c',

@@ -16,7 +16,8 @@
   }
 
 #include <Evas.h>
-void elm_test_init(TCase *tc);
+#include <Ecore.h>
+
 void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);
 void elm_test_colorselector(TCase *tc);
@@ -81,13 +82,7 @@ void elm_test_panes(TCase *tc);
 void elm_test_slideshow(TCase *tc);
 void elm_test_spinner(TCase *tc);
 void elm_test_plug(TCase *tc);
-void elm_test_focus(TCase *tc);
-void elm_test_focus_sub(TCase *tc);
 void elm_test_widget_focus(TCase *tc);
-/* FIXME : This test must move efl_ui_suite when it ready *
- * EFL_UI_TEST BEGIN */
-void efl_ui_test_grid(TCase *tc);
-/* EFL_UI_TEST END */
 
 void elm_code_file_test_load(TCase *tc);
 void elm_code_file_test_memory(TCase *tc);
@@ -104,5 +99,9 @@ void elm_code_test_widget_undo(TCase *tc);
 
 Evas_Object *win_add();
 Evas_Object *win_add_focused();
+
+Eo *timer_add(double in, Ecore_Task_Cb cb, void *data);
+
+#define ecore_timer_add timer_add
 
 #endif /* _ELM_SUITE_H */

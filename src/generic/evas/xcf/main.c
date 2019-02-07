@@ -45,13 +45,10 @@
   Ok, hope this helps with understanding XCF.                 -- cK.
 
 */
+#include <Eina.h>
 #include "common.h"
 #include "shmfile.h"
 #include "timeout.h"
-
-#ifdef _WIN32
-# include <winsock2.h> /* for ntohl() */
-#endif
 
 #define FREE(X) { free(X); X = NULL; }
 
@@ -479,7 +476,7 @@ xcf_read_int32(void     *fp,
         xcf_read_int8(fp, (DATA8*) data, count * 4);
         while (count--)
           {
-             *data = (DATA32)ntohl(*data);
+             *data = (DATA32)eina_ntohl(*data);
              data++;
           }
      }

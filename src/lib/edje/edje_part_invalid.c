@@ -71,7 +71,7 @@ EDJE_PART_INVALID_VOID(efl_text_cursor_line_jump_by, _efl_canvas_layout_part_inv
 EDJE_PART_INVALID_VOID(efl_text_cursor_copy, _efl_canvas_layout_part_invalid_efl_text_cursor_cursor_copy, Efl_Text_Cursor_Cursor *dst, const Efl_Text_Cursor_Cursor *src)
 EDJE_PART_INVALID_CONST(Eina_Unicode, 0, efl_text_cursor_content_get, _efl_canvas_layout_part_invalid_efl_text_cursor_cursor_content_get, const Efl_Text_Cursor_Cursor *cur)
 EDJE_PART_INVALID_CONST(Eina_Bool, 0, efl_text_cursor_geometry_get, _efl_canvas_layout_part_invalid_efl_text_cursor_cursor_geometry_get, const Efl_Text_Cursor_Cursor *cur, Efl_Text_Cursor_Type ctype, int *cx, int *cy, int *cw, int *ch, int *cx2, int *cy2, int *cw2, int *ch2)
-EDJE_PART_INVALID_VOID(efl_text_markup_cursor_markup_insert, _efl_canvas_layout_part_invalid_efl_text_markup_cursor_markup_insert, Efl_Text_Cursor_Cursor *cur, const char *markup)
+EDJE_PART_INVALID_VOID(efl_text_markup_interactive_cursor_markup_insert, _efl_canvas_layout_part_invalid_efl_text_markup_interactive_cursor_markup_insert, Efl_Text_Cursor_Cursor *cur, const char *markup)
 EDJE_PART_INVALID(Eina_Iterator *, 0, efl_content_iterate, _efl_canvas_layout_part_invalid_efl_container_content_iterate)
 EDJE_PART_INVALID(int, 0, efl_content_count, _efl_canvas_layout_part_invalid_efl_container_content_count)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_content_remove, _efl_canvas_layout_part_invalid_efl_container_content_remove, Efl_Gfx_Entity *content)

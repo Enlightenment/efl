@@ -1056,12 +1056,16 @@ struct _Edje_Signal_Callback_Match
 {
    const char     *signal;
    const char     *source;
-   Edje_Signal_Cb  func;
+   union {
+      Edje_Signal_Cb  legacy;
+      EflLayoutSignalCb eo;
+   };
 };
 
 struct _Edje_Signal_Callback_Matches
 {
    Edje_Signal_Callback_Match *matches;
+   Eina_Free_Cb *free_cb;
 
    Edje_Signals_Sources_Patterns *patterns;
 
@@ -1073,6 +1077,7 @@ struct _Edje_Signal_Callback_Matches
 
 struct _Edje_Signal_Callback_Flags
 {
+   Eina_Bool legacy:1;
    Eina_Bool delete_me:1;
    Eina_Bool just_added:1;
    Eina_Bool propagate:1;
@@ -2449,7 +2454,9 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 						      const char *source,
 						      const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
-void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
+Eina_Bool _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+                                           Edje_Signal_Cb func_legacy,
+                                           Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data);
 
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
@@ -2572,14 +2579,19 @@ void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
 void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
 const Edje_Signal_Callback_Group *_edje_signal_callback_alloc(void);
+void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m, Edje_Signal_Callback_Flags *flags, void **custom_data);
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
 Eina_Bool _edje_signal_callback_push(Edje_Signal_Callback_Group *cgp,
                                      const char *signal, const char *source,
-                                     Edje_Signal_Cb func, void *data,
+                                     Edje_Signal_Cb func_legacy,
+                                     Efl_Signal_Cb func_eo,
+                                     Eina_Free_Cb func_free_cb,
+                                     void *data,
                                      Eina_Bool propagate);
 Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
                                         const char *signal, const char *source,
-                                        Edje_Signal_Cb func, void *data);
+                                        Edje_Signal_Cb func_legacy,
+                                        EflLayoutSignalCb func, Eina_Free_Cb func_free_cb, void *data);
 
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);

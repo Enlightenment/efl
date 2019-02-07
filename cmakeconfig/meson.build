@@ -27,7 +27,7 @@ cmake_src = [
 ]
 
 cmake_version_src = [
-  'EFL',
+  'Efl',
   'Elementary',
 ]
 

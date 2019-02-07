@@ -48,6 +48,7 @@ _progress_status_new(const char *part_name, double val)
 {
    Efl_Ui_Progress_Status *ps;
    ps = calloc(1, sizeof(Efl_Ui_Progress_Status));
+   if (!ps) return NULL;
    ps->part_name = eina_stringshare_add(part_name);
    ps->val = val;
    return ps;
@@ -998,6 +999,7 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
 {
    EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
    Pb_Format_Wrapper_Data *pfwd = malloc(sizeof(Pb_Format_Wrapper_Data));
+   if (!pfwd) return;
 
    pfwd->format_cb = func;
    pfwd->format_free_cb = free_func;

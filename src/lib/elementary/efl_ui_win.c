@@ -272,6 +272,8 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    ctor : 1; /**< legacy constructor: elm_win~add */
    } legacy;
 
+   Eina_Value exit_on_close;
+
    Eina_Bool    first_draw : 1;
    Eina_Bool    deferred_resize_job : 1;
    Eina_Bool    urgent : 1;
@@ -360,6 +362,7 @@ static const Elm_Action key_actions[] = {
 
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
+static Eina_Value exit_on_all_windows_closed;
 
 static Eina_Bool _elm_win_throttle_ok = EINA_FALSE;
 static int _elm_win_count = 0;
@@ -2985,13 +2988,19 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 
-   if (!_elm_win_list)
+   if (eina_value_type_get(&sd->exit_on_close))
+     efl_loop_quit(efl_loop_get(obj), sd->exit_on_close);
+   else if (!_elm_win_list)
      {
        if (elm_policy_get(ELM_POLICY_QUIT) == ELM_POLICY_QUIT_LAST_WINDOW_CLOSED)
          _elm_win_flush_cache_and_exit(obj);
      }
    if (!_elm_win_list)
-     efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+     {
+        efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+        if (eina_value_type_get(&exit_on_all_windows_closed))
+          efl_loop_quit(efl_loop_get(obj), exit_on_all_windows_closed);
+     }
 }
 
 EOLIAN static void
@@ -4886,11 +4895,6 @@ _create_indicator(Evas_Object *obj)
    const char *indicator_serv_name;
 
    indicator_serv_name = "elm_indicator_portrait";
-   if (!indicator_serv_name)
-     {
-        ERR("Conformant cannot get portrait indicator service name");
-        return NULL;
-     }
 
    indicator = elm_plug_add(obj);
    if (!indicator)
@@ -4961,6 +4965,24 @@ _win_finalize_job_cb(void *data, const Eina_Value value)
    if (!efl_invalidated_get(sd->obj))
      evas_render_pending_objects_flush(sd->evas);
    return value;
+}
+
+static void
+_gesture_manager_config_load(Eo *obj)
+{
+   Eina_Value val;
+   Efl_Canvas_Gesture_Manager *gm = efl_provider_find(obj, EFL_CANVAS_GESTURE_MANAGER_CLASS);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_DOUBLE);
+   eina_value_set(&val, _elm_config->glayer_long_tap_start_timeout);
+   efl_gesture_manager_config_set(gm, "glayer_long_tap_start_timeout", &val);
+
+   eina_value_set(&val, _elm_config->glayer_double_tap_timeout);
+   efl_gesture_manager_config_set(gm, "glayer_double_tap_timeout", &val);
+
+   eina_value_setup(&val, EINA_VALUE_TYPE_INT);
+   eina_value_set(&val, _elm_config->glayer_tap_finger_size);
+   efl_gesture_manager_config_set(gm, "glayer_tap_finger_size", &val);
 }
 
 static Eo *
@@ -5684,6 +5706,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
           }
      }
 
+   // Load the config values into gesutre manager.
+   _gesture_manager_config_load(obj);
+
    return obj;
 }
 
@@ -5897,6 +5922,23 @@ EOLIAN static const Evas_Object*
 _efl_ui_win_icon_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->icon;
+}
+
+EOLIAN static const Eina_Value *
+_efl_ui_win_exit_on_close_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return &sd->exit_on_close;
+}
+
+EOLIAN static void
+_efl_ui_win_exit_on_close_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const Eina_Value *exit_code)
+{
+   const Eina_Value_Type *type = eina_value_type_get(exit_code);
+
+   if (type)
+     eina_value_copy(exit_code, &sd->exit_on_close);
+   else
+     eina_value_flush(&sd->exit_on_close);
 }
 
 /* Only for C API */
@@ -6222,6 +6264,23 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
      }
    _elm_win_frame_style_update(sd, 0, 1);
    //sd->deferred_resize_job = EINA_TRUE;
+}
+
+EOLIAN static const Eina_Value *
+_efl_ui_win_exit_on_all_windows_closed_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+{
+   return &exit_on_all_windows_closed;
+}
+
+EOLIAN static void
+_efl_ui_win_exit_on_all_windows_closed_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Eina_Value *exit_code)
+{
+   const Eina_Value_Type *type = eina_value_type_get(exit_code);
+
+   if (type)
+     eina_value_copy(exit_code, &exit_on_all_windows_closed);
+   else
+     eina_value_flush(&exit_on_all_windows_closed);
 }
 
 EOLIAN static void

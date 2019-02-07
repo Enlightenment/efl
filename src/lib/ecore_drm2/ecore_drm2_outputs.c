@@ -859,14 +859,14 @@ next:
           {
              output->connected = EINA_FALSE;
              output->enabled = EINA_FALSE;
-             _output_event_send(output);
           }
         else
           {
              output->connected = EINA_TRUE;
              output->enabled = EINA_TRUE;
-             _output_event_send(output);
           }
+
+        _output_event_send(output);
      }
    free(connected);
 }
@@ -891,10 +891,7 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
      {
         if (output->prep.atomic_req)
           sym_drmModeAtomicFree(output->prep.atomic_req);
-     }
 
-   if (_ecore_drm2_use_atomic)
-     {
         EINA_LIST_FREE(output->plane_states, pstate)
           free(pstate);
 
@@ -1347,8 +1344,8 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
              else
                buffer = output->ocrtc->buffer_id;
 
-             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer,
-                                    0, 0, &output->conn_id, 1, &mode->info) < 0)
+             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer, 0, 0,
+                                    &output->conn_id, 1, &mode->info) < 0)
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
                       mode->width, mode->height, output->name);
@@ -1551,8 +1548,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
                                                 pstate->rotation.id, rotation);
              if (res < 0) goto err;
 
-             res = sym_drmModeAtomicCommit(output->fd, req, flags,
-                                           output);
+             res = sym_drmModeAtomicCommit(output->fd, req, flags, output);
              if (res < 0)
                goto err;
              else

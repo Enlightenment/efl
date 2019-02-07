@@ -41,6 +41,7 @@ _page_info_allocate(Efl_Page_Transition_Scroll_Data *pd,
    for (i = 0; i < pd->page_info_num; i++)
      {
         pi = calloc(1, sizeof(*pi));
+        if (!pi) return;
         if (i == 0) pd->head = pi;
         else if (i == (pd->page_info_num - 1)) pd->tail = pi;
         pi->id = i;
@@ -462,6 +463,7 @@ _add_item(Efl_Page_Transition_Scroll_Data *pd, Efl_Page_Transition_Data *spd)
    Page_Info *pi;
 
    pi = calloc(1, sizeof(*pi));
+   if (!pi) return NULL;
    pi->obj = efl_add(EFL_UI_BOX_CLASS, spd->pager.obj);
    efl_canvas_group_member_add(spd->pager.group, pi->obj);
    pi->content_num = -1;

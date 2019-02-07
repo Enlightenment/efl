@@ -477,7 +477,7 @@ eina_debug_remote_connect(int port)
    //Prepare the sockaddr_in structure
    server.sin_family = AF_INET;
    if (inet_pton(AF_INET, "127.0.0.1", &server.sin_addr.s_addr) != 1) goto err;
-   server.sin_port = htons(port);
+   server.sin_port = eina_htons(port);
 
    if (connect(fd, (struct sockaddr *)&server, sizeof(server)) < 0)
     {

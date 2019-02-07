@@ -10,7 +10,7 @@
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>
-#include <eio_model.eo.h>
+#include <efl_io_model.eo.h>
 #include <stdio.h>
 #include <Eio.h>
 #include <elm_view_form.h>
@@ -38,7 +38,7 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 static int
-_filter_cb(void *data EINA_UNUSED, Eio_Model *model, Eina_File_Direct_Info *info)
+_filter_cb(void *data EINA_UNUSED, Efl_Io_Model *model, Eina_File_Direct_Info *info)
 {
    if (info->type == EINA_FILE_DIR && info->path[info->name_start] != '.')  return 1;
 
@@ -124,8 +124,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
    //treemodel
-   priv.treemodel = efl_add(EIO_MODEL_CLASS, win, eio_model_path_set(efl_added, dirname));
-   eio_model_children_filter_set(priv.treemodel, NULL, _filter_cb, NULL);
+   priv.treemodel = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
+   efl_io_model_children_filter_set(priv.treemodel, NULL, _filter_cb, NULL);
 
    //treeview
    genlist = elm_genlist_add(win);

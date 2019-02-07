@@ -88,7 +88,7 @@ verify_item_iteration_api(Elm_Object_Item *parent)
      }
 }
 
-EFL_START_TEST (elm_genlist_test_item_iteration)
+EFL_START_TEST(elm_genlist_test_item_iteration)
 {
    Elm_Object_Item *parent;
    int i;
@@ -119,7 +119,7 @@ EFL_START_TEST (elm_genlist_test_item_iteration)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_genlist_test_legacy_type_check)
+EFL_START_TEST(elm_genlist_test_legacy_type_check)
 {
    const char *type;
 
@@ -145,7 +145,7 @@ void test_init(void)
    genlist = elm_genlist_add(win);
 }
 
-EFL_START_TEST (elm_genlist_test_atspi_role_get)
+EFL_START_TEST(elm_genlist_test_atspi_role_get)
 {
    test_init();
 
@@ -472,7 +472,7 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_genlist_test_focus_state)
+EFL_START_TEST(elm_genlist_test_focus_state)
 {
    Elm_Object_Item *it;
    Evas_Object *btn;

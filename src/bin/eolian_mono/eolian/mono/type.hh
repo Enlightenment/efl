@@ -14,29 +14,29 @@ struct visitor_generate;
       
 struct type_generator
 {
-   type_generator(bool is_return = false)
-     : is_return(is_return) {}
+   type_generator(bool is_return = false, bool is_optional = false)
+     : is_return(is_return), is_optional(is_optional) {}
   
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& type, Context const& context) const
    {
-      return type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return, type.is_ptr});
+      return type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return, type.is_ptr, is_optional});
    }
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
       return param.type.original_type.visit(visitor_generate<OutputIterator, Context>{sink, &context, param.type.c_type
-            , param.direction != attributes::parameter_direction::in, false, param.type.is_ptr});
+          , param.direction != attributes::parameter_direction::in, false, param.type.is_ptr, is_optional});
    }
 
-   bool is_return;
+  bool is_return, is_optional;
 };
 
 struct type_terminal
 {
-  type_generator const operator()(bool is_return) const
+  type_generator const operator()(bool is_return, bool is_optional = false) const
   {
-    return type_generator(is_return);
+    return type_generator(is_return, is_optional);
   }
 } const type = {};
 

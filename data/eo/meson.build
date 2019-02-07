@@ -9,5 +9,5 @@ configure_file(
   input: 'libeo-gdb.py.in',
   output: 'libeo.so.'+meson.project_version()+'-gdb.py',
   configuration: configuration,
-  install_dir: join_paths(dir_data, 'gdb', 'autoload', 'usr', 'lib')
+  install_dir: join_paths(dir_data, 'gdb', 'auto-load', 'usr', 'lib')
 )

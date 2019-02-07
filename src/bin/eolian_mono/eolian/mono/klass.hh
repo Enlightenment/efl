@@ -220,15 +220,16 @@ struct klass
          if (!generate_fields(sink, cls, concrete_cxt))
            return false;
 
+         bool root = !helpers::has_regular_ancestor(cls);
          if (!as_generator
             (
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
-             << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
-             << scope_tab << "public " << concrete_name << "(System.IntPtr raw)\n"
+             << scope_tab << "///<summary>Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
+             << scope_tab << "public " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "handle = raw;\n"
+             << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
              << scope_tab << scope_tab << "register_event_proxies();\n"
              << scope_tab << "}\n"
             )
@@ -495,56 +496,50 @@ struct klass
      auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
 
      if(!as_generator(
-             scope_tab << "///<summary>Delegate for function to be called from inside the native constructor.</summary>\n"
-             << scope_tab << "public" << (root ? "" : " new") << " delegate void ConstructingMethod(" << inherit_name << " obj);\n"
-             << scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
+             scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
             ).generate(sink, attributes::unused, context))
        return false;
 
+     auto constructors = helpers::reorder_constructors(cls.get_all_constructors());
 
-     if (!root)
-       {
-          return as_generator(
+     // Public (API) constructors
+     if (!as_generator(
                      scope_tab << "///<summary>Creates a new instance.</summary>\n"
                      << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
-                     << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-                     << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : "
-                     "base(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                     << *(documentation)
+                     // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
+                     << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
+                     << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") :\n"
+                     << scope_tab << scope_tab << (root ? "this" : "base")  << "(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
                      << scope_tab << "{\n"
-                     << scope_tab << scope_tab << "if (init_cb != null) {\n"
-                     << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
-                     << scope_tab << scope_tab << "}\n"
+                     << *(scope_tab << scope_tab << constructor_invocation << "\n" )
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
                      << scope_tab << "}\n"
-
-                     << scope_tab << "///<summary>Internal constructor to forward the wrapper initialization to the root class.</summary>\n"
-                     << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(klass_name, base_klass, managed_type, parent) {}\n"
-
-                     << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
+                     << scope_tab << "///<summary>Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
                      << scope_tab << scope_tab << "register_event_proxies();\n"
                      << scope_tab << "}\n"
+                 ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
+         return false;
+
+     // Internal constructors
+     if (!root)
+     {
+         return as_generator(
+                     scope_tab << "///<summary>Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
+                     << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(klass_name, base_klass, managed_type, parent) {}\n"
                   ).generate(sink, attributes::unused, context);
-       }
+
+     }
 
      // Detailed constructors go only in root classes.
      return as_generator(
-             scope_tab << "///<summary>Creates a new instance.</summary>\n"
-             << scope_tab << "///<param name=\"parent\">Parent instance.</param>\n"
-             << scope_tab << "///<param name=\"init_cb\">Delegate to call constructing methods that should be run inside the constructor.</param>\n"
-             << scope_tab << "public " << inherit_name << "(Efl.Object parent = null, ConstructingMethod init_cb=null) : this(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) << "(), typeof(" << inherit_name << "), parent)\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "if (init_cb != null) {\n"
-             << scope_tab << scope_tab << scope_tab << "init_cb(this);\n"
-             << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << "FinishInstantiation();\n"
-             << scope_tab << "}\n"
-
-             << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
+             /// Actual root costructor that creates class and instantiates 
+             scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "inherited = ((object)this).GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
@@ -574,12 +569,6 @@ struct klass
              << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
              << scope_tab << "}\n"
 
-             << scope_tab << "///<summary>Constructs an instance from a native pointer.</summary>\n"
-             << scope_tab << "public " << inherit_name << "(System.IntPtr raw)\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "handle = raw;\n"
-             << scope_tab << scope_tab << "register_event_proxies();\n"
-             << scope_tab << "}\n"
              ).generate(sink, attributes::unused, context);
    }
 

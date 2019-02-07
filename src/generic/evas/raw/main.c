@@ -11,10 +11,6 @@
 #include "shmfile.h"
 #include "timeout.h"
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -142,7 +138,7 @@ read_raw_data()
         if (image->colors != 3)
           goto clean_image;
 #define SWAP(a, b) { a ^= b; a = (b ^=a); }
-        if ((image->bits == 16) && (htons(0x55aa) != 0x55aa))
+        if ((image->bits == 16) && (eina_htons(0x55aa) != 0x55aa))
           for (count = 0; count < image->data_size; count +=2)
             SWAP(image->data[count], image->data[count + 1]);
 #undef SWAP

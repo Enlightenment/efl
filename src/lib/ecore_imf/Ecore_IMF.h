@@ -47,6 +47,8 @@ extern "C" {
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
  * @ingroup Ecore_IMF_Lib_Group
  *
+ * @section intro Introduction
+ *
  * Functions that operate on Ecore Input Method Context objects.
 
  * Ecore Input Method Context Function defines the interface for EFL input methods.
@@ -64,8 +66,44 @@ extern "C" {
  * ecore_imf_init() should be called to initialize and load immodule.@n
  * ecore_imf_shutdown() is used for shutdowning and unloading immodule.
  *
- * An example of usage of these functions can be found at:
+ * @section how-to-compose How to process key event for composition or prediction
+ *
+ * To input Chinese, Japanese, Korean and other complex languages, the editor widget (as known as entry) should be connected with input method framework.@n
+ * Each editor widget should have each input context to connect with input service framework.@n
+ * Key event is processed by input method engine. The result is notified to application through ECORE_IMF_CALLBACK_PREEDIT_CHANGED and ECORE_IMF_CALLBACK_COMMIT event.@n
+ * @n
+ * The following example demonstrates how to connect input method framework and handle preedit and commit string from input method framework.
  * @li @ref ecore_imf_example_c
+ *
+ * @section media-content How to receive media contents from input method editor
+ *
+ * Users sometimes wants to send images and other rich content with their input method editor (as known as virtual keyboard or soft keyboard).@n
+ * According to this requirement, the way to receive the media content URI such as images and other rich content as well as text have been provided since 1.20.@n
+ * @n
+ * The following code shows how to receive the media content URI.
+ *
+ * @code
+ * #include <glib.h>
+ *
+ * static void
+ * _imf_event_commit_content_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
+ * {
+ *    Ecore_IMF_Event_Commit_Content *commit_content = (Ecore_IMF_Event_Commit_Content *)event_info;
+ *    if (!commit_content) return;
+ *
+ *    // convert URI to filename
+ *    gchar *filepath = g_filename_from_uri(commit_content->content_uri, NULL, NULL);
+ *    printf("filepath : %s, description : %s, mime types : %s\n", filepath, commit_content->description, commit_content->mime_types);
+ *
+ *    // do something to use filepath
+ *
+ *    if (filepath)
+ *       g_free(filepath);
+ * }
+ *
+ * ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT_CONTENT, _imf_event_commit_content_cb, data);
+ * @endcode
+ *
  */
 
 /**
@@ -1451,8 +1489,10 @@ EAPI void                          ecore_imf_context_delete_surrounding_event_ad
  *
  * The event type @p type to trigger the function may be one of
  * #ECORE_IMF_CALLBACK_PREEDIT_START, #ECORE_IMF_CALLBACK_PREEDIT_END,
- * #ECORE_IMF_CALLBACK_PREEDIT_CHANGED, #ECORE_IMF_CALLBACK_COMMIT and
- * #ECORE_IMF_CALLBACK_DELETE_SURROUNDING.
+ * #ECORE_IMF_CALLBACK_PREEDIT_CHANGED, #ECORE_IMF_CALLBACK_COMMIT,
+ * #ECORE_IMF_CALLBACK_DELETE_SURROUNDING, #ECORE_IMF_CALLBACK_SELECTION_SET,
+ * #ECORE_IMF_CALLBACK_PRIVATE_COMMAND_SEND, #ECORE_IMF_CALLBACK_COMMIT_CONTENT,
+ * #ECORE_IMF_CALLBACK_TRANSACTION_START, and #ECORE_IMF_CALLBACK_TRANSACTION_END.
  *
  * @param ctx Ecore_IMF_Context to attach a callback to.
  * @param type The type of event that will trigger the callback
@@ -1463,6 +1503,9 @@ EAPI void                          ecore_imf_context_delete_surrounding_event_ad
  *
  * Example
  * @code
+ * #include <glib.h>
+ *
+ * // example for handling commit event from input framework
  * static void
  * _imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
  * {
@@ -1471,6 +1514,28 @@ EAPI void                          ecore_imf_context_delete_surrounding_event_ad
  * }
  *
  * ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _imf_event_commit_cb, data);
+ *
+ * // example for receiving media content URI from input framework
+ * @code
+ * #include <glib.h>
+ *
+ * static void
+ * _imf_event_commit_content_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
+ * {
+ *    Ecore_IMF_Event_Commit_Content *commit_content = (Ecore_IMF_Event_Commit_Content *)event;
+ *    if (!commit_content) return;
+ *
+ *    // convert URI to filename
+ *    gchar *filepath = g_filename_from_uri(commit_content->content_uri, NULL, NULL);
+ *    printf("filepath : %s, description : %s, mime types : %s\n", filepath, commit_content->description, commit_content->mime_types);
+ *
+ *    // do something to use filepath
+ *
+ *    if (filepath)
+ *       g_free(filepath);
+ * }
+ *
+ * ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_COMMIT_CONTENT, _imf_event_commit_content_cb, data);
  * @endcode
  */
 EAPI void                          ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data);

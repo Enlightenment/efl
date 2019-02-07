@@ -8,7 +8,14 @@
   match that.
 */
 
-type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
+function EflLayoutSignalCb {
+  [[EflLayoutSignalCb function that is called when a specifc pair of signal/emision is triggered]]
+  params {
+     @in object: Efl.Layout.Signal; [[The object the callback is being triggered from.]]
+     @in emission: string; [[The name component of the signal.]]
+     @in source: string; [[The source of a signal used as context.]]
+  }
+};
 
 interface Efl.Layout.Signal
 {
@@ -83,9 +90,8 @@ interface Efl.Layout.Signal
          params {
             @in emission: string; [[The signal's "emission" string]]
             @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
+            @in func: EflLayoutSignalCb;
                [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
          }
          return: bool; [[$true in case of success, $false in case of error.]]
       }
@@ -102,9 +108,8 @@ interface Efl.Layout.Signal
          params {
             @in emission: string; [[The signal's "emission" string]]
             @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
+            @in func: EflLayoutSignalCb;
                [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
          }
          return: bool; [[$true in case of success, $false in case of error.]]
       }

@@ -4,5 +4,5 @@ generic_src = files([
   'pixelfuncs.c'
 ])
 
-generic_deps = [dependency('zlib')]
+generic_deps = [eina, dependency('zlib')]
 generic_support = ['xcf.gz']

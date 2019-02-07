@@ -43,13 +43,13 @@ _print_ip_addr_info(const Eo *o)
      {
         struct sockaddr_in *a = (struct sockaddr_in *)sa;
         inet_ntop(sa->sa_family, &a->sin_addr, buf, sizeof(buf));
-        port = ntohs(a->sin_port);
+        port = eina_ntohs(a->sin_port);
      }
    else
      {
         struct sockaddr_in6 *a = (struct sockaddr_in6 *)sa;
         inet_ntop(sa->sa_family, &a->sin6_addr, buf, sizeof(buf));
-        port = ntohs(a->sin6_port);
+        port = eina_ntohs(a->sin6_port);
      }
 
    printf("INFO:   - sockaddr=%p (%d, '%s', %u)\n",

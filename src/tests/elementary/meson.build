@@ -19,6 +19,7 @@ endforeach
 
 elementary_suite_src = [
   'elm_suite.c',
+  'suite_helpers.c',
   'elm_test_atspi.c',
   'elm_test_check.c',
   'elm_test_colorselector.c',
@@ -96,16 +97,41 @@ elementary_suite_src = [
   'elm_code_test_widget_text.c',
   'elm_code_test_widget_selection.c',
   'elm_code_test_widget_undo.c',
-  'elm_test_focus_common.c',
-  'elm_test_focus_common.h',
-  'elm_test_focus.c',
-  'elm_test_focus_sub.c',
-  'efl_ui_test_grid.c',
   'elm_test_widget_focus.c'
 ]
 
 elementary_suite = executable('elementary_suite',
-  elementary_suite_src, priv_eo_file_target,
+  elementary_suite_src,
+  dependencies: [check, eina, elementary, elementary_deps],
+  include_directories : [config_dir] + [elementary_config_dir],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"',
+  '-DELM_IMAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
+  '-DELM_TEST_DATA_DIR="'+join_paths(meson.build_root(), 'data', 'elementary')+'"',
+  ]
+)
+
+efl_ui_suite_src = [
+  'efl_ui_suite.c',
+  'suite_helpers.c',
+  'suite_helpers.h',
+  'elm_test_init.c',
+  'efl_ui_test_atspi.c',
+  'efl_ui_test_focus_common.c',
+  'efl_ui_test_focus_common.h',
+  'efl_ui_test_focus.c',
+  'efl_ui_test_focus_sub.c',
+  'efl_ui_test_grid.c',
+  'efl_ui_test_image.c',
+  'efl_ui_test_image_zoomable.c',
+  'efl_ui_test_layout.c',
+  'efl_ui_suite.h',
+  'efl_ui_model.c',
+]
+
+efl_ui_suite = executable('efl_ui_suite',
+  efl_ui_suite_src, priv_eo_file_target,
   dependencies: [check, eina, elementary, elementary_deps],
   include_directories : [config_dir] + [elementary_config_dir],
   c_args : [
@@ -120,6 +146,9 @@ test('elementary-suite', elementary_suite,
   env : test_env
 )
 
+test('efl-ui-suite', efl_ui_suite,
+  env : test_env
+)
 
 install_data(files(['testdiff.diff', 'testfile-windows.txt', 'testfile-withblanks.txt', 'testfile.txt']),
   install_dir : join_paths(dir_data, 'elementary')

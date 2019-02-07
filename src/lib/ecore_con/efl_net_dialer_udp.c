@@ -143,7 +143,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
    if (family == AF_INET)
      {
         const struct sockaddr_in *a = (const struct sockaddr_in *)addr->ai_addr;
-        uint32_t ipv4 = ntohl(a->sin_addr.s_addr);
+        uint32_t ipv4 = eina_ntohl(a->sin_addr.s_addr);
         if (ipv4 == INADDR_BROADCAST)
           {
 #ifdef _WIN32

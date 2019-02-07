@@ -23,6 +23,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_duplicate.eo \
       lib/efl/interfaces/efl_file.eo \
+      lib/efl/interfaces/efl_file_save.eo \
       lib/efl/interfaces/efl_gfx_image_load_controller.eo \
       lib/efl/interfaces/efl_part.eo \
       lib/efl/interfaces/efl_playable.eo \
@@ -34,6 +35,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_text_cursor.eo \
       lib/efl/interfaces/efl_text_annotate.eo \
       lib/efl/interfaces/efl_text_markup.eo \
+      lib/efl/interfaces/efl_text_markup_interactive.eo \
       lib/efl/interfaces/efl_text_markup_util.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
@@ -201,9 +203,9 @@ TESTS += tests/efl/efl_suite
 
 tests_efl_efl_suite_SOURCES = \
 tests/efl/efl_suite.c \
-tests/efl/efl_test_model_container.c \
-tests/efl/efl_test_model_composite.c \
-tests/efl/efl_test_model_view.c \
+tests/efl/efl_test_container_model.c \
+tests/efl/efl_test_composite_model.c \
+tests/efl/efl_test_view_model.c \
 tests/efl/efl_suite.h
 
 tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

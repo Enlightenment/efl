@@ -77,6 +77,7 @@ _alloc_node(Efl_Ui_List_View_Seg_Array* pd, int first)
 {
    Efl_Ui_List_View_Seg_Array_Node* node;
    node = calloc(1, sizeof(Efl_Ui_List_View_Seg_Array_Node) + pd->step_size*sizeof(Efl_Ui_List_View_Layout_Item*));
+   if (!node) return NULL;
    node->first = first;
    node->max = pd->step_size;
    pd->root = (void*)eina_rbtree_inline_insert(EINA_RBTREE_GET(pd->root), EINA_RBTREE_GET(node),
@@ -89,6 +90,7 @@ static Efl_Ui_List_View_Layout_Item*
 _create_item_partial(Efl_Model* model)
 {
    Efl_Ui_List_View_Layout_Item* item = calloc(1, sizeof(Efl_Ui_List_View_Layout_Item));
+   if (!item) return NULL;
    item->children = efl_ref(model);
    return item;
 }
@@ -334,6 +336,7 @@ Efl_Ui_List_View_Seg_Array *
 efl_ui_list_view_seg_array_setup(int size)
 {
    Efl_Ui_List_View_Seg_Array *pd = calloc(1, sizeof(Efl_Ui_List_View_Seg_Array));
+   if (!pd) return NULL;
    pd->step_size = size;
 
    return pd;

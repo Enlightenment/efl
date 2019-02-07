@@ -147,7 +147,7 @@ _eventing_test(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    *val = EINA_TRUE;
 }
 
-EFL_START_TEST (elm_test_widget_focus_simple_widget)
+EFL_START_TEST(elm_test_widget_focus_simple_widget)
 {
    Evas_Object *win, *box, *resettor, *o;
    Eina_Hash *map;

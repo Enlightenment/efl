@@ -15,12 +15,13 @@ enum
    GEN_H_STUB   = 1 << 2,
    GEN_C        = 1 << 3,
    GEN_C_IMPL   = 1 << 4,
-   GEN_D        = 1 << 5
+   GEN_D        = 1 << 5,
+   GEN_D_FULL   = 1 << 6
 };
 
-static const char *_dexts[6] =
+static const char *_dexts[7] =
 {
-  ".h", ".legacy.h", ".stub.h", ".c", ".c", ".d"
+  ".h", ".legacy.h", ".stub.h", ".c", ".c", ".d", ".d"
 };
 
 static int
@@ -51,7 +52,8 @@ _print_usage(const char *progn, FILE *outf)
                  "  s: Stub C header file (.eo.stub.h/.eot.stub.h)\n"
                  "  c: C source file (.eo.c)\n"
                  "  i: Implementation file (.c, merged with existing)\n"
-                 "  d: Make-style dependencies (.d)\n"
+                 "  d: Make-style dependencies, only for headers (.d)\n"
+                 "  D: Like 'd' but for all generated files (.d)\n"
                  "\n"
                  "By default, the 'hc' set is used ('h' for .eot files).\n\n"
                  "The system-wide Eolian directory is scanned for eo files\n"
@@ -103,6 +105,11 @@ _try_set_out(char t, char **outs, const char *val, int *what)
       case 'd':
         pos = _get_bit_pos(GEN_D);
         *what |= GEN_D;
+        break;
+      case 'D':
+        pos = _get_bit_pos(GEN_D_FULL);
+        *what |= GEN_D_FULL;
+        break;
      }
    if (pos < 0)
      return EINA_FALSE;
@@ -471,8 +478,12 @@ _write_deps(const Eolian_State *eos, const char *ofname, const char *ifname,
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H);
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_LEGACY);
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_STUB);
-   _append_dep_line(buf, dbuf, outs, gen_what, GEN_C);
-   _append_dep_line(buf, dbuf, outs, gen_what, GEN_C_IMPL);
+
+   if (gen_what & GEN_D_FULL)
+     {
+        _append_dep_line(buf, dbuf, outs, gen_what, GEN_C);
+        _append_dep_line(buf, dbuf, outs, gen_what, GEN_C_IMPL);
+     }
 
    ret = _write_file(ofname, buf);
 result:
@@ -486,7 +497,9 @@ main(int argc, char **argv)
 {
    int pret = 1;
 
-   char *outs[6] = { NULL, NULL, NULL, NULL, NULL, NULL };
+   char *outs[sizeof(_dexts) / sizeof(void *)] = {
+     NULL, NULL, NULL, NULL, NULL, NULL, NULL
+   };
    char *basen = NULL;
    Eina_List *includes = NULL;
 
@@ -541,6 +554,9 @@ main(int argc, char **argv)
                  break;
                case 'd':
                  gen_what |= GEN_D;
+                 break;
+               case 'D':
+                 gen_what |= GEN_D_FULL;
                  break;
                default:
                  fprintf(stderr, "unknown type: '%c'\n", *wstr);
@@ -639,7 +655,10 @@ main(int argc, char **argv)
      succ = _write_source(eos, outs[_get_bit_pos(GEN_C)], eobn, !strcmp(ext, ".eot"));
    if (succ && (gen_what & GEN_C_IMPL))
      succ = _write_impl(eos, outs[_get_bit_pos(GEN_C_IMPL)], eobn);
-   if (succ && (gen_what & GEN_D))
+
+   if (succ && (gen_what & GEN_D_FULL))
+     succ = _write_deps(eos, outs[_get_bit_pos(GEN_D_FULL)], eobn, outs, gen_what);
+   else if (succ && (gen_what & GEN_D))
      succ = _write_deps(eos, outs[_get_bit_pos(GEN_D)], eobn, outs, gen_what);
 
    if (!succ)

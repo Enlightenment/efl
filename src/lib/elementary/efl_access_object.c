@@ -440,6 +440,7 @@ EOLIAN Efl_Access_Event_Handler *
 _efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
 {
    Efl_Access_Event_Handler *ret = calloc(1, sizeof(Efl_Access_Event_Handler));
+   if (!ret) return NULL;
 
    ret->cb = cb;
    ret->data = data;

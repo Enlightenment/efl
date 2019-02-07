@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.Gfx.Frame_Controller
+class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save, Efl.Gfx.Frame_Controller
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -84,7 +84,7 @@ class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.Gf
       Efl.Object.destructor;
       Efl.File.mmap { get; set; }
       Efl.File.file { get; set; }
-      Efl.File.save;
+      Efl.File_Save.save;
       Efl.Gfx.Frame_Controller.animated { get; }
       Efl.Gfx.Frame_Controller.frame { get; set; }
       Efl.Gfx.Frame_Controller.frame_count { get; }

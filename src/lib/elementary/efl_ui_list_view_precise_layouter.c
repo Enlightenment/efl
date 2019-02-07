@@ -567,6 +567,7 @@ _efl_ui_list_view_precise_layouter_efl_ui_list_view_relayout_content_created(Eo 
      }
 
    cb_data = calloc(1, sizeof(Efl_Ui_List_View_Precise_Layouter_Callback_Data));
+   if (!cb_data) return;
    cb_data->pd = pd;
    cb_data->item = item;
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_item_size_hint_change, cb_data);

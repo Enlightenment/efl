@@ -438,24 +438,24 @@ _efl_ui_list_view_bar_hide_cb(void *data, const Efl_Event *event)
      edje_object_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_list_view_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+static Eina_Bool
+_efl_ui_list_view_efl_layout_signal_signal_callback_add(Eo *obj, Efl_Ui_List_View_Data *pd EINA_UNUSED, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    Eina_Bool ok;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   ok = efl_layout_signal_callback_add(wd->resize_obj, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_add(wd->resize_obj, emission, source, func_data, func, func_free_cb);
 
    return ok;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_list_view_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Data *sd EINA_UNUSED, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+static Eina_Bool
+_efl_ui_list_view_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_List_View_Data *pd EINA_UNUSED, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    Eina_Bool ok;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   ok = efl_layout_signal_callback_del(wd->resize_obj, emission, source, func_cb, data);
+   ok = efl_layout_signal_callback_del(wd->resize_obj, emission, source, func_data, func, func_free_cb);
 
    return ok;
 }
@@ -464,116 +464,118 @@ static void
 _efl_ui_list_view_edje_object_attach(Eo *obj)
 {
    efl_layout_signal_callback_add
-     (obj, "reload", "efl", _efl_ui_list_view_reload_cb, obj);
+     (obj, "reload", "efl",
+      obj, _efl_ui_list_view_reload_cb, NULL);
   //Vertical bar
    efl_layout_signal_callback_add
      (obj, "drag", "efl.dragable.vbar",
-     _efl_ui_list_view_vbar_drag_cb, obj);
+      obj, _efl_ui_list_view_vbar_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,set", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,start", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_start_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,stop", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_stop_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,step", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,page", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "efl,vbar,press", "efl",
-     _efl_ui_list_view_vbar_press_cb, obj);
+      obj, _efl_ui_list_view_vbar_press_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "efl,vbar,unpress", "efl",
-     _efl_ui_list_view_vbar_unpress_cb, obj);
+      obj, _efl_ui_list_view_vbar_unpress_cb, NULL);
 
-  //Horizontal bar
+   //Horizontal bar
    efl_layout_signal_callback_add
      (obj, "drag", "efl.dragable.hbar",
-     _efl_ui_list_view_hbar_drag_cb, obj);
+      obj, _efl_ui_list_view_hbar_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,set", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,start", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_start_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,stop", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_stop_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,step", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "drag,page", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "efl,hbar,press", "efl",
-     _efl_ui_list_view_hbar_press_cb, obj);
+      obj, _efl_ui_list_view_hbar_press_cb, NULL);
    efl_layout_signal_callback_add
      (obj, "efl,hbar,unpress", "efl",
-     _efl_ui_list_view_hbar_unpress_cb, obj);
+      obj, _efl_ui_list_view_hbar_unpress_cb, NULL);
 }
 
 static void
 _efl_ui_list_view_edje_object_detach(Evas_Object *obj)
 {
    efl_layout_signal_callback_del
-     (obj, "reload", "efl", _efl_ui_list_view_reload_cb, obj);
-  //Vertical bar
+     (obj, "reload", "efl",
+      obj, _efl_ui_list_view_reload_cb, NULL);
+   //Vertical bar
    efl_layout_signal_callback_del
-     (obj, "drag", "efl.dragable.vbar", _efl_ui_list_view_vbar_drag_cb,
-     obj);
+     (obj, "drag", "efl.dragable.vbar",
+      obj, _efl_ui_list_view_vbar_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,set", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,start", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_start_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,stop", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_stop_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,step", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,page", "efl.dragable.vbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "efl,vbar,press", "efl",
-     _efl_ui_list_view_vbar_press_cb, obj);
+      obj, _efl_ui_list_view_vbar_press_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "efl,vbar,unpress", "efl",
-   _efl_ui_list_view_vbar_unpress_cb, obj);
+      obj, _efl_ui_list_view_vbar_unpress_cb, NULL);
 
    //Horizontal bar
    efl_layout_signal_callback_del
-       (obj, "drag", "efl.dragable.hbar",
-       _efl_ui_list_view_hbar_drag_cb, obj);
+     (obj, "drag", "efl.dragable.hbar",
+      obj, _efl_ui_list_view_hbar_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,set", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,start", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_start_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,stop", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_stop_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,step", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "drag,page", "efl.dragable.hbar",
-     _efl_ui_list_view_edje_drag_cb, obj);
+      obj, _efl_ui_list_view_edje_drag_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "efl,hbar,press", "efl",
-     _efl_ui_list_view_hbar_press_cb, obj);
+      obj, _efl_ui_list_view_hbar_press_cb, NULL);
    efl_layout_signal_callback_del
      (obj, "efl,hbar,unpress", "efl",
-     _efl_ui_list_view_hbar_unpress_cb, obj);
+      obj, _efl_ui_list_view_hbar_unpress_cb, NULL);
 }
 
 EOLIAN static void

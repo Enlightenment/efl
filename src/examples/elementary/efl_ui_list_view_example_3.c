@@ -70,7 +70,7 @@ _bt_add_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 {
    Priv_Data *priv = (Priv_Data*)data;
    Eina_Value vtext, value;
-   Efl_Model_Item *child;
+   Efl_Generic_Model *child;
 
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
    eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
@@ -170,10 +170,10 @@ static Efl_Model*
 _make_model()
 {
    Eina_Value vtext, value;
-   Efl_Model_Item *model, *child;
+   Efl_Generic_Model *model, *child;
    unsigned int i, len;
 
-   model = efl_add(EFL_MODEL_ITEM_CLASS, efl_main_loop_get());
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
    eina_value_setup(&value, EINA_VALUE_TYPE_UCHAR);
 

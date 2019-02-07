@@ -10,7 +10,7 @@
 #define MY_CLASS_NAME_LEGACY "Evas_Object_Smart"
 
 #define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
-   Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_GROUP_CLASS); \
+   Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, MY_CLASS); \
    do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
 
 extern Eina_Hash* signals_hash_table;
@@ -273,7 +273,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
 
    if (obj->is_smart)
      {
-        member_o = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
+        member_o = efl_data_scope_get(eo_obj, MY_CLASS);
 
         if ((member_o->inherit_paragraph_direction) &&
             (member_o->paragraph_direction != o->paragraph_direction))
@@ -367,7 +367,7 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
 
    if (obj->is_smart)
      {
-        member_o = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
+        member_o = efl_data_scope_get(eo_obj, MY_CLASS);
 
         if ((member_o->inherit_paragraph_direction) &&
             (member_o->paragraph_direction != EVAS_BIDI_DIRECTION_NEUTRAL))
@@ -675,7 +675,7 @@ evas_object_smart_add(Evas *eo_e, Evas_Smart *s)
 
    eo_e = evas_find(eo_e);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(eo_e, EVAS_CANVAS_CLASS), NULL);
-   eo_obj = efl_add(EFL_CANVAS_GROUP_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
+   eo_obj = efl_add(MY_CLASS, eo_e, efl_canvas_object_legacy_ctor(efl_added));
    evas_object_smart_attach(eo_obj, s);
    return eo_obj;
 }
@@ -768,7 +768,7 @@ evas_object_smart_move_children_relative(Eo *eo_obj, Evas_Coord dx, Evas_Coord d
 void
 _evas_object_smart_clipped_smart_move_internal(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y)
 {
-   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_GROUP_CLASS);
+   Evas_Smart_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Evas_Coord orig_x, orig_y;
 
    orig_x = o->x;
@@ -1763,7 +1763,7 @@ _efl_canvas_group_group_paragraph_direction_set_internal(Eo *eo_obj,
 
         if (o->is_smart)
           {
-             member_o = efl_data_scope_get(o->object, EFL_CANVAS_GROUP_CLASS);
+             member_o = efl_data_scope_get(o->object, MY_CLASS);
 
              if ((member_o->inherit_paragraph_direction) &&
                  (member_o->paragraph_direction != dir))
@@ -1793,7 +1793,7 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Sma
 
         if (obj->smart.parent)
           {
-             parent = efl_data_scope_get(obj->smart.parent, EFL_CANVAS_GROUP_CLASS);
+             parent = efl_data_scope_get(obj->smart.parent, MY_CLASS);
 
              if (parent)
                parent_dir = parent->paragraph_direction;

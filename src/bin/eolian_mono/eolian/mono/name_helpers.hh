@@ -187,6 +187,12 @@ inline std::string managed_method_name(std::string const& klass, std::string con
   return candidate;
 }
 
+inline std::string managed_name(std::string const& name, char separator='_')
+{
+  auto tokens = utils::split(name, separator);
+  return utils::to_pascal_case(tokens);
+}
+
 inline std::string managed_method_name(attributes::function_def const& f)
 {
   return managed_method_name(f.klass.eolian_name, f.name);
@@ -420,7 +426,12 @@ bool close_namespaces(OutputIterator sink, std::vector<std::string> const& names
      return as_generator(close_namespace).generate(sink, namespaces, context);
 }
 
+std::string constructor_managed_name(std::string full_name)
+{
+    auto tokens = utils::split(full_name, '.');
 
+    return managed_name(tokens.at(tokens.size()-1));
+}
 
 } // namespace name_helpers
 

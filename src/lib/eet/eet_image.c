@@ -6,16 +6,6 @@
 # include <sys/types.h>
 #endif /* ifdef __OpenBSD__ */
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
-# define HAVE_BOOLEAN
-# define XMD_H /* This prevents libjpeg to redefine INT32 */
-#endif /* ifdef _WIN32 */
-
 #include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
@@ -254,7 +244,7 @@ _eet_image_endian_check(void)
      {
         unsigned long int v;
 
-        v = htonl(0x12345678);
+        v = eina_htonl(0x12345678);
         if (v == 0x12345678)
           _eet_image_words_bigendian = 1;
         else
@@ -811,8 +801,8 @@ eet_data_image_etc1_compressed_convert(int         *size,
 
    image_stride = w;
    image_height = h;
-   nl_width = htonl(image_stride);
-   nl_height = htonl(image_height);
+   nl_width = eina_htonl(image_stride);
+   nl_height = eina_htonl(image_height);
    compress = !!compress;
 
    // Disable dithering, as it will deteriorate the quality of flat surfaces
@@ -1792,8 +1782,8 @@ eet_data_image_header_advance_decode_cipher(const void   *data,
         const char *m = data;
 
         // We only use Emile for decoding the actual data, seems simpler this way.
-        if (w) *w = ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
-        if (h) *h = ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
+        if (w) *w = eina_ntohl(*((unsigned int*) &(m[OFFSET_WIDTH])));
+        if (h) *h = eina_ntohl(*((unsigned int*) &(m[OFFSET_HEIGHT])));
         if (comp) *comp = m[OFFSET_OPTIONS] & 0x1;
         switch (m[OFFSET_ALGORITHM] & 0xFF)
           {

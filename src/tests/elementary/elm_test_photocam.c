@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_photocam_legacy_type_check)
+EFL_START_TEST(elm_photocam_legacy_type_check)
 {
    Evas_Object *win, *photocam;
    const char *type;
@@ -26,7 +26,7 @@ EFL_START_TEST (elm_photocam_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *photocam;
    Efl_Access_Role role;
@@ -41,33 +41,8 @@ EFL_START_TEST (elm_atspi_role_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_image_zoomable_icon)
-{
-   Evas_Object *win, *img_zoomable;
-   Eina_Bool ok;
-   const char *icon_name;
-
-   win = win_add(NULL, "photocam", ELM_WIN_BASIC);
-
-   img_zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win);
-   evas_object_show(img_zoomable);
-
-   ok = efl_ui_image_icon_set(img_zoomable, "folder");
-   ck_assert(ok);
-   icon_name = efl_ui_image_icon_get(img_zoomable);
-   ck_assert_str_eq(icon_name, "folder");
-
-   ok = efl_ui_image_icon_set(img_zoomable, "None");
-   ck_assert(ok == 0);
-   icon_name = efl_ui_image_icon_get(img_zoomable);
-   ck_assert(icon_name == NULL);
-
-}
-EFL_END_TEST
-
 void elm_test_photocam(TCase *tc)
 {
    tcase_add_test(tc, elm_photocam_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
-   tcase_add_test(tc, efl_ui_image_zoomable_icon);
 }

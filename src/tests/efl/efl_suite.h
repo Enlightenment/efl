@@ -21,8 +21,8 @@
 
 #include <check.h>
 #include "../efl_check.h"
-void efl_test_case_model_container(TCase *tc);
-void efl_test_case_model_view(TCase *tc);
-void efl_test_case_model_composite_boolean(TCase *tc);
+void efl_test_case_container_model(TCase *tc);
+void efl_test_case_view_model(TCase *tc);
+void efl_test_case_boolean_model(TCase *tc);
 
 #endif /* EFL_SUITE_H_ */

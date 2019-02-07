@@ -907,7 +907,7 @@ _evas_canvas3d_mesh_efl_file_file_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_efl_file_save(const Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
+_evas_canvas3d_mesh_efl_file_save_save(const Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
                    const char *file,
                    const char *key EINA_UNUSED,
                    const char *flags EINA_UNUSED)

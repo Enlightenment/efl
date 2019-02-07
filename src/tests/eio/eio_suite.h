@@ -5,8 +5,8 @@
 #include "../efl_check.h"
 void eio_test_monitor(TCase *tc);
 void eio_test_sentry(TCase *tc);
-void eio_model_test_file(TCase *tc);
-void eio_model_test_monitor_add(TCase *tc);
+void efl_io_model_test_file(TCase *tc);
+void efl_io_model_test_monitor_add(TCase *tc);
 void eio_test_file(TCase *tc);
 void eio_test_job(TCase *tc);
 void eio_test_job_xattr(TCase *tc);

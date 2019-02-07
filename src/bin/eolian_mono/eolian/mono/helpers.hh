@@ -221,6 +221,12 @@ inline bool is_unique_event(attributes::event_def const& evt
                      });
 }
 
+inline std::vector<attributes::constructor_def> reorder_constructors(std::vector<attributes::constructor_def> constructors)
+{
+  auto is_required = [](attributes::constructor_def const& ctr) { return !ctr.is_optional; };
+  std::stable_partition(constructors.begin(), constructors.end(), is_required);
+  return constructors;
+}
 
 } // namespace helpers
 

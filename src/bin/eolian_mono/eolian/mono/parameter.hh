@@ -3,6 +3,7 @@
 
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
+#include "grammar/attribute_reorder.hpp"
 #include "grammar/case.hpp"
 #include "helpers.hh"
 #include "marshall_type.hh"
@@ -34,6 +35,10 @@ namespace eolian_mono {
     struct native_convert_return_variable_generator;
     struct convert_function_pointer_generator;
     struct native_convert_function_pointer_generator;
+    struct constructor_param_generator;
+    struct constructor_invocation_generator;
+    struct constructor_parameter_name_generator;
+    struct constructor_parameter_name_paremeterized;
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -230,6 +235,38 @@ struct is_generator< ::eolian_mono::native_convert_function_pointer_generator> :
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::native_convert_function_pointer_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_param_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_param_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_param_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_parameter_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_parameter_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_parameter_name_paremeterized> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_parameter_name_generator> : std::integral_constant<int, 1> {};
 }
 
 } } }
@@ -1435,6 +1472,89 @@ struct native_convert_function_pointer_generator
    }
 
 } const native_convert_function_pointer {};
+
+struct constructor_parameter_name_generator
+{
+   
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+     auto target_name = name_helpers::constructor_managed_name(ctor.name);
+
+     // Only multi-valued constructing methods get their actual parameter names
+     if (ctor.function.parameters.size() > 1)
+       target_name += '_' + param.param_name;
+
+     auto name = name_helpers::managed_name(target_name);
+     name[0] = std::tolower(name[0]);
+
+     return as_generator(string).generate(sink, name, context);
+   }
+
+   attributes::constructor_def const& ctor;
+};
+
+struct constructor_parameter_name_parameterized
+{
+   constructor_parameter_name_generator const operator()(attributes::constructor_def const& ctor) const
+   {
+       return {ctor};
+   }
+} const constructor_parameter_name;
+
+// Generates the parameters for the given constructor
+// If the constructor receives multiple parameters, they get the name
+// of the constructor plus the name of the parameter (e.g. DefineParentData, DefineIndex)
+struct constructor_param_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context context) const
+  {
+     auto params = ctor.function.parameters;
+
+     if (!as_generator(
+                       efl::eolian::grammar::attribute_reorder<1, -1>
+                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ","
+                ).generate(sink, params, context))
+       return false;
+     //   }
+     return true;
+  }
+
+} const constructor_param;
+
+// Generates the invocation of the given parameter
+struct constructor_invocation_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context context) const
+  {
+     auto params = ctor.function.parameters;
+     if (!as_generator(
+                       "if (" <<
+                       (efl::eolian::grammar::attribute_reorder<-1>
+                        ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % "||") << ")\n"
+                       << scope_tab << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
+             ).generate(sink, params, context))
+       return false;
+
+     size_t idx = 0;
+
+     for (auto&& param : params)
+       {
+          idx++;
+          if (!as_generator(
+              "Efl.Eo.Globals.GetParamHelper(" << constructor_parameter_name(ctor) << ")" << ((idx < params.size()) ? ", " : "")
+              ).generate(sink, param, context))
+            return false;
+       }
+
+     if (!as_generator(");").generate(sink, attributes::unused, context))
+       return false;
+     return true;
+  }
+
+} const constructor_invocation;
 
 }
 

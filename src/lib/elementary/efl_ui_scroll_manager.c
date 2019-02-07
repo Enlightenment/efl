@@ -2433,17 +2433,19 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
    ELM_ANIMATOR_DISCONNECT(sd->event_rect, sd->scrollto.x.animator, _efl_ui_scroll_manager_scroll_to_x_animator, sd);
    ELM_ANIMATOR_DISCONNECT(sd->event_rect, sd->scrollto.y.animator, _efl_ui_scroll_manager_scroll_to_y_animator, sd);
 
-   evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_RESIZE,
-                                       _efl_ui_scroll_manager_pan_resized_cb, obj);
-   evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_MOVE,
-                                       _efl_ui_scroll_manager_pan_moved_cb, obj);
-   efl_event_callback_del
-      (sd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
-   efl_event_callback_del
-      (sd->pan_obj, EFL_UI_PAN_EVENT_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
-   efl_event_callback_del
-      (sd->pan_obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
-
+   if (!efl_invalidating_get(sd->pan_obj))
+     {
+        evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_RESIZE,
+                                            _efl_ui_scroll_manager_pan_resized_cb, obj);
+        evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_MOVE,
+                                            _efl_ui_scroll_manager_pan_moved_cb, obj);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+     }
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

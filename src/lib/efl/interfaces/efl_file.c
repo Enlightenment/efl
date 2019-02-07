@@ -60,3 +60,4 @@ _efl_file_load_error_get(const Eo *obj EINA_UNUSED, Efl_File_Data *pd)
 }
 
 #include "interfaces/efl_file.eo.c"
+#include "interfaces/efl_file_save.eo.c"

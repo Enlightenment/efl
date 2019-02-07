@@ -543,6 +543,7 @@ elm_theme_files_copy(Eina_Inlist **dst, Eina_Inlist **src)
    EINA_INLIST_FOREACH(*src, etf)
      {
         cpy = malloc(sizeof(Elm_Theme_File));
+        EINA_SAFETY_ON_NULL_RETURN(cpy);
         cpy->item = eina_stringshare_ref(etf->item);
         cpy->handle = eina_file_dup(etf->handle);
         *dst = eina_inlist_append(*dst, EINA_INLIST_GET(cpy));

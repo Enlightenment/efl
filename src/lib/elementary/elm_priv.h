@@ -67,8 +67,19 @@
 # include "efl_ui_widget_focus_manager.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
 # include "elm_widget_item_static_focus.eo.h"
-#include "efl_ui_selection_manager.eo.h"
+# include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
+# include "efl_ui_size_model.eo.h"
+# include "efl_ui_homogeneous_model.eo.h"
+# include "efl_ui_exact_model.eo.h"
+# include "efl_ui_average_model.eo.h"
+
+extern const char *_efl_model_property_itemw;
+extern const char *_efl_model_property_itemh;
+extern const char *_efl_model_property_selfw;
+extern const char *_efl_model_property_selfh;
+extern const char *_efl_model_property_totalw;
+extern const char *_efl_model_property_totalh;
 
 # ifdef HAVE_LANGINFO_H
 #  include <langinfo.h>

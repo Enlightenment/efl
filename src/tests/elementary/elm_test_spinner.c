@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_spinner_legacy_type_check)
+EFL_START_TEST(elm_spinner_legacy_type_check)
 {
    Evas_Object *win, *spinner;
    const char *type;
@@ -26,7 +26,7 @@ EFL_START_TEST (elm_spinner_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *spinner;
    Efl_Access_Role role;
@@ -42,7 +42,7 @@ EFL_START_TEST (elm_atspi_role_get)
 EFL_END_TEST
 
 
-EFL_START_TEST (elm_spinner_focus_next_object)
+EFL_START_TEST(elm_spinner_focus_next_object)
 {
    Evas_Object *win, *box, *spinner, *btn, *o;
 

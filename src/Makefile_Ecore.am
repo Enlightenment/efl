@@ -42,16 +42,14 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_bounce_interpolator.eo \
 	lib/ecore/efl_spring_interpolator.eo \
 	lib/ecore/efl_cubic_bezier_interpolator.eo \
-	lib/ecore/efl_model_loop.eo \
-	lib/ecore/efl_model_item.eo \
-	lib/ecore/efl_model_container.eo \
-	lib/ecore/efl_model_container_item.eo \
-	lib/ecore/efl_model_composite_boolean.eo \
-	lib/ecore/efl_model_composite_boolean_children.eo \
-	lib/ecore/efl_model_composite_selection.eo \
-	lib/ecore/efl_model_composite_selection_children.eo \
-	lib/ecore/efl_model_composite.eo \
-	lib/ecore/efl_model_view.eo
+	lib/ecore/efl_loop_model.eo \
+	lib/ecore/efl_generic_model.eo \
+	lib/ecore/efl_container_model.eo \
+	lib/ecore/efl_container_model_item.eo \
+	lib/ecore/efl_boolean_model.eo \
+	lib/ecore/efl_select_model.eo \
+	lib/ecore/efl_composite_model.eo \
+	lib/ecore/efl_view_model.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -120,18 +118,18 @@ lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
-lib/ecore/efl_model_loop.c \
-lib/ecore/efl_model_item.c \
-lib/ecore/efl_model_container.c \
-lib/ecore/efl_model_container_item.c \
-lib/ecore/efl_model_container_private.h \
-lib/ecore/efl_model_composite.c \
-lib/ecore/efl_model_composite_boolean.c \
-lib/ecore/efl_model_composite_selection.c \
-lib/ecore/efl_model_composite_private.h \
+lib/ecore/efl_loop_model.c \
+lib/ecore/efl_generic_model.c \
+lib/ecore/efl_container_model.c \
+lib/ecore/efl_container_model_item.c \
+lib/ecore/efl_container_model_private.h \
+lib/ecore/efl_composite_model.c \
+lib/ecore/efl_boolean_model.c \
+lib/ecore/efl_select_model.c \
+lib/ecore/efl_composite_model_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
-lib/ecore/efl_model_view.c \
+lib/ecore/efl_view_model.c \
 lib/ecore/efl_linear_interpolator.c \
 lib/ecore/efl_accelerate_interpolator.c \
 lib/ecore/efl_decelerate_interpolator.c \
@@ -293,7 +291,7 @@ tests/ecore/ecore_test_args.c \
 tests/ecore/ecore_test_pipe.c \
 tests/ecore/ecore_suite.h
 
-tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/ecore \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \

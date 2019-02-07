@@ -327,20 +327,20 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    if (elm_widget_is_legacy(obj))
      {
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,on", "*", _on_check_on, obj);
+          (wd->resize_obj, "elm,action,check,on", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,off", "*", _on_check_off, obj);
+          (wd->resize_obj, "elm,action,check,off", "*", obj, _on_check_off, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
+          (wd->resize_obj, "elm,action,check,toggle", "*", obj, _on_check_toggle, NULL);
      }
    else
      {
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,on", "*", _on_check_on, obj);
+          (wd->resize_obj, "efl,action,check,on", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,off", "*", _on_check_off, obj);
+          (wd->resize_obj, "efl,action,check,off", "*", obj, _on_check_off, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,toggle", "*", _on_check_toggle, obj);
+          (wd->resize_obj, "efl,action,check,toggle", "*", obj, _on_check_toggle, NULL);
      }
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);

@@ -311,6 +311,17 @@ EAPI void ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device,
 EAPI Eina_Bool ecore_drm2_device_pointer_rotation_set(Ecore_Drm2_Device *device, int rotation);
 
 /**
+ * Enable or disable pointer tap-to-click
+ *
+ * @param device
+ * @param enabled
+ *
+ * @ingroup Ecore_Drm2_Device_Group
+ * @since 1.22
+ */
+EAPI void ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *device, Eina_Bool enabled);
+
+/**
  * Set info to be used on keyboards
  *
  * @param device

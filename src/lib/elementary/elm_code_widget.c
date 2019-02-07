@@ -258,6 +258,7 @@ _elm_code_widget_fill_line_gutter(Elm_Code_Widget *widget, Evas_Textgrid_Cell *c
         if (line->number > 0)
           {
              number = malloc(sizeof(char) * gutter);
+             if (!number) return;
              snprintf(number, gutter, "%*d", gutter - 1, line->number);
           }
         for (g = 0; g < gutter - 1; g++)
@@ -1430,6 +1431,7 @@ _elm_code_widget_change_create(unsigned int start_col, unsigned int start_line,
    Elm_Code_Widget_Change_Info *info;
 
    info = calloc(1, sizeof(*info));
+   if (!info) return NULL;
    info->insert = insert;
 
    info->start_col = start_col;
@@ -1540,6 +1542,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
 
    textlen = strlen(leading) + 2;
    text = malloc(sizeof(char) * textlen);
+   if (!text) return;
    snprintf(text, textlen, "\n%s", leading);
    free(leading);
 

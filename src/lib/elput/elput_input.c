@@ -847,6 +847,44 @@ elput_input_pointer_accel_speed_set(Elput_Manager *manager, const char *seat, do
      }
 }
 
+EAPI void
+elput_input_touch_tap_to_click_enabled_set(Elput_Manager *manager, const char *seat, Eina_Bool enabled)
+{
+   Elput_Seat *eseat;
+   Elput_Device *edev;
+   Eina_List *l, *ll;
+   enum libinput_config_tap_state state;
+
+   EINA_SAFETY_ON_NULL_RETURN(manager);
+
+   state = enabled ? LIBINPUT_CONFIG_TAP_ENABLED : LIBINPUT_CONFIG_TAP_DISABLED;
+
+   /* if no seat name is passed in, just use default seat name */
+   if (!seat) seat = "seat0";
+
+   EINA_LIST_FOREACH(manager->input.seats, l, eseat)
+     {
+        if ((eseat->name) && (strcmp(eseat->name, seat)))
+          continue;
+
+        EINA_LIST_FOREACH(eseat->devices, ll, edev)
+          {
+             if (!libinput_device_has_capability(edev->device,
+                                                 LIBINPUT_DEVICE_CAP_POINTER))
+               continue;
+
+             if (libinput_device_config_tap_set_enabled(edev->device, state)
+                 != LIBINPUT_CONFIG_STATUS_SUCCESS)
+               {
+                  WRN("Failed to %s tap-to-click on device: %s",
+                      enabled ? "enable" : "disable",
+                      libinput_device_get_name(edev->device));
+                  continue;
+               }
+          }
+     }
+}
+
 EAPI Elput_Seat *
 elput_device_seat_get(const Elput_Device *dev)
 {

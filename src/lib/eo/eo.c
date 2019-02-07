@@ -44,6 +44,7 @@ int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
 static unsigned int efl_del_api_generation = 0;
 static Efl_Object_Op _efl_del_api_op_id = 0;
+static Eina_Hash *class_overrides;
 
 typedef enum _Eo_Ref_Op {
    EO_REF_OP_NONE,
@@ -867,6 +868,12 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    Eo_Stack_Frame *fptr = NULL;
 
    if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
+
+   if (class_overrides)
+     {
+        const Efl_Class *override = eina_hash_find(class_overrides, &klass_id);
+        if (override) klass_id = override;
+     }
 
    EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
 
@@ -1760,24 +1767,14 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    // Case where we are looking if eo_id is a class that contain klass_id
    if (EINA_UNLIKELY(_eo_is_a_class(eo_id)))
      {
-        const _Efl_Class **kls_itr;
 
         EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
         EO_CLASS_POINTER_GOTO(eo_id, lookinto, err_class0);
 
-        if (lookinto == klass) return EINA_TRUE;
+        const op_type_funcs *func = _vtable_func_get
+          (&lookinto->vtable, klass->base_id + klass->ops_count);
 
-        kls_itr = lookinto->mro;
-        if (!kls_itr) return EINA_FALSE;
-
-        while (*kls_itr)
-          {
-             if ((*kls_itr) == klass)
-               return EINA_TRUE;
-             kls_itr++;
-          }
-
-        return EINA_FALSE;
+        return (func && (func->func == _eo_class_isa_func));;
      }
 
    domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
@@ -2470,21 +2467,26 @@ EAPI Eina_Bool
 efl_domain_switch(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *new_data;
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD) ||
        (domain == EFL_ID_DOMAIN_SHARED))
      {
         ERR("Invalid domain %i being switched to", domain);
         return EINA_FALSE;
      }
-   if (data)
+   if ((data) && (data->local_domain == domain))
+     return EINA_TRUE;
+
+   new_data = _eo_table_data_new(domain);
+   if (!new_data)
      {
-        if (data->local_domain == domain) return EINA_TRUE;
-        _eo_free_ids_tables(data);
+        ERR("Could not allocate domain %i table data", domain);
+        return EINA_FALSE;
      }
-   data = _eo_table_data_new(domain);
-   data->local_domain = domain;
-   data->domain_stack[data->stack_top] = domain;
-   eina_tls_set(_eo_table_data, data);
+   if (data) _eo_free_ids_tables(data);
+   new_data->local_domain = domain;
+   new_data->domain_stack[new_data->stack_top] = domain;
+   eina_tls_set(_eo_table_data, new_data);
    return EINA_TRUE;
 }
 
@@ -2599,6 +2601,33 @@ efl_compatible(const Eo *obj, const Eo *obj_target)
    DBG("Object %p and %p are not compatible. Domain %i and %i do not match",
        obj, obj_target, domain1, domain2);
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+efl_class_override_register(const Efl_Class *klass, const Efl_Class *override)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!efl_isa(override, klass), EINA_FALSE);
+   if (!class_overrides)
+     class_overrides = eina_hash_pointer_new(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_overrides, EINA_FALSE);
+
+   eina_hash_set(class_overrides, &klass, override);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override)
+{
+   const Efl_Class *set;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   if (!class_overrides) return EINA_TRUE;
+
+   set = eina_hash_find(class_overrides, &klass);
+   if (set != override) return EINA_FALSE;
+   return eina_hash_del_by_key(class_overrides, &klass);
 }
 
 EAPI Eina_Bool

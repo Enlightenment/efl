@@ -11,7 +11,7 @@ enum Efl.Canvas.Layout_Part_Text_Expand
 }
 
 class Efl.Canvas.Layout_Part_Text extends Efl.Canvas.Layout_Part implements Efl.Text,
-Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
+Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
 {
    [[Represents a TEXT part of a layout
 
@@ -36,6 +36,7 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
    implements {
       Efl.Text.text { set; get; }
       Efl.Text_Markup.markup { get; set; }
+      Efl.Text_Markup_Interactive.cursor_markup_insert;
       Efl.Text_Cursor.text_cursor { get; }
       Efl.Text_Cursor.cursor_paragraph_first;
       Efl.Text_Cursor.cursor_paragraph_last;
@@ -49,7 +50,6 @@ Efl.Text_Markup, Efl.Text_Format, Efl.Text_Font, Efl.Text_Style
       Efl.Text_Cursor.cursor_copy;
       Efl.Text_Cursor.cursor_content { get; }
       Efl.Text_Cursor.cursor_geometry { get; }
-      Efl.Text_Markup.cursor_markup_insert;
       Efl.Text_Format.ellipsis { set; get; }
       Efl.Text_Format.wrap { set; get; }
       Efl.Text_Font.font { set; get; }

@@ -9,7 +9,7 @@
 #include <stdbool.h>
 typedef unsigned int uint;
 
-EFL_START_TEST (elm_config_eoapi)
+EFL_START_TEST(elm_config_eoapi)
 {
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
@@ -144,7 +144,7 @@ EFL_START_TEST (elm_config_eoapi)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_config_win)
+EFL_START_TEST(elm_config_win)
 {
    Eo *cfg = efl_provider_find(efl_main_loop_get(), EFL_CONFIG_INTERFACE);
    fail_if(!cfg);
@@ -173,7 +173,7 @@ _eina_list_string_has(const Eina_List *list, const char *str)
    return EINA_FALSE;
 }
 
-EFL_START_TEST (elm_config_profiles)
+EFL_START_TEST(elm_config_profiles)
 {
    // this only tests some of the profile APIs. we're not going to mess with
    // the global config during make check :)

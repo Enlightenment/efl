@@ -707,6 +707,10 @@ inline efl::eina::value_view convert_to_return(Eina_Value* value, tag<Eina_Value
 {
   return efl::eina::value_view{value};
 }
+inline efl::eina::value_view convert_to_return(Eina_Value const* value, tag<Eina_Value const*, efl::eina::value_view const>)
+{
+  return efl::eina::value_view{const_cast<Eina_Value*>(value)};
+}
 template <typename T, typename U>
 T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::value || is_container<T>::value>::type* = 0)
 {

@@ -17,7 +17,7 @@ struct _Test_Data
    int success;
 };
 
-EFL_START_TEST (elm_image_legacy_type_check)
+EFL_START_TEST(elm_image_legacy_type_check)
 {
    Evas_Object *win, *image;
    const char *type;
@@ -37,7 +37,7 @@ EFL_START_TEST (elm_image_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *image;
    Efl_Access_Role role;
@@ -127,7 +127,7 @@ _timeout_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-EFL_START_TEST (elm_image_async_path)
+EFL_START_TEST(elm_image_async_path)
 {
    Evas_Object *win, *image;
    Ecore_Timer *t;
@@ -157,7 +157,7 @@ EFL_START_TEST (elm_image_async_path)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_image_async_mmap)
+EFL_START_TEST(elm_image_async_mmap)
 {
    Evas_Object *win, *image;
    Ecore_Timer *t;
@@ -195,7 +195,7 @@ EFL_START_TEST (elm_image_async_mmap)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_image_evas_object_color_set)
+EFL_START_TEST(elm_image_evas_object_color_set)
 {
    Evas_Object *win, *image;
    int r = 128, g = 99, b = 3, a = 230;
@@ -213,7 +213,7 @@ EFL_START_TEST (elm_image_evas_object_color_set)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_image_evas_image_get)
+EFL_START_TEST(elm_image_evas_image_get)
 {
    Evas_Object *win, *image, *obj;
 
@@ -226,7 +226,7 @@ EFL_START_TEST (elm_image_evas_image_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_image_icon)
+EFL_START_TEST(efl_ui_image_icon)
 {
    Evas_Object *win, *image;
    Eina_Bool ok;

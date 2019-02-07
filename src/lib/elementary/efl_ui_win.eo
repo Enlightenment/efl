@@ -299,6 +299,19 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
                               itself when closed.]]
          }
       }
+      @property exit_on_close {
+         [[Enable quitting the main loop when this window is closed.
+
+           When set, the window's loop object will exit using the passed exit code if the
+           window is closed.
+
+           The Eina.Value passed should be $EMPTY to unset this state or an int value to be
+           used as the exit code.
+         ]]
+         values {
+            exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
+         }
+      }
       @property icon_object {
          set {
             [[Set a window object's icon.
@@ -656,6 +669,18 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
 
            This will try and delete all the windows in the stack that
            are above the window.]]
+      }
+      @property exit_on_all_windows_closed @class {
+         [[Enable quitting the main loop when all windows are closed.
+
+           When set, the main loop will quit with the passed exit code once all windows have been closed.
+
+           The Eina.Value passed should be $EMPTY to unset this state or an int value to be
+           used as the exit code.
+         ]]
+         values {
+            exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
+         }
       }
       activate {
          [[Activate a window object.

@@ -1,0 +1,104 @@
+function EflViewModelPropertyGet {
+   [[Function called when a property is get.]]
+   params {
+      @in view_model: const(Efl.View_Model); [[The ViewModel object the @.property.get is issued on.]]
+      @in property: stringshare; [[The property name the @.property.get is issued on.]]
+   }
+   return: any_value_ptr; [[The property value.]]
+};
+
+function EflViewModelPropertySet {
+   [[Function called when a property is set.]]
+   params {
+      @in view_model: Efl.View_Model; [[The ViewModel object the @.property.set is issued on.]]
+      @in property: stringshare; [[The property name the @.property.set is issued on.]]
+      @in value: any_value_ptr @owned; [[The new value to set.]]
+   }
+   return: future<any_value_ptr>; [[The value that was finally set.]]
+};
+
+class Efl.View_Model extends Efl.Composite_Model
+{
+   [[Efl model providing helpers for custom properties used when linking a model to a view and you need to generate/adapt values for display.
+
+     There is two ways to use this class, you can either inherit from it and have a custom constructor for example. Or you can just instantiate
+     it and manually define your property on it via callbacks.
+   ]]
+   methods {
+      property_logic_add {
+         [[Add callbacks that will be triggered when someone ask for the specified property name when getting or setting a property.
+
+           A get or set should at least be provided for this call to succeed.
+
+           See @.property_logic_del
+         ]]
+         params {
+            property: string; [[The property to bind on to.]]
+            get: EflViewModelPropertyGet; [[Define the get callback called when the @Efl.Model.property.get is called with the above property name.]]
+            set: EflViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called with the above property name.]]
+            binded: iterator<string>; [[Iterator of property name to bind with this defined property see @.property_bind.]]
+         }
+         return: Eina.Error;
+      }
+      property_logic_del {
+         [[Delete previously added callbacks that were triggered when someone asked for the specified property name when getting or setting a property.
+
+           A get or set should at least be provided for this call to succeed.
+
+           See @.property_logic_add
+         ]]
+         params {
+            property: string; [[The property to bind on to.]]
+         }
+         return: Eina.Error;
+      }
+      property_bind {
+         [[Automatically update the field for the event @[Efl.Model.properties,changed] to include property
+           that are impacted with change in a property from the composited model.
+
+           The source doesn't have to be provided at this point by the composited model.
+         ]]
+         params {
+            @in source: string; [[Property name in the composited model.]]
+            @in destination: string; [[Property name in the @Efl.View_Model]]
+         }
+      }
+      property_unbind {
+         [[Stop automatically updating the field for the event @[Efl.Model.properties,changed] to
+           include property that are impacted with change in a property from the
+           composited model.
+         ]]
+         params {
+            @in source: string; [[Property name in the composited model.]]
+            @in destination: string; [[Property name in the @Efl.View_Model]]
+         }
+      }
+      @property children_bind {
+         [[Define if we will intercept all childrens object reference and
+           bind them through the ViewModel with the same property logic as this
+           one. Be careful of recursivity.
+
+           This can only be applied at construction time.]]
+         get {
+            [[Get the state of the automatic binding of children object.]]
+         }
+         set {
+            [[Set the state of the automatic binding of children object.]]
+         }
+         values {
+            enable: bool; [[Do you automatically bind children. Default to true.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Model.children_slice_get;
+      Efl.Model.properties { get; }
+      Efl.Model.property { set; get; }
+   }
+   constructors {
+      Efl.View_Model.children_bind;
+   }
+}

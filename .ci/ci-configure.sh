@@ -77,7 +77,7 @@ else
 
   RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
-  MINGW_COPTS=" --prefix=/root/EFL/ewpi_64 --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/local/bin/eolian_gen \
+  MINGW_COPTS=" --prefix=/ewpi-64-install --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/local/bin/eolian_gen \
   --with-edje-cc=/usr/local/bin/edje_cc --with-eet-eet=/usr/local/bin/eet \
   --with-bin-elm-prefs-cc=/usr/local/bin/elm_prefs_cc \
   --disable-static --with-tests=regular --with-crypto=openssl \
@@ -116,7 +116,7 @@ else
     if [ "$1" = "mingw" ]; then
       docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
       docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
-        --env CPPFLAGS="-I/root/EFL/ewpi_64/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/root/EFL/ewpi_64/lib/" --env PKG_CONFIG_PATH="/root/EFL/ewpi_64/lib/pkgconfig/" \
+        --env CPPFLAGS="-I/ewpi-64-install/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/ewpi-64-install/lib/" --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
         $(cat $HOME/cid) sh -c "autoreconf -iv"
     else
       docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
@@ -127,7 +127,7 @@ else
     travis_fold configure "configure $OPTS"
     if [ "$1" = "mingw" ]; then
       docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CFLAGS="-pipe" --env CXXFLAGS="-pipe" \
-        --env CPPFLAGS="-I/root/EFL/ewpi_64/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/root/EFL/ewpi_64/lib/" --env PKG_CONFIG_PATH="/root/EFL/ewpi_64/lib/pkgconfig/" \
+        --env CPPFLAGS="-I/ewpi-64-install/include -DECORE_WIN32_WIP_POZEFLKSD" --env LDFLAGS="-L/ewpi-64-install/lib/" --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
         $(cat $HOME/cid) sh -c ".ci/configure.sh $OPTS"
     else
       docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \

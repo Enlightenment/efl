@@ -153,6 +153,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
+EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
@@ -174,6 +175,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_layout.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
@@ -208,12 +210,11 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_button_eo.h>
 
 # include "efl_ui_caching_factory.eo.h"
+# include "efl_ui_widget_factory.eo.h"
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
-# warning Efl.Ui.Multibutton is not available yet without Elementary.h
-# if 0
-# include <efl_ui_multibuttonentry.h>
-# endif
+
+# include <efl_ui_tags.eo.h>
 
 # include <efl_ui_flip_eo.h>
 # include <efl_ui_frame_eo.h>

@@ -1,39 +1,44 @@
 class Efl.Ui.Tags extends Efl.Ui.Layout implements Efl.Text, Efl.Ui.Format
 {
-   [[Elementary Tags class]]
+   [[A widget displaying a list of tags. The user can remove tags by clicking
+     on each tag "close" button and add new tags by typing text in the text
+     entry at the end of the list.]]
    methods {
       @property editable {
-         [[Control if the tags is to be editable or not.]]
+         [[Control if the tag list is to be editable by the user or not.]]
          set {
          }
          get {
          }
          values {
-            editable: bool; [[If $true, user can add/delete item in tags, if not, the tags is non-editable.]]
+            editable: bool; [[If $true, the user can add/delete tags to the tag list,
+                              if not, the tag list is non-editable.]]
          }
       }
       @property expanded {
-         [[Control the tags to expanded state.
+         [[Control whether the tag list is expanded or not.
 
-           In expanded state, the complete entry will be displayed.
-           Otherwise, only single line of the entry will be displayed.]]
+           In the expanded state, all tags will be displayed.
+           Otherwise, only a single line of tags will be displayed with a marker to
+           indicate that there is more content.]]
          set {
          }
          get {
          }
          values {
-            expanded: bool; [[The value of expanded state. Set this to $true for expanded state. Set
-                       this to $false for single line state.]]
+            expanded: bool; [[The expanded state. Set this to $true to allow multiple
+                              lines of tags. Set to $false for a single line.]]
          }
       }
       @property items {
-         [[Get a list of items in the tags]]
+         [[List of tags in the tag list. Tags can be added and removed by the user
+           using the UI, and by the program by modifying this property.]]
          set {
          }
          get {
          }
          values {
-            items: const(array<string>); [[The array of items, or NULL if none]]
+            items: const(array<string>); [[The array of items, or NULL if none.]]
          }
       }
    }

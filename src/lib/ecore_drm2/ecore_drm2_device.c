@@ -783,6 +783,14 @@ ecore_drm2_device_pointer_accel_profile_set(Ecore_Drm2_Device *device, uint32_t 
 }
 
 EAPI void
+ecore_drm2_device_touch_tap_to_click_enabled_set(Ecore_Drm2_Device *device, Eina_Bool enabled)
+{
+   EINA_SAFETY_ON_NULL_RETURN(device);
+
+   elput_input_touch_tap_to_click_enabled_set(device->em, NULL, enabled);
+}
+
+EAPI void
 ecore_drm2_device_window_set(Ecore_Drm2_Device *device, unsigned int window)
 {
    EINA_SAFETY_ON_NULL_RETURN(device);

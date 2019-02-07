@@ -5,14 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
-#endif /* ifdef _WIN32 */
-
 #include <Eina.h>
 
 #include "Eet.h"
@@ -71,9 +63,9 @@ eet_connection_received(Eet_Connection *conn,
 
              msg = data;
              /* Check the magic */
-             if (ntohl(msg[0]) != MAGIC_EET_DATA_PACKET) break;
+             if (eina_ntohl(msg[0]) != MAGIC_EET_DATA_PACKET) break;
 
-             packet_size = ntohl(msg[1]);
+             packet_size = eina_ntohl(msg[1]);
              /* Message should always be under MAX_MSG_SIZE */
              if (packet_size > MAX_MSG_SIZE) break;
 
@@ -143,8 +135,8 @@ _eet_connection_raw_send(Eet_Connection *conn,
    /* Message should always be under MAX_MSG_SIZE */
    if (data_size > MAX_MSG_SIZE) return EINA_FALSE;
    message = malloc(data_size + (sizeof(int) * 2));
-   message[0] = htonl(MAGIC_EET_DATA_PACKET);
-   message[1] = htonl(data_size);
+   message[0] = eina_htonl(MAGIC_EET_DATA_PACKET);
+   message[1] = eina_htonl(data_size);
    memcpy(message + 2, data, data_size);
    conn->eet_write_cb(message,
                       data_size + (sizeof(int) * 2),

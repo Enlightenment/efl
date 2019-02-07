@@ -2,10 +2,6 @@
 # include <config.h>
 #endif
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
@@ -149,7 +145,7 @@ emile_binbuf_cipher(Emile_Cipher_Algorithm algo,
    eina_binbuf_append_length(result, (unsigned char*) &salt, sizeof (salt));
    memset(&salt, 0, sizeof (salt));
 
-   tmp = htonl(eina_binbuf_length_get(data));
+   tmp = eina_htonl(eina_binbuf_length_get(data));
    buffer = malloc(crypted_length - sizeof (int));
    if (!buffer) goto on_error;
    *buffer = tmp;
@@ -279,7 +275,7 @@ emile_binbuf_decipher(Emile_Cipher_Algorithm algo,
 
    /* Get the decrypted data size */
    tmp = *(unsigned int*)(eina_binbuf_string_get(result));
-   tmp = ntohl(tmp);
+   tmp = eina_ntohl(tmp);
    if (tmp > tmp_len || tmp <= 0)
      goto on_error;
 

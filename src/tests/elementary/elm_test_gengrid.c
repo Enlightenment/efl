@@ -8,7 +8,7 @@
 
 static Elm_Gengrid_Item_Class *gic = NULL;
 
-EFL_START_TEST (elm_gengrid_legacy_type_check)
+EFL_START_TEST(elm_gengrid_legacy_type_check)
 {
    Evas_Object *win, *gengrid;
    const char *type;
@@ -28,7 +28,7 @@ EFL_START_TEST (elm_gengrid_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
@@ -101,7 +101,7 @@ _realized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
      ecore_main_loop_quit();
 }
 
-EFL_START_TEST (elm_gengrid_focus)
+EFL_START_TEST(elm_gengrid_focus)
 {
    Evas_Object *win, *grid, *bx, *bt;
    Elm_Object_Item *it;

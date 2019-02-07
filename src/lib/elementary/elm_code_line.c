@@ -98,6 +98,7 @@ _elm_code_line_merge_into(Elm_Code_Line *line1, Elm_Code_Line *line2)
    text2 = elm_code_line_text_get(line2, &length2);
 
    newtext = malloc(sizeof(char) * (length1 + length2 + 1));
+   if (!newtext) return;
    if (length1 > 0)
      snprintf(newtext, length1 + 1, "%s", text1);
    if (length2 > 0)
@@ -178,6 +179,7 @@ EAPI void elm_code_line_token_add(Elm_Code_Line *line, int start, int end, int l
      return;
 
    tok = calloc(1, sizeof(Elm_Code_Token));
+   if (!tok) return;
 
    tok->start = start;
    tok->end = end;

@@ -45,7 +45,7 @@ _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Dat
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   efl_ui_caching_factory_item_class_set(obj, EFL_UI_LAYOUT_CLASS);
+   efl_ui_widget_factory_item_class_set(obj, EFL_UI_LAYOUT_CLASS);
 
    pd->connects = eina_hash_stringshared_new(EINA_FREE_CB(eina_stringshare_del));
    pd->factory_connects = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref));

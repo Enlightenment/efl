@@ -8,14 +8,6 @@
 #include <ctype.h>
 #include <limits.h>
 
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <winsock2.h>
-#endif /* ifdef _WIN32 */
-
 #include <Eina.h>
 
 #include "Eet.h"
@@ -2877,7 +2869,7 @@ _eet_data_dump_encode(int             parent_type,
      {
         unsigned long int v;
 
-        v = htonl(0x12345678);
+        v = eina_htonl(0x12345678);
         if (v == 0x12345678)
           _eet_data_words_bigendian = 1;
         else
@@ -3483,7 +3475,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
      {
         unsigned long int v;
 
-        v = htonl(0x12345678);
+        v = eina_htonl(0x12345678);
         if (v == 0x12345678)
           _eet_data_words_bigendian = 1;
         else
@@ -5088,7 +5080,7 @@ _eet_data_descriptor_encode(Eet_Dictionary      *ed,
      {
         unsigned long int v;
 
-        v = htonl(0x12345678);
+        v = eina_htonl(0x12345678);
         if (v == 0x12345678)
           _eet_data_words_bigendian = 1;
         else

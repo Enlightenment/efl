@@ -18,7 +18,7 @@ static void _parser_file_callback(Elm_Code_File *file EINA_UNUSED, void *data EI
    file_calls++;
 }
 
-EFL_START_TEST (elm_code_parse_hook_memory_test)
+EFL_START_TEST(elm_code_parse_hook_memory_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -42,7 +42,7 @@ EFL_START_TEST (elm_code_parse_hook_memory_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_parse_hook_file_test)
+EFL_START_TEST(elm_code_parse_hook_file_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -67,7 +67,7 @@ EFL_START_TEST (elm_code_parse_hook_file_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_parse_todo_test)
+EFL_START_TEST(elm_code_parse_todo_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
