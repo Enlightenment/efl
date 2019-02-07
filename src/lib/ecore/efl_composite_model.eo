@@ -31,6 +31,7 @@ class Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
       Efl.Model.child_del;
    }
    constructors {
-      .index;
+      .index @optional;
+      Efl.Ui.View.model;
    }
 }
