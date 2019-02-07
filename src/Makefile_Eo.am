@@ -4,8 +4,7 @@
 eo_eolian_files = \
 	lib/eo/efl_object.eo \
 	lib/eo/efl_class.eo \
-	lib/eo/efl_object_override.eo \
-	lib/eo/efl_interface.eo
+	lib/eo/efl_object_override.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)
 eo_eolian_h = $(eo_eolian_files:%.eo=%.eo.h)

@@ -216,7 +216,6 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
-#include "efl_interface.eo.h"
 #define EO_CLASS EFL_OBJECT_CLASS
 
 /** An event callback prototype. */

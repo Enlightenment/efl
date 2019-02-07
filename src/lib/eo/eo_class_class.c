@@ -5,4 +5,3 @@
 #include "Eo.h"
 
 #include "efl_class.eo.c"
-#include "efl_interface.eo.c"
