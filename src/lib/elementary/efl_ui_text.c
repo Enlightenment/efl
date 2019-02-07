@@ -2120,6 +2120,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_sub_object_parent_add(obj);
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);
    sd->text_obj = text_obj;
    sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
@@ -3892,13 +3893,14 @@ _decoration_defer_all(Eo *obj)
 }
 
 static void
-_efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_text_changed_cb(void *data, const Efl_Event *event)
 {
    if (efl_invalidated_get(event->object)) return;
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->text_changed = EINA_TRUE;
    sd->cursor_update = EINA_TRUE;
    _update_guide_text(data, sd);
+   efl_event_callback_call(event->object, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    elm_layout_sizing_eval(data);
    _decoration_defer(data);
 }

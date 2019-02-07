@@ -607,6 +607,7 @@ _range_del_emit(Evas_Object *obj, Efl_Text_Cursor_Cursor *cur1, Efl_Text_Cursor_
    evas_textblock_cursor_range_delete(cur1, cur2);
 
    efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    if (tmp) free(tmp);
 }
 
@@ -637,6 +638,7 @@ _delete_emit(Eo *obj, Evas_Textblock_Cursor *c, Efl_Ui_Internal_Text_Interactive
    evas_textblock_cursor_char_delete(c);
 
    efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    if (tmp) free(tmp);
 }
 
@@ -1061,6 +1063,8 @@ end:
    if (changed_user)
      {
         efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
+        /* FIXME: this is kinda gross */
+        efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
      }
    (void) 0;
 }
