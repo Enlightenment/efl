@@ -91,7 +91,7 @@ struct _Efl_Ui_Text_Data
         const char  *hover_style; /**< style of a hover object */
      } anchor_hover;
 
-   Elm_Sel_Format                        cnp_mode;
+   Efl_Ui_Selection_Format               cnp_mode;
    Elm_Sel_Format                        drop_format;
 
    struct {
