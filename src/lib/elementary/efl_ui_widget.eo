@@ -15,7 +15,7 @@ struct Efl.Ui.Widget_Focus_State {
 
 abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
-                        Efl.Ui.Cursor, Efl.Ui.L10n,
+                        Efl.Ui.L10n,
                         Efl.Ui.Selection, Efl.Ui.Dnd
 {
    [[Efl UI widget abstract class]]
@@ -24,6 +24,70 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
+      @property cursor {
+         [[The cursor to be shown when mouse is over the object
+
+           This is the cursor that will be displayed when mouse is over the
+           object. The object can have only one cursor set to it so if
+           @.cursor.set is called twice for an object, the previous set
+           will be unset.
+
+           If using X cursors, a definition of all the valid cursor names
+           is listed on Elementary_Cursors.h. If an invalid name is set
+           the default cursor will be used.
+         ]]
+         set {
+            [[Sets or unsets the current cursor.
+
+              If $cursor is $null this function will reset the cursor
+              to the default one.
+            ]]
+            return: bool; [[$true if successful.]]
+         }
+         get {
+            [[Returns the current cursor name.]]
+         }
+         values {
+            cursor: string @nullable; [[The cursor name, defined either
+                                        by the display system or the theme.]]
+         }
+      }
+      @property cursor_style {
+         [[A different style for the cursor.
+
+           This only makes sense if theme cursors are used.
+           The cursor should be set with @.cursor.set first before
+           setting its style with this property.
+         ]]
+         set {
+            [[Sets a style for the current cursor. Call after @.cursor.set.]]
+            return: bool; [[$true if successful.]]
+         }
+         get {
+            [[Returns the current cursor style name.]]
+         }
+         values {
+            style: string; [[A specific style to use, eg. default,
+                             transparent, ....]]
+         }
+      }
+      @property cursor_theme_search_enabled {
+         [[Whether the cursor may be looked in the theme or not.
+
+           If $false, the cursor may only come from the render engine,
+           i.e. from the display manager.
+         ]]
+         set {
+            [[Enables or disables theme cursors.]]
+            return: bool; [[$true if successful.]]
+         }
+         get {
+            [[Returns the current state of theme cursors search.]]
+         }
+         values {
+            allow: bool(true); [[Whether to use theme cursors.]]
+         }
+      }
       @property resize_object @protected {
          [[This is the internal canvas object managed by a widget.
 
@@ -587,9 +651,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       Efl.Ui.Focus.Object.focus { set; }
       Efl.Ui.I18n.mirrored { get; set; }
       Efl.Ui.I18n.mirrored_automatic { get; set; }
-      Efl.Ui.Cursor.cursor { get; set; }
-      Efl.Ui.Cursor.cursor_style { get; set; }
-      Efl.Ui.Cursor.cursor_theme_search_enabled { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]

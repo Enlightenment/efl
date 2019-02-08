@@ -182,7 +182,6 @@ pub_eo_files = [
   'efl_ui_textpath.eo',
   'efl_ui_l10n.eo',
   'efl_ui_clock.eo',
-  'efl_ui_cursor.eo',
   'efl_ui_image_factory.eo',
   'efl_ui_focus_manager.eo',
   'efl_ui_focus_manager_calc.eo',

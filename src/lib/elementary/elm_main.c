@@ -1967,3 +1967,40 @@ elm_object_item_del(Eo *obj)
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _item_noref, NULL);
    item->on_deletion = EINA_TRUE;
 }
+
+
+EAPI Eina_Bool
+elm_object_cursor_set(Eo *obj, const char *cursor)
+{
+   return efl_ui_widget_cursor_set(obj, cursor);
+}
+
+EAPI const char *
+elm_object_cursor_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_style_set(Eo *obj, const char *style)
+{
+   return efl_ui_widget_cursor_style_set(obj, style);
+}
+
+EAPI const char *
+elm_object_cursor_style_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_style_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_set(obj, allow);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_get(obj);
+}

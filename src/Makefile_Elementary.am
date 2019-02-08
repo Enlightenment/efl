@@ -59,7 +59,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_textpath_legacy.eo \
 	lib/elementary/efl_ui_l10n.eo \
 	lib/elementary/efl_ui_clock.eo \
-	lib/elementary/efl_ui_cursor.eo \
 	lib/elementary/efl_ui_image_factory.eo \
 	lib/elementary/efl_ui_focus_manager.eo \
 	lib/elementary/efl_ui_focus_manager_calc.eo \
