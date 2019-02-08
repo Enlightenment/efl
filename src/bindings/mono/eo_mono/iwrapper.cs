@@ -197,15 +197,10 @@ public class Globals {
 
         var interface_list = EoG.get_efl_interfaces(type);
 
-        System.Console.WriteLine ("Interafaces: {0}", interface_list.Count);
-
-        Eina.Log.Debug("Going to register!");
+        Eina.Log.Debug($"Going to register new class named {class_name}");
         IntPtr klass = EoG.call_efl_class_new(description_ptr, base_klass, interface_list);
         if(klass == IntPtr.Zero)
-        {
             Eina.Log.Error("klass was not registered");
-            Console.WriteLine("klass was not registered");
-        }
         else
             Eina.Log.Debug("Registered class successfully");
         return klass;
@@ -246,12 +241,12 @@ public class Globals {
     }
     public static byte class_initializer_call(IntPtr klass, System.Type type)
     {
-        Console.WriteLine("class_intiailizer_call 0x{1} {0}", type, klass);
+        Eina.Log.Debug($"called with 0x{klass.ToInt64()} {type}");
         Efl.Eo.NativeClass nativeClass = get_native_class(type.BaseType);
 
         if (nativeClass != null)
         {
-            Console.WriteLine("nativeClass != null");
+            Eina.Log.Debug("nativeClass != null");
             var descs = nativeClass.GetEoOps(type);
             var count = descs.Count;
 
@@ -265,7 +260,7 @@ public class Globals {
                     if(nc != null)
                     {
                         var moredescs = nc.GetEoOps(type);
-                        Console.WriteLine("adding {0} more descs to registration", moredescs.Count);
+                        Eina.Log.Debug("adding {moredescs.Count} more descs to registration");
                         descs.AddRange(moredescs);
                         count = descs.Count;
                     }
@@ -288,7 +283,7 @@ public class Globals {
             //EoKlass = klass;
         }
         else
-            Console.WriteLine("nativeClass == null");
+            Eina.Log.Debug("nativeClass == null");
 
        return 1;
     }
@@ -353,7 +348,6 @@ public class Globals {
     public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
     {
         Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
-        Console.WriteLine($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.NativeHandle;
@@ -364,8 +358,8 @@ public class Globals {
             throw new Exception("Instantiation failed");
         }
 
-        Console.WriteLine($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
-        Console.WriteLine($"Parent was 0x{parent_ptr.ToInt64()}");
+        Eina.Log.Debug($"Eo instance right after internal_start 0x{eo.ToInt64():x} with refcount {Efl.Eo.Globals.efl_ref_count(eo)}");
+        Eina.Log.Debug($"Parent was 0x{parent_ptr.ToInt64()}");
         return eo;
     }
 
