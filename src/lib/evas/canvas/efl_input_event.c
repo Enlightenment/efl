@@ -95,7 +95,7 @@ _noref_death(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 Efl_Input_Event *
-efl_input_event_instance_get(Eo *klass, Eo *owner)
+efl_input_event_instance_get(const Eo *klass, Eo *owner)
 {
    Efl_Input_Event *evt;
 

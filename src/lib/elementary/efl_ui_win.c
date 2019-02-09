@@ -2534,7 +2534,7 @@ _efl_ui_win_efl_canvas_scene_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
         Efl_Input_Pointer *ptr;
         double x, y;
 
-        ptr = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, (Eo *) obj, (void **) &ptrdata);
+        ptr = efl_input_pointer_instance_get( (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
         ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);

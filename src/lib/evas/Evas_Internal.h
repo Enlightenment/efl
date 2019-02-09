@@ -74,7 +74,11 @@ EOAPI void evas_canvas_seat_focus_out(Eo *obj, Efl_Input_Device *seat);
 EOAPI Eo* evas_canvas_seat_focus_get(const Eo *obj, Efl_Input_Device *seat);
 
 EOAPI void *efl_input_legacy_info_get(const Eo *obj);
-EOAPI Eo *efl_input_instance_get(const Eo *obj, Efl_Object *owner, void **priv);
+
+EOAPI Eo *efl_input_focus_instance_get(Efl_Object *owner, void **priv);
+EOAPI Eo *efl_input_hold_instance_get(Efl_Object *owner, void **priv);
+EOAPI Eo *efl_input_key_instance_get(Efl_Object *owner, void **priv);
+EOAPI Eo *efl_input_pointer_instance_get(Efl_Object *owner, void **priv);
 
 EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))

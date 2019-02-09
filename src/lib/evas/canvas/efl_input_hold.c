@@ -82,11 +82,11 @@ _efl_input_hold_efl_object_destructor(Eo *obj, Efl_Input_Hold_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Input_Event *
-_efl_input_hold_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
-                                             Efl_Object *owner, void **priv)
+
+EOAPI Eo*
+efl_input_hold_instance_get(Efl_Object *owner, void **priv)
 {
-   Efl_Input_Event *evt = efl_input_event_instance_get(klass, owner);;
+   Efl_Input_Event *evt = efl_input_event_instance_get(EFL_INPUT_HOLD_CLASS, owner);;
 
    if (!evt) return NULL;
    if (priv) *priv = efl_data_scope_get(evt, MY_CLASS);
@@ -138,8 +138,5 @@ _efl_input_hold_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Hold_Data *pd
 
 #define EFL_INPUT_HOLD_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_hold_efl_input_event_legacy_info_get)
-
-#define EFL_INPUT_HOLD_EXTRA_CLASS_OPS \
-   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_hold_efl_input_event_instance_get)
 
 #include "efl_input_hold.eo.c"
