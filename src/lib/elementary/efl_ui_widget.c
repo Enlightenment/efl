@@ -3422,7 +3422,7 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
 
    if (pd->focus.manager && !pd->focus.logical)
      {
-        efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+        efl_ui_focus_util_focus(obj);
      }
 }
 

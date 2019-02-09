@@ -246,8 +246,7 @@ _ecore_event_init(void)
    if ((!choice) || (!choice[0])) choice = "chained_mempool";
 
    _event_msg_handler =
-     efl_loop_message_handler_get(EFL_LOOP_CLASS,
-                                  _mainloop_singleton,
+     efl_loop_message_handler_get(_mainloop_singleton,
                                   ECORE_EVENT_MESSAGE_HANDLER_CLASS);
    if (!_event_msg_handler)
      {

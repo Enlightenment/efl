@@ -123,7 +123,7 @@ main(int argc, char *argv[])
    for (i = 1; i < argc; i++)
      {
         const char *address = argv[i];
-        Eo *o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, address);
+        Eo *o = efl_net_ip_address_parse( address);
         if (o)
           {
              _print_ip_addr_info(o);
@@ -131,7 +131,7 @@ main(int argc, char *argv[])
           }
         else
           {
-             Eina_Future *f = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS, address, 0, 0);
+             Eina_Future *f = efl_net_ip_address_resolve( address, 0, 0);
              eina_future_then(f, _resolved, address);
              printf("INFO: %s is not numeric, resolving...\n", address);
              resolving = eina_list_append(resolving, f);

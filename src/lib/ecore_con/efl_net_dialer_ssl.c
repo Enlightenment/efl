@@ -84,7 +84,7 @@ _efl_net_dialer_ssl_efl_object_finalize(Eo *o, Efl_Net_Dialer_Ssl_Data *pd)
    else
      {
         if (!pd->ssl_ctx)
-          pd->ssl_ctx = efl_ref(efl_net_ssl_context_default_dialer_get(EFL_NET_SSL_CONTEXT_CLASS));
+          pd->ssl_ctx = efl_ref(efl_net_ssl_context_default_dialer_get());
 
         efl_net_socket_ssl_adopt(o, pd->sock, pd->ssl_ctx);
      }

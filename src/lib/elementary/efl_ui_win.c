@@ -2372,7 +2372,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         Eo *root;
         efl_access_window_created_signal_emit(obj);
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        root = efl_access_object_access_root_get();
         if (root)
            efl_access_children_changed_added_signal_emit(root, obj);
      }
@@ -2441,7 +2441,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (_elm_config->atspi_mode)
      {
         Eo *root;
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        root = efl_access_object_access_root_get();
         efl_access_window_destroyed_signal_emit(obj);
         if (root)
            efl_access_children_changed_del_signal_emit(root, obj);
@@ -2996,7 +2996,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
      }
    if (!_elm_win_list)
      {
-        efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+        efl_event_callback_call(efl_app_main_get(), EFL_APP_EVENT_STANDBY, NULL);
         if (eina_value_type_get(&exit_on_all_windows_closed))
           efl_loop_quit(efl_loop_get(obj), exit_on_all_windows_closed);
      }
@@ -6266,13 +6266,13 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
 }
 
 EOLIAN static const Eina_Value *
-_efl_ui_win_exit_on_all_windows_closed_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_ui_win_exit_on_all_windows_closed_get(void)
 {
    return &exit_on_all_windows_closed;
 }
 
 EOLIAN static void
-_efl_ui_win_exit_on_all_windows_closed_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Eina_Value *exit_code)
+_efl_ui_win_exit_on_all_windows_closed_set(const Eina_Value *exit_code)
 {
    const Eina_Value_Type *type = eina_value_type_get(exit_code);
 
@@ -7385,7 +7385,7 @@ _efl_ui_win_efl_object_provider_find(const Eo *obj,
       return (Eo *)obj;
 
    // attach all kinds of windows directly to ATSPI application root object
-   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get();
 
     if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
       return pd->provider;

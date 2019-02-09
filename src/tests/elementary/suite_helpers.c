@@ -64,7 +64,7 @@ efl_main(void *data EINA_UNUSED,
 {
    Efl_Loop_Arguments *arge = ev->info;
 
-   
+
    fail_if(!arge->initialization);
    fprintf(stderr, "ARGC %d\n", eina_array_count(arge->argv));
    fail_if(eina_array_count(arge->argv) != 2);
@@ -84,10 +84,10 @@ EFL_START_TEST(efl_ui_test_init)
    _efl_startup_time = ecore_time_unix_get();
    _EFL_APP_VERSION_SET();
    fail_if(!ecore_init());
-   efl_event_callback_add(efl_app_main_get(EFL_APP_CLASS), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL);
+   efl_event_callback_add(efl_app_main_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main, NULL);
    fail_if(!ecore_init_ex(argc, argv));
    __EFL_MAIN_CONSTRUCTOR;
-   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
+   ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
    fail_if(real__ != 0);
    __EFL_MAIN_DESTRUCTOR;
@@ -270,7 +270,7 @@ suite_setup(Eina_Bool legacy)
    else
      failed_count = _efl_suite_build_and_run(0, NULL,
                                              "Efl_Ui_Init", ui_init, NULL, NULL);
-     
+
    failed_count += !elm_init(1, (char*[]){"exe"});
    if (buffer)
      {

@@ -2375,14 +2375,14 @@ _efl_net_dialer_http_ssl_certificate_revocation_list_get(const Eo *o EINA_UNUSED
 }
 
 EOLIAN static int64_t
-_efl_net_dialer_http_date_parse(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, const char *str)
+_efl_net_dialer_http_date_parse(const char *str)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
    return curl_getdate(str, NULL);
 }
 
 EOLIAN static char *
-_efl_net_dialer_http_date_serialize(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, int64_t ts)
+_efl_net_dialer_http_date_serialize(int64_t ts)
 {
    static const char *const wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
    static const char * const month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };

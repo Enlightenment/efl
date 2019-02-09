@@ -29,7 +29,7 @@ EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_bar, int *, NULL, EFL_FUNC_CALL(x)
 static Eina_Bool
 _class_simple_class_initializer(Efl_Class *klass)
 {
-   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;
+   const Efl_Object_Ops *opsp = NULL;
 
 #ifndef CLASS_SIMPLE_EXTRA_OPS
 #define CLASS_SIMPLE_EXTRA_OPS
@@ -45,12 +45,7 @@ _class_simple_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-#ifdef CLASS_SIMPLE_EXTRA_CLASS_OPS
-   EFL_OPS_DEFINE(cops, CLASS_SIMPLE_EXTRA_CLASS_OPS);
-   copsp = &cops;
-#endif
-
-   return efl_class_functions_set(klass, opsp, copsp, NULL);
+   return efl_class_functions_set(klass, opsp, NULL, NULL);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {

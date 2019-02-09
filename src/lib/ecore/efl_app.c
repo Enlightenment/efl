@@ -15,7 +15,7 @@
 Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
 
 EOLIAN static Efl_App*
-_efl_app_app_main_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_app_app_main_get(void)
 {
    if (_mainloop_singleton) return _mainloop_singleton;
    _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);

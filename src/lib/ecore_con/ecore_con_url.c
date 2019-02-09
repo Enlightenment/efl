@@ -734,7 +734,7 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
 
    if (url_con->time.condition != ECORE_CON_URL_TIME_NONE)
      {
-        char *ts = efl_net_dialer_http_date_serialize(EFL_NET_DIALER_HTTP_CLASS, url_con->time.stamp);
+        char *ts = efl_net_dialer_http_date_serialize(url_con->time.stamp);
         if (ts)
           {
              efl_net_dialer_http_request_header_add(url_con->dialer,

@@ -96,7 +96,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_core_env_test_process)
 {
-   Efl_Core_Env *env_fork, *env = efl_env_self(EFL_CORE_PROC_ENV_CLASS);
+   Efl_Core_Env *env_fork, *env = efl_env_self();
 
    ck_assert(env);
 
@@ -110,7 +110,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_core_env_test_undepend_fork)
 {
-   Efl_Core_Env *env_fork, *env = efl_env_self(EFL_CORE_PROC_ENV_CLASS);
+   Efl_Core_Env *env_fork, *env = efl_env_self();
 
    ck_assert(env);
 

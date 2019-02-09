@@ -125,7 +125,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
    eina_stringshare_del(fcn);
 
    Eina_Strbuf *flagbuf = NULL;
-   int nidx = !legacy || !eolian_function_is_class(fid);
+   int nidx = !eolian_function_is_class(fid);
 
    eina_strbuf_append_char(buf, '(');
    if (nidx)

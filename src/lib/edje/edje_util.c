@@ -1979,7 +1979,6 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
           {
              char *mkup;
              mkup = efl_text_markup_util_text_to_markup(
-                EFL_TEXT_MARKUP_UTIL_CLASS,
                 text);
              rp->typedata.text->text = eina_stringshare_add(mkup);
              free(mkup);

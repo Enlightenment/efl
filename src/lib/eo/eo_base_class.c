@@ -1850,13 +1850,13 @@ _efl_object_event_freeze_count_get(const Eo *obj EINA_UNUSED, Efl_Object_Data *p
 }
 
 EOLIAN static void
-_efl_object_event_global_freeze(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_freeze(void)
 {
    event_freeze_count++;
 }
 
 EOLIAN static void
-_efl_object_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_thaw(void)
 {
    if (event_freeze_count > 0)
      {
@@ -1869,7 +1869,7 @@ _efl_object_event_global_thaw(Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
 }
 
 EOLIAN static int
-_efl_object_event_global_freeze_count_get(const Eo *klass EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_object_event_global_freeze_count_get(void)
 {
    return event_freeze_count;
 }

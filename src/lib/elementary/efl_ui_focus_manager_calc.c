@@ -157,7 +157,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FREE(border->one_direction, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
         b->cleanup_nodes = eina_list_remove(b->cleanup_nodes, node);
      }
 
@@ -165,7 +165,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FOREACH(border->one_direction, lnode, partner)
      {
-        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(direction));
 
         comp_border->cleanup_nodes = eina_list_append(comp_border->cleanup_nodes, node);
      }
@@ -183,7 +183,7 @@ border_onedirection_cleanup(Node *node, Efl_Ui_Focus_Direction direction)
 
    EINA_LIST_FREE(border->cleanup_nodes, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
         b->one_direction = eina_list_remove(b->one_direction, node);
      }
 }

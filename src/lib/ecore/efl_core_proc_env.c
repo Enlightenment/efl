@@ -131,7 +131,7 @@ _efl_core_proc_env_efl_object_constructor(Eo *obj, Efl_Core_Proc_Env_Data *pd EI
 }
 
 EOLIAN static Efl_Core_Env*
-_efl_core_proc_env_self(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_core_proc_env_self(void)
 {
    if (!env)
      {

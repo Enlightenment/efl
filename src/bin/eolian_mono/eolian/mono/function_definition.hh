@@ -147,11 +147,12 @@ struct function_definition_generator
         << (do_super ? " protected " : " private ") << "static extern "
         << eolian_mono::marshall_type(true)
         << " " << string
-        << "(System.IntPtr obj"
-        << *grammar::attribute_reorder<-1, -1>
+        << "(" << (f.is_static ? "" : "System.IntPtr obj")
+        << ((!f.is_static && (f.parameters.size() > 0)) ? ", " : "")
+        << (grammar::attribute_reorder<-1, -1>
         (
-         (", " << marshall_annotation << " " << marshall_parameter)
-        )
+         (marshall_annotation << " " << marshall_parameter)
+        ) % ",")
         << ");\n")
        .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
       return false;
@@ -170,14 +171,14 @@ struct function_definition_generator
     if (do_super && !f.is_static)
       self = "(inherited ? Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass) : " + self + ")";
     else if (f.is_static)
-      self = name_helpers::klass_get_full_name(f.klass) + "()";
+      self = "";
 
     if(!as_generator
        (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble() << string << "("
-        << self
-        << *(", " << argument_invocation ) << ");\n"
+        << self << ((!f.is_static && (f.parameters.size() > 0)) ? "," : "")
+        << (argument_invocation % ", ") << ");\n"
         << eolian_mono::function_definition_epilogue()
         << " }\n")
        .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters, f, f.c_name, f.parameters, f), context))

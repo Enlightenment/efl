@@ -1122,7 +1122,7 @@ _efl_ui_theme_efl_object_destructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Theme *
-_efl_ui_theme_default_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_ui_theme_default_get(void)
 {
    if (theme_default)
      return theme_default->eo_theme;

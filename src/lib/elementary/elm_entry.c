@@ -2231,14 +2231,14 @@ _entry_changed_user_signal_cb(void *data,
              atspi_info.content = edje_info->change.insert.content;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
+             efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, &atspi_info);
           }
         else if (edje_info && !edje_info->insert)
           {
              atspi_info.content = edje_info->change.del.content;
              atspi_info.pos = MIN(edje_info->change.del.start, edje_info->change.del.end);
              atspi_info.len = MAX(edje_info->change.del.start, edje_info->change.del.end) - atspi_info.pos;
-             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
+             efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, &atspi_info);
           }
      }
 }
@@ -2263,7 +2263,7 @@ _entry_preedit_changed_signal_cb(void *data,
              atspi_info.content = text;
              atspi_info.pos = edje_info->change.insert.pos;
              atspi_info.len = edje_info->change.insert.plain_length;
-             efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN,
+             efl_access_object_event_emit(
                                                        data,
                                                        EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED,
                                                        &atspi_info);
@@ -2355,7 +2355,7 @@ _entry_selection_changed_signal_cb(void *data,
      _selection_store(ELM_SEL_TYPE_PRIMARY, data);
    _update_selection_handler(data);
    if (_elm_config->atspi_mode)
-     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
+     efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -2466,7 +2466,7 @@ _entry_cursor_changed_signal_cb(void *data,
    efl_event_callback_legacy_call(data, ELM_ENTRY_EVENT_CURSOR_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
-     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
@@ -2478,7 +2478,7 @@ _entry_cursor_changed_manual_signal_cb(void *data,
    efl_event_callback_legacy_call
      (data, ELM_ENTRY_EVENT_CURSOR_CHANGED_MANUAL, NULL);
    if (_elm_config->atspi_mode)
-     efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
+     efl_access_object_event_emit( data, EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, NULL);
 }
 
 static void
