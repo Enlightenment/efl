@@ -819,7 +819,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 }
 
 EAPI Eina_Bool
-efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const Efl_Object_Property_Reflection_Ops *reflection_table)
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table)
 {
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
    Efl_Object_Ops empty_ops = { 0 };
@@ -830,11 +830,9 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
 
    if (!object_ops) object_ops = &empty_ops;
 
-   if (!class_ops) class_ops = &empty_ops;
-
    klass->reflection = reflection_table;
 
-   klass->ops_count = object_ops->count + class_ops->count;
+   klass->ops_count = object_ops->count;
 
    klass->base_id = _eo_ops_last_id;
    _eo_ops_last_id += klass->ops_count + 1;
@@ -851,8 +849,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
           _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
      }
 
-   return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE) &&
-      _eo_class_funcs_set(&klass->vtable, class_ops, klass, klass, object_ops->count, EINA_FALSE);
+   return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE);
 
 err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
@@ -1693,7 +1690,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* If functions haven't been set, invoke it with an empty ops structure. */
    if (!klass->functions_set)
      {
-        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL, NULL);
+        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
      }
 
    /* Mark which classes we implement */

@@ -29,7 +29,7 @@ _destructor_unref_class_initializer(Efl_Class *klass2)
          EFL_OBJECT_OP_FUNC(efl_destructor, _destructor_unref),
    );
 
-   return efl_class_functions_set(klass2, &ops, NULL, NULL);
+   return efl_class_functions_set(klass2, &ops, NULL);
 }
 
 EFL_START_TEST(efl_destructor_unref)

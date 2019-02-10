@@ -45,7 +45,7 @@ _class_simple_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-   return efl_class_functions_set(klass, opsp, NULL, NULL);
+   return efl_class_functions_set(klass, opsp, NULL);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {

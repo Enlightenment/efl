@@ -24,8 +24,6 @@ extern const Efl_Event_Description _EV_A_CHANGED2;
 #define SIMPLE_CLASS simple_class_get()
 const Efl_Class *simple_class_get(void);
 
-EAPI int simple2_class_beef_get(const Efl_Class *obj);
-
 #define SIMPLE2_CLASS simple2_class_get()
 const Efl_Class *simple2_class_get(void);
 

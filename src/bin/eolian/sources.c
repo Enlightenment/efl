@@ -907,7 +907,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf)
         eina_strbuf_append(buf, "#endif\n\n");
      }
 
-   eina_strbuf_append(buf, "   return efl_class_functions_set(klass, opsp, NULL, NULL);\n");
+   eina_strbuf_append(buf, "   return efl_class_functions_set(klass, opsp, NULL);\n");
 
    eina_strbuf_free(ops);
 
