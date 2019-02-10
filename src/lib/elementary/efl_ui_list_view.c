@@ -611,7 +611,6 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
    efl_gfx_stack_raise((Eo *)o);
 
    efl_gfx_entity_visible_set(pd->pan_obj, EINA_TRUE);
-   efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    edje_object_size_min_calc(wd->resize_obj, &min.w, &min.h);
    efl_gfx_size_hint_restricted_min_set(obj, min);

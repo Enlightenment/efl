@@ -61,8 +61,6 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
    pd->file = NULL;
    pd->key = NULL;
 
-   efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
-
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
    return obj;
