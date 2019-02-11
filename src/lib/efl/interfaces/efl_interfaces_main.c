@@ -35,7 +35,6 @@
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"
 
-#include "interfaces/efl_gfx_color_class.eo.c"
 #include "interfaces/efl_gfx_text_class.eo.c"
 #include "interfaces/efl_gfx_size_class.eo.c"
 
