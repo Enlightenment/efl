@@ -60,6 +60,6 @@ class Elm.View.List extends Efl.Object
         Efl.Object.destructor;
     }
     constructors {
-        .genlist_set;
+        .genlist_set @optional;
     }
 }

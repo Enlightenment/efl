@@ -185,6 +185,8 @@ struct _Efl_Class
 
    const _Efl_Class **mro;
 
+   const Efl_Object_Property_Reflection_Ops *reflection;
+
    /* cached object for faster allocation */
    struct {
       Eina_Trash  *trash;

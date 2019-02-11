@@ -26,6 +26,6 @@ class Elm.View.Form extends Efl.Object
         Efl.Object.destructor;
     }
     constructors {
-        .model_set;
+        .model_set @optional;
     }
 }

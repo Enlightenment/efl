@@ -595,7 +595,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
    }
    constructors {
-      .style;
+      .style @optional;
    }
    events {
       moved: Efl.Object; [[Called when widget moved]]

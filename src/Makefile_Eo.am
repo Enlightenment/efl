@@ -4,8 +4,7 @@
 eo_eolian_files = \
 	lib/eo/efl_object.eo \
 	lib/eo/efl_class.eo \
-	lib/eo/efl_object_override.eo \
-	lib/eo/efl_interface.eo
+	lib/eo/efl_object_override.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)
 eo_eolian_h = $(eo_eolian_files:%.eo=%.eo.h)
@@ -149,7 +148,8 @@ tests/eo/suite/eo_test_value.c \
 tests/eo/suite/eo_test_event.c \
 tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c \
-tests/eo/suite/eo_test_lifecycle.c
+tests/eo/suite/eo_test_lifecycle.c \
+tests/eo/suite/eo_test_reflection.c
 
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \

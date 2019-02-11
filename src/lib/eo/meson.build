@@ -4,8 +4,7 @@ eo_pub_deps = [eina]
 pub_eo_files = [
   'efl_object.eo',
   'efl_class.eo',
-  'efl_object_override.eo',
-  'efl_interface.eo'
+  'efl_object_override.eo'
 ]
 
 eo_src = [

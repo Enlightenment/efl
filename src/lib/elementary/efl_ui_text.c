@@ -91,7 +91,7 @@ struct _Efl_Ui_Text_Data
         const char  *hover_style; /**< style of a hover object */
      } anchor_hover;
 
-   Elm_Sel_Format                        cnp_mode;
+   Efl_Ui_Selection_Format               cnp_mode;
    Elm_Sel_Format                        drop_format;
 
    struct {
@@ -599,8 +599,10 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
                    Efl_Ui_Selection_Data *sel_data)
 {
    Efl_Text_Cursor_Cursor *cur, *start, *end;
+   Efl_Ui_Text_Change_Info info = { NULL, 0, 0, 0, 0 };
 
    char *buf = eina_slice_strdup(sel_data->content);
+   size_t len = sel_data->content.len;
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    if (!efl_text_cursor_equal(obj, start, end))
@@ -608,6 +610,10 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
         efl_canvas_text_range_delete(obj, start, end);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   info.insert = EINA_TRUE;
+   info.position = efl_text_cursor_position_get(obj, cur);
+   info.length = len;
+   info.content = buf;
    if (sel_data->format == EFL_UI_SELECTION_FORMAT_MARKUP)
      {
         efl_text_markup_interactive_cursor_markup_insert(obj, cur, buf);
@@ -616,6 +622,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
      {
         efl_text_cursor_text_insert(obj, cur, buf);
      }
+   efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED_USER, &info);
    free(buf);
 }
 
@@ -684,7 +691,7 @@ _get_drop_format(Evas_Object *obj)
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if ((sd->editable) && (!sd->single_line) && (!sd->password) && (!sd->disabled))
-     return EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+     return EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    return EFL_UI_SELECTION_FORMAT_MARKUP;
 }
 
@@ -2120,6 +2127,9 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    elm_widget_sub_object_parent_add(obj);
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, obj);
    sd->text_obj = text_obj;
    sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
@@ -2132,7 +2142,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    sd->auto_save = EINA_TRUE;
    sd->editable = EINA_TRUE;
    sd->sel_allow = EINA_TRUE;
-   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE;
+   sd->drop_format = EFL_UI_SELECTION_FORMAT_MARKUP | EFL_UI_SELECTION_FORMAT_IMAGE;
    sd->last.scroll = EINA_SIZE2D(0, 0);
    sd->sel_handler_disabled = EINA_TRUE;
 
@@ -2555,7 +2565,7 @@ _efl_ui_text_cnp_mode_set(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Ui_Selection_Format
    if (sd->cnp_mode == EFL_UI_SELECTION_FORMAT_TEXT)
      dnd_format = EFL_UI_SELECTION_FORMAT_TEXT;
    else if (cnp_mode == EFL_UI_SELECTION_FORMAT_IMAGE)
-     dnd_format |= ELM_SEL_FORMAT_IMAGE;
+     dnd_format |= EFL_UI_SELECTION_FORMAT_IMAGE;
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
@@ -3892,13 +3902,14 @@ _decoration_defer_all(Eo *obj)
 }
 
 static void
-_efl_ui_text_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_text_changed_cb(void *data, const Efl_Event *event)
 {
    if (efl_invalidated_get(event->object)) return;
    EFL_UI_TEXT_DATA_GET(data, sd);
    sd->text_changed = EINA_TRUE;
    sd->cursor_update = EINA_TRUE;
    _update_guide_text(data, sd);
+   efl_event_callback_call(event->object, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    elm_layout_sizing_eval(data);
    _decoration_defer(data);
 }

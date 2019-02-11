@@ -9,6 +9,7 @@ engine_src = files([
   'evas_ector_software.h',
 ])
 
+gen_src = []
 
 pub_eo_files = [
   'evas_ector_software_buffer.eo'
@@ -17,7 +18,7 @@ pub_eo_files = [
 subdir('filters')
 
 foreach eo_file : pub_eo_files
-  engine_src += custom_target('eolian_gen_' + eo_file,
+  gen_src += custom_target('eolian_gen_' + eo_file,
     input : eo_file,
     output : [eo_file + '.h'],
     depfile : eo_file + '.d',
@@ -27,6 +28,8 @@ foreach eo_file : pub_eo_files
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
 endforeach
+
+engine_src += gen_src
 
 engine_deps = [draw, dl]
 

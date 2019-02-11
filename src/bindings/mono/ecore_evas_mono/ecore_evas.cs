@@ -25,7 +25,7 @@ public class EcoreEvas
         ecore_evas_init();
         handle = ecore_evas_new(IntPtr.Zero, 0, 0, 640, 480, IntPtr.Zero);
         if(handle == IntPtr.Zero)
-            System.Console.WriteLine("Couldn't create a ecore evas");
+            Eina.Log.Error("Couldn't create a ecore evas");
         ecore_evas_show(handle);
     }
 

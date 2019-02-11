@@ -70,7 +70,8 @@ foreach engine_conf : engines
       if engine == 'software_generic'
         software_generic = declare_dependency(
           include_directories: engine_include_dir,
-          source : engine_src,
+          sources : gen_src,
+          dependencies : [eina, evas_pre] + engine_deps,
           link_with : tmp
         )
       endif

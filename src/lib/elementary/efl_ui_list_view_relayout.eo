@@ -1,4 +1,4 @@
-interface Efl.Ui.List_View_Relayout extends Efl.Interface
+interface Efl.Ui.List_View_Relayout
 {
    methods {
       layout_do {

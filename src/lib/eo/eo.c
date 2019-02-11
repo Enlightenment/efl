@@ -819,7 +819,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 }
 
 EAPI Eina_Bool
-efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops)
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const Efl_Object_Property_Reflection_Ops *reflection_table)
 {
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
    Efl_Object_Ops empty_ops = { 0 };
@@ -831,6 +831,8 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
    if (!object_ops) object_ops = &empty_ops;
 
    if (!class_ops) class_ops = &empty_ops;
+
+   klass->reflection = reflection_table;
 
    klass->ops_count = object_ops->count + class_ops->count;
 
@@ -982,7 +984,7 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
         // fails or succeeds based on if service is there.
         //
         // until there is a better solution - don't complain here.
-        // 
+        //
         //             ERR("Object of class '%s' - Finalizing the object failed.",
         //                   klass->desc->name);
         goto cleanup;
@@ -1691,7 +1693,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
    /* If functions haven't been set, invoke it with an empty ops structure. */
    if (!klass->functions_set)
      {
-        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL);
+        efl_class_functions_set(_eo_class_id_get(klass), NULL, NULL, NULL);
      }
 
    /* Mark which classes we implement */
@@ -3597,3 +3599,63 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_OBJECT = {
 };
 
 EOAPI const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT = &_EINA_VALUE_TYPE_OBJECT;
+
+static const Efl_Object_Property_Reflection*
+_efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
+{
+   const _Efl_Class **klass_iter = klass->extensions;
+   const Efl_Object_Property_Reflection_Ops *ref = klass->reflection;
+   unsigned int i;
+
+   for (i = 0; ref && i < ref->count; ++i)
+     {
+        if (eina_streq(property_name, ref->table[i].property_name))
+          return &ref->table[i];
+     }
+
+   if (klass->parent)
+     {
+        const Efl_Object_Property_Reflection *ref;
+
+        ref = _efl_class_reflection_find(klass->parent, property_name);
+        if (ref) return ref;
+     }
+
+   for (; *klass_iter; klass_iter++)
+     {
+        return _efl_class_reflection_find(*klass_iter, property_name);
+     }
+
+   return NULL;
+}
+
+EAPI void
+efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value value)
+{
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (!reflection || !reflection->set) goto end;
+
+   reflection->set(obj_id, value);
+   EO_OBJ_DONE(obj_id);
+   return;
+end:
+   eina_value_flush(&value);
+   EO_OBJ_DONE(obj_id);
+}
+
+EAPI Eina_Value
+efl_property_reflection_get(Eo *obj_id, const char *property_name)
+{
+   EO_OBJ_POINTER(obj_id, obj);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (!reflection || !reflection->get) goto end;
+
+   return reflection->get(obj_id);
+end:
+   EO_OBJ_DONE(obj_id);
+
+   return EINA_VALUE_EMPTY;
+}

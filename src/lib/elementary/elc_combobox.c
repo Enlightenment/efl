@@ -279,7 +279,7 @@ _gl_filter_finished_cb(void *data, const Efl_Event *event)
         else _table_resize(data);
         elm_genlist_item_selected_set(sd->item, EINA_TRUE);
      }
-   else 
+   else
      {
         sd->expanded = EINA_FALSE;
         elm_layout_signal_emit(sd->hover, "elm,action,hide,no_animate", "elm");
@@ -616,7 +616,7 @@ _elm_combobox_class_initializer(Efl_Class *klass)
       EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
    );
 
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 static const Efl_Class_Description _elm_combobox_class_desc = {

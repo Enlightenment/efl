@@ -229,6 +229,6 @@ class Elm.Glview extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.Ui.Legacy
             ]]
    }
    constructors {
-      .version_constructor;
+      .version_constructor @optional;
    }
 }

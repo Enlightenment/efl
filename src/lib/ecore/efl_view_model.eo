@@ -99,6 +99,6 @@ class Efl.View_Model extends Efl.Composite_Model
       Efl.Model.property { set; get; }
    }
    constructors {
-      Efl.View_Model.children_bind;
+      Efl.View_Model.children_bind @optional;
    }
 }

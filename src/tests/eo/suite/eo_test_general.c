@@ -472,7 +472,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_destructor, _man_des),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 EFL_START_TEST(eo_man_free)
@@ -1049,7 +1049,7 @@ _multi_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(resolve_a_print, _a_print),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 EFL_START_TEST(efl_func_resolve)
@@ -1215,7 +1215,7 @@ _add_failures_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_finalize, _efl_add_failures_finalize),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 EFL_START_TEST(efl_add_failures)
@@ -1628,14 +1628,14 @@ static Eina_Bool
 _cast_inherit_class_initializer_1(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_1), );
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 static Eina_Bool
 _cast_inherit_class_initializer_2(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_2), );
-   return efl_class_functions_set(klass, &ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL, NULL);
 }
 
 EFL_START_TEST(efl_cast_test)
