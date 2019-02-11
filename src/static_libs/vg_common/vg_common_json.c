@@ -193,6 +193,68 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 }
 
 static void
+_construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer)
+{
+   if (!parent) return;
+
+   for (unsigned int i = 0; i < layer->mMaskList.size; i++)
+     {
+        LOTMask *mask = &layer->mMaskList.ptr[i];
+        if (!mask) continue;
+
+        const float *data = mask->mPath.ptPtr;
+        if (!data) continue;
+
+        char *key = _get_key_val(mask);
+        Efl_Canvas_Vg_Shape *mask_shape = efl_key_data_get(parent, key);
+        if (!mask_shape)
+          {
+             mask_shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+             efl_key_data_set(parent, key, mask_shape);
+          }
+        else
+          efl_gfx_path_reset(mask_shape);
+
+        efl_gfx_entity_visible_set(mask_shape, EINA_TRUE);
+
+        efl_gfx_path_reserve(mask_shape, mask->mPath.elmCount, mask->mPath.ptCount);
+
+        for (int i = 0; i < mask->mPath.elmCount; i++)
+          {
+             switch (mask->mPath.elmPtr[i])
+               {
+                case 0:
+                   efl_gfx_path_append_move_to(mask_shape, data[0], data[1]);
+                   data += 2;
+                   break;
+                case 1:
+                   efl_gfx_path_append_line_to(mask_shape, data[0], data[1]);
+                   data += 2;
+                   break;
+                case 2:
+                   efl_gfx_path_append_cubic_to(mask_shape, data[0], data[1], data[2], data[3], data[4], data[5]);
+                   data += 6;
+                   break;
+                case 3:
+                   efl_gfx_path_append_close(mask_shape);
+                   break;
+                default:
+                   ERR("No reserved path type = %d", mask->mPath.elmPtr[i]);
+                   break;
+               }
+          }
+
+        //Temporary solid type setting.
+        float pa = ((float)mask->mAlpha) / 255;
+        int r = (int)(((float) 255) * pa);
+        int g = (int)(((float) 255) * pa);
+        int b = (int)(((float) 255) * pa);
+        int a = (int)(((float) 255) * pa);
+        efl_gfx_color_set(mask_shape, r, g, b, a);
+     }
+}
+
+static void
 _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
    if (!layer->mVisible)
@@ -248,9 +310,44 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               break;
            default:
               ERR("No reserved Matte type = %d", matte);
+              break;
           }
-     }
 
+        //Make mask layer
+        if (clayer->mMaskList.size > 0)
+          {
+             key = _get_key_val(clayer->mMaskList.ptr);
+             Efl_Canvas_Vg_Container *mask_layer = efl_key_data_get(root, key);
+             if (!mask_layer)
+               {
+                  mask_layer = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, root);
+                  efl_key_data_set(root, key, mask_layer);
+               }
+             _construct_mask_nodes(mask_layer, clayer);
+
+             //TODO: 1 and 2 mode are temporary.
+             //      We need to implements modes and interface related to mask.
+             LOTMaskMode mask_mode = clayer->mMaskList.ptr->mMode;
+             switch (mask_mode)
+               {
+                case MaskModeAdd:       //a
+                   //ERR("TODO: Mask Add");
+                case MaskModeIntersect: //i
+                   //ERR("TODO: Mask Intersect");
+                case MaskModeDifference: //f
+                   //ERR("TODO: Mask Difference");
+                   efl_canvas_vg_node_mask_set(ptree, mask_layer, 1 /*mask_mode*/);
+                   break;
+                case MaskModeSubstract: //s
+                   //ERR("TODO: Mask Substract");
+                   efl_canvas_vg_node_mask_set(ptree, mask_layer, 2 /*mask_mode*/);
+                   break;
+                default:
+                   break;
+               }
+          }
+
+     }
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
      _construct_drawable_nodes(root, layer, depth);
