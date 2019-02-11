@@ -169,7 +169,7 @@ struct function_definition_generator
     // inherited is set in the constructor, true if this instance is from a pure C# class (not generated).
     if (do_super && !f.is_static)
       self = "(inherited ? Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass) : " + self + ")";
-    else
+    else if (f.is_static)
       self = name_helpers::klass_get_full_name(f.klass) + "()";
 
     if(!as_generator

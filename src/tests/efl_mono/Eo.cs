@@ -369,4 +369,17 @@ class TestConstructors
     }
 }
 
+class TestInterfaceConcrete
+{
+    // For T7619
+    public static void test_iface_concrete_methods()
+    {
+        var obj = new Dummy.TestObject();
+        Dummy.TestIface iface = Dummy.TestIfaceConcrete.static_cast(obj);
+
+        iface.IfaceProp = 1970;
+        Test.AssertEquals(iface.IfaceProp, 1970);
+    }
+}
+
 }
