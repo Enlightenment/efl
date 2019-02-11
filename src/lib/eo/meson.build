@@ -50,7 +50,7 @@ eo_lib = library('eo',
     version : meson.project_version()
 )
 
-library('eo_dbg',
+eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
     dependencies: [eina, valgrind, dl, execinfo],
     install: true,
@@ -61,6 +61,13 @@ library('eo_dbg',
 eo = declare_dependency(
   include_directories: [include_directories('.')],
   link_with: eo_lib,
+  sources : pub_eo_file_target + priv_eo_file_target,
+  dependencies: eo_deps + eo_pub_deps,
+)
+
+eo_dbg = declare_dependency(
+  include_directories: [include_directories('.')],
+  link_with: eo_lib_dbg,
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: eo_deps + eo_pub_deps,
 )
