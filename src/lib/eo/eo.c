@@ -1766,6 +1766,10 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
 
+   // Everything can add a override to an existing class, which pretty much means, everything is a efl override
+   // This is required in order to support our debug-profile for the users of efl_override
+   if (EINA_UNLIKELY(klass_id == EFL_OBJECT_OVERRIDE_CLASS)) return EINA_TRUE;
+
    // Case where we are looking if eo_id is a class that contain klass_id
    if (EINA_UNLIKELY(_eo_is_a_class(eo_id)))
      {
