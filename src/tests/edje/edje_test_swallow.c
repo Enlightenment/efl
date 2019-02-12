@@ -107,7 +107,7 @@ EFL_START_TEST(edje_test_swallows_eoapi)
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
-   efl_content_remove(ly, o1);
+   efl_canvas_layout_content_remove(ly, o1);
    ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));

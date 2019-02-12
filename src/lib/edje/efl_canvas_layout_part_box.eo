@@ -10,7 +10,6 @@ class @beta Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements
    implements {
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

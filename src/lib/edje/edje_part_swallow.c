@@ -27,7 +27,7 @@ _efl_canvas_layout_part_swallow_efl_content_content_unset(Eo *obj, void *_pd EIN
    PROXY_DATA_GET(obj, pd);
    Efl_Gfx_Entity *content = _edje_efl_content_content_get(pd->ed, pd->part);
    if (!content) return NULL;
-   efl_content_remove(obj, content);
+   efl_canvas_layout_content_remove(obj, content);
    return content;
 }
 

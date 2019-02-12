@@ -30,12 +30,6 @@ _efl_canvas_layout_part_table_efl_container_content_count(Eo *obj, void *_pd EIN
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   return efl_pack_unpack(obj, content);
-}
-
-EOLIAN static Eina_Bool
 _efl_canvas_layout_part_table_efl_pack_pack_clear(Eo *obj, void *_pd EINA_UNUSED)
 {
    PROXY_DATA_GET(obj, pd);

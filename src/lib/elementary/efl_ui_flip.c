@@ -2210,15 +2210,6 @@ _efl_ui_flip_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
-{
-   pd->content_list = eina_list_remove(pd->content_list, content);
-   pd->content_list = eina_list_remove(pd->content_list, content);
-   _content_removed(obj, pd, content);
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);

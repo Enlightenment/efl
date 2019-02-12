@@ -102,7 +102,7 @@ EFL_START_TEST(edje_test_box_eoapi)
    fail_if(i != 3);
    eina_iterator_free(it);
 
-   fail_if(!efl_content_remove(efl_part(obj, "box"), sobjs[0]));
+   fail_if(!efl_pack_unpack(efl_part(obj, "box"), sobjs[0]));
    fail_if(efl_content_count(efl_part(obj, "box")) != 2);
    fail_if(!efl_pack_unpack_at(efl_part(obj, "box"), 1));
    fail_if(efl_content_count(efl_part(obj, "box")) != 1);

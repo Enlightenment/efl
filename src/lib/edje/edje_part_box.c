@@ -99,12 +99,6 @@ _efl_canvas_layout_part_box_efl_pack_linear_pack_content_get(Eo *obj, void *_pd 
    return _edje_part_box_content_at(pd->ed, pd->part, index);
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_layout_part_box_efl_container_content_remove(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
-{
-   return efl_pack_unpack(obj, subobj);
-}
-
 EOLIAN static int
 _efl_canvas_layout_part_box_efl_pack_linear_pack_index_get(Eo *obj, void *_pd EINA_UNUSED, const Efl_Gfx_Entity * subobj)
 {

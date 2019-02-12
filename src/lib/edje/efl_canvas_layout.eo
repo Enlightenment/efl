@@ -80,6 +80,13 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
              error: Efl.Gfx.Image_Load_Error(Efl.Gfx.Image_Load_Error.none); [[The load error code.]]
           }
       }
+      content_remove {
+         [[Unswallow an object from this Edje.]]
+         params {
+            @in content: Efl.Gfx.Entity; [[To be removed content.]]
+         }
+         return: bool; [[$false if $content was not a child or can not be removed.]]
+      }
    }
    events {
       part,invalid @beta: string; [[Emitted when trying to use an invalid part.
@@ -122,7 +129,6 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.File.load;
-      Efl.Container.content_remove;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]

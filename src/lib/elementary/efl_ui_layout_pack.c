@@ -112,13 +112,6 @@ _efl_ui_layout_part_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_D
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_box_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *content)
-{
-   // alias for efl_pack_unpack
-   return _efl_ui_layout_part_box_efl_pack_unpack(obj, pd, content);
-}
-
-EOLIAN static Eina_Bool
 _efl_ui_layout_part_box_efl_pack_pack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *subobj)
 {
    return _efl_ui_layout_box_append(pd->obj, pd->sd, pd->part, subobj);
@@ -279,13 +272,6 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
 {
    if (!subobj) return EINA_FALSE;
    return _efl_ui_layout_table_unpack(pd->obj, pd->sd, pd->part, subobj) == subobj;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *content)
-{
-   // alias for efl_pack_unpack
-   return _efl_ui_layout_part_table_efl_pack_unpack(obj, pd, content);
 }
 
 EOLIAN static Eina_Bool

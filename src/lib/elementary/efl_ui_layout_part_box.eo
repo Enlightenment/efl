@@ -22,7 +22,6 @@ class @beta Efl.Ui.Layout_Part_Box extends Efl.Object implements Efl.Pack_Linear
       Efl.Object.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Ui.Direction.direction { get; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;

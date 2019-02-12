@@ -3363,7 +3363,7 @@ _swallow_real_part_get(Evas_Object *obj_swallow)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
+_efl_canvas_layout_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -6461,7 +6461,7 @@ edje_object_part_swallow(Edje_Object *obj, const char *part, Evas_Object *obj_sw
 EAPI void
 edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow)
 {
-   efl_content_remove(obj, obj_swallow);
+   efl_canvas_layout_content_remove(obj, obj_swallow);
 }
 
 EAPI Evas_Object *

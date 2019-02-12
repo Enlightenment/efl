@@ -572,13 +572,6 @@ _efl_ui_table_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data
    return pd->count;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_table_efl_container_content_remove(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   return efl_pack_unpack(obj, content);
-}
-
-
 EOLIAN static Eina_Iterator *
 _efl_ui_table_efl_pack_table_table_contents_get(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED,
                                                 int col, int row, Eina_Bool below)
