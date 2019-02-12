@@ -10,7 +10,6 @@
 static Eina_Hash *_server_displays = NULL;
 static Eina_Hash *_client_displays = NULL;
 
-static Eina_Bool _cb_connect_idle(void *data);
 static Eina_Bool _cb_connect_data(void *data, Ecore_Fd_Handler *hdl);
 static Eina_Bool _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync);
 
@@ -475,8 +474,6 @@ _recovery_timer_add(Ecore_Wl2_Display *ewd)
    Ecore_Wl2_Window *window;
 
    eina_hash_free_buckets(ewd->globals);
-   ecore_idle_enterer_del(ewd->idle_enterer);
-   ewd->idle_enterer = NULL;
 
    ecore_main_fd_handler_del(ewd->fd_hdl);
    ewd->fd_hdl = NULL;
@@ -528,6 +525,30 @@ _begin_recovery_maybe(Ecore_Wl2_Display *ewd, int code)
      }
 }
 
+static void
+_cb_connect_pre(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED)
+{
+   Ecore_Wl2_Display *ewd = data;
+   int ret = 0, code;
+
+   while ((wl_display_prepare_read(ewd->wl.display) != 0) && (ret >= 0))
+     ret = wl_display_dispatch_pending(ewd->wl.display);
+
+   if (ret < 0) goto err;
+
+   ret = wl_display_get_error(ewd->wl.display);
+   if (ret < 0) goto err;
+
+   return;
+
+err:
+   code = errno;
+   if ((ret < 0) && (code != EAGAIN))
+     {
+        _begin_recovery_maybe(ewd, code);
+     }
+}
+
 static Eina_Bool
 _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
 {
@@ -536,17 +557,20 @@ _cb_connect_data(void *data, Ecore_Fd_Handler *hdl)
 
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
      {
-        ret = wl_display_dispatch(ewd->wl.display);
+        ret = wl_display_read_events(ewd->wl.display);
         code = errno;
         if ((ret < 0) && (code != EAGAIN)) goto err;
      }
+   else
+     wl_display_cancel_read(ewd->wl.display);
 
+   wl_display_dispatch_pending(ewd->wl.display);
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
      {
         ret = wl_display_flush(ewd->wl.display);
         code = errno;
         if (ret >= 0)
-          ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ);
+          ecore_main_fd_handler_active_set(hdl, ECORE_FD_READ | ECORE_FD_ALWAYS);
 
         if ((ret < 0) && (code != EAGAIN)) goto err;
      }
@@ -570,34 +594,6 @@ _cb_globals_hash_del(void *data)
    eina_stringshare_del(global->interface);
 
    free(global);
-}
-
-static Eina_Bool
-_cb_connect_idle(void *data)
-{
-   Ecore_Wl2_Display *ewd = data;
-   int ret = 0, code;
-
-   ret = wl_display_get_error(ewd->wl.display);
-   code = errno;
-   if (ret < 0) goto err;
-
-   ret = wl_display_dispatch_pending(ewd->wl.display);
-   code = errno;
-   if (ret < 0) goto err;
-
-   return ECORE_CALLBACK_RENEW;
-
-err:
-   if ((ret < 0) && (code != EAGAIN))
-     {
-        ewd->idle_enterer = NULL;
-        _begin_recovery_maybe(ewd, code);
-
-        return ECORE_CALLBACK_CANCEL;
-     }
-
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Ecore_Wl2_Global *
@@ -742,10 +738,11 @@ _ecore_wl2_display_connect(Ecore_Wl2_Display *ewd, Eina_Bool sync)
 
    ewd->fd_hdl =
      ecore_main_fd_handler_add(wl_display_get_fd(ewd->wl.display),
-                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR,
-                               _cb_connect_data, ewd, NULL, NULL);
+                               ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ERROR | ECORE_FD_ALWAYS,
+                               _cb_connect_data, ewd, NULL, ewd);
 
-   ewd->idle_enterer = ecore_idle_enterer_add(_cb_connect_idle, ewd);
+   ecore_main_fd_handler_prepare_callback_set
+     (ewd->fd_hdl, _cb_connect_pre, ewd);
 
    _ecore_wl2_display_event(ewd, ECORE_WL2_EVENT_CONNECT);
    return EINA_TRUE;
@@ -767,8 +764,6 @@ _ecore_wl2_display_cleanup(Ecore_Wl2_Display *ewd)
    /* free each output */
    EINA_INLIST_FOREACH_SAFE(ewd->outputs, tmp, output)
      _ecore_wl2_output_del(output);
-
-   if (ewd->idle_enterer) ecore_idle_enterer_del(ewd->idle_enterer);
 
    if (ewd->fd_hdl) ecore_main_fd_handler_del(ewd->fd_hdl);
 
@@ -1160,7 +1155,7 @@ ecore_wl2_display_flush(Ecore_Wl2_Display *display)
    if (code == EAGAIN)
      {
         ecore_main_fd_handler_active_set(display->fd_hdl,
-                                         (ECORE_FD_READ | ECORE_FD_WRITE));
+                                         (ECORE_FD_READ | ECORE_FD_WRITE | ECORE_FD_ALWAYS));
         return;
      }
 
