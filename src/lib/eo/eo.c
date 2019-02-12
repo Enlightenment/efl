@@ -3674,6 +3674,19 @@ efl_property_reflection_get(Eo *obj_id, const char *property_name)
    return r;
 }
 
+EAPI Eina_Bool
+efl_property_reflection_exist(Eo *obj_id, const char *property_name)
+{
+   Eina_Bool r = EINA_FALSE;
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (reflection) r = EINA_TRUE;
+ end:
+   EO_OBJ_DONE(obj_id);
+   return r;
+}
+
 EAPI Efl_Class_Type
 efl_class_type_get(const Efl_Class *klass_id)
 {
