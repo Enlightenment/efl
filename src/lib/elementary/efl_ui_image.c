@@ -595,6 +595,8 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
+   Efl_Model *model;
+
    if (elm_widget_is_legacy(obj))
      efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                             _on_size_hints_changed, sd);
@@ -607,12 +609,11 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
    ELM_SAFE_FREE(sd->remote.key, eina_stringshare_del);
 
-   if (sd->property.model)
+   model = efl_ui_view_model_get(obj);
+   if (model)
      {
-         efl_event_callback_del(sd->property.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+         efl_event_callback_del(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                 _efl_ui_image_model_properties_changed_cb, obj);
-         efl_unref(sd->property.model);
-         sd->property.model = NULL;
      }
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
@@ -1849,12 +1850,14 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
    Eina_File *f = NULL;
    char *file = NULL;
    char *key = NULL;
+   Efl_Model *model;
 
-   if (!pd->property.model) return ;
+   model = efl_ui_view_model_get(obj);
+   if (!model) return ;
 
-   vfile = efl_model_property_get(pd->property.model, pd->property.file);
+   vfile = efl_model_property_get(model, pd->property.file);
    if (!vfile) return;
-   vkey = efl_model_property_get(pd->property.model, pd->property.key);
+   vkey = efl_model_property_get(model, pd->property.key);
 
    if (eina_value_type_get(vfile) == EINA_VALUE_TYPE_ERROR)
      goto err;
@@ -1926,27 +1929,25 @@ _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event)
 EOLIAN static void
 _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *model)
 {
-   if (pd->property.model)
+   Efl_Model *setted;
+
+   setted = efl_ui_view_model_get(obj);
+   if (setted)
      {
-        efl_event_callback_del(pd->property.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+        efl_event_callback_del(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                _efl_ui_image_model_properties_changed_cb, obj);
      }
 
-   efl_replace(&pd->property.model, model);
+   efl_ui_view_model_set(efl_super(obj, EFL_UI_IMAGE_CLASS), model);
 
-   if (model)
+   setted = efl_ui_view_model_get(obj);
+   if (setted)
      {
-        efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+        efl_event_callback_add(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                _efl_ui_image_model_properties_changed_cb, obj);
      }
 
    _update_viewmodel(obj, pd);
-}
-
-EOLIAN static Efl_Model *
-_efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
-{
-   return pd->property.model;
 }
 
 EOLIAN static Eina_Error
@@ -1967,7 +1968,10 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
      {
         eina_stringshare_replace(&pd->property.key, property);
      }
-   else return EINA_FALSE;
+   else
+     {
+        return efl_ui_property_bind(efl_super(obj, EFL_UI_IMAGE_CLASS), key, property);
+     }
 
    _update_viewmodel(obj, pd);
    return 0;
