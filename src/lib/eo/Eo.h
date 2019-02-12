@@ -827,7 +827,7 @@ struct _Efl_Class_Description
 /**
  * Setter type which is used to set an #Eina_Value, this function should access one particular property field
  */
-typedef void (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
+typedef Eina_Error (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
 
 /**
  * Getter type which is used to get an #Eina_Value, this function should access one particular property field
@@ -1985,7 +1985,7 @@ EAPI Eina_Bool efl_destructed_is(const Eo *obj);
  * @param value The value to set, the value passed here will be flushed by the function
  *
  */
-EAPI void efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
+EAPI Eina_Error efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
 
 /**
  * @brief Retrieve an #Eina_Value containing the current value of the property specified with \c property_name.

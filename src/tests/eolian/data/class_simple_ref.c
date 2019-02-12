@@ -3,13 +3,19 @@ EWAPI float BAR = 10.300000f;
 Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 
 
-static void
+static Eina_Error
 __eolian_class_simple_a_set_reflect(Eo *obj, Eina_Value val)
 {
-   int cval;
-   eina_value_int_convert(&val, &cval);
+   Eina_Error r = 0;   int cval;
+   if (!eina_value_int_convert(&val, &cval))
+      {
+         r = EINA_ERROR_VALUE_FAILED;
+         goto end;
+      }
    efl_canvas_object_simple_a_set(obj, cval);
+ end:
    eina_value_flush(&val);
+   return r;
 }
 
 EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);

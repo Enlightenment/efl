@@ -3636,20 +3636,25 @@ _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
    return NULL;
 }
 
-EAPI void
+EAPI Eina_Error
 efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value value)
 {
+   Eina_Error r = EINA_ERROR_NOT_IMPLEMENTED;
+   Eina_Bool freed = EINA_FALSE;
+
    EO_OBJ_POINTER_GOTO(obj_id, obj, end);
    const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
 
-   if (!reflection || !reflection->set) goto end;
+   if (reflection && reflection->set)
+     {
+        r = reflection->set(obj_id, value);
+        freed = EINA_TRUE;
+     }
 
-   reflection->set(obj_id, value);
+ end:
+   if (!freed) eina_value_flush(&value);
    EO_OBJ_DONE(obj_id);
-   return;
-end:
-   eina_value_flush(&value);
-   EO_OBJ_DONE(obj_id);
+   return r;
 }
 
 EAPI Eina_Value

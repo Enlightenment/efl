@@ -408,23 +408,30 @@ _gen_reflect_set(Eina_Strbuf *buf, const char *cnamel, const Eolian_Type *valt,
    else
      eina_hash_set(refh, &fid, (void *)EOLIAN_PROP_SET);
 
-   eina_strbuf_append(buf, "\nstatic void\n");
+   eina_strbuf_append(buf, "\nstatic Eina_Error\n");
    eina_strbuf_append_printf(buf, "__eolian_%s_%s_set_reflect(Eo *obj, Eina_Value val)\n",
      cnamel, eolian_function_name_get(fid));
    eina_strbuf_append(buf, "{\n");
+   eina_strbuf_append(buf, "   Eina_Error r = 0;");
 
    Eina_Stringshare *ct = eolian_type_c_type_get(valt, EOLIAN_C_TYPE_PARAM);
    const char *starsp = (ct[strlen(ct) - 1] != '*') ? " " : "";
    eina_strbuf_append_printf(buf, "   %s%scval;\n", ct, starsp);
    eina_stringshare_del(ct);
 
-   eina_strbuf_append_printf(buf, "   eina_value_%s_convert(&val, &cval);\n", initf);
+   eina_strbuf_append_printf(buf, "   if (!eina_value_%s_convert(&val, &cval))\n", initf);
+   eina_strbuf_append(buf, "      {\n");
+   eina_strbuf_append(buf, "         r = EINA_ERROR_VALUE_FAILED;\n");
+   eina_strbuf_append(buf, "         goto end;\n");
+   eina_strbuf_append(buf, "      }\n");
 
    Eina_Stringshare *fcn = eolian_function_full_c_name_get(fid, EOLIAN_PROP_SET, EINA_FALSE);
    eina_strbuf_append_printf(buf, "   %s(obj, cval);\n", fcn);
    eina_stringshare_del(fcn);
 
+   eina_strbuf_append(buf, " end:\n");
    eina_strbuf_append(buf, "   eina_value_flush(&val);\n");
+   eina_strbuf_append(buf, "   return r;\n");
 
    eina_strbuf_append(buf, "}\n\n");
 }
