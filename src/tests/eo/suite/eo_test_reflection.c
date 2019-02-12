@@ -52,8 +52,12 @@ EFL_START_TEST(eo_test_reflection_simple)
    efl_property_reflection_set(simple, "simple_a", numb_val);
    ck_assert_int_eq(simple_a_get(simple), numb);
 
+   ck_assert_int_eq(efl_property_reflection_exist(simple, "simple_a"), EINA_TRUE);
+
    ck_assert_int_eq(efl_property_reflection_set(simple, "should_fail", useless_val),
                     EINA_ERROR_NOT_IMPLEMENTED);
+
+   ck_assert_int_eq(efl_property_reflection_exist(simple, "should_fail"), EINA_FALSE);
 
    simple_a_set(simple, 22);
    Eina_Value res = efl_property_reflection_get(simple, "simple_a");
