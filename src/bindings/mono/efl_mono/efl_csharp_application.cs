@@ -104,9 +104,8 @@ namespace Efl {
       public void Launch(Efl.Csharp.Components components=Components.Ui) {
         Init(components);
         Efl.App app = Efl.App.AppMain;
-        Eina.Array<String> command_line = new Eina.Array<String>();
-        command_line.Append(Environment.GetCommandLineArgs());
-        app.SetCommandArray(command_line);
+        foreach (var arg in Environment.GetCommandLineArgs())
+          app.AppendArg(arg);
         app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) => {
           if (evt.arg.Initialization) {
             OnInitialize(evt.arg.Argv);

@@ -53,7 +53,6 @@ static const Efl_Test_Case etc[] = {
   { "Promise", efl_app_test_promise_3 },
   { "Promise", efl_app_test_promise_safety },
   { "Env", efl_test_efl_env },
-  { "CML", efl_test_efl_cml },
   { NULL, NULL }
 };
 

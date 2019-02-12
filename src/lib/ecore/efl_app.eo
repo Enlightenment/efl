@@ -1,6 +1,6 @@
 import efl_types;
 
-class Efl.App extends Efl.Loop implements Efl.Core.Command_Line
+class Efl.App extends Efl.Loop
 {
    [[ ]]
    data: null;
