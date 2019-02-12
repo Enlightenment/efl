@@ -1,5 +1,11 @@
 import eina_types;
 
+struct Efl.Ui.Property_Event {
+   [[EFL Ui property event data structure triggered when an object property change due
+     to the interaction on the object.]]
+   changed_properties: array<stringshare>; [[List of changed properties]]
+}
+
 interface @beta Efl.Ui.Property_Bind
 {
    [[Efl UI Property_Bind interface.
@@ -17,5 +23,9 @@ interface @beta Efl.Ui.Property_Bind
          }
          return: Eina.Error; [[0 when it succeed, an error code otherwise.]]
       }
+   }
+   events {
+      properties,changed: Efl.Ui.Property_Event; [[Event dispatched when a property on the object has changed due to an user interaction on the object that a model could be interested in.]]
+      property,bound: stringshare; [[Event dispatched when a property on the object is bound to a model. This is useful to not overgenerate event.]]
    }
 }
