@@ -9,6 +9,7 @@
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
+
 EFL_START_TEST(efl_app_test_efl_build_version)
 {
    const Efl_Version *ver;
@@ -52,7 +53,6 @@ static const Efl_Test_Case etc[] = {
   { "Promise", efl_app_test_promise_2 },
   { "Promise", efl_app_test_promise_3 },
   { "Promise", efl_app_test_promise_safety },
-  { "Env", efl_test_efl_env },
   { NULL, NULL }
 };
 

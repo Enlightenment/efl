@@ -210,7 +210,6 @@ elif sys_osx == true
   sys_lib_extension = 'dylib'
   sys_exe_extension = ''
   sys_mod_extension = 'dylib'
-  config_h.set('environ', '(*_NSGetEnviron())')
 else
   error('System '+host_machine.system()+' not known')
 endif

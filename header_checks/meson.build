@@ -53,8 +53,7 @@ header_checks = [
   'langinfo.h',
   'locale.h',
   'uv.h',
-  'ws2tcpip.h',
-  'crt_externs.h'
+  'ws2tcpip.h'
 ]
 
 function_checks = [

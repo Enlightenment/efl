@@ -15,6 +15,8 @@
 
 #include "ecore_main_common.h"
 
+extern char **environ;
+
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
 
@@ -50,6 +52,11 @@ _efl_loop_message_handler_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Loo
 
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
+
+extern Eina_Lock   _environ_lock;
+static Eina_List  *_environ_strings_set = NULL;
+
+static void _clean_old_environ(void);
 
 EAPI Eo *
 efl_main_loop_get(void)
@@ -346,6 +353,16 @@ EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
    pd->future_message_handler = NULL;
+
+   eina_lock_take(&_environ_lock);
+   _clean_old_environ();
+   _environ_strings_set = eina_list_free(_environ_strings_set);
+   pd->env.environ_ptr = NULL;
+   free(pd->env.environ_copy);
+   pd->env.environ_copy = NULL;
+   eina_lock_release(&_environ_lock);
+
+   eina_value_flush(&pd->exit_code);
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
@@ -655,6 +672,178 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    free((char *)_app_efl_version.build_id);
    _app_efl_version.flavor = flavor ? strdup(flavor) : NULL;
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
+}
+
+static void
+_env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
+{
+   Eina_Bool update = EINA_FALSE;
+   unsigned int count = 0, i;
+   char **p;
+
+   // count environs
+   if (environ)
+     {
+        for (p = environ; *p; p++) count++;
+     }
+   // cached env ptr is the same... so look deeper if things changes
+   if (pd->env.environ_ptr == environ)
+     {
+        // if we have no cached copy then update
+        if (!pd->env.environ_copy) update = EINA_TRUE;
+        else
+          {
+             // if any ptr in the cached copy doesnt match environ ptr
+             // then update
+             for (i = 0; i <= count; i++)
+               {
+                  if (pd->env.environ_copy[i] != environ[i])
+                    {
+                       update = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
+     }
+   // cached env ptr changed so we need to update anyway
+   else update = EINA_TRUE;
+   if (!update) return;
+   // things changed - do the update
+   pd->env.environ_ptr = environ;
+   free(pd->env.environ_copy);
+   pd->env.environ_copy = NULL;
+   if (count > 0)
+     {
+        pd->env.environ_copy = malloc((count + 1) * sizeof(char *));
+        if (pd->env.environ_copy)
+          {
+             for (i = 0; i <= count; i++)
+               pd->env.environ_copy[i] = environ[i];
+          }
+     }
+   // clear previous env hash and rebuild it from environ so it matches
+   if (td->env) eina_hash_free(td->env);
+   td->env = eina_hash_string_superfast_new
+     ((Eina_Free_Cb)eina_stringshare_del);
+   for (i = 0; i < count; i++)
+     {
+        char *var;
+        const char *value;
+
+        if (!environ[i]) continue;
+        if ((value = strchr(environ[i], '=')))
+          {
+             if (*value)
+               {
+                  if ((var = malloc(value - environ[i] + 1)))
+                    {
+                       strncpy(var, environ[i], value - environ[i]);
+                       var[value - environ[i]] = 0;
+                       value++;
+                       eina_hash_add(td->env, var,
+                                     eina_stringshare_add(value));
+                       free(var);
+                    }
+               }
+          }
+     }
+}
+
+static void
+_clean_old_environ(void)
+{
+   char **p;
+   const char *str;
+   Eina_List *l, *ll;
+   Eina_Bool ok;
+
+   // clean up old strings no longer in environ
+   EINA_LIST_FOREACH_SAFE(_environ_strings_set, l, ll, str)
+     {
+        ok = EINA_FALSE;
+        for (p = environ; *p; p++)
+          {
+             if (*p == str)
+               {
+                  ok = EINA_TRUE;
+                  break;
+               }
+          }
+        if (!ok)
+          {
+             _environ_strings_set =
+               eina_list_remove_list(_environ_strings_set, l);
+             eina_stringshare_del(str);
+          }
+     }
+}
+
+EOLIAN static void
+_efl_loop_efl_task_env_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const char *var, const char *value)
+{
+   char *str, *str2;
+   size_t varlen, vallen = 0;
+
+   if (!var) return;
+
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return;
+
+   varlen = strlen(var);
+   if (value) vallen = strlen(value);
+
+   str = malloc(varlen + 1 + vallen + 1);
+   if (!str) return;
+   strcpy(str, var);
+   str[varlen] = '=';
+   if (value) strcpy(str + varlen + 1, value);
+   else str[varlen + 1] = 0;
+
+   str2 = (char *)eina_stringshare_add(str);
+   free(str);
+   if (!str2) return;
+
+   eina_lock_take(&_environ_lock);
+   if (putenv(str2) != 0)
+     {
+        eina_stringshare_del(str2);
+        eina_lock_release(&_environ_lock);
+        return;
+     }
+   _environ_strings_set = eina_list_append(_environ_strings_set, str2);
+   eina_lock_release(&_environ_lock);
+
+   efl_task_env_set(efl_super(obj, EFL_LOOP_CLASS), var, value);
+
+   eina_lock_take(&_environ_lock);
+   _clean_old_environ();
+   eina_lock_release(&_environ_lock);
+}
+
+EOLIAN static const char *
+_efl_loop_efl_task_env_get(const Eo *obj, Efl_Loop_Data *pd, const char *var)
+{
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return NULL;
+   eina_lock_take(&_environ_lock);
+   _env_sync(pd, td);
+   eina_lock_release(&_environ_lock);
+   return efl_task_env_get(efl_super(obj, EFL_LOOP_CLASS), var);
+}
+
+EOLIAN static void
+_efl_loop_efl_task_env_reset(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
+{
+   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
+   if (!td) return;
+   eina_lock_take(&_environ_lock);
+#ifdef HAVE_CLEARENV
+   clearenv();
+#else
+   environ = NULL;
+#endif
+   _env_sync(pd, td);
+   eina_lock_release(&_environ_lock);
 }
 
 EOLIAN static Eina_Future *

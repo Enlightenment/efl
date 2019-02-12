@@ -96,6 +96,26 @@ abstract Efl.Task extends Efl.Object
          [[ Clear all arguments in arg_value/count set. Will result in the
             command property also being cleared. ]]
       }
+      @property env {
+         [[ The environment to be passed in or that was passed to the
+            task. This is a string key, value list which map to environment
+            variables where appropriate. The var string must contain
+            only an underscore ('_'), letters ('a-z', 'A-Z'),
+            numbers ('0-9'), but the first character may not be a number.]]
+         set { }
+         get { }
+         keys {
+            var: string; [[ The variable name as a string ]]
+         }
+         values {
+            value: string; [[ Set var to this value if not $NULL,
+                              otherwise clear this env value if value
+                              is $NULL or if it is an empty string ]]
+         }
+      }
+      env_reset {
+         [[ Clear all environment variables. ]]
+      }
       @property priority {
          [[ The priority of this task. ]]
          get { }

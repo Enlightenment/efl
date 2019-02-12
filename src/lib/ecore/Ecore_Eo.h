@@ -26,9 +26,6 @@
  * @{
  */
 
-#include "efl_core_env.eo.h"
-#include "efl_core_proc_env.eo.h"
-
 #include "efl_loop_message.eo.h"
 #include "efl_loop_message_handler.eo.h"
 

@@ -188,6 +188,7 @@ struct _Efl_Task_Data
 {
    Eina_Stringshare  *command;
    Eina_Array        *args;
+   Eina_Hash         *env;
    Efl_Task_Priority  priority;
    int                exit_code;
    Efl_Task_Flags     flags;
