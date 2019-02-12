@@ -125,8 +125,6 @@ class Efl.Loop extends Efl.Task
       Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Object.provider_find;
-      Efl.Task.env { set; get; }
-      Efl.Task.env_reset;
       Efl.Task.run;
       Efl.Task.end;
    }

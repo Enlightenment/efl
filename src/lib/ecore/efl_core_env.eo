@@ -1,0 +1,57 @@
+class Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
+   [[This object can maintain a set of key value pairs
+
+     A object of this type alone does not apply the object to the system.
+     For getting the value into the system, see @Efl.Core.Proc_Env.
+
+     A object can be forked, which will only copy its values, changes to the returned object will not change the object where it is forked off.
+   ]]
+   methods {
+      @property env {
+         [[ Stored var value pairs of this object.
+
+            Var must contain only: underscores ('_'), letters ('a-z', 'A-Z'),
+            numbers ('0-9'), but the first character may not be a number.
+         ]]
+         set {
+            [[ Add a new pair to this object ]]
+         }
+         get {
+            [[ Get the value of the $var, or $null if no such $var exists in the object]]
+         }
+         keys {
+            var: string; [[ The name of the variable ]]
+         }
+         values {
+            value: string; [[ Set var to this value if not $NULL,
+                              otherwise clear this env value if value
+                              is $NULL or if it is an empty string ]]
+         }
+      }
+      unset {
+         [[ Remove the pair with the matching $var from this object]]
+         params {
+           var : string; [[ The name of the variable ]]
+         }
+      }
+      clear {
+         [[ Remove all pairs from this object]]
+      }
+      @property content {
+        [[ Get the content of this object.
+
+          This will return a iterator that contains all keys that are part of this object.
+        ]]
+        get {
+
+        }
+        values {
+          iter : iterator<string>;
+        }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Duplicate.duplicate;
+   }
+}

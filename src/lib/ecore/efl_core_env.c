@@ -26,7 +26,7 @@ key_valid(const char *key)
 {
    if (!key || key[0] == '\0') return EINA_FALSE;
 
-   if isdigit(key[0]) return EINA_FALSE;
+   if (isdigit(key[0])) return EINA_FALSE;
 
    for (int i = 0; key[i] != '\0'; ++i) {
      if (!isalnum(key[i]) && key[i] != '_') return EINA_FALSE;
