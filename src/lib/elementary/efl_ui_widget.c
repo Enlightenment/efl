@@ -5940,6 +5940,190 @@ _efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA
    return efl_gfx_image_scale_type_get(bg_obj);
 }
 
+typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
+struct _Efl_Ui_Property_Bound
+{
+   Eina_Stringshare *key; // Local object property
+   Eina_Stringshare *property; // Model property
+   Eina_Future *f;
+};
+
+static void
+_efl_ui_property_bind_free(void *data)
+{
+   Efl_Ui_Property_Bound *prop = data;
+
+   eina_stringshare_del(prop->key);
+   eina_stringshare_del(prop->property);
+   free(prop);
+}
+
+static void
+_efl_ui_property_bind_clean(Eo *obj EINA_UNUSED,
+                            void *data,
+                            const Eina_Future *f EINA_UNUSED)
+{
+   Efl_Ui_Property_Bound *prop = data;
+
+   prop->f = NULL;
+}
+
+static void
+_efl_ui_property_bind_get(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
+{
+   Eina_Value *value = efl_model_property_get(pd->properties.model, prop->property);
+   Eina_Future *f;
+   Eina_Error err;
+
+   err = efl_property_reflection_set(pd->obj, prop->key, eina_value_reference_copy(value));
+   eina_value_free(value);
+
+   if (!err) return ;
+
+   // Report back the error to the model
+   if (prop->f) eina_future_cancel(prop->f);
+   f = efl_model_property_set(pd->properties.model, prop->property,
+                              eina_value_error_new(err));
+   prop->f = efl_future_then(pd->obj, f, .free = _efl_ui_property_bind_clean, .data = prop);
+}
+
+static void
+_efl_ui_property_bind_set(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
+{
+   Eina_Value value = efl_property_reflection_get(pd->obj, prop->key);
+   Eina_Future *f;
+
+   if (prop->f) eina_future_cancel(prop->f);
+   f = efl_model_property_set(pd->properties.model, prop->property, eina_value_dup(&value));
+   prop->f = efl_future_then(pd->obj, f, .free = _efl_ui_property_bind_clean, .data = prop);
+   eina_value_flush(&value);
+}
+
+static void
+_efl_ui_model_property_bind_changed(void *data, const Efl_Event *event)
+{
+   Efl_Model_Property_Event *evt = event->info;
+   Efl_Ui_Widget_Data *pd = data;
+   Eina_Array_Iterator it;
+   const char *prop;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        Eina_Stringshare *sp = eina_stringshare_add(prop);
+        Efl_Ui_Property_Bound *lookup;
+
+        lookup = eina_hash_find(pd->properties.model_lookup, sp);
+        if (lookup) _efl_ui_property_bind_get(pd, lookup);
+        eina_stringshare_del(sp);
+     }
+}
+
+static void
+_efl_ui_view_property_bind_changed(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Property_Event *evt = event->info;
+   Efl_Ui_Widget_Data *pd = data;
+   Eina_Array_Iterator it;
+   Eina_Stringshare *prop;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        Efl_Ui_Property_Bound *lookup;
+
+        lookup = eina_hash_find(pd->properties.view_lookup, prop);
+        if (lookup) _efl_ui_property_bind_set(pd, lookup);
+     }
+}
+
+static Eina_Error
+_efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
+                                                  const char *key, const char *property)
+{
+   Efl_Ui_Property_Bound *prop;
+
+   // Check if the property is available from the reflection table of the object.
+   if (!efl_property_reflection_exist(obj, key)) return EFL_PROPERTY_ERROR_INVALID_KEY;
+
+   if (!pd->properties.model_lookup)
+     {
+        pd->properties.model_lookup = eina_hash_stringshared_new(_efl_ui_property_bind_free);
+        pd->properties.view_lookup = eina_hash_stringshared_new(NULL);
+        if (pd->properties.model)
+          {
+             efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                                    _efl_ui_model_property_bind_changed, pd);
+             efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                                    _efl_ui_view_property_bind_changed, pd);
+          }
+     }
+
+   prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
+   if (!prop) return ENOMEM;
+   prop->key = eina_stringshare_add(key);
+   prop->property = eina_stringshare_add(property);
+
+   eina_hash_direct_add(pd->properties.model_lookup, prop->property, prop);
+   eina_hash_direct_add(pd->properties.view_lookup, prop->key, prop);
+
+   _efl_ui_property_bind_get(pd, prop);
+
+
+   return 0;
+}
+
+static void
+_efl_ui_widget_efl_ui_view_model_set(Eo *obj,
+                                     Efl_Ui_Widget_Data *pd,
+                                     Efl_Model *model)
+{
+   if (pd->properties.model)
+     {
+        // Remove any existing handler that might exist for any reason
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+     }
+
+   efl_replace(&pd->properties.model, model);
+
+   if (pd->properties.model && pd->properties.model_lookup)
+     {
+        // Set the properties handler just in case
+        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+     }
+}
+
+static Efl_Model *
+_efl_ui_widget_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Data *pd)
+{
+   return pd->properties.model;
+}
+
+static void
+_efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
+{
+   efl_invalidate(efl_super(obj, EFL_UI_WIDGET_CLASS));
+
+   if (pd->properties.model)
+     {
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+        efl_replace(&pd->properties.model, NULL);
+     }
+   if (pd->properties.view_lookup) eina_hash_free(pd->properties.view_lookup);
+   pd->properties.view_lookup = NULL;
+   if (pd->properties.model_lookup) eina_hash_free(pd->properties.model_lookup);
+   pd->properties.model_lookup = NULL;
+}
+
 #include "efl_ui_widget_part_bg.eo.c"
 
 /* Efl.Part Bg end */

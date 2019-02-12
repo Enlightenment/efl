@@ -16,7 +16,8 @@ struct Efl.Ui.Widget_Focus_State {
 abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
                         Efl.Ui.L10n,
-                        Efl.Ui.Selection, Efl.Ui.Dnd
+                        Efl.Ui.Selection, Efl.Ui.Dnd,
+                        Efl.Ui.Property_Bind, Efl.Ui.View
 {
    [[Efl UI widget abstract class]]
    //eo_prefix: efl_ui_widget;
@@ -388,6 +389,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Object.provider_find;
       Efl.Object.debug_name_override;
@@ -415,6 +417,8 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]
       Efl.Part.part_get; [[Returns @Efl.Ui.Widget_Part.]]
+      Efl.Ui.View.model { get; set; }
+      Efl.Ui.Property_Bind.property_bind;
    }
    constructors {
       .style @optional;
