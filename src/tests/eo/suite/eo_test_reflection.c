@@ -17,7 +17,7 @@ EFL_START_TEST(eo_test_reflection_invalid)
 
    simple_a_set(simple, 22);
    efl_property_reflection_set(simple, "simple_a_asdf", numb_val);
-   fail_if(efl_property_reflection_get(simple, "simple_a_invalid").type != EINA_VALUE_EMPTY.type);
+   fail_if(efl_property_reflection_get(simple, "simple_a_invalid").type != EINA_VALUE_TYPE_ERROR);
 }
 EFL_END_TEST
 
