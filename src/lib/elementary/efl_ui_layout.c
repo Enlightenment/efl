@@ -758,6 +758,7 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    Edje_Signal_Data *esd;
    Evas_Object *child;
    Eina_List *l;
+   Efl_Model *model;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -782,12 +783,11 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
         free(esd);
      }
 
-   if(sd->connect.model)
+   model = efl_ui_view_model_get(obj);
+   if(model)
      {
-         efl_event_callback_del(sd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+         efl_event_callback_del(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                 _efl_model_properties_changed_cb, sd);
-         efl_unref(sd->connect.model);
-         sd->connect.model = NULL;
      }
 
    eina_hash_free(sd->connect.properties);
@@ -1236,6 +1236,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
 
    Efl_Ui_Layout_Sub_Object_Data *sub_d = NULL;
    Eina_List *l;
+   Efl_Model *model;
 
    EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
@@ -1292,7 +1293,8 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
      sub_d->obj = _elm_access_edje_object_part_object_register
          (obj, elm_layout_edje_get(obj), part);
 
-   if (sd->connect.model && !sd->connect.updating)
+   model = efl_ui_view_model_get(obj);
+   if (model && !sd->connect.updating)
      {
         char *property = eina_hash_find(sd->connect.properties, sub_d->part);
 
@@ -1303,7 +1305,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
              eina_value_setup(&v, EINA_VALUE_TYPE_STRING);
              eina_value_set(&v, text);
 
-             efl_model_property_set(sd->connect.model, property, &v);
+             efl_model_property_set(model, property, &v);
           }
      }
 
@@ -1978,8 +1980,10 @@ _efl_ui_layout_view_model_property_update(Efl_Ui_Layout_Data *pd, const char *pa
 {
    Eina_Value *v = NULL;
    char *value = NULL;
+   Efl_Model *model;
 
-   v = efl_model_property_get(pd->connect.model, fetch);
+   model = efl_ui_view_model_get(pd->obj);
+   v = efl_model_property_get(model, fetch);
    if (!v) return;
 
    if (eina_value_type_get(v) != EINA_VALUE_TYPE_ERROR)
@@ -1999,10 +2003,12 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Data *pd, const char *sign
    Eina_Value *v = NULL;
    Eina_Strbuf *buf;
    char *value = NULL;
+   Efl_Model *model;
    Eina_Bool eval = EINA_FALSE;
    Eina_Bool is_bool = EINA_FALSE;
 
-   v = efl_model_property_get(pd->connect.model, fetch);
+   model = efl_ui_view_model_get(pd->obj);
+   v = efl_model_property_get(model, fetch);
    if (!v) return;
 
    if (eina_value_type_get(v) == EINA_VALUE_TYPE_ERROR)
@@ -2112,6 +2118,7 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
 {
    Efl_Ui_Layout_Factory_Request *request = calloc(1, sizeof (Efl_Ui_Layout_Factory_Request));
    Eina_Future *f;
+   Efl_Model *model;
 
    if (!request) return ;
 
@@ -2122,7 +2129,8 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
    request->factory = efl_ref(tracking->factory);
    request->tracking = tracking;
 
-   f = efl_ui_view_factory_create_with_event(tracking->factory, pd->connect.model, pd->obj);
+   model = efl_ui_view_model_get(pd->obj);
+   f = efl_ui_view_factory_create_with_event(tracking->factory, model, pd->obj);
    f = efl_future_then(pd->obj, f,
                        .success = _content_created,
                        .success_type = EINA_VALUE_TYPE_OBJECT,
@@ -2136,7 +2144,7 @@ _efl_ui_layout_view_model_update(Efl_Ui_Layout_Data *pd)
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it;
 
-   if (!pd->connect.model) return ;
+   if (!efl_ui_view_model_get(pd->obj)) return ;
 
    it = eina_hash_iterator_tuple_new(pd->connect.properties);
    EINA_ITERATOR_FOREACH(it, tuple)
@@ -2214,17 +2222,18 @@ _efl_ui_layout_base_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_M
    Eina_Stringshare *key;
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it;
+   Efl_Model *setted;
 
-   if (pd->connect.model && pd->connect.model != model)
-     efl_event_callback_del(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_model_properties_changed_cb, pd);
+   setted = efl_ui_view_model_get(obj);
+   if (setted)
+     efl_event_callback_del(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                            _efl_model_properties_changed_cb, pd);
 
-   if (!efl_replace(&pd->connect.model, model))
-     return;
+   efl_ui_view_model_set(efl_super(obj, EFL_UI_LAYOUT_BASE_CLASS), model);
 
    if (model)
-     efl_event_callback_add(pd->connect.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_model_properties_changed_cb, pd);
+     efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                            _efl_model_properties_changed_cb, pd);
 
    _efl_ui_layout_connect_hash(pd);
 
@@ -2261,20 +2270,21 @@ _efl_ui_layout_base_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_M
    _efl_ui_layout_view_model_update(pd);
 }
 
-EOLIAN static Efl_Model *
-_efl_ui_layout_base_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd)
-{
-   return pd->connect.model;
-}
-
 EOLIAN static Eina_Error
-_efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
+_efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EFL_PROPERTY_ERROR_INVALID_KEY);
    Eina_Stringshare *sprop;
    Eina_Hash *hash = NULL;
    char *data = NULL;
+   Efl_Model *model;
+   Eina_Error r;
 
+   // First try binding with property on the Widget
+   r = efl_ui_property_bind(efl_super(obj, EFL_UI_LAYOUT_BASE_CLASS), key, property);
+   if (!r) return r;
+
+   // Before trying to bind on the part of this object.
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return EFL_PROPERTY_ERROR_INVALID_KEY;
 
@@ -2304,7 +2314,8 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_
      }
 
    // Update display right away if possible
-   if (pd->connect.model)
+   model = efl_ui_view_model_get(obj);
+   if (model)
      {
         if (hash == pd->connect.signals)
           _efl_ui_layout_view_model_signal_update(pd, data, sprop);
