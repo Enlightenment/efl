@@ -324,13 +324,14 @@ _efl_ui_caching_factory_efl_object_parent_set(Eo *obj, Efl_Ui_Caching_Factory_Da
    if (a) efl_event_callback_add(a, EFL_APP_EVENT_PAUSE, _efl_ui_caching_factory_pause, pd);
 }
 
-static void
+static Eina_Error
 _efl_ui_caching_factory_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Caching_Factory_Data *pd,
                                                            const char *key, const char *property)
 {
    if (!strcmp(key, "style"))
      eina_stringshare_replace(&pd->style, property);
-   efl_ui_property_bind(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), key, property);
+
+   return efl_ui_property_bind(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), key, property);
 }
 
 #include "efl_ui_caching_factory.eo.c"

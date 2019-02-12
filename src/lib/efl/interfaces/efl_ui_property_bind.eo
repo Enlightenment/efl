@@ -1,3 +1,5 @@
+import eina_types;
+
 interface @beta Efl.Ui.Property_Bind
 {
    [[Efl UI Property_Bind interface.
@@ -13,6 +15,7 @@ interface @beta Efl.Ui.Property_Bind
             key: string; [[key string for bind model property data]]
             property: string; [[Model property name]]
          }
+         return: Eina.Error; [[0 when it succeed, an error code otherwise.]]
       }
    }
 }

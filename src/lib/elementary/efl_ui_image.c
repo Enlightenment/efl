@@ -1949,7 +1949,7 @@ _efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data
    return pd->property.model;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd, const char *key, const char *property)
 {
    if (strcmp(key, "filename") == 0)
@@ -1967,9 +1967,10 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
      {
         eina_stringshare_replace(&pd->property.key, property);
      }
-   else return;
+   else return EINA_FALSE;
 
    _update_viewmodel(obj, pd);
+   return 0;
 }
 
 EAPI void

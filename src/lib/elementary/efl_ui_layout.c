@@ -2267,16 +2267,16 @@ _efl_ui_layout_base_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layo
    return pd->connect.model;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
-   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EFL_PROPERTY_ERROR_INVALID_KEY);
    Eina_Stringshare *sprop;
    Eina_Hash *hash = NULL;
    char *data = NULL;
 
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
-     return;
+     return EFL_PROPERTY_ERROR_INVALID_KEY;
 
    _efl_ui_layout_connect_hash(pd);
 
@@ -2314,6 +2314,8 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_
 
    if (!sprop)
      free(data);
+
+   return 0;
 }
 
 EOLIAN static void
