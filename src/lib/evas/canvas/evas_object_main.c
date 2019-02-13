@@ -1,5 +1,4 @@
 #define EFL_CANVAS_OBJECT_PROTECTED
-#define EFL_CANVAS_OBJECT_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include "evas_common_private.h"

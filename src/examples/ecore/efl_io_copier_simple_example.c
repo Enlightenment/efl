@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Core.h>
 
 static void

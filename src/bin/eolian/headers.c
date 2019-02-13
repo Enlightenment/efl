@@ -92,7 +92,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
 
    /* this one will never be satisfied in legacy */
    if (eolian_function_is_beta(fid))
-     eina_strbuf_append_printf(buf, "#ifdef %s_BETA\n", cnameu);
+     eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
    /* XXX: is this right? we expose potentially internal stuff into legacy */
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
@@ -174,10 +174,10 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
      }
    eina_strbuf_append(buf, ";\n");
 
-   if (eolian_function_is_beta(fid))
-     eina_strbuf_append_printf(buf, "#endif\n");
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#endif\n");
+   if (eolian_function_is_beta(fid))
+     eina_strbuf_append_printf(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
 }
 
 void
@@ -267,7 +267,7 @@ events:
 
              if (eolian_event_is_beta(ev))
                {
-                  eina_strbuf_append_printf(buf, "\n#ifdef %s_BETA\n", cnameu);
+                  eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
                }
              if (evs == EOLIAN_SCOPE_PROTECTED)
                {
@@ -292,7 +292,7 @@ events:
              if (evs == EOLIAN_SCOPE_PROTECTED)
                eina_strbuf_append(buf, "#endif\n");
              if (eolian_event_is_beta(ev))
-               eina_strbuf_append(buf, "#endif\n");
+               eina_strbuf_append(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
 
              eina_stringshare_del(evn);
           }

@@ -5,7 +5,6 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
-#define EFL_UI_SCROLLBAR_BETA
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"

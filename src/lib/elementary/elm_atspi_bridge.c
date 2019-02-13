@@ -10,7 +10,6 @@
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 
-#define EFL_ACCESS_ACTION_BETA
 
 #include "atspi/atspi-constants.h"
 

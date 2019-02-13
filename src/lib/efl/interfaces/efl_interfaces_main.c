@@ -2,9 +2,7 @@
 # include <config.h>
 #endif
 
-#define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_SCROLLBAR_PROTECTED
-#define EFL_UI_SCROLLBAR_BETA
 #define EFL_PART_PROTECTED
 
 #include "eo_internal.h"

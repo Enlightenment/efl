@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_SELECTION_MANAGER_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"

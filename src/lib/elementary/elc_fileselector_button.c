@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define ELM_INTERFACE_FILESELECTOR_BETA
 
 #include <Elementary.h>
 #include "Eio_Eo.h"

@@ -1,4 +1,3 @@
-#define EVAS_CANVAS_BETA
 #define EFL_INPUT_EVENT_PROTECTED
 
 #include "evas_common_private.h"

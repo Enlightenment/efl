@@ -62,7 +62,6 @@
  * @todo write @ref textblock_layout
  */
 
-#define EFL_CANVAS_OBJECT_BETA
 #define EFL_CANVAS_FILTER_INTERNAL_PROTECTED
 
 #include "evas_common_private.h"

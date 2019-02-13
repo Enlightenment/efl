@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_ACCESS_COMPONENT_PROTECTED
-#define EFL_ACCESS_COMPONENT_BETA
 #define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>

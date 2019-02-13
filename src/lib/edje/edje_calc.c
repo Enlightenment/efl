@@ -1,4 +1,3 @@
-#define EFL_GFX_FILTER_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include "edje_private.h"

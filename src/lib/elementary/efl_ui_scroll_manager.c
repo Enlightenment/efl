@@ -4,7 +4,6 @@
 
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
-#define EFL_UI_SCROLLBAR_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
