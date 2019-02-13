@@ -1,7 +1,7 @@
 struct @beta Efl.Model_Property_Event {
      [[EFL model property event data structure]]
-     changed_properties: array<string>; [[List of changed properties]]
-     invalidated_properties: array<string>; [[Removed properties identified by name]]
+     changed_properties: array<stringshare>; [[List of changed properties]]
+     invalidated_properties: array<stringshare>; [[Removed properties identified by name]]
 }
 
 struct @beta Efl.Model_Children_Event {

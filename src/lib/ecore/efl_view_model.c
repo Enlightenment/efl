@@ -304,7 +304,7 @@ _efl_view_model_property_changed(void *data, const Efl_Event *event)
 
         eina_array_push(nev.changed_properties, property);
 
-        src = eina_stringshare_add(property);
+        src = eina_stringshare_ref(property);
         bind = _efl_view_model_property_bind_lookup(pd, src);
         if (bind)
           {

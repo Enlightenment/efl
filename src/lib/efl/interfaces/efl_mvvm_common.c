@@ -62,6 +62,7 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 {
    Efl_Model_Property_Event ev = { 0 };
    Eina_Array *properties = eina_array_new(1);
+   Eina_Stringshare *sp;
    const char *property;
    va_list args;
 
@@ -69,7 +70,7 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 
    while ((property = (const char*) va_arg(args, const char*)))
      {
-        eina_array_push(properties, property);
+        eina_array_push(properties, eina_stringshare_add(property));
      }
 
    va_end(args);
@@ -78,6 +79,8 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 
    efl_event_callback_call((Efl_Model *) model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &ev);
 
+   while ((sp = eina_array_pop(properties)))
+     eina_stringshare_del(sp);
    eina_array_free(properties);
 }
 
@@ -87,13 +90,16 @@ efl_model_property_invalidated_notify(Efl_Model *model, const char *property)
    Eina_Array *invalidated_properties = eina_array_new(1);
    EINA_SAFETY_ON_NULL_RETURN(invalidated_properties);
 
-   Eina_Bool ret = eina_array_push(invalidated_properties, property);
+   Eina_Stringshare *sp = eina_stringshare_add(property);
+
+   Eina_Bool ret = eina_array_push(invalidated_properties, sp);
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.invalidated_properties = invalidated_properties};
    efl_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
+   eina_stringshare_del(sp);
    eina_array_free(invalidated_properties);
 }
 

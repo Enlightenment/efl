@@ -2179,21 +2179,18 @@ _efl_model_properties_changed_cb(void *data, const Efl_Event *event)
 
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
-        Eina_Stringshare *sprop = eina_stringshare_add(prop);
         const char *part;
         const char *signal;
         Efl_Ui_Layout_Factory_Tracking *factory;
 
-        part = eina_hash_find(pd->connect.properties, sprop);
-        if (part) _efl_ui_layout_view_model_property_update(pd, part, sprop);
+        part = eina_hash_find(pd->connect.properties, prop);
+        if (part) _efl_ui_layout_view_model_property_update(pd, part, prop);
 
-        signal = eina_hash_find(pd->connect.signals, sprop);
-        if (signal) _efl_ui_layout_view_model_signal_update(pd, signal, sprop);
+        signal = eina_hash_find(pd->connect.signals, prop);
+        if (signal) _efl_ui_layout_view_model_signal_update(pd, signal, prop);
 
-        factory = eina_hash_find(pd->connect.factories, sprop);
-        if (factory) _efl_ui_layout_view_model_content_update(pd, factory, sprop);
-
-        eina_stringshare_del(sprop);
+        factory = eina_hash_find(pd->connect.factories, prop);
+        if (factory) _efl_ui_layout_view_model_content_update(pd, factory, prop);
      }
 }
 

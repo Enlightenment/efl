@@ -6010,12 +6010,10 @@ _efl_ui_model_property_bind_changed(void *data, const Efl_Event *event)
 
    EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
      {
-        Eina_Stringshare *sp = eina_stringshare_add(prop);
         Efl_Ui_Property_Bound *lookup;
 
-        lookup = eina_hash_find(pd->properties.model_lookup, sp);
+        lookup = eina_hash_find(pd->properties.model_lookup, prop);
         if (lookup) _efl_ui_property_bind_get(pd, lookup);
-        eina_stringshare_del(sp);
      }
 }
 
