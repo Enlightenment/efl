@@ -549,9 +549,13 @@ evas_object_image_pixels_dirty_set(Eo *eo_obj, Eina_Bool dirty)
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    evas_object_async_block(obj);
-   if (dirty) o->dirty_pixels = EINA_TRUE;
+   if (dirty)
+     {
+        o->dirty_pixels = EINA_TRUE;
+        o->changed = EINA_TRUE;
+     }
    else o->dirty_pixels = EINA_FALSE;
-   o->changed = EINA_TRUE;
+
    evas_object_change(eo_obj, obj);
 }
 
