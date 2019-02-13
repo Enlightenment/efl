@@ -77,6 +77,7 @@ ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
 EXTRA_DIST2 += $(ecore_eolian_files)
+EXTRA_DIST2 += $(ecore_test_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 
