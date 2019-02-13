@@ -1576,10 +1576,11 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_create)
           {
              Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
+             aparent = efl_access_object_access_parent_get(sobj);
              if (aparent)
                 efl_access_children_changed_added_signal_emit(aparent, sobj);
           }
+
      }
 
 end:
@@ -1654,7 +1655,7 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
              Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
+             aparent = efl_access_object_access_parent_get(sobj);
              if (aparent)
                 efl_access_children_changed_del_signal_emit(aparent, sobj);
           }
@@ -5479,6 +5480,12 @@ _efl_ui_widget_efl_access_object_access_children_get(const Eo *obj EINA_UNUSED, 
         accs = eina_list_append(accs, widget);
      }
    return accs;
+}
+
+EOLIAN static Efl_Access_Object*
+_efl_ui_widget_efl_access_object_access_parent_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
+{
+   return pd->parent_obj;
 }
 
 EOLIAN static Efl_Access_State_Set

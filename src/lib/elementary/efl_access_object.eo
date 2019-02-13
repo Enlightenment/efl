@@ -277,6 +277,14 @@ mixin Efl.Access.Object requires Efl.Object
             children: list<Efl.Access.Object> @owned; [[List of widget's children]]
          }
       }
+      @property access_parent @protected @beta {
+         [[Gets object's accessible parent.]]
+         get {
+         }
+         values {
+            parent: Efl.Access.Object @owned; [[Widget's accessible parent. May differ from Eo parent or widget parent]]
+         }
+      }
       @property role_name @protected @beta {
          [[Gets human-readable string indentifying object accessibility role.]]
          get {
@@ -430,7 +438,6 @@ mixin Efl.Access.Object requires Efl.Object
    implements {
       Efl.Object.destructor;
       Efl.Object.invalidate;
-      Efl.Object.provider_find;
    }
    events {
       property,changed: string; [[Called when property has changed]]
