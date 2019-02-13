@@ -5,6 +5,7 @@
 
 #ifdef EFL_EO_API_SUPPORT
 #include "efl_access_object.eo.h"
+#include "efl_access_bridge.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "efl_access_object.eo.legacy.h"
@@ -42,12 +43,12 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
  * Emits Accessible 'StateChanged' signal.
  */
 #define efl_access_state_changed_signal_emit(obj, tp, nvl) \
-   { do { \
+   do { \
       Efl_Access_Event_State_Changed_Data evinfo; \
       evinfo.type = (tp); \
       evinfo.new_value = (nvl); \
-      efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_STATE_CHANGED, (void*)&evinfo); \
-   } while(0); }
+      efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_STATE_CHANGED, (void*)&evinfo); \
+   } while(0);
 
 /**
  * Emits Accessible 'BoundsChanged' signal.
@@ -55,38 +56,38 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
 #define efl_access_bounds_changed_signal_emit(obj, x, y, width, height) \
    do { \
          Efl_Access_Event_Geometry_Changed_Data evinfo = { x, y, width, height }; \
-         efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_BOUNDS_CHANGED, (void*)&evinfo); \
+         efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_BOUNDS_CHANGED, (void*)&evinfo); \
    } while(0);
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Name' property.
  */
 #define efl_access_i18n_name_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "i18n_name");
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "i18n_name");
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Description' property.
  */
 #define efl_access_description_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "description");
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "description");
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Parent' property.
  */
 #define efl_access_parent_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "parent");
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "parent");
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Role' property.
  */
 #define efl_access_role_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "role");
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "role");
 
 /**
  * Emits Accessible 'PropertyChanged' signal for 'Value' property.
  */
 #define efl_access_value_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "value");
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_PROPERTY_CHANGED, "value");
 
 /**
  * Emits Accessible 'ChildrenChanged' signal with added child as argument.
@@ -94,7 +95,7 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
 #define efl_access_children_changed_added_signal_emit(obj, child) \
    do { \
       Efl_Access_Event_Children_Changed_Data atspi_data = { EINA_TRUE, child }; \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED, &atspi_data); \
+      efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED, &atspi_data); \
    } while(0);
 
 /**
@@ -103,32 +104,32 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
 #define efl_access_children_changed_del_signal_emit(obj, child) \
    do { \
       Efl_Access_Event_Children_Changed_Data atspi_data = { EINA_FALSE, child }; \
-      efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED, &atspi_data); \
+      efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_CHILDREN_CHANGED, &atspi_data); \
    } while(0);
 
 /**
  * Emits Accessible 'ActiveDescendantChanged' signal.
  */
 #define efl_access_active_descendant_changed_signal_emit(obj, child) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED, child);
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_ACTIVE_DESCENDANT_CHANGED, child);
 
 /**
  * Emits Accessible 'VisibleDataChanged' signal.
  */
 #define efl_access_visible_data_changed_signal_emit(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_VISIBLE_DATA_CHANGED, NULL);
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_VISIBLE_DATA_CHANGED, NULL);
 
 /**
  * Emits Accessible 'AddAccessible' signal.
  */
 #define efl_access_added(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_ADDED, NULL);
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_ADDED, NULL);
 
 /**
  * Emits Accessible 'RemoveAccessible' signal.
  */
 #define efl_access_removed(obj) \
-   efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, obj, EFL_ACCESS_OBJECT_EVENT_REMOVED, NULL);
+   efl_access_bridge_access_event_emit(EFL_ACCESS_BRIDGE_CLASS, obj, EFL_ACCESS_OBJECT_EVENT_REMOVED, NULL);
 
 #endif
 

@@ -1,0 +1,29 @@
+
+abstract Efl.Access.Bridge extends Efl.Object
+{
+   [[ Base class for all accessibility platform implementations. ]]
+   data: null;
+   methods {
+        access_event_handle @protected @pure_virtual {
+            params {
+                  @in object: Efl.Access.Object;
+                  @in event: const(ptr(Efl.Event_Description)); [[The event description.]]
+                  @in data: void_ptr;
+            }
+        }
+        access_event_emit @class {
+             [[ Broadcasts accessibility event to all instances of
+                Efl.Access.Bridge ]]
+             params {
+                  @in object: Efl.Access.Object;
+                  @in event: const(ptr(Efl.Event_Description)); [[The event description.]]
+                  @in data: void_ptr;
+             }
+        }
+   }
+   implements {
+       class.constructor;
+       Efl.Object.constructor;
+       Efl.Object.destructor;
+   }
+}

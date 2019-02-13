@@ -192,8 +192,6 @@ enum Efl.Access.Reading.Info.Type
 
 type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
-struct Efl.Access.Event.Handler; [[Accessibility event listener]]
-
 struct Efl.Access.Event.State_Changed.Data
 {
    [[Accessibility state changed event data]]
@@ -347,28 +345,6 @@ mixin Efl.Access.Object requires Efl.Object
          }
          values {
             states: Efl.Access.State_Set; [[Accessible state set]]
-         }
-      }
-      event_handler_add @class @protected @beta {
-         [[Register accessibility event listener]]
-         params {
-              @in cb: Efl.Event_Cb; [[Callback]]
-              @in data: void_ptr; [[Data]]
-         }
-         return: ptr(Efl.Access.Event.Handler); [[Event handler]]
-      }
-      event_handler_del @class @protected @beta {
-         [[Deregister accessibility event listener]]
-         params {
-              @in handler: ptr(Efl.Access.Event.Handler); [[Event handler]]
-         }
-      }
-      event_emit @class @protected @beta {
-          [[Emit event]]
-         params {
-            @in accessible: Efl.Access.Object; [[Accessibility object.]]
-            @cref event: Efl.Event_Description; [[Accessibility event type.]]
-            @in event_info: void_ptr; [[Accessibility event details.]]
          }
       }
       @property translation_domain @beta {

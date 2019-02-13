@@ -115,12 +115,6 @@ const char* Access_Name[] = {
     "last defined"
 };
 
-struct _Efl_Access_Event_Handler
-{
-   Efl_Event_Cb cb;
-   void *data;
-};
-
 struct _Efl_Access_Object_Data
 {
    Eina_List     *relations;
@@ -135,7 +129,6 @@ struct _Efl_Access_Object_Data
 typedef struct _Efl_Access_Object_Data Efl_Access_Object_Data;
 
 
-static Eina_List *global_callbacks;
 static Eo *root;
 
 EOLIAN static int
@@ -370,61 +363,9 @@ EAPI void efl_access_attributes_list_free(Eina_List *list)
    Efl_Access_Attribute *attr;
    EINA_LIST_FREE(list, attr)
      {
-        efl_access_attribute_free(attr);
-     }
-}
-
-EOLIAN void
-_efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
-{
-   Eina_List *l;
-   Efl_Access_Event_Handler *hdl;
-
-   if (!accessible || !event || !efl_isa(accessible, EFL_ACCESS_OBJECT_MIXIN))
-     {
-        CRI("Invalid parameters, event: %s, obj: %s", event ? event->name : "NULL", accessible ? efl_class_name_get(accessible) : "NULL");
-        return;
-     }
-
-   Efl_Event ev;
-   ev.object = accessible;
-   ev.desc = event;
-   ev.info = event_info;
-
-   EINA_LIST_FOREACH(global_callbacks, l, hdl)
-     {
-        if (hdl->cb)
-          hdl->cb(hdl->data, &ev);
-     }
-}
-
-EOLIAN Efl_Access_Event_Handler *
-_efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
-{
-   Efl_Access_Event_Handler *ret = calloc(1, sizeof(Efl_Access_Event_Handler));
-   if (!ret) return NULL;
-
-   ret->cb = cb;
-   ret->data = data;
-
-   global_callbacks = eina_list_append(global_callbacks, ret);
-
-   return ret;
-}
-
-EOLIAN void
-_efl_access_object_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
-{
-   Eina_List *l, *l2;
-   Efl_Access_Event_Handler *hdl;
-   EINA_LIST_FOREACH_SAFE(global_callbacks, l, l2, hdl)
-     {
-        if (hdl == handler)
-          {
-             global_callbacks = eina_list_remove_list(global_callbacks, l);
-             free(hdl);
-             break;
-          }
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
      }
 }
 
@@ -582,17 +523,6 @@ _efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
    eina_stringshare_del(pd->translation_domain);
 
    efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
-}
-
-void
-_efl_access_shutdown(void)
-{
-   Efl_Access_Event_Handler *hdl;
-
-   EINA_LIST_FREE(global_callbacks, hdl)
-     free(hdl);
-
-   ELM_SAFE_DEL(root);
 }
 
 #include "efl_access_object.eo.c"
