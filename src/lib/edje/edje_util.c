@@ -2039,6 +2039,7 @@ _edje_user_text_style_definition_fetch(Edje *ed, const char *part)
    if (!eud)
      {
         eud = _edje_user_definition_new(EDJE_USER_TEXT_STYLE, part, ed);
+        if (!eud) return NULL;
         eud->u.text_style.types = EDJE_PART_TEXT_PROP_NONE;
         eud->u.text_style.props = NULL;
      }
@@ -2063,6 +2064,7 @@ _edje_user_text_expand_definition_fetch(Edje *ed, const char *part)
    if (!eud)
      {
         eud = _edje_user_definition_new(EDJE_USER_TEXT_EXPAND, part, ed);
+        if (!eud) return NULL;
         eud->u.text_expand.expand = EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_NONE;
      }
 
