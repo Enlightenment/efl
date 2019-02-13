@@ -1796,7 +1796,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
 
    if (!eina_file_close_on_exec(pd->fd, close_on_exec))
      {
-        ERR("fcntl(" SOCKET_FMT ", F_SETFD): %s", pd->fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD): %s", pd->fd, eina_error_msg_get(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }

@@ -2659,7 +2659,7 @@ _ecore_con_lookup_done_cb(void *data, const char *host, const char *port EINA_UN
 
         if (!inet_ntop(result->ai_family, mem, ip, sizeof(ip)))
           {
-             ERR("could not convert IP to string: %s", strerror(errno));
+             ERR("could not convert IP to string: %s", eina_error_msg_get(errno));
              goto end;
           }
         ctx->cb(result->ai_canonname, ip, result->ai_addr, result->ai_addrlen, (void *)ctx->data);

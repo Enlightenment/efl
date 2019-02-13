@@ -425,7 +425,7 @@ _ecore_con_url_dialer_can_read_changed(void *data, const Efl_Event *event EINA_U
         ssize_t r = write(url_con->write_fd, slice.bytes, slice.len);
         if (r == -1)
           {
-             ERR("Could not write to fd=%d: %s", url_con->write_fd, strerror(errno));
+             ERR("Could not write to fd=%d: %s", url_con->write_fd, eina_error_msg_get(errno));
              break;
           }
         slice.bytes += r;
