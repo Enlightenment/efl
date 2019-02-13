@@ -189,6 +189,10 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 /* Interfaces */
 #include <elm_interfaces.h>
 
+/* accessibility */
+#include <efl_access_widget.h>
+#include <efl_access_widget_item.h>
+
 /* other includes */
 #include <elc_ctxpopup.h>
 #include <elc_combobox.h>
