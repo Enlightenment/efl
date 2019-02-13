@@ -1,0 +1,11 @@
+class Efl.Access.Ui.Win extends Efl.Access.Widget
+{
+   data: null;
+   implements {
+        Efl.Object.constructor;
+        Efl.Access.Object.state_set { get; }
+        Efl.Access.Object.i18n_name { get; }
+        Efl.Access.Component.extents { get; }
+   }
+}
+

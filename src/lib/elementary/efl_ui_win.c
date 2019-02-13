@@ -7242,56 +7242,6 @@ _elm_win_focus_auto_hide(Evas_Object *obj)
      }
 }
 
-static void
-_on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
-{
-   Evas_Object *win;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(_elm_win_list, l, win)
-     {
-        /**
-         * Reemit accessibility events when AT-SPI2 connection is begin
-         * established. This assures that Assistive Technology clients will
-         * receive all org.a11y.window events and could keep track of active
-         * windows whithin system.
-         */
-        efl_access_window_created_signal_emit(win);
-        if (elm_win_focus_get(win))
-          {
-             Evas_Object *target;
-             efl_access_window_activated_signal_emit(win);
-             /** Reemit focused event to inform atspi clients about currently
-              * focused object **/
-             {
-                Efl_Ui_Focus_Manager *m;
-
-                m = win;
-
-                while (efl_ui_focus_manager_redirect_get(m))
-                  m = efl_ui_focus_manager_redirect_get(m);
-
-                target = efl_ui_focus_manager_focus_get(m);
-             }
-             if (target)
-               efl_access_state_changed_signal_emit(target, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
-          }
-        else
-          efl_access_window_deactivated_signal_emit(win);
-     }
-}
-
-EOLIAN static void
-_efl_ui_win_class_constructor(Efl_Class *klass EINA_UNUSED)
-{
-   if (_elm_config->atspi_mode)
-     {
-        Eo *bridge = _elm_atspi_bridge_get();
-        if (bridge)
-           efl_event_callback_add(bridge, ELM_ATSPI_BRIDGE_EVENT_CONNECTED, _on_atspi_bus_connected, NULL);
-     }
-}
-
 EOLIAN static void
 _efl_ui_win_efl_object_debug_name_override(Eo *obj, Efl_Ui_Win_Data *pd, Eina_Strbuf *sb)
 {
@@ -7312,49 +7262,6 @@ _efl_ui_win_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED, 
           { NULL, NULL, NULL, NULL }
    };
    return &atspi_actions[0];
-}
-
-EOLIAN static Efl_Access_State_Set
-_efl_ui_win_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
-{
-   Efl_Access_State_Set ret;
-   ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
-
-   if (elm_win_focus_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ACTIVE);
-
-   return ret;
-}
-
-EOLIAN static const char*
-_efl_ui_win_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Win_Data *sd EINA_UNUSED)
-{
-   const char *ret;
-   ret = efl_access_object_i18n_name_get(efl_super(obj, EFL_UI_WIN_CLASS));
-   if (ret) return ret;
-   const char *name = elm_win_title_get(obj);
-   return name;
-}
-
-EOLIAN static Eina_Rect
-_efl_ui_win_efl_access_component_extents_get(const Eo *obj, Efl_Ui_Win_Data *_pd EINA_UNUSED, Eina_Bool screen_coords)
-{
-   Eina_Rect r;
-   int ee_x, ee_y;
-
-   r = efl_gfx_entity_geometry_get(obj);
-   r.x = r.y = 0;
-   if (screen_coords)
-     {
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-        if (ee)
-          {
-             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
-             r.x += ee_x;
-             r.y += ee_y;
-          }
-     }
-   return r;
 }
 
 EOLIAN static Eina_Bool
@@ -9053,11 +8960,60 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
    return win;
 }
 
-EOLIAN Efl_Access_Object*
-_efl_ui_win_efl_access_object_access_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+EOLIAN static Efl_Access_State_Set
+_efl_access_ui_win_efl_access_object_state_set_get(const Eo *obj, void *sd EINA_UNUSED)
 {
-   // attach all kinds of windows directly to access root object
-   return elm_atspi_app_object_instance_get(ELM_ATSPI_APP_OBJECT_CLASS);
+   Efl_Access_State_Set ret;
+   ret = efl_access_object_state_set_get(efl_super(obj, EFL_ACCESS_UI_WIN_CLASS));
+
+   Efl_Ui_Widget *win = efl_access_widget_real_widget_get(obj);
+   if (win && elm_win_focus_get(win))
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ACTIVE);
+
+   return ret;
+}
+
+EOLIAN static const char*
+_efl_access_ui_win_efl_access_object_i18n_name_get(const Eo *obj, void *sd EINA_UNUSED)
+{
+   const char *ret;
+   ret = efl_access_object_i18n_name_get(efl_super(obj, EFL_ACCESS_UI_WIN_CLASS));
+   if (ret) return ret;
+   const char *name = elm_win_title_get(efl_access_widget_real_widget_get(obj));
+   return name;
+}
+
+EOLIAN static Eina_Rect
+_efl_access_ui_win_efl_access_component_extents_get(const Eo *obj, void *_pd EINA_UNUSED, Eina_Bool screen_coords)
+{
+   Eina_Rect r = {0,};
+   int ee_x, ee_y;
+
+   Efl_Ui_Widget *win = efl_access_widget_real_widget_get(obj);
+   if (!win) return r;
+
+   r = efl_gfx_entity_geometry_get(win);
+   r.x = r.y = 0;
+   if (screen_coords)
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        if (ee)
+          {
+             ecore_evas_geometry_get(ee, &ee_x, &ee_y, NULL, NULL);
+             r.x += ee_x;
+             r.y += ee_y;
+          }
+     }
+   return r;
+}
+
+EOLIAN static Eo*
+_efl_access_ui_win_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   efl_access_widget_forced_parent_set(obj, elm_atspi_app_object_instance_get(ELM_ATSPI_APP_OBJECT_CLASS));
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_WINDOW);
+   return efl_constructor(efl_super(obj, EFL_ACCESS_UI_WIN_CLASS));
 }
 
 #include "efl_ui_win_legacy.eo.c"
+#include "efl_access_ui_win.eo.c"

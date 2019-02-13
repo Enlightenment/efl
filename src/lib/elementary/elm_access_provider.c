@@ -8,6 +8,8 @@
 static Efl_Access_Object*
 _access_object_create(Efl_Object *obj)
 {
+   if (efl_isa(obj, EFL_UI_WIN_CLASS))
+     return efl_add(EFL_ACCESS_UI_WIN_CLASS, obj);
    if (efl_isa(obj, EFL_UI_WIDGET_CLASS))
      return efl_add(EFL_ACCESS_WIDGET_CLASS, obj);
 
