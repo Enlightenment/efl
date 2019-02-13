@@ -2093,6 +2093,11 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    eo_lexer_get(ls);
    ls->klass->type = type;
    eo_lexer_context_push(ls);
+   if (ls->t.kw == KW_at_beta)
+     {
+        ls->klass->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    parse_name(ls, buf);
    bnm = eina_stringshare_ref(ls->filename);
    fnm = database_class_to_filename(eina_strbuf_string_get(buf));

@@ -192,6 +192,10 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
 
    /* class definition */
 
+   if (!legacy && eolian_class_is_beta(cl))
+     {
+        eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
+     }
    if (!legacy)
      {
         const Eolian_Documentation *doc = eolian_class_documentation_get(cl);
@@ -297,6 +301,10 @@ events:
              eina_stringshare_del(evn);
           }
         eina_iterator_free(itr);
+     }
+   if (!legacy && eolian_class_is_beta(cl))
+     {
+        eina_strbuf_append(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
      }
 
    free(cname);

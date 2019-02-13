@@ -196,6 +196,7 @@ struct _Eolian_Class
    Eina_List *callables; /* internal for now */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
+   Eina_Bool is_beta :1;
 };
 
 struct _Eolian_Function
