@@ -85,7 +85,7 @@ _efl_page_transition_loop_set(Eo *obj EINA_UNUSED,
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_update,
                           EFL_FUNC_CALL(move), double move)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_curr_page_change,
-                          EFL_FUNC_CALL(move), double move)
+                          EFL_FUNC_CALL(diff), int diff)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_page_size_set,
                           EFL_FUNC_CALL(sz), Eina_Size2D sz)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_padding_size_set,
