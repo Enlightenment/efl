@@ -48,9 +48,8 @@ _elm_atspi_app_object_efl_access_object_access_children_get(const Eo *obj EINA_U
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {
-        if (!efl_isa(win, EFL_ACCESS_OBJECT_MIXIN))
-          continue;
-        accs = eina_list_append(accs, win);
+        Efl_Access_Object *access = efl_access_object_query(EFL_ACCESS_OBJECT_MIXIN, win);
+        if (access) accs = eina_list_append(accs, access);
      }
 
    return accs;

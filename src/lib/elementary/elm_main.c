@@ -428,7 +428,10 @@ elm_init(int argc, char **argv)
    ELM_CNP_EVENT_SELECTION_CHANGED = ecore_event_type_new();
 
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
-     _elm_atspi_bridge_init();
+   {
+      _elm_access_init();
+      _elm_atspi_bridge_init();
+   }
    if (!_elm_config->web_backend)
      _elm_config->web_backend = eina_stringshare_add("none");
    if (!_elm_web_init(_elm_config->web_backend))
@@ -1207,7 +1210,10 @@ elm_quicklaunch_fork(int    argc,
    if (setsid() < 0) perror("could not setsid");
    if (chdir(cwd) != 0) perror("could not chdir");
    if (_elm_config->atspi_mode != ELM_ATSPI_MODE_OFF)
-     _elm_atspi_bridge_init();
+     {
+        _elm_access_init();
+        _elm_atspi_bridge_init();
+     }
 
    if (qre_main)
      {
