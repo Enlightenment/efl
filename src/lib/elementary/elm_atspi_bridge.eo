@@ -13,6 +13,15 @@ class Elm.Atspi.Bridge extends Efl.Access.Bridge
             }
          }
       }
+      @property root {
+           get {
+           }
+           set {
+           }
+           values {
+               root: Efl.Access.Object;
+           }
+      }
    }
    implements {
       Efl.Object.constructor;
