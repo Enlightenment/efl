@@ -520,7 +520,7 @@ _begin_recovery_maybe(Ecore_Wl2_Display *ewd, int code)
      _recovery_timer_add(ewd);
    else if (!_server_displays)
      {
-        ERR("Wayland Socket Error: %s", strerror(errno));
+        ERR("Wayland Socket Error: %s", eina_error_msg_get(errno));
         _ecore_wl2_display_signal_exit();
      }
 }
