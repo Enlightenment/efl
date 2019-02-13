@@ -1,0 +1,7 @@
+class Elm.Access.Provider extends Efl.Object implements Efl.Access.Provider
+{
+   data: null;
+   implements {
+        Efl.Access.Provider.access_object { get; }
+   }
+}

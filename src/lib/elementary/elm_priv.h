@@ -73,6 +73,7 @@
 # include "efl_ui_homogeneous_model.eo.h"
 # include "efl_ui_exact_model.eo.h"
 # include "efl_ui_average_model.eo.h"
+# include "elm_access_provider.eo.h"
 
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;

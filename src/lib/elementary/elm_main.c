@@ -397,6 +397,13 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void _elm_access_init()
+{
+   Elm_Access_Provider *provider = efl_add_ref(ELM_ACCESS_PROVIDER_CLASS, NULL);
+   efl_access_object_access_provider_add(EFL_ACCESS_OBJECT_MIXIN, provider);
+   efl_unref(provider);
+}
+
 // This is necessary to keep backward compatibility
 static const char *bcargv[] = { "exe" };
 
