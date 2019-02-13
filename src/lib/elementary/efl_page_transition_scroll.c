@@ -415,7 +415,7 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
              pi->id = (pi->id - 1 + pd->page_info_num) % pd->page_info_num;
              target = pi->prev;
           }
-        else if (diff == -1)
+        else
           {
              pi->id = (pi->id + 1) % pd->page_info_num;
              target = pi->next;
@@ -443,7 +443,7 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
         pd->head = pd->head->next;
         pd->tail = pd->tail->next;
      }
-   else if (diff == -1)
+   else
      {
         pd->head = pd->head->prev;
         pd->tail = pd->tail->prev;
