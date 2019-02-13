@@ -6069,6 +6069,7 @@ _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *p
 
    _efl_ui_property_bind_get(pd, prop);
 
+   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) prop->key);
 
    return 0;
 }

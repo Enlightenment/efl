@@ -809,6 +809,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
      }
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
+   if (!_property_style_ss) _property_style_ss = eina_stringshare_add("style");
 
    eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
@@ -925,6 +926,7 @@ elm_quicklaunch_shutdown(void)
    pfx = NULL;
    ELM_SAFE_FREE(_elm_data_dir, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_lib_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(_property_style_ss, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_appname, free);
 
    ELM_SAFE_FREE(_elm_exit_handler, ecore_event_handler_del);

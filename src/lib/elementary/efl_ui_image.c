@@ -1953,6 +1953,8 @@ _efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *m
 EOLIAN static Eina_Error
 _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd, const char *key, const char *property)
 {
+   Eina_Stringshare *sk;
+
    if (strcmp(key, "filename") == 0)
      {
         pd->property.icon = EINA_FALSE;
@@ -1974,6 +1976,11 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
      }
 
    _update_viewmodel(obj, pd);
+
+   sk = eina_stringshare_add(key);
+   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) sk);
+   eina_stringshare_del(sk);
+
    return 0;
 }
 
