@@ -86,7 +86,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Eina_Bool horiz = efl_ui_dir_is_horizontal(pd->dir, EINA_FALSE);
    int id = 0, count, boxl = 0, boxr = 0, boxt = 0, boxb = 0;
    int length, want, pad;
-   double cur_pos, weight[2] = { 0, 0 }, scale;
+   double cur_pos, weight[2] = { 0, 0 }, scale, mmin = 0;
    double box_align[2];
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
 
@@ -141,9 +141,9 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         item->min = efl_gfx_size_hint_combined_min_get(o);
         efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect);
 
-        if (horiz && box_fill[0]) item->weight[0] = 1;
+        if (horiz && (box_fill[0] || pd->homogeneous)) item->weight[0] = 1;
         else if (item->weight[0] < 0) item->weight[0] = 0;
-        if (!horiz && box_fill[1]) item->weight[1] = 1;
+        if (!horiz && (box_fill[1] || pd->homogeneous)) item->weight[1] = 1;
         else if (item->weight[1] < 0) item->weight[1] = 0;
 
         if (EINA_DBL_EQ(item->align[0], -1))
@@ -191,13 +191,29 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
           {
              if (item->space[1] > wanth)
                wanth = item->space[1];
-             wantw += item->space[0];
+             if (pd->homogeneous)
+               {
+                  if (item->space[0] > mmin)
+                    mmin = item->space[0];
+               }
+             else
+               {
+                  wantw += item->space[0];
+               }
           }
         else
           {
              if (item->space[0] > wantw)
                wantw = item->space[0];
-             wanth += item->space[1];
+             if (pd->homogeneous)
+               {
+                  if (item->space[1] > mmin)
+                    mmin = item->space[1];
+               }
+             else
+               {
+                  wanth += item->space[1];
+               }
           }
 
         item->id = id++;
@@ -206,6 +222,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    // total space & available space
    if (horiz)
      {
+        if (pd->homogeneous)
+          wantw = mmin * count;
         want = wantw;
         length = boxs.w;
         pad = pd->pad.scalable ? (pd->pad.h * scale) : pd->pad.h;
@@ -214,6 +232,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
      }
    else
      {
+        if (pd->homogeneous)
+          wanth = mmin * count;
         want = wanth;
         length = boxs.h;
         pad = pd->pad.scalable ? (pd->pad.v * scale) : pd->pad.v;
@@ -226,7 +246,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    cur_pos = horiz ? boxs.x : boxs.y;
 
    // calculate weight length
-   if ((length > want) && (weight[!horiz] > 0))
+   if (!pd->homogeneous && (length > want) && (weight[!horiz] > 0))
      {
         int orig_length = length;
         double orig_weight = weight[!horiz];
@@ -272,12 +292,19 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
      {
         int x, y, w, h, sw, sh;
 
-        if ((length > want) && EINA_DBL_EQ(weight[!horiz], 0))
-          cur_pos += (length - want) * box_align[!horiz];
+        if (length > want)
+          {
+             if (pd->homogeneous)
+               mmin = (double)length / count;
+             else if (EINA_DBL_EQ(weight[!horiz], 0))
+               cur_pos += (length - want) * box_align[!horiz];
+          }
 
         for (id = 0; id < count; id++)
           {
              item = &items[id];
+             if (pd->homogeneous)
+               item->space[!horiz] = mmin;
              item->space[horiz] = horiz ? boxs.h : boxs.w;
              sw = item->space[0] - item->pad[0] - item->pad[1];
              sh = item->space[1] - item->pad[2] - item->pad[3];
