@@ -12,17 +12,19 @@ group { name: "e/init/splash";
    }
    parts {
       part { name: "bg"; type: RECT;
+         clip_to: "fader";
          description { state: "default" 0.0;
             color: 32 32 32 255;
          }
       }
       part { name: "logo";
          scale: 1;
+         clip_to: "fader";
          description { state: "default" 0.0;
             image.normal: "logo_mono";
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            color: 255 255 255 192;
+            color: 255 255 255 0;
             FIXED_SIZE(150, 150)
          }
          description { state: "active" 0.0;
@@ -32,6 +34,7 @@ group { name: "e/init/splash";
       }
       part { name: "e.text.title"; type: TEXT; mouse_events: 0;
          scale: 1;
+         clip_to: "fader";
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel1.relative: 0.05 0.0;
@@ -51,6 +54,7 @@ group { name: "e/init/splash";
       }
       part { name: "e.text.status"; type: TEXT;
          scale: 1;
+         clip_to: "fader";
          description { state: "default" 0.0;
             align: 0.5 1.0;
             rel1.relative: 0.05 0.0;
@@ -70,6 +74,7 @@ group { name: "e/init/splash";
       }
       part { name: "e.text.version"; type: TEXT;
          scale: 1;
+         clip_to: "fader";
          description { state: "default" 0.0;
             align: 1.0 1.0;
             rel1.relative: 1.0 1.0;
@@ -98,6 +103,14 @@ group { name: "e/init/splash";
             visible: 0;
          }
       }
+      part { name: "fader"; type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "faded" 0.0;
+            color: 255 255 255 0;
+         }
+      }
    }
    programs {
       program { signal: "load"; source: "";
@@ -109,13 +122,15 @@ group { name: "e/init/splash";
       program { signal: "show"; source: "";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 1.0;
+         in: 1.0 0.0;
          target: "blanker";
-         after: "ready";
       }
       program { signal: "show"; source: "";
          action: STATE_SET "active" 0.0;
          target: "logo";
+         in: 1.5 0.0;
          transition: SINUSOIDAL 0.8;
+         after: "ready";
       }
       program { name: "ready";
          script {
@@ -137,9 +152,9 @@ group { name: "e/init/splash";
          }
       }
       program { name: "exit1";
-         action: STATE_SET "default" 0.0;
+         action: STATE_SET "faded" 0.0;
          transition: SINUSOIDAL 1.0 CURRENT;
-         target: "blanker";
+         target: "fader";
          after: "exit2";
       }
       program { name: "exit2";
