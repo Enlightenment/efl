@@ -402,8 +402,41 @@ mixin Efl.Access.Object requires Efl.Object
       relationships_clear @beta {
          [[Removes all relationships in accessible object.]]
       }
+      query @class {
+           [[Queries Efl.Object for accessibile implementation.
+
+             The accessibility implementation will be provided by
+             Efl.Access.Provider installed with @Efl.Access.Object.access_provider_add
+             function.
+
+             The providers are queried in reverse order the were added. So if two
+             providers provide accessibility for same object, the accessible
+             implementation from the most recently added provider will be
+             returned.]]
+           params {
+                @in object: Efl.Object;
+           }
+           return: Efl.Access.Object;
+      }
+      access_provider_add @class {
+           [[Adds provider object to the list of providers queried by
+              @Efl.Access.Object.query
+             method.]]
+           params {
+                @in provider: Efl.Access.Provider;
+           }
+      }
+      access_provider_del @class {
+           [[Removes provider object from the list of providers queried by
+              @Efl.Access.Object.query
+             method.]]
+           params {
+                @in provider: Efl.Access.Provider;
+           }
+      }
    }
    implements {
+      class.constructor;
       Efl.Object.destructor;
    }
    events {

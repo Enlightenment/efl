@@ -8,6 +8,8 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
+static Eina_Inarray providers;
+
 const char* Access_Name[] = {
     "invalid",
     "accelerator label",
@@ -499,6 +501,49 @@ _efl_access_object_efl_object_destructor(Eo *obj, Efl_Access_Object_Data *pd)
    eina_stringshare_del(pd->translation_domain);
 
    efl_destructor(efl_super(obj, EFL_ACCESS_OBJECT_MIXIN));
+}
+
+EOLIAN void
+_efl_access_object_class_constructor(Efl_Class *cls EINA_UNUSED)
+{
+   eina_inarray_step_set(&providers, sizeof(Eina_Inarray), sizeof(Eo*), 0);
+}
+
+static int
+_eo_pointer_compare(const void *a, const void *b)
+{
+   return memcmp(a, b, sizeof(Eo*));
+}
+
+EOLIAN Efl_Access_Object*
+_efl_access_object_query(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Object *obj)
+{
+   Efl_Access_Provider **provider;
+
+   EINA_INARRAY_REVERSE_FOREACH(&providers, provider)
+     {
+        Efl_Access_Object *access = efl_access_provider_access_object_get(*provider, obj);
+        if (access) return access;
+     }
+
+   return NULL;
+}
+
+EOLIAN void
+_efl_access_object_access_provider_add(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Provider *provider)
+{
+   if (eina_inarray_search(&providers, &provider, _eo_pointer_compare) == -1)
+     {
+        eina_inarray_push(&providers, &provider);
+        efl_ref(provider);
+     }
+}
+
+EOLIAN void
+_efl_access_object_access_provider_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Provider *provider)
+{
+   if (eina_inarray_remove(&providers, &provider) != -1)
+     efl_unref(provider);
 }
 
 #include "efl_access_object.eo.c"

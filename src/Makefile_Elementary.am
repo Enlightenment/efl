@@ -110,6 +110,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_access_component.eo \
 	lib/elementary/efl_access_editable_text.eo \
 	lib/elementary/efl_access_bridge.eo \
+	lib/elementary/efl_access_provider.eo \
 	lib/elementary/efl_access_selection.eo \
 	lib/elementary/efl_access_text.eo \
 	lib/elementary/efl_access_value.eo \
@@ -754,6 +755,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_access_component.c \
 	lib/elementary/efl_access_editable_text.c \
 	lib/elementary/efl_access_bridge.c \
+	lib/elementary/efl_access_provider.c \
 	lib/elementary/efl_access_selection.c \
 	lib/elementary/efl_access_text.c \
 	lib/elementary/efl_access_value.c \

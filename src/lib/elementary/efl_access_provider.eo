@@ -1,0 +1,17 @@
+interface Efl.Access.Provider
+{
+   methods {
+      @property access_object {
+           [[ Get accessibile implementation for Efl.Object ]]
+           get {
+           }
+           keys {
+                object: Efl.Object;
+           }
+           values {
+              obj: Efl.Access.Object;
+           }
+      }
+   }
+}
+
