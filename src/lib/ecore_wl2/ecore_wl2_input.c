@@ -635,9 +635,9 @@ _ecore_wl2_input_key_send(Ecore_Wl2_Input *input, Ecore_Wl2_Window *window, xkb_
    ev->compose = comp_len ? ev->key + key_len + 1 : NULL;
    ev->string = ev->compose;
 
-   strcpy((char *)ev->keyname, keyname);
-   strcpy((char *)ev->key, key);
-   if (comp_len) strcpy((char *)ev->compose, compose);
+   strncpy((char *)ev->keyname, keyname, key_len + 1);
+   strncpy((char *)ev->key, key, name_len + 1);
+   if (comp_len) strncpy((char *)ev->compose, compose, comp_len +1);
 
    ev->window = (Ecore_Window)window;
    ev->event_window = (Ecore_Window)window;
