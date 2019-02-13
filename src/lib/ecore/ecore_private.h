@@ -138,7 +138,6 @@ struct _Efl_Loop_Data
    Ecore_Fd_Handler    *fd_handlers;
    Eina_List           *fd_handlers_with_prep;
    Eina_List           *file_fd_handlers;
-   Eina_List           *always_fd_handlers;
    Eina_List           *fd_handlers_with_buffer;
    Eina_List           *fd_handlers_to_delete;
    Ecore_Fd_Handler    *fd_handlers_to_call;

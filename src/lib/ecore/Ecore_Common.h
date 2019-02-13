@@ -1388,13 +1388,7 @@ enum _Ecore_Fd_Handler_Flags
 {
    ECORE_FD_READ = 1, /**< Fd Read mask */
    ECORE_FD_WRITE = 2, /**< Fd Write mask */
-   ECORE_FD_ERROR = 4, /**< Fd Error mask */
-   /* ECORE_FD_ALWAYS is intended to fix a problem with wayland
-    * and threads.  It causes the fd handler to be called
-    * in any state, so wayland libs can call read_cancel
-    * if nothing is available to read.  Everyone else should
-    * stay away. */
-   ECORE_FD_ALWAYS = 8, /**< Fd Always mask - DO NOT USE! */
+   ECORE_FD_ERROR = 4 /**< Fd Error mask */
 };
 typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
 
