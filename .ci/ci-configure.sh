@@ -77,7 +77,7 @@ else
 
   RELEASE_READY_LINUX_COPTS=" --with-profile=release"
 
-  MINGW_COPTS=" --prefix=/ewpi-64-install --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/local/bin/eolian_gen \
+  MINGW_COPTS=" --prefix=/ewpi-64-install --host=x86_64-w64-mingw32 --with-eolian-gen=/usr/bin/eolian_gen \
   --with-edje-cc=/usr/local/bin/edje_cc --with-eet-eet=/usr/local/bin/eet \
   --with-bin-elm-prefs-cc=/usr/local/bin/elm_prefs_cc \
   --disable-static --with-tests=regular --with-crypto=openssl \
@@ -110,6 +110,7 @@ else
     if [ "$1" = "mingw" ]; then
       OPTS="$OPTS $MINGW_COPTS"
       docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
+      docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap_eolian.sh'
     fi
     docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
     travis_fold autoreconf autoreconf
