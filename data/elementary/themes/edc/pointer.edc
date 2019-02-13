@@ -39,6 +39,18 @@ group { name: "e/pointer/enlightenment/default/color";
    }
    programs {
       program {
+         signal: "e,state,init"; source: "e";
+         action: STATE_SET "suspend" 0.0;
+         target: "parent";
+         after: "load2";
+      }
+      program { name: "load2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 1.0;
+         in: 1.0 0.0;
+         target: "parent";
+      }
+      program {
          signal: "e,action,mouse,down"; source: "e";
          action: STATE_SET "clicked" 0.0;
          target: "base";
