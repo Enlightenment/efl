@@ -287,7 +287,9 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    int do_fork;
    int num_forks = 0;
    int can_fork = 0;
+#ifdef HAVE_FORK
    Eina_Bool timeout_reached = EINA_FALSE;
+#endif
 #ifdef ENABLE_TIMING_INFO
    double tstart = 0.0, tcstart = 0.0;
    int timing = _timing_enabled();
