@@ -2231,6 +2231,7 @@ eina_value_object_get(Eina_Value *v)
    return r;
 }
 
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Get if the object is in its main lifetime.
  * @param obj the object to check
@@ -2243,6 +2244,7 @@ efl_alive_get(const Eo *obj)
 {
   return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
 }
+#endif /* EFL_BETA_API_SUPPORT */
 
 /**
  * @brief Event triggered when a callback was added to the object
