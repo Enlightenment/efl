@@ -69,9 +69,9 @@ typedef struct tm Efl_Time;
 typedef struct _Efl_Text_Cursor_Cursor Efl_Text_Cursor_Cursor;
 typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
-#ifdef EFL_BETA_API_SUPPORT
-
 #include "interfaces/efl_types.eot.h"
+
+#ifdef EFL_BETA_API_SUPPORT
 
 #include <Efl_MVVM_Common.h>
 
