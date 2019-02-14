@@ -1,5 +1,12 @@
 import efl_types;
 
+struct @free(efl_observable_tuple_free) Efl.Observable_Tuple
+{
+   [[This type describes an observable touple]]
+   key: string; [[Touple key]]
+   data: iterator<Efl.Observer> @owned; [[Touple data]]
+}
+
 class @beta Efl.Observable extends Efl.Object {
    [[Efl observable class]]
    methods {
