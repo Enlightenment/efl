@@ -345,7 +345,7 @@ abstract Efl.Object
          [[Get an iterator on all childrens]]
          return: iterator<Efl.Object> @owned @warn_unused; [[Children iterator]]
       }
-      composite_attach {
+      composite_attach @beta {
            [[Make an object a composite object of another.
 
              The class of comp_obj must be part of the extensions of the class of the parent.
@@ -359,7 +359,7 @@ abstract Efl.Object
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_detach {
+      composite_detach @beta {
            [[Detach a composite object from another object.
 
              This functions also sets the parent of comp_obj to $null.
@@ -371,7 +371,7 @@ abstract Efl.Object
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_part_is {
+      composite_part_is @beta {
            [[Check if an object is part of a composite object.
 
              See @.composite_attach, @.composite_part_is.
