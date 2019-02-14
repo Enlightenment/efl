@@ -2503,7 +2503,7 @@ _input_pointer_iterator_free(Input_Pointer_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_scene_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
+_efl_ui_win_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
                                        Eina_Bool hover EINA_UNUSED)
 {
    Input_Pointer_Iterator *it;
