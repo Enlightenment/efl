@@ -87,8 +87,6 @@ EAPI unsigned int ecore_init_ex(int argc, char **argv);
  */
 EAPI unsigned int ecore_shutdown_ex(void);
 
-
-#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Inform EFL of the version this application was built for.
  *
@@ -97,7 +95,6 @@ EAPI unsigned int ecore_shutdown_ex(void);
  * @since 1.18 (as beta)
  */
 EWAPI void efl_build_version_set(int vmaj, int vmin, int vmic, int revision, const char *flavor, const char *build_id);
-#endif
 
 /**
  * @}
