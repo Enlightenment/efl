@@ -417,6 +417,8 @@ static void page_size_cb(void *data,
                 efl_pack_end(inbox, efl_added));
 
    size_params = calloc(1, sizeof(Size_Params));
+   if (!size_params) return;
+
    size_params->slider = sl;
    size_params->pager = params->pager;
    size_params->params = params;
@@ -456,6 +458,8 @@ static void page_size_cb(void *data,
                 efl_pack_end(inbox, efl_added));
 
    size_params = calloc(1, sizeof(Size_Params));
+   if (!size_params) return;
+
    size_params->slider = sl;
    size_params->pager = params->pager;
    size_params->params = params;
@@ -570,6 +574,8 @@ static void pack_cb(void *data,
 
    // Pack Begin
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -586,6 +592,8 @@ static void pack_cb(void *data,
 
    // Pack End
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -602,6 +610,8 @@ static void pack_cb(void *data,
 
    // Pack Before
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -618,6 +628,8 @@ static void pack_cb(void *data,
 
    // Pack After
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -634,6 +646,8 @@ static void pack_cb(void *data,
 
    // Pack At
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -653,6 +667,8 @@ static void pack_cb(void *data,
 
    // Unpack At
    pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
    pack_param->pager = pager;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
@@ -691,6 +707,7 @@ static void current_page_cb(void *data,
    Eo *pager = params->pager;
    Eo *btn, *box, *sp;
    Page_Set_Params *psp = calloc(1, sizeof(Page_Set_Params));
+   if (!psp) return;
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
@@ -884,6 +901,8 @@ void test_ui_pager_scroll(void *data EINA_UNUSED,
                   efl_ui_pager_transition_set(pager, efl_added));
 
    params = calloc(1, sizeof(Params));
+   if (!params) return;
+
    params->navi = navi;
    params->pager = pager;
    params->transition = NULL;
