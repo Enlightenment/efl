@@ -409,7 +409,7 @@ _inputs_timer3_cb(void *data)
    fail_if(cnt != 2); // 2 moves (in the list), 2 ups (gone)
 
    fail_if(!efl_canvas_pointer_inside_get(win, NULL));
-   pos = efl_canvas_scene_pointer_position_get(win);
+   efl_canvas_scene_pointer_position_get(win, NULL, &pos);
    ck_assert_int_eq(pos.x, points[1][0].x);
    ck_assert_int_eq(pos.y, points[1][0].y);
 

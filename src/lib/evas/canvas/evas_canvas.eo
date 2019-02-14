@@ -966,6 +966,7 @@ class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Ani
       Efl.Canvas.Scene.device { get; }
       Efl.Canvas.Scene.seat { get; }
       Efl.Canvas.Scene.seat_default { get; }
+      Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Scene.image_max_size { get; }
       Efl.Canvas.Scene.objects_at_xy_get;
       Efl.Canvas.Scene.object_top_at_xy_get;

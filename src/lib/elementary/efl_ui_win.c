@@ -2458,12 +2458,10 @@ _efl_ui_win_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool v
    else _efl_ui_win_hide(obj, sd);
 }
 
-EOLIAN static Eina_Position2D
-_efl_ui_win_efl_canvas_scene_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_canvas_scene_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev, Eina_Position2D *pos)
 {
-   Eina_Position2D pos;
-   evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
-   return pos;
+   return efl_canvas_scene_pointer_position_get(sd->evas, dev, pos);
 }
 
 EOLIAN static Eina_Bool

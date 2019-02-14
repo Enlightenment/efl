@@ -213,8 +213,11 @@ interface @beta Efl.Canvas.Scene
               This function returns the current position of the main input
               pointer (mouse, pen, etc...).
             ]]
+            return: bool; [[$true if a pointer exists for the given seat, otherwise $false.]]
          }
-         /* FIXME: missing keys { seat } */
+         keys {
+            seat: Efl.Input.Device; [[The seat, or $null to use the default.]]
+         }
          values {
             pos: Eina.Position2D; [[The pointer position in pixels.]]
          }
