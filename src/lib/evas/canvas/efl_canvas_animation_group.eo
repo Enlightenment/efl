@@ -1,4 +1,4 @@
-abstract Efl.Canvas.Animation_Group extends Efl.Canvas.Animation
+abstract @beta Efl.Canvas.Animation_Group extends Efl.Canvas.Animation
 {
    [[Efl group animation abstract class]]
    eo_prefix: efl_animation_group;

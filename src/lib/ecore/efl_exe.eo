@@ -19,7 +19,7 @@ enum Efl.Exe_Flags {
    hide_io          = 4
 }
 
-class Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer,Efl.Core.Command_Line
+class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer,Efl.Core.Command_Line
 {
    [[ ]]
    methods {

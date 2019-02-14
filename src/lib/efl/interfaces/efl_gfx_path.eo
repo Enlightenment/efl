@@ -1,7 +1,7 @@
 import eina_types;
 import efl_gfx_types;
 
-mixin Efl.Gfx.Path
+mixin @beta Efl.Gfx.Path
 {
    [[EFL graphics path object interface]]
    methods {

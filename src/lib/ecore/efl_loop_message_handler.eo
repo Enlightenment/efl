@@ -1,4 +1,4 @@
-class Efl.Loop_Message_Handler extends Efl.Object
+class @beta Efl.Loop_Message_Handler extends Efl.Object
 {
    [[Message handlers represent a single message type on the Efl.Loop
      parent object. These message handlers can be used to listen for

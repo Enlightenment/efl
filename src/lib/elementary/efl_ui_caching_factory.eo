@@ -1,4 +1,4 @@
-class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
+class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
 {
    [[Efl Ui Factory that provides object caching.
 

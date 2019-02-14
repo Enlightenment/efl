@@ -1,4 +1,4 @@
-class Efl.Ui.Win_Socket extends Efl.Ui.Win
+class @beta Efl.Ui.Win_Socket extends Efl.Ui.Win
 {
    [[An off-screen window to be displayed in a remote process.
 

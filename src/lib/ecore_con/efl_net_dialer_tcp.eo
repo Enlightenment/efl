@@ -1,4 +1,4 @@
-class Efl.Net.Dialer_Tcp extends Efl.Net.Socket_Tcp implements Efl.Net.Dialer {
+class @beta Efl.Net.Dialer_Tcp extends Efl.Net.Socket_Tcp implements Efl.Net.Dialer {
     [[Connects to a remote TCP server.
 
       If the proxy is NULL (default), then the system proxy will be

@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-mixin Efl.Gfx.Color_Class
+mixin @beta Efl.Gfx.Color_Class
 {
    [[Efl Gfx Color Class mixin class]]
    data: null;

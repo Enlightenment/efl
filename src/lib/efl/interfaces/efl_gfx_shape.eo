@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-mixin Efl.Gfx.Shape extends Efl.Gfx.Path
+mixin @beta Efl.Gfx.Shape extends Efl.Gfx.Path
 {
    [[EFL graphics shape object interface]]
    methods {

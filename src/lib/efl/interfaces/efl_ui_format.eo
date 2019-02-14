@@ -6,7 +6,7 @@ function Efl.Ui.Format_Func_Cb {
    }
 };
 
-mixin Efl.Ui.Format
+mixin @beta Efl.Ui.Format
 {
    [[interface class for format_func]]
    methods {

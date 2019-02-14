@@ -40,7 +40,7 @@ enum Efl.Gfx.Image_Scale_Type
    none         [[Not scale the image]]
 }
 
-interface Efl.Gfx.Image
+interface @beta Efl.Gfx.Image
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
 

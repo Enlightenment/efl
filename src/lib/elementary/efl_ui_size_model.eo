@@ -1,4 +1,4 @@
-class Efl.Ui.Size_Model extends Efl.Composite_Model
+class @beta Efl.Ui.Size_Model extends Efl.Composite_Model
 {
    [[Class to be used to store object item size for List/Grid View.
 

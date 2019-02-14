@@ -3,7 +3,7 @@ import efl_input_types;
 
 /* FIXME: This class lacks a lot of useful helpers. */
 
-class Efl.Canvas.Gesture_Touch extends Efl.Object
+class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
 {
    [[EFL Gesture Touch class]]
    eo_prefix: efl_gesture_touch;

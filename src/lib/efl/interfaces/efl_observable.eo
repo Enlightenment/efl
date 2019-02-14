@@ -1,6 +1,6 @@
 import efl_types;
 
-class Efl.Observable extends Efl.Object {
+class @beta Efl.Observable extends Efl.Object {
    [[Efl observable class]]
    methods {
       observer_add {

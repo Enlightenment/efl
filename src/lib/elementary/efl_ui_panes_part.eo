@@ -1,4 +1,4 @@
-class Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
+class @beta Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
 {
    [[Elementary Panes internal part class]]
    data: null;

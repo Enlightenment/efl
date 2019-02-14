@@ -12,7 +12,7 @@ enum Efl.Ui.Scroll_Block
    horizontal = 2 [[Block horizontal movement.]]
 }
 
-interface Efl.Ui.Scrollable
+interface @beta Efl.Ui.Scrollable
 {
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;

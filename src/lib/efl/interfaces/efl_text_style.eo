@@ -55,7 +55,7 @@ enum Efl.Text_Style_Underline_Type
    dashed, [[Underlined with a dashed line]]
 }
 
-interface Efl.Text_Style {
+interface @beta Efl.Text_Style {
    [[Style to apply to the text
 
      A style can be coloring, effects, underline, strikethrough etc.

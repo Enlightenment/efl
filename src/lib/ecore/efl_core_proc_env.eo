@@ -1,4 +1,4 @@
-class Efl.Core.Proc_Env extends Efl.Core.Env
+class @beta Efl.Core.Proc_Env extends Efl.Core.Env
 {
    eo_prefix : efl_env;
    methods {

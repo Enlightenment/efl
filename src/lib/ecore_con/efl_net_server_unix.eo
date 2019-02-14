@@ -1,4 +1,4 @@
-class Efl.Net.Server_Unix extends Efl.Net.Server_Fd {
+class @beta Efl.Net.Server_Unix extends Efl.Net.Server_Fd {
     [[An AF_UNIX server.
 
       The @Efl.Net.Server.serve method will call bind(2) directly.

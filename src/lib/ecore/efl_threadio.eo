@@ -15,7 +15,7 @@ function EFlThreadIOCallSync {
    return: void_ptr; [[ ]]
 };
 
-mixin Efl.ThreadIO
+mixin @beta Efl.ThreadIO
 {
    [[ ]]
    methods {

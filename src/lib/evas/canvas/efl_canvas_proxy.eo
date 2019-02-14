@@ -1,4 +1,4 @@
-class Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
+class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
 {
    [[Low-level proxy image object.
 

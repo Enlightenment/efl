@@ -1,5 +1,5 @@
 /* FIXME: Edje Drag and this Dnd Draggable have confusingly similar names! */
-interface Efl.Ui.Draggable
+interface @beta Efl.Ui.Draggable
 {
    [[Efl UI draggable interface]]
    event_prefix: efl_ui;

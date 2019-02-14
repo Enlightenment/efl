@@ -1,4 +1,4 @@
-abstract Efl.Class
+abstract @beta Efl.Class
 {
     [[Abstract Efl class]]
     data: null;

@@ -1,4 +1,4 @@
-interface Efl.Content
+interface @beta Efl.Content
 {
    [[Common interface for objects that have a (single) content.
 

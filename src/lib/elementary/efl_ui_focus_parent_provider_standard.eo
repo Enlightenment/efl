@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Parent_Provider_Standard extends Efl.Object implements Efl.Ui.Focus.Parent_Provider {
+class @beta Efl.Ui.Focus.Parent_Provider_Standard extends Efl.Object implements Efl.Ui.Focus.Parent_Provider {
    [[EFL UI Focus Parent Provider Standard Class]]
    implements {
       Efl.Ui.Focus.Parent_Provider.find_logical_parent;

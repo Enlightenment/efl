@@ -21,7 +21,7 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save
+class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;

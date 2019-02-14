@@ -1,4 +1,4 @@
-class Efl.Select_Model extends Efl.Boolean_Model
+class @beta Efl.Select_Model extends Efl.Boolean_Model
 {
    [[Efl select model class]]
    implements {

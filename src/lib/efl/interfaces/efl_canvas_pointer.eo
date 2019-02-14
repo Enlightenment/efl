@@ -1,6 +1,6 @@
 import efl_input_device;
 
-interface Efl.Canvas.Pointer
+interface @beta Efl.Canvas.Pointer
 {
    [[Efl Canvas Pointer interface]]
    methods {

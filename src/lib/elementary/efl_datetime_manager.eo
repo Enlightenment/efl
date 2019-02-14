@@ -1,6 +1,6 @@
 import efl_types;
 
-class Efl.Datetime.Manager extends Efl.Object
+class @beta Efl.Datetime.Manager extends Efl.Object
 {
    [[Efl datetime manager class for Datepicker and Timepicker]]
    methods {

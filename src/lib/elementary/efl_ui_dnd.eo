@@ -1,6 +1,6 @@
 import efl_ui_dnd_types;
 
-mixin Efl.Ui.Dnd {
+mixin @beta Efl.Ui.Dnd {
    data: null;
    methods {
       drag_start {

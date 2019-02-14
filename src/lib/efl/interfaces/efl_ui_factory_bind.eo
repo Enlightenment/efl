@@ -1,4 +1,4 @@
-interface Efl.Ui.Factory_Bind
+interface @beta Efl.Ui.Factory_Bind
 {
    [[Efl UI Property interface.
      view object can have @Efl.Model and need to set cotent with those model stored data.

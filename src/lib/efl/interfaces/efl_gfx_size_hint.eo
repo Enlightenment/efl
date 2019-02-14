@@ -4,7 +4,7 @@ import efl_gfx_types;
 const Efl.Gfx.Size_Hint_Expand: double = 1.0;
    [[Use with @Efl.Gfx.Size_Hint.hint_weight.]]
 
-interface Efl.Gfx.Size_Hint
+interface @beta Efl.Gfx.Size_Hint
 {
    [[Efl graphics size hint interface]]
    event_prefix: efl_gfx_entity;

@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
+interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
 {
    eo_prefix: efl_ui_scrollable;
    methods {

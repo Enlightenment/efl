@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Ui.Scroll_Alert_Popup extends Efl.Ui.Alert_Popup
+class @beta Efl.Ui.Scroll_Alert_Popup extends Efl.Ui.Alert_Popup
 {
    [[EFL UI Scroll Alert Popup class]]
    methods {

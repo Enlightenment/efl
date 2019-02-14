@@ -1,4 +1,4 @@
-class Efl.Ui.Scroll.Manager extends Efl.Object implements
+class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
                              Efl.Ui.I18n,
                              Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar

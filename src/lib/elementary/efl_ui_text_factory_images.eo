@@ -1,4 +1,4 @@
-class Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.Text_Factory
+class @beta Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.Text_Factory
 {
    [[Factory that creates images given key string
 

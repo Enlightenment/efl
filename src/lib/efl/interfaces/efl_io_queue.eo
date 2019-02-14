@@ -1,4 +1,4 @@
-class Efl.Io.Queue extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
+class @beta Efl.Io.Queue extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
     [[Generic In-memory queue of data to be used as I/O.
 
       This class is to be used to receive temporary data using

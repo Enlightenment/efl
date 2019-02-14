@@ -1,4 +1,4 @@
-interface Efl.Gfx.Filter
+interface @beta Efl.Gfx.Filter
 {
    [[Graphical filters can be applied to any object implementing this interface.
 

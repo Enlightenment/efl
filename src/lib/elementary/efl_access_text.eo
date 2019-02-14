@@ -44,7 +44,7 @@ struct Efl.Access.Text_Change_Info
    len: size; [[Change length]]
 }
 
-interface Efl.Access.Text
+interface @beta Efl.Access.Text
 {
    [[Elementary accessible text interface]]
    methods {

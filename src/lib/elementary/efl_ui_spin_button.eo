@@ -1,4 +1,4 @@
-class Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Composition, Efl.Ui.Direction,
+class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Composition, Efl.Ui.Direction,
                           Efl.Access.Widget.Action
 {
    [[A Button Spin.

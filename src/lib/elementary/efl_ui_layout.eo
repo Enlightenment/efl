@@ -1,6 +1,6 @@
 import efl_ui;
 
-class Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
+class @beta Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
                      Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group

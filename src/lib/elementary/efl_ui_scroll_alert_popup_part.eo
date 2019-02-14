@@ -1,4 +1,4 @@
-class Efl.Ui.Scroll_Alert_Popup_Part extends Efl.Ui.Layout_Part implements Efl.Content, Efl.Text
+class @beta Efl.Ui.Scroll_Alert_Popup_Part extends Efl.Ui.Layout_Part implements Efl.Content, Efl.Text
 {
    [[Efl UI Scroll Alert Popup internal part class]]
    data: null;

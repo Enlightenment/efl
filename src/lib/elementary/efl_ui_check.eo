@@ -1,4 +1,4 @@
-class Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
+class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
 {
    [[Check widget
 

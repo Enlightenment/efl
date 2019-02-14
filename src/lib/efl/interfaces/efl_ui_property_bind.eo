@@ -1,4 +1,4 @@
-interface Efl.Ui.Property_Bind
+interface @beta Efl.Ui.Property_Bind
 {
    [[Efl UI Property_Bind interface.
      view object can have @Efl.Model to manage the data,

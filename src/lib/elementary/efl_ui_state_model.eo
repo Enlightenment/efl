@@ -1,4 +1,4 @@
-class Efl.Ui.State_Model extends Efl.Boolean_Model
+class @beta Efl.Ui.State_Model extends Efl.Boolean_Model
 {
    [[Efl model handling visibility, enable and selected state]]
    implements {

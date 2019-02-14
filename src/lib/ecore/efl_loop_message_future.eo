@@ -1,4 +1,4 @@
-class Efl.Loop_Message_Future extends Efl.Loop_Message
+class @beta Efl.Loop_Message_Future extends Efl.Loop_Message
 {
    [[ Used internally for futures on the loop ]]
    methods {

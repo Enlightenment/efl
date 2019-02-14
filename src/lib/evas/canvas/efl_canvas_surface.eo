@@ -1,4 +1,4 @@
-abstract Efl.Canvas.Surface extends Efl.Canvas.Image_Internal
+abstract @beta Efl.Canvas.Surface extends Efl.Canvas.Image_Internal
 {
    [[Native surfaces usually bound to an externally-managed buffer.
 

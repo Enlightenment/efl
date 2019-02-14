@@ -1,6 +1,6 @@
 /* FIXME: Rename */
 
-interface Efl.Control {
+interface @beta Efl.Control {
    [[Efl control interface]]
    methods {
         @property priority {

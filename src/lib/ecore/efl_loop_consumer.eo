@@ -1,4 +1,4 @@
-abstract Efl.Loop_Consumer extends Efl.Object
+abstract @beta Efl.Loop_Consumer extends Efl.Object
 {
    [[An @Efl.Loop_Consumer is a class which requires one of the parents to provide
      an @Efl.Loop interface when performing @Efl.Object.provider_find. It will enforce this by

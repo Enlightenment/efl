@@ -1,4 +1,4 @@
-interface Efl.Access.Window
+interface @beta Efl.Access.Window
 {
    [[Elementary accessible window interface]]
    events {

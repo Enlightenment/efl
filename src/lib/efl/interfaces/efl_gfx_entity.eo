@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Gfx.Entity {
+interface @beta Efl.Gfx.Entity {
    [[Efl graphics interface]]
    eo_prefix: efl_gfx_entity;
    methods {

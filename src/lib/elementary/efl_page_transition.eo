@@ -1,4 +1,4 @@
-class Efl.Page.Transition extends Efl.Object
+class @beta Efl.Page.Transition extends Efl.Object
 {
    [[Page transition for @Efl.Ui.Pager
 

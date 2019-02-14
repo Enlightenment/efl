@@ -1,4 +1,4 @@
-class Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
+class @beta Efl.Core.Env extends Efl.Object implements Efl.Duplicate {
    [[This object can maintain a set of key value pairs
 
      A object of this type alone does not apply the object to the system.

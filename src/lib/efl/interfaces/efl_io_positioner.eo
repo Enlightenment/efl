@@ -7,7 +7,7 @@ enum Efl.Io.Positioner_Whence {
     end, [[Seek from the end of stream/file]]
 }
 
-mixin Efl.Io.Positioner {
+mixin @beta Efl.Io.Positioner {
     [[Generic interface for objects that can change or report position.
 
       @since 1.19

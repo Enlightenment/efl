@@ -1,4 +1,4 @@
-class Efl.Io.Stdout extends Efl.Loop_Fd implements Efl.Io.Writer_Fd {
+class @beta Efl.Io.Stdout extends Efl.Loop_Fd implements Efl.Io.Writer_Fd {
     [[Application's standard output (stdout).
 
       @since 1.19

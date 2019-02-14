@@ -8,7 +8,7 @@ enum Efl.Ui.Popup_Align {
     bottom    [[Popup aligned to bottom]]
 }
 
-class Efl.Ui.Popup extends Efl.Ui.Layout implements Efl.Content, Efl.Ui.Focus.Layer
+class @beta Efl.Ui.Popup extends Efl.Ui.Layout implements Efl.Content, Efl.Ui.Focus.Layer
 {
    [[EFL UI popup class]]
    methods {

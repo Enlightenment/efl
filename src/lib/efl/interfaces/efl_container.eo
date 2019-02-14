@@ -1,4 +1,4 @@
-interface Efl.Container
+interface @beta Efl.Container
 {
    [[Common interface for objects that have multiple contents (sub objects).
 

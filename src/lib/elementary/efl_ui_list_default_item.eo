@@ -1,5 +1,5 @@
 
-class Efl.Ui.List_Default_Item extends Efl.Ui.List_Item implements
+class @beta Efl.Ui.List_Default_Item extends Efl.Ui.List_Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
                                 Efl.Content

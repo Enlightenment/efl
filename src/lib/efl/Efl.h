@@ -71,8 +71,6 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
 #include "interfaces/efl_types.eot.h"
 
-#ifdef EFL_BETA_API_SUPPORT
-
 #include <Efl_MVVM_Common.h>
 
 /* Data types */
@@ -186,6 +184,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_interactive.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+
+#ifdef EFL_BETA_API_SUPPORT
 
 EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 

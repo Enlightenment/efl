@@ -1,4 +1,4 @@
-interface Efl.Ui.Cursor
+interface @beta Efl.Ui.Cursor
 {
    [[An interface to define mouse cursors to use when hovering
      over UI widgets.

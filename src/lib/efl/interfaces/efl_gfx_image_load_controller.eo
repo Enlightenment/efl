@@ -13,7 +13,7 @@ enum Efl.Gfx.Image_Load_Controller_State
 }
 */
 
-interface Efl.Gfx.Image_Load_Controller
+interface @beta Efl.Gfx.Image_Load_Controller
 {
    [[Common APIs for all loadable 2D images.]]
 

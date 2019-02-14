@@ -49,7 +49,7 @@ enum Efl.Text_Font_Bitmap_Scalable {
    color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
 }
 
-interface Efl.Text_Font {
+interface @beta Efl.Text_Font {
    [[Font settings of the text
 
      @since 1.20

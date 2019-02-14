@@ -1,4 +1,4 @@
-class Efl.Canvas.Surface_Tbm extends Efl.Canvas.Surface
+class @beta Efl.Canvas.Surface_Tbm extends Efl.Canvas.Surface
 {
    [[Native Tizen Buffer Manager surface for Efl canvas]]
 

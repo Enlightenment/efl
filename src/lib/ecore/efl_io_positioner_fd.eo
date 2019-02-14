@@ -1,4 +1,4 @@
-mixin Efl.Io.Positioner_Fd extends Efl.Io.Positioner {
+mixin @beta Efl.Io.Positioner_Fd extends Efl.Io.Positioner {
     [[Positions fd using lseek(2).
 
       @since 1.19

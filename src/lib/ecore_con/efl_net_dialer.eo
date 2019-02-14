@@ -2,7 +2,7 @@ var Efl.Net.Dialer_Error.COULDNT_CONNECT: Eina.Error; [[The dialer could not con
 var Efl.Net.Dialer_Error.COULDNT_RESOLVE_PROXY: Eina.Error; [[The dialer could not resolve the given proxy server]]
 var Efl.Net.Dialer_Error.PROXY_AUTHENTICATION_FAILED: Eina.Error; [[The dialer failed to authenticate against the proxy server]]
 
-interface Efl.Net.Dialer extends Efl.Net.Socket {
+interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
     [[Creates a client socket to reach a remote peer.
 
       The connection process starts when @.dial is executed. This

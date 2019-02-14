@@ -13,7 +13,7 @@ struct Efl.Model_Children_Event {
                           the parent, it will be available here.]]
 }
 
-interface Efl.Model
+interface @beta Efl.Model
 {
    [[Efl model interface]]
    eo_prefix: efl_model;

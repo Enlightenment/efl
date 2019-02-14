@@ -1,6 +1,6 @@
 import efl_text_types;
 
-interface Efl.Text_Interactive extends Efl.Text, Efl.Text_Font,
+interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font,
    Efl.Text_Format, Efl.Text_Style
 {
    [[This is an interface interactive text inputs should implement]]

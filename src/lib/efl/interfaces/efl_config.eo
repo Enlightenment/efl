@@ -1,4 +1,4 @@
-interface Efl.Config
+interface @beta Efl.Config
 {
    [[A generic configuration interface, that holds key-value pairs.]]
    methods {

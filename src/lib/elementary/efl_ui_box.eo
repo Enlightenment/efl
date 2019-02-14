@@ -1,4 +1,4 @@
-class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
+class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
                   Efl.Ui.Direction
 {
    [[The box widget.

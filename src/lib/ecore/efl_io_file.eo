@@ -1,4 +1,4 @@
-class Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Io.Sizer_Fd, Efl.Io.Positioner_Fd {
+class @beta Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Io.Sizer_Fd, Efl.Io.Positioner_Fd {
     [[File access (open, close, read, write, lseek, ftruncate)
 
       @Efl.Io.Closer.close_on_exec and

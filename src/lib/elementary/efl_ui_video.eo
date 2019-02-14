@@ -1,4 +1,4 @@
-class Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access.Widget.Action
+class @beta Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access.Widget.Action
 {
    [[Efl UI video class]]
    legacy_prefix: elm_video;

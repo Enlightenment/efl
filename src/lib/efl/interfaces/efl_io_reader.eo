@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Io.Reader {
+interface @beta Efl.Io.Reader {
     [[Generic interface for objects that can read data into a provided memory.
 
       This interface allows external objects to transparently monitor

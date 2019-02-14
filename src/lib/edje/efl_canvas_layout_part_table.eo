@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Part_Table extends Efl.Canvas.Layout_Part implements Efl.Pack_Table
+class @beta Efl.Canvas.Layout_Part_Table extends Efl.Canvas.Layout_Part implements Efl.Pack_Table
 {
    [[Represents a Table created as part of a layout.
 

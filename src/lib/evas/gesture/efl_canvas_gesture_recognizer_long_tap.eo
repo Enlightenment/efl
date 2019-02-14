@@ -1,4 +1,4 @@
-class Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Recognizer
+class @beta Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Recognizer
 {
    [[EFL Gesture Recognizer Long Tap class]]
    data: null;

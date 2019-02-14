@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Manager_Sub requires Efl.Object extends Efl.Ui.Focus.Manager
+mixin @beta Efl.Ui.Focus.Manager_Sub requires Efl.Object extends Efl.Ui.Focus.Manager
 {
     [[A class that automatically registers its border elements in the parent manager
 

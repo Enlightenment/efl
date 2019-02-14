@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Text_Class
+interface @beta Efl.Gfx.Text_Class
 {
    [[Efl Gfx Text Class interface]]
    methods {

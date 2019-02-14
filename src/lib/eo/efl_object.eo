@@ -27,7 +27,7 @@ const Efl.Callback_Priority_Default : Efl.Callback_Priority = 0;
 const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
 [[Slightly less prioritized than default.]]
 
-abstract Efl.Object
+abstract @beta Efl.Object
 {
    [[Abstract EFL object class.
    
