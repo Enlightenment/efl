@@ -25,7 +25,7 @@ interface Efl.Screen
             ]]
          }
          values {
-            rotation: int; [[Screen rortation in degrees.]]
+            rotation: int; [[Screen rotation in degrees.]]
          }
       }
       @property screen_dpi {
