@@ -287,7 +287,7 @@ subprojects = [
 ['efreet'           ,[]                    , false, false,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ecore_imf_evas'   ,[]                    , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ephysics'         ,['physics']           , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
-['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', 'luajit'], []],
+['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', get_option('lua-interpreter')], []],
 ['emotion'          ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],

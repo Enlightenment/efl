@@ -2,7 +2,7 @@ subdir('epp')
 
 edje_bin_deps = [
   eina, eo, efl, m,
-  luajit, eet, evas,
+  lua, eet, evas,
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
   embryo, efreet, eio,

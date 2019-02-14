@@ -1,5 +1,5 @@
 elua_deps = [eina, eo, efl, ecore, ecore_file, intl]
-elua_pub_deps = [luajit]
+elua_pub_deps = [dependency('luajit')]
 
 elua_src = ['elua.c', 'io.c', 'cache.c']
 elua_header_src = ['Elua.h']

@@ -1,13 +1,12 @@
 edje_deps = [
   eina, eo, efl, m,
-  luajit, eet, evas, ecore_evas,
+  eet, evas, ecore_evas,
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
   embryo, efreet, eio, intl
 ]
 
-
-edje_pub_deps = [m, evas, eo, efl, luajit]
+edje_pub_deps = [m, evas, eo, efl, lua]
 
 if (get_option('physics'))
   edje_deps += ephysics
@@ -151,7 +150,7 @@ edje_src = [
 
 edje_lib = library('edje',
     edje_src, pub_eo_file_target, priv_eo_file_target,
-    dependencies: [edje_deps],
+    dependencies: edje_pub_deps + edje_deps,
     include_directories : config_dir + [include_directories('.')],
     install: true,
     c_args : [package_c_args],
