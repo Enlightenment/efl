@@ -2617,6 +2617,12 @@ _efl_ui_win_efl_canvas_scene_device_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
 }
 
 EOLIAN static Efl_Input_Device *
+_efl_ui_win_efl_canvas_scene_seat_default_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return efl_canvas_scene_seat_default_get(sd->evas);
+}
+
+EOLIAN static Efl_Input_Device *
 _efl_ui_win_efl_canvas_scene_seat_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, int id)
 {
    return efl_canvas_scene_seat_get(sd->evas, id);

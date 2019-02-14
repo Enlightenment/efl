@@ -191,6 +191,21 @@ interface @beta Efl.Canvas.Scene
             seat: Efl.Input.Device; [[The seat or $null if not found.]]
          }
       }
+      @property seat_default {
+         [[Get the default seat attached to this canvas.
+
+           A canvas may have exactly one default seat.
+
+           See also @.device to find a seat by name.
+           See also @.seat to find a seat by id.
+         ]]
+         get {
+            [[Get the default seat.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The default seat or $null if one does not exist.]]
+         }
+      }
       @property pointer_position {
          get {
             [[This function returns the current known pointer coordinates

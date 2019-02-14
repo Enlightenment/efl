@@ -145,6 +145,12 @@ evas_device_get(Evas *eo_e, const char *name)
 }
 
 EOLIAN Efl_Input_Device *
+_evas_canvas_efl_canvas_scene_seat_default_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return e->default_seat;
+}
+
+EOLIAN Efl_Input_Device *
 _evas_canvas_efl_canvas_scene_seat_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e, unsigned int id)
 {
    Evas_Device *dev;

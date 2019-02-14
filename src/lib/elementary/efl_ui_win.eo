@@ -880,6 +880,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Gfx.Hint.hint_weight { set; }
       Efl.Gfx.Hint.hint_size_max { set; }
       Efl.Text.text { get; set; }
+      Efl.Canvas.Scene.seat_default { get; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.image_max_size { get; }
