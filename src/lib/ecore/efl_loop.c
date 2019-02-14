@@ -390,8 +390,11 @@ ecore_loop_arguments_send(int argc, const char **argv)
    cml = eina_array_new(argc);
    for (i = 0; i < argc; i++)
      {
-        Eina_Stringshare *arg = eina_stringshare_add(argv[i]);
+        Eina_Stringshare *arg;
+
+        arg = eina_stringshare_add(argv[i]);
         eina_array_push(arga, arg);
+        arg = eina_stringshare_add(argv[i]);
         eina_array_push(cml, arg);
      }
 

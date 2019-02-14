@@ -277,11 +277,9 @@ _efl_thread_main(void *data, Eina_Thread t)
                                           it->func, it->user_data);
      }
    efl_core_command_line_command_array_set(obj, thdat->argv);
+   thdat->argv = NULL;
    efl_future_then(obj, efl_loop_job(obj),
                    .success = _efl_loop_arguments_send);
-
-   while (thdat->argv && eina_array_count(thdat->argv)) free(eina_array_pop(thdat->argv));
-   eina_array_free(thdat->argv);
    free(thdat->event_cb);
    thdat->event_cb = NULL;
 

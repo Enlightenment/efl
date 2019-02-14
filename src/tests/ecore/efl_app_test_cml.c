@@ -23,13 +23,13 @@ _construct_array(void)
 {
    Eina_Array *array = eina_array_new(16);
 
-   eina_array_push(array, "/bin/sh");
-   eina_array_push(array, "-C");
-   eina_array_push(array, "foo");
-   eina_array_push(array, "--test");
-   eina_array_push(array, "--option=done");
-   eina_array_push(array, "--");
-   eina_array_push(array, "asdf --test");
+   eina_array_push(array, eina_stringshare_add("/bin/sh"));
+   eina_array_push(array, eina_stringshare_add("-C"));
+   eina_array_push(array, eina_stringshare_add("foo"));
+   eina_array_push(array, eina_stringshare_add("--test"));
+   eina_array_push(array, eina_stringshare_add("--option=done"));
+   eina_array_push(array, eina_stringshare_add("--"));
+   eina_array_push(array, eina_stringshare_add("asdf --test"));
    return array;
 }
 

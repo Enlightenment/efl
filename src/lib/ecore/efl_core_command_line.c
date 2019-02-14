@@ -223,6 +223,8 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
               eina_stringshare_del(eina_array_pop(pd->command));
              eina_array_free(pd->command);
              pd->command = NULL;
+             for (;i < (array ? eina_array_count(array) : 0); ++i)
+               eina_stringshare_del(content);
              eina_array_free(array);
              return EINA_FALSE;
           }
@@ -236,6 +238,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
         _remove_invalid_chars(param);
         eina_array_push(pd->command, eina_stringshare_add(param));
         free(param);
+        eina_stringshare_del(content);
      }
    pd->string_command = eina_strbuf_release(command);
    pd->filled = EINA_TRUE;
