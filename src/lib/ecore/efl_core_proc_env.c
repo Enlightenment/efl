@@ -135,7 +135,9 @@ _efl_core_proc_env_self(void)
 {
    if (!env)
      {
+        efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
         env = efl_add_ref(EFL_CORE_PROC_ENV_CLASS, NULL);
+        efl_domain_current_pop();
         efl_wref_add(env, &env);
      }
 
