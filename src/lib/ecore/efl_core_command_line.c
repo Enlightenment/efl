@@ -214,7 +214,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
    for (i = 0; i < (array ? eina_array_count(array) : 0); ++i)
      {
         char *content = eina_array_data_get(array, i);
-        char *param = calloc(1, strlen(content));
+        char *param = calloc(1, strlen(content) + 1);
 
         if (!param)
           {
