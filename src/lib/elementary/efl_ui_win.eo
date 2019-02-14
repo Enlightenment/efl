@@ -832,9 +832,9 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
-      Efl.Gfx.Stack.raise; [[Places the window at the top of the stack, so
-                             that it's not covered by any other window.]]
-      Efl.Gfx.Stack.lower; [[This action is ignored by the Window.]]
+      Efl.Gfx.Stack.raise_to_top; [[Places the window at the top of the stack, so
+                                   that it's not covered by any other window.]]
+      Efl.Gfx.Stack.lower_to_bottom; [[This action is ignored by the Window.]]
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.focus { get; }
       Efl.Ui.Widget.focus_highlight_style { get; set; }

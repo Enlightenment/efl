@@ -609,7 +609,7 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
    edje_object_freeze(wd->resize_obj);
    o = (Evas_Object *)edje_object_part_object_get(wd->resize_obj, "efl.dragable.vbar");
    edje_object_thaw(wd->resize_obj);
-   efl_gfx_stack_raise((Eo *)o);
+   efl_gfx_stack_raise_to_top((Eo *)o);
 
    efl_gfx_entity_visible_set(pd->pan_obj, EINA_TRUE);
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);

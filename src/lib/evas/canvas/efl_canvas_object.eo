@@ -598,8 +598,8 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       Efl.Gfx.Stack.above { get; }
       Efl.Gfx.Stack.stack_below;
       Efl.Gfx.Stack.stack_above;
-      Efl.Gfx.Stack.raise;
-      Efl.Gfx.Stack.lower;
+      Efl.Gfx.Stack.raise_to_top;
+      Efl.Gfx.Stack.lower_to_bottom;
       Efl.Gfx.Size_Hint.hint_aspect { get; set; }
       Efl.Gfx.Size_Hint.hint_align { get; set; }
       Efl.Gfx.Size_Hint.hint_combined_min { get; }

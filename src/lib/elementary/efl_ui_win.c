@@ -5972,7 +5972,7 @@ _efl_ui_win_activate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_stack_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+_efl_ui_win_efl_gfx_stack_raise_to_top(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
    TRAP(pd, raise);
 }
@@ -5980,11 +5980,11 @@ _efl_ui_win_efl_gfx_stack_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 EAPI void
 elm_win_raise(Eo *obj)
 {
-   efl_gfx_stack_raise(obj);
+   efl_gfx_stack_raise_to_top(obj);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_stack_lower(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
+_efl_ui_win_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
 {
    // Do nothing: in X we could request to stack lower but that has been abused
    // and transformed into a kind of "iconify". As a consequence, lower is

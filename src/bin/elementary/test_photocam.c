@@ -836,7 +836,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
                   efl_gfx_color_set(efl_added, 0, 0, 0, 0),
-                  efl_gfx_stack_raise(efl_added),
+                  efl_gfx_stack_raise_to_top(efl_added),
                   efl_canvas_object_repeat_events_set(efl_added, EINA_TRUE),
                   efl_event_callback_add(efl_added, EFL_EVENT_POINTER_WHEEL, _zoomable_mouse_wheel_cb, zoomable)
                  );
