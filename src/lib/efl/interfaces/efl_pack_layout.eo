@@ -23,4 +23,7 @@ interface Efl.Pack_Layout
          ]]
       }
    }
+   events {
+      layout,updated: void; [[Sent after the layout was updated.]]
+   }
 }

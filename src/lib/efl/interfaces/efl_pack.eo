@@ -57,7 +57,4 @@ interface Efl.Pack extends Efl.Container
          }
       }
    }
-   events {
-      layout,updated: void; [[Sent after the layout was updated.]]
-   }
 }
