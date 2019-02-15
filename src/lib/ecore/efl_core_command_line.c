@@ -180,13 +180,13 @@ _escape(const char *s)
    return s2;
 }
 
-EOLIAN static const char*
+EOLIAN static const char *
 _efl_core_command_line_command_get(const Eo *obj EINA_UNUSED, Efl_Core_Command_Line_Data *pd)
 {
-   return eina_strdup(pd->string_command);
+   return pd->string_command;
 }
 
-EOLIAN static Eina_Accessor*
+EOLIAN static Eina_Accessor *
 _efl_core_command_line_command_access(Eo *obj EINA_UNUSED, Efl_Core_Command_Line_Data *pd)
 {
    return pd->command ? eina_array_accessor_new(pd->command) : NULL;
@@ -224,7 +224,10 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
              eina_array_free(pd->command);
              pd->command = NULL;
              for (;i < (array ? eina_array_count(array) : 0); ++i)
-               eina_stringshare_del(content);
+               {
+                  content = eina_array_data_get(array, i);
+                  eina_stringshare_del(content);
+               }
              eina_array_free(array);
              return EINA_FALSE;
           }

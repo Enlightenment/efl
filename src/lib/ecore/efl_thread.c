@@ -153,19 +153,26 @@ _efl_loop_arguments_send(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
    int i = 0;
 
    accessor = efl_core_command_line_command_access(obj);
-   arga = eina_array_new(10);
-
-   EINA_ACCESSOR_FOREACH(accessor, i, argv)
+   if (accessor)
      {
-        eina_array_push(arga, eina_stringshare_add(argv));
+        arga = eina_array_new(10);
+
+        EINA_ACCESSOR_FOREACH(accessor, i, argv)
+          {
+             eina_array_push(arga, eina_stringshare_add(argv));
+          }
+        arge.argv = arga;
      }
-   arge.argv = arga;
+   else arge.argv = NULL;
    arge.initialization = EINA_TRUE;
    efl_event_callback_call(obj,
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
-
-   while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
-   eina_array_free(arga);
+   if (accessor)
+     {
+        while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
+        eina_array_free(arga);
+        eina_accessor_free(accessor);
+     }
 
    return v;
 }
@@ -276,7 +283,7 @@ _efl_thread_main(void *data, Eina_Thread t)
           efl_event_callback_priority_add(obj, it->desc, it->priority,
                                           it->func, it->user_data);
      }
-   efl_core_command_line_command_array_set(obj, thdat->argv);
+   if (thdat->argv) efl_core_command_line_command_array_set(obj, thdat->argv);
    thdat->argv = NULL;
    efl_future_then(obj, efl_loop_job(obj),
                    .success = _efl_loop_arguments_send);
@@ -728,7 +735,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
       acc = efl_core_command_line_command_access(obj);
       if (acc)
         {
-           thdat->argv = eina_array_new(0);
+           thdat->argv = eina_array_new(1);
            EINA_ACCESSOR_FOREACH(acc, i, argv)
              {
                 eina_array_push(thdat->argv, eina_stringshare_add(argv));
