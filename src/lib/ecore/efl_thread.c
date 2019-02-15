@@ -535,10 +535,10 @@ _efl_thread_efl_object_destructor(Eo *obj, Efl_Thread_Data *pd)
    if (pd->thdat)
      {
         eina_thread_join(pd->thread);
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
-        efl_del(pd->ctrl.in_handler);
-        efl_del(pd->ctrl.out_handler);
+//        efl_del(pd->fd.in_handler);
+//        efl_del(pd->fd.out_handler);
+//        efl_del(pd->ctrl.in_handler);
+//        efl_del(pd->ctrl.out_handler);
         close(pd->fd.in);
         close(pd->fd.out);
         close(pd->ctrl.in);

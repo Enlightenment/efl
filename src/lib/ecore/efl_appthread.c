@@ -37,10 +37,10 @@ _efl_appthread_efl_object_destructor(Eo *obj, Efl_Appthread_Data *pd)
 {
    if (pd->fd.in >= 0)
      {
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
-        efl_del(pd->ctrl.in_handler);
-        efl_del(pd->ctrl.out_handler);
+//        efl_del(pd->fd.in_handler);
+//        efl_del(pd->fd.out_handler);
+//        efl_del(pd->ctrl.in_handler);
+//        efl_del(pd->ctrl.out_handler);
         close(pd->fd.in);
         close(pd->fd.out);
         close(pd->ctrl.in);
