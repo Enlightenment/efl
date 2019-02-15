@@ -81,6 +81,15 @@ edje_codegen = executable('edje_codegen',
         c_args : package_c_args,
 )
 
+if meson.is_cross_build()
+  _edje_codegen = find_program('edje_codegen', native: true)
+  edje_codegen_path = _edje_codegen.path()
+  edje_codegen_exe = [_edje_codegen]
+else
+  env = find_program('env', native: true)
+  edje_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', edje_codegen.full_path()]
+endif
+
 edje_pick = executable('edje_pick',
         'edje_pick.c',
         dependencies: [edje_bin_deps, eet, ecore, eio, ecore_evas],
