@@ -1,4 +1,4 @@
-abstract Ecore.Audio.Out extends Ecore.Audio
+abstract @beta Ecore.Audio.Out extends Ecore.Audio
 {
    [[Ecore Audio output object.]]
 

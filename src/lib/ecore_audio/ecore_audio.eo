@@ -12,7 +12,7 @@ enum Ecore.Audio.Format {
     last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-abstract Ecore.Audio extends Efl.Object
+abstract @beta Ecore.Audio extends Efl.Object
 {
    [[Convenience audio class.]]
 
