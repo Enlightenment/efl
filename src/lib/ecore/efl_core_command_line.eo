@@ -60,7 +60,7 @@ mixin @beta Efl.Core.Command_Line {
         return : bool; [[On success $true, $false otherwise]]
       }
       values {
-        array : array<const(stringshare) @owned> @owned; [[An array where every array field is an argument]]
+        array : array<stringshare @owned> @owned; [[An array where every array field is an argument]]
       }
     }
     @property command_string {
