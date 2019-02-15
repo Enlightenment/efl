@@ -49,7 +49,7 @@ int _elm_map_zoom_min_get(const Eo *obj, Elm_Map_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_map_zoom_min_get_reflect(Eo *obj)
+__eolian_elm_map_zoom_min_get_reflect(const Eo *obj)
 {
    int val = elm_obj_map_zoom_min_get(obj);
    return eina_value_int_init(val);
@@ -89,7 +89,7 @@ const char *_elm_map_user_agent_get(const Eo *obj, Elm_Map_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_map_user_agent_get_reflect(Eo *obj)
+__eolian_elm_map_user_agent_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_map_user_agent_get(obj);
    return eina_value_string_init(val);
@@ -121,7 +121,7 @@ int _elm_map_zoom_max_get(const Eo *obj, Elm_Map_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_map_zoom_max_get_reflect(Eo *obj)
+__eolian_elm_map_zoom_max_get_reflect(const Eo *obj)
 {
    int val = elm_obj_map_zoom_max_get(obj);
    return eina_value_int_init(val);

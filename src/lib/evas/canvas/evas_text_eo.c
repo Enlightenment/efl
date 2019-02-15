@@ -31,7 +31,7 @@ double _evas_text_ellipsis_get(const Eo *obj, Evas_Text_Data *pd);
 
 
 static Eina_Value
-__eolian_evas_text_ellipsis_get_reflect(Eo *obj)
+__eolian_evas_text_ellipsis_get_reflect(const Eo *obj)
 {
    double val = evas_obj_text_ellipsis_get(obj);
    return eina_value_double_init(val);
@@ -63,7 +63,7 @@ const char *_evas_text_bidi_delimiters_get(const Eo *obj, Evas_Text_Data *pd);
 
 
 static Eina_Value
-__eolian_evas_text_bidi_delimiters_get_reflect(Eo *obj)
+__eolian_evas_text_bidi_delimiters_get_reflect(const Eo *obj)
 {
    const char *val = evas_obj_text_bidi_delimiters_get(obj);
    return eina_value_string_init(val);

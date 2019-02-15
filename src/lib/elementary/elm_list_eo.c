@@ -43,7 +43,7 @@ Eina_Bool _elm_list_horizontal_get(const Eo *obj, Elm_List_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_list_horizontal_get_reflect(Eo *obj)
+__eolian_elm_list_horizontal_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_list_horizontal_get(obj);
    return eina_value_bool_init(val);
@@ -83,7 +83,7 @@ Eina_Bool _elm_list_focus_on_selection_get(const Eo *obj, Elm_List_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_list_focus_on_selection_get_reflect(Eo *obj)
+__eolian_elm_list_focus_on_selection_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_list_focus_on_selection_get(obj);
    return eina_value_bool_init(val);
@@ -115,7 +115,7 @@ Eina_Bool _elm_list_multi_select_get(const Eo *obj, Elm_List_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_list_multi_select_get_reflect(Eo *obj)
+__eolian_elm_list_multi_select_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_list_multi_select_get(obj);
    return eina_value_bool_init(val);

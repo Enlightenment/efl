@@ -31,7 +31,7 @@ Eina_Bool _elm_toolbar_item_selected_get(const Eo *obj, Elm_Toolbar_Item_Data *p
 
 
 static Eina_Value
-__eolian_elm_toolbar_item_selected_get_reflect(Eo *obj)
+__eolian_elm_toolbar_item_selected_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_toolbar_item_selected_get(obj);
    return eina_value_bool_init(val);
@@ -63,7 +63,7 @@ int _elm_toolbar_item_priority_get(const Eo *obj, Elm_Toolbar_Item_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_toolbar_item_priority_get_reflect(Eo *obj)
+__eolian_elm_toolbar_item_priority_get_reflect(const Eo *obj)
 {
    int val = elm_obj_toolbar_item_priority_get(obj);
    return eina_value_int_init(val);
@@ -95,7 +95,7 @@ const char *_elm_toolbar_item_icon_get(const Eo *obj, Elm_Toolbar_Item_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_toolbar_item_icon_get_reflect(Eo *obj)
+__eolian_elm_toolbar_item_icon_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_toolbar_item_icon_get(obj);
    return eina_value_string_init(val);
@@ -135,7 +135,7 @@ Eina_Bool _elm_toolbar_item_separator_get(const Eo *obj, Elm_Toolbar_Item_Data *
 
 
 static Eina_Value
-__eolian_elm_toolbar_item_separator_get_reflect(Eo *obj)
+__eolian_elm_toolbar_item_separator_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_toolbar_item_separator_get(obj);
    return eina_value_bool_init(val);

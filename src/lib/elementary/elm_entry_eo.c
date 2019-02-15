@@ -65,7 +65,7 @@ Eina_Bool _elm_entry_scrollable_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_scrollable_get_reflect(Eo *obj)
+__eolian_elm_entry_scrollable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_scrollable_get(obj);
    return eina_value_bool_init(val);
@@ -97,7 +97,7 @@ Eina_Bool _elm_entry_input_panel_show_on_demand_get(const Eo *obj, Elm_Entry_Dat
 
 
 static Eina_Value
-__eolian_elm_entry_input_panel_show_on_demand_get_reflect(Eo *obj)
+__eolian_elm_entry_input_panel_show_on_demand_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_input_panel_show_on_demand_get(obj);
    return eina_value_bool_init(val);
@@ -129,7 +129,7 @@ Eina_Bool _elm_entry_context_menu_disabled_get(const Eo *obj, Elm_Entry_Data *pd
 
 
 static Eina_Value
-__eolian_elm_entry_context_menu_disabled_get_reflect(Eo *obj)
+__eolian_elm_entry_context_menu_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_context_menu_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -181,7 +181,7 @@ Eina_Bool _elm_entry_selection_handler_disabled_get(const Eo *obj, Elm_Entry_Dat
 
 
 static Eina_Value
-__eolian_elm_entry_selection_handler_disabled_get_reflect(Eo *obj)
+__eolian_elm_entry_selection_handler_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_selection_handler_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -213,7 +213,7 @@ int _elm_entry_input_panel_layout_variation_get(const Eo *obj, Elm_Entry_Data *p
 
 
 static Eina_Value
-__eolian_elm_entry_input_panel_layout_variation_get_reflect(Eo *obj)
+__eolian_elm_entry_input_panel_layout_variation_get_reflect(const Eo *obj)
 {
    int val = elm_obj_entry_input_panel_layout_variation_get(obj);
    return eina_value_int_init(val);
@@ -253,7 +253,7 @@ Eina_Bool _elm_entry_editable_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_editable_get_reflect(Eo *obj)
+__eolian_elm_entry_editable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_editable_get(obj);
    return eina_value_bool_init(val);
@@ -285,7 +285,7 @@ const char *_elm_entry_anchor_hover_style_get(const Eo *obj, Elm_Entry_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_entry_anchor_hover_style_get_reflect(Eo *obj)
+__eolian_elm_entry_anchor_hover_style_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_entry_anchor_hover_style_get(obj);
    return eina_value_string_init(val);
@@ -317,7 +317,7 @@ Eina_Bool _elm_entry_single_line_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_single_line_get_reflect(Eo *obj)
+__eolian_elm_entry_single_line_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_single_line_get(obj);
    return eina_value_bool_init(val);
@@ -349,7 +349,7 @@ Eina_Bool _elm_entry_password_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_password_get_reflect(Eo *obj)
+__eolian_elm_entry_password_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_password_get(obj);
    return eina_value_bool_init(val);
@@ -381,7 +381,7 @@ Eina_Bool _elm_entry_input_panel_return_key_disabled_get(const Eo *obj, Elm_Entr
 
 
 static Eina_Value
-__eolian_elm_entry_input_panel_return_key_disabled_get_reflect(Eo *obj)
+__eolian_elm_entry_input_panel_return_key_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_input_panel_return_key_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -413,7 +413,7 @@ Eina_Bool _elm_entry_autosave_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_autosave_get_reflect(Eo *obj)
+__eolian_elm_entry_autosave_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_autosave_get(obj);
    return eina_value_bool_init(val);
@@ -453,7 +453,7 @@ Eina_Bool _elm_entry_prediction_allow_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_prediction_allow_get_reflect(Eo *obj)
+__eolian_elm_entry_prediction_allow_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_prediction_allow_get(obj);
    return eina_value_bool_init(val);
@@ -509,7 +509,7 @@ Eina_Bool _elm_entry_input_panel_enabled_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_input_panel_enabled_get_reflect(Eo *obj)
+__eolian_elm_entry_input_panel_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_input_panel_enabled_get(obj);
    return eina_value_bool_init(val);
@@ -549,7 +549,7 @@ int _elm_entry_cursor_pos_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_cursor_pos_get_reflect(Eo *obj)
+__eolian_elm_entry_cursor_pos_get_reflect(const Eo *obj)
 {
    int val = elm_obj_entry_cursor_pos_get(obj);
    return eina_value_int_init(val);
@@ -693,7 +693,7 @@ Eina_Bool _elm_entry_select_allow_get(const Eo *obj, Elm_Entry_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_entry_select_allow_get_reflect(Eo *obj)
+__eolian_elm_entry_select_allow_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_entry_select_allow_get(obj);
    return eina_value_bool_init(val);

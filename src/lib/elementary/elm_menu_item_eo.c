@@ -23,7 +23,7 @@ const char *_elm_menu_item_icon_name_get(const Eo *obj, Elm_Menu_Item_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_menu_item_icon_name_get_reflect(Eo *obj)
+__eolian_elm_menu_item_icon_name_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_menu_item_icon_name_get(obj);
    return eina_value_string_init(val);
@@ -63,7 +63,7 @@ Eina_Bool _elm_menu_item_selected_get(const Eo *obj, Elm_Menu_Item_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_menu_item_selected_get_reflect(Eo *obj)
+__eolian_elm_menu_item_selected_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_menu_item_selected_get(obj);
    return eina_value_bool_init(val);

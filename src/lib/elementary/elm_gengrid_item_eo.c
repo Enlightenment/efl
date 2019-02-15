@@ -31,7 +31,7 @@ Eina_Bool _elm_gengrid_item_selected_get(const Eo *obj, Elm_Gen_Item *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_item_selected_get_reflect(Eo *obj)
+__eolian_elm_gengrid_item_selected_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_item_selected_get(obj);
    return eina_value_bool_init(val);
@@ -47,7 +47,7 @@ int _elm_gengrid_item_index_get(const Eo *obj, Elm_Gen_Item *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_item_index_get_reflect(Eo *obj)
+__eolian_elm_gengrid_item_index_get_reflect(const Eo *obj)
 {
    int val = elm_obj_gengrid_item_index_get(obj);
    return eina_value_int_init(val);

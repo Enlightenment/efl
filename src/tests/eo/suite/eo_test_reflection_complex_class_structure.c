@@ -93,7 +93,7 @@ __eolian_complex_interface_i_test_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(complex_interface_i_test_set, EFL_FUNC_CALL(i), int i);
 
 static Eina_Value
-__eolian_complex_interface_i_test_get_reflect(Eo *obj)
+__eolian_complex_interface_i_test_get_reflect(const Eo *obj)
 {
    int val = complex_interface_i_test_get(obj);
    return eina_value_int_init(val);
@@ -161,7 +161,7 @@ EOAPI EFL_VOID_FUNC_BODYV(complex_mixin_m_test_set, EFL_FUNC_CALL(i), int i);
 
 
 static Eina_Value
-__eolian_complex_mixin_m_test_get_reflect(Eo *obj)
+__eolian_complex_mixin_m_test_get_reflect(const Eo *obj)
 {
    int val = complex_mixin_m_test_get(obj);
    return eina_value_int_init(val);

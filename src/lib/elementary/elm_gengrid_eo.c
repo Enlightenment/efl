@@ -65,7 +65,7 @@ Eina_Bool _elm_gengrid_filled_get(const Eo *obj, Elm_Gengrid_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_filled_get_reflect(Eo *obj)
+__eolian_elm_gengrid_filled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_filled_get(obj);
    return eina_value_bool_init(val);
@@ -97,7 +97,7 @@ Eina_Bool _elm_gengrid_multi_select_get(const Eo *obj, Elm_Gengrid_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_multi_select_get_reflect(Eo *obj)
+__eolian_elm_gengrid_multi_select_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_multi_select_get(obj);
    return eina_value_bool_init(val);
@@ -145,7 +145,7 @@ Eina_Bool _elm_gengrid_reorder_mode_get(const Eo *obj, Elm_Gengrid_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_reorder_mode_get_reflect(Eo *obj)
+__eolian_elm_gengrid_reorder_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_reorder_mode_get(obj);
    return eina_value_bool_init(val);
@@ -177,7 +177,7 @@ Eina_Bool _elm_gengrid_highlight_mode_get(const Eo *obj, Elm_Gengrid_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_highlight_mode_get_reflect(Eo *obj)
+__eolian_elm_gengrid_highlight_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_highlight_mode_get(obj);
    return eina_value_bool_init(val);
@@ -229,7 +229,7 @@ Eina_Bool _elm_gengrid_horizontal_get(const Eo *obj, Elm_Gengrid_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_gengrid_horizontal_get_reflect(Eo *obj)
+__eolian_elm_gengrid_horizontal_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gengrid_horizontal_get(obj);
    return eina_value_bool_init(val);

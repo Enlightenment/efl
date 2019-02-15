@@ -17,7 +17,7 @@ __eolian_elm_web_text_matches_highlight_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_FUNC_BODYV(elm_obj_web_text_matches_highlight_set, Eina_Bool, 0, EFL_FUNC_CALL(highlight), Eina_Bool highlight);
 
 static Eina_Value
-__eolian_elm_web_text_matches_highlight_get_reflect(Eo *obj)
+__eolian_elm_web_text_matches_highlight_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_web_text_matches_highlight_get(obj);
    return eina_value_bool_init(val);
@@ -43,7 +43,7 @@ __eolian_elm_web_useragent_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_useragent_set, EFL_FUNC_CALL(user_agent), const char *user_agent);
 
 static Eina_Value
-__eolian_elm_web_useragent_get_reflect(Eo *obj)
+__eolian_elm_web_useragent_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_web_useragent_get(obj);
    return eina_value_string_init(val);
@@ -69,7 +69,7 @@ __eolian_elm_web_url_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_FUNC_BODYV(elm_obj_web_url_set, Eina_Bool, 0, EFL_FUNC_CALL(url), const char *url);
 
 static Eina_Value
-__eolian_elm_web_url_get_reflect(Eo *obj)
+__eolian_elm_web_url_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_web_url_get(obj);
    return eina_value_string_init(val);
@@ -97,7 +97,7 @@ __eolian_elm_web_inwin_mode_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_inwin_mode_set, EFL_FUNC_CALL(value), Eina_Bool value);
 
 static Eina_Value
-__eolian_elm_web_inwin_mode_get_reflect(Eo *obj)
+__eolian_elm_web_inwin_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_web_inwin_mode_get(obj);
    return eina_value_bool_init(val);
@@ -123,7 +123,7 @@ __eolian_elm_web_tab_propagate_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_tab_propagate_set, EFL_FUNC_CALL(propagate), Eina_Bool propagate);
 
 static Eina_Value
-__eolian_elm_web_tab_propagate_get_reflect(Eo *obj)
+__eolian_elm_web_tab_propagate_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_web_tab_propagate_get(obj);
    return eina_value_bool_init(val);
@@ -149,7 +149,7 @@ __eolian_elm_web_history_enabled_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(elm_obj_web_history_enabled_set, EFL_FUNC_CALL(enable), Eina_Bool enable);
 
 static Eina_Value
-__eolian_elm_web_history_enabled_get_reflect(Eo *obj)
+__eolian_elm_web_history_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_web_history_enabled_get(obj);
    return eina_value_bool_init(val);

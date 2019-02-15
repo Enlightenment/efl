@@ -31,7 +31,7 @@ Eina_Bool _elm_fileselector_buttons_ok_cancel_get(const Eo *obj, Elm_Fileselecto
 
 
 static Eina_Value
-__eolian_elm_fileselector_buttons_ok_cancel_get_reflect(Eo *obj)
+__eolian_elm_fileselector_buttons_ok_cancel_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_fileselector_buttons_ok_cancel_get(obj);
    return eina_value_bool_init(val);

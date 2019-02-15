@@ -351,7 +351,7 @@ _gen_reflect_get(Eina_Strbuf *buf, const char *cnamel, const Eolian_Type *valt,
      eina_hash_set(refh, &fid, (void *)EOLIAN_PROP_GET);
 
    eina_strbuf_append(buf, "\nstatic Eina_Value\n");
-   eina_strbuf_append_printf(buf, "__eolian_%s_%s_get_reflect(Eo *obj)\n",
+   eina_strbuf_append_printf(buf, "__eolian_%s_%s_get_reflect(const Eo *obj)\n",
      cnamel, eolian_function_name_get(fid));
    eina_strbuf_append(buf, "{\n");
 

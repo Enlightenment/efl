@@ -23,7 +23,7 @@ Eina_Bool _elm_flipselector_item_selected_get(const Eo *obj, Elm_Flipselector_It
 
 
 static Eina_Value
-__eolian_elm_flipselector_item_selected_get_reflect(Eo *obj)
+__eolian_elm_flipselector_item_selected_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_flipselector_item_selected_get(obj);
    return eina_value_bool_init(val);

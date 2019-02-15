@@ -3661,7 +3661,7 @@ efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value va
 }
 
 EAPI Eina_Value
-efl_property_reflection_get(Eo *obj_id, const char *property_name)
+efl_property_reflection_get(const Eo *obj_id, const char *property_name)
 {
    Eina_Value r = eina_value_error_init(EINA_ERROR_NOT_IMPLEMENTED);
 

@@ -41,7 +41,7 @@ Eina_Bool _elm_prefs_autosave_get(const Eo *obj, Elm_Prefs_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_prefs_autosave_get_reflect(Eo *obj)
+__eolian_elm_prefs_autosave_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_prefs_autosave_get(obj);
    return eina_value_bool_init(val);

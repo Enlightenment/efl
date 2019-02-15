@@ -39,7 +39,7 @@ Eina_Bool _elm_multibuttonentry_editable_get(const Eo *obj, Elm_Multibuttonentry
 
 
 static Eina_Value
-__eolian_elm_multibuttonentry_editable_get_reflect(Eo *obj)
+__eolian_elm_multibuttonentry_editable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_multibuttonentry_editable_get(obj);
    return eina_value_bool_init(val);
@@ -71,7 +71,7 @@ Eina_Bool _elm_multibuttonentry_expanded_get(const Eo *obj, Elm_Multibuttonentry
 
 
 static Eina_Value
-__eolian_elm_multibuttonentry_expanded_get_reflect(Eo *obj)
+__eolian_elm_multibuttonentry_expanded_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_multibuttonentry_expanded_get(obj);
    return eina_value_bool_init(val);

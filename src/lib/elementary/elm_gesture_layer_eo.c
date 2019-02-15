@@ -23,7 +23,7 @@ double _elm_gesture_layer_zoom_step_get(const Eo *obj, Elm_Gesture_Layer_Data *p
 
 
 static Eina_Value
-__eolian_elm_gesture_layer_zoom_step_get_reflect(Eo *obj)
+__eolian_elm_gesture_layer_zoom_step_get_reflect(const Eo *obj)
 {
    double val = elm_obj_gesture_layer_zoom_step_get(obj);
    return eina_value_double_init(val);
@@ -55,7 +55,7 @@ int _elm_gesture_layer_tap_finger_size_get(const Eo *obj, Elm_Gesture_Layer_Data
 
 
 static Eina_Value
-__eolian_elm_gesture_layer_tap_finger_size_get_reflect(Eo *obj)
+__eolian_elm_gesture_layer_tap_finger_size_get_reflect(const Eo *obj)
 {
    int val = elm_obj_gesture_layer_tap_finger_size_get(obj);
    return eina_value_int_init(val);
@@ -87,7 +87,7 @@ Eina_Bool _elm_gesture_layer_hold_events_get(const Eo *obj, Elm_Gesture_Layer_Da
 
 
 static Eina_Value
-__eolian_elm_gesture_layer_hold_events_get_reflect(Eo *obj)
+__eolian_elm_gesture_layer_hold_events_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_gesture_layer_hold_events_get(obj);
    return eina_value_bool_init(val);
@@ -119,7 +119,7 @@ double _elm_gesture_layer_rotate_step_get(const Eo *obj, Elm_Gesture_Layer_Data 
 
 
 static Eina_Value
-__eolian_elm_gesture_layer_rotate_step_get_reflect(Eo *obj)
+__eolian_elm_gesture_layer_rotate_step_get_reflect(const Eo *obj)
 {
    double val = elm_obj_gesture_layer_rotate_step_get(obj);
    return eina_value_double_init(val);

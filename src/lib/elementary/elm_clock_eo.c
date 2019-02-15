@@ -25,7 +25,7 @@ Eina_Bool _elm_clock_show_am_pm_get(const Eo *obj, Elm_Clock_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_clock_show_am_pm_get_reflect(Eo *obj)
+__eolian_elm_clock_show_am_pm_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_clock_show_am_pm_get(obj);
    return eina_value_bool_init(val);
@@ -57,7 +57,7 @@ double _elm_clock_first_interval_get(const Eo *obj, Elm_Clock_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_clock_first_interval_get_reflect(Eo *obj)
+__eolian_elm_clock_first_interval_get_reflect(const Eo *obj)
 {
    double val = elm_obj_clock_first_interval_get(obj);
    return eina_value_double_init(val);
@@ -89,7 +89,7 @@ Eina_Bool _elm_clock_show_seconds_get(const Eo *obj, Elm_Clock_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_clock_show_seconds_get_reflect(Eo *obj)
+__eolian_elm_clock_show_seconds_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_clock_show_seconds_get(obj);
    return eina_value_bool_init(val);
@@ -121,7 +121,7 @@ Eina_Bool _elm_clock_edit_get(const Eo *obj, Elm_Clock_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_clock_edit_get_reflect(Eo *obj)
+__eolian_elm_clock_edit_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_clock_edit_get(obj);
    return eina_value_bool_init(val);
@@ -153,7 +153,7 @@ Eina_Bool _elm_clock_pause_get(const Eo *obj, Elm_Clock_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_clock_pause_get_reflect(Eo *obj)
+__eolian_elm_clock_pause_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_clock_pause_get(obj);
    return eina_value_bool_init(val);

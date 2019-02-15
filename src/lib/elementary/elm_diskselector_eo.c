@@ -23,7 +23,7 @@ int _elm_diskselector_side_text_max_length_get(const Eo *obj, Elm_Diskselector_D
 
 
 static Eina_Value
-__eolian_elm_diskselector_side_text_max_length_get_reflect(Eo *obj)
+__eolian_elm_diskselector_side_text_max_length_get_reflect(const Eo *obj)
 {
    int val = elm_obj_diskselector_side_text_max_length_get(obj);
    return eina_value_int_init(val);
@@ -55,7 +55,7 @@ Eina_Bool _elm_diskselector_round_enabled_get(const Eo *obj, Elm_Diskselector_Da
 
 
 static Eina_Value
-__eolian_elm_diskselector_round_enabled_get_reflect(Eo *obj)
+__eolian_elm_diskselector_round_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_diskselector_round_enabled_get(obj);
    return eina_value_bool_init(val);
@@ -87,7 +87,7 @@ int _elm_diskselector_display_item_num_get(const Eo *obj, Elm_Diskselector_Data 
 
 
 static Eina_Value
-__eolian_elm_diskselector_display_item_num_get_reflect(Eo *obj)
+__eolian_elm_diskselector_display_item_num_get_reflect(const Eo *obj)
 {
    int val = elm_obj_diskselector_display_item_num_get(obj);
    return eina_value_int_init(val);

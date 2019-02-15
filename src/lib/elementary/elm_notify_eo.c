@@ -37,7 +37,7 @@ Eina_Bool _elm_notify_allow_events_get(const Eo *obj, Elm_Notify_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_notify_allow_events_get_reflect(Eo *obj)
+__eolian_elm_notify_allow_events_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_notify_allow_events_get(obj);
    return eina_value_bool_init(val);
@@ -69,7 +69,7 @@ double _elm_notify_timeout_get(const Eo *obj, Elm_Notify_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_notify_timeout_get_reflect(Eo *obj)
+__eolian_elm_notify_timeout_get_reflect(const Eo *obj)
 {
    double val = elm_obj_notify_timeout_get(obj);
    return eina_value_double_init(val);

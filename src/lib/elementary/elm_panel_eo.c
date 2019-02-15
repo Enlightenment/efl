@@ -33,7 +33,7 @@ Eina_Bool _elm_panel_hidden_get(const Eo *obj, Elm_Panel_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_panel_hidden_get_reflect(Eo *obj)
+__eolian_elm_panel_hidden_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_panel_hidden_get(obj);
    return eina_value_bool_init(val);
@@ -65,7 +65,7 @@ Eina_Bool _elm_panel_scrollable_get(const Eo *obj, Elm_Panel_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_panel_scrollable_get_reflect(Eo *obj)
+__eolian_elm_panel_scrollable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_panel_scrollable_get(obj);
    return eina_value_bool_init(val);
@@ -97,7 +97,7 @@ double _elm_panel_scrollable_content_size_get(const Eo *obj, Elm_Panel_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_panel_scrollable_content_size_get_reflect(Eo *obj)
+__eolian_elm_panel_scrollable_content_size_get_reflect(const Eo *obj)
 {
    double val = elm_obj_panel_scrollable_content_size_get(obj);
    return eina_value_double_init(val);

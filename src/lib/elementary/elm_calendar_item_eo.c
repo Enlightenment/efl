@@ -23,7 +23,7 @@ int _elm_calendar_item_day_number_get(const Eo *obj, Elm_Calendar_Item_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_calendar_item_day_number_get_reflect(Eo *obj)
+__eolian_elm_calendar_item_day_number_get_reflect(const Eo *obj)
 {
    int val = elm_calendar_item_day_number_get(obj);
    return eina_value_int_init(val);

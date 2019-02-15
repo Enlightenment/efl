@@ -93,7 +93,7 @@ Eina_Bool _elm_genlist_homogeneous_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_homogeneous_get_reflect(Eo *obj)
+__eolian_elm_genlist_homogeneous_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_homogeneous_get(obj);
    return eina_value_bool_init(val);
@@ -133,7 +133,7 @@ Eina_Bool _elm_genlist_focus_on_selection_get(const Eo *obj, Elm_Genlist_Data *p
 
 
 static Eina_Value
-__eolian_elm_genlist_focus_on_selection_get_reflect(Eo *obj)
+__eolian_elm_genlist_focus_on_selection_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_focus_on_selection_get(obj);
    return eina_value_bool_init(val);
@@ -165,7 +165,7 @@ double _elm_genlist_longpress_timeout_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_longpress_timeout_get_reflect(Eo *obj)
+__eolian_elm_genlist_longpress_timeout_get_reflect(const Eo *obj)
 {
    double val = elm_obj_genlist_longpress_timeout_get(obj);
    return eina_value_double_init(val);
@@ -197,7 +197,7 @@ Eina_Bool _elm_genlist_multi_select_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_multi_select_get_reflect(Eo *obj)
+__eolian_elm_genlist_multi_select_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_multi_select_get(obj);
    return eina_value_bool_init(val);
@@ -229,7 +229,7 @@ Eina_Bool _elm_genlist_reorder_mode_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_reorder_mode_get_reflect(Eo *obj)
+__eolian_elm_genlist_reorder_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_reorder_mode_get(obj);
    return eina_value_bool_init(val);
@@ -261,7 +261,7 @@ Eina_Bool _elm_genlist_decorate_mode_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_decorate_mode_get_reflect(Eo *obj)
+__eolian_elm_genlist_decorate_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_decorate_mode_get(obj);
    return eina_value_bool_init(val);
@@ -301,7 +301,7 @@ int _elm_genlist_block_count_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_block_count_get_reflect(Eo *obj)
+__eolian_elm_genlist_block_count_get_reflect(const Eo *obj)
 {
    int val = elm_obj_genlist_block_count_get(obj);
    return eina_value_int_init(val);
@@ -333,7 +333,7 @@ Eina_Bool _elm_genlist_tree_effect_enabled_get(const Eo *obj, Elm_Genlist_Data *
 
 
 static Eina_Value
-__eolian_elm_genlist_tree_effect_enabled_get_reflect(Eo *obj)
+__eolian_elm_genlist_tree_effect_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_tree_effect_enabled_get(obj);
    return eina_value_bool_init(val);
@@ -365,7 +365,7 @@ Eina_Bool _elm_genlist_highlight_mode_get(const Eo *obj, Elm_Genlist_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_genlist_highlight_mode_get_reflect(Eo *obj)
+__eolian_elm_genlist_highlight_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_genlist_highlight_mode_get(obj);
    return eina_value_bool_init(val);

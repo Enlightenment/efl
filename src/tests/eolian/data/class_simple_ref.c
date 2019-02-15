@@ -24,7 +24,7 @@ int _class_simple_a_get(const Eo *obj, Evas_Simple_Data *pd);
 
 
 static Eina_Value
-__eolian_class_simple_a_get_reflect(Eo *obj)
+__eolian_class_simple_a_get_reflect(const Eo *obj)
 {
    int val = efl_canvas_object_simple_a_get(obj);
    return eina_value_int_init(val);

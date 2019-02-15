@@ -27,7 +27,7 @@ int _elm_slideshow_cache_after_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_slideshow_cache_after_get_reflect(Eo *obj)
+__eolian_elm_slideshow_cache_after_get_reflect(const Eo *obj)
 {
    int val = elm_obj_slideshow_cache_after_get(obj);
    return eina_value_int_init(val);
@@ -59,7 +59,7 @@ int _elm_slideshow_cache_before_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_slideshow_cache_before_get_reflect(Eo *obj)
+__eolian_elm_slideshow_cache_before_get_reflect(const Eo *obj)
 {
    int val = elm_obj_slideshow_cache_before_get(obj);
    return eina_value_int_init(val);
@@ -91,7 +91,7 @@ const char *_elm_slideshow_layout_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_slideshow_layout_get_reflect(Eo *obj)
+__eolian_elm_slideshow_layout_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_slideshow_layout_get(obj);
    return eina_value_string_init(val);
@@ -123,7 +123,7 @@ const char *_elm_slideshow_transition_get(const Eo *obj, Elm_Slideshow_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_slideshow_transition_get_reflect(Eo *obj)
+__eolian_elm_slideshow_transition_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_slideshow_transition_get(obj);
    return eina_value_string_init(val);
@@ -155,7 +155,7 @@ Eina_Bool _elm_slideshow_items_loop_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_slideshow_items_loop_get_reflect(Eo *obj)
+__eolian_elm_slideshow_items_loop_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_slideshow_items_loop_get(obj);
    return eina_value_bool_init(val);
@@ -187,7 +187,7 @@ double _elm_slideshow_timeout_get(const Eo *obj, Elm_Slideshow_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_slideshow_timeout_get_reflect(Eo *obj)
+__eolian_elm_slideshow_timeout_get_reflect(const Eo *obj)
 {
    double val = elm_obj_slideshow_timeout_get(obj);
    return eina_value_double_init(val);

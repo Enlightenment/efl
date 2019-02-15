@@ -35,7 +35,7 @@ Eina_Bool _elm_spinner_wrap_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_wrap_get_reflect(Eo *obj)
+__eolian_elm_spinner_wrap_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_spinner_wrap_get(obj);
    return eina_value_bool_init(val);
@@ -67,7 +67,7 @@ double _elm_spinner_interval_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_interval_get_reflect(Eo *obj)
+__eolian_elm_spinner_interval_get_reflect(const Eo *obj)
 {
    double val = elm_obj_spinner_interval_get(obj);
    return eina_value_double_init(val);
@@ -99,7 +99,7 @@ int _elm_spinner_round_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_round_get_reflect(Eo *obj)
+__eolian_elm_spinner_round_get_reflect(const Eo *obj)
 {
    int val = elm_obj_spinner_round_get(obj);
    return eina_value_int_init(val);
@@ -131,7 +131,7 @@ Eina_Bool _elm_spinner_editable_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_editable_get_reflect(Eo *obj)
+__eolian_elm_spinner_editable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_spinner_editable_get(obj);
    return eina_value_bool_init(val);
@@ -163,7 +163,7 @@ double _elm_spinner_base_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_base_get_reflect(Eo *obj)
+__eolian_elm_spinner_base_get_reflect(const Eo *obj)
 {
    double val = elm_obj_spinner_base_get(obj);
    return eina_value_double_init(val);
@@ -195,7 +195,7 @@ const char *_elm_spinner_label_format_get(const Eo *obj, Elm_Spinner_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_spinner_label_format_get_reflect(Eo *obj)
+__eolian_elm_spinner_label_format_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_spinner_label_format_get(obj);
    return eina_value_string_init(val);
