@@ -61,6 +61,8 @@ _override_class_initializer(Efl_Class *klass)
 {
    const Efl_Object_Ops *opsp = NULL;
 
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
+
 #ifndef OVERRIDE_EXTRA_OPS
 #define OVERRIDE_EXTRA_OPS
 #endif
@@ -81,7 +83,7 @@ _override_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-   return efl_class_functions_set(klass, opsp, NULL);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _override_class_desc = {

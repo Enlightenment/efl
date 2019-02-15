@@ -45,6 +45,8 @@ _owning_class_initializer(Efl_Class *klass)
 {
    const Efl_Object_Ops *opsp = NULL;
 
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
+
 #ifndef OWNING_EXTRA_OPS
 #define OWNING_EXTRA_OPS
 #endif
@@ -56,7 +58,7 @@ _owning_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-   return efl_class_functions_set(klass, opsp, NULL);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _owning_class_desc = {

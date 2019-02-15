@@ -16,6 +16,8 @@ _function_as_argument_class_initializer(Efl_Class *klass)
 {
    const Efl_Object_Ops *opsp = NULL;
 
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
+
 #ifndef FUNCTION_AS_ARGUMENT_EXTRA_OPS
 #define FUNCTION_AS_ARGUMENT_EXTRA_OPS
 #endif
@@ -28,7 +30,7 @@ _function_as_argument_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-   return efl_class_functions_set(klass, opsp, NULL);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _function_as_argument_class_desc = {

@@ -2,9 +2,27 @@ EWAPI float BAR = 10.300000f;
 
 Eina_Bool _class_simple_a_set(Eo *obj, Evas_Simple_Data *pd, int value);
 
+
+static void
+__eolian_class_simple_a_set_reflect(Eo *obj, Eina_Value val)
+{
+   int cval;
+   eina_value_int_convert(&val, &cval);
+   efl_canvas_object_simple_a_set(obj, cval);
+   eina_value_flush(&val);
+}
+
 EOAPI EFL_FUNC_BODYV(efl_canvas_object_simple_a_set, Eina_Bool, EINA_TRUE /* true */, EFL_FUNC_CALL(value), int value);
 
 int _class_simple_a_get(const Eo *obj, Evas_Simple_Data *pd);
+
+
+static Eina_Value
+__eolian_class_simple_a_get_reflect(Eo *obj)
+{
+   int val = efl_canvas_object_simple_a_get(obj);
+   return eina_value_int_init(val);
+}
 
 EOAPI EFL_FUNC_BODY_CONST(efl_canvas_object_simple_a_get, int, 100);
 
@@ -31,6 +49,8 @@ _class_simple_class_initializer(Efl_Class *klass)
 {
    const Efl_Object_Ops *opsp = NULL;
 
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
+
 #ifndef CLASS_SIMPLE_EXTRA_OPS
 #define CLASS_SIMPLE_EXTRA_OPS
 #endif
@@ -45,7 +65,15 @@ _class_simple_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-   return efl_class_functions_set(klass, opsp, NULL);
+   static const Efl_Object_Property_Reflection refl_table[] = {
+      {"a", __eolian_class_simple_a_set_reflect, __eolian_class_simple_a_get_reflect},
+   };
+   static const Efl_Object_Property_Reflection_Ops rops = {
+      refl_table, EINA_C_ARRAY_LENGTH(refl_table)
+   };
+   ropsp = &rops;
+
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _class_simple_class_desc = {
