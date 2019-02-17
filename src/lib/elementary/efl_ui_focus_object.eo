@@ -24,23 +24,17 @@ mixin @beta Efl.Ui.Focus.Object
               [[This is called by the manager and should never be called by
                 anyone else.
 
-                It can be used by configuring a focus object to adapt to
-                any changes that are required.
-
                 The function emits the focus state events, if focus is
                 different to the previous state.
             ]]
-
             }
             values {
                 focus : bool; [[The focused state of the object]]
             }
         }
         @property focus_manager {
-            [[Describes which manager is used to register.
-
-              If an instance of this interface is the root of a manager, this instance should not have a manager where as root of this property. The other manager in this instance will be set as focused in the corresponding manager.
-              This instance should be registered with its own manager as redirect.
+            [[This is the focus manager where this focus object is registered in.
+              The element which is the $root of a Efl.Ui.Focus.Manager will not have this focus manager as this object, but rather the second focus manager where it is registered in.
             ]]
             get {}
             values {
@@ -55,20 +49,18 @@ mixin @beta Efl.Ui.Focus.Object
             }
         }
         @property child_focus @protected {
-            [[set if a child of this element has focus or not.]]
+            [[Indicates if a child of this object has focus setted to true.]]
             values {
                child_focus : bool;
             }
         }
         prepare_logical {
             [[Tells the object that its children will be queried soon by the given manager.
-              The call will be a NOP if there is already a active preprare_logical call on this object
-
               Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
             ]]
         }
         prepare_logical_none_recursive @protected {
-            [[]]
+            [[This is called when prepare_logical is called, but only on the first call, additional recursive calls to $prepare_logical will not call this function agian.]]
         }
         on_focus_update @protected {
            [[Virtual function handling focus in/out events on the widget]]
