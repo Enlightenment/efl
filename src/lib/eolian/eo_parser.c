@@ -593,40 +593,6 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    return def;
 }
 
-static void
-parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
-                   const char **freefunc)
-{
-   Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
-   *freefunc = NULL;
-   *is_extern = EINA_FALSE;
-   for (;;) switch (ls->t.kw)
-     {
-      case KW_at_extern:
-        CASE_LOCK(ls, extern, "@extern qualifier")
-        eo_lexer_get(ls);
-        *is_extern = EINA_TRUE;
-        break;
-      case KW_at_free:
-        {
-           CASE_LOCK(ls, free, "@free qualifier")
-           if (is_enum)
-             eo_lexer_syntax_error(ls, "enums cannot have @free");
-           eo_lexer_get(ls);
-           int pline = ls->line_number, pcol = ls->column;
-           check_next(ls, '(');
-           check(ls, TOK_VALUE);
-           *freefunc = eina_stringshare_add(ls->t.value.s);
-           eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_stringshare_del), (void *)*freefunc);
-           eo_lexer_get(ls);
-           check_match(ls, ')', '(', pline, pcol);
-           break;
-        }
-      default:
-        return;
-     }
-}
-
 static Eolian_Type *
 parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
 {
@@ -778,18 +744,14 @@ static Eolian_Typedecl *
 parse_typedef(Eo_Lexer *ls)
 {
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
-   Eina_Bool has_extern;
-   const char *freefunc;
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
-   parse_struct_attrs(ls, EINA_FALSE, &has_extern, &freefunc);
-   if (freefunc)
+   if (ls->t.kw == KW_at_extern)
      {
-        def->freefunc = eina_stringshare_ref(freefunc);
-        eo_lexer_dtor_pop(ls);
+        def->is_extern = EINA_TRUE;
+        eo_lexer_get(ls);
      }
    def->type = EOLIAN_TYPEDECL_ALIAS;
-   def->is_extern = has_extern;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
    eo_lexer_context_push(ls);
@@ -2246,11 +2208,37 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            Eina_Bool is_enum = (ls->t.kw == KW_enum);
            const char *name;
            int line, col;
-           Eina_Bool has_extern;
-           const char *freefunc;
+           const char *freefunc = NULL;
            Eina_Strbuf *buf;
            eo_lexer_get(ls);
-           parse_struct_attrs(ls, is_enum, &has_extern, &freefunc);
+           Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
+           for (;;) switch (ls->t.kw)
+             {
+              case KW_at_extern:
+                CASE_LOCK(ls, extern, "@extern qualifier")
+                eo_lexer_get(ls);
+                break;
+              case KW_at_free:
+                {
+                   if (is_enum)
+                     goto postparams;
+                   CASE_LOCK(ls, free, "@free qualifier")
+                   if (is_enum)
+                     eo_lexer_syntax_error(ls, "enums cannot have @free");
+                   eo_lexer_get(ls);
+                   int pline = ls->line_number, pcol = ls->column;
+                   check_next(ls, '(');
+                   check(ls, TOK_VALUE);
+                   freefunc = eina_stringshare_add(ls->t.value.s);
+                   eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_stringshare_del), (void *)freefunc);
+                   eo_lexer_get(ls);
+                   check_match(ls, ')', '(', pline, pcol);
+                   break;
+                }
+              default:
+                goto postparams;
+             }
+postparams:
            buf = eina_strbuf_new();
            eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
            eo_lexer_context_push(ls);
