@@ -14,7 +14,7 @@
 typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
-   Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
+   Efl_Ui_Focus_Manager *registered, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
@@ -27,10 +27,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
    if (elm_widget_is_legacy(obj) && elm_object_focus_custom_chain_get(obj)) return;
 
-   if (pd->custom_manager)
-     manager = pd->custom_manager;
-   else
-     manager = pd->registered;
+   manager = pd->registered;
 
    if (manager)
      {
@@ -167,7 +164,12 @@ _efl_ui_focus_composition_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_
    registered = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    if (registered)
-     pd->registered = configured_state->manager;
+     {
+        if (efl_isa(obj, EFL_UI_FOCUS_MANAGER_INTERFACE))
+          pd->registered = obj;
+        else
+          pd->registered = configured_state->manager;
+     }
    else
      pd->registered = NULL;
 
@@ -192,18 +194,6 @@ _efl_ui_focus_composition_efl_ui_focus_object_prepare_logical_none_recursive(Eo 
      }
 
    efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Focus_Manager *custom_manager)
-{
-   pd->custom_manager = custom_manager;
-}
-
-EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_composition_custom_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
-{
-   return pd->custom_manager;
 }
 
 EOLIAN static void
