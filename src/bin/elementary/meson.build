@@ -214,6 +214,13 @@ elementary_codegen = executable('elementary_codegen',
         link_args: link_args
 )
 
+if meson.is_cross_build()
+  elementary_codegen_exe = [find_program('elementary_codegen', native: true)]
+else
+  env = find_program('env', native: true)
+  elementary_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', elementary_codegen.full_path()]
+endif
+
 elm_prefs_cc_src = [
    'elm_prefs_cc.h',
    'elm_prefs_cc.c',
