@@ -313,7 +313,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(vbx, bt);
 
    elm_box_pack_end(bx, priv->list2);
-   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focused ,priv);
+   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _focused ,priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
 

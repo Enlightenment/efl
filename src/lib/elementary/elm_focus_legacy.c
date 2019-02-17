@@ -413,7 +413,7 @@ legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager,
    state->emittee = emittee;
    state->focused = EINA_FALSE;
 
-   efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focus_manager_focused, state);
+   efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _focus_manager_focused, state);
    efl_event_callback_add(manager, EFL_EVENT_DEL, _focus_manager_del, state);
 }
 
@@ -443,10 +443,10 @@ _manager_focus_object_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Legacy_Object_Focus_State *state = data;
    if (state->registered_manager)
-     efl_event_callback_del(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+     efl_event_callback_del(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _manager_focus_changed, state);
    state->registered_manager = efl_ui_focus_object_focus_manager_get(state->emittee);
    if (state->registered_manager)
-     efl_event_callback_add(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+     efl_event_callback_add(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _manager_focus_changed, state);
 }
 
 void

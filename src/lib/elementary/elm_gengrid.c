@@ -4364,7 +4364,7 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _gengrid_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _gengrid_element_focused, obj);
 
    return obj;
 }

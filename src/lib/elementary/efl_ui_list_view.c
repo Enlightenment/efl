@@ -678,7 +678,7 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 
    pd->seg_array = efl_ui_list_view_seg_array_setup(32);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _list_element_focused, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _list_element_focused, NULL);
 
    efl_ui_focus_composition_custom_manager_set(obj, obj);
    efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
@@ -695,7 +695,7 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 EOLIAN static void
 _efl_ui_list_view_efl_object_destructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 {
-   efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED,
+   efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED,
                                             _list_element_focused, NULL);
 
    _efl_ui_list_view_edje_object_detach(obj);

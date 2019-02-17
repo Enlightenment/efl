@@ -192,7 +192,7 @@ interface @beta Efl.Ui.Focus.Manager {
         flush,pre: void; [[Emitted once the graph calculationg will be performed]]
         coords,dirty: void; [[Emitted once the graph is dirty, this means there are
             potential changes in border_elements you want to know about]]
-        focus,changed : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
+        manager_focus,changed : Efl.Ui.Focus.Object; [[Emitted if the manager has focused an
             object, the passed focus object is the last focused object]]
         dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or unfrozen, even_info beeing $true indicates that it is now frozen, $false indicates that it is unfrozen.]]
     }

@@ -1553,7 +1553,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
         if (new_focusable)
           efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
-        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
      }
 
     _current_focused_parent_to_array(obj, pd, chain);
@@ -1868,7 +1868,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSE
 
   pd->focus_stack = eina_list_free(pd->focus_stack);
 
-  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
 }
 
 EOLIAN static void
@@ -1909,7 +1909,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_U
          efl_ui_focus_manager_focus_set(obj, last->focusable);
     }
 
-  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
 }
 
 EOLIAN static Efl_Ui_Focus_Object*

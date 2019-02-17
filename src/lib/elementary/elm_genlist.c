@@ -5990,7 +5990,7 @@ _elm_genlist_efl_object_constructor(Eo *obj, Elm_Genlist_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _genlist_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _genlist_element_focused, obj);
 
    return obj;
 }
