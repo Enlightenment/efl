@@ -16,7 +16,7 @@ _btn_overlay_clicked_cb(void *data EINA_UNUSED, const Efl_Event *event)
    static Eina_Bool loaded = EINA_TRUE;
    Efl_Ui_Theme *default_theme;
 
-   default_theme = efl_ui_theme_default_get(efl_ui_theme_class_get());
+   default_theme = efl_ui_theme_default_get();
 
    if (loaded)
      {
@@ -48,7 +48,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         efl_exit(0);
      }
 
-   default_theme = efl_ui_theme_default_get(efl_ui_theme_class_get());
+   default_theme = efl_ui_theme_default_get();
    efl_ui_theme_overlay_add(default_theme, EXAMPLE_EDJ_FILE_PATH);
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
