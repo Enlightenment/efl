@@ -263,6 +263,11 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
+   if (output->flip_timeout)
+     {
+        ecore_timer_del(output->flip_timeout);
+        output->flip_timeout = NULL;
+     }
    if (output->current.fb && (output->current.fb != output->pending.fb))
      _ecore_drm2_fb_buffer_release(output, &output->current);
 
@@ -428,6 +433,21 @@ err:
    return EINA_FALSE;
 }
 
+static int _fb_atomic_flip(Ecore_Drm2_Output *output);
+static int _fb_flip(Ecore_Drm2_Output *output);
+
+static Eina_Bool
+_cb_flip_timeout(void *data)
+{
+   Ecore_Drm2_Output *output = data;
+
+   output->flip_timeout = NULL;
+   ERR("flip event callback timout 0.05sec - try again");
+   if (_ecore_drm2_use_atomic) _fb_atomic_flip(output);
+   else _fb_flip(output);
+   return EINA_FALSE;
+}
+
 static int
 _fb_atomic_flip(Ecore_Drm2_Output *output)
 {
@@ -452,6 +472,11 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      {
         ERR("Failed Atomic Commit: %m");
         return -1;
+     }
+   else
+     {
+        if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+        output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
      }
 
    return 0;
@@ -525,6 +550,11 @@ _fb_flip(Ecore_Drm2_Output *output)
                   break;
                }
              usleep(100);
+          }
+        else
+          {
+             if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+             output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
           }
      }
    while (repeat);
