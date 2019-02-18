@@ -884,6 +884,7 @@ _create_gradient_node(Efl_VG *vg)
    unsigned int count = 0, i;
 
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(grad, NULL);
 
    grad->spread = evas_vg_gradient_spread_get(vg);
    evas_vg_gradient_stop_get(vg, &stops, &count);
