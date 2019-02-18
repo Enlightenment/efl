@@ -823,6 +823,8 @@ vg_common_svg_create_vg_node(Svg_Node *node)
    if (!node || (node->type != SVG_NODE_DOC)) return NULL;
 
    vg_data = calloc(1, sizeof(Vg_File_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(vg_data, NULL);
+
    vg_data->view_box.x = node->node.doc.vx;
    vg_data->view_box.y = node->node.doc.vy;
    vg_data->view_box.w = node->node.doc.vw;
@@ -838,6 +840,7 @@ static Svg_Node *
 _create_node(Svg_Node *parent, Svg_Node_Type type)
 {
    Svg_Node *node = calloc(1, sizeof(Svg_Node));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(node, NULL);
 
    // default fill property
    node->style = calloc(1, sizeof(Svg_Style_Property));
