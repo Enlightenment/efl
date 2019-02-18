@@ -899,6 +899,7 @@ _create_gradient_node(Efl_VG *vg)
    for (i = 0; i < count; i++)
      {
         new_stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
+        if (!new_stop) goto oom_error;
         memcpy(new_stop, stops, sizeof(Efl_Gfx_Gradient_Stop));
         grad->stops = eina_list_append(grad->stops, new_stop);
         stops++;
@@ -907,6 +908,7 @@ _create_gradient_node(Efl_VG *vg)
      {
         grad->type = SVG_LINEAR_GRADIENT;
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
+        if (!grad->linear) goto oom_error;
         evas_vg_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         evas_vg_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
      }
@@ -914,12 +916,18 @@ _create_gradient_node(Efl_VG *vg)
      {
         grad->type = SVG_RADIAL_GRADIENT;
         grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
+        if (!grad->radial) goto oom_error;
         evas_vg_gradient_radial_center_get(vg, &grad->radial->cx, &grad->radial->cy);
         evas_vg_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
         grad->radial->r = evas_vg_gradient_radial_radius_get(vg);
      }
 
    return grad;
+
+oom_error:
+   ERR("OOM: Failed calloc()");
+   return grad;
+
 }
 
 static void
