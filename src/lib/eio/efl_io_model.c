@@ -111,7 +111,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
         info.name_start = mi->name_start;
         info.name_length = mi->name_length;
         info.type = EINA_FILE_UNKNOWN;
-        strcpy(info.path, mi->path);
+        strncpy(info.path, mi->path, (EINA_PATH_MAX - 1));
 
         if (!pd->filter.cb(pd->filter.data, obj, &info))
           {
