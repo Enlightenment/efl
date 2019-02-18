@@ -1841,6 +1841,13 @@ EFL_START_TEST(eo_test_class_replacement)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eo_test_class_type)
+{
+   ck_assert_int_eq(efl_class_type_get(SIMPLE_CLASS), EFL_CLASS_TYPE_REGULAR);
+   ck_assert_int_eq(efl_class_type_get((void*)0xAFFE), EFL_CLASS_TYPE_INVALID);
+}
+EFL_END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_simple);
@@ -1870,4 +1877,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_object_destruct_test);
    tcase_add_test(tc, efl_object_auto_unref_test);
    tcase_add_test(tc, efl_object_size);
+   tcase_add_test(tc, eo_test_class_type);
 }

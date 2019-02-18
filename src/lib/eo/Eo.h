@@ -776,7 +776,8 @@ enum _Efl_Class_Type
    EFL_CLASS_TYPE_REGULAR = 0, /**< Regular class. */
    EFL_CLASS_TYPE_REGULAR_NO_INSTANT, /**< Regular non instant-able class. */
    EFL_CLASS_TYPE_INTERFACE, /**< Interface */
-   EFL_CLASS_TYPE_MIXIN /**< Mixin */
+   EFL_CLASS_TYPE_MIXIN, /**< Mixin */
+   EFL_CLASS_TYPE_INVALID
 };
 
 /**
@@ -2002,6 +2003,14 @@ EAPI Eina_Value efl_property_reflection_get(Eo *obj, const char *property_name);
  */
 
 #include "efl_class.eo.h"
+
+/**
+ * @brief Get the type of this class.
+ * @param klass The Efl_Class to get the type from.
+ *
+ * @return The type of this class or INVALID if the klass parameter was invalid.
+ */
+EAPI Efl_Class_Type efl_class_type_get(const Efl_Class *klass);
 
 /**
  * @}

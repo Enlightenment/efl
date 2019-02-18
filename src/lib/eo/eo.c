@@ -1516,6 +1516,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                    return NULL;
                 }
               break;
+           default:
+             ERR("type cannot be INVALID");
+             return NULL;
           }
      }
 
@@ -1542,6 +1545,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                      case EFL_CLASS_TYPE_MIXIN:
                        extn_list = eina_list_append(extn_list, extn);
                        break;
+                     default:
+                       ERR("type cannot be INVALID");
+                       return NULL;
                     }
                }
              extn_id = va_arg(p_list, Eo_Id *);
@@ -3659,4 +3665,12 @@ end:
    EO_OBJ_DONE(obj_id);
 
    return EINA_VALUE_EMPTY;
+}
+
+EAPI Efl_Class_Type
+efl_class_type_get(const Efl_Class *klass_id)
+{
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EFL_CLASS_TYPE_INVALID);
+
+   return klass->desc->type;
 }
