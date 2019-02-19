@@ -799,7 +799,7 @@ _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
+_efl_ui_pager_efl_pack_unpack(Eo *obj,
                               Efl_Ui_Pager_Data *pd,
                               Efl_Gfx_Entity *subobj)
 {
@@ -817,10 +817,17 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj EINA_UNUSED,
        (index < pd->curr.page))
      pd->curr.page--;
 
-   //FIXME if the number of pages is not enough after unpacking a page,
-   //      loop mode needs to be disabled
    if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
+     {
+        // if the number of pages is not enough after unpacking a page,
+        // loop mode needs to be disabled
+        if (pd->loop == EFL_UI_PAGER_LOOP_ENABLED)
+          {
+             _efl_ui_pager_loop_mode_set(obj, pd, EFL_UI_PAGER_LOOP_DISABLED);
+             _efl_ui_pager_loop_mode_set(obj, pd, EFL_UI_PAGER_LOOP_ENABLED);
+          }
+        efl_page_transition_update(pd->transition, pd->curr.pos);
+     }
    else
      {
         efl_pack_unpack(pd->page_box, subobj);
