@@ -59,11 +59,26 @@ class @beta Efl.Loop extends Efl.Task
          }
       }
       @property time {
-         [[The time point when the loop was logically woken.]]
-         set {}
-         get {}
+         [[Retrieves the time at which the last loop stopped waiting for timeouts or events.]]
+         set @protected {
+           [[You should never need/call this, unless you are implementing a custom
+             tick source for an animator.
+
+             Note: The time point must match whatever zero time you get from ecore_time_get() and @.time.get() (same 0 point).
+             What this point is is undefined, so unless your source uses the same 0 time, then you may have to adjust and do some guessing.
+           ]]
+         }
+         get {
+           [[This gets the time that the main loop ceased waiting for timouts and/or
+             events to come in or for signals or any other interrupt source. This should
+             be considered a reference point for all time based activity that should
+             calculate its timepoint from the return of ecore_loop_time_get(). Note that this
+             time is meant to be used as relative to other times obtained on this run.
+             If you need absolute time references, use a unix timestamp instead.
+            ]]
+         }
          values {
-           timepoint: double; [[Time in seconds since process specific start point]]
+           timepoint: double; [[Time in seconds]]
          }
       }
       idle {
