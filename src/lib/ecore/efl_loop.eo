@@ -98,13 +98,12 @@ class @beta Efl.Loop extends Efl.Task
          }
          return: bool; [[$true if successfully unregistered, $false otherwise.]]
       }
-      message_handler_get @class {
+      message_handler_get {
          [[Get a message handler object that is created by and owned by
            the Efl.Loop object, so you can listen to this message type by
            listening to message events on the handler as well as send
            objects as events.]]
          params {
-            @in loop: Efl.Loop; [[The loop to get the object from.]]
             @in klass: const(Efl.Class); [[The class of the message object.]]
          }
          return: Efl.Loop_Message_Handler; [[The message handler to use.]]

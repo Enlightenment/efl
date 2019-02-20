@@ -29,22 +29,20 @@ struct _Efl_Loop_Promise_Simple_Data
 GENERIC_ALLOC_SIZE_DECLARE(Efl_Loop_Promise_Simple_Data);
 
 EOLIAN static Efl_Loop_Message_Handler *
-_efl_loop_message_handler_get(Efl_Loop *loop, const Efl_Class *klass)
+_efl_loop_message_handler_get(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const Efl_Class *klass)
 {
    Message_Handler mh = { 0 }, *mh2;
-   Efl_Loop_Data *ld = efl_data_scope_get(loop, EFL_LOOP_CLASS);
    unsigned int i, n;
 
-   if (!ld) return NULL;
-   n = eina_inarray_count(ld->message_handlers);
+   n = eina_inarray_count(pd->message_handlers);
    for (i = 0; i < n; i++)
      {
-        mh2 = eina_inarray_nth(ld->message_handlers, i);
+        mh2 = eina_inarray_nth(pd->message_handlers, i);
         if (mh2->klass == klass) return mh2->handler;
      }
    mh.klass = klass;
-   mh.handler = efl_add(klass, loop);
-   eina_inarray_push(ld->message_handlers, &mh);
+   mh.handler = efl_add(klass, obj);
+   eina_inarray_push(pd->message_handlers, &mh);
    return mh.handler;
 }
 
