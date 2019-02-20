@@ -351,7 +351,7 @@ void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
-void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
+void test_efl_gfx_mapping(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
 
 void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
@@ -1210,7 +1210,7 @@ add_tests:
    ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
-   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Map", test_efl_gfx_map);
+   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Mapping", test_efl_gfx_mapping);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);

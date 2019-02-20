@@ -32,10 +32,10 @@ _evas_render_can_map(Evas_Object_Protected_Data *obj)
 }
 
 static inline void
-_evas_object_gfx_map_update(Evas_Object_Protected_Data *obj)
+_evas_object_gfx_mapping_update(Evas_Object_Protected_Data *obj)
 {
-   if (!obj->gfx_map_has) return;
-   _efl_gfx_map_update(obj->object);
+   if (!obj->gfx_mapping_has) return;
+   _efl_gfx_mapping_update(obj->object);
 }
 
 static inline int

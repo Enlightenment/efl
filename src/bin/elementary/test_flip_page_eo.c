@@ -88,34 +88,34 @@ _slice_apply(State *st, Slice *sl,
              Evas_Coord x EINA_UNUSED, Evas_Coord y EINA_UNUSED, Evas_Coord w, Evas_Coord h EINA_UNUSED,
              Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
-   efl_gfx_map_reset(sl->obj);
-   efl_gfx_map_smooth_set(sl->obj, EINA_TRUE);
-   efl_gfx_map_color_set(sl->obj, -1, 255, 255, 255, 255);
+   efl_gfx_mapping_reset(sl->obj);
+   efl_gfx_mapping_smooth_set(sl->obj, EINA_TRUE);
+   efl_gfx_mapping_color_set(sl->obj, -1, 255, 255, 255, 255);
    for (int i = 0; i < 4; i++)
      {
         if (st->dir == 0)
           {
              int p[4] = { 0, 1, 2, 3 };
-             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
-             efl_gfx_map_uv_set(sl->obj, i, sl->u[p[i]] , sl->v[p[i]]);
+             efl_gfx_mapping_coord_absolute_set(sl->obj, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
+             efl_gfx_mapping_uv_set(sl->obj, i, sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 1)
           {
              int p[4] = { 1, 0, 3, 2 };
-             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
-             efl_gfx_map_uv_set(sl->obj, i, 1. - sl->u[p[i]] , sl->v[p[i]]);
+             efl_gfx_mapping_coord_absolute_set(sl->obj, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
+             efl_gfx_mapping_uv_set(sl->obj, i, 1. - sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 2)
           {
              int p[4] = { 1, 0, 3, 2 };
-             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
-             efl_gfx_map_uv_set(sl->obj, i, sl->v[p[i]] , sl->u[p[i]]);
+             efl_gfx_mapping_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
+             efl_gfx_mapping_uv_set(sl->obj, i, sl->v[p[i]] , sl->u[p[i]]);
           }
         else if (st->dir == 3)
           {
              int p[4] = { 0, 1, 2, 3 };
-             efl_gfx_map_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
-             efl_gfx_map_uv_set(sl->obj, i, sl->v[p[i]] , 1. - sl->u[p[i]]);
+             efl_gfx_mapping_coord_absolute_set(sl->obj, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
+             efl_gfx_mapping_uv_set(sl->obj, i, sl->v[p[i]] , 1. - sl->u[p[i]]);
           }
      }
    evas_object_image_fill_set(sl->obj, 0, 0, ow, oh);
@@ -125,22 +125,22 @@ static void
 _slice_3d(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    // vanishing point is center of page, and focal dist is 1024
-   efl_gfx_map_perspective_3d_absolute(sl->obj, x + (w / 2), y + (h / 2), 0, 1024);
+   efl_gfx_mapping_perspective_3d_absolute(sl->obj, x + (w / 2), y + (h / 2), 0, 1024);
 
    for (int i = 0; i < 4; i++)
      {
         double xx, yy;
 
-        efl_gfx_map_coord_absolute_get(sl->obj, i, &xx, &yy, NULL);
-        efl_gfx_map_coord_absolute_set(sl->obj, i, xx, yy, 0);
+        efl_gfx_mapping_coord_absolute_get(sl->obj, i, &xx, &yy, NULL);
+        efl_gfx_mapping_coord_absolute_set(sl->obj, i, xx, yy, 0);
      }
-   efl_gfx_entity_visible_set(sl->obj, efl_gfx_map_clockwise_get(sl->obj));
+   efl_gfx_entity_visible_set(sl->obj, efl_gfx_mapping_clockwise_get(sl->obj));
 }
 
 static void
 _slice_light(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   efl_gfx_map_lightning_3d_absolute(sl->obj,
+   efl_gfx_mapping_lighting_3d_absolute(sl->obj,
                                      // light position
                                      // (centered over page 10 * h toward camera)
                                      x + (w / 2), y + (h / 2), -10000,
@@ -153,11 +153,11 @@ _slice_light(State *st EINA_UNUSED, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_
      {
         int r, g, b, a;
 
-        efl_gfx_map_color_get(sl->obj, i, &r, &g, &b, &a);
+        efl_gfx_mapping_color_get(sl->obj, i, &r, &g, &b, &a);
         r = (double)r * 1.2; if (r > 255) r = 255;
         g = (double)g * 1.2; if (g > 255) g = 255;
         b = (double)b * 1.2; if (b > 255) b = 255;
-        efl_gfx_map_color_set(sl->obj, i, r, g, b, a);
+        efl_gfx_mapping_color_set(sl->obj, i, r, g, b, a);
      }
 }
 
@@ -253,7 +253,7 @@ _slice_obj_color_sum(Slice *s, int p, int *r, int *g, int *b, int *a)
    int rr = 0, gg = 0, bb = 0, aa = 0;
 
    if (!s) return 0;
-   efl_gfx_map_color_get(s->obj, p, &rr, &gg, &bb, &aa);
+   efl_gfx_mapping_color_get(s->obj, p, &rr, &gg, &bb, &aa);
    *r += rr; *g += gg; *b += bb; *a += aa;
    return 1;
 }
@@ -262,7 +262,7 @@ static void
 _slice_obj_color_set(Slice *s, int p, int r, int g, int b, int a)
 {
    if (!s) return;
-   efl_gfx_map_color_set(s->obj, p, r, g, b, a);
+   efl_gfx_mapping_color_set(s->obj, p, r, g, b, a);
 }
 
 static void

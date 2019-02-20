@@ -42,7 +42,7 @@ evas_canvas_eolian_pub_files = \
 	lib/evas/canvas/efl_input_pointer.eo \
 	lib/evas/canvas/efl_input_hold.eo \
 	lib/evas/canvas/efl_input_focus.eo \
-	lib/evas/canvas/efl_gfx_map.eo \
+	lib/evas/canvas/efl_gfx_mapping.eo \
 	lib/evas/canvas/efl_canvas_animation.eo \
 	lib/evas/canvas/efl_canvas_animation_alpha.eo \
 	lib/evas/canvas/efl_canvas_animation_rotate.eo \
@@ -264,7 +264,7 @@ lib/evas/canvas/efl_canvas_surface.c \
 lib/evas/canvas/efl_canvas_surface_tbm.c \
 lib/evas/canvas/efl_canvas_surface_x11.c \
 lib/evas/canvas/efl_canvas_surface_wayland.c \
-lib/evas/canvas/efl_gfx_map.c \
+lib/evas/canvas/efl_gfx_mapping.c \
 lib/evas/canvas/efl_input_event.c \
 lib/evas/canvas/efl_input_key.c \
 lib/evas/canvas/efl_input_pointer.c \

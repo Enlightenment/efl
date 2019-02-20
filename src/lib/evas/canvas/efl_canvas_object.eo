@@ -4,7 +4,7 @@ struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
 
 abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
                             Efl.Input.Interface, Efl.Gfx.Hint,
-                            Efl.Gfx.Map, Efl.Ui.I18n, Efl.Canvas.Pointer
+                            Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;

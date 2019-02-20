@@ -425,7 +425,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_image.eo.h"
 #include "canvas/efl_canvas_snapshot.eo.h"
 #include "canvas/efl_canvas_proxy.eo.h"
-#include "canvas/efl_gfx_map.eo.h"
+#include "canvas/efl_gfx_mapping.eo.h"
 #endif /* EFL_EO_API_SUPPORT */
 
 #if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)

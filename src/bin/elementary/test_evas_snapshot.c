@@ -104,12 +104,12 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *snap;
 
    snap = efl_key_wref_get(win, "snap");
-   if (!efl_gfx_map_has(snap))
+   if (!efl_gfx_mapping_has(snap))
      {
-        efl_gfx_map_zoom(snap, 0.8, 0.8, NULL, 0.5, 0.5);
-        efl_gfx_map_rotate(snap, 20.0, NULL, 0.5, 0.5);
+        efl_gfx_mapping_zoom(snap, 0.8, 0.8, NULL, 0.5, 0.5);
+        efl_gfx_mapping_rotate(snap, 20.0, NULL, 0.5, 0.5);
      }
-   else efl_gfx_map_reset(snap);
+   else efl_gfx_mapping_reset(snap);
 }
 
 void

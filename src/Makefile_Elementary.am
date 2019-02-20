@@ -1004,7 +1004,7 @@ bin/elementary/test_entry_anchor2.c \
 bin/elementary/test_events.c \
 bin/elementary/test_evas_mask.c \
 bin/elementary/test_evas_map.c \
-bin/elementary/test_efl_gfx_map.c \
+bin/elementary/test_efl_gfx_mapping.c \
 bin/elementary/test_evas_snapshot.c \
 bin/elementary/test_external.c \
 bin/elementary/test_fileselector_button.c \

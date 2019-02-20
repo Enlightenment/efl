@@ -7524,7 +7524,7 @@ EAPI void            evas_map_util_points_populate_from_geometry(Evas_Map *m, Ev
 /**
  * Set color of all points to given color.
  *
- * This call is useful to reuse maps after they had 3d lightning or
+ * This call is useful to reuse maps after they had 3d lighting or
  * any other colorization applied before.
  *
  * @param m map to change the color of.
@@ -8037,7 +8037,7 @@ EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
  */
 EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
 
-#include "canvas/efl_gfx_map.eo.legacy.h"
+#include "canvas/efl_gfx_mapping.eo.legacy.h"
 
 /**
  * @brief Apply an evas filter program on this text object.

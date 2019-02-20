@@ -43,7 +43,7 @@ _efl_canvas_animation_alpha_efl_canvas_animation_animation_apply(Eo *eo_obj,
 
    for (i = 0; i < 4; i++)
      {
-        efl_gfx_map_color_set(target, i, cur_alpha, cur_alpha, cur_alpha, cur_alpha);
+        efl_gfx_mapping_color_set(target, i, cur_alpha, cur_alpha, cur_alpha, cur_alpha);
      }
 
    return progress;

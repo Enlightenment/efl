@@ -1,4 +1,4 @@
-mixin @beta Efl.Gfx.Map requires Efl.Object
+mixin @beta Efl.Gfx.Mapping requires Efl.Object
 {
    [[Texture UV mapping for all objects (rotation, perspective, 3d, ...).
 
@@ -17,23 +17,23 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
      @since 1.20
    ]]
    methods {
-      map_has {
+      mapping_has {
          [[Read-only property indicating whether an object is mapped.
 
            This will be $true if any transformation is applied to this object.
          ]]
          return: bool; [[$true if the object is mapped.]]
       }
-      map_reset {
+      mapping_reset {
          [[Resets the map transformation to its default state.
 
            This will reset all transformations to identity, meaning the points'
            colors, positions and UV coordinates will be reset to their default
-           values. @.map_has will then return $false. This function will
-           not modify the values of @.map_smooth or @.map_alpha.
+           values. @.mapping_has will then return $false. This function will
+           not modify the values of @.mapping_smooth or @.mapping_alpha.
          ]]
       }
-      @property map_point_count {
+      @property mapping_point_count {
          [[Number of points of a map.
 
             This sets the number of points of map.
@@ -43,7 +43,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             count: int; [[The number of points of map]]
          }
       }
-      @property map_clockwise {
+      @property mapping_clockwise {
          [[Clockwise state of a map (read-only).
 
            This determines if the output points (X and Y. Z is not used) are
@@ -63,7 +63,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
       // Same remark for alpha - it's only for performance
       // Same remark for (MISSING) anti-aliasing
 
-      @property map_smooth {
+      @property mapping_smooth {
          [[Smoothing state for map rendering.
 
            This sets smoothing for map rendering. If the object is a type that has
@@ -74,7 +74,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             smooth: bool; [[$true by default.]]
          }
       }
-      @property map_alpha {
+      @property mapping_alpha {
          [[Alpha flag for map rendering.
 
            This sets alpha flag for map rendering. If the object is a type that
@@ -84,14 +84,14 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
            and is useful if you know the object and/or all sub-objects is 100%
            solid.
 
-           Note that this may conflict with @.map_smooth depending on which
+           Note that this may conflict with @.mapping_smooth depending on which
            algorithm is used for anti-aliasing.
          ]]
          values {
             alpha: bool; [[$true by default.]]
          }
       }
-      @property map_coord_absolute {
+      @property mapping_coord_absolute {
          [[A point's absolute coordinate on the canvas.
 
            This sets/gets the fixed point's coordinate in the map. Note that points
@@ -121,7 +121,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             z: double; [[Point Z coordinate hint (pre-perspective transform).]]
          }
       }
-      @property map_uv {
+      @property mapping_uv {
          [[Map point's U and V texture source point.
 
            This sets/gets the U and V coordinates for the point. This determines
@@ -142,7 +142,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             v: double; [[Relative Y coordinate within the image, from 0 to 1.]]
          }
       }
-      @property map_color {
+      @property mapping_color {
          [[Color of a vertex in the map.
 
            This sets the color of the vertex in the map. Colors will be linearly
@@ -270,7 +270,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             cy: double; [[y relative coordinate of the center point.]]
          }
       }
-      lightning_3d {
+      lighting_3d {
          [[Apply a lighting effect on the object.
 
            This is used to apply lighting calculations (from a single light
@@ -410,7 +410,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
             cy: double; [[y absolute coordinate in pixels of the center point.]]
          }
       }
-      lightning_3d_absolute {
+      lighting_3d_absolute {
          [[Apply a lighting effect to the object.
 
            This is used to apply lighting calculations (from a single light
@@ -423,7 +423,7 @@ mixin @beta Efl.Gfx.Map requires Efl.Object
            "logical" side for lighting.
 
            The coordinates of the center point are given in absolute canvas
-           coordinates. See also @.lightning_3d for a pivot-based lightning
+           coordinates. See also @.lighting_3d for a pivot-based lighting
            effect.
          ]]
          params {

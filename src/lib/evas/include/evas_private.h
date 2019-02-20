@@ -1186,8 +1186,8 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   snapshot_needs_redraw : 1;
    Eina_Bool                   snapshot_no_obscure : 1;
    Eina_Bool                   is_image_object : 1;
-   Eina_Bool                   gfx_map_has : 1;
-   Eina_Bool                   gfx_map_update : 1;
+   Eina_Bool                   gfx_mapping_has : 1;
+   Eina_Bool                   gfx_mapping_update : 1;
 
    struct {
       Eina_Bool                ctor : 1; // used legacy constructor
@@ -1736,10 +1736,10 @@ void _evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file);
 void evas_filter_init(void);
 void evas_filter_shutdown(void);
 
-/* Efl.Gfx.Map */
-void _efl_gfx_map_init(void);
-void _efl_gfx_map_shutdown(void);
-void _efl_gfx_map_update(Eo *eo_obj);
+/* Efl.Gfx.Mapping */
+void _efl_gfx_mapping_init(void);
+void _efl_gfx_mapping_shutdown(void);
+void _efl_gfx_mapping_update(Eo *eo_obj);
 
 /* Ector */
 Ector_Surface *evas_ector_get(Evas_Public_Data *evas);
