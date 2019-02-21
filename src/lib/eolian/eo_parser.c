@@ -684,7 +684,8 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
              def->btype = ls->t.kw - KW_byte + 1;
              def->base.name = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
-             if (tpid >= KW_accessor && tpid <= KW_inlist)
+             if ((tpid >= KW_accessor && tpid <= KW_inlist) ||
+                 (tpid >= KW_slice && tpid <= KW_rw_slice))
                {
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');

@@ -142,15 +142,19 @@ ffi.cdef [[
 
         EOLIAN_TYPE_BUILTIN_BOOL,
 
+        EOLIAN_TYPE_BUILTIN_SLICE,
+        EOLIAN_TYPE_BUILTIN_RW_SLICE,
+
         EOLIAN_TYPE_BUILTIN_VOID,
 
         EOLIAN_TYPE_BUILTIN_ACCESSOR,
         EOLIAN_TYPE_BUILTIN_ARRAY,
+        EOLIAN_TYPE_BUILTIN_FUTURE,
         EOLIAN_TYPE_BUILTIN_ITERATOR,
         EOLIAN_TYPE_BUILTIN_HASH,
         EOLIAN_TYPE_BUILTIN_LIST,
-
-        EOLIAN_TYPE_BUILTIN_FUTURE,
+        EOLIAN_TYPE_BUILTIN_INARRAY,
+        EOLIAN_TYPE_BUILTIN_INLIST,
 
         EOLIAN_TYPE_BUILTIN_ANY_VALUE,
         EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR,
@@ -158,6 +162,7 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_MSTRING,
         EOLIAN_TYPE_BUILTIN_STRING,
         EOLIAN_TYPE_BUILTIN_STRINGSHARE,
+        EOLIAN_TYPE_BUILTIN_STRBUF,
 
         EOLIAN_TYPE_BUILTIN_VOID_PTR,
         EOLIAN_TYPE_BUILTIN_FREE_CB
@@ -822,25 +827,30 @@ M.type_builtin_type = {
 
    BOOL          = 30,
 
-   VOID          = 31,
+   SLICE         = 31,
+   RW_SLICE      = 32,
 
-   ACCESSOR      = 32,
-   ARRAY         = 33,
-   ITERATOR      = 34,
-   HASH          = 35,
-   LIST          = 36,
+   VOID          = 33,
 
-   FUTURE        = 37,
+   ACCESSOR      = 34,
+   ARRAY         = 35,
+   FUTURE        = 36,
+   ITERATOR      = 37,
+   HASH          = 38,
+   LIST          = 39,
+   INARRAY       = 40,
+   INLIST        = 41,
 
-   ANY_VALUE     = 38,
-   ANY_VALUE_PTR = 39,
+   ANY_VALUE     = 42,
+   ANY_VALUE_PTR = 43,
 
-   MSTRING       = 40,
-   STRING        = 41,
-   STRINGSHARE   = 42,
+   MSTRING       = 44,
+   STRING        = 45,
+   STRINGSHARE   = 46,
+   STRBUF        = 47.
 
-   VOID_PTR      = 43,
-   FREE_CB       = 44
+   VOID_PTR      = 48,
+   FREE_CB       = 49
 }
 
 M.typedecl_type = {

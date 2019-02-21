@@ -50,6 +50,8 @@ enum Tokens
     \
     KW(bool), \
     \
+    KW(slice), KW(rw_slice), \
+    \
     KW(void), \
     \
     KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
