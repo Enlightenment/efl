@@ -722,7 +722,7 @@ _elm_hoversel_efl_object_destructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_on_parent,
                           { EFL_EVENT_DEL, _on_parent_del },
-                          { EFL_GFX_ENTITY_EVENT_RESIZE, _on_parent_resize });
+                          { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_parent_resize });
 
 EOLIAN static void
 _elm_hoversel_hover_parent_set(Eo *obj, Elm_Hoversel_Data *sd, Evas_Object *parent)

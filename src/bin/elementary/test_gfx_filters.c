@@ -460,7 +460,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
       // Note: No TEXT object with EO APIs
       o = text = evas_object_text_add(evas_object_evas_get(win));
-      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_RESIZE, _text_resize, NULL);
+      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _text_resize, NULL);
       efl_text_font_set(o, "Sans:style=Bold", default_font_size);
       efl_gfx_entity_scale_set(text, elm_config_scale_get());
       efl_text_set(o, "EFL");
@@ -492,7 +492,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       // Experimental textblock support
       o = tb = evas_object_textblock_add(evas_object_evas_get(win));
       efl_event_callback_add(o, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
-      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_RESIZE, _textblock_resize, NULL);
+      efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(programs); k++)

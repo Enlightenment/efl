@@ -248,8 +248,8 @@ _new_geom(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
-    {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},
-    {EFL_GFX_ENTITY_EVENT_MOVE, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _new_geom},
     {EFL_EVENT_DEL, _canvas_object_deleted},
 );
 

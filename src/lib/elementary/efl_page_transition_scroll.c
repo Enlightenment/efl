@@ -218,8 +218,8 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
 
    if (spd->pager.obj)
      {
-        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, obj);
-        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, obj);
+        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
+        efl_event_callback_del(spd->pager.group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
         _page_info_deallocate(pd);
         efl_del(pd->foreclip);
@@ -233,8 +233,8 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
         int cnt, i;
         Eo *item;
 
-        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, obj);
-        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, obj);
+        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
+        efl_event_callback_add(spd->pager.group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
 
         pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                                evas_object_evas_get(spd->pager.obj));

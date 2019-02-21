@@ -842,8 +842,8 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                  );
 
    // add move/resize callbacks to resize rect manually
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_RESIZE, _zoomable_move_resize_cb, rect);
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_MOVE, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _zoomable_move_resize_cb, rect);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300,  320));
 }

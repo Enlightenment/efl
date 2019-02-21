@@ -356,8 +356,8 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
    efl_content_set(efl_part(obj, "efl.page_root"), pd->page_root);
 
-   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, pd);
-   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, pd);
 
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);

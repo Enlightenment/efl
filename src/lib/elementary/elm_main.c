@@ -50,8 +50,8 @@ _focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal)
 {
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_MOVE, _focus_ev_redirect_cb, goal);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _focus_ev_redirect_cb, goal);
 }
 
 void

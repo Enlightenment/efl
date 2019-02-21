@@ -2201,7 +2201,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
-   efl_event_callback_add(sd->text_obj, EFL_GFX_ENTITY_EVENT_MOVE,
+   efl_event_callback_add(sd->text_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
          _text_position_changed_cb, obj);
    evas_object_event_callback_add(sd->entry_edje, EVAS_CALLBACK_MOVE,
          _efl_ui_text_move_cb, obj);
@@ -2215,7 +2215,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    evas_object_event_callback_add
      (sd->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
 
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
          _text_size_changed_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -2602,7 +2602,7 @@ _efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool
         edje_object_part_swallow(sd->entry_edje, "efl.text", sd->scroller);
         evas_object_clip_set(sd->cursor,
               efl_ui_internal_text_scroller_viewport_clip_get(sd->scroller));
-        efl_event_callback_add(sd->scroller, EFL_GFX_ENTITY_EVENT_RESIZE,
+        efl_event_callback_add(sd->scroller, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
               _scroller_size_changed_cb, obj);
      }
    else

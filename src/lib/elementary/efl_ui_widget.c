@@ -3912,8 +3912,8 @@ static void
 _track_obj_view_del(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
-                          { EFL_GFX_ENTITY_EVENT_RESIZE, _track_obj_view_update },
-                          { EFL_GFX_ENTITY_EVENT_MOVE, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _track_obj_view_update },
                           { EFL_GFX_ENTITY_EVENT_SHOW, _track_obj_view_update },
                           { EFL_GFX_ENTITY_EVENT_HIDE, _track_obj_view_update },
                           { EFL_EVENT_DEL, _track_obj_view_del });
@@ -5807,8 +5807,8 @@ _widget_shadow_event_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
 { EFL_EVENT_DEL, _widget_shadow_del_cb },
-{ EFL_GFX_ENTITY_EVENT_MOVE, _widget_shadow_event_cb },
-{ EFL_GFX_ENTITY_EVENT_RESIZE, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_STACK_CHANGED, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_HIDE, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_SHOW, _widget_shadow_event_cb })

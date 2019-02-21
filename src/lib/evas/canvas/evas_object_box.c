@@ -164,7 +164,7 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
-  { EFL_GFX_ENTITY_EVENT_RESIZE, _on_child_resize },
+  { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_resize },
   { EFL_EVENT_INVALIDATE, _on_child_invalidate },
   { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed }
 );

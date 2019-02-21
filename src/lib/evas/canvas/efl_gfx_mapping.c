@@ -194,8 +194,8 @@ _geometry_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_geometry_changes,
-                           { EFL_GFX_ENTITY_EVENT_MOVE, _geometry_changed_cb },
-                           { EFL_GFX_ENTITY_EVENT_RESIZE, _geometry_changed_cb });
+                           { EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _geometry_changed_cb },
+                           { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _geometry_changed_cb });
 
 static void
 _pivot_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
@@ -208,8 +208,8 @@ _pivot_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_pivot_changes,
-                           { EFL_GFX_ENTITY_EVENT_MOVE, _pivot_changed_cb },
-                           { EFL_GFX_ENTITY_EVENT_RESIZE, _pivot_changed_cb });
+                           { EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _pivot_changed_cb },
+                           { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _pivot_changed_cb });
 
 static inline void
 _map_dirty(Eo *eo_obj, Efl_Gfx_Mapping_Data *pd, Eina_Bool reset)

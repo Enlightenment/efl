@@ -934,7 +934,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
@@ -3015,7 +3015,7 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
           {
              sd->screen.x = pos.x;
              sd->screen.y = pos.y;
-             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
           }
         goto super_skip;
      }
@@ -3037,7 +3037,7 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
      {
         sd->screen.x = pos.x;
         sd->screen.y = pos.y;
-        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
      }
    if (sd->frame_obj)
      {
@@ -6210,7 +6210,7 @@ _main_menu_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // After resize, the framespace size has changed, so update the win geometry
    _elm_win_resize_objects_eval(ev->object, EINA_FALSE);
-   efl_event_callback_del(ev->object, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+   efl_event_callback_del(ev->object, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _main_menu_resize_cb, NULL);
 }
 
 static void
@@ -6240,7 +6240,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
    else
      {
         DBG("Setting menu to local mode");
-        efl_event_callback_add(sd->obj, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+        efl_event_callback_add(sd->obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _main_menu_resize_cb, NULL);
 
         if (elm_widget_is_legacy(sd->obj))
           edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
