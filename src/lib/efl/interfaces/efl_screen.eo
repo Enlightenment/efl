@@ -28,6 +28,20 @@ interface @beta Efl.Screen
 //            size: Eina.Size2D; [[The screen size in millimeters.]]
 //         }
 //      }
+      @property screen_scale_factor {
+         get {
+            [[Get screen scaling factor.
+
+              This is the factor by which window contents will be scaled on the screen.
+
+              Note that on some display systems this information is not available and a
+              value of 1.0 will be returned.
+            ]]
+         }
+         values {
+            size: float; [[The screen scaling factor.]]
+         }
+      }
       @property screen_rotation {
          get {
             [[Get the rotation of the screen.
