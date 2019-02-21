@@ -59,7 +59,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
    sl6.range_min_max_set(0, 10);
    sl6.hint_fill_set(false, true);
-   sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
+   sl6.hint_weight_set(0, EFL_GFX_HINT_EXPAND);
    bx.pack_end(sl6);
 
    efl::ui::Slider sl7(instantiate, win);

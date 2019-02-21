@@ -117,8 +117,8 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
                     }
                }
 
-             min = efl_gfx_size_hint_min_get(item);
-             max = efl_gfx_size_hint_max_get(item);
+             min = efl_gfx_hint_size_min_get(item);
+             max = efl_gfx_hint_size_max_get(item);
 
              if (pd->item.size.w < min.w) pd->item.size.w = min.w;
              if (pd->item.size.h < min.h) pd->item.size.h = min.h;
@@ -139,7 +139,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
         //
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
-        //efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
+        //efl_gfx_hint_size_restricted_min_set(item, id->geo.size);
 
         prev = id;
         count++;
@@ -150,7 +150,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    else
      pd->geo.h = cur.y + pd->item.size.h + pd->item.pad.h - pd->geo.y;
 
-   //efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
+   //efl_gfx_hint_size_restricted_min_set(pd->content, pd->geo.size);
    efl_gfx_entity_size_set(pd->content, pd->geo.size);
 
    pd->need_update = EINA_FALSE;
@@ -172,7 +172,7 @@ _reposition(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
         ipos.y = id->geo.y - pan.y;
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
-        //efl_gfx_size_hint_min_set(item, id->geo.size);
+        //efl_gfx_hint_size_min_set(item, id->geo.size);
      }
 
 }
@@ -708,9 +708,9 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
 
-   min = efl_gfx_size_hint_combined_min_get(obj);
-   max = efl_gfx_size_hint_max_get(obj);
-   efl_gfx_size_hint_weight_get(obj, &xw, &yw);
+   min = efl_gfx_hint_size_combined_min_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
+   efl_gfx_hint_weight_get(obj, &xw, &yw);
 
    if (pd->smanager)
      view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
@@ -740,11 +740,11 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    if (pd->match_content_w) size.w = vmw + min.w;
    if (pd->match_content_h) size.h = vmh + min.h;
 
-   max = efl_gfx_size_hint_max_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
    pd->geo = view;
-   efl_gfx_size_hint_min_set(obj, size);
+   efl_gfx_hint_size_min_set(obj, size);
 
    _need_update(pd);
    return;

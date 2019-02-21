@@ -133,7 +133,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_pack(bx, efl_added),
                      efl_text_set(efl_added, "percent"),
                      efl_ui_range_min_max_set(efl_added, 0, 100),
-                     efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(250, 20))
+                     efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
                     );
 
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
@@ -146,7 +146,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_pack(bx, efl_added),
                      efl_text_set(efl_added, "10-100"),
                      efl_ui_progressbar_pulse_set(efl_added, EINA_TRUE),
-                     efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(250, 20)),
+                     efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20)),
                      efl_ui_range_min_max_set(efl_added, 10, 100),
                      efl_ui_range_value_set(efl_added, 10)
                     );

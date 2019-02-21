@@ -31,7 +31,7 @@ interface @beta Efl.Gfx.Entity {
 
               Note that setting the actual size of an object might be the job
               of its container, so this function might have no effect.
-              Look at @Efl.Gfx.Size_Hint instead, when manipulating
+              Look at @Efl.Gfx.Hint instead, when manipulating
               widgets.
             ]]
          }

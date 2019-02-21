@@ -2897,7 +2897,7 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
 
         // weight should be set during finalize()
         if (EINA_UNLIKELY(!obj->legacy.weight_set))
-          efl_gfx_size_hint_weight_set(eo_obj, 1.0, 1.0);
+          efl_gfx_hint_weight_set(eo_obj, 1.0, 1.0);
      }
 
    eina_evlog("-render_pre_objects_finalize", eo_e, 0.0, NULL);

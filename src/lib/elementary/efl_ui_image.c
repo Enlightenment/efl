@@ -1219,7 +1219,7 @@ _efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
    else
      {
         // Ignore restricted here? Combine with min? Hmm...
-        return efl_gfx_size_hint_combined_min_get(sd->img);
+        return efl_gfx_hint_size_combined_min_get(sd->img);
      }
 }
 

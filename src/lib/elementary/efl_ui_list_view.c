@@ -615,7 +615,7 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    edje_object_size_min_calc(wd->resize_obj, &min.w, &min.h);
-   efl_gfx_size_hint_restricted_min_set(obj, min);
+   efl_gfx_hint_size_restricted_min_set(obj, min);
 
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
                          _efl_ui_list_view_bar_size_changed_cb, obj);

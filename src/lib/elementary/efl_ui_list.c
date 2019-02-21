@@ -517,9 +517,9 @@ _efl_ui_list_elm_layout_sizing_eval(Eo *obj, Efl_Ui_List_Data *pd)
 
    if (pd->box)
      {
-        min = efl_gfx_size_hint_combined_min_get(pd->box);
-        max = efl_gfx_size_hint_max_get(pd->box);
-        efl_gfx_size_hint_weight_get(pd->box, &xw, &yw);
+        min = efl_gfx_hint_size_combined_min_get(pd->box);
+        max = efl_gfx_hint_size_max_get(pd->box);
+        efl_gfx_hint_weight_get(pd->box, &xw, &yw);
      }
 
    if (pd->smanager)
@@ -552,11 +552,11 @@ _efl_ui_list_elm_layout_sizing_eval(Eo *obj, Efl_Ui_List_Data *pd)
    if (pd->match_content_w) size.w = vmw + min.w;
    if (pd->match_content_h) size.h = vmh + min.h;
 
-   max = efl_gfx_size_hint_max_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_size_hint_min_set(obj, size);
+   efl_gfx_hint_size_min_set(obj, size);
 }
 
 //FIXME: is this box related API could be improved more?

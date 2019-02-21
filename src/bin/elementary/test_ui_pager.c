@@ -80,7 +80,7 @@ static Eo *page_add(Page_Type p, Eo *parent)
          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
                         efl_file_set(efl_added, buf, "page"),
                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
-         efl_gfx_size_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
          break;
       case LIST:
          page = elm_list_add(parent);
@@ -98,7 +98,7 @@ static Eo *page_add(Page_Type p, Eo *parent)
       case BUTTON:
          page = efl_add(EFL_UI_BUTTON_CLASS, parent,
                         efl_text_set(efl_added, "Button Page"));
-         efl_gfx_size_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
          break;
       default:
          snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
@@ -106,7 +106,7 @@ static Eo *page_add(Page_Type p, Eo *parent)
          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
                         efl_file_set(efl_added, buf, "page"),
                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
-         efl_gfx_size_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
          break;
    }
 
@@ -339,8 +339,8 @@ static void page_size_cb(void *data,
    // Width
    fr = elm_frame_add(box);
    elm_object_text_set(fr, "Width");
-   efl_gfx_size_hint_align_set(fr, -1, -1);
-   efl_gfx_size_hint_weight_set(fr, 1, 1);
+   efl_gfx_hint_align_set(fr, -1, -1);
+   efl_gfx_hint_weight_set(fr, 1, 1);
    efl_pack(box, fr);
    efl_gfx_entity_visible_set(fr, 1);
 
@@ -355,7 +355,7 @@ static void page_size_cb(void *data,
    sl = efl_add(EFL_UI_SLIDER_CLASS, inbox,
                 efl_ui_range_min_max_set(efl_added, 100, 200),
                 efl_ui_range_value_set(efl_added, params->w),
-                efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(100, 0)),
+                efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
                 efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
                                        width_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
@@ -380,8 +380,8 @@ static void page_size_cb(void *data,
    // Height
    fr = elm_frame_add(box);
    elm_object_text_set(fr, "Height");
-   efl_gfx_size_hint_align_set(fr, -1, -1);
-   efl_gfx_size_hint_weight_set(fr, 1, 1);
+   efl_gfx_hint_align_set(fr, -1, -1);
+   efl_gfx_hint_weight_set(fr, 1, 1);
    efl_pack(box, fr);
    efl_gfx_entity_visible_set(fr, 1);
 
@@ -396,7 +396,7 @@ static void page_size_cb(void *data,
    sl = efl_add(EFL_UI_SLIDER_CLASS, inbox,
                 efl_ui_range_min_max_set(efl_added, 100, 300),
                 efl_ui_range_value_set(efl_added, params->h),
-                efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(100, 0)),
+                efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
                 efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
                                        height_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
@@ -610,7 +610,7 @@ static void current_page_cb(void *data,
                  efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
-                efl_gfx_size_hint_align_set(efl_added, -1, -1),
+                efl_gfx_hint_align_set(efl_added, -1, -1),
                 efl_pack_end(box, efl_added));
 
    if (efl_content_count(pager) > 0)
@@ -679,7 +679,7 @@ void test_ui_pager(void *data EINA_UNUSED,
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
-                   efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                   efl_gfx_hint_weight_set(efl_added, 1, 1),
                    efl_ui_panes_split_ratio_set(efl_added, 0.3),
                    efl_content_set(win, efl_added));
 

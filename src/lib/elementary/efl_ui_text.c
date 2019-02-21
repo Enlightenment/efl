@@ -889,7 +889,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
           }
 
         elm_layout_sizing_eval(sd->scroller);
-        min = efl_gfx_size_hint_min_get(sd->scroller);
+        min = efl_gfx_hint_size_min_get(sd->scroller);
         if (sd->single_line)
           {
              efl_ui_internal_text_scroller_mode_set(sd->scroller,
@@ -897,7 +897,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
              edje_object_size_min_calc(wd->resize_obj, &edmin.w, &edmin.h);
              min.w = edmin.w;
              min.h = edmin.h;
-             efl_gfx_size_hint_restricted_min_set(obj, min);
+             efl_gfx_hint_size_restricted_min_set(obj, min);
           }
 
         sd->cursor_update = EINA_TRUE;
@@ -909,7 +909,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
         efl_canvas_text_size_formatted_get(sd->text_obj, &min.w, &min.h);
         min.w += edmin.w;
         min.h += edmin.h;
-        efl_gfx_size_hint_restricted_min_set(obj, min);
+        efl_gfx_hint_size_restricted_min_set(obj, min);
      }
 }
 

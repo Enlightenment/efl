@@ -350,7 +350,7 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
         evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
         evas_object_size_hint_weight_get(child, &weightw, &weighth);
         //only for Efl.Ui.Table
-        efl_gfx_size_hint_fill_get(child, &fill_h, &fill_v);
+        efl_gfx_hint_fill_get(child, &fill_h, &fill_v);
 
         child_minw = opt->min.w + opt->pad.l + opt->pad.r;
         child_minh = opt->min.h + opt->pad.t + opt->pad.b;

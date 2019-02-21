@@ -20,7 +20,7 @@ typedef struct {
    int                      marginr;
    int                      margint;
    int                      marginb;
-   Efl_Gfx_Size_Hint_Aspect mode;
+   Efl_Gfx_Hint_Aspect mode;
    Eina_Size2D              aspect;
    Eina_Bool                fillx;
    Eina_Bool                filly;
@@ -32,59 +32,59 @@ typedef struct {
 
 static Hint hints[] = {
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(0, 0), 1, 1, 0.5, 0.5, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT(0, 0, 200, 200), "[0]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.5, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT(0, 0, 200, 200), "[1]" },
    { EINA_SIZE2D(50, 150), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT((200 - 70) * 0.3, (200 - 150) * 0.7, 70, 150), "[2]" },
    { EINA_SIZE2D(150, -1), EINA_SIZE2D(70, 70), 0, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT((200 - 70) * 0.3, (200 - 70) * 0.2, 70, 70), "[3]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_TRUE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_TRUE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT((200 - 70) * 0.3, (200 - 70) * 0.2, 70, 70), "[4]" },
    { EINA_SIZE2D(150, 150), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_TRUE,
+     EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_TRUE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 200),
      EINA_RECT((200 - 70) * 0.3, (200 - 70) * 0.2, 70, 70), "[5]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 0, 1, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 210),
      EINA_RECT((200 - 70) * 0.3, 0, 70, 70 * 3), "[6]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 0, 1, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(300, 300), EINA_SIZE2D(300, 300),
      EINA_RECT((300 - 70) * 0.3, (300 - 70 * 3) * 0.7, 70, 70 * 3), "[7]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 210),
      EINA_RECT((200 - 70) * 0.3, 0, 70, 70 * 3), "[8]" },
    { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(300, 300), EINA_SIZE2D(300, 300),
      EINA_RECT((300 - 70) * 0.3, (300 - 70 * 3) * 0.2, 70, 70 * 3), "[9]" },
    { EINA_SIZE2D(-1, 150), EINA_SIZE2D(70, 70), 0, 1, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 210),
      EINA_RECT((200 - 70) * 0.3, 0, 70, 70 * 3), "[10]" },
    { EINA_SIZE2D(-1, 150), EINA_SIZE2D(70, 70), 0, 1, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(300, 300), EINA_SIZE2D(300, 300),
      EINA_RECT((300 - 70) * 0.3, (300 - 70 * 3) * 0.7, 70, 70 * 3), "[11]" },
    { EINA_SIZE2D(-1, 150), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(200, 200), EINA_SIZE2D(200, 210),
      EINA_RECT((200 - 70) * 0.3, 0, 70, 70 * 3), "[12]" },
    { EINA_SIZE2D(-1, 150), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-     EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+     EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
      EINA_SIZE2D(300, 300), EINA_SIZE2D(300, 300),
      EINA_RECT((300 - 70) * 0.3, (300 - 70 * 3) * 0.2, 70, 70 * 3), "[13]" },
 };
@@ -92,31 +92,31 @@ static Hint hints[] = {
 static Hint hints2[][2] = {
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - 70) * 0.3, (150 - 70) * 0.7, 70, 70), "[1/1 weight btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - 70) * 0.8, (150 - 70) * 0.2 + 150, 70, 70), "[1/1 weight btn2]" }
    },
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - 70) * 0.3, 0, 70, 70), "[0/1 weight btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_VERTICAL, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_VERTICAL, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - ((300 - 70) / 3)) * 0.8, 70, (300 - 70) / 3, (300 - 70)), "[0/1 weight btn2]" }
    },
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_FALSE, EINA_FALSE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - 70) * 0.3, (300 - 280) * 0.2, 70, 70), "[0/0 weight btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 0, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
+        EFL_GFX_HINT_ASPECT_HORIZONTAL, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_FALSE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT((150 - 70) * 0.8, (300 - 280) * 0.2 + 70, 70, 70 * 3), "[0/0 weight btn2]" }
    },
@@ -125,57 +125,57 @@ static Hint hints2[][2] = {
 static Hint hints3[][3] = {
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT(0, 0, 150, 100), "[1/1/1 weight_l btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 100), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT(0, 100, 150, 100), "[1/1/1 weight_l btn2]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 300), EINA_SIZE2D(150, 300),
         EINA_RECT(0, 100 + 100, 150, 100), "[1/1/1 weight_l btn3]" }
    },
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 270), EINA_SIZE2D(150, 270),
         EINA_RECT(0, 0, 150, 85), "[1/1/1 weight_m btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 100), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 270), EINA_SIZE2D(150, 270),
         EINA_RECT(0, 85, 150, 100), "[1/1/1 weight_m btn2]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 270), EINA_SIZE2D(150, 270),
         EINA_RECT(0, 100 + 85, 150, 85), "[1/1/1 weight_m btn3]" }
    },
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.3, 0.7, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 200), EINA_SIZE2D(150, 240),
         EINA_RECT(0, 0, 150, 70), "[1/1/1 weight_s btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 100), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 200), EINA_SIZE2D(150, 240),
         EINA_RECT(0, 70, 150, 100), "[1/1/1 weight_s btn2]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(70, 70), 1, 1, 0.8, 0.2, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_NONE, EINA_SIZE2D(0, 0), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(150, 200), EINA_SIZE2D(150, 240),
         EINA_RECT(0, 170, 150, 70), "[1/1/1 weight_s btn3]" }
    },
    {
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(0, 0), 1, 1, 0.5, 0.5, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(300, 900), EINA_SIZE2D(300, 900),
         EINA_RECT(100, 0, 100, 300), "[aspect resize btn]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(0, 0), 1, 1, 0.5, 0.5, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(300, 900), EINA_SIZE2D(300, 900),
         EINA_RECT(100, 300, 100, 300), "[aspect resize btn2]" },
       { EINA_SIZE2D(-1, -1), EINA_SIZE2D(0, 0), 1, 1, 0.5, 0.5, 0, 0, 0, 0,
-        EFL_GFX_SIZE_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
+        EFL_GFX_HINT_ASPECT_BOTH, EINA_SIZE2D(1, 3), EINA_TRUE, EINA_TRUE,
         EINA_SIZE2D(300, 900), EINA_SIZE2D(300, 900),
         EINA_RECT(100, 300 + 300, 100, 300), "[aspect resize btn3]" }
    },
@@ -187,12 +187,12 @@ static void
 btn_hint_set(Eo *btn, Hint *hint)
 {
    efl_gfx_entity_size_set(layout, hint->layout_size);
-   efl_gfx_size_hint_max_set(btn, hint->max);
-   efl_gfx_size_hint_min_set(btn, hint->min);
-   efl_gfx_size_hint_weight_set(btn, hint->weightx, hint->weighty);
-   efl_gfx_size_hint_align_set(btn, hint->alignx, hint->aligny);
-   efl_gfx_size_hint_fill_set(btn, hint->fillx, hint->filly);
-   efl_gfx_size_hint_aspect_set(btn, hint->mode, hint->aspect);
+   efl_gfx_hint_size_max_set(btn, hint->max);
+   efl_gfx_hint_size_min_set(btn, hint->min);
+   efl_gfx_hint_weight_set(btn, hint->weightx, hint->weighty);
+   efl_gfx_hint_align_set(btn, hint->alignx, hint->aligny);
+   efl_gfx_hint_fill_set(btn, hint->fillx, hint->filly);
+   efl_gfx_hint_aspect_set(btn, hint->mode, hint->aspect);
    efl_canvas_group_calculate(layout);
 }
 
@@ -202,7 +202,7 @@ btn_geom_assert(Hint *hint, Eina_Rect btn_geom)
    Eina_Size2D layout_size, layout_min;
 
    layout_size = efl_gfx_entity_size_get(layout);
-   layout_min = efl_gfx_size_hint_min_get(layout);
+   layout_min = efl_gfx_hint_size_min_get(layout);
    layout_size.w = layout_size.w > layout_min.w ? layout_size.w : layout_min.w;
    layout_size.h = layout_size.h > layout_min.h ? layout_size.h : layout_min.h;
 

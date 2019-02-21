@@ -235,7 +235,7 @@ test_win_inline(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    elm_win_alpha_set(win2, EINA_TRUE);
    evas_object_size_hint_weight_set(elm_win_inlined_image_object_get(win2), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(elm_win_inlined_image_object_get(win2), EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_gfx_size_hint_margin_set(elm_win_inlined_image_object_get(win2), 20, 20, 20, 20);
+   efl_gfx_hint_margin_set(elm_win_inlined_image_object_get(win2), 20, 20, 20, 20);
    efl_pack(box, elm_win_inlined_image_object_get(win2));
 
    evas_object_resize(win2, 300, 200);

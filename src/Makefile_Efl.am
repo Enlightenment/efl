@@ -47,7 +47,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_gfx_blur.eo \
-      lib/efl/interfaces/efl_gfx_size_hint.eo \
+      lib/efl/interfaces/efl_gfx_hint.eo \
       lib/efl/interfaces/efl_model.eo \
       lib/efl/interfaces/efl_animator.eo \
       lib/efl/interfaces/efl_orientation.eo \

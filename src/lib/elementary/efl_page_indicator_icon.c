@@ -58,9 +58,9 @@ _efl_page_indicator_icon_pack(Eo *obj,
    item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
    elm_widget_theme_object_set(spd->idbox, item,
                                "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
-   efl_gfx_size_hint_fill_set(item, 0, 0);
+   efl_gfx_hint_align_set(item, 0.5, 0.5);
+   efl_gfx_hint_weight_set(item, 0, 0);
+   efl_gfx_hint_fill_set(item, 0, 0);
 
    if (index == spd->cnt)
      {
@@ -145,9 +145,9 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
 
                   elm_widget_theme_object_set(spd->idbox, item,
                                               "pager", "indicator", "default");
-                  efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-                  efl_gfx_size_hint_weight_set(item, 0, 0);
-                  efl_gfx_size_hint_fill_set(item, 0, 0);
+                  efl_gfx_hint_align_set(item, 0.5, 0.5);
+                  efl_gfx_hint_weight_set(item, 0, 0);
+                  efl_gfx_hint_fill_set(item, 0, 0);
                   efl_pack_end(spd->idbox, item);
                }
 

@@ -21,7 +21,7 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Left - user set min size(110,110)"),
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(110, 110)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(110, 110)),
            efl_content_set(efl_part(panes, "first"), efl_added)
           );
 
@@ -31,14 +31,14 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                     );
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Up - user set min size(10,0)"),
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(10, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(10, 0)),
            efl_content_set(efl_part(panes_h, "first"), efl_added)
           );
    efl_ui_panes_part_hint_min_allow_set(efl_part(panes_h, "first"), EINA_TRUE);
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Down - min size 50 40"),
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(50, 40)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(50, 40)),
            efl_content_set(efl_part(panes_h, "second"), efl_added)
           );
 

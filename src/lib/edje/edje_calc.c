@@ -1,4 +1,4 @@
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 
 #include "edje_private.h"
 
@@ -1004,7 +1004,7 @@ _edje_recalc_do(Edje *ed)
         ed->recalc_hints = EINA_FALSE;
 
         edje_object_size_min_calc(ed->obj, &min.w, &min.h);
-        efl_gfx_size_hint_restricted_min_set(ed->obj, min);
+        efl_gfx_hint_size_restricted_min_set(ed->obj, min);
      }
 
    if (!ed->collection) return;
@@ -2906,7 +2906,7 @@ _edje_part_recalc_single(Edje *ed,
 
         efl_canvas_group_need_recalculate_set(ep->object, 1);
         efl_canvas_group_calculate(ep->object);
-        lmin = efl_gfx_size_hint_restricted_min_get(ep->object);
+        lmin = efl_gfx_hint_size_restricted_min_get(ep->object);
         if (((Edje_Part_Description_Table *)chosen_desc)->table.min.h)
           {
              if (lmin.w > minw) minw = lmin.w;
@@ -2924,7 +2924,7 @@ _edje_part_recalc_single(Edje *ed,
 
         efl_canvas_group_need_recalculate_set(ep->object, 1);
         efl_canvas_group_calculate(ep->object);
-        lmin = efl_gfx_size_hint_restricted_min_get(ep->object);
+        lmin = efl_gfx_hint_size_restricted_min_get(ep->object);
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.h)
           {
              if (lmin.w > minw) minw = lmin.w;

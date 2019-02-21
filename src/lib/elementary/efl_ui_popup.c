@@ -259,7 +259,7 @@ _sizing_eval(Eo *obj)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
       (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
 
    Eina_Size2D size = efl_gfx_entity_size_get(obj);
 

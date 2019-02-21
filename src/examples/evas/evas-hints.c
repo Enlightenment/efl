@@ -119,7 +119,7 @@ _print_rect_stats(Evas_Object *rect)
    printf("\talign hints: h(%f), v(%f)\n",
           x, y);
 
-   cmin = efl_gfx_size_hint_combined_min_get(rect);
+   cmin = efl_gfx_hint_size_combined_min_get(rect);
    printf("\tmin. size hints: h(%d), v(%d)\n",
           cmin.w, cmin.h);
 

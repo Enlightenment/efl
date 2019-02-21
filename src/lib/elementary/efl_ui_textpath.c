@@ -497,7 +497,7 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
           }
         if (set_min)
           {
-             efl_gfx_size_hint_min_set(obj, rect.size);
+             efl_gfx_hint_size_min_set(obj, rect.size);
           }
      }
 }
@@ -581,8 +581,8 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
    priv->text_obj = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set(obj, priv->text_obj, "textpath", "base",
                                elm_widget_style_get(obj));
-   efl_gfx_size_hint_weight_set(priv->text_obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(priv->text_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_hint_weight_set(priv->text_obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_align_set(priv->text_obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_gfx_entity_visible_set(priv->text_obj, EINA_TRUE);
 
    evas_object_smart_member_add(priv->text_obj, obj);

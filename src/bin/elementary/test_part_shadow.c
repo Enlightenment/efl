@@ -94,7 +94,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_content_set(win, bx);
 
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win);
-   efl_gfx_size_hint_weight_set(pb, EFL_GFX_SIZE_HINT_EXPAND, 0);
+   efl_gfx_hint_weight_set(pb, EFL_GFX_HINT_EXPAND, 0);
    efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
    efl_pack(bx, pb);
    td->pb1 = pb;
@@ -122,7 +122,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    pb = efl_add(EFL_UI_PROGRESSBAR_CLASS, win);
    efl_ui_progressbar_pulse_mode_set(pb, EINA_TRUE);
-   efl_gfx_size_hint_weight_set(pb, EFL_GFX_SIZE_HINT_EXPAND, 0);
+   efl_gfx_hint_weight_set(pb, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, pb);
    td->pb4 = pb;
 
@@ -143,7 +143,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    hbx = efl_add(EFL_UI_BOX_CLASS, win);
    efl_ui_direction_set(hbx, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(hbx, EFL_GFX_SIZE_HINT_EXPAND, 0);
+   efl_gfx_hint_weight_set(hbx, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, hbx);
 
    // FIXME: Needs wheel progressbar class
@@ -176,7 +176,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt_bx = efl_add(EFL_UI_BOX_CLASS, win);
    efl_ui_direction_set(bt_bx, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(bt_bx, EFL_GFX_SIZE_HINT_EXPAND, 0);
+   efl_gfx_hint_weight_set(bt_bx, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, bt_bx);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, win, efl_text_set(efl_added, "Start"));

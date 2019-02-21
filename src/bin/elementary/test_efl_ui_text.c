@@ -150,7 +150,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_gfx_size_hint_weight_set(bx, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
+   efl_gfx_hint_weight_set(bx, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_content_set(win, bx);
 
    en = efl_add(EFL_UI_TEXT_CLASS, bx,
@@ -174,24 +174,24 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       "occaecat cupidatat non proident, sunt in culpa qui officia deserunt\n"
       "mollit anim id est laborum");
 
-   efl_gfx_size_hint_min_set(en, EINA_SIZE2D(300, 100));
+   efl_gfx_hint_size_min_set(en, EINA_SIZE2D(300, 100));
    efl_pack(bx, en);
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, bx);
-   efl_gfx_size_hint_weight_set(bx2, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
+   efl_gfx_hint_weight_set(bx2, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_ui_direction_set(bx2, EFL_UI_DIR_HORIZONTAL);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Sel");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_bt3_clicked, en);
-   efl_gfx_size_hint_weight_set(bt, EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Wr");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_bt6_clicked, en);
-   efl_gfx_size_hint_weight_set(bt, EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
@@ -209,7 +209,7 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_gfx_size_hint_weight_set(bx, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
+   efl_gfx_hint_weight_set(bx, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_content_set(win, bx);
 
    en = efl_add(EFL_UI_TEXT_CLASS, bx,
@@ -370,27 +370,27 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    elm_object_focus_set(en, EINA_TRUE);
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, bx);
-   efl_gfx_size_hint_weight_set(bx2, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
+   efl_gfx_hint_weight_set(bx2, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_ui_direction_set(bx2, EFL_UI_DIR_HORIZONTAL);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Image");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_image_clicked, en);
-   efl_gfx_size_hint_weight_set(bt, EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Emoticon");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_emoticon_clicked, en);
-   efl_gfx_size_hint_weight_set(bt, EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Factory");
    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_factory_clicked, en);
-   efl_gfx_size_hint_weight_set(bt, EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 

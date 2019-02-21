@@ -36,14 +36,14 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    // Notes:
    // - All objects have 0 weight, this makes the window not resizable.
-   // - With EO APIs, efl_gfx_size_hint_min_set() is safe to call as EFL will
+   // - With EO APIs, efl_gfx_hint_size_min_set() is safe to call as EFL will
    //   only set the restricted min size (and combine them for calculation).
 
    lb = efl_add(EFL_UI_TEXT_CLASS, dia,
                 efl_text_set(efl_added, "This is a non-resizable dialog."),
-                efl_gfx_size_hint_min_set(efl_added, size),
-                efl_gfx_size_hint_max_set(efl_added, size),
-                efl_gfx_size_hint_weight_set(efl_added, 0, 0));
+                efl_gfx_hint_size_min_set(efl_added, size),
+                efl_gfx_hint_size_max_set(efl_added, size),
+                efl_gfx_hint_weight_set(efl_added, 0, 0));
 
    // Swallow in the label as the default content, this will make it visible.
    efl_content_set(dia, lb);
@@ -57,9 +57,9 @@ _size_update(void *data, const Efl_Event *ev)
    Eo *dia = ev->object;
    Eo *lbl = data;
 
-   cmin = efl_gfx_size_hint_combined_min_get(dia);
-   min = efl_gfx_size_hint_min_get(dia);
-   max = efl_gfx_size_hint_max_get(dia);
+   cmin = efl_gfx_hint_size_combined_min_get(dia);
+   min = efl_gfx_hint_size_min_get(dia);
+   max = efl_gfx_hint_size_max_get(dia);
    sz = efl_gfx_entity_size_get(dia);
 
    sprintf(buf, "This is a dialog with min/max size<br>"
@@ -86,14 +86,14 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Dialog Window");
-   efl_gfx_size_hint_weight_set(lb, 1.0, 1.0);
+   efl_gfx_hint_weight_set(lb, 1.0, 1.0);
 
    // Swallow in the label as the default content, this will make it visible.
    efl_content_set(dia, lb);
 
    // Set min & max size (app-side)
-   efl_gfx_size_hint_min_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100)));
-   efl_gfx_size_hint_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
+   efl_gfx_hint_size_min_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100)));
+   efl_gfx_hint_size_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
 }
 
 static void
@@ -113,14 +113,14 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Centered Dialog Window");
-   efl_gfx_size_hint_weight_set(lb, 1.0, 1.0);
+   efl_gfx_hint_weight_set(lb, 1.0, 1.0);
 
    // Swallow in the label as the default content, this will make it visible.
    efl_content_set(dia, lb);
 
    // Set min & max size (app-side)
-   efl_gfx_size_hint_min_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100)));
-   efl_gfx_size_hint_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
+   efl_gfx_hint_size_min_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(0), ELM_SCALE_SIZE(100)));
+   efl_gfx_hint_size_max_set(dia, EINA_SIZE2D(ELM_SCALE_SIZE(800), ELM_SCALE_SIZE(600)));
 
    efl_ui_win_center(dia, EINA_TRUE, EINA_TRUE);
 }

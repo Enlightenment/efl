@@ -43,7 +43,7 @@
 #include "interfaces/efl_gfx_filter.eo.c"
 #include "interfaces/efl_gfx_blur.eo.c"
 
-#include "interfaces/efl_gfx_size_hint.eo.c"
+#include "interfaces/efl_gfx_hint.eo.c"
 #include "interfaces/efl_canvas_scene.eo.c"
 #include "interfaces/efl_canvas_pointer.eo.c"
 

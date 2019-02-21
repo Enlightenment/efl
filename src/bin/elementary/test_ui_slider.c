@@ -46,8 +46,8 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
-           efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 0)),
+           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
@@ -56,8 +56,8 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
-           efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 0)),
+           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
 		   efl_ui_direction_set(efl_added, EFL_UI_DIR_LEFT),
            efl_pack(bx, efl_added));
 
@@ -68,8 +68,8 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    step = _step_size_calculate(0, 9);
    efl_add(EFL_UI_SLIDER_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(120, 0)),
-           efl_gfx_size_hint_align_set(efl_added, 0.5, 0.5),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(120, 0)),
+           efl_gfx_hint_align_set(efl_added, 0.5, 0.5),
            efl_ui_range_step_set(efl_added, step),
            efl_pack(bx, efl_added));
 
@@ -79,7 +79,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(120, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(120, 0)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_step_set(efl_added, step),
            elm_object_disabled_set(efl_added, EINA_TRUE),
@@ -95,7 +95,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_step_set(efl_added, step),
            efl_ui_range_value_set(efl_added, 70),
@@ -103,7 +103,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_step_set(efl_added, step),
            efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
@@ -111,7 +111,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_value_set(efl_added, 35),
            efl_ui_range_step_set(efl_added, step),
@@ -124,7 +124,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(260, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(260, 0)),
            efl_ui_range_min_max_set(efl_added, 0, 150),
            efl_ui_range_step_set(efl_added, step),
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _slider_changed_cb, NULL),
