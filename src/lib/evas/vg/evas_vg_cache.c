@@ -181,8 +181,8 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *
         char *p, *pp;
         char *tflags;
 
-        int len = strlen(flags);
-        tflags = alloca(len) + 1;
+        int len = strlen(flags) + 1;
+        tflags = alloca(len);
         strncpy(tflags, flags, len);
         p = tflags;
         while (p)
