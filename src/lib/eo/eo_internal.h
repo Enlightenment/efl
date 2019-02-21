@@ -35,6 +35,15 @@ EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable);
 EAPI int ___efl_ref2_count(const Eo *obj_id);
 EAPI void ___efl_ref2_reset(const Eo *obj_id);
 
+#define EFL_CLASS_SIMPLE_CLASS(FUNC, NAME, ABSTRACT_CLASS) \
+static const Efl_Class_Description FUNC ##_realized_class_desc = { \
+     EO_VERSION, \
+     #NAME"_Realized", \
+     EFL_CLASS_TYPE_REGULAR, \
+     0, NULL, NULL, NULL \
+}; \
+EFL_DEFINE_CLASS(FUNC ##_realized_class_get, &FUNC ##_realized_class_desc, ABSTRACT_CLASS, NULL)
+
 #undef EAPI
 #define EAPI
 

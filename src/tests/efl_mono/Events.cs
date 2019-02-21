@@ -25,7 +25,7 @@ class TestEoEvents
 
     public static void idle_event()
     {
-        Efl.Loop loop = new Efl.Loop();
+        Efl.Loop loop = Efl.App.AppMain;
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
         listener.loop = loop;

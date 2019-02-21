@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include "eo_internal.h"
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
 #include "efl_app_suite.h"
@@ -65,13 +66,15 @@ loop_timer_tick(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_loop_iterate(data);
 }
 
+EFL_CLASS_SIMPLE_CLASS(efl_loop, "Efl.Loop", EFL_LOOP_CLASS)
+
 EFL_START_TEST(efl_app_test_efl_loop_concentric)
 {
    Eo *loop, *loop2, *timer, *timer2;
    int exitcode;
 
    loop = efl_main_loop_get();
-   loop2 = efl_add(EFL_LOOP_CLASS, loop);
+   loop2 = efl_add(efl_loop_realized_class_get(), loop);
    efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE, loop_idle, loop2);
    efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE_ENTER, loop_idle_enter, NULL);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop2,

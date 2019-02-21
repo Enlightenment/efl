@@ -4,7 +4,7 @@ struct Efl.Loop_Arguments {
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
 
-class @beta Efl.Loop extends Efl.Task
+abstract @beta Efl.Loop extends Efl.Task
 {
    [[The Efl Main Loop
 

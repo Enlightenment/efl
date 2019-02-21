@@ -4,6 +4,7 @@
 #include <Elementary.h>
 #include <Efl_Ui.h>
 #include <check.h>
+#include "eo_internal.h"
 #include "../efl_check.h"
 #include "elm_widget.h"
 
@@ -170,6 +171,8 @@ _ui_win_hide(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_key_data_set(ev->object, "timer", NULL);
 }
 
+EFL_CLASS_SIMPLE_CLASS(efl_loop, "Efl.Loop", EFL_LOOP_CLASS)
+
 static Evas_Object *
 _elm_suite_win_create()
 {
@@ -181,7 +184,7 @@ _elm_suite_win_create()
    else
      win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
    if (!buffer) return win;
-   loop = efl_add(EFL_LOOP_CLASS, win);
+   loop = efl_add(efl_loop_realized_class_get(), win);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop,
      efl_loop_timer_interval_set(efl_added, BUFFER_RENDER_INTERVAL),
      efl_event_freeze(efl_added),
