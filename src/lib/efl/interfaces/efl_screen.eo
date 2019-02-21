@@ -13,9 +13,21 @@ interface @beta Efl.Screen
             ]]
          }
          values {
-            size: Eina.Size2D; [[The screen size.]]
+            size: Eina.Size2D; [[The screen size in pixels.]]
          }
       }
+//      @property screen_size_in_mm {
+//         get {
+//            [[Get screen geometry (in millimeters) for the screen.
+//
+//              Note that on some display systems this information is not available and
+//              a value of 0x0 will be returned.
+//            ]]
+//         }
+//         values {
+//            size: Eina.Size2D; [[The screen size in millimeters.]]
+//         }
+//      }
       @property screen_rotation {
          get {
             [[Get the rotation of the screen.
