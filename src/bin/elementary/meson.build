@@ -47,7 +47,7 @@ elementary_test_src = [
   'test_events.c',
   'test_evas_mask.c',
   'test_evas_map.c',
-  'test_efl_gfx_map.c',
+  'test_efl_gfx_mapping.c',
   'test_evas_snapshot.c',
   'test_external.c',
   'test_fileselector_button.c',
