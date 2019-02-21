@@ -5809,7 +5809,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
 { EFL_EVENT_DEL, _widget_shadow_del_cb },
 { EFL_GFX_ENTITY_EVENT_MOVE, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_RESIZE, _widget_shadow_event_cb },
-{ EFL_GFX_ENTITY_EVENT_RESTACK, _widget_shadow_event_cb },
+{ EFL_GFX_ENTITY_EVENT_STACK_CHANGED, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_HIDE, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_SHOW, _widget_shadow_event_cb })
 
