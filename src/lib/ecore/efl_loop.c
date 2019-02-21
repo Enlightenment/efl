@@ -30,24 +30,6 @@ struct _Efl_Loop_Promise_Simple_Data
 };
 GENERIC_ALLOC_SIZE_DECLARE(Efl_Loop_Promise_Simple_Data);
 
-EOLIAN static Efl_Loop_Message_Handler *
-_efl_loop_message_handler_get(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const Efl_Class *klass)
-{
-   Message_Handler mh = { 0 }, *mh2;
-   unsigned int i, n;
-
-   n = eina_inarray_count(pd->message_handlers);
-   for (i = 0; i < n; i++)
-     {
-        mh2 = eina_inarray_nth(pd->message_handlers, i);
-        if (mh2->klass == klass) return mh2->handler;
-     }
-   mh.klass = klass;
-   mh.handler = efl_add(klass, obj);
-   eina_inarray_push(pd->message_handlers, &mh);
-   return mh.handler;
-}
-
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
 
@@ -305,11 +287,11 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 
    pd->loop_time = ecore_time_get();
    pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
-   pd->message_handlers = eina_inarray_new(sizeof(Message_Handler), 32);
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
-   pd->future_message_handler = efl_loop_message_handler_get
-     (obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS);
+   pd->future_message_handler = efl_add(EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, obj);
+   efl_loop_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
+
    return obj;
 }
 
@@ -327,12 +309,6 @@ _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
    pd->poll_low = NULL;
    pd->poll_medium = NULL;
    pd->poll_high = NULL;
-
-   if (pd->message_handlers)
-     {
-        eina_inarray_free(pd->message_handlers);
-        pd->message_handlers = NULL;
-     }
 
    // After invalidate, it won't be possible to parent to the singleton anymore
    if (obj == _mainloop_singleton)
