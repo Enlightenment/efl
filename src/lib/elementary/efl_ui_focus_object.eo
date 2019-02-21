@@ -76,9 +76,9 @@ mixin @beta Efl.Ui.Focus.Object
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed]]
-        manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
+        focus_manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
                                                  the parent for this object.]]
-        logical,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
+        focus_parent,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
                                                 parent should be used.]]
         child_focus,changed: bool; [[Emitted if child_focus has changed]]
         focus_geometry,changed: void; [[Emitted if focus geometry of this object has changed]]

@@ -203,8 +203,8 @@ _manager_change(void *data, const Efl_Event *ev EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(self_manager,
     {EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, _self_manager_dirty},
-    {EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, _logical_manager_change},
-    {EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_change}
+    {EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_PARENT_CHANGED, _logical_manager_change},
+    {EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_change}
 );
 
 EOLIAN static Efl_Object*

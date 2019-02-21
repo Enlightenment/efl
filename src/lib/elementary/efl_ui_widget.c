@@ -402,13 +402,13 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         old = pd->manager.manager;
 
         if (pd->manager.provider)
-          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
 
         pd->manager.manager = new;
         pd->manager.provider = provider;
 
         if (pd->manager.provider)
-          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
      }
 
    return old;
@@ -619,13 +619,13 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
    if (old_registered_parent != pd->focus.parent)
      {
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, old_registered_parent);
+             EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_PARENT_CHANGED, old_registered_parent);
      }
 
    if (old_registered_manager != pd->focus.manager)
      {
         efl_event_callback_call(obj,
-             EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, old_registered_manager);
+             EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, old_registered_manager);
      }
 
 }
@@ -5364,7 +5364,7 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    if (sd->manager.provider)
      {
-        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed_cb, obj);
+        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
         sd->manager.provider = NULL;
      }
    efl_access_object_attributes_clear(obj);

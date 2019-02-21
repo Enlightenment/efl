@@ -86,12 +86,12 @@ _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
 
    if (pd->legacy_focus.custom_chain && !pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_TRUE;
      }
    else if (!pd->legacy_focus.custom_chain && pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_FALSE;
      }
 
@@ -455,7 +455,7 @@ legacy_child_focus_handle(Efl_Ui_Focus_Object *object)
    Legacy_Object_Focus_State *state = calloc(1, sizeof(Legacy_Object_Focus_State));
    state->emittee = object;
 
-   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_focus_object_changed, state);
+   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_focus_object_changed, state);
    efl_event_callback_add(object, EFL_EVENT_DEL, _focus_manager_del, state);
 }
 

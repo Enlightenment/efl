@@ -97,8 +97,8 @@ _efl_ui_focus_layer_efl_object_constructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd)
 static void
 _publish_state_change(Eo *obj, Efl_Ui_Focus_Manager *omanager, Efl_Ui_Focus_Object *oobj)
 {
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, omanager);
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_LOGICAL_CHANGED, oobj);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, omanager);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_PARENT_CHANGED, oobj);
 }
 
 EOLIAN static void

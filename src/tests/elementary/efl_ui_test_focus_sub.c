@@ -107,7 +107,7 @@ _setup(Efl_Ui_Focus_Manager **m, Efl_Ui_Focus_Manager_Sub **sub, Efl_Ui_Focus_Ob
 
    efl_composite_attach(focus_main, subm);
 
-   efl_event_callback_call(focus_main, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, NULL);
+   efl_event_callback_call(focus_main, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, NULL);
 
    efl_ui_focus_manager_calc_register_logical(manager, focus_main, root_manager, subm);
 

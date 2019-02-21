@@ -1029,7 +1029,7 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
    _callbacks_register(obj);
 
    //listen to manager changes here
-   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _legacy_manager_changed_cb, NULL);
 
    return obj;
 }
