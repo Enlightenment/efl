@@ -129,6 +129,6 @@ interface @beta Efl.Gfx.Stack
       }
    }
    events {
-      stack,changed: void; [[Object stacking was changed.]]
+      stacking,changed: void; [[Object stacking was changed.]]
    }
 }
