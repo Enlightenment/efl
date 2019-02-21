@@ -602,7 +602,7 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
                           _efl_ui_grid_bar_hide_cb, obj);
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_grid_size_hint_changed_cb, obj);
    efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_pan_resized_cb, obj);
@@ -630,7 +630,7 @@ _efl_ui_grid_efl_object_invalidate(Eo *obj, Efl_Ui_Grid_Data *pd)
                           _efl_ui_grid_bar_hide_cb, obj);
    efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_grid_size_hint_changed_cb, obj);
    efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_grid_pan_resized_cb, obj);

@@ -458,7 +458,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
                           _efl_ui_list_bar_hide_cb, obj);
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_list_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_list_size_hint_changed_cb, obj);
    efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_list_pan_resized_cb, obj);
@@ -483,7 +483,7 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
                           _efl_ui_list_bar_hide_cb, obj);
    efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_list_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_list_size_hint_changed_cb, obj);
    efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
                           _efl_ui_list_pan_resized_cb, obj);

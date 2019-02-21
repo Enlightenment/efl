@@ -266,7 +266,7 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
   { EFL_EVENT_INVALIDATE, _on_child_invalidate },
-  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed }
 );
 
 static void

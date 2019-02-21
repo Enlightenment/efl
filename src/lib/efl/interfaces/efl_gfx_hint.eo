@@ -217,6 +217,6 @@ interface @beta Efl.Gfx.Hint
       }
    }
    events {
-      change,size,hints: void; [[Object hints changed.]]
+      hints,changed: void; [[Object hints changed.]]
    }
 }

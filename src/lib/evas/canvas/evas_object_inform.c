@@ -55,7 +55,7 @@ evas_object_inform_call_changed_size_hints(Evas_Object *eo_obj, Evas_Object_Prot
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL, event_id, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, NULL, event_id, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 

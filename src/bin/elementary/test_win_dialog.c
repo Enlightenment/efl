@@ -83,7 +83,7 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
 
    //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
    lb = elm_label_add(dia);
-   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Dialog Window");
    efl_gfx_hint_weight_set(lb, 1.0, 1.0);
@@ -110,7 +110,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
 
    //lb = efl_add(EFL_UI_TEXT_CLASS, dia);,
    lb = elm_label_add(dia);
-   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_update, lb);
+   efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_update, lb);
    efl_event_callback_add(dia, EFL_GFX_ENTITY_EVENT_RESIZE, _size_update, lb);
    elm_object_text_set(lb, "This is a Centered Dialog Window");
    efl_gfx_hint_weight_set(lb, 1.0, 1.0);
