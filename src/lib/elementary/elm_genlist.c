@@ -2577,7 +2577,7 @@ _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd)
         evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
         evas_object_show(sd->event_block_rect);
         sd->start_time = ecore_time_get();
-        efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
+        efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
         sd->tree_effect_animator = 1;
         return EINA_TRUE;
      }
@@ -2590,7 +2590,7 @@ _elm_genlist_tree_effect_stop(Elm_Genlist_Data *sd)
    if (sd->tree_effect_animator)
      {
         sd->tree_effect_animator = 0;
-        efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
+        efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
      }
 }
 

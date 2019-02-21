@@ -2100,7 +2100,7 @@ _edje_file_del(Edje *ed)
         EINA_LIST_FREE(ed->actions, runp)
           free(runp);
      }
-   efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+   efl_event_callback_del(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
    ecore_animator_del(ed->animator);
    ed->animator = NULL;
 

@@ -128,7 +128,7 @@ anim_tick(void *data, const Efl_Event *event EINA_UNUSED)
         ecore_animator_del(animator);
         animator = NULL;
 #else
-        efl_event_callback_del(win, EFL_EVENT_ANIMATOR_TICK, anim_tick, data);
+        efl_event_callback_del(win, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, anim_tick, data);
 #endif
         ecore_timer_add(0.5, next_test_delay, data);
      }
@@ -168,7 +168,7 @@ all_tests(Evas *e)
 #ifdef ANIMATOR
    animator = ecore_animator_add(anim_tick, e);
 #else
-   efl_event_callback_add(win, EFL_EVENT_ANIMATOR_TICK, anim_tick, e);
+   efl_event_callback_add(win, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, anim_tick, e);
 #endif
 }
 

@@ -780,7 +780,7 @@ _animator_repeater(void *data, const Efl_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   efl_event_callback_legacy_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_legacy_call(obj->object, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
@@ -803,11 +803,11 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
              _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
           }
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if (obj->animator_ref++ > 0) break;
 
-             efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
@@ -840,11 +840,11 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
           }
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if ((--obj->animator_ref) > 0) break;
 
-             efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_del(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }

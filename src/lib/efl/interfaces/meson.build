@@ -74,7 +74,6 @@ pub_eo_files = [
   'efl_gfx_blur.eo',
   'efl_gfx_hint.eo',
   'efl_model.eo',
-  'efl_animator.eo',
   'efl_interpolator.eo',
   'efl_orientation.eo',
   'efl_container.eo',

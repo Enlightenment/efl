@@ -1,8 +1,12 @@
 import efl_text_types;
 
 struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
+struct Efl.Event_Animator_Tick {
+   [[EFL event animator tick data structure]]
+   update_area: Eina.Rect; [[Area of the canvas that will be pushed to screen.]]
+}
 
-abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
+abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
                             Efl.Input.Interface, Efl.Gfx.Hint,
                             Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
@@ -618,5 +622,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
       anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
       anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
+      animator,tick: Efl.Event_Animator_Tick; [[Animator tick synchronized with screen vsync if possible.]]
    }
 }

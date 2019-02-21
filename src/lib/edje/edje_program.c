@@ -397,7 +397,7 @@ _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp)
    ed->actions = eina_list_remove(ed->actions, runp);
    if (!ed->actions)
      {
-        efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+        efl_event_callback_del(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
         ecore_animator_del(ed->animator);
         ed->animator = NULL;
      }
@@ -761,7 +761,7 @@ low_mem_current:
              if (!ed->actions)
                {
                   if (ed->canvas_animator)
-                    efl_event_callback_add(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+                    efl_event_callback_add(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
                   else
                     ed->animator = ecore_animator_add(_edje_animator_cb, ed);
                }

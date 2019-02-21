@@ -45,7 +45,7 @@ pulse_start(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_ui_widget_disabled_set(td->btn_start, EINA_TRUE);
    efl_ui_widget_disabled_set(td->btn_stop, EINA_FALSE);
 
-   efl_event_callback_add(td->ico, EFL_EVENT_ANIMATOR_TICK, animate, td);
+   efl_event_callback_add(td->ico, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, animate, td);
 }
 
 static void
@@ -62,7 +62,7 @@ pulse_stop(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_ui_widget_disabled_set(td->btn_start, EINA_FALSE);
    efl_ui_widget_disabled_set(td->btn_stop, EINA_TRUE);
 
-   efl_event_callback_del(td->ico, EFL_EVENT_ANIMATOR_TICK, animate, td);
+   efl_event_callback_del(td->ico, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, animate, td);
 }
 
 static void

@@ -117,7 +117,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #define EFL_ORIENT_270 EFL_ORIENT_LEFT
 
 /* Core interface */
-#include "interfaces/efl_animator.eo.h"
 #include "interfaces/efl_interpolator.eo.h"
 
 /* Graphics */
