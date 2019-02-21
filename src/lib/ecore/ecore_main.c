@@ -248,7 +248,7 @@ _ecore_try_add_to_call_list(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, Ecore_Fd_Han
         DBG("next_ready");
         return;
      }
-   if (fdh->read_active || fdh->write_active || fdh->error_active)
+   if (fdh->read_active || fdh->write_active || fdh->error_active || (fdh->flags & ECORE_FD_ALWAYS))
      {
         DBG("added");
         // make sure next_ready is non-null by pointing to ourselves
@@ -583,6 +583,10 @@ _ecore_main_fdh_epoll_mark_active(Eo *obj, Efl_Loop_Data *pd)
              fdh->write_active = EINA_TRUE;
              fdh->error_active = EINA_TRUE;
           }
+        /* We'll add this one anyway outside this function,
+           don't want it twice */
+        if (fdh->flags & ECORE_FD_ALWAYS)
+          continue;
 
         _ecore_try_add_to_call_list(obj, pd, fdh);
      }
@@ -1357,6 +1361,9 @@ _ecore_main_fd_handler_add(Eo                    *obj,
    if (is_file)
      pd->file_fd_handlers = eina_list_append
        (pd->file_fd_handlers, fdh);
+   if (fdh->flags & ECORE_FD_ALWAYS)
+     pd->always_fd_handlers = eina_list_append
+       (pd->always_fd_handlers, fdh);
    pd->fd_handlers = (Ecore_Fd_Handler *)
      eina_inlist_append(EINA_INLIST_GET(pd->fd_handlers),
                         EINA_INLIST_GET(fdh));
@@ -1664,6 +1671,9 @@ _ecore_main_content_clear(Eo *obj, Efl_Loop_Data *pd)
    if (pd->file_fd_handlers)
      pd->file_fd_handlers =
        eina_list_free(pd->file_fd_handlers);
+   if (pd->always_fd_handlers)
+     pd->always_fd_handlers =
+       eina_list_free(pd->always_fd_handlers);
    if (pd->fd_handlers_to_delete)
      pd->fd_handlers_to_delete =
        eina_list_free(pd->fd_handlers_to_delete);
@@ -1741,7 +1751,7 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    fd_set rfds, wfds, exfds;
    Ecore_Fd_Handler *fdh;
    Eina_List *l;
-   int max_fd, ret;
+   int max_fd, ret, outval;
 #ifndef _WIN32
    int err_no;
 #endif
@@ -1785,17 +1795,17 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
           {
              if (!fdh->delete_me)
                {
-                  if (fdh->flags & ECORE_FD_READ)
+                  if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
                        FD_SET(fdh->fd, &rfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
                     }
-                  if (fdh->flags & ECORE_FD_WRITE)
+                  if ((fdh->flags & ECORE_FD_WRITE) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
                        FD_SET(fdh->fd, &wfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
                     }
-                  if (fdh->flags & ECORE_FD_ERROR)
+                  if ((fdh->flags & ECORE_FD_ERROR) || (fdh->flags & ECORE_FD_ALWAYS))
                     {
                        FD_SET(fdh->fd, &exfds);
                        if (fdh->fd > max_fd) max_fd = fdh->fd;
@@ -1815,17 +1825,17 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      {
         if (!fdh->delete_me)
           {
-             if (fdh->flags & ECORE_FD_READ)
+             if ((fdh->flags & ECORE_FD_READ) || (fdh->flags & ECORE_FD_ALWAYS))
                {
                   FD_SET(fdh->fd, &rfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
                }
-             if (fdh->flags & ECORE_FD_WRITE)
+             if ((fdh->flags & ECORE_FD_WRITE) || (fdh->flags & ECORE_FD_ALWAYS))
                {
                   FD_SET(fdh->fd, &wfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
                }
-             if (fdh->flags & ECORE_FD_ERROR)
+             if ((fdh->flags & ECORE_FD_ERROR) || (fdh->flags & ECORE_FD_ALWAYS))
                {
                   FD_SET(fdh->fd, &exfds);
                   if (fdh->fd > max_fd) max_fd = fdh->fd;
@@ -1851,7 +1861,11 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
    if (ret < 0)
      {
 #ifndef _WIN32
-        if (err_no == EINTR) return -1;
+        if (err_no == EINTR)
+          {
+             outval = -1;
+             goto BAIL;
+          }
         else if (err_no == EBADF) _ecore_main_fd_handlers_bads_rem(obj, pd);
 #endif
      }
@@ -1890,13 +1904,22 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
                   _ecore_try_add_to_call_list(obj, pd, fdh);
                }
           }
+        outval = 1;
+        goto BAIL;
+     }
+   outval = 0;
+BAIL:
+   EINA_LIST_FOREACH(pd->always_fd_handlers, l, fdh)
+     _ecore_try_add_to_call_list(obj, pd, fdh);
+
+   if (ret > 0)
+     {
         _ecore_main_fd_handlers_cleanup(obj, pd);
 #ifdef _WIN32
         _ecore_main_win32_handlers_cleanup(obj, pd);
 #endif
-        return 1;
      }
-   return 0;
+   return outval || pd->always_fd_handlers;
 }
 
 #endif
@@ -2017,6 +2040,8 @@ _ecore_main_fd_handlers_cleanup(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
                              EINA_INLIST_GET(fdh));
         if (fdh->file)
           pd->file_fd_handlers = eina_list_remove(pd->file_fd_handlers, fdh);
+        if (fdh->flags & ECORE_FD_ALWAYS)
+          pd->always_fd_handlers = eina_list_remove(pd->always_fd_handlers, fdh);
         ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
         ecore_fd_handler_mp_free(fdh);
         pd->fd_handlers_to_delete = eina_list_remove_list
@@ -2074,7 +2099,8 @@ _ecore_main_fd_handlers_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
           {
              if ((fdh->read_active) ||
                  (fdh->write_active) ||
-                 (fdh->error_active))
+                 (fdh->error_active) ||
+                 (fdh->flags & ECORE_FD_ALWAYS))
                {
                   fdh->references++;
                   if (!_ecore_call_fd_cb(fdh->func, fdh->data, fdh))

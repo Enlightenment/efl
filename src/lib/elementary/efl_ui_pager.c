@@ -95,9 +95,9 @@ _page_set_animation(void *data, const Efl_Event *event)
    if (pd->curr.page != temp_page)
      {
         if (pd->change.delta < 0)
-          efl_page_transition_curr_page_change(pd->transition, -1.0);
+          efl_page_transition_curr_page_change(pd->transition, -1);
         else
-          efl_page_transition_curr_page_change(pd->transition, 1.0);
+          efl_page_transition_curr_page_change(pd->transition, 1);
         temp_pos = 0.0;
      }
 
@@ -139,13 +139,13 @@ _mouse_up_animation(void *data, const Efl_Event *event)
 
    if (EINA_DBL_EQ(pd->curr.pos, 1.0))
      {
-        efl_page_transition_curr_page_change(pd->transition, 1.0);
+        efl_page_transition_curr_page_change(pd->transition, 1);
         pd->curr.page = (pd->curr.page + 1 + pd->cnt) % pd->cnt;
         pd->curr.pos = 0.0;
      }
    else if (EINA_DBL_EQ(pd->curr.pos, -1.0))
      {
-        efl_page_transition_curr_page_change(pd->transition, -1.0);
+        efl_page_transition_curr_page_change(pd->transition, -1);
         pd->curr.page = (pd->curr.page - 1 + pd->cnt) % pd->cnt;
         pd->curr.pos = 0.0;
      }

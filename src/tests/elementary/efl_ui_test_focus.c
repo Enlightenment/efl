@@ -297,7 +297,7 @@ _check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *objects[])
              efl_ui_focus_manager_reset_history(m);
              efl_ui_focus_manager_setup_on_first_touch(m, EFL_UI_FOCUS_DIRECTION_NEXT, root);
           }
-        next = efl_ui_focus_manager_focus_get(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, m));
+        next = efl_ui_focus_manager_focus_get(efl_ui_focus_util_active_manager(m));
 
         ck_assert_ptr_eq(next, objects[i]);
      }
@@ -317,7 +317,7 @@ _check_chain(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *objects[])
              efl_ui_focus_manager_setup_on_first_touch(m, EFL_UI_FOCUS_DIRECTION_PREVIOUS, root);
           }
 
-        prev = efl_ui_focus_manager_focus_get(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, m));
+        prev = efl_ui_focus_manager_focus_get(efl_ui_focus_util_active_manager(m));
         ck_assert_ptr_eq(prev, objects[i - 1]);
      }
    ck_assert_ptr_eq(efl_ui_focus_manager_move(m, EFL_UI_FOCUS_DIRECTION_PREVIOUS), NULL);

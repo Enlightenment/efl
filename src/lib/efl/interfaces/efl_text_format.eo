@@ -16,7 +16,7 @@ enum Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    end     [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
 }
 
-interface Efl.Text_Format {
+interface @beta Efl.Text_Format {
    [[The look and layout of the text
 
      The text format can affect the geometry of the text object, as well as

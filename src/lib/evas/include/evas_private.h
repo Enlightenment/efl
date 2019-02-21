@@ -1880,7 +1880,7 @@ void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 
 /* legacy/eo events */
-Efl_Input_Event *efl_input_event_instance_get(Eo *klass, Eo *owner);
+Efl_Input_Event *efl_input_event_instance_get(const Eo *klass, Eo *owner);
 void efl_input_event_instance_clean(Eo *klass);
 
 void *efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Callback_Type type, Evas_Event_Flags **pflags);

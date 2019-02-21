@@ -66,7 +66,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_app_test_loop_timer_invalid)
 {
-   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get(EFL_APP_CLASS));
+   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get());
    fail_if(t != NULL);
 }
 EFL_END_TEST

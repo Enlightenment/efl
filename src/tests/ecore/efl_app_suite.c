@@ -9,7 +9,6 @@
 #include "efl_app_suite.h"
 #include "../efl_check.h"
 
-
 EFL_START_TEST(efl_app_test_efl_build_version)
 {
    const Efl_Version *ver;
@@ -17,7 +16,7 @@ EFL_START_TEST(efl_app_test_efl_build_version)
 
    ecore_init();
 
-   app = efl_app_main_get(EFL_APP_CLASS);
+   app = efl_app_main_get();
    fail_if(!efl_isa(app, EFL_APP_CLASS));
 
    efl_build_version_set(EFL_VERSION_MAJOR, EFL_VERSION_MINOR, 0, 0, NULL, EFL_BUILD_ID);
@@ -53,6 +52,8 @@ static const Efl_Test_Case etc[] = {
   { "Promise", efl_app_test_promise_2 },
   { "Promise", efl_app_test_promise_3 },
   { "Promise", efl_app_test_promise_safety },
+  { "Env", efl_test_efl_env },
+  { "CML", efl_test_efl_cml },
   { NULL, NULL }
 };
 

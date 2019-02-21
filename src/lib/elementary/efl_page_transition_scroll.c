@@ -401,7 +401,7 @@ _efl_page_transition_scroll_update(Eo *obj,
 EOLIAN static void
 _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
                                              Efl_Page_Transition_Scroll_Data *pd,
-                                             double pos)
+                                             int diff)
 {
    Eina_List *list;
    Page_Info *pi, *target = NULL;
@@ -410,12 +410,12 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
    // with a new id based on the new geometry of the boxes.
    EINA_LIST_FOREACH(pd->page_infos, list, pi)
      {
-        if (EINA_DBL_EQ(pos, 1.0))
+        if (diff == 1)
           {
              pi->id = (pi->id - 1 + pd->page_info_num) % pd->page_info_num;
              target = pi->prev;
           }
-        else if (EINA_DBL_EQ(pos, -1.0))
+        else
           {
              pi->id = (pi->id + 1) % pd->page_info_num;
              target = pi->next;
@@ -438,12 +438,12 @@ _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
                            pi->temp.h);
      }
 
-   if (EINA_DBL_EQ(pos, 1.0))
+   if (diff == 1)
      {
         pd->head = pd->head->next;
         pd->tail = pd->tail->next;
      }
-   else if (EINA_DBL_EQ(pos, -1.0))
+   else
      {
         pd->head = pd->head->prev;
         pd->tail = pd->tail->prev;

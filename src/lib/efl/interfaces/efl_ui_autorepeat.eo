@@ -1,4 +1,4 @@
-interface Efl.Ui.Autorepeat {
+interface @beta Efl.Ui.Autorepeat {
    [[Efl UI autorepeat interface]]
       eo_prefix: efl_ui;
    methods {

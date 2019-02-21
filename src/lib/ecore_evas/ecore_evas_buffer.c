@@ -896,7 +896,11 @@ ecore_evas_buffer_new(int w, int h)
      ecore_evas_buffer_allocfunc_new(w, h, _ecore_evas_buffer_pix_alloc,
                                      _ecore_evas_buffer_pix_free, NULL);
 
-   if (!ee) ecore_event_evas_shutdown();
+   if (!ee)
+     {
+        ecore_event_evas_shutdown();
+        return NULL;
+     }
 
    ecore_evas_done(ee, EINA_TRUE);
 

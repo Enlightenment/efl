@@ -220,7 +220,7 @@ EFL_START_TEST(elm_genlist_test_atspi_children_events_add)
 
    Elm_Object_Item *it[3];
 
-   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(_children_changed_cb, NULL);
 
    it[0] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    ck_assert(genlist == current);
@@ -256,7 +256,7 @@ EFL_START_TEST(elm_genlist_test_atspi_children_events_del1)
    it[1] = elm_genlist_item_prepend(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
    it[2] = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
-   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(_children_changed_cb, NULL);
 
    elm_object_item_del(it[0]);
    ck_assert(genlist == current);
@@ -283,7 +283,7 @@ EFL_START_TEST(elm_genlist_test_atspi_children_events_del2)
 
    it = elm_genlist_item_append(genlist, &itc, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _children_changed_cb, NULL);
+   efl_access_object_event_handler_add(_children_changed_cb, NULL);
    elm_genlist_clear(genlist);
 
    ck_assert(genlist == current);

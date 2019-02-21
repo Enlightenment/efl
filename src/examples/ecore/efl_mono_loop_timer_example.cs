@@ -18,9 +18,7 @@ class TestMain
         Efl.All.Init();
 
         var loop = new Efl.Loop();
-        var timer = new Efl.LoopTimer(loop, (Efl.LoopTimer t) => {
-                t.SetInterval(1.0);
-        });
+        var timer = new Efl.LoopTimer(loop, interval:1.0);
 
         TestMain listener = new TestMain(loop);
 

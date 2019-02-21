@@ -1,4 +1,4 @@
-class Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.State
+class @beta Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.State
 {
    [[Represents a single key event from a keyboard or similar device.
 

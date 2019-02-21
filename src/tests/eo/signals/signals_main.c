@@ -171,15 +171,15 @@ main(int argc, char *argv[])
    efl_event_callback_priority_add(obj, EV_A_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1);
    fail_if(pd->cb_count != 1);
 
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 0);
 
-   efl_event_global_freeze(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_freeze();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 1);
 
-   efl_event_global_freeze(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_freeze();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 2);
 
    efl_event_callback_priority_add(obj, EV_A_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2);
@@ -187,30 +187,30 @@ main(int argc, char *argv[])
 
    simple_a_set(obj, 2);
    fail_if(cb_count != 0);
-   efl_event_global_thaw(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_thaw();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 1);
 
-   efl_event_global_thaw(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_thaw();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 0);
 
    simple_a_set(obj, 3);
    fail_if(cb_count != 2);
 
    cb_count = 0;
-   efl_event_global_thaw(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_thaw();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 0);
 
-   efl_event_global_freeze(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_freeze();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 1);
 
    simple_a_set(obj, 2);
    fail_if(cb_count != 0);
-   efl_event_global_thaw(EO_CLASS);
-   fcount = efl_event_global_freeze_count_get(EO_CLASS);
+   efl_event_global_thaw();
+   fcount = efl_event_global_freeze_count_get();
    fail_if(fcount != 0);
 
    efl_event_callback_priority_add(obj, EV_RESTART, EFL_CALLBACK_PRIORITY_DEFAULT, _restart_1_cb, NULL);

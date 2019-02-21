@@ -1,6 +1,6 @@
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
-class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Container, Efl.Part,
+class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Container, Efl.Part,
                          Efl.Observer, Efl.Layout.Calc,
                          Efl.Layout.Signal, Efl.Layout.Group,
                          Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,

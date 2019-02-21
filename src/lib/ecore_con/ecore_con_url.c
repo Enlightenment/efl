@@ -425,7 +425,7 @@ _ecore_con_url_dialer_can_read_changed(void *data, const Efl_Event *event EINA_U
         ssize_t r = write(url_con->write_fd, slice.bytes, slice.len);
         if (r == -1)
           {
-             ERR("Could not write to fd=%d: %s", url_con->write_fd, strerror(errno));
+             ERR("Could not write to fd=%d: %s", url_con->write_fd, eina_error_msg_get(errno));
              break;
           }
         slice.bytes += r;
@@ -734,7 +734,7 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
 
    if (url_con->time.condition != ECORE_CON_URL_TIME_NONE)
      {
-        char *ts = efl_net_dialer_http_date_serialize(EFL_NET_DIALER_HTTP_CLASS, url_con->time.stamp);
+        char *ts = efl_net_dialer_http_date_serialize(url_con->time.stamp);
         if (ts)
           {
              efl_net_dialer_http_request_header_add(url_con->dialer,

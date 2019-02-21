@@ -506,7 +506,7 @@ video_obj_signal_frame_move_start_cb(void *data EINA_UNUSED, Evas_Object *o, con
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   efl_gfx_stack_raise(o);
+   efl_gfx_stack_raise_to_top(o);
 }
 
 static void
@@ -531,7 +531,7 @@ video_obj_signal_frame_resize_start_cb(void *data EINA_UNUSED, Evas_Object *o, c
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   efl_gfx_stack_raise(o);
+   efl_gfx_stack_raise_to_top(o);
 }
 
 static void

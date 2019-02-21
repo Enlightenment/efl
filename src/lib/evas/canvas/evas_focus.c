@@ -107,7 +107,7 @@ _evas_focus_dispatch_event(Evas_Object_Protected_Data *obj, Efl_Input_Device *se
    const Efl_Event_Description *efl_object_focus_event;
 
    EVAS_OBJECT_DATA_VALID_CHECK(obj);
-   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS,
+   evt = efl_input_focus_instance_get(
                                 efl_provider_find(obj->object, EVAS_CANVAS_CLASS),
                                 (void **) &ev_data);
    if (!evt) return;

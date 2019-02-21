@@ -1,6 +1,6 @@
 import efl_input_types;
 
-mixin Efl.Input.Event requires Efl.Object extends Efl.Duplicate
+mixin @beta Efl.Input.Event requires Efl.Object extends Efl.Duplicate
 {
    [[Represents a generic event data.
 

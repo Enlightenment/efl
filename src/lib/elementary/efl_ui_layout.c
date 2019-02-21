@@ -76,7 +76,7 @@ struct _Efl_Ui_Layout_Factory_Tracking
 {
    Efl_Ui_Factory *factory;
    Eina_Future *in_flight;
-   Eina_Stringshare *name;
+   Eina_Stringshare *key;
 };
 
 
@@ -2085,7 +2085,7 @@ struct _Efl_Ui_Layout_Factory_Request
    Efl_Ui_Layout_Factory_Tracking *tracking;
    Efl_Ui_Layout_Data *pd;
    Efl_Ui_Factory *factory;
-   const char *name;
+   const char *key;
 };
 
 static Eina_Value
@@ -2098,11 +2098,11 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    eina_value_get(&value, &content);
 
    // Recycle old content
-   old_content = elm_layout_content_get(obj, request->name);
+   old_content = elm_layout_content_get(obj, request->key);
    if (old_content) efl_ui_factory_release(request->factory, old_content);
 
    // Set new content
-   elm_layout_content_set(obj, request->name, content);
+   elm_layout_content_set(obj, request->key, content);
 
    return value;
 }
@@ -2113,13 +2113,13 @@ _clean_request(Eo *obj EINA_UNUSED, void *data, const Eina_Future *dead_future E
    Efl_Ui_Layout_Factory_Request *request = data;
 
    request->tracking->in_flight = NULL;
-   eina_stringshare_del(request->name);
+   eina_stringshare_del(request->key);
    efl_unref(request->factory);
    free(request);
 }
 
 static void
-_efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_Factory_Tracking *tracking, const char *name)
+_efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_Factory_Tracking *tracking, const char *key)
 {
    Efl_Ui_Layout_Factory_Request *request = calloc(1, sizeof (Efl_Ui_Layout_Factory_Request));
    Eina_Future *f;
@@ -2128,7 +2128,7 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
 
    if (tracking->in_flight) eina_future_cancel(tracking->in_flight);
 
-   request->name = eina_stringshare_ref(name);
+   request->key = eina_stringshare_ref(key);
    request->pd = pd;
    request->factory = efl_ref(tracking->factory);
    request->tracking = tracking;
@@ -2205,7 +2205,7 @@ _efl_ui_layout_factory_free(Efl_Ui_Layout_Factory_Tracking *tracking)
 {
    if (tracking->in_flight) eina_future_cancel(tracking->in_flight);
    efl_unref(tracking->factory);
-   eina_stringshare_del(tracking->name);
+   eina_stringshare_del(tracking->key);
    free(tracking);
 }
 
@@ -2222,7 +2222,7 @@ _efl_ui_layout_connect_hash(Efl_Ui_Layout_Data *pd)
 EOLIAN static void
 _efl_ui_layout_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_Model *model)
 {
-   Eina_Stringshare *name;
+   Eina_Stringshare *key;
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it;
 
@@ -2241,9 +2241,9 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_Model 
 
    // Reset to empty state
    it = eina_hash_iterator_key_new(pd->connect.properties);
-   EINA_ITERATOR_FOREACH(it, name)
+   EINA_ITERATOR_FOREACH(it, key)
      {
-        efl_text_set(efl_part(obj, name), NULL);
+        efl_text_set(efl_part(obj, key), NULL);
      }
    eina_iterator_free(it);
 
@@ -2253,15 +2253,15 @@ _efl_ui_layout_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_Model 
         Efl_Ui_Layout_Factory_Tracking *factory;
         Efl_Gfx_Entity *content;
 
-        name = tuple->key;
+        key = tuple->key;
         factory = tuple->data;
 
         // Cancel in flight creation request
         if (factory->in_flight) eina_future_cancel(factory->in_flight);
 
         // Cleanup content
-        content = elm_layout_content_get(obj, name);
-        elm_layout_content_set(obj, name, NULL);
+        content = elm_layout_content_get(obj, key);
+        elm_layout_content_set(obj, key, NULL);
 
         // And recycle it
         efl_ui_factory_release(factory->factory, content);
@@ -2279,30 +2279,30 @@ _efl_ui_layout_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Da
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, const char *name, const char *property)
+_efl_ui_layout_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
-   EINA_SAFETY_ON_NULL_RETURN(name);
+   EINA_SAFETY_ON_NULL_RETURN(key);
    Eina_Stringshare *sprop;
    Eina_Hash *hash = NULL;
    char *data = NULL;
 
-   if (!_elm_layout_part_aliasing_eval(obj, &name, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return;
 
    _efl_ui_layout_connect_hash(pd);
 
    sprop = eina_stringshare_add(property);
 
-   // FIXME: prevent double connect of name to multiple property ?
-   if (strncmp(SIGNAL_PREFIX, name, sizeof(SIGNAL_PREFIX) - 1) == 0)
+   // FIXME: prevent double connect of key to multiple property ?
+   if (strncmp(SIGNAL_PREFIX, key, sizeof(SIGNAL_PREFIX) - 1) == 0)
      {
         hash = pd->connect.signals;
-        data = strdup(name + sizeof(SIGNAL_PREFIX) - 1);
+        data = strdup(key + sizeof(SIGNAL_PREFIX) - 1);
      }
    else
      {
         hash = pd->connect.properties;
-        data = strdup(name);
+        data = strdup(key);
      }
 
    if (!sprop)
@@ -2328,30 +2328,30 @@ _efl_ui_layout_efl_ui_model_connect_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_D
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_ui_factory_model_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
-                const char *name, Efl_Ui_Factory *factory)
+_efl_ui_layout_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
+                                                const char *key, Efl_Ui_Factory *factory)
 {
-   EINA_SAFETY_ON_NULL_RETURN(name);
+   EINA_SAFETY_ON_NULL_RETURN(key);
    Efl_Ui_Layout_Factory_Tracking *tracking;
-   Eina_Stringshare *ss_name;
+   Eina_Stringshare *ss_key;
 
-   if (!_elm_layout_part_aliasing_eval(obj, &name, EINA_TRUE))
+   if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return;
 
    if (!pd->connect.factories)
      pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(_efl_ui_layout_factory_free));
 
-   ss_name = eina_stringshare_add(name);
+   ss_key = eina_stringshare_add(key);
 
    // First undo the old one if there is one
-   tracking = eina_hash_find(pd->connect.factories, ss_name);
+   tracking = eina_hash_find(pd->connect.factories, ss_key);
    if (tracking)
      {
         Efl_Gfx_Entity *old;
 
         // Unset and recycle
-        old = elm_layout_content_get(obj, ss_name);
-        elm_layout_content_set(obj, ss_name, NULL);
+        old = elm_layout_content_get(obj, ss_key);
+        elm_layout_content_set(obj, ss_key, NULL);
         if (old) efl_ui_factory_release(tracking->factory, old);
 
         // Stop in flight request
@@ -2365,15 +2365,15 @@ _efl_ui_layout_efl_ui_factory_model_connect(Eo *obj EINA_UNUSED, Efl_Ui_Layout_D
         tracking = calloc(1, sizeof (Efl_Ui_Layout_Factory_Tracking));
         if (!tracking) return ;
 
-        tracking->name = ss_name;
+        tracking->key = ss_key;
 
-        eina_hash_add(pd->connect.factories, ss_name, tracking);
+        eina_hash_add(pd->connect.factories, ss_key, tracking);
      }
 
    // And update content with the new factory
    tracking->factory = efl_ref(factory);
 
-   _efl_ui_layout_view_model_content_update(pd, tracking, ss_name);
+   _efl_ui_layout_view_model_content_update(pd, tracking, ss_key);
 }
 
 EOLIAN static Eo *

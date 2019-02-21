@@ -1,4 +1,4 @@
-class Efl.Loop_Message extends Efl.Object
+class @beta Efl.Loop_Message extends Efl.Object
 {
    [[Base message payload object class. Inherit this and extend for
      specific message types.]]

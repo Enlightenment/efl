@@ -2,9 +2,7 @@
 # include <config.h>
 #endif
 
-#define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_SCROLLBAR_PROTECTED
-#define EFL_UI_SCROLLBAR_BETA
 #define EFL_PART_PROTECTED
 
 #include "eo_internal.h"
@@ -35,7 +33,6 @@
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"
 
-#include "interfaces/efl_gfx_color_class.eo.c"
 #include "interfaces/efl_gfx_text_class.eo.c"
 #include "interfaces/efl_gfx_size_class.eo.c"
 
@@ -71,8 +68,9 @@
 #include "interfaces/efl_ui_range_interactive.eo.c"
 #include "interfaces/efl_ui_autorepeat.eo.c"
 #include "interfaces/efl_ui_view.eo.c"
-#include "interfaces/efl_ui_model_connect.eo.c"
+#include "interfaces/efl_ui_property_bind.eo.c"
 #include "interfaces/efl_ui_factory.eo.c"
+#include "interfaces/efl_ui_factory_bind.eo.c"
 
 #include "interfaces/efl_ui_draggable.eo.c"
 #include "interfaces/efl_ui_clickable.eo.c"

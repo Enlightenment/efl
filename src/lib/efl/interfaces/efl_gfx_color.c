@@ -117,8 +117,8 @@ _efl_gfx_color_color_code_get(const Eo *obj, void *_pd EINA_UNUSED)
     return eina_slstr_printf("#%02X%02X%02X%02X", r, g, b, a);
 }
 
-EOLIAN static void
-_efl_gfx_color_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *color_class,
+EOLIAN static Eina_Bool
+_efl_gfx_color_class_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *color_class,
                                     Efl_Gfx_Color_Class_Layer layer, const char *colorcode)
 {
    int len;
@@ -127,17 +127,19 @@ _efl_gfx_color_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *
    len = _format_clean_param(colorcode);
 
    _format_color_parse(colorcode, len, &r, &g, &b, &a);
-   efl_gfx_color_class_set(obj, color_class, layer, r, g, b, a);
+   return efl_gfx_color_class_set(obj, color_class, layer, r, g, b, a);
 }
 
 EOLIAN static const char *
-_efl_gfx_color_color_class_code_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
+_efl_gfx_color_class_color_class_code_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED,
                                     const char *color_class, Efl_Gfx_Color_Class_Layer layer)
 {
    int r, g, b, a;
 
-   efl_gfx_color_class_get(obj, color_class, layer, &r, &g, &b, &a);
-   return eina_slstr_printf("#%02X%02X%02X%02X", r, g, b, a);
+   if (efl_gfx_color_class_get(obj, color_class, layer, &r, &g, &b, &a))
+     return eina_slstr_printf("#%02X%02X%02X%02X", r, g, b, a);
+   return NULL;
 }
 
 #include "interfaces/efl_gfx_color.eo.c"
+#include "interfaces/efl_gfx_color_class.eo.c"

@@ -75,14 +75,33 @@ efl_app_suite_src = [
   'efl_app_test_loop.c',
   'efl_app_test_loop_fd.c',
   'efl_app_test_loop_timer.c',
-  'efl_app_test_promise.c'
+  'efl_app_test_promise.c',
+  'efl_app_test_env.c',
+  'efl_app_test_cml.c',
 ]
+
+priv_eo_files = [
+   'efl_app_test_cml.eo',
+]
+
+priv_eo_file_target = []
+foreach eo_file : priv_eo_files
+  priv_eo_file_target += custom_target('eolian_gen_' + eo_file,
+    input : eo_file,
+    output : [eo_file + '.h'],
+    depfile : eo_file + '.d',
+    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
+                           '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
+                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
+                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
+                           '-gchd', '@INPUT@'])
+endforeach
 
 efl_app_suite_deps = [m]
 efl_app_suite_deps += ecore
 
 efl_app_suite = executable('efl_app_suite',
-  efl_app_suite_src,
+  efl_app_suite_src, priv_eo_file_target,
   dependencies: [efl_app_suite_deps, check],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',

@@ -1,4 +1,4 @@
-class Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
+class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[Efl canvas video class]]
    methods {

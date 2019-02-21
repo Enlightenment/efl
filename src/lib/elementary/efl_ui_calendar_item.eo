@@ -1,4 +1,4 @@
-class Efl.Ui.Calendar_Item extends Efl.Object implements Efl.Ui.Focus.Object
+class @beta Efl.Ui.Calendar_Item extends Efl.Object implements Efl.Ui.Focus.Object
 {
     [[EFL UI Calendar Item class]]
     methods {

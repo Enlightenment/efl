@@ -477,6 +477,8 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
    Eina_List **props = &eud->u.text_style.props;
 
    rp = _edje_real_part_recursive_get(&ed, eud->part);
+   if (!rp) return;
+
    if (eud->u.text_style.types == EDJE_PART_TEXT_PROP_NONE) return;
 
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_BACKING_TYPE)

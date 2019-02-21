@@ -10,7 +10,6 @@
 #define EFL_ACCESS_TEXT_PROTECTED
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 
-#define EFL_ACCESS_ACTION_BETA
 
 #include "atspi/atspi-constants.h"
 
@@ -588,7 +587,7 @@ _accessible_get_application(const Eldbus_Service_Interface *iface, const Eldbus_
    EINA_SAFETY_ON_NULL_RETURN_VAL(ret, NULL);
 
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(ret);
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
    _bridge_iter_object_reference_append(bridge, iter, root);
 
    return ret;
@@ -2026,7 +2025,7 @@ _bridge_object_from_path(Eo *bridge, const char *path)
    tmp = path + len; /* Skip over the prefix */
    if (!strcmp(ELM_ACCESS_OBJECT_PATH_ROOT, tmp))
      {
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        root = efl_access_object_access_root_get();
         return root;
      }
 
@@ -2053,7 +2052,7 @@ _path_from_object(const Eo *eo)
 
    if (!eo)
      return ATSPI_DBUS_PATH_NULL;
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
 
    if (eo == root)
      snprintf(path, sizeof(path), "%s%s", ELM_ACCESS_OBJECT_PATH_PREFIX, ELM_ACCESS_OBJECT_PATH_ROOT);
@@ -3201,7 +3200,7 @@ _cache_item_reference_append_cb(Eo *bridge, Eo *data, Eldbus_Message_Iter *iter_
   Efl_Access_State_Set states;
   Efl_Access_Role role;
   Eo *root;
-  root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+  root = efl_access_object_access_root_get();
 
   role = efl_access_object_role_get(data);
 
@@ -3298,7 +3297,7 @@ _cache_get_items(const Eldbus_Service_Interface *iface, const Eldbus_Message *ms
    iter_array = eldbus_message_iter_container_new(iter, 'a', CACHE_ITEM_SIGNATURE);
    EINA_SAFETY_ON_NULL_GOTO(iter_array, fail);
 
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
    to_process = eina_list_append(NULL, root);
 
    while (to_process)
@@ -3703,7 +3702,7 @@ _elm_atspi_bridge_app_register(Eo *bridge)
                                     "Embed");
    Eldbus_Message_Iter *iter = eldbus_message_iter_get(message);
 
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
    _bridge_iter_object_reference_append(bridge, iter, root);
    eldbus_connection_send(pd->a11y_bus, message, _on_elm_atspi_bridge_app_register, NULL, -1);
 
@@ -3716,7 +3715,7 @@ _elm_atspi_bridge_app_unregister(Eo *bridge)
    Eo *root;
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_FALSE);
 
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
 
    Eldbus_Message *message = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY,
                                     ATSPI_DBUS_PATH_ROOT,
@@ -4116,7 +4115,7 @@ static void _bridge_signal_send(Eo *bridge, Eo *obj, const char *infc, const Eld
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(bridge, pd);
 
    path = _path_from_object(obj);
-   root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   root = efl_access_object_access_root_get();
 
    msg = eldbus_message_signal_new(path, infc, signal->name);
    if (!msg) return;
@@ -4366,7 +4365,7 @@ _a11y_connection_shutdown(Eo *bridge)
    if (pd->event_hash) eina_hash_free(pd->event_hash);
    pd->event_hash = NULL;
 
-   efl_access_object_event_handler_del(EFL_ACCESS_OBJECT_MIXIN, pd->event_hdlr);
+   efl_access_object_event_handler_del(pd->event_hdlr);
    pd->event_hdlr = NULL;
 
    efl_event_callback_legacy_call(bridge, ELM_ATSPI_BRIDGE_EVENT_DISCONNECTED, NULL);
@@ -4458,7 +4457,7 @@ _a11y_bus_initialize(Eo *obj, const char *socket_addr)
    _elm_atspi_bridge_app_register(obj);
 
    // register accessible object event listener
-   pd->event_hdlr = efl_access_object_event_handler_add(EFL_ACCESS_OBJECT_MIXIN, _bridge_accessible_event_dispatch, obj);
+   pd->event_hdlr = efl_access_object_event_handler_add(_bridge_accessible_event_dispatch, obj);
 }
 
 static void

@@ -112,7 +112,7 @@ _efl_ui_focus_layer_enable_set(Eo *obj, Efl_Ui_Focus_Layer_Data *pd, Eina_Bool v
 
         pd->registered_manager = elm_widget_top_get(obj);
         EINA_SAFETY_ON_FALSE_RETURN(efl_isa(pd->registered_manager, EFL_UI_WIN_CLASS));
-        manager = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, pd->registered_manager);
+        manager = efl_ui_focus_util_active_manager(pd->registered_manager);
 
         efl_ui_focus_manager_calc_register_logical(pd->registered_manager, obj, efl_ui_focus_manager_root_get(pd->registered_manager), obj);
         _publish_state_change(obj, NULL, NULL);

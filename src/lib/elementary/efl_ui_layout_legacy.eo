@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Legacy extends Efl.Ui.Layout implements Efl.Ui.Legacy
+class @beta Efl.Ui.Layout_Legacy extends Efl.Ui.Layout implements Efl.Ui.Legacy
 {
    [[Elementary layout class]]
    data: null;

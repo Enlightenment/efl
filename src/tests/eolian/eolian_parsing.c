@@ -981,7 +981,6 @@ EFL_START_TEST(eolian_free_func)
 {
    const Eolian_Class *class;
    const Eolian_Typedecl *tdl;
-   const Eolian_Type *type;
    const Eolian_Unit *unit;
 
    Eolian_State *eos = eolian_state_new();
@@ -1000,25 +999,11 @@ EFL_START_TEST(eolian_free_func)
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Named2")));
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "test_free"));
 
-   /* typedef */
-   fail_if(!(tdl = eolian_unit_alias_by_name_get(unit, "Typedef1")));
-   fail_if(eolian_typedecl_free_func_get(tdl));
-   fail_if(!(tdl = eolian_unit_alias_by_name_get(unit, "Typedef2")));
-   fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "def_free"));
-
    /* opaque struct */
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Opaque1")));
    fail_if(eolian_typedecl_free_func_get(tdl));
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Opaque2")));
    fail_if(strcmp(eolian_typedecl_free_func_get(tdl), "opaque_free"));
-
-   /* pointer */
-   fail_if(!(tdl = eolian_unit_alias_by_name_get(unit, "Pointer1")));
-   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
-   fail_if(eolian_type_free_func_get(type));
-   fail_if(!(tdl = eolian_unit_alias_by_name_get(unit, "Pointer2")));
-   fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
-   fail_if(strcmp(eolian_type_free_func_get(type), "ptr_free"));
 
    eolian_state_free(eos);
 }

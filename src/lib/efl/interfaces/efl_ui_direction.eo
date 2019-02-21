@@ -25,7 +25,7 @@ enum Efl.Ui.Dir
    left = Efl.Ui.Dir.rtl, [[Left is an alias for RTL.]]
 }
 
-interface Efl.Ui.Direction
+interface @beta Efl.Ui.Direction
 {
    [[EFL UI object direction interface]]
    methods {

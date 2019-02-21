@@ -1,4 +1,4 @@
-interface Efl.Access.Editable.Text
+interface @beta Efl.Access.Editable.Text
 {
    [[Elementary editable text interface]]
    methods {

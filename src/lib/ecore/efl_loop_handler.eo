@@ -7,7 +7,7 @@ enum Efl.Loop_Handler_Flags {
    error = 4, [[ Error channel input is desired ]]
 }
 
-class Efl.Loop_Handler extends Efl.Object
+class @beta Efl.Loop_Handler extends Efl.Object
 {
    [[ An object that describes an low-level source of I/O to listen to
    for available data to be read or written, depending on the OS and data

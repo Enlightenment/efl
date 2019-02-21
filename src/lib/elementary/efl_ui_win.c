@@ -7,13 +7,10 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_GFX_SIZE_HINT_PROTECTED
-#define EFL_CANVAS_OBJECT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 #define EFL_UI_WIN_INLINED_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
-#define EFL_UI_WIN_BETA
-#define EFL_CANVAS_SCENE_BETA
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 #define EFL_PART_PROTECTED
 #define IPA_YLNO_ESU_LANRETNI_MLE
@@ -1488,7 +1485,6 @@ _elm_win_profile_update(Efl_Ui_Win_Data *sd)
 
    _config_profile_lock = EINA_TRUE;
    _elm_config_profile_set(sd->profile.name);
-   _config_profile_lock = EINA_FALSE;
 
    /* update sub ee */
    Ecore_Evas *ee2;
@@ -2373,7 +2369,7 @@ _efl_ui_win_show(Eo *obj, Efl_Ui_Win_Data *sd)
      {
         Eo *root;
         efl_access_window_created_signal_emit(obj);
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        root = efl_access_object_access_root_get();
         if (root)
            efl_access_children_changed_added_signal_emit(root, obj);
      }
@@ -2442,7 +2438,7 @@ _efl_ui_win_hide(Eo *obj, Efl_Ui_Win_Data *sd)
    if (_elm_config->atspi_mode)
      {
         Eo *root;
-        root = efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+        root = efl_access_object_access_root_get();
         efl_access_window_destroyed_signal_emit(obj);
         if (root)
            efl_access_children_changed_del_signal_emit(root, obj);
@@ -2535,7 +2531,7 @@ _efl_ui_win_efl_canvas_scene_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
         Efl_Input_Pointer *ptr;
         double x, y;
 
-        ptr = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, (Eo *) obj, (void **) &ptrdata);
+        ptr = efl_input_pointer_instance_get( (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
         ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);
@@ -2997,7 +2993,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
      }
    if (!_elm_win_list)
      {
-        efl_event_callback_call(efl_app_main_get(EFL_APP_CLASS), EFL_APP_EVENT_STANDBY, NULL);
+        efl_event_callback_call(efl_app_main_get(), EFL_APP_EVENT_STANDBY, NULL);
         if (eina_value_type_get(&exit_on_all_windows_closed))
           efl_loop_quit(efl_loop_get(obj), exit_on_all_windows_closed);
      }
@@ -5976,7 +5972,7 @@ _efl_ui_win_activate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_stack_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+_efl_ui_win_efl_gfx_stack_raise_to_top(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
    TRAP(pd, raise);
 }
@@ -5984,11 +5980,11 @@ _efl_ui_win_efl_gfx_stack_raise(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 EAPI void
 elm_win_raise(Eo *obj)
 {
-   efl_gfx_stack_raise(obj);
+   efl_gfx_stack_raise_to_top(obj);
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_stack_lower(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
+_efl_ui_win_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
 {
    // Do nothing: in X we could request to stack lower but that has been abused
    // and transformed into a kind of "iconify". As a consequence, lower is
@@ -6267,13 +6263,13 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
 }
 
 EOLIAN static const Eina_Value *
-_efl_ui_win_exit_on_all_windows_closed_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_ui_win_exit_on_all_windows_closed_get(void)
 {
    return &exit_on_all_windows_closed;
 }
 
 EOLIAN static void
-_efl_ui_win_exit_on_all_windows_closed_set(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, const Eina_Value *exit_code)
+_efl_ui_win_exit_on_all_windows_closed_set(const Eina_Value *exit_code)
 {
    const Eina_Value_Type *type = eina_value_type_get(exit_code);
 
@@ -7386,7 +7382,7 @@ _efl_ui_win_efl_object_provider_find(const Eo *obj,
       return (Eo *)obj;
 
    // attach all kinds of windows directly to ATSPI application root object
-   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get(EFL_ACCESS_OBJECT_MIXIN);
+   if (klass == EFL_ACCESS_OBJECT_MIXIN) return efl_access_object_access_root_get();
 
     if (klass == EFL_UI_FOCUS_PARENT_PROVIDER_INTERFACE)
       return pd->provider;

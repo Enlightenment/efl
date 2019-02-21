@@ -87,7 +87,7 @@ _ecore_event_filters_call(Eo *obj, Efl_Loop_Data *pd)
    Filter *f;
    Ecore_Event_Message_Handler_Data *eemhd;
    Eo *ecore_event_handler = efl_loop_message_handler_get
-     (EFL_LOOP_CLASS, obj, ECORE_EVENT_MESSAGE_HANDLER_CLASS);
+     (obj, ECORE_EVENT_MESSAGE_HANDLER_CLASS);
 
    if (!ecore_event_handler) return;
    eemhd = efl_data_scope_get(ecore_event_handler, MY_CLASS);

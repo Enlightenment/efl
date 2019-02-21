@@ -32,3 +32,16 @@ eo_suite = executable('eo_suite',
 test('eo-suite', eo_suite,
   env : test_env
 )
+
+eo_suite = executable('eo_suite_dbg',
+  eo_suite_src,
+  dependencies: [eo_dbg, check, valgrind],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DEO_DEBUG=1',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-suite-dbg', eo_suite,
+  env : test_env
+)

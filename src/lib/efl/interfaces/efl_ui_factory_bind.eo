@@ -1,0 +1,19 @@
+interface @beta Efl.Ui.Factory_Bind
+{
+   [[Efl UI Property interface.
+     view object can have @Efl.Model and need to set cotent with those model stored data.
+     the interface can help binding the factory to create object with model property data.
+     see @Efl.Model
+     see @Efl.Ui.Factory]]
+   methods {
+      factory_bind {
+         [[bind the factory with the given key string. when the data is ready or changed,
+           factory create the object and bind the data to the key action and process promised work.
+           Note: the input @Efl.Ui.Factory need to be @Efl.Ui.Property_Bind.property_bind at least once.]]
+         params {
+            key: string; [[Key string for bind model property data]]
+            factory: Efl.Ui.Factory; [[@Efl.Ui.Factory for create and bind model property data]]
+         }
+      }
+   }
+}

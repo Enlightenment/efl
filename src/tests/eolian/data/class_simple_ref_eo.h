@@ -41,7 +41,7 @@ EWAPI extern long BAZ;
 
 EWAPI const Efl_Class *class_simple_class_get(void);
 
-#ifdef CLASS_SIMPLE_BETA
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Common desc for a
  *
@@ -55,9 +55,9 @@ EWAPI const Efl_Class *class_simple_class_get(void);
  * @ingroup Class_Simple
  */
 EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
-#endif
+#endif /* EFL_BETA_API_SUPPORT */
 
-#ifdef CLASS_SIMPLE_BETA
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Common desc for a
  *
@@ -68,11 +68,11 @@ EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
  * @ingroup Class_Simple
  */
 EOAPI int efl_canvas_object_simple_a_get(const Eo *obj);
-#endif
+#endif /* EFL_BETA_API_SUPPORT */
 
 EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
 
-#ifdef CLASS_SIMPLE_BETA
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief comment foo
  *
@@ -87,7 +87,7 @@ EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
  * @ingroup Class_Simple
  */
 EOAPI char *efl_canvas_object_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
-#endif
+#endif /* EFL_BETA_API_SUPPORT */
 
 EOAPI int *efl_canvas_object_simple_bar(Eo *obj, int x);
 

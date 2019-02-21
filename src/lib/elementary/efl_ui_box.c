@@ -81,6 +81,18 @@ _evas_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
 }
 
 EOLIAN static void
+_efl_ui_box_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, Eina_Bool homogeneous)
+{
+   pd->homogeneous = !!homogeneous;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_box_homogeneous_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+{
+   return pd->homogeneous;
+}
+
+EOLIAN static void
 _efl_ui_box_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);

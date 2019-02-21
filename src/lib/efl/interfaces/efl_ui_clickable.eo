@@ -1,4 +1,4 @@
-interface Efl.Ui.Clickable
+interface @beta Efl.Ui.Clickable
 {
    [[Efl UI clickable interface]]
    event_prefix: efl_ui;

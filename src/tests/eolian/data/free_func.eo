@@ -6,17 +6,9 @@ struct @free(test_free) Named2 {
     field: int;
 }
 
-/* typedef */
-type Typedef1: int;
-type @free(def_free) Typedef2: int;
-
 /* opaque */
 struct Opaque1;
 struct @free(opaque_free) Opaque2;
-
-/* pointers */
-type Pointer1: ptr(char);
-type Pointer2: free(ptr(char), ptr_free);
 
 class Free_Func {
    methods {

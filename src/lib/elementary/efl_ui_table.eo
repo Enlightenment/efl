@@ -1,4 +1,4 @@
-class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
+class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
                    Efl.Ui.Direction
 {
    [[Efl UI table class]]

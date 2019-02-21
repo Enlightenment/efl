@@ -1,10 +1,10 @@
-class Efl.Ui.Image_Factory extends Efl.Ui.Caching_Factory
+class @beta Efl.Ui.Image_Factory extends Efl.Ui.Caching_Factory
 {
    [[Efl UI image factory class]]
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Factory.create;
-      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Property_Bind.property_bind;
    }
 }

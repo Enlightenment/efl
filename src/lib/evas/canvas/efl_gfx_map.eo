@@ -1,4 +1,4 @@
-mixin Efl.Gfx.Map requires Efl.Object
+mixin @beta Efl.Gfx.Map requires Efl.Object
 {
    [[Texture UV mapping for all objects (rotation, perspective, 3d, ...).
 

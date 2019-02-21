@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Util extends Efl.Object  {
+class @beta Efl.Ui.Focus.Util extends Efl.Object  {
    [[EFL UI Focus Util class]]
    methods {
       focus @class {

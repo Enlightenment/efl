@@ -18,3 +18,15 @@ eo_access = executable('eo_access',
 test('eo-access', eo_access,
   env : test_env
 )
+
+eo_access = executable('eo_access_dbg',
+  eo_access_src,
+  dependencies: [eo_dbg],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-access-dbg', eo_access,
+  env : test_env
+)

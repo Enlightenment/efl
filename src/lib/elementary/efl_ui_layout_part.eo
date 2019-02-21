@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Part extends Efl.Ui.Widget_Part implements Efl.Ui.Cursor
+class @beta Efl.Ui.Layout_Part extends Efl.Ui.Widget_Part implements Efl.Ui.Cursor
 {
    [[Elementary layout internal part class]]
    data: null;

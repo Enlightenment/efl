@@ -1,5 +1,4 @@
 #define EFL_CANVAS_OBJECT_PROTECTED
-#define EFL_CANVAS_OBJECT_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include "evas_common_private.h"
@@ -2675,6 +2674,7 @@ _efl_canvas_object_event_animation_set(Eo *eo_obj,
    if (!animation) return;
 
    event_anim = calloc(1, sizeof(Event_Animation));
+   EINA_SAFETY_ON_NULL_RETURN(event_anim);
 
    //Set callback for Hide event
    if (desc == EFL_GFX_ENTITY_EVENT_HIDE)

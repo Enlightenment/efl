@@ -47,7 +47,7 @@ struct Efl.Net.Dialer_Websocket_Closed_Reason {
     message: string; [[Textual closing reason message]]
 }
 
-class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dialer {
+class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dialer {
     [[WebSocket Dialer (Client).
 
       The WebSocket Protocol (https://tools.ietf.org/html/rfc6455) is

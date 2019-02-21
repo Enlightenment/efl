@@ -165,12 +165,11 @@ EFL_END_TEST
 EFL_START_TEST (elm_win_test_app_exit_on_windows_close)
 {
    Eo *win = win_add(NULL, "win", ELM_WIN_BASIC);
-   Eo *app = efl_app_main_get(EFL_APP_CLASS);
    Eina_Value val, *exit_val;
    int code;
 
    val = eina_value_int_init(66);
-   efl_ui_win_exit_on_all_windows_closed_set(win, &val);
+   efl_ui_win_exit_on_all_windows_closed_set(&val);
    efl_gfx_entity_visible_set(win, EINA_TRUE);
 
    Eina_Bool fail_flag = EINA_FALSE;
@@ -180,7 +179,7 @@ EFL_START_TEST (elm_win_test_app_exit_on_windows_close)
    exit_val = efl_loop_begin(efl_loop_get(win));
    ck_assert(eina_value_int_get(exit_val, &code));
    ck_assert_int_eq(code, 66);
-   efl_ui_win_exit_on_all_windows_closed_set(app, &EINA_VALUE_EMPTY);
+   efl_ui_win_exit_on_all_windows_closed_set(&EINA_VALUE_EMPTY);
 }
 EFL_END_TEST
 

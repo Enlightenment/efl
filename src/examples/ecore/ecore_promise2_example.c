@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT 1
 #include <Efl_Core.h>
 #include <stdlib.h>
 #include <errno.h>

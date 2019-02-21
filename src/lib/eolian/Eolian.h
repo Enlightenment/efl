@@ -2299,6 +2299,16 @@ EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 
 /*
+ * @brief Get whether a class is beta.
+ *
+ * @param[in] klass the class
+ * @return EINA_TRUE if the class has been marked as BETA
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_class_is_beta(const Eolian_Class *klass);
+
+/*
  * @brief Get the type of a type declaration.
  *
  * @param[in] tp the type declaration.

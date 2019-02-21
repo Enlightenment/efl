@@ -18,11 +18,11 @@ struct Efl.Ui.Image_Error
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Draggable,
+class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation,
-                 Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
+                 Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal
 {
    [[ Efl UI image class]]
@@ -118,7 +118,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Draggable.drag_target { get; set; }
-      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.View.model { get; set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_event;

@@ -66,6 +66,18 @@ _simple_obj_override_a_double_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS), 2 * a);
 }
 
+EAPI int test_class_beef_get(const Efl_Object *obj);
+
+EFL_FUNC_BODY_CONST(test_class_beef_get, int, 0)
+
+static int
+_simple_obj_override_beef_get(Eo *obj, void *class_data EINA_UNUSED)
+{
+   test_class_beef_get(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS));
+
+   return 1337;
+}
+
 EFL_START_TEST(efl_object_override_tests)
 {
 
@@ -105,7 +117,7 @@ EFL_START_TEST(efl_object_override_tests)
    /* Try introducing a new function */
    EFL_OPS_DEFINE(
             overrides3,
-            EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
+            EFL_OBJECT_OP_FUNC(test_class_beef_get, _simple_obj_override_beef_get));
    fail_if(efl_object_override(obj, &overrides3));
    fail_if(!efl_object_override(obj, NULL));
    fail_if(efl_object_override(obj, &overrides3));
@@ -472,7 +484,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_destructor, _man_des),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 EFL_START_TEST(eo_man_free)
@@ -1049,7 +1061,7 @@ _multi_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(resolve_a_print, _a_print),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 EFL_START_TEST(efl_func_resolve)
@@ -1215,7 +1227,7 @@ _add_failures_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(efl_finalize, _efl_add_failures_finalize),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 EFL_START_TEST(efl_add_failures)
@@ -1628,14 +1640,14 @@ static Eina_Bool
 _cast_inherit_class_initializer_1(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_1), );
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static Eina_Bool
 _cast_inherit_class_initializer_2(Efl_Class *klass)
 {
    EFL_OPS_DEFINE(ops, EFL_OBJECT_OP_FUNC(inherit_value, _inherit_value_2), );
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 EFL_START_TEST(efl_cast_test)
@@ -1794,7 +1806,12 @@ EFL_START_TEST(efl_object_size)
 {
    // This test is checking that we are not increasing the size of our object over time
    // Update this number only if you modified the class size on purpose
+
+#ifdef EO_DEBUG
+   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 164);
+#else
    ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 148);
+#endif
 }
 EFL_END_TEST
 

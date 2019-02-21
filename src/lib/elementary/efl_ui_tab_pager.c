@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_TAB_BAR_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"

@@ -1627,6 +1627,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus_common.h \
 	tests/elementary/efl_ui_test_focus.c \
 	tests/elementary/efl_ui_test_focus_sub.c \
+	tests/elementary/efl_ui_test_box.c \
 	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \

@@ -15,3 +15,15 @@ eo_children = executable('eo_children',
 test('eo-children', eo_children,
   env : test_env
 )
+
+eo_children = executable('eo_children_dbg',
+  eo_children_src,
+  dependencies: [eo_dbg],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-children-dbg', eo_children,
+  env : test_env
+)

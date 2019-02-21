@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
+class @beta Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
 {
    [[Efl alpha animation class]]
    eo_prefix: efl_animation_alpha;

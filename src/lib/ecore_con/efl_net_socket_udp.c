@@ -119,7 +119,7 @@ _efl_net_socket_udp_bind(Eo *o, Efl_Net_Socket_Udp_Data *pd)
    if (errno)
      {
         err = errno;
-        ERR("invalid port numer '%s': %s", bport, strerror(errno));
+        ERR("invalid port numer '%s': %s", bport, eina_error_msg_get(errno));
         goto error_bind;
      }
 

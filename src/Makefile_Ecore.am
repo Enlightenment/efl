@@ -49,7 +49,13 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_boolean_model.eo \
 	lib/ecore/efl_select_model.eo \
 	lib/ecore/efl_composite_model.eo \
-	lib/ecore/efl_view_model.eo
+	lib/ecore/efl_view_model.eo \
+	lib/ecore/efl_core_env.eo \
+	lib/ecore/efl_core_proc_env.eo \
+	lib/ecore/efl_core_command_line.eo
+
+ecore_test_eolian_files = \
+	tests/ecore/efl_app_test_cml.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -58,15 +64,20 @@ ecore_eolian_files = \
 ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
 ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
                  $(ecore_eolian_files_legacy:%.eo=%.eo.legacy.h)
+ecore_test_c = $(ecore_test_eolian_files:%.eo=%.eo.c)
+ecore_test_h = $(ecore_test_eolian_files:%.eo=%.eo.h)
 
 BUILT_SOURCES += \
                  $(ecore_eolian_c) \
-                 $(ecore_eolian_h)
+                 $(ecore_eolian_h) \
+                 $(ecore_test_c) \
+                 $(ecore_test_h)
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
 EXTRA_DIST2 += $(ecore_eolian_files)
+EXTRA_DIST2 += $(ecore_test_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 
@@ -98,6 +109,9 @@ lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
 lib/ecore/ecore_event_message.c \
 lib/ecore/ecore_event_message_handler.c \
+lib/ecore/efl_core_command_line.c \
+lib/ecore/efl_core_env.c \
+lib/ecore/efl_core_proc_env.c \
 lib/ecore/efl_app.c \
 lib/ecore/efl_loop.c \
 lib/ecore/efl_loop_consumer.c \
@@ -335,6 +349,8 @@ tests/ecore/efl_app_test_loop.c \
 tests/ecore/efl_app_test_loop_fd.c \
 tests/ecore/efl_app_test_loop_timer.c \
 tests/ecore/efl_app_test_promise.c \
+tests/ecore/efl_app_test_cml.c \
+tests/ecore/efl_app_test_env.c \
 tests/ecore/efl_app_suite.c \
 tests/ecore/efl_app_suite.h
 

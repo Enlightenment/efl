@@ -401,7 +401,7 @@ EAPI void efl_access_attributes_list_free(Eina_List *list)
 }
 
 EOLIAN void
-_efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
+_efl_access_object_event_emit(Eo *accessible, const Efl_Event_Description *event, void *event_info)
 {
    Eina_List *l;
    Efl_Access_Event_Handler *hdl;
@@ -437,7 +437,7 @@ _efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *a
 }
 
 EOLIAN Efl_Access_Event_Handler *
-_efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
+_efl_access_object_event_handler_add(Efl_Event_Cb cb, void *data)
 {
    Efl_Access_Event_Handler *ret = calloc(1, sizeof(Efl_Access_Event_Handler));
    if (!ret) return NULL;
@@ -451,7 +451,7 @@ _efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED
 }
 
 EOLIAN void
-_efl_access_object_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
+_efl_access_object_event_handler_del(Efl_Access_Event_Handler *handler)
 {
    Eina_List *l, *l2;
    Efl_Access_Event_Handler *hdl;
@@ -596,7 +596,7 @@ _efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Da
 }
 
 EOLIAN Eo*
-_efl_access_object_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_access_object_access_root_get(void)
 {
    if (!root)
      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());

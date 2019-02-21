@@ -14,7 +14,9 @@ EOAPI EFL_FUNC_BODYV(function_as_argument_call_cb, char *, NULL, EFL_FUNC_CALL(a
 static Eina_Bool
 _function_as_argument_class_initializer(Efl_Class *klass)
 {
-   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;
+   const Efl_Object_Ops *opsp = NULL;
+
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
 
 #ifndef FUNCTION_AS_ARGUMENT_EXTRA_OPS
 #define FUNCTION_AS_ARGUMENT_EXTRA_OPS
@@ -28,12 +30,7 @@ _function_as_argument_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-#ifdef FUNCTION_AS_ARGUMENT_EXTRA_CLASS_OPS
-   EFL_OPS_DEFINE(cops, FUNCTION_AS_ARGUMENT_EXTRA_CLASS_OPS);
-   copsp = &cops;
-#endif
-
-   return efl_class_functions_set(klass, opsp, copsp, NULL);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _function_as_argument_class_desc = {

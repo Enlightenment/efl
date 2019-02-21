@@ -1,4 +1,4 @@
-class Efl.Ui.Average_Model extends Efl.Ui.Exact_Model
+class @beta Efl.Ui.Average_Model extends Efl.Ui.Exact_Model
 {
    [[Class to be used to store object item size for List/Grid View.
 

@@ -59,7 +59,9 @@ static void __eolian_override_base_z_get(const Eo *obj EINA_UNUSED, Override_Dat
 static Eina_Bool
 _override_class_initializer(Efl_Class *klass)
 {
-   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;
+   const Efl_Object_Ops *opsp = NULL;
+
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
 
 #ifndef OVERRIDE_EXTRA_OPS
 #define OVERRIDE_EXTRA_OPS
@@ -81,12 +83,7 @@ _override_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-#ifdef OVERRIDE_EXTRA_CLASS_OPS
-   EFL_OPS_DEFINE(cops, OVERRIDE_EXTRA_CLASS_OPS);
-   copsp = &cops;
-#endif
-
-   return efl_class_functions_set(klass, opsp, copsp, NULL);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _override_class_desc = {

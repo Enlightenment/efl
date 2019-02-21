@@ -12,18 +12,17 @@
 
 #define MY_CLASS EFL_INPUT_KEY_CLASS
 
-EOLIAN static Efl_Input_Key *
-_efl_input_key_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
-                                            Eo *owner, void **priv)
+EOAPI Eo*
+efl_input_key_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Key_Data *ev;
    Efl_Input_Key *evt;
    Evas *evas;
 
-   evt = efl_input_event_instance_get(klass, owner);
+   evt = efl_input_event_instance_get(EFL_INPUT_KEY_CLASS, owner);
    if (!evt) return NULL;
 
-   ev = efl_data_scope_get(evt, klass);
+   ev = efl_data_scope_get(evt, EFL_INPUT_KEY_CLASS);
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
 
@@ -266,8 +265,5 @@ _efl_input_key_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Key_Data *pd)
 
 #define EFL_INPUT_KEY_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_key_efl_input_event_legacy_info_get)
-
-#define EFL_INPUT_KEY_EXTRA_CLASS_OPS \
-   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_key_efl_input_event_instance_get)
 
 #include "efl_input_key.eo.c"

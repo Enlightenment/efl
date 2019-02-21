@@ -68,7 +68,7 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(interface2_ab_sum_get2, _ab_sum_get2),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description class_desc = {

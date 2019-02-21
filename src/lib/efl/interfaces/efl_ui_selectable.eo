@@ -1,4 +1,4 @@
-interface Efl.Ui.Selectable
+interface @beta Efl.Ui.Selectable
 {
    [[Efl UI selectable interface]]
    event_prefix: efl_ui;

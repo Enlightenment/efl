@@ -68,8 +68,7 @@ _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
 }
 
 EOLIAN static char*
-_efl_text_markup_util_text_to_markup(Eo *class EINA_UNUSED,
-      void *_pd EINA_UNUSED, const char *text)
+_efl_text_markup_util_text_to_markup(const char *text)
 {
    Eina_Strbuf *sbuf;
    char *str = NULL;
@@ -491,8 +490,7 @@ _text_util_markup_to_text(const char *text)
 }
 
 static EOLIAN char*
-_efl_text_markup_util_markup_to_text(Eo *class EINA_UNUSED,
-      void *_pd EINA_UNUSED, const char *text)
+_efl_text_markup_util_markup_to_text(const char *text)
 {
    return _text_util_markup_to_text(text);
 }

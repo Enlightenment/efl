@@ -1,4 +1,3 @@
-#define EFL_GFX_FILTER_BETA
 #define EFL_GFX_SIZE_HINT_PROTECTED
 
 #include "edje_private.h"
@@ -3681,7 +3680,7 @@ _map_colors_interp(Edje_Calc_Params *p1, Edje_Calc_Params *p2,
 static void
 _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
                    Edje_Part_Description_Common *chosen_desc,
-                   Edje_Real_Part *ep, Evas_Object *mo)
+                   Edje_Real_Part *ep, Evas_Object *mo, Evas_Object *populate_obj)
 {
    Edje_Map_Color *color, **colors;
    int colors_cnt, i;
@@ -3691,7 +3690,7 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
    colors = pf->ext->map->colors;
    colors_cnt = pf->ext->map->colors_count;
 
-   evas_map_util_points_populate_from_object(map, ep->object);
+   evas_map_util_points_populate_from_object(map, populate_obj ?: ep->object);
 
    if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
        ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
@@ -5187,10 +5186,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         if (ep->part->type != EDJE_PART_TYPE_SPACER)
           {
              Evas_Object *map_obj;
+             Evas_Object *cursor_objs[EDJE_ENTRY_NUM_CURSOR_OBJS];
+             int c = 0, num_cursors = 0;
 
              /* Apply map to smart obj holding nested parts */
              if (ep->nested_smart) map_obj = ep->nested_smart;
              else map_obj = mo;
+             if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+               num_cursors = _edje_entry_real_part_cursor_objs_get(ep, cursor_objs);
 
              if (chosen_desc->map.on)
                {
@@ -5200,12 +5203,21 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   // create map and populate with part geometry
                   if (!map) map = evas_map_new(4);
 
-                  _edje_map_prop_set(map, pf, chosen_desc, ep, mo);
+                  _edje_map_prop_set(map, pf, chosen_desc, ep, mo, NULL);
 
                   if (map_obj)
                     {
                        evas_object_map_set(map_obj, map);
                        evas_object_map_enable_set(map_obj, EINA_TRUE);
+                       if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                         {
+                            for (c = 0; c < num_cursors; c++)
+                              {
+                                 _edje_map_prop_set(map, pf, chosen_desc, ep, mo, cursor_objs[c]);
+                                 evas_object_map_set(cursor_objs[c], map);
+                                 evas_object_map_enable_set(cursor_objs[c], EINA_TRUE);
+                              }
+                         }
                     }
                }
              else
@@ -5219,6 +5231,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
                             evas_object_map_enable_set(mo, EINA_FALSE);
                             evas_object_map_set(mo, NULL);
+                            if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
+                              {
+                                 for (c = 0; c < num_cursors; c++)
+                                   {
+                                      evas_object_map_enable_set(cursor_objs[c], EINA_FALSE);
+                                      evas_object_map_set(cursor_objs[c], NULL);
+                                   }
+                              }
 #ifdef HAVE_EPHYSICS
                          }
 #endif

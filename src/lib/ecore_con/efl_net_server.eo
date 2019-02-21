@@ -1,4 +1,4 @@
-interface Efl.Net.Server {
+interface @beta Efl.Net.Server {
     [[The basic server interface.
 
       This will start serving and accepting clients once @.serve is

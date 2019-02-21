@@ -1,4 +1,4 @@
-class Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
+class @beta Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
                         Efl.Gfx.Image_Load_Controller, Efl.Gfx.Frame_Controller,
                         Efl.File
 {

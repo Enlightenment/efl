@@ -201,7 +201,7 @@ efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *
         int r = snprintf(buf, buflen, "unnamed:" SOCKET_FMT, fd);
         if (r < 0)
           {
-             ERR("snprintf(): %s", strerror(errno));
+             ERR("snprintf(): %s", eina_error_msg_get(errno));
              return EINA_FALSE;
           }
         else if ((size_t)r > buflen)
@@ -330,7 +330,7 @@ efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
    if (!inet_ntop(addr->sa_family, mem, p, sizeof(p)))
      {
         ERR("inet_ntop(%d, %p, %p, %zd): %s",
-            addr->sa_family, mem, p, sizeof(p), strerror(errno));
+            addr->sa_family, mem, p, sizeof(p), eina_error_msg_get(errno));
         return EINA_FALSE;
      }
 
@@ -341,7 +341,7 @@ efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
 
    if (r < 0)
      {
-        ERR("could not snprintf(): %s", strerror(errno));
+        ERR("could not snprintf(): %s", eina_error_msg_get(errno));
         return EINA_FALSE;
      }
    else if ((size_t)r > buflen)

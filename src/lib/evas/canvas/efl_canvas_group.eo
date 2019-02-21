@@ -1,4 +1,4 @@
-class Efl.Canvas.Group extends Efl.Canvas.Object
+class @beta Efl.Canvas.Group extends Efl.Canvas.Object
 {
    [[A group object is a container for other canvas objects. Its children
      move along their parent and are often clipped with a common clipper.

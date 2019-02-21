@@ -1,6 +1,6 @@
 import efl_ui_selection_types;
 
-mixin Efl.Ui.Selection {
+mixin @beta Efl.Ui.Selection {
    [[Efl Ui Selection class]]
    data: null;
    methods {

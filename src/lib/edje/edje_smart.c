@@ -1,5 +1,4 @@
 #define EFL_CANVAS_GROUP_PROTECTED
-#define EFL_CANVAS_GROUP_BETA
 #define EFL_PART_PROTECTED
 
 #include "edje_private.h"

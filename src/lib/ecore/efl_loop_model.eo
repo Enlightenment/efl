@@ -1,4 +1,4 @@
-abstract Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
+abstract @beta Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
 {
    data: null;
    implements {

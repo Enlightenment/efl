@@ -1,4 +1,4 @@
-interface Efl.Ui.Menu {
+interface @beta Efl.Ui.Menu {
    [[Efl UI menu interface]]
    legacy_prefix: null;
    methods {

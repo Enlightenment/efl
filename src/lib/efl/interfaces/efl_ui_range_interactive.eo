@@ -1,4 +1,4 @@
-interface Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
+interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
 {
    [[Interface that extends the normal displaying properties with usage properties.
 

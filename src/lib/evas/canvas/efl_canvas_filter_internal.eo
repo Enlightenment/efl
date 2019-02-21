@@ -41,7 +41,7 @@ struct Efl.Canvas.Filter.State
    pos: double; [[Position]]
 }
 
-mixin Efl.Canvas.Filter.Internal requires Efl.Object extends Efl.Gfx.Filter
+mixin @beta Efl.Canvas.Filter.Internal requires Efl.Object extends Efl.Gfx.Filter
 {
    [[Evas internal implementation of filters.]]
 

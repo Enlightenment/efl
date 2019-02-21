@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Container_Model extends Efl.Loop_Model
+class @beta Efl.Container_Model extends Efl.Loop_Model
 {
    [[
      Class used to create data models from Eina containers.

@@ -1,6 +1,6 @@
 import efl_object;
 
-interface Efl.Part
+interface @beta Efl.Part
 {
    [[Interface for objects supporting named parts.
 

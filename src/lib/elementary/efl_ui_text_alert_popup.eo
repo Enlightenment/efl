@@ -1,6 +1,6 @@
 import eina_types;
 
-class Efl.Ui.Text_Alert_Popup extends Efl.Ui.Alert_Popup implements Efl.Text
+class @beta Efl.Ui.Text_Alert_Popup extends Efl.Ui.Alert_Popup implements Efl.Text
 {
    [[EFL UI Text Alert Popup class]]
    methods {

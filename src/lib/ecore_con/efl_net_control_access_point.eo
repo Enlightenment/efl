@@ -74,7 +74,7 @@ enum Efl.Net.Control.Access_Point_Proxy_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy.]]
 }
 
-class Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
+class @beta Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
     [[An access point for network connectivity.
 
       The @Efl.Net.Control.Manager is composed of multiple technologies, each

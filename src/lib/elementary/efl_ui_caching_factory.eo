@@ -1,4 +1,4 @@
-class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
+class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
 {
    [[Efl Ui Factory that provides object caching.
 
@@ -36,7 +36,7 @@ class Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
    implements {
       Efl.Ui.Factory.create;
       Efl.Ui.Factory.release;
-      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Widget_Factory.item_class { get; set; }
       Efl.Object.invalidate;
       Efl.Object.parent { set; }

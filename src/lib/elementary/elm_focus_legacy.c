@@ -110,7 +110,7 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
    MAPPING()
    #undef MAP
-   dir = efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS, dir);
+   dir = efl_ui_focus_util_direction_complement(dir);
    #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
    MAPPING()
    #undef MAP
@@ -218,7 +218,7 @@ elm_object_focus_next(Evas_Object        *obj,
    top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(top, EFL_UI_WIN_CLASS));
 
-   manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
+   manager_top = efl_ui_focus_util_active_manager(obj);
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
    if (elm_widget_is(logical))
@@ -255,7 +255,7 @@ elm_object_focus_next(Evas_Object        *obj,
 
         if (legacy_target)
           {
-             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
+             efl_ui_focus_util_focus(legacy_target);
              if (elm_object_focused_object_get(top) == legacy_target)
                {
                   legacy_focus_move = EINA_TRUE;
@@ -289,7 +289,7 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
    MAPPING()
    #undef MAP
 
-   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, top), dir, NULL, EINA_FALSE);
+   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(top), dir, NULL, EINA_FALSE);
 }
 
 EAPI Elm_Object_Item *
@@ -364,7 +364,7 @@ elm_object_focus_set(Evas_Object *obj,
    else if (elm_widget_is(obj))
      {
         if (focus)
-          efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+          efl_ui_focus_util_focus(obj);
         else
           {
              if (efl_ui_focus_manager_focus_get(efl_ui_focus_object_focus_manager_get(obj)) == obj)

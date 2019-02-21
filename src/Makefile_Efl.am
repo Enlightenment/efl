@@ -64,8 +64,9 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_ui_range_display.eo \
       lib/efl/interfaces/efl_ui_range_interactive.eo \
       lib/efl/interfaces/efl_ui_view.eo \
-      lib/efl/interfaces/efl_ui_model_connect.eo \
+      lib/efl/interfaces/efl_ui_property_bind.eo \
       lib/efl/interfaces/efl_ui_factory.eo \
+      lib/efl/interfaces/efl_ui_factory_bind.eo \
       lib/efl/interfaces/efl_screen.eo \
       lib/efl/interfaces/efl_io_closer.eo \
       lib/efl/interfaces/efl_io_positioner.eo \

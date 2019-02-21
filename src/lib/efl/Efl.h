@@ -69,8 +69,6 @@ typedef struct tm Efl_Time;
 typedef struct _Efl_Text_Cursor_Cursor Efl_Text_Cursor_Cursor;
 typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
-#ifdef EFL_BETA_API_SUPPORT
-
 #include "interfaces/efl_types.eot.h"
 
 #include <Efl_MVVM_Common.h>
@@ -149,8 +147,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_canvas_scene.eo.h"
 #include "interfaces/efl_canvas_pointer.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
-#include "interfaces/efl_ui_model_connect.eo.h"
+#include "interfaces/efl_ui_property_bind.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
+#include "interfaces/efl_ui_factory_bind.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
 #include "interfaces/efl_cached_item.eo.h"
 
@@ -185,6 +184,8 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup.eo.h"
 #include "interfaces/efl_text_markup_interactive.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+
+#ifdef EFL_BETA_API_SUPPORT
 
 EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 

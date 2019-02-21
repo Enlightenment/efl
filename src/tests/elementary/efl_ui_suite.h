@@ -19,6 +19,7 @@
     ck_assert_str_eq(expected, actual);         \
   }
 
+void efl_ui_test_box(TCase *tc);
 void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
 void efl_ui_test_image_zoomable(TCase *tc);

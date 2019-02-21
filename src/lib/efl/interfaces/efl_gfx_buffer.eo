@@ -12,7 +12,7 @@ enum Efl.Gfx.Buffer_Access_Mode {
 
 /* FIXME: YUV and other planar formats are not properly handled in this API! */
 
-interface Efl.Gfx.Buffer
+interface @beta Efl.Gfx.Buffer
 {
    [[Common APIs for all objects representing images and 2D pixel buffers.]]
 

@@ -1,7 +1,7 @@
 import eina_types;
 import efl_gfx_types;
 
-mixin Efl.File {
+mixin @beta Efl.File {
    [[Efl file interface]]
    methods {
       @property load_error {

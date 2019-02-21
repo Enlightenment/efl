@@ -1,4 +1,4 @@
-class Efl.Io.Stderr extends Efl.Loop_Fd implements Efl.Io.Writer_Fd {
+class @beta Efl.Io.Stderr extends Efl.Loop_Fd implements Efl.Io.Writer_Fd {
     [[Application's standard error (stderr).
 
       @since 1.19

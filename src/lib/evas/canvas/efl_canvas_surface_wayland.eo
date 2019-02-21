@@ -1,4 +1,4 @@
-class Efl.Canvas.Surface_Wayland extends Efl.Canvas.Surface
+class @beta Efl.Canvas.Surface_Wayland extends Efl.Canvas.Surface
 {
    [[Native Wayland surface for Efl canvas]]
 

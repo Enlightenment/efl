@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Gradient
+interface @beta Efl.Gfx.Gradient
 {
    [[Efl graphics gradient interface]]
    eo_prefix: efl_gfx_gradient;

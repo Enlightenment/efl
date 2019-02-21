@@ -1,20 +1,20 @@
 import efl_input_device;
 import efl_gfx_types;
 
-interface Efl.Canvas.Scene
+interface @beta Efl.Canvas.Scene
 {
-   [[Common interface for window and some internal classes in EFL.]]
+   [[Interface containing basic canvas-related methods and events.]]
    methods {
       @property image_max_size {
          get {
-            [[Get the maximum image size evas can possibly handle.
+            [[Get the maximum image size the canvas can possibly handle.
 
               This function returns the largest image or surface size that
-              evas can handle in pixels, and if there is one, returns $true.
+              the canvas can handle in pixels, and if there is one, returns $true.
               It returns $false if no extra constraint on maximum image
-              size exists. You still should check the return values of
-              $maxw and $maxh as there may still be a limit, just a
-              much higher one.
+              size exists.
+
+              The default limit is 65535x65535.
 
             ]]
             return: bool; [[$true on success, $false otherwise]]
@@ -38,17 +38,15 @@ interface Efl.Canvas.Scene
          }
       }
       objects_at_xy_get {
-         [[Retrieve a list of objects lying over a given position in
-           a canvas.
+         [[Retrieve a list of objects at a given position in a canvas.
 
            This function will traverse all the layers of the given canvas,
            from top to bottom, querying for objects with areas covering the
-           given position. The user can remove from query objects which are
+           given position. The user can exclude from the query objects which are
            hidden and/or which are set to pass events.
 
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
+           Warning: This function will only evaluate top-level objects; child
+           or "sub" objects will be skipped.
          ]]
          return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[
             The list of objects that are over the given position in $e.
@@ -71,14 +69,13 @@ interface Efl.Canvas.Scene
 
            This function will traverse all the layers of the given canvas,
            from top to bottom, querying for objects with areas covering the
-           given position. The user can remove from the query
-           objects which are hidden and/or which are set to pass events.
+           given position. The user can exclude from the query objects which are
+           hidden and/or which are set to pass events.
 
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
+           Warning: This function will only evaluate top-level objects; child
+           or "sub" objects will be skipped.
          ]]
-         return: Efl.Gfx.Entity @warn_unused; [[The Evas object that is over all other objects at the given position.]]
+         return: Efl.Gfx.Entity @warn_unused; [[The canvas object that is over all other objects at the given position.]]
          params {
             @in pos: Eina.Position2D; [[The pixel position.]]
             @in include_pass_events_objects: bool; [[
@@ -92,18 +89,16 @@ interface Efl.Canvas.Scene
          }
       }
       objects_in_rectangle_get {
-         [[Retrieve a list of objects lying over a given
-           rectangular region in a canvas.
+         [[Retrieve a list of objects overlapping a given rectangular region in a canvas.
 
            This function will traverse all the layers of the given canvas,
            from top to bottom, querying for objects with areas overlapping
-           with the given rectangular region inside $e. The user can remove
+           with the given rectangular region. The user can exclude
            from the query objects which are hidden and/or which are set to
            pass events.
 
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
+           Warning: This function will only evaluate top-level objects; child
+           or "sub" objects will be skipped.
          ]]
          return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to objects]]
          params {
@@ -119,18 +114,17 @@ interface Efl.Canvas.Scene
          }
       }
       object_top_in_rectangle_get @const {
-         [[Retrieve the Evas object stacked at the top of a given
+         [[Retrieve the canvas object stacked at the top of a given
            rectangular region in a canvas
 
            This function will traverse all the layers of the given canvas,
            from top to bottom, querying for objects with areas overlapping
-           with the given rectangular region inside $e. The user can remove
+           with the given rectangular region. The user can exclude
            from the query objects which are hidden and/or which are set to
            pass events.
 
-           Warning: This function will skip objects parented by smart
-           objects, acting only on the ones at the "top level", with
-           regard to object parenting.
+           Warning: This function will only evaluate top-level objects; child
+           or "sub" objects will be skipped.
          ]]
          return: Efl.Gfx.Entity @warn_unused; [[
             The object that is over all other objects at the given
@@ -149,7 +143,11 @@ interface Efl.Canvas.Scene
          }
       }
       seats {
-         [[Iterate over the input device seats.
+         [[Iterate over the available input device seats for the canvas.
+
+           A "seat" is the term used for a group of input devices, typically including
+           a pointer and a keyboard. A seat object is the parent of the individual input
+           devices.
 
            @since 1.20
          ]]
@@ -175,7 +173,11 @@ interface Efl.Canvas.Scene
          }
       }
       @property seat {
-         [[A seat attached to this canvas, found by id.
+         [[Get a seat attached to this canvas using the seat's id property.
+
+           Seats are associated with an arbitrary integer id. The id is not a
+           persistent value and should never be hardcoded, as it may change between
+           runs of an application depending on the environment.
 
            See also @.device to find a seat by name instead of by id.
          ]]

@@ -182,8 +182,6 @@ typedef Eo Efl_Class;
 typedef Eo Efl_Object;
 #define _EFL_OBJECT_EO_CLASS_TYPE
 
-#ifdef EFL_BETA_API_SUPPORT
-
 /**
  * @var _efl_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -897,7 +895,7 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
  * efl_property_reflection_set() or efl_property_reflection_get() is called.
  * @see #EFL_DEFINE_CLASS
  */
-EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops, const Efl_Object_Property_Reflection_Ops *reflection_table);
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table);
 
 /**
  * @brief Override Eo functions of this object.
@@ -1009,6 +1007,7 @@ EAPI Eina_Bool efl_object_init(void);
  */
 EAPI Eina_Bool efl_object_shutdown(void);
 
+#ifdef EFL_BETA_API_SUPPORT
 
 /**
  * The virtual allocation domain where an object lives
@@ -1192,8 +1191,7 @@ EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
  */
 EAPI Eina_Bool        efl_compatible(const Eo *obj, const Eo *obj_target);
 
-
-
+#endif
 
 // to fetch internal function and object data at once
 typedef struct _Efl_Object_Op_Call_Data
@@ -2233,6 +2231,7 @@ eina_value_object_get(Eina_Value *v)
    return r;
 }
 
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Get if the object is in its main lifetime.
  * @param obj the object to check
@@ -2245,6 +2244,7 @@ efl_alive_get(const Eo *obj)
 {
   return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
 }
+#endif /* EFL_BETA_API_SUPPORT */
 
 /**
  * @brief Event triggered when a callback was added to the object
@@ -2293,7 +2293,6 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
  * @}
  */
 
-#endif
 
 #ifdef __cplusplus
 }

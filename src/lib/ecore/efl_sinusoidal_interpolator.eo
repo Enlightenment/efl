@@ -1,4 +1,4 @@
-class Efl.Sinusoidal_Interpolator extends Efl.Object implements Efl.Interpolator
+class @beta Efl.Sinusoidal_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Efl sinusoidal interpolator class
 

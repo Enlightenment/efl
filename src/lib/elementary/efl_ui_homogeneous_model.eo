@@ -1,4 +1,4 @@
-class Efl.Ui.Homogeneous_Model extends Efl.Ui.Size_Model
+class @beta Efl.Ui.Homogeneous_Model extends Efl.Ui.Size_Model
 {
    [[Class to be used to store object item size for List/Grid View.
 

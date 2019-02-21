@@ -1,4 +1,4 @@
-class Efl.Spring_Interpolator extends Efl.Object implements Efl.Interpolator
+class @beta Efl.Spring_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Efl spring interpolator class]]
    data: Efl_Spring_Interpolator_Data;

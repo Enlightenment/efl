@@ -1,7 +1,7 @@
 const Efl.Gfx.Stack_Layer_Min: short = -32768; [[bottom-most layer number]]
 const Efl.Gfx.Stack_Layer_Max: short = 32767;  [[top-most layer number]]
 
-interface Efl.Gfx.Stack
+interface @beta Efl.Gfx.Stack
 {
    [[Efl graphics stack interface]]
    event_prefix: efl_gfx_entity;
@@ -84,13 +84,13 @@ interface Efl.Gfx.Stack
             @in below: Efl.Gfx.Stack @nonull; [[The object below which to stack]]
          }
       }
-      raise {
+      raise_to_top {
          [[Raise $obj to the top of its layer.
 
            $obj will, then, be the highest one in the layer it belongs
            to. Object on other layers won't get touched.
 
-           See also @.stack_above(), @.stack_below() and @.lower()]]
+           See also @.stack_above(), @.stack_below() and @.lower_to_bottom()]]
 
       }
       stack_above {
@@ -118,13 +118,13 @@ interface Efl.Gfx.Stack
             @in above: Efl.Gfx.Stack @nonull; [[The object above which to stack]]
          }
       }
-      lower {
+      lower_to_bottom {
          [[Lower $obj to the bottom of its layer.
 
            $obj will, then, be the lowest one in the layer it belongs
            to. Objects on other layers won't get touched.
 
-           See also @.stack_above(), @.stack_below() and @.raise() ]]
+           See also @.stack_above(), @.stack_below() and @.raise_to_top() ]]
 
       }
    }

@@ -1,6 +1,6 @@
 import eina_types;
 
-mixin Efl.Access.Component extends Efl.Gfx.Entity, Efl.Gfx.Stack
+mixin @beta Efl.Access.Component extends Efl.Gfx.Entity, Efl.Gfx.Stack
 {
    [[AT-SPI component mixin]]
    data: null;

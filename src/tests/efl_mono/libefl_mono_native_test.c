@@ -3827,24 +3827,15 @@ Dummy_MyInt _dummy_test_object_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED D
 /* Class Properties */
 static int _dummy_test_object_klass_prop = 0;
 
-int _dummy_test_object_klass_prop_get(const Eo *klass, EINA_UNUSED void *pd)
+int _dummy_test_object_klass_prop_get(void)
 {
-    EINA_LOG_ERR("FAIL on GET");
-   if (klass != dummy_test_object_class_get())
-     {
-        eina_error_set(EINVAL);
-        return -1;
-     }
+   EINA_LOG_ERR("FAIL on GET");
    return _dummy_test_object_klass_prop;
 }
 
-void _dummy_test_object_klass_prop_set(Eo *klass, EINA_UNUSED void *pd, int value)
+void _dummy_test_object_klass_prop_set(int value)
 {
-    EINA_LOG_ERR("FAIL on SET");
-   if (klass != dummy_test_object_class_get())
-     {
-        eina_error_set(EINVAL);
-     }
+   EINA_LOG_ERR("FAIL on SET");
    _dummy_test_object_klass_prop = value;
 }
 
@@ -3858,7 +3849,7 @@ Eina_Future* _dummy_test_object_get_future(EINA_UNUSED Eo *obj, Dummy_Test_Objec
 {
     if (pd->promise == NULL)
       {
-         Eo *loop = efl_app_main_get(EFL_APP_CLASS);
+         Eo *loop = efl_app_main_get();
          Eina_Future_Scheduler *scheduler = efl_loop_future_scheduler_get(loop);
          pd->promise = eina_promise_new(scheduler, _promise_cancelled, pd);
       }
@@ -3989,14 +3980,14 @@ _dummy_child_class_destructor(Efl_Class *klass)
 }
 
 // Inherit
-int _dummy_inherit_helper_receive_dummy_and_call_int_out(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+int _dummy_inherit_helper_receive_dummy_and_call_int_out(Dummy_Test_Object *x)
 {
   int v = 8;
   dummy_test_object_int_out (x, 5, &v);
   return v;
 }
 
-const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Test_Object *x)
 {
   return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
 }

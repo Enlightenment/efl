@@ -25,3 +25,14 @@ eo_mixin = executable('eo_mixin',
 test('eo-mixins', eo_mixin,
   env : test_env
 )
+eo_mixin = executable('eo_mixin_dbg',
+  eo_mixin_src,
+  dependencies: [eo_dbg],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-mixins-dbg', eo_mixin,
+  env : test_env
+)

@@ -196,7 +196,7 @@ _efl_net_ssl_ctx_check_errors();
 
         if (stat(path, &st) != 0)
           {
-             ERR("ssl_ctx=%p could not load certificate authorities from '%s': %s", ctx, path, strerror(errno));
+             ERR("ssl_ctx=%p could not load certificate authorities from '%s': %s", ctx, path, eina_error_msg_get(errno));
              eina_stringshare_del(path);
              *cfg.certificate_authorities = eina_list_remove_list(*cfg.certificate_authorities, n);
              continue;

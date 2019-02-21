@@ -1,4 +1,4 @@
-interface Efl.Playable
+interface @beta Efl.Playable
 {
    [[Efl media playable interface]]
    methods {

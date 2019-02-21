@@ -1,4 +1,4 @@
-interface Efl.Gfx.Blur
+interface @beta Efl.Gfx.Blur
 {
    [[A simple API to apply blur effects.
 

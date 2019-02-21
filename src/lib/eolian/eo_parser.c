@@ -404,14 +404,14 @@ parse_expr(Eo_Lexer *ls)
    return parse_expr_bin(ls, 1);
 }
 
-static Eolian_Type *parse_type_void(Eo_Lexer *ls);
+static Eolian_Type *parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr);
 
 static Eolian_Type *
-parse_type(Eo_Lexer *ls)
+parse_type(Eo_Lexer *ls, Eina_Bool allow_ptr)
 {
    Eolian_Type *ret;
    eo_lexer_context_push(ls);
-   ret = parse_type_void(ls);
+   ret = parse_type_void(ls, allow_ptr);
    if (ret->type == EOLIAN_TYPE_VOID)
      {
         eo_lexer_context_restore(ls);
@@ -464,7 +464,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         eolian_object_ref(&fdef->base);
         eo_lexer_get(ls);
         check_next(ls, ':');
-        tp = parse_type(ls);
+        tp = parse_type(ls, EINA_TRUE);
         FILL_BASE(fdef->base, ls, fline, fcol, STRUCT_FIELD);
         fdef->type = eo_lexer_type_release(ls, tp);
         fdef->base.name = eina_stringshare_ref(fname);
@@ -593,42 +593,8 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    return def;
 }
 
-static void
-parse_struct_attrs(Eo_Lexer *ls, Eina_Bool is_enum, Eina_Bool *is_extern,
-                   const char **freefunc)
-{
-   Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
-   *freefunc = NULL;
-   *is_extern = EINA_FALSE;
-   for (;;) switch (ls->t.kw)
-     {
-      case KW_at_extern:
-        CASE_LOCK(ls, extern, "@extern qualifier")
-        eo_lexer_get(ls);
-        *is_extern = EINA_TRUE;
-        break;
-      case KW_at_free:
-        {
-           CASE_LOCK(ls, free, "@free qualifier")
-           if (is_enum)
-             eo_lexer_syntax_error(ls, "enums cannot have @free");
-           eo_lexer_get(ls);
-           int pline = ls->line_number, pcol = ls->column;
-           check_next(ls, '(');
-           check(ls, TOK_VALUE);
-           *freefunc = eina_stringshare_add(ls->t.value.s);
-           eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_stringshare_del), (void *)*freefunc);
-           eo_lexer_get(ls);
-           check_match(ls, ')', '(', pline, pcol);
-           break;
-        }
-      default:
-        return;
-     }
-}
-
 static Eolian_Type *
-parse_type_void(Eo_Lexer *ls)
+parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
 {
    Eolian_Type *def;
    Eina_Strbuf *buf;
@@ -642,7 +608,7 @@ parse_type_void(Eo_Lexer *ls)
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls);
+           def = parse_type_void(ls, allow_ptr);
            FILL_BASE(def->base, ls, line, col, TYPE);
            def->is_const = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -650,12 +616,14 @@ parse_type_void(Eo_Lexer *ls)
         }
       case KW_ptr:
         {
+           if (!allow_ptr)
+             break;
            int pline, pcol;
            eo_lexer_get(ls);
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls);
+           def = parse_type_void(ls, EINA_FALSE);
            FILL_BASE(def->base, ls, line, col, TYPE);
            def->is_ptr = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -668,7 +636,7 @@ parse_type_void(Eo_Lexer *ls)
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls);
+           def = parse_type_void(ls, allow_ptr);
            FILL_BASE(def->base, ls, line, col, TYPE);
            def->legacy = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -681,7 +649,7 @@ parse_type_void(Eo_Lexer *ls)
            pline = ls->line_number;
            pcolumn = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls);
+           def = parse_type_void(ls, allow_ptr);
            check_next(ls, ',');
            check(ls, TOK_VALUE);
            def->freefunc = eina_stringshare_ref(ls->t.value.s);
@@ -721,16 +689,16 @@ parse_type_void(Eo_Lexer *ls)
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');
                   if (tpid == KW_future)
-                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls));
+                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
                   else
-                    def->base_type = eo_lexer_type_release(ls, parse_type(ls));
+                    def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
                   if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
                     eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type =
-                         eo_lexer_type_release(ls, parse_type(ls));
+                         eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
                        if ((def->base_type->next_type->owned = (ls->t.kw == KW_at_owned)))
                          eo_lexer_get(ls);
                     }
@@ -776,18 +744,14 @@ static Eolian_Typedecl *
 parse_typedef(Eo_Lexer *ls)
 {
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
-   Eina_Bool has_extern;
-   const char *freefunc;
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
-   parse_struct_attrs(ls, EINA_FALSE, &has_extern, &freefunc);
-   if (freefunc)
+   if (ls->t.kw == KW_at_extern)
      {
-        def->freefunc = eina_stringshare_ref(freefunc);
-        eo_lexer_dtor_pop(ls);
+        def->is_extern = EINA_TRUE;
+        eo_lexer_get(ls);
      }
    def->type = EOLIAN_TYPEDECL_ALIAS;
-   def->is_extern = has_extern;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
    eo_lexer_context_push(ls);
@@ -802,7 +766,7 @@ parse_typedef(Eo_Lexer *ls)
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = eo_lexer_type_release(ls, parse_type(ls));
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_FALSE));
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -835,7 +799,7 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = eo_lexer_type_release(ls, parse_type(ls));
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
    /* constants are required to have a value */
    if (!global)
      check(ls, '=');
@@ -870,9 +834,9 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
    eo_lexer_get(ls);
    check_next(ls, ':');
    if (allow_void)
-     ret->type = parse_type_void(ls);
+     ret->type = parse_type_void(ls, EINA_TRUE);
    else
-     ret->type = parse_type(ls);
+     ret->type = parse_type(ls, EINA_TRUE);
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->warn_unused = EINA_FALSE;
@@ -940,9 +904,9 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    eo_lexer_get(ls);
    check_next(ls, ':');
    if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
-     par->type = eo_lexer_type_release(ls, parse_type_void(ls));
+     par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
    else
-     par->type = eo_lexer_type_release(ls, parse_type(ls));
+     par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
    if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
@@ -1775,7 +1739,7 @@ parse_event(Eo_Lexer *ls)
      }
 end:
    check_next(ls, ':');
-   ev->type = eo_lexer_type_release(ls, parse_type_void(ls));
+   ev->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
    ev->type->owned = has_owned;
    check(ls, ';');
    eo_lexer_get(ls);
@@ -2093,6 +2057,11 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    eo_lexer_get(ls);
    ls->klass->type = type;
    eo_lexer_context_push(ls);
+   if (ls->t.kw == KW_at_beta)
+     {
+        ls->klass->is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    parse_name(ls, buf);
    bnm = eina_stringshare_ref(ls->filename);
    fnm = database_class_to_filename(eina_strbuf_string_get(buf));
@@ -2239,11 +2208,37 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            Eina_Bool is_enum = (ls->t.kw == KW_enum);
            const char *name;
            int line, col;
-           Eina_Bool has_extern;
-           const char *freefunc;
+           const char *freefunc = NULL;
            Eina_Strbuf *buf;
            eo_lexer_get(ls);
-           parse_struct_attrs(ls, is_enum, &has_extern, &freefunc);
+           Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
+           for (;;) switch (ls->t.kw)
+             {
+              case KW_at_extern:
+                CASE_LOCK(ls, extern, "@extern qualifier")
+                eo_lexer_get(ls);
+                break;
+              case KW_at_free:
+                {
+                   if (is_enum)
+                     goto postparams;
+                   CASE_LOCK(ls, free, "@free qualifier")
+                   if (is_enum)
+                     eo_lexer_syntax_error(ls, "enums cannot have @free");
+                   eo_lexer_get(ls);
+                   int pline = ls->line_number, pcol = ls->column;
+                   check_next(ls, '(');
+                   check(ls, TOK_VALUE);
+                   freefunc = eina_stringshare_add(ls->t.value.s);
+                   eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_stringshare_del), (void *)freefunc);
+                   eo_lexer_get(ls);
+                   check_match(ls, ')', '(', pline, pcol);
+                   break;
+                }
+              default:
+                goto postparams;
+             }
+postparams:
            buf = eina_strbuf_new();
            eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
            eo_lexer_context_push(ls);

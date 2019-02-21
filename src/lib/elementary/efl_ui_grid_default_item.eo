@@ -1,5 +1,5 @@
 
-class Efl.Ui.Grid_Default_Item extends Efl.Ui.Grid_Item implements
+class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Grid_Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
                                 Efl.Ui.L10n,

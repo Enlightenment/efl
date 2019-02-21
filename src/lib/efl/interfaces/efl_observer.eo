@@ -1,4 +1,4 @@
-interface Efl.Observer {
+interface @beta Efl.Observer {
    [[Efl observer interface]]
    methods {
       update {

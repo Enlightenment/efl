@@ -28,7 +28,7 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
     element : Efl.Ui.Focus.Object; [[Focus object element]]
 }
 
-interface Efl.Ui.Focus.Manager {
+interface @beta Efl.Ui.Focus.Manager {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get a other registered object into each

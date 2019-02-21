@@ -644,7 +644,7 @@ void                 _elm_config_sub_init(void);
 void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
 Eina_Bool            _elm_config_save(Elm_Config *cfg, const char *profile);
-void                 _elm_config_reload(Eina_Bool on_flush);
+void                 _elm_config_reload(void);
 size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
                                                    const char *fmt, ...)
                                                    EINA_PRINTF(3, 4);
@@ -784,7 +784,7 @@ void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Da
 EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
 EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
 EOAPI void			 efl_page_transition_update(Eo *obj, double pos);
-EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, double move);
+EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, int diff);
 EOAPI void			 efl_page_transition_pack_end(Eo *obj, Efl_Gfx_Entity *subobj);
 EOAPI Eina_Bool		 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
 

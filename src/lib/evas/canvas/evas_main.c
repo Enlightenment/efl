@@ -1,4 +1,3 @@
-#define EVAS_CANVAS_BETA
 #define EFL_INPUT_EVENT_PROTECTED
 
 #include "evas_common_private.h"
@@ -760,7 +759,7 @@ _evas_canvas_focus_inout_dispatch(Eo *eo_e, Efl_Input_Device *seat,
    Efl_Input_Focus_Data *ev_data;
    Efl_Input_Focus *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_FOCUS_CLASS, eo_e, (void **) &ev_data);
+   evt = efl_input_focus_instance_get(eo_e, (void **) &ev_data);
    if (!evt) return;
 
    ev_data->device = efl_ref(seat);

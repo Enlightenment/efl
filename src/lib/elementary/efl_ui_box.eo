@@ -1,4 +1,4 @@
-class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
+class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
                   Efl.Ui.Direction
 {
    [[The box widget.
@@ -15,6 +15,18 @@ class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layo
      THIS CLASS NEEDS GOOD UP TO DATE DOCUMENTATION. LEGACY BOX AND UI BOX
      BEHAVE SLIGHTLY DIFFERENTLY AND USE VASTLY DIFFERENT APIS.
    ]]
+   methods {
+      @property homogeneous {
+         [[Control homogeneous mode.
+
+           This will enable the homogeneous mode where children are of the same
+           weight and of the same min size which is determined by maximum min
+           size of children.]]
+         values {
+            homogeneous: bool; [[$true if the box is homogeneous, $false otherwise]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;

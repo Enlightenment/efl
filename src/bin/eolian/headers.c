@@ -92,7 +92,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
 
    /* this one will never be satisfied in legacy */
    if (eolian_function_is_beta(fid))
-     eina_strbuf_append_printf(buf, "#ifdef %s_BETA\n", cnameu);
+     eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
    /* XXX: is this right? we expose potentially internal stuff into legacy */
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#ifdef %s_PROTECTED\n", cnameu);
@@ -125,7 +125,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
    eina_stringshare_del(fcn);
 
    Eina_Strbuf *flagbuf = NULL;
-   int nidx = !legacy || !eolian_function_is_class(fid);
+   int nidx = !eolian_function_is_class(fid);
 
    eina_strbuf_append_char(buf, '(');
    if (nidx)
@@ -174,10 +174,10 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
      }
    eina_strbuf_append(buf, ";\n");
 
-   if (eolian_function_is_beta(fid))
-     eina_strbuf_append_printf(buf, "#endif\n");
    if (!legacy && (fsc == EOLIAN_SCOPE_PROTECTED))
      eina_strbuf_append_printf(buf, "#endif\n");
+   if (eolian_function_is_beta(fid))
+     eina_strbuf_append_printf(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
 }
 
 void
@@ -192,6 +192,10 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
 
    /* class definition */
 
+   if (!legacy && eolian_class_is_beta(cl))
+     {
+        eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
+     }
    if (!legacy)
      {
         const Eolian_Documentation *doc = eolian_class_documentation_get(cl);
@@ -267,7 +271,7 @@ events:
 
              if (eolian_event_is_beta(ev))
                {
-                  eina_strbuf_append_printf(buf, "\n#ifdef %s_BETA\n", cnameu);
+                  eina_strbuf_append(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
                }
              if (evs == EOLIAN_SCOPE_PROTECTED)
                {
@@ -292,11 +296,15 @@ events:
              if (evs == EOLIAN_SCOPE_PROTECTED)
                eina_strbuf_append(buf, "#endif\n");
              if (eolian_event_is_beta(ev))
-               eina_strbuf_append(buf, "#endif\n");
+               eina_strbuf_append(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
 
              eina_stringshare_del(evn);
           }
         eina_iterator_free(itr);
+     }
+   if (!legacy && eolian_class_is_beta(cl))
+     {
+        eina_strbuf_append(buf, "#endif /* EFL_BETA_API_SUPPORT */\n");
      }
 
    free(cname);

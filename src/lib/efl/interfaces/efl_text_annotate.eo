@@ -1,6 +1,6 @@
 import efl_text_types;
 
-interface Efl.Text_Annotate {
+interface @beta Efl.Text_Annotate {
    [[Cursor API
 
      @since 1.20

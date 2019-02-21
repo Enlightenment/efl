@@ -25,10 +25,7 @@ typedef struct
       int in, out;
       Eo *in_handler, *out_handler;
    } fd, ctrl;
-   struct {
-      unsigned int argc;
-      const char **argv;
-   } args;
+   Eina_Array *argv;
    Efl_Callback_Array_Item_Full *event_cb;
    void *indata, *outdata;
 } Thread_Data;
@@ -151,24 +148,31 @@ _efl_loop_arguments_send(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
    Efl_Loop_Arguments arge;
    Eina_Array *arga;
    Eina_Stringshare *s;
-   unsigned int argc = efl_task_arg_count_get(obj);
-   unsigned int i;
+   Eina_Accessor *accessor;
+   const char *argv;
+   int i = 0;
 
-   arga = eina_array_new(argc);
-
-   for (i = 0; i < argc; i++)
+   accessor = efl_core_command_line_command_access(obj);
+   if (accessor)
      {
-        const char *argv = efl_task_arg_value_get(obj, i);
-        if (argv)
-          eina_array_push(arga, eina_stringshare_add(argv));
+        arga = eina_array_new(10);
+
+        EINA_ACCESSOR_FOREACH(accessor, i, argv)
+          {
+             eina_array_push(arga, eina_stringshare_add(argv));
+          }
+        arge.argv = arga;
      }
-   arge.argv = arga;
+   else arge.argv = NULL;
    arge.initialization = EINA_TRUE;
    efl_event_callback_call(obj,
                            EFL_LOOP_EVENT_ARGUMENTS, &arge);
-
-   while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
-   eina_array_free(arga);
+   if (accessor)
+     {
+        while ((s = eina_array_pop(arga))) eina_stringshare_del(s);
+        eina_array_free(arga);
+        eina_accessor_free(accessor);
+     }
 
    return v;
 }
@@ -229,7 +233,6 @@ _efl_thread_main(void *data, Eina_Thread t)
    Eo *obj;
    Eina_Value *ret;
    Control_Data cmd;
-   unsigned int i;
    int real;
    Efl_Callback_Array_Item_Full *it;
 
@@ -280,16 +283,11 @@ _efl_thread_main(void *data, Eina_Thread t)
           efl_event_callback_priority_add(obj, it->desc, it->priority,
                                           it->func, it->user_data);
      }
-   for (i = 0; i < thdat->args.argc; i++)
-     efl_task_arg_append(obj, thdat->args.argv[i]);
+   if (thdat->argv) efl_core_command_line_command_array_set(obj, thdat->argv);
+   thdat->argv = NULL;
    efl_future_then(obj, efl_loop_job(obj),
                    .success = _efl_loop_arguments_send);
-
-   for (i = 0; i < thdat->args.argc; i++)
-     eina_stringshare_del(thdat->args.argv[i]);
-   free(thdat->args.argv);
    free(thdat->event_cb);
-   thdat->args.argv = NULL;
    thdat->event_cb = NULL;
 
    ret = efl_loop_begin(obj);
@@ -537,10 +535,10 @@ _efl_thread_efl_object_destructor(Eo *obj, Efl_Thread_Data *pd)
    if (pd->thdat)
      {
         eina_thread_join(pd->thread);
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
-        efl_del(pd->ctrl.in_handler);
-        efl_del(pd->ctrl.out_handler);
+//        efl_del(pd->fd.in_handler);
+//        efl_del(pd->fd.out_handler);
+//        efl_del(pd->ctrl.in_handler);
+//        efl_del(pd->ctrl.out_handler);
         close(pd->fd.in);
         close(pd->fd.out);
         close(pd->ctrl.in);
@@ -575,7 +573,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    const char *name;
    int pipe_to_thread[2];
    int pipe_from_thread[2];
-   unsigned int argc, i, num;
+   unsigned int num;
    Efl_Callback_Array_Item_Full *it;
    Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
@@ -729,24 +727,23 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    name = efl_name_get(obj);
    if (name) thdat->name = eina_stringshare_add(name);
 
-   argc = efl_task_arg_count_get(obj);
-   if (argc > 0)
-     {
-        thdat->args.argc = argc;
-        thdat->args.argv = malloc(argc * sizeof(char *));
-        if (thdat->args.argv)
-          {
-             for (i = 0; i < argc; i++)
-               {
-                  const char *argv = efl_task_arg_value_get(obj, i);
-                  if (argv)
-                    thdat->args.argv[i] = eina_stringshare_add(argv);
-                  else
-                    thdat->args.argv[i] = NULL;
-               }
-          }
-        // XXX: if malloc fails?
-     }
+   {
+      Eina_Accessor *acc;
+      int i = 0;
+      const char *argv;
+
+      acc = efl_core_command_line_command_access(obj);
+      if (acc)
+        {
+           thdat->argv = eina_array_new(1);
+           EINA_ACCESSOR_FOREACH(acc, i, argv)
+             {
+                eina_array_push(thdat->argv, eina_stringshare_add(argv));
+             }
+        }
+
+   }
+
    if (pd->event_cb)
      {
         num = 0;
@@ -762,9 +759,8 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
 
    if (!eina_thread_create(&(pd->thread), pri, -1, _efl_thread_main, thdat))
      {
-        for (i = 0; i < thdat->args.argc; i++)
-          eina_stringshare_del(thdat->args.argv[i]);
-        free(thdat->args.argv);
+        while (eina_array_count(thdat->argv)) eina_stringshare_del(eina_array_pop(thdat->argv));
+        eina_array_free(thdat->argv);
         efl_del(pd->fd.in_handler);
         efl_del(pd->fd.out_handler);
         efl_del(pd->ctrl.in_handler);

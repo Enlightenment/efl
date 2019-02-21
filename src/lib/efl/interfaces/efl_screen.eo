@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Screen
+interface @beta Efl.Screen
 {
    [[Efl screen interface]]
    methods {
@@ -25,19 +25,19 @@ interface Efl.Screen
             ]]
          }
          values {
-            rotation: int; [[The degree of the screen.]]
+            rotation: int; [[Screen rotation in degrees.]]
          }
       }
       @property screen_dpi {
          get {
-            [[Get screen dpi for the screen that a window is on.
+            [[Get the pixel density in DPI (Dots Per Inch) for the screen that a window is on.
 
               @since 1.7
             ]]
          }
          values {
-            xdpi: int; [[Pointer to value to store return horizontal dpi. May be $null.]]
-            ydpi: int; [[Pointer to value to store return vertical dpi. May be $null.]]
+            xdpi: int; [[Horizontal DPI.]]
+            ydpi: int; [[Vertical DPI.]]
          }
       }
    }

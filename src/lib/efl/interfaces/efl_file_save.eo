@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.File_Save {
+interface @beta Efl.File_Save {
    [[Efl file saving interface]]
    methods {
       save @const {

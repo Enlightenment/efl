@@ -15,7 +15,7 @@ enum Efl.Net.Control.Technology_Type {
     p2p, [[Type: Peer-2-Peer]]
 }
 
-class Efl.Net.Control.Technology extends Efl.Loop_Consumer {
+class @beta Efl.Net.Control.Technology extends Efl.Loop_Consumer {
     [[A technology that allows control of network access points.
 
       The @Efl.Net.Control.Manager is composed of multiple technologies, each

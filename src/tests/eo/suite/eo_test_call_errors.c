@@ -89,7 +89,7 @@ _errorcase_class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_error_test, _test),
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description errorcase_class_desc = {

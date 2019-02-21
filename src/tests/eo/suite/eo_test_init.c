@@ -23,10 +23,9 @@ EFL_START_TEST(eo_test_init_shutdown)
    /* XXX-1: Essential for the next test to assign the wrong op. */
    obj = efl_add_ref(SIMPLE_CLASS, NULL);
    simple_a_set(obj, 1);
+   /* XXX-1: Essential for the next test to cache the op. */
    ck_assert_int_eq(1, simple_a_get(obj));
 
-   /* XXX-1: Essential for the next test to cache the op. */
-   ck_assert_int_eq(0xBEEF, simple2_class_beef_get(SIMPLE2_CLASS));
    efl_unref(obj);
    fail_if(efl_object_shutdown());
 
@@ -34,7 +33,9 @@ EFL_START_TEST(eo_test_init_shutdown)
    ck_assert_str_eq("Efl.Object", efl_class_name_get(EFL_OBJECT_CLASS));
 
    /* XXX-1: Verify that the op was not cached. */
-   ck_assert_int_eq(0xBEEF, simple2_class_beef_get(SIMPLE2_CLASS));
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   simple_a_set(obj, 1);
+   ck_assert_int_eq(1, simple_a_get(obj));
 }
 EFL_END_TEST
 

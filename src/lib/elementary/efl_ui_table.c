@@ -83,11 +83,11 @@ static void _custom_table_calc(Eo *obj, Custom_Table_Data *pd);
 static Eina_Bool
 _custom_table_initializer(Efl_Class *klass)
 {
-   EFL_OPS_DEFINE(class_ops,
+   EFL_OPS_DEFINE(ops,
          EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _custom_table_calc)
    );
 
-   return efl_class_functions_set(klass, NULL, &class_ops, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 };
 
 static const Efl_Class_Description custom_table_class_desc = {

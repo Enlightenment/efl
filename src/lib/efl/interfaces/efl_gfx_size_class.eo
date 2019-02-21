@@ -1,4 +1,4 @@
-interface Efl.Gfx.Size_Class
+interface @beta Efl.Gfx.Size_Class
 {
    [[Efl Gfx Size Class interface]]
    methods {

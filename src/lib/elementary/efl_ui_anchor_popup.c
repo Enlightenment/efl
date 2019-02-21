@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_UI_POPUP_PROTECTED
-#define EFL_UI_ANCHOR_POPUP_BETA
 
 #include <Elementary.h>
 

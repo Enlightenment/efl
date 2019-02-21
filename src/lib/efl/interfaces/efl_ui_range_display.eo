@@ -1,4 +1,4 @@
-interface Efl.Ui.Range_Display
+interface @beta Efl.Ui.Range_Display
 {
    [[Interface that contains properties regarding the displaying of a range.]]
    eo_prefix: efl_ui_range;

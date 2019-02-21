@@ -87,8 +87,6 @@ EAPI unsigned int ecore_init_ex(int argc, char **argv);
  */
 EAPI unsigned int ecore_shutdown_ex(void);
 
-
-#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Inform EFL of the version this application was built for.
  *
@@ -97,7 +95,6 @@ EAPI unsigned int ecore_shutdown_ex(void);
  * @since 1.18 (as beta)
  */
 EWAPI void efl_build_version_set(int vmaj, int vmin, int vmic, int revision, const char *flavor, const char *build_id);
-#endif
 
 /**
  * @}
@@ -1388,7 +1385,13 @@ enum _Ecore_Fd_Handler_Flags
 {
    ECORE_FD_READ = 1, /**< Fd Read mask */
    ECORE_FD_WRITE = 2, /**< Fd Write mask */
-   ECORE_FD_ERROR = 4 /**< Fd Error mask */
+   ECORE_FD_ERROR = 4, /**< Fd Error mask */
+   /* ECORE_FD_ALWAYS is intended to fix a problem with wayland
+    * and threads.  It causes the fd handler to be called
+    * in any state, so wayland libs can call read_cancel
+    * if nothing is available to read.  Everyone else should
+    * stay away. */
+   ECORE_FD_ALWAYS = 8, /**< Fd Always mask - DO NOT USE! */
 };
 typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
 

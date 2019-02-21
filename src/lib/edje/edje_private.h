@@ -40,7 +40,6 @@
 #endif
 
 // auto_unref
-#define EFL_CANVAS_LAYOUT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
 
@@ -188,6 +187,8 @@ EAPI extern int _edje_default_log_dom ;
 #define NEQ(a, b) !EINA_DBL_EQ(a, b)
 
 #endif
+
+#define EDJE_ENTRY_NUM_CURSOR_OBJS 3
 
 /* Inheritable Edje Smart API. For now private so only Edje Edit makes
  * use of this, but who knows what will be possible in the future */
@@ -2511,7 +2512,7 @@ static inline Edje_Global *
 _edje_global(void)
 {
 #ifndef NDEBUG
-   return efl_provider_find(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE);
+   return efl_provider_find(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN);
 #else
    extern Edje_Global *_edje_global_obj;
    return _edje_global_obj;
@@ -2911,6 +2912,7 @@ void _edje_lua_script_only_message(Edje *ed, Edje_Message *em);
 
 void _edje_entry_init(Edje *ed);
 void _edje_entry_shutdown(Edje *ed);
+int _edje_entry_real_part_cursor_objs_get(Edje_Real_Part *rp, Evas_Object  **objs);
 void _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp);
 void _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp);
 void _edje_entry_real_part_configure(Edje *ed, Edje_Real_Part *rp);

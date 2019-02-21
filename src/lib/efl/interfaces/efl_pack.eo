@@ -1,4 +1,4 @@
-interface Efl.Pack extends Efl.Container
+interface @beta Efl.Pack extends Efl.Container
 {
    [[API common to all UI container objects.]]
    methods
@@ -56,8 +56,5 @@ interface Efl.Pack extends Efl.Container
             scalable:  bool; [[$true if scalable, $false otherwise]]
          }
       }
-   }
-   events {
-      layout,updated: void; [[Sent after the layout was updated.]]
    }
 }

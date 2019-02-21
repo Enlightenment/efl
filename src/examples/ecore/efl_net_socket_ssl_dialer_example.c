@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
@@ -464,7 +465,7 @@ efl_main(void *data EINA_UNUSED,
                      efl_net_ssl_context_hostname_set(efl_added, hostname_override),
                      efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
 #else
-   ssl_ctx = efl_net_ssl_context_default_dialer_get(EFL_NET_SSL_CONTEXT_CLASS);
+   ssl_ctx = efl_net_ssl_context_default_dialer_get();
    fprintf(stderr, "INFO: using default context for dialers.\n");
 #endif
 

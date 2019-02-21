@@ -180,7 +180,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
           }
      }
 
-   remote_address = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, addr->ai_addr);
+   remote_address = efl_net_ip_address_create_sockaddr(addr->ai_addr);
    if (remote_address)
      {
         efl_net_socket_udp_init(o, remote_address);

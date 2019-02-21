@@ -616,7 +616,7 @@ _elm_combobox_class_initializer(Efl_Class *klass)
       EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_combobox)
    );
 
-   return efl_class_functions_set(klass, &ops, NULL, NULL);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description _elm_combobox_class_desc = {

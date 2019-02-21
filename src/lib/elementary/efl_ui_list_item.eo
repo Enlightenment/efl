@@ -1,5 +1,5 @@
 
-abstract Efl.Ui.List_Item extends Efl.Ui.Item
+abstract @beta Efl.Ui.List_Item extends Efl.Ui.Item
 {
    implements {
       //Efl.Object

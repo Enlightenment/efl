@@ -1,4 +1,4 @@
-class Efl.Container_Model_Item extends Efl.Object implements Efl.Model
+class @beta Efl.Container_Model_Item extends Efl.Object implements Efl.Model
 {
    [[
      Used as a child of @Efl.Container_Model.

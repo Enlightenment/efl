@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_SCROLL_ALERT_POPUP_BETA
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>

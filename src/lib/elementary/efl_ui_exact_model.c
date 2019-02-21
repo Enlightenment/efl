@@ -76,6 +76,7 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    Eina_Binbuf *cbuf;
    Eina_Binbuf *tbuf;
    Eina_List *l = NULL;
+   unsigned int i;
 
    _efl_ui_exact_model_list_find(list_index, compressed, &l);
 
@@ -106,7 +107,10 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
           }
 
         // Fill the list all the way to the needed index with buffer full of zero
-        while (list_index) compressed = eina_list_append(compressed, z);
+        for (i = 0; i < list_index; i++)
+          {
+             compressed = eina_list_append(compressed, z);
+          }
         l = eina_list_last(compressed);
      }
 

@@ -1,4 +1,4 @@
-class Efl.Bounce_Interpolator extends Efl.Object implements Efl.Interpolator
+class @beta Efl.Bounce_Interpolator extends Efl.Object implements Efl.Interpolator
 {
    [[Efl bounce interpolator class]]
    data: Efl_Bounce_Interpolator_Data;

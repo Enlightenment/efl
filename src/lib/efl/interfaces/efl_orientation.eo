@@ -28,7 +28,7 @@ enum Efl.Flip
    vertical = 2 [[Flip image vertically]]
 }
 
-interface Efl.Orientation
+interface @beta Efl.Orientation
 {
    [[Efl orientation interface]]
    methods {

@@ -1,4 +1,4 @@
-class Efl.Ui.Bg_Legacy extends Efl.Ui.Bg implements Efl.Ui.Legacy
+class @beta Efl.Ui.Bg_Legacy extends Efl.Ui.Bg implements Efl.Ui.Legacy
 {
    [[The bg (background) widget is used for setting (solid) background decorations
 

@@ -210,6 +210,7 @@ elif sys_osx == true
   sys_lib_extension = 'dylib'
   sys_exe_extension = ''
   sys_mod_extension = 'dylib'
+  config_h.set('environ', '(*_NSGetEnviron())')
 else
   error('System '+host_machine.system()+' not known')
 endif
@@ -240,6 +241,12 @@ if get_option('wl') == true
 endif
 
 ecore_evas_wayland_engine_include_dir = []
+
+boot_strap_eolian = [
+  ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
+  ['eina'             ,[]                    , false,  true, false, false, false, false, [], []],
+  ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
+]
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
@@ -303,6 +310,9 @@ test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
 
+if get_option('eolian-bootstrap')
+   subprojects = boot_strap_eolian
+endif
 
 foreach package : subprojects
   package_name = package[0]
@@ -403,23 +413,23 @@ foreach package : subprojects
 
 endforeach
 
-#build this later, as the debug services are depending on ecore
-subdir(join_paths('src', 'bin', 'efl'))
-
-subdir(join_paths('src', 'generic', 'evas'))
-subdir(join_paths('src', 'generic', 'emotion'))
 subdir('cmakeconfig')
+#build this later, as the debug services are depending on ecore
+if get_option('eolian-bootstrap') == false
+  subdir(join_paths('src', 'bin', 'efl'))
 
-bindings = get_option('bindings')
+  subdir(join_paths('src', 'generic', 'evas'))
+  subdir(join_paths('src', 'generic', 'emotion'))
 
-foreach binding : bindings
-  subdir(join_paths('src', 'bindings', binding))
-endforeach
+  bindings = get_option('bindings')
 
-subdir(join_paths('src', 'edje_external'))
+  foreach binding : bindings
+    subdir(join_paths('src', 'bindings', binding))
+  endforeach
 
-
-subdir(join_paths('data'))
+  subdir(join_paths('src', 'edje_external'))
+  subdir(join_paths('data'))
+endif
 
 if get_option('build-tests')
   check = dependency('check')

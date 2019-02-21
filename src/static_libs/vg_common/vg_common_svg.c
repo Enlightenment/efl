@@ -608,10 +608,10 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
 
              efl_gfx_path_bounds_get(grad_obj, &grad_geom);
 
-             double cy = (grad_geom.h / 2) + grad_geom.y;
-             double cy_scaled = (grad_geom.h / 2) * scale_reversed_Y;
-             double cx = grad_geom.w / 2 + grad_geom.x;
-             double cx_scaled = (grad_geom.w / 2) * scale_reversed_X;
+             double cy = ((double) grad_geom.h) * 0.5 + grad_geom.y;
+             double cy_scaled = (((double) grad_geom.h) * 0.5) * scale_reversed_Y;
+             double cx = ((double) grad_geom.w) * 0.5 + grad_geom.x;
+             double cx_scaled = (((double) grad_geom.w) * 0.5) * scale_reversed_X;
 
              /* matrix tranformation of gradient figure:
               * 0. we remember size of gradient and it's center point
@@ -823,6 +823,8 @@ vg_common_svg_create_vg_node(Svg_Node *node)
    if (!node || (node->type != SVG_NODE_DOC)) return NULL;
 
    vg_data = calloc(1, sizeof(Vg_File_Data));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(vg_data, NULL);
+
    vg_data->view_box.x = node->node.doc.vx;
    vg_data->view_box.y = node->node.doc.vy;
    vg_data->view_box.w = node->node.doc.vw;
@@ -838,9 +840,15 @@ static Svg_Node *
 _create_node(Svg_Node *parent, Svg_Node_Type type)
 {
    Svg_Node *node = calloc(1, sizeof(Svg_Node));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(node, NULL);
 
    // default fill property
    node->style = calloc(1, sizeof(Svg_Style_Property));
+   if (!node->style)
+     {
+        free(node);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(node->style, NULL);
+     }
 
    // update the default value of stroke and fill
    //https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
@@ -884,12 +892,14 @@ _create_gradient_node(Efl_VG *vg)
    unsigned int count = 0, i;
 
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(grad, NULL);
 
    grad->spread = evas_vg_gradient_spread_get(vg);
    evas_vg_gradient_stop_get(vg, &stops, &count);
    for (i = 0; i < count; i++)
      {
         new_stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
+        if (!new_stop) goto oom_error;
         memcpy(new_stop, stops, sizeof(Efl_Gfx_Gradient_Stop));
         grad->stops = eina_list_append(grad->stops, new_stop);
         stops++;
@@ -898,6 +908,7 @@ _create_gradient_node(Efl_VG *vg)
      {
         grad->type = SVG_LINEAR_GRADIENT;
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
+        if (!grad->linear) goto oom_error;
         evas_vg_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         evas_vg_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
      }
@@ -905,12 +916,18 @@ _create_gradient_node(Efl_VG *vg)
      {
         grad->type = SVG_RADIAL_GRADIENT;
         grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
+        if (!grad->radial) goto oom_error;
         evas_vg_gradient_radial_center_get(vg, &grad->radial->cx, &grad->radial->cy);
         evas_vg_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
         grad->radial->r = evas_vg_gradient_radial_radius_get(vg);
      }
 
    return grad;
+
+oom_error:
+   ERR("OOM: Failed calloc()");
+   return grad;
+
 }
 
 static void

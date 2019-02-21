@@ -1,4 +1,4 @@
-class Efl.Ui.Video_Legacy extends Efl.Ui.Video implements Efl.Ui.Legacy
+class @beta Efl.Ui.Video_Legacy extends Efl.Ui.Video implements Efl.Ui.Legacy
 {
    [[Efl UI video class]]
    data: null;

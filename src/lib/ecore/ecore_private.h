@@ -138,6 +138,7 @@ struct _Efl_Loop_Data
    Ecore_Fd_Handler    *fd_handlers;
    Eina_List           *fd_handlers_with_prep;
    Eina_List           *file_fd_handlers;
+   Eina_List           *always_fd_handlers;
    Eina_List           *fd_handlers_with_buffer;
    Eina_List           *fd_handlers_to_delete;
    Ecore_Fd_Handler    *fd_handlers_to_call;
@@ -188,7 +189,6 @@ struct _Efl_Task_Data
 {
    Eina_Stringshare  *command;
    Eina_Array        *args;
-   Eina_Hash         *env;
    Efl_Task_Priority  priority;
    int                exit_code;
    Efl_Task_Flags     flags;

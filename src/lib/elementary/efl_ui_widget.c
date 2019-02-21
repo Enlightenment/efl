@@ -6,7 +6,6 @@
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define ELM_WIDGET_PROTECTED
 #define ELM_WIDGET_ITEM_PROTECTED
-#define EFL_CANVAS_OBJECT_BETA
 #define EFL_INPUT_EVENT_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
@@ -3422,7 +3421,7 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
 
    if (pd->focus.manager && !pd->focus.logical)
      {
-        efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+        efl_ui_focus_util_focus(obj);
      }
 }
 

@@ -18,7 +18,7 @@ _propagated_cb(void *data EINA_UNUSED,
    return v;
 }
 
-EFL_START_TEST(efl_ui_layout_test_model_connect)
+EFL_START_TEST(efl_ui_layout_test_property_bind)
 {
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
@@ -26,7 +26,7 @@ EFL_START_TEST(efl_ui_layout_test_model_connect)
    Eina_Value v;
    Eina_Future *f;
    const char *part_text;
-   const char text_value[] = "A random string for elm_layout_model_connect test";
+   const char text_value[] = "A random string for elm_layout_property_bind test";
 
    win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
 
@@ -41,7 +41,7 @@ EFL_START_TEST(efl_ui_layout_test_model_connect)
    f = efl_model_property_set(model, "text_property", &v);
    eina_future_then(f, _propagated_cb, NULL, NULL);
 
-   efl_ui_model_connect(ly, "text", "text_property");
+   efl_ui_property_bind(ly, "text", "text_property");
    efl_ui_view_model_set(ly, model);
 
    ecore_main_loop_begin();
@@ -92,7 +92,7 @@ EFL_END_TEST
 
 void efl_ui_test_layout(TCase *tc)
 {
-   tcase_add_test(tc, efl_ui_layout_test_model_connect);
+   tcase_add_test(tc, efl_ui_layout_test_property_bind);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_size_min);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_update_hints);
    tcase_add_test(tc, efl_ui_layout_test_layout_force);

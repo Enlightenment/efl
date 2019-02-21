@@ -71,7 +71,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    efl_text_multiline_set(en, EINA_TRUE);
 
    en = _create_label(win, bx);
-   markup = efl_text_markup_util_text_to_markup(EFL_TEXT_MARKUP_UTIL_CLASS,
+   markup = efl_text_markup_util_text_to_markup(
          "You can use the text -> markup helper\nto make coding easier.");
    efl_text_markup_set(en, markup);
    free(markup);
@@ -80,7 +80,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    efl_text_multiline_set(en, EINA_TRUE);
 
    en = _create_label(win, bx);
-   markup = efl_text_markup_util_markup_to_text(EFL_TEXT_MARKUP_UTIL_CLASS,
+   markup = efl_text_markup_util_markup_to_text(
          "You can use markup -&gt; text helpers<ps>to make coding easier.");
    efl_text_set(en, markup);
    free(markup);

@@ -169,7 +169,7 @@ EFL_START_TEST(efl_ui_homogeneous_model_test)
    ck_assert_int_eq(_property_error_expected(model, "item.width"), EAGAIN);
    ck_assert_int_eq(_property_error_expected(model, "item.height"), EAGAIN);
 
-   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
+   ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
    fail_if(real__ != 0);
 
@@ -240,7 +240,7 @@ EFL_START_TEST(efl_ui_exact_model_test)
    ck_assert_int_eq(_property_error_expected(model, "item.width"), EAGAIN);
    ck_assert_int_eq(_property_error_expected(model, "item.height"), EAGAIN);
 
-   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
+   ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
    fail_if(real__ != 0);
 
@@ -328,7 +328,7 @@ EFL_START_TEST(efl_ui_average_model_test)
    ck_assert_int_eq(_property_error_expected(model, "item.width"), EAGAIN);
    ck_assert_int_eq(_property_error_expected(model, "item.height"), EAGAIN);
 
-   ret__ = efl_loop_begin(efl_app_main_get(EFL_APP_CLASS));
+   ret__ = efl_loop_begin(efl_app_main_get());
    real__ = efl_loop_exit_code_process(ret__);
    fail_if(real__ != 0);
 

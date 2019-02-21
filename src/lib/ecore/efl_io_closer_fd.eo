@@ -1,4 +1,4 @@
-mixin Efl.Io.Closer_Fd requires Efl.Object extends Efl.Io.Closer {
+mixin @beta Efl.Io.Closer_Fd requires Efl.Object extends Efl.Io.Closer {
     [[Close fd using close(2).
 
       @since 1.19

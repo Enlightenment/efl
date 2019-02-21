@@ -22,7 +22,7 @@ enum Efl.Text_Cursor_Type
    under [[Cursor type under]]
 }
 
-interface Efl.Text_Cursor {
+interface @beta Efl.Text_Cursor {
    [[Cursor API
 
      @since 1.20

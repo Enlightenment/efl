@@ -1,4 +1,4 @@
-class Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
+class @beta Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
 {
    [[Efl model for all composite class which provide a unified API to set source of data.
 
