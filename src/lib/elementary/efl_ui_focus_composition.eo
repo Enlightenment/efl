@@ -39,7 +39,7 @@ mixin @beta Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
    implements {
       Efl.Object.invalidate;
       Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+      Efl.Ui.Focus.Object.setup_order_non_recursive;
       @empty .prepare;
    }
 }

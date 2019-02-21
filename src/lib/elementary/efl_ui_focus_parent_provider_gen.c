@@ -67,7 +67,7 @@ _efl_ui_focus_parent_provider_gen_efl_ui_focus_parent_provider_find_logical_pare
         if (parent == pd->container)
           {
              item = eina_hash_find(pd->map, &above_gengrid);
-             efl_ui_focus_object_prepare_logical(pd->container);
+             efl_ui_focus_object_setup_order(pd->container);
 
              if (item)
                return item;
@@ -91,7 +91,7 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
 
         if (efl_isa(item, ELM_WIDGET_ITEM_CLASS))
           {
-             efl_ui_focus_object_prepare_logical(pd->container);
+             efl_ui_focus_object_setup_order(pd->container);
              return item;
           }
         else
@@ -114,7 +114,7 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
      }
    item = eina_hash_find(pd->map, &above_gengrid);
 
-   efl_ui_focus_object_prepare_logical(pd->container);
+   efl_ui_focus_object_setup_order(pd->container);
 
    return item;
 }

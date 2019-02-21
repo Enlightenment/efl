@@ -54,13 +54,13 @@ mixin @beta Efl.Ui.Focus.Object
                child_focus : bool;
             }
         }
-        prepare_logical {
-            [[Tells the object that its children will be queried soon by the given manager.
-              Deleting manager items in this call will result in undefined behaviour and may cause your system to crash.
+        setup_order {
+            [[Tells the object that its children will be queried soon by the focus manager. Overwrite  this to update the order of the children. Deleting items in this call will
+              result in undefined behaviour and may cause your system to crash.
             ]]
         }
-        prepare_logical_none_recursive @protected {
-            [[This is called when prepare_logical is called, but only on the first call, additional recursive calls to $prepare_logical will not call this function agian.]]
+        setup_order_non_recursive @protected {
+            [[This is called when @.setup_order is called, but only on the first call, additional recursive calls to @.setup_order will not call this function again.]]
         }
         on_focus_update @protected {
            [[Virtual function handling focus in/out events on the widget]]
@@ -69,7 +69,7 @@ mixin @beta Efl.Ui.Focus.Object
     }
     implements {
         @empty .focus_geometry;
-        @empty .prepare_logical_none_recursive;
+        @empty .setup_order_non_recursive;
         @empty .focus_manager;
         @empty .focus_parent;
         @empty .on_focus_update;
