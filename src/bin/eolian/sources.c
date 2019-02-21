@@ -1091,7 +1091,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
 }
 
 void
-eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
+eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Strbuf *lbuf,
+                  const char *lfname)
 {
    if (!cl)
      return;
@@ -1121,8 +1122,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         }
       eina_iterator_free(itr);
    }
-
-   Eina_Strbuf *lbuf = eina_strbuf_new();
 
    /* Eolian_Function -> Eolian_Function_Type
     * maps which parts of which functions are qualified for reflection
@@ -1236,10 +1235,9 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    /* terminate inherits */
    eina_strbuf_append(buf, ", NULL);\n");
 
-   /* append legacy if there */
-   eina_strbuf_append(buf, eina_strbuf_string_get(lbuf));
-
-   eina_strbuf_free(lbuf);
+   /* append legacy include if there */
+   if (eina_strbuf_length_get(lbuf))
+     eina_strbuf_append_printf(buf, "\n#include \"%s\"\n", lfname);
 
    /* and we're done */
    free(cnamel);
