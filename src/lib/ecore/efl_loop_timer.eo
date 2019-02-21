@@ -6,6 +6,8 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
      Timers require the ecore main loop to be running and functioning
      properly. They do not guarantee exact timing but try to work on a
      "best effort" basis.
+
+     The @Efl.Object.event_freeze and @Efl.Object.event_thaw calls are used to pause and unpause the timer.
    ]]
    legacy_prefix: ecore_timer;
    methods {
@@ -27,14 +29,10 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
          }
       }
       reset {
-         /* FIXME-doc:
-          * @note This is equivalent to (but faster than)
-          * @code
-          * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
-          * @endcode
-          */
           [[Resets a timer to its full interval. This effectively makes the
             timer start ticking off from zero now.
+
+            This is equal to delaying the timer by the already passed time, since the timer started ticking
 
             @since 1.2
           ]]
@@ -65,34 +63,7 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
       Efl.Object.finalize;
       Efl.Object.event_freeze;
       Efl.Object.parent { set; }
-      /* XXX: can't document overridden methods
-       * Pauses a running timer.
-       *
-       * @param timer The timer to be paused.
-       *
-       * The timer callback won't be called while the timer is paused. The remaining
-       * time until the timer expires will be saved so the timer can be resumed with
-       * that same remaining time to expire, instead of expiring instantly. Use
-       * ecore_timer_thaw() to resume.
-       *
-       * @note Nothing happens if the timer was already paused.
-       *
-       * @see ecore_timer_thaw()
-       */
       Efl.Object.event_freeze_count { get; }
       Efl.Object.event_thaw;
-      /* XXX: can't document overridden methods
-       * Resumes a frozen (paused) timer.
-       *
-       * @param timer The timer to be resumed.
-       *
-       * The timer will be resumed from its previous relative position. This
-       * means if it had X seconds remaining until expiry when paused, it will
-       * now start with those same X seconds remaining.
-       * The interval time won't be affected by this call nor by
-       * ecore_timer_freeze().
-       *
-       * @see ecore_timer_freeze()
-       */
    }
 }
