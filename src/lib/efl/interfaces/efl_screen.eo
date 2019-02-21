@@ -4,12 +4,12 @@ interface @beta Efl.Screen
 {
    [[Efl screen interface]]
    methods {
-      @property screen_size {
+      @property screen_size_in_pixels {
          get {
-            [[Get screen geometry details for the screen that a window is on.
+            [[Get screen size (in pixels) for the screen.
 
-              Note that on some display systems this information is not
-              available (this could be the case Wayland for instance).
+              Note that on some display systems this information is not available and
+              a value of 0x0 will be returned.
             ]]
          }
          values {

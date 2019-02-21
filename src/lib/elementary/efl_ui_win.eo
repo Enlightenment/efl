@@ -851,7 +851,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Input.State.lock_enabled { get; }
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
-      Efl.Screen.screen_size { get; }
+      Efl.Screen.screen_size_in_pixels { get; }
       Efl.Gfx.Size_Hint.hint_aspect { set; }
       Efl.Gfx.Size_Hint.hint_weight { set; }
       Efl.Gfx.Size_Hint.hint_max { set; }
