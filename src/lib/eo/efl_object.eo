@@ -27,14 +27,14 @@ const Efl.Callback_Priority_Default : Efl.Callback_Priority = 0;
 const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
 [[Slightly less prioritized than default.]]
 
-abstract @beta Efl.Object
+abstract Efl.Object
 {
    [[Abstract EFL object class.
-   
+
      All EFL objects inherit from this class, which provides basic functionality
      like naming, debugging, hierarchy traversal, event emission and life cycle
      management.
-   
+
      Life Cycle
      Objects are created with efl_add() and mostly disposed of with efl_del().
      As an optimization, efl_add() accepts a list of initialization functions
@@ -55,6 +55,8 @@ abstract @beta Efl.Object
      - Destruction: The object has no parent and it can be destroyed. The
        @.destructor method is called, use it to return any resources the object
        might have gathered during its life.
+
+       @since 1.22
      ]]
    eo_prefix: efl;
 
@@ -131,8 +133,6 @@ abstract @beta Efl.Object
 
             Usually more debug information should be added to $sb after
             calling the super function.
-
-            @since 1.21
          ]]
          params {
             @in sb: strbuf; [[A string buffer, must not be $null.]]
@@ -378,7 +378,7 @@ abstract @beta Efl.Object
            ]]
            return: bool; [[$true if it is. $false otherwise.]]
       }
-      @property allow_parent_unref {
+      @property allow_parent_unref @beta {
          [[Allow an object to be deleted by unref even if it has a parent.
 
            This simply hides the error message warning that an object being
