@@ -188,6 +188,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_win.eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
+# include <efl_ui_relative_layout.eo.h>
 
 /* FIXME: Efl.Ui.Text must not use elm_general.h */
 # warning Efl.Ui.Text is not available yet without Elementary.h

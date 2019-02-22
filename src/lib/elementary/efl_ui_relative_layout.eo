@@ -1,0 +1,79 @@
+class Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout
+{
+   [[The relative layout class.
+
+     A relative layout calculates the size and position of all the children
+     based on their relationship to each other.]]
+   methods {
+      @property relation_left {
+         [[Specifies the left side edge of the child relative to the target.
+           By default, target is parent and relative is 0.0.]]
+         keys {
+            child: Efl.Object; [[The child to specify relation.]]
+         }
+         values {
+            target: Efl.Object; [[The relative target.]]
+            relative: double; [[The ratio between left and right of the target,
+                                ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_right {
+         [[Specifies the right side edge of the child relative to the target.
+           By default, target is parent and relative is 1.0.]]
+         keys {
+            child: Efl.Object; [[The child to specify relation.]]
+         }
+         values {
+            target: Efl.Object; [[The relative target.]]
+            relative: double; [[The ratio between left and right of the target,
+                                ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_top {
+         [[Specifies the top side edge of the child relative to the target.
+           By default, target is parent and relative is 0.0.]]
+         keys {
+            child: Efl.Object; [[The child to specify relation.]]
+         }
+         values {
+            target: Efl.Object; [[The relative target.]]
+            relative: double; [[The ratio between top and bottom of the target,
+                                ranging from 0.0 to 1.0.]]
+         }
+      }
+      @property relation_bottom {
+         [[Specifies the bottom side edge of the child relative to the target.
+           By default, target is parent and relative is 1.0.]]
+         keys {
+            child: Efl.Object; [[The child to specify relation.]]
+         }
+         values {
+            target: Efl.Object; [[The relative target.]]
+            relative: double; [[The ratio between top and bottom of the target,
+                                ranging from 0.0 to 1.0.]]
+         }
+      }
+      unregister {
+         [[Remove all relations of the child.]]
+         params {
+            @in child: Efl.Object; [[The child to unregister]]
+         }
+      }
+      unregister_all {
+         [[Remove all relations from the registered children. ]]
+      }
+      children_iterate {
+         [[Begin iterating over this object's children.]]
+         return: iterator<Efl.Object> @owned @warn_unused; [[Iterator to object children.]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Pack_Layout.layout_update;
+      Efl.Pack_Layout.layout_request;
+   }
+}

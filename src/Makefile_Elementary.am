@@ -133,6 +133,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text_part.eo \
 	lib/elementary/efl_ui_caching_factory.eo \
 	lib/elementary/efl_ui_widget_factory.eo \
+	lib/elementary/efl_ui_relative_layout.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -455,7 +456,8 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_page_indicator_icon.h \
 	lib/elementary/efl_ui_tab_pager_private.h \
 	lib/elementary/efl_ui_tab_bar_private.h \
-	lib/elementary/efl_ui_tab_page_private.h
+	lib/elementary/efl_ui_tab_page_private.h \
+	lib/elementary/efl_ui_relative_layout_private.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
@@ -893,6 +895,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_homogeneous_model.c \
 	lib/elementary/efl_ui_exact_model.c \
 	lib/elementary/efl_ui_average_model.c \
+	lib/elementary/efl_ui_relative_layout.c \
 	$(NULL)
 
 
@@ -1111,6 +1114,7 @@ bin/elementary/test_gesture_framework.c \
 bin/elementary/test_ui_tab_pager.c \
 bin/elementary/test_ui_pager.c \
 bin/elementary/test_ui_pager_scroll.c \
+bin/elementary/test_ui_relative_layout.c \
 bin/elementary/test.h
 
 bin_elementary_elementary_test_LDADD = @USE_ELEMENTARY_LIBS@
@@ -1620,6 +1624,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus.c \
 	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_box.c \
+	tests/elementary/efl_ui_test_relative_layout.c \
 	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \

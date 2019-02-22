@@ -21,6 +21,7 @@
 
 void efl_ui_test_box(TCase *tc);
 void efl_ui_test_grid(TCase *tc);
+void efl_ui_test_relative_layout(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
 void efl_ui_test_image_zoomable(TCase *tc);
 void efl_ui_test_layout(TCase *tc);

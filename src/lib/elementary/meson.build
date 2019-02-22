@@ -276,6 +276,7 @@ pub_eo_files = [
   'efl_ui_text_part.eo',
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
+  'efl_ui_relative_layout.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -480,7 +481,8 @@ elementary_headers_unstable = [
   'efl_page_indicator_icon.h',
   'efl_ui_tab_pager_private.h',
   'efl_ui_tab_bar_private.h',
-  'efl_ui_tab_page_private.h'
+  'efl_ui_tab_page_private.h',
+  'efl_ui_relative_layout_private.h'
 ]
 
 elementary_pub_headers = [
@@ -912,6 +914,7 @@ elementary_src = [
   'efl_ui_homogeneous_model.c',
   'efl_ui_exact_model.c',
   'efl_ui_average_model.c'
+  'efl_ui_relative_layout.c'
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
