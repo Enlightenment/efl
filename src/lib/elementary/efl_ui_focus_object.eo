@@ -8,10 +8,9 @@ mixin @beta Efl.Ui.Focus.Object
     ]]
     methods {
         @property focus_geometry {
-            [[The geometry used to calculate relationships between other objects.]]
-            get {
-
-            }
+            [[The geometry (that is, the bounding rectangle) used to calculate the
+              relationship with other objects.]]
+            get {}
             values {
                 rect : Eina.Rect; [[The geometry to use.]]
             }
@@ -29,7 +28,7 @@ mixin @beta Efl.Ui.Focus.Object
             ]]
             }
             values {
-                focus : bool; [[The focused state of the object]]
+                focus : bool; [[The focused state of the object.]]
             }
         }
         @property focus_manager {
@@ -49,13 +48,14 @@ mixin @beta Efl.Ui.Focus.Object
             }
         }
         @property child_focus @protected {
-            [[Indicates if a child of this object has focus setted to true.]]
+            [[Indicates if a child of this object has focus set to true.]]
             values {
-               child_focus : bool;
+               child_focus : bool; [[$true if a child has focus.]]
             }
         }
         setup_order {
-            [[Tells the object that its children will be queried soon by the focus manager. Overwrite  this to update the order of the children. Deleting items in this call will
+            [[Tells the object that its children will be queried soon by the focus manager.
+              Overwrite this to update the order of the children. Deleting items in this call will
               result in undefined behaviour and may cause your system to crash.
             ]]
         }
@@ -75,12 +75,12 @@ mixin @beta Efl.Ui.Focus.Object
         @empty .on_focus_update;
     }
     events {
-        focus,changed : bool; [[Emitted if the focus state has changed]]
+        focus,changed : bool; [[Emitted if the focus state has changed.]]
         focus_manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
                                                  the parent for this object.]]
         focus_parent,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
                                                 parent should be used.]]
-        child_focus,changed: bool; [[Emitted if child_focus has changed]]
-        focus_geometry,changed: void; [[Emitted if focus geometry of this object has changed]]
+        child_focus,changed: bool; [[Emitted if child_focus has changed.]]
+        focus_geometry,changed: void; [[Emitted if focus geometry of this object has changed.]]
     }
 }

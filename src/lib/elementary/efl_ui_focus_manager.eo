@@ -2,7 +2,7 @@ import efl_ui;
 import eina_types;
 
 struct @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
-    [[Structure holding the graph of relations between focussable objects.
+    [[Structure holding the graph of relations between focusable objects.
 
       @since 1.20
     ]]
@@ -31,44 +31,51 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
 interface @beta Efl.Ui.Focus.Manager {
     [[Interface for managing focus objects
 
-      This interface is build in order to support movement of the focus property in a set of widgets.
-      The movement of the focus property can happen in a tree manner, or a graph manner. The movements is also keeping track of the history of focused elements. The tree interpretation differentiates between logical and none-logical widgets, a logical widget cannot receive focus, a none-logical can.
+      This interface is built in order to support movement of the focus property in a set of widgets.
+      The movement of the focus property can happen in a tree manner, or a graph manner.
+      The movement is also keeping track of the history of focused elements.
+      The tree interpretation differentiates between logical and non-logical widgets,
+      a logical widget cannot receive focus whereas a non-logical one can.
 
       @since 1.20
     ]]
     methods {
         move {
-            [[Move the focus into the given direction.
+            [[Move the focus in the given direction.
 
               This call flushes all changes.
-              This means all changes between the last flush and now are computed
+              This means all changes between the last flush and now are computed.
             ]]
             params {
-                direction : Efl.Ui.Focus.Direction; [[The direction to move to]]
+                direction : Efl.Ui.Focus.Direction; [[The direction to move to.]]
             }
-            return : Efl.Ui.Focus.Object; [[The element which is now focused]]
+            return : Efl.Ui.Focus.Object; [[The element which is now focused.]]
         }
         request_move {
-            [[Return the object next in the $direction from $child.]]
+            [[Return the object in the $direction from $child.]]
             params {
-                direction : Efl.Ui.Focus.Direction; [[Direction to move focus]]
-                child : Efl.Ui.Focus.Object; [[The child where to look from. Pass $null to indicate the last focused child.]]
-                logical : bool; [[Weather you want to have a logical node as result or a logical. Note, at a move call no logical node will get focus, and this is passed as $false there.]]
+                direction : Efl.Ui.Focus.Direction; [[Direction to move focus.]]
+                child : Efl.Ui.Focus.Object; [[The child to move from. Pass $null to indicate the currently focused child.]]
+                logical : bool; [[Wether you want to have a logical node as result or a non-logical.
+                                  Note, in a @.move call no logical node will get focus.]]
             }
-            return : Efl.Ui.Focus.Object; [[Next object to focus]]
+            return : Efl.Ui.Focus.Object; [[Object that would receive focus if moved in the given direction.]]
         }
         @property manager_focus {
             [[The element which is currently focused by this manager
 
-              For the case focus is a logical child, then the item will go to the next none logical element. If there is none, focus will stay where it is right now.
+              Use this property to retrieve the object currently being focused, or to set the focus
+              to a new one.
+              When $focus is a logical child (which cannot receive focus), the next non-logical
+              object is selected instead. If there is no such object, focus does not change.
             ]]
 
             values {
-                focus : Efl.Ui.Focus.Object @nonull; [[Focused element]]
+                focus : Efl.Ui.Focus.Object @nonull; [[Currently focused element.]]
             }
         }
         @property redirect {
-            [[Add a another manager to serve the move requests.
+            [[Add another manager to serve the move requests.
 
               If this value is set, all move requests are redirected to this
               manager object. Set it to $null once nothing should be redirected
@@ -93,15 +100,15 @@ interface @beta Efl.Ui.Focus.Manager {
         @property viewport_elements {
             [[Get all elements that are at the border of the viewport
 
-              Every element returned by this is located in the viewport rectangle,
-              but has a right,left,down or up relation outside the viewport.
+              Every element returned by this is located inside the viewport rectangle,
+              but has a right, left, down or up neighbor outside the viewport.
             ]]
             get {}
             keys {
-                viewport : Eina.Rect;
+                viewport : Eina.Rect; [[The rectangle defining the viewport.]]
             }
             values {
-              viewport_elements : iterator<Efl.Ui.Focus.Object>;
+              viewport_elements : iterator<Efl.Ui.Focus.Object>; [[The list of border objects.]]
             }
         }
         @property root {
@@ -113,9 +120,7 @@ interface @beta Efl.Ui.Focus.Manager {
                 return : bool; [[If $true, this is the root node]]
             }
 
-            get {
-
-            }
+            get {}
 
             values {
                 root : Efl.Ui.Focus.Object @nonull; [[Will be registered into
@@ -126,18 +131,18 @@ interface @beta Efl.Ui.Focus.Manager {
             [[Return the widget in the direction next.
 
               The returned widget is a child of $root.
-              Its garanteed that child will not be prepared once again,
-              so you can call this function out of a prepare call.
+              It's guaranteed that child will not be prepared once again,
+              so you can call this function inside a @Efl.Ui.Focus.Object.setup_order call.
             ]]
               params {
-                 root : Efl.Ui.Focus.Object; [[Parent for returned child]]
+                 root : Efl.Ui.Focus.Object; [[Parent for returned child.]]
               }
-              return : Efl.Ui.Focus.Object; [[Child of passed parameter]]
+              return : Efl.Ui.Focus.Object; [[Child of passed parameter.]]
         }
         fetch {
             [[This will fetch the data from a registered node.
 
-              Be aware this function will trigger all dirty nodes to be computed
+              Be aware this function will trigger a computation of all dirty nodes.
             ]]
             params {
                 child : Efl.Ui.Focus.Object; [[The child object to inspect.]]
@@ -150,49 +155,58 @@ interface @beta Efl.Ui.Focus.Manager {
 
               The returned object is the last object that would be returned if you start at the root and move the direction into next.
             ]]
-            return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object]]
+            return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object.]]
         }
         reset_history {
             [[Reset the history stack of this manager object.
-              This means the most upper element will be unfocused, all other elements will be removed from the remembered before.
+              This means the uppermost element will be unfocused, and all other elements
+              will be removed from the remembered list.
 
-              To not break the assertion that there should be always a focused element, you should focus a other element immidiatly after calling this.
+              You should focus another element immediately after calling this, in order
+              to always have a focused object.
             ]]
         }
         pop_history_stack {
-            [[Remove the most upper history element, and focus the next possible element
+            [[Remove the uppermost history element, and focus the previous one.
 
-              If there is a element that was focused before, it will be taken. Otherwise, the best fitting element from the registered elements will be focused.
+              If there is an element that was focused before, it will be used.
+              Otherwise, the best fitting element from the registered elements will be focused.
             ]]
         }
         setup_on_first_touch {
            [[Called when this manager is set as redirect.
 
-             In case that this is called as an result of a move call, $direction and $entry will be set to the direction of the move call, and the entry object will be set to the object, that had this object as redirect property.
+             In case that this is called as an result of a move call, $direction and $entry
+             will be set to the direction of the move call, and the $entry object will be
+             set to the object that had this manager as redirect property.
            ]]
            params {
-             direction : Efl.Ui.Focus.Direction; [[The direction in which this should be setup]]
-             entry : Efl.Ui.Focus.Object; [[The object that caused this manager to be redirect]]
+             direction : Efl.Ui.Focus.Direction; [[The direction in which this should be setup.]]
+             entry : Efl.Ui.Focus.Object; [[The object that caused this manager to be redirect.]]
            }
         }
         dirty_logic_freeze {
-          [[This disables the cache invalidation when a object is moved.
+          [[This disables the cache invalidation when an object is moved.
 
-            Even the object is moved, the focus manager will not recalculate its relations, this can be used when you know that the set of widgets in the focus manager is equally moved. so the relations between the widets in the set do not change.
+            Even if an object is moved, the focus manager will not recalculate its relations.
+            This can be used when you know that the set of widgets in the focus manager is
+            moved the same way, so the relations between the widets in the set do not change
+            and the complex calculations can be avoided.
+            Use @.dirty_logic_unfreeze to re-enable relationship calculation.
           ]]
         }
         dirty_logic_unfreeze {
-          [[This enables the cache invalidation when a object is moved.
+          [[This enables the cache invalidation when an object is moved.
 
-            This is the counter part to @.dirty_logic_freeze
+            This is the counterpart to @.dirty_logic_freeze.
           ]]
         }
     }
     events {
-        redirect,changed : Efl.Ui.Focus.Manager; [[Redirect object has changed, the old manager is passed as event info]]
-        flush,pre: void; [[Next to this event, the manager object will calculate relations in the graph. Can be used to add / remove children in a lazy manner]]
-        coords,dirty: void; [[Cached calculation results have been invalidated]]
-        manager_focus,changed : Efl.Ui.Focus.Object; [[the manager_focus property has changed, the previous focused object is passed as event argument]]
-        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or unfrozen, even_info beeing $true indicates that it is now frozen, $false indicates that it is unfrozen.]]
+        redirect,changed : Efl.Ui.Focus.Manager; [[Redirect object has changed, the old manager is passed as an event argument.]]
+        flush,pre: void; [[After this event, the manager object will calculate relations in the graph. Can be used to add / remove children in a lazy fashion.]]
+        coords,dirty: void; [[Cached relationship calculation results have been invalidated.]]
+        manager_focus,changed : Efl.Ui.Focus.Object; [[The manager_focus property has changed. The previously focused object is passed as an event argument.]]
+        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or thawed, even_info beeing $true indicates that it is now frozen, $false indicates that it is thawed.]]
     }
 }
