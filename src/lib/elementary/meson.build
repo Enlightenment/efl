@@ -913,7 +913,7 @@ elementary_src = [
   'efl_ui_size_model.c',
   'efl_ui_homogeneous_model.c',
   'efl_ui_exact_model.c',
-  'efl_ui_average_model.c'
+  'efl_ui_average_model.c',
   'efl_ui_relative_layout.c'
 ]
 
