@@ -347,6 +347,18 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
    efl_event_callback_legacy_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
+static void
+_evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc)
+{
+   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "move", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "resize", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "restack", NULL);
+}
+
+
 void
 evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                 Evas_Callback_Type type, void *event_info, int event_id,
@@ -410,6 +422,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    e->current_event = type;
 
    efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
+   _evas_callback_legacy_smart_compatibility_do_it(eo_obj, efl_event_desc);
 
    /* multi events with finger 0 - only for eo callbacks */
    if (type == EVAS_CALLBACK_MOUSE_DOWN)

@@ -41,8 +41,7 @@ evas_object_inform_call_move(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 
    pos = ((Eina_Rect) obj->cur->geometry).pos;
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOVE, NULL, event_id, EFL_GFX_ENTITY_EVENT_MOVE);
-   efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, &pos);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_MOVE, &pos, event_id, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -54,8 +53,7 @@ evas_object_inform_call_resize(Evas_Object *eo_obj, Evas_Object_Protected_Data *
 
    size = ((Eina_Rect) obj->cur->geometry).size;
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESIZE, NULL, event_id, EFL_GFX_ENTITY_EVENT_RESIZE);
-   efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, &size);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_RESIZE, &size, event_id, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
