@@ -112,7 +112,7 @@ static void
 _setter_add(Eo *vbox, Eo *btn, Options option)
 {
    Eo *to, *hbox;
-   char *text, *btn_text;
+   char *text = NULL, *btn_text;
    double relative;
 
    switch (option)
