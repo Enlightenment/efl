@@ -3628,8 +3628,10 @@ _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
         if (ref) return ref;
      }
 
-   if (*klass_iter)
-     return _efl_class_reflection_find(*klass_iter, property_name);
+   for (; *klass_iter; klass_iter++)
+     {
+        return _efl_class_reflection_find(*klass_iter, property_name);
+     }
 
    return NULL;
 }
