@@ -15,7 +15,7 @@ enum Efl.Task_Flags {
    no_exit_code_error = 4,
 }
 
-abstract @beta Efl.Task extends Efl.Loop_Consumer
+abstract Efl.Task extends Efl.Loop_Consumer
 {
    [[ ]]
    methods {
