@@ -712,6 +712,7 @@ struct _Ecore_IMF_Event_Key_Down
    const char                   *dev_name;  /**< The device name of the key pressed @since 1.14 */
    Ecore_IMF_Device_Class        dev_class; /**< The device class of the key pressed @since 1.14 */
    Ecore_IMF_Device_Subclass     dev_subclass; /**< The device subclass of the key pressed @since 1.14 */
+   unsigned int                  keycode;   /**< Key scan code numeric value @since 1.22 */
 };
 
 /**
@@ -730,6 +731,7 @@ struct _Ecore_IMF_Event_Key_Up
    const char                   *dev_name;  /**< The device name of the key released @since 1.14 */
    Ecore_IMF_Device_Class        dev_class; /**< The device class of the key released @since 1.14 */
    Ecore_IMF_Device_Subclass     dev_subclass; /**< The device subclass of the key released @since 1.14 */
+   unsigned int                  keycode;   /**< Key scan code numeric value @since 1.22 */
 };
 
 /**
