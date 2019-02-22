@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace TestSuite
 {
@@ -164,18 +165,26 @@ class TestEoEvents
         Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
     }
 
-    public static void event_in_init_callback()
+    public static void event_with_list_payload()
     {
-        int received = 0;
-        int sent = 42;
         var obj = new Dummy.TestObject();
-        obj.EvtWithIntEvt += (object sender, Dummy.TestObjectEvtWithIntEvt_Args e) => {
+        Eina.List<string> received = null;
+        Eina.List<string> sent = new Eina.List<string>();
+
+        sent.Append("Abc");
+        sent.Append("Def");
+        sent.Append("Ghi");
+
+        obj.EvtWithListEvt += (object sender, Dummy.TestObjectEvtWithListEvt_Args e) => {
             received = e.arg;
         };
 
-        obj.EmitEventWithInt(sent);
+        obj.EmitEventWithList(sent);
 
-        Test.AssertEquals(sent, received);
+        Test.AssertEquals(sent.Length, received.Length);
+        var pairs = sent.Zip(received, (string sentItem, string receivedItem) => new { Sent = sentItem, Received = receivedItem } );
+        foreach (var pair in pairs)
+            Test.AssertEquals(pair.Sent, pair.Received);
     }
 }
 

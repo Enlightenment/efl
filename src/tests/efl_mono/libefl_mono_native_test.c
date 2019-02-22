@@ -3791,6 +3791,11 @@ void _dummy_test_object_emit_event_with_struct_complex(Eo *obj, EINA_UNUSED Dumm
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT_COMPLEX, &data);
 }
 
+void _dummy_test_object_emit_event_with_list(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List *data)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_LIST, data);
+}
+
 Efl_Object *_dummy_test_object_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const char *name)
 {
     if (!strcmp(name, "part_one"))
