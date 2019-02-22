@@ -1297,7 +1297,7 @@ _efl_net_dialer_websocket_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Webso
    if (pd->streaming_mode == EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_DISABLED) return;
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, (void*) (uintptr_t) can_read);
 }
 
 EOLIAN static void
@@ -1350,7 +1350,7 @@ _efl_net_dialer_websocket_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Webs
      can_write = EINA_FALSE;
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, (void*) (uintptr_t) can_write);
 }
 
 EOLIAN static Eina_Error

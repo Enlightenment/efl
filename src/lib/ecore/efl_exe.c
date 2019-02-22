@@ -759,7 +759,7 @@ _efl_exe_efl_io_reader_can_read_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_rea
    else
      efl_loop_handler_active_set(pd->fd.out_handler,
                                  EFL_LOOP_HANDLER_FLAGS_READ);
-   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, (void*) (uintptr_t) can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -857,7 +857,7 @@ _efl_exe_efl_io_writer_can_write_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_wr
    else
      efl_loop_handler_active_set(pd->fd.in_handler,
                                  EFL_LOOP_HANDLER_FLAGS_WRITE);
-   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, (void*) (uintptr_t) can_write);
 }
 
 EOLIAN static Eina_Bool
