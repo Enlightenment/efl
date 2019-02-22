@@ -666,7 +666,7 @@ _efl_ui_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ta
      {
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
         int rows;
-        evas_object_table_col_row_size_get(wd->resize_obj, &rows, NULL);
+        evas_object_table_col_row_size_get(wd->resize_obj, NULL, &rows);
         return rows;
      }
    return pd->req_rows;
