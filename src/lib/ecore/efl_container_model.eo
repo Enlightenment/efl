@@ -1,12 +1,12 @@
 import eina_types;
 
-class @beta Efl.Container_Model extends Efl.Loop_Model
+class @beta Efl.Container_Model extends Efl.Composite_Model
 {
    [[
      Class used to create data models from Eina containers.
 
      Each container supplied represents a series of property values, each item
-     being the property value for a child object (@Efl.Container_Model_Item).
+     being the property value for a child object.
 
      The data in the given containers are copied and stored internally.
 
@@ -20,14 +20,6 @@ class @beta Efl.Container_Model extends Efl.Loop_Model
             name: string; [[Property name]]
          }
          return: ptr(const(Eina.Value_Type)); [[Property type]]
-      }
-      child_property_values_get {
-         [[Gets the values for the given property.]]
-         params {
-            name: string; [[Property name]]
-         }
-         return: iterator<void_ptr> @owned @warn_unused;
-         [[The currently wrapped values]]
       }
       child_property_add {
          [[Adds the given property to child objects and supply the values.
@@ -48,12 +40,10 @@ class @beta Efl.Container_Model extends Efl.Loop_Model
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Model.properties { get; }
       Efl.Model.property { set; get; }
-      Efl.Model.child_add;
-      Efl.Model.child_del;
-      Efl.Model.children_slice_get;
       Efl.Model.children_count { get; }
    }
 }

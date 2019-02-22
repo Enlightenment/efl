@@ -45,7 +45,6 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_loop_model.eo \
 	lib/ecore/efl_generic_model.eo \
 	lib/ecore/efl_container_model.eo \
-	lib/ecore/efl_container_model_item.eo \
 	lib/ecore/efl_boolean_model.eo \
 	lib/ecore/efl_select_model.eo \
 	lib/ecore/efl_composite_model.eo \
@@ -135,8 +134,6 @@ lib/ecore/efl_io_buffered_stream.c \
 lib/ecore/efl_loop_model.c \
 lib/ecore/efl_generic_model.c \
 lib/ecore/efl_container_model.c \
-lib/ecore/efl_container_model_item.c \
-lib/ecore/efl_container_model_private.h \
 lib/ecore/efl_composite_model.c \
 lib/ecore/efl_boolean_model.c \
 lib/ecore/efl_select_model.c \
