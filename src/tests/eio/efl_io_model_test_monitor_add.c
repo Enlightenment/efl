@@ -16,12 +16,72 @@ Eina_Tmpstr* temp_filename = NULL;
 const char* tmpdir = NULL;
 Eina_Bool children_deleted = EINA_FALSE;
 
+// This will ensure that the child have the time to be automatically destroyed
+static Eina_Value
+_delayed_quit(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   ecore_main_loop_quit();
+
+   return v;
+}
+
+static Eina_Value
+_children_got(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Eo *child = NULL;
+   unsigned int i, len;
+   Eina_Value r = (Eina_Value) v;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
+     {
+        Eina_Value *path;
+        char *str;
+
+        path = efl_model_property_get(child, "path");
+        fail_if(path == NULL);
+        str = eina_value_to_string(path);
+        fail_if(str == NULL);
+
+        if (temp_filename && strcmp(str, temp_filename) == 0)
+          r = eina_future_as_value(efl_future_then(efl_loop_get(o),
+                                                   efl_loop_job(efl_loop_get(o)),
+                                                   .success = _delayed_quit));
+
+
+        free(str);
+        eina_value_free(path);
+     }
+
+   return r;
+}
+
+static Eina_Value
+_children_failed(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Error err)
+{
+   ck_abort_msg( "Failed to get the child with '%s'.\n", eina_error_msg_get(err));
+   return eina_value_error_init(err);
+}
+
 static void
 _children_removed_cb(void *data EINA_UNUSED, const Efl_Event* event)
 {
    Efl_Model_Children_Event* evt = event->info;
    Eina_Value *path;
    char *str;
+
+   if (!evt->child)
+     {
+        Eina_Future *f;
+
+        // Last time we can fetch the object
+        f = efl_future_then(event->object,
+                            efl_model_children_slice_get(event->object, evt->index, 1),
+                            .success = _children_got,
+                            .error = _children_failed,
+                            .success_type = EINA_VALUE_TYPE_ARRAY);
+        fail_if(f == NULL);
+        return;
+     }
 
    fail_if(evt->child == NULL);
    path = efl_model_property_get(evt->child, "path");
@@ -30,7 +90,9 @@ _children_removed_cb(void *data EINA_UNUSED, const Efl_Event* event)
    fail_if(str == NULL);
 
    if (temp_filename && strcmp(str, temp_filename) == 0)
-     ecore_main_loop_quit();
+     efl_future_then(efl_loop_get(evt->child),
+                     efl_loop_job(efl_loop_get(evt->child)),
+                     .success = _delayed_quit);
 
    free(str);
    eina_value_free(path);

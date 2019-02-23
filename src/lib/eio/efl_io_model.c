@@ -100,7 +100,8 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    mi->name_start = eina_stringshare_strlen(pd->path) + 1;
    mi->name_length = mi->path_length - mi->name_start;
    mi->type = EINA_FILE_UNKNOWN;
-   mi->parent_ref = EINA_TRUE;
+   mi->parent_ref = EINA_FALSE;
+   mi->child_ref = EINA_TRUE;
 
    // Honor filter on new added file too
    if (pd->filter.cb)
@@ -115,7 +116,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
 
         if (!pd->filter.cb(pd->filter.data, obj, &info))
           {
-             eina_stringshare_del(mi->path);
+             eina_stringshare_replace(&mi->path, NULL);
              free(mi);
              goto end;
           }
@@ -176,9 +177,7 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
    // Remove the entry from the files list
    pd->files = eina_list_remove_list(pd->files, l);
 
-   // This should trigger the object child destruction if it exist
-   // resulting in the potential destruction of the child, after
-   // this point mi and info might be freed.
+   // This will only trigger the data destruction if no object is referencing them.
    _efl_io_model_info_free(mi, EINA_FALSE);
 
  end:
@@ -225,11 +224,6 @@ _efl_io_model_info_free(Efl_Io_Model_Info *info, Eina_Bool model)
 
    if (!model)
      {
-        if (!info->object)
-          {
-             efl_del(info->object);
-             info->object = NULL;
-          }
         info->child_ref = EINA_FALSE;
      }
    else
@@ -241,7 +235,7 @@ _efl_io_model_info_free(Efl_Io_Model_Info *info, Eina_Bool model)
        info->parent_ref)
      return ;
 
-   eina_stringshare_del(info->path);
+   eina_stringshare_replace(&info->path, NULL);
    free(info);
 }
 
@@ -336,11 +330,11 @@ _eio_build_st_done_clobber(void *data, Eio_File *handler, const Eina_Stat *stat)
    Efl_Io_Model *model = data;
    Efl_Io_Model *parent;
 
-   efl_ref(model);
+   efl_ref(model); // For st_done
    _eio_build_st_done(data, handler, stat);
    parent = efl_parent_get(model);
    efl_model_child_del(parent, model);
-   efl_unref(model);
+   efl_unref(model); // From the async thread early ref
 }
 
 static void
@@ -361,13 +355,10 @@ static void
 _eio_build_st_error_clobber(void *data, Eio_File *handler, int error)
 {
    Efl_Io_Model *model = data;
-   Efl_Io_Model *parent;
 
-   efl_ref(model);
+   efl_ref(model); // For st_error unref
    _eio_build_st_error(data, handler, error);
-   parent = efl_parent_get(model);
-   efl_model_child_del(parent, model);
-   efl_unref(model);
+   efl_unref(model); // From the async thread early ref
 }
 
 static void
@@ -377,7 +368,10 @@ _eio_build_st(const Efl_Io_Model *model, Efl_Io_Model_Data *pd)
    if (pd->request.stat) return ;
    if (pd->error) return ;
 
-   pd->request.stat = eio_file_direct_stat(pd->path, _eio_build_st_done, _eio_build_st_error, efl_ref(model));
+   pd->request.stat = eio_file_direct_stat(pd->path,
+                                           _eio_build_st_done,
+                                           _eio_build_st_error,
+                                           efl_ref(model));
 }
 
 static void
@@ -502,7 +496,7 @@ _property_filename_cb(const Eo *obj, Efl_Io_Model_Data *pd)
 static Eina_Value *
 _property_path_cb(const Eo *obj EINA_UNUSED, Efl_Io_Model_Data *pd)
 {
-   return eina_value_string_new(pd->path);
+   return eina_value_stringshare_new(pd->path);
 }
 
 static Eina_Value *
@@ -700,7 +694,7 @@ _efl_io_model_efl_model_property_set(Eo *obj,
      }
    else
      {
-        f = efl_loop_future_resolved(obj, eina_value_string_init(pd->path));
+        f = efl_loop_future_resolved(obj, eina_value_stringshare_init(pd->path));
      }
 
    return f;
@@ -741,7 +735,8 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
         mi->name_start = info->name_start;
         mi->name_length = info->name_length;
         mi->type = _efl_io_model_info_type_get(info, NULL);
-        mi->parent_ref = EINA_TRUE;
+        mi->parent_ref = EINA_FALSE;
+        mi->child_ref = EINA_TRUE;
 
         cevt.index = eina_list_count(pd->files);
         cevt.child = NULL;
@@ -755,19 +750,24 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
 }
 
 static Eina_Value
-_efl_io_model_children_list_on(void *data, const Eina_Value v,
-                               const Eina_Future *dead EINA_UNUSED)
+_efl_io_model_children_list_on(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 {
    Efl_Io_Model_Data *pd = data;
-
-   pd->request.listing = NULL;
-   pd->listed = EINA_TRUE;
 
    // Now that we have listed the content of the directory,
    // we can whatch over it
    _efl_io_model_efl_model_monitor_add(pd);
 
    return v;
+}
+
+static void
+_efl_io_model_children_list_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Io_Model_Data *pd = data;
+
+   pd->request.listing = NULL;
+   pd->listed = EINA_TRUE;
 }
 
 /**
@@ -801,8 +801,11 @@ _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
 
         f = efl_io_manager_direct_ls(iom, pd->path, EINA_FALSE,
                                      (void*) obj, _efl_io_model_children_list, NULL);
-        f = eina_future_then(f, _efl_io_model_children_list_on, pd, NULL);
-        pd->request.listing = efl_future_then(obj, f);
+
+        pd->request.listing = efl_future_then(obj, f,
+                                              .success = _efl_io_model_children_list_on,
+                                              .free = _efl_io_model_children_list_cleanup,
+                                              .data = pd);
      }
 
    return eina_list_count(pd->files);
@@ -878,8 +881,8 @@ _efl_io_model_efl_model_child_del(Eo *obj EINA_UNUSED,
    Eina_File_Type type;
 
    child_pd = efl_data_scope_get(child, MY_CLASS);
-   if (!child_pd->info) goto on_error;
-   if (child_pd->error) goto on_error;
+   if (!child_pd->info) return;
+   if (child_pd->error) return;
 
    type = child_pd->info->type;
 
@@ -888,6 +891,9 @@ _efl_io_model_efl_model_child_del(Eo *obj EINA_UNUSED,
         _eio_build_st_then_clobber(child, child_pd);
         return ;
      }
+
+   // Already in progress
+   if (child_pd->request.del) return;
 
    efl_ref(child);
    if (type == EINA_FILE_DIR)
@@ -906,11 +912,6 @@ _efl_io_model_efl_model_child_del(Eo *obj EINA_UNUSED,
                                                 _eio_error_unlink_cb,
                                                 child);
      }
-
-   return ;
-
- on_error:
-   efl_del(child);
 }
 
 /**
@@ -947,19 +948,23 @@ _efl_io_model_efl_model_children_slice_get(Eo *obj, Efl_Io_Model_Data *pd,
         Efl_Io_Model_Info *info = eina_list_data_get(ls);
         Efl_Io_Model_Data *child_data = NULL;
 
-        info->child_ref = EINA_TRUE;
+        info->parent_ref = EINA_TRUE;
 
         if (info->object == NULL)
           // Little trick here, setting internal data before finalize
-          info->object = efl_add(EFL_IO_MODEL_CLASS, obj,
-                                 child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
-                                 child_data->info = info,
-                                 child_data->path = eina_stringshare_ref(info->path),
-                                 child_data->parent = ls,
-                                 // NOTE: We are assuming here that the parent model will outlive all its children
-                                 child_data->filter.cb = pd->filter.cb,
-                                 child_data->filter.data = pd->filter.data);
+          info->object = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
+                                     efl_loop_model_volatile_make(efl_added),
+                                     child_data = efl_data_scope_get(efl_added, EFL_IO_MODEL_CLASS),
+                                     child_data->info = info,
+                                     child_data->path = eina_stringshare_ref(info->path),
+                                     child_data->parent = ls,
+                                     // NOTE: We are assuming here that the parent model will outlive all its children
+                                     child_data->filter.cb = pd->filter.cb,
+                                     child_data->filter.data = pd->filter.data);
         eina_value_array_append(&array, info->object);
+
+        efl_wref_add(info->object, &info->object);
+        efl_unref(info->object);
 
         count--;
         ls = eina_list_next(ls);
@@ -1017,13 +1022,17 @@ _efl_io_model_efl_object_destructor(Eo *obj , Efl_Io_Model_Data *priv)
 {
    Efl_Io_Model_Info *info;
 
+
+   free(priv->st);
+   priv->st = NULL;
+
    _efl_io_model_info_free(priv->info, EINA_TRUE);
    priv->info = NULL;
 
    EINA_LIST_FREE(priv->files, info)
      _efl_io_model_info_free(info, EINA_FALSE);
 
-   eina_stringshare_del(priv->path);
+   eina_stringshare_replace(&priv->path, NULL);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
@@ -1031,10 +1040,20 @@ _efl_io_model_efl_object_destructor(Eo *obj , Efl_Io_Model_Data *priv)
 static void
 _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
 {
+   // This has to be done first, to make sure that the automatic
+   // del is not done anymore. Or it would lead to too much
+   // unref when stopping async thread (During invalidate, we
+   // are already in the process of doing an implicit del).
+   efl_invalidate(efl_super(obj, EFL_IO_MODEL_CLASS));
+
    _efl_io_model_efl_model_monitor_del(priv);
 
    // Unlink the object from the parent
-   if (priv->info) priv->info->object = NULL;
+   if (priv->info)
+     {
+        efl_wref_del(priv->info->object, &priv->info->object);
+        priv->info->object = NULL;
+     }
    if (priv->request.del)
      {
         if (!ecore_thread_wait(priv->request.del->thread, 0.1))
@@ -1059,8 +1078,6 @@ _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
              ecore_thread_wait(priv->request.stat->thread, 0.1);
           }
      }
-
-   efl_invalidate(efl_super(obj, EFL_IO_MODEL_CLASS));
 }
 
 #include "efl_io_model.eo.c"
