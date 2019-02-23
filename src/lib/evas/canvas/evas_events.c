@@ -3715,23 +3715,47 @@ _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                              evas->last_timestamp, NULL);
      }
 }
-
 EOLIAN void
-_efl_canvas_object_freeze_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool freeze)
+_efl_canvas_object_efl_object_event_freeze(Eo *obj, Evas_Object_Protected_Data *pd)
 {
-   freeze = !!freeze;
-   if (obj->freeze_events == freeze) return;
-   obj->freeze_events = freeze;
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE,
-                                             EINA_FALSE);
-   if (obj->freeze_events) return;
-   _feed_mouse_move_eval_internal(eo_obj, obj);
+   efl_event_freeze(efl_super(obj, EFL_CANVAS_OBJECT_CLASS));
+   if (efl_event_freeze_count_get(obj) == 1)
+     {
+        pd->freeze_events = EINA_TRUE;
+        evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE,
+                                                  EINA_FALSE);
+     }
 }
 
-EOLIAN Eina_Bool
-_efl_canvas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EOLIAN void
+_efl_canvas_object_efl_object_event_thaw(Eo *obj, Evas_Object_Protected_Data *pd)
 {
-   return obj->freeze_events;
+   if (efl_event_freeze_count_get(obj) == 1)
+     {
+        pd->freeze_events = EINA_FALSE;
+        evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE,
+                                                  EINA_FALSE);
+        _feed_mouse_move_eval_internal(obj, pd);
+     }
+   efl_event_thaw(efl_super(obj, EFL_CANVAS_OBJECT_CLASS));
+}
+
+EAPI void
+evas_object_freeze_events_set(Eo *eo_obj, Eina_Bool freeze)
+{
+   if (freeze)
+     efl_event_freeze(eo_obj);
+   else
+     // The following check is needed, as eo does not accept more thaw calls than freeze calls.
+     // However, evas legacy stuff accepted multiple flase sets
+     if (efl_event_freeze_count_get(eo_obj) > 0)
+       efl_event_thaw(eo_obj);
+}
+
+EAPI Eina_Bool
+evas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED)
+{
+   return (efl_event_freeze_count_get(eo_obj) > 0);
 }
 
 EOLIAN void

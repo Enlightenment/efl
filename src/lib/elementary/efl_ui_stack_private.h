@@ -17,7 +17,6 @@ typedef struct _Transit_Data Transit_Data;
 struct _Transit_Data
 {
    Content_Data *cd;
-   Eina_Bool     freeze_events;
 };
 
 typedef struct _Efl_Ui_Stack_Data Efl_Ui_Stack_Data;

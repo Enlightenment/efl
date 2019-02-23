@@ -102,7 +102,7 @@ _content_data_del(Content_Data *cd)
 static void
 _anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   efl_canvas_object_freeze_events_set(efl_animation_player_target_get(event->object), EINA_TRUE);
+   efl_event_freeze(efl_animation_player_target_get(event->object));
 }
 
 static Evas_Object*
@@ -110,7 +110,7 @@ _end_anim(Transit_Data *td)
 {
    Efl_Canvas_Object *content = td->cd->content;
 
-   efl_canvas_object_freeze_events_set(content, td->freeze_events);
+   efl_event_thaw(content);
    td->cd->on_pushing = EINA_FALSE;
    td->cd->on_popping = EINA_FALSE;
    free(td);
@@ -159,8 +159,6 @@ _show_content_with_anim(Efl_Ui_Stack *obj, Efl_Ui_Stack_Data *pd, Content_Data *
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
    td->cd = cd;
-   td->freeze_events =
-      efl_canvas_object_freeze_events_get(cd->content);
    pd->show_td = td;
 
    /* efl_ui_widget_resize_object_set() calls efl_gfx_entity_visible_set()
@@ -184,7 +182,6 @@ _hide_content_with_anim(Efl_Ui_Stack *obj EINA_UNUSED, Efl_Ui_Stack_Data *pd, Co
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
    td->cd = cd;
-   td->freeze_events = efl_canvas_object_freeze_events_get(cd->content);
    pd->hide_td = td;
 
    efl_player_start(pd->hide);

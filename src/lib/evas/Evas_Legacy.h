@@ -8121,6 +8121,42 @@ EAPI void evas_object_is_frame_object_set(Efl_Canvas_Object *obj, Eina_Bool is_f
  */
 EAPI Eina_Bool evas_object_is_frame_object_get(const Efl_Canvas_Object *obj);
 
+/**
+ * @brief Set whether an Evas object is to freeze (discard) events.
+ *
+ * If @c freeze is @c true, it will force events on @c obj to be discarded.
+ * Unlike @ref evas_object_pass_events_set, events will not be passed to next
+ * lower object. This API can be used for blocking events while @c obj is in
+ * transition.
+ *
+ * If @c freeze is @c false, events will be processed on that object as normal.
+ *
+ * @warning If you block only key/mouse up events with this API, you can't be
+ * sure of the state of any objects that have only key/mouse down events.
+ *
+ * @param[in] obj The object.
+ * @param[in] freeze Pass when @c obj is to freeze events ($true) or not
+ * ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI void evas_object_freeze_events_set(Efl_Canvas_Object *obj, Eina_Bool freeze);
+
+/**
+ * @brief Determine whether an object is set to freeze (discard) events.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Pass when @c obj is to freeze events ($true) or not ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI Eina_Bool evas_object_freeze_events_get(const Efl_Canvas_Object *obj);
+
 #include "canvas/efl_canvas_event_grabber.eo.legacy.h"
 
 #include "canvas/efl_canvas_animation_alpha.eo.legacy.h"

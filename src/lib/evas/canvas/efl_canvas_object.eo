@@ -86,36 +86,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             render_op: Efl.Gfx.Render_Op; [[Blend or copy.]]
          }
       }
-      @property freeze_events {
-         set {
-            [[Set whether an Evas object is to freeze (discard) events.
-
-              If $freeze is $true, it will force events on $obj to be
-              discarded. Unlike @.pass_events.set, events will not be
-              passed to next lower object. This API can be used for
-              blocking events while $obj is in transition.
-
-              If $freeze is $false, events will be processed on that
-              object as normal.
-
-              Warning: If you block only key/mouse up events with this API,
-              you can't be sure of the state of any objects that have only
-              key/mouse down events.
-
-              @since 1.1
-            ]]
-         }
-         get {
-            [[Determine whether an object is set to freeze (discard) events.
-
-              @since 1.1
-            ]]
-         }
-         values {
-            freeze: bool; [[Pass when $obj is to freeze events ($true)
-                            or not ($false).]]
-         }
-      }
       @property clip {
          set {
             [[Clip one object to another.
@@ -315,15 +285,13 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               be propagated on to the smart object of which $obj is a
               member. The default value is $true.
 
-              See also @.repeat_events.set, @.pass_events.set,
-              @.freeze_events.set.
+              See also @.repeat_events.set, @.pass_events.set.
             ]]
          }
          get {
             [[Retrieve whether an Evas object is set to propagate events.
 
-              See also @.repeat_events.get, @.pass_events.get,
-              @.freeze_events.get.
+              See also @.repeat_events.get, @.pass_events.get.
             ]]
          }
          values {
@@ -342,15 +310,13 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               If $pass is $false events will be processed on that object
               as normal.
 
-              See also @.repeat_events.set, @.propagate_events.set,
-              @.freeze_events.set.
+              See also @.repeat_events.set, @.propagate_events.set
             ]]
          }
          get {
             [[Determine whether an object is set to pass (ignore) events.
 
-              See also @.repeat_events.get, @.propagate_events.get,
-              @.freeze_events.get.
+              See also @.repeat_events.get, @.propagate_events.get.
             ]]
             /* FIXME-doc
             Example:
@@ -561,6 +527,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Object.provider_find;
+      Efl.Object.event_freeze;
+      Efl.Object.event_thaw;
       Efl.Object.debug_name_override;
       Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }
