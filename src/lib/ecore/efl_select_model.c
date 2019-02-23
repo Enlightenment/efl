@@ -88,7 +88,7 @@ _clear_child(Eo *child,
              void *data EINA_UNUSED,
 	     const Eina_Future *dead_future EINA_UNUSED)
 {
-   efl_del(child);
+   efl_unref(child);
 }
 
 static Efl_Model *
@@ -125,7 +125,9 @@ _check_child_change(Efl_Model *child, Eina_Bool value)
    else
      {
         r = efl_model_property_set(child, "selected", eina_value_bool_new(!!value));
-        r = efl_future_then(child, r, .success = _commit_change, .free = _clear_child);
+        r = efl_future_then(efl_ref(child), r,
+                            .success = _commit_change,
+                            .free = _clear_child);
      }
 
    return r;
@@ -229,6 +231,15 @@ _untangle_error(void *data, Eina_Error err)
    return eina_future_as_value(f);
 }
 
+static void
+_untangle_free(void *data,
+               const Eina_Future *dead_future EINA_UNUSED)
+{
+   Eo *obj = data;
+
+   efl_unref(obj);
+}
+
 static Eina_Iterator *
 _efl_select_model_efl_model_properties_get(const Eo *obj,
                                            Efl_Select_Model_Data *pd EINA_UNUSED)
@@ -271,9 +282,10 @@ _efl_select_model_efl_model_property_set(Eo *obj,
         if (!eina_value_ulong_convert(value, &l))
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-        return efl_future_then(obj, efl_model_children_slice_get(obj, l, 1),
+        return efl_future_then(efl_ref(obj), efl_model_children_slice_get(obj, l, 1),
                                .success = _select_slice_then,
-                               .success_type = EINA_VALUE_TYPE_ARRAY);
+                               .success_type = EINA_VALUE_TYPE_ARRAY,
+                               .free = _clear_child);
      }
 
    if (pd->parent && !strcmp("self.selected", property))
@@ -326,18 +338,23 @@ _efl_select_model_efl_model_property_set(Eo *obj,
                   // There was, need to unselect the previous one along setting the new value
                   parent = efl_parent_get(obj);
                   chain = eina_future_all(chain,
-                                          efl_future_then(parent, efl_model_children_slice_get(parent, selected, 1),
+                                          efl_future_then(efl_ref(parent),
+                                                          efl_model_children_slice_get(parent, selected, 1),
                                                           .success = _unselect_slice_then,
-                                                          .success_type = EINA_VALUE_TYPE_ARRAY));
+                                                          .success_type = EINA_VALUE_TYPE_ARRAY,
+                                                          .free = _clear_child));
                   chain = eina_future_then_easy(chain,
                                                 .success_type = EINA_VALUE_TYPE_ARRAY,
                                                 .success = _untangle_array,
-                                                .data = obj,
-                                                .error = _untangle_error);
+                                                .data = efl_ref(obj),
+                                                .error = _untangle_error,
+                                                .free = _untangle_free);
                }
           }
 
-        return efl_future_then(obj, chain, .success = _commit_change);
+        return efl_future_then(efl_ref(obj), chain,
+                               .success = _commit_change,
+                               .free = _clear_child);
      }
 
    return efl_model_property_set(efl_super(obj, EFL_SELECT_MODEL_CLASS),
