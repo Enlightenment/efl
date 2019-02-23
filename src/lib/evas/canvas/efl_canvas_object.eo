@@ -570,20 +570,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             return: bool; [[$true if the coords are inside the object, $false otherwise]]
          }
       }
-      @property event_animation {
-         [[Set the $animation which starts when the given $desc happens to the object.]]
-         get { legacy: null; }
-         set { legacy: null; }
-         keys {
-            @cref desc: Efl.Event_Description;
-               [[The event description for which the given $animation is set.]]
-         }
-         values {
-            animation: Efl.Canvas.Animation;
-               [[The animation which starts when the given $desc
-                 happens to the object.]]
-         }
-      }
    }
    implements {
       Efl.Object.constructor;
@@ -619,9 +605,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       Efl.Canvas.Pointer.pointer_inside { get; }
    }
    events {
-      anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
-      anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
-      anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
       animator,tick: Efl.Event_Animator_Tick; [[Animator tick synchronized with screen vsync if possible.]]
    }
 }

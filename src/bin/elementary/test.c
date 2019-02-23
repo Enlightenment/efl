@@ -365,7 +365,6 @@ void test_efl_anim_translate(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_translate_absolute(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_parallel(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_sequential(void *data, Evas_Object *obj, void *event_info);
-void test_efl_anim_event_anim(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_pause(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_repeat(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_start_delay(void *data, Evas_Object *obj, void *event_info);
@@ -923,7 +922,6 @@ add_tests:
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Translate Absolute", test_efl_anim_translate_absolute);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Group Parallel", test_efl_anim_group_parallel);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Group Sequential", test_efl_anim_group_sequential);
-   ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Event Animation", test_efl_anim_event_anim);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Pause", test_efl_anim_pause);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Repeat", test_efl_anim_repeat);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Start Delay", test_efl_anim_start_delay);

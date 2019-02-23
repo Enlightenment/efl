@@ -1147,8 +1147,6 @@ struct _Evas_Object_Protected_Data
    unsigned char               no_change_render;
    unsigned char               delete_me;
 
-   Eina_Inlist                *event_anims; //List of Efl_Animation
-
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
 

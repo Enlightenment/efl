@@ -994,7 +994,6 @@ bin/elementary/test_efl_anim_scale.c \
 bin/elementary/test_efl_anim_translate.c \
 bin/elementary/test_efl_anim_group_parallel.c \
 bin/elementary/test_efl_anim_group_sequential.c \
-bin/elementary/test_efl_anim_event_anim.c \
 bin/elementary/test_efl_anim_pause.c \
 bin/elementary/test_efl_anim_repeat.c \
 bin/elementary/test_efl_anim_start_delay.c \
