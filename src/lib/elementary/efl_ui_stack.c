@@ -40,15 +40,6 @@ _show_content_without_anim(Efl_Ui_Stack *obj, Evas_Object *content)
    efl_event_callback_call(obj, EFL_UI_STACK_EVENT_LOADED,
                            &loaded_info);
 
-   Efl_Canvas_Animation *orig_show_anim =
-     efl_canvas_object_event_animation_get(content,
-                                           EFL_GFX_ENTITY_EVENT_SHOW);
-
-   if (orig_show_anim)
-     efl_canvas_object_event_animation_set(content,
-                                          EFL_GFX_ENTITY_EVENT_SHOW,
-                                          NULL);
-
    evas_object_raise(content);
    /* efl_ui_widget_resize_object_set() calls efl_gfx_entity_visible_set()
     * internally.
@@ -56,10 +47,6 @@ _show_content_without_anim(Efl_Ui_Stack *obj, Evas_Object *content)
     * setting animation and efl_gfx_entity_visible_set() is not called. */
    efl_ui_widget_resize_object_set(obj, content);
 
-   if (orig_show_anim)
-     efl_canvas_object_event_animation_set(content,
-                                           EFL_GFX_ENTITY_EVENT_SHOW,
-                                           orig_show_anim);
    //Activated Event
    Efl_Ui_Stack_Event_Activated activated_info;
    activated_info.content = content;
@@ -70,20 +57,7 @@ _show_content_without_anim(Efl_Ui_Stack *obj, Evas_Object *content)
 static void
 _hide_content_without_anim(Efl_Ui_Stack *obj EINA_UNUSED, Evas_Object *content)
 {
-   Efl_Canvas_Animation *orig_hide_anim =
-      efl_canvas_object_event_animation_get(content,
-                                            EFL_GFX_ENTITY_EVENT_HIDE);
-
-   if (orig_hide_anim)
-     efl_canvas_object_event_animation_set(content,
-                                           EFL_GFX_ENTITY_EVENT_HIDE, NULL);
-
    efl_gfx_entity_visible_set(content, EINA_FALSE);
-
-   if (orig_hide_anim)
-     efl_canvas_object_event_animation_set(content,
-                                           EFL_GFX_ENTITY_EVENT_HIDE,
-                                           orig_hide_anim);
 }
 
 static void
@@ -98,7 +72,7 @@ _content_del_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static Content_Data *
-_content_data_new(Eo *obj, Eo *content)
+_content_data_new(Eo *obj EINA_UNUSED, Eo *content)
 {
    Content_Data *cd = calloc(1, sizeof(Content_Data));
    if (!cd)
@@ -107,7 +81,6 @@ _content_data_new(Eo *obj, Eo *content)
         return NULL;
      }
 
-   cd->stack = obj;
    cd->content = content;
 
    efl_event_callback_add(cd->content, EFL_EVENT_DEL, _content_del_cb, cd);
@@ -129,106 +102,92 @@ _content_data_del(Content_Data *cd)
 static void
 _anim_started_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   efl_canvas_object_freeze_events_set(event->object, EINA_TRUE);
-
-   efl_event_callback_del(event->object, EFL_CANVAS_OBJECT_EVENT_ANIM_STARTED,
-                          _anim_started_cb, NULL);
+   efl_canvas_object_freeze_events_set(efl_animation_player_target_get(event->object), EINA_TRUE);
 }
 
-static void
-_anim_ended_cb(void *data, const Efl_Event *event)
+static Evas_Object*
+_end_anim(Transit_Data *td)
 {
-   Transit_Data *td = data;
-   Efl_Canvas_Object_Animation_Event *anim_event = event->info;
+   Efl_Canvas_Object *content = td->cd->content;
 
-   //Unset animation because originally there is no animation.
-   if (!td->orig_anim)
-     efl_canvas_object_event_animation_set(event->object,
-                                           anim_event->event_desc, NULL);
-
-   efl_canvas_object_freeze_events_set(event->object,
-                                       td->freeze_events);
-
+   efl_canvas_object_freeze_events_set(content, td->freeze_events);
    td->cd->on_pushing = EINA_FALSE;
    td->cd->on_popping = EINA_FALSE;
+   free(td);
 
-   if (anim_event->event_desc == EFL_GFX_ENTITY_EVENT_SHOW)
-     {
-        //Activated Event
-        Efl_Ui_Stack_Event_Activated activated_info;
-        activated_info.content = event->object;
-        efl_event_callback_call(td->cd->stack,
-                                EFL_UI_STACK_EVENT_ACTIVATED,
-                                &activated_info);
-     }
-   else
-     {
-        _announce_hiding(NULL, event->object);
-     }
-
-   efl_event_callback_del(event->object, EFL_CANVAS_OBJECT_EVENT_ANIM_ENDED,
-                          _anim_ended_cb, data);
-   free(data);
+   return content;
 }
 
 static void
-_show_content_with_anim(Efl_Ui_Stack *obj, Content_Data *cd)
+_hide_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Canvas_Animation *orig_show_anim =
-      efl_canvas_object_event_animation_get(cd->content,
-                                            EFL_GFX_ENTITY_EVENT_SHOW);
+   Efl_Ui_Stack_Data *pd = efl_data_scope_safe_get(data, EFL_UI_STACK_CLASS);
+   Efl_Canvas_Object *content;
 
-   //Show with animation
-   if (!orig_show_anim)
-     efl_canvas_object_event_animation_set(cd->content,
-                                           EFL_GFX_ENTITY_EVENT_SHOW,
-                                           show_anim);
+   content = _end_anim(pd->hide_td);
+   pd->hide_td = NULL;
+   efl_gfx_entity_visible_set(content, EINA_FALSE);
+   _announce_hiding(data, content);
+}
+
+static void
+_show_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Stack_Data *pd = efl_data_scope_safe_get(data, EFL_UI_STACK_CLASS);
+   Efl_Canvas_Object *content;
+
+   content = _end_anim(pd->show_td);
+   pd->show_td = NULL;
+   //Activated Event
+   Efl_Ui_Stack_Event_Activated activated_info;
+   activated_info.content = content;
+   efl_event_callback_call(data,
+                           EFL_UI_STACK_EVENT_ACTIVATED,
+                           &activated_info);
+}
+
+static void
+_show_content_with_anim(Efl_Ui_Stack *obj, Efl_Ui_Stack_Data *pd, Content_Data *cd)
+{
+   //immidiatly stop hiding animation
+   efl_player_stop(pd->show);
+   if (pd->show_td)
+     EINA_SAFETY_ERROR("td is set but it should not");
+
+   //attach new content target
+   efl_animation_player_target_set(pd->show, cd->content);
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
    td->cd = cd;
-   td->orig_anim = !!(orig_show_anim);
    td->freeze_events =
       efl_canvas_object_freeze_events_get(cd->content);
-
-   efl_event_callback_add(cd->content,
-                          EFL_CANVAS_OBJECT_EVENT_ANIM_STARTED,
-                          _anim_started_cb, NULL);
-   efl_event_callback_add(cd->content,
-                          EFL_CANVAS_OBJECT_EVENT_ANIM_ENDED,
-                          _anim_ended_cb, td);
+   pd->show_td = td;
 
    /* efl_ui_widget_resize_object_set() calls efl_gfx_entity_visible_set()
     * internally.
     * Therefore, efl_ui_widget_resize_object_set() is called after
     * setting animation and efl_gfx_entity_visible_set() is not called. */
    efl_ui_widget_resize_object_set(obj, cd->content);
+   efl_player_start(pd->show);
 }
 
 static void
-_hide_content_with_anim(Efl_Ui_Stack *obj EINA_UNUSED, Content_Data *cd)
+_hide_content_with_anim(Efl_Ui_Stack *obj EINA_UNUSED, Efl_Ui_Stack_Data *pd, Content_Data *cd)
 {
-   Efl_Canvas_Animation *orig_hide_anim =
-      efl_canvas_object_event_animation_get(cd->content,
-                                            EFL_GFX_ENTITY_EVENT_HIDE);
-   //Hide with animation.
-   if (!orig_hide_anim)
-     efl_canvas_object_event_animation_set(cd->content,
-                                           EFL_GFX_ENTITY_EVENT_HIDE,
-                                           hide_anim);
+   //immidiatly stop hiding animation
+   efl_player_stop(pd->hide);
+   if (pd->hide_td)
+     EINA_SAFETY_ERROR("td is set but it should not");
+
+   //attach new content target
+   efl_animation_player_target_set(pd->hide, cd->content);
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
    td->cd = cd;
-   td->orig_anim = !!(orig_hide_anim);
    td->freeze_events = efl_canvas_object_freeze_events_get(cd->content);
+   pd->hide_td = td;
 
-   efl_event_callback_add(cd->content,
-                          EFL_CANVAS_OBJECT_EVENT_ANIM_STARTED,
-                          _anim_started_cb, NULL);
-   efl_event_callback_add(cd->content,
-                          EFL_CANVAS_OBJECT_EVENT_ANIM_ENDED,
-                          _anim_ended_cb, td);
-
-   efl_gfx_entity_visible_set(cd->content, EINA_FALSE);
+   efl_player_start(pd->hide);
 }
 
 EOLIAN static void
@@ -287,7 +246,7 @@ _efl_ui_stack_push(Eo *obj, Efl_Ui_Stack_Data *pd, Eo *content)
           {
              top_cd->on_pushing = EINA_TRUE;
 
-             _hide_content_with_anim(obj, top_cd);
+             _hide_content_with_anim(obj, pd, top_cd);
           }
      }
 
@@ -298,7 +257,7 @@ _efl_ui_stack_push(Eo *obj, Efl_Ui_Stack_Data *pd, Eo *content)
 
    /* Apply transition to new content.
     * Show new content with animation. */
-   _show_content_with_anim(obj, cd);
+   _show_content_with_anim(obj, pd, cd);
 }
 
 static void
@@ -344,7 +303,7 @@ _efl_ui_stack_pop(Eo *obj, Efl_Ui_Stack_Data *pd)
              efl_event_callback_add(top_content, EFL_GFX_ENTITY_EVENT_HIDE,
                                     _pop_content_hide_cb, top_cd);
 
-             _hide_content_with_anim(obj, top_cd);
+             _hide_content_with_anim(obj, pd, top_cd);
           }
      }
 
@@ -364,7 +323,7 @@ _efl_ui_stack_pop(Eo *obj, Efl_Ui_Stack_Data *pd)
 
         /* Apply transition to previous content.
          * Show previous content with animation. */
-        _show_content_with_anim(obj, prev_cd);
+        _show_content_with_anim(obj, pd, prev_cd);
      }
 
    return NULL;
@@ -673,23 +632,44 @@ _efl_ui_stack_top(Eo *obj EINA_UNUSED, Efl_Ui_Stack_Data *pd)
    return cd->content;
 }
 
+EFL_CALLBACKS_ARRAY_DEFINE(_anim_show_event_cb,
+  {EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb},
+  {EFL_ANIMATION_PLAYER_EVENT_ENDED, _show_anim_ended_cb},
+)
+
+EFL_CALLBACKS_ARRAY_DEFINE(_anim_hide_event_cb,
+  {EFL_ANIMATION_PLAYER_EVENT_STARTED, _anim_started_cb},
+  {EFL_ANIMATION_PLAYER_EVENT_ENDED, _hide_anim_ended_cb},
+)
+
 EOLIAN static Eo *
 _efl_ui_stack_efl_object_constructor(Eo *obj, Efl_Ui_Stack_Data *pd EINA_UNUSED)
 {
+   Efl_Canvas_Animation *sh, *hi;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
    //Default Show Animation
-   show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
+   sh = show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 0.5);
    efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
 
+   pd->show = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
+   efl_animation_player_animation_set(pd->show, sh);
+   efl_player_play_set(pd->show, EINA_FALSE);
+   efl_event_callback_array_add(pd->show, _anim_show_event_cb(), obj);
+
    //Default Hide Animation
-   hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
+   hi = hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 0.5);
    efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
+
+   pd->hide = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
+   efl_animation_player_animation_set(pd->hide, hi);
+   efl_player_play_set(pd->hide, EINA_FALSE);
+   efl_event_callback_array_add(pd->hide, _anim_hide_event_cb(), obj);
 
    return obj;
 }
