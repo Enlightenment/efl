@@ -280,10 +280,6 @@ _efl_ui_stack_push(Eo *obj, Efl_Ui_Stack_Data *pd, Eo *content)
          * the content without animation. */
         if (top_cd->on_pushing)
           {
-             //Finish current animation.
-             efl_canvas_object_event_animation_set(top_content,
-                                                   EFL_GFX_ENTITY_EVENT_SHOW, NULL);
-
              _hide_content_without_anim(obj, top_content);
              _announce_hiding(obj, top_content);
           }
@@ -337,10 +333,6 @@ _efl_ui_stack_pop(Eo *obj, Efl_Ui_Stack_Data *pd)
          * the content without animation. */
         if (top_cd->on_popping)
           {
-             //Finish current animation.
-             efl_canvas_object_event_animation_set(top_content,
-                                                   EFL_GFX_ENTITY_EVENT_SHOW, NULL);
-
              _hide_content_without_anim(obj, top_content);
              _announce_hiding(obj, top_content);
           }
@@ -362,13 +354,6 @@ _efl_ui_stack_pop(Eo *obj, Efl_Ui_Stack_Data *pd)
                                                           Content_Data);
         Eo *prev_content = prev_cd->content;
 
-        //If content is being pushed now, then finish current animation.
-        if (prev_cd->on_pushing)
-          {
-             efl_canvas_object_event_animation_set(prev_content,
-                                                   EFL_GFX_ENTITY_EVENT_HIDE,
-                                                   NULL);
-          }
         prev_cd->on_popping = EINA_TRUE;
 
         //Loaded Event
