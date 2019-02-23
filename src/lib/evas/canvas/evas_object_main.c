@@ -2545,13 +2545,30 @@ evas_object_pointer_inside_get(const Evas_Object *eo_obj)
    return evas_object_pointer_inside_by_device_get(eo_obj, NULL);
 }
 
+EAPI void
+evas_object_is_frame_object_set(Efl_Canvas_Object *obj, Eina_Bool is_frame)
+{
+   efl_canvas_object_is_frame_object_set(obj, is_frame);
+}
+
+EAPI Eina_Bool
+evas_object_is_frame_object_get(const Efl_Canvas_Object *obj)
+{
+   return efl_canvas_object_is_frame_object_get(obj);
+}
+
+
 /* Internal EO APIs and hidden overrides */
 
+EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_is_frame_object_set, EFL_FUNC_CALL(is_frame), Eina_Bool is_frame);
+EOAPI EFL_FUNC_BODY_CONST(efl_canvas_object_is_frame_object_get, Eina_Bool, 0);
 EOAPI EFL_VOID_FUNC_BODY(efl_canvas_object_legacy_ctor)
 EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const char *type)
 
 #define EFL_CANVAS_OBJECT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_object_efl_object_dbg_info_get), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_set, _efl_canvas_object_is_frame_object_set), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_get, _efl_canvas_object_is_frame_object_get), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_canvas_object_legacy_ctor), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set)
 

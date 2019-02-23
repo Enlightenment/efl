@@ -269,22 +269,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          legacy: null;
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }
-      @property is_frame_object {
-         [[If $true the object belongs to the window border decorations.
-
-           This will be $false by default, and should be $false for all objects
-           created by the application, unless swallowed in some very specific
-           parts of the window.
-
-           It is very unlikely that an application needs to call this manually,
-           as the window will handle this feature automatically.
-
-           @since 1.2
-         ]]
-         values {
-            is_frame: bool; [[$true if the object is a frame, $false otherwise]]
-         }
-      }
       @property precise_is_inside {
          set {
             [[Set whether to use precise (usually expensive) point collision

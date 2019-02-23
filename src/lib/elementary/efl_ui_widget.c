@@ -6152,6 +6152,7 @@ ELM_PART_TEXT_DEFAULT_GET(efl_ui_widget, NULL)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_widget), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_widget), \
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_widget), \
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_set, _efl_ui_widget_efl_canvas_object_is_frame_object_set), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"

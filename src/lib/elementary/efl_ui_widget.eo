@@ -636,7 +636,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       Efl.Gfx.Entity.scale { set; get; }
       Efl.Canvas.Object.clip { set; }
       Efl.Canvas.Object.no_render { set; }
-      Efl.Canvas.Object.is_frame_object { set; }
       Efl.Canvas.Group.group_calculate;
       Efl.Canvas.Group.group_member_del;
       Efl.Canvas.Group.group_member_add;
