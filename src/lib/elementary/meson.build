@@ -258,6 +258,7 @@ pub_eo_files = [
   'efl_ui_radio_legacy_part.eo',
   'efl_ui_check_legacy_part.eo',
   'efl_ui_progressbar_legacy_part.eo',
+  'elm_widget_item_container.eo',
   'elm_spinner.eo',
   'elm_multibuttonentry.eo',
   'elm_multibuttonentry_item.eo',

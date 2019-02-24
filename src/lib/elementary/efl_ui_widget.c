@@ -3539,12 +3539,6 @@ _efl_ui_widget_focus_highlight_geometry_get(const Eo *obj, Elm_Widget_Smart_Data
    return r;
 }
 
-EOLIAN static Elm_Object_Item*
-_efl_ui_widget_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
-{
-   return NULL;
-}
-
 EOLIAN static void
 _efl_ui_widget_interest_region_mode_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd, Elm_Focus_Region_Show_Mode mode)
 {
@@ -6156,6 +6150,7 @@ ELM_PART_TEXT_DEFAULT_GET(efl_ui_widget, NULL)
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_widget_efl_object_dbg_info_get)
 
 #include "elm_widget_item.eo.c"
+#include "elm_widget_item_container.eo.c"
 #include "efl_ui_widget.eo.c"
 
 /* Others */

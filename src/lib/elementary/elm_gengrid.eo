@@ -11,7 +11,7 @@ enum Elm.Gengrid.Reorder_Type
 
 class Elm.Gengrid extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Efl.Access.Widget.Action,
-                   Efl.Access.Selection, Efl.Ui.Legacy
+                   Efl.Access.Selection, Efl.Ui.Legacy, Elm.Widget_Item_Container
 {
    [[Elementary gengrid class]]
    legacy_prefix: elm_gengrid;
@@ -510,7 +510,7 @@ class Elm.Gengrid extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Elm
       Efl.Ui.Widget.interest_region { get; }
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
-      Efl.Ui.Widget.focused_item { get; }
+      Elm.Widget_Item_Container.focused_item { get; }
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.bounce_allow { set; }
       Elm.Interface_Scrollable.policy { get; set; }

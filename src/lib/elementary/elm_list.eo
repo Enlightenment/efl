@@ -2,7 +2,7 @@ import elm_general;
 
 class Elm.List extends Efl.Ui.Layout implements Elm.Interface_Scrollable,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
-                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
+                Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy, Elm.Widget_Item_Container
 {
    [[Elementary list class]]
    legacy_prefix: elm_list;
@@ -405,7 +405,7 @@ class Elm.List extends Efl.Ui.Layout implements Elm.Interface_Scrollable,
       Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Ui.Widget.widget_event;
-      Efl.Ui.Widget.focused_item { get; }
+      Elm.Widget_Item_Container.focused_item { get; }
       Efl.Ui.Widget.focus_state_apply;
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
       Elm.Interface_Scrollable.policy { set; }

@@ -583,15 +583,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                $false otherwise]]
          }
       }
-
-      /* FIXME: No more items in EO API */
-      @property focused_item @beta {
-         get {
-            [[Get the focused widget item.]]
-            return: Elm.Widget.Item; [[Focused item]]
-         }
-      }
-
       /* Focus Manager API */
       focus_state_apply @protected {
          [[Register focus with the given configuration.

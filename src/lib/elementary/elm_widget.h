@@ -305,6 +305,7 @@ typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Objec
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 
 #include "efl_ui_widget.eo.h"
+#include "elm_widget_item_container.eo.h"
 
 /**
  * @addtogroup Widget

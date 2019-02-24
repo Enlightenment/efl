@@ -1,0 +1,10 @@
+interface Elm.Widget_Item_Container {
+  methods {
+      @property focused_item {
+         get {
+            [[Get the focused widget item.]]
+            return: Elm.Widget.Item; [[Focused item]]
+         }
+      }
+  }
+}

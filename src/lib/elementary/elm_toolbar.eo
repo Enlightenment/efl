@@ -25,7 +25,7 @@ enum Elm.Toolbar_Shrink_Mode
 
 class Elm.Toolbar extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Elm.Interface_Scrollable, Efl.Ui.Direction,
                    Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
-                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
+                   Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy, Elm.Widget_Item_Container
 {
    [[Elementary toolbar class]]
    legacy_prefix: elm_toolbar;
@@ -356,7 +356,7 @@ class Elm.Toolbar extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Elm
       Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
-      Efl.Ui.Widget.focused_item { get; }
+      Elm.Widget_Item_Container.focused_item { get; }
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }
       Efl.Ui.Widget.focus_state_apply;
       Efl.Access.Widget.Action.elm_actions { get; }

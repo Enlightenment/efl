@@ -1928,7 +1928,9 @@ EAPI Elm_Object_Item *
 elm_object_focused_item_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return efl_ui_widget_focused_item_get(obj);
+   if (!efl_isa(obj, ELM_WIDGET_ITEM_CONTAINER_INTERFACE))
+     return NULL;
+   return elm_widget_item_container_focused_item_get(obj);
 }
 
 EAPI void

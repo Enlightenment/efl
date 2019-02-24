@@ -158,6 +158,7 @@ elm_public_eolian_files += \
 	lib/elementary/elm_view_form.eo \
 	lib/elementary/elm_web.eo \
 	lib/elementary/elm_widget_item.eo \
+	lib/elementary/elm_widget_item_container.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)

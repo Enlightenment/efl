@@ -8721,7 +8721,7 @@ _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_efl_ui_widget_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+_elm_genlist_elm_widget_item_container_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->focused_item;
 }
