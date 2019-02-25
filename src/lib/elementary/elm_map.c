@@ -797,7 +797,7 @@ _download_job(void *data)
 
    EINA_LIST_REVERSE_FOREACH_SAFE(sd->download_list, l, ll, gi)
    {
-      Eina_Bool ret;
+      Eina_Bool ret, file_exists;
 
       if ((gi->g->zoom != sd->zoom) || !(_grid_item_in_viewport(gi)))
         {
@@ -807,21 +807,41 @@ _download_job(void *data)
       if (sd->download_num >= MAX_CONCURRENT_DOWNLOAD)
         return ECORE_CALLBACK_RENEW;
 
-      ret = ecore_file_download_full
-          (gi->url, gi->file, _downloaded_cb, NULL, gi, &(gi->job), sd->ua);
-
-      if ((!ret) || (!gi->job))
-        ERR("Can't start to download from %s to %s", gi->url, gi->file);
-      else
+      file_exists = ecore_file_exists(gi->file);
+      if (!file_exists)
         {
-           sd->download_list = eina_list_remove(sd->download_list, gi);
+           /* Check here if we can download into this directory even if this one
+              disappear due to some user black magic */
+           char *dir_path;
+           dir_path = ecore_file_dir_get(gi->file);
+           if (!ecore_file_exists(dir_path)) ecore_file_mkpath(dir_path);
+           free(dir_path);
+           ret = ecore_file_download_full
+              (gi->url, gi->file, _downloaded_cb, NULL, gi, &(gi->job), sd->ua);
+
+           if ((!ret) || (!gi->job))
+             {
+                ERR("Can't start to download from %s to %s", gi->url, gi->file);
+                continue;
+             }
            sd->try_num++;
            sd->download_num++;
+        }
+      sd->download_list = eina_list_remove(sd->download_list, gi);
+      efl_event_callback_legacy_call
+         (obj, ELM_MAP_EVENT_TILE_LOAD, NULL);
+      if (sd->download_num == 1)
+        edje_object_signal_emit(wd->resize_obj,
+                                "elm,state,busy,start", "elm");
+      if (file_exists)
+        {
+           /* It seem the file already exists, try to load it and let
+              _grid_item_update do his job. If this file isn't a image the func
+              will invalidate it and try to redownload it. */
+           _grid_item_update(gi);
+           gi->wsd->finish_num++;
            efl_event_callback_legacy_call
-             (obj, ELM_MAP_EVENT_TILE_LOAD, NULL);
-           if (sd->download_num == 1)
-             edje_object_signal_emit(wd->resize_obj,
-                                     "elm,state,busy,start", "elm");
+              ((gi->wsd)->obj, ELM_MAP_EVENT_TILE_LOADED, NULL);
         }
    }
 
