@@ -73,6 +73,27 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 }
 
 static Eina_Bool
+_class_is_legacy(Eolian_Class *klass)
+{
+   return !!strncmp(klass->base.name, "Efl.", strlen("Efl."));
+}
+
+static Eina_Bool
+_validate_beta_usage(Eolian_Class *klass, Eolian_Type *type)
+{
+  if (!klass) return EINA_TRUE;
+  if (_class_is_legacy(klass)) return EINA_TRUE;
+  if (klass->is_beta) return EINA_TRUE;
+
+  if (type->type == EOLIAN_TYPE_CLASS && type->klass->is_beta)
+    {
+       _eo_parser_log(&type->base, "beta class used in public API");
+       return EINA_FALSE;
+    }
+  return EINA_TRUE;
+}
+
+static Eina_Bool
 _validate_doc(Eolian_Documentation *doc)
 {
    if (!doc)
@@ -378,10 +399,10 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
         return EINA_TRUE;
      }
 
-   if (func->get_ret_type && !_validate_type(vals, func->get_ret_type))
+   if (func->get_ret_type && (!_validate_type(vals, func->get_ret_type) || !_validate_beta_usage(func->klass, func->get_ret_type)))
      return EINA_FALSE;
 
-   if (func->set_ret_type && !_validate_type(vals, func->set_ret_type))
+   if (func->set_ret_type && (!_validate_type(vals, func->set_ret_type) || !_validate_beta_usage(func->klass, func->set_ret_type)))
      return EINA_FALSE;
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
@@ -394,7 +415,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 
 #define EOLIAN_PARAMS_VALIDATE(params) \
    EINA_LIST_FOREACH(params, l, param) \
-     if (!_validate_param(vals, param)) \
+     if (!_validate_param(vals, param) || !_validate_beta_usage(func->klass, param->type)) \
        return EINA_FALSE;
 
    EOLIAN_PARAMS_VALIDATE(func->prop_values);
@@ -482,7 +503,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         return EINA_TRUE;
      }
 
-   if (!_validate_type(vals, event->type))
+   if (!_validate_type(vals, event->type) || !_validate_beta_usage(event->klass, event->type))
      return EINA_FALSE;
 
    if (!_validate_doc(event->doc))
@@ -1158,6 +1179,11 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
              break;
            default:
              break;
+          }
+        if (!_class_is_legacy(cl) && !cl->is_beta && cl->parent->is_beta)
+          {
+             _eo_parser_log(&cl->base, "non-beta class cannot have beta parent");
+             return EINA_FALSE;
           }
         if (!_validate_class(vals, cl->parent, nhash, ehash, chash))
           return EINA_FALSE;
