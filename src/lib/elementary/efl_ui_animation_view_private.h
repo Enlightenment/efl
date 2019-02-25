@@ -14,7 +14,7 @@ struct _Efl_Ui_Animation_View_Data
    Elm_Transit *transit;
    Eina_Stringshare *file;
    double speed;
-   double keyframe;
+   double progress;
    double frame_cnt;
    int repeat_times;
    double frame_duration;

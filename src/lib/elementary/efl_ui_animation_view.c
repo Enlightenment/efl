@@ -132,8 +132,8 @@ _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
 {
    Efl_Ui_Animation_View_Data *pd = (Efl_Ui_Animation_View_Data *) effect;
 
-   if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAY && pd->keyframe == 1) ||
-       (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAY_BACK && pd->keyframe == 0))
+   if ((pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAY && pd->progress == 1) ||
+       (pd->state == EFL_UI_ANIMATION_VIEW_STATE_PLAY_BACK && pd->progress == 0))
      evas_object_smart_callback_call(pd->obj, SIG_PLAY_DONE, NULL);
 
    if (pd->transit != transit) return;
@@ -146,7 +146,7 @@ _transit_del_cb(Elm_Transit_Effect *effect, Elm_Transit *transit)
    if (prev_state != EFL_UI_ANIMATION_VIEW_STATE_STOP)
      {
         evas_object_smart_callback_call(pd->obj, SIG_PLAY_STOP, NULL);
-        pd->keyframe = 0;
+        pd->progress = 0;
      }
 }
 
@@ -169,7 +169,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
      }
    else pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAY;
 
-   pd->keyframe = progress;
+   pd->progress = progress;
    int minframe = (pd->frame_cnt - 1) * pd->min_progress;
    int maxframe = (pd->frame_cnt - 1) * pd->max_progress;
    evas_object_vg_animated_frame_set(pd->vg, (int)((maxframe - minframe) * progress) + minframe);
@@ -267,7 +267,7 @@ _ready_play(Efl_Ui_Animation_View_Data *pd)
         elm_transit_object_add(transit, pd->vg);
         if (pd->auto_repeat) elm_transit_repeat_times_set(transit, -1);
         elm_transit_effect_add(transit, _transit_cb, pd, _transit_del_cb);
-        elm_transit_progress_value_set(transit, pd->keyframe);
+        elm_transit_progress_value_set(transit, pd->progress);
         elm_transit_objects_final_state_keep_set(transit, EINA_TRUE);
         pd->transit = transit;
         if (pd->min_progress != 0.0 || pd->max_progress != 1.0)
@@ -287,7 +287,7 @@ _efl_ui_animation_view_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_V
 
    if (pd->file) eina_stringshare_del(pd->file);
    pd->file = eina_stringshare_add(file);
-   pd->keyframe = 0;
+   pd->progress = 0;
 
    _sizing_eval(pd);
 
@@ -407,7 +407,7 @@ _efl_ui_animation_view_play(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
    if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOP)
      _transit_go_facade(pd);
    else if (rewind)
-     elm_transit_progress_value_set(pd->transit, pd->keyframe);
+     elm_transit_progress_value_set(pd->transit, pd->progress);
 
    return EINA_TRUE;
 }
@@ -422,7 +422,7 @@ _efl_ui_animation_view_stop(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
      return EINA_FALSE;
 
    evas_object_vg_animated_frame_set(pd->vg, 0);
-   pd->keyframe = 0;
+   pd->progress = 0;
    pd->state = EFL_UI_ANIMATION_VIEW_STATE_STOP;
    evas_object_smart_callback_call(pd->obj, SIG_PLAY_STOP, NULL);
    elm_transit_del(pd->transit);
@@ -487,7 +487,7 @@ _efl_ui_animation_view_play_back(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data
    if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOP)
      _transit_go_facade(pd);
    else if (rewind)
-     elm_transit_progress_value_set(pd->transit, 1 - pd->keyframe);
+     elm_transit_progress_value_set(pd->transit, 1 - pd->progress);
 
    return EINA_TRUE;
 }
@@ -505,42 +505,42 @@ _efl_ui_animation_view_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data
 }
 
 EOLIAN static void
-_efl_ui_animation_view_keyframe_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double keyframe)
+_efl_ui_animation_view_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, double progress)
 {
-   if (keyframe < 0) keyframe = 0;
-   else if (keyframe > 1) keyframe = 1;
-   if (pd->keyframe == keyframe) return;
+   if (progress < 0) progress = 0;
+   else if (progress > 1) progress = 1;
+   if (pd->progress == progress) return;
 
-   pd->keyframe = keyframe;
+   pd->progress = progress;
 
    if (pd->frame_cnt > 0)
-     evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * keyframe));
+     evas_object_vg_animated_frame_set(pd->vg, (int) ((pd->frame_cnt - 1) * progress));
 
    if (pd->transit)
      {
         if (pd->play_back)
-          elm_transit_progress_value_set(pd->transit, 1 - keyframe);
+          elm_transit_progress_value_set(pd->transit, 1 - progress);
         else
-          elm_transit_progress_value_set(pd->transit, keyframe);
+          elm_transit_progress_value_set(pd->transit, progress);
      }
 }
 
 EOLIAN static double
-_efl_ui_animation_view_keyframe_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
+_efl_ui_animation_view_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
 {
-   return pd->keyframe;
+   return pd->progress;
 }
 
 EOLIAN static void
 _efl_ui_animation_view_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, int frame_num)
 {
-   efl_ui_animation_view_keyframe_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
+   efl_ui_animation_view_progress_set(obj, (double) frame_num / (double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1));
 }
 
 EOLIAN static int
 _efl_ui_animation_view_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
 {
-   return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * pd->keyframe);
+   return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * pd->progress);
 }
 
 EOLIAN static double
