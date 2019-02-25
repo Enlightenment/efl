@@ -23,18 +23,18 @@ interface @beta Efl.Canvas.Scene
             max: Eina.Size2D; [[The maximum image size (in pixels).]]
          }
       }
-      smart_objects_calculate {
-         [[Call user-provided $calculate smart functions and unset the
+      group_objects_calculate {
+         [[Call user-provided $calculate group functions and unset the
            flag signalling that the object needs to get recalculated to
-           all smart objects in the canvas.
+           all group objects in the canvas.
          ]]
       }
-      @property smart_objects_calculating {
+      @property group_objects_calculating {
          get {
-            [[Get if the canvas is currently calculating smart objects.]]
+            [[Get if the canvas is currently calculating group objects.]]
          }
          values {
-            calculating: bool; [[$true if currently calculating smart objects.]]
+            calculating: bool; [[$true if currently calculating group objects.]]
          }
       }
       objects_at_xy_get {

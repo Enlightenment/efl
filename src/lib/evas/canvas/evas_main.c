@@ -1878,7 +1878,7 @@ evas_font_available_list_free(Evas *eo_e, Eina_List *available)
 
 
 EOLIAN static void
-_evas_canvas_efl_canvas_scene_smart_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
+_evas_canvas_efl_canvas_scene_group_objects_calculate(Eo *eo_e, Evas_Public_Data *o EINA_UNUSED)
 {
    evas_call_smarts_calculate(eo_e);
 }
@@ -1891,7 +1891,7 @@ evas_smart_objects_calculate(Eo *eo_e)
 }
 
 EOLIAN Eina_Bool
-_evas_canvas_efl_canvas_scene_smart_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
+_evas_canvas_efl_canvas_scene_group_objects_calculating_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    return !!e->in_smart_calc;
 }
@@ -1899,7 +1899,7 @@ _evas_canvas_efl_canvas_scene_smart_objects_calculating_get(const Eo *eo_e EINA_
 EAPI Eina_Bool
 evas_smart_objects_calculating_get(const Eo *obj)
 {
-   return efl_canvas_scene_smart_objects_calculating_get(obj);
+   return efl_canvas_scene_group_objects_calculating_get(obj);
 }
 
 EOLIAN int

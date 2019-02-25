@@ -884,7 +884,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.image_max_size { get; }
-      Efl.Canvas.Scene.smart_objects_calculate;
+      Efl.Canvas.Scene.group_objects_calculate;
       Efl.Canvas.Scene.objects_at_xy_get;
       Efl.Canvas.Scene.object_top_at_xy_get;
       Efl.Canvas.Scene.objects_in_rectangle_get;

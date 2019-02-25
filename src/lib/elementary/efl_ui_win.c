@@ -2575,7 +2575,7 @@ _efl_ui_win_efl_canvas_scene_image_max_size_get(const Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static void
-_efl_ui_win_efl_canvas_scene_smart_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_canvas_scene_group_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    evas_smart_objects_calculate(sd->evas);
 }

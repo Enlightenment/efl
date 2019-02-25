@@ -972,7 +972,7 @@ class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Inp
       Efl.Canvas.Scene.object_top_at_xy_get;
       Efl.Canvas.Scene.objects_in_rectangle_get;
       Efl.Canvas.Scene.object_top_in_rectangle_get;
-      Efl.Canvas.Scene.smart_objects_calculate;
-      Efl.Canvas.Scene.smart_objects_calculating { get; }
+      Efl.Canvas.Scene.group_objects_calculate;
+      Efl.Canvas.Scene.group_objects_calculating { get; }
    }
 }
