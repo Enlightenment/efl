@@ -7644,7 +7644,7 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
         return ret;
      }
 
-   return EINA_TRUE;
+   return disable;
 }
 
 EAPI Eina_Bool
