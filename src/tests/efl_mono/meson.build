@@ -47,7 +47,6 @@ efl_mono_src = [
      'Eo.cs',
      'EoPromises.cs',
      'Errors.cs',
-     'Evas.cs',
      'Events.cs',
      'FunctionPointers.cs',
      'FunctionPointerMarshalling.cs',

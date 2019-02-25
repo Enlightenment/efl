@@ -9,7 +9,6 @@ mono_sublibs = [
   ['Evas',       false, ], #
   ['Edje',       false, ], #
   ['Eldbus',      true, ], #
-  ['Ecore_Evas',  true, ], #
   ['Elementary', false, ]  #
 ]
 
@@ -103,18 +102,6 @@ foreach lib : mono_sublibs
   if lib[1]
     subdir(package_name + '_mono')
   endif
-endforeach
-
-legacy_evas_required_by_mono = ['evas_box.eo', 'evas_image.eo', 'evas_table.eo', 'evas_text.eo']
-subdir_file_location = join_paths('..', '..', 'lib', 'evas', 'canvas')
-foreach mono_gen_file : legacy_evas_required_by_mono
-  mono_generator_target += custom_target('eolian_mono_gen_'+mono_gen_file.underscorify()+'',
-            input : join_paths(subdir_file_location, mono_gen_file),
-            output : [mono_gen_file + '.cs'],
-            command : [eolian_mono_gen, beta_option, '-I', meson.current_source_dir(), eolian_include_directories,
-                                       '--dllimport', 'evas',
-                                       '-o', join_paths(meson.current_build_dir(), mono_gen_file + '.cs'),
-                                       '@INPUT@'])
 endforeach
 
 efl_mono_conf_data = configuration_data()

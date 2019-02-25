@@ -161,7 +161,6 @@ dist-hook:
 	@mkdir -p $(distdir)/static_libs/http-parser/contrib $(distdir)/bindings/luajit/eina
 	@mkdir -p $(distdir)/wayland_protocol $(distdir)/lib/efl_wl/
 	@mkdir -p $(distdir)/modules/evas/engines/software_generic/filters/blur
-	@mkdir -p $(distdir)/bindings/mono/ecore_evas_mono
 	@mkdir -p $(distdir)/bindings/mono/efl_mono
 	@mkdir -p $(distdir)/bindings/mono/eina_mono
 	@mkdir -p $(distdir)/bindings/mono/eldbus_mono

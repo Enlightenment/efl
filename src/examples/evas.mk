@@ -221,62 +221,6 @@ $(AM_CPPFLAGS) @EVAS_CFLAGS@
 
 endif
 
-if HAVE_CSHARP
-
-EXTRA_PROGRAMS += \
-    evas/evas_mono_box_csharp \
-    evas/evas_mono_image_csharp \
-    evas/evas_mono_image2_csharp \
-    evas/evas_mono_rectangle_csharp \
-    evas/evas_mono_table_csharp \
-    evas/evas_mono_text_csharp
-
-
-evas_evas_mono_box_csharp_SOURCES = \
-	evas/evas_mono_box.cs
-
-evas/evas_mono_box_csharp$(EXEEXT): $(evas_evas_mono_box_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-evas_evas_mono_image_csharp_SOURCES = \
-	evas/evas_mono_image.cs
-
-evas/evas_mono_image_csharp$(EXEEXT): $(evas_evas_mono_image_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-evas_evas_mono_image2_csharp_SOURCES = \
-	evas/evas_mono_image2.cs
-
-evas/evas_mono_image2_csharp$(EXEEXT): $(evas_evas_mono_image2_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-evas_evas_mono_rectangle_csharp_SOURCES = \
-	evas/evas_mono_rectangle.cs
-
-evas/evas_mono_rectangle_csharp$(EXEEXT): $(evas_evas_mono_rectangle_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-evas_evas_mono_table_csharp_SOURCES = \
-	evas/evas_mono_table.cs
-
-evas/evas_mono_table_csharp$(EXEEXT): $(evas_evas_mono_table_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-evas_evas_mono_text_csharp_SOURCES = \
-	evas/evas_mono_text.cs
-
-evas/evas_mono_text_csharp$(EXEEXT): $(evas_evas_mono_text_csharp_SOURCES) $(am_dirstamp) $(top_builddir)/src/lib/efl_mono/libefl_mono.dll
-	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -out:$@ $(filter %.cs, $(^))
-
-endif
-
-
-
 EVAS_SRCS = \
 evas/evas-aspect-hints.c \
 evas/evas-box.c \
