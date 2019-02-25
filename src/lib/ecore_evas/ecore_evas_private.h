@@ -171,6 +171,7 @@ struct _Ecore_Evas_Engine_Func
    Eina_Bool (*fn_prepare)(Ecore_Evas *ee);
 
    double (*fn_last_tick_get)(Ecore_Evas *ee);
+   Eina_Bool (*fn_output_clone)(const Ecore_Evas *ee, void *output, void *clone);
 };
 
 struct _Ecore_Evas_Interface

@@ -3670,6 +3670,18 @@ EAPI unsigned long ecore_evas_pixmap_colormap_get(const Ecore_Evas *ee);
 EAPI int ecore_evas_pixmap_depth_get(const Ecore_Evas *ee);
 
 /**
+ * @brief Clone a given output
+ *
+ * @param ee The Ecore_Evas containing the outputs
+ * @param output The output which is to be set as the clone
+ * @param clone The output which is used as the clone source or NULL to unclone
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @since 1.22
+ */
+EAPI Eina_Bool ecore_evas_output_clone_set(const Ecore_Evas *ee, void *output, void *clone);
+
+/**
  * @}
  */
 
