@@ -205,7 +205,7 @@ public class Connection : IDisposable
         var ptr = eldbus_connection_unique_name_get(Handle);
         if (ptr == IntPtr.Zero)
             return null;
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public eldbus.Pending NameRequest(string bus, uint flags, eldbus.MessageDelegate dlgt = null)

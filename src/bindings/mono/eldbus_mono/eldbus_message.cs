@@ -279,42 +279,42 @@ public class Message : IDisposable
     {
         CheckHandle();
         var ptr = eldbus_message_path_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetInterface()
     {
         CheckHandle();
         var ptr = eldbus_message_interface_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetMember()
     {
         CheckHandle();
         var ptr = eldbus_message_member_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetDestination()
     {
         CheckHandle();
         var ptr = eldbus_message_destination_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetSender()
     {
         CheckHandle();
         var ptr = eldbus_message_sender_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetSignature()
     {
         CheckHandle();
         var ptr = eldbus_message_signature_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public eldbus.Message NewError(string error_name, string error_msg)
@@ -341,8 +341,8 @@ public class Message : IDisposable
         IntPtr name_ptr;
         IntPtr text_ptr;
         bool r = eldbus_message_error_get(Handle, out name_ptr, out text_ptr);
-        name = Marshal.PtrToStringAuto(name_ptr);
-        text = Marshal.PtrToStringAuto(text_ptr);
+        name = Eina.StringConversion.NativeUtf8ToManagedString(name_ptr);
+        text = Eina.StringConversion.NativeUtf8ToManagedString(text_ptr);
         return r;
     }
 
@@ -408,7 +408,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.StringType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -417,7 +417,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.ObjectPathType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -426,7 +426,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.SignatureType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -617,7 +617,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.StringType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -626,7 +626,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.ObjectPathType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -635,7 +635,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.SignatureType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -732,7 +732,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.ObjectPath val)
@@ -740,7 +740,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.SignatureString val)
@@ -748,7 +748,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.UnixFd val)
