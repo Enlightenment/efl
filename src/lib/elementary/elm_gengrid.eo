@@ -548,5 +548,6 @@ class Elm.Gengrid extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Elm
       highlighted: Efl.Object; [[Called when gengrid is highlighted]]
       unhighlighted: Efl.Object; [[Called when gengrid is no longer highlighted]]
       released: Efl.Object; [[Called when gengrid is released]]
+      moved: Efl.Object; [[Called when gengrid item moved]]
    }
 }
