@@ -727,7 +727,7 @@ _efl_ui_panel_efl_content_content_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Gfx_En
         else
           elm_widget_sub_object_add(obj, sd->content);
      }
-
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
    if (efl_finalized_get(obj))
      elm_layout_sizing_eval(obj);
 
@@ -752,7 +752,7 @@ _efl_ui_panel_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Panel_Data *
    if (sd->scrollable)
      _elm_widget_sub_object_redirect_to_top(sd->scr_ly, sd->content);
    sd->content = NULL;
-
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    return ret;
 }
 

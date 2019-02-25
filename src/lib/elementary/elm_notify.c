@@ -374,6 +374,7 @@ _elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Obj
           _changed_size_hints_cb, obj);
         edje_object_part_swallow(sd->notify, "elm.swallow.content", content);
      }
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
 
    _calc(obj);
 
@@ -399,6 +400,7 @@ _elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
    content = sd->content;
    _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    edje_object_part_unswallow(sd->notify, content);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 
    return content;
 }

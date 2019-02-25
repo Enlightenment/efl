@@ -220,7 +220,7 @@ _elm_mapbuf_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Obj
      }
    else
      evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
-
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
    _sizing_eval(obj);
    _configure(obj);
 
@@ -244,6 +244,7 @@ _elm_mapbuf_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
    content = sd->content;
    _elm_widget_sub_object_redirect_to_top(obj, content);
    _elm_mapbuf_content_unset_internal(sd, obj, content);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    return content;
 }
 

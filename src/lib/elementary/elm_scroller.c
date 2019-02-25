@@ -690,6 +690,7 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
              sd->proxy_content[i] = NULL;
           }
      }
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
 
    elm_layout_sizing_eval(obj);
 
@@ -725,6 +726,7 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
      _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    elm_interface_scrollable_content_set(obj, NULL);
    sd->content = NULL;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 
    return ret;
 }
