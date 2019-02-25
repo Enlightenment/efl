@@ -178,7 +178,8 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
 
         /* Set mp1, mp2 position according to difference between
          * previous points and next points.
-         * It improves smoothness of curve's slope changing. */
+         * It improves smoothness of curve's slope changing.
+         * But, it can cause huge differeces from actual positions. */
         mp0_x = *last_x1;
         mp0_y = *last_y1;
         mp1_x = *last_x1 + (int) round(vec1.x - vec0.x);
@@ -187,6 +188,12 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
         mp2_y = *last_y2 + (int) round(vec2.y - vec3.y);
         mp3_x = *last_x2;
         mp3_y = *last_y2;
+
+        /* It reduces differences between actual position and modified position. */
+        mp1_x += (int)round(((double)vec1.x - mp1_x) / 2);
+        mp1_y += (int)round(((double)vec1.y - mp1_y) / 2);
+        mp2_x += (int)round(((double)vec2.x - mp2_x) / 2);
+        mp2_y += (int)round(((double)vec2.y - mp2_y) / 2);
 
         evas_map_point_coord_set(map, cmp + i * 4, mp0_x, mp0_y, 0);
         evas_map_point_coord_set(map, cmp + i * 4 + 1, mp1_x, mp1_y, 0);
