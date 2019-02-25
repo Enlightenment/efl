@@ -45,7 +45,7 @@ _sizing_eval(void *data)
    if (!pd->file) return;
 
    double hw,hh;
-   efl_gfx_size_hint_weight_get(pd->obj, &hw, &hh);
+   efl_gfx_hint_weight_get(pd->obj, &hw, &hh);
 
    Eina_Size2D size = efl_canvas_vg_object_default_size_get(pd->vg);
 
@@ -53,7 +53,7 @@ _sizing_eval(void *data)
    if (hw == 0) min.w = size.w;
    if (hh == 0) min.h = size.h;
 
-   efl_gfx_size_hint_min_set(pd->obj, min);
+   efl_gfx_hint_size_min_set(pd->obj, min);
 }
 
 static void
@@ -196,7 +196,7 @@ _efl_ui_animation_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Animation_View
    // Create vg to render vector animation
    Eo *vg = evas_object_vg_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, vg);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _size_hint_event_cb, priv);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _size_hint_event_cb, priv);
 
    priv->vg = vg;
    priv->speed = 1;
