@@ -188,6 +188,8 @@ eina_vpath_init(void)
 Eina_Bool
 eina_vpath_shutdown(void)
 {
+   eina_hash_free(vpath_data);
+   vpath_data = NULL;
    eina_log_domain_unregister(_eina_vpath_log_dom);
    _eina_vpath_log_dom = -1;
    return EINA_TRUE;
