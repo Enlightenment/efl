@@ -137,6 +137,19 @@ interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
             h: bool; [[Whether to limit the minimum vertical size]]
          }
       }
+      @property step_size {
+         [[Control the step size
+
+           Use this call to set step size.
+           This value is used when scroller scroll by arrow key event.]]
+         set {
+         }
+         get {
+         }
+         values {
+            step: Eina.Position2D; [[The step size in pixels]]
+         }
+      }
       scroll {
          [[Show a specific virtual region within the scroller content object.
 

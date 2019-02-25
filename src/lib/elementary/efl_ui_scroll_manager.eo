@@ -35,6 +35,7 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
       Efl.Ui.Scrollable_Interactive.movement_block { get; set; }
       Efl.Ui.Scrollable_Interactive.gravity { get; set; }
       Efl.Ui.Scrollable_Interactive.match_content { set; }
+      Efl.Ui.Scrollable_Interactive.step_size { set; get; }
       Efl.Ui.Scrollbar.bar_mode { get; set; }
       Efl.Ui.Scrollbar.bar_size { get; }
       Efl.Ui.Scrollbar.bar_position { get; set; }
