@@ -258,9 +258,12 @@ _efl_ui_stack_push(Eo *obj, Efl_Ui_Stack_Data *pd, Eo *content)
 }
 
 static void
-_pop_content_hide_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_pop_content_hide_cb(void *data, const Efl_Event *event)
 {
    Content_Data *cd = data;
+
+   /* object is being shown */
+   if (event->info) return;
 
    cd->popped_hidden = EINA_TRUE;
 
@@ -297,7 +300,7 @@ _efl_ui_stack_pop(Eo *obj, Efl_Ui_Stack_Data *pd)
              top_cd->on_popping = EINA_TRUE;
 
              //Deallocate content data when hide animation is finished.
-             efl_event_callback_add(top_content, EFL_GFX_ENTITY_EVENT_HIDE,
+             efl_event_callback_add(top_content, EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED,
                                     _pop_content_hide_cb, top_cd);
 
              _hide_content_with_anim(obj, pd, top_cd);

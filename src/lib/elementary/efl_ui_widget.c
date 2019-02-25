@@ -3908,8 +3908,7 @@ _track_obj_view_del(void *data, const Efl_Event *event);
 EFL_CALLBACKS_ARRAY_DEFINE(tracker_callbacks,
                           { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _track_obj_view_update },
                           { EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _track_obj_view_update },
-                          { EFL_GFX_ENTITY_EVENT_SHOW, _track_obj_view_update },
-                          { EFL_GFX_ENTITY_EVENT_HIDE, _track_obj_view_update },
+                          { EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, _track_obj_view_update },
                           { EFL_EVENT_DEL, _track_obj_view_del });
 
 static void
@@ -5804,8 +5803,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(widget_shadow_cb,
 { EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _widget_shadow_event_cb },
 { EFL_GFX_ENTITY_EVENT_STACKING_CHANGED, _widget_shadow_event_cb },
-{ EFL_GFX_ENTITY_EVENT_HIDE, _widget_shadow_event_cb },
-{ EFL_GFX_ENTITY_EVENT_SHOW, _widget_shadow_event_cb })
+{ EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, _widget_shadow_event_cb });
 
 static Widget_Shadow *
 _widget_shadow_part_get(const Eo *part_obj)

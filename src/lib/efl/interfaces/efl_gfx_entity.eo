@@ -101,8 +101,7 @@ interface @beta Efl.Gfx.Entity {
       }
    }
    events {
-      show: void; [[Object just became visible.]]
-      hide: void; [[Object just became invisible.]]
+      visibility,changed: bool; [[Object's visibility state changed, the event value is the new state.]]
       position,changed: Eina.Position2D; [[Object was moved, its position during the event is the new one.]]
       size,changed: Eina.Size2D; [[Object was resized, its size during the event is the new one.]]
    }

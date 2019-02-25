@@ -1928,6 +1928,13 @@ extern Eina_Cow *evas_object_events_cow;
    }									\
   while (0);
 
+/* BEGIN: events to maintain compatibility with legacy */
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW;
+#define EFL_GFX_ENTITY_EVENT_SHOW (&(_EFL_GFX_ENTITY_EVENT_SHOW))
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE;
+#define EFL_GFX_ENTITY_EVENT_HIDE (&(_EFL_GFX_ENTITY_EVENT_HIDE))
+/* END: events to maintain compatibility with legacy */
+
 /****************************************************************************/
 /*****************************************/
 /********************/
