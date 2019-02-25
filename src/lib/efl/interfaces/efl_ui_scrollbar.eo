@@ -3,7 +3,7 @@ enum Efl.Ui.Scrollbar_Mode
    auto = 0, [[Visible if necessary]]
    on, [[Always visible]]
    off, [[Always invisible]]
-   last [[]]
+   last [[For internal use only]]
 }
 
 enum Efl.Ui.Scrollbar_Direction

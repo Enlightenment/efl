@@ -32,7 +32,7 @@ interface @beta Efl.Gfx.Stack
          }
          values {
             l: short; [[The number of the layer to place the object on.
-                        Must be between #EFL_GFX_STACK_LAYER_MIN and #EFL_GFX_STACK_LAYER_MAX.]]
+                        Must be between @Efl.Gfx.Stack_Layer_Min and @Efl.Gfx.Stack_Layer_Max.]]
          }
       }
       @property below {
@@ -43,8 +43,8 @@ interface @beta Efl.Gfx.Stack
               objects on layers below the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The #Efl_Gfx_Stack directly below $obj, if any,
-                                                    or $null, if none]]
+            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                    or $null, if none.]]
          }
       }
       @property above {
@@ -55,8 +55,8 @@ interface @beta Efl.Gfx.Stack
               objects on layers above the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The #Efl_Gfx_Stack directly below $obj, if any,
-                                                    or $null, if none]]
+            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                    or $null, if none.]]
          }
       }
       stack_below {

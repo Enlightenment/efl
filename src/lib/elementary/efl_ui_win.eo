@@ -182,7 +182,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             legacy: null;
          }
          values {
-            type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of #Efl_Ui_Win_Indicator_Mode.]]
+            type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of @Efl.Ui.Win_Indicator_Mode.]]
          }
       }
       @property keyboard_mode {
@@ -193,7 +193,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             [[Get the keyboard mode of the window.]]
          }
          values {
-            mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of #Efl_Ui_Win_Keyboard_Mode.]]
+            mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of @Efl.Ui.Win_Keyboard_Mode.]]
          }
       }
       @property wm_available_rotations {
@@ -402,7 +402,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          }
          values {
             urgent: Efl.Ui.Win_Urgent_Mode;
-                [[The mode of a urgent window, one of #Efl_Ui_Win_Urgent_Mode.]]
+                [[The mode of a urgent window, one of @Efl.Ui.Win_Urgent_Mode.]]
          }
       }
       @property modal {
@@ -415,7 +415,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             legacy: null;
          }
          values {
-            modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of #Efl_Ui_Win_Modal_Mode.]]
+            modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
          }
       }
       @property noblank {
