@@ -472,8 +472,8 @@ _efl_ui_slider_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUS
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
      (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
 }
 
 static void

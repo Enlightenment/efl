@@ -1315,7 +1315,7 @@ _item_mouse_up_cb(void *data,
        (sd->reorder_it))
      {
         efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_WIDGET_EVENT_MOVED, EO_OBJ(sd->reorder_it));
+          (WIDGET(it), ELM_GENGRID_EVENT_MOVED, EO_OBJ(sd->reorder_it));
         sd->reorder_it = NULL;
         sd->move_effect_enabled = EINA_FALSE;
         ecore_job_del(sd->calc_job);
@@ -2876,7 +2876,7 @@ _item_move_cb(void *data, double pos)
         efl_event_callback_legacy_call
           (sd->obj, ELM_GENGRID_EVENT_ITEM_REORDER_ANIM_STOP, EO_OBJ(sd->reorder.it1));
         efl_event_callback_legacy_call
-          (sd->obj, EFL_UI_WIDGET_EVENT_MOVED, EO_OBJ(sd->reorder.it1));
+          (sd->obj, ELM_GENGRID_EVENT_MOVED, EO_OBJ(sd->reorder.it1));
         sd->reorder.running = EINA_FALSE;
      }
    _elm_widget_focus_highlight_start(sd->obj);
@@ -4354,7 +4354,6 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
     efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),
     efl_ui_focus_parent_provider_gen_content_item_map_set(efl_added, sd->content_item_map));
 
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
    efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -4364,7 +4363,7 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TREE_TABLE);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _gengrid_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _gengrid_element_focused, obj);
 
    return obj;
 }
@@ -5832,7 +5831,7 @@ _elm_gengrid_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd EINA_
 }
 
 EOLIAN static void
-_elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
+_elm_gengrid_item_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
@@ -5843,7 +5842,7 @@ _elm_gengrid_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Object*

@@ -129,11 +129,11 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    /*Label widget */
     _label_init(win, bxr, "FILENAME:");
    priv->label = _label_init(win, bxr, "");
-   efl_ui_model_connect(priv->label, "default", "path"); //connect "default" to "filename" property
+   efl_ui_property_bind(priv->label, "default", "path"); //connect "default" to "filename" property
 
    /* Entry widget */
    priv->entry = elm_entry_add(win);
-   efl_ui_model_connect(priv->entry, "elm.text", "path"); //connect "elm.text" to "path" property
+   efl_ui_property_bind(priv->entry, "elm.text", "path"); //connect "elm.text" to "path" property
    elm_entry_single_line_set(priv->entry, EINA_TRUE);
    elm_box_pack_end(bxr, priv->entry);
    evas_object_size_hint_weight_set(priv->entry, EVAS_HINT_FILL, 0);
@@ -146,13 +146,13 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_object_text_set(priv->bt, "update model");
    evas_object_smart_callback_add(priv->bt, "clicked", _update_cb, priv);
    edje_object_signal_callback_add(priv->bt, "test*" , "*", _signal_cb, priv);
-   efl_ui_model_connect(priv->bt, "signal/test-%v", "size");
+   efl_ui_property_bind(priv->bt, "signal/test-%v", "size");
    evas_object_show(priv->bt);
 
    /* Image widget */
    img_factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
-   efl_ui_model_connect(img_factory, "", "path"); //connect to "path" property
-   efl_ui_factory_model_connect(priv->bt, "icon", img_factory);
+   efl_ui_property_bind(img_factory, "", "path"); //connect to "path" property
+   efl_ui_factory_bind(priv->bt, "icon", img_factory);
 
    priv->img = efl_ui_factory_create(img_factory, NULL, win);
    elm_box_pack_end(bxr, priv->img);

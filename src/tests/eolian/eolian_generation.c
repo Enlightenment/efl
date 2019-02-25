@@ -141,6 +141,7 @@ EFL_START_TEST(eolian_default_values_generation)
    _remove_ref(output_filepath, "eo.c");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gc", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.c", output_filepath, "eo.c"));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.legacy.c", output_filepath, "eo.legacy.c"));
 }
 EFL_END_TEST
 

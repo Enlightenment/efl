@@ -444,11 +444,11 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
                           _efl_ui_scroller_bar_show_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_scroller_size_hint_changed_cb, obj);
-   efl_event_callback_add(sd->pan_obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
 
    return obj;
@@ -468,11 +468,11 @@ _efl_ui_scroller_efl_object_destructor(Eo *obj,
                           _efl_ui_scroller_bar_show_cb, obj);
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_scroller_bar_hide_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_scroller_size_hint_changed_cb, obj);
-   efl_event_callback_del(sd->pan_obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
    efl_del(sd->pan_obj);
    sd->pan_obj = NULL;
@@ -493,9 +493,9 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
 
    if (sd->content)
      {
-        min = efl_gfx_size_hint_combined_min_get(sd->content);
-        max = efl_gfx_size_hint_max_get(sd->content);
-        efl_gfx_size_hint_weight_get(sd->content, &xw, &yw);
+        min = efl_gfx_hint_size_combined_min_get(sd->content);
+        max = efl_gfx_hint_size_max_get(sd->content);
+        efl_gfx_hint_weight_get(sd->content, &xw, &yw);
      }
 
    if (sd->smanager)
@@ -528,11 +528,11 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
    if (sd->match_content_w) size.w = vmw + min.w;
    if (sd->match_content_h) size.h = vmh + min.h;
 
-   max = efl_gfx_size_hint_max_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_size_hint_min_set(obj, size);
+   efl_gfx_hint_size_min_set(obj, size);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result

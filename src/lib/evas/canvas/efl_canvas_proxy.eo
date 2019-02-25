@@ -15,7 +15,7 @@ class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
            source object in its drawing region, without affecting that
            source in any way. The source must be another valid @Efl.Canvas.Object.
            Other effects may be applied to the proxy, such as a map (see
-           @Efl.Gfx.Map) to create a reflection of the original object
+           @Efl.Gfx.Mapping) to create a reflection of the original object
            (for example).
 
            Any existing source object will be removed after this call.

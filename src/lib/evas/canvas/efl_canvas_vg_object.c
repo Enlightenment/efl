@@ -206,13 +206,13 @@ _efl_canvas_vg_object_viewbox_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Eina_R
              eina_matrix3_identity(&m);
              efl_canvas_vg_node_transformation_set(pd->root, &m);
              // unregister the resize callback
-             efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _evas_vg_resize, pd);
+             efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _evas_vg_resize, pd);
           }
         return;
      }
    // register for resize callback if not done yet
    if (eina_rectangle_is_empty(&pd->viewbox.rect))
-     efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _evas_vg_resize, pd);
+     efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _evas_vg_resize, pd);
 
    pd->viewbox = viewbox;
    _update_vgtree_viewport(obj, pd);

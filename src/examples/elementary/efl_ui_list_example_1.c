@@ -115,15 +115,15 @@ elm_main(int argc, char **argv)
 
    wbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_ui_direction_set(wbox, EFL_UI_DIR_VERTICAL);
-   efl_gfx_size_hint_weight_set(wbox, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_fill_set(wbox, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(wbox, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
+   efl_gfx_hint_fill_set(wbox, EINA_TRUE, EINA_TRUE);
 
    if ((argv[1] != NULL) &&
        (!strcmp(argv[1], "empty")))
      emptystyle = EINA_TRUE;
 
    priv_d.list = list = efl_add(EFL_UI_LIST_CLASS, wbox);
-   efl_gfx_size_hint_weight_set(list, EFL_GFX_SIZE_HINT_EXPAND, 0.9);
+   efl_gfx_hint_weight_set(list, EFL_GFX_HINT_EXPAND, 0.9);
 
    efl_event_callback_add(list, EFL_UI_EVENT_SELECTED, _list_selected, NULL);
    efl_event_callback_add(list, EFL_UI_EVENT_UNSELECTED, _list_unselected, NULL);
@@ -145,7 +145,7 @@ elm_main(int argc, char **argv)
              efl_ui_direction_set(ibox, EFL_UI_DIR_HORIZONTAL);
 
              txt = efl_add(EFL_UI_TEXT_CLASS, ibox);
-             efl_gfx_size_hint_weight_set(txt, 0.95, EFL_GFX_SIZE_HINT_EXPAND);
+             efl_gfx_hint_weight_set(txt, 0.95, EFL_GFX_HINT_EXPAND);
              efl_text_halign_set(txt, 0.2);
              efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
              snprintf(buf, sizeof(buf), "empty style item [%d]", i);
@@ -153,7 +153,7 @@ elm_main(int argc, char **argv)
              efl_pack_end(ibox, txt);
 
              check = efl_add(EFL_UI_CHECK_CLASS, ibox);
-             efl_gfx_size_hint_weight_set(check, 0.05, EFL_GFX_SIZE_HINT_EXPAND);
+             efl_gfx_hint_weight_set(check, 0.05, EFL_GFX_HINT_EXPAND);
              efl_pack_end(ibox, check);
 
              if (i % 2)
@@ -223,7 +223,7 @@ elm_main(int argc, char **argv)
 
    /*select mode */
    txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
-   efl_gfx_size_hint_weight_set(txt, EFL_GFX_SIZE_HINT_EXPAND, 0.01);
+   efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
    efl_text_halign_set(txt, 0.02);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
    efl_text_set(txt, "Select Mode");
@@ -231,7 +231,7 @@ elm_main(int argc, char **argv)
 
    bbox  = efl_add(EFL_UI_BOX_CLASS, wbox);
    efl_ui_direction_set(bbox, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(bbox, EFL_GFX_SIZE_HINT_EXPAND, 0.05);
+   efl_gfx_hint_weight_set(bbox, EFL_GFX_HINT_EXPAND, 0.05);
 
    select_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE");
@@ -260,7 +260,7 @@ elm_main(int argc, char **argv)
 
   /* scroll mode */
    txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
-   efl_gfx_size_hint_weight_set(txt, EFL_GFX_SIZE_HINT_EXPAND, 0.01);
+   efl_gfx_hint_weight_set(txt, EFL_GFX_HINT_EXPAND, 0.01);
    efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
    efl_text_halign_set(txt, 0.02);
    efl_text_set(txt, "Item Scroll");
@@ -268,27 +268,27 @@ elm_main(int argc, char **argv)
 
    priv_d.slider = slider  = efl_add(EFL_UI_SLIDER_CLASS, wbox);
    efl_ui_direction_set(slider, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(slider, 0.0, 0.05);
-   efl_gfx_size_hint_align_set(slider, 0.5, 0.5);
-   efl_gfx_size_hint_min_set(slider, EINA_SIZE2D(380, 20));
+   efl_gfx_hint_weight_set(slider, 0.0, 0.05);
+   efl_gfx_hint_align_set(slider, 0.5, 0.5);
+   efl_gfx_hint_size_min_set(slider, EINA_SIZE2D(380, 20));
    efl_ui_range_min_max_set(slider, 0.0, 1.0);
    efl_pack_end(wbox, slider);
 
    bbox  = efl_add(EFL_UI_BOX_CLASS, wbox);
    efl_ui_direction_set(bbox, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(bbox, EFL_GFX_SIZE_HINT_EXPAND, 0.05);
+   efl_gfx_hint_weight_set(bbox, EFL_GFX_HINT_EXPAND, 0.05);
 
    rbox  = efl_add(EFL_UI_BOX_CLASS, bbox);
    efl_ui_direction_set(rbox, EFL_UI_DIR_VERTICAL);
 
    anim_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, rbox);
-   efl_gfx_size_hint_align_set(radio, 0.5, 0.5);
+   efl_gfx_hint_align_set(radio, 0.5, 0.5);
    efl_text_set(radio, "ANIMATION OFF");
    efl_ui_radio_state_value_set(radio, 0);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _anim_radio_changed, NULL);
    efl_pack_end(rbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, rbox);
-   efl_gfx_size_hint_align_set(radio, 0.5, 0.5);
+   efl_gfx_hint_align_set(radio, 0.5, 0.5);
    efl_text_set(radio, "ANIMATION ON");
    efl_ui_radio_state_value_set(radio, 1);
    efl_ui_radio_group_add(radio, anim_radio);
@@ -301,15 +301,15 @@ elm_main(int argc, char **argv)
 
    scrl_btn  = efl_add(EFL_UI_BUTTON_CLASS, rbox);
    efl_text_set(scrl_btn, "Scroll Item");
-   efl_gfx_size_hint_align_set(scrl_btn, 0.5, 0.5);
-   efl_gfx_size_hint_min_set(scrl_btn, EINA_SIZE2D(200, 25));
+   efl_gfx_hint_align_set(scrl_btn, 0.5, 0.5);
+   efl_gfx_hint_size_min_set(scrl_btn, EINA_SIZE2D(200, 25));
    efl_event_callback_add(scrl_btn, EFL_UI_EVENT_CLICKED, _scrl_btn_clicked, NULL);
    efl_pack_end(rbox, scrl_btn);
 
    scrl_btn  = efl_add(EFL_UI_BUTTON_CLASS, rbox);
    efl_text_set(scrl_btn, "Scroll Item Align");
-   efl_gfx_size_hint_align_set(scrl_btn, 0.5, 0.5);
-   efl_gfx_size_hint_min_set(scrl_btn, EINA_SIZE2D(200, 25));
+   efl_gfx_hint_align_set(scrl_btn, 0.5, 0.5);
+   efl_gfx_hint_size_min_set(scrl_btn, EINA_SIZE2D(200, 25));
    efl_event_callback_add(scrl_btn, EFL_UI_EVENT_CLICKED, _scrl_align_btn_clicked, NULL);
    efl_pack_end(rbox, scrl_btn);
 

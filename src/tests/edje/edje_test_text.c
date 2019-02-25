@@ -122,7 +122,7 @@ START_TEST(edje_test_text_ellipsis)
    evas = _setup_evas();
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-         efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 40)));
+         efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 40)));
    efl_file_set(layout, test_layout_get("test_text.edj"), "test");
    fail_if(efl_file_load_error_get(layout));
 
@@ -140,7 +140,7 @@ START_TEST(edje_test_text_wrap)
    evas = _setup_evas();
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-         efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 40)));
+         efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 40)));
    efl_file_set(layout, test_layout_get("test_text.edj"), "test");
    fail_if(efl_file_load_error_get(layout));
 
@@ -158,7 +158,7 @@ START_TEST(edje_test_text_font)
    evas = _setup_evas();
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-         efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 40)));
+         efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 40)));
    efl_file_set(layout, test_layout_get("test_text.edj"), "test");
    fail_if(efl_file_load_error_get(layout));
 
@@ -176,7 +176,7 @@ START_TEST(edje_test_text_color)
    evas = _setup_evas();
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-         efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 40)));
+         efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 40)));
    efl_file_set(layout, test_layout_get("test_text.edj"), "test");
    fail_if(efl_file_load_error_get(layout));
 
@@ -313,7 +313,7 @@ START_TEST(edje_test_text_part)
    evas = _setup_evas();
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-         efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 40)));
+         efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 40)));
 
    efl_file_set(layout, test_layout_get("test_text.edj"), "test");
    fail_if(efl_file_load_error_get(layout));

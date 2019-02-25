@@ -408,23 +408,30 @@ _gen_reflect_set(Eina_Strbuf *buf, const char *cnamel, const Eolian_Type *valt,
    else
      eina_hash_set(refh, &fid, (void *)EOLIAN_PROP_SET);
 
-   eina_strbuf_append(buf, "\nstatic void\n");
+   eina_strbuf_append(buf, "\nstatic Eina_Error\n");
    eina_strbuf_append_printf(buf, "__eolian_%s_%s_set_reflect(Eo *obj, Eina_Value val)\n",
      cnamel, eolian_function_name_get(fid));
    eina_strbuf_append(buf, "{\n");
+   eina_strbuf_append(buf, "   Eina_Error r = 0;");
 
    Eina_Stringshare *ct = eolian_type_c_type_get(valt, EOLIAN_C_TYPE_PARAM);
    const char *starsp = (ct[strlen(ct) - 1] != '*') ? " " : "";
    eina_strbuf_append_printf(buf, "   %s%scval;\n", ct, starsp);
    eina_stringshare_del(ct);
 
-   eina_strbuf_append_printf(buf, "   eina_value_%s_convert(&val, &cval);\n", initf);
+   eina_strbuf_append_printf(buf, "   if (!eina_value_%s_convert(&val, &cval))\n", initf);
+   eina_strbuf_append(buf, "      {\n");
+   eina_strbuf_append(buf, "         r = EINA_ERROR_VALUE_FAILED;\n");
+   eina_strbuf_append(buf, "         goto end;\n");
+   eina_strbuf_append(buf, "      }\n");
 
    Eina_Stringshare *fcn = eolian_function_full_c_name_get(fid, EOLIAN_PROP_SET, EINA_FALSE);
    eina_strbuf_append_printf(buf, "   %s(obj, cval);\n", fcn);
    eina_stringshare_del(fcn);
 
+   eina_strbuf_append(buf, " end:\n");
    eina_strbuf_append(buf, "   eina_value_flush(&val);\n");
+   eina_strbuf_append(buf, "   return r;\n");
 
    eina_strbuf_append(buf, "}\n\n");
 }
@@ -1091,7 +1098,8 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
 }
 
 void
-eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
+eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Strbuf *lbuf,
+                  const char *lfname)
 {
    if (!cl)
      return;
@@ -1121,8 +1129,6 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         }
       eina_iterator_free(itr);
    }
-
-   Eina_Strbuf *lbuf = eina_strbuf_new();
 
    /* Eolian_Function -> Eolian_Function_Type
     * maps which parts of which functions are qualified for reflection
@@ -1236,10 +1242,9 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
    /* terminate inherits */
    eina_strbuf_append(buf, ", NULL);\n");
 
-   /* append legacy if there */
-   eina_strbuf_append(buf, eina_strbuf_string_get(lbuf));
-
-   eina_strbuf_free(lbuf);
+   /* append legacy include if there */
+   if (eina_strbuf_length_get(lbuf))
+     eina_strbuf_append_printf(buf, "\n#include \"%s\"\n", lfname);
 
    /* and we're done */
    free(cnamel);

@@ -323,6 +323,13 @@ option('mono-beta',
   description: 'Flag for enabling @beta Eo methods in the api'
 )
 
+option('lua-interpreter',
+  type: 'combo',
+  choices: ['luajit', 'lua'],
+  value: 'luajit',
+  description: 'Select a type of lua interpreter to use it for edje and evas'
+)
+
 option('native-arch-optimization',
   type: 'boolean',
   value: true,

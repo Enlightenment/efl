@@ -456,11 +456,11 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
                           _efl_ui_list_bar_show_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_list_bar_hide_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_list_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_list_size_hint_changed_cb, obj);
-   efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_list_pan_resized_cb, obj);
 
    elm_layout_sizing_eval(obj);
@@ -481,11 +481,11 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
                           _efl_ui_list_bar_show_cb, obj);
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_list_bar_hide_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_list_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_list_size_hint_changed_cb, obj);
-   efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_list_pan_resized_cb, obj);
 
    efl_del(pd->box);
@@ -517,9 +517,9 @@ _efl_ui_list_elm_layout_sizing_eval(Eo *obj, Efl_Ui_List_Data *pd)
 
    if (pd->box)
      {
-        min = efl_gfx_size_hint_combined_min_get(pd->box);
-        max = efl_gfx_size_hint_max_get(pd->box);
-        efl_gfx_size_hint_weight_get(pd->box, &xw, &yw);
+        min = efl_gfx_hint_size_combined_min_get(pd->box);
+        max = efl_gfx_hint_size_max_get(pd->box);
+        efl_gfx_hint_weight_get(pd->box, &xw, &yw);
      }
 
    if (pd->smanager)
@@ -552,11 +552,11 @@ _efl_ui_list_elm_layout_sizing_eval(Eo *obj, Efl_Ui_List_Data *pd)
    if (pd->match_content_w) size.w = vmw + min.w;
    if (pd->match_content_h) size.h = vmh + min.h;
 
-   max = efl_gfx_size_hint_max_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_size_hint_min_set(obj, size);
+   efl_gfx_hint_size_min_set(obj, size);
 }
 
 //FIXME: is this box related API could be improved more?

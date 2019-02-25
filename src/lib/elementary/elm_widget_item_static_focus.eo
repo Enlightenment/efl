@@ -4,6 +4,6 @@ class Elm.Widget.Item.Static_Focus extends Elm.Widget.Item implements Efl.Ui.Foc
    implements {
            Efl.Object.constructor;
            Efl.Object.destructor;
-           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+           Efl.Ui.Focus.Object.setup_order_non_recursive;
    }
 }

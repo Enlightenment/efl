@@ -191,6 +191,21 @@ interface @beta Efl.Canvas.Scene
             seat: Efl.Input.Device; [[The seat or $null if not found.]]
          }
       }
+      @property seat_default {
+         [[Get the default seat attached to this canvas.
+
+           A canvas may have exactly one default seat.
+
+           See also @.device to find a seat by name.
+           See also @.seat to find a seat by id.
+         ]]
+         get {
+            [[Get the default seat.]]
+         }
+         values {
+            seat: Efl.Input.Device; [[The default seat or $null if one does not exist.]]
+         }
+      }
       @property pointer_position {
          get {
             [[This function returns the current known pointer coordinates
@@ -198,35 +213,14 @@ interface @beta Efl.Canvas.Scene
               This function returns the current position of the main input
               pointer (mouse, pen, etc...).
             ]]
+            return: bool; [[$true if a pointer exists for the given seat, otherwise $false.]]
          }
-         /* FIXME: missing keys { seat } */
+         keys {
+            seat: Efl.Input.Device; [[The seat, or $null to use the default.]]
+         }
          values {
             pos: Eina.Position2D; [[The pointer position in pixels.]]
          }
-      }
-      /* FIXME: maybe not necessary if gesture supports this */
-      pointer_iterate @const @beta {
-         [[Returns an iterator over the current known pointer positions.
-
-           This is used to iterate over the current known multi-touch positions,
-           including the first finger. Each pointer position is represented by
-           an object of type @Efl.Input.Pointer.
-
-           Each finger in a multi touch environment can then be identified
-           by the @Efl.Input.Pointer.tool property. The order of the pointers
-           in this iterator is not defined.
-
-           Note: If the input surface supports hovering input, some pointers
-           may not be in a "down" state. To retrieve the list of such pointers,
-           set the $hover value to $true. Remember though that most devices
-           currently don't support this.
-         ]]
-         params {
-            /* FIXME: missing seat. hover is not useful */
-            hover: bool @optional; [[$false by default, $true means to include
-                                     fingers that are currently hovering.]]
-         }
-         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
       }
    }
    events {

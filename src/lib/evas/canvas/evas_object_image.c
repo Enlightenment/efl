@@ -2703,6 +2703,9 @@ evas_object_image_render_post(Evas_Object *eo_obj EINA_UNUSED,
    Evas_Image_Data *o = type_private_data;
    Eina_Rectangle *r;
 
+   /* image is not ready yet, skip rendering. Leave it to next frame */
+   if (o->preload & EVAS_IMAGE_PRELOADING) return;
+
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */

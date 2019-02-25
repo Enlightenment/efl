@@ -63,12 +63,12 @@ _create_box_contents(Evas_Object *box)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                  efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_pack_end(box, efl_added));
 
    radio_group = radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
                                  efl_pack_end(hbox, efl_added),
-                                 efl_gfx_size_hint_weight_set(efl_added, 0, 0),
+                                 efl_gfx_hint_weight_set(efl_added, 0, 0),
                                  efl_ui_radio_state_value_set(efl_added, 0));
 
    content = efl_add(EFL_UI_BOX_CLASS, hbox,
@@ -92,7 +92,7 @@ _create_box_contents(Evas_Object *box)
                         efl_ui_radio_group_add(efl_added, radio_group),
                         efl_pack_end(hbox, efl_added),
                         efl_ui_radio_state_value_set(efl_added, i + 1),
-                        efl_gfx_size_hint_weight_set(efl_added, 0, 0));
+                        efl_gfx_hint_weight_set(efl_added, 0, 0));
 
         content = efl_add(content_class[i], hbox,
                           efl_pack_end(hbox, efl_added));
@@ -147,12 +147,12 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
-                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                  efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_content_set(win, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                  efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                   efl_pack_end(vbox, efl_added));
 
    reset_btn = efl_add(EFL_UI_BUTTON_CLASS, hbox,
@@ -172,7 +172,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_pack_end(vbox, scr);
 
    vbox = efl_add(EFL_UI_BOX_CLASS, scr,
-                  efl_gfx_size_hint_weight_set(efl_added, 1, 1),
+                  efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_content_set(scr, efl_added));
 
    radio_group = _create_box_contents(vbox);

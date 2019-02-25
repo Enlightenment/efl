@@ -672,7 +672,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                      const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -688,7 +688,7 @@ elm_object_sub_cursor_get(const Evas_Object *obj)
 }
 
 EOLIAN const char *
-_efl_ui_widget_efl_ui_cursor_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_get(obj);
 }
@@ -793,7 +793,7 @@ elm_object_sub_cursor_style_set(Evas_Object *obj, const char *style)
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                            const char *style)
 {
    return elm_object_sub_cursor_style_set(obj, style);
@@ -807,7 +807,7 @@ elm_object_sub_cursor_style_get(const Evas_Object *obj)
 }
 
 EOLIAN const char *
-_efl_ui_widget_efl_ui_cursor_cursor_style_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_style_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_style_get(obj);
 }
@@ -838,7 +838,7 @@ elm_object_sub_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                                              Eina_Bool theme_search)
 {
    return elm_object_sub_cursor_theme_search_enabled_set(obj, theme_search);
@@ -852,9 +852,7 @@ elm_object_sub_cursor_theme_search_enabled_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_theme_search_enabled_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_theme_search_enabled_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_theme_search_enabled_get(obj);
 }
-
-#include "efl_ui_cursor.eo.c"

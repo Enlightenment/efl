@@ -1516,6 +1516,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                    return NULL;
                 }
               break;
+           default:
+             ERR("type cannot be INVALID");
+             return NULL;
           }
      }
 
@@ -1542,6 +1545,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                      case EFL_CLASS_TYPE_MIXIN:
                        extn_list = eina_list_append(extn_list, extn);
                        break;
+                     default:
+                       ERR("type cannot be INVALID");
+                       return NULL;
                     }
                }
              extn_id = va_arg(p_list, Eo_Id *);
@@ -3630,33 +3636,61 @@ _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
    return NULL;
 }
 
-EAPI void
+EAPI Eina_Error
 efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value value)
 {
+   Eina_Error r = EINA_ERROR_NOT_IMPLEMENTED;
+   Eina_Bool freed = EINA_FALSE;
+
    EO_OBJ_POINTER_GOTO(obj_id, obj, end);
    const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
 
-   if (!reflection || !reflection->set) goto end;
+   if (reflection && reflection->set)
+     {
+        r = reflection->set(obj_id, value);
+        freed = EINA_TRUE;
+     }
 
-   reflection->set(obj_id, value);
+ end:
+   if (!freed) eina_value_flush(&value);
    EO_OBJ_DONE(obj_id);
-   return;
-end:
-   eina_value_flush(&value);
-   EO_OBJ_DONE(obj_id);
+   return r;
 }
 
 EAPI Eina_Value
 efl_property_reflection_get(Eo *obj_id, const char *property_name)
 {
-   EO_OBJ_POINTER(obj_id, obj);
+   Eina_Value r = eina_value_error_init(EINA_ERROR_NOT_IMPLEMENTED);
+
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
    const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
 
-   if (!reflection || !reflection->get) goto end;
+   if (reflection && reflection->get)
+     r = reflection->get(obj_id);
 
-   return reflection->get(obj_id);
-end:
+ end:
    EO_OBJ_DONE(obj_id);
 
-   return EINA_VALUE_EMPTY;
+   return r;
+}
+
+EAPI Eina_Bool
+efl_property_reflection_exist(Eo *obj_id, const char *property_name)
+{
+   Eina_Bool r = EINA_FALSE;
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (reflection) r = EINA_TRUE;
+ end:
+   EO_OBJ_DONE(obj_id);
+   return r;
+}
+
+EAPI Efl_Class_Type
+efl_class_type_get(const Efl_Class *klass_id)
+{
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EFL_CLASS_TYPE_INVALID);
+
+   return klass->desc->type;
 }

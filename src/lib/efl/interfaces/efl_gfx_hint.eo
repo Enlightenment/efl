@@ -1,12 +1,12 @@
 import eina_types;
 import efl_gfx_types;
 
-const Efl.Gfx.Size_Hint_Expand: double = 1.0;
-   [[Use with @Efl.Gfx.Size_Hint.hint_weight.]]
+const Efl.Gfx.Hint_Expand: double = 1.0;
+   [[Use with @Efl.Gfx.Hint.hint_weight.]]
 
-interface @beta Efl.Gfx.Size_Hint
+interface @beta Efl.Gfx.Hint
 {
-   [[Efl graphics size hint interface]]
+   [[Efl graphics hint interface]]
    event_prefix: efl_gfx_entity;
    methods {
       @property hint_aspect {
@@ -27,7 +27,7 @@ interface @beta Efl.Gfx.Size_Hint
          @image html aspect-control-horizontal.png
          */
          values {
-            mode: Efl.Gfx.Size_Hint_Aspect; [[Mode of interpretation.]]
+            mode: Efl.Gfx.Hint_Aspect; [[Mode of interpretation.]]
             sz: Eina.Size2D; [[Base size to use for aspecting.]]
 
             /* FIXME: do we want min/max like Edje instead??
@@ -36,7 +36,7 @@ interface @beta Efl.Gfx.Size_Hint
             */
          }
       }
-      @property hint_max {
+      @property hint_size_max {
          [[Hints on the object's maximum size.
 
            This is not a size enforcement in any way, it's just a hint
@@ -49,7 +49,7 @@ interface @beta Efl.Gfx.Size_Hint
            queried by managers.
 
            Note: Smart objects (such as elementary) can have their own
-           size hint policy. So calling this API may or may not affect
+           hint policy. So calling this API may or may not affect
            the size of smart objects.
          ]]
          values {
@@ -57,7 +57,7 @@ interface @beta Efl.Gfx.Size_Hint
                default for canvas objects).]]
          }
       }
-      @property hint_min {
+      @property hint_size_min {
          [[Hints on the object's minimum size.
 
            This is not a size enforcement in any way, it's just a hint
@@ -76,7 +76,7 @@ interface @beta Efl.Gfx.Size_Hint
             sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
          }
       }
-      @property hint_restricted_min {
+      @property hint_size_restricted_min {
          [[Internal hints for an object's minimum size.
 
            This is not a size enforcement in any way, it's just a hint
@@ -88,7 +88,7 @@ interface @beta Efl.Gfx.Size_Hint
            Note: This property is internal and meant for widget developers to
            define the absolute minimum size of the object. EFL itself sets
            this size internally, so any change to it from an application
-           might be ignored. Use @.hint_min instead.
+           might be ignored. Use @.hint_size_min instead.
          ]]
          set @protected {
             [[This function is protected as it is meant for widgets to indicate
@@ -102,13 +102,13 @@ interface @beta Efl.Gfx.Size_Hint
             sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
          }
       }
-      @property hint_combined_min {
-         [[Read-only minimum size combining both @.hint_restricted_min and
-           @.hint_min size hints.
+      @property hint_size_combined_min {
+         [[Read-only minimum size combining both @.hint_size_restricted_min and
+           @.hint_size_min hints.
 
-           @.hint_restricted_min is intended for mostly internal usage
-           and widget developers, and @.hint_min is intended to be
-           set from application side. @.hint_combined_min combines both values
+           @.hint_size_restricted_min is intended for mostly internal usage
+           and widget developers, and @.hint_size_min is intended to be
+           set from application side. @.hint_size_combined_min combines both values
            by taking their repective maximum (in both width and height), and
            is used internally to get an object's minimum size.
          ]]
@@ -127,7 +127,7 @@ interface @beta Efl.Gfx.Size_Hint
            placing the object accordingly.
 
            Note: Smart objects (such as elementary) can have their own
-           size hint policy. So calling this API may or may not affect
+           hint policy. So calling this API may or may not affect
            the size of smart objects.
          ]]
          /*
@@ -146,7 +146,7 @@ interface @beta Efl.Gfx.Size_Hint
            This is a hint on how a container object should resize a given
            child within its area. Containers may adhere to the simpler
            logic of just expanding the child object's dimensions to fit
-           its own (see the @Efl.Gfx.Size_Hint_Expand helper weight macro) or
+           its own (see the @Efl.Gfx.Hint_Expand helper weight macro) or
            the complete one of taking each child's weight hint as real
            weights to how much of its size to allocate for them in each
            axis. A container is supposed to, after normalizing the
@@ -195,7 +195,7 @@ interface @beta Efl.Gfx.Size_Hint
            or "fill" by some users. @.hint_fill specify whether to fill
            the space inside the boundaries of a container/manager.
 
-           Maximum size hints should be enforced with higher
+           Maximum hints should be enforced with higher
            priority, if they are set. Also, any @.hint_margin set on
            objects should add up to the object space on the final
            scene composition.
@@ -217,6 +217,6 @@ interface @beta Efl.Gfx.Size_Hint
       }
    }
    events {
-      change,size,hints: void; [[Object size hints changed.]]
+      hints,changed: void; [[Object hints changed.]]
    }
 }

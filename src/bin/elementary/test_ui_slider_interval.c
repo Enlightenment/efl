@@ -46,7 +46,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(160, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 0)),
            efl_ui_slider_interval_value_set(efl_added, 0.4, 0.9),
            efl_pack(bx, efl_added));
 
@@ -57,7 +57,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    step = _step_size_calculate(0, 9);
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(120, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(120, 0)),
            efl_ui_slider_interval_value_set(efl_added, 0.4, 0.9),
            efl_ui_range_step_set(efl_added, step),
            efl_pack(bx, efl_added));
@@ -68,7 +68,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(120, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(120, 0)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
@@ -85,7 +85,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
@@ -93,7 +93,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(0, 160)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
@@ -107,7 +107,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(260, 0)),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(260, 0)),
            efl_ui_range_min_max_set(efl_added, 0, 600),
            efl_ui_slider_interval_value_set(efl_added, 100, 500),
            efl_ui_range_step_set(efl_added, step),

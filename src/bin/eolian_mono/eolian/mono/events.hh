@@ -76,7 +76,7 @@ struct unpack_event_args_visitor
    }
    bool operator()(attributes::complex_type_def const&) const
    {
-      return as_generator("UNSUPPORTED").generate(sink, attributes::unused, *context);
+      return as_generator("new " << eolian_mono::type << "(evt.Info, false, false)").generate(sink, type, *context);
    }
 };
 

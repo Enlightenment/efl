@@ -1890,7 +1890,7 @@ static inline void
 _palette_box_prepare(Eo *o)
 {
    efl_ui_direction_set(o, EFL_UI_DIR_HORIZONTAL);
-   efl_gfx_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_entity_visible_set(o, EINA_FALSE);
 }
 

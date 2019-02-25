@@ -1590,6 +1590,12 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          }
       }
 
+      emit_event_with_list {
+         params {
+            @in data: list<string>;
+         }
+      }
+
       append_to_strbuf {
          params {
             @in buf: strbuf;
@@ -1685,5 +1691,6 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
       evt,with,struct,complex @hot: Dummy.StructComplex;
+      evt,with,list @hot: list<string>;
    }
 }

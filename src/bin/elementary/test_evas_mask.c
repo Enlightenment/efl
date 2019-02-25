@@ -81,12 +81,12 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *ly = data;
 
-   if (!efl_gfx_map_has(ly))
+   if (!efl_gfx_mapping_has(ly))
      {
-        efl_gfx_map_zoom(ly, 0.8, 0.8, NULL, 0.5, 0.5);
-        efl_gfx_map_rotate(ly, 45, NULL, 0.5, 0.5);
+        efl_gfx_mapping_zoom(ly, 0.8, 0.8, NULL, 0.5, 0.5);
+        efl_gfx_mapping_rotate(ly, 45, NULL, 0.5, 0.5);
      }
-   else efl_gfx_map_reset(ly);
+   else efl_gfx_mapping_reset(ly);
 }
 
 static void
@@ -129,8 +129,8 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    // FIXME: No genlist in EO API
    o = gl = elm_genlist_add(win);
    elm_genlist_homogeneous_set(gl, 1);
-   efl_gfx_size_hint_align_set(o, -1, -1);
-   efl_gfx_size_hint_weight_set(o, 1, 1);
+   efl_gfx_hint_align_set(o, -1, -1);
+   efl_gfx_hint_weight_set(o, 1, 1);
 
    itc = elm_genlist_item_class_new();
    itc->item_style = "default";
@@ -154,26 +154,26 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    box2 = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_LTR),
-                  efl_gfx_size_hint_weight_set(efl_added, 1.0, 0.0),
+                  efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                   efl_pack(box, efl_added));
 
    // FIXME: button EO API
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle mask"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_mask, ly),
-           efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Toggle map"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_map, ly),
-           efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Rotate Window"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _rotate_win, win),
-           efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 600));

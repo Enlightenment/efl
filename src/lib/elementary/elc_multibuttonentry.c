@@ -212,7 +212,7 @@ _shrink_mode_set(Evas_Object *obj,
         if (sd->label && sd->label_packed)
           {
              elm_box_pack_end(sd->box, sd->label);
-             w -= efl_gfx_size_hint_combined_min_get(sd->label).w;
+             w -= efl_gfx_hint_size_combined_min_get(sd->label).w;
              w -= box_inner_item_width_padding;
           }
 
@@ -229,7 +229,7 @@ _shrink_mode_set(Evas_Object *obj,
              evas_object_show(VIEW(item));
              item->visible = EINA_TRUE;
 
-             w -= efl_gfx_size_hint_combined_min_get(VIEW(item)).w;
+             w -= efl_gfx_hint_size_combined_min_get(VIEW(item)).w;
              w -= box_inner_item_width_padding;
              count--;
 

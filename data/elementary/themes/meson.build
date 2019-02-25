@@ -37,3 +37,4 @@ install_subdir('fdo',
     join_paths('actions', '128-svg'),
   ]
 )
+elementary_img_data = join_paths(meson.current_source_dir())

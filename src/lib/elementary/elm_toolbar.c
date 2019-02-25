@@ -155,7 +155,7 @@ _items_visibility_fix(Elm_Toolbar *obj,
           }
      }
    efl_ui_focus_composition_dirty(obj);
-   efl_ui_focus_object_prepare_logical(obj);
+   efl_ui_focus_object_setup_order(obj);
 }
 
 static void
@@ -2985,8 +2985,6 @@ _elm_toolbar_efl_object_constructor(Eo *obj, Elm_Toolbar_Data *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_TOOL_BAR);
-
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
 
    return obj;
 }

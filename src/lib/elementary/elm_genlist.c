@@ -2577,7 +2577,7 @@ _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd)
         evas_object_stack_below(sd->event_block_rect, sd->stack[1]);
         evas_object_show(sd->event_block_rect);
         sd->start_time = ecore_time_get();
-        efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
+        efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
         sd->tree_effect_animator = 1;
         return EINA_TRUE;
      }
@@ -2590,7 +2590,7 @@ _elm_genlist_tree_effect_stop(Elm_Genlist_Data *sd)
    if (sd->tree_effect_animator)
      {
         sd->tree_effect_animator = 0;
-        efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
+        efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _tree_effect_animator_cb, sd->obj);
      }
 }
 
@@ -5990,7 +5990,7 @@ _elm_genlist_efl_object_constructor(Eo *obj, Elm_Genlist_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_LIST);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _genlist_element_focused, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _genlist_element_focused, obj);
 
    return obj;
 }
@@ -8910,7 +8910,7 @@ _elm_genlist_efl_object_provider_find(const Eo *obj, Elm_Genlist_Data *pd, const
 }
 
 EOLIAN static void
-_elm_genlist_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Gen_Item *pd)
+_elm_genlist_item_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Gen_Item *pd)
 {
    Eina_List *n;
    Efl_Ui_Widget *wid;
@@ -8921,7 +8921,7 @@ _elm_genlist_item_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, El
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, ELM_GENLIST_ITEM_CLASS));
+   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENLIST_ITEM_CLASS));
 }
 
 EOLIAN static Eina_Bool

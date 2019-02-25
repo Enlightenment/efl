@@ -776,7 +776,8 @@ enum _Efl_Class_Type
    EFL_CLASS_TYPE_REGULAR = 0, /**< Regular class. */
    EFL_CLASS_TYPE_REGULAR_NO_INSTANT, /**< Regular non instant-able class. */
    EFL_CLASS_TYPE_INTERFACE, /**< Interface */
-   EFL_CLASS_TYPE_MIXIN /**< Mixin */
+   EFL_CLASS_TYPE_MIXIN, /**< Mixin */
+   EFL_CLASS_TYPE_INVALID
 };
 
 /**
@@ -826,7 +827,7 @@ struct _Efl_Class_Description
 /**
  * Setter type which is used to set an #Eina_Value, this function should access one particular property field
  */
-typedef void (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
+typedef Eina_Error (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
 
 /**
  * Getter type which is used to get an #Eina_Value, this function should access one particular property field
@@ -1983,8 +1984,9 @@ EAPI Eina_Bool efl_destructed_is(const Eo *obj);
  * @param property_name The name of the property to modify.
  * @param value The value to set, the value passed here will be flushed by the function
  *
+ * @see efl_property_reflection_get() and efl_property_reflection_exist()
  */
-EAPI void efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
+EAPI Eina_Error efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
 
 /**
  * @brief Retrieve an #Eina_Value containing the current value of the property specified with \c property_name.
@@ -1992,9 +1994,21 @@ EAPI void efl_property_reflection_set(Eo *obj, const char *property_name, Eina_V
  * @param property_name The name of the property to get.
  *
  * @return The value that got returned by the actual property in form of a generic Eina_Value. The user of this API is owning the returned Value.
+ *
+ * @see efl_property_reflection_set() and efl_property_reflection_exist()
  */
 EAPI Eina_Value efl_property_reflection_get(Eo *obj, const char *property_name);
 
+/**
+ * @brief Check if a property exist for reflection.
+ * @param obj The object to inspect.
+ * @param property_name The name of the property to check if it exist.
+ *
+ * @return EINA_TRUE if the property exist, EINA_FALSE otherwise.
+ *
+ * @see efl_property_reflection_set() and efl_property_reflection_get()
+ */
+EAPI Eina_Bool efl_property_reflection_exist(Eo *obj, const char *property_name);
 
 /**
  * @addtogroup Efl_Class_Class Eo's Class class.
@@ -2002,6 +2016,14 @@ EAPI Eina_Value efl_property_reflection_get(Eo *obj, const char *property_name);
  */
 
 #include "efl_class.eo.h"
+
+/**
+ * @brief Get the type of this class.
+ * @param klass The Efl_Class to get the type from.
+ *
+ * @return The type of this class or INVALID if the klass parameter was invalid.
+ */
+EAPI Efl_Class_Type efl_class_type_get(const Efl_Class *klass);
 
 /**
  * @}

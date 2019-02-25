@@ -83,68 +83,68 @@ _anim_cb(void *data)
    evas_output_size_get(ad->canvas, &win_w, &win_h);
 
    o = evas_object_name_find(ad->canvas, "obj1");
-   efl_gfx_map_reset(o);
-   efl_gfx_map_rotate(o, 3 * f, NULL, 0.5, 0.5);
-   efl_gfx_map_smooth_set(o, ad->smooth);
-   efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_color_set(o, -1, r, g, b, a);
+   efl_gfx_mapping_reset(o);
+   efl_gfx_mapping_rotate(o, 3 * f, NULL, 0.5, 0.5);
+   efl_gfx_mapping_smooth_set(o, ad->smooth);
+   efl_gfx_mapping_alpha_set(o, ad->alpha);
+   efl_gfx_mapping_color_set(o, -1, r, g, b, a);
 
 
    o = evas_object_name_find(ad->canvas, "obj2");
    size = efl_gfx_entity_size_get(o);
-   efl_gfx_map_reset(o);
-   efl_gfx_map_smooth_set(o, ad->smooth);
-   efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_color_set(o, -1, r, g, b, a);
-   efl_gfx_map_translate(o, 0, 0, 100);
-   efl_gfx_map_rotate_3d(o, f * 6, f * 6, f * 6, NULL, 1./3., 10. / size.h, 0);
+   efl_gfx_mapping_reset(o);
+   efl_gfx_mapping_smooth_set(o, ad->smooth);
+   efl_gfx_mapping_alpha_set(o, ad->alpha);
+   efl_gfx_mapping_color_set(o, -1, r, g, b, a);
+   efl_gfx_mapping_translate(o, 0, 0, 100);
+   efl_gfx_mapping_rotate_3d(o, f * 6, f * 6, f * 6, NULL, 1./3., 10. / size.h, 0);
    if (ad->apply_lighting)
      {
-        efl_gfx_map_lightning_3d(o, ad->canvas, 0.5, 0.5, -100.,
+        efl_gfx_mapping_lighting_3d(o, ad->canvas, 0.5, 0.5, -100.,
                                  255, 255, 255, 0, 0, 0);
      }
 
 
    o = evas_object_name_find(ad->canvas, "obj3");
    size = efl_gfx_entity_size_get(o);
-   efl_gfx_map_reset(o);
-   efl_gfx_map_smooth_set(o, ad->smooth);
-   efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_color_set(o, -1, r, g, b, a);
-   efl_gfx_map_translate(o, 0, size.h/2, -20);
-   efl_gfx_map_rotate_3d(o, 20, f * 6, 0, NULL, 0.5, 0.5, size.w / 2);
+   efl_gfx_mapping_reset(o);
+   efl_gfx_mapping_smooth_set(o, ad->smooth);
+   efl_gfx_mapping_alpha_set(o, ad->alpha);
+   efl_gfx_mapping_color_set(o, -1, r, g, b, a);
+   efl_gfx_mapping_translate(o, 0, size.h/2, -20);
+   efl_gfx_mapping_rotate_3d(o, 20, f * 6, 0, NULL, 0.5, 0.5, size.w / 2);
    if (ad->apply_perspective)
-     efl_gfx_map_perspective_3d(o, NULL, 0.5, 0.5, 0, 256);
+     efl_gfx_mapping_perspective_3d(o, NULL, 0.5, 0.5, 0, 256);
    if (ad->apply_lighting)
      {
         evas_pointer_canvas_xy_get(ad->canvas, &mx, &my);
-        efl_gfx_map_lightning_3d(o, ad->canvas,
+        efl_gfx_mapping_lighting_3d(o, ad->canvas,
                                  (double) mx / win_w, (double) my / win_h,
                                  -256, 255, 255, 255, 0, 0, 0);
      }
    if (ad->backface_culling)
-     efl_gfx_entity_visible_set(o, efl_gfx_map_clockwise_get(o));
+     efl_gfx_entity_visible_set(o, efl_gfx_mapping_clockwise_get(o));
    else
      efl_gfx_entity_visible_set(o, 1);
 
 
    o = evas_object_name_find(ad->canvas, "obj4");
    rect = efl_gfx_entity_geometry_get(o);
-   efl_gfx_map_reset(o);
-   efl_gfx_map_smooth_set(o, ad->smooth);
-   efl_gfx_map_alpha_set(o, ad->alpha);
-   efl_gfx_map_coord_absolute_set(o, 0, rect.x, rect.y + rect.h, 0);
-   efl_gfx_map_coord_absolute_set(o, 1, rect.x + rect.w, rect.y + rect.h, 0);
-   efl_gfx_map_coord_absolute_set(o, 2, win_w - 10, win_h - 30, 0);
-   efl_gfx_map_coord_absolute_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
-   efl_gfx_map_uv_set(o, 0, 0, 1);
-   efl_gfx_map_uv_set(o, 1, 1, 1);
-   efl_gfx_map_uv_set(o, 2, 1, 2. / 3.);
-   efl_gfx_map_uv_set(o, 3, 0, 2. / 3.);
-   efl_gfx_map_color_set(o, 0, 200, 200, 200, 150);
-   efl_gfx_map_color_set(o, 1, 200, 200, 200, 150);
-   efl_gfx_map_color_set(o, 2, 0, 0, 0, 0);
-   efl_gfx_map_color_set(o, 3, 0, 0, 0, 0);
+   efl_gfx_mapping_reset(o);
+   efl_gfx_mapping_smooth_set(o, ad->smooth);
+   efl_gfx_mapping_alpha_set(o, ad->alpha);
+   efl_gfx_mapping_coord_absolute_set(o, 0, rect.x, rect.y + rect.h, 0);
+   efl_gfx_mapping_coord_absolute_set(o, 1, rect.x + rect.w, rect.y + rect.h, 0);
+   efl_gfx_mapping_coord_absolute_set(o, 2, win_w - 10, win_h - 30, 0);
+   efl_gfx_mapping_coord_absolute_set(o, 3, (win_w / 2) + 10, win_h - 30, 0);
+   efl_gfx_mapping_uv_set(o, 0, 0, 1);
+   efl_gfx_mapping_uv_set(o, 1, 1, 1);
+   efl_gfx_mapping_uv_set(o, 2, 1, 2. / 3.);
+   efl_gfx_mapping_uv_set(o, 3, 0, 2. / 3.);
+   efl_gfx_mapping_color_set(o, 0, 200, 200, 200, 150);
+   efl_gfx_mapping_color_set(o, 1, 200, 200, 200, 150);
+   efl_gfx_mapping_color_set(o, 2, 0, 0, 0, 0);
+   efl_gfx_mapping_color_set(o, 3, 0, 0, 0, 0);
 
 
    ad->frame = (ad->frame + 1) % 60;

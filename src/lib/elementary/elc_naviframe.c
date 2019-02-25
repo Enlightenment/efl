@@ -1439,7 +1439,7 @@ _deferred(void *data, const Efl_Event *event EINA_UNUSED)
         free(nfo);
      }
 
-   efl_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
+   efl_event_callback_del(nfd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _deferred, nfd);
 }
 
 EOLIAN static void
@@ -1534,7 +1534,7 @@ static void
 _schedule_deferred(Elm_Naviframe_Op *nfo, Elm_Naviframe_Data *sd)
 {
    if (!sd->ops)
-     efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, sd);
+     efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _deferred, sd);
 
    sd->ops = eina_list_append(sd->ops, nfo);
 }

@@ -94,14 +94,7 @@ typedef struct _Efl_Loop_Data Efl_Loop_Data;
 typedef struct _Efl_Task_Data Efl_Task_Data;
 typedef struct _Efl_Appthread_Data Efl_Appthread_Data;
 
-typedef struct _Message_Handler Message_Handler;
 typedef struct _Message Message;
-
-struct _Message_Handler
-{
-   Eo       *handler;
-   const Eo *klass;
-};
 
 struct _Message
 {
@@ -150,7 +143,6 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
-   Eina_Inarray        *message_handlers;
    Eina_Inlist         *message_queue;
    unsigned int         message_walking;
 

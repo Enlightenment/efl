@@ -1214,9 +1214,9 @@ _zoom_animator_set(Elm_Map_Data *sd,
    Eina_Bool r = EINA_FALSE;
 
    sd->zoom_animator = !!callback;
-   r = efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
-   r |= efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
-   if (callback) efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, callback, sd->obj);
+   r = efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
+   r |= efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
+   if (callback) efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, callback, sd->obj);
 
    return r;
 }

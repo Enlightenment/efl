@@ -1,4 +1,4 @@
-/* Common header for maps: legacy Evas_Map API and Efl.Gfx.Map */
+/* Common header for maps: legacy Evas_Map API and Efl.Gfx.Mapping */
 
 #ifndef EVAS_MAP_H
 #define EVAS_MAP_H

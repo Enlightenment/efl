@@ -27,7 +27,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Box box_initial(instantiate, win);
    box_initial.direction_set(EFL_UI_DIR_HORIZONTAL);
-   box_initial.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   box_initial.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_initial);
 
    efl::ui::Button btn(instantiate, win);
@@ -78,7 +78,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Box box_gap(instantiate, win);
    box_gap.direction_set(EFL_UI_DIR_HORIZONTAL);
-   box_gap.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   box_gap.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_gap);
 
    efl::ui::Button btn4(instantiate, win);
@@ -99,7 +99,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    up.autorepeat_enabled_set(true);
    up.autorepeat_initial_timeout_set(1.0);
    up.autorepeat_gap_timeout_set(0.5);
-   up.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   up.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    up.hint_fill_set(true, false);
    up.hint_align_set(0.5, 0.0);
    box.pack_end(up);
@@ -180,7 +180,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    left.autorepeat_enabled_set(true);
    left.autorepeat_initial_timeout_set(1.0);
    left.autorepeat_gap_timeout_set(0.5);
-   left.hint_weight_set(0.0, EFL_GFX_SIZE_HINT_EXPAND);
+   left.hint_weight_set(0.0, EFL_GFX_HINT_EXPAND);
    left.hint_fill_set(false, true);
    left.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(left);
@@ -200,7 +200,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    right.autorepeat_enabled_set(true);
    right.autorepeat_initial_timeout_set(1.0);
    right.autorepeat_gap_timeout_set(0.5);
-   right.hint_weight_set(0.0, EFL_GFX_SIZE_HINT_EXPAND);
+   right.hint_weight_set(0.0, EFL_GFX_HINT_EXPAND);
    right.hint_fill_set(false, true);
    right.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(right);
@@ -214,7 +214,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    down.autorepeat_enabled_set(true);
    down.autorepeat_initial_timeout_set(1.0);
    down.autorepeat_gap_timeout_set(0.5);
-   down.hint_weight_set(EFL_GFX_SIZE_HINT_EXPAND, 0.0);
+   down.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    down.hint_fill_set(true, false);
    down.hint_align_set(0.5, 0.0);
    box.pack_end(down);

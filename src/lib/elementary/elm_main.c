@@ -50,8 +50,8 @@ _focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal)
 {
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_MOVE, _focus_ev_redirect_cb, goal);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _focus_ev_redirect_cb, goal);
 }
 
 void
@@ -59,7 +59,7 @@ _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj
 {
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
+   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
@@ -69,7 +69,7 @@ _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj
 {
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
+   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
@@ -1966,4 +1966,41 @@ elm_object_item_del(Eo *obj)
    if (!item) return ;
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _item_noref, NULL);
    item->on_deletion = EINA_TRUE;
+}
+
+
+EAPI Eina_Bool
+elm_object_cursor_set(Eo *obj, const char *cursor)
+{
+   return efl_ui_widget_cursor_set(obj, cursor);
+}
+
+EAPI const char *
+elm_object_cursor_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_style_set(Eo *obj, const char *style)
+{
+   return efl_ui_widget_cursor_style_set(obj, style);
+}
+
+EAPI const char *
+elm_object_cursor_style_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_style_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_set(obj, allow);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_get(obj);
 }

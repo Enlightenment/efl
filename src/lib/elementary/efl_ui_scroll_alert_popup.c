@@ -99,7 +99,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
         efl_gfx_entity_size_set(obj, new_size);
      }
 
-   efl_gfx_size_hint_min_set(obj, new_min);
+   efl_gfx_hint_size_min_set(obj, new_min);
 }
 
 static void
@@ -159,8 +159,8 @@ _efl_ui_scroll_alert_popup_content_set(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *
         pd->content = content;
 
         //Content should have expand propeties since the scroller is not layout layer
-        efl_gfx_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        efl_gfx_size_hint_fill_set(pd->content, EINA_TRUE, EINA_TRUE);
+        efl_gfx_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        efl_gfx_hint_fill_set(pd->content, EINA_TRUE, EINA_TRUE);
 
         efl_content_set(pd->scroller, pd->content);
      }

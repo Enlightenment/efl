@@ -252,6 +252,8 @@ struct _Ecore_Drm2_Output
    /* unused when doing atomic */
    drmModePropertyPtr dpms;
 
+   Ecore_Timer *flip_timeout;
+
    Ecore_Drm2_Output_Mode *current_mode;
    Eina_List *modes;
 

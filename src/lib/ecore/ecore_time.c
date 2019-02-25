@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_LOOP_PROTECTED
+
 #include <stdlib.h>
 #include <sys/time.h>
 

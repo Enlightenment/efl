@@ -1,6 +1,6 @@
 import efl_input_types;
 
-class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Animator, Efl.Input.Interface,
+class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Input.Interface,
                    Efl.Canvas.Pointer
 {
    [[Evas canvas class]]
@@ -965,6 +965,8 @@ class Evas.Canvas extends Efl.Loop_Consumer implements Efl.Canvas.Scene, Efl.Ani
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.device { get; }
       Efl.Canvas.Scene.seat { get; }
+      Efl.Canvas.Scene.seat_default { get; }
+      Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Scene.image_max_size { get; }
       Efl.Canvas.Scene.objects_at_xy_get;
       Efl.Canvas.Scene.object_top_at_xy_get;

@@ -15,6 +15,7 @@ class Complex_Type {
       foo {
          params {
             buf: mstring @owned;
+            sl: slice<ubyte>;
          }
          return: list<stringshare> @owned; [[comment for method return]]
       }

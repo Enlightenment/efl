@@ -17,7 +17,7 @@ evas = declare_dependency(
 
 evas_bin = declare_dependency(
    link_with : [evas_lib],
-   dependencies : [eina, ecore, ector, emile, dependency('luajit')],
+   dependencies : [eina, ecore, ector, emile, lua],
    include_directories : evas_include_directories
 )
 
@@ -32,5 +32,5 @@ pkgconfig.generate(evas_lib,
   name : 'evas',
   subdirs : ['evas-'+version_major] + tmp_package_subdirs,
   version : version_major + '.' + version_minor + '.' + version_micro,
-  libraries : [eina, ecore, ector, emile, dependency('luajit')],
+  libraries : [eina, ecore, ector, emile, lua],
 )

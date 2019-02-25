@@ -124,6 +124,7 @@ efl_ui_suite_src = [
   'efl_ui_test_focus_sub.c',
   'efl_ui_test_box.c',
   'efl_ui_test_grid.c',
+  'efl_ui_test_relative_layout.c',
   'efl_ui_test_image.c',
   'efl_ui_test_image_zoomable.c',
   'efl_ui_test_layout.c',

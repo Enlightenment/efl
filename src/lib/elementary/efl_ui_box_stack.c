@@ -1,4 +1,4 @@
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 
 #include "efl_ui_box_private.h"
 
@@ -25,11 +25,11 @@ _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
      {
         Evas_Object *child = opt->obj;
 
-        cmin = efl_gfx_size_hint_combined_min_get(child);
+        cmin = efl_gfx_hint_size_combined_min_get(child);
         if (cmin.w > min.w) min.w = cmin.w;
         if (cmin.h > min.h) min.h = cmin.h;
      }
-   efl_gfx_size_hint_restricted_min_set(obj, min);
+   efl_gfx_hint_size_restricted_min_set(obj, min);
 }
 
 #include "efl_ui_box_stack.eo.c"

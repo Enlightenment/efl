@@ -206,7 +206,7 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    EFL_UI_POPUP_DATA_GET_OR_RETURN(data, ppd);
    EFL_UI_ANCHOR_POPUP_DATA_GET(data, pd);
 
-   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, data);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, data);
 
    pd->anchor = NULL;
    //Add align calc only
@@ -223,9 +223,9 @@ _anchor_detach(Eo *obj)
 
    if (!pd->anchor) return;
 
-   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
-   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
-   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_MOVE, _anchor_geom_cb, obj);
+   efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _anchor_geom_cb, obj);
    efl_event_callback_del(pd->anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
 }
 
@@ -239,9 +239,9 @@ _efl_ui_anchor_popup_anchor_set(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd, Eo *ancho
 
    if (anchor)
      {
-        efl_event_callback_add(ppd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
-        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_RESIZE, _anchor_geom_cb, obj);
-        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_MOVE, _anchor_geom_cb, obj);
+        efl_event_callback_add(ppd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _anchor_geom_cb, obj);
         efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
      }
 

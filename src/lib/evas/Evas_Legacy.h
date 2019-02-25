@@ -1895,21 +1895,21 @@ EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_C
 /** Display mode size hint. */
 typedef enum
 {
-  EFL_GFX_SIZE_HINT_MODE_NONE = 0, /**< Default mode */
-  EFL_GFX_SIZE_HINT_MODE_COMPRESS = 1, /**< Use this mode when you want to give
+  EFL_GFX_HINT_MODE_NONE = 0, /**< Default mode */
+  EFL_GFX_HINT_MODE_COMPRESS = 1, /**< Use this mode when you want to give
                                         * compress display mode hint to an object */
-  EFL_GFX_SIZE_HINT_MODE_EXPAND = 2, /**< Use this mode when you want to give
+  EFL_GFX_HINT_MODE_EXPAND = 2, /**< Use this mode when you want to give
                                       * expand display mode hint to an object */
-  EFL_GFX_SIZE_HINT_MODE_DONT_CHANGE = 3 /**< Use this mode when an object
+  EFL_GFX_HINT_MODE_DONT_CHANGE = 3 /**< Use this mode when an object
                                           * should not change its display mode */
-} Efl_Gfx_Size_Hint_Mode;
+} Efl_Gfx_Hint_Mode;
 
-typedef Efl_Gfx_Size_Hint_Mode             Evas_Display_Mode;
+typedef Efl_Gfx_Hint_Mode             Evas_Display_Mode;
 
-#define EVAS_DISPLAY_MODE_NONE             EFL_GFX_SIZE_HINT_MODE_NONE
-#define EVAS_DISPLAY_MODE_COMPRESS         EFL_GFX_SIZE_HINT_MODE_COMPRESS
-#define EVAS_DISPLAY_MODE_EXPAND           EFL_GFX_SIZE_HINT_MODE_EXPAND
-#define EVAS_DISPLAY_MODE_DONT_CHANGE      EFL_GFX_SIZE_HINT_MODE_DONT_CHANGE
+#define EVAS_DISPLAY_MODE_NONE             EFL_GFX_HINT_MODE_NONE
+#define EVAS_DISPLAY_MODE_COMPRESS         EFL_GFX_HINT_MODE_COMPRESS
+#define EVAS_DISPLAY_MODE_EXPAND           EFL_GFX_HINT_MODE_EXPAND
+#define EVAS_DISPLAY_MODE_DONT_CHANGE      EFL_GFX_HINT_MODE_DONT_CHANGE
 
 /**
  * @brief Sets the hints for an object's disply mode,
@@ -7620,7 +7620,7 @@ EAPI void            evas_map_util_points_populate_from_geometry(Evas_Map *m, Ev
 /**
  * Set color of all points to given color.
  *
- * This call is useful to reuse maps after they had 3d lightning or
+ * This call is useful to reuse maps after they had 3d lighting or
  * any other colorization applied before.
  *
  * @param m map to change the color of.
@@ -8133,7 +8133,7 @@ EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
  */
 EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
 
-#include "canvas/efl_gfx_map.eo.legacy.h"
+#include "canvas/efl_gfx_mapping.eo.legacy.h"
 
 /**
  * @brief Apply an evas filter program on this text object.

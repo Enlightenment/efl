@@ -23,7 +23,7 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    efl_event_callback_legacy_call(obj, EV_A_CHANGED, &pd->a);
 }
 
-static void
+static Eina_Error
 _a_set_reflect(Eo *obj, Eina_Value value)
 {
    int a;
@@ -31,6 +31,8 @@ _a_set_reflect(Eo *obj, Eina_Value value)
    eina_value_int_convert(&value, &a);
    simple_a_set(obj, a);
    eina_value_flush(&value);
+
+   return 0;
 }
 
 static int

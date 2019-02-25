@@ -6,7 +6,7 @@
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_INPUT_EVENT_PROTECTED
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 #define EFL_UI_WIN_INLINED_PROTECTED
@@ -901,8 +901,8 @@ _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
 {
    Eina_Size2D min, max;
 
-   min = efl_gfx_size_hint_combined_min_get(win);
-   max = efl_gfx_size_hint_max_get(win);
+   min = efl_gfx_hint_size_combined_min_get(win);
+   max = efl_gfx_hint_size_max_get(win);
    if (max.w < 1) max.w = -1;
    if (max.h < 1) max.h = -1;
 
@@ -934,7 +934,7 @@ _elm_win_move(Ecore_Evas *ee)
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
    sd->screen.x = x;
    sd->screen.y = y;
-   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
@@ -1691,8 +1691,8 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_wm_rotation)
      {
-        efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-        efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
+        efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
+        efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
 #ifdef HAVE_ELEMENTARY_X
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_xwin_update(sd);
@@ -2458,12 +2458,10 @@ _efl_ui_win_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Bool v
    else _efl_ui_win_hide(obj, sd);
 }
 
-EOLIAN static Eina_Position2D
-_efl_ui_win_efl_canvas_scene_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_canvas_scene_pointer_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *dev, Eina_Position2D *pos)
 {
-   Eina_Position2D pos;
-   evas_pointer_canvas_xy_get(sd->evas, &pos.x, &pos.y);
-   return pos;
+   return efl_canvas_scene_pointer_position_get(sd->evas, dev, pos);
 }
 
 EOLIAN static Eina_Bool
@@ -2503,7 +2501,7 @@ _input_pointer_iterator_free(Input_Pointer_Iterator *it)
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_win_efl_canvas_scene_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
+_efl_ui_win_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
                                        Eina_Bool hover EINA_UNUSED)
 {
    Input_Pointer_Iterator *it;
@@ -2614,6 +2612,12 @@ EOLIAN static Efl_Input_Device *
 _efl_ui_win_efl_canvas_scene_device_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *name)
 {
    return efl_canvas_scene_device_get(sd->evas, name);
+}
+
+EOLIAN static Efl_Input_Device *
+_efl_ui_win_efl_canvas_scene_seat_default_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return efl_canvas_scene_seat_default_get(sd->evas);
 }
 
 EOLIAN static Efl_Input_Device *
@@ -3011,7 +3015,7 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
           {
              sd->screen.x = pos.x;
              sd->screen.y = pos.y;
-             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
           }
         goto super_skip;
      }
@@ -3033,7 +3037,7 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
      {
         sd->screen.x = pos.x;
         sd->screen.y = pos.y;
-        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_MOVE, NULL);
+        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
      }
    if (sd->frame_obj)
      {
@@ -3574,7 +3578,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
    // If content has a weight, make resizable
-   efl_gfx_size_hint_weight_get(sd->legacy.edje, &wx, &wy);
+   efl_gfx_hint_weight_get(sd->legacy.edje, &wx, &wy);
 
    // Content max hint is ignored
    maxw = sd->max_w;
@@ -3612,8 +3616,8 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
      }
 
    sd->tmp_updating_hints = 1;
-   efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(maxw, maxh));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
 
@@ -4880,7 +4884,7 @@ _indicator_resized(void *data, const Efl_Event *event)
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
    Evas_Object *indicator = event->object;
    Evas_Coord_Size *size = (Evas_Coord_Size *)event->info;
-   efl_gfx_size_hint_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
+   efl_gfx_hint_size_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
    _elm_win_frame_obj_update(sd, 0);
 }
 
@@ -6206,7 +6210,7 @@ _main_menu_resize_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // After resize, the framespace size has changed, so update the win geometry
    _elm_win_resize_objects_eval(ev->object, EINA_FALSE);
-   efl_event_callback_del(ev->object, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+   efl_event_callback_del(ev->object, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _main_menu_resize_cb, NULL);
 }
 
 static void
@@ -6236,7 +6240,7 @@ _dbus_menu_set(Eina_Bool dbus_connect, void *data)
    else
      {
         DBG("Setting menu to local mode");
-        efl_event_callback_add(sd->obj, EFL_GFX_ENTITY_EVENT_RESIZE, _main_menu_resize_cb, NULL);
+        efl_event_callback_add(sd->obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _main_menu_resize_cb, NULL);
 
         if (elm_widget_is_legacy(sd->obj))
           edje_object_part_swallow(swallow, "elm.swallow.menu", sd->main_menu);
@@ -6458,12 +6462,12 @@ _win_aspect_get(Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
-                                              Efl_Gfx_Size_Hint_Aspect mode, Eina_Size2D sz)
+_efl_ui_win_efl_gfx_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd,
+                                              Efl_Gfx_Hint_Aspect mode, Eina_Size2D sz)
 {
    if (sz.h) _win_aspect_set(pd, (double) sz.w / (double) sz.h);
    else _win_aspect_set(pd, 0.0);
-   efl_gfx_size_hint_aspect_set(efl_super(obj, MY_CLASS), mode, sz);
+   efl_gfx_hint_aspect_set(efl_super(obj, MY_CLASS), mode, sz);
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->wl.win)
      ecore_wl2_window_aspect_set(pd->wl.win, sz.w, sz.h, mode);
@@ -6471,10 +6475,10 @@ _efl_ui_win_efl_gfx_size_hint_hint_aspect_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_weight_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED,
+_efl_ui_win_efl_gfx_hint_hint_weight_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd EINA_UNUSED,
                                               double w, double h)
 {
-   efl_gfx_size_hint_weight_set(efl_super(obj, MY_CLASS), w, h);
+   efl_gfx_hint_weight_set(efl_super(obj, MY_CLASS), w, h);
 #ifdef HAVE_ELEMENTARY_WL2
    if (pd->wl.win)
      ecore_wl2_window_weight_set(pd->wl.win, w, h);
@@ -6510,11 +6514,11 @@ _efl_ui_win_hint_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Size2D 
 }
 
 EOLIAN static void
-_efl_ui_win_efl_gfx_size_hint_hint_max_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
+_efl_ui_win_efl_gfx_hint_hint_size_max_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Size2D sz)
 {
    if (sd->tmp_updating_hints)
      {
-        efl_gfx_size_hint_max_set(efl_super(obj, MY_CLASS), sz);
+        efl_gfx_hint_size_max_set(efl_super(obj, MY_CLASS), sz);
      }
    else
      {
@@ -6595,8 +6599,8 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    sd->rot = rotation;
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
-   efl_gfx_size_hint_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-   efl_gfx_size_hint_max_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -6833,7 +6837,7 @@ _efl_ui_win_screen_constrain_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_win_efl_screen_screen_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_efl_screen_screen_size_in_pixels_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    Eina_Size2D sz;
    ecore_evas_screen_geometry_get(sd->ee, NULL, NULL, &sz.w, &sz.h);
@@ -7442,8 +7446,8 @@ _elm_win_bg_set(Efl_Ui_Win_Data *sd, Eo *bg)
           }
      }
    efl_gfx_entity_visible_set(bg, 1);
-   efl_gfx_size_hint_fill_set(bg, EINA_TRUE, EINA_TRUE);
-   efl_gfx_size_hint_weight_set(bg, 1, 1);
+   efl_gfx_hint_fill_set(bg, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(bg, 1, 1);
    efl_wref_add(bg, &sd->bg);
    return EINA_TRUE;
 }
@@ -8661,7 +8665,7 @@ elm_win_aspect_set(Eo *obj, double aspect)
    if (aspect > DBL_EPSILON)
      sz = EINA_SIZE2D(1000 * aspect, 1000);
 
-   efl_gfx_size_hint_aspect_set(obj, EFL_GFX_SIZE_HINT_ASPECT_NONE, sz);
+   efl_gfx_hint_aspect_set(obj, EFL_GFX_HINT_ASPECT_NONE, sz);
 }
 
 EAPI double
@@ -8714,7 +8718,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
    EINA_LIST_FOREACH(p->children, l, opt)
      {
         child = opt->obj;
-        efl_gfx_size_hint_weight_get(child, &wx, &wy);
+        efl_gfx_hint_weight_get(child, &wx, &wy);
         if (EINA_DBL_EQ(wx, 0.0)) weight_x = 0;
         if (EINA_DBL_EQ(wy, 0.0)) weight_y = 0;
 
@@ -8724,7 +8728,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
      }
 
    if (minw < menuw) minw = menuw;
-   efl_gfx_size_hint_restricted_min_set(o, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_restricted_min_set(o, EINA_SIZE2D(minw, minh));
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if (w < minw) w = minw;
    if (h < minh) h = minh;
@@ -8736,7 +8740,7 @@ _window_layout_stack(Evas_Object *o, Evas_Object_Box_Data *p, void *data)
         evas_object_geometry_set(child, x, y, w, h);
      }
 
-   efl_gfx_size_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
+   efl_gfx_hint_weight_set(sd->legacy.edje, weight_x, weight_y);
    //evas_object_smart_changed(sd->legacy.edje);
 }
 

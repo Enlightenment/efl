@@ -825,7 +825,7 @@ _zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
      {
         sd->no_smooth--;
         if (!sd->no_smooth) _smooth_update(data);
-        efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         efl_event_callback_legacy_call(obj, EFL_UI_EVENT_ZOOM_STOP, NULL);
      }
 }
@@ -1058,7 +1058,7 @@ _bounce_eval(void *data, const Efl_Event *event EINA_UNUSED)
 
    efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_FALSE);
 
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
 }
 
 static void
@@ -1066,7 +1066,7 @@ _efl_ui_image_zoomable_bounce_reset(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd EINA
 {
    Eina_Bool r;
 
-   r = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   r = efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    if (r) _zoom_do(obj, 1.0);
 }
 
@@ -1075,7 +1075,7 @@ _efl_ui_image_zoomable_zoom_reset(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
    Eina_Bool r;
 
-   r = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   r = efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    if (r)
      {
         sd->no_smooth--;
@@ -1275,7 +1275,7 @@ _g_layer_zoom_end_cb(void *data,
         sd->g_layer_zoom.bounce.t_end = t +
           _elm_config->page_scroll_friction;
 
-        efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+        efl_event_callback_add(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
      }
    else
      {
@@ -1927,8 +1927,8 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
    ecore_timer_del(sd->long_timer);
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
 
    _efl_ui_image_zoomable_edje_object_detach(obj);
@@ -2607,8 +2607,8 @@ done:
      }
    else
      {
-        an = efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
-        efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        an = efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
+        efl_event_callback_add(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
         if (!an)
           {
              sd->no_smooth++;

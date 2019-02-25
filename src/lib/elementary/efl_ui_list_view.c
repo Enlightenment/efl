@@ -615,7 +615,7 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_DISABLED);
 
    edje_object_size_min_calc(wd->resize_obj, &min.w, &min.h);
-   efl_gfx_size_hint_restricted_min_set(obj, min);
+   efl_gfx_hint_size_restricted_min_set(obj, min);
 
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
                          _efl_ui_list_view_bar_size_changed_cb, obj);
@@ -678,9 +678,8 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 
    pd->seg_array = efl_ui_list_view_seg_array_setup(32);
 
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _list_element_focused, NULL);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _list_element_focused, NULL);
 
-   efl_ui_focus_composition_custom_manager_set(obj, obj);
    efl_ui_focus_composition_logical_mode_set(obj, EINA_TRUE);
 
    pd->style = eina_stringshare_add(elm_widget_style_get(obj));
@@ -695,7 +694,7 @@ _efl_ui_list_view_efl_object_constructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 EOLIAN static void
 _efl_ui_list_view_efl_object_destructor(Eo *obj, Efl_Ui_List_View_Data *pd)
 {
-   efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED,
+   efl_event_callback_del(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED,
                                             _list_element_focused, NULL);
 
    _efl_ui_list_view_edje_object_detach(obj);

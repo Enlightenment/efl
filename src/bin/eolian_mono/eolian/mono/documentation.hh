@@ -252,11 +252,34 @@ struct documentation_generator
       return generate_tag(sink, "returns", text, context);
    }
 
+   template<typename OutputIterator, typename Context>
+   bool generate_tag_value(OutputIterator sink, std::string const& text, Context const& context) const
+   {
+      return generate_tag(sink, "value", text, context);
+   }
+
    // Actual exported generators
    template<typename OutputIterator, typename Attribute, typename Context>
    bool generate(OutputIterator sink, Attribute const& attr, Context const& context) const
    {
        return generate(sink, attr.documentation, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::property_def const& prop, Context const& context) const
+   {
+       if (!generate(sink, prop.documentation, context))
+         return false;
+
+       std::string text;
+       if (prop.setter.is_engaged())
+         text = prop.setter->parameters[0].documentation.full_text;
+       else if (prop.getter.is_engaged())
+         text = prop.getter->return_documentation.full_text;
+       // If there are no docs at all, do not generate <value> tag
+       else return true;
+
+       return generate_tag_value(sink, text, context);
    }
 
    template<typename OutputIterator, typename Context>

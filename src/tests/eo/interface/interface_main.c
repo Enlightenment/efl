@@ -41,6 +41,8 @@ main(int argc, char *argv[])
    fail_if(!efl_isa(SIMPLE_CLASS, INTERFACE2_CLASS));
    fail_if(efl_isa(INTERFACE_CLASS, INTERFACE2_CLASS));
 
+   fail_if(efl_class_type_get(INTERFACE_CLASS) != EFL_CLASS_TYPE_INTERFACE);
+
    efl_unref(obj);
    efl_object_shutdown();
    return 0;

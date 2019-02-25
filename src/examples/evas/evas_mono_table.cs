@@ -43,7 +43,7 @@ class TestMain
         rect.SetColor(255, 0, 0, 255);
         hint.W = 100;
         hint.H = 50;
-        rect.SetHintMin(hint);
+        rect.SetHintSizeMin(hint);
         rect.SetVisible(true);
         table.Pack(rect, 1, 1, 2, 1);
         
@@ -51,7 +51,7 @@ class TestMain
         rect.SetColor(0, 255, 0, 255);
         hint.W = 50;
         hint.H = 100;
-        rect.SetHintMin(hint);
+        rect.SetHintSizeMin(hint);
         rect.SetVisible(true);
         table.Pack(rect, 1, 2, 1, 2);
 
@@ -59,13 +59,13 @@ class TestMain
         rect.SetColor(0, 0, 255, 255);
         hint.W = 50;
         hint.H = 50;
-        rect.SetHintMin(hint);
+        rect.SetHintSizeMin(hint);
         rect.SetVisible(true);
         table.Pack(rect, 2, 2, 1, 1);
 
         rect = new Efl.Canvas.Rectangle(canvas);
         rect.SetColor(255, 255, 0, 255);
-        rect.SetHintMin(hint);
+        rect.SetHintSizeMin(hint);
         rect.SetVisible(true);
         table.Pack(rect, 2, 3, 1, 1);
         

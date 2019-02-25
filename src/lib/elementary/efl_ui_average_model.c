@@ -50,9 +50,11 @@ _efl_ui_average_model_update(Eo *obj EINA_UNUSED, void *data, const Eina_Value v
 }
 
 static void
-_efl_ui_average_model_clean(Eo *obj EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+_efl_ui_average_model_clean(Eo *obj, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    free(data);
+
+   efl_unref(obj);
 }
 
 static Eina_Future *
@@ -83,6 +85,14 @@ _efl_ui_average_model_prepare(Eo *obj,
 
    update->total = total;
    update->seen = seen;
+
+   // As we are operating asynchronously and we want to make sure that the object
+   // survive until the transaction is commited, we will ref the object here
+   // and unref on clean. This is necessary so that a nested call of property_set
+   // on a model returned by children_slice_get, the user doesn't have to keep a
+   // reference around to do the same. It shouldn't create any problem as this
+   // future would be cancelled automatically when the parent object get destroyed.
+   efl_ref(obj);
 
    // We have to make the change after we fetch the old value, otherwise, well, no old value left
    f = efl_model_property_set(efl_super(obj, EFL_UI_AVERAGE_MODEL_CLASS), property, value);

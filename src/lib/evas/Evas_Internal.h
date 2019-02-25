@@ -56,7 +56,7 @@ static inline void
 evas_object_size_hint_combined_min_get(const Eo *obj, int *w, int *h)
 {
    Eina_Size2D sz;
-   sz = efl_gfx_size_hint_combined_min_get(obj);
+   sz = efl_gfx_hint_size_combined_min_get(obj);
    if (w) *w = sz.w;
    if (h) *h = sz.h;
 }

@@ -43,7 +43,7 @@
 #include "interfaces/efl_gfx_filter.eo.c"
 #include "interfaces/efl_gfx_blur.eo.c"
 
-#include "interfaces/efl_gfx_size_hint.eo.c"
+#include "interfaces/efl_gfx_hint.eo.c"
 #include "interfaces/efl_canvas_scene.eo.c"
 #include "interfaces/efl_canvas_pointer.eo.c"
 
@@ -58,7 +58,6 @@
 #include "interfaces/efl_pack_table.eo.c"
 
 #include "interfaces/efl_model.eo.c"
-#include "interfaces/efl_animator.eo.c"
 #include "interfaces/efl_interpolator.eo.c"
 #include "interfaces/efl_orientation.eo.c"
 #include "interfaces/efl_ui_i18n.eo.c"

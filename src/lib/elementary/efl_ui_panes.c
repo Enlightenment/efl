@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -223,17 +223,17 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    if (first_content)
      {
         if (!sd->first_hint_min_allow)
-          sd->first_min = efl_gfx_size_hint_combined_min_get(first_content);
+          sd->first_min = efl_gfx_hint_size_combined_min_get(first_content);
         else
-          sd->first_min = efl_gfx_size_hint_min_get(first_content);
+          sd->first_min = efl_gfx_hint_size_min_get(first_content);
      }
 
    if (second_content)
      {
         if (!sd->second_hint_min_allow)
-          sd->second_min = efl_gfx_size_hint_combined_min_get(second_content);
+          sd->second_min = efl_gfx_hint_size_combined_min_get(second_content);
         else
-          sd->second_min = efl_gfx_size_hint_min_get(second_content);
+          sd->second_min = efl_gfx_hint_size_min_get(second_content);
      }
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
@@ -247,7 +247,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
         min.h = MAX(sd->first_min.h, sd->second_min.h);
      }
 
-   efl_gfx_size_hint_restricted_min_set(obj, min);
+   efl_gfx_hint_size_restricted_min_set(obj, min);
    _set_min_size_new(obj);
 }
 

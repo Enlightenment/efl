@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <Eina.h>
 #include <Elua.h>
@@ -27,6 +28,11 @@ EFL_START_TEST(elua_api)
 
     st = elua_state_new("test");
     fail_if(!st);
+
+    /* elua APIs here try accessing files by relative path,
+     * prevent any unintentional file accesses in cwd
+     */
+    fail_if(chdir(TESTS_SRC_DIR));
 
     /* test env vars */
     setenv("ELUA_CORE_DIR", "foo", 1);

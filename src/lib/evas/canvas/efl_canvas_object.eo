@@ -1,10 +1,14 @@
 import efl_text_types;
 
 struct Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
+struct Efl.Event_Animator_Tick {
+   [[EFL event animator tick data structure]]
+   update_area: Eina.Rect; [[Area of the canvas that will be pushed to screen.]]
+}
 
-abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Animator,
-                            Efl.Input.Interface, Efl.Gfx.Size_Hint,
-                            Efl.Gfx.Map, Efl.Ui.I18n, Efl.Canvas.Pointer
+abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
+                            Efl.Input.Interface, Efl.Gfx.Hint,
+                            Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
    [[Efl canvas object abstract class]]
    legacy_prefix: evas_object;
@@ -600,15 +604,15 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       Efl.Gfx.Stack.stack_above;
       Efl.Gfx.Stack.raise_to_top;
       Efl.Gfx.Stack.lower_to_bottom;
-      Efl.Gfx.Size_Hint.hint_aspect { get; set; }
-      Efl.Gfx.Size_Hint.hint_align { get; set; }
-      Efl.Gfx.Size_Hint.hint_combined_min { get; }
-      Efl.Gfx.Size_Hint.hint_restricted_min { get; set; }
-      Efl.Gfx.Size_Hint.hint_min { get; set; }
-      Efl.Gfx.Size_Hint.hint_max { get; set; }
-      Efl.Gfx.Size_Hint.hint_margin { get; set; }
-      Efl.Gfx.Size_Hint.hint_weight { get; set; }
-      Efl.Gfx.Size_Hint.hint_fill { get; set; }
+      Efl.Gfx.Hint.hint_aspect { get; set; }
+      Efl.Gfx.Hint.hint_align { get; set; }
+      Efl.Gfx.Hint.hint_size_combined_min { get; }
+      Efl.Gfx.Hint.hint_size_restricted_min { get; set; }
+      Efl.Gfx.Hint.hint_size_min { get; set; }
+      Efl.Gfx.Hint.hint_size_max { get; set; }
+      Efl.Gfx.Hint.hint_margin { get; set; }
+      Efl.Gfx.Hint.hint_weight { get; set; }
+      Efl.Gfx.Hint.hint_fill { get; set; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.Input.Interface.seat_event_filter { get; set; }
       Efl.Loop_Consumer.loop { get; }
@@ -618,5 +622,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
       anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
       anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
+      animator,tick: Efl.Event_Animator_Tick; [[Animator tick synchronized with screen vsync if possible.]]
    }
 }

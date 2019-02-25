@@ -237,7 +237,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (tp->base_type)
              {
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
-                if (!tp->freefunc)
+                if (!tp->freefunc && kwid > KW_void)
                   {
                      tp->freefunc = eina_stringshare_add(eo_complex_frees[
                        kwid - KW_accessor]);

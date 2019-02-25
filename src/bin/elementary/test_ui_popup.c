@@ -1009,7 +1009,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_set(layout, buf, "efl_ui_anchor_popup_layout");
-   efl_gfx_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_content_set(win, layout);
 
    Eo *efl_ui_popup = efl_add(EFL_UI_ANCHOR_POPUP_CLASS, win);
@@ -1034,7 +1034,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
      {
         btn = efl_add(EFL_UI_BUTTON_CLASS, win);
         efl_text_set(btn, "anchor");
-        efl_gfx_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _anchor_set_cb, efl_ui_popup);
 
         snprintf(buf, sizeof(buf), "anchor%d", i+1);
@@ -1043,52 +1043,52 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(btn, "anchor none");
-   efl_gfx_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _anchor_unset_cb, efl_ui_popup);
    efl_content_set(efl_part(layout, "anchor_none"), btn);
 
    Eo *table = efl_add(EFL_UI_TABLE_CLASS, efl_ui_popup);
-   efl_gfx_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Center Align");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(70, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _center_align_cb, p_data);
    efl_pack_table(table, btn, 0, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Top Align");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(70, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _top_align_cb, p_data);
    efl_pack_table(table, btn, 2, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Bottom Align");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(70, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _bottom_align_cb, p_data);
    efl_pack_table(table, btn, 4, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Left Align");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(100, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _left_align_cb, p_data);
    efl_pack_table(table, btn, 0, 1, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Right Align");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(100, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _right_align_cb, p_data);
    efl_pack_table(table, btn, 3, 1, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Position Set");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(100, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _position_set_cb, p_data);
    efl_pack_table(table, btn, 0, 2, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Resize");
-   efl_gfx_size_hint_min_set(btn, EINA_SIZE2D(100, 35));
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _popup_resize_cb, p_data);
    efl_pack_table(table, btn, 3, 2, 3, 1);
 

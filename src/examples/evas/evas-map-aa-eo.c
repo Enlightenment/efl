@@ -60,15 +60,15 @@ static struct example_data d =
 static void
 update(void)
 {
-   efl_gfx_map_coord_absolute_set(d.target1, 0, d.px1, d.py1, 0);
-   efl_gfx_map_coord_absolute_set(d.target1, 1, d.px2, d.py2, 0);
-   efl_gfx_map_coord_absolute_set(d.target1, 2, d.px3, d.py3, 0);
-   efl_gfx_map_coord_absolute_set(d.target1, 3, d.px4, d.py4, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target1, 0, d.px1, d.py1, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target1, 1, d.px2, d.py2, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target1, 2, d.px3, d.py3, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target1, 3, d.px4, d.py4, 0);
 
-   efl_gfx_map_coord_absolute_set(d.target2, 0, d.px1 + 400, d.py1, 0);
-   efl_gfx_map_coord_absolute_set(d.target2, 1, d.px2 + 400, d.py2, 0);
-   efl_gfx_map_coord_absolute_set(d.target2, 2, d.px3 + 400, d.py3, 0);
-   efl_gfx_map_coord_absolute_set(d.target2, 3, d.px4 + 400, d.py4, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target2, 0, d.px1 + 400, d.py1, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target2, 1, d.px2 + 400, d.py2, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target2, 2, d.px3 + 400, d.py3, 0);
+   efl_gfx_mapping_coord_absolute_set(d.target2, 3, d.px4 + 400, d.py4, 0);
 }
 
 static void

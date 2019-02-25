@@ -78,7 +78,7 @@ evas_init(void)
 		   EINA_LOG_STATE_STOP,
 		   EINA_LOG_STATE_INIT);
 
-   _efl_gfx_map_init();
+   _efl_gfx_mapping_init();
    evas_focus_init();
 
    return _evas_init_count;
@@ -138,7 +138,7 @@ evas_shutdown(void)
    evas_filter_shutdown();
    evas_module_shutdown();
 
-   _efl_gfx_map_shutdown();
+   _efl_gfx_mapping_shutdown();
 
    eina_cow_del(evas_object_proxy_cow);
    eina_cow_del(evas_object_map_cow);

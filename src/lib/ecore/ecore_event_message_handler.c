@@ -86,10 +86,12 @@ _ecore_event_filters_call(Eo *obj, Efl_Loop_Data *pd)
 {
    Filter *f;
    Ecore_Event_Message_Handler_Data *eemhd;
-   Eo *ecore_event_handler = efl_loop_message_handler_get
-     (obj, ECORE_EVENT_MESSAGE_HANDLER_CLASS);
-
+   Eo *ecore_event_handler = efl_provider_find(obj, ECORE_EVENT_MESSAGE_HANDLER_CLASS);
+   /* If this is not != NULL, then _ecore_event_init was not called yet, which means,
+      there cannot be any registered events yet
+    */
    if (!ecore_event_handler) return;
+
    eemhd = efl_data_scope_get(ecore_event_handler, MY_CLASS);
    if (!eemhd) return;
    if (!eemhd->filters) return;

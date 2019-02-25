@@ -20,22 +20,22 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::canvas::Rectangle rect(instantiate, win);
    rect.color_set(255, 0, 0, 255);
-   rect.hint_min_set({100, 50});
+   rect.hint_size_min_set({100, 50});
    table.pack_table(rect, 0, 0, 2, 1);
 
    efl::canvas::Rectangle rect2(instantiate, win);
    rect2.color_set(0, 255, 0, 255);
-   rect2.hint_min_set({50, 100});
+   rect2.hint_size_min_set({50, 100});
    table.pack_table(rect2, 0, 1, 1, 2);
 
    efl::canvas::Rectangle rect3(instantiate, win);
    rect3.color_set(0, 0, 255, 255);
-   rect3.hint_min_set({50, 50});
+   rect3.hint_size_min_set({50, 50});
    table.pack_table(rect3, 1, 1, 1, 1);
 
    efl::canvas::Rectangle rect4(instantiate, win);
    rect4.color_set(255, 255, 0, 255);
-   rect4.hint_min_set({50, 50});
+   rect4.hint_size_min_set({50, 50});
    table.pack_table(rect4, 1, 2, 1, 1);
 }
 EFL_MAIN()

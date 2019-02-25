@@ -1,4 +1,4 @@
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 
 #include "efl_ui_box_private.h"
 
@@ -18,7 +18,7 @@ struct _Item_Calc
    Eina_Bool fill[2];
    Eina_Size2D max, min, aspect;
    int pad[4];
-   Efl_Gfx_Size_Hint_Aspect aspect_type;
+   Efl_Gfx_Hint_Aspect aspect_type;
    int id;
 };
 
@@ -91,7 +91,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Eina_Bool box_fill[2] = { EINA_FALSE, EINA_FALSE };
 
    boxs = efl_gfx_entity_geometry_get(ui_box);
-   efl_gfx_size_hint_margin_get(ui_box, &boxl, &boxr, &boxt, &boxb);
+   efl_gfx_hint_margin_get(ui_box, &boxl, &boxr, &boxt, &boxb);
    scale = efl_gfx_entity_scale_get(ui_box);
 
    // Box align: used if "item has max size and fill" or "no item has a weight"
@@ -112,7 +112,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    count = eina_list_count(bd->children);
    if (!count)
      {
-        efl_gfx_size_hint_min_set(ui_box, EINA_SIZE2D(0, 0));
+        efl_gfx_hint_size_min_set(ui_box, EINA_SIZE2D(0, 0));
         return;
      }
 
@@ -133,13 +133,13 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
         item = &items[id];
         o = item->obj = opt->obj;
 
-        efl_gfx_size_hint_weight_get(o, &item->weight[0], &item->weight[1]);
-        efl_gfx_size_hint_align_get(o, &item->align[0], &item->align[1]);
-        efl_gfx_size_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
-        efl_gfx_size_hint_fill_get(o, &item->fill[0], &item->fill[1]);
-        item->max = efl_gfx_size_hint_max_get(o);
-        item->min = efl_gfx_size_hint_combined_min_get(o);
-        efl_gfx_size_hint_aspect_get(o, &item->aspect_type, &item->aspect);
+        efl_gfx_hint_weight_get(o, &item->weight[0], &item->weight[1]);
+        efl_gfx_hint_align_get(o, &item->align[0], &item->align[1]);
+        efl_gfx_hint_margin_get(o, &item->pad[0], &item->pad[1], &item->pad[2], &item->pad[3]);
+        efl_gfx_hint_fill_get(o, &item->fill[0], &item->fill[1]);
+        item->max = efl_gfx_hint_size_max_get(o);
+        item->min = efl_gfx_hint_size_combined_min_get(o);
+        efl_gfx_hint_aspect_get(o, &item->aspect_type, &item->aspect);
 
         if (horiz && (box_fill[0] || pd->homogeneous)) item->weight[0] = 1;
         else if (item->weight[0] < 0) item->weight[0] = 0;
@@ -176,7 +176,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
                {
                   ERR("Invalid aspect parameter for obj: %p", item->obj);
                   item->aspect.w = item->aspect.h = 0;
-                  item->aspect_type = EFL_GFX_SIZE_HINT_ASPECT_NONE;
+                  item->aspect_type = EFL_GFX_HINT_ASPECT_NONE;
                }
           }
         else
@@ -342,13 +342,13 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 
    if (horiz)
      {
-        efl_gfx_size_hint_min_set(ui_box, EINA_SIZE2D(
+        efl_gfx_hint_size_min_set(ui_box, EINA_SIZE2D(
                                   wantw + boxl + boxr + pad * (count - 1),
                                   wanth + boxt + boxb));
      }
    else
      {
-        efl_gfx_size_hint_min_set(ui_box, EINA_SIZE2D(
+        efl_gfx_hint_size_min_set(ui_box, EINA_SIZE2D(
                                   wantw + boxl + boxr,
                                   wanth + pad * (count - 1) + boxt + boxb));
      }

@@ -230,7 +230,7 @@ class Elm.Gengrid.Item extends Elm.Widget.Item.Static_Focus implements Efl.Ui.Fo
            Elm.Widget.Item.cursor_unset;
            Efl.Access.Object.i18n_name { get; }
            Efl.Access.Object.state_set { get; }
-           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+           Efl.Ui.Focus.Object.setup_order_non_recursive;
            Efl.Ui.Focus.Object.focus_parent { get; }
       }
 }

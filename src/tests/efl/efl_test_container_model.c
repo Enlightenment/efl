@@ -89,7 +89,7 @@ EFL_START_TEST(efl_test_container_model_values)
         cmp_str[i] = strdup(base_str[i]);
      }
 
-   model = efl_add_ref(EFL_CONTAINER_MODEL_CLASS, NULL);
+   model = efl_add(EFL_CONTAINER_MODEL_CLASS, efl_main_loop_get());
 
    efl_container_model_child_property_add(model, "test_p_int", EINA_VALUE_TYPE_INT,
                                           eina_carray_iterator_new((void**)cmp_int));
@@ -110,6 +110,8 @@ EFL_START_TEST(efl_test_container_model_values)
    eina_future_then(future, _children_slice_future_then, NULL, NULL);
 
    ecore_main_loop_begin();
+
+   efl_del(model);
 }
 EFL_END_TEST
 

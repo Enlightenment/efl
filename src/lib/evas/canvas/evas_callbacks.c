@@ -50,12 +50,12 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_FOCUS_OUT,
                       EFL_GFX_ENTITY_EVENT_SHOW,
                       EFL_GFX_ENTITY_EVENT_HIDE,
-                      EFL_GFX_ENTITY_EVENT_MOVE,
-                      EFL_GFX_ENTITY_EVENT_RESIZE,
-                      EFL_GFX_ENTITY_EVENT_RESTACK,
+                      EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
+                      EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
+                      EFL_GFX_ENTITY_EVENT_STACKING_CHANGED,
                       EVAS_OBJECT_EVENT_DEL,
                       EFL_EVENT_HOLD,
-                      EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+                      EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                       EFL_GFX_IMAGE_EVENT_PRELOAD,
                       EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
                       EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
@@ -347,6 +347,18 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
    efl_event_callback_legacy_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
+static void
+_evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc)
+{
+   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "move", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "resize", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "restack", NULL);
+}
+
+
 void
 evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                 Evas_Callback_Type type, void *event_info, int event_id,
@@ -410,6 +422,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    e->current_event = type;
 
    efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
+   _evas_callback_legacy_smart_compatibility_do_it(eo_obj, efl_event_desc);
 
    /* multi events with finger 0 - only for eo callbacks */
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
@@ -780,7 +793,7 @@ _animator_repeater(void *data, const Efl_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   efl_event_callback_legacy_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_legacy_call(obj->object, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
@@ -803,11 +816,11 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
              _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
           }
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if (obj->animator_ref++ > 0) break;
 
-             efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
@@ -840,11 +853,11 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
              _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
           }
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if ((--obj->animator_ref) > 0) break;
 
-             efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_del(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }

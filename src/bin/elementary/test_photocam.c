@@ -816,7 +816,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
-           efl_gfx_size_hint_weight_set(efl_added, 1, 0),
+           efl_gfx_hint_weight_set(efl_added, 1, 0),
            efl_canvas_text_style_set(efl_added, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'"),
            efl_pack(bx, efl_added)
           );
@@ -842,8 +842,8 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                  );
 
    // add move/resize callbacks to resize rect manually
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_RESIZE, _zoomable_move_resize_cb, rect);
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_MOVE, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _zoomable_move_resize_cb, rect);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300,  320));
 }

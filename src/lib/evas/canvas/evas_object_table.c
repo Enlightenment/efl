@@ -266,7 +266,7 @@ _on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_table_callbacks,
   { EFL_EVENT_INVALIDATE, _on_child_invalidate },
-  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed }
 );
 
 static void
@@ -350,7 +350,7 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Table_Data *
         evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
         evas_object_size_hint_weight_get(child, &weightw, &weighth);
         //only for Efl.Ui.Table
-        efl_gfx_size_hint_fill_get(child, &fill_h, &fill_v);
+        efl_gfx_hint_fill_get(child, &fill_h, &fill_v);
 
         child_minw = opt->min.w + opt->pad.l + opt->pad.r;
         child_minh = opt->min.h + opt->pad.t + opt->pad.b;

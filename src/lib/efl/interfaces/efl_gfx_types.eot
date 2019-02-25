@@ -169,11 +169,11 @@ struct Efl.Gfx.Event.Render_Post
                                          updated in the canvas.]]
 }
 
-enum Efl.Gfx.Size_Hint_Aspect
+enum Efl.Gfx.Hint_Aspect
 {
    [[Aspect types/policies for scaling size hints.
 
-     See also @Efl.Gfx.Size_Hint.hint_aspect.
+     See also @Efl.Gfx.Hint.hint_aspect.
    ]]
 
    none = 0, [[No preference on either direction of the container

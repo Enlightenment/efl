@@ -55,7 +55,7 @@ interface @beta Efl.Io.Reader {
     }
 
     events {
-        can_read,changed: void; [[Notifies can_read property changed.
+        can_read,changed: bool; [[Notifies can_read property changed.
 
                             If @.can_read is $true there is data to
                             @.read without blocking/error. If

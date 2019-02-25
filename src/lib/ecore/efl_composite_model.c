@@ -193,11 +193,14 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 
         // First set the Model to be used as a source so that we the newly object
         // can know if it needs to retain the information regarding its index.
-        composite = efl_add(req->self, req->parent,
-                            efl_ui_view_model_set(efl_added, target),
-                            efl_composite_model_index_set(efl_added, req->start + i));
+        composite = efl_add_ref(req->self, req->parent,
+                                efl_ui_view_model_set(efl_added, target),
+                                efl_composite_model_index_set(efl_added, req->start + i),
+                                efl_loop_model_volatile_make(efl_added));
 
         eina_value_array_append(&r, composite);
+        // Dropping this scope reference
+        efl_unref(composite);
      }
 
    return r;

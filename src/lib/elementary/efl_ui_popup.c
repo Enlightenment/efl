@@ -110,8 +110,8 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
    efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
    efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
-   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb, obj);
-   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
 }
 
 EOLIAN static void
@@ -242,9 +242,9 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
 
-   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb,
                           obj);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb,
                           obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -259,7 +259,7 @@ _sizing_eval(Eo *obj)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
       (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
 
    Eina_Size2D size = efl_gfx_entity_size_get(obj);
 

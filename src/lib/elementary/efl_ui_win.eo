@@ -821,6 +821,30 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             sz: Eina.Size2D; [[Step size (hint) in pixels.]]
          }
       }
+      /* FIXME: maybe not necessary if gesture supports this */
+      pointer_iterate @const @beta {
+         [[Returns an iterator over the current known pointer positions.
+
+           This is used to iterate over the current known multi-touch positions,
+           including the first finger. Each pointer position is represented by
+           an object of type @Efl.Input.Pointer.
+
+           Each finger in a multi touch environment can then be identified
+           by the @Efl.Input.Pointer.tool property. The order of the pointers
+           in this iterator is not defined.
+
+           Note: If the input surface supports hovering input, some pointers
+           may not be in a "down" state. To retrieve the list of such pointers,
+           set the $hover value to $true. Remember though that most devices
+           currently don't support this.
+         ]]
+         params {
+            /* FIXME: missing seat. hover is not useful */
+            hover: bool @optional; [[$false by default, $true means to include
+                                     fingers that are currently hovering.]]
+         }
+         return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+      }
    }
    implements {
       class.constructor;
@@ -851,14 +875,14 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Input.State.lock_enabled { get; }
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
-      Efl.Screen.screen_size { get; }
-      Efl.Gfx.Size_Hint.hint_aspect { set; }
-      Efl.Gfx.Size_Hint.hint_weight { set; }
-      Efl.Gfx.Size_Hint.hint_max { set; }
+      Efl.Screen.screen_size_in_pixels { get; }
+      Efl.Gfx.Hint.hint_aspect { set; }
+      Efl.Gfx.Hint.hint_weight { set; }
+      Efl.Gfx.Hint.hint_size_max { set; }
       Efl.Text.text { get; set; }
+      Efl.Canvas.Scene.seat_default { get; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
-      Efl.Canvas.Scene.pointer_iterate;
       Efl.Canvas.Scene.image_max_size { get; }
       Efl.Canvas.Scene.smart_objects_calculate;
       Efl.Canvas.Scene.objects_at_xy_get;

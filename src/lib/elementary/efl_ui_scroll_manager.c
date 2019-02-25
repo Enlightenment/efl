@@ -13,12 +13,12 @@
 #define MY_CLASS_NAME "Efl.Ui.Scroll.Manager"
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
-  efl_event_callback_add(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_add(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 1;
 
 #define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
-  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
 

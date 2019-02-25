@@ -351,7 +351,7 @@ void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
-void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
+void test_efl_gfx_mapping(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
 
 void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
@@ -376,6 +376,8 @@ void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
 void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
 void test_ui_pager(void *data, Evas_Object *obj, void *event_info);
 void test_ui_pager_scroll(void *data, Evas_Object *obj, void *event_info);
+
+void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -842,6 +844,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table", test_ui_table);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);
@@ -1210,7 +1213,7 @@ add_tests:
    ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
-   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Map", test_efl_gfx_map);
+   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Mapping", test_efl_gfx_mapping);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);

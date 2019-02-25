@@ -916,6 +916,8 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
    eina_stringshare_del(output->serial);
    eina_stringshare_del(output->relative.to);
 
+   if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+
    sym_drmModeFreeProperty(output->dpms);
    free(output->edid.blob);
 

@@ -38,7 +38,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Slider sl3(instantiate, win);
    sl3.range_value_set(1);
-   sl3.hint_min_set({220, 0});
+   sl3.hint_size_min_set({220, 0});
    sl3.hint_fill_set(true, false);
    bx.pack_end(sl3);
 
@@ -52,14 +52,14 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sl5.range_step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
    sl5.hint_fill_set(true, false);
-   sl5.hint_min_set({0, 120});
+   sl5.hint_size_min_set({0, 120});
    bx.pack_end(sl5);
 
    efl::ui::Slider sl6(instantiate, win);
    sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
    sl6.range_min_max_set(0, 10);
    sl6.hint_fill_set(false, true);
-   sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
+   sl6.hint_weight_set(0, EFL_GFX_HINT_EXPAND);
    bx.pack_end(sl6);
 
    efl::ui::Slider sl7(instantiate, win);

@@ -109,7 +109,7 @@ _page_set_animation(void *data, const Efl_Event *event)
    _efl_ui_pager_update(pd);
 
    if (EINA_DBL_EQ(p, 1.0))
-     efl_event_callback_del(event->object, EFL_EVENT_ANIMATOR_TICK,
+     efl_event_callback_del(event->object, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK,
                             _page_set_animation, pd);
 }
 
@@ -153,7 +153,7 @@ _mouse_up_animation(void *data, const Efl_Event *event)
    _efl_ui_pager_update(pd);
 
    if (EINA_DBL_EQ(p, 1.0))
-     efl_event_callback_del(event->object, EFL_EVENT_ANIMATOR_TICK,
+     efl_event_callback_del(event->object, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK,
                             _mouse_up_animation, pd);
 }
 
@@ -169,8 +169,8 @@ _mouse_down_cb(void *data,
    if (efl_input_pointer_button_get(ev) != 1) return;
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
 
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 
    pd->move_started = EINA_FALSE;
 
@@ -241,7 +241,7 @@ _mouse_up_cb(void *data,
 
    pd->mouse_up_time = ecore_loop_time_get();
 
-   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
+   efl_event_callback_add(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
 }
 
 //FIXME sub_object_parent_add? destruction
@@ -356,8 +356,8 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    pd->page_root = efl_add(EFL_CANVAS_GROUP_CLASS, evas_object_evas_get(obj));
    efl_content_set(efl_part(obj, "efl.page_root"), pd->page_root);
 
-   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_RESIZE, _resize_cb, pd);
-   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_MOVE, _move_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, pd);
+   efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, pd);
 
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);
@@ -551,8 +551,8 @@ _efl_ui_pager_current_page_set(Eo *obj,
 {
    if (index == pd->curr.page) return;
 
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
-   efl_event_callback_del(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
+   efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 
    if ((index < 0) || (index > (pd->cnt - 1)))
      {
@@ -584,7 +584,7 @@ _efl_ui_pager_current_page_set(Eo *obj,
    if (pd->change.delta == 0) return;
 
    pd->change.start_time = ecore_loop_time_get();
-   efl_event_callback_add(obj, EFL_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
+   efl_event_callback_add(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 }
 
 EOLIAN static int

@@ -594,7 +594,7 @@ EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    if (elm_widget_is_legacy(obj))
-     efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+     efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                             _on_size_hints_changed, sd);
    ecore_job_del(sd->sizing_job);
    ecore_timer_del(sd->anim_timer);
@@ -1219,7 +1219,7 @@ _efl_ui_image_efl_layout_calc_calc_size_min(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
    else
      {
         // Ignore restricted here? Combine with min? Hmm...
-        return efl_gfx_size_hint_combined_min_get(sd->img);
+        return efl_gfx_hint_size_combined_min_get(sd->img);
      }
 }
 
@@ -2312,7 +2312,7 @@ elm_image_add(Evas_Object *parent)
    Evas_Object *obj = elm_legacy_add(EFL_UI_IMAGE_LEGACY_CLASS, parent);
    EFL_UI_IMAGE_DATA_GET(obj, priv);
 
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_size_hints_changed, priv);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_size_hints_changed, priv);
 
    return obj;
 }

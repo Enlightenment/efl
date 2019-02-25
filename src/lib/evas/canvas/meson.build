@@ -74,7 +74,7 @@ pub_eo_files = [
   'efl_canvas_vg_gradient_radial.eo',
   'efl_canvas_vg_gradient_linear.eo',
   'efl_canvas_group.eo',
-  'efl_gfx_map.eo',
+  'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
   'efl_canvas_text.eo'
 ]
@@ -179,7 +179,7 @@ evas_src += files([
   'efl_canvas_surface_tbm.c',
   'efl_canvas_surface_x11.c',
   'efl_canvas_surface_wayland.c',
-  'efl_gfx_map.c',
+  'efl_gfx_mapping.c',
   'efl_input_event.c',
   'efl_input_key.c',
   'efl_input_pointer.c',

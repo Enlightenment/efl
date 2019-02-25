@@ -28,6 +28,13 @@ _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf,
         char *n = strdup(eolian_object_name_get(decl));
         char *p = n;
         while ((p = strchr(p, '.'))) *p = '_';
+        if (eolian_object_type_get(decl) == EOLIAN_OBJECT_VARIABLE)
+          {
+             const Eolian_Variable *v = (const Eolian_Variable *)decl;
+             /* constants are emitted as macros */
+             if (eolian_variable_type_get(v) == EOLIAN_VAR_CONSTANT)
+               eina_str_toupper(&n);
+          }
         eina_strbuf_append(wbuf, n);
         free(n);
         return;

@@ -23,8 +23,8 @@ EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
 {
    Eo* obj = efl_add(klass, parent);
    if (dir != EFL_UI_DIR_DEFAULT) efl_ui_direction_set(obj, dir);
-   efl_gfx_size_hint_weight_set(obj, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_fill_set(obj, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(obj, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
+   efl_gfx_hint_fill_set(obj, EINA_TRUE, EINA_TRUE);
    return obj;
 }
 
@@ -47,8 +47,8 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, box);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, box);
-   efl_gfx_size_hint_weight_set(btn, 0.3, 0.3);
-   efl_gfx_size_hint_fill_set(btn, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(btn, 0.3, 0.3);
+   efl_gfx_hint_fill_set(btn, EINA_TRUE, EINA_TRUE);
    efl_text_set(btn, "BUTTON");
    efl_pack_end(box, btn);
 

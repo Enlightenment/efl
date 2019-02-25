@@ -477,12 +477,12 @@ class TestEolianVariable(unittest.TestCase):
         self.assertIsNone(var.value)  # TODO is None correct here? no value?
 
     def test_variable_constant(self):
-        var = eolian_db.constant_by_name_get('Efl.Gfx.Size_Hint_Fill')
+        var = eolian_db.constant_by_name_get('Efl.Gfx.Hint_Fill')
         self.assertIsInstance(var, eolian.Variable)
-        self.assertEqual(var.name, 'Efl.Gfx.Size_Hint_Fill')
+        self.assertEqual(var.name, 'Efl.Gfx.Hint_Fill')
         self.assertEqual(var.short_name, 'Size_Hint_Fill')
         self.assertEqual(var.type, eolian.Eolian_Variable_Type.CONSTANT)
-        self.assertEqual(var.file, 'efl_gfx_size_hint.eo')
+        self.assertEqual(var.file, 'efl_gfx_hint.eo')
         self.assertFalse(var.is_extern)
         self.assertEqual(list(var.namespaces), ['Efl','Gfx'])
         self.assertIsInstance(var.documentation, eolian.Documentation)
@@ -634,7 +634,7 @@ class TestEolianExpression(unittest.TestCase):
         self.assertEqual(exp.serialize, '100')
 
     def test_expression_unary(self):
-        var = eolian_db.constant_by_name_get('Efl.Gfx.Size_Hint_Fill')
+        var = eolian_db.constant_by_name_get('Efl.Gfx.Hint_Fill')
         exp = var.value
         self.assertIsInstance(exp, eolian.Expression)
         self.assertEqual(exp.type, eolian.Eolian_Expression_Type.UNARY)

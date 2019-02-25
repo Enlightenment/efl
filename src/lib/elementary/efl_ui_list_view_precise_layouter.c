@@ -60,12 +60,12 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
    Eina_Bool fill[2];
    Eina_Size2D max;
 
-   efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
+   efl_gfx_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
    evas_object_geometry_get(pd->modeler, &boxx, &boxy, &boxw, &boxh);
-   efl_gfx_size_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
-   efl_gfx_size_hint_align_get(item->layout, &align[0], &align[1]);
-   efl_gfx_size_hint_fill_get(item->layout, &fill[0], &fill[1]);
-   max = efl_gfx_size_hint_max_get(item->layout);
+   efl_gfx_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
+   efl_gfx_hint_align_get(item->layout, &align[0], &align[1]);
+   efl_gfx_hint_fill_get(item->layout, &fill[0], &fill[1]);
+   max = efl_gfx_hint_size_max_get(item->layout);
 
    // box outer margin
    boxw -= boxl + boxr;
@@ -145,9 +145,9 @@ _item_min_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Layo
    Efl_Ui_List_View_Layout_Item *layout_item;
    int i, pad[4];
 
-   Eina_Size2D min = efl_gfx_size_hint_combined_min_get(item->layout);
+   Eina_Size2D min = efl_gfx_hint_size_combined_min_get(item->layout);
 
-   efl_gfx_size_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
+   efl_gfx_hint_margin_get(item->layout, &pad[0], &pad[1], &pad[2], &pad[3]);
    min.w += pad[0] + pad[1];
    min.h += pad[2] + pad[3];
 
@@ -634,7 +634,7 @@ _efl_ui_list_view_relayout_layout_do(Efl_Ui_List_View_Precise_Layouter_Data *pd)
    _calc_range(pd);
 
    evas_object_geometry_get(pd->modeler, &boxx, &boxy, &boxw, &boxh);
-   efl_gfx_size_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
+   efl_gfx_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
 
    // box outer margin
    boxw -= boxl + boxr;
@@ -681,7 +681,7 @@ _efl_ui_list_view_relayout_layout_do(Efl_Ui_List_View_Precise_Layouter_Data *pd)
                   if (pd->resize)
                     _item_size_calc(pd, layout_item);
 
-                  efl_gfx_size_hint_weight_get(layout_item->layout, &weight_x, &weight_y);
+                  efl_gfx_hint_weight_get(layout_item->layout, &weight_x, &weight_y);
                }
              else
                {

@@ -5,6 +5,7 @@
 #include <Ecore.h>
 
 #include "ecore_private.h"
+#include "eo_internal.h"
 
 #ifndef _WIN32
 # include <sys/resource.h>
@@ -12,13 +13,15 @@
 
 #define MY_CLASS EFL_APP_CLASS
 
+EFL_CLASS_SIMPLE_CLASS(efl_app, "Efl.App", EFL_APP_CLASS)
+
 Efl_Version _app_efl_version = { 0, 0, 0, 0, NULL, NULL };
 
 EOLIAN static Efl_App*
 _efl_app_app_main_get(void)
 {
    if (_mainloop_singleton) return _mainloop_singleton;
-   _mainloop_singleton = efl_add_ref(EFL_APP_CLASS, NULL);
+   _mainloop_singleton = efl_add_ref(efl_app_realized_class_get(), NULL);
    _mainloop_singleton_data = efl_data_scope_get(_mainloop_singleton, EFL_LOOP_CLASS);
    return _mainloop_singleton;
 }

@@ -46,6 +46,9 @@ main(int argc, char *argv[])
    printf("%d\n", a);
    fail_if(a != 5);
 
+   fail_if(efl_class_type_get(MIXIN_CLASS) != EFL_CLASS_TYPE_MIXIN);
+
+
    efl_unref(obj);
    efl_object_shutdown();
    return 0;

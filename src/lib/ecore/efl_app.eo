@@ -1,8 +1,8 @@
 import efl_types;
 
-class @beta Efl.App extends Efl.Loop implements Efl.Core.Command_Line
+abstract @beta Efl.App extends Efl.Loop implements Efl.Core.Command_Line
 {
-   [[ ]]
+   [[Object representing the application itself]]
    data: null;
    methods {
       @property app_main @class {
@@ -23,7 +23,7 @@ class @beta Efl.App extends Efl.Loop implements Efl.Core.Command_Line
          ]]
          get {}
          values {
-            @cref version: Efl.Version; [[Efl version]]
+            @cref version: Efl.Version; [[Efl build version]]
          }
       }
       @property efl_version {

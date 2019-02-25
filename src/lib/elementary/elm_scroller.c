@@ -898,7 +898,7 @@ _elm_scroller_efl_object_constructor(Eo *obj, Elm_Scroller_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SCROLL_PANE);
-   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focused_element, obj);
+   efl_event_callback_add(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _focused_element, obj);
    legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
 
    return obj;
