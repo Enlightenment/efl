@@ -24,7 +24,7 @@ List_Scroll_Data priv_d;
 
 
 static void
-_list_selected(void *data, const Efl_Event *ev)
+_list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *list = ev->object;
   Eo *item = ev->info, *tmp;
@@ -39,28 +39,28 @@ _list_selected(void *data, const Efl_Event *ev)
 }
 
 static void
-_list_unselected(void *data, const Efl_Event *ev)
+_list_unselected(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_item_selected_get(item)? "selected" : "unselected"));
 }
 
 static void
-_list_pressed(void *data, const Efl_Event *ev)
+_list_pressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is pressed\n", item, efl_ui_item_index_get(item));
 }
 
 static void
-_list_unpressed(void *data, const Efl_Event *ev)
+_list_unpressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is unpressed\n", item, efl_ui_item_index_get(item));
 }
 
 static void
-_list_longpressed(void *data, const Efl_Event *ev)
+_list_longpressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is longpressed\n", item, efl_ui_item_index_get(item));
@@ -74,13 +74,13 @@ _select_radio_changed(void *data, const Efl_Event *ev)
 }
 
 static void
-_anim_radio_changed(void *data, const Efl_Event *ev)
+_anim_radio_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   priv_d.anim = efl_ui_radio_state_value_get(ev->object);
 }
 
 static void
-_scrl_btn_clicked(void *data, const Efl_Event *ev)
+_scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
   Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
@@ -88,7 +88,7 @@ _scrl_btn_clicked(void *data, const Efl_Event *ev)
 }
 
 static void
-_scrl_align_btn_clicked(void *data, const Efl_Event *ev)
+_scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
   Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
@@ -97,7 +97,7 @@ _scrl_align_btn_clicked(void *data, const Efl_Event *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv)
 {
    Eo *win, *list;
    Eo *wbox, *ibox, *bbox, *rbox;
