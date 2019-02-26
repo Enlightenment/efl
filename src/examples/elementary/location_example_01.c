@@ -57,7 +57,7 @@ _print_address(Elocation_Address *address)
 }
 
 static Eina_Bool
-_position_changed(void *data, int ev_type, void *event)
+_position_changed(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Position *position;
 
