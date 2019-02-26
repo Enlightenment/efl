@@ -358,7 +358,8 @@ endif
 eina_config_file = configure_file(
   output: 'eina_config.h',
   configuration: eina_config,
-  install: true)
+  install: true,
+  install_dir: dir_package_include)
 
 public_headers += eina_config_file
 
