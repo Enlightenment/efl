@@ -125,7 +125,7 @@ _on_key_down(void *data, const Efl_Event *event)
 
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED,
-         const Efl_Event *ev)
+         const Efl_Event *ev EINA_UNUSED)
 {
 
    Eo *layout;
