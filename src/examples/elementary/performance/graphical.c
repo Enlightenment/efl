@@ -492,7 +492,7 @@ _init_scene(Evas_Object *img)
 }
 
 static Eina_Bool
-_xml_attr_data(void *data, const char *key, const char *value)
+_xml_attr_data(void *data EINA_UNUSED, const char *key, const char *value)
 {
    char *format = NULL, *tmp = NULL, *a = NULL;
    int i;
@@ -533,8 +533,8 @@ _xml_attr_data(void *data, const char *key, const char *value)
 }
 
 static Eina_Bool
-_xml_get_data(void *data, Eina_Simple_XML_Type type, const char *content,
-              unsigned offset, unsigned length)
+_xml_get_data(void *data EINA_UNUSED, Eina_Simple_XML_Type type, const char *content,
+              unsigned offset EINA_UNUSED, unsigned length)
 {
    char str[512];
    switch (type)
