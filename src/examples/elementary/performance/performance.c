@@ -70,7 +70,7 @@ void _value_int_to_char(char *buf, int value, const char *description)
 }
 
 static Eina_Bool
-_timer_update(void *data)
+_timer_update(void *data EINA_UNUSED)
 {
    printf(" frame rate = %f fps\n", fps_frames / 10.0);
    fps_frames = 0;
@@ -165,19 +165,19 @@ _on_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj,
      }
 }
 static void
-_btnstart_cb(void *data, Evas_Object *obj, void *event_info)
+_btnstart_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    globalGraphical.change_scene_setup();
 }
 
 static void
-_btnexit_cb(void *data, Evas_Object *obj, void *event_info)
+_btnexit_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_exit();
 }
 
 static void
-_btnstop_cb(void *data, Evas_Object *obj, void *event_info)
+_btnstop_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const char *status = NULL;
    status = elm_object_text_get(obj);
@@ -193,7 +193,7 @@ _btnstop_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_node_orientation_change_cb(void *data, Evas_Object *obj, void *event_info)
+_node_orientation_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -211,7 +211,7 @@ _node_orientation_change_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_node_position_change_cb(void *data, Evas_Object *obj, void *event_info)
+_node_position_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -229,7 +229,7 @@ _node_position_change_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_node_scale_change_cb(void *data, Evas_Object *obj, void *event_info)
+_node_scale_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
    Eina_List *l;
@@ -247,7 +247,7 @@ _node_scale_change_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_countdec10_cb(void *data, Evas_Object *obj, void *event_info)
+_countdec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
    int tmp;
@@ -262,7 +262,7 @@ _countdec10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_countdec_cb(void *data, Evas_Object *obj, void *event_info)
+_countdec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
   char buf[CONVERT];
   int tmp;
@@ -275,7 +275,7 @@ _countdec_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_countinc_cb(void *data, Evas_Object *obj, void *event_info)
+_countinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -286,7 +286,7 @@ _countinc_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_countinc10_cb(void *data, Evas_Object *obj, void *event_info)
+_countinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -297,7 +297,7 @@ _countinc10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_speeddec10_cb(void *data, Evas_Object *obj, void *event_info)
+_speeddec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -309,7 +309,7 @@ _speeddec10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_speeddec_cb(void *data, Evas_Object *obj, void *event_info)
+_speeddec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -321,7 +321,7 @@ _speeddec_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_speedinc_cb(void *data, Evas_Object *obj, void *event_info)
+_speedinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -332,7 +332,7 @@ _speedinc_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_speedinc10_cb(void *data, Evas_Object *obj, void *event_info)
+_speedinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -343,7 +343,7 @@ _speedinc10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_precisiondec10_cb(void *data, Evas_Object *obj, void *event_info)
+_precisiondec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -355,7 +355,7 @@ _precisiondec10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_precisiondec_cb(void *data, Evas_Object *obj, void *event_info)
+_precisiondec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -367,7 +367,7 @@ _precisiondec_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_precisioninc_cb(void *data, Evas_Object *obj, void *event_info)
+_precisioninc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -378,7 +378,7 @@ _precisioninc_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_precisioninc10_cb(void *data, Evas_Object *obj, void *event_info)
+_precisioninc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -386,11 +386,10 @@ _precisioninc10_cb(void *data, Evas_Object *obj, void *event_info)
 
    _value_int_to_char(buf, globalGraphical.precision, "precision:");
    elm_object_text_set((Evas_Object*)data, buf);
-
 }
 
 static void
-_angledec10_cb(void *data, Evas_Object *obj, void *event_info)
+_angledec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -402,7 +401,7 @@ _angledec10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_angledec_cb(void *data, Evas_Object *obj, void *event_info)
+_angledec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -414,7 +413,7 @@ _angledec_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_angleinc_cb(void *data, Evas_Object *obj, void *event_info)
+_angleinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -425,7 +424,7 @@ _angleinc_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_angleinc10_cb(void *data, Evas_Object *obj, void *event_info)
+_angleinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    char buf[CONVERT];
 
@@ -437,7 +436,7 @@ _angleinc10_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_shadow_enable(void *data, Evas_Object *obj, void *event_info)
+_shadow_enable(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      globalGraphical.flags.shadow_enable = EINA_TRUE;
@@ -446,7 +445,7 @@ _shadow_enable(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_colorpick_enable(void *data, Evas_Object *obj, void *event_info)
+_colorpick_enable(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      globalGraphical.flags.colorpick_enable = EINA_TRUE;
@@ -455,7 +454,7 @@ _colorpick_enable(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_fog_enable(void *data, Evas_Object *obj, void *event_info)
+_fog_enable(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      globalGraphical.flags.fog_enable = EINA_TRUE;
@@ -464,7 +463,7 @@ _fog_enable(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_blend_enable(void *data, Evas_Object *obj, void *event_info)
+_blend_enable(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      globalGraphical.flags.blend_enable = EINA_TRUE;
@@ -473,7 +472,7 @@ _blend_enable(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_cb_fps_enable(void *data, Evas_Object *obj, void *event_info)
+_cb_fps_enable(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    if (elm_check_state_get(obj))
      {
