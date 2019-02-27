@@ -55,7 +55,7 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_content_set(btn, efl_added)
           );
 
@@ -69,7 +69,7 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_content_set(btn, efl_added)
           );
 

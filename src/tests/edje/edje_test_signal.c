@@ -106,7 +106,8 @@ EFL_START_TEST(edje_test_message_send_eo)
    evas = _setup_evas();
 
    obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-                 efl_file_set(efl_added, test_layout_get("test_messages.edj"), "test_group"));
+                 efl_file_set(efl_added, test_layout_get("test_messages.edj")),
+                 efl_file_key_set(efl_added, "test_group"));
 
    // FIXME: EO API HERE
    edje_object_signal_callback_add(obj, "*", "edc", _message_signal_reply_cb, &id);
@@ -163,7 +164,8 @@ EFL_START_TEST(edje_test_signals)
    evas = _setup_evas();
 
    obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-                 efl_file_set(efl_added, test_layout_get("test_signals.edj"), "level1"),
+                 efl_file_set(efl_added, test_layout_get("test_signals.edj")),
+                 efl_file_key_set(efl_added, "level1"),
                  efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(320, 240)),
                  efl_gfx_entity_visible_set(efl_added, 1));
 
@@ -207,7 +209,8 @@ EFL_START_TEST(edje_test_signal_callback_del_full)
 
    obj = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
                  efl_file_set(efl_added,
-                 test_layout_get("test_signal_callback_del_full.edj"), "test"),
+                 test_layout_get("test_signal_callback_del_full.edj")),
+                 efl_file_key_set(efl_added, "test"),
                  efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(320, 240)),
                  efl_gfx_entity_visible_set(efl_added, 1));
 

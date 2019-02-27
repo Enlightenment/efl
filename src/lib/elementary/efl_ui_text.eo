@@ -362,7 +362,8 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
       Efl.Access.Editable.Text.cut;
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
-      Efl.File.file { get; set; }
+      Efl.File.file { set; }
+      Efl.File.load;
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;
    }

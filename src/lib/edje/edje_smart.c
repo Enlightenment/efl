@@ -95,7 +95,7 @@ _efl_canvas_layout_efl_object_dbg_info_get(Eo *eo_obj, Edje *_pd EINA_UNUSED, Ef
    Edje_Load_Error error;
 
    const char *file, *edje_group;
-   efl_file_get(eo_obj, &file, &edje_group);
+   efl_file_simple_get(eo_obj, &file, &edje_group);
    EFL_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
    EFL_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
@@ -402,50 +402,55 @@ _efl_canvas_layout_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *e
    _edje_recalc_do(ed);
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_layout_efl_file_mmap_set(Eo *obj, Edje *pd EINA_UNUSED,
-                               const Eina_File *f, const char *key)
+EOLIAN static Eina_Error
+_efl_canvas_layout_efl_file_load(Eo *obj, Edje *ed)
 {
-   Eina_Bool ret;
+   Eina_Error err;
    Eina_Array *nested;
 
-   ret = EINA_FALSE;
+   if (efl_file_loaded_get(obj)) return 0;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err)
+     {
+        if (err == ENOENT)
+          ed->load_error = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
+        else if (err == ENOMEM)
+          ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        else if ((err == EPERM) || (err == EACCES))
+          ed->load_error = EDJE_LOAD_ERROR_PERMISSION_DENIED;
+        else
+          ed->load_error = EDJE_LOAD_ERROR_GENERIC;
+        return err;
+     }
 
    nested = eina_array_new(8);
 
-   if (_edje_object_file_set_internal(obj, f, key, NULL, NULL, nested))
-     ret = EINA_TRUE;
+   err = _edje_object_file_set_internal(obj, efl_file_mmap_get(obj), efl_file_key_get(obj), NULL, NULL, nested);
 
    eina_array_free(nested);
    _edje_object_orientation_inform(obj);
 
-   return ret;
-}
-
-EOLIAN static void
-_efl_canvas_layout_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Edje *pd,
-                               const Eina_File **f, const char **key)
-{
-   if (f) *f = pd->file ? pd->file->f : NULL;
-   if (key) *key = pd->group;
+   return err;
 }
 
 EAPI Eina_Bool
 edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 {
-   return efl_file_mmap_set(obj, file, group);
+   return efl_file_simple_mmap_load(obj, file, group);
 }
 
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
-   return efl_file_set(obj, file, group);
+   return efl_file_simple_load(obj, file, group);
 }
 
 EAPI void
 edje_object_file_get(const Edje_Object *obj, const char **file, const char **group)
 {
-   efl_file_get((Edje_Object *)obj, file, group);
+   if (file) *file = efl_file_get(obj);
+   if (group) *group = efl_file_key_get(obj);
 }
 
 EOLIAN static void

@@ -312,22 +312,25 @@ _edje_signals_free(Elm_Icon_Data *sd)
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_elm_icon_efl_file_load(Eo *obj, Elm_Icon_Data *sd)
 {
    Evas_Object *pclip;
+   const char *key;
+   Eina_Error err;
 
+   if (efl_file_loaded_get(obj)) return 0;
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+   
    Efl_Ui_Image_Data *id = efl_data_scope_get(obj, EFL_UI_IMAGE_CLASS);
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
    _edje_signals_free(sd);
 
    if (!sd->freedesktop.use)
      ELM_SAFE_FREE(sd->stdicon, eina_stringshare_del);
 
-   if (!sd->is_video)
-     return efl_file_set(efl_super(obj, MY_CLASS), file, key);
+   if (!sd->is_video) return 0;
 
    /* parent's edje file setting path replicated here (we got .eet
     * extension, so bypassing it) */
@@ -346,18 +349,21 @@ _elm_icon_efl_file_file_set(Eo *obj, Elm_Icon_Data *sd, const char *file, const 
         evas_object_clip_set(id->img, pclip);
         id->edje = EINA_TRUE;
      }
-
-   if (!edje_object_file_set(id->img, file, key))
+   key = efl_file_key_get(obj);
+   efl_file_key_set(id->img, key);
+   err = efl_file_mmap_set(id->img, efl_file_mmap_get(obj));
+   if (!err) err = efl_file_load(id->img);
+   if (err)
      {
-        ERR("failed to set edje file '%s', group '%s': %s", file, key,
+        ERR("failed to set edje file '%s', group '%s': %s", efl_file_get(id->img), key,
             edje_load_error_str
               (edje_object_load_error_get(id->img)));
-        return EINA_FALSE;
+        return err;
      }
 
    evas_object_geometry_set(id->img, id->img_x, id->img_y, id->img_w, id->img_h);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result
@@ -652,7 +658,7 @@ elm_icon_file_set(Evas_Object *obj,
    ELM_ICON_CHECK(obj) EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
-   return efl_file_set(obj, file, group);
+   return efl_file_simple_load(obj, file, group);
 }
 
 EAPI void

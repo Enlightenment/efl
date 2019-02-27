@@ -1205,7 +1205,7 @@ _x11_text_converter(char *target, void *data, int size EINA_UNUSED, void **data_
      }
    else if (sel->format & EFL_UI_SELECTION_FORMAT_IMAGE)
      {
-        efl_file_get(sel->request_obj, (const char **)data_ret, NULL);
+        efl_file_simple_get(sel->request_obj, (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
 
@@ -2487,7 +2487,7 @@ _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int siz
    else if (format & EFL_UI_SELECTION_FORMAT_IMAGE)
      {
         sel_debug("Image %s\n", evas_object_type_get(sel->request_obj));
-        efl_file_get(sel->request_obj, (const char **)data_ret, NULL);
+        efl_file_simple_get(sel->request_obj, (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
 

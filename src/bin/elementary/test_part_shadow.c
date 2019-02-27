@@ -109,7 +109,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    ic = efl_add(EFL_UI_IMAGE_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
-   efl_file_set(ic, buf, NULL);
+   efl_file_simple_load(ic, buf, NULL);
    efl_pack(bx, ic);
    td->ico = ic;
 

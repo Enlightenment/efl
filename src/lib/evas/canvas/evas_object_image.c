@@ -854,6 +854,12 @@ _efl_canvas_image_internal_efl_gfx_image_ratio_get(const Eo *eo_obj EINA_UNUSED,
    return (double)o->cur->image.w / (double)o->cur->image.h;
 }
 
+EOLIAN static Efl_Gfx_Image_Load_Error
+_efl_canvas_image_internal_efl_gfx_image_image_load_error_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->load_error;
+}
+
 EOLIAN static Eina_Bool
 _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
 {

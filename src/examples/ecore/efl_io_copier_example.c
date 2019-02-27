@@ -664,7 +664,7 @@ efl_main(void *data EINA_UNUSED,
      {
         /* regular file, open with flags: read-only and close-on-exec */
         input = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
-                        efl_file_set(efl_added, input_fname, NULL), /* mandatory */
+                        efl_file_set(efl_added, input_fname), /* mandatory */
                         efl_io_file_flags_set(efl_added, O_RDONLY), /* default */
                         efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL) /* optional */
@@ -940,7 +940,7 @@ efl_main(void *data EINA_UNUSED,
          * create if did not exist and truncate if exist.
          */
         output = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
-                         efl_file_set(efl_added, output_fname, NULL), /* mandatory */
+                         efl_file_set(efl_added, output_fname), /* mandatory */
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT | O_TRUNC), /* mandatory for write */
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
                          efl_io_file_mode_set(efl_added, 0644), /* mandatory for write */

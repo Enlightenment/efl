@@ -66,7 +66,7 @@ _ecore_file_download_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Net_Http_Status status = efl_net_dialer_http_response_status_get(job->input);
    const char *file;
 
-   efl_file_get(job->output, &file, NULL);
+   file = efl_file_get(job->output);
 
    DBG("Finished downloading %s (status=%d) -> %s",
        efl_net_dialer_address_dial_get(job->input),
@@ -92,7 +92,7 @@ _ecore_file_download_copier_error(void *data, const Efl_Event *event)
    Eina_Error *perr = event->info;
    const char *file;
 
-   efl_file_get(job->output, &file, NULL);
+   file = efl_file_get(job->output);
 
    WRN("Failed downloading %s (status=%d) -> %s: %s",
        efl_net_dialer_address_dial_get(job->input),
@@ -127,7 +127,7 @@ _ecore_file_download_copier_progress(void *data, const Efl_Event *event EINA_UNU
 
    if (!job->progress_cb) return;
 
-   efl_file_get(job->output, &file, NULL);
+   file = efl_file_get(job->output);
    efl_net_dialer_http_progress_download_get(job->input, &dn, &dt);
    efl_net_dialer_http_progress_upload_get(job->input, &un, &ut);
    ret = job->progress_cb((void *)job->data, file, dt, dn, ut, un);
@@ -227,7 +227,7 @@ ecore_file_download_full(const char *url,
    EINA_SAFETY_ON_NULL_GOTO(job->input, error_input);
 
    job->output = efl_add(EFL_IO_FILE_CLASS, loop,
-                         efl_file_set(efl_added, dst, NULL),
+                         efl_file_set(efl_added, dst),
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT),
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE),
                          efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
@@ -309,7 +309,7 @@ ecore_file_download_abort(Ecore_File_Download_Job *job)
         return;
      }
 
-   efl_file_get(job->output, &file, NULL);
+   file = efl_file_get(job->output);
    DBG("Aborting download %s -> %s",
        efl_net_dialer_address_dial_get(job->input),
        file);

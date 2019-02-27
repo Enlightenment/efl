@@ -5,10 +5,7 @@
 EAPI Edje_Load_Error
 edje_object_load_error_get(const Eo *obj)
 {
-   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(obj);
    Edje *ed;
-
-   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
 
    ed = _edje_fetch(obj);
    if (!ed) return EDJE_LOAD_ERROR_GENERIC;

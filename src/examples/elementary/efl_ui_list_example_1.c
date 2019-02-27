@@ -197,13 +197,13 @@ elm_main(int argc EINA_UNUSED, char **argv)
              break;
 
            case 40:
-             efl_file_set(efl_part(item, "background"), "./sky_01.jpg", NULL);
+             efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
              efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
              efl_pack_at(list, item, 39);
              break;
 
            case 50:
-             efl_file_set(efl_part(item, "background"), "./sky_01.jpg", NULL);
+             efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
              efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_TILE);
              efl_pack(list, item);
              break;

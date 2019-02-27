@@ -72,6 +72,14 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
             device: Efl.Input.Device; [[The seat device]]
          }
       }
+      @property layout_load_error {
+          get {
+              [[Gets the (last) file loading error for a given object.]]
+          }
+          values {
+             error: Efl.Gfx.Image_Load_Error(Efl.Gfx.Image_Load_Error.none); [[The load error code.]]
+          }
+      }
    }
    events {
       part,invalid @beta: string; [[Emitted when trying to use an invalid part.
@@ -113,8 +121,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Ui.I18n.mirrored { set; get; }
       Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
-      Efl.File.load_error { get; }
-      Efl.File.mmap { get; set; }
+      Efl.File.load;
       Efl.Container.content_remove;
       Efl.Container.content_iterate;
       Efl.Container.content_count;

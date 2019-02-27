@@ -32,7 +32,7 @@ EFL_START_TEST(efl_ui_layout_test_property_bind)
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
-   efl_file_set(ly, buf, "layout");
+   efl_file_simple_load(ly, buf, "layout");
    efl_gfx_entity_visible_set(ly, EINA_TRUE);
 
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);

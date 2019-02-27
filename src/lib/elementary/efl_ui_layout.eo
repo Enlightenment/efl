@@ -49,7 +49,9 @@ class @beta Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.Fi
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.File.file { get; set; }
+      Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
+      Efl.File.load;
       Efl.Canvas.Group.group_calculate;
       Efl.Layout.Calc.calc_freeze;
       Efl.Layout.Calc.calc_thaw;

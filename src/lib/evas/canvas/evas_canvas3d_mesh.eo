@@ -426,8 +426,7 @@ class Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File, Efl.F
       Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
-      Efl.File.file { get; set; }
-      Efl.File.mmap { get; set; }
+      Efl.File.load;
       Efl.File_Save.save;
    }
 

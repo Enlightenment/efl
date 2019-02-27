@@ -851,67 +851,70 @@ _parts_cursors_find(Efl_Ui_Layout_Data *sd,
 /* The public functions down here are meant to operate on whichever
  * widget inheriting from elm_layout */
 
-EOLIAN static Eina_Bool
-_efl_ui_layout_efl_file_file_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *file, const char *group)
+EOLIAN static Eina_Error
+_efl_ui_layout_efl_file_load(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   Eina_Error err;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
-   int_ret =
-     edje_object_file_set(wd->resize_obj, file, group);
+   if (efl_file_loaded_get(obj)) return 0;
+   err = efl_file_load(wd->resize_obj);
 
-   if (int_ret)
+   if (!err)
      {
         sd->file_set = EINA_TRUE;
         _visuals_refresh(obj, sd);
      }
    else
      ERR("failed to set edje file '%s', group '%s': %s",
-         file, group,
+         efl_file_get(wd->resize_obj), efl_file_key_get(wd->resize_obj),
          edje_load_error_str
            (edje_object_load_error_get(wd->resize_obj)));
 
-   return int_ret;
+   return err;
+}
+
+EOLIAN static Eina_Error
+_efl_ui_layout_efl_file_file_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *file)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
+   return efl_file_set(wd->resize_obj, file);
+}
+
+EOLIAN static const char *
+_efl_ui_layout_efl_file_file_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   return efl_file_get(wd->resize_obj);
 }
 
 EOLIAN static void
-_efl_ui_layout_efl_file_file_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char **file, const char **group)
+_efl_ui_layout_efl_file_key_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *key)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   edje_object_file_get(wd->resize_obj, file, group);
+   return efl_file_key_set(wd->resize_obj, key);
 }
 
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_efl_file_mmap_set(Eo *obj, Efl_Ui_Layout_Data *sd, const Eina_File *file, const char *group)
+EOLIAN static const char *
+_efl_ui_layout_efl_file_key_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
-   Eina_Bool int_ret = EINA_FALSE;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   return efl_file_key_get(wd->resize_obj);
+}
 
+EOLIAN static Eina_Error
+_efl_ui_layout_efl_file_mmap_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const Eina_File *file)
+{
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   int_ret =
-     edje_object_mmap_set(wd->resize_obj, file, group);
-
-   if (int_ret)
-     {
-        sd->file_set = EINA_TRUE;
-        _visuals_refresh(obj, sd);
-     }
-   else
-     ERR("failed to set edje mmap file %p, group '%s': %s",
-         file, group,
-         edje_load_error_str
-           (edje_object_load_error_get(wd->resize_obj)));
-
-   return int_ret;
+   return efl_file_mmap_set(wd->resize_obj, file);
 }
 
-EOLIAN static void
-_efl_ui_layout_efl_file_mmap_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
+EOLIAN static const Eina_File *
+_efl_ui_layout_efl_file_mmap_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   efl_file_mmap_get(wd->resize_obj, file, group);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   return efl_file_mmap_get(wd->resize_obj);
 }
 
 EOLIAN static Efl_Ui_Theme_Apply_Result
@@ -1971,7 +1974,7 @@ _efl_ui_layout_efl_object_dbg_info_get(Eo *eo_obj, Efl_Ui_Layout_Data *_pd EINA_
         Evas_Object *edje_obj = wd->resize_obj;
         Edje_Load_Error error;
 
-        efl_file_get(edje_obj, &file, &edje_group);
+        efl_file_simple_get(edje_obj, &file, &edje_group);
         EFL_DBG_INFO_APPEND(group, "File", EINA_VALUE_TYPE_STRING, file);
         EFL_DBG_INFO_APPEND(group, "Group", EINA_VALUE_TYPE_STRING, edje_group);
 
@@ -2391,9 +2394,11 @@ EOLIAN static Efl_Object*
 _efl_ui_layout_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
 {
    Eo *eo;
-
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_widget_theme_apply(eo);
+   if (efl_file_get(wd->resize_obj) || efl_file_mmap_get(wd->resize_obj))
+     efl_file_load(wd->resize_obj);
 
    return eo;
 }
@@ -2437,7 +2442,7 @@ _efl_ui_layout_efl_part_part_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUS
                       type > EFL_CANVAS_LAYOUT_PART_TYPE_NONE)
                     {
                        const char *file = NULL, *key = NULL;
-                       efl_file_get(wd->resize_obj, &file, &key);
+                       efl_file_simple_get(wd->resize_obj, &file, &key);
                        WRN("Layout has a background but it's not a swallow: '%s'",
                            elm_widget_theme_element_get(obj));
                     }
@@ -2627,25 +2632,25 @@ elm_layout_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_layout_file_set(Eo *obj, const char *file, const char *group)
 {
-   return efl_file_set((Eo *) obj, file, group);
+   return efl_file_simple_load((Eo *) obj, file, group);
 }
 
 EAPI void
 elm_layout_file_get(Eo *obj, const char **file, const char **group)
 {
-   efl_file_get((Eo *) obj, file, group);
+   efl_file_simple_get((Eo *) obj, file, group);
 }
 
 EAPI Eina_Bool
 elm_layout_mmap_set(Eo *obj, const Eina_File *file, const char *group)
 {
-   return efl_file_mmap_set((Eo *) obj, file, group);
+   return efl_file_simple_mmap_load((Eo *) obj, file, group);
 }
 
 EAPI void
 elm_layout_mmap_get(Eo *obj, const Eina_File **file, const char **group)
 {
-   efl_file_mmap_get((Eo *) obj, file, group);
+   efl_file_simple_mmap_get((Eo *) obj, file, group);
 }
 
 EAPI Eina_Bool

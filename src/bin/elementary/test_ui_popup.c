@@ -85,12 +85,12 @@ _backwall_cb(void *data EINA_UNUSED, const Efl_Event *ev)
      {
         char buf[PATH_MAX];
         snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
-        efl_file_set(efl_part(p_data->efl_ui_popup, "backwall"), buf, NULL);
+        efl_file_simple_load(efl_part(p_data->efl_ui_popup, "backwall"), buf, NULL);
         efl_text_set(ev->object, "Backwall UnSet");
      }
    else
      {
-        efl_file_set(efl_part(p_data->efl_ui_popup, "backwall"), NULL, NULL);
+        efl_file_simple_load(efl_part(p_data->efl_ui_popup, "backwall"), NULL, NULL);
         efl_text_set(ev->object, "Backwall Set");
      }
    k = !k;
@@ -365,7 +365,7 @@ test_ui_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
@@ -386,7 +386,7 @@ _alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
 
@@ -410,7 +410,7 @@ _alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
 
@@ -436,7 +436,7 @@ _alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
 
@@ -462,7 +462,7 @@ _alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
 
@@ -488,7 +488,7 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, efl_ui_popup);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_popup_scroll_content");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
    efl_content_set(efl_ui_popup, layout);
 
@@ -1008,7 +1008,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_set(layout, buf, "efl_ui_anchor_popup_layout");
+   efl_file_simple_load(layout, buf, "efl_ui_anchor_popup_layout");
    efl_gfx_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_content_set(win, layout);
 

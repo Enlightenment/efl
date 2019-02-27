@@ -3200,17 +3200,17 @@ _edje_svg_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EINA_U
 
    if (new_svg < 0)
      {
-        efl_file_set(ep->object, ed->file->path, src_key);
+        efl_file_simple_load(ep->object, ed->file->path, src_key);
      }
    else
      {
         snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_svg);
 
-        efl_file_set(ep->object, ed->file->path, src_key);
+        efl_file_simple_load(ep->object, ed->file->path, src_key);
         src_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(src_root);
 
-        efl_file_set(ep->object, ed->file->path, dest_key);
+        efl_file_simple_load(ep->object, ed->file->path, dest_key);
         dest_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(dest_root);
 
@@ -4927,7 +4927,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           proxy = ed->file->image_dir->entries[pd_mesh_node->mesh_node.texture.id].entry;
                           if (proxy)
                             {
-                               efl_file_mmap_set(texture, ed->file->f, proxy);
+                               efl_file_simple_mmap_load(texture, ed->file->f, proxy);
                                evas_canvas3d_texture_filter_set(texture, pd_mesh_node->mesh_node.texture.filter1, pd_mesh_node->mesh_node.texture.filter2);
                                evas_canvas3d_texture_wrap_set(texture, pd_mesh_node->mesh_node.texture.wrap1, pd_mesh_node->mesh_node.texture.wrap2);
                             }

@@ -10,7 +10,6 @@ class Edje.Edit extends Efl.Canvas.Layout
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.File.file { set; }
-      Efl.File.mmap { set; }
+      Efl.File.load;
    }
 }

@@ -66,8 +66,8 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
               the absolute path of an image file, this image will be used.
               Lookup order used by @.icon.set can be set using "icon_theme" in config.
 
-              Note: The image set by this function can be changed by
-              @Efl.File.file.set.
+              Note: The image set by this function is changed when
+              @Efl.File.load is called.
 
               Note: This function does not accept relative icon path.
 
@@ -89,8 +89,8 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
    }
    implements {
       Efl.Object.constructor;
-      Efl.File.file { get; set; }
-      Efl.File.mmap { get; set; }
+      Efl.File.load;
+      Efl.File.unload;
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }

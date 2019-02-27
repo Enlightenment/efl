@@ -19,7 +19,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, table,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
            efl_pack_table(table, efl_added, 0, 0, 4, 5));

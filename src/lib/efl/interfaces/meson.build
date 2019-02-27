@@ -183,4 +183,8 @@ efl_src += files([
 #  'efl_common_internal.h'
 #])
 
+install_headers('efl_file.h',
+  install_dir : join_paths(dir_package_include, 'interfaces'),
+)
+
 eolian_include_directories += ['-I', meson.current_source_dir()]

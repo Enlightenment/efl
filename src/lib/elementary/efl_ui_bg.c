@@ -210,48 +210,76 @@ _efl_ui_bg_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
-   return efl_file_set((Eo *) obj, file, group);
+   return efl_file_simple_load((Eo *) obj, file, group);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_bg_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_efl_ui_bg_efl_file_load(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
+{
+   return efl_file_load(sd->img);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_bg_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *file)
 {
    eina_stringshare_replace(&sd->file, file);
+
+   return efl_file_set(sd->img, file);
+}
+
+EOLIAN static void
+_efl_ui_bg_efl_file_key_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *key)
+{
    eina_stringshare_replace(&sd->key, key);
 
-   return efl_file_set(sd->img, file, key);
+   efl_file_key_set(sd->img, key);
 }
+
 EAPI void
 elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 {
-   efl_file_get((Eo *) obj, file, group);
+   efl_file_simple_get((Eo *) obj, file, group);
 }
 
-EOLIAN static void
-_efl_ui_bg_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Data *sd, const char **file, const char **key)
+EOLIAN static const char *
+_efl_ui_bg_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Data *sd)
 {
    if (elm_widget_is_legacy(obj))
-     {
-        if (file) *file = sd->file;
-        if (key) *key = sd->key;
-        return;
-     }
+     return sd->file;
 
-   efl_file_get(sd->img, file, key);
+   return efl_file_get(sd->img);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static const char *
+_efl_ui_bg_efl_file_key_get(const Eo *obj, Efl_Ui_Bg_Data *sd)
+{
+   if (elm_widget_is_legacy(obj))
+     return sd->key;
+
+   return efl_file_key_get(sd->img);
+}
+
+EOLIAN static Eina_Error
 _efl_ui_bg_efl_file_mmap_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd,
-                             const Eina_File *file, const char *key)
+                             const Eina_File *file)
 {
-   return efl_file_mmap_set(sd->img, file, key);
+   return efl_file_mmap_set(sd->img, file);
 }
 
-EOLIAN static void
-_efl_ui_bg_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd,
-                             const Eina_File **file, const char **key)
+EOLIAN static const Eina_File *
+_efl_ui_bg_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
 {
-   efl_file_mmap_get(sd->img, file, key);
+   return efl_file_mmap_get(sd->img);
+}
+
+
+EOLIAN static Eo *
+_efl_ui_bg_efl_object_finalize(Eo *obj, Efl_Ui_Bg_Data *sd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!obj) return NULL;
+   if (efl_file_get(sd->img) || efl_file_mmap_get(sd->img)) efl_file_load(sd->img);
+   return obj;
 }
 
 /* Internal EO APIs and hidden overrides */

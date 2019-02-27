@@ -150,13 +150,13 @@ typedef struct _vec2
 
 
 #define MATERIAL_TEXTURE_SET(Object, Name, file, image)                                   \
-   efl_file_set(data->mesh_##Name, file, NULL);                                                       \
+   efl_file_simple_load(data->mesh_##Name, file, NULL);                                                       \
                                                                                           \
    SETUP_DEFAULT_MESH(Object, Name, PHONG)                                                \
    data->texture_diffuse_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                  \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
-   efl_file_set(data->texture_diffuse_##Object, image, NULL); \
+   efl_file_simple_load(data->texture_diffuse_##Object, image, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \
@@ -175,7 +175,7 @@ typedef struct _vec2
    data->texture_diffuse_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
                                                                                                 \
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_##Object, EINA_FALSE); \
-   efl_file_set(data->texture_diffuse_##Object, image, NULL); \
+   efl_file_simple_load(data->texture_diffuse_##Object, image, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);         \
@@ -190,7 +190,7 @@ typedef struct _vec2
    data->texture_normal_##Object = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                   \
                                                                                           \
    evas_canvas3d_texture_atlas_enable_set(data->texture_normal_##Object, EINA_FALSE); \
-   efl_file_set(data->texture_normal_##Object, normal, NULL); \
+   efl_file_simple_load(data->texture_normal_##Object, normal, NULL); \
    evas_canvas3d_texture_filter_set(data->texture_normal_##Object, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(data->texture_normal_##Object, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);   \

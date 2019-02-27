@@ -88,7 +88,7 @@ _on_key_down(void *data, const Efl_Event *event)
      {
         // edje group
         group_itr = (group_itr + 1) % 2;
-        efl_file_set(layout, edjefile, groups[group_itr]);
+        efl_file_simple_load(layout, edjefile, groups[group_itr]);
         printf("Changed layout group to: %s\n", groups[group_itr]);
      }
    else if (!strcmp(key, "w"))
@@ -139,7 +139,7 @@ efl_main(void *data EINA_UNUSED,
 
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, win);
-   efl_file_set(layout, edjefile, groups[group_itr]);
+   efl_file_simple_load(layout, edjefile, groups[group_itr]);
 
    efl_content_set(win, layout);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(110, 100));

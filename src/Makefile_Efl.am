@@ -108,6 +108,7 @@ EXTRA_DIST2 += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl_Config.h.in \
       lib/efl/Efl.h \
+      lib/efl/interfaces/efl_file.h \
       lib/efl/interfaces/efl_common_internal.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
@@ -152,6 +153,7 @@ dist_installed_eflheaders_DATA = \
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
+	lib/efl/interfaces/efl_file.h \
 	$(efl_eolian_legacy_files_h)
 
 if HAVE_LUA_BINDINGS

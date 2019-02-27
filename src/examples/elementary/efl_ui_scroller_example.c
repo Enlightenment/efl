@@ -24,7 +24,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 
    content = efl_add(EFL_UI_IMAGE_CLASS, scroller);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
-   efl_file_set(content, buf, NULL);
+   efl_file_simple_load(content, buf, NULL);
    efl_gfx_entity_size_set(content, EINA_SIZE2D(5000, 5000));
    efl_content_set(scroller, content);
 }

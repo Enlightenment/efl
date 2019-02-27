@@ -31,7 +31,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
 
    efl::ui::Bg bg(instantiate, win);
    bg.scale_type_set(EFL_GFX_IMAGE_SCALE_TYPE_FILL);
-   bg.file_set(path, nullptr);
+   bg.file_set(path);
+   bg.load();
    win.content_set(bg);
 
    win.size_set({640, 400});

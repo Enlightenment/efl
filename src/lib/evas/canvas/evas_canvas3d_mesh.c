@@ -861,49 +861,26 @@ _evas_canvas3d_mesh_alpha_test_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas
    return pd->alpha_test_enabled;
 }
 
-EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_efl_file_mmap_set(Eo *obj,
-                                Evas_Canvas3D_Mesh_Data *pd,
-                                const Eina_File *f, const char *key EINA_UNUSED)
+EOLIAN static Eina_Error
+_evas_canvas3d_mesh_efl_file_load(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {
+   const Eina_File *f;
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+
    _mesh_fini(pd);
    _mesh_init(pd);
 
-   if (f == NULL) return EINA_FALSE;
+   f = efl_file_mmap_get(obj);
+   if (f == NULL) return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
    evas_common_load_model_from_eina_file(obj, f);
 
-   return EINA_TRUE;
-}
-
-EOLIAN void
-_evas_canvas3d_mesh_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *sd EINA_UNUSED, const Eina_File **file, const char **group)
-{
-   ERR("this function is not available for this object");
-   if (file) *file = NULL;
-   if (group) *group = NULL;
-}
-
-EOLIAN void
-_evas_canvas3d_mesh_efl_file_file_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *sd EINA_UNUSED, const char **file, const char **key)
-{
-   ERR("this function is not available for this object");
-   if (file) *file = NULL;
-   if (key) *key = NULL;
-}
-
-EOLIAN static Eina_Bool
-_evas_canvas3d_mesh_efl_file_file_set(Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
-                                const char *file,
-                                const char *key EINA_UNUSED)
-{
-   _mesh_fini(pd);
-   _mesh_init(pd);
-
-   if (file == NULL) return EINA_FALSE;
-
-   evas_common_load_model_from_file(obj, file);
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static Eina_Bool

@@ -351,11 +351,18 @@ _efl_ui_popup_part_backwall_repeat_events_get(const Eo *obj, void *_pd EINA_UNUS
    return efl_canvas_object_repeat_events_get(sd->backwall);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_popup_part_backwall_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *group)
+EOLIAN static Eina_Error
+_efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
 
    Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
    if (prev_obj)
@@ -366,16 +373,23 @@ _efl_ui_popup_part_backwall_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, co
      }
 
    Eo *image = elm_image_add(pd->obj);
-   Eina_Bool ret = elm_image_file_set(image, file, group);
+   Eina_Bool ret;
+   const Eina_File *f;
+
+   f = efl_file_mmap_get(obj);
+   if (f)
+     ret = elm_image_mmap_set(image, f, efl_file_key_get(obj));
+   else
+     ret = elm_image_file_set(image, efl_file_get(obj), efl_file_key_get(obj));
    if (!ret)
      {
         efl_del(image);
-        return EINA_FALSE;
+        return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
    edje_object_part_swallow(sd->backwall, "efl.content", image);
    edje_object_signal_emit(sd->backwall, "efl,state,content,set", "efl");
 
-   return EINA_TRUE;
+   return 0;
 }
 
 #include "efl_ui_popup_part_backwall.eo.c"

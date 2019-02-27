@@ -86,7 +86,8 @@ content_add(Eo *parent, char *text)
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
 
    page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                  efl_file_set(efl_added, buf, "page_layout"),
+                  efl_file_set(efl_added, buf),
+                  efl_file_key_set(efl_added, "page_layout"),
                   efl_text_set(efl_part(efl_added, "text"), text),
                   efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                   efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE));
@@ -129,7 +130,8 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
 
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
    layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
-                    efl_file_set(efl_added, buf, "tab_page_layout"),
+                    efl_file_set(efl_added, buf),
+                    efl_file_key_set(efl_added, "tab_page_layout"),
                     efl_content_set(win, efl_added));
 
    navi = elm_naviframe_add(layout);

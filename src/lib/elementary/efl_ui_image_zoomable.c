@@ -2023,14 +2023,17 @@ _efl_ui_image_zoomable_efl_layout_signal_signal_callback_del(Eo *obj, Efl_Ui_Ima
    return ok;
 }
 
-static Eina_Bool
+static Eina_Error
 _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
-               const char *file, const Eina_File *f, const char *group,
                Eina_Bool resize)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    double tz;
    int w, h;
+   Eina_Error err;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
 
    sd->zoom = 1.0;
    evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
@@ -2042,23 +2045,13 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
      sd->edje = edje_object_add(evas_object_evas_get(obj));
    if (!resize)
      {
-        if (f)
+        efl_file_key_set(sd->edje, efl_file_key_get(obj));
+        err = efl_file_mmap_set(sd->edje, efl_file_mmap_get(obj));
+        if (err)
           {
-             if (!edje_object_mmap_set(sd->edje, f, group))
-               {
-                  ERR("failed to set edje file '%s', group '%s': %s", sd->file, group,
-                      edje_load_error_str(edje_object_load_error_get(sd->edje)));
-                  return EINA_FALSE;
-               }
-          }
-        else if (file)
-          {
-             if (!edje_object_file_set(sd->edje, file, group))
-               {
-                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
-                      edje_load_error_str(edje_object_load_error_get(sd->edje)));
-                  return EINA_FALSE;
-               }
+             ERR("failed to set edje file '%s', group '%s': %s", efl_file_get(obj), efl_file_key_get(obj),
+                 edje_load_error_str(edje_object_load_error_get(sd->edje)));
+             return err;
           }
      }
 
@@ -2100,41 +2093,42 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
    sd->flip = EFL_FLIP_NONE;
    sd->orientation_changed = EINA_FALSE;
 
-   return EINA_TRUE;
+   return 0;
 }
 
-static Eina_Bool
-_image_zoomable_edje_file_set(Evas_Object *obj,
-                              const char *file,
-                              const char *group)
+static Eina_Error
+_image_zoomable_edje_file_set(Evas_Object *obj)
 {
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
 
-   if (file) eina_stringshare_replace(&sd->file, file);
-   return _img_proxy_set(obj, sd, file, NULL, group, EINA_FALSE);
+   return _img_proxy_set(obj, sd, EINA_FALSE);
 }
 
-static void
-_internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Eina_File *f, const char *key, Evas_Load_Error *ret)
+static Eina_Error
+_internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Load_Error err;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
    int w, h;
    double tz;
+   Eina_Error err;
+   const char *file;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+
+   file = efl_file_get(obj);
 
    if (eina_str_has_extension(file, ".edj"))
      {
-       _image_zoomable_edje_file_set(obj, file, key);
-       return;
+        return _image_zoomable_edje_file_set(obj);
      }
 
    // It is actually to late, we have lost the reference to the previous
    // file descriptor already, so we can't know if the file changed. To
    // be safe we do for now just force a full reload on file_set and hope
    // on evas to catch it, if there is no change.
-   eina_stringshare_replace(&sd->file, file);
-   sd->f = eina_file_dup(f);
+   sd->f = eina_file_dup(efl_file_mmap_get(obj));
 
    evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
    evas_object_image_file_set(sd->img, NULL, NULL);
@@ -2145,7 +2139,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Ei
      {
         ERR("Things are going bad for '%s' (%p) : %i", file, sd->img, err);
         if (ret) *ret = err;
-        return;
+        return err;
      }
    evas_object_image_size_get(sd->img, &w, &h);
 
@@ -2161,7 +2155,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Ei
      {
         ERR("Things are going bad for '%s' (%p)", file, sd->img);
         if (ret) *ret = err;
-        return;
+        return err;
      }
 
    evas_object_image_preload(sd->img, 0);
@@ -2189,6 +2183,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, Ei
    sd->orientation_changed = EINA_FALSE;
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
+   return efl_gfx_image_load_error_get(sd->img);
 }
 
 static void
@@ -2239,11 +2234,11 @@ _efl_ui_image_zoomable_remote_copier_done(void *data, const Efl_Event *event EIN
                             eina_binbuf_string_get(sd->remote.binbuf),
                             eina_binbuf_length_get(sd->remote.binbuf),
                             EINA_FALSE);
-
-   _internal_file_set(obj, sd, url, f, NULL, &ret);
+   efl_file_mmap_set(obj, f);
    eina_file_close(f);
+   ret = _internal_file_set(obj, sd, &ret);
 
-   if (ret != EVAS_LOAD_ERROR_NONE)
+   if (ret)
      {
         Elm_Photocam_Error err = { 0, EINA_TRUE };
 
@@ -2352,11 +2347,10 @@ _efl_ui_image_zoomable_is_remote(const char *file)
    return EINA_FALSE;
 }
 
-static Evas_Load_Error
-_efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, const char *key)
+static Eina_Error
+_efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret)
 {
-   Evas_Load_Error ret = EVAS_LOAD_ERROR_NONE;
-
+   const char *file = efl_file_get(obj);
    ELM_SAFE_FREE(sd->edje, evas_object_del);
    eina_stringshare_replace(&sd->stdicon, NULL);
 
@@ -2382,21 +2376,24 @@ _efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
           {
              efl_event_callback_legacy_call
                (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_DOWNLOAD_START, NULL);
-             return ret;
+             *ret = EVAS_LOAD_ERROR_NONE;
+             return 0;
           }
      }
 
-   _internal_file_set(obj, sd, file, NULL, key, &ret);
-
-   return ret;
+   return _internal_file_set(obj, sd, ret);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_efl_ui_image_zoomable_efl_file_load(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   Evas_Load_Error ret = _efl_ui_image_zoomable_file_set_internal(obj, sd, file, key);
+   Evas_Load_Error ret;
+   Eina_Error err;
 
-   if (ret == EVAS_LOAD_ERROR_NONE) return EINA_TRUE;
+   if (efl_file_loaded_get(obj)) return 0;
+   err = _efl_ui_image_zoomable_file_set_internal(obj, sd, &ret);
+
+   if ((!ret) && (!err)) return 0;
 
    eina_error_set(
      ret == EVAS_LOAD_ERROR_DOES_NOT_EXIST             ? PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST :
@@ -2406,14 +2403,14 @@ _efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
      ret == EVAS_LOAD_ERROR_UNKNOWN_FORMAT             ? PHOTO_FILE_LOAD_ERROR_UNKNOWN_FORMAT :
      PHOTO_FILE_LOAD_ERROR_GENERIC
    );
-   return EINA_FALSE;
+   return err;
 }
 
-EOLIAN static void
-_efl_ui_image_zoomable_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char **file, const char **key)
+EOLIAN static Eina_Error
+_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
 {
-   if (file) *file = sd->file;
-   if (key) *key = NULL;
+   eina_stringshare_replace(&sd->file, file);
+   return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
 EOLIAN static void
@@ -2816,7 +2813,7 @@ _min_obj_size_get(Evas_Object *o, int *w, int *h)
      }
 }
 
-static Eina_Bool
+static Eina_Error
 _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, Eina_Bool resize)
 {
    Elm_Theme *th = elm_widget_theme_get(o);
@@ -2832,10 +2829,10 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
    if (f)
      {
         if (sd->f) eina_file_close(sd->f);
-        eina_stringshare_replace(&sd->file, eina_file_filename_get(f));
-        sd->f = eina_file_dup(f);
+        efl_file_key_set(o, buf);
+        efl_file_mmap_set(o, f);
 
-        return _img_proxy_set(o, sd, NULL, f, buf, resize);
+        return _img_proxy_set(o, sd, resize);
      }
 
    ELM_SAFE_FREE(sd->edje, evas_object_del);
@@ -2843,7 +2840,7 @@ _image_zoomable_object_icon_set(Evas_Object *o, const char *group, char *style, 
    WRN("Failed to set icon '%s'. Icon theme '%s' not found", group, buf);
    ELM_SAFE_FREE(sd->f, eina_file_close);
 
-   return EINA_FALSE;
+   return EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
 }
 
 static Eina_Bool
@@ -2851,7 +2848,7 @@ _icon_standard_set(Evas_Object *obj, const char *name, Eina_Bool resize)
 {
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
 
-   if (_image_zoomable_object_icon_set(obj, name, "default", resize))
+   if (!_image_zoomable_object_icon_set(obj, name, "default", resize))
      {
         /* TODO: elm_unneed_efreet() */
         sd->freedesktop.use = EINA_FALSE;
@@ -2902,7 +2899,7 @@ _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
    if (sd->freedesktop.use)
      {
         sd->freedesktop.requested_size = size;
-        efl_file_set(obj, path, NULL);
+        efl_file_simple_load(obj, path, NULL);
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -2970,7 +2967,7 @@ _internal_efl_ui_image_zoomable_icon_set(Evas_Object *obj, const char *name, Ein
      {
         if (fdo)
           *fdo = EINA_FALSE;
-        return efl_file_set(obj, name, NULL);
+        return efl_file_simple_load(obj, name, NULL);
      }
 
    /* if that fails, see if icon name is in the format size/name. if so,
@@ -3362,7 +3359,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
    ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
-   if (efl_file_set(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;
+   if (efl_file_simple_load(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;
 
    Eina_Error err = eina_error_get();
    return err == PHOTO_FILE_LOAD_ERROR_DOES_NOT_EXIST ?
@@ -3381,9 +3378,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
 EAPI const char*
 elm_photocam_file_get(const Evas_Object *obj)
 {
-   const char *ret = NULL;
-   efl_file_get(obj, &ret, NULL);
-   return ret;
+   return efl_file_get(obj);
 }
 
 EAPI void

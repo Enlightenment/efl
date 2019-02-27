@@ -288,14 +288,19 @@ _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED
    return obj;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *filename, const char *key EINA_UNUSED)
+EOLIAN static Eina_Error
+_efl_ui_video_efl_file_load(Eo *obj, Efl_Ui_Video_Data *sd)
 {
+   const char *file = efl_file_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST);
+
+   if (eina_streq(file, emotion_object_file_get(sd->emotion)) && efl_file_loaded_get(sd->emotion)) return 0;
+
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
    sd->stop = EINA_FALSE;
-   if (!emotion_object_file_set(sd->emotion, filename)) return EINA_FALSE;
+   if (!emotion_object_file_set(sd->emotion, file)) return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 
-   if (filename && ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://"))))
+   if (file && ((!strncmp(file, "file://", 7)) || (!strstr(file, "://"))))
      emotion_object_last_position_load(sd->emotion);
 
    if(elm_widget_is_legacy(obj))
@@ -303,14 +308,7 @@ _efl_ui_video_efl_file_file_set(Eo *obj, Efl_Ui_Video_Data *sd, const char *file
    else
      elm_layout_signal_emit(obj, "efl,video,load", "efl");
 
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd EINA_UNUSED, const char **filename, const char **key EINA_UNUSED)
-{
-   if (filename)
-     *filename = emotion_object_file_get(sd->emotion);
+   return 0;
 }
 
 EOLIAN static Evas_Object*
@@ -454,13 +452,13 @@ elm_video_add(Evas_Object *parent)
 EAPI Eina_Bool
 elm_video_file_set(Eo *obj, const char *filename)
 {
-   return efl_file_set((Eo *) obj, filename, NULL);
+   return efl_file_simple_load((Eo *) obj, filename, NULL);
 }
 
 EAPI void
 elm_video_file_get(Eo *obj, const char **filename)
 {
-   efl_file_get((Eo *) obj, filename, NULL);
+   efl_file_simple_get((Eo *) obj, filename, NULL);
 }
 
 EAPI void

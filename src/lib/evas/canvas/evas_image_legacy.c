@@ -49,7 +49,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
 
    f = eina_file_virtualize(NULL, data, size, EINA_TRUE);
    if (!f) return ;
-   efl_file_mmap_set(eo_obj, f, key);
+   efl_file_simple_mmap_load(eo_obj, f, key);
    eina_file_close(f);
 }
 
@@ -194,28 +194,28 @@ EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    EVAS_IMAGE_API(obj);
-   efl_file_set(obj, file, key);
+   efl_file_simple_load(obj, file, key);
 }
 
 EAPI void
 evas_object_image_file_get(const Evas_Object *obj, const char **file, const char **key)
 {
    EVAS_IMAGE_API(obj);
-   efl_file_get(obj, file, key);
+   efl_file_simple_get(obj, file, key);
 }
 
 EAPI void
 evas_object_image_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key)
 {
    EVAS_IMAGE_API(obj);
-   _evas_image_mmap_set(obj, f, key);
+   efl_file_simple_mmap_load(obj, f, key);
 }
 
 EAPI void
 evas_object_image_mmap_get(const Evas_Object *obj, const Eina_File **f, const char **key)
 {
    EVAS_IMAGE_API(obj);
-   _evas_image_mmap_get(obj, f, key);
+   efl_file_simple_mmap_get(obj, f, key);
 }
 
 EAPI Eina_Bool
@@ -362,7 +362,7 @@ EAPI Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_LOAD_ERROR_GENERIC);
-   return _evas_image_load_error_get(obj);
+   return efl_gfx_image_load_error_get(obj);
 }
 
 EAPI void
@@ -1243,20 +1243,27 @@ evas_object_image_alpha_mask_set(Evas_Object *eo_obj EINA_UNUSED, Eina_Bool isma
    EVAS_IMAGE_LEGACY_API(eo_obj);
 }
 
-EOLIAN static Eina_Bool
-_evas_image_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *f, const char *key)
+EOLIAN static Eina_Error
+_evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
 {
    EVAS_IMAGE_API(obj, EINA_FALSE);
-   return _evas_image_mmap_set(obj, f, key);
-}
-
-EOLIAN static void
-_evas_image_efl_file_mmap_get(const Eo *obj, void *pd EINA_UNUSED, const Eina_File **f, const char **key)
-{
-   if (f) *f = NULL;
-   if (key) *key = NULL;
-   EVAS_IMAGE_API(obj);
-   _evas_image_mmap_get(obj, f, key);
+   if (efl_file_loaded_get(obj)) return 0;
+   Eina_Error err = efl_file_load(efl_super(obj, EVAS_IMAGE_CLASS));
+   if (err)
+     {
+        if (err == ENOENT)
+          _efl_canvas_image_load_error_set(obj, EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST);
+        else if (err == ENOMEM)
+          _efl_canvas_image_load_error_set(obj, EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED);
+        else if ((err == EPERM) || (err == EACCES))
+          _efl_canvas_image_load_error_set(obj, EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED);
+        else
+          _efl_canvas_image_load_error_set(obj, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
+        return err;
+     }
+   if (_evas_image_file_load(obj))
+     return 0;
+   return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 }
 
 #include "canvas/evas_image.eo.c"

@@ -138,16 +138,14 @@ ok: // ok - return api
 }
 
 static char *
-_file_load(const char *file)
+_file_load(Eo *obj)
 {
    Eina_File *f;
    char *text = NULL;
    void *tmp = NULL;
    size_t size;
 
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f) return NULL;
-
+   f = eina_file_dup(efl_file_mmap_get(obj));
    size = eina_file_size_get(f);
    if (size)
      {
@@ -175,11 +173,11 @@ _file_load(const char *file)
 }
 
 static char *
-_plain_load(const char *file)
+_plain_load(Eo *obj)
 {
    char *text;
 
-   text = _file_load(file);
+   text = _file_load(obj);
    if (text)
      {
         char *text2;
@@ -192,32 +190,42 @@ _plain_load(const char *file)
    return NULL;
 }
 
-static Eina_Bool
+static Eina_Error
 _load_do(Evas_Object *obj)
 {
    char *text;
+   Eina_Bool fail = EINA_FALSE;
+   Eina_Error err = 0;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
    if (!sd->file)
      {
         elm_object_text_set(obj, "");
-        return EINA_TRUE;
+        return 0;
      }
 
    switch (sd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
-        text = _plain_load(sd->file);
+        text = _plain_load(obj);
+        fail = !text;
         break;
 
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
-        text = _file_load(sd->file);
+        text = _file_load(obj);
+        fail = !text;
         break;
 
       default:
         text = NULL;
         break;
+     }
+   if (fail)
+     {
+        err = errno;
+        /* FIXME: this is more like a hint but not totally accurate... */
+        if (!err) err = ENOENT;
      }
 
    if (text)
@@ -225,14 +233,11 @@ _load_do(Evas_Object *obj)
         elm_object_text_set(obj, text);
         free(text);
 
-        return EINA_TRUE;
+        return 0;
      }
-   else
-     {
-        elm_object_text_set(obj, "");
+   elm_object_text_set(obj, "");
 
-        return EINA_FALSE;
-     }
+   return err;
 }
 
 static void
@@ -4969,37 +4974,40 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
    Eina_Bool ret;
    elm_obj_entry_file_text_format_set(obj, format);
-   ret = efl_file_set(obj, file, NULL);
+   ret = efl_file_simple_load(obj, file, NULL);
    return ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file, const char *group EINA_UNUSED)
+EOLIAN static Eina_Error
+_elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd)
 {
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
+   return _load_do(obj);
+}
+
+EOLIAN static Eina_Error
+_elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file)
+{
    eina_stringshare_replace(&sd->file, file);
-   Eina_Bool int_ret = _load_do(obj);
-   return int_ret;
+   return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
 EAPI void
 elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format)
 {
-   efl_file_get(obj, file, NULL);
+   if (file) *file = efl_file_get(obj);
    if (format)
      {
         ELM_ENTRY_DATA_GET(obj, sd);
         if (!sd) return;
         *format = sd->format;
      }
-}
-
-EOLIAN static void
-_elm_entry_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, const char **file, const char **group)
-{
-   if (file) *file = sd->file;
-   if (group) *group = NULL;
 }
 
 EOLIAN static void

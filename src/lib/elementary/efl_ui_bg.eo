@@ -9,7 +9,10 @@ class @beta Efl.Ui.Bg extends Efl.Ui.Layout implements Efl.Gfx.Color, Efl.Gfx.Im
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.finalize;
+      Efl.File.load;
       Efl.File.file { get; set; }
+      Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Gfx.Color.color { get; set; }
       Efl.Gfx.Image.scale_type { get; set; }

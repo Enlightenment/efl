@@ -6079,20 +6079,60 @@ efl_ui_widget_part_bg_get(const Eo *part_obj)
    return _efl_ui_widget_bg_get(pd->obj);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_widget_part_bg_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file, const char *key)
+EOLIAN static Eina_Error
+_efl_ui_widget_part_bg_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   return efl_file_set(bg_obj, file, key);
+   return efl_file_load(bg_obj);
+}
+
+EOLIAN static const char *
+_efl_ui_widget_part_bg_efl_file_file_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_get(bg_obj);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_widget_part_bg_efl_file_file_set(Eo *obj, void *pd EINA_UNUSED, const char *file)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_set(bg_obj, file);
+}
+
+EOLIAN static const char *
+_efl_ui_widget_part_bg_efl_file_key_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_key_get(bg_obj);
 }
 
 EOLIAN static void
-_efl_ui_widget_part_bg_efl_file_file_get(const Eo *obj, void *pd EINA_UNUSED, const char **file, const char **key)
+_efl_ui_widget_part_bg_efl_file_key_set(Eo *obj, void *pd EINA_UNUSED, const char *key)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_file_get(bg_obj, file, key);
+   efl_file_key_set(bg_obj, key);
+}
+
+EOLIAN static const Eina_File *
+_efl_ui_widget_part_bg_efl_file_mmap_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_mmap_get(bg_obj);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_widget_part_bg_efl_file_mmap_set(Eo *obj, void *pd EINA_UNUSED, const Eina_File *file)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   return efl_file_mmap_set(bg_obj, file);
 }
 
 EOLIAN static void

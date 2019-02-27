@@ -245,41 +245,50 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
+_efl_canvas_vg_object_efl_file_loaded_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd)
+{
+   return !!pd->vg_entry;
+}
+
+EOLIAN static Eina_Error
+_efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
    Vg_Cache_Entry *old_entry;
+   const char *file;
 
-   if (!file) return EINA_FALSE;
+   file = efl_file_get(eo_obj);
+   if (!file) return ENOENT;
 
    old_entry = pd->vg_entry;
 
    Evas_Object_Protected_Data *obj;
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if (file)
-     pd->vg_entry = evas_cache_vg_entry_create(file, key,
-                                               obj->cur->geometry.w,
-                                               obj->cur->geometry.h);
-   else
-     pd->vg_entry = NULL;
+   pd->vg_entry = evas_cache_vg_entry_create(file, efl_file_key_get(eo_obj),
+                                             obj->cur->geometry.w,
+                                             obj->cur->geometry.h);
 
    evas_object_change(eo_obj, obj);
    evas_cache_vg_entry_del(old_entry);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static void
-_efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
+_efl_canvas_vg_object_efl_file_unload(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
-   if (file) *file = NULL;
-   if (key) *key = NULL;
+   Vg_Cache_Entry *old_entry;
 
-   if (pd->vg_entry)
-     {
-        if (file) *file = pd->vg_entry->file;
-        if (key) *key = pd->vg_entry->key;
-     }
+   if (!efl_file_loaded_get(eo_obj)) return;
+   old_entry = pd->vg_entry;
+
+   Evas_Object_Protected_Data *obj;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   pd->vg_entry = NULL;
+
+   evas_object_change(eo_obj, obj);
+   evas_cache_vg_entry_del(old_entry);
 }
 
 EOLIAN static Eina_Bool

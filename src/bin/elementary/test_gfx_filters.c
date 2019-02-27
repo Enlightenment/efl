@@ -403,7 +403,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_gfx_hint_align_set(efl_added, 0.5, 0.5),
                        efl_gfx_hint_size_max_set(efl_added, size),
                        efl_gfx_hint_size_min_set(efl_added, size),
-                       efl_file_set(efl_added, buf, NULL),
+                       efl_file_set(efl_added, buf),
                        efl_name_set(efl_added, images[k].src_name),
                        elm_object_tooltip_text_set(efl_added, images[k].src_name));
            if (efl_player_playable_get(o))

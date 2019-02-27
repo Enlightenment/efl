@@ -91,14 +91,14 @@ class Elm.Entry extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.U
 
            Default is $ELM_TEXT_FORMAT_PLAIN_UTF8, if you want to use
            $ELM_TEXT_FORMAT_MARKUP_UTF8 then you need to set the text format
-           before calling @Efl.File.file.set.
+           before calling @Efl.File.load.
 
            You could also set it before a call to @.file_save
            in order to save with the given format.
          ]]
 
          set {
-            [[Use it before calling @Efl.File.file.set or @.file_save.]]
+            [[Use it before calling @Efl.File.load or @.file_save.]]
          }
          values {
             format: Elm.Text_Format(Elm.Text_Format.plain_utf8); [[ The file format ]]
@@ -897,7 +897,8 @@ class Elm.Entry extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.U
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.File.file { get; set; }
+      Efl.File.file { set; }
+      Efl.File.load;
       Efl.Part.part_get;
    }
    events {

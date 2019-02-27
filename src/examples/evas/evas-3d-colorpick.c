@@ -256,7 +256,7 @@ _init_sphere(void *this, const char *texture)
    evas_canvas3d_mesh_color_pick_enable_set(sphere->mesh, EINA_TRUE);
 
    sphere->texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(sphere->texture, texture, NULL);
+   efl_file_simple_load(sphere->texture, texture, NULL);
    evas_canvas3d_texture_filter_set(sphere->texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(sphere->texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(sphere->material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, sphere->texture);

@@ -61,20 +61,20 @@ _efl_ui_text_factory_images_efl_canvas_text_factory_create(Eo *obj EINA_UNUSED,
    e = eina_hash_find(pd->hash, key);
    if (e)
      {
-        efl_file_mmap_set(o, e->file, e->key);
+        efl_file_key_set(o, e->key);
+        if (efl_file_mmap_set(o, e->file)) goto error;
      }
    else
      {
-        efl_file_set(o, key, NULL);
+        if (efl_file_set(o, key)) goto error;
      }
-
-   if (efl_file_load_error_get(o) != EFL_GFX_IMAGE_LOAD_ERROR_NONE)
-     {
-        efl_del(o);
-        o = NULL;
-     }
+   if (efl_file_load(o)) goto error;
 
    return o;
+
+error:
+   efl_del(o);
+   return NULL;
 }
 
 EOLIAN static Eina_Bool

@@ -2572,7 +2572,7 @@ Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 
-int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
+Eina_Error _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
 void  _edje_file_callbacks_del(Edje *ed, Evas *e);
 void  _edje_file_del(Edje *ed);

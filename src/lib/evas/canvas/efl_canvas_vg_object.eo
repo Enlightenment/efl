@@ -73,8 +73,9 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      // FIXME: Implement mmap only (also fix cache keys)
-      Efl.File.file { get; set; }
+      Efl.File.load;
+      Efl.File.unload;
+      Efl.File.loaded { get; }
       Efl.File_Save.save;
    }
 }

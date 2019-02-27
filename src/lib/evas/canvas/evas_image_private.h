@@ -161,11 +161,12 @@ void *_evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj, void *
 void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, int h);
 
 /* Efl.File */
-Eina_Bool _evas_image_mmap_set(Eo *eo_obj, const Eina_File *f, const char *key);
-void _evas_image_mmap_get(const Eo *eo_obj, const Eina_File **f, const char **key);
+Eina_Bool _evas_image_file_load(Eo *eo_obj);
+const Eina_File *_evas_image_mmap_get(const Eo *eo_obj);
+const char *_evas_image_key_get(const Eo *eo_obj);
+void _efl_canvas_image_load_error_set(Eo *eo_obj EINA_UNUSED, Eina_Error err);
 
 /* Efl.Image.Load */
-Efl_Gfx_Image_Load_Error _evas_image_load_error_get(const Eo *eo_obj);
 void _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void _evas_image_load_async_start(Eo *eo_obj);
 void _evas_image_load_async_cancel(Eo *eo_obj);

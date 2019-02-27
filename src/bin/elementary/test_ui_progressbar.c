@@ -138,7 +138,8 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, pd->pb1,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
+           efl_file_load(efl_added),
            efl_content_set(pd->pb1, efl_added)
           );
 

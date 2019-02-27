@@ -323,7 +323,7 @@ _change_scene_setup()
            }
          else
            {
-              efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
+              efl_file_simple_load(globalGraphical.mesh, globalGraphical.model_path, NULL);
               evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
               evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }
@@ -427,7 +427,7 @@ _init_scene(Evas_Object *img)
 
    globalGraphical.material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, globalGraphical.evas);
    globalGraphical.texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, globalGraphical.evas);
-   efl_file_set(globalGraphical.texture, "target_texture.png", NULL);
+   efl_file_simple_load(globalGraphical.texture, "target_texture.png", NULL);
    evas_canvas3d_texture_filter_set(globalGraphical.texture, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR);
    evas_canvas3d_texture_wrap_set(globalGraphical.texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(globalGraphical.material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, globalGraphical.texture);
@@ -460,7 +460,7 @@ _init_scene(Evas_Object *img)
            }
          else
            {
-              efl_file_set(globalGraphical.mesh, globalGraphical.model_path, NULL);
+              efl_file_simple_load(globalGraphical.mesh, globalGraphical.model_path, NULL);
               evas_canvas3d_mesh_frame_material_set(globalGraphical.mesh, 0, globalGraphical.material);
               evas_canvas3d_mesh_shader_mode_set(globalGraphical.mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
            }

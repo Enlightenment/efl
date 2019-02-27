@@ -251,14 +251,13 @@ static void _selection_defer(Eo *obj, Efl_Ui_Text_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Text_Data *sd);
 
 static char *
-_file_load(const char *file)
+_file_load(Eo *obj)
 {
    Eina_File *f;
    char *text = NULL;
    void *tmp = NULL;
 
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f) return NULL;
+   f = eina_file_dup(efl_file_mmap_get(obj));
 
    tmp = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!tmp) goto on_error;
@@ -282,29 +281,35 @@ _file_load(const char *file)
 }
 
 static char *
-_plain_load(const char *file)
+_plain_load(Eo *obj)
 {
-   return _file_load(file);
+   return _file_load(obj);
 }
 
-static Eina_Bool
+static Eina_Error
 _load_do(Evas_Object *obj)
 {
    char *text;
+   Eina_Error err = 0;
 
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    if (!sd->file)
      {
         elm_object_text_set(obj, "");
-        return EINA_TRUE;
+        return 0;
      }
 
    switch (sd->format)
      {
       /* Only available format */
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
-         text = _plain_load(sd->file);
+         text = _plain_load(obj);
+         if (!text)
+           {
+              err = errno;
+              if (!err) err = ENOENT;
+           }
          break;
 
       default:
@@ -316,13 +321,10 @@ _load_do(Evas_Object *obj)
      {
         efl_text_set(obj, text);
         free(text);
-        return EINA_TRUE;
+        return 0;
      }
-   else
-     {
-        efl_text_set(obj, "");
-        return EINA_FALSE;
-     }
+   efl_text_set(obj, "");
+   return err;
 }
 
 static void
@@ -2528,21 +2530,24 @@ _efl_ui_text_context_menu_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Da
    return !sd->context_menu;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file, const char *group EINA_UNUSED)
+EOLIAN static Eina_Error
+_efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file)
 {
-   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
-   if (sd->auto_save) _save_do(obj);
    eina_stringshare_replace(&sd->file, file);
-   Eina_Bool int_ret = _load_do(obj);
-   return int_ret;
+   return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
-EOLIAN static void
-_efl_ui_text_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, const char **file, const char **group)
+EOLIAN static Eina_Error
+_efl_ui_text_efl_file_load(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   if (file) *file = sd->file;
-   if (group) *group = NULL;
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
+   if (sd->auto_save) _save_do(obj);
+   return _load_do(obj);
 }
 
 EOLIAN static void

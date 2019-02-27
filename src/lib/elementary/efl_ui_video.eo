@@ -42,7 +42,7 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access
    }
    implements {
       Efl.Object.constructor;
-      Efl.File.file { get; set; }
+      Efl.File.load;
       Efl.Ui.Widget.widget_event;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Player.start;

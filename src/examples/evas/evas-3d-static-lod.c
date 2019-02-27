@@ -179,14 +179,14 @@ _mesh_setup(Scene_Data *data)
         Eo *mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
         Eina_Stringshare *str = eina_stringshare_printf("%s%d%s", model_path,
                                                         i, ".obj");
-        efl_file_set(mesh, str, NULL);
+        efl_file_simple_load(mesh, str, NULL);
         evas_canvas3d_mesh_frame_material_set(mesh, 0, data->material);
         evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
         evas_canvas3d_mesh_lod_boundary_set(mesh, distances[i], distances[i + 1]);
         evas_canvas3d_node_mesh_add(data->lod_mesh_node1, mesh);
 
         mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
-        efl_file_set(mesh, str, NULL);
+        efl_file_simple_load(mesh, str, NULL);
         evas_canvas3d_mesh_frame_material_set(mesh, 0, data->material);
         evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
         evas_canvas3d_mesh_lod_boundary_set(mesh, m_distances[i], m_distances[i + 1]);
