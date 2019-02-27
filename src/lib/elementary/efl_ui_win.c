@@ -6973,7 +6973,7 @@ static Efl_Ui_Theme_Apply_Result
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
    Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
-   Eina_Bool ret = EINA_FALSE, prev_alpha;
+   Eina_Bool prev_alpha;
    const char *s;
 
    int_ret = elm_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
@@ -6985,9 +6985,6 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
                          efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_THEME_CHANGED, NULL);
-   ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
-
-   if (!ret) int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
 
    prev_alpha = sd->theme_alpha;
    s = edje_object_data_get(sd->legacy.edje, "alpha");

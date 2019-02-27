@@ -805,11 +805,25 @@ _get_drop_format(Evas_Object *obj)
    return ELM_SEL_FORMAT_MARKUP;
 }
 
-/* we can't reuse layout's here, because it's on entry_edje only */
-EOLIAN static Eina_Bool
-_elm_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
+static void
+_flush_disabled_state(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *emission;
+   emission = efl_ui_widget_disabled_get(obj) ? "elm,state,disabled" : "elm,state,enabled";
+   edje_object_signal_emit(sd->entry_edje, emission, "elm");
+   if (sd->scroll)
+     {
+        edje_object_signal_emit(sd->scr_edje, emission, "elm");
+        elm_interface_scrollable_freeze_set(obj, efl_ui_widget_disabled_get(obj));
+     }
+}
+
+/* we can't reuse layout's here, because it's on entry_edje only */
+EOLIAN static void
+_elm_entry_efl_ui_widget_disabled_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool disabled)
+{
+
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
@@ -817,16 +831,10 @@ _elm_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bo
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   emission = disabled ? "elm,state,disabled" : "elm,state,enabled";
-   edje_object_signal_emit(sd->entry_edje, emission, "elm");
-   if (sd->scroll)
-     {
-        edje_object_signal_emit(sd->scr_edje, emission, "elm");
-        elm_interface_scrollable_freeze_set(obj, disabled);
-     }
-   sd->disabled = disabled;
+   _flush_disabled_state(obj, sd);
+   sd->disabled = efl_ui_widget_disabled_get(obj);
 
-   if (!disabled)
+   if (!efl_ui_widget_disabled_get(obj))
      {
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
@@ -835,8 +843,6 @@ _elm_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Entry_Data *sd, Eina_Bo
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
      }
-
-   return EINA_TRUE;
 }
 
 /* It gets the background object from from_edje object and
@@ -1021,6 +1027,8 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    evas_object_unref(obj);
+
+   _flush_disabled_state(obj, sd);
 
    return theme_apply;
 }

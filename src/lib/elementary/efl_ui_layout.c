@@ -395,12 +395,29 @@ _efl_ui_layout_highlight_in_theme(Evas_Object *obj)
      elm_widget_access_highlight_in_theme_set(obj, EINA_FALSE);
 }
 
+static void
+_flush_mirrored_state(Eo *obj)
+{
+   char prefix[4], state[10], signal[100];
+
+   if (efl_ui_widget_disabled_get(obj))
+     snprintf(state, sizeof(state), "disabled");
+   else
+     snprintf(state, sizeof(state), "enabled");
+
+   if (!elm_widget_is_legacy(obj))
+     snprintf(prefix, sizeof(prefix), "efl");
+   else
+     snprintf(prefix, sizeof(prefix), "elm");
+
+   snprintf(signal, sizeof(signal), "%s,state,%s", prefix, state);
+   efl_layout_signal_emit(obj, signal, prefix);
+}
+
 static Eina_Bool
 _visuals_refresh(Evas_Object *obj,
                  Efl_Ui_Layout_Data *sd)
 {
-   Eina_Bool ret = EINA_FALSE;
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    _parts_signals_emit(sd);
@@ -414,41 +431,18 @@ _visuals_refresh(Evas_Object *obj,
      efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
 
    _efl_ui_layout_highlight_in_theme(obj);
-
-   ret = efl_ui_widget_on_disabled_update(obj, elm_widget_disabled_get(obj));
+   _flush_mirrored_state(obj);
 
    elm_layout_sizing_eval(obj);
 
-   return ret;
+   return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_layout_base_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+EOLIAN static void
+_efl_ui_layout_base_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Layout_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-
-   // Not calling efl_super here: Elm.Widget simply returns false.
-
-   if (elm_widget_is_legacy(obj))
-     {
-        if (disabled)
-          edje_object_signal_emit
-             (wd->resize_obj, "elm,state,disabled", "elm");
-        else
-          edje_object_signal_emit
-             (wd->resize_obj, "elm,state,enabled", "elm");
-     }
-   else
-     {
-        if (disabled)
-          edje_object_signal_emit
-             (wd->resize_obj, "efl,state,disabled", "efl");
-        else
-          edje_object_signal_emit
-             (wd->resize_obj, "efl,state,enabled", "efl");
-     }
-
-   return EINA_TRUE;
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
+   _flush_mirrored_state(obj);
 }
 
 static Efl_Ui_Theme_Apply_Result

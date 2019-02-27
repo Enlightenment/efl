@@ -1242,15 +1242,14 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
      (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
 }
 
-EOLIAN static Eina_Bool
-_elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
+EOLIAN static void
+_elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
 {
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
    if (sd->scrollable)
      {
-        if (disabled && sd->callback_added)
+        if (efl_ui_widget_disabled_get(obj) && sd->callback_added)
           {
              evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down);
@@ -1263,7 +1262,7 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
 
              sd->callback_added = EINA_FALSE;
           }
-        else if (!disabled && !sd->callback_added)
+        else if (!efl_ui_widget_disabled_get(obj) && !sd->callback_added)
           {
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down, sd);
@@ -1277,8 +1276,6 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
              sd->callback_added = EINA_TRUE;
           }
      }
-
-   return EINA_TRUE;
 }
 
 EOLIAN static double

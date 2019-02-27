@@ -334,7 +334,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
-      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.disabled {set;}
       //Efl.Ui.Widget.widget_sub_object_del;
       //Elm.Interface_Scrollable.policy { set; }
       //Elm.Interface_Scrollable.bounce_allow { set; }

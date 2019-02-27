@@ -1590,6 +1590,20 @@ elm_object_disabled_set(Evas_Object *obj,
                         Eina_Bool    disabled)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(efl_ui_widget_parent_get(obj), ppd);
+   if (disabled)
+     {
+        //we aim here for the disabled count of parent + 1
+        if (pd->disabled == ppd->disabled + 1) return;
+        pd->disabled = ppd->disabled;
+     }
+   else
+     {
+         //we aim for the same disabled count as the parent here
+        if (pd->disabled == ppd->disabled) return;
+        pd->disabled = ppd->disabled + 1;
+     }
    elm_widget_disabled_set(obj, disabled);
 }
 

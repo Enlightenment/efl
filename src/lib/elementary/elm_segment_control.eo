@@ -138,7 +138,7 @@ class Elm.Segment_Control extends Efl.Ui.Layout implements Efl.Ui.Focus.Composit
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.disabled {set;}
       Efl.Ui.L10n.translation_update;
    }
    events {

@@ -244,15 +244,12 @@ _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_segment_control_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
+
+EOLIAN static void
+_elm_segment_control_efl_ui_widget_disabled_set(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
 {
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
    _update_list(sd);
-
-   return EINA_TRUE;
 }
 
 // TODO: elm_widget_focus_list_next_get supports only Elm_widget list,

@@ -353,6 +353,7 @@ typedef struct _Elm_Widget_Smart_Data
 
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
+   int                           disabled;
 
    Eina_Inlist                  *translate_strings;
    Eina_List                    *focus_chain;
@@ -394,7 +395,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     highlight_ignore : 1;
    Eina_Bool                     highlight_in_theme : 1;
    Eina_Bool                     access_highlight_in_theme : 1;
-   Eina_Bool                     disabled : 1;
    Eina_Bool                     is_mirrored : 1;
    Eina_Bool                     mirrored_auto_mode : 1; /* This is TRUE by default */
    Eina_Bool                     still_in : 1;

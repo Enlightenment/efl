@@ -3733,15 +3733,15 @@ _rotate_test(Evas_Object *obj,
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_gesture_layer_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+EOLIAN static void
+_elm_gesture_layer_efl_ui_widget_disabled_set(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
-   if (disabled)
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
+
+   if (efl_ui_widget_disabled_get(obj))
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void

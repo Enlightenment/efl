@@ -1077,13 +1077,12 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
    elm_interface_scrollable_content_region_set(obj, r.x, r.y, r.w, r.h);
 }
 
-EOLIAN static Eina_Bool
-_elm_list_efl_ui_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
+EOLIAN static void
+_elm_list_efl_ui_widget_disabled_set(Eo *obj, Elm_List_Data *sd, Eina_Bool disabled)
 {
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
-   if (disabled)
+   if (efl_ui_widget_disabled_get(obj))
      {
         elm_widget_scroll_freeze_push(obj);
         elm_widget_scroll_hold_push(obj);
@@ -1096,8 +1095,6 @@ _elm_list_efl_ui_widget_on_disabled_update(Eo *obj, Elm_List_Data *sd, Eina_Bool
         elm_widget_scroll_freeze_pop(obj);
         elm_widget_scroll_hold_pop(obj);
      }
-
-   return EINA_TRUE;
 }
 
 static void

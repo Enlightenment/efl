@@ -698,10 +698,12 @@ _get_drop_format(Evas_Object *obj)
 }
 
 /* we can't reuse layout's here, because it's on entry_edje only */
-EOLIAN static Eina_Bool
-_efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
+EOLIAN static void
+_efl_ui_text_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool disabled)
 {
-   const char *emission ;
+   const char *emission;
+
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
@@ -709,16 +711,16 @@ _efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Ein
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   emission = disabled ? "efl,state,disabled" : "efl,state,enabled";
+   emission = efl_ui_widget_disabled_get(obj) ? "efl,state,disabled" : "efl,state,enabled";
    edje_object_signal_emit(sd->entry_edje, emission, "efl");
    if (sd->scroll)
      {
         edje_object_signal_emit(sd->scr_edje, emission, "efl");
-        //elm_interface_scrollable_freeze_set(obj, disabled);
+        elm_interface_scrollable_freeze_set(obj, efl_ui_widget_disabled_get(obj));
      }
-   sd->disabled = disabled;
+   sd->disabled = efl_ui_widget_disabled_get(obj);
 
-   if (!disabled)
+   if (!efl_ui_widget_disabled_get(obj))
      {
         sd->drop_format = _get_drop_format(obj);
         elm_drop_target_add(obj, sd->drop_format,
@@ -727,8 +729,6 @@ _efl_ui_text_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Text_Data *sd, Ein
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
      }
-
-   return EINA_TRUE;
 }
 
 /* we can't issue the layout's theming code here, cause it assumes an
@@ -2071,7 +2071,7 @@ _format_color_parse(const char *str, int slen,
 /**
   * @internal
   * Updates the text properties of the object from the theme.
-  * 
+  *
   * This update functions skips any property that was already set,
   * to allow users to override the theme during the construction of the widget.
   */
@@ -3642,7 +3642,7 @@ _anchor_format_parse(const char *item)
 static Anchor *
 _anchor_get(Eo *obj, Efl_Ui_Text_Data *sd, Efl_Text_Annotate_Annotation *an)
 {
-   Anchor *anc; 
+   Anchor *anc;
    Eina_List *i;
    const char *str;
 

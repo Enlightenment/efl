@@ -106,6 +106,8 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       @property disabled {
          [[Whether the widget is enabled (accepts and reacts to user inputs).
 
+           The property works counted, this means, whenever n-caller set the value to $true, n-caller have to set it to $false in order to get it out of the disabled state again.
+
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
            $false by default, meaning the widget is enabled.
@@ -311,17 +313,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          }
          return: bool; [[Indicates if the operation succeeded.]]
          legacy: elm_widget_sub_object_del;
-      }
-      on_disabled_update @protected {
-         [[Virtual function called when the widget becomes disabled.
-
-           This may be triggered even if this widget is not disabled, as the
-           parent widget could be disabled and propagate its state.
-         ]]
-         params {
-            disabled: bool; [[The new value of @.disabled.]]
-         }
-         return: bool; [[Indicates if the operation succeeded.]]
       }
       theme_apply @protected {
          [[Virtual function called when the widget needs to re-apply its theme.
