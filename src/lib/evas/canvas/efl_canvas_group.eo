@@ -77,7 +77,7 @@ class @beta Efl.Canvas.Group extends Efl.Canvas.Object
            to ensure the proper stacking of special objects, such as clippers,
            event rectangles, etc...
 
-           See also @.group_member_del.
+           See also @.group_member_remove.
            See also @.group_member_is.
          ]]
          params {
@@ -85,7 +85,7 @@ class @beta Efl.Canvas.Group extends Efl.Canvas.Object
          }
          legacy: null;
       }
-      group_member_del {
+      group_member_remove {
          [[Removes a member object from a given smart object.
 
            This removes a member object from a smart object, if it was added

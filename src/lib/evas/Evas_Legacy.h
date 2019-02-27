@@ -6641,7 +6641,7 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  * This function will return @c null when a non-smart object is passed.
  *
  * See also @ref Efl.Canvas.Group.group_member_add,
- * @ref Efl.Canvas.Group.group_member_del and @ref evas_object_smart_iterator_new.
+ * @ref Efl.Canvas.Group.group_member_remove and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *
@@ -6698,7 +6698,7 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
  * object.
  *
  * See also @ref Efl.Canvas.Group.group_member_add and
- * @ref Efl.Canvas.Group.group_member_del
+ * @ref Efl.Canvas.Group.group_member_remove
  *
  * @return Returns the iterator of the member objects of @c obj.
  *

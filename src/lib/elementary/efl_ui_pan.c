@@ -194,7 +194,7 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
 {
    Efl_Gfx_Stack *old_content = pd->content;
 
-   efl_canvas_group_member_del(obj, pd->content);
+   efl_canvas_group_member_remove(obj, pd->content);
    evas_object_event_callback_del_full
      (pd->content, EVAS_CALLBACK_DEL, _efl_ui_pan_content_del_cb, obj);
    evas_object_event_callback_del_full

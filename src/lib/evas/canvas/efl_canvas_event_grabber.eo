@@ -35,7 +35,7 @@ class @beta Efl.Canvas.Event_Grabber extends Efl.Canvas.Group
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_member_del;
+      Efl.Canvas.Group.group_member_remove;
       Efl.Canvas.Group.group_member_is;
       Efl.Canvas.Group.group_members_iterate;
       Efl.Canvas.Group.group_calculate;

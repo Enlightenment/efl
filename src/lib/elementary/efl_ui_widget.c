@@ -1070,11 +1070,11 @@ _efl_ui_widget_efl_canvas_group_group_member_add(Eo *obj, Elm_Widget_Smart_Data 
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_canvas_group_group_member_del(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *child)
+_efl_ui_widget_efl_canvas_group_group_member_remove(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *child)
 {
    if (!evas_object_data_get(child, "_elm_leaveme"))
       evas_object_clip_unset(child);
-   efl_canvas_group_member_del(efl_super(obj, MY_CLASS), child);
+   efl_canvas_group_member_remove(efl_super(obj, MY_CLASS), child);
 }
 
 // internal funcs

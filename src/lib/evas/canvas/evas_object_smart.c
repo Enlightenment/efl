@@ -342,11 +342,11 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
-   efl_canvas_group_member_del(smart_obj, eo_obj);
+   efl_canvas_group_member_remove(smart_obj, eo_obj);
 }
 
 EOLIAN static void
-_efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
+_efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *smart;
