@@ -158,18 +158,6 @@ _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entr
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Fileselector_Entry_Data *sd, Eina_Bool disabled)
-{
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   elm_widget_disabled_set(sd->button, disabled);
-   elm_widget_disabled_set(sd->entry, disabled);
-
-   return EINA_TRUE;
-}
-
 static Eina_Bool
 _elm_fileselector_entry_text_set(Eo *obj, Elm_Fileselector_Entry_Data *sd, const char *part, const char *label)
 {

@@ -7,7 +7,6 @@ class Elm.Fileselector_Entry extends Efl.Ui.Layout implements Elm.Interface.File
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_disabled_update;
       Elm.Interface.Fileselector.selected_model { get; set; }
       Elm.Interface.Fileselector.folder_only { get; set; }
       Elm.Interface.Fileselector.is_save { get; set; }

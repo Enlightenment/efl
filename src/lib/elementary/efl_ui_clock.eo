@@ -224,7 +224,6 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;
    }

@@ -1027,20 +1027,6 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
    efl_destructor(efl_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS));
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
-{
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   if (sd->list)
-     elm_object_disabled_set(sd->list, disabled);
-   else if (sd->content)
-     elm_object_disabled_set(sd->content, disabled);
-
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
