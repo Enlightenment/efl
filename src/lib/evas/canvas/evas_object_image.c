@@ -861,10 +861,10 @@ _efl_canvas_image_internal_efl_gfx_image_image_load_error_get(const Eo *eo_obj E
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
+_efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    int quality = 80, compress = 9, ok = 0;
-   char *encoding = NULL;
+   const char *encoding = NULL;
    Image_Entry *ie;
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
    Evas_Colorspace want_cspace = EVAS_COLORSPACE_ARGB8888;
@@ -889,46 +889,31 @@ _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data 
 
    cspace = ENFN->image_file_colorspace_get(ENC, pixels);
    want_cspace = cspace;
-
-   if (flags)
+   if (info)
      {
-        const char *ext;
-        char *p, *pp;
-        char *tflags;
+        encoding = info->encoding;
+        quality = info->quality;
+        compress = info->compression;
+     }
 
-        tflags = alloca(strlen(flags) + 1);
-        strcpy(tflags, flags);
-        p = tflags;
-        while (p)
+   if (encoding)
+     {
+        const char *ext = strrchr(file, '.');
+        if (ext && !strcasecmp(ext, ".tgv"))
           {
-             pp = strchr(p, ' ');
-             if (pp) *pp = 0;
-             sscanf(p, "quality=%4i", &quality);
-             sscanf(p, "compress=%4i", &compress);
-             sscanf(p, "encoding=%ms", &encoding);
-             if (pp) p = pp + 1;
-             else break;
-          }
-
-        if (encoding)
-          {
-             ext = strrchr(file, '.');
-             if (ext && !strcasecmp(ext, ".tgv"))
+             if (!strcmp(encoding, "auto"))
+               want_cspace = cspace;
+             else if (!strcmp(encoding, "etc1"))
+               want_cspace = EVAS_COLORSPACE_ETC1;
+             else if (!strcmp(encoding, "etc2"))
                {
-                  if (!strcmp(encoding, "auto"))
-                    want_cspace = cspace;
-                  else if (!strcmp(encoding, "etc1"))
-                    want_cspace = EVAS_COLORSPACE_ETC1;
-                  else if (!strcmp(encoding, "etc2"))
-                    {
-                       if (!ENFN->image_alpha_get(ENC, pixels))
-                         want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
-                       else
-                         want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
-                    }
-                  else if (!strcmp(encoding, "etc1+alpha"))
-                    want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
+                  if (!ENFN->image_alpha_get(ENC, pixels))
+                    want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
+                  else
+                    want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
                }
+             else if (!strcmp(encoding, "etc1+alpha"))
+               want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
           }
      }
 
@@ -971,12 +956,10 @@ _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data 
    if (unmap_it)
      ENFN->image_data_unmap(ENC, pixels, &slice);
 
-   free(encoding);
    if (!ok) ERR("Image save failed.");
    return ok;
 
 no_pixels:
-   free(encoding);
    ERR("Could not get image pixels for saving.");
    return EINA_FALSE;
 }

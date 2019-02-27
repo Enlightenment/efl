@@ -221,8 +221,39 @@ evas_object_image_mmap_get(const Evas_Object *obj, const Eina_File **f, const ch
 EAPI Eina_Bool
 evas_object_image_save(const Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
+   char *encoding = NULL;
+   Efl_File_Save_Info info;
+   Eina_Error ret;
+
    EVAS_IMAGE_API(obj, EINA_FALSE);
-   return efl_file_save(obj, file, key, flags);
+   
+   if (flags)
+     {
+        char *p, *pp;
+        char *tflags;
+        int quality = 80, compress = 9;
+
+        tflags = alloca(strlen(flags) + 1);
+        strcpy(tflags, flags);
+        p = tflags;
+        while (p)
+          {
+             pp = strchr(p, ' ');
+             if (pp) *pp = 0;
+             sscanf(p, "quality=%4i", &quality);
+             sscanf(p, "compress=%4i", &compress);
+             sscanf(p, "encoding=%ms", &encoding);
+             if (pp) p = pp + 1;
+             else break;
+          }
+        info.quality = quality;
+        info.compression = compress;
+        info.encoding = encoding;
+
+     }
+   ret = efl_file_save(obj, file, key, flags ? &info : NULL);
+   free(encoding);
+   return ret;
 }
 
 EAPI Eina_Bool

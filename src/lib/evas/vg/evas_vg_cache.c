@@ -167,7 +167,7 @@ _evas_cache_vg_entry_free_cb(void *data)
 }
 
 static Eina_Bool
-_vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *flags)
+_vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Evas_Module       *em;
    Evas_Vg_Save_Func *saver;
@@ -176,24 +176,7 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *
 
    if (!file) return EINA_FALSE;
 
-   if (flags)
-     {
-        char *p, *pp;
-        char *tflags;
-
-        int len = strlen(flags) + 1;
-        tflags = alloca(len);
-        strncpy(tflags, flags, len);
-        p = tflags;
-        while (p)
-          {
-             pp = strchr(p, ' ');
-             if (pp) *pp = 0;
-             sscanf(p, "compress=%i", &compress);
-             if (pp) p = pp + 1;
-             else break;
-          }
-     }
+   if (info) compress = info->compression;
 
    em = _find_saver_module(file);
    if (em)
@@ -408,20 +391,18 @@ evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
 }
 
 Eina_Bool
-evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key,
-                              const char *flags)
+evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data *vfd =
       evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
 
    if (!vfd) return EINA_FALSE;
 
-   return _vg_file_save(vfd, file, key, flags);
+   return _vg_file_save(vfd, file, key, info);
 }
 
 Eina_Bool
-evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key,
-                        const char *flags)
+evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data vfd = {};
 
@@ -432,5 +413,5 @@ evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char
    vfd.root = root;
    vfd.preserve_aspect = EINA_FALSE;
 
-   return _vg_file_save(&vfd, file, key, flags);
+   return _vg_file_save(&vfd, file, key, info);
 }

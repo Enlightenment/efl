@@ -292,14 +292,14 @@ _efl_canvas_vg_object_efl_file_unload(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
+_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    if (pd->vg_entry)
-     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, flags);
+     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, info);
 
    Evas_Coord w, h;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   return evas_cache_vg_file_save(pd->root, w, h, file, key, flags);
+   return evas_cache_vg_file_save(pd->root, w, h, file, key, info);
 }
 
 static void

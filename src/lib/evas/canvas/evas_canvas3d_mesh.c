@@ -887,7 +887,7 @@ EOLIAN static Eina_Bool
 _evas_canvas3d_mesh_efl_file_save_save(const Eo *obj, Evas_Canvas3D_Mesh_Data *pd,
                    const char *file,
                    const char *key EINA_UNUSED,
-                   const char *flags EINA_UNUSED)
+                   const Efl_File_Save_Info *info EINA_UNUSED)
 {
    if ((file == NULL) || (obj == NULL) || (pd == NULL)) return EINA_FALSE;
 

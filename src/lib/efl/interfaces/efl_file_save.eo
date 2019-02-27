@@ -1,5 +1,14 @@
 import eina_types;
 
+
+struct Efl.File_Save_Info
+{
+   [[Info used to determine various attributes when saving a file.]]
+   quality: uint; [[The quality level (0-100) to save the file with; commonly used when saving image files.]]
+   compression: uint; [[The compression level (0-100) to save the file with.]]
+   encoding: string; [[The encoding to use when saving the file.]]
+}
+
 interface @beta Efl.File_Save {
    [[Efl file saving interface]]
    methods {
@@ -20,8 +29,7 @@ interface @beta Efl.File_Save {
                                               obligatory).]]
             @in key: string; [[The image key in the file (if an Eet one), or $null,
                                      otherwise.]]
-            @in flags: string; [[String containing the flags to be used ($null for
-                                       none).]]
+            @in info: const(ptr(Efl.File_Save_Info)); [[The flags to be used ($null for defaults).]]
          }
          return: bool;  [[$true on success, $false otherwise]]
       }
