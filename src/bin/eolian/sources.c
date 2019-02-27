@@ -437,6 +437,39 @@ _gen_reflect_set(Eina_Strbuf *buf, const char *cnamel, const Eolian_Type *valt,
 }
 
 static void
+_emit_class_function(Eina_Strbuf *buf, const Eolian_Function *fid, const Eolian_Type *rtp, Eina_Strbuf *params_full,
+                     const char *ocnamel, const char *func_suffix, Eina_Strbuf *params, const char *function_name)
+{
+   eina_strbuf_append(buf, "EOAPI ");
+   if (rtp)
+     eina_strbuf_append(buf, eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN));
+   else
+     eina_strbuf_append(buf, "void");
+   eina_strbuf_append(buf, " ");
+   eina_strbuf_append(buf, function_name);
+   eina_strbuf_append(buf, "(");
+   if (eina_strbuf_length_get(params_full) == 0)
+     eina_strbuf_append(buf, "void");
+   else
+     eina_strbuf_append_buffer(buf, params_full);
+   eina_strbuf_append(buf, ")\n");
+   eina_strbuf_append(buf, "{\n");
+   eina_strbuf_append_printf(buf, "   %s();\n", eolian_class_c_get_function_name_get(eolian_function_class_get(fid)));
+   if (rtp)
+     eina_strbuf_append(buf, "   return ");
+   else
+     eina_strbuf_append(buf, "   ");
+   eina_strbuf_append_printf(buf, "_%s", ocnamel);
+   eina_strbuf_append_char(buf, '_');
+   eina_strbuf_append(buf, eolian_function_name_get(fid));
+   eina_strbuf_append(buf, func_suffix);
+   eina_strbuf_append(buf, "(");
+   eina_strbuf_append_buffer(buf, params);
+   eina_strbuf_append(buf, ");\n");
+   eina_strbuf_append(buf, "}\n");
+}
+
+static void
 _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
           Eolian_Function_Type ftype, Eina_Strbuf *buf,
           const Eolian_Implement *impl, Eina_Strbuf *lbuf,
@@ -901,33 +934,11 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
      }
    if (impl_same_class && eolian_function_is_class(fid))
      {
-        eina_strbuf_append(buf, "EOAPI ");
-        if (rtp)
-          eina_strbuf_append(buf, eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN));
-        else
-          eina_strbuf_append(buf, "void");
-        eina_strbuf_append(buf, " ");
-        eina_strbuf_append(buf, eolian_function_full_c_name_get(fid, ftype, EINA_FALSE));
-        eina_strbuf_append(buf, "(");
-        if (eina_strbuf_length_get(params_full) == 0)
-          eina_strbuf_append(buf, "void");
-        else
-          eina_strbuf_append_buffer(buf, params_full);
-        eina_strbuf_append(buf, ")\n");
-        eina_strbuf_append(buf, "{\n");
-        eina_strbuf_append_printf(buf, "   %s();\n", eolian_class_c_get_function_name_get(cl));
-        if (rtp)
-          eina_strbuf_append(buf, "   return ");
-        else
-          eina_strbuf_append(buf, "   ");
-        eina_strbuf_append_printf(buf, "_%s", ocnamel);
-        eina_strbuf_append_char(buf, '_');
-        eina_strbuf_append(buf, eolian_function_name_get(fid));
-        eina_strbuf_append(buf, func_suffix);
-        eina_strbuf_append(buf, "(");
-        eina_strbuf_append_buffer(buf, params);
-        eina_strbuf_append(buf, ");\n");
-        eina_strbuf_append(buf, "}\n");
+        const char *legacy_name = eolian_function_full_c_name_get(fid, ftype, EINA_TRUE);
+
+        _emit_class_function(buf, fid, rtp, params_full, ocnamel, func_suffix, params, eolian_function_full_c_name_get(fid, ftype, EINA_FALSE));
+        if (legacy_name)
+          _emit_class_function(buf, fid, rtp, params_full, ocnamel, func_suffix, params, legacy_name);
      }
 
    free(cname);
