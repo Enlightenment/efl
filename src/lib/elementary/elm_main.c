@@ -1568,14 +1568,14 @@ elm_object_focus_highlight_style_set(Evas_Object *obj,
                                      const char  *style)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_focus_highlight_style_set(obj, style);
+   return elm_win_focus_highlight_style_set(elm_widget_top_get(obj), style);
 }
 
 EAPI const char *
 elm_object_focus_highlight_style_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focus_highlight_style_get(obj);
+   return elm_win_focus_highlight_style_get(elm_widget_top_get(obj));
 }
 
 EAPI const char *

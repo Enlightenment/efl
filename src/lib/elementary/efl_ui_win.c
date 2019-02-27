@@ -1187,8 +1187,6 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
    Eina_Bool visible_changed;
    Eina_Bool common_visible;
    const char *sig = NULL;
-   const char *focus_style_target = NULL;
-   const char *focus_style_previous = NULL;
 
    _elm_win_focus_highlight_reconfigure_job_stop(sd);
 
@@ -1254,18 +1252,11 @@ _elm_win_focus_highlight_reconfigure_job(void *data)
         goto the_end;
      }
 
-   if (previous)
-     focus_style_previous = elm_widget_focus_highlight_style_get(previous);
-   focus_style_target = elm_widget_focus_highlight_style_get(target);
-
-   if (sd->focus_highlight.theme_changed ||
-       (focus_style_target != focus_style_previous))
+   if (sd->focus_highlight.theme_changed)
      {
         const char *str;
 
-        if (focus_style_target)
-          str = focus_style_target;
-        else if (sd->focus_highlight.style)
+       if (sd->focus_highlight.style)
           str = sd->focus_highlight.style;
         else
           str = "default";
@@ -6947,9 +6938,8 @@ _efl_ui_win_keygrab_unset(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *
 }
 
 EOLIAN static void
-_efl_ui_win_efl_ui_widget_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool enabled)
+_efl_ui_win_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool enabled)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    enabled = !!enabled;
    if (sd->focus_highlight.enabled == enabled)
      return;
@@ -6963,9 +6953,8 @@ _efl_ui_win_efl_ui_widget_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.enabled;
 }
 
@@ -7012,9 +7001,8 @@ _efl_ui_win_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *style)
+_efl_ui_win_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *style)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    if (!eina_stringshare_replace(&sd->focus_highlight.style, style))
      return EINA_TRUE;
 
@@ -7024,16 +7012,14 @@ _efl_ui_win_efl_ui_widget_focus_highlight_style_set(Eo *obj EINA_UNUSED, Efl_Ui_
 }
 
 EOLIAN static const char*
-_efl_ui_win_efl_ui_widget_focus_highlight_style_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_focus_highlight_style_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.style;
 }
 
 EOLIAN static void
-_efl_ui_win_efl_ui_widget_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool animate)
+_efl_ui_win_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool animate)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    animate = !!animate;
    if (sd->focus_highlight.animate == animate)
      return;
@@ -7044,9 +7030,8 @@ _efl_ui_win_efl_ui_widget_focus_highlight_animate_set(Eo *obj EINA_UNUSED, Efl_U
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_efl_ui_widget_focus_highlight_animate_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_focus_highlight_animate_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   // Do not call efl_super() here. Only Win handles this property.
    return sd->focus_highlight.animate;
 }
 
@@ -8886,42 +8871,6 @@ elm_win_focus_get(const Efl_Ui_Win *obj)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(obj, MY_CLASS), EINA_FALSE);
    return efl_ui_focus_object_focus_get(obj);
-}
-
-EAPI void
-elm_win_focus_highlight_style_set(Elm_Win *obj, const char *style)
-{
-   elm_widget_focus_highlight_style_set(obj, style);
-}
-
-EAPI const char *
-elm_win_focus_highlight_style_get(const Elm_Win *obj)
-{
-   return elm_widget_focus_highlight_style_get(obj);
-}
-
-EAPI Eina_Bool
-elm_win_focus_highlight_enabled_get(const Efl_Ui_Win *obj)
-{
-   return elm_widget_focus_highlight_enabled_get(obj);
-}
-
-EAPI void
-elm_win_focus_highlight_enabled_set(Efl_Ui_Win *obj, Eina_Bool enabled)
-{
-   efl_ui_widget_focus_highlight_enabled_set(obj, enabled);
-}
-
-EAPI void
-elm_win_focus_highlight_animate_set(Elm_Win *obj, Eina_Bool animate)
-{
-   efl_ui_widget_focus_highlight_animate_set(obj, animate);
-}
-
-EAPI Eina_Bool
-elm_win_focus_highlight_animate_get(const Elm_Win *obj)
-{
-   return efl_ui_widget_focus_highlight_animate_get(obj);
 }
 
 EAPI Eina_Bool

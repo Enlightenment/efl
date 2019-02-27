@@ -621,6 +621,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
 {
    ELM_TOOLBAR_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_TOOLBAR_DATA_GET(obj, sd);
    const char *focus_raise;
 
@@ -643,7 +644,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
          break;
      }
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_win_focus_highlight_enabled_get(win))
      {
         elm_layout_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -664,6 +665,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
 {
    ELM_TOOLBAR_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    if ((!sd) || !sd->focused_item ||
@@ -671,7 +673,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
      return;
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_win_focus_highlight_enabled_get(win))
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
         elm_layout_signal_emit

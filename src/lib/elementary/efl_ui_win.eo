@@ -862,6 +862,64 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
            rotation : Efl.Orient; [[The rotation of the window]]
          }
       }
+      @property focus_highlight_enabled {
+         [[Whether focus highlight is enabled or not.
+
+           See also @.focus_highlight_style.
+           See also @.focus_highlight_animate.
+         ]]
+         set {
+            [[Set the enabled status for the focus highlight in a window.
+
+              This function will enable or disable the focus highlight,
+              regardless of the global setting for it.
+            ]]
+         }
+         get {
+            [[Get the enabled value of the focus highlight for this window.]]
+         }
+         values {
+            enabled: bool; [[The enabled value for the highlight.]]
+         }
+      }
+      @property focus_highlight_style {
+         [[Control the widget focus highlight style.
+
+           If $style is $null, the default will be used.
+
+           See also @.focus_highlight_enabled.
+           See also @.focus_highlight_animate.
+         ]]
+         set {
+            /* FIXME: This is async... success here means nothing. */
+            return: bool; [[$true on success, $false otherwise.]]
+         }
+         get {
+         }
+         values {
+            style: string @nullable; [[The name of the focus highlight style.]]
+         }
+      }
+      @property focus_highlight_animate {
+         [[Whether focus highlight should animate or not.
+
+           See also @.focus_highlight_style.
+           See also @.focus_highlight_enabled.
+         ]]
+         set {
+            [[Set the animate status for the focus highlight for this window.
+
+              This function will enable or disable the animation of focus
+              highlight.
+            ]]
+         }
+         get {
+            [[Get the animate value of the focus highlight for this window.]]
+         }
+         values {
+            animate: bool; [[The enabled value for the highlight animation.]]
+         }
+      }
    }
    implements {
       class.constructor;
@@ -878,9 +936,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Gfx.Stack.lower_to_bottom; [[This action is ignored by the Window.]]
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.focus { get; }
-      Efl.Ui.Widget.focus_highlight_style { get; set; }
-      Efl.Ui.Widget.focus_highlight_enabled { get; set; }
-      Efl.Ui.Widget.focus_highlight_animate { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_event;
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;

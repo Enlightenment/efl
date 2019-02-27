@@ -1147,6 +1147,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
 {
    ELM_LIST_ITEM_DATA_GET(eo_it, it);
    ELM_LIST_DATA_GET_FROM_ITEM(it, sd);
+   Evas_Object *win = elm_widget_top_get(WIDGET(it));
    Evas_Coord x, y, w, h, sx, sy, sw, sh;
    const char *focus_raise;
 
@@ -1170,7 +1171,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
           }
      }
    sd->focused_item = eo_it;
-   if (elm_widget_focus_highlight_enabled_get(WIDGET(it)) || _elm_config->win_auto_focus_enable)
+   if (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable)
      {
         edje_object_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -1189,6 +1190,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
 {
    ELM_LIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_LIST_DATA_GET(obj, sd);
 
    if ((!sd) || (!sd->focused_item) ||
@@ -1198,7 +1200,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
    if (_is_no_select(it))
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
+   if (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable)
      {
         ELM_LIST_ITEM_DATA_GET(sd->focused_item, focus_it);
         edje_object_signal_emit

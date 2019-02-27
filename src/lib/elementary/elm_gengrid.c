@@ -205,6 +205,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    Item_Cache *itc = NULL;
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
+   Evas_Object *win = elm_widget_top_get(obj);
 
    evas_event_freeze(evas_object_evas_get(obj));
    if (sd->item_cache_max > 0)
@@ -230,7 +231,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           edje_object_signal_emit(itc->base_view, "elm,state,enabled", "elm");
         if ((EO_OBJ(it) == sd->focused_item) &&
-            (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable))
+            (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable))
           edje_object_signal_emit(itc->base_view, "elm,state,unfocused", "elm");
 
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -1560,9 +1561,10 @@ _elm_gengrid_item_focus_update(Elm_Gen_Item *it)
 {
    const char *focus_raise;
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
+   if (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable)
      {
         edje_object_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -2357,6 +2359,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
 {
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_GENGRID_DATA_GET(obj, sd);
 
    if (it->generation < sd->generation)
@@ -2369,7 +2372,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
        (eo_it != sd->focused_item))
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable)
+   if (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable)
      {
         ELM_GENGRID_ITEM_DATA_GET(sd->focused_item, focus_it);
         edje_object_signal_emit
