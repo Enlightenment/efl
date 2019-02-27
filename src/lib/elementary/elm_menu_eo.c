@@ -50,12 +50,6 @@ void _elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *pd);
 void _elm_menu_efl_gfx_entity_visible_set(Eo *obj, Elm_Menu_Data *pd, Eina_Bool v);
 
 
-void _elm_menu_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Menu_Data *pd, Efl_Ui_Widget *parent);
-
-
-Efl_Ui_Widget *_elm_menu_efl_ui_widget_widget_parent_get(const Eo *obj, Elm_Menu_Data *pd);
-
-
 Eina_Error _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *pd);
 
 
@@ -101,8 +95,6 @@ _elm_menu_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_menu_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_destructor, _elm_menu_efl_object_destructor),
       EFL_OBJECT_OP_FUNC(efl_gfx_entity_visible_set, _elm_menu_efl_gfx_entity_visible_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_menu_efl_ui_widget_widget_parent_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_get, _elm_menu_efl_ui_widget_widget_parent_get),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_menu_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_menu_efl_ui_l10n_translation_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_focus_manager_create, _elm_menu_efl_ui_widget_focus_manager_focus_manager_create),

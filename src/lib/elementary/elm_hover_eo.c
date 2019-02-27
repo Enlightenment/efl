@@ -37,12 +37,6 @@ Eina_Error _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *pd);
 Eina_Bool _elm_hover_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Hover_Data *pd, Efl_Canvas_Object *sub_obj);
 
 
-void _elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *pd, Efl_Ui_Widget *parent);
-
-
-Efl_Ui_Widget *_elm_hover_efl_ui_widget_widget_parent_get(const Eo *obj, Elm_Hover_Data *pd);
-
-
 Eina_Bool _elm_hover_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Hover_Data *pd, Efl_Canvas_Object *sub_obj);
 
 
@@ -77,8 +71,6 @@ _elm_hover_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_gfx_entity_size_set, _elm_hover_efl_gfx_entity_size_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_hover_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_sub_object_add, _elm_hover_efl_ui_widget_widget_sub_object_add),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_hover_efl_ui_widget_widget_parent_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_get, _elm_hover_efl_ui_widget_widget_parent_get),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_sub_object_del, _elm_hover_efl_ui_widget_widget_sub_object_del),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_hover_efl_access_widget_action_elm_actions_get),
       EFL_OBJECT_OP_FUNC(efl_access_object_state_set_get, _elm_hover_efl_access_object_state_set_get),

@@ -6,9 +6,6 @@ EOAPI EFL_VOID_FUNC_BODY(elm_obj_win_inwin_activate);
 Efl_Object *_elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd);
 
 
-void _elm_inwin_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd, Efl_Ui_Widget *parent);
-
-
 Eina_Bool _elm_inwin_efl_content_content_set(Eo *obj, Elm_Inwin_Data *pd, Efl_Gfx_Entity *content);
 
 
@@ -32,7 +29,6 @@ _elm_inwin_class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(elm_obj_win_inwin_activate, _elm_inwin_activate),
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_inwin_efl_object_constructor),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_inwin_efl_ui_widget_widget_parent_set),
       EFL_OBJECT_OP_FUNC(efl_content_set, _elm_inwin_efl_content_content_set),
       EFL_OBJECT_OP_FUNC(efl_content_get, _elm_inwin_efl_content_content_get),
       EFL_OBJECT_OP_FUNC(efl_content_unset, _elm_inwin_efl_content_content_unset),

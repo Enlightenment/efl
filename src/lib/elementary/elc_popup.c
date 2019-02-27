@@ -1496,10 +1496,11 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
    evas_object_resize(popup, w, h);
 }
 
-EOLIAN static void
-_elm_popup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
+static void
+_parent_setup(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
+
    evas_object_geometry_get(parent, &x, &y, &w, &h);
 
    if (efl_isa(parent, EFL_UI_WIN_CLASS))
@@ -1541,6 +1542,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
    legacy_object_focus_handle(obj);
+   _parent_setup(obj, _pd, efl_parent_get(obj));
 
    return obj;
 }

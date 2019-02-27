@@ -682,12 +682,6 @@ _elm_hoversel_efl_gfx_entity_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bo
    efl_gfx_entity_visible_set(sd->hover, vis);
 }
 
-EOLIAN static void
-_elm_hoversel_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, Evas_Object *parent)
-{
-   elm_hoversel_hover_parent_set(obj, parent);
-}
-
 EOLIAN static Eina_Bool
 _elm_hoversel_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
 {
@@ -709,6 +703,7 @@ _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);
    legacy_object_focus_handle(obj);
+   elm_hoversel_hover_parent_set(obj, efl_parent_get(obj));
 
    return obj;
 }

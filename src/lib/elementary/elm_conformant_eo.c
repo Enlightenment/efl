@@ -10,9 +10,6 @@ EWAPI const Efl_Event_Description _ELM_CONFORMANT_EVENT_CLIPBOARD_STATE_OFF =
 Efl_Object *_elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *pd);
 
 
-void _elm_conformant_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *pd, Efl_Ui_Widget *parent);
-
-
 Eina_Error _elm_conformant_efl_ui_widget_theme_apply(Eo *obj, Elm_Conformant_Data *pd);
 
 
@@ -29,7 +26,6 @@ _elm_conformant_class_initializer(Efl_Class *klass)
 
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_conformant_efl_object_constructor),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_conformant_efl_ui_widget_widget_parent_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_conformant_efl_ui_widget_theme_apply),
       ELM_CONFORMANT_EXTRA_OPS
    );

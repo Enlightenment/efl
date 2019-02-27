@@ -1101,13 +1101,6 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_elm_ctxpopup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
-{
-   //default parent is to be hover parent
-   elm_ctxpopup_hover_parent_set(obj, parent);
-}
-
 EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
@@ -1129,7 +1122,8 @@ _elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
-
+   //default parent is to be hover parent
+   elm_ctxpopup_hover_parent_set(obj, efl_parent_get(obj));
    return obj;
 }
 

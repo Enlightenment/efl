@@ -474,26 +474,9 @@ elm_notify_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-EOLIAN static Eo *
-_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
 
-   return obj;
-}
-
-EAPI void
-elm_notify_parent_set(Evas_Object *obj,
-                      Evas_Object *parent)
-{
-   ELM_NOTIFY_CHECK(obj);
-   efl_ui_widget_parent_set(obj, parent);
-}
-
-EOLIAN static void
-_elm_notify_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
+static void
+_parent_setup(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
 {
    if (sd->parent)
      {
@@ -530,6 +513,27 @@ _elm_notify_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_O
    _calc(obj);
 }
 
+EOLIAN static Eo *
+_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
+   _parent_setup(obj, sd, efl_parent_get(obj));
+
+   return obj;
+}
+
+EAPI void
+elm_notify_parent_set(Evas_Object *obj,
+                      Evas_Object *parent)
+{
+   ELM_NOTIFY_CHECK(obj);
+   ELM_NOTIFY_DATA_GET(obj, sd);
+   efl_ui_widget_sub_object_add(parent, obj);
+   _parent_setup(obj, sd, parent);
+}
+
 EAPI Evas_Object *
 elm_notify_parent_get(const Evas_Object *obj)
 {
@@ -537,12 +541,6 @@ elm_notify_parent_get(const Evas_Object *obj)
    Evas_Object *ret = NULL;
    ret = efl_ui_widget_parent_get((Eo *) obj);
    return ret;
-}
-
-EOLIAN static Evas_Object*
-_elm_notify_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
-{
-   return sd->parent;
 }
 
 EINA_DEPRECATED EAPI void
