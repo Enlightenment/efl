@@ -1476,7 +1476,8 @@ gl_extn_veto(Render_Engine *re)
                 )
                extn_have_y_inverted = 0;
           }
-        if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
+        if ((!strstr(str, "EGL_EXT_swap_buffers_with_damage")) &&
+            (!strstr(str, "EGL_KHR_swap_buffers_with_damage")))
           {
              glsym_eglSwapBuffersWithDamage = NULL;
           }
