@@ -115,7 +115,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
       Efl.Layout.Calc.calc_size_min;
       Efl.Layout.Calc.calc_parts_extends;
       Efl.Layout.Calc.calc_force;
-      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Draggable.drag_target { get; set; }
       Efl.Ui.Property_Bind.property_bind;

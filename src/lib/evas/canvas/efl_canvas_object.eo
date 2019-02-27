@@ -86,7 +86,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             render_op: Efl.Gfx.Render_Op; [[Blend or copy.]]
          }
       }
-      @property clip {
+      @property clipper {
          set {
             [[Clip one object to another.
 
@@ -128,6 +128,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               Note: Only rectangle and image (masks) objects can be used
               as clippers. Anything else will result in undefined behaviour.
             ]]
+            legacy: evas_object_clip_set;
          }
          get {
             [[Get the object clipping $obj (if any).
@@ -136,9 +137,10 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               not being clipped at all, $null is returned. The object $obj
               must be a valid Evas_Object.
             ]]
+            legacy: evas_object_clip_get;
          }
          values {
-            clip: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
+            clipper: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
          }
       }
       @property repeat_events {
@@ -348,7 +350,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                                 $false otherwise.]]
          }
       }
-      @property clipees {
+      @property clipped_objects {
          get {
             [[Return a list of objects currently clipped by $obj.
 
@@ -363,7 +365,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               anymore after that point. Any use of the list after this
               may have undefined results, possibly leading to crashes.
 
-              See also @.clip.
+              See also @.clipper.
             ]]
             legacy: null;
             return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
@@ -396,12 +398,11 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             dir: Efl.Text_Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
-      clipees_has @const {
-         [[Test if any object is clipped by $obj.
-
-           @since 1.8
+      clipped_objects_count @const {
+         [[Returns the number of objects clipped by $obj
          ]]
-         return: bool @warn_unused; [[$true if any object is clipped by $obj, $false otherwise]]
+         legacy: null;
+         return: uint @warn_unused; [[The number of objects clipped by $obj]]
       }
       key_grab {
          /* FIXME: can't reference Eolian object, .eo file not being installed */

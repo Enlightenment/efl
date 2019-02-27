@@ -136,7 +136,7 @@ class @beta Efl.Canvas.Group extends Efl.Canvas.Object
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
-      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { get; set; }
    }

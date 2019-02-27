@@ -1021,7 +1021,7 @@ _efl_ui_widget_efl_canvas_object_is_frame_object_set(Eo *obj, Elm_Widget_Smart_D
 }
 
 EOLIAN static void
-_efl_ui_widget_efl_canvas_object_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
+_efl_ui_widget_efl_canvas_object_clipper_set(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *clip)
 {
    Eina_Iterator *it;
    Evas_Object *o;
@@ -1029,7 +1029,7 @@ _efl_ui_widget_efl_canvas_object_clip_set(Eo *obj, Elm_Widget_Smart_Data *_pd EI
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
-   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
+   efl_canvas_object_clipper_set(efl_super(obj, MY_CLASS), clip);
 
    it = evas_object_smart_iterator_new(obj);
    EINA_ITERATOR_FOREACH(it, o)
@@ -5870,7 +5870,7 @@ _widget_shadow_update(Widget_Shadow *ws)
         return;
      }
 
-   efl_canvas_object_clip_set(ws->surface, efl_canvas_object_clip_get(ws->widget));
+   efl_canvas_object_clipper_set(ws->surface, efl_canvas_object_clipper_get(ws->widget));
    efl_canvas_group_member_add(efl_canvas_object_render_parent_get(ws->widget), ws->surface);
    efl_gfx_entity_geometry_set(ws->surface, srect);
    efl_gfx_stack_below(ws->surface, ws->widget);

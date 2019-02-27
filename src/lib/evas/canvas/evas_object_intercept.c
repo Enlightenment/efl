@@ -194,7 +194,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
           {
              if (!internal)
                {
-                  if (_efl_canvas_object_clip_set_block(eo_obj, obj, eo_other, NULL))
+                  if (_efl_canvas_object_clipper_set_block(eo_obj, obj, eo_other, NULL))
                     return 1;
                }
              if (!obj->interceptors) return 0;
@@ -204,7 +204,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
           {
              if (!internal)
                {
-                  if (_efl_canvas_object_clip_unset_block(eo_obj, obj))
+                  if (_efl_canvas_object_clipper_unset_block(eo_obj, obj))
                     return 1;
                }
              if (!obj->interceptors) return 0;

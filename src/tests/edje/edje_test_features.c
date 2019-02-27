@@ -42,13 +42,13 @@ EFL_START_TEST(edje_test_masking)
    edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "text");
    edje_object_thaw(obj);
-   fail_if(!efl_canvas_object_clip_get(sub));
+   fail_if(!efl_canvas_object_clipper_get(sub));
 
    /* test description.clip_to override */
    edje_object_freeze(obj);
    sub = edje_object_part_object_get(obj, "noclip");
    edje_object_thaw(obj);
-   clip2 = efl_canvas_object_clip_get(sub);
+   clip2 = efl_canvas_object_clipper_get(sub);
    fail_if(clip != clip2);
 
    evas_free(evas);

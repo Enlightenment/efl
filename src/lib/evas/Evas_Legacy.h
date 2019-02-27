@@ -2130,6 +2130,19 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Test if any object is clipped by @c obj.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if any object is clipped by @c obj, @c false otherwise
+ *
+ * @since 1.8
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
 /** How the object should be rendered to output.
  *
  * @ingroup Evas

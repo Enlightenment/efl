@@ -307,7 +307,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
-        Eina_Bool had_clippees = efl_canvas_object_clipees_has(clipper);
+        Eina_Bool had_clippees = evas_object_clipees_has(clipper);
 
         if (EINA_UNLIKELY(!clipper && !o->constructed))
           {
@@ -318,7 +318,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
         if (clipper != eo_obj)
           {
              EINA_SAFETY_ON_NULL_RETURN(clipper);
-             efl_canvas_object_clip_set(eo_obj, clipper);
+             efl_canvas_object_clipper_set(eo_obj, clipper);
              if (!had_clippees && smart->cur->visible)
                efl_gfx_entity_visible_set(clipper, 1);
           }
@@ -369,8 +369,8 @@ _efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *_pd EINA_U
         Evas_Object *clipper = _smart_clipper_get(o);
 
         EINA_SAFETY_ON_NULL_RETURN(clipper);
-        efl_canvas_object_clip_set(eo_obj, NULL);
-        if (!efl_canvas_object_clipees_has(clipper))
+        efl_canvas_object_clipper_set(eo_obj, NULL);
+        if (!evas_object_clipees_has(clipper))
           efl_gfx_entity_visible_set(clipper, 0);
      }
 
@@ -922,20 +922,20 @@ _efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Ei
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Object *clip)
+_efl_canvas_group_efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Object *clip)
 {
    EINA_SAFETY_ON_FALSE_RETURN(!clip || efl_isa(clip, EFL_CANVAS_OBJECT_CLASS));
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
-   efl_canvas_object_clip_set(efl_super(eo_obj, MY_CLASS), clip);
+   efl_canvas_object_clipper_set(efl_super(eo_obj, MY_CLASS), clip);
 
    if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         EINA_SAFETY_ON_NULL_RETURN(clipper);
 
-        efl_canvas_object_clip_set(clipper, clip);
+        efl_canvas_object_clipper_set(clipper, clip);
      }
 }
 

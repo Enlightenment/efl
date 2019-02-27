@@ -81,8 +81,8 @@ static void
 _recover_status(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    int r, g, b, a;
-   Evas_Object *pclip = efl_canvas_object_clip_get(obj);
-   if (pclip) efl_canvas_object_clip_set(sd->img, pclip);
+   Evas_Object *pclip = efl_canvas_object_clipper_get(obj);
+   if (pclip) efl_canvas_object_clipper_set(sd->img, pclip);
 
    efl_gfx_color_get(obj, &r, &g, &b, &a);
    efl_gfx_color_set(sd->img, r, g, b, a);
@@ -706,12 +706,12 @@ _efl_ui_image_efl_gfx_color_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_object_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
+_efl_ui_image_efl_canvas_object_clipper_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
-   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
+   efl_canvas_object_clipper_set(efl_super(obj, MY_CLASS), clip);
 
    if (sd->img) evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);

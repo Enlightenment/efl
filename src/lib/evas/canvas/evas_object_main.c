@@ -422,7 +422,7 @@ evas_object_cur_prev(Evas_Object_Protected_Data *obj)
           map_write->prev = map_write->cur;
         EINA_COW_WRITE_END(evas_object_map_cow, obj->map, map_write);
      }
-   _efl_canvas_object_clip_prev_reset(obj, EINA_TRUE);
+   _efl_canvas_object_clipper_prev_reset(obj, EINA_TRUE);
    eina_cow_memcpy(evas_object_state_cow, (const Eina_Cow_Data **) &obj->prev, obj->cur);
 }
 
@@ -1095,7 +1095,7 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
      }
 
    if (obj->cur && obj->cur->clipper) evas_object_clip_unset(eo_obj);
-   if (obj->prev) _efl_canvas_object_clip_prev_reset(obj, EINA_FALSE);
+   if (obj->prev) _efl_canvas_object_clipper_prev_reset(obj, EINA_FALSE);
 
    if (obj->map) evas_object_map_set(eo_obj, NULL);
 
@@ -2126,7 +2126,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    pass_event = efl_canvas_object_pass_events_get(eo_obj);
    repeat_event = efl_canvas_object_repeat_events_get(eo_obj);
    propagate_event = efl_canvas_object_propagate_events_get(eo_obj);
-   clipees_has = efl_canvas_object_clipees_has(eo_obj);
+   clipees_has = evas_object_clipees_has(eo_obj);
 
    EFL_DBG_INFO_APPEND(group, "Visibility", EINA_VALUE_TYPE_CHAR, visible);
 
@@ -2205,7 +2205,7 @@ _efl_canvas_object_efl_object_dbg_info_get(Eo *eo_obj, Evas_Object_Protected_Dat
    EFL_DBG_INFO_APPEND(group, "Has clipees", EINA_VALUE_TYPE_CHAR, clipees_has);
 
    Evas_Object *clipper = NULL;
-   clipper = efl_canvas_object_clip_get(eo_obj);
+   clipper = efl_canvas_object_clipper_get(eo_obj);
    EFL_DBG_INFO_APPEND(group, "Clipper", EINA_VALUE_TYPE_UINT64, (uintptr_t) clipper);
 
    const Evas_Map *map = evas_object_map_get(eo_obj);

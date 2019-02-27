@@ -3739,7 +3739,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                          {
                             efl_canvas_group_member_add(smart, ob);
                             efl_gfx_stack_above(ob, obj);
-                            efl_canvas_object_clip_set(ob, clip);
+                            efl_canvas_object_clipper_set(ob, clip);
                             efl_canvas_object_pass_events_set(ob, EINA_TRUE);
                             rect->obj = ob;
                          }
