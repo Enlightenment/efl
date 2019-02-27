@@ -364,7 +364,6 @@ typedef struct _Elm_Widget_Smart_Data
    Efl_Ui_Scrollable_On_Show_Region on_show_region;
    Eina_Free_Cb                  on_show_region_data_free;
 
-   int                           orient_mode; /* -1 is disabled */
    Elm_Focus_Move_Policy         focus_move_policy;
    Elm_Focus_Region_Show_Mode    focus_region_show_mode;
 

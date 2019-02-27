@@ -1,4 +1,5 @@
 import efl_ui;
+import efl_orientation;
 
 abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
                      Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind,
@@ -44,6 +45,19 @@ abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container
             group: string("base"); [[The group, eg. "base".]]
             style: string("default"); [[The style to use, eg "default".]]
          }
+      }
+      @property automatic_theme_rotation {
+        [[This flag tells if this object will automatically mirror the rotation changes of the window to this object.
+        ]]
+        values {
+           automatic : bool; [[$true to mirror orientation changes to the theme $false otherwise]]
+        }
+      }
+      theme_rotation_apply {
+        [[Apply a new rotation value to this object.]]
+        params {
+          orientation : Efl.Orient; [[The new rotation value.]]
+        }
       }
    }
    implements {

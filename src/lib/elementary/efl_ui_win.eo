@@ -1,3 +1,5 @@
+import efl_orientation;
+
 enum Efl.Ui.Win_Type
 {
    [[Defines the types of window that can be created
@@ -844,6 +846,21 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
                                      fingers that are currently hovering.]]
          }
          return: iterator<const(Efl.Input.Pointer)>; [[Iterator to pointer positions]]
+      }
+      @property win_rotation @beta {
+         [[The rotation of this window
+
+           The value will automatically change when the WM of this window changes its rotation. This rotation is automatically applied to all @Efl.Ui.Layout objects.
+         ]]
+         set {
+          legacy: null;
+         }
+         get {
+          legacy: null;
+         }
+         values {
+           rotation : Efl.Orient; [[The rotation of the window]]
+         }
       }
    }
    implements {

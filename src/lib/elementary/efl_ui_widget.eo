@@ -312,48 +312,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          return: bool; [[Indicates if the operation succeeded.]]
          legacy: elm_widget_sub_object_del;
       }
-      @property orientation_mode {
-         [[Whether the widget's automatic orientation is enabled or not.
-
-           Orientation mode is used for widgets to change their style or send
-           signals based on the canvas rotation (i.e. the window orientation).
-           If the orientation mode is enabled, the widget will emit signals
-           such as "elm,state,orient,N" where $N is one of 0, 90, 180, 270,
-           depending on the window orientation. Such signals may be handled by
-           the theme in order to provide a different look for the widget based
-           on the canvas orientation.
-
-           By default orientation mode is enabled.
-
-           See also @.on_orientation_update.
-         ]]
-         values {
-            mode: Efl.Ui.Widget_Orientation_Mode(Efl.Ui.Widget_Orientation_Mode.default);
-               [[How window orientation should affect this widget.]]
-         }
-      }
-      on_orientation_update @protected {
-         [[Virtual function handling canvas orientation changes.
-
-           This method will be called recursively from the top widget (the
-           window) to all the children objects whenever the window rotation
-           is changed. The given $rotation will be one of 0, 90, 180, 270 or
-           the special value -1 if @.orientation_mode is $disabled.
-
-           If @.orientation_mode is $default, the widget implementation will
-           emit the signal "elm,state,orient,$R" will be emitted (where $R is
-           the rotation angle in degrees).
-
-           Note: This function may be called even if the orientation has not
-           actually changed, like when a widget needs to be reconfigured.
-
-           See also @.orientation_mode.
-         ]]
-         params {
-            rotation: int; [[Orientation in degrees: 0, 90, 180, 270 or -1 if
-               @.orientation_mode is $disabled.]]
-         }
-      }
       on_disabled_update @protected {
          [[Virtual function called when the widget becomes disabled.
 

@@ -1912,16 +1912,31 @@ elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 EAPI void
 elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
-   Efl_Ui_Widget_Orientation_Mode mode =
-         disabled ? EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED
-                  : EFL_UI_WIDGET_ORIENTATION_MODE_DEFAULT;
-   efl_ui_widget_orientation_mode_set(obj, mode);
+   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+     {
+        efl_ui_layout_automatic_theme_rotation_set(obj, disabled);
+     }
+   else
+     {
+        //legacy behaviour
+        if (disabled)
+          efl_key_data_set(obj, "__orientation_mode_disabled", (void*) (intptr_t) EINA_TRUE);
+     }
 }
 
 EAPI Eina_Bool
 elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
 {
-   return efl_ui_widget_orientation_mode_get(obj) == EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED;
+   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+     {
+        return efl_ui_layout_automatic_theme_rotation_get(obj);
+     }
+   else
+     {
+        if (efl_key_data_get(obj, "__orientation_mode_disabled"))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 EAPI Elm_Object_Item *

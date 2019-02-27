@@ -35,6 +35,7 @@
 #include "efl_ui_win_legacy.eo.h"
 #include "efl_ui_win_socket_legacy.eo.h"
 #include "efl_ui_win_inlined_legacy.eo.h"
+#include "efl_ui_widget_common.h"
 
 #define MY_CLASS EFL_UI_WIN_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win"
@@ -212,6 +213,7 @@ struct _Efl_Ui_Win_Data
    int          norender;
    int          modal_count;
    int          response;
+   int          rotation;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
 
@@ -1558,6 +1560,93 @@ _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force)
      TRAP(sd, resize, w, h);
 }
 
+static int
+_win_rotation_degree_check(int rotation)
+{
+   if ((rotation > 360) || (rotation < 0))
+     {
+        WRN("Rotation degree should be 0 ~ 360 (passed degree: %d)", rotation);
+        rotation %= 360;
+        if (rotation < 0) rotation += 360;
+     }
+   return rotation;
+}
+
+/*
+ * This API resizes the internal window(ex: X window) and evas_output.
+ * But this does not resize the elm window object and its contents.
+ */
+static void
+_win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resize)
+{
+   rotation = _win_rotation_degree_check(rotation);
+   if (sd->rot == rotation) return;
+   sd->rot = rotation;
+   if (resize) TRAP(sd, rotation_with_resize_set, rotation);
+   else TRAP(sd, rotation_set, rotation);
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
+   _elm_win_resize_objects_eval(obj, EINA_FALSE);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+   _elm_win_frame_obj_update(sd, 0);
+   efl_event_callback_legacy_call
+     (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
+   if (_elm_config->atspi_mode)
+     {
+        Evas_Coord x = 0, y = 0, width = 0, height = 0;
+        elm_win_screen_size_get(obj, &x, &y, &width, &height);
+        if ((sd->rot == 0) || (sd->rot == 180))
+          {
+             efl_access_bounds_changed_signal_emit(obj, x, y, width, height);
+          }
+        else
+          {
+             efl_access_bounds_changed_signal_emit(obj, x, y, height, width);
+          }
+     }
+}
+
+EOLIAN static void
+_efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Efl_Orient rotation)
+{
+   Efl_Ui_Widget *widget;
+   Eina_Iterator *it;
+   int rot = rotation %360;
+
+   if (pd->rot == rot) return;
+
+   _win_rotate(obj, pd, rot, EINA_FALSE);
+
+   it = efl_ui_widget_tree_widget_iterator(obj);
+   EINA_ITERATOR_FOREACH(it, widget)
+     {
+        if (!efl_isa(widget, EFL_UI_LAYOUT_CLASS)) continue;
+
+        if (efl_ui_layout_automatic_theme_rotation_get(widget))
+          efl_ui_layout_theme_rotation_apply(widget, rot);
+     }
+}
+
+EOLIAN static Efl_Orient
+_efl_ui_win_win_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
+{
+   return pd->rotation;
+}
+
+EAPI void
+elm_win_rotation_set(Evas_Object *obj, int rotation)
+{
+   efl_ui_win_rotation_set(obj, rotation);
+}
+
+EAPI int
+elm_win_rotation_get(const Evas_Object *obj)
+{
+   return efl_ui_win_rotation_get(obj);
+}
+
 static void
 _elm_win_state_change(Ecore_Evas *ee)
 {
@@ -1613,7 +1702,6 @@ _elm_win_state_change(Ecore_Evas *ee)
      {
         if (sd->rot != ecore_evas_rotation_get(sd->ee))
           {
-             sd->rot = ecore_evas_rotation_get(sd->ee);
              ch_wm_rotation = EINA_TRUE;
           }
      }
@@ -1691,31 +1779,10 @@ _elm_win_state_change(Ecore_Evas *ee)
      }
    if (ch_wm_rotation)
      {
-        efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-        efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
-#ifdef HAVE_ELEMENTARY_X
-        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-        _elm_win_xwin_update(sd);
-#endif
-        ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-        efl_ui_widget_on_orientation_update(obj, sd->rot);
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
+        efl_ui_win_rotation_set(obj, ecore_evas_rotation_get(sd->ee));
+
         efl_event_callback_legacy_call
           (obj, EFL_UI_WIN_EVENT_WM_ROTATION_CHANGED, NULL);
-        if (_elm_config->atspi_mode)
-          {
-             Evas_Coord x = 0, y = 0, width = 0, height = 0;
-             elm_win_screen_size_get(obj, &x, &y, &width, &height);
-             if ((sd->rot == 0) || (sd->rot == 180))
-               {
-                  efl_access_bounds_changed_signal_emit(obj, x, y, width, height);
-               }
-             else
-               {
-                  efl_access_bounds_changed_signal_emit(obj, x, y, height, width);
-               }
-          }
      }
 }
 
@@ -6581,55 +6648,6 @@ elm_win_render(Evas_Object *obj)
    ecore_evas_manual_render(sd->ee);
 }
 
-static int
-_win_rotation_degree_check(int rotation)
-{
-   if ((rotation > 360) || (rotation < 0))
-     {
-        WRN("Rotation degree should be 0 ~ 360 (passed degree: %d)", rotation);
-        rotation %= 360;
-        if (rotation < 0) rotation += 360;
-     }
-   return rotation;
-}
-
-/*
- * This API resizes the internal window(ex: X window) and evas_output.
- * But this does not resize the elm window object and its contents.
- */
-static void
-_win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resize)
-{
-   rotation = _win_rotation_degree_check(rotation);
-   if (sd->rot == rotation) return;
-   sd->rot = rotation;
-   if (resize) TRAP(sd, rotation_with_resize_set, rotation);
-   else TRAP(sd, rotation_set, rotation);
-   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
-   _elm_win_resize_objects_eval(obj, EINA_FALSE);
-#ifdef HAVE_ELEMENTARY_X
-   _elm_win_xwin_update(sd);
-#endif
-   _elm_win_frame_obj_update(sd, 0);
-   efl_ui_widget_on_orientation_update(obj, rotation);
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
-   if (_elm_config->atspi_mode)
-     {
-        Evas_Coord x = 0, y = 0, width = 0, height = 0;
-        elm_win_screen_size_get(obj, &x, &y, &width, &height);
-        if ((sd->rot == 0) || (sd->rot == 180))
-          {
-             efl_access_bounds_changed_signal_emit(obj, x, y, width, height);
-          }
-        else
-          {
-             efl_access_bounds_changed_signal_emit(obj, x, y, height, width);
-          }
-     }
-}
-
 EOLIAN static void
 _efl_ui_win_wm_available_rotations_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd,
                                        Eina_Bool allow_0, Eina_Bool allow_90,
@@ -8224,15 +8242,6 @@ elm_win_wm_rotation_manual_rotation_done(Evas_Object *obj)
    ecore_evas_wm_rotation_manual_rotation_done(sd->ee);
 }
 
-EAPI void
-elm_win_rotation_set(Evas_Object *obj, int rotation)
-{
-   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return;
-
-   _win_rotate(obj, sd, rotation, EINA_FALSE);
-}
-
 /*
  * This API does not resize the internal window (ex: X window).
  * But this resizes evas_output, elm window, and its contents.
@@ -8244,15 +8253,6 @@ elm_win_rotation_with_resize_set(Evas_Object *obj, int rotation)
    if (!sd) return;
 
    _win_rotate(obj, sd, rotation, EINA_TRUE);
-}
-
-EAPI int
-elm_win_rotation_get(const Evas_Object *obj)
-{
-   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return -1;
-
-   return sd->rot;
 }
 
 EAPI int

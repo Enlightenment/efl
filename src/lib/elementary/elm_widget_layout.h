@@ -71,6 +71,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
+   Eina_Bool             automatic_orientation_apply : 1;
 } Efl_Ui_Layout_Data;
 
 /**

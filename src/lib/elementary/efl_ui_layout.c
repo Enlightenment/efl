@@ -2394,10 +2394,15 @@ _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 EOLIAN static Efl_Object*
 _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
 {
-   Eo *eo;
+   Eo *eo, *win;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_widget_theme_apply(eo);
+
+   win = efl_ui_widget_top_get(obj);
+   if (efl_isa(win, EFL_UI_WIN_CLASS))
+     efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(win));
+
    if (efl_file_get(wd->resize_obj) || efl_file_mmap_get(wd->resize_obj))
      efl_file_load(wd->resize_obj);
 
@@ -2581,6 +2586,35 @@ _efl_ui_layout_part_bg_efl_object_finalize(Eo *obj, void *_pd EINA_UNUSED)
 
    return obj;
 }
+
+EOLIAN static void
+_efl_ui_layout_base_automatic_theme_rotation_set(Eo *obj, Efl_Ui_Layout_Data *pd, Eina_Bool automatic)
+{
+   if (pd->automatic_orientation_apply == automatic) return;
+   pd->automatic_orientation_apply = automatic;
+
+   efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(efl_ui_widget_top_get(obj)));
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_base_automatic_theme_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd)
+{
+   return pd->automatic_orientation_apply;
+}
+
+EOLIAN static void
+_efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, Efl_Orient orientation)
+{
+   char prefix[4], buf[128];
+
+   if (elm_widget_is_legacy(obj))
+     snprintf(prefix, sizeof(prefix), "elm");
+   else
+     snprintf(prefix, sizeof(prefix), "efl");
+   snprintf(buf, sizeof(buf), "%s,state,orient,%d", prefix, (int)orientation);
+   efl_layout_signal_emit(obj, buf, prefix);
+}
+
 
 /* Efl.Ui.Layout_Part_Xxx includes */
 #include "efl_ui_layout_part.eo.c"

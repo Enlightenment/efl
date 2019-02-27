@@ -1499,11 +1499,6 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         _full_eval(sobj, sdc);
 
         if (!sdc->on_create)
-          efl_ui_widget_on_orientation_update(sobj, sd->orient_mode);
-        else
-          sdc->orient_mode = sd->orient_mode;
-
-        if (!sdc->on_create)
           {
              if (!sdc->disabled && (elm_widget_disabled_get(obj)))
                {
@@ -3158,22 +3153,6 @@ elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wnam
         return EFL_UI_THEME_APPLY_RESULT_FAIL;
      }
 
-   if (sd->orient_mode != -1)
-     {
-        char buf[128];
-
-        if (elm_widget_is_legacy(obj))
-          {
-             snprintf(buf, sizeof(buf), "elm,state,orient,%d", sd->orient_mode);
-             elm_widget_signal_emit(obj, buf, "elm");
-          }
-        else
-          {
-             snprintf(buf, sizeof(buf), "efl,state,orient,%d", sd->orient_mode);
-             elm_widget_signal_emit(obj, buf, "efl");
-          }
-     }
-
    return ret;
 }
 
@@ -3606,60 +3585,6 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
      {
         if (elm_widget_is(child))
           elm_widget_display_mode_set(child, dispmode);
-     }
-}
-
-EOLIAN static void
-_efl_ui_widget_orientation_mode_set(Eo *obj, Elm_Widget_Smart_Data *sd, Efl_Ui_Widget_Orientation_Mode mode)
-{
-   int rotation = -1;
-
-   if (mode != EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED)
-     {
-        //Get current orient mode from it's parent otherwise, 0.
-        sd->orient_mode = 0;
-        ELM_WIDGET_DATA_GET(sd->parent_obj, sd_parent);
-        if (!sd_parent) rotation = 0;
-        else rotation = sd_parent->orient_mode;
-     }
-   efl_ui_widget_on_orientation_update(obj, rotation);
-}
-
-EOLIAN static Efl_Ui_Widget_Orientation_Mode
-_efl_ui_widget_orientation_mode_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   if (sd->orient_mode == -1) return EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED;
-   else return EFL_UI_WIDGET_ORIENTATION_MODE_DEFAULT;
-}
-
-EOLIAN static void
-_efl_ui_widget_on_orientation_update(Eo *obj, Elm_Widget_Smart_Data *sd, int orient_mode)
-{
-   Evas_Object *child;
-   Eina_List *l;
-
-   sd->orient_mode = orient_mode;
-
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
-     {
-        if (elm_widget_is(child))
-          efl_ui_widget_on_orientation_update(child, orient_mode);
-     }
-
-   if (orient_mode != -1)
-     {
-        char buf[128];
-
-        if (elm_widget_is_legacy(obj))
-          {
-             snprintf(buf, sizeof(buf), "elm,state,orient,%d", orient_mode);
-             elm_widget_signal_emit(obj, buf, "elm");
-          }
-        else
-          {
-             snprintf(buf, sizeof(buf), "efl,state,orient,%d", orient_mode);
-             elm_widget_signal_emit(obj, buf, "efl");
-          }
      }
 }
 
