@@ -45,6 +45,8 @@ struct _Efl_Ui_Table_Data
       double h, v;
    } align;
    Eina_Bool linear_recalc : 1;
+   Eina_Bool homogeneoush : 1;
+   Eina_Bool homogeneousv : 1;
 };
 
 struct _Table_Item_Iterator

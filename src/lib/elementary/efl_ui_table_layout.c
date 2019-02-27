@@ -33,6 +33,7 @@ struct _Table_Calc
    int                           rows;
    int                           cols;
    int                           want[2];
+   int                           hgsize[2];
    double                        weight_sum[2];
    Cell_Calc                    *cell_calc[2];
    Efl_Ui_Container_Layout_Calc  layout_calc[2];
@@ -98,6 +99,45 @@ _cell_weight_calc(Table_Calc *table_calc, Eina_Bool axis)
 }
 
 static void
+_efl_ui_table_homogeneous_cell_init(Table_Calc *table_calc, Eina_Bool axis)
+{
+   int i, index = 0, mmin = 0, count;
+   Cell_Calc *prev_cell = NULL, *cell_calc;
+
+   cell_calc = table_calc->cell_calc[axis];
+   count = axis ? table_calc->rows : table_calc->cols;
+
+   for (i = 0; i < count; i++)
+     {
+        if (!cell_calc[i].occupied) continue;
+
+        cell_calc[i].index = index++;
+        if (cell_calc[i].space > mmin)
+          mmin = cell_calc[i].space;
+
+        if (prev_cell)
+          prev_cell->next = i;
+
+        prev_cell = &cell_calc[i];
+     }
+   if (prev_cell)
+     prev_cell->next = count;
+
+   table_calc->layout_calc[axis].size -= (table_calc->layout_calc[axis].pad
+                                          * (index - 1));
+
+   table_calc->want[axis] = mmin * index;
+   table_calc->weight_sum[axis] = index;
+
+   if (table_calc->want[axis] > table_calc->layout_calc[axis].size)
+     table_calc->hgsize[axis] = table_calc->want[axis] / index;
+   else
+     table_calc->hgsize[axis] = table_calc->layout_calc[axis].size / index;
+
+   table_calc->hgsize[axis] += table_calc->layout_calc[axis].pad;
+}
+
+static void
 _efl_ui_table_regular_cell_init(Table_Calc *table_calc, Eina_Bool axis)
 {
    int i, index = 0, acc, want = 0, count;
@@ -140,6 +180,20 @@ _efl_ui_table_regular_cell_init(Table_Calc *table_calc, Eina_Bool axis)
 }
 
 static inline int
+_efl_ui_table_homogeneous_item_pos_get(Table_Calc *table_calc, Item_Calc *item, Eina_Bool axis)
+{
+   return 0.5 + table_calc->layout_calc[axis].pos + (table_calc->hgsize[axis]
+           * table_calc->cell_calc[axis][item->cell_index[axis]].index);
+}
+
+static inline int
+_efl_ui_table_homogeneous_item_size_get(Table_Calc *table_calc, Item_Calc *item, Eina_Bool axis)
+{
+   return (table_calc->hgsize[axis] * item->cell_span[axis])
+          - table_calc->layout_calc[axis].pad;
+}
+
+static inline int
 _efl_ui_table_regular_item_pos_get(Table_Calc *table_calc, Item_Calc *item, Eina_Bool axis)
 {
    return 0.5 + table_calc->layout_calc[axis].pos
@@ -170,6 +224,8 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    Item_Calc *items, *item;
    Efl_Ui_Container_Item_Hints *hints;
    int i = 0, rows, cols;
+   int (*_efl_ui_table_item_pos_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
+   int (*_efl_ui_table_item_size_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
 
    Table_Calc table_calc;
 
@@ -215,12 +271,12 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
 
         _efl_ui_container_layout_item_init(item->obj, hints);
 
-        if (table_calc.layout_calc[0].fill)
+        if (table_calc.layout_calc[0].fill || pd->homogeneoush)
           hints[0].weight = 1;
         else if (hints[0].weight < 0)
           hints[0].weight = 0;
 
-        if (table_calc.layout_calc[1].fill)
+        if (table_calc.layout_calc[1].fill || pd->homogeneousv)
           hints[1].weight = 1;
         else if (hints[1].weight < 0)
           hints[1].weight = 0;
@@ -251,8 +307,31 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
           }
      }
 
-   _efl_ui_table_regular_cell_init(&table_calc, 0);
-   _efl_ui_table_regular_cell_init(&table_calc, 1);
+   if (pd->homogeneoush)
+     {
+        _efl_ui_table_homogeneous_cell_init(&table_calc, 0);
+        _efl_ui_table_item_pos_get[0] = _efl_ui_table_homogeneous_item_pos_get;
+        _efl_ui_table_item_size_get[0] = _efl_ui_table_homogeneous_item_size_get;
+     }
+   else
+     {
+        _efl_ui_table_regular_cell_init(&table_calc, 0);
+        _efl_ui_table_item_pos_get[0] = _efl_ui_table_regular_item_pos_get;
+        _efl_ui_table_item_size_get[0] = _efl_ui_table_regular_item_size_get;
+     }
+
+   if (pd->homogeneousv)
+     {
+        _efl_ui_table_homogeneous_cell_init(&table_calc, 1);
+        _efl_ui_table_item_pos_get[1] = _efl_ui_table_homogeneous_item_pos_get;
+        _efl_ui_table_item_size_get[1] = _efl_ui_table_homogeneous_item_size_get;
+     }
+   else
+     {
+        _efl_ui_table_regular_cell_init(&table_calc, 1);
+        _efl_ui_table_item_pos_get[1] = _efl_ui_table_regular_item_pos_get;
+        _efl_ui_table_item_size_get[1] = _efl_ui_table_regular_item_size_get;
+     }
 
    for (i = 0; i < pd->count; i++)
      {
@@ -260,10 +339,10 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
         item = &items[i];
         hints = items[i].hints;
 
-        space.x = _efl_ui_table_regular_item_pos_get(&table_calc, item, 0);
-        space.y = _efl_ui_table_regular_item_pos_get(&table_calc, item, 1);
-        space.w = _efl_ui_table_regular_item_size_get(&table_calc, item, 0);
-        space.h = _efl_ui_table_regular_item_size_get(&table_calc, item, 1);
+        space.x = _efl_ui_table_item_pos_get[0](&table_calc, item, 0);
+        space.y = _efl_ui_table_item_pos_get[1](&table_calc, item, 1);
+        space.w = _efl_ui_table_item_size_get[0](&table_calc, item, 0);
+        space.h = _efl_ui_table_item_size_get[1](&table_calc, item, 1);
 
         item_geom.w = hints[0].fill ? space.w : hints[0].min;
         item_geom.h = hints[1].fill ? space.h : hints[1].min;

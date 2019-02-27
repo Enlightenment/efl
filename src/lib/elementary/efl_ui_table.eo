@@ -2,6 +2,21 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
                    Efl.Ui.Direction
 {
    [[Efl UI table class]]
+   methods {
+      @property homogeneous {
+         [[Control homogeneous mode.
+
+           This will enable the homogeneous mode where cells are of the same
+           weight and of the same min size which is determined by maximum min
+           size of cells.]]
+         values {
+            homogeneoush : bool; [[$true if the box is homogeneous horizontally,
+                                   $false otherwise]]
+            homogeneousv : bool; [[$true if the box is homogeneous vertically,
+                                   $false otherwise]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
