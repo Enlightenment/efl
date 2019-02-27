@@ -329,6 +329,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (smart->smart.smart && smart->smart.smart->smart_class->member_add)
      smart->smart.smart->smart_class->member_add(smart_obj, eo_obj);
    evas_object_update_bounding_box(eo_obj, obj, member_o);
+   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED, eo_obj);
 }
 
 EAPI void
@@ -354,6 +355,8 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
    if (!obj || !obj->smart.parent) return;
 
    evas_object_async_block(obj);
+
+   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED, eo_obj);
 
    smart = efl_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_del)

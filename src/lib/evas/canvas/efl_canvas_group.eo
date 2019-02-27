@@ -123,6 +123,10 @@ class @beta Efl.Canvas.Group extends Efl.Canvas.Object
          }
       }
    }
+   events {
+      member,added: Efl.Gfx.Entity; [[Called when a member is added to the group.]]
+      member,removed: Efl.Gfx.Entity; [[Called when a member is removed from the group.]]
+   }
    implements {
       class.constructor;
       class.destructor;
