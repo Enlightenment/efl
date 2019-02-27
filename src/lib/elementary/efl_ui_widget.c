@@ -161,7 +161,7 @@ static inline Eina_Bool
 _is_focusable(Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
-   return sd->can_focus || (sd->child_can_focus);
+   return sd->can_focus || (sd->logical.child_count > 0);
 }
 
 static inline Eina_Bool
@@ -1414,23 +1414,6 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
         efl_ui_widget_disabled_set(sobj, efl_ui_widget_disabled_get(obj));
 
         _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
-
-        /* update child focusable-ness on self and parents, now that a
-         * focusable child got in */
-        if (!sd->child_can_focus && (_is_focusable(sobj)))
-          {
-             Elm_Widget_Smart_Data *sdp = sd;
-
-             sdp->child_can_focus = EINA_TRUE;
-             while (sdp->parent_obj)
-               {
-                  sdp = efl_data_scope_get(sdp->parent_obj, MY_CLASS);
-
-                  if (sdp->child_can_focus) break;
-
-                  sdp->child_can_focus = EINA_TRUE;
-               }
-          }
      }
    else
      {
@@ -1522,35 +1505,6 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
           {
              elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
              elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
-          }
-        if ((sd->child_can_focus) && (_is_focusable(sobj)))
-          {
-             Evas_Object *parent = obj;
-
-             /* update child focusable-ness on self and parents, now that a
-              * focusable child is gone */
-             while (parent)
-               {
-                  const Eina_List *l;
-                  Evas_Object *subobj;
-
-                  ELM_WIDGET_DATA_GET(parent, sdp);
-
-                  sdp->child_can_focus = EINA_FALSE;
-                  EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
-                    {
-                       if ((subobj != sobj) && (_is_focusable(subobj)))
-                         {
-                            sdp->child_can_focus = EINA_TRUE;
-                            break;
-                         }
-                    }
-
-                  /* break again, child_can_focus went back to
-                   * original value */
-                  if (sdp->child_can_focus) break;
-                  parent = sdp->parent_obj;
-               }
           }
         if (_elm_config->atspi_mode && !sd->on_destroy)
           {
@@ -1655,45 +1609,10 @@ _efl_ui_widget_focus_allow_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Bool can
    sd->can_focus = can_focus;
    if (sd->can_focus)
      {
-        /* update child_can_focus of parents */
-        Evas_Object *o = obj;
-
-        for (;;)
-          {
-             o = elm_widget_parent_get(o);
-             if (!o) break;
-             ELM_WIDGET_DATA_GET(o, sdp);
-             if (!sdp || sdp->child_can_focus) break;
-             sdp->child_can_focus = EINA_TRUE;
-          }
-
         efl_event_callback_array_add(obj, focus_callbacks(), NULL);
      }
    else
      {
-        // update child_can_focus of parents */
-        Evas_Object *parent = elm_widget_parent_get(obj);
-        while (parent)
-          {
-             const Eina_List *l;
-             Evas_Object *subobj;
-
-             ELM_WIDGET_DATA_GET(parent, sdp);
-
-             sdp->child_can_focus = EINA_FALSE;
-             EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
-               {
-                  if (_is_focusable(subobj))
-                    {
-                       sdp->child_can_focus = EINA_TRUE;
-                       break;
-                    }
-               }
-             /* break again, child_can_focus went back to
-              * original value */
-             if (sdp->child_can_focus) break;
-             parent = sdp->parent_obj;
-          }
         efl_event_callback_array_del(obj, focus_callbacks(), NULL);
      }
      if (efl_finalized_get(obj))
@@ -1712,7 +1631,7 @@ elm_widget_child_can_focus_get(const Eo *obj)
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
 
-   return sd->child_can_focus;
+   return sd->logical.child_count > 0;
 }
 
 /**

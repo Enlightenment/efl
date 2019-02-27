@@ -387,7 +387,6 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     scroll_y_locked : 1;
 
    Eina_Bool                     can_focus : 1;
-   Eina_Bool                     child_can_focus : 1;
    Eina_Bool                     focused : 1;
    Eina_Bool                     top_win_focused : 1;
    Eina_Bool                     tree_unfocusable : 1;
