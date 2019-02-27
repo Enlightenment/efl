@@ -78,10 +78,10 @@ typedef struct _Elm_Layout_Smart_Data
  */
 
 #define EFL_UI_LAYOUT_DATA_GET(o, sd) \
-  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_CLASS)
+  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_BASE_CLASS)
 
 #define EFL_UI_LAYOUT_CHECK(obj) \
-  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))) \
     return
 
 #endif

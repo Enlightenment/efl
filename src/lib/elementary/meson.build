@@ -138,6 +138,7 @@ pub_eo_files = [
   'efl_ui_image.eo',
   'efl_ui_image_zoomable.eo',
   'efl_ui_layout.eo',
+  'efl_ui_layout_base.eo',
   'efl_ui_nstate.eo',
   'efl_ui_navigation_bar.eo',
   'efl_ui_navigation_bar_part.eo',

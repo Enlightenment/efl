@@ -14,6 +14,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
 	lib/elementary/efl_ui_layout.eo \
+	lib/elementary/efl_ui_layout_base.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/efl_ui_navigation_bar.eo \
 	lib/elementary/efl_ui_navigation_bar_part.eo \

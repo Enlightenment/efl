@@ -67,7 +67,7 @@ EOLIAN static void
 _efl_ui_layout_part_box_real_part_set(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Eo *layout, const char *part)
 {
    pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_CLASS, obj);
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
    eina_stringshare_replace(&pd->part, part);
    pd->temp = 1;
 }
@@ -225,7 +225,7 @@ EOLIAN static void
 _efl_ui_layout_part_table_real_part_set(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Eo *layout, const char *part)
 {
    pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_CLASS, obj);
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
    eina_stringshare_replace(&pd->part, part);
    pd->temp = 1;
 }

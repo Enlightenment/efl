@@ -236,7 +236,7 @@ _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *eo_it)
      {
         Elm_Widget_Item_Data *it = efl_data_scope_get(eo_it, ELM_WIDGET_ITEM_CLASS);
 
-        if (efl_isa(it->view, EFL_UI_LAYOUT_CLASS))
+        if (efl_isa(it->view, EFL_UI_LAYOUT_BASE_CLASS))
           str = edje_object_data_get(elm_layout_edje_get(it->view), "focus_highlight");
         else
           str = edje_object_data_get(it->view, "focus_highlight");
@@ -2821,7 +2821,7 @@ elm_widget_part_text_set(Eo *obj, const char *part, const char *label)
    /* legacy support: combobox was special (internal entry is text object). */
    if (efl_isa(obj, ELM_COMBOBOX_CLASS))
      _elm_combobox_part_text_set(obj, part, label);
-   else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   else if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      elm_layout_text_set(obj, part, label);
 }
 
@@ -2831,7 +2831,7 @@ elm_widget_part_text_get(const Eo *obj, const char *part)
    /* legacy support: combobox was special (internal entry is text object). */
    if (efl_isa(obj, ELM_COMBOBOX_CLASS))
      return _elm_combobox_part_text_get(obj, part);
-   else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   else if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      return elm_layout_text_get(obj, part);
 
    return NULL;
@@ -3486,7 +3486,7 @@ elm_widget_focus_highlight_focus_part_geometry_get(const Evas_Object *obj,
         if (!(target_hl_part = edje_object_data_get(edje_obj, "focus_part")))
           return;
      }
-   else if (obj && efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   else if (obj && efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      {
         edje_obj = elm_layout_edje_get(obj);
         if (!(target_hl_part = elm_layout_data_get(obj, "focus_part")))
@@ -5671,7 +5671,7 @@ EAPI void
 elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_WIDGET_CHECK(obj);
-   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      {
         elm_layout_content_set(obj, part, content);
         return;
@@ -5689,7 +5689,7 @@ EAPI Evas_Object *
 elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
-   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      return elm_layout_content_get(obj, part);
    if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    if (!part)
@@ -5704,7 +5704,7 @@ EAPI Evas_Object *
 elm_widget_content_part_unset(Evas_Object *obj, const char *part)
 {
    ELM_WIDGET_CHECK(obj) NULL;
-   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      return elm_layout_content_unset(obj, part);
    if (!efl_isa(obj, EFL_PART_INTERFACE)) return NULL;
    if (!part)
@@ -5720,7 +5720,7 @@ elm_widget_signal_emit(Eo *obj, const char *emission, const char *source)
 {
    ELM_WIDGET_CHECK(obj);
 
-   if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
      elm_layout_signal_emit(obj, emission, source);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {

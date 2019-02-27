@@ -3,7 +3,7 @@ import elm_general;
 type Elm_Entry_Item_Provider_Cb: __undefined_type; [[Elementary entry item provider callback type]]
 type Elm_Entry_Filter_Cb: __undefined_type; [[Elementary entry filter callback type]]
 
-class Elm.Entry extends Efl.Ui.Layout implements Elm.Interface_Scrollable, Efl.Ui.Clickable,
+class Elm.Entry extends Efl.Ui.Layout_Base implements Elm.Interface_Scrollable, Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Selectable, Efl.Ui.Scrollable, Efl.Access.Widget.Action,
                  Efl.Ui.Legacy
