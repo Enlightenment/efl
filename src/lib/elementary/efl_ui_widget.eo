@@ -329,43 +329,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                        theme or default theme was used.]]
       }
 
-      /* Scroll API. */
-      @property on_show_region_hook @protected {
-         [[Hook function called when the @.show_region is changed.
-
-           See also @.show_region.
-         ]]
-         set {}
-         values {
-            func: Efl.Ui.Scrollable_On_Show_Region @nullable; [[Region hook function]]
-         }
-      }
-      @property show_region @protected {
-         [[Region inside the widget to show.
-
-           See also @.on_show_region_hook.
-         ]]
-         set {
-            [[Request parent scrollers to pan around so that this region
-              of the widget becomes visible.
-
-              If $force is $true this will trigger scroller changes and
-              the @.on_show_region_hook to be called even if the region is
-              unchanged.
-            ]]
-            values {
-               region: Eina.Rect; [[The region to show.]]
-               force: bool; [[Set to $true to force show even if unchanged.]]
-            }
-         }
-         get {
-            [[Returns the current region to show.]]
-            values {
-               region: Eina.Rect; [[The region to show.]]
-            }
-         }
-      }
-
       /* FIXME: Scroll API. Not sure how those APIs should be exposed with
        * the new scrollable API. */
       scroll_hold_push {
@@ -410,9 +373,9 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          }
       }
       @property interest_region_mode {
-         [[Defines how @.show_region should be calculated.
+         [[Defines how @.interest_region should be calculated.
 
-           It is up to the implementation of @.show_region.get to take this
+           It is up to the implementation of @.interest_region.get to take this
            value into account (or ignore it).
          ]]
          get {

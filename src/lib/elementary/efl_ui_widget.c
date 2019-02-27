@@ -1342,20 +1342,6 @@ _efl_ui_widget_efl_ui_i18n_mirrored_automatic_set(Eo *obj, Elm_Widget_Smart_Data
      }
 }
 
-EOLIAN static void
-_efl_ui_widget_on_show_region_hook_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb func_free_cb)
-{
-   if ((sd->on_show_region_data == data) && (sd->on_show_region == func))
-     return;
-
-   if (sd->on_show_region_data && sd->on_show_region_data_free)
-     sd->on_show_region_data_free(sd->on_show_region_data);
-
-   sd->on_show_region = func;
-   sd->on_show_region_data = data;
-   sd->on_show_region_data_free = func_free_cb;
-}
-
 /*
  * @internal
  *
@@ -2420,66 +2406,6 @@ EOLIAN static Eina_Bool
 _efl_ui_widget_disabled_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd)
 {
    return pd->disabled > 0;
-}
-
-EOLIAN static void
-_efl_ui_widget_show_region_set(Eo *obj, Elm_Widget_Smart_Data *sd, Eina_Rect sr, Eina_Bool forceshow)
-{
-   Evas_Object *parent_obj, *child_obj;
-   Evas_Coord px, py, cx, cy, nx = 0, ny = 0;
-
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
-
-   if (!forceshow && eina_rectangle_equal(&sr.rect, &sd->show_region.rect)) return;
-
-   sd->show_region = sr;
-   if (sd->on_show_region)
-     {
-        sd->on_show_region(sd->on_show_region_data, obj, sr);
-
-        if (_elm_scrollable_is(obj))
-          {
-             if (elm_widget_is_legacy(obj))
-               {
-                  elm_interface_scrollable_content_pos_get(obj, &nx, &ny);
-                  sr.x -= nx;
-                  sr.y -= ny;
-               }
-             else
-               {
-                  Eina_Position2D pos;
-                  pos = efl_ui_scrollable_content_pos_get(obj);
-                  sr.x -= pos.x;
-                  sr.y -= pos.y;
-               }
-          }
-     }
-
-   do
-     {
-        parent_obj = sd->parent_obj;
-        child_obj = sd->obj;
-        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
-        sd = efl_data_scope_get(parent_obj, MY_CLASS);
-        if (!sd) break;
-
-        evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
-        evas_object_geometry_get(child_obj, &cx, &cy, NULL, NULL);
-
-        sr.x += (cx - px);
-        sr.y += (cy - py);
-        sd->show_region = sr;
-
-        if (sd->on_show_region)
-          sd->on_show_region(sd->on_show_region_data, parent_obj, sr);
-     }
-   while (parent_obj);
-}
-
-EOLIAN static Eina_Rect
-_efl_ui_widget_show_region_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
-{
-   return (Eina_Rect) sd->show_region;
 }
 
 /**
@@ -5481,6 +5407,84 @@ _efl_ui_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd,
 
 /* Legacy APIs */
 
+EAPI void
+elm_widget_on_show_region_hook_set(Eo *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb func_free_cb)
+{
+   ELM_WIDGET_DATA_GET(obj, sd);
+
+   if ((sd->on_show_region_data == data) && (sd->on_show_region == func))
+     return;
+
+   if (sd->on_show_region_data && sd->on_show_region_data_free)
+     sd->on_show_region_data_free(sd->on_show_region_data);
+
+   sd->on_show_region = func;
+   sd->on_show_region_data = data;
+   sd->on_show_region_data_free = func_free_cb;
+}
+
+EAPI void
+elm_widget_show_region_set(Eo *obj, Eina_Rect sr, Eina_Bool forceshow)
+{
+   Evas_Object *parent_obj, *child_obj;
+   Evas_Coord px, py, cx, cy, nx = 0, ny = 0;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd);
+
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+
+   if (!forceshow && eina_rectangle_equal(&sr.rect, &sd->show_region.rect)) return;
+
+   sd->show_region = sr;
+   if (sd->on_show_region)
+     {
+        sd->on_show_region(sd->on_show_region_data, obj, sr);
+
+        if (_elm_scrollable_is(obj))
+          {
+             if (elm_widget_is_legacy(obj))
+               {
+                  elm_interface_scrollable_content_pos_get(obj, &nx, &ny);
+                  sr.x -= nx;
+                  sr.y -= ny;
+               }
+             else
+               {
+                  Eina_Position2D pos;
+                  pos = efl_ui_scrollable_content_pos_get(obj);
+                  sr.x -= pos.x;
+                  sr.y -= pos.y;
+               }
+          }
+     }
+
+   do
+     {
+        parent_obj = sd->parent_obj;
+        child_obj = sd->obj;
+        if ((!parent_obj) || (!_elm_widget_is(parent_obj))) break;
+        sd = efl_data_scope_get(parent_obj, MY_CLASS);
+        if (!sd) break;
+
+        evas_object_geometry_get(parent_obj, &px, &py, NULL, NULL);
+        evas_object_geometry_get(child_obj, &cx, &cy, NULL, NULL);
+
+        sr.x += (cx - px);
+        sr.y += (cy - py);
+        sd->show_region = sr;
+
+        if (sd->on_show_region)
+          sd->on_show_region(sd->on_show_region_data, parent_obj, sr);
+     }
+   while (parent_obj);
+}
+
+EAPI Eina_Rect
+elm_widget_show_region_get(const Eo *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, sd, EINA_RECT_EMPTY());
+   return (Eina_Rect) sd->show_region;
+}
 /* elm_object_content_xxx APIs are supposed to work on all objects for which
  * elm_object_widget_check() returns true. The below checks avoid printing out
  * undesired ERR messages. */
