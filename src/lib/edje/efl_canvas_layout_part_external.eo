@@ -25,6 +25,7 @@ class @beta Efl.Canvas.Layout_Part_External extends Efl.Canvas.Layout_Part imple
    ]]
    data: null;
    implements {
-      Efl.Content.content { get; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }
