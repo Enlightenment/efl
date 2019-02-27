@@ -15,6 +15,7 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
       Efl.Pack.unpack;
       Efl.Pack.pack;
       Efl.Pack.pack_padding { get; set; }
+      Efl.Pack.pack_align { get; set; }
       Efl.Pack_Table.pack_table;
       Efl.Pack_Table.table_content_get;
       Efl.Pack_Table.table_contents_get;

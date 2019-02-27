@@ -826,6 +826,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/els_cursor.c \
 	lib/elementary/els_tooltip.c \
 	lib/elementary/elu_ews_wm.c \
+	lib/elementary/efl_ui_container_layout.c \
+	lib/elementary/efl_ui_container_layout.h \
 	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
 	lib/elementary/efl_ui_box_stack.c \
@@ -838,6 +840,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_anchor_popup.c \
 	lib/elementary/efl_ui_table.c \
 	lib/elementary/efl_ui_table_static.c \
+	lib/elementary/efl_ui_table_layout.c \
 	lib/elementary/efl_ui_table_private.h \
 	lib/elementary/efl_ui_text.c \
 	lib/elementary/efl_ui_text_factory_images.c \

@@ -34,31 +34,31 @@ weights_cb(void *data, const Efl_Event *event)
      {
       case NONE:
         efl_gfx_hint_align_set(table, 0.5, 0.5);
-        for (int i = 0; i < 7; i++)
+        for (int i = 1; i < 7; i++)
           efl_gfx_hint_weight_set(objects[i], 0, 0);
         break;
       case NONE_BUT_FILL:
         efl_gfx_hint_fill_set(table, EINA_TRUE, EINA_TRUE);
-        for (int i = 0; i < 7; i++)
+        for (int i = 1; i < 7; i++)
           efl_gfx_hint_weight_set(objects[i], 0, 0);
         break;
       case EQUAL:
         efl_gfx_hint_align_set(table, 0.5, 0.5);
-        for (int i = 0; i < 7; i++)
+        for (int i = 1; i < 7; i++)
           efl_gfx_hint_weight_set(objects[i], 1, 1);
         break;
       case ONE:
         efl_gfx_hint_align_set(table, 0.5, 0.5);
-        for (int i = 0; i < 6; i++)
+        for (int i = 1; i < 7; i++)
           efl_gfx_hint_weight_set(objects[i], 0, 0);
-        efl_gfx_hint_weight_set(objects[6], 1, 1);
+        efl_gfx_hint_weight_set(objects[2], 1, 1);
         break;
       case TWO:
         efl_gfx_hint_align_set(table, 0.5, 0.5);
-        for (int i = 0; i < 5; i++)
+        for (int i = 1; i < 7; i++)
           efl_gfx_hint_weight_set(objects[i], 0, 0);
-        efl_gfx_hint_weight_set(objects[5], 1, 1);
-        efl_gfx_hint_weight_set(objects[6], 1, 1);
+        efl_gfx_hint_weight_set(objects[2], 1, 1);
+        efl_gfx_hint_weight_set(objects[3], 1, 1);
         break;
       case CUSTOM:
         efl_object_override(table, &custom_layout_ops);
@@ -89,11 +89,11 @@ margin_slider_cb(void *data, const Efl_Event *event)
 }
 
 static void
-btnmargins_slider_cb(void *data, const Efl_Event *event)
+btnmargins_slider_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
    for (int i = 1; i < 7; i++)
-     efl_gfx_hint_margin_set(data, val, val, val, val);
+     efl_gfx_hint_margin_set(objects[i], val, val, val, val);
 }
 
 static void
@@ -333,7 +333,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, padding_slider_cb, table);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
-   elm_slider_value_set(o, 10);
+   elm_slider_value_set(o, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -359,7 +359,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, margin_slider_cb, table);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
-   elm_slider_value_set(o, 10);
+   elm_slider_value_set(o, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -386,7 +386,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_event_callback_add(o, EFL_UI_SLIDER_EVENT_CHANGED, btnmargins_slider_cb, table);
    elm_slider_min_max_set(o, 0, 40);
    elm_slider_inverted_set(o, 1);
-   elm_slider_value_set(o, 10);
+   elm_slider_value_set(o, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
 
