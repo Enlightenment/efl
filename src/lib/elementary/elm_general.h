@@ -50,9 +50,12 @@ typedef enum
 } Elm_Object_Layer;
 
 /** How the focus region should be calculated (not related to input focus). */
-typedef Efl_Ui_Interest_Region_Mode Elm_Focus_Region_Show_Mode;
-#define ELM_FOCUS_REGION_SHOW_WIDGET EFL_UI_INTEREST_REGION_MODE_WIDGET
-#define ELM_FOCUS_REGION_SHOW_ITEM   EFL_UI_INTEREST_REGION_MODE_ITEM
+typedef enum
+{
+  ELM_FOCUS_REGION_SHOW_WIDGET = 0, /**< As a widget. */
+  ELM_FOCUS_REGION_SHOW_ITEM /**< As an item. */
+} Elm_Focus_Region_Show_Mode;
+
 
 /**************************************************************************/
 EAPI extern int ELM_ECORE_EVENT_ETHUMB_CONNECT;

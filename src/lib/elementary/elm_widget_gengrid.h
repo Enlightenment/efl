@@ -94,6 +94,8 @@ struct _Elm_Gengrid_Data
       Elm_Gengrid_Reorder_Type              type; /**< Reorder type */
       Eina_Bool                             running : 1; /**< animation is happening */
    } reorder;
+   Elm_Focus_Region_Show_Mode            mode; /**< the mode which describes which rectangle should be returned in the interest region getter*/
+
 
    Eina_Bool                             reorder_item_changed : 1;
    Eina_Bool                             move_effect_enabled : 1;

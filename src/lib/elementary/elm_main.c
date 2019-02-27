@@ -27,6 +27,7 @@
 //we need those for legacy compatible code
 #include "elm_genlist.eo.h"
 #include "elm_gengrid.eo.h"
+#include "elm_widget_gengrid.h"
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
@@ -1965,13 +1966,22 @@ elm_object_focused_item_get(const Evas_Object *obj)
 EAPI void
 elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode)
 {
-   elm_widget_focus_region_show_mode_set(obj, mode);
+   if (efl_isa(obj, ELM_GENGRID_CLASS))
+     {
+        Elm_Gengrid_Data *pd = efl_data_scope_get(obj, ELM_GENGRID_CLASS);
+        pd->mode = mode;
+     }
 }
 
 EAPI Elm_Focus_Region_Show_Mode
 elm_object_focus_region_show_mode_get(const Evas_Object *obj)
 {
-   return elm_widget_focus_region_show_mode_get(obj);
+   if (efl_isa(obj, ELM_GENGRID_CLASS))
+     {
+        Elm_Gengrid_Data *pd = efl_data_scope_get(obj, ELM_GENGRID_CLASS);
+        return pd->mode;
+     }
+   return ELM_FOCUS_REGION_SHOW_WIDGET;
 }
 
 static void

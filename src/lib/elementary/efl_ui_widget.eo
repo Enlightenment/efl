@@ -360,8 +360,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            i.e. X,Y start from 0,0 to indicate the top-left corner of the
            widget. W,H must be greater or equal to 1 for this region to be
            taken into account, otherwise it is ignored.
-
-           See also @.interest_region_mode
          ]]
          get {
             legacy: elm_widget_focus_region_get;
@@ -372,24 +370,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                  will be ignored, and no action will be taken.]]
          }
       }
-      @property interest_region_mode {
-         [[Defines how @.interest_region should be calculated.
-
-           It is up to the implementation of @.interest_region.get to take this
-           value into account (or ignore it).
-         ]]
-         get {
-            legacy: elm_widget_focus_region_show_mode_get;
-         }
-         set {
-            legacy: elm_widget_focus_region_show_mode_set;
-         }
-         values {
-            mode: Efl.Ui.Interest_Region_Mode;
-               [[Whether to show a specific item or the widget as a whole.]]
-         }
-      }
-
       /* Focus highlight (visual focus rectangle) properties */
       @property focus_highlight_geometry @protected {
          [[The rectangle region to be highlighted on focus.

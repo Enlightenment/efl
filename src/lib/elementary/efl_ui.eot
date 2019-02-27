@@ -23,13 +23,6 @@ enum Efl.Ui.Focus.Direction
    last = 6      [[ last direction ]]
 }
 
-enum Efl.Ui.Interest_Region_Mode
-{
-   [[Focus region show mode.]]
-   widget, [[As a widget.]]
-   item, [[As an item.]]
-}
-
 enum Efl.Ui.Focus.Move_Policy
 {
    [[Focus Movement Policy.
