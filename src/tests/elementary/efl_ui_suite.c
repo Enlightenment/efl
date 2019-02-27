@@ -19,6 +19,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_image_zoomable", efl_ui_test_image_zoomable},
   { "efl_ui_layout", efl_ui_test_layout},
   { "Efl_Ui_Model", efl_ui_model },
+  { "efl_ui_widget", efl_ui_test_widget },
   { NULL, NULL }
 };
 

@@ -347,6 +347,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_interface_scrollable.h \
 	lib/elementary/elm_interfaces.h \
 	lib/elementary/elm_widget.h \
+	lib/elementary/efl_ui_widget_common.h \
 	lib/elementary/elm_widget_actionslider.h \
 	lib/elementary/elm_widget_box.h \
 	lib/elementary/elm_widget_bubble.h \
@@ -816,6 +817,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \
 	lib/elementary/efl_ui_widget.c \
+	lib/elementary/efl_ui_widget_common.c \
 	lib/elementary/efl_ui_win.c \
 	lib/elementary/efl_ui_win_inlined.c \
 	lib/elementary/efl_ui_win_socket.c \
@@ -1630,6 +1632,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \
 	tests/elementary/efl_ui_test_layout.c \
+	tests/elementary/efl_ui_test_widget.c \
 	tests/elementary/efl_ui_suite.h \
 	tests/elementary/efl_ui_model.c
 

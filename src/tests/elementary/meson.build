@@ -130,6 +130,7 @@ efl_ui_suite_src = [
   'efl_ui_test_layout.c',
   'efl_ui_suite.h',
   'efl_ui_model.c',
+  'efl_ui_test_widget.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',

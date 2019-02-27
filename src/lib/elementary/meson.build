@@ -837,6 +837,7 @@ elementary_src = [
   'elm_view_form.c',
   'elm_web2.c',
   'efl_ui_widget.c',
+  'efl_ui_widget_common.c',
   'efl_ui_win.c',
   'efl_ui_win_inlined.c',
   'efl_ui_win_socket.c',

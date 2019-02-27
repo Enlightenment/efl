@@ -31,6 +31,7 @@ void efl_ui_test_focus(TCase *tc);
 void efl_ui_test_focus_sub(TCase *tc);
 
 void efl_ui_model(TCase *tc);
+void efl_ui_test_widget(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 

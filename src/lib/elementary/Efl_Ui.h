@@ -170,6 +170,8 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
+# include <efl_ui_widget.eo.h>
+# include <efl_ui_widget_common.h>
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_layout_base.eo.h>
 # include <efl_ui_layout.eo.h>
