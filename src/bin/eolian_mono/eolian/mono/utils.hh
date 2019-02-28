@@ -70,6 +70,14 @@ namespace eolian_mono { namespace utils {
        name.erase(std::remove(name.begin(), name.end(), target), name.end());
        return name;
    }
+
+   inline bool ends_with(std::string const& source, std::string suffix)
+   {
+       if (source.size() > suffix.size())
+           return (0 == source.compare(source.size() - suffix.size(), suffix.size(), suffix));
+       else
+           return false;
+   }
 } }
 
 #endif

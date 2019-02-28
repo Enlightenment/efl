@@ -47,8 +47,14 @@ struct constant_definition_generator
         auto lit = ::eolian_expression_value_to_literal(&constant.expression_value);
         if (!lit)
           return false;
+
         literal = lit;
         ::eina_stringshare_del(lit);
+
+        // Cleanup suffix. Roslyn does not accept ULL/LL as it has only longs.
+        if (utils::ends_with(literal, "LL") || utils::ends_with(literal, "ll"))
+          literal = literal.substr(0, literal.size() -1);
+
       }
 
     // declare variable
