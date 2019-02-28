@@ -331,16 +331,16 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
 
       /* FIXME: Scroll API. Not sure how those APIs should be exposed with
        * the new scrollable API. */
-      scroll_hold_push {
+      scroll_hold_push @beta {
          [[Push scroll hold]]
       }
-      scroll_hold_pop {
+      scroll_hold_pop @beta {
          [[Pop scroller hold]]
       }
-      scroll_freeze_push {
+      scroll_freeze_push @beta {
          [[Push scroller freeze]]
       }
-      scroll_freeze_pop {
+      scroll_freeze_pop @beta {
          [[Pop scroller freeze]]
       }
 
