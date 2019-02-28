@@ -134,7 +134,7 @@ enum Efl.Access.State_Type
    focused, [[State: focused]]
    has_tooltip, [[State: has a tooltip]]
    horizontal, [[State: horizontal]]
-   iconified, [[State: iconified]]
+   minimized, [[State: minimized]]
    modal, [[State: modal]]
    multi_line, [[State: multi line]]
    multiselectable, [[State: multiselectable]]
