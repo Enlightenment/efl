@@ -2215,6 +2215,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            const char *freefunc = NULL;
            Eina_Strbuf *buf;
            eo_lexer_get(ls);
+           if (is_inlist)
+             check_kw_next(ls, KW_struct);
            Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
            for (;;) switch (ls->t.kw)
              {
