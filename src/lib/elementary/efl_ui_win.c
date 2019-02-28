@@ -282,7 +282,7 @@ struct _Efl_Ui_Win_Data
    Eina_Bool    autohide : 1;
    Eina_Bool    constrain : 1;
    Eina_Bool    resizing : 1;
-   Eina_Bool    iconified : 1;
+   Eina_Bool    minimized : 1;
    Eina_Bool    withdrawn : 1;
    Eina_Bool    sticky : 1;
    Eina_Bool    fullscreen : 1;
@@ -312,7 +312,7 @@ static const char SIG_FOCUS_OUT[] = "focus,out"; // deprecated. use "unfocused" 
 static const char SIG_FOCUS_IN[] = "focus,in"; // deprecated. use "focused" instead.
 static const char SIG_MOVED[] = "moved";
 static const char SIG_WITHDRAWN[] = "withdrawn";
-static const char SIG_ICONIFIED[] = "iconified";
+static const char SIG_MINIMIZED[] = "minimized";
 static const char SIG_NORMAL[] = "normal";
 static const char SIG_STICK[] = "stick";
 static const char SIG_UNSTICK[] = "unstick";
@@ -332,7 +332,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_FOCUS_IN, ""},
    {SIG_MOVED, ""},
    {SIG_WITHDRAWN, ""},
-   {SIG_ICONIFIED, ""},
+   {SIG_MINIMIZED, ""},
    {SIG_NORMAL, ""},
    {SIG_STICK, ""},
    {SIG_UNSTICK, ""},
@@ -424,7 +424,7 @@ _win_noblank_eval(void)
 
         if (sd->x.xwin)
           {
-             if ((sd->noblank) && (!sd->iconified) && (!sd->withdrawn) &&
+             if ((sd->noblank) && (!sd->minimized) && (!sd->withdrawn) &&
                  evas_object_visible_get(obj))
                noblanks++;
 
@@ -488,12 +488,12 @@ _elm_win_apply_alpha(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 /* auto norender withdrawn is really only for X11.
  * On other backends like wayland, there's actually
  * no way for a client to tell if the window is
- * iconified or not.  You can request iconified state
- * but there's no explicit feedback for iconification
+ * minimized or not.  You can request minimized state
+ * but there's no explicit feedback for minimization
  * or return to normal state.
  *
  * So, blocking drawing based on client side thinking
- * it's iconified, and having the compositor think
+ * it's minimized, and having the compositor think
  * the client should be drawing will lead to
  * predictably disappointing results.
  *
@@ -524,7 +524,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
    Eina_List *l;
    Evas_Object *obj;
    int _elm_win_count_shown = 0;
-   int _elm_win_count_iconified = 0;
+   int _elm_win_count_minimized = 0;
    int _elm_win_count_withdrawn = 0;
    Eina_Bool throttle = EINA_FALSE;
 
@@ -589,7 +589,7 @@ _elm_win_state_eval(void *data EINA_UNUSED)
         EINA_LIST_FOREACH(_elm_win_list, l, obj)
           {
              if (elm_win_withdrawn_get(obj)) _elm_win_count_withdrawn++;
-             else if (elm_win_iconified_get(obj)) _elm_win_count_iconified++;
+             else if (elm_win_iconified_get(obj)) _elm_win_count_minimized++;
              else if (evas_object_visible_get(obj)) _elm_win_count_shown++;
           }
         if (_elm_win_count_shown <= 0)
@@ -1645,7 +1645,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    Evas_Object *obj;
    Eina_Bool ch_withdrawn = EINA_FALSE;
    Eina_Bool ch_sticky = EINA_FALSE;
-   Eina_Bool ch_iconified = EINA_FALSE;
+   Eina_Bool ch_minimized = EINA_FALSE;
    Eina_Bool ch_fullscreen = EINA_FALSE;
    Eina_Bool ch_maximized = EINA_FALSE;
    Eina_Bool ch_profile = EINA_FALSE;
@@ -1666,10 +1666,10 @@ _elm_win_state_change(Ecore_Evas *ee)
         sd->sticky = ecore_evas_sticky_get(sd->ee);
         ch_sticky = EINA_TRUE;
      }
-   if (sd->iconified != ecore_evas_iconified_get(sd->ee))
+   if (sd->minimized != ecore_evas_iconified_get(sd->ee))
      {
-        sd->iconified = ecore_evas_iconified_get(sd->ee);
-        ch_iconified = EINA_TRUE;
+        sd->minimized = ecore_evas_iconified_get(sd->ee);
+        ch_minimized = EINA_TRUE;
      }
    if (sd->fullscreen != ecore_evas_fullscreen_get(sd->ee))
      {
@@ -1699,14 +1699,15 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    _elm_win_state_eval_queue();
 
-   if ((ch_withdrawn) || (ch_iconified))
+   if ((ch_withdrawn) || (ch_minimized))
      {
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         if (sd->withdrawn)
           efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_WITHDRAWN, NULL);
-        else if (sd->iconified)
+        else if (sd->minimized)
           {
-             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_ICONIFIED, NULL);
+             efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MINIMIZED, NULL);
+             evas_object_smart_callback_call(obj, "iconified", NULL);
              if (_elm_config->atspi_mode)
                efl_access_window_minimized_signal_emit(obj);
           }
@@ -4334,7 +4335,7 @@ _elm_win_frame_cb_minimize(void *data,
    ELM_WIN_DATA_GET(data, sd);
 
    if (!sd) return;
-//   sd->iconified = EINA_TRUE;
+//   sd->minimized = EINA_TRUE;
    TRAP(sd, iconified_set, EINA_TRUE);
 }
 
@@ -6365,19 +6366,19 @@ _efl_ui_win_maximized_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_iconified_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool iconified)
+_efl_ui_win_minimized_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool minimized)
 {
-//   sd->iconified = iconified;
-   TRAP(sd, iconified_set, iconified);
+//   sd->minimized = minimized;
+   TRAP(sd, iconified_set, minimized);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_win_iconified_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+_efl_ui_win_minimized_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   return sd->iconified;
+   return sd->minimized;
 }
 
 EOLIAN static void

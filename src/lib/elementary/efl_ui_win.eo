@@ -344,15 +344,17 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             }
          }
       }
-      @property iconified {
+      @property minimized {
          set {
-            [[Set the iconified state of a window.]]
+            [[Set the minimized state of a window.]]
+            legacy: elm_win_iconified_set;
          }
          get {
-            [[Get the iconified state of a window.]]
+            [[Get the minimized state of a window.]]
+            legacy: elm_win_iconified_get;
          }
          values {
-            iconified: bool; [[If $true, the window is iconified.]]
+            state: bool; [[If $true, the window is minimized.]]
          }
       }
       @property maximized {
@@ -430,7 +432,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
               uses such as media playback on a television where a user
               may not want to be interrupted by an idle screen. The
               noblank property may have no effect if the window is
-              iconified/minimized or hidden.
+              minimized or hidden.
 
               @since 1.11
             ]]
@@ -975,7 +977,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
    events {
       delete,request: void; [[Called when the window receives a delete request]]
       withdrawn: void; [[Called when window is withdrawn]]
-      iconified: void; [[Called when window is iconified]]
+      minimized: void; [[Called when window is minimized]]
       normal: void; [[Called when window is set to normal state]]
       stick: void; [[Called when window is set as sticky]]
       unstick: void; [[Called when window is no  longer set as sticky]]
