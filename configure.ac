@@ -804,7 +804,7 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lmsvcr100])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
 
 ### Checks for header files
 
