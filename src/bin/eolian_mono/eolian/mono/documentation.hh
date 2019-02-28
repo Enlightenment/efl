@@ -135,6 +135,18 @@ struct documentation_generator
          case ::EOLIAN_OBJECT_FUNCTION:
            ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
            break;
+         case ::EOLIAN_OBJECT_VARIABLE:
+           if (::eolian_variable_type_get((::Eolian_Variable *)data) == ::EOLIAN_VAR_CONSTANT)
+             {
+                auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
+                names.pop_back(); // Remove var name
+                ref = name_helpers::join_namespaces(names, '.');
+                ref += "Constants.";
+                ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
+             }
+           // Otherwise, do nothing and no <see> tag will be generated. Because, who would
+           // reference a global (non-constant) variable in the docs?
+           break;
          case ::EOLIAN_OBJECT_UNKNOWN:
            // If the reference cannot be resolved, just return an empty string and
            // it won't be converted into a <see> tag.
