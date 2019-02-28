@@ -847,7 +847,7 @@ M.type_builtin_type = {
    MSTRING       = 44,
    STRING        = 45,
    STRINGSHARE   = 46,
-   STRBUF        = 47.
+   STRBUF        = 47,
 
    VOID_PTR      = 48,
    FREE_CB       = 49
