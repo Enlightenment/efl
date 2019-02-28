@@ -192,9 +192,7 @@ struct to_internal_field_convert_generator
              return false;
         }
       else if ((complex && (complex->outer.base_type == "array"
-                         || complex->outer.base_type == "inarray"
                          || complex->outer.base_type == "list"
-                         || complex->outer.base_type == "inlist"
                          || complex->outer.base_type == "iterator"
                          || complex->outer.base_type == "hash"))
             || field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")
@@ -299,9 +297,7 @@ struct to_external_field_convert_generator
              return false;
         }
       else if (complex && (complex->outer.base_type == "array"
-                        || complex->outer.base_type == "inarray"
                         || complex->outer.base_type == "list"
-                        || complex->outer.base_type == "inlist"
                         || complex->outer.base_type == "iterator"))
         {
            // Always assumes pointer

@@ -212,17 +212,7 @@ struct marshall_type_visitor_generate
               return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
-        ,{"inarray", nullptr, nullptr, [&]
-           {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
-           }
-        }
         ,{"list", nullptr, nullptr, [&]
-           {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
-           }
-        }
-        ,{"inlist", nullptr, nullptr, [&]
            {
               return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
            }

@@ -333,22 +333,10 @@ struct visitor_generate
            c.outer.base_type = "Eina.List";
            return c;
          }}
-        , {"inlist", nullptr, nullptr, [&]
-           {
-           complex_type_def c = complex;
-           c.outer.base_type = "Eina.Inlist";
-           return c;
-         }}
         , {"array", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
            c.outer.base_type = "Eina.Array";
-           return c;
-         }}
-        , {"inarray", nullptr, nullptr, [&]
-           {
-           complex_type_def c = complex;
-           c.outer.base_type = "Eina.Inarray";
            return c;
          }}
         , {"hash", nullptr, nullptr

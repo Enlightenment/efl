@@ -3332,18 +3332,9 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    eina_array_push(complex->farray, _new_int(0x2A));
    eina_array_push(complex->farray, _new_int(0x42));
 
-   complex->finarray = eina_inarray_new(sizeof(int), 0);
-   eina_inarray_push(complex->finarray, _int_ref(0x0));
-   eina_inarray_push(complex->finarray, _int_ref(0x2A));
-   eina_inarray_push(complex->finarray, _int_ref(0x42));
-
    complex->flist = eina_list_append(complex->flist, strdup("0x0"));
    complex->flist = eina_list_append(complex->flist, strdup("0x2A"));
    complex->flist = eina_list_append(complex->flist, strdup("0x42"));
-
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x0));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x2A));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x42));
 
    complex->fhash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(complex->fhash, "aa", strdup("aaa"));
@@ -3374,13 +3365,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
    if (!_array_int_equal(complex->farray, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
-   if (!_inarray_int_equal(complex->finarray, base_seq_int, base_seq_int_size))
-     return EINA_FALSE;
-
    if (!_list_str_equal(complex->flist, base_seq_str, base_seq_str_size))
-     return EINA_FALSE;
-
-   if (!_inlist_int_equal(complex->finlist, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
    if (!_hash_str_check(complex->fhash, "aa", "aaa")
