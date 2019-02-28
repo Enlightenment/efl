@@ -172,7 +172,6 @@ _check_typedecl(const Eolian_Typedecl *tp, Eina_Hash *depset, Eina_Hash *chash)
              switch (tp->type)
                {
                 case EOLIAN_TYPEDECL_STRUCT:
-                case EOLIAN_TYPEDECL_STRUCT_INLIST:
                   _check_type(((const Eolian_Struct_Type_Field *)data)->type,
                               depset, chash);
                   break;

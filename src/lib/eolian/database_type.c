@@ -43,18 +43,10 @@ database_type_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 }
 
 void
-database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp, Eina_Bool is_inlist)
+database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
-   if (is_inlist)
-     {
-        EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, inlists);
-     }
-   else
-     {
-        EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
-     }
-   Eina_Hash *sh = is_inlist ? unit->state->staging.inlists_f
-                             : unit->state->staging.structs_f;
+   EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
+   Eina_Hash *sh = unit->state->staging.structs_f;
    eina_hash_set(sh, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(sh, tp->base.file), tp));
    database_object_add(unit, &tp->base);
@@ -169,8 +161,6 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
    if (tp->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
      return;
    eina_strbuf_append(buf, " { ");
-   if (tp->type == EOLIAN_TYPEDECL_STRUCT_INLIST)
-     eina_strbuf_append(buf, "EINA_INLIST; ");
    Eina_List *l;
    Eolian_Struct_Type_Field *sf;
    EINA_LIST_FOREACH(tp->field_list, l, sf)
@@ -245,7 +235,6 @@ database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
         break;
       case EOLIAN_TYPEDECL_STRUCT:
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
-      case EOLIAN_TYPEDECL_STRUCT_INLIST:
         _stype_to_str(tp, buf);
         break;
       default:
