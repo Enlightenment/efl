@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Datepicker extends Efl.Ui.Layout
+class @beta Efl.Ui.Datepicker extends Efl.Ui.Layout_Base
 {
    [[Datepicker widget
 

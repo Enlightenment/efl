@@ -16,7 +16,7 @@ enum Efl.Ui.Clock_Type
    ampm    = 7, [[Indicates AM/PM field .]]
 }
 
-class @beta Efl.Ui.Clock extends Efl.Ui.Layout
+class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
 {
    [[Efl UI clock class]]
    methods {

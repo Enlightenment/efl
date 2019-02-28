@@ -8,7 +8,7 @@ enum Elm.Label.Slide_Mode
    always [[Slide always.]]
 }
 
-class Elm.Label extends Efl.Ui.Layout implements Efl.Ui.Legacy
+class Elm.Label extends Efl.Ui.Layout_Base implements Efl.Ui.Legacy
 {
    [[Elementary label class]]
    legacy_prefix: elm_label;

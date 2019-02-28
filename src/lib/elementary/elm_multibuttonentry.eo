@@ -1,7 +1,7 @@
 type Elm_Multibuttonentry_Item_Filter_Cb: __undefined_type; [[Elementary multibuttonentry item filter callback type]]
 type Elm_Multibuttonentry_Format_Cb: __undefined_type; [[Elementary multibuttonentry format callback type]]
 
-class Elm.Multibuttonentry extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Legacy
+class Elm.Multibuttonentry extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable, Efl.Ui.Legacy
 {
    [[Elementary multibuttonentry class]]
    legacy_prefix: elm_multibuttonentry;

@@ -1,4 +1,4 @@
-class Elm.Conformant extends Efl.Ui.Layout implements Efl.Ui.Legacy
+class Elm.Conformant extends Efl.Ui.Layout_Base implements Efl.Ui.Legacy
 {
    [[Elementary conformant class]]
    legacy_prefix: elm_conformant;

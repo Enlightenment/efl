@@ -1,4 +1,4 @@
-class Elm.Index extends Efl.Ui.Layout implements Efl.Ui.Direction,
+class Elm.Index extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
                  Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
    [[elementary index class]]

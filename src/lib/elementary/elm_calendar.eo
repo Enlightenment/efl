@@ -72,7 +72,7 @@ struct Elm.Calendar.Mark; [[Item handle for a calendar mark.
                             with @Elm.Calendar.mark_del.
                           ]]
 
-class Elm.Calendar extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action,
+class Elm.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action,
                     Efl.Ui.Legacy
 {
    [[Calendar widget

@@ -1,4 +1,4 @@
-class Elm.Spinner extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Focus.Composition,
+class Elm.Spinner extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Focus.Composition,
                    Efl.Access.Value, Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary spinner class]]

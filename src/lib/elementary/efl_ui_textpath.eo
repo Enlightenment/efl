@@ -4,7 +4,7 @@ enum Efl.Ui.Textpath_Direction {
     ccw [[Counter-clockwise]]
 }
 
-class @beta Efl.Ui.Textpath extends Efl.Ui.Layout implements Efl.Text, Efl.Gfx.Path
+class @beta Efl.Ui.Textpath extends Efl.Ui.Layout_Base implements Efl.Text, Efl.Gfx.Path
 {
    [[Efl Ui Textpath class]]
    legacy_prefix: elm_textpath;

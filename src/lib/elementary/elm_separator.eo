@@ -1,4 +1,4 @@
-class Elm.Separator extends Efl.Ui.Layout implements Efl.Ui.Legacy
+class Elm.Separator extends Efl.Ui.Layout_Base implements Efl.Ui.Legacy
 {
    [[Elementary separator class]]
    legacy_prefix: elm_separator;

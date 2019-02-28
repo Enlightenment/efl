@@ -1,6 +1,6 @@
 import elm_general;
 
-class Elm.List extends Efl.Ui.Layout implements Elm.Interface_Scrollable,
+class Elm.List extends Efl.Ui.Layout_Base implements Elm.Interface_Scrollable,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Access.Object,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy, Elm.Widget_Item_Container
 {

@@ -1,4 +1,4 @@
-class Elm.Flipselector extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive,
+class Elm.Flipselector extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive,
                         Efl.Access.Widget.Action,
                         Efl.Ui.Selectable, Efl.Ui.Legacy
 {

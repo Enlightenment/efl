@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Panes extends Efl.Ui.Layout implements Efl.Ui.Direction,
+class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
                     Efl.Ui.Clickable
 {
    [[Elementary panes class]]

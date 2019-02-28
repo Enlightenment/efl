@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+class @beta Efl.Ui.Button extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
                      Efl.Text, Efl.Content,
                      Efl.Access.Widget.Action
 {

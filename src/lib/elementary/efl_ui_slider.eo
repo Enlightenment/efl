@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Slider extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Direction,
+class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Direction,
                      Efl.Access.Value,
                      Efl.Access.Widget.Action
 {

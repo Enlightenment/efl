@@ -1,6 +1,6 @@
 type Elm_Slideshow_Item_Class: __undefined_type; [[Elementary slideshow item class type]]
 
-class Elm.Slideshow extends Efl.Ui.Layout implements Efl.Access.Widget.Action, Efl.Ui.Legacy
+class Elm.Slideshow extends Efl.Ui.Layout_Base implements Efl.Access.Widget.Action, Efl.Ui.Legacy
 {
    [[Elementary slideshow class]]
    eo_prefix: elm_obj_slideshow;

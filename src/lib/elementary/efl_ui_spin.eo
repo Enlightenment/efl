@@ -5,7 +5,7 @@ struct Efl.Ui.Spin_Special_Value
    label: string; [[String to replace]]
 }
 
-class @beta Efl.Ui.Spin extends Efl.Ui.Layout implements Efl.Ui.Range_Interactive, Efl.Ui.Format,
+class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Format,
                    Efl.Access.Value, Efl.Access.Widget.Action
 {
    [[A Spin.

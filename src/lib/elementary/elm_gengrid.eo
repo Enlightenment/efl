@@ -9,7 +9,7 @@ enum Elm.Gengrid.Reorder_Type
    swap    [[Swap reorder type]]
 }
 
-class Elm.Gengrid extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
+class Elm.Gengrid extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Composition, Elm.Interface_Scrollable,
                    Efl.Ui.Clickable, Efl.Access.Widget.Action,
                    Efl.Access.Selection, Efl.Ui.Legacy, Elm.Widget_Item_Container
 {

@@ -8,7 +8,7 @@ struct Efl.Ui.Tab_Page_Tab_Changed_Event {
    changed_info: Efl.Ui.Tab_Page_Tab_Changed;
 }
 
-class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout implements Efl.Content
+class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Tab Page class]]
    methods {

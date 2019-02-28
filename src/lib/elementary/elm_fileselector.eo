@@ -1,4 +1,4 @@
-class Elm.Fileselector extends Efl.Ui.Layout implements Elm.Interface.Fileselector,
+class Elm.Fileselector extends Efl.Ui.Layout_Base implements Elm.Interface.Fileselector,
                         Efl.Access.Widget.Action, Efl.Ui.Focus.Composition,
                         Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.Legacy
 {
