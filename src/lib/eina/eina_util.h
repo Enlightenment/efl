@@ -78,7 +78,7 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
  *
  * @return @c true if two floats match
  */
-#define EINA_FLT_EQ(a, b) (!!(fabsf((float)a - (float)b) <= FLT_EPSILON))
+#define EINA_FLT_EQ(a, b) (!!(fabsf((float)(a) - (float)(b)) <= FLT_EPSILON))
 
 /**
  * @brief Determines if a float is not zero
@@ -97,7 +97,7 @@ static inline Eina_Bool eina_flt_exact(float a, float b);
  *
  * @return @c true if two double match
  */
-#define EINA_DBL_EQ(a, b) (!!(fabs((double)a - (double)b) <= DBL_EPSILON))
+#define EINA_DBL_EQ(a, b) (!!(fabs((double)(a) - (double)(b)) <= DBL_EPSILON))
 
 /**
  * @brief Determines if a double is not zero
