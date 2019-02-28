@@ -53,8 +53,8 @@ database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp, Eina_Bool is_inlist)
      {
         EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
      }
-   Eina_Hash *sh = is_inlist ? unit->state->staging.structs_f
-                             : unit->state->staging.inlists_f;
+   Eina_Hash *sh = is_inlist ? unit->state->staging.inlists_f
+                             : unit->state->staging.structs_f;
    eina_hash_set(sh, tp->base.file, eina_list_append
                 ((Eina_List*)eina_hash_find(sh, tp->base.file), tp));
    database_object_add(unit, &tp->base);

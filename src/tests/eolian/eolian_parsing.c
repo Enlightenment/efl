@@ -686,6 +686,7 @@ EFL_START_TEST(eolian_struct)
    const Eolian_Unit *unit;
    const char *type_name;
    const char *file;
+   Eina_Iterator *structs;
 
    Eolian_State *eos = eolian_state_new();
 
@@ -696,6 +697,9 @@ EFL_START_TEST(eolian_struct)
    /* Check that the class Dummy is still readable */
    fail_if(!(class = eolian_unit_class_by_name_get(unit, "Struct")));
    fail_if(!eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD));
+
+   fail_if(!(structs = eolian_state_structs_by_file_get(eos, "struct.eo")));
+   eina_iterator_free(structs);
 
    /* named struct */
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Named")));
