@@ -190,6 +190,24 @@ class TestTypedefs
     }
 }
 
+class TestVariables
+{
+    public static void test_constant_variables()
+    {
+        Test.AssertEquals(Dummy.Constants.ConstvarBool, true);
+        Test.AssertEquals(Dummy.Constants.ConstvarInt, -32766);
+        Test.AssertEquals(Dummy.Constants.ConstvarUInt, 65533U);
+        Test.AssertEquals(Dummy.Constants.ConstvarLong, -2147483644L);
+        Test.AssertEquals(Dummy.Constants.ConstvarULong, 4294967288UL);
+        //Test.AssertEquals(Dummy.Constants.ConstvarLLong, -9223372036854775800); // TODO
+        //Test.AssertEquals(Dummy.Constants.ConstvarULLong, 18446744073709551615);
+        Test.AssertEquals(Dummy.Constants.ConstvarFloat, 16777211.0f);
+        Test.AssertEquals(Dummy.Constants.ConstvarDouble, 9007199254740988.0);
+        Test.AssertEquals(Dummy.Constants.ConstvarChar, '!');
+        Test.AssertEquals(Dummy.Constants.ConstvarString, "test_str");
+    }
+}
+
 class TestEoAccessors
 {
     public static void basic_eo_accessors()

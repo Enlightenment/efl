@@ -82,6 +82,7 @@ bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian/mono/part_definition.hh \
 	bin/eolian_mono/eolian/mono/struct_fields.hh \
 	bin/eolian_mono/eolian/mono/parameter.hh \
+	bin/eolian_mono/eolian/mono/variable_definition.hh \
 	bin/eolian_mono/eolian/mono/utils.hh \
 	bin/eolian_mono/eolian/mono/using_decl.hh \
 	bin/eolian_mono/eolian/mono/marshall_type.hh \

@@ -2,6 +2,18 @@ import eina_types;
 
 type Dummy.MyInt: int;
 
+const Dummy.Constvar_Bool : bool = true;
+const Dummy.Constvar_Int : int = -32766;
+const Dummy.Constvar_UInt : uint = 65533U;
+const Dummy.Constvar_Long : long = -2147483644L;
+const Dummy.Constvar_ULong : ulong = 4294967288UL;
+const Dummy.Constvar_LLong : llong = -9223372036854775800LL;
+const Dummy.Constvar_ULLong : ullong = 18446744073709551615ULL;
+const Dummy.Constvar_Float : float = 16777211.0f;
+const Dummy.Constvar_Double : double = 9007199254740988.0;
+const Dummy.Constvar_Char : char = '!';
+const Dummy.Constvar_String : string = "test_str";
+
 enum Dummy.SampleEnum {
    v0,
    v1,
