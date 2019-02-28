@@ -503,14 +503,6 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         else
           evas_object_size_hint_min_set(sd->spacer, minw, minh);
 
-        if (sd->main_layout)
-          {
-             Evas *ev = evas_object_evas_get(sd->main_layout);
-             if (evas_smart_objects_calculating_get(ev))
-               evas_object_smart_calculate(sd->main_layout);
-             else
-               evas_object_smart_need_recalculate_set(sd->main_layout, EINA_TRUE);
-          }
        return;
      }
 

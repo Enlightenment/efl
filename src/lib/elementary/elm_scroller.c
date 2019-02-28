@@ -886,11 +886,6 @@ _focused_element(void *data, const Efl_Event *event)
    geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
-
-   geom = efl_gfx_entity_geometry_get(obj);
-   geom.x = geom.y = 0;
-   elm_widget_show_region_set(obj, geom, EINA_TRUE);
-
 }
 
 EOLIAN static Eo *
