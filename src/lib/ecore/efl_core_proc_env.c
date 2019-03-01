@@ -10,6 +10,8 @@
 
 #define MY_CLASS EFL_CORE_PROC_ENV_CLASS
 
+extern char **environ;
+
 static Efl_Core_Env *env = NULL;
 
 typedef struct {
