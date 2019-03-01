@@ -1,8 +1,10 @@
 /*
  * gcc -o web_example_02 web_example_02.c `pkg-config --cflags --libs elementary ewebkit` -D_GNU_SOURCE
  */
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
 
-#define _GNU_SOURCE
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
