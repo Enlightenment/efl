@@ -178,7 +178,47 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_array_append_wrapper(IntPtr handle, IntPtr data);
+    internal static extern bool eina_value_container_append_wrapper_string(IntPtr handle, string data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_char(IntPtr handle, sbyte data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_uchar(IntPtr handle, byte data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_short(IntPtr handle, short data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_ushort(IntPtr handle, ushort data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_int(IntPtr handle, int data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_uint(IntPtr handle, uint data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_long(IntPtr handle, long data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_ulong(IntPtr handle, ulong data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_float(IntPtr handle, float data);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_append_wrapper_double(IntPtr handle, double data);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -186,7 +226,47 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_array_get_wrapper(IntPtr handle, int index, out IntPtr output);
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out IntPtr output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out sbyte output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out byte output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out short output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out ushort output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out int output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out uint output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out long output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out ulong output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out float output);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_get_wrapper(IntPtr handle, int index, out double output);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
@@ -194,11 +274,47 @@ static internal class UnsafeNativeMethods {
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_array_set_wrapper(IntPtr handle, int index, IntPtr value);
+    internal static extern bool eina_value_container_set_wrapper_string(IntPtr handle, int index, string value);
 
     [DllImport(efl.Libs.CustomExports)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
-    internal static extern bool eina_value_list_set_wrapper(IntPtr handle, int index, IntPtr value);
+    internal static extern bool eina_value_container_set_wrapper_uchar(IntPtr handle, int index, byte value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_char(IntPtr handle, int index, sbyte value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_short(IntPtr handle, int index, short value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_ushort(IntPtr handle, int index, ushort value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_int(IntPtr handle, int index, int value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_uint(IntPtr handle, int index, uint value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_long(IntPtr handle, int index, long value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_ulong(IntPtr handle, int index, ulong value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_float(IntPtr handle, int index, float value);
+
+    [DllImport(efl.Libs.CustomExports)]
+    [return: MarshalAsAttribute(UnmanagedType.U1)]
+    internal static extern bool eina_value_container_set_wrapper_double(IntPtr handle, int index, double value);
 
     [DllImport(efl.Libs.CustomExports)]
     internal static extern IntPtr eina_value_array_subtype_get_wrapper(IntPtr handle);
@@ -1747,13 +1863,70 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
     public bool Append(object o) {
         ContainerSanityChecks();
-        using (DisposableIntPtr marshalled_value = MarshalValue(o)) {
-            switch (GetValueType()) {
-                case ValueType.Array:
-                    return eina_value_array_append_wrapper(this.Handle, marshalled_value.Handle);
-                case ValueType.List:
-                    return eina_value_list_append_wrapper(this.Handle, marshalled_value.Handle);
-            }
+
+        switch (GetValueSubType()) {
+            case ValueType.SByte:
+                {
+                    sbyte b = Convert.ToSByte(o);
+                    return eina_value_container_append_wrapper_char(this.Handle, b);
+                }
+            case ValueType.Byte:
+                {
+                    byte b = Convert.ToByte(o);
+                    return eina_value_container_append_wrapper_uchar(this.Handle, b);
+                }
+
+            case ValueType.Short:
+                {
+                    short b = Convert.ToInt16(o);
+                    return eina_value_container_append_wrapper_short(this.Handle, b);
+                }
+            case ValueType.UShort:
+                {
+                    ushort b = Convert.ToUInt16(o);
+                    return eina_value_container_append_wrapper_ushort(this.Handle, b);
+                }
+
+            case ValueType.Int32:
+                {
+                    int x = Convert.ToInt32(o);
+                    return eina_value_container_append_wrapper_int(this.Handle, x);
+                }
+            case ValueType.UInt32:
+                {
+                    uint x = Convert.ToUInt32(o);
+                    return eina_value_container_append_wrapper_uint(this.Handle, x);
+                }
+
+            case ValueType.Long:
+            case ValueType.Int64:
+                {
+                    long x = Convert.ToInt64(o);
+                    return eina_value_container_append_wrapper_long(this.Handle, x);
+                }
+            case ValueType.ULong:
+            case ValueType.UInt64:
+                {
+                    ulong x = Convert.ToUInt64(o);
+                    return eina_value_container_append_wrapper_ulong(this.Handle, x);
+                }
+
+            case ValueType.Float:
+                {
+                    float x = Convert.ToSingle(o);
+                    return eina_value_container_append_wrapper_float(this.Handle, x);
+                }
+            case ValueType.Double:
+                {
+                    double x = Convert.ToDouble(o);
+                    return eina_value_container_append_wrapper_double(this.Handle, x);
+                }
+
+            case ValueType.String:
+                {
+                    string x = Convert.ToString(o);
+                    return eina_value_container_append_wrapper_string(this.Handle, x);
+                }
         }
         return false;
     }
@@ -1763,49 +1936,163 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         get {
             ContainerSanityChecks(i);
 
-            IntPtr output = IntPtr.Zero;
-            switch (GetValueType()) {
-                case ValueType.Array:
-                    if (!eina_value_array_get_wrapper(this.Handle, i, out output))
-                        return null;
-                    break;
-                case ValueType.List:
-                    if (!eina_value_list_get_wrapper(this.Handle, i, out output))
-                        return null;
-                    break;
+            switch (GetValueSubType()) {
+                case ValueType.SByte:
+                    {
+                        sbyte ret = default(sbyte);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+                case ValueType.Byte:
+                    {
+                        byte ret = default(byte);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+
+                case ValueType.Short:
+                    {
+                        short ret = default(short);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+                case ValueType.UShort:
+                    {
+                        ushort ret = default(ushort);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+
+                case ValueType.Int32:
+                    {
+                        int ret = default(int);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+                case ValueType.UInt32:
+                    {
+                        uint ret = default(uint);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+
+                case ValueType.Long:
+                case ValueType.Int64:
+                    {
+                        long ret = default(long);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+                case ValueType.ULong:
+                case ValueType.UInt64:
+                    {
+                        ulong ret = default(ulong);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+
+                case ValueType.Float:
+                    {
+                        float ret = default(float);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+                case ValueType.Double:
+                    {
+                        double ret = default(double);
+                        eina_value_container_get_wrapper(this.Handle, i, out ret);
+                        return ret;
+                    }
+
+                case ValueType.String:
+                    {
+                        // Using intptr as using string as the arg type in the DllImport'd function would
+                        // make mono take ownership of the string.
+                        IntPtr ptr = IntPtr.Zero;
+                        eina_value_container_get_wrapper(this.Handle, i, out ptr);
+                        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
+                    }
+                default:
+                    throw new InvalidOperationException("Subtype not supported.");
             }
-            return UnMarshalPtr(output);
         }
         set {
             ContainerSanityChecks(i);
 
-            switch (GetValueType()) {
-                case ValueType.Array:
-                    ArraySet(i, value);
+            switch (GetValueSubType()) {
+                case ValueType.SByte:
+                    {
+                        sbyte v = Convert.ToSByte(value);
+                        eina_value_container_set_wrapper_char(this.Handle, i, v);
+                    }
                     break;
-                case ValueType.List:
-                    ListSet(i, value);
+                case ValueType.Byte:
+                    {
+                        byte v = Convert.ToByte(value);
+                        eina_value_container_set_wrapper_uchar(this.Handle, i, v);
+                    }
                     break;
-            }
-        }
-    }
 
-    private void ArraySet(int i, object value) {
-        using (DisposableIntPtr marshalled_value = MarshalValue(value))
-        {
-            if (!eina_value_array_set_wrapper(this.Handle, i,
-                                              marshalled_value.Handle)) {
-                throw new SetItemFailedException($"Failed to set item at index {i}");
-            }
-        }
-    }
+                case ValueType.Short:
+                    {
+                        short x = Convert.ToInt16(value);
+                        eina_value_container_set_wrapper_short(this.Handle, i, x);
+                    }
+                    break;
+                case ValueType.UShort:
+                    {
+                        ushort x = Convert.ToUInt16(value);
+                        eina_value_container_set_wrapper_ushort(this.Handle, i, x);
+                    }
+                    break;
 
-    private void ListSet(int i, object value) {
-        using (DisposableIntPtr marshalled_value = MarshalValue(value))
-        {
-            if (!eina_value_list_set_wrapper(this.Handle, i,
-                                             marshalled_value.Handle)) {
-                throw new SetItemFailedException($"Failed to set item at index {i}");
+                case ValueType.Int32:
+                    {
+                        int x = Convert.ToInt32(value);
+                        eina_value_container_set_wrapper_int(this.Handle, i, x);
+                    }
+                    break;
+                case ValueType.UInt32:
+                    {
+                        uint x = Convert.ToUInt32(value);
+                        eina_value_container_set_wrapper_uint(this.Handle, i, x);
+                    }
+                    break;
+
+                case ValueType.Long:
+                case ValueType.Int64:
+                    {
+                        long x = Convert.ToInt64(value);
+                        eina_value_container_set_wrapper_long(this.Handle, i, x);
+                    }
+                    break;
+                case ValueType.ULong:
+                case ValueType.UInt64:
+                    {
+                        ulong x = Convert.ToUInt64(value);
+                        eina_value_container_set_wrapper_ulong(this.Handle, i, x);
+                    }
+                    break;
+
+                case ValueType.Float:
+                    {
+                        float x = Convert.ToSingle(value);
+                        eina_value_container_set_wrapper_float(this.Handle, i, x);
+                    }
+                    break;
+                case ValueType.Double:
+                    {
+                        double x = Convert.ToDouble(value);
+                        eina_value_container_set_wrapper_double(this.Handle, i, x);
+                    }
+                    break;
+
+                case ValueType.String:
+                    {
+                        string x = Convert.ToString(value);
+                        eina_value_container_set_wrapper_string(this.Handle, i, x);
+                    }
+                    break;
             }
         }
     }
@@ -1826,54 +2113,6 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
         return ValueTypeBridge.GetManaged(native_subtype);
     }
-
-    private DisposableIntPtr MarshalValue(object value)
-    {
-        IntPtr ret = IntPtr.Zero;
-        bool shouldFree = false;
-        switch(GetValueSubType()) {
-            case ValueType.Int32:
-                {
-                    int x = Convert.ToInt32(value);
-                    ret = new IntPtr(x);
-                }
-                break;
-            case ValueType.UInt32:
-                {
-                    uint x = Convert.ToUInt32(value);
-                    ret = new IntPtr((int)x);
-                }
-                break;
-            case ValueType.String:
-                {
-                    string x = value as string;
-                    if (x == null)
-                        ret = IntPtr.Zero;
-                    else {
-                        ret = StringConversion.ManagedStringToNativeUtf8Alloc(x);
-                        shouldFree = true;
-                    }
-                }
-                break;
-        }
-
-        return new DisposableIntPtr(ret, shouldFree);
-    }
-
-    private object UnMarshalPtr(IntPtr data)
-    {
-        switch(GetValueSubType()) {
-            case ValueType.Int32:
-                return Convert.ToInt32(data.ToInt32());
-            case ValueType.UInt32:
-                return Convert.ToUInt32(data.ToInt32());
-            case ValueType.String:
-                return StringConversion.NativeUtf8ToManagedString(data);
-            default:
-                return null;
-        }
-    }
-
 }
 
 /// <summary> Custom marshaler to convert value pointers to managed values and back,
