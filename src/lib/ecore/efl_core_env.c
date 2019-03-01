@@ -9,8 +9,6 @@
 
 #define MY_CLASS EFL_CORE_ENV_CLASS
 
-extern char **environ;
-
 typedef struct {
    Eina_Hash *env;
 } Efl_Core_Env_Data;
