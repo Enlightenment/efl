@@ -576,11 +576,11 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
         Eina_Iterator *itr;
         const char *key;
 
-      #ifdef HAVE_CLEARENV
+# ifdef HAVE_CLEARENV
         clearenv();
-      #else
+# else
         environ = NULL;
-      #endif
+# endif
         itr = efl_core_env_content_get(pd->env);
 
         EINA_ITERATOR_FOREACH(itr, key)
