@@ -1,5 +1,9 @@
-#define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Elementary.h>
 

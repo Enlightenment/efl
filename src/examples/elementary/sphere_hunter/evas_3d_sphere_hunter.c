@@ -14,8 +14,12 @@
 * edje_cc sphere_hunter.edc
 * gcc -o evas_3d_sphere_hunter evas_3d_sphere_hunter.c -g `pkg-config --libs --cflags evas ecore elementary eina eo` -lm
 */
-
-#define EFL_BETA_API_SUPPORT
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Elementary.h>
 #include <Ecore.h>
