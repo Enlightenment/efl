@@ -1,7 +1,12 @@
 //Compile with:
 //gcc -o location_example_01 location_example_01.c -g `pkg-config --cflags --libs elementary elocation`
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
-#define EFL_BETA_API_SUPPORT
 #include <Elementary.h>
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
