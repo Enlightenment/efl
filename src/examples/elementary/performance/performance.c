@@ -19,9 +19,6 @@
  * @endverbatim
  */
 
-#define EFL_EO_API_SUPPORT
-#define EFL_BETA_API_SUPPORT
-
 /*enable automation test*/
 #ifdef ENABLE_ATPORT
    #include "at_port.h"
@@ -33,6 +30,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef EFL_EO_API_SUPPORT
+# define EFL_EO_API_SUPPORT
+#endif
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Eo.h>
 #include <Evas.h>
@@ -60,13 +63,11 @@ void _clear_buf(char *buf)
      buf[i] = '\0';
 }
 
-void _value_int_to_char(char *buf, int value, const char *description)
+Eina_Slstr * _value_int_to_char(int value, const char *description)
 {
-   _clear_buf(buf);
    if (description)
-     sprintf(buf, "%s %d", description, value);
-   else
-     sprintf(buf, "%d", value);
+     return eina_slstr_printf("%s %d", description, value);
+   return eina_slstr_printf("%d", value);
 }
 
 static Eina_Bool
@@ -249,7 +250,7 @@ _node_scale_change_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info
 static void
 _countdec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
    int tmp;
 
    globalGraphical.count -= 10;
@@ -257,181 +258,183 @@ _countdec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_U
    else
      tmp = ((globalGraphical.count + 1) * (globalGraphical.count + 1));
 
-   _value_int_to_char(buf, ((tmp <= 1) ? 0 : tmp), "quantity:");
+   buf = _value_int_to_char(((tmp <= 1) ? 0 : tmp), "quantity:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _countdec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-  char buf[CONVERT];
-  int tmp;
+   Eina_Slstr *buf;
+   int tmp;
+
    globalGraphical.count--;
    if (globalGraphical.count < 0) tmp = globalGraphical.count = 0;
    else
      tmp = ((globalGraphical.count + 1) * (globalGraphical.count + 1));
-   _value_int_to_char(buf, ((tmp <= 1) ? 0 : tmp), "quantity:");
+   buf = _value_int_to_char(((tmp <= 1) ? 0 : tmp), "quantity:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _countinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.count++;
 
-   _value_int_to_char(buf, ((globalGraphical.count + 1) * (globalGraphical.count + 1)), "quantity:");
+   buf = _value_int_to_char(((globalGraphical.count + 1) * (globalGraphical.count + 1)), "quantity:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _countinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.count += 10;
 
-   _value_int_to_char(buf, ((globalGraphical.count + 1) * (globalGraphical.count + 1)), "quantity:");
+   buf = _value_int_to_char(((globalGraphical.count + 1) * (globalGraphical.count + 1)), "quantity:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _speeddec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.speed -= 10;
    if (globalGraphical.speed <= 0) globalGraphical.speed = 10;
 
-   _value_int_to_char(buf, globalGraphical.speed, "speed:");
+   buf = _value_int_to_char(globalGraphical.speed, "speed:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _speeddec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.speed--;
    if (globalGraphical.speed <= 0) globalGraphical.speed = 10;
 
-   _value_int_to_char(buf, globalGraphical.speed, "speed:");
+   buf = _value_int_to_char(globalGraphical.speed, "speed:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _speedinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.speed++;
 
-   _value_int_to_char(buf, globalGraphical.speed, "speed:");
+   buf = _value_int_to_char(globalGraphical.speed, "speed:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _speedinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.speed += 10;
 
-   _value_int_to_char(buf, globalGraphical.speed, "speed:");
+   buf = _value_int_to_char(globalGraphical.speed, "speed:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _precisiondec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.precision -= 10;
    if (globalGraphical.precision <= 0) globalGraphical.precision = 10;
 
-   _value_int_to_char(buf, globalGraphical.precision, "precision:");
+   buf = _value_int_to_char(globalGraphical.precision, "precision:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _precisiondec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.precision--;
    if (globalGraphical.precision <= 0) globalGraphical.precision = 10;
 
-   _value_int_to_char(buf, globalGraphical.precision, "precision:");
+   buf = _value_int_to_char(globalGraphical.precision, "precision:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _precisioninc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.precision++;
 
-   _value_int_to_char(buf, globalGraphical.precision, "precision:");
+   buf = _value_int_to_char(globalGraphical.precision, "precision:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _precisioninc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.precision += 10;
 
-   _value_int_to_char(buf, globalGraphical.precision, "precision:");
+   buf = _value_int_to_char(globalGraphical.precision, "precision:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _angledec10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.angle -= 10;
    if (globalGraphical.angle <= 0) globalGraphical.angle = 10;
 
-   _value_int_to_char(buf, globalGraphical.angle, "angle:");
+   buf = _value_int_to_char(globalGraphical.angle, "angle:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _angledec_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.angle--;
    if (globalGraphical.angle <= 0) globalGraphical.angle = 10;
 
-   _value_int_to_char(buf, globalGraphical.angle, "angle:");
+   buf = _value_int_to_char(globalGraphical.angle, "angle:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _angleinc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.angle++;
    if (globalGraphical.angle >= 180) globalGraphical.angle = 180;
-   _value_int_to_char(buf, globalGraphical.angle, "angle:");
+
+   buf = _value_int_to_char(globalGraphical.angle, "angle:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
 static void
 _angleinc10_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
    globalGraphical.angle += 10;
    if (globalGraphical.angle >= 180) globalGraphical.angle = 180;
 
-   _value_int_to_char(buf, globalGraphical.angle, "angle:");
+   buf = _value_int_to_char(globalGraphical.angle, "angle:");
    elm_object_text_set((Evas_Object*)data, buf);
 }
 
@@ -577,7 +580,7 @@ EAPI_MAIN
    Evas_Object *navigation = NULL;
    Evas_Object *fs_node = NULL, *bt_orientation = NULL, *bt_position = NULL, *bt_scale = NULL;
    Ecore_Timer *fps_timer = NULL;
-   char buf[CONVERT];
+   Eina_Slstr *buf;
 
 #ifdef ENABLE_ATPORT
     at_port_h mf_at_port = NULL;
@@ -692,7 +695,7 @@ EAPI_MAIN
    evas_object_show(controlbox);
 
    vcount = elm_label_add(win);
-   _value_int_to_char(buf, 121, "quantity:");
+   buf = _value_int_to_char(121, "quantity:");
    elm_object_text_set(vcount, buf);
 
    countdec10 = elm_button_add(win);
@@ -731,7 +734,7 @@ EAPI_MAIN
    evas_object_smart_callback_add(countinc10, "clicked", _countinc10_cb, vcount);
 
    vspeed = elm_label_add(win);
-   _value_int_to_char(buf, 30, "speed:");
+   buf = _value_int_to_char(30, "speed:");
    elm_object_text_set(vspeed, buf);
 
    speeddec10 = elm_button_add(win);
@@ -770,7 +773,7 @@ EAPI_MAIN
    evas_object_smart_callback_add(speedinc10, "clicked", _speedinc10_cb, vspeed);
 
    vprecision = elm_label_add(win);
-   _value_int_to_char(buf, 100, "precision:");
+   buf = _value_int_to_char(100, "precision:");
    elm_object_text_set(vprecision, buf);
 
    precisiondec10 = elm_button_add(win);
@@ -809,7 +812,7 @@ EAPI_MAIN
    evas_object_smart_callback_add(precisioninc10, "clicked", _precisioninc10_cb, vprecision);
 
    vangle = elm_label_add(win);
-   _value_int_to_char(buf, 120, "angle:");
+   buf = _value_int_to_char(120, "angle:");
    elm_object_text_set(vangle, buf);
 
    angledec10 = elm_button_add(win);
@@ -913,13 +916,13 @@ EAPI_MAIN
    image = init_graphical_window(image);
 
    /*Update data for count, speed, precision, angle*/
-   _value_int_to_char(buf, (globalGraphical.count + 1) * (globalGraphical.count + 1), "quantity:");
+   buf = _value_int_to_char((globalGraphical.count + 1) * (globalGraphical.count + 1), "quantity:");
    elm_object_text_set(vcount, buf);
-   _value_int_to_char(buf, globalGraphical.speed, "speed:");
+   buf = _value_int_to_char(globalGraphical.speed, "speed:");
    elm_object_text_set(vspeed, buf);
-   _value_int_to_char(buf, globalGraphical.precision, "precision:");
+   buf = _value_int_to_char(globalGraphical.precision, "precision:");
    elm_object_text_set(vprecision, buf);
-   _value_int_to_char(buf, globalGraphical.angle, "angle:");
+   buf = _value_int_to_char(globalGraphical.angle, "angle:");
    elm_object_text_set(vangle, buf);
    if (globalGraphical.model_path)
      evas_object_smart_callback_call(fs_bt, "file,chosen", (void *)globalGraphical.model_path);
