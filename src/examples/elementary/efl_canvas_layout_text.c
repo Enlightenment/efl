@@ -39,17 +39,6 @@ static struct
 
 static struct
 {
-   Efl_Text_Format_Wrap wrap;
-   const char *desc;
-} group[] =
-{
-     { EFL_TEXT_FORMAT_WRAP_NONE, "none" },
-     { EFL_TEXT_FORMAT_WRAP_WORD, "word" },
-     { EFL_TEXT_FORMAT_WRAP_CHAR, "char" },
-     { EFL_TEXT_FORMAT_WRAP_MIXED, "mixed" }
-};
-static struct
-{
    Efl_Canvas_Layout_Part_Text_Expand expand;
    const char *desc;
 } expands[] =
