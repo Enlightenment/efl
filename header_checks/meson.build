@@ -57,6 +57,19 @@ header_checks = [
   'crt_externs.h'
 ]
 
+#### The below is logically broken
+#### the declaration of symbol + headers when you look the symbols up
+#### in man pages you'll find that, for example, kevent needs you to
+#### include ALL of the headers listed below. same for setxattr,
+#### listxattr, pthread_getcpuclockid ... i stopped looking at this
+#### point because it seems this is the pattern, but the foreach below
+#### does not do this. it includes one header at a time from the list
+#### then checks to see if the symbol exists. this leads to failures
+#### in the checks (specifically i noticed kevent on bsd). so the whole
+#### construct for this is wrong. it needs a rethink. i'm putting this
+#### comment here as a note that this is the case for now as i'm just
+#### trying to fix the meson build on freebsd for now
+
 function_checks = [
 # function name | headers that are needed | libraries to include | Defines that are needed
   ['alloca', ['alloca.h']],
@@ -191,7 +204,7 @@ if jpeg.found() == false
   jpeg = cc.find_library('jpeg')
 endif
 
-if config_h.has('HAVE_KEVENT')
+if sys_bsd == true
   config_h.set('HAVE_NOTIFY_KEVENT', '1')
 endif
 
