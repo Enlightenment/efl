@@ -2241,7 +2241,7 @@ eina_value_object_init(Eo *obj)
  * @since 1.21
  */
 static inline Eo *
-eina_value_object_get(Eina_Value *v)
+eina_value_object_get(const Eina_Value *v)
 {
    Eo *r = NULL;
 
