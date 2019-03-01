@@ -106,8 +106,6 @@ static Eina_Condition _thread_cond;
 static Eina_Lock _thread_feedback_mutex;
 static Eina_Condition _thread_feedback_cond;
 
-Eina_Lock _environ_lock;
-
 static Eina_Lock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
@@ -265,8 +263,6 @@ ecore_init(void)
         ERR("Could not get ecore installation prefix");
         goto shutdown_log_dom;
      }
-
-   eina_lock_new(&_environ_lock);
 
    efl_object_init();
 
@@ -470,8 +466,6 @@ ecore_shutdown(void)
      _ecore_pfx = NULL;
 
      efl_object_shutdown();
-
-     eina_lock_free(&_environ_lock);
 
      eina_evlog("<RUN", NULL, 0.0, NULL);
      eina_shutdown();
