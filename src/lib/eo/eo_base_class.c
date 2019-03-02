@@ -679,7 +679,7 @@ efl_del(const Eo *obj)
      }
    else
      {
-        ERR("Calling efl_del on an object with no parent is not advised any more.");
+        ERR("Calling efl_del on object %s with no parent is not advised any more.", efl_debug_name_get(obj));
         efl_unref(obj);
      }
    _efl_unref(oid);
