@@ -2002,7 +2002,7 @@ _efl_ui_layout_view_model_signal_update(Efl_Ui_Layout_Data *pd, const char *sign
         Eina_Error error;
 
         eina_value_get(v, &error);
-        ERR("Failed to fetch signal value. Error: %s", eina_error_msg_get(error));
+        if (error != EAGAIN) ERR("Failed to fetch signal value %s for property %s got error: %s", signal, fetch, eina_error_msg_get(error));
         return;
      }
 
@@ -2079,11 +2079,11 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    eina_value_get(&value, &content);
 
    // Recycle old content
-   old_content = elm_layout_content_get(obj, request->key);
+   old_content = efl_content_get(efl_part(obj, request->key));
    if (old_content) efl_ui_factory_release(request->factory, old_content);
 
    // Set new content
-   elm_layout_content_set(obj, request->key, content);
+   efl_content_set(efl_part(obj, request->key), content);
 
    return value;
 }
@@ -2241,11 +2241,11 @@ _efl_ui_layout_base_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_M
         if (factory->in_flight) eina_future_cancel(factory->in_flight);
 
         // Cleanup content
-        content = elm_layout_content_get(obj, key);
-        elm_layout_content_set(obj, key, NULL);
+        content = efl_content_get(efl_part(obj, key));
+        efl_content_unset(efl_part(obj, key));
 
         // And recycle it
-        efl_ui_factory_release(factory->factory, content);
+        if (content) efl_ui_factory_release(factory->factory, content);
      }
    eina_iterator_free(it);
 
@@ -2331,8 +2331,8 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
         Efl_Gfx_Entity *old;
 
         // Unset and recycle
-        old = elm_layout_content_get(obj, ss_key);
-        elm_layout_content_set(obj, ss_key, NULL);
+        old = efl_content_get(efl_part(obj, ss_key));
+        efl_content_unset(efl_part(obj, ss_key));
         if (old) efl_ui_factory_release(tracking->factory, old);
 
         // Stop in flight request
