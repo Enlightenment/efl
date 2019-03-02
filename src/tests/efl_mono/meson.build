@@ -31,18 +31,11 @@ foreach mono_gen_file : eo_files
                                 '@INPUT@'])
 endforeach
 
-if (cs_is_dotnet)
 efl_mono_test = library('efl_mono_test',
     eo_file_targets,
     link_with : [efl_mono],
-    runtime_assemblies : runtime_assemblies
+    cs_args : runtime_assemblies
 )
-else
-efl_mono_test = library('efl_mono_test',
-    eo_file_targets,
-    link_with : [efl_mono],
-)
-endif
 
 efl_mono_src = [
      'Main.cs',
@@ -68,18 +61,11 @@ efl_mono_src = [
      'Inheritance.cs',
 ]
 
-if (cs_is_dotnet)
 efl_mono_suite = executable('efl-mono-suite',
   efl_mono_src,
   link_with : [efl_mono, efl_mono_test],
-  runtime_assemblies : runtime_assemblies
+  cs_args : runtime_assemblies
 )
-else
-efl_mono_suite = executable('efl-mono-suite',
-  efl_mono_src,
-  link_with : [efl_mono, efl_mono_test],
-)
-endif
 
 env = environment()
 env.set('MONO_PATH', efl_mono_test_suite_path )

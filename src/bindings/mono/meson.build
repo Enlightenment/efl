@@ -8,20 +8,22 @@ cs_is_dotnet = meson.get_compiler('cs').get_id().contains('dotnet')
 
 if (cs_is_dotnet)
 
+warning('Dotnet support is still not upstream in meson.')
+
 runtime_assemblies += [
-    'System.Console',
-    'Microsoft.CSharp',
-    'System.Collections',
-    'System.Collections.Concurrent',
-    'System.ComponentModel.Primitives',
-    'System.ComponentModel.Primitives',
-    'System.Diagnostics.Debug',
-    'System.Diagnostics.TraceSource',
-    'System.Dynamic.Runtime',
-    'System.Linq',
-    'System.Runtime',
-    'System.Runtime.Extensions',
-    'System.Security',
+    '-r:System.Console.dll',
+    '-r:Microsoft.CSharp.dll',
+    '-r:System.Collections.dll',
+    '-r:System.Collections.Concurrent.dll',
+    '-r:System.ComponentModel.Primitives.dll',
+    '-r:System.ComponentModel.Primitives.dll',
+    '-r:System.Diagnostics.Debug.dll',
+    '-r:System.Diagnostics.TraceSource.dll',
+    '-r:System.Dynamic.Runtime.dll',
+    '-r:System.Linq.dll',
+    '-r:System.Runtime.dll',
+    '-r:System.Runtime.Extensions.dll',
+    '-r:System.Security.dll',
 ]
 
 endif
@@ -144,20 +146,12 @@ efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
                                  output : 'efl_mono.dll.config',
                                  configuration : efl_mono_conf_data)
 
-if (cs_is_dotnet)
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
     install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    runtime_assemblies : runtime_assemblies
+    cs_args : runtime_assemblies
 )
-else
-efl_mono = library('efl_mono',
-    mono_generator_target + mono_files + [efl_src],
-    install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-)
-endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 
