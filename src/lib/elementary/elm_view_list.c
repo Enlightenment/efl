@@ -108,7 +108,8 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    if (!idata->item) return NULL;
 
    prop = eina_hash_find(idata->priv->connect.properties, part);
-   if (!prop) prop = part;
+   // If no property are connected, let's not try to guess randomly.
+   if (!prop) return NULL;
 
    value = efl_model_property_get(idata->model, prop);
    if (value == NULL) return NULL;
