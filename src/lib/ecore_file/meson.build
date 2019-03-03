@@ -11,7 +11,7 @@ ecore_file_src = [
 
 if sys_windows == true
   ecore_file_src += [ 'ecore_file_monitor_win32.c']
-elif cc.has_header('sys/inotify.h')
+elif sys_linux == true
   ecore_file_src += [ 'ecore_file_monitor_inotify.c']
 else
   ecore_file_src += [ 'ecore_file_monitor_poll.c']
