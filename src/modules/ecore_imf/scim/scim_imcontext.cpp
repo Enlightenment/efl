@@ -358,7 +358,7 @@ find_ic(int id)
 static void
 feed_key_event(Evas *evas, const char *str, Eina_Bool fake)
 {
-   char key_string[128] = {0};
+   char key_string[128] = { 0 };
    unsigned int timestamp = 0;
 
    if (!fake)
@@ -366,15 +366,26 @@ feed_key_event(Evas *evas, const char *str, Eina_Bool fake)
 
    if (strncmp(str, "KeyRelease+", 11) == 0)
      {
-        strncpy(key_string, str + 11, strlen(str)-11);
-        evas_event_feed_key_up(evas, key_string, key_string, NULL, NULL, timestamp, NULL);
+        if ((strlen(str) - 11 + 1) > sizeof(key_string))
+          {
+             fprintf(stderr, "Key string too long: '%s'", str);
+             return;
+          }
+        strcpy(key_string, str + 11);
+        evas_event_feed_key_up(evas, key_string, key_string, NULL, NULL,
+                               timestamp, NULL);
         SCIM_DEBUG_FRONTEND(1) << "    evas_event_feed_key_up()...\n";
      }
    else
      {
-	if (strlen(str) + 1 > 128) return;
-        strncpy(key_string, str, strlen(str) + 1);
-        evas_event_feed_key_down(evas, key_string, key_string, NULL, NULL, timestamp, NULL);
+        if ((strlen(str) + 1) > sizeof(key_string))
+          {
+             fprintf(stderr, "Key string too long: '%s'", str);
+             return;
+          }
+        strcpy(key_string, str);
+        evas_event_feed_key_down(evas, key_string, key_string, NULL, NULL,
+                                 timestamp, NULL);
         SCIM_DEBUG_FRONTEND(1) << "    evas_event_feed_key_down()...\n";
      }
 }
