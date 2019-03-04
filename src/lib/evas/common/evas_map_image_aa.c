@@ -167,6 +167,11 @@ _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
                   Outside Vertical -> Outside Horizontal */
                if (prev_dir == DirOutVer)
                  calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+
+               //Tricky case by fine tuning.
+               if (y == 1)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, tx[0], tx[1]);
+
                PUSH_EDGE_POINT();
             }
           break;
