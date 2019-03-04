@@ -134,16 +134,17 @@ typedef Emile_Image_Property  Evas_Image_Property;
 
 typedef struct _Evas_Image_Load_Func Evas_Image_Load_Func;
 
-typedef Efl_Gfx_Image_Load_Error Evas_Load_Error;
-
-#define EVAS_LOAD_ERROR_NONE EFL_GFX_IMAGE_LOAD_ERROR_NONE
-#define EVAS_LOAD_ERROR_GENERIC EFL_GFX_IMAGE_LOAD_ERROR_GENERIC
-#define EVAS_LOAD_ERROR_DOES_NOT_EXIST EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST
-#define EVAS_LOAD_ERROR_PERMISSION_DENIED EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED
-#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED
-#define EVAS_LOAD_ERROR_CORRUPT_FILE EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE
-#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT
-#define EVAS_LOAD_ERROR_CANCELLED EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED
+typedef enum
+{
+   EVAS_LOAD_ERROR_NONE = 0,
+   EVAS_LOAD_ERROR_GENERIC,
+   EVAS_LOAD_ERROR_DOES_NOT_EXIST,
+   EVAS_LOAD_ERROR_PERMISSION_DENIED,
+   EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED,
+   EVAS_LOAD_ERROR_CORRUPT_FILE,
+   EVAS_LOAD_ERROR_UNKNOWN_FORMAT,
+   EVAS_LOAD_ERROR_CANCELLED,
+} Evas_Load_Error;
 
 typedef Emile_Image_Animated_Loop_Hint Evas_Image_Animated_Loop_Hint;
 
@@ -219,7 +220,7 @@ EAPI Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
           Count = 0;                                                    \
           if (evas_module_task_cancelled())                             \
             {                                                           \
-               *Error = EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED;                 \
+               *Error = EVAS_LOAD_ERROR_CANCELLED;                 \
                goto Error_Handler;                                      \
             }                                                           \
        }                                                                \
