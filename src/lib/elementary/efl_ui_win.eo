@@ -89,24 +89,6 @@ enum Efl.Ui.Win_Indicator_Mode
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
-enum Efl.Ui.Win_Keygrab_Mode
-{
-   [[Define the keygrab modes of window. A window may send commands to the
-     Keyrouter according this mode, and perform different actions.]]
-
-   unknown = 0, [[Unknown keygrab mode]]
-   shared = (1 << 8), [[Get the grabbed-key together with the other client
-                        windows]]
-   topmost = (1 << 9), [[Get the grabbed-key only when window is top of the
-                         stack]]
-   exclusive = (1 << 10), [[Get the grabbed-key exclusively regardless of
-                            window's position]]
-   override_exclusive = (1 << 11) [[Get the grabbed-key exclusively
-                                    regardless of window's position. This is
-                                    overrided by grabs from the other client
-                                    window]]
-}
-
 enum Efl.Ui.Win_Modal_Mode
 {
    [[Defines the mode of a modal window]]
@@ -688,38 +670,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          params {
             @in h: bool; [[If $true, center horizontally. If $false, do not change horizontal location.]]
             @in v: bool; [[If $true, center vertically. If $false, do not change vertical location.]]
-         }
-      }
-      keygrab_set {
-         [[Set keygrab value of the window
-
-           This function grabs the $key of window using $grab_mode.
-         ]]
-
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Efl.Input.Modifier; [[A combination of modifier keys
-                 that must be present to trigger the event. Not supported yet.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
-                 keys that must not be present to trigger the event. Not supported yet.]]
-            @in priority: int; [[Not supported yet.]]
-            @in grab_mode: Efl.Ui.Win_Keygrab_Mode; [[Describes how the key should
-                 be grabbed, wrt. focus and stacking.]]
-         }
-      }
-      keygrab_unset {
-         [[Unset keygrab value of the window
-
-           This function unset keygrab value. Ungrab $key of window.
-         ]]
-         return: bool; [[$true on success, $false otherwise]]
-         params {
-            @in key: string; [[This string is the keyname to grab.]]
-            @in modifiers: Efl.Input.Modifier; [[A combination of modifier keys
-                 that must be present to trigger the event. Not supported yet.]]
-            @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier keys
-                 that must not be present to trigger the event. Not supported yet.]]
          }
       }
       move_resize_start {

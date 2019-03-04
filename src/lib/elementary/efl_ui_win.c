@@ -6942,62 +6942,6 @@ _efl_ui_win_prop_focus_skip_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_B
    TRAP(sd, focus_skip_set, skip);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_win_keygrab_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key,
-                        Efl_Input_Modifier modifiers EINA_UNUSED,
-                        Efl_Input_Modifier not_modifiers EINA_UNUSED,
-                        int priority EINA_UNUSED, Efl_Ui_Win_Keygrab_Mode grab_mode)
-{
-   Eina_Bool ret = EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     {
-        Ecore_X_Win_Keygrab_Mode x_grab_mode;
-        switch (grab_mode)
-          {
-           case ELM_WIN_KEYGRAB_SHARED:
-             x_grab_mode = ECORE_X_WIN_KEYGRAB_SHARED;
-             break;
-           case ELM_WIN_KEYGRAB_TOPMOST:
-             x_grab_mode = ECORE_X_WIN_KEYGRAB_TOPMOST;
-             break;
-           case ELM_WIN_KEYGRAB_EXCLUSIVE:
-             x_grab_mode = ECORE_X_WIN_KEYGRAB_EXCLUSIVE;
-             break;
-           case ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE:
-             x_grab_mode = ECORE_X_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE;
-             break;
-           default:
-             return ret;
-          }
-         ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, x_grab_mode);
-     }
-#else
-   (void)sd;
-   (void)key;
-   (void)grab_mode;
-#endif
-   return ret;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_win_keygrab_unset(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *key,
-                          Efl_Input_Modifier modifiers EINA_UNUSED,
-                          Efl_Input_Modifier not_modifiers EINA_UNUSED)
-{
-   Eina_Bool ret = EINA_FALSE;
-#ifdef HAVE_ELEMENTARY_X
-   _internal_elm_win_xwindow_get(sd);
-   if (sd->x.xwin)
-     ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
-#else
-   (void)sd;
-   (void)key;
-#endif
-   return ret;
-}
-
 EOLIAN static void
 _efl_ui_win_focus_highlight_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool enabled)
 {
@@ -8901,13 +8845,40 @@ EAPI Eina_Bool
 elm_win_keygrab_set(Elm_Win *obj, const char *key,
                     Evas_Modifier_Mask modifiers EINA_UNUSED,
                     Evas_Modifier_Mask not_modifiers EINA_UNUSED,
-                    int priority, Elm_Win_Keygrab_Mode grab_mode)
+                    int priority EINA_UNUSED, Elm_Win_Keygrab_Mode grab_mode)
 {
    // Note: Not converting modifiers as they are not used in the implementation
-   return efl_ui_win_keygrab_set(obj, key,
-                                 EFL_INPUT_MODIFIER_NONE,
-                                 EFL_INPUT_MODIFIER_NONE,
-                                 priority, grab_mode);
+   Eina_Bool ret = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_X
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        Ecore_X_Win_Keygrab_Mode x_grab_mode;
+        switch (grab_mode)
+          {
+           case ELM_WIN_KEYGRAB_SHARED:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_SHARED;
+             break;
+           case ELM_WIN_KEYGRAB_TOPMOST:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_TOPMOST;
+             break;
+           case ELM_WIN_KEYGRAB_EXCLUSIVE:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_EXCLUSIVE;
+             break;
+           case ELM_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE:
+             x_grab_mode = ECORE_X_WIN_KEYGRAB_OVERRIDE_EXCLUSIVE;
+             break;
+           default:
+             return ret;
+          }
+         ret = ecore_x_window_keygrab_set(sd->x.xwin, key, 0, 0, 0, x_grab_mode);
+     }
+#else
+   (void)key;
+   (void)grab_mode;
+#endif
+   return ret;
 }
 
 EAPI Eina_Bool
@@ -8916,9 +8887,17 @@ elm_win_keygrab_unset(Elm_Win *obj, const char *key,
                       Evas_Modifier_Mask not_modifiers EINA_UNUSED)
 {
    // Note: Not converting modifiers as they are not used in the implementation
-   return efl_ui_win_keygrab_unset(obj, key,
-                                   EFL_INPUT_MODIFIER_NONE,
-                                   EFL_INPUT_MODIFIER_NONE);
+   Eina_Bool ret = EINA_FALSE;
+#ifdef HAVE_ELEMENTARY_X
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   _internal_elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
+#else
+   (void)sd;
+   (void)key;
+#endif
+   return ret;
 }
 
 EAPI Eina_Bool
