@@ -989,14 +989,16 @@ _elm_win_move(Ecore_Evas *ee)
    Efl_Ui_Win_Data *sd = _elm_win_associate_get(ee);
    int x, y;
    Eo *obj;
+   Eina_Position2D pos;
 
    if (!sd) return;
    obj = sd->obj;
 
    ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-   sd->screen.x = x;
-   sd->screen.y = y;
-   efl_event_callback_legacy_call(sd->obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
+   pos.x = sd->screen.x = x;
+   pos.y = sd->screen.y = y;
+   efl_event_callback_call(sd->obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, &pos);
+   evas_object_smart_callback_call(sd->obj, "move", NULL);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
    evas_nochange_push(evas_object_evas_get(sd->obj));
    sd->response++;
@@ -3134,7 +3136,8 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
           {
              sd->screen.x = pos.x;
              sd->screen.y = pos.y;
-             efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
+             efl_event_callback_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, &pos);
+             evas_object_smart_callback_call(obj, "move", NULL);
           }
         goto super_skip;
      }
@@ -3156,7 +3159,8 @@ _efl_ui_win_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Win_Data *sd, Eina_Posit
      {
         sd->screen.x = pos.x;
         sd->screen.y = pos.y;
-        efl_event_callback_legacy_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, NULL);
+        efl_event_callback_call(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, &pos);
+        evas_object_smart_callback_call(obj, "move", NULL);
      }
    if (sd->frame_obj)
      {
