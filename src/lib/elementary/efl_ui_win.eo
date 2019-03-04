@@ -388,31 +388,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
          }
       }
-      @property noblank {
-         set {
-            [[Set the noblank property of a window.
-
-              The "noblank" property is a way to request the display on
-              which the window is shown does not blank, go to screensaver or
-              otherwise hide or obscure the window. It is intended for
-              uses such as media playback on a television where a user
-              may not want to be interrupted by an idle screen. The
-              noblank property may have no effect if the window is
-              minimized or hidden.
-
-              @since 1.11
-            ]]
-         }
-         get {
-            [[Get the noblank property of a window.
-
-              @since 1.11
-            ]]
-         }
-         values {
-            noblank: bool; [[If $true, the window is set to noblank.]]
-         }
-      }
       @property borderless {
          set {
             [[Set the borderless state of a window.

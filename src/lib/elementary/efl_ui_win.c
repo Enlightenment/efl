@@ -5978,21 +5978,6 @@ _efl_ui_win_accel_preference_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_win_noblank_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Eina_Bool noblank)
-{
-   noblank = !!noblank;
-   if (pd->noblank == noblank) return;
-   pd->noblank = noblank;
-   _win_noblank_eval();
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_win_noblank_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
-{
-   return pd->noblank;
-}
-
-EOLIAN static void
 _efl_ui_win_win_role_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *role)
 {
    if (!role) return;
@@ -9238,13 +9223,18 @@ elm_win_sticky_get(const Evas_Object *obj)
 EAPI void
 elm_win_noblank_set(Evas_Object *obj, Eina_Bool noblank)
 {
-   efl_ui_win_noblank_set(obj, noblank);
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   noblank = !!noblank;
+   if (sd->noblank == noblank) return;
+   sd->noblank = noblank;
+   _win_noblank_eval();
 }
 
 EAPI Eina_Bool
 elm_win_noblank_get(const Evas_Object *obj)
 {
-   return efl_ui_win_noblank_get(obj);
+   Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   return sd->noblank;
 }
 
 EAPI void
