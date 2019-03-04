@@ -1559,9 +1559,7 @@ elm_object_style_set(Evas_Object *obj,
                      const char  *style)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   if (elm_widget_style_set(obj, style))
-     return EINA_TRUE;
-   return EINA_FALSE;
+   return elm_widget_style_set(obj, style) == EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EAPI Eina_Bool

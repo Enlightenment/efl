@@ -24,7 +24,7 @@ EOLIAN static Efl_Canvas_Object
    Eo *o;
 
    o = efl_add(EFL_CANVAS_LAYOUT_CLASS, object);
-   if (!elm_widget_element_update(object, o, key))
+   if (elm_widget_element_update(object, o, key) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         elm_widget_element_update(object, o, "wtf");
      }

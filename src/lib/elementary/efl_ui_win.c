@@ -378,7 +378,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
-static Efl_Ui_Theme_Apply_Result _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
+static Efl_Ui_Theme_Apply_Error _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
@@ -3285,7 +3285,7 @@ _elm_win_wl_cursor_set(Evas_Object *obj, const char *cursor)
 
         if (cursor)
           {
-             if (!elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
+             if (elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
                                         "cursor", cursor, "default"))
                {
                   elm_widget_theme_object_set(sd->obj, sd->pointer.obj,
@@ -4501,8 +4501,8 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    v = version ? atoi(version) : 0;
    if (EINA_LIKELY(v >= FRAME_OBJ_THEME_MIN_VERSION))
      {
-        if (!elm_widget_theme_object_set
-            (sd->obj, sd->frame_obj, "border", element, style))
+        if (elm_widget_theme_object_set
+            (sd->obj, sd->frame_obj, "border", element, style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
           {
              ERR("Failed to set main border theme for the window.");
              ELM_SAFE_FREE(sd->frame_obj, evas_object_del);
@@ -6959,16 +6959,16 @@ _efl_ui_win_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
    return sd->focus_highlight.enabled;
 }
 
-static Efl_Ui_Theme_Apply_Result
+static Efl_Ui_Theme_Apply_Error
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_Bool prev_alpha;
    const char *s;
 
    int_ret = elm_widget_theme_object_set(obj, sd->legacy.edje, "win", "base",
                                        elm_widget_style_get(obj));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    edje_object_mirrored_set(sd->legacy.edje, efl_ui_mirrored_get(obj));
    edje_object_scale_set(sd->legacy.edje,
@@ -6985,17 +6985,17 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _efl_ui_win_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    sd->focus_highlight.theme_changed = EINA_TRUE;
 
    int_ret = _elm_win_theme_internal(obj, sd) & int_ret;
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
    _elm_win_focus_highlight_reconfigure_job_start(sd);
 
    return int_ret;

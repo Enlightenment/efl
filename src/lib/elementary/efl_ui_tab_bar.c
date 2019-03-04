@@ -213,7 +213,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 {
    Eo *tab, *icon_obj;
    Tab_Info *ti;
-   Efl_Ui_Theme_Apply_Result theme_apply;
+   Efl_Ui_Theme_Apply_Error theme_apply;
 
    ti = calloc(1, sizeof(*ti));
 
@@ -243,7 +243,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 
    theme_apply = elm_widget_element_update(obj, tab, PART_NAME_TAB);
 
-   if (theme_apply == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    efl_layout_signal_callback_add
@@ -370,11 +370,12 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
+
 
    elm_widget_sub_object_parent_add(obj);
 

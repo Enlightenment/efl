@@ -2341,15 +2341,15 @@ _elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 {
-   if (!efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)))
-     return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+     return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    _elm_code_widget_theme_refresh(obj, pd);
 
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EOLIAN static int
@@ -2382,10 +2382,10 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    pd->alpha = 255;
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    scroller = elm_scroller_add(obj);

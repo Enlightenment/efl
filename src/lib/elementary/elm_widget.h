@@ -579,7 +579,7 @@ struct _Elm_Widget_Item_Data
 
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Eina_Bool        elm_widget_access(Evas_Object *obj, Eina_Bool is_access);
-EAPI Efl_Ui_Theme_Apply_Result  elm_widget_theme(Evas_Object *obj);
+EAPI Efl_Ui_Theme_Apply_Error  elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb data_free);
 EAPI Eina_Bool        elm_widget_sub_object_parent_add(Evas_Object *sobj);
@@ -646,7 +646,7 @@ EAPI void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
 EAPI void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
 EAPI Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
-EAPI Efl_Ui_Theme_Apply_Result  elm_widget_style_set(Evas_Object *obj, const char *style);
+EAPI Efl_Ui_Theme_Apply_Error  elm_widget_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char      *elm_widget_type_get(const Evas_Object *obj);
@@ -658,7 +658,7 @@ EAPI void             elm_widget_scroll_lock_set(Evas_Object *obj, Efl_Ui_Scroll
 EAPI Efl_Ui_Scroll_Block elm_widget_scroll_lock_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_x_get(const Evas_Object *obj);
 EAPI int              elm_widget_scroll_child_locked_y_get(const Evas_Object *obj);
-EAPI Efl_Ui_Theme_Apply_Result  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
+EAPI Efl_Ui_Theme_Apply_Error  elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
 EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
@@ -687,7 +687,7 @@ EAPI Eina_Bool        elm_widget_theme_element_set(Evas_Object *obj, const char 
 EAPI const char      *elm_widget_theme_element_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_theme_style_set(Evas_Object *obj, const char *name);
 EAPI const char      *elm_widget_theme_style_get(const Evas_Object *obj);
-EAPI Efl_Ui_Theme_Apply_Result elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
+EAPI Efl_Ui_Theme_Apply_Error elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);

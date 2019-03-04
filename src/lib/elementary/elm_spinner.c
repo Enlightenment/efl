@@ -1299,15 +1299,15 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
-   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+   if (efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         CRI("Failed to set layout!");
-        return EFL_UI_THEME_APPLY_RESULT_FAIL;
+        return EFL_UI_THEME_APPLY_ERROR_GENERIC;
      }
 
    if (edje_object_part_exists(wd->resize_obj, "elm.swallow.dec_button"))
@@ -1351,7 +1351,7 @@ _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;

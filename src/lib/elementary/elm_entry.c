@@ -872,22 +872,22 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
-   Efl_Ui_Theme_Apply_Result theme_apply;
+   Efl_Ui_Theme_Apply_Error theme_apply;
    int cursor_pos;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    // Note: We are skipping elm_layout here! This is by design.
    // This assumes the following inheritance: my_class -> layout -> widget ...
    theme_apply = efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS));
-   if (!theme_apply) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -974,14 +974,14 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->scroll)
      {
-        Efl_Ui_Theme_Apply_Result ok = EFL_UI_THEME_APPLY_RESULT_FAIL;
+        Efl_Ui_Theme_Apply_Error err = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
         efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 
         if (sd->single_line)
-          ok = elm_widget_theme_object_set
+          err = elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry_single", style);
-        if (!ok)
+        if (err)
           elm_widget_theme_object_set
           (obj, sd->scr_edje, "scroller", "entry", style);
 
@@ -2854,8 +2854,8 @@ _item_get(void *data,
      }
 
    o = edje_object_add(evas_object_evas_get(data));
-   if (!_elm_theme_object_set
-         (data, o, "entry", item, style))
+   if (_elm_theme_object_set
+         (data, o, "entry", item, style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      _elm_theme_object_set
        (data, o, "entry/emoticon", "wtf", style);
    return o;
@@ -3799,10 +3799,10 @@ _elm_entry_efl_canvas_group_group_add(Eo *obj, Elm_Entry_Data *priv)
                        _dnd_pos_cb, NULL,
                        _dnd_drop_cb, NULL);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));

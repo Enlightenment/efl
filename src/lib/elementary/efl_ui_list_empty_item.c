@@ -21,9 +21,9 @@ _efl_ui_list_empty_item_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
    Eo *eo;
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo, wd, eo);
-   Efl_Ui_Theme_Apply_Result theme_apply_ret = efl_ui_layout_theme_set(obj, "list_item", NULL, "empty");
+   Efl_Ui_Theme_Apply_Error theme_apply_ret = efl_ui_layout_theme_set(obj, "list_item", NULL, "empty");
 
-   if (theme_apply_ret == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Empty Item(%p) failed to set theme [efl/list_item:empty]!", eo);
    return eo;
 }

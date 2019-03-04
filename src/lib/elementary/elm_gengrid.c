@@ -1170,10 +1170,10 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
    ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
    snprintf(buf, sizeof(buf), "item/%s", style ? style : "default");
 
-   Efl_Ui_Theme_Apply_Result th_ret =
+   Efl_Ui_Theme_Apply_Error th_ret =
       elm_widget_theme_object_set(WIDGET(it), view, "gengrid", buf,
                                     elm_widget_style_get(WIDGET(it)));
-   if (th_ret == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (th_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         ERR("%s is not a valid gengrid item style. "
             "Automatically falls back into default style.",
@@ -3589,12 +3589,12 @@ _mirrored_set(Evas_Object *obj,
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _elm_gengrid_efl_ui_widget_theme_apply(Eo *obj, Elm_Gengrid_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 

@@ -666,13 +666,13 @@ _on_content_resized(void *data,
 }
 
 //FIXME: lost the content size when theme hook is called.
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    elm_widget_theme_object_set
      (obj, sd->bg, "ctxpopup", "bg", elm_widget_style_get(obj));
@@ -1044,7 +1044,7 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 
    //Background
    priv->bg = edje_object_add(evas_object_evas_get(obj));
-   if (!elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
+   if (elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
      CRI("ctxpopup(%p) failed to set theme [efl/ctxpopup/bg/default]!", obj);
 
    edje_object_signal_callback_add

@@ -445,12 +445,12 @@ _efl_ui_layout_base_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Layout_Data *_pd 
    _flush_mirrored_state(obj);
 }
 
-static Efl_Ui_Theme_Apply_Result
+static Efl_Ui_Theme_Apply_Error
 _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    /* function already prints error messages, if any */
    if (!sd->file_set)
@@ -462,22 +462,22 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
                 elm_widget_theme_style_get(obj));
      }
 
-   if (ret)
+   if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
      efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
 
    if (!_visuals_refresh(obj, sd))
-     ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+     ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    return ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result theme_apply_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Efl_Ui_Theme_Apply_Error theme_apply_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!theme_apply_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    theme_apply_ret &= _efl_ui_layout_theme_internal(obj, sd);
    return theme_apply_ret;
@@ -920,7 +920,7 @@ _efl_ui_layout_base_theme_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
    if (style) *style = elm_widget_theme_style_get(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Efl_Ui_Theme_Apply_Error
 _efl_ui_layout_base_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
    Eina_Bool changed = EINA_FALSE;
@@ -928,7 +928,7 @@ _efl_ui_layout_base_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass
    if (!elm_widget_is_legacy(obj) && efl_finalized_get(obj))
      {
         ERR("Efl.Ui.Layout_theme can only be set before finalize!");
-        return EFL_UI_THEME_APPLY_RESULT_FAIL;
+        return EFL_UI_THEME_APPLY_ERROR_GENERIC;
      }
 
    if (sd->file_set) sd->file_set = EINA_FALSE;
@@ -939,7 +939,7 @@ _efl_ui_layout_base_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass
 
    if (changed)
      return efl_ui_widget_theme_apply(obj);
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EOLIAN static void
@@ -2944,10 +2944,10 @@ elm_layout_data_get(const Evas_Object *obj, const char *key)
 EAPI Eina_Bool
 elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style)
 {
-   Efl_Ui_Theme_Apply_Result theme_apply_ret;
+   Efl_Ui_Theme_Apply_Error theme_apply_ret;
 
    theme_apply_ret = efl_ui_layout_theme_set(obj, klass, group, style);
-   return (theme_apply_ret != EFL_UI_THEME_APPLY_RESULT_FAIL);
+   return (theme_apply_ret != EFL_UI_THEME_APPLY_ERROR_GENERIC);
 }
 
 #include "efl_ui_layout_legacy.eo.c"
