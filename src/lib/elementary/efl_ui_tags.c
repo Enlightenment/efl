@@ -471,7 +471,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
 //FIXME: having an empty event handling function and reacting on Evas
 //events on specific objects is crazy, someone should fix that.
 EOLIAN static Eina_Bool
-_efl_ui_tags_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
+_efl_ui_tags_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
 {
    //lets stop eating all events
    return EINA_FALSE;

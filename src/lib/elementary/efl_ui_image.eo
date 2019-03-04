@@ -121,7 +121,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.View.model { get; set; }
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }

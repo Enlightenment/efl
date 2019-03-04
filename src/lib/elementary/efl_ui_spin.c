@@ -168,7 +168,7 @@ _efl_ui_spin_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_efl_ui_spin_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 

@@ -42,7 +42,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
-static Eina_Bool _hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
+static Eina_Bool _hoversel_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -447,7 +447,7 @@ _hover_key_down(void *data, const Efl_Event *ev)
 {
    ELM_HOVERSEL_DATA_GET(ev->object, sd);
 
-   _hoversel_efl_ui_widget_widget_event(data, sd, ev, ev->object);
+   _hoversel_efl_ui_widget_widget_input_event_handler(data, sd, ev, ev->object);
 }
 
 static void
@@ -1016,12 +1016,12 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
 
 EOLIAN static Eina_Bool
-_elm_hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_hoversel_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
-   if (efl_ui_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
+   if (efl_ui_widget_input_event_handler(efl_super(obj, MY_CLASS), eo_event, src))
      return EINA_TRUE; // note: this was FALSE but likely wrong
 
-   return _hoversel_efl_ui_widget_widget_event(obj, sd, eo_event, src);
+   return _hoversel_efl_ui_widget_widget_input_event_handler(obj, sd, eo_event, src);
 }
 
 static void

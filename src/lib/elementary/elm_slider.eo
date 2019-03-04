@@ -14,7 +14,7 @@ class Elm.Slider extends Efl.Ui.Slider_Interval implements Efl.Ui.Legacy,
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Text.text { get; set; }
       Efl.Text_Markup.markup { get; set; }

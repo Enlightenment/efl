@@ -416,7 +416,7 @@ class Elm.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Compositio
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {

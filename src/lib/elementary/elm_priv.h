@@ -878,7 +878,7 @@ void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y)
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
-_##_pfx##_efl_ui_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
+_##_pfx##_efl_ui_widget_widget_input_event_handler(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
 { \
    Evas_Event_Key_Down *ev; \
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; \

@@ -354,7 +354,7 @@ class Elm.Toolbar extends Efl.Ui.Widget implements Efl.Ui.Focus.Composition, Elm
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Elm.Widget_Item_Container.focused_item { get; }
       Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $horizontal.]] }

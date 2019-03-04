@@ -35,7 +35,7 @@ class Elm.Fileselector extends Efl.Ui.Layout_Base implements Elm.Interface.Files
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.theme_apply;
       Elm.Interface.Fileselector.selected_models { get; }
       Elm.Interface.Fileselector.selected_model { get; set; }

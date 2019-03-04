@@ -64,7 +64,7 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.load;

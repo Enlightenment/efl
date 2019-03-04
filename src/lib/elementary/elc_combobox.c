@@ -609,7 +609,7 @@ _elm_combobox_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_gfx_entity_size_set, _elm_combobox_efl_gfx_entity_size_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_combobox_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_combobox_efl_ui_l10n_translation_update),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_event, _elm_combobox_efl_ui_widget_widget_event),
+      EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_combobox_efl_ui_widget_widget_input_event_handler),
       EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_combobox_efl_ui_autorepeat_autorepeat_supported_get),
       EFL_OBJECT_OP_FUNC(elm_obj_genlist_filter_set, _elm_combobox_elm_genlist_filter_set),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_combobox_efl_access_widget_action_elm_actions_get),

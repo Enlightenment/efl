@@ -939,7 +939,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.focus { get; }
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Object.i18n_name { get; }

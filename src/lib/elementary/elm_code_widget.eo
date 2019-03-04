@@ -312,7 +312,7 @@ class Elm.Code_Widget extends Efl.Ui.Layout_Base
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.theme_apply;
    }
    constructors {

@@ -404,7 +404,7 @@ class Elm.List extends Efl.Ui.Layout_Base implements Elm.Interface_Scrollable,
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Elm.Widget_Item_Container.focused_item { get; }
       Efl.Ui.Widget.focus_state_apply;
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }

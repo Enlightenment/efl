@@ -147,7 +147,7 @@ class Elm.Naviframe extends Efl.Ui.Layout_Base implements Efl.Access.Widget.Acti
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.L10n.translation_update;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Layout.Signal.signal_emit;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Widget.resize_object { set; }

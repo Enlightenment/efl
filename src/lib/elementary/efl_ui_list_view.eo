@@ -73,7 +73,7 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scroll
 
       // Widget
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }

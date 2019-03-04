@@ -24,7 +24,7 @@ class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Acti
       Efl.Object.constructor;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Nstate.value { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }

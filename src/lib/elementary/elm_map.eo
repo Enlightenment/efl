@@ -506,7 +506,7 @@ class Elm.Map extends Efl.Ui.Widget implements Elm.Interface_Scrollable,
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }

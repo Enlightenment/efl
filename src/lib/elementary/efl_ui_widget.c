@@ -1936,7 +1936,7 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *eo_event)
              continue;
           }
 
-        if (efl_ui_widget_event(parent, eo_event, obj))
+        if (efl_ui_widget_input_event_handler(parent, eo_event, obj))
           return;
 
         EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
@@ -5105,7 +5105,7 @@ _efl_ui_widget_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Widget_Smart_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *source EINA_UNUSED)
+_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *source EINA_UNUSED)
 {
    return EINA_FALSE;
 }

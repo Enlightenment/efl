@@ -157,7 +157,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                  for the available style names, or to the themes in use.]]
          }
       }
-      widget_event @protected {
+      widget_input_event_handler @protected {
          [[Virtual function handling input events on the widget.
 
            This method should return $true if the event has been processed.

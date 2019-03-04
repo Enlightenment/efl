@@ -36,7 +36,7 @@ class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Inter
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Range_Display.range_min_max { get; set; }
       Efl.Ui.Range_Interactive.range_step { get; set; }
       Efl.Ui.Range_Display.range_value { get; set; }

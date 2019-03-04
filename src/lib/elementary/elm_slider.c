@@ -398,17 +398,17 @@ _key_action_drag(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
-// _slider_efl_ui_widget_widget_event
+// _slider_efl_ui_widget_widget_input_event_handler
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(slider, Elm_Slider_Data)
 
 EOLIAN static Eina_Bool
-_elm_slider_efl_ui_widget_widget_event(Eo *obj, Elm_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_slider_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
    Eo *ev = eo_event->info;
 
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        if (!_slider_efl_ui_widget_widget_event(obj, sd, eo_event, src))
+        if (!_slider_efl_ui_widget_widget_input_event_handler(obj, sd, eo_event, src))
           return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)

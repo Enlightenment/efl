@@ -45,7 +45,7 @@ class @beta Efl.Ui.Tags extends Efl.Ui.Layout_Base implements Efl.Text, Efl.Ui.F
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Text.text { get; set; }
       Efl.Ui.Format.format_cb { set; }
    }

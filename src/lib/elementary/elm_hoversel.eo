@@ -99,7 +99,7 @@ class Elm.Hoversel extends Efl.Ui.Button_Legacy implements Efl.Ui.Selectable,
       Efl.Ui.Widget.widget_parent { set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.L10n.translation_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Autorepeat.autorepeat_supported { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Object.access_children { get; }

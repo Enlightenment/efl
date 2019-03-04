@@ -113,7 +113,7 @@ class Elm.Colorselector extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Compo
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Object.access_children { get; }
    }

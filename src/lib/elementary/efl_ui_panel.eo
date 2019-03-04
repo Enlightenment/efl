@@ -82,7 +82,7 @@ class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Laye
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.disabled {set;}
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.I18n.mirrored { set; }

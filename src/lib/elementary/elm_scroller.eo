@@ -50,7 +50,7 @@ class Elm.Scroller extends Efl.Ui.Layout_Base implements Elm.Interface_Scrollabl
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Elm.Interface_Scrollable.page_size { set; }
       Elm.Interface_Scrollable.policy { set; }
       Elm.Interface_Scrollable.single_direction { get; set; }

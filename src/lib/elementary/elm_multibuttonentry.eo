@@ -181,7 +181,7 @@ class Elm.Multibuttonentry extends Efl.Ui.Layout_Base implements Efl.Ui.Clickabl
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.L10n.translation_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Object.access_children { get; }
       Efl.Part.part_get;
    }

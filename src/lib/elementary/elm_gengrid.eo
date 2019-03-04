@@ -508,7 +508,7 @@ class Elm.Gengrid extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Composition
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Widget.interest_region { get; }
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.focus_highlight_geometry { get; }
       Elm.Widget_Item_Container.focused_item { get; }
       Elm.Interface_Scrollable.item_loop_enabled { get; set; }
