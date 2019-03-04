@@ -603,7 +603,7 @@ EAPI Eina_Bool        elm_widget_highlight_in_theme_get(const Evas_Object *obj);
 EAPI void             elm_widget_access_highlight_in_theme_set(Evas_Object *obj, Eina_Bool highlight);
 EAPI Eina_Bool        elm_widget_access_highlight_in_theme_get(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_highlight_get(const Evas_Object *obj);
-EAPI Evas_Object     *elm_widget_top_get(const Evas_Object *obj);
+EAPI Eo              *elm_widget_top_get(const Eo *obj);
 EAPI Eina_Bool        elm_widget_is(const Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_widget_get(const Evas_Object *obj);
 EAPI void             elm_widget_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);

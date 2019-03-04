@@ -208,8 +208,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            @Efl.Ui.Widget objects have a parent hierarchy that may differ slightly
            from their @Efl.Object or @Efl.Canvas.Object hierarchy. This is
            meant for internal handling.
-
-           See also @.widget_top.
          ]]
          set {
             legacy: elm_widget_parent_set; /* internal in legacy */
@@ -219,31 +217,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          }
          values {
             parent: Efl.Ui.Widget @nullable; [[Widget parent object]]
-         }
-      }
-      @property widget_top {
-         [[Root widget in the widget hierarchy.
-
-           This returns the top widget, in terms of widget hierarchy. This is
-           usually a window (@Efl.Ui.Win). This function walks the list of
-           @.widget_parent.
-
-           If this widget has no parent (in terms of widget hierarchy) this
-           will return $null.
-
-           Note: This may not be a display manager window in case of nested
-           canvases. If a "real" window is required, then you might want to
-           verify that the returned object is a @Efl.Ui.Win_Inlined, and then
-           get @Efl.Ui.Win_Inlined.inlined_parent to find an object in the
-           master window.
-
-           See also @.widget_parent.
-         ]]
-         get {
-            legacy: elm_widget_top_get; /* internal in legacy */
-         }
-         values {
-            top: Efl.Ui.Widget; [[Top widget, usually a window.]]
          }
       }
 

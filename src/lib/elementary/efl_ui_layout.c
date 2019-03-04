@@ -2384,7 +2384,7 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_widget_theme_apply(eo);
 
-   win = efl_ui_widget_top_get(obj);
+   win = elm_widget_top_get(obj);
    if (efl_isa(win, EFL_UI_WIN_CLASS))
      efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(win));
 
@@ -2578,7 +2578,7 @@ _efl_ui_layout_base_automatic_theme_rotation_set(Eo *obj, Efl_Ui_Layout_Data *pd
    if (pd->automatic_orientation_apply == automatic) return;
    pd->automatic_orientation_apply = automatic;
 
-   efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(efl_ui_widget_top_get(obj)));
+   efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(elm_widget_top_get(obj)));
 }
 
 EOLIAN static Eina_Bool

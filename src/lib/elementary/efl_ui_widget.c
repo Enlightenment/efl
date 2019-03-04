@@ -1838,23 +1838,23 @@ elm_widget_highlight_get(const Eo *obj)
    return sd->highlighted;
 }
 
-EOLIAN static Evas_Object*
-_efl_ui_widget_widget_top_get(const Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
+EAPI Eina_Bool
+elm_widget_is(const Evas_Object *obj)
+{
+   return _elm_widget_is(obj);
+}
+
+EAPI Eo *
+elm_widget_top_get(const Eo *obj)
 {
    Efl_Ui_Widget *parent = elm_widget_parent_get(obj);
    if (parent)
      {
         if (!efl_isa(parent, EFL_UI_WIDGET_CLASS)) return NULL;
-        return efl_ui_widget_top_get(parent);
+        return elm_widget_top_get(parent);
      }
    /* XXX const */
    return (Evas_Object *)obj;
-}
-
-EAPI Eina_Bool
-elm_widget_is(const Evas_Object *obj)
-{
-   return _elm_widget_is(obj);
 }
 
 EAPI Evas_Object *
