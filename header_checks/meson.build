@@ -208,6 +208,9 @@ if sys_bsd == true
   config_h.set('HAVE_NOTIFY_KEVENT', '1')
 endif
 
+if sys_osx == true
+  config_h.set('HAVE_NOTIFY_COCOA', '1')
+endif
 config_h.set('SIZEOF_INT', cc.sizeof('int'))
 config_h.set('SIZEOF_LONG', cc.sizeof('long'))
 
