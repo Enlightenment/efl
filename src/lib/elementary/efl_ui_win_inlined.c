@@ -36,7 +36,7 @@ _efl_ui_win_inlined_inlined_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Inl
 EOLIAN static Efl_Object *
 _efl_ui_win_inlined_efl_object_finalize(Eo *obj, Efl_Ui_Win_Inlined_Data *pd EINA_UNUSED)
 {
-   efl_ui_win_type_set(obj, ELM_WIN_INLINED_IMAGE);
+   efl_ui_win_type_set(obj, EFL_UI_WIN_TYPE_INLINED_IMAGE);
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    return obj;

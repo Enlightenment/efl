@@ -181,7 +181,7 @@ _elm_suite_win_create()
    if (legacy_mode)
      win = elm_win_add(NULL, "elm_suite", ELM_WIN_BASIC);
    else
-     win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
+     win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
    if (!buffer) return win;
    loop = efl_add(efl_loop_realized_class_get(), win);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop,

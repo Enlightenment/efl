@@ -10,7 +10,6 @@ enum Efl.Ui.Win_Type
 
      Currently, only the X11 backed engines use them.
    ]]
-   legacy: efl_ui_win;
 
    unknown = -1, [[Default, unknown, type]]
    basic, [[A normal window. Indicates a normal, top-level window. Almost every
@@ -38,6 +37,10 @@ enum Efl.Ui.Win_Type
                    a new E-Mail received.]]
    combo, [[A window holding the contents of a combo box. Not usually used in
             the EFL.]]
+   dnd,
+   inlined_image,
+   socket_image,
+   fake,
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
@@ -52,7 +55,6 @@ enum Efl.Ui.Win_Keyboard_Mode
      When the application window is being managed by Illume it may request
      any of the following layouts for the virtual keyboard.
    ]]
-   legacy: efl_ui_win_keyboard;
 
    unknown, [[Unknown keyboard state]]
    off, [[Request to deactivate the keyboard]]
@@ -75,7 +77,6 @@ enum Efl.Ui.Win_Keyboard_Mode
 enum Efl.Ui.Win_Indicator_Mode
 {
    [[Defines the type indicator that can be shown]]
-   legacy: efl_ui_win_indicator;
 
    off, [[Request to deactivate the indicator]]
    bg_opaque, [[The indicator icon is opaque, as is the indicator background.
@@ -93,7 +94,6 @@ enum Efl.Ui.Win_Keygrab_Mode
    [[Define the keygrab modes of window. A window may send commands to the
      Keyrouter according this mode, and perform different actions.]]
 
-   legacy: efl_ui_win_keygrab;
    unknown = 0, [[Unknown keygrab mode]]
    shared = (1 << 8), [[Get the grabbed-key together with the other client
                         windows]]
@@ -110,7 +110,6 @@ enum Efl.Ui.Win_Keygrab_Mode
 enum Efl.Ui.Win_Modal_Mode
 {
    [[Defines the mode of a modal window]]
-   legacy: efl_ui_win_modal;
 
    none, [[The window is not modal window.]]
    modal [[The window is modal window.]]
@@ -119,7 +118,6 @@ enum Efl.Ui.Win_Modal_Mode
 enum Efl.Ui.Win_Urgent_Mode
 {
    [[Defines the mode of a urgent window.]]
-   legacy: efl_ui_win_urgent;
 
    none,  [[The window is not a urgent window.]]
    urgent [[The window is a urgent window.]]
@@ -147,7 +145,6 @@ enum Efl.Ui.Win_Move_Resize_Mode
 
      @since 1.19
    ]]
-   legacy: efl_ui_win_move_resize;
 
    move = 1,           [[Start moving window]]
    top = (1 << 1),     [[Start resizing window to the top]]
@@ -163,7 +160,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
                   Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root
 {
    [[Efl UI window class]]
-   legacy_prefix: elm_win;
    methods {
       @property indicator_mode {
            [[In some environments you may have an indicator that
@@ -178,10 +174,8 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
            @since 1.18
          ]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
             type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of @Efl.Ui.Win_Indicator_Mode.]]
@@ -211,10 +205,8 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             allow_270: bool; [[Rotated 270 degrees CCW (i.e. 90 CW).]]
          }
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
             return: bool; [[Returns $false if available rotations were
                             not specified.]]
          }
@@ -222,10 +214,8 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       @property wm_available_profiles {
          [[Available profiles on a window.]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
             profiles: const(array<string>); [[A list of profiles.]]
@@ -347,11 +337,9 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       @property minimized {
          set {
             [[Set the minimized state of a window.]]
-            legacy: elm_win_iconified_set;
          }
          get {
             [[Get the minimized state of a window.]]
-            legacy: elm_win_iconified_get;
          }
          values {
             state: bool; [[If $true, the window is minimized.]]
@@ -398,11 +386,9 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       @property urgent {
          set {
             [[Set the urgent state of a window.]]
-            legacy: null;
          }
          get {
             [[Get the urgent state of a window.]]
-            legacy: null;
          }
          values {
             urgent: Efl.Ui.Win_Urgent_Mode;
@@ -412,11 +398,9 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       @property modal {
          set {
             [[Set the modal state of a window.]]
-            legacy: null;
          }
          get {
             [[Get the modal state of a window.]]
-            legacy: null;
          }
          values {
             modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
@@ -471,7 +455,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          ]]
          set {
             [[Set the role of the window.]]
-            legacy: elm_win_role_set;
          }
          get {
             [[Get the role of the window.
@@ -480,7 +463,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
               freed or modified. It will also be invalid if a new role
               is set or if the window is destroyed.
             ]]
-            legacy: elm_win_role_get;
          }
          values {
             role: string; [[The role to set.]]
@@ -498,11 +480,9 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          ]]
          set {
             [[Name can only be set before finalize.]]
-            legacy: null;
          }
          get {
             [[ @since 1.18 ]]
-            legacy: elm_win_name_get;
          }
          values {
             name: string @nullable; [[Window name]]
@@ -520,11 +500,9 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          ]]
          set {
             [[Type can on be set before finalize.]]
-            legacy: null;
          }
          get {
             [[If the object is not window object, returns $unknown.]]
-            legacy: elm_win_type_get;
          }
          values {
             type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
@@ -579,7 +557,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             accel: string; [[Acceleration]]
          }
          set {
-            legacy: null;
          }
          get {
             [[This will return the value of "accel_preference" when the window
@@ -730,7 +707,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             @in grab_mode: Efl.Ui.Win_Keygrab_Mode; [[Describes how the key should
                  be grabbed, wrt. focus and stacking.]]
          }
-         legacy: null;
       }
       keygrab_unset {
          [[Unset keygrab value of the window
@@ -745,7 +721,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier keys
                  that must not be present to trigger the event. Not supported yet.]]
          }
-         legacy: null;
       }
       move_resize_start {
          [[Start moving or resizing the window.
@@ -855,10 +830,8 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
            The value will automatically change when the WM of this window changes its rotation. This rotation is automatically applied to all @Efl.Ui.Layout objects.
          ]]
          set {
-          legacy: null;
          }
          get {
-          legacy: null;
          }
          values {
            rotation : Efl.Orient; [[The rotation of the window]]

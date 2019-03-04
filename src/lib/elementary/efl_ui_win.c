@@ -53,7 +53,7 @@ static int _paused_windows = 0;
 #define TRAP(sd, name, ...)                                             \
   do                                                                    \
     {                                                                   \
-       if (sd->type != ELM_WIN_FAKE)                                    \
+       if (sd->type != EFL_UI_WIN_TYPE_FAKE)                                    \
          if ((!trap) || (!trap->name) ||                                \
              ((trap->name) &&                                           \
               (trap->name(sd->trap_data, sd->obj, ## __VA_ARGS__))))    \
@@ -384,6 +384,66 @@ static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emi
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
 static void _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize);
 static void _elm_win_frame_obj_update(Efl_Ui_Win_Data *sd, Eina_Bool force);
+
+static inline Efl_Ui_Win_Type
+_elm_win_type_to_efl_ui_win_type(Elm_Win_Type type)
+{
+   switch (type)
+     {
+#define CONVERT_TYPE(TYPE) case ELM_WIN_##TYPE: return EFL_UI_WIN_TYPE_##TYPE
+      CONVERT_TYPE(BASIC);
+      CONVERT_TYPE(DIALOG_BASIC);
+      CONVERT_TYPE(DESKTOP);
+      CONVERT_TYPE(DOCK);
+      CONVERT_TYPE(TOOLBAR);
+      CONVERT_TYPE(MENU);
+      CONVERT_TYPE(UTILITY);
+      CONVERT_TYPE(SPLASH);
+      CONVERT_TYPE(DROPDOWN_MENU);
+      CONVERT_TYPE(POPUP_MENU);
+      CONVERT_TYPE(TOOLTIP);
+      CONVERT_TYPE(NOTIFICATION);
+      CONVERT_TYPE(COMBO);
+      CONVERT_TYPE(DND);
+      CONVERT_TYPE(INLINED_IMAGE);
+      CONVERT_TYPE(SOCKET_IMAGE);
+      CONVERT_TYPE(FAKE);
+      CONVERT_TYPE(NAVIFRAME_BASIC);
+      default: break;
+     }
+   return EFL_UI_WIN_TYPE_UNKNOWN;
+#undef CONVERT_TYPE
+}
+
+static inline Elm_Win_Type
+_efl_ui_win_type_to_elm_win_type(Efl_Ui_Win_Type type)
+{
+   switch (type)
+     {
+#define CONVERT_TYPE(TYPE) case EFL_UI_WIN_TYPE_##TYPE: return ELM_WIN_##TYPE
+      CONVERT_TYPE(BASIC);
+      CONVERT_TYPE(DIALOG_BASIC);
+      CONVERT_TYPE(DESKTOP);
+      CONVERT_TYPE(DOCK);
+      CONVERT_TYPE(TOOLBAR);
+      CONVERT_TYPE(MENU);
+      CONVERT_TYPE(UTILITY);
+      CONVERT_TYPE(SPLASH);
+      CONVERT_TYPE(DROPDOWN_MENU);
+      CONVERT_TYPE(POPUP_MENU);
+      CONVERT_TYPE(TOOLTIP);
+      CONVERT_TYPE(NOTIFICATION);
+      CONVERT_TYPE(COMBO);
+      CONVERT_TYPE(DND);
+      CONVERT_TYPE(INLINED_IMAGE);
+      CONVERT_TYPE(SOCKET_IMAGE);
+      CONVERT_TYPE(FAKE);
+      CONVERT_TYPE(NAVIFRAME_BASIC);
+      default: break;
+     }
+   return ELM_WIN_UNKNOWN;
+#undef CONVERT_TYPE
+}
 
 #ifdef HAVE_ELEMENTARY_X
 static void _elm_win_xwin_update(Efl_Ui_Win_Data *sd);
@@ -1000,7 +1060,7 @@ _elm_win_pre_render(Ecore_Evas *ee)
      {
         int mw, mh;
 
-        if (sd->type != ELM_WIN_FAKE)
+        if (sd->type != EFL_UI_WIN_TYPE_FAKE)
           {
              edje_object_thaw(sd->frame_obj);
              evas_object_show(sd->frame_obj);
@@ -1315,7 +1375,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
 
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
    ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
-   if (sd->type != ELM_WIN_FAKE)
+   if (sd->type != EFL_UI_WIN_TYPE_FAKE)
      {
         Efl_Ui_Focus_Manager *man = sd->obj;
         while(efl_ui_focus_manager_redirect_get(man))
@@ -1388,7 +1448,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
         efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_FALSE);
      }
 
-   if (sd->type != ELM_WIN_FAKE)
+   if (sd->type != EFL_UI_WIN_TYPE_FAKE)
      {
         Efl_Ui_Focus_Manager *man = sd->obj;
         while(efl_ui_focus_manager_redirect_get(man))
@@ -2943,7 +3003,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
 
    /* NB: child deletion handled by parent's smart del */
 
-   if ((sd->type != ELM_WIN_FAKE) && (trap) && (trap->del))
+   if ((sd->type != EFL_UI_WIN_TYPE_FAKE) && (trap) && (trap->del))
      trap->del(sd->trap_data, obj);
 
    if (sd->parent)
@@ -2995,7 +3055,7 @@ _efl_ui_win_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Win_Data *sd)
      }
    else
      {
-        if (sd->ee && (sd->type != ELM_WIN_FAKE))
+        if (sd->ee && (sd->type != EFL_UI_WIN_TYPE_FAKE))
           {
              ecore_evas_manual_render_set(sd->ee, EINA_TRUE);
              edje_object_freeze(sd->frame_obj);
@@ -3409,7 +3469,7 @@ _elm_win_xwin_update(Efl_Ui_Win_Data *sd)
 {
    const char *s;
 
-   if (sd->type == ELM_WIN_FAKE) return;
+   if (sd->type == EFL_UI_WIN_TYPE_FAKE) return;
    _internal_elm_win_xwindow_get(sd);
 
    if (!sd->x.xwin) return;  /* nothing more to do */
@@ -4031,40 +4091,40 @@ typedef struct _resize_info {
 } resize_info;
 
 static const resize_info _resize_infos_legacy[8] = {
-   { "elm.event.resize.t",  ELM_CURSOR_TOP_SIDE, EFL_UI_WIN_MOVE_RESIZE_TOP, 1 XDIR(SIZE_T) },
-   { "elm.event.resize.b",  ELM_CURSOR_BOTTOM_SIDE, EFL_UI_WIN_MOVE_RESIZE_BOTTOM, 2 XDIR(SIZE_B) },
-   { "elm.event.resize.l",  ELM_CURSOR_LEFT_SIDE, EFL_UI_WIN_MOVE_RESIZE_LEFT, 4 XDIR(SIZE_L) },
-   { "elm.event.resize.r",  ELM_CURSOR_RIGHT_SIDE, EFL_UI_WIN_MOVE_RESIZE_RIGHT, 8 XDIR(SIZE_R) },
-   { "elm.event.resize.tl", ELM_CURSOR_TOP_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT, 5 XDIR(SIZE_TL) },
-   { "elm.event.resize.bl", ELM_CURSOR_BOTTOM_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT, 6 XDIR(SIZE_BL) },
-   { "elm.event.resize.br", ELM_CURSOR_BOTTOM_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 10 XDIR(SIZE_BR) },
-   { "elm.event.resize.tr", ELM_CURSOR_TOP_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 9 XDIR(SIZE_TR) },
+   { "elm.event.resize.t",  ELM_CURSOR_TOP_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP, 1 XDIR(SIZE_T) },
+   { "elm.event.resize.b",  ELM_CURSOR_BOTTOM_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM, 2 XDIR(SIZE_B) },
+   { "elm.event.resize.l",  ELM_CURSOR_LEFT_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 4 XDIR(SIZE_L) },
+   { "elm.event.resize.r",  ELM_CURSOR_RIGHT_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 8 XDIR(SIZE_R) },
+   { "elm.event.resize.tl", ELM_CURSOR_TOP_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 5 XDIR(SIZE_TL) },
+   { "elm.event.resize.bl", ELM_CURSOR_BOTTOM_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 6 XDIR(SIZE_BL) },
+   { "elm.event.resize.br", ELM_CURSOR_BOTTOM_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 10 XDIR(SIZE_BR) },
+   { "elm.event.resize.tr", ELM_CURSOR_TOP_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 9 XDIR(SIZE_TR) },
 };
 
 static const resize_info _resize_infos[8] = {
-   { "efl.event.resize.t",  ELM_CURSOR_TOP_SIDE, EFL_UI_WIN_MOVE_RESIZE_TOP, 1 XDIR(SIZE_T) },
-   { "efl.event.resize.b",  ELM_CURSOR_BOTTOM_SIDE, EFL_UI_WIN_MOVE_RESIZE_BOTTOM, 2 XDIR(SIZE_B) },
-   { "efl.event.resize.l",  ELM_CURSOR_LEFT_SIDE, EFL_UI_WIN_MOVE_RESIZE_LEFT, 4 XDIR(SIZE_L) },
-   { "efl.event.resize.r",  ELM_CURSOR_RIGHT_SIDE, EFL_UI_WIN_MOVE_RESIZE_RIGHT, 8 XDIR(SIZE_R) },
-   { "efl.event.resize.tl", ELM_CURSOR_TOP_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT, 5 XDIR(SIZE_TL) },
-   { "efl.event.resize.bl", ELM_CURSOR_BOTTOM_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT, 6 XDIR(SIZE_BL) },
-   { "efl.event.resize.br", ELM_CURSOR_BOTTOM_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 10 XDIR(SIZE_BR) },
-   { "efl.event.resize.tr", ELM_CURSOR_TOP_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT, 9 XDIR(SIZE_TR) },
+   { "efl.event.resize.t",  ELM_CURSOR_TOP_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP, 1 XDIR(SIZE_T) },
+   { "efl.event.resize.b",  ELM_CURSOR_BOTTOM_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM, 2 XDIR(SIZE_B) },
+   { "efl.event.resize.l",  ELM_CURSOR_LEFT_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 4 XDIR(SIZE_L) },
+   { "efl.event.resize.r",  ELM_CURSOR_RIGHT_SIDE, EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 8 XDIR(SIZE_R) },
+   { "efl.event.resize.tl", ELM_CURSOR_TOP_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 5 XDIR(SIZE_TL) },
+   { "efl.event.resize.bl", ELM_CURSOR_BOTTOM_LEFT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT, 6 XDIR(SIZE_BL) },
+   { "efl.event.resize.br", ELM_CURSOR_BOTTOM_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 10 XDIR(SIZE_BR) },
+   { "efl.event.resize.tr", ELM_CURSOR_TOP_RIGHT_CORNER, EFL_UI_WIN_MOVE_RESIZE_MODE_TOP | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT, 9 XDIR(SIZE_TR) },
 };
 
 static inline Efl_Ui_Win_Move_Resize_Mode
 _move_resize_mode_rotate(int rotation, Efl_Ui_Win_Move_Resize_Mode mode)
 {
    const Efl_Ui_Win_Move_Resize_Mode edges[4] = {
-      EFL_UI_WIN_MOVE_RESIZE_TOP,    EFL_UI_WIN_MOVE_RESIZE_LEFT,
-      EFL_UI_WIN_MOVE_RESIZE_BOTTOM, EFL_UI_WIN_MOVE_RESIZE_RIGHT
+      EFL_UI_WIN_MOVE_RESIZE_MODE_TOP,    EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM, EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT
    };
 
    const Efl_Ui_Win_Move_Resize_Mode corners[4] = {
-      EFL_UI_WIN_MOVE_RESIZE_TOP    | EFL_UI_WIN_MOVE_RESIZE_LEFT,
-      EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT,
-      EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT,
-      EFL_UI_WIN_MOVE_RESIZE_TOP    | EFL_UI_WIN_MOVE_RESIZE_RIGHT,
+      EFL_UI_WIN_MOVE_RESIZE_MODE_TOP    | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_LEFT,
+      EFL_UI_WIN_MOVE_RESIZE_MODE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT,
+      EFL_UI_WIN_MOVE_RESIZE_MODE_TOP    | EFL_UI_WIN_MOVE_RESIZE_MODE_RIGHT,
    };
 
    const int i = rotation / 90;
@@ -4078,7 +4138,7 @@ _move_resize_mode_rotate(int rotation, Efl_Ui_Win_Move_Resize_Mode mode)
      if (mode == corners[k])
        return corners[(k + i) % 4];
 
-   return EFL_UI_WIN_MOVE_RESIZE_MOVE;
+   return EFL_UI_WIN_MOVE_RESIZE_MODE_MOVE;
 }
 
 static const resize_info *
@@ -4123,7 +4183,7 @@ _move_resize_mode_get(Evas_Object *obj, const char *source)
             return _resize_infos[k].mode;
      }
 
-   return EFL_UI_WIN_MOVE_RESIZE_MOVE;
+   return EFL_UI_WIN_MOVE_RESIZE_MODE_MOVE;
 }
 
 static void
@@ -4264,7 +4324,7 @@ _win_move_resize_start(Efl_Ui_Win_Data *sd, Efl_Ui_Win_Move_Resize_Mode mode)
         return EINA_FALSE;
      }
 
-   if (mode == EFL_UI_WIN_MOVE_RESIZE_MOVE)
+   if (mode == EFL_UI_WIN_MOVE_RESIZE_MODE_MOVE)
      return _win_move_start(sd);
 
    ri = _resize_info_get(sd->obj, sd->rot, mode);
@@ -4310,7 +4370,7 @@ _elm_win_frame_cb_move_start(void *data,
 {
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
 
-   _win_move_resize_start(sd, EFL_UI_WIN_MOVE_RESIZE_MOVE);
+   _win_move_resize_start(sd, EFL_UI_WIN_MOVE_RESIZE_MODE_MOVE);
 }
 
 static void
@@ -4321,7 +4381,7 @@ _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj EINA_UNUSED,
    Efl_Ui_Win_Move_Resize_Mode mode;
 
    mode = _move_resize_mode_get(sd->obj, source);
-   if (mode == EFL_UI_WIN_MOVE_RESIZE_MOVE) return;
+   if (mode == EFL_UI_WIN_MOVE_RESIZE_MODE_MOVE) return;
 
    _win_move_resize_start(sd, mode);
 }
@@ -4697,7 +4757,7 @@ _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool
    if (!sd->frame_obj)
      {
         if (!efl_finalized_get(sd->obj)) return;
-        if (EINA_LIKELY(sd->type == ELM_WIN_FAKE))
+        if (EINA_LIKELY(sd->type == EFL_UI_WIN_TYPE_FAKE))
           return;
         if (!_elm_config->win_no_border)
           CRI("Window has no frame object!");
@@ -4927,7 +4987,7 @@ _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine)
    sd->csd.wayland = (eina_streq(engine, ELM_WAYLAND_SHM) ||
                       eina_streq(engine, ELM_WAYLAND_EGL));
 
-   if (sd->type == ELM_WIN_FAKE)
+   if (sd->type == EFL_UI_WIN_TYPE_FAKE)
      sd->csd.need = EINA_FALSE;
    else if (eina_streq(s, "on"))
      sd->csd.need = EINA_TRUE;
@@ -5081,7 +5141,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
    switch ((int) type)
      {
-      case ELM_WIN_FAKE:
+      case EFL_UI_WIN_TYPE_FAKE:
         tmp_sd.ee = sd->ee;
         break;
       case ELM_WIN_INLINED_IMAGE:
@@ -5431,12 +5491,12 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    SD_CPY(shot.info);
 #undef SD_CPY
 
-   if ((type != ELM_WIN_FAKE) && (trap) && (trap->add))
+   if ((type != EFL_UI_WIN_TYPE_FAKE) && (trap) && (trap->add))
      sd->trap_data = trap->add(obj);
 
    /* complementary actions, which depend on final smart data
     * pointer */
-   if (type == ELM_WIN_INLINED_IMAGE)
+   if (type == EFL_UI_WIN_TYPE_INLINED_IMAGE)
      _win_inlined_image_set(sd);
 #ifdef HAVE_ELEMENTARY_X
    else if ((engine) &&
@@ -5454,7 +5514,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
    sd->legacy.indmode = ELM_WIN_INDICATOR_UNKNOWN;
-   sd->indimode = EFL_UI_WIN_INDICATOR_OFF;
+   sd->indimode = EFL_UI_WIN_INDICATOR_MODE_OFF;
 
 #ifdef HAVE_ELEMENTARY_X
    _internal_elm_win_xwindow_get(sd);
@@ -5494,7 +5554,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
           }
         ecore_wl2_window_type_set(sd->wl.win, wtype);
      }
-   else if (sd->type == ELM_WIN_FAKE)
+   else if (sd->type == EFL_UI_WIN_TYPE_FAKE)
      {
         const char *env = getenv("WAYLAND_DISPLAY");
         if (env)
@@ -5540,13 +5600,13 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    evas_object_color_set(obj, 0, 0, 0, 0);
    evas_object_pass_events_set(obj, EINA_TRUE);
 
-   if (type == ELM_WIN_INLINED_IMAGE)
+   if (type == EFL_UI_WIN_TYPE_INLINED_IMAGE)
      efl_ui_win_inlined_parent_set(obj, parent);
 
    /* use own version of ecore_evas_object_associate() that does TRAP() */
    ecore_evas_data_set(sd->ee, "elm_win", obj);
 
-   if (type != ELM_WIN_FAKE)
+   if (type != EFL_UI_WIN_TYPE_FAKE)
      {
         evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
            _elm_win_obj_callback_changed_size_hints, NULL);
@@ -5571,7 +5631,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    ecore_evas_callback_resize_set(sd->ee, _elm_win_resize);
    ecore_evas_callback_move_set(sd->ee, _elm_win_move);
    ecore_evas_callback_pre_render_set(sd->ee, _elm_win_pre_render);
-   if (type != ELM_WIN_FAKE)
+   if (type != EFL_UI_WIN_TYPE_FAKE)
      {
          ecore_evas_callback_mouse_in_set(sd->ee, _elm_win_mouse_in);
          ecore_evas_callback_mouse_out_set(sd->ee, _elm_win_mouse_out);
@@ -5600,7 +5660,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    _elm_win_xwin_update(sd);
 #endif
 
-   if (type != ELM_WIN_FAKE)
+   if (type != EFL_UI_WIN_TYPE_FAKE)
      {
         //Prohibiting auto-rendering, until elm_win is shown.
         if (_elm_win_auto_norender_withdrawn(obj))
@@ -5627,7 +5687,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      ERR("failed to grab F12 key to elm widgets (dot) tree generation");
 #endif
 
-   if (type != ELM_WIN_FAKE)
+   if (type != EFL_UI_WIN_TYPE_FAKE)
      {
         if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
             ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
@@ -5665,7 +5725,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    _elm_win_apply_alpha(obj, sd);
 
 #ifdef HAVE_ELEMENTARY_WL2
-   if ((type != ELM_WIN_FAKE) && (type != ELM_WIN_INLINED_IMAGE))
+   if ((type != EFL_UI_WIN_TYPE_FAKE) && (type != EFL_UI_WIN_TYPE_INLINED_IMAGE))
      {
         if ((engine) &&
             ((!strcmp(engine, ELM_WAYLAND_SHM) ||
@@ -5693,7 +5753,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
 #endif
 
    /* do not append to list; all windows render as black rects */
-   if (type != ELM_WIN_FAKE)
+   if (type != EFL_UI_WIN_TYPE_FAKE)
      {
         const char *element = "base";
         const char *style;
@@ -5711,15 +5771,15 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         if (!style) style = "default";
         switch (type)
           {
-           case EFL_UI_WIN_DIALOG_BASIC:    element = "dialog"; break;
-           case EFL_UI_WIN_NAVIFRAME_BASIC: element = "naviframe"; break;
+           case EFL_UI_WIN_TYPE_DIALOG_BASIC:    element = "dialog"; break;
+           case EFL_UI_WIN_TYPE_NAVIFRAME_BASIC: element = "naviframe"; break;
            default: break;
           }
 
         if (!_elm_config->win_no_border)
           _elm_win_frame_add(sd, element, style);
 
-        if (sd->indimode != EFL_UI_WIN_INDICATOR_OFF)
+        if (sd->indimode != EFL_UI_WIN_INDICATOR_MODE_OFF)
           _indicator_add(sd);
 
         if (_elm_config->focus_highlight_enable)
@@ -5740,7 +5800,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    efl_event_callback_array_add(obj, _elm_win_tracking(), sd);
    evas_object_show(sd->legacy.edje);
 
-   if (type == ELM_WIN_FAKE)
+   if (type == EFL_UI_WIN_TYPE_FAKE)
      {
         _elm_win_resize_job(obj);
         _elm_win_move(sd->ee);
@@ -5756,9 +5816,9 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
      {
         switch (type)
           {
-           case EFL_UI_WIN_UNKNOWN:
-           case EFL_UI_WIN_BASIC:
-           case EFL_UI_WIN_DIALOG_BASIC:
+           case EFL_UI_WIN_TYPE_UNKNOWN:
+           case EFL_UI_WIN_TYPE_BASIC:
+           case EFL_UI_WIN_TYPE_DIALOG_BASIC:
              _elm_win_standard_init(obj);
              break;
            default: break;
@@ -5812,7 +5872,7 @@ EOLIAN static void
 _efl_ui_win_efl_object_destructor(Eo *obj, Efl_Ui_Win_Data *pd EINA_UNUSED)
 {
 #ifdef HAVE_ELEMENTARY_WL2
-   if (pd->type == ELM_WIN_FAKE)
+   if (pd->type == EFL_UI_WIN_TYPE_FAKE)
      {
         if (pd->wl.win)
           ecore_wl2_window_free(pd->wl.win);
@@ -6218,7 +6278,7 @@ _efl_ui_win_fullscreen_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Bool f
         // these engines... can ONLY be fullscreen
         return;
      }
-   else if (sd->type == ELM_WIN_FAKE)
+   else if (sd->type == EFL_UI_WIN_TYPE_FAKE)
      sd->fullscreen = !!fullscreen;
    else
      {
@@ -6480,8 +6540,8 @@ _efl_ui_win_urgent_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Urge
 EOLIAN static Efl_Ui_Win_Urgent_Mode
 _efl_ui_win_urgent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   if (sd->urgent) return EFL_UI_WIN_URGENT_URGENT;
-   return EFL_UI_WIN_URGENT_NONE;
+   if (sd->urgent) return EFL_UI_WIN_URGENT_MODE_URGENT;
+   return EFL_UI_WIN_URGENT_MODE_NONE;
 }
 
 EOLIAN static void
@@ -6506,8 +6566,8 @@ _efl_ui_win_modal_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Modal_Mode modal)
 EOLIAN static Efl_Ui_Win_Modal_Mode
 _efl_ui_win_modal_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
-   if (sd->modal) return EFL_UI_WIN_MODAL_MODAL;
-   return EFL_UI_WIN_MODAL_NONE;
+   if (sd->modal) return EFL_UI_WIN_MODAL_MODE_MODAL;
+   return EFL_UI_WIN_MODAL_MODE_NONE;
 }
 
 static void
@@ -6767,7 +6827,7 @@ _efl_ui_win_sticky_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_win_keyboard_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Elm_Win_Keyboard_Mode mode)
+_efl_ui_win_keyboard_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Keyboard_Mode mode)
 {
    if (mode == sd->kbdmode) return;
 #ifdef HAVE_ELEMENTARY_X
@@ -6781,7 +6841,7 @@ _efl_ui_win_keyboard_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Elm_Win_
 #endif
 }
 
-EOLIAN static Elm_Win_Keyboard_Mode
+EOLIAN static Efl_Ui_Win_Keyboard_Mode
 _efl_ui_win_keyboard_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
 {
    return sd->kbdmode;
@@ -6794,7 +6854,7 @@ _efl_ui_win_indicator_mode_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Indicato
    if (sd->indimode == mode) return;
    sd->indimode = mode;
 
-   if (sd->indimode == EFL_UI_WIN_INDICATOR_OFF)
+   if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_OFF)
      {
         _indicator_del(sd);
         return;
@@ -6804,20 +6864,20 @@ _efl_ui_win_indicator_mode_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Indicato
 
    if (elm_widget_is_legacy(obj))
      {
-        if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
+        if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_BG_OPAQUE)
           edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_opaque", "elm");
-        else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_BG_TRANSPARENT)
           edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,bg_transparent", "elm");
-        else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_HIDDEN)
           edje_object_signal_emit(sd->frame_obj, "elm,action,indicator,hidden", "elm");
      }
    else
      {
-        if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_OPAQUE)
+        if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_BG_OPAQUE)
           edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,bg_opaque", "efl");
-        else if (sd->indimode == EFL_UI_WIN_INDICATOR_BG_TRANSPARENT)
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_BG_TRANSPARENT)
           edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,bg_transparent", "efl");
-        else if (sd->indimode == EFL_UI_WIN_INDICATOR_HIDDEN)
+        else if (sd->indimode == EFL_UI_WIN_INDICATOR_MODE_HIDDEN)
           edje_object_signal_emit(sd->frame_obj, "efl,action,indicator,hidden", "efl");
      }
 
@@ -8401,7 +8461,7 @@ elm_win_modal_set(Evas_Object *obj, Eina_Bool modal)
 {
    Efl_Ui_Win_Modal_Mode modality;
 
-   modality = modal ? EFL_UI_WIN_MODAL_MODAL : EFL_UI_WIN_MODAL_NONE;
+   modality = modal ? EFL_UI_WIN_MODAL_MODE_MODAL : EFL_UI_WIN_MODAL_MODE_NONE;
    efl_ui_win_modal_set(obj, modality);
 }
 
@@ -8411,7 +8471,7 @@ elm_win_modal_get(const Evas_Object *obj)
    Efl_Ui_Win_Modal_Mode modality;
 
    modality = efl_ui_win_modal_get(obj);
-   return (modality != EFL_UI_WIN_MODAL_NONE);
+   return (modality != EFL_UI_WIN_MODAL_MODE_NONE);
 }
 
 EAPI void
@@ -8781,7 +8841,7 @@ _elm_win_legacy_init(Efl_Ui_Win_Data *sd)
      edje_object_part_swallow(sd->legacy.edje, "efl.contents", sd->legacy.box);
 
    evas_object_geometry_set(sd->legacy.edje, 0, 0, 1, 1);
-   if (sd->type != ELM_WIN_FAKE)
+   if (sd->type != EFL_UI_WIN_TYPE_FAKE)
      {
         edje_object_update_hints_set(sd->legacy.edje, EINA_TRUE);
         evas_object_event_callback_add(sd->legacy.edje, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -8933,7 +8993,7 @@ EAPI void
 elm_win_type_set(Evas_Object *obj, Elm_Win_Type type)
 {
    ERR("Calling deprecrated function '%s'", __FUNCTION__);
-   efl_ui_win_type_set(obj, type);
+   efl_ui_win_type_set(obj, _elm_win_type_to_efl_ui_win_type(type));
 }
 
 EAPI void
@@ -8987,8 +9047,45 @@ _efl_ui_win_legacy_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
+
+Efl_Object *_efl_ui_win_legacy_efl_object_finalize(Eo *obj, void *pd);
+
+
+static Eina_Bool
+_efl_ui_win_legacy_class_initializer(Efl_Class *klass)
+{
+   const Efl_Object_Ops *opsp = NULL;
+
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
+
+#ifndef EFL_UI_WIN_LEGACY_EXTRA_OPS
+#define EFL_UI_WIN_LEGACY_EXTRA_OPS
+#endif
+
+   EFL_OPS_DEFINE(ops,
+      EFL_OBJECT_OP_FUNC(efl_finalize, _efl_ui_win_legacy_efl_object_finalize),
+      EFL_UI_WIN_LEGACY_EXTRA_OPS
+   );
+   opsp = &ops;
+
+   return efl_class_functions_set(klass, opsp, ropsp);
+}
+
+static const Efl_Class_Description _efl_ui_win_legacy_class_desc = {
+   EO_VERSION,
+   "Efl.Ui.Win_Legacy",
+   EFL_CLASS_TYPE_REGULAR,
+   0,
+   _efl_ui_win_legacy_class_initializer,
+   _efl_ui_win_legacy_class_constructor,
+   NULL
+};
+
+EFL_DEFINE_CLASS(efl_ui_win_legacy_class_get, &_efl_ui_win_legacy_class_desc, EFL_UI_WIN_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+
+
 EAPI Evas_Object *
-elm_win_add(Evas_Object *parent, const char *name, Efl_Ui_Win_Type type)
+elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
    const Efl_Class *klass = EFL_UI_WIN_LEGACY_CLASS;
 
@@ -9011,7 +9108,7 @@ elm_win_fake_add(Ecore_Evas *ee)
    return elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, NULL,
                         _fake_canvas_set(efl_added, ee),
                         efl_ui_win_name_set(efl_added, NULL),
-                        efl_ui_win_type_set(efl_added, ELM_WIN_FAKE));
+                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_FAKE));
 }
 
 EAPI Evas_Object *
@@ -9022,7 +9119,7 @@ elm_win_util_standard_add(const char *name, const char *title)
    win = elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, NULL,
                         efl_text_set(efl_added, title),
                         efl_ui_win_name_set(efl_added, name),
-                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
+                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
    if (!win) return NULL;
 
    _elm_win_standard_init(win);
@@ -9037,11 +9134,244 @@ elm_win_util_dialog_add(Evas_Object *parent, const char *name, const char *title
    win = elm_legacy_add(EFL_UI_WIN_LEGACY_CLASS, parent,
                         efl_text_set(efl_added, title),
                         efl_ui_win_name_set(efl_added, name),
-                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC));
+                        efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC));
    if (!win) return NULL;
 
    _elm_win_standard_init(win);
    return win;
 }
 
-#include "efl_ui_win_legacy.eo.c"
+
+EAPI void
+elm_win_keyboard_mode_set(Evas_Object *obj, Elm_Win_Keyboard_Mode mode)
+{
+   efl_ui_win_keyboard_mode_set(obj, mode);
+}
+
+EAPI Elm_Win_Keyboard_Mode
+elm_win_keyboard_mode_get(const Evas_Object *obj)
+{
+   return efl_ui_win_keyboard_mode_get(obj);
+}
+
+EAPI void
+elm_win_screen_constrain_set(Evas_Object *obj, Eina_Bool constrain)
+{
+   efl_ui_win_screen_constrain_set(obj, constrain);
+}
+
+EAPI Eina_Bool
+elm_win_screen_constrain_get(const Evas_Object *obj)
+{
+   return efl_ui_win_screen_constrain_get(obj);
+}
+
+EAPI void
+elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip)
+{
+   efl_ui_win_prop_focus_skip_set(obj, skip);
+}
+
+EAPI void
+elm_win_autohide_set(Evas_Object *obj, Eina_Bool autohide)
+{
+   efl_ui_win_autohide_set(obj, autohide);
+}
+
+EAPI Eina_Bool
+elm_win_autohide_get(const Evas_Object *obj)
+{
+   return efl_ui_win_autohide_get(obj);
+}
+
+EAPI void
+elm_win_exit_on_close_set(Evas_Object *obj, const Eina_Value *exit_code)
+{
+   efl_ui_win_exit_on_close_set(obj, exit_code);
+}
+
+EAPI const Eina_Value *
+elm_win_exit_on_close_get(const Evas_Object *obj)
+{
+   return efl_ui_win_exit_on_close_get(obj);
+}
+
+EAPI void
+elm_win_icon_object_set(Evas_Object *obj, Evas_Object *icon)
+{
+   efl_ui_win_icon_object_set(obj, icon);
+}
+
+EAPI const Evas_Object *
+elm_win_icon_object_get(const Evas_Object *obj)
+{
+   return efl_ui_win_icon_object_get(obj);
+}
+
+EAPI void
+elm_win_iconified_set(Evas_Object *obj, Eina_Bool iconified)
+{
+   efl_ui_win_minimized_set(obj, iconified);
+}
+
+EAPI Eina_Bool
+elm_win_iconified_get(const Evas_Object *obj)
+{
+   return efl_ui_win_minimized_get(obj);
+}
+
+EAPI void
+elm_win_maximized_set(Evas_Object *obj, Eina_Bool maximized)
+{
+   efl_ui_win_maximized_set(obj, maximized);
+}
+
+EAPI Eina_Bool
+elm_win_maximized_get(const Evas_Object *obj)
+{
+   return efl_ui_win_maximized_get(obj);
+}
+
+EAPI void
+elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
+{
+   efl_ui_win_fullscreen_set(obj, fullscreen);
+}
+
+EAPI Eina_Bool
+elm_win_fullscreen_get(const Evas_Object *obj)
+{
+   return efl_ui_win_fullscreen_get(obj);
+}
+
+EAPI void
+elm_win_sticky_set(Evas_Object *obj, Eina_Bool sticky)
+{
+   efl_ui_win_sticky_set(obj, sticky);
+}
+
+EAPI Eina_Bool
+elm_win_sticky_get(const Evas_Object *obj)
+{
+   return efl_ui_win_sticky_get(obj);
+}
+
+EAPI void
+elm_win_noblank_set(Evas_Object *obj, Eina_Bool noblank)
+{
+   efl_ui_win_noblank_set(obj, noblank);
+}
+
+EAPI Eina_Bool
+elm_win_noblank_get(const Evas_Object *obj)
+{
+   return efl_ui_win_noblank_get(obj);
+}
+
+EAPI void
+elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
+{
+   efl_ui_win_borderless_set(obj, borderless);
+}
+
+EAPI Eina_Bool
+elm_win_borderless_get(const Evas_Object *obj)
+{
+   return efl_ui_win_borderless_get(obj);
+}
+
+EAPI void
+elm_win_role_set(Evas_Object *obj, const char *role)
+{
+   efl_ui_win_role_set(obj, role);
+}
+
+EAPI const char *
+elm_win_role_get(const Evas_Object *obj)
+{
+   return efl_ui_win_role_get(obj);
+}
+
+EAPI const char *
+elm_win_name_get(const Evas_Object *obj)
+{
+   return efl_ui_win_name_get(obj);
+}
+
+EAPI Elm_Win_Type
+elm_win_type_get(const Evas_Object *obj)
+{
+   return _efl_ui_win_type_to_elm_win_type(efl_ui_win_type_get(obj));
+}
+
+EAPI const char *
+elm_win_accel_preference_get(const Evas_Object *obj)
+{
+   return efl_ui_win_accel_preference_get(obj);
+}
+
+EAPI void
+elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha)
+{
+   efl_ui_win_alpha_set(obj, alpha);
+}
+
+EAPI Eina_Bool
+elm_win_alpha_get(const Evas_Object *obj)
+{
+   return efl_ui_win_alpha_get(obj);
+}
+
+EAPI void
+elm_win_activate(Evas_Object *obj)
+{
+   efl_ui_win_activate(obj);
+}
+
+EAPI void
+elm_win_center(Evas_Object *obj, Eina_Bool h, Eina_Bool v)
+{
+   efl_ui_win_center(obj, h, v);
+}
+
+EAPI Eina_Bool
+elm_win_move_resize_start(Evas_Object *obj, Elm_Win_Move_Resize_Mode mode)
+{
+   return efl_ui_win_move_resize_start(obj, mode);
+}
+
+EAPI void
+elm_win_focus_highlight_animate_set(Efl_Ui_Win *obj, Eina_Bool animate)
+{
+   efl_ui_win_focus_highlight_animate_set(obj, animate);
+}
+
+EAPI Eina_Bool
+elm_win_focus_highlight_animate_get(const Efl_Ui_Win *obj)
+{
+   return efl_ui_win_focus_highlight_animate_get(obj);
+}
+
+EAPI void
+elm_win_focus_highlight_enabled_set(Efl_Ui_Win *obj, Eina_Bool enabled)
+{
+   efl_ui_win_focus_highlight_enabled_set(obj, enabled);
+}
+
+EAPI Eina_Bool
+elm_win_focus_highlight_enabled_get(const Efl_Ui_Win *obj)
+{
+   return efl_ui_win_focus_highlight_enabled_get(obj);
+}
+
+EAPI Eina_Bool
+elm_win_focus_highlight_style_set(Efl_Ui_Win *obj, const char *style)
+{
+   return efl_ui_win_focus_highlight_style_set(obj, style);
+}
+
+EAPI const char *
+elm_win_focus_highlight_style_get(const Efl_Ui_Win *obj)
+{
+   return efl_ui_win_focus_highlight_style_get(obj);
+}

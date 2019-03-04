@@ -28,7 +28,7 @@ EFL_START_TEST(efl_ui_layout_test_property_bind)
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_property_bind test";
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
@@ -58,7 +58,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_api_size_min)
    Evas_Object *win;
    Eina_Size2D res;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    res = efl_layout_calc_size_min(layout, EINA_SIZE2D(2, 2));
@@ -71,7 +71,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_api_update_hints)
 {
    Evas_Object *win;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    efl_layout_calc_auto_update_hints_set(layout, EINA_TRUE);
@@ -83,7 +83,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_force)
 {
    Evas_Object *win;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    efl_layout_calc_force(layout);
@@ -95,7 +95,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_theme)
    Evas_Object *win;
    const char *klass, *group, *style;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
      efl_ui_layout_theme_set(efl_added, "win", "background", NULL)
    );

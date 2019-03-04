@@ -209,7 +209,7 @@ static void
 layout_setup()
 {
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC));
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
 
    layout = efl_add(EFL_UI_RELATIVE_LAYOUT_CLASS, win,
                     efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(200, 200)));

@@ -13,7 +13,7 @@ EFL_START_TEST(efl_ui_test_image_zoomable_icon)
    Eina_Bool ok;
    const char *icon_name;
 
-   win = win_add(NULL, "photocam", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "photocam", EFL_UI_WIN_TYPE_BASIC);
 
    img_zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win);
    efl_gfx_entity_visible_set(img_zoomable, EINA_TRUE);

@@ -123,7 +123,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Tab_Pager"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del_cb, ad));

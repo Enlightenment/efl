@@ -18,7 +18,7 @@ static void
 _small_ui(State *s)
 {
    s->win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Hello World"));
 
    s->ic = efl_add(EFL_UI_IMAGE_CLASS, s->win,

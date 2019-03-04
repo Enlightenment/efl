@@ -16,7 +16,7 @@ elm_main(int argc, char **argv)
    Eo *win, *layout, *btn1, *btn2;
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                   efl_text_set(efl_added, "Efl.Ui.Relative_Layout"),
                   efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

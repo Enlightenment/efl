@@ -21,7 +21,7 @@ typedef struct
 EOLIAN static Efl_Object *
 _efl_ui_win_socket_efl_object_finalize(Eo *obj, Efl_Ui_Win_Socket_Data *pd EINA_UNUSED)
 {
-   efl_ui_win_type_set(obj, ELM_WIN_SOCKET_IMAGE);
+   efl_ui_win_type_set(obj, EFL_UI_WIN_TYPE_SOCKET_IMAGE);
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    return obj;

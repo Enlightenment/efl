@@ -41,7 +41,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    char *markup;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Canvas_Layout"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -145,7 +145,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    Eo *bt;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -204,7 +204,7 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Eo *win, *bx, *en;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text Input Field"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -294,7 +294,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    Eina_File *f;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text Item Factory"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

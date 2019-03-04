@@ -263,39 +263,39 @@ _bt_pressed(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      {
       case 1:
         printf("Top Left\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_TOP | ELM_WIN_MOVE_RESIZE_LEFT);
         break;
       case 2:
         printf("Top\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_TOP);
         break;
       case 3:
         printf("Top Right\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_TOP | EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_TOP | ELM_WIN_MOVE_RESIZE_RIGHT);
         break;
       case 4:
         printf("Left\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_LEFT);
         break;
       case 5:
         printf("Move win\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_MOVE);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_MOVE);
         break;
       case 6:
         printf("Right\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_RIGHT);
         break;
       case 7:
         printf("Bottom Left\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_LEFT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_BOTTOM | ELM_WIN_MOVE_RESIZE_LEFT);
         break;
       case 8:
         printf("Bottom\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_BOTTOM);
         break;
       case 9:
         printf("Bottom Right\n");
-        res = elm_win_move_resize_start(win, EFL_UI_WIN_MOVE_RESIZE_BOTTOM | EFL_UI_WIN_MOVE_RESIZE_RIGHT);
+        res = elm_win_move_resize_start(win, ELM_WIN_MOVE_RESIZE_BOTTOM | ELM_WIN_MOVE_RESIZE_RIGHT);
         break;
       default:
         printf("No action\n");
