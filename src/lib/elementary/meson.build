@@ -524,6 +524,7 @@ elementary_pub_headers = [
   'elm_bubble.h',
   'elm_bubble_legacy.h',
   'elm_button.h',
+  'efl_ui_widget_common.h',
   'efl_ui_button_eo.h',
   'elm_button_legacy.h',
   'elm_cache.h',
