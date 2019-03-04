@@ -43,14 +43,14 @@ abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container
             style: string("default"); [[The style to use, eg "default".]]
          }
       }
-      @property automatic_theme_rotation {
+      @property automatic_theme_rotation @beta {
         [[This flag tells if this object will automatically mirror the rotation changes of the window to this object.
         ]]
         values {
            automatic : bool; [[$true to mirror orientation changes to the theme $false otherwise]]
         }
       }
-      theme_rotation_apply {
+      theme_rotation_apply  @beta {
         [[Apply a new rotation value to this object.]]
         params {
           orientation : Efl.Orient; [[The new rotation value.]]
