@@ -12,14 +12,14 @@ calc_irregular_coverage(Line* spans, int eidx, int y, int diagonal,
                        int edge_dist, Eina_Bool reverse)
 {
    if (eidx == 1) reverse = !reverse;
-   int coverage = (256 / (diagonal + 2));
+   int coverage = (255 / (diagonal + 2));
    int tmp;
    for (int ry = 0; ry < (diagonal + 2); ry++)
      {
         tmp = y - ry - edge_dist;
         if (tmp < 0) return;
         spans[tmp].aa_len[eidx] = 1;
-        if (reverse) spans[tmp].aa_cov[eidx] = 256 - (coverage * ry);
+        if (reverse) spans[tmp].aa_cov[eidx] = 255 - (coverage * ry);
         else spans[tmp].aa_cov[eidx] = (coverage * ry);
      }
 }
@@ -28,14 +28,14 @@ static void
 calc_vert_coverage(Line *spans, int eidx, int y, int rewind, Eina_Bool reverse)
 {
    if (eidx == 1) reverse = !reverse;
-   int coverage = (256 / (rewind + 1));
+   int coverage = (255 / (rewind + 1));
    int tmp;
    for (int ry = 1; ry < (rewind + 1); ry++)
      {
         tmp = y - ry;
         if (tmp < 0 ) return;
         spans[tmp].aa_len[eidx] = 1;
-        if (reverse) spans[tmp].aa_cov[eidx] = (256 - (coverage * ry));
+        if (reverse) spans[tmp].aa_cov[eidx] = (255 - (coverage * ry));
         else spans[tmp].aa_cov[eidx] = (coverage * ry);
      }
 }
@@ -46,7 +46,7 @@ calc_horiz_coverage(Line *spans, int eidx, int y, int x, int x2)
    if (spans[y].aa_len[eidx] < abs(x - x2))
      {
         spans[y].aa_len[eidx] = abs(x - x2);
-        spans[y].aa_cov[eidx] = (256 / (spans[y].aa_len[eidx] + 1));
+        spans[y].aa_cov[eidx] = (255 / (spans[y].aa_len[eidx] + 1));
      }
 }
 
@@ -61,7 +61,7 @@ _aa_coverage_apply(Line *line, int ww, int w, DATA32 val, Eina_Bool src_alpha)
    //Right Edge Anti Aliasing
    if (line->aa_len[1] >= ww)
      {
-        return MUL_256(256 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
+        return MUL_256(255 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
                        val);
      }
    //Remove Transparency if src image alpha is off.
