@@ -9,12 +9,14 @@ _efl_canvas_scene3d_scene3d_set(Eo *eo_obj, void *pd EINA_UNUSED, Evas_Canvas3D_
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
    Evas_Image_Load_Opts lo;
+   int load_error;
 
    if (o->cur->scene == scene) return;
 
    evas_object_async_block(obj);
    _evas_image_init_set(NULL, NULL, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
+   o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
    _evas_image_done_set(eo_obj, obj, o);
 
    if (scene) _evas_image_3d_set(eo_obj, scene);

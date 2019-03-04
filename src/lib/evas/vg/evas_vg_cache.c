@@ -171,7 +171,7 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_Fi
 {
    Evas_Module       *em;
    Evas_Vg_Save_Func *saver;
-   int                error = EVAS_LOAD_ERROR_GENERIC;
+   Evas_Load_Error    error = EVAS_LOAD_ERROR_GENERIC;
    int                compress = 9;
 
    if (!file) return EINA_FALSE;

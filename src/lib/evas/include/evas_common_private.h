@@ -636,7 +636,7 @@ struct _Image_Entry
    int                    server_id;
    int                    connect_num;
    int                    channel;
-   int                    load_error;
+   Evas_Load_Error        load_error;
 };
 
 struct _Engine_Image_Entry

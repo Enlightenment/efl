@@ -229,7 +229,7 @@ _evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->source = eo_src;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-   o->load_error = EVAS_LOAD_ERROR_NONE;
+   o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;;
    o->proxyerror = 0;
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)

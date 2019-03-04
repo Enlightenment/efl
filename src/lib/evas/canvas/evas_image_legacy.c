@@ -393,7 +393,7 @@ EAPI Evas_Load_Error
 evas_object_image_load_error_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_LOAD_ERROR_GENERIC);
-   return efl_gfx_image_load_error_get(obj);
+   return _efl_gfx_image_load_error_to_evas_load_error(efl_gfx_image_load_error_get(obj));
 }
 
 EAPI void
@@ -542,7 +542,7 @@ evas_object_image_native_surface_set(Evas_Object *eo_obj, Evas_Native_Surface *s
      {
         Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
-        o->load_error = EVAS_LOAD_ERROR_GENERIC;
+        o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 }
 
@@ -669,7 +669,7 @@ evas_object_image_data_set(Eo *eo_obj, void *data)
              o->changed = EINA_TRUE;
              evas_object_change(eo_obj, obj);
           }
-        o->load_error = EVAS_LOAD_ERROR_NONE;
+        o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
         if ((o->cur->image.w != 0) || (o->cur->image.h != 0))
           resize_call = EINA_TRUE;
 
@@ -718,6 +718,7 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
    void *pixels = NULL;
    int stride = 0;
    DATA32 *data;
+   int load_error;
 
    if (!o->engine_data) return NULL;
 
@@ -731,7 +732,8 @@ evas_object_image_data_get(const Eo *eo_obj, Eina_Bool for_writing)
      ENFN->image_scale_hint_set(ENC, o->engine_data, o->scale_hint);
    if (ENFN->image_content_hint_set)
      ENFN->image_content_hint_set(ENC, o->engine_data, o->content_hint);
-   pixels = ENFN->image_data_get(ENC, o->engine_data, for_writing, &data, &o->load_error, &tofree);
+   pixels = ENFN->image_data_get(ENC, o->engine_data, for_writing, &data, &load_error, &tofree);
+   o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
 
    /* if we fail to get engine_data, we have to return NULL */
    if (!pixels || !data) goto error;
@@ -1110,6 +1112,7 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
    void *engine_data;
    DATA32 *data;
    void* result = NULL;
+   int load_error;
 
    static int warned = 0;
    if (!warned)
@@ -1130,7 +1133,8 @@ evas_object_image_data_convert(Evas_Object *eo_obj, Evas_Colorspace to_cspace)
         ENFN->image_data_preload_cancel(ENC, o->engine_data, eo_obj, EINA_TRUE);
      }
    data = NULL;
-   engine_data = ENFN->image_data_get(ENC, o->engine_data, 0, &data, &o->load_error, NULL);
+   engine_data = ENFN->image_data_get(ENC, o->engine_data, 0, &data, &load_error, NULL);
+   o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
    result = _evas_image_data_convert_internal(o, data, to_cspace);
    if (engine_data)
      o->engine_data = ENFN->image_data_put(ENC, engine_data, data);
@@ -1184,6 +1188,7 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
 
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Image_Data *o;
+   int load_error;
 
    static int warned = 0;
    if (!warned)
@@ -1211,7 +1216,8 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
                                          o->engine_data,
                                          1,
                                          &image_pixels,
-                                         &o->load_error);
+                                         &load_error);
+                  o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
 /* FIXME: need to actualyl support this */
 /*		  memcpy(image_pixels, pixels->rows, o->cur->image.w * o->cur->image.h * 4);*/
                   if (o->engine_data)
@@ -1232,7 +1238,8 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
                {
                   DATA32 *image_pixels = NULL;
 
-                  o->engine_data = ENFN->image_data_get(ENC, o->engine_data, 1, &image_pixels,&o->load_error, NULL);
+                  o->engine_data = ENFN->image_data_get(ENC, o->engine_data, 1, &image_pixels, &load_error, NULL);
+                  o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
                   if (image_pixels)
                     evas_common_convert_yuv_422p_601_rgba((DATA8 **) pixels->rows, (DATA8 *) image_pixels, o->cur->image.w, o->cur->image.h);
                   if (o->engine_data)

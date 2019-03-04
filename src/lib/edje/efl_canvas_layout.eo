@@ -77,7 +77,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
               [[Gets the (last) file loading error for a given object.]]
           }
           values {
-             error: Efl.Gfx.Image_Load_Error(Efl.Gfx.Image_Load_Error.none); [[The load error code.]]
+             error: Eina.Error; [[The load error code.]]
           }
       }
       content_remove {

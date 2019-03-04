@@ -12,6 +12,7 @@ _evas_image_file_load(Eo *eo_obj)
    Evas_Image_Load_Opts lo;
    const Eina_File *f = efl_file_mmap_get(eo_obj);
    const char *key = efl_file_key_get(eo_obj);
+   int load_error;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(f, EINA_FALSE);
 
@@ -26,7 +27,8 @@ _evas_image_file_load(Eo *eo_obj)
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    _evas_image_init_set(f, key, eo_obj, obj, o, &lo);
-   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
+   o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
    o->buffer_data_set = EINA_FALSE;
    _evas_image_done_set(eo_obj, obj, o);
    o->file_size.w = o->cur->image.w;
@@ -787,11 +789,11 @@ _efl_canvas_image_efl_object_dbg_info_get(Eo *obj, void *pd EINA_UNUSED, Efl_Dbg
        (root))
      {
         Efl_Dbg_Info *group = EFL_DBG_INFO_LIST_APPEND(root, MY_CLASS_NAME);
-        Evas_Load_Error error = EVAS_LOAD_ERROR_GENERIC;
+        Eina_Error error = EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 
-        error = (Evas_Load_Error) efl_gfx_image_load_error_get(obj);
+        error = efl_gfx_image_load_error_get(obj);
         EFL_DBG_INFO_APPEND(group, "Load Error", EINA_VALUE_TYPE_STRING,
-                            evas_load_error_str(error));
+                            eina_error_msg_get(error));
      }
 }
 

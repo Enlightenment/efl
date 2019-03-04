@@ -171,7 +171,7 @@ _efl_canvas_layout_efl_file_group_get(Eo *obj EINA_UNUSED, Edje *ed)
    return ed->group;
 }
 
-EOLIAN Efl_Gfx_Image_Load_Error
+EOLIAN Eina_Error
 _efl_canvas_layout_layout_load_error_get(const Eo *obj EINA_UNUSED, Edje *ed)
 {
    switch (ed->load_error)

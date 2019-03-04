@@ -111,7 +111,7 @@ struct _Evas_Image_Data
    void             *plane;
 
    int               pixels_checked_out;
-   int               load_error;
+   Eina_Error        load_error; /* Efl.Gfx.Image.Load_Error */
 
    Efl_Gfx_Image_Scale_Hint   scale_hint;
    Efl_Gfx_Image_Content_Hint content_hint;

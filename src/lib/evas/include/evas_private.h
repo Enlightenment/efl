@@ -1530,7 +1530,7 @@ struct _Evas_Vg_Load_Func
 
 struct _Evas_Vg_Save_Func
 {
-   int (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
+   Evas_Load_Error (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
 };
 
 #ifdef __cplusplus
@@ -1917,6 +1917,9 @@ extern Eina_Cow *evas_object_image_load_opts_cow;
 extern Eina_Cow *evas_object_image_state_cow;
 extern Eina_Cow *evas_object_mask_cow;
 extern Eina_Cow *evas_object_events_cow;
+
+Eina_Error _evas_load_error_to_efl_gfx_image_load_error(Evas_Load_Error err);
+Evas_Load_Error _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err);
 
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
