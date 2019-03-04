@@ -174,7 +174,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of @Efl.Ui.Win_Keyboard_Mode.]]
          }
       }
-      @property wm_available_rotations {
+      @property wm_available_rotations @beta {
          [[Defines which rotations this window supports.
 
            The window manager will refer to these hints and rotate the window
@@ -193,7 +193,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
                             not specified.]]
          }
       }
-      @property wm_available_profiles {
+      @property wm_available_profiles @beta {
          [[Available profiles on a window.]]
          set {
          }
@@ -224,7 +224,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
-      @property prop_focus_skip {
+      @property prop_focus_skip @beta {
          set {
             [[Set the window to be skipped by keyboard focus.
 
@@ -248,7 +248,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
          }
       }
-      @property autohide {
+      @property autohide @beta {
          [[Window's autohide state.
 
            When closing the window in any way outside of the program control,
@@ -349,7 +349,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             fullscreen: bool; [[If $true, the window is fullscreen.]]
          }
       }
-      @property sticky {
+      @property sticky @beta {
          set {
             [[Set the sticky state of the window.
 
@@ -365,7 +365,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             sticky: bool; [[If $true, the window's sticky state is enabled.]]
          }
       }
-      @property urgent {
+      @property urgent @beta {
          set {
             [[Set the urgent state of a window.]]
          }
@@ -377,7 +377,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
                 [[The mode of a urgent window, one of @Efl.Ui.Win_Urgent_Mode.]]
          }
       }
-      @property modal {
+      @property modal @beta {
          set {
             [[Set the modal state of a window.]]
          }
@@ -388,7 +388,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
          }
       }
-      @property borderless {
+      @property borderless @beta {
          set {
             [[Set the borderless state of a window.
 
@@ -403,7 +403,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             borderless: bool; [[If $true, the window is borderless.]]
          }
       }
-      @property win_role {
+      @property win_role @beta {
          /* FIXME: Do we actually need this? There is only support in X. */
          [[The role of the window.
 
@@ -445,7 +445,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             name: string @nullable; [[Window name]]
          }
       }
-      @property win_type {
+      @property win_type @beta {
          [[The type of the window.
 
            It is a hint of how the Window Manager should handle it.
@@ -465,7 +465,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
          }
       }
-      @property accel_preference {
+      @property accel_preference @beta {
          [[The hardware acceleration preference for this window.
 
            This is a constructor function and can only be called before
@@ -632,7 +632,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
            window will be the active one afterwards.
          ]]
       }
-      center {
+      center @beta {
          [[Center a window on the screen.
 
            This function centers window $obj horizontally and/or vertically
@@ -685,8 +685,6 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
            Note: the result of this API can only guarantee that the request has
            been forwarded to the server, but there is no guarantee that the
            request can be processed by the display server.
-
-           @since 1.19
          ]]
          return: bool; [[$true if the request was successfully sent to the
                          display server, $false in case of error.]]
@@ -874,21 +872,21 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
    }
    events {
       delete,request: void; [[Called when the window receives a delete request]]
-      withdrawn: void; [[Called when window is withdrawn]]
+      withdrawn @beta: void; [[Called when window is withdrawn]]
       minimized: void; [[Called when window is minimized]]
       normal: void; [[Called when window is set to normal state]]
-      stick: void; [[Called when window is set as sticky]]
-      unstick: void; [[Called when window is no  longer set as sticky]]
+      stick @beta: void; [[Called when window is set as sticky]]
+      unstick @beta: void; [[Called when window is no  longer set as sticky]]
       fullscreen: void; [[Called when window is set to fullscreen]]
       unfullscreen: void; [[Called when window is no longer set to fullscreen]]
       maximized: void; [[Called when window is set to maximized]]
       unmaximized: void; [[Called when window is no longer set to maximized]]
       indicator,prop,changed: void; [[Called when indicator is property changed]]
       rotation,changed: void; [[Called when window rotation is changed]]
-      profile,changed: void; [[Called when profile is changed]]
-      wm,rotation,changed: void; [[Called when window manager rotation is changed]]
+      profile,changed @beta: void; [[Called when profile is changed]]
+      wm,rotation,changed @beta: void; [[Called when window manager rotation is changed]]
       theme,changed: void; [[Called when theme is changed]]
-      elm,action,block_menu: void; [[Called when elementary block menu action occurs]]
+      elm,action,block_menu @beta: void; [[Called when elementary block menu action occurs]]
       pause: void; [[Called when the window is not going be displayed for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
    }
