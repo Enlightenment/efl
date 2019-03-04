@@ -34,12 +34,9 @@ abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container
                [[Whether the style was successfully applied or not, see
                  the values of @Efl.Ui.Theme_Apply_Result for more information.]]
          }
-         /*
-         TODO:
          get {
             [[Get information about the current theme in use.]]
          }
-         */
          values {
             klass: string; [[The class of the group, eg. "button".]]
             group: string("base"); [[The group, eg. "base".]]

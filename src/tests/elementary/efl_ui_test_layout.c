@@ -90,10 +90,27 @@ EFL_START_TEST(efl_ui_layout_test_layout_force)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_layout_test_layout_theme)
+{
+   Evas_Object *win;
+   const char *klass, *group, *style;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
+     efl_ui_layout_theme_set(efl_added, "win", "background", NULL)
+   );
+   efl_ui_layout_theme_get(layout, &klass, &group, &style);
+   ck_assert_str_eq(klass, "win");
+   ck_assert_str_eq(group, "background");
+   ck_assert(!style);
+}
+EFL_END_TEST
+
 void efl_ui_test_layout(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_layout_test_property_bind);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_size_min);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_update_hints);
    tcase_add_test(tc, efl_ui_layout_test_layout_force);
+   tcase_add_test(tc, efl_ui_layout_test_layout_theme);
 }

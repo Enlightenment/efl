@@ -912,6 +912,14 @@ _efl_ui_layout_efl_file_mmap_get(const Eo *obj, void *_pd EINA_UNUSED)
    return efl_file_mmap_get(wd->resize_obj);
 }
 
+EOLIAN static void
+_efl_ui_layout_base_theme_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char **klass, const char **group, const char **style)
+{
+   if (klass) *klass = elm_widget_theme_klass_get(obj);
+   if (group) *group = elm_widget_theme_element_get(obj);
+   if (style) *style = elm_widget_theme_style_get(obj);
+}
+
 EOLIAN static Efl_Ui_Theme_Apply_Result
 _efl_ui_layout_base_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
