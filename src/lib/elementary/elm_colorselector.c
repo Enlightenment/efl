@@ -1317,7 +1317,7 @@ _color_bars_add(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i;
@@ -1329,7 +1329,7 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
    unsigned int v_pad = DEFAULT_VER_PAD;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;

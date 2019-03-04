@@ -213,7 +213,7 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 {
    Eo *tab, *icon_obj;
    Tab_Info *ti;
-   Efl_Ui_Theme_Apply_Error theme_apply;
+   Eina_Error theme_apply;
 
    ti = calloc(1, sizeof(*ti));
 

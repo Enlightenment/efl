@@ -113,11 +113,11 @@ _mirroredness_change_eval(Evas_Object *obj)
      (wd->resize_obj, "elm.drag_button_base", 1.0 - pos, 0.5);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_actionslider_efl_ui_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
 {
    Eina_Bool mirrored;
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 

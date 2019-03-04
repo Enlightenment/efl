@@ -302,7 +302,7 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
    return NULL;
 }
 
-Efl_Ui_Theme_Apply_Error
+Eina_Error
 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
@@ -323,7 +323,7 @@ _elm_theme_object_icon_set(Evas_Object *o,
    return _elm_theme_icon_set(th, o, group, style);
 }
 
-Efl_Ui_Theme_Apply_Error
+Eina_Error
 _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool is_legacy)
 {
    Eina_File *file;

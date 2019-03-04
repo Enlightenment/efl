@@ -514,10 +514,10 @@ _efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Clock_Field *field;
    char buf[BUFFER_SIZE];

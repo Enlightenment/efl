@@ -423,10 +423,10 @@ _efl_ui_slider_theme_group_get(Evas_Object *obj, Efl_Ui_Slider_Data *sd)
    return eina_strbuf_release(new_group);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
    char *group;
 

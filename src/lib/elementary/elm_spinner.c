@@ -1299,7 +1299,7 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);

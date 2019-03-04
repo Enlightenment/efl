@@ -86,10 +86,10 @@ _move_resize_cb(void *data EINA_UNUSED,
    _sizing_eval(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_route_efl_ui_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 

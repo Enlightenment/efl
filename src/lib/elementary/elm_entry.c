@@ -872,14 +872,14 @@ _elm_entry_background_switch(Evas_Object *from_edje, Evas_Object *to_edje)
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 {
    const char *str;
    const char *t;
    const char *stl_user;
    const char *style = elm_widget_style_get(obj);
-   Efl_Ui_Theme_Apply_Error theme_apply;
+   Eina_Error theme_apply;
    int cursor_pos;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
@@ -974,7 +974,7 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
 
    if (sd->scroll)
      {
-        Efl_Ui_Theme_Apply_Error err = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+        Eina_Error err = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
         efl_ui_mirrored_set(obj, efl_ui_mirrored_get(obj));
 

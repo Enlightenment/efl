@@ -2341,7 +2341,7 @@ _elm_code_widget_theme_refresh(Eo *obj, Elm_Code_Widget_Data *pd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_code_widget_efl_ui_widget_theme_apply(Eo *obj, Elm_Code_Widget_Data *pd)
 {
    if (efl_ui_widget_theme_apply(efl_cast(obj, EFL_UI_WIDGET_CLASS)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)

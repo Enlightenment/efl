@@ -788,10 +788,10 @@ _efl_ui_spin_button_theme_group_get(Evas_Object *obj, Efl_Ui_Spin_Button_Data *s
 }
 
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    char *group;
 
    group = _efl_ui_spin_button_theme_group_get(obj, sd);

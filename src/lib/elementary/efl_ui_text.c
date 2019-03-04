@@ -733,10 +733,10 @@ _efl_ui_text_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool
 
 /* we can't issue the layout's theming code here, cause it assumes an
  * unique edje object, always */
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_text_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Text_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error theme_apply;
+   Eina_Error theme_apply;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 

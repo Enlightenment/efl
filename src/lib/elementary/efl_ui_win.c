@@ -378,7 +378,7 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
                                           void *event_info);
 static void
 _elm_win_img_callbacks_del(Evas_Object *obj, Evas_Object *imgobj);
-static Efl_Ui_Theme_Apply_Error _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
+static Eina_Error _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd);
 static void _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style);
 static void _elm_win_frame_style_update(Efl_Ui_Win_Data *sd, Eina_Bool force_emit, Eina_Bool calc);
 static inline void _elm_win_need_frame_adjust(Efl_Ui_Win_Data *sd, const char *engine);
@@ -6959,10 +6959,10 @@ _efl_ui_win_focus_highlight_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Da
    return sd->focus_highlight.enabled;
 }
 
-static Efl_Ui_Theme_Apply_Error
+static Eina_Error
 _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_Bool prev_alpha;
    const char *s;
 
@@ -6985,10 +6985,10 @@ _elm_win_theme_internal(Eo *obj, Efl_Ui_Win_Data *sd)
    return int_ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_win_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Win_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 

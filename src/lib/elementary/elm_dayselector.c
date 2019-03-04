@@ -123,10 +123,10 @@ _item_location_get(Elm_Dayselector_Data *sd,
           ELM_DAYSELECTOR_MAX;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_dayselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Eina_List *l;
    char buf[1024];

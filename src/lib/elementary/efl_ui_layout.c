@@ -445,10 +445,10 @@ _efl_ui_layout_base_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Layout_Data *_pd 
    _flush_mirrored_state(obj);
 }
 
-static Efl_Ui_Theme_Apply_Error
+static Eina_Error
 _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
@@ -471,10 +471,10 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
    return ret;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error theme_apply_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error theme_apply_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
@@ -920,7 +920,7 @@ _efl_ui_layout_base_theme_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED,
    if (style) *style = elm_widget_theme_style_get(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_layout_base_theme_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *klass, const char *group, const char *style)
 {
    Eina_Bool changed = EINA_FALSE;
@@ -2944,7 +2944,7 @@ elm_layout_data_get(const Evas_Object *obj, const char *key)
 EAPI Eina_Bool
 elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, const char *style)
 {
-   Efl_Ui_Theme_Apply_Error theme_apply_ret;
+   Eina_Error theme_apply_ret;
 
    theme_apply_ret = efl_ui_layout_theme_set(obj, klass, group, style);
    return (theme_apply_ret != EFL_UI_THEME_APPLY_ERROR_GENERIC);

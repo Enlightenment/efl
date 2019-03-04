@@ -198,13 +198,13 @@ _scrollable_layout_theme_set(Eo *obj, Efl_Ui_Panel_Data *sd)
      _access_obj_process(obj, EINA_TRUE);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_panel_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panel_Data *sd)
 {
    const char *str;
    Evas_Coord minw = 0, minh = 0;
 
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 

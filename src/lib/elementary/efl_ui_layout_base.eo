@@ -30,9 +30,9 @@ abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container
               If this returns $false the widget is very likely to become
               non-functioning.
             ]]
-            return: Efl.Ui.Theme_Apply_Error(2);
+            return: Eina.Error;
                [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme_Apply_Error for more information.]]
+                 the values of Efl.Ui.Theme.Apply_Error for more information.]]
          }
          get {
             [[Get information about the current theme in use.]]

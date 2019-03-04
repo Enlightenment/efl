@@ -920,10 +920,10 @@ _efl_ui_image_zoomable_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Image
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_image_zoomable_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_Bool fdo = EINA_FALSE;
 
    if (sd->stdicon)

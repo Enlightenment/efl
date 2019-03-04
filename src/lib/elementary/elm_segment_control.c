@@ -215,14 +215,14 @@ _update_list(Elm_Segment_Control_Data *sd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_List *l;
    Eina_Bool rtl;
    Elm_Object_Item *eo_item;
 
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 

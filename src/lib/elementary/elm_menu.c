@@ -231,10 +231,10 @@ _sizing_eval(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;

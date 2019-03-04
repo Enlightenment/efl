@@ -566,7 +566,7 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
                     "",style ? : "default");
      }
 
-   Efl_Ui_Theme_Apply_Error th_ret =
+   Eina_Error th_ret =
       elm_widget_theme_object_set(WIDGET(it), view, "genlist", buf,
                                   elm_widget_style_get(WIDGET(it)));
    if (th_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
@@ -3533,11 +3533,11 @@ _mirrored_set(Evas_Object *obj,
    efl_ui_mirrored_set(obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_genlist_efl_ui_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 {
    Item_Block *itb;
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_List *l;
    Elm_Gen_Item *it;
    Evas *e;

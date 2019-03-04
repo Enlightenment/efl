@@ -432,13 +432,13 @@ _index_priority_change(void *data, Elm_Index_Item_Data *it)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Object_Item *eo_item;
 
-   Efl_Ui_Theme_Apply_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 

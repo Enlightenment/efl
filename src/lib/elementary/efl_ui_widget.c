@@ -1192,7 +1192,16 @@ _efl_ui_widget_on_access_update(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd 
 {
 }
 
-EAPI Efl_Ui_Theme_Apply_Error
+static void
+_elm_widget_theme_helper(Eina_Error err, Eina_Bool *err_default, Eina_Bool *err_generic)
+{
+   if (err == EFL_UI_THEME_APPLY_ERROR_DEFAULT)
+     *err_default = EINA_TRUE;
+   else if (err == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+     *err_generic = EINA_TRUE;
+}
+
+EAPI Eina_Error
 elm_widget_theme(Evas_Object *obj)
 {
    const Eina_List *l;
@@ -1206,46 +1215,17 @@ elm_widget_theme(Evas_Object *obj)
 
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      if (_elm_widget_is(child))
-       {
-          switch (elm_widget_theme(child))
-            {
-             case EFL_UI_THEME_APPLY_ERROR_DEFAULT:
-               err_default = EINA_TRUE;
-               break;
-             case EFL_UI_THEME_APPLY_ERROR_GENERIC:
-               err_generic = EINA_TRUE;
-               break;
-             default: break;
-            }
-       }
+       _elm_widget_theme_helper(elm_widget_theme(child), &err_default, &err_generic);
 
    if (sd->hover_obj)
-     switch (elm_widget_theme(sd->hover_obj))
-       {
-        case EFL_UI_THEME_APPLY_ERROR_DEFAULT:
-          err_default = EINA_TRUE;
-          break;
-        case EFL_UI_THEME_APPLY_ERROR_GENERIC:
-          err_generic = EINA_TRUE;
-          break;
-        default: break;
-       }
+     _elm_widget_theme_helper(elm_widget_theme(sd->hover_obj), &err_default, &err_generic);
 
    EINA_LIST_FOREACH(sd->tooltips, l, tt)
      elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
 
-   switch (efl_ui_widget_theme_apply(obj))
-     {
-      case EFL_UI_THEME_APPLY_ERROR_DEFAULT:
-        err_default = EINA_TRUE;
-        break;
-      case EFL_UI_THEME_APPLY_ERROR_GENERIC:
-        err_generic = EINA_TRUE;
-        break;
-      default: break;
-     }
+   _elm_widget_theme_helper(efl_ui_widget_theme_apply(obj), &err_default, &err_generic);
    if (err_generic) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
    if (err_default) return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
    return EFL_UI_THEME_APPLY_ERROR_NONE;
@@ -1296,7 +1276,7 @@ elm_widget_theme_specific(Evas_Object *obj,
    efl_ui_widget_theme_apply(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_widget_theme_apply(Eo *obj, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    _elm_widget_mirrored_reload(obj);
@@ -2827,7 +2807,7 @@ elm_widget_theme_get(const Evas_Object *obj)
    return sd->theme;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Error
+EOLIAN static Eina_Error
 _efl_ui_widget_style_set(Eo *obj, Elm_Widget_Smart_Data *sd, const char *style)
 {
    if (!elm_widget_is_legacy(obj) && efl_finalized_get(obj))
@@ -2938,7 +2918,7 @@ elm_widget_scroll_child_locked_y_get(const Eo *obj)
    return sd->child_drag_y_locked;
 }
 
-EAPI Efl_Ui_Theme_Apply_Error
+EAPI Eina_Error
 elm_widget_theme_object_set(Evas_Object *obj, Evas_Object *edj, const char *wname, const char *welement, const char *wstyle)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
@@ -3554,10 +3534,10 @@ elm_widget_theme_style_get(const Evas_Object *obj)
  * @param name An element name of sub object.
  * @return Whether the style was successfully applied or not.
  */
-EAPI Efl_Ui_Theme_Apply_Error
+EAPI Eina_Error
 elm_widget_element_update(Evas_Object *obj, Evas_Object *component, const char *name)
 {
-   Efl_Ui_Theme_Apply_Error ret = EFL_UI_THEME_APPLY_ERROR_NONE;
+   Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_NONE;
    Eina_Bool changed = EINA_FALSE;
    const char *obj_group;
    Eina_Stringshare *group;
