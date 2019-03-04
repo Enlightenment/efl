@@ -1824,6 +1824,18 @@ elm_widget_is(const Evas_Object *obj)
    return _elm_widget_is(obj);
 }
 
+EAPI void
+elm_widget_access_info_set(Efl_Ui_Widget *obj, const char *txt)
+{
+   efl_ui_widget_access_info_set(obj, txt);
+}
+
+EAPI const char *
+elm_widget_access_info_get(const Efl_Ui_Widget *obj)
+{
+   return efl_ui_widget_access_info_get(obj);
+}
+
 EAPI Eo *
 elm_widget_top_get(const Eo *obj)
 {

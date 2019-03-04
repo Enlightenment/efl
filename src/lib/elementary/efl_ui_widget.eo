@@ -24,7 +24,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
-      @property cursor {
+      @property cursor @beta {
          [[The cursor to be shown when mouse is over the object
 
            This is the cursor that will be displayed when mouse is over the
@@ -52,7 +52,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                         by the display system or the theme.]]
          }
       }
-      @property cursor_style {
+      @property cursor_style @beta {
          [[A different style for the cursor.
 
            This only makes sense if theme cursors are used.
@@ -71,7 +71,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                              transparent, ....]]
          }
       }
-      @property cursor_theme_search_enabled {
+      @property cursor_theme_search_enabled @beta {
          [[Whether the cursor may be looked in the theme or not.
 
            If $false, the cursor may only come from the render engine,
@@ -221,7 +221,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       }
 
       /* Accessibility */
-      @property access_info {
+      @property access_info @beta {
          [[Accessibility information.
 
            This is a replacement string to be read by the accessibility
@@ -439,6 +439,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
    }
    events {
       language,changed: void; [[Called when widget language changed]]
-      access,changed: void; [[Called when accessibility changed]]
+      access,changed @beta: void; [[Called when accessibility changed]]
    }
 }
