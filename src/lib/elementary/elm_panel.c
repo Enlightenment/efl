@@ -1501,4 +1501,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_panel), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_panel)
 
-#include "elm_panel.eo.c"
+#include "elm_panel_eo.c"
