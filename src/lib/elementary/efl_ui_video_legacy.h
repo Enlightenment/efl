@@ -169,4 +169,4 @@ EAPI void elm_video_stop(Evas_Object *obj);
  */
 EAPI void elm_video_pause(Evas_Object *obj);
 
-#include "efl_ui_video.eo.legacy.h"
+#include "efl_ui_video_eo.legacy.h"

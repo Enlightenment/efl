@@ -185,7 +185,6 @@ elm_private_eolian_files = \
 
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
-	lib/elementary/efl_ui_video_legacy.eo \
 	lib/elementary/efl_ui_win_legacy.eo \
 	lib/elementary/efl_ui_clock_legacy.eo \
 	lib/elementary/elm_code_widget_legacy.eo \
@@ -329,6 +328,8 @@ lib/elementary/efl_ui_radio_eo.legacy.c \
 lib/elementary/efl_ui_radio_legacy_eo.c \
 lib/elementary/efl_ui_textpath_eo.legacy.c \
 lib/elementary/efl_ui_textpath_legacy_eo.c \
+lib/elementary/efl_ui_video_eo.legacy.c \
+lib/elementary/efl_ui_video_legacy_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
@@ -368,6 +369,9 @@ lib/elementary/efl_ui_radio_legacy_eo.legacy.h \
 lib/elementary/efl_ui_textpath_eo.legacy.h \
 lib/elementary/efl_ui_textpath_legacy_eo.h \
 lib/elementary/efl_ui_textpath_legacy_eo.legacy.h \
+lib/elementary/efl_ui_video_eo.legacy.h \
+lib/elementary/efl_ui_video_legacy_eo.h \
+lib/elementary/efl_ui_video_legacy_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

@@ -421,8 +421,9 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
 
 #include "efl_ui_video.eo.c"
+#include "efl_ui_video_eo.legacy.c"
 
-#include "efl_ui_video_legacy.eo.h"
+#include "efl_ui_video_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_video"
 
@@ -533,4 +534,4 @@ elm_video_pause(Evas_Object *obj)
    efl_player_play_set(obj, EINA_FALSE);
 }
 
-#include "efl_ui_video_legacy.eo.c"
+#include "efl_ui_video_legacy_eo.c"

@@ -1,7 +1,6 @@
 class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Player, Efl.Access.Widget.Action
 {
    [[Efl UI video class]]
-   legacy_prefix: elm_video;
    methods {
       @property remember_position {
          set {
