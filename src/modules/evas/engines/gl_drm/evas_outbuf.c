@@ -550,14 +550,18 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 
    while (ecore_drm2_fb_release(ob->priv.output, EINA_TRUE));
 
+   ob->w = w;
+   ob->h = h;
+   ob->rotation = rot;
+
    _evas_outbuf_gbm_surface_destroy(ob);
+
    if ((ob->rotation == 0) || (ob->rotation == 180))
      _evas_outbuf_gbm_surface_create(ob, w, h);
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      _evas_outbuf_gbm_surface_create(ob, h, w);
-   _evas_outbuf_egl_setup(ob);
 
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   _evas_outbuf_egl_setup(ob);
 }
 
 Render_Output_Swap_Mode
@@ -622,7 +626,7 @@ evas_outbuf_update_region_first_rect(Outbuf *ob)
 
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   /* glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rotation); */
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rotation);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 
