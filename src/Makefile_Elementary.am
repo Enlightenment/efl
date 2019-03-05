@@ -187,7 +187,6 @@ elm_private_eolian_files = \
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
-	lib/elementary/elm_hover.eo \
 	lib/elementary/elm_index.eo \
 	lib/elementary/elm_label.eo \
 	lib/elementary/elm_list.eo \
@@ -356,6 +355,8 @@ lib/elementary/elm_glview_eo.legacy.c \
 lib/elementary/elm_glview_eo.c \
 lib/elementary/elm_grid_eo.legacy.c \
 lib/elementary/elm_grid_eo.c \
+lib/elementary/elm_hover_eo.legacy.c \
+lib/elementary/elm_hover_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -471,6 +472,8 @@ lib/elementary/elm_glview_eo.h \
 lib/elementary/elm_glview_eo.legacy.h \
 lib/elementary/elm_grid_eo.h \
 lib/elementary/elm_grid_eo.legacy.h \
+lib/elementary/elm_hover_eo.h \
+lib/elementary/elm_hover_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

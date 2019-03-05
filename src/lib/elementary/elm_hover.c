@@ -883,4 +883,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_hover), \
    _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
 
-#include "elm_hover.eo.c"
+#include "elm_hover_eo.c"

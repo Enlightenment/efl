@@ -12,7 +12,7 @@
 #include "elm_widget_combobox.h"
 #include "elm_entry_eo.h"
 #include "elm_genlist_eo.h"
-#include "elm_hover.eo.h"
+#include "elm_hover_eo.h"
 
 EOAPI void elm_obj_combobox_hover_begin(Eo *obj);
 EOAPI void elm_obj_combobox_hover_end(Eo *obj);
