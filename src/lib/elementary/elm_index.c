@@ -1710,5 +1710,5 @@ _elm_index_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UN
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_index), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_index)
 
-#include "elm_index_item.eo.c"
-#include "elm_index.eo.c"
+#include "elm_index_item_eo.c"
+#include "elm_index_eo.c"

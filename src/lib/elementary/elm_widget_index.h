@@ -3,8 +3,8 @@
 
 #include "Elementary.h"
 
-#include "elm_index_item.eo.h"
-#include "elm_index.eo.h"
+#include "elm_index_item_eo.h"
+#include "elm_index_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

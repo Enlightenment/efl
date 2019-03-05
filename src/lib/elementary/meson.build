@@ -1,7 +1,6 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
   'elm_interface_fileselector.eo',
-  'elm_index.eo',
   'elm_label.eo',
   'elm_list.eo',
   'elm_map.eo',
@@ -19,7 +18,6 @@ pub_legacy_eo_files = [
   'elm_sys_notify_dbus.eo',
   'elm_systray.eo',
   'elm_menu_item.eo',
-  'elm_index_item.eo',
   'elm_widget_item_static_focus.eo',
   'elm_list_item.eo',
   'elm_popup_item.eo',
@@ -761,6 +759,10 @@ elementary_pub_headers = [
   'elm_hoversel_item_eo.legacy.h',
   'elm_icon_eo.h',
   'elm_icon_eo.legacy.h',
+  'elm_index_eo.h',
+  'elm_index_eo.legacy.h',
+  'elm_index_item_eo.h',
+  'elm_index_item_eo.legacy.h',
 ]
 
 elementary_header_src = [
