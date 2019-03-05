@@ -3177,8 +3177,9 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image_zoomable, Efl_Ui_Image_Zoomab
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image_zoomable)
 
 #include "efl_ui_image_zoomable.eo.c"
+#include "efl_ui_image_zoomable_eo.legacy.c"
 
-#include "efl_ui_image_zoomable_legacy.eo.h"
+#include "efl_ui_image_zoomable_legacy_eo.h"
 #define MY_CLASS_NAME_LEGACY "elm_photocam"
 
 static void
@@ -3431,4 +3432,4 @@ elm_photocam_image_region_get(const Efl_Ui_Image_Zoomable *obj, int *x, int *y, 
    if (h) *h = r.h;
 }
 
-#include "efl_ui_image_zoomable_legacy.eo.c"
+#include "efl_ui_image_zoomable_legacy_eo.c"

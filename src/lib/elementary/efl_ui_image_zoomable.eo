@@ -7,7 +7,6 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
                              Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
-   legacy_prefix: elm_photocam;
    methods {
       @property gesture_enabled {
          set {
@@ -33,7 +32,6 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
 
               See also @.image_region.set.
             ]]
-            legacy: null;
          }
          set {
             [[Set the viewed region of the image
@@ -41,7 +39,6 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
               This shows the region of the image without using animation.
               @since 1.20
             ]]
-            legacy: null;
          }
          values {
             region: Eina.Rect; [[The region in the original image pixels.]]
