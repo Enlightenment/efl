@@ -67,7 +67,6 @@ typedef struct _Elm_Atspi_Bridge_Data
 {
    Eldbus_Connection *session_bus;
    Eldbus_Connection *a11y_bus;
-   Eina_List *reemited_events;
    Eina_Hash *cache;
    Eldbus_Service_Interface *cache_interface;
    Eldbus_Signal_Handler *register_hdl;
@@ -4659,66 +4658,63 @@ _on_event_del(void *user_data, void *func_data EINA_UNUSED)
    _key_event_info_free(info);
 }
 
-static void
-_on_listener_answer(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   Key_Event_Info *info = data;
-   const char *errname, *errmsg;
-   Eina_Bool ret = EINA_TRUE;
-
-   ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN(info->bridge, pd);
-
-   if (eldbus_message_error_get(msg, &errname, &errmsg))
-     {
-        ERR("%s %s", errname, errmsg);
-        goto reemit;
-     }
-   if (!eldbus_message_arguments_get(msg, "b", &ret))
-     {
-        ERR("Return message does not contain return value");
-        goto reemit;
-     }
-   if (ret)
-     {
-        _key_event_info_free(info);
-        return;
-     }
-reemit:
-   ecore_event_add(info->type, &info->event, _on_event_del, info);
-   pd->reemited_events = eina_list_append(pd->reemited_events, &info->event);
-}
-
 static Eina_Bool
 _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void *event)
 {
-   Eldbus_Message *msg;
-   Eldbus_Message_Iter *iter;
    Ecore_Event_Key *key_event = event;
    Key_Event_Info *ke;
+   Eldbus_Object *dobj;
+   Eldbus_Proxy *proxy;
+   Eldbus_Message *req;
+   Eldbus_Message_Iter *iter;
+   Eldbus_Message *reply;
+   Eina_Bool ret = EINA_TRUE;
+   const char *errname = NULL, *errmsg = NULL;
    Eo *bridge = data;
 
    ELM_ATSPI_BRIDGE_DATA_GET_OR_RETURN_VAL(bridge, pd, EINA_TRUE);
 
    if ((type != ECORE_EVENT_KEY_DOWN) && (type != ECORE_EVENT_KEY_UP)) return EINA_TRUE;
 
-   // check if reemited
-   if (eina_list_data_find(pd->reemited_events, event))
+   if (!(dobj = eldbus_object_get(pd->a11y_bus, ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC)))
      {
-        pd->reemited_events = eina_list_remove(pd->reemited_events, event);
+        ERR("Failed to create eldbus object for: " ATSPI_DBUS_PATH_DEC);
+        return EINA_TRUE;
+     }
+
+   if (!(proxy = eldbus_proxy_get(dobj, ATSPI_DBUS_INTERFACE_DEC)))
+     {
+        ERR("Failed to create proxy object for: " ATSPI_DBUS_INTERFACE_DEC);
+        return EINA_TRUE;
+     }
+
+   if (!(req = eldbus_proxy_method_call_new(proxy, "NotifyListenersSync")))
+     {
+        ERR("Failed to create method call on: " ATSPI_DBUS_INTERFACE_DEC "." "NotifyListenersSync");
         return EINA_TRUE;
      }
 
    ke = _key_event_info_new(type, key_event, bridge);
    if (!ke) return EINA_TRUE;
 
-   msg = eldbus_message_method_call_new(ATSPI_DBUS_NAME_REGISTRY, ATSPI_DBUS_PATH_DEC,
-                                        ATSPI_DBUS_INTERFACE_DEC, "NotifyListenersSync");
-   iter = eldbus_message_iter_get(msg);
+   iter = eldbus_message_iter_get(req);
    _iter_marshall_key_event(iter, ke);
 
    // timeout should be kept reasonably low to avoid delays
-   if (!eldbus_connection_send(pd->a11y_bus, msg, _on_listener_answer, ke, 100))
-     return EINA_TRUE;
+   if (!(reply = eldbus_proxy_send_and_block(proxy, req, 100)))
+     {
+        ERR("Unable to call method " ATSPI_DBUS_INTERFACE_DEC "." "NotifyListenersSync");
+        return EINA_TRUE;
+     }
+
+   if (eldbus_message_error_get(reply, &errname, &errmsg))
+     ERR("Error in call method " ATSPI_DBUS_INTERFACE_DEC "." "NotifyListenersSync" ": %s %s", errname, errmsg);
+   else
+       if (!eldbus_message_arguments_get(reply, "b", &ret))
+          ERR("Invalid answer signature");
+
+   if (ret)
+      return EINA_FALSE;
 
    return EINA_FALSE;
 }
