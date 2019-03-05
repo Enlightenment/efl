@@ -2632,7 +2632,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #include "efl_ui_layout_base.eo.c"
 #include "efl_ui_layout.eo.c"
 
-#include "efl_ui_layout_legacy.eo.h"
+#include "efl_ui_layout_legacy_eo.h"
 
 
 EOLIAN static Eo *
@@ -2950,4 +2950,4 @@ elm_layout_theme_set(Evas_Object *obj, const char *klass, const char *group, con
    return (theme_apply_ret != EFL_UI_THEME_APPLY_ERROR_GENERIC);
 }
 
-#include "efl_ui_layout_legacy.eo.c"
+#include "efl_ui_layout_legacy_eo.c"

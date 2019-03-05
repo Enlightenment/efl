@@ -192,7 +192,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_win_legacy.eo \
 	lib/elementary/efl_ui_progressbar_legacy.eo \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/efl_ui_layout_legacy.eo \
 	lib/elementary/elm_code_widget_legacy.eo \
 	lib/elementary/efl_ui_win_socket_legacy.eo \
 	lib/elementary/efl_ui_win_inlined_legacy.eo \
@@ -326,6 +325,7 @@ lib/elementary/efl_ui_frame_legacy_eo.c \
 lib/elementary/efl_ui_image_legacy_eo.c \
 lib/elementary/efl_ui_image_zoomable_eo.legacy.c \
 lib/elementary/efl_ui_image_zoomable_legacy_eo.c \
+lib/elementary/efl_ui_layout_legacy_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
@@ -352,6 +352,8 @@ lib/elementary/efl_ui_image_legacy_eo.legacy.h \
 lib/elementary/efl_ui_image_zoomable_eo.legacy.h \
 lib/elementary/efl_ui_image_zoomable_legacy_eo.h \
 lib/elementary/efl_ui_image_zoomable_legacy_eo.legacy.h \
+lib/elementary/efl_ui_layout_legacy_eo.h \
+lib/elementary/efl_ui_layout_legacy_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \
