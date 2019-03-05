@@ -31,7 +31,7 @@
 
 #include "elm_part_helper.h"
 #include "efl_ui_win_part.eo.h"
-#include "elm_plug.eo.h"
+#include "elm_plug_eo.h"
 #include "efl_ui_win_legacy_eo.h"
 #include "efl_ui_win_socket_legacy_eo.h"
 #include "efl_ui_win_inlined_legacy_eo.h"

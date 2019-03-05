@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_plug.eo',
   'elm_popup.eo',
   'elm_route.eo',
   'elm_scroller.eo',
@@ -782,6 +781,8 @@ elementary_pub_headers = [
   'elm_photo_eo.legacy.h',
   'elm_player_eo.h',
   'elm_player_eo.legacy.h',
+  'elm_plug_eo.h',
+  'elm_plug_eo.legacy.h',
 ]
 
 elementary_header_src = [

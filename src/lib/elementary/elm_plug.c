@@ -193,4 +193,4 @@ _elm_plug_class_constructor(Efl_Class *klass)
 #define ELM_PLUG_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_plug)
 
-#include "elm_plug.eo.c"
+#include "elm_plug_eo.c"
