@@ -964,4 +964,4 @@ _elm_clock_class_constructor(Efl_Class *klass)
 #define ELM_CLOCK_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_clock)
 
-#include "elm_clock.eo.c"
+#include "elm_clock_eo.c"
