@@ -8,7 +8,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "efl_ui_win_inlined_legacy.eo.h"
+#include "efl_ui_win_inlined_legacy_eo.h"
 
 #define MY_CLASS EFL_UI_WIN_INLINED_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win_Inlined"
@@ -58,4 +58,4 @@ _efl_ui_win_inlined_legacy_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
-#include "efl_ui_win_inlined_legacy.eo.c"
+#include "efl_ui_win_inlined_legacy_eo.c"

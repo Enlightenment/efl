@@ -1,9 +1,0 @@
-class @beta Efl.Ui.Win_Legacy extends Efl.Ui.Win implements Efl.Ui.Legacy
-{
-   [[Efl UI window class]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.finalize;
-   }
-}
