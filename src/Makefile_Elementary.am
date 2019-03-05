@@ -94,8 +94,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
-	lib/elementary/elm_slider.eo \
-	lib/elementary/elm_slider_part_indicator.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_widget_part_bg.eo \
@@ -385,6 +383,8 @@ lib/elementary/elm_segment_control_item_eo.c \
 lib/elementary/elm_segment_control_item_eo.legacy.c \
 lib/elementary/elm_separator_eo.c \
 lib/elementary/elm_separator_eo.legacy.c \
+lib/elementary/elm_slider_eo.c \
+lib/elementary/elm_slider_part_indicator_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -566,6 +566,10 @@ lib/elementary/elm_segment_control_item_eo.h \
 lib/elementary/elm_segment_control_item_eo.legacy.h \
 lib/elementary/elm_separator_eo.h \
 lib/elementary/elm_separator_eo.legacy.h \
+lib/elementary/elm_slider_eo.h \
+lib/elementary/elm_slider_eo.legacy.h \
+lib/elementary/elm_slider_part_indicator_eo.h \
+lib/elementary/elm_slider_part_indicator_eo.legacy.h \
 $(NULL)
 
 

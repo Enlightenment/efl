@@ -139,8 +139,6 @@ pub_eo_files = [
   'efl_ui_grid.eo',
   'efl_ui_panes_part.eo',
   'efl_ui_progressbar_part.eo',
-  'elm_slider.eo',
-  'elm_slider_part_indicator.eo',
   'efl_ui_textpath_part.eo',
   'efl_ui_widget_part.eo',
   'efl_ui_widget_part_bg.eo',
@@ -791,6 +789,10 @@ elementary_pub_headers = [
   'elm_segment_control_item_eo.legacy.h',
   'elm_separator_eo.h',
   'elm_separator_eo.legacy.h',
+  'elm_slider_eo.h',
+  'elm_slider_eo.legacy.h',
+  'elm_slider_part_indicator_eo.h',
+  'elm_slider_part_indicator_eo.legacy.h',
 ]
 
 elementary_header_src = [

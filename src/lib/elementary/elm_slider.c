@@ -1193,7 +1193,7 @@ _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *_pd EINA_UNUSED
    return sd->indicator_visible_mode;
 }
 
-#include "elm_slider_part_indicator.eo.c"
+#include "elm_slider_part_indicator_eo.c"
 
 /* Efl.Part end */
 
@@ -1490,4 +1490,4 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_slider)
    EFL_UI_SLIDER_DOWN_KNOB_OPS(elm_slider), \
    EFL_UI_SLIDER_MOVE_KNOB_OPS(elm_slider)
 
-#include "elm_slider.eo.c"
+#include "elm_slider_eo.c"
