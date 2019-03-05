@@ -433,4 +433,4 @@ _elm_view_list_model_get(const Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
 {
    return priv->connect.model;
 }
-#include "elm_view_list.eo.c"
+#include "elm_view_list_eo.c"

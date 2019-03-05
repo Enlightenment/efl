@@ -96,4 +96,4 @@ _elm_view_form_widget_add(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv, const c
    _elm_view_widget_add(priv, propname, evas);
 }
 
-#include "elm_view_form.eo.c"
+#include "elm_view_form_eo.c"

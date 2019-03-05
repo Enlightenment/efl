@@ -4,7 +4,7 @@
 #define ELM_VIEW_FORM_H
 
 #include <Efl.h>
-#include <elm_view_form.eo.h>
+#include <elm_view_form_eo.h>
 
 #endif
 #endif

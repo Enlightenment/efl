@@ -174,7 +174,7 @@ lib/elementary/elm_map_eo.cs \
 lib/elementary/elm_combobox.eo.cs \
 lib/elementary/elm_list_eo.cs \
 lib/elementary/elm_genlist_eo.cs \
-lib/elementary/elm_view_list.eo.cs \
+lib/elementary/elm_view_list_eo.cs \
 lib/elementary/elm_genlist_item_eo.cs \
 lib/elementary/elm_gengrid_eo.cs \
 lib/elementary/elm_glview_eo.cs
