@@ -5,7 +5,7 @@
 #include "Elementary.h"
 
 #include "elm_code_private.h"
-#include "elm_code_widget_legacy.eo.h"
+#include "elm_code_widget_legacy_eo.h"
 
 #define _ELM_CODE_DIFF_WIDGET_LEFT "diffwidgetleft"
 #define _ELM_CODE_DIFF_WIDGET_RIGHT "diffwidgetright"

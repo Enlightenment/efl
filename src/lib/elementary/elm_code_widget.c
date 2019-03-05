@@ -58,7 +58,7 @@ static Eina_Unicode status_icons[] = {
 
 static void _elm_code_widget_resize(Elm_Code_Widget *widget, Elm_Code_Line *newline);
 
-#include "elm_code_widget_legacy.eo.h"
+#include "elm_code_widget_legacy_eo.h"
 
 EAPI Evas_Object *
 elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
@@ -68,7 +68,7 @@ elm_code_widget_add(Evas_Object *parent, Elm_Code *code)
                          efl_ui_code_widget_code_set(efl_added, code));
 }
 
-#include "elm_code_widget_legacy.eo.c"
+#include "elm_code_widget_legacy_eo.c"
 
 EOLIAN static Eo *
 _elm_code_widget_efl_object_constructor(Eo *obj, Elm_Code_Widget_Data *pd)
