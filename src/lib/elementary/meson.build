@@ -1,7 +1,6 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
   'elm_interface_fileselector.eo',
-  'elm_entry.eo',
   'elm_fileselector.eo',
   'elm_gengrid.eo',
   'elm_gengrid_pan.eo',
@@ -740,6 +739,8 @@ elementary_pub_headers = [
   'elm_diskselector_eo.legacy.h',
   'elm_diskselector_item_eo.h',
   'elm_diskselector_item_eo.legacy.h',
+  'elm_entry_eo.h',
+  'elm_entry_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

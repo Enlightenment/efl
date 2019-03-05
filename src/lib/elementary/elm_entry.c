@@ -6230,4 +6230,4 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_entry)
 
-#include "elm_entry.eo.c"
+#include "elm_entry_eo.c"

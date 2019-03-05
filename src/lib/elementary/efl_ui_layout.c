@@ -13,7 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #define MY_CLASS EFL_UI_LAYOUT_BASE_CLASS
 #define MY_CLASS_PFX efl_ui_layout

@@ -10,7 +10,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_combobox.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_genlist.eo.h"
 #include "elm_hover.eo.h"
 

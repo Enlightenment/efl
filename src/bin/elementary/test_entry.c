@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 // FIXME: elm_entry is not part of EO API, the below test cases may be useless
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_popup.eo.h"
 
 static void

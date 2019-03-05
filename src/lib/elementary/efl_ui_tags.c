@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_tags_private.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #define MY_CLASS EFL_UI_TAGS_CLASS
 

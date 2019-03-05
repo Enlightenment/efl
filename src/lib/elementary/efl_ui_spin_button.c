@@ -12,7 +12,7 @@
 #include "elm_priv.h"
 #include "efl_ui_spin_button_private.h"
 #include "efl_ui_spin_private.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #define MY_CLASS EFL_UI_SPIN_BUTTON_CLASS
 

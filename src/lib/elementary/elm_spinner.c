@@ -12,7 +12,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #include "Eo.h"
 

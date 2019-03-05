@@ -3,7 +3,7 @@
 
 #include "elm_interface_scrollable.h"
 #include "elm_widget_layout.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

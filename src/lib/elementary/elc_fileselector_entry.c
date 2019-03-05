@@ -13,7 +13,7 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_fileselector.eo.h"
 
 #include "elm_fileselector_entry_part.eo.h"

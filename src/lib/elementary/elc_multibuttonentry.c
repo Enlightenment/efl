@@ -13,7 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_multibuttonentry.h"
 #include "elm_multibuttonentry_part.eo.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_MULTIBUTTONENTRY_CLASS

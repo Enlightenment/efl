@@ -21,7 +21,7 @@
 #include "elm_fileselector_entry.eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_fileselector.eo.h"
 #include "elm_genlist.eo.h"
 #include "elm_gengrid.eo.h"
