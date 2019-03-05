@@ -217,7 +217,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
 	lib/elementary/elm_systray.eo \
-	lib/elementary/elm_color_item.eo \
 	lib/elementary/elm_dayselector_item.eo \
 	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
@@ -338,6 +337,8 @@ lib/elementary/elm_clock_eo.c \
 lib/elementary/elm_clock_eo.legacy.c \
 lib/elementary/elm_code_widget_eo.legacy.c \
 lib/elementary/elm_code_widget_legacy_eo.c \
+lib/elementary/elm_color_item_eo.legacy.c \
+lib/elementary/elm_color_item_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -403,6 +404,8 @@ lib/elementary/elm_clock_eo.legacy.h \
 lib/elementary/elm_code_widget_eo.legacy.h \
 lib/elementary/elm_code_widget_legacy_eo.h \
 lib/elementary/elm_code_widget_legacy_eo.legacy.h \
+lib/elementary/elm_color_item_eo.h \
+lib/elementary/elm_color_item_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

@@ -2750,4 +2750,4 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
 
 #include "elm_colorselector.eo.c"
-#include "elm_color_item.eo.c"
+#include "elm_color_item_eo.c"

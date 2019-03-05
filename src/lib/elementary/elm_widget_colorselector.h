@@ -2,7 +2,7 @@
 #define ELM_WIDGET_COLORSELECTOR_H
 
 #include "Elementary.h"
-#include "elm_color_item.eo.h"
+#include "elm_color_item_eo.h"
 #include "elm_colorselector.eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
