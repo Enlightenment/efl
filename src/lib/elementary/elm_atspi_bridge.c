@@ -4651,13 +4651,6 @@ _iter_marshall_key_event(Eldbus_Message_Iter *iter, Key_Event_Info *data)
    eldbus_message_iter_container_close(iter, struct_iter);
 }
 
-static void
-_on_event_del(void *user_data, void *func_data EINA_UNUSED)
-{
-   Key_Event_Info *info = user_data;
-   _key_event_info_free(info);
-}
-
 static Eina_Bool
 _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void *event)
 {
