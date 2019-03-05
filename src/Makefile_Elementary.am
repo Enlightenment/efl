@@ -144,8 +144,6 @@ elm_public_eolian_files += \
 	lib/elementary/efl_ui_check_legacy_part.eo \
 	lib/elementary/efl_ui_progressbar_legacy_part.eo \
 	lib/elementary/elm_spinner.eo \
-	lib/elementary/elm_multibuttonentry.eo \
-	lib/elementary/elm_multibuttonentry_item.eo \
 	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_interface_scrollable.eo \
 	lib/elementary/elm_atspi_bridge.eo \
@@ -370,6 +368,10 @@ lib/elementary/elm_menu_eo.c \
 lib/elementary/elm_menu_eo.legacy.c \
 lib/elementary/elm_menu_item_eo.c \
 lib/elementary/elm_menu_item_eo.legacy.c \
+lib/elementary/elm_multibuttonentry_eo.c \
+lib/elementary/elm_multibuttonentry_eo.legacy.c \
+lib/elementary/elm_multibuttonentry_item_eo.c \
+lib/elementary/elm_multibuttonentry_item_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -515,6 +517,10 @@ lib/elementary/elm_menu_eo.h \
 lib/elementary/elm_menu_eo.legacy.h \
 lib/elementary/elm_menu_item_eo.h \
 lib/elementary/elm_menu_item_eo.legacy.h \
+lib/elementary/elm_multibuttonentry_eo.h \
+lib/elementary/elm_multibuttonentry_eo.legacy.h \
+lib/elementary/elm_multibuttonentry_item_eo.h \
+lib/elementary/elm_multibuttonentry_item_eo.legacy.h \
 $(NULL)
 
 

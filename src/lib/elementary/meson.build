@@ -197,8 +197,6 @@ pub_eo_files = [
   'efl_ui_progressbar_legacy_part.eo',
   'elm_widget_item_container.eo',
   'elm_spinner.eo',
-  'elm_multibuttonentry.eo',
-  'elm_multibuttonentry_item.eo',
   'elm_multibuttonentry_part.eo',
   'elm_interface_scrollable.eo',
   'elm_atspi_bridge.eo',
@@ -773,6 +771,10 @@ elementary_pub_headers = [
   'elm_menu_eo.legacy.h',
   'elm_menu_item_eo.h',
   'elm_menu_item_eo.legacy.h',
+  'elm_multibuttonentry_eo.h',
+  'elm_multibuttonentry_eo.legacy.h',
+  'elm_multibuttonentry_item_eo.h',
+  'elm_multibuttonentry_item_eo.legacy.h',
 ]
 
 elementary_header_src = [

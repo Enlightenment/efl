@@ -2033,5 +2033,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, Elm_Multi
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_multibuttonentry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_multibuttonentry)
 
-#include "elm_multibuttonentry_item.eo.c"
-#include "elm_multibuttonentry.eo.c"
+#include "elm_multibuttonentry_item_eo.c"
+#include "elm_multibuttonentry_eo.c"
