@@ -223,7 +223,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_inwin.eo \
 	lib/elementary/elm_mapbuf.eo \
 	lib/elementary/elm_naviframe.eo \
 	lib/elementary/elm_naviframe_item.eo \
@@ -362,6 +361,8 @@ lib/elementary/elm_index_eo.legacy.c \
 lib/elementary/elm_index_item_eo.c \
 lib/elementary/elm_index_item_eo.legacy.c \
 lib/elementary/elm_interface_fileselector_eo.c \
+lib/elementary/elm_inwin_eo.c \
+lib/elementary/elm_inwin_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -489,6 +490,8 @@ lib/elementary/elm_index_item_eo.h \
 lib/elementary/elm_index_item_eo.legacy.h \
 lib/elementary/elm_interface_fileselector_eo.h \
 lib/elementary/elm_interface_fileselector_eo.legacy.h \
+lib/elementary/elm_inwin_eo.h \
+lib/elementary/elm_inwin_eo.legacy.h \
 $(NULL)
 
 

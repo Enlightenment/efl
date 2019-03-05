@@ -10,7 +10,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_inwin.eo.h"
+#include "elm_inwin_eo.h"
 #include "elm_widget_inwin.h"
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
@@ -141,4 +141,4 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(elm_inwin, Elm_Inwin_Data)
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin)
 
-#include "elm_inwin.eo.c"
+#include "elm_inwin_eo.c"
