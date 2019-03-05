@@ -109,5 +109,5 @@ EAPI void elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  */
 EAPI Eina_Bool elm_toolbar_horizontal_get(const Evas_Object *obj);
 
-#include "elm_toolbar_item.eo.legacy.h"
-#include "elm_toolbar.eo.legacy.h"
+#include "elm_toolbar_item_eo.legacy.h"
+#include "elm_toolbar_eo.legacy.h"

@@ -4087,5 +4087,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_toolbar, Elm_Toolbar_Data)
 #define ELM_TOOLBAR_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_toolbar)
 
-#include "elm_toolbar.eo.c"
-#include "elm_toolbar_item.eo.c"
+#include "elm_toolbar_eo.c"
+#include "elm_toolbar_item_eo.c"

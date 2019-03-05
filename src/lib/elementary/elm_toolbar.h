@@ -71,6 +71,7 @@
 #include <elm_toolbar_common.h>
 #ifdef EFL_EO_API_SUPPORT
 #include <elm_toolbar_eo.h>
+#include <elm_toolbar_item_eo.h>
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <elm_toolbar_legacy.h>

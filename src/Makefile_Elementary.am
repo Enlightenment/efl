@@ -146,8 +146,6 @@ elm_public_eolian_files += \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/efl_ui_image_zoomable_pan.eo \
-	lib/elementary/elm_toolbar.eo \
-	lib/elementary/elm_toolbar_item.eo \
 	lib/elementary/elm_view_list.eo \
 	lib/elementary/elm_view_form.eo \
 	lib/elementary/elm_web.eo \
@@ -392,6 +390,10 @@ lib/elementary/elm_systray_eo.legacy.c \
 lib/elementary/elm_table_eo.c \
 lib/elementary/elm_table_eo.legacy.c \
 lib/elementary/elm_thumb_eo.c \
+lib/elementary/elm_toolbar_eo.c \
+lib/elementary/elm_toolbar_eo.legacy.c \
+lib/elementary/elm_toolbar_item_eo.c \
+lib/elementary/elm_toolbar_item_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -595,6 +597,10 @@ lib/elementary/elm_table_eo.h \
 lib/elementary/elm_table_eo.legacy.h \
 lib/elementary/elm_thumb_eo.h \
 lib/elementary/elm_thumb_eo.legacy.h \
+lib/elementary/elm_toolbar_eo.h \
+lib/elementary/elm_toolbar_eo.legacy.h \
+lib/elementary/elm_toolbar_item_eo.h \
+lib/elementary/elm_toolbar_item_eo.legacy.h \
 $(NULL)
 
 
