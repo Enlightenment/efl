@@ -5,7 +5,6 @@ class @beta Efl.Ui.Bg extends Efl.Ui.Layout_Base implements Efl.File, Efl.Gfx.Co
    works just like an image, but has some properties useful for backgrounds, such as
    setting it to tiled, centered, scaled or stretched.
    ]]
-   legacy_prefix: elm_bg;
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

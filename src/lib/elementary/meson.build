@@ -2,7 +2,6 @@ pub_legacy_eo_files = [
   'efl_ui_button_legacy.eo',
   'efl_ui_check_legacy.eo',
   'efl_ui_radio_legacy.eo',
-  'efl_ui_bg_legacy.eo',
   'efl_ui_video_legacy.eo',
   'efl_ui_frame_legacy.eo',
   'efl_ui_panes_legacy.eo',
@@ -697,6 +696,9 @@ elementary_pub_headers = [
   'elm_win_legacy.h',
   'elm_helper.h',
   'elm_part_helper.h',
+  'efl_ui_bg_eo.legacy.h',
+  'efl_ui_bg_legacy_eo.h',
+  'efl_ui_bg_legacy_eo.legacy.h',
 ]
 
 elementary_header_src = [

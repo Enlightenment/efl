@@ -292,7 +292,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #include "efl_ui_bg.eo.c"
 
 
-#include "efl_ui_bg_legacy.eo.h"
+#include "efl_ui_bg_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_bg"
 
@@ -320,4 +320,4 @@ elm_bg_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_BG_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_bg_legacy.eo.c"
+#include "efl_ui_bg_legacy_eo.c"

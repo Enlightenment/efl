@@ -189,7 +189,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_button_legacy.eo \
 	lib/elementary/efl_ui_check_legacy.eo \
 	lib/elementary/efl_ui_radio_legacy.eo \
-	lib/elementary/efl_ui_bg_legacy.eo \
 	lib/elementary/efl_ui_video_legacy.eo \
 	lib/elementary/efl_ui_frame_legacy.eo \
 	lib/elementary/efl_ui_panes_legacy.eo \
@@ -326,14 +325,24 @@ elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files)
+elm_legacy_eo_files = \
+lib/elementary/efl_ui_bg_legacy_eo.c
+
+elm_legacy_eo_headers = \
+lib/elementary/efl_ui_bg_eo.legacy.h \
+lib/elementary/efl_ui_bg_legacy_eo.h \
+lib/elementary/efl_ui_bg_legacy_eo.legacy.h
+
+
+EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
 includes_HEADERS = \
 lib/elementary/Elementary.h \
 lib/elementary/Elementary_Options.h \
-lib/elementary/Elementary_Cursor.h
+lib/elementary/Elementary_Cursor.h \
+$(elm_legacy_eo_headers)
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
