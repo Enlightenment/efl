@@ -225,8 +225,9 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_frame, Efl_Ui_Frame_Data)
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_frame)
 
 #include "efl_ui_frame.eo.c"
+#include "efl_ui_frame_eo.legacy.c"
 
-#include "efl_ui_frame_legacy.eo.h"
+#include "efl_ui_frame_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_frame"
 
@@ -251,4 +252,4 @@ elm_frame_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_FRAME_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_frame_legacy.eo.c"
+#include "efl_ui_frame_legacy_eo.c"
