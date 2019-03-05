@@ -1978,3 +1978,4 @@ _efl_canvas_video_efl_gfx_entity_size_set(Evas_Object *obj, Efl_Canvas_Video_Dat
 
 
 #include "efl_canvas_video.eo.c"
+#include "efl_canvas_video_eo.legacy.c"

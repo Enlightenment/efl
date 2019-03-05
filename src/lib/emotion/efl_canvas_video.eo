@@ -12,7 +12,6 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.P
                     Please don't use this function, consider using
                     @Efl.Player.mute instead.
                   ]]
-                  legacy: emotion_object_module_option_set;
              }
              values {
                   opt: string; [[The option that is being set. Currently
@@ -39,7 +38,6 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.P
 
                     See also @Efl.File.file.
                   ]]
-                  legacy: emotion_object_init;
                   return: bool; [[$true if the specified module was successfully
                                   initialized for this object, $false otherwise.]]
              }
