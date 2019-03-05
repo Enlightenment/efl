@@ -16456,7 +16456,7 @@ ppar(Evas_Object_Textblock_Paragraph *par)
 EOLIAN static Efl_Text_Cursor_Cursor *
 _efl_canvas_text_efl_text_cursor_text_cursor_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o, Efl_Text_Cursor_Get_Type get_type)
 {
-   if (get_type > EFL_TEXT_CURSOR_GET_MAIN)
+   if (get_type > EFL_TEXT_CURSOR_GET_TYPE_MAIN)
      {
         ERR("Unsupported cursor types other than main!");
      }
@@ -16466,7 +16466,7 @@ _efl_canvas_text_efl_text_cursor_text_cursor_get(const Eo *eo_obj EINA_UNUSED, E
 EAPI Efl_Text_Cursor_Cursor *
 evas_object_textblock_cursor_get(const Evas_Object *eo_obj EINA_UNUSED)
 {
-   return efl_text_cursor_get(eo_obj, EFL_TEXT_CURSOR_GET_MAIN);
+   return efl_text_cursor_get(eo_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
 }
 
 EOLIAN static Efl_Text_Cursor_Cursor *

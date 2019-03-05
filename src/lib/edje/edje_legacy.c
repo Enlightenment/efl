@@ -428,7 +428,7 @@ EAPI void
 edje_object_part_text_cursor_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h)
 {
    efl_text_cursor_geometry_get(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          x, y, w, h, NULL, NULL, NULL, NULL
          );

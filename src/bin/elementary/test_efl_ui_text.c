@@ -251,7 +251,7 @@ _on_factory_bt_image_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 
    image_idx = (image_idx + 1) % IMAGES_SZ;
    efl_text_cursor_item_insert(en,
-         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          images[image_idx], "size=32x32");
    printf("Inserted image: key = %s\n", images[image_idx]);
 }
@@ -260,7 +260,7 @@ static void
 _on_factory_bt_emoticon_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          "emoticon/evil-laugh", "size=32x32");
 }
 
@@ -353,7 +353,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    efl_text_font_set(en, "Sans", 14);
    efl_text_normal_color_set(en, 255, 255, 255, 255);
 
-   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN);
+   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    cur = efl_text_cursor_new(en);
 
    efl_text_cursor_position_set(en, cur, 2);

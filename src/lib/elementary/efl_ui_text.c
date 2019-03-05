@@ -611,7 +611,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
      {
         efl_canvas_text_range_delete(obj, start, end);
      }
-   cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    info.insert = EINA_TRUE;
    info.position = efl_text_cursor_position_get(obj, cur);
    info.length = len;
@@ -834,7 +834,7 @@ _cursor_geometry_recalc(Evas_Object *obj)
    x = y = w = h = 0;
 
    Efl_Text_Cursor_Cursor *main_cur =
-      efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+      efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
 
    efl_text_cursor_geometry_get(obj, main_cur,
          EFL_TEXT_CURSOR_TYPE_BEFORE,
@@ -995,7 +995,7 @@ _efl_ui_text_efl_ui_widget_interest_region_get(const Eo *obj EINA_UNUSED, Efl_Ui
    Eina_Rect r = {};
 
    efl_text_cursor_geometry_get(obj,
-         efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          &r.x, &r.y, &r.w, &r.h,
          NULL, NULL, NULL, NULL);
@@ -1705,7 +1705,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler)
 
    pos = efl_gfx_entity_position_get(sd->text_obj);
    efl_text_cursor_geometry_get(obj,
-         efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          &cx, &cy, &cw, &ch,
          NULL, NULL, NULL, NULL);
@@ -1743,7 +1743,7 @@ _start_handler_mouse_down_cb(void *data,
 
    /* Get the cursors */
    efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
-   main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
+   main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
 
    start_pos = efl_text_cursor_position_get(text_obj, sel_start);
    end_pos = efl_text_cursor_position_get(text_obj, sel_end);
@@ -1802,7 +1802,7 @@ _start_handler_mouse_move_cb(void *data,
 
    /* Set the main cursor. */
    efl_text_cursor_position_set(sd->text_obj,
-         efl_text_cursor_get(sd->text_obj, EFL_TEXT_CURSOR_GET_MAIN), pos);
+         efl_text_cursor_get(sd->text_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN), pos);
 
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
@@ -1825,7 +1825,7 @@ _end_handler_mouse_down_cb(void *data,
    Eo *text_obj = sd->text_obj;
 
    efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
-   main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN);
+   main_cur = efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
 
    start_pos = efl_text_cursor_position_get(text_obj, sel_start);
    end_pos = efl_text_cursor_position_get(text_obj, sel_end);
@@ -1883,7 +1883,7 @@ _end_handler_mouse_move_cb(void *data,
    efl_text_cursor_coord_set(sd->text_obj, sd->sel_handler_cursor, cx, cy);
    pos = efl_text_cursor_position_get(sd->text_obj, sd->sel_handler_cursor);
    /* Set the main cursor. */
-   efl_text_cursor_position_set(sd->text_obj, efl_text_cursor_get(data, EFL_TEXT_CURSOR_GET_MAIN), pos);
+   efl_text_cursor_position_set(sd->text_obj, efl_text_cursor_get(data, EFL_TEXT_CURSOR_GET_TYPE_MAIN), pos);
    ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
    sd->long_pressed = EINA_FALSE;
 }
@@ -2384,7 +2384,7 @@ _efl_ui_text_selection_handler_disabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Te
 static void
 _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
 {
-   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    efl_text_cursor_text_insert(obj, cur_obj, entry);
    sd->text_changed = EINA_TRUE;
    elm_layout_sizing_eval(obj);
@@ -2987,13 +2987,13 @@ fail:
 EOLIAN static int
 _efl_ui_text_efl_access_text_caret_offset_get(const Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED)
 {
-   return efl_text_cursor_position_get(obj, efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN));
+   return efl_text_cursor_position_get(obj, efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN));
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_text_efl_access_text_caret_offset_set(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int offset)
 {
-   efl_text_cursor_position_set(obj, efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN), offset);
+   efl_text_cursor_position_set(obj, efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN), offset);
    return EINA_TRUE;
 }
 
@@ -3300,7 +3300,7 @@ _efl_ui_text_efl_access_editable_text_text_content_set(Eo *obj, Efl_Ui_Text_Data
 EOLIAN static Eina_Bool
 _efl_ui_text_efl_access_editable_text_insert(Eo *obj, Efl_Ui_Text_Data *pd, const char *string, int position)
 {
-   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    efl_text_cursor_position_set(obj, cur_obj, position);
    _efl_ui_text_entry_insert(obj, pd, string);
 
@@ -3350,7 +3350,7 @@ _efl_ui_text_efl_access_editable_text_delete(Eo *obj, Efl_Ui_Text_Data *pd, int 
 EOLIAN static Eina_Bool
 _efl_ui_text_efl_access_editable_text_paste(Eo *obj, Efl_Ui_Text_Data *_pd EINA_UNUSED, int position)
 {
-   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_MAIN);
+   Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    efl_text_cursor_position_set(obj, cur_obj, position);
    efl_ui_text_selection_paste(obj);
    return EINA_TRUE;
@@ -3471,7 +3471,7 @@ _update_text_cursors(Eo *obj)
    xx = yy = ww = hh = -1;
    off =_decoration_calc_offset(sd);
    bidi_cursor = efl_text_cursor_geometry_get(obj,
-         efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(text_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE, &xx, &yy, &ww, &hh, &xx2, &yy2,
          NULL, NULL);
    if (ww < 1) ww = 1;
