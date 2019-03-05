@@ -112,10 +112,14 @@ _efl_ui_container_layout_init(Eo* obj, Efl_Ui_Container_Layout_Calc *calc)
 {
    Eina_Rect geom;
    Eina_Bool pad_scalable;
+   Eina_Size2D min;
 
    geom = efl_gfx_entity_geometry_get(obj);
    efl_gfx_hint_margin_get(obj, &calc[0].margin[0], &calc[0].margin[1],
                                      &calc[1].margin[0], &calc[1].margin[1]);
+   min = efl_gfx_hint_size_combined_min_get(obj);
+   calc[0].min = min.w;
+   calc[1].min = min.h;
    calc[0].scale = calc[1].scale = efl_gfx_entity_scale_get(obj);
 
    efl_pack_padding_get(obj, &calc[0].pad, &calc[1].pad, &pad_scalable);

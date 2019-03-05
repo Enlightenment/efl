@@ -187,6 +187,7 @@ static void
 btn_hint_set(Eo *btn, Hint *hint)
 {
    efl_gfx_entity_size_set(layout, hint->layout_size);
+   efl_gfx_hint_size_min_set(layout, hint->layout_size);
    efl_gfx_hint_size_max_set(btn, hint->max);
    efl_gfx_hint_size_min_set(btn, hint->min);
    efl_gfx_hint_weight_set(btn, hint->weightx, hint->weighty);

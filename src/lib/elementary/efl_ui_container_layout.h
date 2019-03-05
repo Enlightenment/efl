@@ -28,6 +28,7 @@ struct _Efl_Ui_Container_Layout_Calc
 {
    int pos;
    int size;
+   int min;
    int margin[2];
    double align;
    double scale;

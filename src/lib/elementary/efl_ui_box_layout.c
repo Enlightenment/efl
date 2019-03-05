@@ -199,5 +199,8 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    want[1] += (box_calc[1].margin[0] + box_calc[1].margin[1]) +
               (box_calc[1].pad * (count - 1));
 
+   if (want[0] < box_calc[0].min) want[0] = box_calc[0].min;
+   if (want[1] < box_calc[1].min) want[1] = box_calc[1].min;
+
    efl_gfx_hint_size_min_set(ui_box, EINA_SIZE2D(want[0], want[1]));
 }
