@@ -6,7 +6,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include <elm_box.eo.h>
+#include <elm_box_eo.h>
 #include "elm_priv.h"
 #include "els_box.h"
 #include "elm_widget_box.h"
@@ -666,4 +666,4 @@ _elm_box_class_constructor(Efl_Class *klass)
 #define ELM_BOX_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_box)
 
-#include "elm_box.eo.c"
+#include "elm_box_eo.c"
