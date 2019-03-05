@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_widget_item_static_focus.eo',
   'elm_ctxpopup_part.eo',
   'elm_dayselector_part.eo',
   'elm_entry_part.eo',
@@ -170,13 +169,11 @@ pub_eo_files = [
   'efl_ui_radio_legacy_part.eo',
   'efl_ui_check_legacy_part.eo',
   'efl_ui_progressbar_legacy_part.eo',
-  'elm_widget_item_container.eo',
   'elm_multibuttonentry_part.eo',
   'elm_interface_scrollable.eo',
   'elm_atspi_bridge.eo',
   'elm_atspi_app_object.eo',
   'efl_ui_image_zoomable_pan.eo',
-  'elm_widget_item.eo',
   'efl_ui_text_part.eo',
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
@@ -807,6 +804,12 @@ elementary_pub_headers = [
   'elm_view_list_eo.legacy.h',
   'elm_web_eo.h',
   'elm_web_eo.legacy.h',
+  'elm_widget_item_container_eo.h',
+  'elm_widget_item_container_eo.legacy.h',
+  'elm_widget_item_eo.h',
+  'elm_widget_item_eo.legacy.h',
+  'elm_widget_item_static_focus_eo.h',
+  'elm_widget_item_static_focus_eo.legacy.h',
 ]
 
 elementary_header_src = [

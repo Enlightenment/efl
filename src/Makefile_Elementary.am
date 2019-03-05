@@ -146,8 +146,6 @@ elm_public_eolian_files += \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/efl_ui_image_zoomable_pan.eo \
-	lib/elementary/elm_widget_item.eo \
-	lib/elementary/elm_widget_item_container.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -175,7 +173,6 @@ elm_private_eolian_files = \
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/elm_widget_item_static_focus.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
 	lib/elementary/elm_dayselector_part.eo \
 	lib/elementary/elm_entry_part.eo \
@@ -395,6 +392,10 @@ lib/elementary/elm_view_form_eo.c \
 lib/elementary/elm_view_list_eo.c \
 lib/elementary/elm_web_eo.c \
 lib/elementary/elm_web_eo.legacy.c \
+lib/elementary/elm_widget_item_container_eo.c \
+lib/elementary/elm_widget_item_eo.c \
+lib/elementary/elm_widget_item_eo.legacy.c \
+lib/elementary/elm_widget_item_static_focus_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -608,6 +609,12 @@ lib/elementary/elm_view_list_eo.h \
 lib/elementary/elm_view_list_eo.legacy.h \
 lib/elementary/elm_web_eo.h \
 lib/elementary/elm_web_eo.legacy.h \
+lib/elementary/elm_widget_item_container_eo.h \
+lib/elementary/elm_widget_item_container_eo.legacy.h \
+lib/elementary/elm_widget_item_eo.h \
+lib/elementary/elm_widget_item_eo.legacy.h \
+lib/elementary/elm_widget_item_static_focus_eo.h \
+lib/elementary/elm_widget_item_static_focus_eo.legacy.h \
 $(NULL)
 
 
