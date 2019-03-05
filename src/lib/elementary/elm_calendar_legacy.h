@@ -1,4 +1,4 @@
-#include "elm_calendar.eo.legacy.h"
+#include "elm_calendar_eo.legacy.h"
 
 /**
  * Add a new calendar widget to the given parent Elementary

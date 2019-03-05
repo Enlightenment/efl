@@ -10,8 +10,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_calendar.h"
-#include "elm_calendar.eo.h"
-#include "elm_calendar_item.eo.h"
+#include "elm_calendar_eo.h"
+#include "elm_calendar_item_eo.h"
 
 #define MY_CLASS ELM_CALENDAR_CLASS
 
@@ -1929,7 +1929,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_calendar, Elm_Calendar_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_calendar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_calendar)
 
-#include "elm_calendar.eo.c"
+#include "elm_calendar_eo.c"
 
 typedef struct {
    int v;
@@ -1988,4 +1988,4 @@ _elm_calendar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Elm_Calen
 }
 
 
-#include "elm_calendar_item.eo.c"
+#include "elm_calendar_item_eo.c"
