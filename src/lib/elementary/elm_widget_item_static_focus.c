@@ -7,7 +7,7 @@
 #define MY_CLASS ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS
 
 #include <Elementary.h>
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 #include "elm_gengrid_eo.h"
 #include "elm_priv.h"
 #include "efl_ui_focus_composition_adapter.eo.h"

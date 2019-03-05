@@ -18,9 +18,9 @@
 #include "elm_interface_scrollable.h"
 #include "efl_ui_focus_parent_provider_gen.eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
-#include "elm_genlist_item.eo.h"
-#include "elm_genlist_pan.eo.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_item_eo.h"
+#include "elm_genlist_pan_eo.h"
+#include "elm_genlist_eo.h"
 
 #define MY_PAN_CLASS ELM_GENLIST_PAN_CLASS
 
@@ -8953,6 +8953,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_genlist, Elm_Genlist_Data)
 #define ELM_GENLIST_PAN_EXTRA_OPS \
    EFL_CANVAS_GROUP_DEL_OPS(elm_genlist_pan)
 
-#include "elm_genlist.eo.c"
-#include "elm_genlist_pan.eo.c"
-#include "elm_genlist_item.eo.c"
+#include "elm_genlist_eo.c"
+#include "elm_genlist_pan_eo.c"
+#include "elm_genlist_item_eo.c"

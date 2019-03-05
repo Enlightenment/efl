@@ -6,7 +6,7 @@
 #include "elm_priv.h"
 
 //we need those for legacy compatible code
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 #include "elm_gengrid_eo.h"
 
 #define API_ENTRY()\

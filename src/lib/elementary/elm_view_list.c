@@ -6,7 +6,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 
 #include <assert.h>
 

@@ -12,7 +12,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_plug.h"
 #include "elm_scroller.eo.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 #include "elm_conformant_eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS

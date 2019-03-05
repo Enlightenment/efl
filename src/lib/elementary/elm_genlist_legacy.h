@@ -31,5 +31,5 @@ EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
 EAPI Elm_Object_Item *
 elm_genlist_nth_item_get(const Evas_Object *obj, unsigned int nth);
 
-#include "elm_genlist_item.eo.legacy.h"
-#include "elm_genlist.eo.legacy.h"
+#include "elm_genlist_item_eo.legacy.h"
+#include "elm_genlist_eo.legacy.h"

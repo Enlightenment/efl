@@ -187,8 +187,6 @@ elm_private_eolian_files = \
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
-	lib/elementary/elm_genlist.eo \
-	lib/elementary/elm_genlist_pan.eo \
 	lib/elementary/elm_gesture_layer.eo \
 	lib/elementary/elm_glview.eo \
 	lib/elementary/elm_hover.eo \
@@ -212,7 +210,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_menu_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
-	lib/elementary/elm_genlist_item.eo \
 	lib/elementary/elm_list_item.eo \
 	lib/elementary/elm_popup_item.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
@@ -351,6 +348,11 @@ lib/elementary/elm_gengrid_eo.c \
 lib/elementary/elm_gengrid_item_eo.legacy.c \
 lib/elementary/elm_gengrid_item_eo.c \
 lib/elementary/elm_gengrid_pan_eo.c \
+lib/elementary/elm_genlist_eo.legacy.c \
+lib/elementary/elm_genlist_eo.c \
+lib/elementary/elm_genlist_item_eo.legacy.c \
+lib/elementary/elm_genlist_item_eo.c \
+lib/elementary/elm_genlist_pan_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -452,6 +454,14 @@ lib/elementary/elm_gengrid_item_eo.h \
 lib/elementary/elm_gengrid_item_eo.legacy.h \
 lib/elementary/elm_gengrid_pan_eo.h \
 lib/elementary/elm_gengrid_pan_eo.legacy.h \
+lib/elementary/elm_gengrid_pan_eo.h \
+lib/elementary/elm_gengrid_pan_eo.legacy.h \
+lib/elementary/elm_genlist_eo.h \
+lib/elementary/elm_genlist_eo.legacy.h \
+lib/elementary/elm_genlist_item_eo.h \
+lib/elementary/elm_genlist_item_eo.legacy.h \
+lib/elementary/elm_genlist_pan_eo.h \
+lib/elementary/elm_genlist_pan_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

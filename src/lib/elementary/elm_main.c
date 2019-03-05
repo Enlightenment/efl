@@ -25,7 +25,7 @@
 #include "elm_interface_scrollable.h"
 
 //we need those for legacy compatible code
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 #include "elm_gengrid_eo.h"
 #include "elm_widget_gengrid.h"
 

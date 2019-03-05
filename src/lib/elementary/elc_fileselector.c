@@ -23,7 +23,7 @@
 #include "elm_widget_fileselector.h"
 #include "elm_entry_eo.h"
 #include "elm_fileselector_eo.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 #include "elm_gengrid_eo.h"
 
 #include "elm_fileselector_part.eo.h"
