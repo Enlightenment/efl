@@ -718,6 +718,7 @@ elementary_pub_headers = [
   'efl_ui_video_eo.legacy.h',
   'efl_ui_video_legacy_eo.h',
   'efl_ui_video_legacy_eo.legacy.h',
+  'efl_ui_widget_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

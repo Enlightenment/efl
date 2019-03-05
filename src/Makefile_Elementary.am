@@ -330,6 +330,7 @@ lib/elementary/efl_ui_textpath_eo.legacy.c \
 lib/elementary/efl_ui_textpath_legacy_eo.c \
 lib/elementary/efl_ui_video_eo.legacy.c \
 lib/elementary/efl_ui_video_legacy_eo.c \
+lib/elementary/efl_ui_widget_eo.legacy.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
@@ -372,6 +373,7 @@ lib/elementary/efl_ui_textpath_legacy_eo.legacy.h \
 lib/elementary/efl_ui_video_eo.legacy.h \
 lib/elementary/efl_ui_video_legacy_eo.h \
 lib/elementary/efl_ui_video_legacy_eo.legacy.h \
+lib/elementary/efl_ui_widget_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \
