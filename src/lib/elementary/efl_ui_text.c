@@ -15,7 +15,7 @@
 #include "elm_entry_common.h"
 #include "elm_widget_entry.h"
 #include "efl_ui_text.eo.h"
-#include "elm_hoversel.eo.h"
+#include "elm_hoversel_eo.h"
 #include "efl_ui_text_part.eo.h"
 #include "elm_part_helper.h"
 

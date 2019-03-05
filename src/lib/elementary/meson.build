@@ -87,8 +87,6 @@ pub_legacy_eo_files = [
   'elm_fileselector_entry.eo',
   'elm_flipselector.eo',
   'elm_grid.eo',
-  'elm_hoversel.eo',
-  'elm_hoversel_item.eo',
   'elm_icon.eo',
   'elm_inwin.eo',
   'elm_mapbuf.eo',
@@ -699,6 +697,10 @@ elementary_pub_headers = [
   'efl_ui_bg_eo.legacy.h',
   'efl_ui_bg_legacy_eo.h',
   'efl_ui_bg_legacy_eo.legacy.h',
+  'elm_hoversel_eo.h',
+  'elm_hoversel_eo.legacy.h',
+  'elm_hoversel_item_eo.h',
+  'elm_hoversel_item_eo.legacy.h',
 ]
 
 elementary_header_src = [

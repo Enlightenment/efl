@@ -8,5 +8,5 @@
  */
 EAPI Evas_Object                 *elm_hoversel_add(Evas_Object *parent);
 
-#include "elm_hoversel_item.eo.legacy.h"
-#include "elm_hoversel.eo.legacy.h"
+#include "elm_hoversel_item_eo.legacy.h"
+#include "elm_hoversel_eo.legacy.h"

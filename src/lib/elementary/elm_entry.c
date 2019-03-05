@@ -19,7 +19,7 @@
 
 #include "elm_entry_part.eo.h"
 #include "elm_part_helper.h"
-#include "elm_hoversel.eo.h"
+#include "elm_hoversel_eo.h"
 
 #define MY_CLASS ELM_ENTRY_CLASS
 #define MY_CLASS_PFX elm_entry

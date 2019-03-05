@@ -10,8 +10,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_hoversel.eo.h"
-#include "elm_hoversel_item.eo.h"
+#include "elm_hoversel_eo.h"
+#include "elm_hoversel_item_eo.h"
 #include "elm_widget_hoversel.h"
 #include "efl_ui_button_legacy.eo.h"
 
@@ -1068,5 +1068,5 @@ _elm_hoversel_auto_update_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 #define ELM_HOVERSEL_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hoversel)
 
-#include "elm_hoversel_item.eo.c"
-#include "elm_hoversel.eo.c"
+#include "elm_hoversel_item_eo.c"
+#include "elm_hoversel_eo.c"

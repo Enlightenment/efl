@@ -10,7 +10,7 @@
 #include "elm_code_widget_private.h"
 
 /* FIXME: hoversel is deprecated in EO APIs */
-#include "elm_hoversel.eo.h"
+#include "elm_hoversel_eo.h"
 
 #define MY_CLASS ELM_CODE_WIDGET_CLASS
 
