@@ -235,24 +235,24 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
    select_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_SINGLE);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE_ALWAYS");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_SINGLE_ALWAYS);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "MULTI");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MULTI);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_MULTI);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "NONE");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_NONE);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_NONE);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);

@@ -444,7 +444,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
    efl_ui_mirrored_set(pd->box, efl_ui_mirrored_get(obj));
    efl_content_set(pd->pan, pd->box);
 
-   pd->select_mode = EFL_UI_SELECT_SINGLE;
+   pd->select_mode = EFL_UI_SELECT_MODE_SINGLE;
 
    _scroll_edje_object_attach(obj);
 
@@ -646,7 +646,7 @@ _list_item_selected(void *data, const Efl_Event *event)
    EFL_UI_LIST_DATA_GET_OR_RETURN(obj, pd);
 
    /* Single Select */
-   if (pd->select_mode != EFL_UI_SELECT_MULTI)
+   if (pd->select_mode != EFL_UI_SELECT_MODE_MULTI)
      {
         EINA_LIST_FREE(pd->selected, selected)
           {
@@ -935,9 +935,9 @@ _efl_ui_list_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED,
 {
    Efl_Ui_List_Item *selected;
 
-   if ((pd->select_mode == EFL_UI_SELECT_MULTI &&
-        mode != EFL_UI_SELECT_MULTI) ||
-       mode == EFL_UI_SELECT_NONE)
+   if ((pd->select_mode == EFL_UI_SELECT_MODE_MULTI &&
+        mode != EFL_UI_SELECT_MODE_MULTI) ||
+       mode == EFL_UI_SELECT_MODE_NONE)
      {
         Eina_List *clone = eina_list_clone(pd->selected);
         EINA_LIST_FREE(clone, selected)
