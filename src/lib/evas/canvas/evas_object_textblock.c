@@ -16169,19 +16169,19 @@ static void
 _efl_canvas_text_efl_text_format_halign_auto_type_set(Eo *obj, Efl_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
 {
    ASYNC_BLOCK;
-   if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NONE)
+   if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NONE);
      }
-   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NORMAL)
+   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NORMAL)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL);
      }
-   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_LOCALE)
+   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_LOCALE)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
      }
-   else if (type == EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_END)
+   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END)
      {
         _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
      }
@@ -16191,19 +16191,19 @@ static Efl_Text_Format_Horizontal_Alignment_Auto_Type
 _efl_canvas_text_efl_text_format_halign_auto_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 {
    Efl_Text_Format_Horizontal_Alignment_Auto_Type ret =
-      EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NONE;
+      EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE;
 
    if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_NORMAL;
+        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NORMAL;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_END)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_END;
+        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END;
      }
    else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
      {
-        ret = EFL_TEXT_HORIZONTAL_ALIGNMENT_AUTO_LOCALE;
+        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_LOCALE;
      }
    return ret;
 }
