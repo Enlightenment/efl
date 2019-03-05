@@ -6,7 +6,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include <elm_table.eo.h>
+#include <elm_table_eo.h>
 #include "elm_priv.h"
 #include "elm_widget_table.h"
 
@@ -346,4 +346,4 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 #define ELM_TABLE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_table)
 
-#include "elm_table.eo.c"
+#include "elm_table_eo.c"

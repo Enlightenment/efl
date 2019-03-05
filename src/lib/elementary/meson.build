@@ -18,7 +18,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_table.eo',
   'elm_thumb.eo',
 ]
 
@@ -800,6 +799,8 @@ elementary_pub_headers = [
   'elm_sys_notify_interface_eo.legacy.h',
   'elm_systray_eo.h',
   'elm_systray_eo.legacy.h',
+  'elm_table_eo.h',
+  'elm_table_eo.legacy.h',
 ]
 
 elementary_header_src = [
