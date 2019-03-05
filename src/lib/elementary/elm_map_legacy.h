@@ -172,4 +172,4 @@ EAPI void elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
  */
 EAPI Eina_Bool elm_map_paused_get(const Evas_Object *obj);
 
-#include "elm_map.eo.legacy.h"
+#include "elm_map_eo.legacy.h"

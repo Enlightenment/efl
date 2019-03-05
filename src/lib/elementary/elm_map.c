@@ -10,8 +10,8 @@
 #include "elm_priv.h"
 #include "elm_widget_map.h"
 #include "elm_interface_scrollable.h"
-#include "elm_map_pan.eo.h"
-#include "elm_map.eo.h"
+#include "elm_map_pan_eo.h"
+#include "elm_map_eo.h"
 
 #define MY_PAN_CLASS ELM_MAP_PAN_CLASS
 
@@ -3995,7 +3995,7 @@ _elm_map_pan_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elm_map_pan.eo.c"
+#include "elm_map_pan_eo.c"
 
 EOLIAN static Eina_Error
 _elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
@@ -5726,4 +5726,4 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_map, Elm_Map_Data)
 #define ELM_MAP_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_map)
 
-#include "elm_map.eo.c"
+#include "elm_map_eo.c"

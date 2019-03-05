@@ -1,7 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_map.eo',
-  'elm_map_pan.eo',
   'elm_menu.eo',
   'elm_notify.eo',
   'elm_panel.eo',
@@ -769,6 +767,10 @@ elementary_pub_headers = [
   'elm_list_item_eo.legacy.h',
   'elm_mapbuf_eo.h',
   'elm_mapbuf_eo.legacy.h',
+  'elm_map_eo.h',
+  'elm_map_eo.legacy.h',
+  'elm_map_pan_eo.h',
+  'elm_map_pan_eo.legacy.h',
 ]
 
 elementary_header_src = [
