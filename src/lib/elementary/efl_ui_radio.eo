@@ -1,7 +1,6 @@
 class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl.Content
 {
    [[Elementary radio class]]
-   legacy_prefix: elm_radio;
    methods {
       @property state_value {
          set {

@@ -373,8 +373,9 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
+#include "efl_ui_radio_eo.legacy.c"
 
-#include "efl_ui_radio_legacy.eo.h"
+#include "efl_ui_radio_legacy_eo.h"
 #include "efl_ui_radio_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_radio"
@@ -494,4 +495,4 @@ elm_radio_value_get(const Evas_Object *obj)
    return efl_ui_nstate_value_get(obj);
 }
 
-#include "efl_ui_radio_legacy.eo.c"
+#include "efl_ui_radio_legacy_eo.c"
