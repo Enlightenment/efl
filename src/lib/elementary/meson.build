@@ -22,8 +22,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_slideshow.eo',
-  'elm_slideshow_item.eo',
   'elm_table.eo',
   'elm_thumb.eo',
 ]
@@ -793,6 +791,10 @@ elementary_pub_headers = [
   'elm_slider_eo.legacy.h',
   'elm_slider_part_indicator_eo.h',
   'elm_slider_part_indicator_eo.legacy.h',
+  'elm_slideshow_eo.h',
+  'elm_slideshow_eo.legacy.h',
+  'elm_slideshow_item_eo.h',
+  'elm_slideshow_item_eo.legacy.h',
 ]
 
 elementary_header_src = [

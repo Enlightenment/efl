@@ -203,8 +203,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_slideshow.eo \
-	lib/elementary/elm_slideshow_item.eo \
 	lib/elementary/elm_table.eo \
 	lib/elementary/elm_thumb.eo \
 	$(NULL)
@@ -385,6 +383,10 @@ lib/elementary/elm_separator_eo.c \
 lib/elementary/elm_separator_eo.legacy.c \
 lib/elementary/elm_slider_eo.c \
 lib/elementary/elm_slider_part_indicator_eo.c \
+lib/elementary/elm_slideshow_eo.c \
+lib/elementary/elm_slideshow_eo.legacy.c \
+lib/elementary/elm_slideshow_item_eo.c \
+lib/elementary/elm_slideshow_item_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -570,6 +572,10 @@ lib/elementary/elm_slider_eo.h \
 lib/elementary/elm_slider_eo.legacy.h \
 lib/elementary/elm_slider_part_indicator_eo.h \
 lib/elementary/elm_slider_part_indicator_eo.legacy.h \
+lib/elementary/elm_slideshow_eo.h \
+lib/elementary/elm_slideshow_eo.legacy.h \
+lib/elementary/elm_slideshow_item_eo.h \
+lib/elementary/elm_slideshow_item_eo.legacy.h \
 $(NULL)
 
 
