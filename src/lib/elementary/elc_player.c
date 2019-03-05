@@ -711,4 +711,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_player, "video")
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
-#include "elm_player.eo.c"
+#include "elm_player_eo.c"
