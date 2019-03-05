@@ -13,7 +13,7 @@
 #include "elm_widget_plug.h"
 #include "elm_scroller.eo.h"
 #include "elm_genlist.eo.h"
-#include "elm_conformant.eo.h"
+#include "elm_conformant_eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
 #define MY_CLASS_PFX elm_conformant
@@ -1034,4 +1034,4 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_conformant)
 
-#include "elm_conformant.eo.c"
+#include "elm_conformant_eo.c"
