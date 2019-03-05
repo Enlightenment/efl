@@ -1867,5 +1867,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
-#include "elm_popup.eo.c"
-#include "elm_popup_item.eo.c"
+#include "elm_popup_eo.c"
+#include "elm_popup_item_eo.c"

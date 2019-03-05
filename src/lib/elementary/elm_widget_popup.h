@@ -4,8 +4,8 @@
 #include "Elementary.h"
 #include "elm_widget_layout.h"
 #include "elm_notify_eo.h"
-#include "elm_popup_item.eo.h"
-#include "elm_popup.eo.h"
+#include "elm_popup_item_eo.h"
+#include "elm_popup_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

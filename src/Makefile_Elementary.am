@@ -183,7 +183,6 @@ elm_private_eolian_files = \
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/elm_popup.eo \
 	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
@@ -191,7 +190,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_sys_notify_dbus.eo \
 	lib/elementary/elm_systray.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
-	lib/elementary/elm_popup_item.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
 	lib/elementary/elm_dayselector_part.eo \
 	lib/elementary/elm_entry_part.eo \
@@ -378,6 +376,9 @@ lib/elementary/elm_photo_eo.c \
 lib/elementary/elm_player_eo.c \
 lib/elementary/elm_plug_eo.c \
 lib/elementary/elm_plug_eo.legacy.c \
+lib/elementary/elm_popup_eo.c \
+lib/elementary/elm_popup_eo.legacy.c \
+lib/elementary/elm_popup_item_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -543,6 +544,10 @@ lib/elementary/elm_player_eo.h \
 lib/elementary/elm_player_eo.legacy.h \
 lib/elementary/elm_plug_eo.h \
 lib/elementary/elm_plug_eo.legacy.h \
+lib/elementary/elm_popup_eo.h \
+lib/elementary/elm_popup_eo.legacy.h \
+lib/elementary/elm_popup_item_eo.h \
+lib/elementary/elm_popup_item_eo.legacy.h \
 $(NULL)
 
 
