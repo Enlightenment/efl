@@ -86,6 +86,9 @@ typedef const char * Eina_Vpath;
 
 /**
  * Translate a virtual path into a normal path.
+ * 
+ * The return string is a string allocated by malloc and should be freed with
+ * free() when no longer needed.
  *
  * @param[in] path The path.
  * @return NULL if failed, or a full normal string file path that is resolved
