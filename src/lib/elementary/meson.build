@@ -1,8 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_sys_notify_interface.eo',
-  'elm_sys_notify.eo',
-  'elm_sys_notify_dbus.eo',
   'elm_systray.eo',
   'elm_widget_item_static_focus.eo',
   'elm_ctxpopup_part.eo',
@@ -796,6 +793,12 @@ elementary_pub_headers = [
   'elm_slideshow_item_eo.legacy.h',
   'elm_spinner_eo.h',
   'elm_spinner_eo.legacy.h',
+  'elm_sys_notify_dbus_eo.h',
+  'elm_sys_notify_dbus_eo.legacy.h',
+  'elm_sys_notify_eo.h',
+  'elm_sys_notify_eo.legacy.h',
+  'elm_sys_notify_interface_eo.h',
+  'elm_sys_notify_interface_eo.legacy.h',
 ]
 
 elementary_header_src = [

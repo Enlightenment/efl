@@ -6,10 +6,10 @@
 
 #include "elm_priv.h"
 
-#include "elm_sys_notify_interface.eo.h"
-#include "elm_sys_notify.eo.h"
-#include "elm_sys_notify_dbus.eo.h"
-#include "elm_sys_notify_dbus.eo.legacy.h"
+#include "elm_sys_notify_interface_eo.h"
+#include "elm_sys_notify_eo.h"
+#include "elm_sys_notify_dbus_eo.h"
+#include "elm_sys_notify_dbus_eo.legacy.h"
 
 #define MY_CLASS ELM_SYS_NOTIFY_CLASS
 
@@ -288,5 +288,5 @@ elm_sys_notify_close(unsigned int id)
    elm_obj_sys_notify_interface_close(_singleton, id);
 }
 
-#include "elm_sys_notify.eo.c"
+#include "elm_sys_notify_eo.c"
 

@@ -4,8 +4,8 @@
 typedef void (*Elm_Sys_Notify_Send_Cb)(void *data, unsigned int id);
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_sys_notify_interface.eo.legacy.h"
-#include "elm_sys_notify.eo.legacy.h"
+#include "elm_sys_notify_interface_eo.legacy.h"
+#include "elm_sys_notify_eo.legacy.h"
 #endif
 
 /**
