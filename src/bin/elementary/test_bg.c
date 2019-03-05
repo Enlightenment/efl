@@ -3,7 +3,7 @@
 #endif
 
 #include <Elementary.h>
-#include "elm_colorselector.eo.h"
+#include "elm_colorselector_eo.h"
 
 static void
 _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)

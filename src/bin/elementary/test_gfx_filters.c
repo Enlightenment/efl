@@ -3,7 +3,7 @@
 #endif
 
 #include <Elementary.h>
-#include "elm_colorselector.eo.h"
+#include "elm_colorselector_eo.h"
 
 static const int default_font_size = 48;
 

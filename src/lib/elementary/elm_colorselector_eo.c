@@ -148,4 +148,4 @@ static const Efl_Class_Description _elm_colorselector_class_desc = {
 
 EFL_DEFINE_CLASS(elm_colorselector_class_get, &_elm_colorselector_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
 
-#include "elm_colorselector.eo.legacy.c"
+#include "elm_colorselector_eo.legacy.c"

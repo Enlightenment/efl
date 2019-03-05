@@ -3,7 +3,7 @@
 
 #include "Elementary.h"
 #include "elm_color_item_eo.h"
-#include "elm_colorselector.eo.h"
+#include "elm_colorselector_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

@@ -1,7 +1,6 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
   'elm_interface_fileselector.eo',
-  'elm_colorselector.eo',
   'elm_conformant.eo',
   'elm_ctxpopup.eo',
   'elm_dayselector.eo',
@@ -732,6 +731,8 @@ elementary_pub_headers = [
   'elm_code_widget_legacy_eo.legacy.h',
   'elm_color_item_eo.h',
   'elm_color_item_eo.legacy.h',
+  'elm_colorselector_eo.h',
+  'elm_colorselector_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',
