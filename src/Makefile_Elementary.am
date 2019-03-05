@@ -211,7 +211,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_photo.eo \
 	lib/elementary/elm_prefs.eo \
 	lib/elementary/elm_segment_control.eo \
 	lib/elementary/elm_segment_control_item.eo \
@@ -377,6 +376,7 @@ lib/elementary/elm_panel_eo.c \
 lib/elementary/elm_panel_eo.legacy.c \
 lib/elementary/elm_pan_eo.c \
 lib/elementary/elm_pan_eo.legacy.c \
+lib/elementary/elm_photo_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -536,6 +536,8 @@ lib/elementary/elm_panel_eo.h \
 lib/elementary/elm_panel_eo.legacy.h \
 lib/elementary/elm_pan_eo.h \
 lib/elementary/elm_pan_eo.legacy.h \
+lib/elementary/elm_photo_eo.h \
+lib/elementary/elm_photo_eo.legacy.h \
 $(NULL)
 
 

@@ -8,7 +8,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_photo.h"
-#include "elm_photo.eo.h"
+#include "elm_photo_eo.h"
 #include "elm_icon_eo.h"
 
 #define MY_CLASS ELM_PHOTO_CLASS
@@ -493,4 +493,4 @@ elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group)
 #define ELM_PHOTO_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_photo)
 
-#include "elm_photo.eo.c"
+#include "elm_photo_eo.c"
