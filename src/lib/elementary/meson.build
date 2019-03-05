@@ -198,7 +198,6 @@ pub_eo_files = [
   'elm_atspi_bridge.eo',
   'elm_atspi_app_object.eo',
   'efl_ui_image_zoomable_pan.eo',
-  'elm_pan.eo',
   'elm_toolbar.eo',
   'elm_toolbar_item.eo',
   'elm_view_list.eo',
@@ -779,6 +778,8 @@ elementary_pub_headers = [
   'elm_notify_eo.legacy.h',
   'elm_panel_eo.h',
   'elm_panel_eo.legacy.h',
+  'elm_pan_eo.h',
+  'elm_pan_eo.legacy.h',
 ]
 
 elementary_header_src = [
