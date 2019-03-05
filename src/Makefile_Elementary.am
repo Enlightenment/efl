@@ -211,7 +211,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_sys_notify.eo \
 	lib/elementary/elm_sys_notify_dbus.eo \
 	lib/elementary/elm_systray.eo \
-	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
@@ -236,7 +235,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_flipselector.eo \
 	lib/elementary/elm_grid.eo \
 	lib/elementary/elm_icon.eo \
 	lib/elementary/elm_inwin.eo \
@@ -347,6 +345,10 @@ lib/elementary/elm_fileselector_button_eo.c \
 lib/elementary/elm_fileselector_entry_eo.c \
 lib/elementary/elm_fileselector_eo.legacy.c \
 lib/elementary/elm_fileselector_eo.c \
+lib/elementary/elm_flipselector_eo.legacy.c \
+lib/elementary/elm_flipselector_eo.c \
+lib/elementary/elm_flipselector_item_eo.legacy.c \
+lib/elementary/elm_flipselector_item_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -438,6 +440,10 @@ lib/elementary/elm_fileselector_entry_eo.h \
 lib/elementary/elm_fileselector_entry_eo.legacy.h \
 lib/elementary/elm_fileselector_eo.h \
 lib/elementary/elm_fileselector_eo.legacy.h \
+lib/elementary/elm_flipselector_eo.h \
+lib/elementary/elm_flipselector_eo.legacy.h \
+lib/elementary/elm_flipselector_item_eo.h \
+lib/elementary/elm_flipselector_item_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

@@ -10,8 +10,8 @@
 #include "elm_priv.h"
 #include "elm_widget_flipselector.h"
 
-#include "elm_flipselector.eo.h"
-#include "elm_flipselector_item.eo.h"
+#include "elm_flipselector_eo.h"
+#include "elm_flipselector_item_eo.h"
 
 #define MY_CLASS ELM_FLIPSELECTOR_CLASS
 
@@ -903,5 +903,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_flipselector, Elm_Flipselector_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_flipselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_flipselector)
 
-#include "elm_flipselector_item.eo.c"
-#include "elm_flipselector.eo.c"
+#include "elm_flipselector_item_eo.c"
+#include "elm_flipselector_eo.c"
