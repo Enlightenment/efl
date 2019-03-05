@@ -11,7 +11,7 @@
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_plug.h"
-#include "elm_scroller.eo.h"
+#include "elm_scroller_eo.h"
 #include "elm_genlist_eo.h"
 #include "elm_conformant_eo.h"
 

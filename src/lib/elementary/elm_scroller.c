@@ -13,7 +13,7 @@
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
-#include "elm_scroller.eo.h"
+#include "elm_scroller_eo.h"
 #include "elm_scroller_part.eo.h"
 #include "elm_part_helper.h"
 
@@ -1390,4 +1390,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 
-#include "elm_scroller.eo.c"
+#include "elm_scroller_eo.c"

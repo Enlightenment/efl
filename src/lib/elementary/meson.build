@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_scroller.eo',
   'elm_sys_notify_interface.eo',
   'elm_sys_notify.eo',
   'elm_sys_notify_dbus.eo',
@@ -787,6 +786,8 @@ elementary_pub_headers = [
   'elm_prefs_eo.legacy.h',
   'elm_route_eo.h',
   'elm_route_eo.legacy.h',
+  'elm_scroller_eo.h',
+  'elm_scroller_eo.legacy.h',
 ]
 
 elementary_header_src = [

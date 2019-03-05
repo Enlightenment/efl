@@ -1,5 +1,5 @@
 #include "elm_interface_scrollable.eo.legacy.h"
-#include "elm_scroller.eo.legacy.h"
+#include "elm_scroller_eo.legacy.h"
 
 /**
  * Type that blocks the scroll movement in one or more direction.
