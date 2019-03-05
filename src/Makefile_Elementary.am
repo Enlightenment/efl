@@ -156,7 +156,6 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
-	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
 	lib/elementary/efl_ui_state_model.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
@@ -396,6 +395,7 @@ lib/elementary/elm_widget_item_container_eo.c \
 lib/elementary/elm_widget_item_eo.c \
 lib/elementary/elm_widget_item_eo.legacy.c \
 lib/elementary/elm_widget_item_static_focus_eo.c \
+lib/elementary/efl_ui_focus_parent_provider_gen_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -615,6 +615,7 @@ lib/elementary/elm_widget_item_eo.h \
 lib/elementary/elm_widget_item_eo.legacy.h \
 lib/elementary/elm_widget_item_static_focus_eo.h \
 lib/elementary/elm_widget_item_static_focus_eo.legacy.h \
+lib/elementary/efl_ui_focus_parent_provider_gen_eo.h \
 $(NULL)
 
 

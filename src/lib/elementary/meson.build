@@ -232,7 +232,6 @@ priv_eo_files = [
   'efl_ui_focus_composition_adapter.eo',
   'efl_ui_focus_parent_provider.eo',
   'efl_ui_focus_parent_provider_standard.eo',
-  'efl_ui_focus_parent_provider_gen.eo',
   'efl_ui_state_model.eo',
   'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
@@ -810,6 +809,7 @@ elementary_pub_headers = [
   'elm_widget_item_eo.legacy.h',
   'elm_widget_item_static_focus_eo.h',
   'elm_widget_item_static_focus_eo.legacy.h',
+  'efl_ui_focus_parent_provider_gen_eo.h',
 ]
 
 elementary_header_src = [

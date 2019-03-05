@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "efl_ui_focus_parent_provider_gen.eo.h"
+#include "efl_ui_focus_parent_provider_gen_eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
 
 typedef struct {
@@ -119,4 +119,4 @@ _efl_ui_focus_parent_provider_gen_item_fetch(Eo *obj EINA_UNUSED, Efl_Ui_Focus_P
    return item;
 }
 
-#include "efl_ui_focus_parent_provider_gen.eo.c"
+#include "efl_ui_focus_parent_provider_gen_eo.c"
