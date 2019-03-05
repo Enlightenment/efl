@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_notify.eo',
   'elm_panel.eo',
   'elm_player.eo',
   'elm_plug.eo',
@@ -777,6 +776,8 @@ elementary_pub_headers = [
   'elm_naviframe_eo.legacy.h',
   'elm_naviframe_item_eo.h',
   'elm_naviframe_item_eo.legacy.h',
+  'elm_notify_eo.h',
+  'elm_notify_eo.legacy.h',
 ]
 
 elementary_header_src = [

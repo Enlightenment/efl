@@ -3,7 +3,7 @@
 
 #include "Elementary.h"
 #include "elm_widget_layout.h"
-#include "elm_notify.eo.h"
+#include "elm_notify_eo.h"
 #include "elm_popup_item.eo.h"
 #include "elm_popup.eo.h"
 

@@ -735,4 +735,4 @@ _elm_notify_part_efl_ui_l10n_l10n_text_set(Eo *obj, void *_pd EINA_UNUSED, const
    ELM_PART_CONTENT_DEFAULT_OPS(elm_notify), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_notify)
 
-#include "elm_notify.eo.c"
+#include "elm_notify_eo.c"
