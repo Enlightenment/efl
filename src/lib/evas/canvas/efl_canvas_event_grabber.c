@@ -409,3 +409,4 @@ evas_object_event_grabber_add(Evas *eo_e)
 }
 
 #include "efl_canvas_event_grabber.eo.c"
+#include "efl_canvas_event_grabber_eo.legacy.c"

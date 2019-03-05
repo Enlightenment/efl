@@ -1,7 +1,7 @@
 #include "edje_private.h"
 #define _ELLIP_STR "\xE2\x80\xA6"
 
-#include "../evas/canvas/evas_text.eo.h"
+#include "../evas/canvas/evas_text_eo.h"
 
 /* returns with and height for this part.
  *

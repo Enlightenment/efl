@@ -24,7 +24,7 @@
 # include "ecore_evas_wayland_private.h"
 #endif
 
-#include "../evas/canvas/evas_box.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"

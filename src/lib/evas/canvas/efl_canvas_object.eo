@@ -11,7 +11,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                             Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
    [[Efl canvas object abstract class]]
-   legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
       @property pointer_mode_by_device {
@@ -27,10 +26,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          }
          set {
             return: bool; [[$true if pointer mode was set, $false otherwise]]
-            legacy: null;
          }
          get {
-            legacy: null;
          }
       }
       @property pointer_mode {
@@ -77,10 +74,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            transparent background inside a buffer canvas).
          ]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
             render_op: Efl.Gfx.Render_Op; [[Blend or copy.]]
@@ -128,7 +123,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               Note: Only rectangle and image (masks) objects can be used
               as clippers. Anything else will result in undefined behaviour.
             ]]
-            legacy: evas_object_clip_set;
          }
          get {
             [[Get the object clipping $obj (if any).
@@ -137,7 +131,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               not being clipped at all, $null is returned. The object $obj
               must be a valid Evas_Object.
             ]]
-            legacy: evas_object_clip_get;
          }
          values {
             clipper: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
@@ -184,10 +177,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            @.seat_focus_add, @.seat_focus_del.
          ]]
          set {
-            legacy: evas_object_focus_set;
          }
          get {
-            legacy: evas_object_focus_get;
          }
          values {
             focus: bool; [[$true when set as focused or $false otherwise.]]
@@ -199,7 +190,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             @since 1.19
          ]]
          get {
-            legacy: null;
          }
          values {
             focus: bool; [[$true if focused by at least one seat or $false otherwise.]]
@@ -210,7 +200,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if focused or $false otherwise.]]
       }
       seat_focus_add {
@@ -227,7 +216,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if the focus has been set or $false otherwise.]]
       }
       seat_focus_del {
@@ -238,7 +226,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }
       @property precise_is_inside {
@@ -367,7 +354,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
               See also @.clipper.
             ]]
-            legacy: null;
             return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
                                              list of objects clipped by $obj.]]
          }
@@ -382,7 +368,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            @since 1.18
          ]]
          get {
-            legacy: evas_object_smart_parent_get;
          }
          values {
             parent: Efl.Canvas.Object; [[The parent smart object of $obj or $null.]]
@@ -401,7 +386,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       clipped_objects_count @const {
          [[Returns the number of objects clipped by $obj
          ]]
-         legacy: null;
          return: uint @warn_unused; [[The number of objects clipped by $obj]]
       }
       key_grab {
@@ -439,7 +423,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             @in exclusive: bool; [[Request that the $obj is the only object
                                    receiving the $keyname events.]]
          }
-         legacy: null;
       }
       key_ungrab {
          [[Removes the grab on $keyname key events by $obj.
@@ -458,7 +441,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                                                      not not be present to trigger
                                                      the event.]]
          }
-         legacy: null;
       }
       @property no_render {
          get {
@@ -470,7 +452,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
               @since 1.15
             ]]
-            legacy: null;
          }
          set {
             [[Disable all rendering on the canvas.
@@ -491,7 +472,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
               @since 1.15
             ]]
-            legacy: null;
          }
          values {
             enable: bool; [[Enable "no-render" mode.]]
@@ -512,7 +492,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
            If $e is not a valid object, the return value is undefined.
           ]]
-          legacy: null;
          }
          keys {
             pos: Eina.Position2D; [[The position in pixels.]]

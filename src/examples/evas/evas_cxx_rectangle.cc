@@ -14,8 +14,8 @@
 #include <Eina.hh>
 #include <Eo.hh>
 
-#include "canvas/evas_canvas.eo.hh"
-#include "canvas/evas_image.eo.hh"
+#include "canvas/evas_canvas_eo.hh"
+#include "canvas/evas_image_eo.hh"
 #include "canvas/evas_rectangle.eo.hh"
 
 #define WIDTH (320)

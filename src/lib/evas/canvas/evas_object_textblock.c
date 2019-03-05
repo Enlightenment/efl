@@ -16626,4 +16626,5 @@ _efl_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl_Canvas_Text_Data *o)
 }
 
 #include "canvas/efl_canvas_text.eo.c"
+#include "canvas/efl_canvas_text_eo.legacy.c"
 #include "canvas/efl_canvas_text_factory.eo.c" // interface

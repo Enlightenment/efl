@@ -1,6 +1,6 @@
 
 #include "evas_image_private.h"
-#include "evas_image.eo.h"
+#include "evas_image_eo.h"
 
 #define EVAS_IMAGE_API(_o, ...) do { \
    if (EINA_UNLIKELY(!efl_isa(_o, EFL_CANVAS_IMAGE_INTERNAL_CLASS))) { \
@@ -1304,4 +1304,4 @@ _evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
    return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 }
 
-#include "canvas/evas_image.eo.c"
+#include "canvas/evas_image_eo.c"

@@ -6,7 +6,7 @@
 
 #include <Evas.h>
 #include <Evas_Internal.h>
-#include "canvas/evas_canvas.eo.h"
+#include "canvas/evas_canvas_eo.h"
 
 #define EFL_INTERNAL_UNSTABLE
 #include "interfaces/efl_common_internal.h"

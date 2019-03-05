@@ -1,7 +1,6 @@
 class @beta Efl.Canvas.Vg.Gradient_Radial extends Efl.Canvas.Vg.Gradient implements Efl.Gfx.Gradient_Radial
 {
    [[Efl vector graphics gradient radial class]]
-   legacy_prefix: evas_vg_gradient_radial;
    implements {
       Efl.Gfx.Gradient_Radial.center { get; set; }
       Efl.Gfx.Gradient_Radial.radius { get; set; }

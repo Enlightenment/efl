@@ -22,7 +22,7 @@
 #include "../common/evas_convert_colorspace.h"
 #include "../common/evas_convert_yuv.h"
 
-#include "canvas/evas_image.eo.h"
+#include "canvas/evas_image_eo.h"
 #include "canvas/efl_canvas_filter_internal.eo.h"
 #include "evas_filter.h"
 

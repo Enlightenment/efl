@@ -2009,4 +2009,4 @@ _evas_box_class_constructor(Efl_Class *klass)
 #define EVAS_BOX_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(evas_box)
 
-#include "canvas/evas_box.eo.c"
+#include "canvas/evas_box_eo.c"

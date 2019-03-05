@@ -471,3 +471,4 @@ evas_vg_shape_add(Efl_Canvas_Vg_Node *parent)
 }
 
 #include "efl_canvas_vg_shape.eo.c"
+#include "efl_canvas_vg_shape_eo.legacy.c"

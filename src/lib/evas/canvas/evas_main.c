@@ -2035,4 +2035,4 @@ EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
    EFL_EVENT_DESCRIPTION("viewport,resize");
 
 #include "evas_stack.x"
-#include "canvas/evas_canvas.eo.c"
+#include "canvas/evas_canvas_eo.c"

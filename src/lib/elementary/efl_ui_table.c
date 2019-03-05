@@ -1,6 +1,6 @@
 #include "efl_ui_table_private.h"
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 #define MY_CLASS EFL_UI_TABLE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Table"

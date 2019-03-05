@@ -3,7 +3,7 @@
 
 #include "edje_private.h"
 
-#include "canvas/evas_canvas.eo.h"
+#include "canvas/evas_canvas_eo.h"
 
 #ifdef MY_CLASS
 # undef MY_CLASS

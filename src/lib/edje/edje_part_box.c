@@ -3,7 +3,7 @@
 #include "efl_canvas_layout_part_box.eo.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_PART_BOX_CLASS
 
-#include "../evas/canvas/evas_box.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
 
 PROXY_IMPLEMENTATION(box, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION

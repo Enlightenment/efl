@@ -3,7 +3,7 @@
 #include "efl_canvas_layout_part_table.eo.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_PART_TABLE_CLASS
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 PROXY_IMPLEMENTATION(table, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION

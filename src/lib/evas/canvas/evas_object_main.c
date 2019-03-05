@@ -2573,3 +2573,4 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const
    EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set)
 
 #include "canvas/efl_canvas_object.eo.c"
+#include "canvas/efl_canvas_object_eo.legacy.c"

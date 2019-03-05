@@ -752,3 +752,4 @@ evas_object_vg_add(Evas *e)
 }
 
 #include "efl_canvas_vg_object.eo.c"
+#include "efl_canvas_vg_object_eo.legacy.c"

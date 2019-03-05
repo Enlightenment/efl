@@ -1870,3 +1870,4 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), E
    EFL_OBJECT_OP_FUNC(efl_canvas_group_clipped_set, _efl_canvas_group_group_clipped_set)
 
 #include "canvas/efl_canvas_group.eo.c"
+#include "canvas/efl_canvas_group_eo.legacy.c"

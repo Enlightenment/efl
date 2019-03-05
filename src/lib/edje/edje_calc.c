@@ -2,7 +2,7 @@
 
 #include "edje_private.h"
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 static void                          _edje_part_make_rtl(Edje_Part_Description_Common *desc);
 static Edje_Part_Description_Common *_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type);

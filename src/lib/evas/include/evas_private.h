@@ -48,13 +48,13 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENC  _evas_engine_context(obj->layer->evas)
 
-#include "canvas/evas_canvas.eo.h"
-#include "canvas/evas_text.eo.h"
-#include "canvas/evas_textgrid.eo.h"
-#include "canvas/evas_line.eo.h"
-#include "canvas/evas_box.eo.h"
-#include "canvas/evas_table.eo.h"
-#include "canvas/evas_grid.eo.h"
+#include "canvas/evas_canvas_eo.h"
+#include "canvas/evas_text_eo.h"
+#include "canvas/evas_textgrid_eo.h"
+#include "canvas/evas_line_eo.h"
+#include "canvas/evas_box_eo.h"
+#include "canvas/evas_table_eo.h"
+#include "canvas/evas_grid_eo.h"
 
 #define RENDER_METHOD_INVALID            0x00000000
 

@@ -13,8 +13,8 @@
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
 
-#include "../evas/canvas/evas_box.eo.h"
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 /* layout internals for box & table */
 Eina_Bool    _efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
