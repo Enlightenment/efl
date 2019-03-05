@@ -12,4 +12,4 @@ typedef Eo Elm_Textpath;
  */
 EAPI Evas_Object                 *elm_textpath_add(Evas_Object *parent);
 
-#include "efl_ui_textpath.eo.legacy.h"
+#include "efl_ui_textpath_eo.legacy.h"

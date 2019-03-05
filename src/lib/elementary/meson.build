@@ -91,7 +91,6 @@ pub_legacy_eo_files = [
   'elm_slideshow_item.eo',
   'elm_table.eo',
   'elm_thumb.eo',
-  'efl_ui_textpath_legacy.eo',
 ]
 
 pub_eo_file_target = []
@@ -714,6 +713,9 @@ elementary_pub_headers = [
   'efl_ui_radio_eo.legacy.h',
   'efl_ui_radio_legacy_eo.h',
   'efl_ui_radio_legacy_eo.legacy.h',
+  'efl_ui_textpath_eo.legacy.h',
+  'efl_ui_textpath_legacy_eo.h',
+  'efl_ui_textpath_legacy_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

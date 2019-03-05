@@ -57,7 +57,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text_factory_emoticons.eo \
 	lib/elementary/efl_ui_text_factory_fallback.eo \
 	lib/elementary/efl_ui_textpath.eo \
-	lib/elementary/efl_ui_textpath_legacy.eo \
 	lib/elementary/efl_ui_l10n.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_image_factory.eo \
@@ -328,6 +327,8 @@ lib/elementary/efl_ui_panes_legacy_eo.c \
 lib/elementary/efl_ui_progressbar_legacy_eo.c \
 lib/elementary/efl_ui_radio_eo.legacy.c \
 lib/elementary/efl_ui_radio_legacy_eo.c \
+lib/elementary/efl_ui_textpath_eo.legacy.c \
+lib/elementary/efl_ui_textpath_legacy_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
@@ -364,6 +365,9 @@ lib/elementary/efl_ui_progressbar_legacy_eo.legacy.h \
 lib/elementary/efl_ui_radio_eo.legacy.h \
 lib/elementary/efl_ui_radio_legacy_eo.h \
 lib/elementary/efl_ui_radio_legacy_eo.legacy.h \
+lib/elementary/efl_ui_textpath_eo.legacy.h \
+lib/elementary/efl_ui_textpath_legacy_eo.h \
+lib/elementary/efl_ui_textpath_legacy_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

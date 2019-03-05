@@ -757,8 +757,9 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Dat
       EFL_CANVAS_GROUP_ADD_OPS(efl_ui_textpath)
 
 #include "efl_ui_textpath.eo.c"
+#include "efl_ui_textpath_eo.legacy.c"
 
-#include "efl_ui_textpath_legacy.eo.h"
+#include "efl_ui_textpath_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_textpath"
 /* Legacy APIs */
@@ -784,5 +785,5 @@ elm_textpath_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_textpath_legacy.eo.c"
+#include "efl_ui_textpath_legacy_eo.c"
 
