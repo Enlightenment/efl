@@ -265,4 +265,4 @@ _elm_route_class_constructor(Efl_Class *klass)
 #define ELM_ROUTE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_route)
 
-#include "elm_route.eo.c"
+#include "elm_route_eo.c"

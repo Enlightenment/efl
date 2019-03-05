@@ -183,7 +183,6 @@ elm_private_eolian_files = \
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/elm_route.eo \
 	lib/elementary/elm_scroller.eo \
 	lib/elementary/elm_sys_notify_interface.eo \
 	lib/elementary/elm_sys_notify.eo \
@@ -380,6 +379,8 @@ lib/elementary/elm_popup_eo.legacy.c \
 lib/elementary/elm_popup_item_eo.c \
 lib/elementary/elm_prefs_eo.c \
 lib/elementary/elm_prefs_eo.legacy.c \
+lib/elementary/elm_route_eo.c \
+lib/elementary/elm_route_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -551,6 +552,8 @@ lib/elementary/elm_popup_item_eo.h \
 lib/elementary/elm_popup_item_eo.legacy.h \
 lib/elementary/elm_prefs_eo.h \
 lib/elementary/elm_prefs_eo.legacy.h \
+lib/elementary/elm_route_eo.h \
+lib/elementary/elm_route_eo.legacy.h \
 $(NULL)
 
 
