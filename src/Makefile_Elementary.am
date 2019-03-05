@@ -238,8 +238,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_diskselector.eo \
-	lib/elementary/elm_diskselector_item.eo \
 	lib/elementary/elm_fileselector_button.eo \
 	lib/elementary/elm_fileselector_entry.eo \
 	lib/elementary/elm_flipselector.eo \
@@ -343,6 +341,10 @@ lib/elementary/elm_ctxpopup_item_eo.c \
 lib/elementary/elm_dayselector_eo.legacy.c \
 lib/elementary/elm_dayselector_eo.c \
 lib/elementary/elm_dayselector_item_eo.c \
+lib/elementary/elm_diskselector_eo.legacy.c \
+lib/elementary/elm_diskselector_eo.c \
+lib/elementary/elm_diskselector_item_eo.legacy.c \
+lib/elementary/elm_diskselector_item_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -422,6 +424,10 @@ lib/elementary/elm_dayselector_eo.h \
 lib/elementary/elm_dayselector_eo.legacy.h \
 lib/elementary/elm_dayselector_item_eo.h \
 lib/elementary/elm_dayselector_item_eo.legacy.h \
+lib/elementary/elm_diskselector_eo.h \
+lib/elementary/elm_diskselector_eo.legacy.h \
+lib/elementary/elm_diskselector_item_eo.h \
+lib/elementary/elm_diskselector_item_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

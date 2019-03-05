@@ -9,8 +9,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_diskselector.eo.h"
-#include "elm_diskselector_item.eo.h"
+#include "elm_diskselector_eo.h"
+#include "elm_diskselector_item_eo.h"
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
 
@@ -1789,5 +1789,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_diskselector, Elm_Diskselector_Data)
 #define ELM_DISKSELECTOR_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_diskselector)
 
-#include "elm_diskselector.eo.c"
-#include "elm_diskselector_item.eo.c"
+#include "elm_diskselector_eo.c"
+#include "elm_diskselector_item_eo.c"
