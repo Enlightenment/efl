@@ -281,4 +281,4 @@ _elm_web_init(const char *engine)
 #undef ELM_WEB_CLASS
 #define ELM_WEB_CLASS elm_web_class_get()
 
-#include "elm_web.eo.c"
+#include "elm_web_eo.c"

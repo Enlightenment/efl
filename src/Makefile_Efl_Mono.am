@@ -169,7 +169,7 @@ eo_eolian_blacklisted_files = \
 lib/eo/efl_object_override.eo.cs
 
 elementary_eolian_blacklisted_files = \
-lib/elementary/elm_web.eo.cs \
+lib/elementary/elm_web_eo.cs \
 lib/elementary/elm_map_eo.cs \
 lib/elementary/elm_combobox.eo.cs \
 lib/elementary/elm_list_eo.cs \

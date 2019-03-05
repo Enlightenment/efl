@@ -12,7 +12,7 @@
 #define ELEMENTARY_BUILD
 #undef ELM_MODULE_HELPER_H
 #include "elm_module_helper.h"
-#include "elm_web_none.eo.h"
+#include "elm_web_none_eo.h"
 
 #define MY_CLASS ELM_WEB_CLASS
 
@@ -365,4 +365,4 @@ ewm_class_get(void)
 #define ELM_WEB_NONE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_web_none)
 
-#include "elm_web_none.eo.c"
+#include "elm_web_none_eo.c"

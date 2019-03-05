@@ -176,7 +176,6 @@ pub_eo_files = [
   'elm_atspi_bridge.eo',
   'elm_atspi_app_object.eo',
   'efl_ui_image_zoomable_pan.eo',
-  'elm_web.eo',
   'elm_widget_item.eo',
   'efl_ui_text_part.eo',
   'efl_ui_caching_factory.eo',
@@ -806,6 +805,8 @@ elementary_pub_headers = [
   'elm_view_form_eo.legacy.h',
   'elm_view_list_eo.h',
   'elm_view_list_eo.legacy.h',
+  'elm_web_eo.h',
+  'elm_web_eo.legacy.h',
 ]
 
 elementary_header_src = [

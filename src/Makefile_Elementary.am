@@ -146,7 +146,6 @@ elm_public_eolian_files += \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/efl_ui_image_zoomable_pan.eo \
-	lib/elementary/elm_web.eo \
 	lib/elementary/elm_widget_item.eo \
 	lib/elementary/elm_widget_item_container.eo \
 	$(NULL)
@@ -394,6 +393,8 @@ lib/elementary/elm_toolbar_item_eo.c \
 lib/elementary/elm_toolbar_item_eo.legacy.c \
 lib/elementary/elm_view_form_eo.c \
 lib/elementary/elm_view_list_eo.c \
+lib/elementary/elm_web_eo.c \
+lib/elementary/elm_web_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -605,6 +606,8 @@ lib/elementary/elm_view_form_eo.h \
 lib/elementary/elm_view_form_eo.legacy.h \
 lib/elementary/elm_view_list_eo.h \
 lib/elementary/elm_view_list_eo.legacy.h \
+lib/elementary/elm_web_eo.h \
+lib/elementary/elm_web_eo.legacy.h \
 $(NULL)
 
 
@@ -1686,13 +1689,10 @@ moduleweb_nonepkg_LTLIBRARIES = modules/elementary/web/none/module.la
 install_moduleweb_nonepkgLTLIBRARIES = install-moduleweb_nonepkgLTLIBRARIES
 $(install_moduleweb_nonepkgLTLIBRARIES): install-libLTLIBRARIES
 
-elm_web_none_eolian_files = modules/elementary/web/none/elm_web_none.eo
 
-elm_web_none_eolian_c = $(elm_web_none_eolian_files:%.eo=%.eo.c)
-elm_web_none_eolian_h = $(elm_web_none_eolian_files:%.eo=%.eo.h)
-
-EXTRA_DIST2 += $(elm_web_none_eolian_files)
-BUILT_SOURCES += $(elm_web_none_eolian_c) $(elm_web_none_eolian_h)
+EXTRA_DIST2 += \
+modules/elementary/web/none/elm_web_none_eo.c \
+modules/elementary/web/none/elm_web_none_eo.h
 
 modules_elementary_web_none_module_la_SOURCES = \
 	modules/elementary/web/none/elm_web_none.c
