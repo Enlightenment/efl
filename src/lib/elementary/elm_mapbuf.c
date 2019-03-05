@@ -10,7 +10,7 @@
 #include "elm_priv.h"
 #include "elm_widget_mapbuf.h"
 #include "elm_widget_container.h"
-#include "elm_mapbuf.eo.h"
+#include "elm_mapbuf_eo.h"
 
 #include "elm_mapbuf_part.eo.h"
 #include "elm_part_helper.h"
@@ -456,4 +456,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_mapbuf, "default")
    ELM_PART_CONTENT_DEFAULT_OPS(elm_mapbuf), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_mapbuf)
 
-#include "elm_mapbuf.eo.c"
+#include "elm_mapbuf_eo.c"
