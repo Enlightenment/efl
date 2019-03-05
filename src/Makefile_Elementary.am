@@ -187,7 +187,6 @@ elm_private_eolian_files = \
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
 	lib/elementary/elm_interface_fileselector.eo \
-	lib/elementary/elm_ctxpopup.eo \
 	lib/elementary/elm_dayselector.eo \
 	lib/elementary/elm_entry.eo \
 	lib/elementary/elm_fileselector.eo \
@@ -218,7 +217,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_dayselector_item.eo \
 	lib/elementary/elm_flipselector_item.eo \
 	lib/elementary/elm_menu_item.eo \
-	lib/elementary/elm_ctxpopup_item.eo \
 	lib/elementary/elm_index_item.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
 	lib/elementary/elm_genlist_item.eo \
@@ -340,6 +338,10 @@ lib/elementary/elm_color_item_eo.c \
 lib/elementary/elm_colorselector_eo.legacy.c \
 lib/elementary/elm_colorselector_eo.c \
 lib/elementary/elm_conformant_eo.c \
+lib/elementary/elm_ctxpopup_eo.legacy.c \
+lib/elementary/elm_ctxpopup_eo.c \
+lib/elementary/elm_ctxpopup_item_eo.legacy.c \
+lib/elementary/elm_ctxpopup_item_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -411,6 +413,10 @@ lib/elementary/elm_colorselector_eo.h \
 lib/elementary/elm_colorselector_eo.legacy.h \
 lib/elementary/elm_conformant_eo.h \
 lib/elementary/elm_conformant_eo.legacy.h \
+lib/elementary/elm_ctxpopup_eo.h \
+lib/elementary/elm_ctxpopup_eo.legacy.h \
+lib/elementary/elm_ctxpopup_item_eo.h \
+lib/elementary/elm_ctxpopup_item_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

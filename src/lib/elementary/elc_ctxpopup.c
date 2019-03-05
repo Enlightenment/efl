@@ -13,8 +13,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
-#include "elm_ctxpopup_item.eo.h"
-#include "elm_ctxpopup.eo.h"
+#include "elm_ctxpopup_item_eo.h"
+#include "elm_ctxpopup_eo.h"
 
 #include "elm_ctxpopup_part.eo.h"
 #include "elm_part_helper.h"
@@ -1560,5 +1560,5 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_ctxpopup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 
-#include "elm_ctxpopup_item.eo.c"
-#include "elm_ctxpopup.eo.c"
+#include "elm_ctxpopup_item_eo.c"
+#include "elm_ctxpopup_eo.c"

@@ -6,8 +6,8 @@
 #include "elm_module_helper.h"
 #include "elm_widget.h"
 #include "efl_ui_clock_private.h"
-#include "elm_ctxpopup_item.eo.h"
-#include "elm_ctxpopup.eo.h"
+#include "elm_ctxpopup_item_eo.h"
+#include "elm_ctxpopup_eo.h"
 
 #define ELEMENTARY_BUILD
 #undef ELM_MODULE_HELPER_H
