@@ -295,7 +295,7 @@ EAPI Eina_Bool ecore_timer_freeze_get(Ecore_Timer *timer);
  */
 EAPI void ecore_timer_thaw(Ecore_Timer *timer);
 
-#include "efl_loop_timer.eo.legacy.h"
+#include "efl_loop_timer_eo.legacy.h"
 
 /**
  * @}

@@ -670,3 +670,4 @@ _efl_loop_timer_set(Efl_Loop_Timer_Data *timer, double at, double in)
 }
 
 #include "efl_loop_timer.eo.c"
+#include "efl_loop_timer_eo.legacy.c"
