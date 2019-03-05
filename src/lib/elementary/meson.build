@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_systray.eo',
   'elm_widget_item_static_focus.eo',
   'elm_ctxpopup_part.eo',
   'elm_dayselector_part.eo',
@@ -799,6 +798,8 @@ elementary_pub_headers = [
   'elm_sys_notify_eo.legacy.h',
   'elm_sys_notify_interface_eo.h',
   'elm_sys_notify_interface_eo.legacy.h',
+  'elm_systray_eo.h',
+  'elm_systray_eo.legacy.h',
 ]
 
 elementary_header_src = [

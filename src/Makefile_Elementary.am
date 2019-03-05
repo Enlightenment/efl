@@ -180,7 +180,6 @@ elm_private_eolian_files = \
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/elm_systray.eo \
 	lib/elementary/elm_widget_item_static_focus.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
 	lib/elementary/elm_dayselector_part.eo \
@@ -390,6 +389,8 @@ lib/elementary/elm_sys_notify_eo.c \
 lib/elementary/elm_sys_notify_eo.legacy.c \
 lib/elementary/elm_sys_notify_interface_eo.c \
 lib/elementary/elm_sys_notify_interface_eo.legacy.c \
+lib/elementary/elm_systray_eo.c \
+lib/elementary/elm_systray_eo.legacy.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -587,6 +588,8 @@ lib/elementary/elm_sys_notify_eo.h \
 lib/elementary/elm_sys_notify_eo.legacy.h \
 lib/elementary/elm_sys_notify_interface_eo.h \
 lib/elementary/elm_sys_notify_interface_eo.legacy.h \
+lib/elementary/elm_systray_eo.h \
+lib/elementary/elm_systray_eo.legacy.h \
 $(NULL)
 
 
