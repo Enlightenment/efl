@@ -22,7 +22,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_separator.eo',
   'elm_slideshow.eo',
   'elm_slideshow_item.eo',
   'elm_table.eo',
@@ -790,6 +789,8 @@ elementary_pub_headers = [
   'elm_segment_control_eo.legacy.h',
   'elm_segment_control_item_eo.h',
   'elm_segment_control_item_eo.legacy.h',
+  'elm_separator_eo.h',
+  'elm_separator_eo.legacy.h',
 ]
 
 elementary_header_src = [

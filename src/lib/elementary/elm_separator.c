@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_separator.eo.h"
+#include "elm_separator_eo.h"
 #include "elm_widget_separator.h"
 #include "elm_widget_layout.h"
 
@@ -104,4 +104,4 @@ _elm_separator_class_constructor(Efl_Class *klass)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_separator), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_separator)
 
-#include "elm_separator.eo.c"
+#include "elm_separator_eo.c"

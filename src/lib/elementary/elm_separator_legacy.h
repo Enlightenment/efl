@@ -9,4 +9,4 @@
  */
 EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
 
-#include "elm_separator.eo.legacy.h"
+#include "elm_separator_eo.legacy.h"
