@@ -21,7 +21,6 @@ if get_option('edje-sound-and-video')
 endif
 
 pub_legacy_eo_files = [
-  'edje_edit.eo',
   'efl_layout_calc.eo',
   'efl_layout_signal.eo',
   'efl_layout_group.eo',
@@ -50,16 +49,6 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
-  pub_eo_file_target += custom_target('eolian_gen_legacy_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.legacy.h'],
-    depfile : eo_file + '.legacy.d',
-    install : true,
-    install_dir : dir_package_include,
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.d'),
-                           '-gld', '@INPUT@'])
 endforeach
 
 pub_eo_types_files = [
@@ -105,6 +94,8 @@ edje_header_src = [
   'Edje_Eo.h',
   'Edje_Legacy.h',
   'Edje_Edit.h',
+  'edje_edit_eo.h',
+  'edje_edit_eo.legacy.h',
   'efl_layout_group_eo.legacy.h',
   'efl_canvas_layout_eo.legacy.h',
 ]

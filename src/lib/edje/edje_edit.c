@@ -16751,4 +16751,4 @@ edje_edit_print_internal_status(Evas_Object *obj)
 #define EDJE_EDIT_EXTRA_OPS \
    EFL_CANVAS_GROUP_DEL_OPS(edje_edit)
 
-#include "edje_edit.eo.c"
+#include "edje_edit_eo.c"
