@@ -30,8 +30,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_naviframe.eo',
-  'elm_naviframe_item.eo',
   'elm_photo.eo',
   'elm_prefs.eo',
   'elm_segment_control.eo',
@@ -775,6 +773,10 @@ elementary_pub_headers = [
   'elm_multibuttonentry_eo.legacy.h',
   'elm_multibuttonentry_item_eo.h',
   'elm_multibuttonentry_item_eo.legacy.h',
+  'elm_naviframe_eo.h',
+  'elm_naviframe_eo.legacy.h',
+  'elm_naviframe_item_eo.h',
+  'elm_naviframe_item_eo.legacy.h',
 ]
 
 elementary_header_src = [
