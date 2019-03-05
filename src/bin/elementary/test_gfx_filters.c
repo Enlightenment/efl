@@ -307,7 +307,7 @@ _flip_click(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *flip = efl_key_wref_get(win, "flip");
 
    /* FIXME: The flip APIs don't make sense for N items (front!?) */
-   efl_ui_flip_go(flip, EFL_UI_FLIP_CROSS_FADE);
+   efl_ui_flip_go(flip, EFL_UI_FLIP_MODE_CROSS_FADE);
 }
 
 static void

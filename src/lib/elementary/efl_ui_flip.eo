@@ -3,7 +3,6 @@ import efl_ui_direction;
 enum Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
-   legacy: efl_ui_flip;
    rotate_y_center_axis, [[Rotate Y center axis flip mode]]
    rotate_x_center_axis, [[Rotate X center axis flip mode]]
    rotate_xz_center_axis, [[Rotate XZ center axis flip mode]]

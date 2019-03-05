@@ -2350,7 +2350,7 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
 
 #include "efl_ui_flip.eo.c"
 
-#include "efl_ui_flip_legacy.eo.h"
+#include "efl_ui_flip_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_flip"
 
@@ -2375,4 +2375,4 @@ elm_flip_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_FLIP_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_flip_legacy.eo.c"
+#include "efl_ui_flip_legacy_eo.c"
