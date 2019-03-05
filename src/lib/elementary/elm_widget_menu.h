@@ -3,8 +3,8 @@
 
 #include "Elementary.h"
 
-#include "elm_menu.eo.h"
-#include "elm_menu_item.eo.h"
+#include "elm_menu_eo.h"
+#include "elm_menu_item_eo.h"
 #include "elm_hover_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR

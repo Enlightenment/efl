@@ -1461,5 +1461,5 @@ _elm_menu_efl_object_provider_find(const Eo *obj, Elm_Menu_Data *pd, const Efl_O
 #define ELM_MENU_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_menu)
 
-#include "elm_menu_item.eo.c"
-#include "elm_menu.eo.c"
+#include "elm_menu_item_eo.c"
+#include "elm_menu_eo.c"
