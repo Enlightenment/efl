@@ -8,7 +8,7 @@
 
 #include <Elementary.h>
 #include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_gengrid_eo.h"
 #include "elm_priv.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
 

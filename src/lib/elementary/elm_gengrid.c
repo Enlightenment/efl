@@ -15,9 +15,9 @@
 #include "elm_interface_scrollable.h"
 #include "efl_ui_focus_parent_provider_gen.eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
-#include "elm_gengrid_item.eo.h"
-#include "elm_gengrid_pan.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_gengrid_item_eo.h"
+#include "elm_gengrid_pan_eo.h"
+#include "elm_gengrid_eo.h"
 
 #define MY_PAN_CLASS ELM_GENGRID_PAN_CLASS
 
@@ -2307,7 +2307,7 @@ _elm_gengrid_pan_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elm_gengrid_pan.eo.c"
+#include "elm_gengrid_pan_eo.c"
 
 static void
 _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
@@ -5865,5 +5865,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_gengrid, Elm_Gengrid_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_gengrid), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gengrid)
 
-#include "elm_gengrid.eo.c"
-#include "elm_gengrid_item.eo.c"
+#include "elm_gengrid_eo.c"
+#include "elm_gengrid_item_eo.c"

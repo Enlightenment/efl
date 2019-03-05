@@ -24,7 +24,7 @@
 #include "elm_entry_eo.h"
 #include "elm_fileselector_eo.h"
 #include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_gengrid_eo.h"
 
 #include "elm_fileselector_part.eo.h"
 #include "elm_part_helper.h"
