@@ -12,7 +12,7 @@
 #include "elm_widget_actionslider.h"
 #include "elm_widget_layout.h"
 
-#include "elm_actionslider.eo.h"
+#include "elm_actionslider_eo.h"
 
 #include "elm_actionslider_part.eo.h"
 #include "elm_part_helper.h"
@@ -664,4 +664,4 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_actionslider), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_actionslider)
 
-#include "elm_actionslider.eo.c"
+#include "elm_actionslider_eo.c"

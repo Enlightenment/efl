@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object                *elm_actionslider_add(Evas_Object *parent);
 
-#include "elm_actionslider.eo.legacy.h"
+#include "elm_actionslider_eo.legacy.h"

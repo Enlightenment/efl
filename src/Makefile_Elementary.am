@@ -249,7 +249,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_actionslider.eo \
 	lib/elementary/elm_box.eo \
 	lib/elementary/elm_bubble.eo \
 	lib/elementary/elm_diskselector.eo \
@@ -332,6 +331,8 @@ lib/elementary/efl_ui_win_legacy_eo.c \
 lib/elementary/efl_ui_win_socket_legacy_eo.c \
 lib/elementary/elm_access_eo.c \
 lib/elementary/elm_access_eo.legacy.c \
+lib/elementary/elm_actionslider_eo.c \
+lib/elementary/elm_actionslider_eo.legacy.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -382,6 +383,8 @@ lib/elementary/efl_ui_win_socket_legacy_eo.h \
 lib/elementary/efl_ui_win_socket_legacy_eo.legacy.h \
 lib/elementary/elm_access_eo.h \
 lib/elementary/elm_access_eo.legacy.h \
+lib/elementary/elm_actionslider_eo.h \
+lib/elementary/elm_actionslider_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \
