@@ -3213,5 +3213,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_list, Elm_List_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_list), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_list)
 
-#include "elm_list.eo.c"
-#include "elm_list_item.eo.c"
+#include "elm_list_eo.c"
+#include "elm_list_item_eo.c"

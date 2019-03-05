@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_list.eo',
   'elm_map.eo',
   'elm_map_pan.eo',
   'elm_menu.eo',
@@ -17,7 +16,6 @@ pub_legacy_eo_files = [
   'elm_systray.eo',
   'elm_menu_item.eo',
   'elm_widget_item_static_focus.eo',
-  'elm_list_item.eo',
   'elm_popup_item.eo',
   'elm_ctxpopup_part.eo',
   'elm_dayselector_part.eo',
@@ -766,6 +764,10 @@ elementary_pub_headers = [
   'elm_inwin_eo.legacy.h',
   'elm_label_eo.h',
   'elm_label_eo.legacy.h',
+  'elm_list_eo.h',
+  'elm_list_eo.legacy.h',
+  'elm_list_item_eo.h',
+  'elm_list_item_eo.legacy.h',
 ]
 
 elementary_header_src = [

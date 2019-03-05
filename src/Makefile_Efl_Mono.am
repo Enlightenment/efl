@@ -172,7 +172,7 @@ elementary_eolian_blacklisted_files = \
 lib/elementary/elm_web.eo.cs \
 lib/elementary/elm_map.eo.cs \
 lib/elementary/elm_combobox.eo.cs \
-lib/elementary/elm_list.eo.cs \
+lib/elementary/elm_list_eo.cs \
 lib/elementary/elm_genlist_eo.cs \
 lib/elementary/elm_view_list.eo.cs \
 lib/elementary/elm_genlist_item_eo.cs \
