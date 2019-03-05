@@ -285,8 +285,8 @@ EFL_START_TEST(test_efl_access_object_relationship_append)
    Eina_Iterator *it;
    unsigned int i = 0;
 
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_win);
    it = efl_access_object_relations_get(g_btn);
 
    ck_assert(it != NULL);
@@ -296,9 +296,9 @@ EFL_START_TEST(test_efl_access_object_relationship_append)
    {
       i++;
 
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_TO)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO)
         rel_to = rel;
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_FROM)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM)
         rel_from = rel;
    }
 
@@ -312,8 +312,8 @@ EFL_START_TEST(test_efl_access_object_relationship_append)
    eina_iterator_free(it);
 
    /* Check if append do not procude duplicated relations */
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_win);
    it = efl_access_object_relations_get(g_btn); i = 0;
 
    rel_to = rel_from = NULL;
@@ -321,9 +321,9 @@ EFL_START_TEST(test_efl_access_object_relationship_append)
    {
       i++;
 
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_TO)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO)
         rel_to = rel;
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_FROM)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM)
         rel_from = rel;
    }
 
@@ -350,9 +350,9 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    unsigned int i = 0;
 
    /* Test if removal of single relationship works */
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
-   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_win);
+   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
    it = efl_access_object_relations_get(g_btn);
 
    ck_assert(it != NULL);
@@ -362,9 +362,9 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    {
       i++;
 
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_TO)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO)
         rel_to = rel;
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_FROM)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM)
         rel_from = rel;
    }
 
@@ -377,9 +377,9 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    eina_iterator_free(it);
 
    /* Test if removal of type relationship works */
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
-   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, NULL);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_win);
+   efl_access_object_relationship_remove(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, NULL);
    it = efl_access_object_relations_get(g_btn); i = 0;
 
    rel_to = rel_from = NULL;
@@ -387,9 +387,9 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    {
       i++;
 
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_TO)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO)
         rel_to = rel;
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_FROM)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM)
         rel_from = rel;
    }
 
@@ -400,8 +400,8 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    eina_iterator_free(it);
 
    /* Test if relationship is implicity removed when object is deleted */
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_bg);
    efl_del(g_bg);
    it = efl_access_object_relations_get(g_btn); i = 0;
 
@@ -410,9 +410,9 @@ EFL_START_TEST(test_efl_access_object_relationship_remove)
    {
       i++;
 
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_TO)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO)
         rel_to = rel;
-      if (rel->type == EFL_ACCESS_RELATION_FLOWS_FROM)
+      if (rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM)
         rel_from = rel;
    }
 
@@ -430,20 +430,20 @@ EFL_START_TEST(test_efl_access_object_relationships_clear)
 
    generate_app();
 
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_bg);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_TO, g_win);
-   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_FLOWS_FROM, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_bg);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_TO, g_win);
+   efl_access_object_relationship_append(g_btn, EFL_ACCESS_RELATION_TYPE_FLOWS_FROM, g_win);
 
    efl_access_object_relationships_clear(g_btn);
 
    it = efl_access_object_relations_get(g_btn);
    EINA_ITERATOR_FOREACH(it, rel)
    {
-      ck_assert(!((rel->type == EFL_ACCESS_RELATION_FLOWS_TO) && eina_list_data_find(rel->objects, g_bg)));
-      ck_assert(!((rel->type == EFL_ACCESS_RELATION_FLOWS_FROM) && eina_list_data_find(rel->objects, g_bg)));
-      ck_assert(!((rel->type == EFL_ACCESS_RELATION_FLOWS_TO) && eina_list_data_find(rel->objects, g_win)));
-      ck_assert(!((rel->type == EFL_ACCESS_RELATION_FLOWS_FROM) && eina_list_data_find(rel->objects, g_win)));
+      ck_assert(!((rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO) && eina_list_data_find(rel->objects, g_bg)));
+      ck_assert(!((rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM) && eina_list_data_find(rel->objects, g_bg)));
+      ck_assert(!((rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_TO) && eina_list_data_find(rel->objects, g_win)));
+      ck_assert(!((rel->type == EFL_ACCESS_RELATION_TYPE_FLOWS_FROM) && eina_list_data_find(rel->objects, g_win)));
    }
    eina_iterator_free(it);
 }

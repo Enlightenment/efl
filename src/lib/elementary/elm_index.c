@@ -1304,7 +1304,7 @@ _elm_index_item_selected_set(Eo *eo_it,
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
      }
    else
      {

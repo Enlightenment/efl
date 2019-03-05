@@ -723,7 +723,7 @@ _item_unselect(Elm_Gen_Item *it)
         efl_event_callback_legacy_call
           (WIDGET(it), EFL_UI_EVENT_UNSELECTED, eo_it);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
      }
 }
 
@@ -2351,7 +2351,7 @@ _elm_gengrid_item_focused(Elm_Object_Item *eo_it)
 
    efl_event_callback_legacy_call(obj, ELM_GENGRID_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2382,7 +2382,7 @@ _elm_gengrid_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_GENGRID_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3958,7 +3958,7 @@ _item_select(Elm_Gen_Item *it)
      {
         efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
      }
 
    efl_ref(eo_it);
@@ -5481,10 +5481,10 @@ _elm_gengrid_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Gen_Item 
 
    sel = elm_obj_gengrid_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }
@@ -5692,10 +5692,10 @@ _elm_gengrid_efl_access_object_state_set_get(const Eo *obj, Elm_Gengrid_Data *sd
 
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_GENGRID_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MANAGES_DESCENDANTS);
 
    if (elm_gengrid_multi_select_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MULTISELECTABLE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MULTISELECTABLE);
 
    return ret;
 }

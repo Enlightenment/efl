@@ -1182,7 +1182,7 @@ _elm_list_item_focused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (WIDGET(it), ELM_LIST_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -1210,7 +1210,7 @@ _elm_list_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_LIST_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
 }
 
 /*
@@ -1449,7 +1449,7 @@ call:
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
    sd->last_selected_item = eo_it;
 
    _elm_list_unwalk(obj, sd);
@@ -1525,7 +1525,7 @@ _item_unselect(Elm_List_Item_Data *it)
           efl_event_callback_legacy_call
             (WIDGET(it), EFL_UI_EVENT_UNSELECTED, EO_OBJ(it));
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
      }
 
    _elm_list_unwalk(obj, sd);
@@ -2141,13 +2141,13 @@ _elm_list_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_List_Item_Da
    if (elm_object_item_disabled_get(eo_it))
      return ret;
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    sel = elm_obj_list_item_selected_get(eo_it);
    if (sel)
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
    else
-     STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_SELECTED);
+     STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }

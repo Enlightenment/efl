@@ -1298,7 +1298,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
         _return_key_enabled_check(obj);
         _validate(obj);
      }
@@ -1312,7 +1312,7 @@ _elm_entry_focus_update(Eo *obj, Elm_Entry_Data *sd)
             !edje_object_part_text_imf_context_get(sd->entry_edje, "elm.text"))
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
 
         if (_elm_config->selection_clear_enable)
           {
@@ -6159,7 +6159,7 @@ _elm_entry_efl_access_object_state_set_get(const Eo *obj, Elm_Entry_Data *_pd EI
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_ENTRY_CLASS));
 
    if (elm_entry_editable_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EDITABLE);
 
    return ret;
 }

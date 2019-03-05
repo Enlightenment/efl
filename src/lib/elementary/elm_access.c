@@ -1531,8 +1531,8 @@ _elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
    Elm_Access_Info *info = _elm_access_info_get(obj);
    if (info && !evas_object_visible_get(info->part_object))
      {
-        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_VISIBLE);
-        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_SHOWING);
+        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_TYPE_VISIBLE);
+        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_TYPE_SHOWING);
      }
 
    return ret;

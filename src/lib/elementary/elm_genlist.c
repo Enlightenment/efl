@@ -2896,7 +2896,7 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
      _elm_genlist_item_focus_update(it);
    efl_event_callback_legacy_call(obj, ELM_GENLIST_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2925,7 +2925,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_GENLIST_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3933,7 +3933,7 @@ _item_unselect(Elm_Gen_Item *it)
    efl_event_callback_legacy_call
      (WIDGET(it), EFL_UI_EVENT_UNSELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -4154,7 +4154,7 @@ _long_press_cb(void *data)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_ENABLED, "elm");
              if (_elm_config->atspi_mode)
-               efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_ANIMATED, EINA_TRUE);
+               efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_ANIMATED, EINA_TRUE);
           }
      }
 
@@ -5134,7 +5134,7 @@ _item_mouse_up_cb(void *data,
           }
         edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_DISABLED, "elm");
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_ANIMATED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_ANIMATED, EINA_FALSE);
         sd->reorder_it = sd->reorder_rel = NULL;
         elm_interface_scrollable_hold_set(sd->obj, EINA_FALSE);
         elm_interface_scrollable_bounce_allow_set
@@ -6117,7 +6117,7 @@ _item_select(Elm_Gen_Item *it)
    if ((it->base)->on_deletion) goto item_deleted;
    efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion)
      {
@@ -7203,7 +7203,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
               (WIDGET(it), ELM_GENLIST_EVENT_EXPANDED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_TRUE;
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_EXPANDED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_EXPANDED, EINA_TRUE);
      }
    else
      {
@@ -7213,7 +7213,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
               (WIDGET(it), ELM_GENLIST_EVENT_CONTRACTED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_FALSE;
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_EXPANDED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_EXPANDED, EINA_FALSE);
      }
 }
 
@@ -8531,16 +8531,16 @@ _elm_genlist_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Gen_Item 
 
    sel = elm_obj_genlist_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    if (elm_genlist_item_type_get(eo_it) == ELM_GENLIST_ITEM_TREE)
      {
-        STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EXPANDABLE);
+        STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EXPANDABLE);
         if (elm_genlist_item_expanded_get(eo_it))
-           STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EXPANDED);
+           STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EXPANDED);
      }
 
    return ret;
@@ -8793,13 +8793,13 @@ _elm_genlist_efl_access_object_state_set_get(const Eo *obj, Elm_Genlist_Data *sd
 
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_GENLIST_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MANAGES_DESCENDANTS);
 
    if (elm_genlist_multi_select_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MULTISELECTABLE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MULTISELECTABLE);
 
    if (elm_genlist_reorder_mode_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ANIMATED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_ANIMATED);
 
    return ret;
 }

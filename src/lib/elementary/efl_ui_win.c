@@ -1400,7 +1400,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    if (_elm_config->atspi_mode)
      {
         efl_access_window_activated_signal_emit(obj);
-        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_TRUE);
+        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_ACTIVE, EINA_TRUE);
      }
 
    /* do nothing */
@@ -1447,7 +1447,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    if (_elm_config->atspi_mode)
      {
         efl_access_window_deactivated_signal_emit(obj);
-        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_ACTIVE, EINA_FALSE);
+        efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_ACTIVE, EINA_FALSE);
      }
 
    if (sd->type != EFL_UI_WIN_TYPE_FAKE)
@@ -7276,7 +7276,7 @@ _on_atspi_bus_connected(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUS
                 target = efl_ui_focus_manager_focus_get(m);
              }
              if (target)
-               efl_access_state_changed_signal_emit(target, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+               efl_access_state_changed_signal_emit(target, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
           }
         else
           efl_access_window_deactivated_signal_emit(win);
@@ -7323,7 +7323,7 @@ _efl_ui_win_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Win_Data *sd E
    ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
    if (elm_win_focus_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ACTIVE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_ACTIVE);
 
    return ret;
 }

@@ -179,7 +179,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
    efl_event_callback_legacy_call(WIDGET(item), EFL_UI_EVENT_UNSELECTED, EO_OBJ(item));
    if (_elm_config->atspi_mode)
-    efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+    efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -657,7 +657,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -685,7 +685,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 /*
@@ -1095,7 +1095,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
      }
    efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-    efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+    efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
 }
 
 /* Send order signals when item is added/deleted.
@@ -3864,10 +3864,10 @@ _elm_toolbar_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Toolbar_I
 
    sel = elm_toolbar_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }

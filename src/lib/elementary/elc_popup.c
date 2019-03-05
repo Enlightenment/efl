@@ -1816,7 +1816,7 @@ _elm_popup_efl_access_object_state_set_get(const Eo *obj, Elm_Popup_Data *sd EIN
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MODAL);
 
    return ret;
 }

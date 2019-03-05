@@ -859,7 +859,7 @@ _elm_hover_efl_access_object_state_set_get(const Eo *obj, Elm_Hover_Data *pd EIN
    Efl_Access_State_Set states;
    states = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(states, EFL_ACCESS_STATE_TYPE_MODAL);
    return states;
 }
 

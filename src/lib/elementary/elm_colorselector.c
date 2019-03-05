@@ -1739,7 +1739,7 @@ _item_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
-                                                              EFL_ACCESS_STATE_CHECKED,
+                                                              EFL_ACCESS_STATE_TYPE_CHECKED,
                                                               EINA_TRUE);
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
@@ -2633,7 +2633,7 @@ _elm_color_item_efl_access_object_state_set_get(const Eo *obj, Elm_Color_Item_Da
    sel = elm_obj_color_item_selected_get(obj);
 
    if (sel)
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }

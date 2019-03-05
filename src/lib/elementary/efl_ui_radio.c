@@ -88,7 +88,7 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
           {
              if (sd->state)
                {
-                  efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_CHECKED, EINA_TRUE);
+                  efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_CHECKED, EINA_TRUE);
                }
           }
      }
@@ -359,7 +359,7 @@ _efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *
 
    ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }

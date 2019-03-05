@@ -495,7 +495,7 @@ _on_item_clicked(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(eo_it,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           EINA_TRUE);
 
    if (sd->selected_it)
@@ -1974,10 +1974,10 @@ _elm_multibuttonentry_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_
 
    sel = elm_obj_multibuttonentry_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EDITABLE);
 
    if (sel)
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }

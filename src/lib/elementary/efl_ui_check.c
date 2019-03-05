@@ -100,7 +100,7 @@ _activate(Evas_Object *obj)
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
@@ -112,7 +112,7 @@ _efl_ui_check_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Check_Data *
    states = efl_access_object_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
-       STATE_TYPE_SET(states, EFL_ACCESS_STATE_CHECKED);
+       STATE_TYPE_SET(states, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return states;
 }
@@ -233,7 +233,7 @@ _on_check_off(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
@@ -258,7 +258,7 @@ _on_check_on(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
