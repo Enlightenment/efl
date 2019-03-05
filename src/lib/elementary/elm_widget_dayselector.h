@@ -2,8 +2,8 @@
 #define ELM_WIDGET_DAYSELECTOR_H
 
 #include "Elementary.h"
-#include "elm_dayselector_item.eo.h"
-#include "elm_dayselector.eo.h"
+#include "elm_dayselector_item_eo.h"
+#include "elm_dayselector_eo.h"
 
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
