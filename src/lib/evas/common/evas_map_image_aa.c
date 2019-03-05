@@ -234,8 +234,12 @@ _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
         calc_horiz_coverage(spans, eidx, y, tx[0], tx[1]);
      }
    else
-     calc_vert_coverage(spans, eidx, (y + 1), (edge_diff.y + 2),
-                        (prev_dir & 0x00000001));
+     {
+        ++y;
+        if (y > yend) y = yend;
+        calc_vert_coverage(spans, eidx, y, (edge_diff.y + 2),
+                           (prev_dir & 0x00000001));
+     }
 }
 
 static void
