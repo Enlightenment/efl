@@ -5,10 +5,8 @@ mixin @beta Efl.Ui.Dnd_Container {
       @property drag_delay_time {
          [[The time since mouse down happens to drag starts.]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
             time: double; [[The drag delay time]]
