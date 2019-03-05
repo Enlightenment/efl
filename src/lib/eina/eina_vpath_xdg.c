@@ -51,7 +51,7 @@ eina_xdg_env_init(void)
    // $XDG_PUBLICSHARE_DIR="$HOME/Public"
    ENV_HOME_SET("XDG_PUBLIC_DIR", "Public", pub);
    // $XDG_TEMPLATES_DIR="$HOME/.Templates"
-   ENV_HOME_SET("XDG_TEMPLATES_DIR", ".Templates", templates);
+   ENV_HOME_SET("XDG_TEMPLATES_DIR", "Templates", templates);
    // $XDG_VIDEOS_DIR="$HOME/Videos"
    ENV_HOME_SET("XDG_VIDEOS_DIR", "Videos", videos);
    // $XDG_DATA_HOME defines the base directory relative to which user
