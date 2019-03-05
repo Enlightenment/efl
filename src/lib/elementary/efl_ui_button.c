@@ -410,7 +410,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_button.eo.c"
 
-#include "efl_ui_button_legacy.eo.h"
+#include "efl_ui_button_legacy_eo.h"
 #include "efl_ui_button_legacy_part.eo.h"
 
 EOLIAN static Eo *
@@ -507,4 +507,4 @@ elm_button_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_BUTTON_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_button_legacy.eo.c"
+#include "efl_ui_button_legacy_eo.c"

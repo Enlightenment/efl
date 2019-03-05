@@ -186,7 +186,6 @@ elm_private_eolian_files = \
 
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
-	lib/elementary/efl_ui_button_legacy.eo \
 	lib/elementary/efl_ui_check_legacy.eo \
 	lib/elementary/efl_ui_radio_legacy.eo \
 	lib/elementary/efl_ui_video_legacy.eo \
@@ -325,6 +324,7 @@ noinst_DATA += $(elm_legacy_eolian_eo_h)
 
 elm_legacy_eo_files = \
 lib/elementary/efl_ui_bg_legacy_eo.c \
+lib/elementary/efl_ui_button_legacy_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
@@ -334,6 +334,9 @@ elm_legacy_eo_headers = \
 lib/elementary/efl_ui_bg_eo.legacy.h \
 lib/elementary/efl_ui_bg_legacy_eo.h \
 lib/elementary/efl_ui_bg_legacy_eo.legacy.h \
+lib/elementary/efl_ui_button_eo.legacy.h \
+lib/elementary/efl_ui_button_legacy_eo.h \
+lib/elementary/efl_ui_button_legacy_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

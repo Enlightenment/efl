@@ -7,7 +7,6 @@ class @beta Efl.Ui.Button extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable
      Press it and run some function. It can contain a simple label and icon
      object and it also has an autorepeat feature.
    ]]
-   legacy_prefix: elm_button;
    implements {
       class.constructor;
       Efl.Object.constructor;

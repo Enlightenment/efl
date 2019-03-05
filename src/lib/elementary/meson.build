@@ -1,5 +1,4 @@
 pub_legacy_eo_files = [
-  'efl_ui_button_legacy.eo',
   'efl_ui_check_legacy.eo',
   'efl_ui_radio_legacy.eo',
   'efl_ui_video_legacy.eo',
@@ -697,6 +696,9 @@ elementary_pub_headers = [
   'efl_ui_bg_eo.legacy.h',
   'efl_ui_bg_legacy_eo.h',
   'efl_ui_bg_legacy_eo.legacy.h',
+  'efl_ui_button_eo.legacy.h',
+  'efl_ui_button_legacy_eo.h',
+  'efl_ui_button_legacy_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',
