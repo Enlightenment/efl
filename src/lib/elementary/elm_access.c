@@ -1543,4 +1543,4 @@ _elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
 #define ELM_ACCESS_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_access)
 
-#include "elm_access.eo.c"
+#include "elm_access_eo.c"

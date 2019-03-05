@@ -61,7 +61,7 @@
 # define EWAPI EAPI EAPI_WEAK
 
 # include "elm_widget.h"
-# include "elm_access.eo.h"
+# include "elm_access_eo.h"
 # include "elm_code_private.h"
 # include "efl_ui_focus_parent_provider.eo.h"
 # include "efl_ui_widget_focus_manager.eo.h"
