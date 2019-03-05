@@ -591,3 +591,4 @@ _efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd
 #include "efl_layout_calc.eo.c"
 #include "efl_layout_signal.eo.c"
 #include "efl_layout_group.eo.c"
+#include "efl_layout_group_eo.legacy.c"

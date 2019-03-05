@@ -104,7 +104,8 @@ edje_header_src = [
   'Edje_Common.h',
   'Edje_Eo.h',
   'Edje_Legacy.h',
-  'Edje_Edit.h'
+  'Edje_Edit.h',
+  'efl_layout_group_eo.legacy.h',
 ]
 
 edje_src = [

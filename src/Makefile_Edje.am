@@ -66,7 +66,11 @@ lib/edje/Edje.h \
 lib/edje/Edje_Common.h \
 lib/edje/Edje_Eo.h \
 lib/edje/Edje_Legacy.h \
-lib/edje/Edje_Edit.h
+lib/edje/Edje_Edit.h \
+lib/edje/efl_layout_group_eo.legacy.h
+
+EXTRA_DIST2 += \
+lib/edje/efl_layout_group_eo.legacy.c
 
 nodist_installed_edjemainheaders_DATA = \
                                         $(edje_eolian_h) \

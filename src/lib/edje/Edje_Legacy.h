@@ -3176,4 +3176,4 @@ typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
  */
 #include "efl_canvas_layout.eo.legacy.h"
 #include "edje_edit.eo.legacy.h"
-#include "efl_layout_group.eo.legacy.h"
+#include "efl_layout_group_eo.legacy.h"
