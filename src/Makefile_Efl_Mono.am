@@ -177,7 +177,7 @@ lib/elementary/elm_genlist_eo.cs \
 lib/elementary/elm_view_list.eo.cs \
 lib/elementary/elm_genlist_item_eo.cs \
 lib/elementary/elm_gengrid_eo.cs \
-lib/elementary/elm_glview.eo.cs
+lib/elementary/elm_glview_eo.cs
 
 efl_mono_blacklisted_files = \
 $(evas_eolian_blacklisted_files) \

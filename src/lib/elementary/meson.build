@@ -1,7 +1,6 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
   'elm_interface_fileselector.eo',
-  'elm_glview.eo',
   'elm_hover.eo',
   'elm_index.eo',
   'elm_label.eo',
@@ -753,6 +752,8 @@ elementary_pub_headers = [
   'elm_genlist_pan_eo.legacy.h',
   'elm_gesture_layer_eo.h',
   'elm_gesture_layer_eo.legacy.h',
+  'elm_glview_eo.h',
+  'elm_glview_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

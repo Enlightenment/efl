@@ -2,7 +2,7 @@
 #define ELM_WIDGET_GLVIEW_H
 
 #include "Elementary.h"
-#include "elm_glview.eo.h"
+#include "elm_glview_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

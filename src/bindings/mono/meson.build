@@ -85,7 +85,7 @@ blacklisted_files = [
   'elm_view_list.eo',
   'elm_genlist_item.eo',
   'elm_gengrid.eo',
-  'elm_glview.eo.cs'
+  'elm_glview_eo.cs'
 ]
 
 efl_mono_lib = library('eflcustomexportsmono',
