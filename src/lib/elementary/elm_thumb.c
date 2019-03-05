@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_thumb.eo.h"
+#include "elm_thumb_eo.h"
 #include "elm_widget_thumb.h"
 
 #define MY_CLASS_NAME "Elm_Thumb"
@@ -936,4 +936,4 @@ elm_thumb_reload(Evas_Object *obj)
 #define ELM_THUMB_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_thumb)
 
-#include "elm_thumb.eo.c"
+#include "elm_thumb_eo.c"

@@ -314,4 +314,4 @@ EAPI void elm_thumb_path_get(const Evas_Object *obj, const char **file, const ch
  */
 EAPI void elm_thumb_reload(Evas_Object *obj);
 
-#include "elm_thumb.eo.legacy.h"
+#include "elm_thumb_eo.legacy.h"

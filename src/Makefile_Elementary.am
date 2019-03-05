@@ -198,7 +198,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_thumb.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
@@ -392,6 +391,7 @@ lib/elementary/elm_systray_eo.c \
 lib/elementary/elm_systray_eo.legacy.c \
 lib/elementary/elm_table_eo.c \
 lib/elementary/elm_table_eo.legacy.c \
+lib/elementary/elm_thumb_eo.c \
 $(NULL)
 
 elm_legacy_eo_headers = \
@@ -593,6 +593,8 @@ lib/elementary/elm_systray_eo.h \
 lib/elementary/elm_systray_eo.legacy.h \
 lib/elementary/elm_table_eo.h \
 lib/elementary/elm_table_eo.legacy.h \
+lib/elementary/elm_thumb_eo.h \
+lib/elementary/elm_thumb_eo.legacy.h \
 $(NULL)
 
 
