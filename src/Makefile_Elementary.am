@@ -227,7 +227,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_grid.eo \
 	lib/elementary/elm_icon.eo \
 	lib/elementary/elm_inwin.eo \
 	lib/elementary/elm_mapbuf.eo \
@@ -355,6 +354,8 @@ lib/elementary/elm_gesture_layer_eo.legacy.c \
 lib/elementary/elm_gesture_layer_eo.c \
 lib/elementary/elm_glview_eo.legacy.c \
 lib/elementary/elm_glview_eo.c \
+lib/elementary/elm_grid_eo.legacy.c \
+lib/elementary/elm_grid_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -468,6 +469,8 @@ lib/elementary/elm_gesture_layer_eo.h \
 lib/elementary/elm_gesture_layer_eo.legacy.h \
 lib/elementary/elm_glview_eo.h \
 lib/elementary/elm_glview_eo.legacy.h \
+lib/elementary/elm_grid_eo.h \
+lib/elementary/elm_grid_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

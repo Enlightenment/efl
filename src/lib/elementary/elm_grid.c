@@ -6,7 +6,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include <elm_grid.eo.h>
+#include <elm_grid_eo.h>
 #include "elm_priv.h"
 #include "elm_widget_grid.h"
 
@@ -217,4 +217,4 @@ _elm_grid_class_constructor(Efl_Class *klass)
 #define ELM_GRID_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_grid)
 
-#include "elm_grid.eo.c"
+#include "elm_grid_eo.c"
