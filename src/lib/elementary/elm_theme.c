@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_icon.eo.h"
+#include "elm_icon_eo.h"
 
 #include "efl_ui_theme.eo.h"
 

@@ -9,7 +9,7 @@
 #include "elm_priv.h"
 #include "elm_widget_icon.h"
 #include "efl_ui_widget_image.h"
-#include "elm_icon.eo.h"
+#include "elm_icon_eo.h"
 
 #define NON_EXISTING (void *)-1
 
@@ -923,4 +923,4 @@ elm_icon_order_lookup_get(const Evas_Object *obj EINA_UNUSED)
 #define ELM_ICON_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_icon)
 
-#include "elm_icon.eo.c"
+#include "elm_icon_eo.c"

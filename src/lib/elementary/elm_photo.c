@@ -9,7 +9,7 @@
 #include "elm_priv.h"
 #include "elm_widget_photo.h"
 #include "elm_photo.eo.h"
-#include "elm_icon.eo.h"
+#include "elm_icon_eo.h"
 
 #define MY_CLASS ELM_PHOTO_CLASS
 

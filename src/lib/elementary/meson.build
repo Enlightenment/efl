@@ -40,7 +40,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_icon.eo',
   'elm_inwin.eo',
   'elm_mapbuf.eo',
   'elm_naviframe.eo',
@@ -760,6 +759,8 @@ elementary_pub_headers = [
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',
   'elm_hoversel_item_eo.legacy.h',
+  'elm_icon_eo.h',
+  'elm_icon_eo.legacy.h',
 ]
 
 elementary_header_src = [

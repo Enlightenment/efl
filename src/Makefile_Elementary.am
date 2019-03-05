@@ -226,7 +226,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_icon.eo \
 	lib/elementary/elm_inwin.eo \
 	lib/elementary/elm_mapbuf.eo \
 	lib/elementary/elm_naviframe.eo \
@@ -359,7 +358,9 @@ lib/elementary/elm_hover_eo.legacy.c \
 lib/elementary/elm_hover_eo.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
-lib/elementary/elm_hoversel_item_eo.legacy.c
+lib/elementary/elm_hoversel_item_eo.legacy.c \
+lib/elementary/elm_icon_eo.c \
+$(NULL)
 
 elm_legacy_eo_headers = \
 lib/elementary/efl_ui_bg_eo.legacy.h \
@@ -477,7 +478,10 @@ lib/elementary/elm_hover_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \
-lib/elementary/elm_hoversel_item_eo.legacy.h
+lib/elementary/elm_hoversel_item_eo.legacy.h \
+lib/elementary/elm_icon_eo.h \
+lib/elementary/elm_icon_eo.legacy.h \
+$(NULL)
 
 
 EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files)
