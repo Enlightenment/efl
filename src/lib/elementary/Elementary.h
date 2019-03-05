@@ -167,7 +167,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_layer.eo.h>
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
-# include <elm_spinner.eo.h>
+# include <elm_spinner_eo.h>
 #endif
 
 #include <elm_tooltip.h>

@@ -1722,4 +1722,4 @@ _elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_spinner), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
 
-#include "elm_spinner.eo.c"
+#include "elm_spinner_eo.c"

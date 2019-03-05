@@ -177,7 +177,6 @@ pub_eo_files = [
   'efl_ui_check_legacy_part.eo',
   'efl_ui_progressbar_legacy_part.eo',
   'elm_widget_item_container.eo',
-  'elm_spinner.eo',
   'elm_multibuttonentry_part.eo',
   'elm_interface_scrollable.eo',
   'elm_atspi_bridge.eo',
@@ -795,6 +794,8 @@ elementary_pub_headers = [
   'elm_slideshow_eo.legacy.h',
   'elm_slideshow_item_eo.h',
   'elm_slideshow_item_eo.legacy.h',
+  'elm_spinner_eo.h',
+  'elm_spinner_eo.legacy.h',
 ]
 
 elementary_header_src = [
