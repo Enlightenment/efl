@@ -779,7 +779,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
 
-#include "efl_ui_progressbar_legacy.eo.h"
+#include "efl_ui_progressbar_legacy_eo.h"
 #include "efl_ui_progressbar_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_progressbar"
@@ -1049,4 +1049,4 @@ elm_progressbar_value_get(const Evas_Object *obj)
    return efl_ui_range_value_get(obj);
 }
 
-#include "efl_ui_progressbar_legacy.eo.c"
+#include "efl_ui_progressbar_legacy_eo.c"
