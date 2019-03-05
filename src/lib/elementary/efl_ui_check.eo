@@ -7,7 +7,6 @@ class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Acti
    except they do not work as a group, but independently, and only toggle
    the value of a boolean between false and true.
    ]]
-   legacy_prefix: elm_check;
    methods {
       @property selected {
          [[The on/off state of the check object.]]

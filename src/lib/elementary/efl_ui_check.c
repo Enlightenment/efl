@@ -448,8 +448,9 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_check.eo.c"
+#include "efl_ui_check_eo.legacy.c"
 
-#include "efl_ui_check_legacy.eo.h"
+#include "efl_ui_check_legacy_eo.h"
 #include "efl_ui_check_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_check"
@@ -557,4 +558,4 @@ elm_check_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_CHECK_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_check_legacy.eo.c"
+#include "efl_ui_check_legacy_eo.c"

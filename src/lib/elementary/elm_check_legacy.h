@@ -52,5 +52,5 @@ EAPI void                        elm_check_state_set(Evas_Object *obj, Eina_Bool
 EAPI void                        elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
 
 #ifdef EFL_EO_API_SUPPORT
-# include "efl_ui_check.eo.legacy.h"
+# include "efl_ui_check_eo.legacy.h"
 #endif
