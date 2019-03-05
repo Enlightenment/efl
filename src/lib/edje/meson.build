@@ -106,6 +106,7 @@ edje_header_src = [
   'Edje_Legacy.h',
   'Edje_Edit.h',
   'efl_layout_group_eo.legacy.h',
+  'efl_canvas_layout_eo.legacy.h',
 ]
 
 edje_src = [

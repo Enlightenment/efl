@@ -587,6 +587,7 @@ _efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_layout_efl_object_dbg_info_get)
 
 #include "efl_canvas_layout.eo.c"
+#include "efl_canvas_layout_eo.legacy.c"
 #include "edje_global.eo.c"
 #include "efl_layout_calc.eo.c"
 #include "efl_layout_signal.eo.c"

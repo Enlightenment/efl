@@ -7,7 +7,6 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
                          Efl.Gfx.Size_Class
 {
    [[Edje object class]]
-   legacy_prefix: edje_object;
    event_prefix: efl_layout;
    data: Edje;
    methods {
@@ -35,7 +34,6 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
-         legacy: null;
          return: iterator<string> @owned; [[Part name iterator]]
       }
       @property seat {
