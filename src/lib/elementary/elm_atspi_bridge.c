@@ -4597,19 +4597,6 @@ _key_event_info_new(int event_type, const Ecore_Event_Key *data, Eo *bridge)
    return ret;
 }
 
-static void
-_key_event_info_free(Key_Event_Info *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   eina_stringshare_del(data->event.keyname);
-   eina_stringshare_del(data->event.key);
-   eina_stringshare_del(data->event.string);
-   eina_stringshare_del(data->event.compose);
-
-   free(data);
-}
-
 static short
 _ecore_modifiers_2_atspi(unsigned int modifiers)
 {
