@@ -632,4 +632,4 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, Elm_Label_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_label), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_label)
 
-#include "elm_label.eo.c"
+#include "elm_label_eo.c"

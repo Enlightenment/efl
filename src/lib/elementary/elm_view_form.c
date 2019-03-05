@@ -11,7 +11,7 @@
 #include "elm_priv.h"
 #include "elm_entry_eo.h"
 #include "elm_thumb.eo.h"
-#include "elm_label.eo.h"
+#include "elm_label_eo.h"
 
 #include <assert.h>
 

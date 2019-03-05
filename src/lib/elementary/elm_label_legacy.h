@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object                *elm_label_add(Evas_Object *parent);
 
-#include "elm_label.eo.legacy.h"
+#include "elm_label_eo.legacy.h"
