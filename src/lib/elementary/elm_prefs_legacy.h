@@ -61,7 +61,7 @@ EAPI Eina_Bool elm_prefs_file_set(Eo *obj, const char *file, const char *page);
  */
 EAPI Eina_Bool elm_prefs_file_get(const Eo *obj, const char **file, const char **page);
 
-#include "elm_prefs.eo.legacy.h"
+#include "elm_prefs_eo.legacy.h"
 /**
  * @}
  */
