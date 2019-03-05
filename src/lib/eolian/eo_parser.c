@@ -433,11 +433,12 @@ _struct_field_free(Eolian_Struct_Type_Field *def)
 
 static Eolian_Typedecl *
 parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
-             int line, int column, const char *freefunc)
+             Eina_Bool is_beta, int line, int column, const char *freefunc)
 {
    int bline = ls->line_number, bcolumn = ls->column;
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    def->is_extern = is_extern;
+   def->base.is_beta = is_beta;
    def->base.name = name;
    def->type = EOLIAN_TYPEDECL_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
@@ -491,11 +492,12 @@ _enum_field_free(Eolian_Enum_Type_Field *def)
 
 static Eolian_Typedecl *
 parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
-           int line, int column)
+           Eina_Bool is_beta, int line, int column)
 {
    int bline = ls->line_number, bcolumn = ls->column;
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    def->is_extern = is_extern;
+   def->base.is_beta = is_beta;
    def->base.name = name;
    def->type = EOLIAN_TYPEDECL_ENUM;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_enum_field_free));
@@ -747,11 +749,23 @@ parse_typedef(Eo_Lexer *ls)
    Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
-   if (ls->t.kw == KW_at_extern)
+   Eina_Bool has_extern = EINA_FALSE, has_beta = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
      {
+      case KW_at_extern:
+        CASE_LOCK(ls, extern, "extern qualifier");
         def->is_extern = EINA_TRUE;
         eo_lexer_get(ls);
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier");
+        def->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto tags_done;
      }
+tags_done:
    def->type = EOLIAN_TYPEDECL_ALIAS;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
@@ -780,11 +794,23 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
    Eolian_Variable *def = eo_lexer_variable_new(ls);
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
-   if (ls->t.kw == KW_at_extern)
+   Eina_Bool has_extern = EINA_FALSE, has_beta = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
      {
+      case KW_at_extern:
+        CASE_LOCK(ls, extern, "extern qualifier");
         def->is_extern = EINA_TRUE;
         eo_lexer_get(ls);
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier");
+        def->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto tags_done;
      }
+tags_done:
    def->type = global ? EOLIAN_VAR_GLOBAL : EOLIAN_VAR_CONSTANT;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
@@ -1189,7 +1215,7 @@ parse_property(Eo_Lexer *ls)
         break;
       case KW_at_beta:
         CASE_LOCK(ls, beta, "beta qualifier");
-        prop->is_beta = EINA_TRUE;
+        prop->base.is_beta = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
@@ -1255,10 +1281,23 @@ parse_function_pointer(Eo_Lexer *ls)
    eo_lexer_get(ls);
 
    def->type = EOLIAN_TYPEDECL_FUNCTION_POINTER;
-   def->is_extern = (ls->t.kw == KW_at_extern);
-   if (def->is_extern)
-     eo_lexer_get(ls);
-
+   Eina_Bool has_extern = EINA_FALSE, has_beta = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
+     {
+      case KW_at_extern:
+        CASE_LOCK(ls, extern, "extern qualifier");
+        def->is_extern = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier");
+        def->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      default:
+        goto tags_done;
+     }
+tags_done:
    parse_name(ls, buf);
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    eo_lexer_dtor_pop(ls);
@@ -1272,8 +1311,8 @@ parse_function_pointer(Eo_Lexer *ls)
    def->function_pointer = meth;
    eolian_object_ref(&meth->base);
 
-   meth->is_beta = (ls->t.kw == KW_at_beta);
-   if (meth->is_beta)
+   meth->base.is_beta = (ls->t.kw == KW_at_beta);
+   if (meth->base.is_beta)
      eo_lexer_get(ls);
 
    bline = ls->line_number;
@@ -1359,7 +1398,7 @@ parse_method(Eo_Lexer *ls)
         break;
       case KW_at_beta:
         CASE_LOCK(ls, beta, "beta qualifier");
-        meth->is_beta = EINA_TRUE;
+        meth->base.is_beta = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_pure_virtual:
@@ -1718,7 +1757,7 @@ parse_event(Eo_Lexer *ls)
         break;
       case KW_at_beta:
         CASE_LOCK(ls, beta, "beta qualifier")
-        ev->is_beta = EINA_TRUE;
+        ev->base.is_beta = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_hot:
@@ -2060,7 +2099,7 @@ parse_class(Eo_Lexer *ls, Eolian_Class_Type type)
    eo_lexer_context_push(ls);
    if (ls->t.kw == KW_at_beta)
      {
-        ls->klass->is_beta = EINA_TRUE;
+        ls->klass->base.is_beta = EINA_TRUE;
         eo_lexer_get(ls);
      }
    parse_name(ls, buf);
@@ -2212,11 +2251,15 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            const char *freefunc = NULL;
            Eina_Strbuf *buf;
            eo_lexer_get(ls);
-           Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE;
+           Eina_Bool has_extern = EINA_FALSE, has_free = EINA_FALSE, has_beta = EINA_FALSE;
            for (;;) switch (ls->t.kw)
              {
               case KW_at_extern:
                 CASE_LOCK(ls, extern, "@extern qualifier")
+                eo_lexer_get(ls);
+                break;
+              case KW_at_beta:
+                CASE_LOCK(ls, beta, "@beta qualifier")
                 eo_lexer_get(ls);
                 break;
               case KW_at_free:
@@ -2264,6 +2307,7 @@ postparams:
              {
                 Eolian_Typedecl *def = eo_lexer_typedecl_new(ls);
                 def->is_extern = has_extern;
+                def->base.is_beta = has_beta;
                 def->type = EOLIAN_TYPEDECL_STRUCT_OPAQUE;
                 if (freefunc)
                   {
@@ -2278,9 +2322,9 @@ postparams:
                 break;
              }
            if (is_enum)
-             parse_enum(ls, name, has_extern, line, col);
+             parse_enum(ls, name, has_extern, has_beta, line, col);
            else
-             parse_struct(ls, name, has_extern, line, col, freefunc);
+             parse_struct(ls, name, has_extern, has_beta, line, col, freefunc);
            break;
         }
       def:

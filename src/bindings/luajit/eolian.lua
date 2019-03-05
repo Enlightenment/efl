@@ -295,6 +295,7 @@ ffi.cdef [[
     const char *eolian_object_name_get(const Eolian_Object *obj);
     const char *eolian_object_short_name_get(const Eolian_Object *obj);
     Eina_Iterator *eolian_object_namespaces_get(const Eolian_Object *obj);
+    Eina_Bool eolian_object_is_beta(const Eolian_Object *obj);
     Eina_Bool eolian_state_directory_add(Eolian_State *state, const char *dir);
     Eina_Bool eolian_state_system_directory_add(Eolian_State *state);
     Eina_Iterator *eolian_state_eo_file_paths_get(const Eolian_State *state);
@@ -348,7 +349,6 @@ ffi.cdef [[
     const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
-    Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
     Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
     Eina_Bool eolian_function_is_function_pointer(const Eolian_Function *function_id);
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
@@ -385,7 +385,6 @@ ffi.cdef [[
     const Eolian_Class *eolian_event_class_get(const Eolian_Event *event);
     const Eolian_Documentation *eolian_event_documentation_get(const Eolian_Event *event);
     Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
-    Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
     Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
     Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
     const char *eolian_event_c_name_get(const Eolian_Event *event);
@@ -573,6 +572,10 @@ local object_idx, wrap_object = gen_wrap {
     namespaces_get = function(self)
         return iterator.String_Iterator(
             eolian.eolian_object_namespaces_get(cast_obj(self)))
+    end,
+
+    is_beta = function(self)
+        return eolian.eolian_object_is_beta(cast_obj(self)) ~= 0
     end
 }
 
@@ -1089,10 +1092,6 @@ M.Function = ffi.metatype("Eolian_Function", {
             return eolian.eolian_function_is_class(self) ~= 0
         end,
 
-        is_beta = function(self)
-            return eolian.eolian_function_is_beta(self) ~= 0
-        end,
-
         is_constructor = function(self, klass)
             return eolian.eolian_function_is_constructor(self, klass) ~= 0
         end,
@@ -1287,10 +1286,6 @@ ffi.metatype("Eolian_Event", {
             local v = eolian.eolian_event_c_name_get(self)
             if v == nil then return nil end
             return ffi_stringshare(v)
-        end,
-
-        is_beta = function(self)
-            return eolian.eolian_event_is_beta(self) ~= 0
         end,
 
         is_hot = function(self)

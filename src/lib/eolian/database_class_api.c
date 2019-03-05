@@ -228,10 +228,3 @@ eolian_class_c_data_type_get(const Eolian_Class *cl)
      *p = '_';
    return eina_stringshare_add(buf);
 }
-
-EAPI Eina_Bool
-eolian_class_is_beta(const Eolian_Class *cl)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(cl, EINA_FALSE);
-   return cl->is_beta;
-}
