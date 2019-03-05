@@ -22,8 +22,6 @@ pub_legacy_eo_files = [
   'elm_actionslider_part.eo',
   'elm_bubble_part.eo',
   'elm_fileselector_part.eo',
-  'elm_segment_control.eo',
-  'elm_segment_control_item.eo',
   'elm_separator.eo',
   'elm_slideshow.eo',
   'elm_slideshow_item.eo',
@@ -788,6 +786,10 @@ elementary_pub_headers = [
   'elm_route_eo.legacy.h',
   'elm_scroller_eo.h',
   'elm_scroller_eo.legacy.h',
+  'elm_segment_control_eo.h',
+  'elm_segment_control_eo.legacy.h',
+  'elm_segment_control_item_eo.h',
+  'elm_segment_control_item_eo.legacy.h',
 ]
 
 elementary_header_src = [

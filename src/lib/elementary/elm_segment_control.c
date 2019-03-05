@@ -10,8 +10,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_segment_control.eo.h"
-#include "elm_segment_control_item.eo.h"
+#include "elm_segment_control_eo.h"
+#include "elm_segment_control_item_eo.h"
 #include "elm_widget_segment_control.h"
 
 #define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
@@ -829,5 +829,5 @@ _elm_segment_control_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EIN
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_segment_control), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_segment_control)
 
-#include "elm_segment_control_item.eo.c"
-#include "elm_segment_control.eo.c"
+#include "elm_segment_control_item_eo.c"
+#include "elm_segment_control_eo.c"
