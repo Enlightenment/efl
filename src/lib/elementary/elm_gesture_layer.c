@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_gesture_layer.eo.h"
+#include "elm_gesture_layer_eo.h"
 
 #define MY_CLASS ELM_GESTURE_LAYER_CLASS
 
@@ -4175,4 +4175,4 @@ _elm_gesture_layer_class_constructor(Efl_Class *klass)
 #define ELM_GESTURE_LAYER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gesture_layer)
 
-#include "elm_gesture_layer.eo.c"
+#include "elm_gesture_layer_eo.c"
