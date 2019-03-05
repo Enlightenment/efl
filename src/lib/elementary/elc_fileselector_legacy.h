@@ -1,4 +1,4 @@
-#include "elm_interface_fileselector.eo.legacy.h"
+#include "elm_interface_fileselector_eo.legacy.h"
 /**
  * Add a new file selector widget to the given parent Elementary
  * (container) object

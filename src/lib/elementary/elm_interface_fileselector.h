@@ -2,10 +2,10 @@
 #define ELM_INTEFARCE_FILESELECTOR_H
 
 #ifdef EFL_EO_API_SUPPORT
-#include "elm_interface_fileselector.eo.h"
+#include "elm_interface_fileselector_eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_interface_fileselector.eo.legacy.h"
+#include "elm_interface_fileselector_eo.legacy.h"
 #endif
 
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \

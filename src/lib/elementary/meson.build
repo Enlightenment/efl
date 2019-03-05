@@ -1,6 +1,5 @@
 pub_legacy_eo_files = [
   'efl_ui_clock_legacy.eo',
-  'elm_interface_fileselector.eo',
   'elm_label.eo',
   'elm_list.eo',
   'elm_map.eo',
@@ -763,6 +762,8 @@ elementary_pub_headers = [
   'elm_index_eo.legacy.h',
   'elm_index_item_eo.h',
   'elm_index_item_eo.legacy.h',
+  'elm_interface_fileselector_eo.h',
+  'elm_interface_fileselector_eo.legacy.h',
 ]
 
 elementary_header_src = [

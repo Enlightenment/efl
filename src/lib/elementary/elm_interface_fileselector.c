@@ -8,4 +8,4 @@
 
 #include "elm_interface_fileselector.h"
 
-#include "elm_interface_fileselector.eo.c"
+#include "elm_interface_fileselector_eo.c"
