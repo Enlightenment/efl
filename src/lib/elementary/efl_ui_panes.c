@@ -716,8 +716,9 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
 #include "efl_ui_panes.eo.c"
+#include "efl_ui_panes_eo.legacy.c"
 
-#include "efl_ui_panes_legacy.eo.h"
+#include "efl_ui_panes_legacy_eo.h"
 #define MY_CLASS_NAME_LEGACY "elm_panes"
 
 static void
@@ -904,4 +905,4 @@ elm_panes_content_right_unset(Evas_Object *obj)
    return elm_layout_content_unset(obj, "right");
 }
 
-#include "efl_ui_panes_legacy.eo.c"
+#include "efl_ui_panes_legacy_eo.c"

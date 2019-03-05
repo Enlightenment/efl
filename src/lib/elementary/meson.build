@@ -1,7 +1,6 @@
 pub_legacy_eo_files = [
   'efl_ui_radio_legacy.eo',
   'efl_ui_video_legacy.eo',
-  'efl_ui_panes_legacy.eo',
   'efl_ui_win_legacy.eo',
   'efl_ui_progressbar_legacy.eo',
   'efl_ui_clock_legacy.eo',
@@ -709,6 +708,9 @@ elementary_pub_headers = [
   'efl_ui_image_zoomable_legacy_eo.legacy.h',
   'efl_ui_layout_legacy_eo.h',
   'efl_ui_layout_legacy_eo.legacy.h',
+  'efl_ui_panes_eo.legacy.h',
+  'efl_ui_panes_legacy_eo.h',
+  'efl_ui_panes_legacy_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

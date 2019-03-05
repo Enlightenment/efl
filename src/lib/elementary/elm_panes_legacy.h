@@ -220,4 +220,4 @@ EAPI void elm_panes_content_right_min_relative_size_set(Evas_Object *obj, double
  */
 EAPI double elm_panes_content_right_min_relative_size_get(const Evas_Object *obj);
 
-#include "efl_ui_panes.eo.legacy.h"
+#include "efl_ui_panes_eo.legacy.h"
