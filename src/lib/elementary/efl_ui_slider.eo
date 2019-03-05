@@ -3,7 +3,6 @@ class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Int
                      Efl.Access.Widget.Action
 {
    [[Elementary slider class]]
-   legacy_prefix: null;
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;

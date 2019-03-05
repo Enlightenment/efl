@@ -101,7 +101,6 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
          }
          get {
             [[This returns whether the entry's selection handlers are disabled.]]
-            legacy: null;
          }
          values {
             disabled: bool; [[If $true, the selection handlers are disabled.]]
