@@ -411,4 +411,4 @@ EAPI Elm_Fileselector_Sort elm_fileselector_sort_method_get(const Evas_Object *o
  */
 EAPI void                  elm_fileselector_sort_method_set(Evas_Object *obj, Elm_Fileselector_Sort sort);
 
-#include "elm_fileselector.eo.legacy.h"
+#include "elm_fileselector_eo.legacy.h"

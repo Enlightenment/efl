@@ -9,12 +9,12 @@
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
 #include "elm_entry_eo.h"
-#include "elm_fileselector.eo.h"
+#include "elm_fileselector_eo.h"
 
 #include "elm_fileselector_entry_part.eo.h"
 #include "elm_part_helper.h"
@@ -574,4 +574,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
-#include "elm_fileselector_entry.eo.c"
+#include "elm_fileselector_entry_eo.c"

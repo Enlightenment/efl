@@ -17,12 +17,12 @@
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
 #include "elm_entry_eo.h"
-#include "elm_fileselector.eo.h"
+#include "elm_fileselector_eo.h"
 #include "elm_genlist.eo.h"
 #include "elm_gengrid.eo.h"
 
@@ -3079,4 +3079,4 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, Elm_Fileselector_
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _elm_fileselector_efl_object_event_callback_legacy_call)
 
-#include "elm_fileselector.eo.c"
+#include "elm_fileselector_eo.c"

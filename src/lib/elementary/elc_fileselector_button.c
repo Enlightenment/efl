@@ -7,11 +7,11 @@
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
-#include "elm_fileselector.eo.h"
+#include "elm_fileselector_eo.h"
 
 #define MY_CLASS ELM_FILESELECTOR_BUTTON_CLASS
 
@@ -703,4 +703,4 @@ elm_fileselector_button_inwin_mode_get(const Eo *obj)
 #define ELM_FILESELECTOR_BUTTON_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_button)
 
-#include "elm_fileselector_button.eo.c"
+#include "elm_fileselector_button_eo.c"
