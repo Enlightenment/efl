@@ -10,4 +10,4 @@
  */
 EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
 
-#include "elm_bubble.eo.legacy.h"
+#include "elm_bubble_eo.legacy.h"

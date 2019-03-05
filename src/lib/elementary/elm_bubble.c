@@ -8,7 +8,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_bubble.eo.h"
+#include "elm_bubble_eo.h"
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
@@ -246,4 +246,4 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_bubble), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bubble)
 
-#include "elm_bubble.eo.c"
+#include "elm_bubble_eo.c"
