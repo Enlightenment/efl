@@ -2447,6 +2447,9 @@ _edje_part_pixel_adjust(Edje *ed,
           }
      }
 
+   if (params->final.w < 0 || params->final.h < 0)
+     ERR("The params final size became negative");
+
 }
 
 static void
