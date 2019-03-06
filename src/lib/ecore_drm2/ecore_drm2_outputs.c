@@ -1675,8 +1675,21 @@ ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, in
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->current_mode);
 
-   if (w) *w = output->current_mode->width;
-   if (h) *h = output->current_mode->height;
+   switch (output->rotation)
+     {
+      case ECORE_DRM2_ROTATION_90:
+      case ECORE_DRM2_ROTATION_270:
+        if (w) *w = output->current_mode->height;
+        if (h) *h = output->current_mode->width;
+        break;
+      case ECORE_DRM2_ROTATION_NORMAL:
+      case ECORE_DRM2_ROTATION_180:
+      default:
+        if (w) *w = output->current_mode->width;
+        if (h) *h = output->current_mode->height;
+        break;
+     }
+
    if (refresh) *refresh = output->current_mode->refresh;
    if (x) *x = output->x;
    if (y) *y = output->y;
