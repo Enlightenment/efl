@@ -337,6 +337,7 @@ lib/elementary/elm_calendar_eo.legacy.c \
 lib/elementary/elm_calendar_item_eo.c \
 lib/elementary/elm_clock_eo.c \
 lib/elementary/elm_clock_eo.legacy.c \
+lib/elementary/elm_code_widget_eo.legacy.c \
 lib/elementary/elm_hoversel_eo.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c
@@ -399,6 +400,7 @@ lib/elementary/elm_calendar_item_eo.h \
 lib/elementary/elm_calendar_item_eo.legacy.h \
 lib/elementary/elm_clock_eo.h \
 lib/elementary/elm_clock_eo.legacy.h \
+lib/elementary/elm_code_widget_eo.legacy.h \
 lib/elementary/elm_hoversel_eo.h \
 lib/elementary/elm_hoversel_eo.legacy.h \
 lib/elementary/elm_hoversel_item_eo.h \

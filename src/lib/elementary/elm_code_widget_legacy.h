@@ -10,4 +10,4 @@
  */
 EAPI Evas_Object *elm_code_widget_add(Evas_Object *parent, Elm_Code *code);
 
-#include "elm_code_widget.eo.legacy.h"
+#include "elm_code_widget_eo.legacy.h"

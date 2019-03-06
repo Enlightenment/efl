@@ -729,6 +729,7 @@ elementary_pub_headers = [
   'elm_calendar_item_eo.legacy.h',
   'elm_clock_eo.h',
   'elm_clock_eo.legacy.h',
+  'elm_code_widget_eo.legacy.h',
   'elm_hoversel_eo.h',
   'elm_hoversel_eo.legacy.h',
   'elm_hoversel_item_eo.h',

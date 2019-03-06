@@ -1,4 +1,15 @@
-import elm_interface_scrollable;
+/* FIXME: this widget should just implement a scroller */
+enum Elm.Code_Widget_Scroller_Policy
+{
+   [[Type that controls when scrollbars should appear.
+
+     See also @Elm.Interface_Scrollable.policy.set.
+   ]]
+   auto = 0, [[Show scrollbars as needed]]
+   on, [[Always show scrollbars]]
+   off, [[Never show scrollbars]]
+   last [[Sentinel value to indicate last enum field during iteration]]
+}
 
 /* FIXME: Those types make elm_code unusable from pure EO */
 struct @extern Elm.Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
@@ -7,8 +18,7 @@ struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts o
 class Elm.Code_Widget extends Efl.Ui.Layout_Base
 {
    [[Elementary code widget]]
-   eo_prefix: elm_obj_code_widget;
-   legacy_prefix: elm_code_widget;
+   eo_prefix: efl_ui_code_widget;
    methods {
       @property code {
          set {
@@ -70,8 +80,8 @@ class Elm.Code_Widget extends Efl.Ui.Layout_Base
            [[Get the widget's policy for scrollbar visibility.]]
          }
          values {
-            policy_h: Elm.Scroller.Policy; [[The horizontal scrollbar visibility policy]]
-            policy_v: Elm.Scroller.Policy; [[The vertical scrollbar visibility policy]]
+            policy_h: Elm.Code_Widget_Scroller_Policy; [[The horizontal scrollbar visibility policy]]
+            policy_v: Elm.Code_Widget_Scroller_Policy; [[The vertical scrollbar visibility policy]]
          }
       }
       @property tabstop {
