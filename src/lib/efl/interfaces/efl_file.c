@@ -40,7 +40,7 @@ _efl_file_load(Eo *obj, Efl_File_Data *pd)
      {
         Eina_File *f;
         f = eina_file_open(pd->vpath, EINA_FALSE);
-        if (!f) return errno;
+        if (!f) return errno ?: ENOENT;
         pd->file_opened = EINA_TRUE;
         pd->setting = 1;
         ret = efl_file_mmap_set(obj, f);
