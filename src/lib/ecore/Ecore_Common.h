@@ -1032,7 +1032,7 @@ enum _Ecore_Exe_Win32_Priority
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
 
-#include "ecore_exe.eo.legacy.h"
+#include "ecore_exe_eo.legacy.h"
 
 #define _ECORE_EXE_EO_CLASS_TYPE
 

@@ -2,7 +2,6 @@ ecore_deps = [intl]
 ecore_pub_deps = [eina, eo, efl]
 
 pub_legacy_eo_files = [
-  'ecore_exe.eo',
   'ecore_event_message.eo',
   'ecore_event_message_handler.eo',
   'efl_loop_timer.eo'
@@ -107,7 +106,9 @@ ecore_header_src = [
   'Ecore_Eo.h',
   'Efl_Core.h',
   'efl_general.h',
-  'Ecore_Getopt.h'
+  'Ecore_Getopt.h',
+  'ecore_exe_eo.h',
+  'ecore_exe_eo.legacy.h',
 ]
 
 ecore_src = [

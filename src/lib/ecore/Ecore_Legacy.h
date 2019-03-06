@@ -392,7 +392,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  * @{
  */
 
-#include "ecore_exe.eo.legacy.h"
+#include "ecore_exe_eo.legacy.h"
 
 /**
  * @}

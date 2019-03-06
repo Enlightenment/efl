@@ -5,7 +5,7 @@
 
 #include "ecore_internal.h"
 
-#include "ecore_exe.eo.h"
+#include "ecore_exe_eo.h"
 #include "ecore_event_message.eo.h"
 #include "ecore_event_message_handler.eo.h"
 

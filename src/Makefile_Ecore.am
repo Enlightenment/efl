@@ -6,7 +6,6 @@ ecore_eolian_files_priv = \
 	lib/ecore/ecore_event_message_handler.eo
 
 ecore_eolian_files_legacy = \
-	lib/ecore/ecore_exe.eo \
 	lib/ecore/efl_loop_timer.eo
 
 ecore_eolian_files_public = \
@@ -82,9 +81,17 @@ BUILT_SOURCES += \
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
+ecore_legacy_eo_c = \
+lib/ecore/ecore_exe_eo.c
+
+ecore_legacy_eo_h = \
+lib/ecore/ecore_exe_eo.h \
+lib/ecore/ecore_exe_eo.legacy.h
+
 EXTRA_DIST2 += $(ecore_eolian_files)
 EXTRA_DIST2 += $(ecore_eolian_files_priv)
 EXTRA_DIST2 += $(ecore_test_eolian_files)
+EXTRA_DIST2 += $(ecore_legacy_eo_c)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 
@@ -96,7 +103,8 @@ lib/ecore/Ecore_Legacy.h \
 lib/ecore/Ecore_Eo.h \
 lib/ecore/Efl_Core.h \
 lib/ecore/efl_general.h \
-lib/ecore/Ecore_Getopt.h
+lib/ecore/Ecore_Getopt.h \
+$(ecore_legacy_eo_h)
 
 nodist_installed_ecoremainheaders_DATA = \
                                          $(ecore_eolian_h)
