@@ -231,92 +231,52 @@ static void
 _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
 {
    Evas_Engine_Info_Drm *einfo;
-   Ecore_Evas_Engine_Drm_Data *edata;
-   Eina_Bool use_hw = EINA_FALSE;
-   int diff, rotations = 0, orient = 0;
-
-   if (ee->rotation == rotation) return;
+   int diff;
 
    einfo = (Evas_Engine_Info_Drm *)evas_engine_info_get(ee->evas);
    if (!einfo) return;
 
-   edata = ee->engine.data;
-
-   rotations = ecore_drm2_output_supported_rotations_get(edata->output);
-   if (rotations >= 0)
-     {
-        if (rotations & ECORE_DRM2_ROTATION_NORMAL)
-          {
-             if (rotation == 0)
-               {
-                  use_hw = EINA_TRUE;
-                  orient = ECORE_DRM2_ROTATION_NORMAL;
-               }
-          }
-
-        if (rotations & ECORE_DRM2_ROTATION_90)
-          {
-             if (rotation == 90)
-               {
-                  use_hw = EINA_TRUE;
-                  orient = ECORE_DRM2_ROTATION_90;
-               }
-          }
-
-        if (rotations & ECORE_DRM2_ROTATION_180)
-          {
-             if (rotation == 180)
-               {
-                  use_hw = EINA_TRUE;
-                  orient = ECORE_DRM2_ROTATION_180;
-               }
-          }
-
-        if (rotations & ECORE_DRM2_ROTATION_270)
-          {
-             if (rotation == 270)
-               {
-                  use_hw = EINA_TRUE;
-                  orient = ECORE_DRM2_ROTATION_270;
-               }
-          }
-     }
-
-   if (use_hw)
-     {
-        ecore_drm2_output_rotation_set(edata->output, orient);
-        ee->rotation = rotation;
-        return;
-     }
-
-   einfo->info.rotation = rotation;
-   if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-     ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
-
    diff = ee->rotation - rotation;
    if (diff < 0) diff = -diff;
 
+   einfo->info.rotation = rotation;
+
    if (diff != 180)
      {
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+
         if (!resize)
           {
-             int ww, hh;
-
-             if (ECORE_EVAS_PORTRAIT(ee))
+             if (!ee->prop.fullscreen)
+               {
+                  ee->expecting_resize.w = ee->h;
+                  ee->expecting_resize.h = ee->w;
+                  evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+               }
+             else
+               {
+                  if (PORTRAIT_CHECK(rotation))
+                    {
+                       evas_output_size_set(ee->evas, ee->req.w, ee->req.h);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.w, ee->req.h);
+                    }
+                  else
+                    {
+                       evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+                       evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
+                    }
+                  if (ee->func.fn_resize) ee->func.fn_resize(ee);
+               }
+             if (PORTRAIT_CHECK(rotation))
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
              else
                evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.h, ee->req.w);
-
-             ww = ee->h;
-             hh = ee->w;
-             ee->w = ww;
-             ee->h = hh;
-             ee->req.w = ww;
-             ee->req.h = hh;
           }
         else
           {
-             if ((rotation == 0) || (rotation == 180))
+             if (PORTRAIT_CHECK(rotation))
                {
                   evas_output_size_set(ee->evas, ee->w, ee->h);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -326,17 +286,25 @@ _drm_rotation_do(Ecore_Evas *ee, int rotation, int resize)
                   evas_output_size_set(ee->evas, ee->h, ee->w);
                   evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
                }
+             if (ee->func.fn_resize) ee->func.fn_resize(ee);
+             if (PORTRAIT_CHECK(rotation))
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+             else
+               evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
           }
+        ee->rotation = rotation;
      }
-
-   ee->rotation = rotation;
-
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
-
-   if (ECORE_EVAS_PORTRAIT(ee))
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
    else
-     evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+     {
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("evas_engine_info_set() for engine '%s' failed", ee->driver);
+        ee->rotation = rotation;
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        if (PORTRAIT_CHECK(rotation))
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+        else
+          evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
+     }
 }
 
 static void
