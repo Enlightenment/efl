@@ -1,12 +1,13 @@
 
 ### Library
 
+ecore_eolian_files_priv = \
+	lib/ecore/ecore_event_message.eo \
+	lib/ecore/ecore_event_message_handler.eo
+
 ecore_eolian_files_legacy = \
 	lib/ecore/ecore_exe.eo \
-	lib/ecore/ecore_event_message.eo \
-	lib/ecore/ecore_event_message_handler.eo \
-	lib/ecore/efl_loop_timer.eo \
-	tests/ecore/ecore_audio_out_test.eo
+	lib/ecore/efl_loop_timer.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_app.eo \
@@ -54,7 +55,8 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_core_command_line.eo
 
 ecore_test_eolian_files = \
-	tests/ecore/efl_app_test_cml.eo
+	tests/ecore/efl_app_test_cml.eo \
+ tests/ecore/ecore_audio_out_test.eo
 
 ecore_eolian_files = \
 	$(ecore_eolian_files_legacy) \
@@ -66,16 +68,22 @@ ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
 ecore_test_c = $(ecore_test_eolian_files:%.eo=%.eo.c)
 ecore_test_h = $(ecore_test_eolian_files:%.eo=%.eo.h)
 
+ecore_priv_c = $(ecore_eolian_files_priv:%.eo=%.eo.c)
+ecore_priv_h = $(ecore_eolian_files_priv:%.eo=%.eo.h)
+
 BUILT_SOURCES += \
                  $(ecore_eolian_c) \
                  $(ecore_eolian_h) \
                  $(ecore_test_c) \
-                 $(ecore_test_h)
+                 $(ecore_test_h) \
+                 $(ecore_priv_c) \
+                 $(ecore_priv_h)
 
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
 EXTRA_DIST2 += $(ecore_eolian_files)
+EXTRA_DIST2 += $(ecore_eolian_files_priv)
 EXTRA_DIST2 += $(ecore_test_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
