@@ -2648,10 +2648,10 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_level_get(const Eo *obj EINA_UNUSED, Efl
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Elm_Photocam_Zoom_Mode mode)
+_efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Efl_Ui_Zoom_Mode mode)
 {
    double tz;
-   if (sd->mode == mode) return;
+   if (sd->mode == (Elm_Photocam_Zoom_Mode)mode) return;
    sd->mode = mode;
 
    tz = sd->zoom;
@@ -2659,7 +2659,7 @@ _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_set(Eo *obj, Efl_Ui_Image_Zoomable_
    elm_photocam_zoom_set(obj, tz);
 }
 
-EOLIAN static Elm_Photocam_Zoom_Mode
+EOLIAN static Efl_Ui_Zoom_Mode
 _efl_ui_image_zoomable_efl_ui_zoom_zoom_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->mode;
