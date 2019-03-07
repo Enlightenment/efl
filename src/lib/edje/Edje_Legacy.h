@@ -1533,16 +1533,32 @@ EAPI double edje_object_base_scale_get(const Evas_Object *obj);
  * @{
  */
 
-/** Dragable properties values */
-typedef Efl_Ui_Drag_Dir Edje_Drag_Dir;
-/** Not dragable */
-#define EDJE_DRAG_DIR_NONE EFL_UI_DRAG_DIR_NONE
-/** Dragable horizontally */
-#define EDJE_DRAG_DIR_X     EFL_UI_DRAG_DIR_X
-/** Dragable verically */
-#define EDJE_DRAG_DIR_Y    EFL_UI_DRAG_DIR_Y
-/** Dragable in both directions */
-#define EDJE_DRAG_DIR_XY   EFL_UI_DRAG_DIR_XY
+/**
+ * @defgroup Edje_Part_Drag Edje Drag
+ *
+ * @brief Functions that deal with dragable parts.
+ *
+ * To create a movable part it must be declared as dragable
+ * in EDC file. To do so, one must define a "dragable" block inside
+ * the "part" block.
+ *
+ * These functions are used to set dragging properties to a
+ * part or get dragging information about it.
+ *
+ * @see @ref tutorial_edje_drag
+ *
+ * @ingroup Edje_Object_Part
+ *
+ * @{
+ */
+
+typedef enum _Edje_Drag_Dir
+{
+   EDJE_DRAG_DIR_NONE = 0,
+   EDJE_DRAG_DIR_X = 1,
+   EDJE_DRAG_DIR_Y = 2,
+   EDJE_DRAG_DIR_XY = 3
+} Edje_Drag_Dir;
 
 
 /**
