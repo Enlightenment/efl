@@ -21,16 +21,17 @@
 // Legacy types
 #include "elm_general.eot.h"
 
-// EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
-#include "efl_ui.eot.h"
 
-#define ELM_FOCUS_PREVIOUS EFL_UI_FOCUS_DIRECTION_PREVIOUS
-#define ELM_FOCUS_NEXT EFL_UI_FOCUS_DIRECTION_NEXT
-#define ELM_FOCUS_UP EFL_UI_FOCUS_DIRECTION_UP
-#define ELM_FOCUS_DOWN EFL_UI_FOCUS_DIRECTION_DOWN
-#define ELM_FOCUS_RIGHT EFL_UI_FOCUS_DIRECTION_RIGHT
-#define ELM_FOCUS_LEFT EFL_UI_FOCUS_DIRECTION_LEFT
-typedef Efl_Ui_Focus_Direction Elm_Focus_Direction;
+typedef enum
+{
+  ELM_FOCUS_PREVIOUS = 0, /**< previous direction */
+  ELM_FOCUS_NEXT = 1, /**< next direction */
+  ELM_FOCUS_UP = 2, /**< up direction */
+  ELM_FOCUS_DOWN = 3, /**< down direction */
+  ELM_FOCUS_RIGHT = 4, /**< right direction */
+  ELM_FOCUS_LEFT = 5, /**< left direction */
+  ELM_FOCUS_LAST = 6 /**< last direction */
+} Elm_Focus_Direction;
 
 /**
  * Defines couple of standard Evas_Object layers to be used
@@ -340,26 +341,50 @@ EAPI Elm_Process_State  elm_process_state_get(void);
 
 /* legacy to eo translation */
 
-typedef Efl_Ui_Focus_Autoscroll_Mode       Elm_Focus_Autoscroll_Mode;
-#define ELM_FOCUS_AUTOSCROLL_MODE_SHOW     EFL_UI_FOCUS_AUTOSCROLL_MODE_SHOW
-#define ELM_FOCUS_AUTOSCROLL_MODE_NONE     EFL_UI_FOCUS_AUTOSCROLL_MODE_NONE
-#define ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN EFL_UI_FOCUS_AUTOSCROLL_MODE_BRING_IN
+typedef enum
+{
+  ELM_FOCUS_AUTOSCROLL_MODE_SHOW = 0, /**< Directly show the focused region
+                                          * or item automatically. */
+  ELM_FOCUS_AUTOSCROLL_MODE_NONE, /**< Do not show the focused region or item
+                                      * automatically. */
+  ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN /**< Bring in the focused region or item
+                                         * automatically which might invole the
+                                         * scrolling. */
+} Elm_Focus_Autoscroll_Mode;
 
-typedef Efl_Ui_Softcursor_Mode             Elm_Softcursor_Mode;
-#define ELM_SOFTCURSOR_MODE_AUTO           EFL_UI_SOFTCURSOR_MODE_AUTO
-#define ELM_SOFTCURSOR_MODE_ON             EFL_UI_SOFTCURSOR_MODE_ON
-#define ELM_SOFTCURSOR_MODE_OFF            EFL_UI_SOFTCURSOR_MODE_OFF
+typedef enum
+{
+  ELM_SOFTCURSOR_MODE_AUTO = 0, /**< Auto-detect if a software cursor should
+                                    * be used (default). */
+  ELM_SOFTCURSOR_MODE_ON, /**< Always use a softcursor. */
+  ELM_SOFTCURSOR_MODE_OFF /**< Never use a softcursor. */
+} Elm_Softcursor_Mode;
 
-typedef Efl_Ui_Slider_Indicator_Visible_Mode       Elm_Slider_Indicator_Visible_Mode;
-#define ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT  EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_DRAG
-#define ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS   EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS
-#define ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS
-#define ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE     EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE
+typedef enum
+{
+  ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT = 0, /**< show indicator on mouse
+                                                     * down or change in slider
+                                                     * value */
+  ELM_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, /**< Always show the indicator.
+                                                */
+  ELM_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, /**< Show the indicator on
+                                                  * focus */
+  ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE /**< Never show the indicator */
+} Elm_Slider_Indicator_Visible_Mode;
 
-typedef Efl_Ui_Focus_Move_Policy           Elm_Focus_Move_Policy;
-#define ELM_FOCUS_MOVE_POLICY_CLICK        EFL_UI_FOCUS_MOVE_POLICY_CLICK
-#define ELM_FOCUS_MOVE_POLICY_IN           EFL_UI_FOCUS_MOVE_POLICY_IN
-#define ELM_FOCUS_MOVE_POLICY_KEY_ONLY     EFL_UI_FOCUS_MOVE_POLICY_KEY_ONLY
+typedef enum
+{
+  ELM_FOCUS_MOVE_POLICY_CLICK = 0, /**< Move focus by mouse click or touch.
+                                       * Elementary focus is set on mouse click
+                                       * and this is checked at mouse up time.
+                                       * (default) */
+  ELM_FOCUS_MOVE_POLICY_IN, /**< Move focus by mouse in. Elementary focus is
+                                * set on mouse move when the mouse pointer is
+                                * moved into an object. */
+  ELM_FOCUS_MOVE_POLICY_KEY_ONLY /**< Move focus by key. Elementary focus is
+                                     * set on key input like Left, Right, Up,
+                                     * Down, Tab, or Shift+Tab. */
+} Elm_Focus_Move_Policy;
 
 /**
  * @}
