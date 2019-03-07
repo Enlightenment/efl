@@ -361,30 +361,23 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                $false otherwise]]
          }
       }
-      /* Focus Manager API */
       focus_state_apply @protected {
-         [[Register focus with the given configuration.
+         [[Apply a new focus state on the widget.
 
-           The implementation can feel free to change the logical flag as it
-           wants, but other than that it should strictly keep the configuration.
+          This method is called internally by @Efl.Ui.Widget. Override it to change how a widget interacts with its focus manager.
+          If a widget desires to change the applied configuration, it has to modify $configured_state in addition to any internal changes.
 
-           The implementation in elm.widget updates the current state into what
-           is passed as configured state, respecting manager changes,
-           registeration and unregistration based on if it should be registered
-           or unregistered.
-
-           A manager field that is $null means that the widget should not or was
-           not registered.
+          The default implementation (when this method is not overridden) applies $configured_state using the $manager contained inside.
          ]]
          params {
             @in current_state : Efl.Ui.Widget_Focus_State;
-               [[The focus manager to register with.]]
+               [[The current focus configuration of the widget.]]
             @inout configured_state : Efl.Ui.Widget_Focus_State;
-               [[The evaluated Focus state that should be used.]]
+               [[The new configuration being set on the widget.]]
             @in redirect : Efl.Ui.Widget;
-               [[A redirect that will be set by the elm.widget implementation.]]
+               [[A redirect object if there is any]]
          }
-         return: bool; [[Returns whether the widget is registered or not.]]
+         return: bool; [[Returns $true if the widget is registered in the focus manager, $false if not.]]
       }
    }
    parts {
