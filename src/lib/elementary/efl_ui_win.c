@@ -1662,7 +1662,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
 }
 
 EOLIAN static void
-_efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Efl_Orient rotation)
+_efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotation)
 {
    Efl_Ui_Widget *widget;
    Eina_Iterator *it;
@@ -1682,7 +1682,7 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, Efl_Orien
      }
 }
 
-EOLIAN static Efl_Orient
+EOLIAN static int
 _efl_ui_win_win_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
    return pd->rotation;

@@ -1,5 +1,3 @@
-import efl_orientation;
-
 enum Efl.Ui.Win_Type
 {
    [[Defines the types of window that can be created
@@ -757,7 +755,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
          get {
          }
          values {
-           rotation : Efl.Orient; [[The rotation of the window]]
+           rotation : int; [[The rotation of the window]]
          }
       }
       @property focus_highlight_enabled {
