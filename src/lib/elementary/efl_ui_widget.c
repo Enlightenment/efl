@@ -3372,7 +3372,7 @@ elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
  * @return focus move policy of the object.
  *
  **/
-EOLIAN static Elm_Focus_Move_Policy
+EOLIAN static Efl_Ui_Focus_Move_Policy
 _efl_ui_widget_focus_move_policy_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd)
 {
    return sd->focus_move_policy;
@@ -3388,9 +3388,9 @@ _efl_ui_widget_focus_move_policy_get(const Eo *obj EINA_UNUSED, Elm_Widget_Smart
  */
 
 EOLIAN static void
-_efl_ui_widget_focus_move_policy_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Elm_Focus_Move_Policy policy)
+_efl_ui_widget_focus_move_policy_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *sd, Efl_Ui_Focus_Move_Policy policy)
 {
-   if (sd->focus_move_policy == policy) return;
+   if (sd->focus_move_policy == (Elm_Focus_Move_Policy)policy) return;
    sd->focus_move_policy = policy;
 }
 
