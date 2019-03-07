@@ -104,13 +104,11 @@
  */
 
 #include <elm_win_common.h>
-#ifdef EFL_EO_API_SUPPORT
-#include <elm_win_eo.h>
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <elm_win_legacy.h>
 #endif
-
+/* FIXME: what the actual fuck. */
+# include <elm_win_eo.h>
 /**
  * @}
  */

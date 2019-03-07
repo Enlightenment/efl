@@ -1,9 +1,6 @@
 #ifndef ELM_INTEFARCE_FILESELECTOR_H
 #define ELM_INTEFARCE_FILESELECTOR_H
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_interface_fileselector_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_interface_fileselector_eo.legacy.h"
 #endif

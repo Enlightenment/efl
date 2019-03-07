@@ -93,15 +93,6 @@
  */
 
 #include "elm_web_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_web_eo.h"
-
-#undef ELM_WEB_CLASS
-#define ELM_WEB_CLASS elm_web_real_class_get()
-
-EAPI const Efl_Class *elm_web_real_class_get(void);
-
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_web_legacy.h"
 #endif

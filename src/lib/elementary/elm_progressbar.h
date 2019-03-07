@@ -63,9 +63,6 @@
  */
 
 #include "elm_progressbar_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "efl_ui_progressbar_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_progressbar_legacy.h"
 #endif

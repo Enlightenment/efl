@@ -167,10 +167,6 @@
  */
 
 #include <elm_layout_common.h>
-#ifdef EFL_EO_API_SUPPORT
-#include <efl_ui_layout_base.eo.h>
-#include <efl_ui_layout.eo.h>
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <elm_layout_legacy.h>
 #endif

@@ -75,10 +75,6 @@
  */
 
 #include "elm_slider_common.h"
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_slider_eo.h"
-#include "elm_slider_part_indicator_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_slider_legacy.h"
 #endif
