@@ -8,6 +8,7 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define MY_PAN_CLASS ELM_PAN_CLASS
 

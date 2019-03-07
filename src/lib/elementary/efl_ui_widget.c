@@ -17,6 +17,7 @@
 #include "elm_priv.h"
 #include "elm_widget_container.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 #include "elm_part_helper.h"
 #include "elm_widget_combobox.h"
 

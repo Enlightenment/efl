@@ -13,6 +13,7 @@
 #include "elm_diskselector_item_eo.h"
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define DISPLAY_ITEM_NUM_MIN 3
 

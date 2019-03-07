@@ -13,6 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_list.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define MY_CLASS ELM_LIST_CLASS
 

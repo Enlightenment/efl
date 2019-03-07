@@ -15,6 +15,7 @@
 #include "elm_priv.h"
 #include "elm_widget_toolbar.h"
 #include "els_box.h"
+#include "elm_pan_eo.h"
 
 #define MY_CLASS ELM_TOOLBAR_CLASS
 

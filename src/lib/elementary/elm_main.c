@@ -23,6 +23,7 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 //we need those for legacy compatible code
 #include "elm_genlist_eo.h"

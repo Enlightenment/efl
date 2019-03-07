@@ -10,6 +10,7 @@
 #include "elm_priv.h"
 #include "elm_widget_map.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 #include "elm_map_pan_eo.h"
 #include "elm_map_eo.h"
 

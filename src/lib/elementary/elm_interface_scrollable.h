@@ -31,9 +31,6 @@
  * Elm_Scrollable_Smart_Interface::extern_pan_set.
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_pan_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_pan_eo.legacy.h"
 #endif

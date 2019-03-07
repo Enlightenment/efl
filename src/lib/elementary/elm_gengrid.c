@@ -13,6 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_gengrid.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 #include "efl_ui_focus_parent_provider_gen_eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
 #include "elm_gengrid_item_eo.h"
