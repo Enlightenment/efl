@@ -3,9 +3,10 @@
 #endif
 
 
-#include <Elementary.h>
+#include "elm_priv.h"
 #include "Eio_Eo.h"
 
 #include "elm_interface_fileselector.h"
 
+#include "elm_interface_fileselector_eo.h"
 #include "elm_interface_fileselector_eo.c"
