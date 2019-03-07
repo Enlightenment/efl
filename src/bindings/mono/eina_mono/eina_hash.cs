@@ -415,6 +415,8 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         IntPtr old = eina_hash_set(Handle, nk, nv);
         FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         FreeNativeIndirection<TValue>(gchnv, false);
+        if (OwnValue || old != IntPtr.Zero)
+            NativeFree<TValue>(old);
     }
 
     public TValue this[TKey key]
