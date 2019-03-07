@@ -354,7 +354,11 @@ class TestEoGrandChildrenFinalize
     public sealed class GrandChild : Dummy.Child
     {
 
+#if EFL_BETA
+        public GrandChild() : base(null, "", 0.0, 0) { }
+#else
         public GrandChild() : base(null, "", 0.0) { }
+#endif
 
         public int receivedValue = 0;
         public override Efl.Object FinalizeAdd()
@@ -378,18 +382,43 @@ class TestConstructors
         int iface_prop = 42;
         string a = "LFE";
         double b = 3.14;
+#if EFL_BETA
+        int beta = 1337;
+#endif
+
+#if EFL_BETA
+        var obj = new Dummy.Child(null, a, b, beta, iface_prop, 0);
+#else
         var obj = new Dummy.Child(null, a, b, iface_prop);
+#endif
         Test.AssertEquals(iface_prop, obj.IfaceProp);
 
+#if EFL_BETA
+        obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b,
+                              obligatoryBetaCtor : beta,
+                              optionalBetaCtor : -beta);
+#else
         obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b);
+#endif
         Test.AssertEquals(iface_prop, obj.IfaceProp);
+
+#if EFL_BETA
+        Test.Assert(obj.ObligatoryBetaCtorWasCalled);
+        Test.Assert(obj.OptionalBetaCtorWasCalled);
+#endif
     }
 
     public static void test_optional_constructor()
     {
         string a = "LFE";
         double b = 3.14;
+#if EFL_BETA
+        int beta = 2241;
+        var obj = new Dummy.Child(null, a, b, obligatoryBetaCtor : beta);
+        Test.Assert(!obj.OptionalBetaCtorWasCalled);
+#else
         var obj = new Dummy.Child(null, a, b);
+#endif
         Test.Assert(!obj.GetIfaceWasSet());
     }
 }
@@ -412,7 +441,6 @@ class TestProvider
     public static void test_find_provider()
     {
         // Tests only the direction C# -> C
-        var tmp = new Dummy.Numberwrapper();
         var obj = new Dummy.TestObject();
         Dummy.Numberwrapper provider = Dummy.Numberwrapper.static_cast(obj.FindProvider(typeof(Dummy.Numberwrapper)));
         Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));

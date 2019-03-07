@@ -146,11 +146,17 @@ efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
                                  output : 'efl_mono.dll.config',
                                  configuration : efl_mono_conf_data)
 
+extra_cs_args = runtime_assemblies
+
+if get_option('mono-beta')
+  extra_cs_args += '-d:EFL_BETA'
+endif
+
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
     install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    cs_args : runtime_assemblies
+    cs_args : extra_cs_args
 )
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())

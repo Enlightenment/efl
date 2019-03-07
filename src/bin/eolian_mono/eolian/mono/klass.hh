@@ -510,7 +510,12 @@ struct klass
             ).generate(sink, attributes::unused, context))
        return false;
 
-     auto constructors = helpers::reorder_constructors(cls.get_all_constructors());
+     auto all_constructors = helpers::reorder_constructors(cls.get_all_constructors());
+     decltype (all_constructors) constructors;
+
+     std::copy_if(all_constructors.cbegin(), all_constructors.cend(), std::back_inserter(constructors), [&context](attributes::constructor_def const& ctor) {
+        return !blacklist::is_function_blacklisted(ctor.function, context);
+     });
 
      // Public (API) constructors
      if (!as_generator(

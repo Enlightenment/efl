@@ -87,6 +87,8 @@ typedef struct Dummy_Child_Data
   const char* a;
   double b;
   Eina_Bool iface_was_set;
+  Eina_Bool obligatory_beta_ctor_was_called;
+  Eina_Bool optional_beta_ctor_was_called;
 } Dummy_Child_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
@@ -3946,6 +3948,8 @@ _dummy_child_efl_object_constructor(Eo *obj, Dummy_Child_Data *pd)
 
     pd->iface_prop = 1984;
     pd->iface_was_set = EINA_FALSE;
+    pd->obligatory_beta_ctor_was_called = EINA_FALSE;
+    pd->optional_beta_ctor_was_called = EINA_FALSE;
     return obj;
 }
 
@@ -3974,6 +3978,27 @@ Eina_Bool _dummy_child_iface_was_set_get(EINA_UNUSED const Eo* obj, Dummy_Child_
 {
     return pd->iface_was_set;
 }
+
+void _dummy_child_obligatory_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->obligatory_beta_ctor_was_called = EINA_TRUE;
+}
+
+void _dummy_child_optional_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->optional_beta_ctor_was_called = EINA_TRUE;
+}
+
+Eina_Bool _dummy_child_obligatory_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->obligatory_beta_ctor_was_called;
+}
+
+Eina_Bool _dummy_child_optional_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->optional_beta_ctor_was_called;
+}
+
 EOLIAN static void
 _dummy_child_class_constructor(Efl_Class *klass)
 {
