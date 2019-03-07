@@ -274,7 +274,10 @@
 
 #include <Eina.h>
 #include <Eo.h>
+
+#ifdef EFL_BETA_API_SUPPORT
 #include <Efl.h>
+#endif
 
 #ifdef EAPI
 # undef EAPI
