@@ -8,6 +8,10 @@
 # define EFL_EO_API_SUPPORT
 #endif
 
+/* FIXME: wtf? */
+#ifndef EFL_UI_RADIO_EVENT_CHANGED
+# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
+#endif
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -189,12 +193,15 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_table_static.eo.h>
 # include <efl_ui_image.eo.h>
 # include <efl_ui_win.eo.h>
+/* FIXME: what the actual fuck. */
+# include <elm_win_eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
 # include <efl_ui_relative_layout.eo.h>
 
 /* FIXME: Efl.Ui.Text must not use elm_general.h */
-# warning Efl.Ui.Text is not available yet without Elementary.h
+// no.
+//# warning Efl.Ui.Text is not available yet without Elementary.h
 # if 0
 # include <efl_ui_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
@@ -223,6 +230,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_progressbar_eo.h>
 # include <efl_ui_radio_eo.h>
 # include <efl_ui_panes_eo.h>
+# include <efl_ui_panes_part.eo.h>
 
 /**
  * Initialize Elementary
