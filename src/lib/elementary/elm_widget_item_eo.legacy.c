@@ -258,25 +258,25 @@ elm_object_item_access_order_unset(Elm_Widget_Item *obj)
 }
 
 EAPI Efl_Canvas_Object *
-elm_object_item_focus_next_object_get(const Elm_Widget_Item *obj, Efl_Ui_Focus_Direction dir)
+elm_object_item_focus_next_object_get(const Elm_Widget_Item *obj, Elm_Focus_Direction dir)
 {
    return elm_wdg_item_focus_next_object_get(obj, dir);
 }
 
 EAPI void
-elm_object_item_focus_next_object_set(Elm_Widget_Item *obj, Efl_Canvas_Object *next, Efl_Ui_Focus_Direction dir)
+elm_object_item_focus_next_object_set(Elm_Widget_Item *obj, Efl_Canvas_Object *next, Elm_Focus_Direction dir)
 {
    elm_wdg_item_focus_next_object_set(obj, next, dir);
 }
 
 EAPI Elm_Widget_Item *
-elm_object_item_focus_next_item_get(const Elm_Widget_Item *obj, Efl_Ui_Focus_Direction dir)
+elm_object_item_focus_next_item_get(const Elm_Widget_Item *obj, Elm_Focus_Direction dir)
 {
    return elm_wdg_item_focus_next_item_get(obj, dir);
 }
 
 EAPI void
-elm_object_item_focus_next_item_set(Elm_Widget_Item *obj, Elm_Widget_Item *next_item, Efl_Ui_Focus_Direction dir)
+elm_object_item_focus_next_item_set(Elm_Widget_Item *obj, Elm_Widget_Item *next_item, Elm_Focus_Direction dir)
 {
    elm_wdg_item_focus_next_item_set(obj, next_item, dir);
 }

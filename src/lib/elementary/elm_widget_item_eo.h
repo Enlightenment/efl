@@ -838,7 +838,7 @@ EOAPI void elm_wdg_item_del_pre(Eo *obj);
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Efl_Ui_Focus_Direction dir);
+EOAPI Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Elm_Focus_Direction dir);
 
 /**
  * @brief Set the next object with specific focus direction.
@@ -851,7 +851,7 @@ EOAPI Efl_Canvas_Object *elm_wdg_item_focus_next_object_get(const Eo *obj, Efl_U
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, Efl_Ui_Focus_Direction dir);
+EOAPI void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, Elm_Focus_Direction dir);
 
 /**
  * @brief Get the next object item with specific focus direction.
@@ -865,7 +865,7 @@ EOAPI void elm_wdg_item_focus_next_object_set(Eo *obj, Efl_Canvas_Object *next, 
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Efl_Ui_Focus_Direction dir);
+EOAPI Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Elm_Focus_Direction dir);
 
 /**
  * @brief Set the next object item with specific focus direction.
@@ -878,6 +878,6 @@ EOAPI Elm_Widget_Item *elm_wdg_item_focus_next_item_get(const Eo *obj, Efl_Ui_Fo
  *
  * @ingroup Elm_Widget_Item
  */
-EOAPI void elm_wdg_item_focus_next_item_set(Eo *obj, Elm_Widget_Item *next_item, Efl_Ui_Focus_Direction dir);
+EOAPI void elm_wdg_item_focus_next_item_set(Eo *obj, Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
 
 #endif

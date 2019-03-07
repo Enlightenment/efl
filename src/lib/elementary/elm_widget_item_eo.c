@@ -405,21 +405,21 @@ void _elm_widget_item_del_pre(Eo *obj, Elm_Widget_Item_Data *pd);
 
 EOAPI EFL_VOID_FUNC_BODY(elm_wdg_item_del_pre);
 
-Efl_Canvas_Object *_elm_widget_item_focus_next_object_get(const Eo *obj, Elm_Widget_Item_Data *pd, Efl_Ui_Focus_Direction dir);
+Efl_Canvas_Object *_elm_widget_item_focus_next_object_get(const Eo *obj, Elm_Widget_Item_Data *pd, Elm_Focus_Direction dir);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_wdg_item_focus_next_object_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(dir), Efl_Ui_Focus_Direction dir);
+EOAPI EFL_FUNC_BODYV_CONST(elm_wdg_item_focus_next_object_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(dir), Elm_Focus_Direction dir);
 
-void _elm_widget_item_focus_next_object_set(Eo *obj, Elm_Widget_Item_Data *pd, Efl_Canvas_Object *next, Efl_Ui_Focus_Direction dir);
+void _elm_widget_item_focus_next_object_set(Eo *obj, Elm_Widget_Item_Data *pd, Efl_Canvas_Object *next, Elm_Focus_Direction dir);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_wdg_item_focus_next_object_set, EFL_FUNC_CALL(next, dir), Efl_Canvas_Object *next, Efl_Ui_Focus_Direction dir);
+EOAPI EFL_VOID_FUNC_BODYV(elm_wdg_item_focus_next_object_set, EFL_FUNC_CALL(next, dir), Efl_Canvas_Object *next, Elm_Focus_Direction dir);
 
-Elm_Widget_Item *_elm_widget_item_focus_next_item_get(const Eo *obj, Elm_Widget_Item_Data *pd, Efl_Ui_Focus_Direction dir);
+Elm_Widget_Item *_elm_widget_item_focus_next_item_get(const Eo *obj, Elm_Widget_Item_Data *pd, Elm_Focus_Direction dir);
 
-EOAPI EFL_FUNC_BODYV_CONST(elm_wdg_item_focus_next_item_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(dir), Efl_Ui_Focus_Direction dir);
+EOAPI EFL_FUNC_BODYV_CONST(elm_wdg_item_focus_next_item_get, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(dir), Elm_Focus_Direction dir);
 
-void _elm_widget_item_focus_next_item_set(Eo *obj, Elm_Widget_Item_Data *pd, Elm_Widget_Item *next_item, Efl_Ui_Focus_Direction dir);
+void _elm_widget_item_focus_next_item_set(Eo *obj, Elm_Widget_Item_Data *pd, Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_wdg_item_focus_next_item_set, EFL_FUNC_CALL(next_item, dir), Elm_Widget_Item *next_item, Efl_Ui_Focus_Direction dir);
+EOAPI EFL_VOID_FUNC_BODYV(elm_wdg_item_focus_next_item_set, EFL_FUNC_CALL(next_item, dir), Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
 
 Efl_Object *_elm_widget_item_efl_object_constructor(Eo *obj, Elm_Widget_Item_Data *pd);
 
