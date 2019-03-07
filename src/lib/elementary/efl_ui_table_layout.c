@@ -152,6 +152,7 @@ _efl_ui_table_regular_cell_init(Table_Calc *table_calc, Eina_Bool axis)
    for (i = 0; i < count; i++)
      {
         if (!cell_calc[i].occupied) continue;
+        else if (i && cell_calc[0].next == 0) cell_calc[0].next = i;
 
         cell_calc[i].index = index++;
         want += cell_calc[i].space;
