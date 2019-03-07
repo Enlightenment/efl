@@ -78,11 +78,12 @@ ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
 
 ecore_legacy_eo_c = \
-lib/ecore/ecore_exe_eo.c
+lib/ecore/ecore_exe_eo.c \
+lib/ecore/ecore_exe_eo.h
 
 ecore_legacy_eo_h = \
-lib/ecore/ecore_exe_eo.h \
-lib/ecore/ecore_exe_eo.legacy.h
+lib/ecore/ecore_exe_eo.legacy.h \
+lib/ecore/efl_loop_timer_eo.legacy.h
 
 EXTRA_DIST2 += $(ecore_eolian_files)
 EXTRA_DIST2 += $(ecore_eolian_files_priv)
