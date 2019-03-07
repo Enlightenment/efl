@@ -25,7 +25,9 @@ public partial class FunctionInterop
 public class FunctionWrapper<T>
 {
     private Lazy<FunctionLoadResult<T>> loadResult;
+#pragma warning disable 0414
     private NativeModule module; // so it doesn't get unloaded
+#pragma warning restore 0414
 
     private static FunctionLoadResult<T> LazyInitialization(NativeModule module, string functionName)
     {

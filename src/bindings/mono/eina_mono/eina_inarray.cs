@@ -226,7 +226,6 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     public T Nth(uint idx)
     {
         IntPtr ele = eina_inarray_nth(Handle, idx);
-        IntPtr v = Marshal.ReadIntPtr(ele);
         return NativeToManagedInplace<T>(ele);
     }
 

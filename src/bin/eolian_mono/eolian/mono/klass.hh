@@ -349,7 +349,7 @@ struct klass
 
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(
-              scope_tab << "private static " << (root ? "" : "new ") << " IntPtr GetEflClassStatic()\n"
+              scope_tab << "private static IntPtr GetEflClassStatic()\n"
               << scope_tab << "{\n"
               << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
               << scope_tab << "}\n"
@@ -481,8 +481,7 @@ struct klass
      if (is_inherit)
       {
          if (!as_generator(
-                scope_tab << "private static readonly object klassAllocLock = new object();\n"
-                << scope_tab << "protected bool inherited;\n"
+                scope_tab << "protected bool inherited;\n"
                 ).generate(sink, attributes::unused, context))
            return false;
       }
