@@ -3,7 +3,8 @@
 #endif
 
 #include <Elementary.h>
-#include "elm_colorselector_eo.h"
+#include <Efl_Ui.h>
+#include "elm_spinner_eo.h"
 
 static const int default_font_size = 48;
 

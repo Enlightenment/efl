@@ -3,6 +3,7 @@
 #endif
 
 #include <string.h>
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "test.h"
 #include "test_explode.h"

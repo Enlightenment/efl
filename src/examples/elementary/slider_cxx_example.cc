@@ -2,6 +2,7 @@
 
 #define EFL_CXXPERIMENTAL
 
+#include <Efl_Ui.h>
 #include <Elementary.hh>
 
 using namespace std::placeholders;

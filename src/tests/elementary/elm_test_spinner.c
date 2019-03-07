@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_BETA
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_suite.h"
 

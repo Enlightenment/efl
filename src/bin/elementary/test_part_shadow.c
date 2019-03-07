@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_UI_WIDGET_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 typedef struct Test_Data

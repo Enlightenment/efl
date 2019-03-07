@@ -7,6 +7,7 @@
 #define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <stdio.h>

@@ -4,6 +4,7 @@
 
 // Stack API is still beta (and EO only)
 #define EFL_UI_WIN_BETA
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static int level = 0;

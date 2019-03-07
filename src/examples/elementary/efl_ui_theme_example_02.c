@@ -6,6 +6,7 @@
 #define EFL_EO_API_SUPPORT 1
 
 #define EFL_UI_WIDGET_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define EXAMPLE_EDJ_FILE_PATH "./efl_ui_theme_example.edj"

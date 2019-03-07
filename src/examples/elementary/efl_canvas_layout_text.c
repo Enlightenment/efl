@@ -10,6 +10,7 @@
 #endif
 
 #include <Efl.h>
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <string.h>
 

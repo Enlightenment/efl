@@ -3,6 +3,7 @@
 #define EFL_CXXPERIMENTAL
 
 #include <Evas.hh>
+#include <Efl_Ui.h>
 #include <Elementary.hh>
 #include <iostream>
 

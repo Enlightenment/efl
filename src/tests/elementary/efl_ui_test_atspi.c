@@ -6,6 +6,7 @@
 #define EFL_ACCESS_OBJECT_BETA
 #define EFL_ACCESS_OBJECT_PROTECTED
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_suite.h"

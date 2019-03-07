@@ -4,6 +4,7 @@
 
 #define EFL_UI_ANCHOR_POPUP_BETA
 #define EFL_UI_SCROLL_ALERT_POPUP_BETA
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define POPUP_POINT_MAX 8

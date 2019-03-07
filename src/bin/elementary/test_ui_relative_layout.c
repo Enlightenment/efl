@@ -3,6 +3,7 @@
 # include "elementary_config.h"
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static Eo *layout, *btn1, *btn2, *btn3;

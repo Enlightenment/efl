@@ -4,6 +4,7 @@
 #define EO_BETA_API
 #define EFL_UI_WIDGET_PROTECTED
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 

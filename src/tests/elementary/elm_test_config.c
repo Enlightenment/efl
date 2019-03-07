@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_suite.h"
 

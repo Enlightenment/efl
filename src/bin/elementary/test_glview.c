@@ -1,8 +1,10 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #ifndef M_PI
 #define M_PI 3.14159265

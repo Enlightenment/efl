@@ -3,6 +3,7 @@
 #endif
 
 #define EFL_PACK_LAYOUT_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED);

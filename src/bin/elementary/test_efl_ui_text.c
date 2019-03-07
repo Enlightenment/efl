@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #define EO_BETA_API
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void
