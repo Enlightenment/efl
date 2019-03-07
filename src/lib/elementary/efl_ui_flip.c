@@ -1959,7 +1959,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
+_efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Efl_Ui_Flip_Mode mode)
 {
    if (sd->next_state == front) return;
 
@@ -1967,7 +1967,7 @@ _efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode
 }
 
 EOLIAN static void
-_efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Elm_Flip_Mode mode)
+_efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Mode mode)
 {
    _internal_elm_flip_go_to(obj, sd, !sd->state, mode);
 }
@@ -2349,6 +2349,7 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
 
 #include "efl_ui_flip.eo.c"
+#include "efl_ui_flip_eo.legacy.c"
 
 #include "efl_ui_flip_legacy_eo.h"
 

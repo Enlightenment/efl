@@ -30,7 +30,6 @@ enum Efl.Ui.Flip_Interaction
 class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[Efl UI flip class]]
-   legacy_prefix: elm_flip;
    methods {
       @property interaction {
          set {

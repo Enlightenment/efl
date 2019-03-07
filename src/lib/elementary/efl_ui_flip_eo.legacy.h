@@ -1,52 +1,6 @@
 #ifndef _EFL_UI_FLIP_EO_LEGACY_H_
 #define _EFL_UI_FLIP_EO_LEGACY_H_
 
-#ifndef _EFL_UI_FLIP_EO_CLASS_TYPE
-#define _EFL_UI_FLIP_EO_CLASS_TYPE
-
-typedef Eo Efl_Ui_Flip;
-
-#endif
-
-#ifndef _EFL_UI_FLIP_EO_TYPES
-#define _EFL_UI_FLIP_EO_TYPES
-
-/** Efl UI flip mode
- *
- * @ingroup Efl_Ui
- */
-typedef enum
-{
-  EFL_UI_FLIP_ROTATE_Y_CENTER_AXIS = 0, /**< Rotate Y center axis flip mode */
-  EFL_UI_FLIP_ROTATE_X_CENTER_AXIS, /**< Rotate X center axis flip mode */
-  EFL_UI_FLIP_ROTATE_XZ_CENTER_AXIS, /**< Rotate XZ center axis flip mode */
-  EFL_UI_FLIP_ROTATE_YZ_CENTER_AXIS, /**< Rotate YZ center axis flip mode */
-  EFL_UI_FLIP_CUBE_LEFT, /**< Cube left flip mode */
-  EFL_UI_FLIP_CUBE_RIGHT, /**< Cube right flip mode */
-  EFL_UI_FLIP_CUBE_UP, /**< Cube up flip mode */
-  EFL_UI_FLIP_CUBE_DOWN, /**< Cube down flip mode */
-  EFL_UI_FLIP_PAGE_LEFT, /**< Page left flip mode */
-  EFL_UI_FLIP_PAGE_RIGHT, /**< Page right flip mode */
-  EFL_UI_FLIP_PAGE_UP, /**< Page up flip mode */
-  EFL_UI_FLIP_PAGE_DOWN, /**< Page down flip mode */
-  EFL_UI_FLIP_CROSS_FADE /**< Cross fade flip mode */
-} Efl_Ui_Flip_Mode;
-
-/** Efl UI flip interaction
- *
- * @ingroup Efl_Ui
- */
-typedef enum
-{
-  EFL_UI_FLIP_INTERACTION_NONE = 0, /**< No interaction */
-  EFL_UI_FLIP_INTERACTION_ROTATE, /**< Rotate interaction */
-  EFL_UI_FLIP_INTERACTION_CUBE, /**< Cube interaction */
-  EFL_UI_FLIP_INTERACTION_PAGE /**< Page interaction */
-} Efl_Ui_Flip_Interaction;
-
-
-#endif
-
 /**
  * @brief Set the interactive flip mode.
  *
@@ -70,7 +24,7 @@ typedef enum
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_interaction_set(Efl_Ui_Flip *obj, Efl_Ui_Flip_Interaction mode);
+EAPI void elm_flip_interaction_set(Eo *obj, Elm_Flip_Interaction mode);
 
 /**
  * @brief Get the interactive flip mode.
@@ -81,7 +35,7 @@ EAPI void elm_flip_interaction_set(Efl_Ui_Flip *obj, Efl_Ui_Flip_Interaction mod
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI Efl_Ui_Flip_Interaction elm_flip_interaction_get(const Efl_Ui_Flip *obj);
+EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Eo *obj);
 
 /**
  * @brief Get flip front visibility state.
@@ -92,7 +46,7 @@ EAPI Efl_Ui_Flip_Interaction elm_flip_interaction_get(const Efl_Ui_Flip *obj);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI Eina_Bool elm_flip_front_visible_get(const Efl_Ui_Flip *obj);
+EAPI Eina_Bool elm_flip_front_visible_get(const Eo *obj);
 
 
 
@@ -139,7 +93,7 @@ EAPI Eina_Bool elm_flip_front_visible_get(const Efl_Ui_Flip *obj);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_go(Efl_Ui_Flip *obj, Efl_Ui_Flip_Mode mode);
+EAPI void elm_flip_go(Eo *obj, Elm_Flip_Mode mode);
 
 /**
  * @brief Runs the flip animation to front or back.
@@ -181,6 +135,6 @@ EAPI void elm_flip_go(Efl_Ui_Flip *obj, Efl_Ui_Flip_Mode mode);
  *
  * @ingroup Elm_Flip_Group
  */
-EAPI void elm_flip_go_to(Efl_Ui_Flip *obj, Eina_Bool front, Efl_Ui_Flip_Mode mode);
+EAPI void elm_flip_go_to(Eo *obj, Eina_Bool front, Elm_Flip_Mode mode);
 
 #endif
