@@ -1554,7 +1554,7 @@ _efl_canvas_object_efl_gfx_hint_hint_aspect_set(Eo *eo_obj, Evas_Object_Protecte
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->aspect.mode == aspect) &&
+   if ((obj->size_hints->aspect.mode == (Evas_Aspect_Control)aspect) &&
        (obj->size_hints->aspect.size.w == sz.w) &&
        (obj->size_hints->aspect.size.h == sz.h)) return;
    obj->size_hints->aspect.mode = aspect;
@@ -2354,15 +2354,15 @@ _efl_canvas_object_render_parent_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_P
 }
 
 EOLIAN static void
-_efl_canvas_object_paragraph_direction_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Evas_BiDi_Direction dir EINA_UNUSED)
+_efl_canvas_object_paragraph_direction_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED, Efl_Text_Bidirectional_Type dir EINA_UNUSED)
 {
    return;
 }
 
-EOLIAN static Evas_BiDi_Direction
+EOLIAN static Efl_Text_Bidirectional_Type
 _efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
-   return EVAS_BIDI_DIRECTION_NEUTRAL;
+   return (Efl_Text_Bidirectional_Type)EVAS_BIDI_DIRECTION_NEUTRAL;
 }
 
 EOLIAN static void
@@ -2426,7 +2426,7 @@ EAPI void
 evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_Control *aspect, Evas_Coord *w, Evas_Coord *h)
 {
    Eina_Size2D sz = { 0, 0 };
-   efl_gfx_hint_aspect_get(obj, aspect, &sz);
+   efl_gfx_hint_aspect_get(obj, (Efl_Gfx_Hint_Aspect*)aspect, &sz);
    if (w) *w = sz.w;
    if (h) *h = sz.h;
 }
