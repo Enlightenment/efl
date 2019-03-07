@@ -309,7 +309,7 @@ _assert_not_dup(std::string option, std::string value)
 static eolian_mono::options_type
 opts_get(int argc, char **argv)
 {
-   eolian_mono::options_type opts;
+   eolian_mono::options_type opts{};
 
    const struct option long_options[] =
      {
