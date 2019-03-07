@@ -85,7 +85,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 
            See also @.interaction.set.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The hit area to set.]]
             @in hitsize: double; [[The amount of that dimension (0.0 to 1.0) to use.]]
@@ -94,7 +93,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_hitsize_get {
          [[Get the amount of the flip that is sensitive to interactive flip.]]
          return: double; [[The size set for that direction.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
@@ -111,7 +109,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            @.interaction_direction_hitsize_set. By default, a minimum
            hit area will be created on the opposite edge of the flip.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to change.]]
             @in enabled: bool; [[If that direction is enabled or not.]]
@@ -120,7 +117,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_enabled_get {
          [[Get the enabled state of that flip direction.]]
          return: bool; [[If that direction is enabled or not.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
