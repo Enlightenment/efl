@@ -163,6 +163,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ector\" \
+-DEFL_BETA_API_SUPPORT=1 \
 @VALGRIND_CFLAGS@ \
 @SSE3_CFLAGS@
 

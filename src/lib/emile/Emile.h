@@ -20,7 +20,6 @@
 #define EMILE_H_
 
 #include <Eina.h>
-#include <interfaces/efl_gfx_types.eot.h>
 
 #ifdef EAPI
 # undef EAPI

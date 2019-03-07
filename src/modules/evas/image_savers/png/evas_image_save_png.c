@@ -40,9 +40,9 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
    if (!im || !im->image.data || !file)
       return 0;
 
-   if ((im->cache_entry.space != EFL_GFX_COLORSPACE_ARGB8888) &&
-       (im->cache_entry.space != EFL_GFX_COLORSPACE_AGRY88) &&
-       (im->cache_entry.space != EFL_GFX_COLORSPACE_GRY8))
+   if (((Efl_Gfx_Colorspace)im->cache_entry.space != EFL_GFX_COLORSPACE_ARGB8888) &&
+       ((Efl_Gfx_Colorspace)im->cache_entry.space != EFL_GFX_COLORSPACE_AGRY88) &&
+       ((Efl_Gfx_Colorspace)im->cache_entry.space != EFL_GFX_COLORSPACE_GRY8))
      return 0;
 
    f = fopen(file, "wb");
@@ -76,7 +76,7 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
    else
      interlace = PNG_INTERLACE_NONE;
 
-   if (im->cache_entry.space == EFL_GFX_COLORSPACE_GRY8)
+   if ((Efl_Gfx_Colorspace)im->cache_entry.space == EFL_GFX_COLORSPACE_GRY8)
      {
         gry8 = EINA_TRUE;
         pixel_size = 1;
@@ -86,7 +86,7 @@ save_image_png(RGBA_Image *im, const char *file, int do_compress, int interlace)
                      PNG_COLOR_TYPE_GRAY, interlace,
                      PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
      }
-   else if (im->cache_entry.space == EFL_GFX_COLORSPACE_AGRY88)
+   else if ((Efl_Gfx_Colorspace)im->cache_entry.space == EFL_GFX_COLORSPACE_AGRY88)
      {
         agry88 = EINA_TRUE;
         pixel_size = 2;
