@@ -13,7 +13,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
    [[Efl canvas object abstract class]]
    data: Evas_Object_Protected_Data;
    methods {
-      @property pointer_mode_by_device {
+      @property pointer_mode_by_device @beta {
          [[Low-level pointer behaviour by device.
            See @.pointer_mode.get and @.pointer_mode.set for more explanation.
            @since 1.19
@@ -30,7 +30,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          get {
          }
       }
-      @property pointer_mode {
+      @property pointer_mode @beta {
          [[Low-level pointer behaviour.
 
            This function has a direct effect on event callbacks related to
