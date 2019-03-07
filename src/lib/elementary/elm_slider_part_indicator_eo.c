@@ -1,11 +1,11 @@
 
-void _elm_slider_part_indicator_visible_mode_set(Eo *obj, void *pd, Efl_Ui_Slider_Indicator_Visible_Mode mode);
+void _elm_slider_part_indicator_visible_mode_set(Eo *obj, void *pd, Elm_Slider_Indicator_Visible_Mode mode);
 
-EOAPI EFL_VOID_FUNC_BODYV(elm_slider_part_indicator_visible_mode_set, EFL_FUNC_CALL(mode), Efl_Ui_Slider_Indicator_Visible_Mode mode);
+EOAPI EFL_VOID_FUNC_BODYV(elm_slider_part_indicator_visible_mode_set, EFL_FUNC_CALL(mode), Elm_Slider_Indicator_Visible_Mode mode);
 
-Efl_Ui_Slider_Indicator_Visible_Mode _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *pd);
+Elm_Slider_Indicator_Visible_Mode _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(elm_slider_part_indicator_visible_mode_get, Efl_Ui_Slider_Indicator_Visible_Mode, 0);
+EOAPI EFL_FUNC_BODY_CONST(elm_slider_part_indicator_visible_mode_get, Elm_Slider_Indicator_Visible_Mode, 0);
 
 void _elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *pd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb);
 
