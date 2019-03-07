@@ -163,7 +163,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             type: Efl.Ui.Win_Indicator_Mode; [[The mype, one of @Efl.Ui.Win_Indicator_Mode.]]
          }
       }
-      @property keyboard_mode {
+      @property keyboard_mode @beta {
          set {
             [[Sets the keyboard mode of the window.]]
          }
@@ -203,7 +203,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
             profiles: const(array<string>); [[A list of profiles.]]
          }
       }
-      @property screen_constrain {
+      @property screen_constrain @beta {
          set {
             [[Constrain the maximum width and height of a window to the
               width and height of the screen.
@@ -881,7 +881,7 @@ class @beta Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Ac
       unfullscreen: void; [[Called when window is no longer set to fullscreen]]
       maximized: void; [[Called when window is set to maximized]]
       unmaximized: void; [[Called when window is no longer set to maximized]]
-      indicator,prop,changed: void; [[Called when indicator is property changed]]
+      indicator,prop,changed @beta: void; [[Called when indicator is property changed]]
       rotation,changed: void; [[Called when window rotation is changed]]
       profile,changed @beta: void; [[Called when profile is changed]]
       wm,rotation,changed @beta: void; [[Called when window manager rotation is changed]]
