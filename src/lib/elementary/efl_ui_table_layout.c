@@ -232,7 +232,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
 
    if (!pd->count)
      {
-        efl_gfx_hint_size_min_set(ui_table, EINA_SIZE2D(0, 0));
+        efl_gfx_hint_size_restricted_min_set(ui_table, EINA_SIZE2D(0, 0));
         return;
      }
 
@@ -369,11 +369,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
                          + (table_calc.layout_calc[1].pad *
                             table_calc.cell_calc[1][rows - 1].index);
 
-   if (table_calc.want[0] < table_calc.layout_calc[0].min)
-     table_calc.want[0] = table_calc.layout_calc[0].min;
-   if (table_calc.want[1] < table_calc.layout_calc[1].min)
-     table_calc.want[1] = table_calc.layout_calc[1].min;
-
-   efl_gfx_hint_size_min_set(ui_table, EINA_SIZE2D(table_calc.want[0],
-                                                   table_calc.want[1]));
+   efl_gfx_hint_size_restricted_min_set(ui_table,
+                                        EINA_SIZE2D(table_calc.want[0],
+                                                    table_calc.want[1]));
 }
