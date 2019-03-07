@@ -206,7 +206,13 @@
 extern "C" {
 #endif
 
+#include <interfaces/efl_gfx_types.eot.h>
+#include <interfaces/efl_gfx_path.eo.h>
+#include <interfaces/efl_input_types.eot.h>
+#include <interfaces/efl_text_types.eot.h>
 #include <Evas_Common.h>
+
+
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <Evas_Legacy.h>
 #endif

@@ -3483,6 +3483,40 @@ typedef Eo Efl_Animation_Group_Sequential;
 #define EFL_ANIMATION_REPEAT_INFINITE -1
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
 
+#ifndef _EFL_INPUT_DEVICE_EO_H_
+#define _EFL_INPUT_DEVICE_EO_H_
+typedef Eo Efl_Input_Device;
+typedef unsigned int Efl_Input_Device_Type;
+
+#endif
+
+#ifndef _EFL_H
+#define _EFL_H
+typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
+typedef struct tm Efl_Time;
+#endif
+
+#ifndef _EFL_TEXT_CURSOR_EO_H_
+#define _EFL_TEXT_CURSOR_EO_H_
+
+#ifndef _EFL_TEXT_CURSOR_EO_CLASS_TYPE
+#define _EFL_TEXT_CURSOR_EO_CLASS_TYPE
+#endif
+typedef Eo Efl_Text_Cursor;
+typedef Eo Efl_Text_Cursor_Cursor;
+
+#endif
+#ifndef _EFL_GFX_ENTITY_EO_H_
+#define _EFL_GFX_ENTITY_EO_H_
+
+#ifndef _EFL_GFX_ENTITY_EO_CLASS_TYPE
+#define _EFL_GFX_ENTITY_EO_CLASS_TYPE
+
+typedef Eo Efl_Gfx_Entity;
+
+#endif
+#endif
+
 /**
  * @}
  */
