@@ -396,47 +396,20 @@ _write_source(const Eolian_State *eos, const char *ofname,
 {
    INF("generating source: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
-   Eina_Strbuf *lbuf = eina_strbuf_new();
-   Eina_Strbuf *oflname = eina_strbuf_new();
    Eina_Bool ret = EINA_FALSE;
 
-   const char *lext = strrchr(ofname, '.');
-   if (!lext)
-     {
-        eina_strbuf_append(oflname, ofname);
-        eina_strbuf_append(oflname, ".legacy.c");
-     }
-   else
-     {
-        eina_strbuf_append_length(oflname, ofname, strlen(ofname) - strlen(lext));
-        eina_strbuf_append(oflname, ".legacy");
-        eina_strbuf_append(oflname, lext);
-     }
-   const char *lfname = eina_strbuf_string_get(oflname);
-     {
-        const char *p1 = strrchr(lfname, '/');
-        const char *p2 = strrchr(lfname, '\\');
-        lfname = (p1 || p2) ? ((p1 > p2) ? (p1 + 1) : (p2 + 1)) : lfname;
-     }
    const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
    eo_gen_types_source_gen(eolian_state_objects_by_file_get(eos, ifname), buf);
-   eo_gen_source_gen(cl, buf, lbuf, lfname);
+   eo_gen_source_gen(cl, buf);
    if (cl || (eot && eina_strbuf_length_get(buf)))
      {
         if (!_write_file(ofname, buf))
           goto done;
-        if (eina_strbuf_length_get(lbuf))
-          {
-             if (!_write_file(eina_strbuf_string_get(oflname), lbuf))
-               goto done;
-          }
         ret = EINA_TRUE;
      }
 
 done:
    eina_strbuf_free(buf);
-   eina_strbuf_free(lbuf);
-   eina_strbuf_free(oflname);
    return ret;
 }
 

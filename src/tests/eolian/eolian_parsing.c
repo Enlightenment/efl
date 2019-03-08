@@ -563,7 +563,6 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(eolian_class_type_get(class) != EOLIAN_CLASS_REGULAR);
    fail_if(eolian_class_parent_get(class) != NULL);
    fail_if(eolian_class_extensions_get(class) != NULL);
-   fail_if(strcmp(eolian_class_legacy_prefix_get(class), "evas_object_simple"));
    fail_if(strcmp(eolian_class_eo_prefix_get(class), "efl_canvas_object_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));
    Eina_Stringshare *dt = eolian_class_c_data_type_get(class);
@@ -613,13 +612,6 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 100);
 
-   /* legacy only + c only */
-   fail_if(eolian_class_function_by_name_get(class, "b", EOLIAN_PROPERTY));
-   fail_if(!(fid = eolian_class_function_by_name_get(class, "b", EOLIAN_PROP_SET)));
-   fail_if(eolian_function_is_legacy_only(fid, EOLIAN_PROP_GET));
-   fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_PROP_SET));
-   fail_if(eolian_function_is_beta(fid));
-
    /* Method */
    fail_if(!(fid = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_beta(fid));
@@ -635,7 +627,6 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(!expr);
    v = eolian_expression_eval(expr, EOLIAN_MASK_NULL);
    fail_if(v.type != EOLIAN_EXPR_NULL);
-   fail_if(eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
 
    /* Function parameters */
    fail_if(!(iter = eolian_function_parameters_get(fid)));
@@ -665,12 +656,6 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(strcmp(eolian_parameter_name_get(param), "d"));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
-
-   /* legacy only + c only */
-   fail_if(!(fid = eolian_class_function_by_name_get(class, "bar", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_legacy_only(fid, EOLIAN_METHOD));
-   fail_if(eolian_function_is_beta(fid));
-   fail_if(!eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
 
    eolian_state_free(eos);
 }

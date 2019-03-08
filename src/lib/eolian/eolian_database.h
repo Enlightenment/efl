@@ -177,7 +177,6 @@ struct _Eolian_Class
    Eolian_Object base;
    Eolian_Class_Type type;
    Eolian_Documentation *doc;
-   Eina_Stringshare *legacy_prefix;
    Eina_Stringshare *eo_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
@@ -222,15 +221,11 @@ struct _Eolian_Function
    Eolian_Expression *get_ret_val;
    Eolian_Expression *set_ret_val;
    Eolian_Implement *impl;
-   Eina_Stringshare *get_legacy;
-   Eina_Stringshare *set_legacy;
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_return_warn_unused :1; /* also used for methods */
    Eina_Bool set_return_warn_unused :1;
-   Eina_Bool get_only_legacy: 1;
-   Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
    Eina_List *ctor_of;
    Eolian_Class *klass;
@@ -276,7 +271,6 @@ struct _Eolian_Type
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
    Eina_Bool owned     :1;
-   Eina_Bool legacy    :1;
 };
 
 struct _Eolian_Typedecl

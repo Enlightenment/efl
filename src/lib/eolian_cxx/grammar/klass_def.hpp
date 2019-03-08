@@ -757,7 +757,7 @@ struct function_def
          else
            parameters.insert(parameters.end(), values.begin(), values.end());
        }
-     c_name = eolian_function_full_c_name_get(function, type, EINA_FALSE);
+     c_name = eolian_function_full_c_name_get(function, type);
      if (type != EOLIAN_FUNCTION_POINTER)
        {
           const Eolian_Class *eolian_klass = eolian_function_class_get(function);
@@ -1253,8 +1253,7 @@ struct klass_def
              efl::eina::optional<function_def> getter(nullptr);
              efl::eina::optional<function_def> setter(nullptr);
              try {
-                if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_GET)
-                   && ::eolian_function_scope_get(function, EOLIAN_PROP_GET) != EOLIAN_SCOPE_PRIVATE)
+                if(::eolian_function_scope_get(function, EOLIAN_PROP_GET) != EOLIAN_SCOPE_PRIVATE)
                   {
                      function_def f(function, EOLIAN_PROP_GET, NULL, unit);
                      functions.push_back(f);
@@ -1262,8 +1261,7 @@ struct klass_def
                   }
              } catch(std::exception const&) {}
              try {
-                if(! ::eolian_function_is_legacy_only(function, EOLIAN_PROP_SET)
-                   && ::eolian_function_scope_get(function, EOLIAN_PROP_SET) != EOLIAN_SCOPE_PRIVATE)
+                if(::eolian_function_scope_get(function, EOLIAN_PROP_SET) != EOLIAN_SCOPE_PRIVATE)
                   {
                      function_def f(function, EOLIAN_PROP_SET, NULL, unit);
                      functions.push_back(f);
@@ -1275,8 +1273,7 @@ struct klass_def
            }
          else
            try {
-             if(! ::eolian_function_is_legacy_only(function, func_type)
-                && ::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
+             if(::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
                {
                   efl::eina::optional<function_def> getter(nullptr);
                   efl::eina::optional<function_def> setter(nullptr);
@@ -1297,8 +1294,7 @@ struct klass_def
          try {
              Eolian_Function const* function = &*eolian_functions;
              Eolian_Function_Type func_type = eolian_function_type_get(function);
-             if(! ::eolian_function_is_legacy_only(function, EOLIAN_METHOD)
-                && ::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
+             if(::eolian_function_scope_get(function, func_type) != EOLIAN_SCOPE_PRIVATE)
                functions.push_back({function, EOLIAN_METHOD, NULL, unit});
          } catch(std::exception const&) {}
        }

@@ -1421,16 +1421,6 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 EAPI const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the legacy prefix of a class
- *
- * @param[in] klass the class
- * @return the legacy prefix
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
-
-/*
  * @brief Returns the eo prefix of a class
  *
  * @param[in] klass the class
@@ -1559,22 +1549,20 @@ eolian_function_name_get(const Eolian_Function *fid)
  *
  * @param[in] function_id Id of the function
  * @param[in] ftype The type of function to get the name for
- * @param[in] use_legacy If true, legacy prefix or name will be used when available
  * @return the function name
  *
  * It's here because the C API names are deduplicated (prefix of function and
  * suffix of prefix merge if applicable) and this helps generators not write
  * the same code over and over.
  *
- * If legacy name is supplied for the given type and use_legacy is set, it
- * will be used. Also, if the given type is PROP_GET or PROPERTY, a "_get"
- * suffix will be applied when not using legacy name, and "_set" for PROP_SET.
+ * If the given type is PROP_GET or PROPERTY, a "_get" suffix will be applied,
+ * and "_set" for PROP_SET.
  *
  * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
+EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get a function in a class by its name and type
@@ -1593,19 +1581,6 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
 EAPI const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
- * @brief Returns a legacy name for a function.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return the legacy name or NULL.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
  * @brief Returns the implement for a function.
  *
  * @param[in] function_id Id of the function
@@ -1614,19 +1589,6 @@ EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *functio
  * @ingroup Eolian
  */
 EAPI const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
-
-/*
- * @brief Indicates if a function is legacy only.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if legacy only, EINA_FALSE otherwise.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get whether a function is a class method/property.
