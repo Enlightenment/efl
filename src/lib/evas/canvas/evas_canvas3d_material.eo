@@ -121,6 +121,8 @@ class Evas.Canvas3D.Material extends Evas.Canvas3D.Object
       Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 
 }

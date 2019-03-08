@@ -156,5 +156,7 @@ class Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
       Efl.File.load;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 }
