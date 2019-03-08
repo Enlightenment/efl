@@ -228,6 +228,10 @@ lib.eolian_object_short_name_get.restype = c_char_p
 lib.eolian_object_namespaces_get.argtypes = (c_void_p,)
 lib.eolian_object_namespaces_get.restype = c_void_p
 
+# EAPI Eina_Bool eolian_object_is_beta(const Eolian_Object *obj);
+lib.eolian_object_is_beta.argtypes = (c_void_p,)
+lib.eolian_object_is_beta.restype = c_bool
+
 ###  Eolian_Class  ############################################################
 
 # EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
@@ -339,10 +343,6 @@ lib.eolian_function_is_legacy_only.restype = c_bool
 # EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 lib.eolian_function_is_class.argtypes = (c_void_p,)
 lib.eolian_function_is_class.restype = c_bool
-
-# EAPI Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
-lib.eolian_function_is_beta.argtypes = (c_void_p,)
-lib.eolian_function_is_beta.restype = c_bool
 
 # EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
 lib.eolian_function_is_constructor.argtypes = (c_void_p,c_void_p,)
@@ -484,10 +484,6 @@ lib.eolian_event_documentation_get.restype = c_void_p
 # EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 lib.eolian_event_scope_get.argtypes = (c_void_p,)
 lib.eolian_event_scope_get.restype = c_int
-
-# EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
-lib.eolian_event_is_beta.argtypes = (c_void_p,)
-lib.eolian_event_is_beta.restype = c_bool
 
 # EAPI Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
 lib.eolian_event_is_hot.argtypes = (c_void_p,)

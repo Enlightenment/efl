@@ -703,6 +703,19 @@ EAPI const char *eolian_object_short_name_get(const Eolian_Object *obj);
 EAPI Eina_Iterator *eolian_object_namespaces_get(const Eolian_Object *obj);
 
 /*
+ * @brief Get whether an object is beta.
+ *
+ * This applies to toplevel objects (classes, types) as well as some
+ * others such as functions and events.
+ *
+ * @param[in] obj The object.
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_object_is_beta(const Eolian_Object *obj);
+
+/*
  * @brief Scan the given directory for .eo and .eot files.
  *
  * You need to add every directory you plan to use .eo/.eot files from.
@@ -1628,12 +1641,15 @@ EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 /*
  * @brief Get whether a function is beta.
  *
- * @param[in] function_id Id of the function
- * @return EINA_TRUE and EINA_FALSE respectively
+ * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
+static inline Eina_Bool
+eolian_function_is_beta(const Eolian_Function *function_id)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(function_id));
+}
 
 /*
  * @brief Indicates if a function is a constructing function of a given class.
@@ -2133,12 +2149,15 @@ EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 /*
  * @brief Get whether an event is beta.
  *
- * @param[in] event the event handle
- * @return EINA_TRUE and EINA_FALSE respectively
+ * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
+static inline Eina_Bool
+eolian_event_is_beta(const Eolian_Event *event)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(event));
+}
 
 /*
  * @brief Get whether an event is hot (unfreezable).
@@ -2303,12 +2322,15 @@ EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 /*
  * @brief Get whether a class is beta.
  *
- * @param[in] klass the class
- * @return EINA_TRUE if the class has been marked as BETA
+ * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_class_is_beta(const Eolian_Class *klass);
+static inline Eina_Bool
+eolian_class_is_beta(const Eolian_Class *klass)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(klass));
+}
 
 /*
  * @brief Get the type of a type declaration.
@@ -2504,6 +2526,19 @@ EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get whether a typedecl is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_typedecl_is_beta(const Eolian_Typedecl *tp)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(tp));
+}
 
 /*
  * @brief Get the full C type name of the given type.
@@ -3005,6 +3040,19 @@ eolian_variable_namespaces_get(const Eolian_Variable *tp)
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+
+/*
+ * @brief Get whether a variable is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_variable_is_beta(const Eolian_Variable *var)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(var));
+}
 
 /*
  * @brief Get the summary of the documentation.

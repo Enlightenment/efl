@@ -11,9 +11,26 @@
 typedef struct _Validate_State
 {
    Eina_Bool warned;
+   Eina_Bool stable;
    Eina_Bool event_redef;
    Eina_Bool unimplemented;
+   Eina_Bool beta_types;
 } Validate_State;
+
+static Eina_Bool
+_set_stable(Validate_State *vals, Eina_Bool newval)
+{
+   Eina_Bool ret = vals->stable;
+   vals->stable = newval;
+   return ret;
+}
+
+static Eina_Bool
+_reset_stable(Validate_State *vals, Eina_Bool oldval, Eina_Bool ret)
+{
+   vals->stable = oldval;
+   return ret;
+}
 
 static Eina_Bool
 _validate(Eolian_Object *obj)
@@ -76,21 +93,6 @@ static Eina_Bool
 _class_is_legacy(Eolian_Class *klass)
 {
    return !!strncmp(klass->base.name, "Efl.", strlen("Efl."));
-}
-
-static Eina_Bool
-_validate_beta_usage(Eolian_Class *klass, Eolian_Type *type)
-{
-  if (!klass) return EINA_TRUE;
-  if (_class_is_legacy(klass)) return EINA_TRUE;
-  if (klass->is_beta) return EINA_TRUE;
-
-  if (type->type == EOLIAN_TYPE_CLASS && type->klass->is_beta)
-    {
-       _eo_parser_log(&type->base, "beta class used in public API");
-       return EINA_FALSE;
-    }
-  return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -163,39 +165,48 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    if (!_validate_doc(tp->doc))
      return EINA_FALSE;
 
+   /* for the time being assume all typedecls are beta unless overridden */
+   Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta && vals->beta_types);
+
    switch (tp->type)
      {
       case EOLIAN_TYPEDECL_ALIAS:
         if (!_validate_type(vals, tp->base_type))
-          return EINA_FALSE;
+          return _reset_stable(vals, was_stable, EINA_FALSE);
         if (!tp->freefunc && tp->base_type->freefunc)
           tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
+        _reset_stable(vals, was_stable, EINA_TRUE);
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
         {
            Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_sf_map_cb, &rt);
            if (!rt.succ)
-             return EINA_FALSE;
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+           _reset_stable(vals, was_stable, EINA_TRUE);
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
+        _reset_stable(vals, was_stable, EINA_TRUE);
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
            Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &rt);
            if (!rt.succ)
-             return EINA_FALSE;
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+           _reset_stable(vals, was_stable, EINA_TRUE);
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
         if (!_validate_function(vals, tp->function_pointer, NULL))
-          return EINA_FALSE;
+          return _reset_stable(vals, was_stable, EINA_FALSE);
+        _reset_stable(vals, was_stable, EINA_TRUE);
         return _validate(&tp->base);
       default:
-        return EINA_FALSE;
+        return _reset_stable(vals, was_stable, EINA_FALSE);
      }
+   _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&tp->base);
 }
 
@@ -316,6 +327,13 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 _eo_parser_log(&tp->base, "undefined type %s", tp->base.name);
                 return EINA_FALSE;
              }
+           else if (vals->stable && tp->tdecl->base.is_beta && vals->beta_types)
+             {
+                /* we should enable this by default, but can't for now */
+                _eo_parser_log(&tp->base, "beta type declaration '%s' used in stable context",
+                               tp->tdecl->base.name);
+                return EINA_FALSE;
+             }
            if (!_validate_typedecl(vals, tp->tdecl))
              return EINA_FALSE;
            if (tp->tdecl->freefunc && !tp->freefunc)
@@ -329,6 +347,12 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              {
                 _eo_parser_log(&tp->base, "undefined class %s "
                          "(likely wrong namespacing)", tp->base.name);
+                return EINA_FALSE;
+             }
+           else if (vals->stable && tp->klass->base.is_beta)
+             {
+                _eo_parser_log(&tp->base, "beta class '%s' used in stable context",
+                               tp->klass->base.name);
                 return EINA_FALSE;
              }
            if (!tp->freefunc)
@@ -383,7 +407,7 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
      {
         _eo_parser_log(&func->base,
                  "%sfunction '%s' conflicts with another symbol (at %s:%d:%d)",
-                 func->is_beta ? "beta " : "", func->base.name, oobj->file,
+                 func->base.is_beta ? "beta " : "", func->base.name, oobj->file,
                  oobj->line, oobj->column);
         vals->warned = EINA_TRUE;
      }
@@ -399,24 +423,27 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
         return EINA_TRUE;
      }
 
-   if (func->get_ret_type && (!_validate_type(vals, func->get_ret_type) || !_validate_beta_usage(func->klass, func->get_ret_type)))
-     return EINA_FALSE;
+   /* need to preserve stable flag set from the class */
+   Eina_Bool was_stable = _set_stable(vals, !func->base.is_beta && vals->stable);
 
-   if (func->set_ret_type && (!_validate_type(vals, func->set_ret_type) || !_validate_beta_usage(func->klass, func->set_ret_type)))
-     return EINA_FALSE;
+   if (func->get_ret_type && !_validate_type(vals, func->get_ret_type))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
+
+   if (func->set_ret_type && !_validate_type(vals, func->set_ret_type))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
                                             func->get_ret_type, 0))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->set_ret_val && !_validate_expr(func->set_ret_val,
                                             func->set_ret_type, 0))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
 #define EOLIAN_PARAMS_VALIDATE(params) \
    EINA_LIST_FOREACH(params, l, param) \
-     if (!_validate_param(vals, param) || !_validate_beta_usage(func->klass, param->type)) \
-       return EINA_FALSE;
+     if (!_validate_param(vals, param)) \
+       return _reset_stable(vals, was_stable, EINA_FALSE);
 
    EOLIAN_PARAMS_VALIDATE(func->prop_values);
    EOLIAN_PARAMS_VALIDATE(func->prop_values_get);
@@ -428,14 +455,15 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 #undef EOLIAN_PARAMS_VALIDATE
 
    if (!_validate_doc(func->get_return_doc))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
    if (!_validate_doc(func->set_return_doc))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* just for now, when dups become errors there will be no need to check */
    if (!oobj && nhash)
      eina_hash_add(nhash, &func->base.name, &func->base);
 
+   _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&func->base);
 }
 
@@ -503,15 +531,18 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
         return EINA_TRUE;
      }
 
-   if (!_validate_type(vals, event->type) || !_validate_beta_usage(event->klass, event->type))
-     return EINA_FALSE;
+   Eina_Bool was_stable = _set_stable(vals, !event->base.is_beta && vals->stable);
+
+   if (!_validate_type(vals, event->type))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (!_validate_doc(event->doc))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (vals->event_redef && !oobj)
      eina_hash_add(nhash, &event->base.name, &event->base);
 
+   _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&event->base);
 }
 
@@ -1180,7 +1211,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_class_is_legacy(cl) && !cl->is_beta && cl->parent->is_beta)
+        if (!_class_is_legacy(cl) && !cl->base.is_beta && cl->parent->base.is_beta)
           {
              _eo_parser_log(&cl->base, "non-beta class cannot have beta parent");
              return EINA_FALSE;
@@ -1247,6 +1278,8 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
           }
      }
 
+   /* we are not verifying betaness for any legacy class */
+   _set_stable(vals, !cl->base.is_beta && !_class_is_legacy(cl));
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(vals, func, nhash))
@@ -1291,15 +1324,18 @@ _validate_variable(Validate_State *vals, Eolian_Variable *var)
    if (var->base.validated)
      return EINA_TRUE;
 
+   Eina_Bool was_stable = _set_stable(vals, !var->base.is_beta && vals->stable);
+
    if (!_validate_type(vals, var->base_type))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (var->value && !_validate_expr(var->value, var->base_type, 0))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (!_validate_doc(var->doc))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
+   _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&var->base);
 }
 
@@ -1324,8 +1360,10 @@ database_validate(const Eolian_Unit *src)
 
    Validate_State vals = {
       EINA_FALSE,
+      EINA_TRUE,
       !!getenv("EOLIAN_EVENT_REDEF_WARN"),
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN")
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
+      !!getenv("EOLIAN_TYPEDECL_BETA_WARN")
    };
 
    /* do an initial pass to refill inherits */

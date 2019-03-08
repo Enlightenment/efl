@@ -119,6 +119,13 @@ eolian_object_namespaces_get(const Eolian_Object *obj)
    return &it->itr;
 }
 
+EAPI Eina_Bool
+eolian_object_is_beta(const Eolian_Object *obj)
+{
+   if (!obj) return EINA_FALSE;
+   return obj->is_beta;
+}
+
 void database_doc_del(Eolian_Documentation *doc)
 {
    if (!doc) return;

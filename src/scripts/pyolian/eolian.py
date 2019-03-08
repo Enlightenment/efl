@@ -622,6 +622,10 @@ class Object(EolianBaseObject):
     def column(self):
         return int(lib.eolian_object_column_get(self))
 
+    @cached_property
+    def is_beta(self):
+        return bool(lib.eolian_object_is_beta(self))
+
 
 class Class(Object):
     def __repr__(self):
@@ -811,10 +815,6 @@ class Event(Object):
         return Eolian_Object_Scope(lib.eolian_event_scope_get(self))
 
     @cached_property
-    def is_beta(self):
-        return bool(lib.eolian_event_is_beta(self))
-
-    @cached_property
     def is_hot(self):
         return bool(lib.eolian_event_is_hot(self))
 
@@ -885,10 +885,6 @@ class Function(Object):
     @cached_property
     def is_class(self):
         return bool(lib.eolian_function_is_class(self))
-
-    @cached_property
-    def is_beta(self):
-        return bool(lib.eolian_function_is_beta(self))
 
     @cached_property
     def object_is_const(self):

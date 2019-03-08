@@ -89,7 +89,8 @@ struct _Eolian_Object
    int column;
    int refcount;
    Eolian_Object_Type type;
-   Eina_Bool validated;
+   Eina_Bool validated: 1;
+   Eina_Bool is_beta: 1;
 };
 
 static inline void
@@ -196,7 +197,6 @@ struct _Eolian_Class
    Eina_List *callables; /* internal for now */
    Eina_Bool class_ctor_enable:1;
    Eina_Bool class_dtor_enable:1;
-   Eina_Bool is_beta :1;
 };
 
 struct _Eolian_Function
@@ -232,7 +232,6 @@ struct _Eolian_Function
    Eina_Bool get_only_legacy: 1;
    Eina_Bool set_only_legacy: 1;
    Eina_Bool is_class :1;
-   Eina_Bool is_beta :1;
    Eina_List *ctor_of;
    Eolian_Class *klass;
 };
@@ -328,7 +327,6 @@ struct _Eolian_Event
    Eolian_Type *type;
    Eolian_Class *klass;
    Eolian_Object_Scope scope;
-   Eina_Bool is_beta :1;
    Eina_Bool is_hot  :1;
    Eina_Bool is_restart :1;
 };
