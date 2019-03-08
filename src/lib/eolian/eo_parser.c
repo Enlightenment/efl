@@ -994,8 +994,7 @@ static void
 parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
-   Eina_Bool has_return = EINA_FALSE,
-             has_eo     = EINA_FALSE, has_keys   = EINA_FALSE,
+   Eina_Bool has_return = EINA_FALSE, has_keys      = EINA_FALSE,
              has_values = EINA_FALSE, has_protected = EINA_FALSE,
              has_virtp  = EINA_FALSE;
    Eina_Bool is_get = (ls->t.kw == KW_get);
@@ -1310,9 +1309,8 @@ parse_method(Eo_Lexer *ls)
    Eolian_Function *meth = NULL;
    Eolian_Implement *impl = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
-             has_return      = EINA_FALSE,
-             has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
-             has_eo          = EINA_FALSE, has_beta   = EINA_FALSE,
+             has_return      = EINA_FALSE, has_protected = EINA_FALSE,
+             has_class       = EINA_FALSE, has_beta   = EINA_FALSE,
              has_virtp       = EINA_FALSE;
    meth = calloc(1, sizeof(Eolian_Function));
    meth->klass = ls->klass;
