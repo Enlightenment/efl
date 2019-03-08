@@ -558,7 +558,7 @@ _sel_extend(Evas_Textblock_Cursor *c, Evas_Object *o, Efl_Ui_Internal_Text_Inter
         free(en->selection);
         en->selection = NULL;
      }
-   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, NULL);
 }
 
 static void
@@ -574,7 +574,7 @@ _sel_clear(Evas_Object *o EINA_UNUSED, Efl_Ui_Internal_Text_Interactive_Data *en
      {
         en->have_selection = EINA_FALSE;
         efl_text_cursor_copy(o, en->sel_start, en->sel_end);
-        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(o, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, NULL);
      }
 }
 
