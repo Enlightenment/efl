@@ -143,7 +143,7 @@ _calc_job_cb(void *data)
         sd->minw = minw;
         sd->minh = minh;
 
-        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;
@@ -398,7 +398,7 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoo
    psd->wsd->pan_y = pos.y;
    evas_object_smart_changed(obj);
 
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Position2D

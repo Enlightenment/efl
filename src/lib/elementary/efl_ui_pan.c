@@ -47,7 +47,7 @@ _efl_ui_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D s
    psd->h = sz.h;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_VIEWPORT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -68,7 +68,7 @@ _efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd, Eina_Pos
    psd->py = pos.y;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Position2D
@@ -126,7 +126,7 @@ _efl_ui_pan_content_del_cb(void *data,
 
    psd->content = NULL;
    psd->content_w = psd->content_h = psd->px = psd->py = 0;
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
 }
 
 static void
@@ -145,7 +145,7 @@ _efl_ui_pan_content_resize_cb(void *data,
         psd->content_h = sz.h;
         evas_object_smart_changed(pobj);
      }
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -179,7 +179,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
 
 end:
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
    return EINA_TRUE;
 }
 
@@ -203,7 +203,7 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
    pd->content = NULL;
    pd->content_w = pd->content_h = pd->px = pd->py = 0;
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
 
    return old_content;
 }
