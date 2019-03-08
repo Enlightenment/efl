@@ -7,7 +7,10 @@
 #include "efl_access_window.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_window.eo.legacy.h"
+#ifndef _EFL_ACCESS_WINDOW_EO_CLASS_TYPE
+#define _EFL_ACCESS_WINDOW_EO_CLASS_TYPE
+typedef Eo Efl_Access_Window;
+#endif
 #endif
 
 /**

@@ -1,4 +1,4 @@
-#include "elm_interface_scrollable.eo.legacy.h"
+#include "elm_interface_scrollable_eo.legacy.h"
 #include "elm_scroller_eo.legacy.h"
 
 /**

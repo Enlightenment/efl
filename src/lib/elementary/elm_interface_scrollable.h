@@ -62,7 +62,7 @@ typedef struct _Elm_Scrollable_Smart_Interface_Data
 #include "elm_interface_scrollable.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_interface_scrollable.eo.legacy.h"
+#include "elm_interface_scrollable_eo.legacy.h"
 #endif
 
 struct _Elm_Scrollable_Smart_Interface_Data

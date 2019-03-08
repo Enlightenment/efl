@@ -17,7 +17,10 @@ typedef struct _Efl_Access_Action_Data Efl_Access_Action_Data;
 #include "efl_access_widget_action.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_widget_action.eo.legacy.h"
+#ifndef _EFL_ACCESS_WIDGET_ACTION_EO_CLASS_TYPE
+#define _EFL_ACCESS_WIDGET_ACTION_EO_CLASS_TYPE
+typedef Eo Efl_Access_Widget_Action;
+#endif
 #endif
 
 #endif

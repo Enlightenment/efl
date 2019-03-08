@@ -7,7 +7,7 @@
 #include "efl_access_object.eo.h"
 #endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_object.eo.legacy.h"
+#include "efl_access_object_eo.legacy.h"
 #endif
 
 /*
