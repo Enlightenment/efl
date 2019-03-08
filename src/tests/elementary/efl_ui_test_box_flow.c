@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
+#include <Efl_Ui.h>
 #include "elm_suite.h"
 
 #define COORD_EQ(a, b) (!!(abs(a - b) < 2))
