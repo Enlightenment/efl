@@ -114,6 +114,7 @@ elementary_suite = executable('elementary_suite',
 
 efl_ui_suite_src = [
   'efl_ui_suite.c',
+  'efl_ui_build.c',
   'suite_helpers.c',
   'suite_helpers.h',
   'elm_test_init.c',
