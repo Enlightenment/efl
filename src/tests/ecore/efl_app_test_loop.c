@@ -79,11 +79,11 @@ EFL_START_TEST(efl_app_test_efl_loop_concentric)
    efl_event_callback_add(loop, EFL_LOOP_EVENT_IDLE_ENTER, loop_idle_enter, NULL);
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop2,
      efl_loop_timer_interval_set(efl_added, 0.01),
-     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, loop_timer_tick, loop)
+     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, loop_timer_tick, loop)
      );
    timer2 = efl_add(EFL_LOOP_TIMER_CLASS, loop,
      efl_loop_timer_interval_set(efl_added, 0.5),
-     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, efl_app_test_efl_loop_concentric_fail, NULL)
+     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, efl_app_test_efl_loop_concentric_fail, NULL)
      );
    exitcode = efl_loop_exit_code_process(efl_loop_begin(loop));
    ck_assert_int_eq(exitcode, 0);

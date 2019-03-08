@@ -187,7 +187,7 @@ _elm_suite_win_create()
    timer = efl_add(EFL_LOOP_TIMER_CLASS, loop,
      efl_loop_timer_interval_set(efl_added, BUFFER_RENDER_INTERVAL),
      efl_event_freeze(efl_added),
-     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _win_manual_render, win)
+     efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _win_manual_render, win)
      );
    evas_object_data_set(win, "timer", timer);
    ecore_evas_manual_render_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), EINA_TRUE);

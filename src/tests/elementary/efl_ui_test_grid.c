@@ -298,7 +298,7 @@ EFL_START_TEST(efl_ui_grid_scroll)
    item = efl_pack_content_get(grid, 50);
 
    timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(), 
-                   efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, grid_timer_cb, NULL),
+                   efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, grid_timer_cb, NULL),
                    efl_loop_timer_loop_reset(efl_added),
                    efl_loop_timer_interval_set(efl_added, 3.0));
 

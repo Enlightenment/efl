@@ -858,7 +858,7 @@ _impl_ecore_exe_kill(Ecore_Exe *obj EINA_UNUSED, Ecore_Exe_Data *exe)
    efl_del(exe->doomsday_clock);
    exe->doomsday_clock = efl_add(EFL_LOOP_TIMER_CLASS, obj,
                                  efl_event_callback_add(efl_added,
-                                                        EFL_LOOP_TIMER_EVENT_TICK,
+                                                        EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                                         _ecore_exe_make_sure_its_really_dead,
                                                         obj),
                                  efl_loop_timer_interval_set(efl_added, 10.0));
@@ -896,7 +896,7 @@ _ecore_exe_make_sure_its_dead(void *data, const Efl_Event *event)
           INF("Sending KILL signal to allegedly dead PID %d.", exe->pid);
         exe->doomsday_clock = efl_add(EFL_LOOP_TIMER_CLASS, exe_obj,
                                       efl_event_callback_add(efl_added,
-                                                             EFL_LOOP_TIMER_EVENT_TICK,
+                                                             EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                                              _ecore_exe_make_sure_its_really_dead,
                                                              exe_obj),
                                       efl_loop_timer_interval_set(efl_added, 10.0));
@@ -1295,7 +1295,7 @@ _ecore_exe_dead_attach(Ecore_Exe *obj)
    if (exe->doomsday_clock) return;
    exe->doomsday_clock = efl_add(EFL_LOOP_TIMER_CLASS, obj,
                                  efl_event_callback_add(efl_added,
-                                                        EFL_LOOP_TIMER_EVENT_TICK,
+                                                        EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                                         _ecore_exe_make_sure_its_dead,
                                                         obj),
                                  efl_loop_timer_interval_set(efl_added, 10.0));

@@ -369,7 +369,7 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
      {
         cm->timer = efl_add(EFL_LOOP_TIMER_CLASS, cm->loop,
                             efl_loop_timer_interval_set(efl_added, seconds),
-                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_http_curlm_timer_do, cm));
+                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _efl_net_dialer_http_curlm_timer_do, cm));
         EINA_SAFETY_ON_NULL_RETURN_VAL(cm->timer, -1);
      }
 

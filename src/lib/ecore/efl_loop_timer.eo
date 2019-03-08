@@ -10,7 +10,7 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
      The @Efl.Object.event_freeze and @Efl.Object.event_thaw calls are used to pause and unpause the timer.
    ]]
    methods {
-      @property interval {
+      @property timer_interval {
          [[Interval the timer ticks on.]]
          set {
             [[If set during a timer call this will affect the next interval.]]
@@ -21,13 +21,13 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
             in: double(-1.0); [[The new interval in seconds]]
          }
       }
-      @property pending {
+      @property time_pending {
          [[Pending time regarding a timer.]]
          get {
             return: double; [[Pending time]]
          }
       }
-      reset {
+      timer_reset {
           [[Resets a timer to its full interval. This effectively makes the
             timer start ticking off from zero now.
 
@@ -36,12 +36,12 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
             @since 1.2
           ]]
       }
-      loop_reset {
+      timer_loop_reset {
          [[This effectively resets a timer but based on the time when this iteration of the main loop started.
            @since 1.18
     ]]
       }
-      delay {
+      timer_delay {
          [[Adds a delay to the next occurrence of a timer.
            This doesn't affect the timer interval.
          ]]
@@ -51,10 +51,10 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
       }
    }
    events {
-      tick: void; [[Event triggered when the specified time as passed.]]
+      timer,tick: void; [[Event triggered when the specified time as passed.]]
    }
    constructors {
-      .interval;
+      .timer_interval;
    }
    implements {
       Efl.Object.constructor;
