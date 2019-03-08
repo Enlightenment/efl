@@ -178,7 +178,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
    elm_layout_signal_emit(VIEW(item), "elm,state,unselected", "elm");
    if (item->icon)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
-   efl_event_callback_legacy_call(WIDGET(item), EFL_UI_EVENT_UNSELECTED, EO_OBJ(item));
+   efl_event_callback_legacy_call(WIDGET(item), EFL_UI_EVENT_SELECTABLE_UNSELECTED, EO_OBJ(item));
    if (_elm_config->atspi_mode)
     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
@@ -1094,7 +1094,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
      {
         if (it->func) it->func((void *)(WIDGET_ITEM_DATA_GET(EO_OBJ(it))), WIDGET(it), EO_OBJ(it));
      }
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
+   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTABLE_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
 }
