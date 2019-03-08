@@ -21,7 +21,7 @@ enum @beta Ector.Buffer.Access_Flag {
    cow       = 0x4, [[Forces copy-on-write if already mapped as read-only. Requires write.]]
 }
 
-mixin Ector.Buffer
+mixin @beta Ector.Buffer
 {
    [[2D pixel buffer interface for Ector
 

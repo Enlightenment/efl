@@ -1,4 +1,4 @@
-class Evas.Ector.GL.Buffer extends Ector.GL.Buffer implements Evas.Ector.Buffer
+class @beta Evas.Ector.GL.Buffer extends Ector.GL.Buffer implements Evas.Ector.Buffer
 {
    [[An Ector GL buffer capable of being mapped, drawn and rendered to.
 

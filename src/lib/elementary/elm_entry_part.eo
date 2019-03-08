@@ -1,4 +1,4 @@
-class Elm.Entry.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm.Entry.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary entry internal part class]]
    data: null;

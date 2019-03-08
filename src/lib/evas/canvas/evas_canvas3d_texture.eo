@@ -1,6 +1,6 @@
 type @extern Evas_Colorspace: int; [[Evas colorspace type]] /* FIXME: Need to get emile migrated. */
 
-class Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
+class @beta Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
 {
    [[Evas 3d canvas texture class]]
    data : Evas_Canvas3D_Texture_Data;

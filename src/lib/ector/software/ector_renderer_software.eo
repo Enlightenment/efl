@@ -1,4 +1,4 @@
-abstract Ector.Renderer.Software extends Ector.Renderer
+abstract @beta Ector.Renderer.Software extends Ector.Renderer
 {
    [[Ector software renderer class]]
    data: null;

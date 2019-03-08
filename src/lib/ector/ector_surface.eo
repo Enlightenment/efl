@@ -1,4 +1,4 @@
-mixin Ector.Surface extends Ector.Buffer
+mixin @beta Ector.Surface extends Ector.Buffer
 {
    [[Surface interface for Ector]]
 

@@ -1,4 +1,4 @@
-mixin Ector.Renderer.Gradient requires Efl.Object extends Efl.Gfx.Gradient
+mixin @beta Ector.Renderer.Gradient requires Efl.Object extends Efl.Gfx.Gradient
 {
    [[Ector gradient renderer mixin]]
    eo_prefix: ector_renderer_gradient;

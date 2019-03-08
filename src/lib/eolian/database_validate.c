@@ -89,12 +89,6 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 }
 
 static Eina_Bool
-_class_is_legacy(Eolian_Class *klass)
-{
-   return !!strncmp(klass->base.name, "Efl.", strlen("Efl."));
-}
-
-static Eina_Bool
 _validate_doc(Eolian_Documentation *doc)
 {
    if (!doc)
@@ -1210,7 +1204,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
            default:
              break;
           }
-        if (!_class_is_legacy(cl) && !cl->base.is_beta && cl->parent->base.is_beta)
+        if (!cl->base.is_beta && cl->parent->base.is_beta)
           {
              _eo_parser_log(&cl->base, "non-beta class cannot have beta parent");
              return EINA_FALSE;
@@ -1277,8 +1271,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
           }
      }
 
-   /* we are not verifying betaness for any legacy class */
-   _set_stable(vals, !cl->base.is_beta && !_class_is_legacy(cl));
+   _set_stable(vals, !cl->base.is_beta);
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(vals, func, nhash))

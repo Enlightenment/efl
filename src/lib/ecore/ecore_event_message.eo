@@ -1,4 +1,4 @@
-class Ecore.Event.Message extends Efl.Loop_Message
+class @beta Ecore.Event.Message extends Efl.Loop_Message
 {
    [[ For Legacy API usage Only. Legacy Ecore Events ]]
    methods {

@@ -1,4 +1,4 @@
-class Focus.Test
+class @beta Focus.Test
     extends Efl.Object
     implements Efl.Ui.Focus.Object, Efl.Gfx.Entity
 {

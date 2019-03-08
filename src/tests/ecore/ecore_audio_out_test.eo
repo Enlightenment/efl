@@ -1,4 +1,4 @@
-class Ecore.Audio.Out.Test extends Ecore.Audio.Out
+class @beta Ecore.Audio.Out.Test extends Ecore.Audio.Out
 {
    data: null;
    implements {

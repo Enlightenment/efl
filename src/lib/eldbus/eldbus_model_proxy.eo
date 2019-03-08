@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model.Proxy extends Eldbus.Model {
+class @beta Eldbus.Model.Proxy extends Eldbus.Model {
     [[Eldbus model proxy class]]
 
     methods {

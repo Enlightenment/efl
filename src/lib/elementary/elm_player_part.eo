@@ -1,4 +1,4 @@
-class Elm.Player.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm.Player.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary player internal part class]]
    data: null;
