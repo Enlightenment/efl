@@ -8,6 +8,7 @@
 
 #include "eo_suite.h"
 #include "eo_test_class_simple.h"
+#include "eo_test_reflection_complex_class_structure.h"
 
 
 EFL_START_TEST(eo_test_reflection_invalid)
@@ -66,9 +67,25 @@ EFL_START_TEST(eo_test_reflection_simple)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eo_test_reflection_complex_class_structure)
+{
+   const int numb = 42;
+   Eina_Value numb_val = eina_value_int_init(numb);
+   Eo *simple = efl_new(COMPLEX_CLASS_CLASS);
+
+   efl_property_reflection_set(simple, "m_test", numb_val);
+   efl_property_reflection_set(simple, "i_test", numb_val);
+
+   ck_assert_int_eq(complex_mixin_m_test_get(simple), numb);
+   ck_assert_int_eq(complex_interface_i_test_get(simple), numb);
+}
+EFL_END_TEST
+
 void eo_test_reflection(TCase *tc)
 {
    tcase_add_test(tc, eo_test_reflection_simple);
    tcase_add_test(tc, eo_test_reflection_inherited);
    tcase_add_test(tc, eo_test_reflection_invalid);
+   tcase_add_test(tc, eo_test_reflection_complex_class_structure);
 }
+#include "eo_test_reflection_complex_class_structure.c"
