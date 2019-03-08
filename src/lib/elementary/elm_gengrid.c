@@ -1108,6 +1108,7 @@ _item_content_realize(Elm_Gen_Item *it,
              _elm_widget_full_eval(content);
           }
 
+        elm_widget_sub_object_add(WIDGET(it), content);
         if (elm_wdg_item_disabled_get(EO_OBJ(it)))
           elm_widget_disabled_set(content, EINA_TRUE);
 
@@ -1231,7 +1232,7 @@ _elm_gengrid_item_all_contents_unset(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, 
 
    EINA_LIST_FREE (it->contents, content)
      {
-        evas_object_smart_member_del(content);
+        _elm_widget_sub_object_redirect_to_top(WIDGET(it), content);
         // edje can be reused by item caching,
         // content should be un-swallowed from edje
         edje_object_part_unswallow(VIEW(it), content);
