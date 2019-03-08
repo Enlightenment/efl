@@ -1815,6 +1815,7 @@ TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/suite_helpers.c \
 	tests/elementary/elm_suite.c \
+	tests/elementary/elm_suite_build.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
 	tests/elementary/elm_test_colorselector.c \

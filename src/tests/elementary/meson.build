@@ -19,6 +19,7 @@ endforeach
 
 elementary_suite_src = [
   'elm_suite.c',
+  'elm_suite_build.c',
   'suite_helpers.c',
   'elm_test_atspi.c',
   'elm_test_check.c',
