@@ -1,4 +1,4 @@
-function EflViewModelPropertyGet {
+function @beta EflViewModelPropertyGet {
    [[Function called when a property is get.]]
    params {
       @in view_model: const(Efl.View_Model); [[The ViewModel object the @.property.get is issued on.]]
@@ -7,7 +7,7 @@ function EflViewModelPropertyGet {
    return: any_value_ptr; [[The property value.]]
 };
 
-function EflViewModelPropertySet {
+function @beta EflViewModelPropertySet {
    [[Function called when a property is set.]]
    params {
       @in view_model: Efl.View_Model; [[The ViewModel object the @.property.set is issued on.]]

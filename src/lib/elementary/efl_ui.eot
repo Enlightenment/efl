@@ -31,7 +31,7 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Efl.Ui.Slider_Indicator_Visible_Mode
+enum @beta Efl.Ui.Slider_Indicator_Visible_Mode
 {
    [[Slider's indicator visibility mode.
 
@@ -54,7 +54,7 @@ enum Efl.Ui.Focus.Autoscroll_Mode
    bring_in [[Bring in the focused region or item automatically which might invole the scrolling.]]
 }
 
-enum Efl.Ui.Softcursor_Mode
+enum @beta Efl.Ui.Softcursor_Mode
 {
    [[Software cursor mode.
 
@@ -66,7 +66,7 @@ enum Efl.Ui.Softcursor_Mode
 }
 
 /* 'on_access_activate' is beta API in the Widget class */
-enum Efl.Ui.Activate
+enum @beta Efl.Ui.Activate
 {
    [[Accessibility ]]
    default = 0, [[Activate default]]
@@ -77,7 +77,7 @@ enum Efl.Ui.Activate
    back, [[Activate back]]
 }
 
-enum Efl.Ui.Widget_Orientation_Mode
+enum @beta Efl.Ui.Widget_Orientation_Mode
 {
    [[Widget orientation mode, or how the theme handles screen orientation.
 
@@ -92,4 +92,4 @@ enum Efl.Ui.Widget_Orientation_Mode
 }
 
 /* Types for A11Y (internal/beta API) */
-type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
+type @beta @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]

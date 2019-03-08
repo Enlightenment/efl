@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Calendar_Weekday
+enum @beta Efl.Ui.Calendar_Weekday
 {
    [[A weekday
 

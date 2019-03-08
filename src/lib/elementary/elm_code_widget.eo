@@ -1,5 +1,5 @@
 /* FIXME: this widget should just implement a scroller */
-enum Elm.Code_Widget_Scroller_Policy
+enum @beta Elm.Code_Widget_Scroller_Policy
 {
    [[Type that controls when scrollbars should appear.
 

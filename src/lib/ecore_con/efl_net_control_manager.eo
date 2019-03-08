@@ -2,7 +2,7 @@ import eina_types;
 import efl_net_control_access_point;
 import efl_net_control_technology;
 
-enum Efl.Net.Control.State {
+enum @beta Efl.Net.Control.State {
     [[Provides the global network connectivity state.
 
       For more details, use @Efl.Net.Control.Manager access points and
@@ -15,7 +15,7 @@ enum Efl.Net.Control.State {
     online, [[At least one access point is connected and the internet has been verified]]
 }
 
-enum Efl.Net.Control.Agent_Request_Input_Field {
+enum @beta Efl.Net.Control.Agent_Request_Input_Field {
     [[Bitwise-able fields requested to the agent.
 
       @since 1.19
@@ -27,7 +27,7 @@ enum Efl.Net.Control.Agent_Request_Input_Field {
     wps = (1 << 4), [[Use WPS authentication. If passphrase is present, this is an alternative to that.]]
 }
 
-struct Efl.Net.Control.Agent_Request_Input_Information {
+struct @beta Efl.Net.Control.Agent_Request_Input_Information {
     [[Name-value information pair provided to the agent.
 
       @since 1.19
@@ -36,7 +36,7 @@ struct Efl.Net.Control.Agent_Request_Input_Information {
     value: string; [[The contents of the information]]
 }
 
-struct Efl.Net.Control.Agent_Request_Input {
+struct @beta Efl.Net.Control.Agent_Request_Input {
     [[Requests input to the agent.
 
       @since 1.19
@@ -47,7 +47,7 @@ struct Efl.Net.Control.Agent_Request_Input {
     informational: list<ptr(Efl.Net.Control.Agent_Request_Input_Information)>; [[Such as the previous passphrase, VPN host]]
 }
 
-struct Efl.Net.Control.Agent_Error {
+struct @beta Efl.Net.Control.Agent_Error {
     [[Reports error to the agent.
 
       @since 1.19
@@ -56,7 +56,7 @@ struct Efl.Net.Control.Agent_Error {
     message: string; [[The error message.]]
 }
 
-struct Efl.Net.Control.Agent_Browser_Url {
+struct @beta Efl.Net.Control.Agent_Browser_Url {
     [[Reports to agent that it should open a browser at a given URL.
 
       @since 1.19

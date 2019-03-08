@@ -1,4 +1,4 @@
-enum Efl.Ui.Select_Mode {
+enum @beta Efl.Ui.Select_Mode {
    [[Type of multi selectable object.]]
    single, [[Only single child is selected. if the child is selected,
              previous selected child will be unselected.]]

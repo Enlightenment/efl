@@ -1,4 +1,4 @@
-enum Efl.Pointer.Action
+enum @beta Efl.Pointer.Action
 {
    [[Pointer event type. Represents which kind of event this is.
 
@@ -18,7 +18,7 @@ enum Efl.Pointer.Action
    axis,   [[Axis event (pen, stick, ...).]]
 }
 
-enum Efl.Pointer.Flags
+enum @beta Efl.Pointer.Flags
 {
    [[Pointer flags indicating whether a double or triple click is under way.
 
@@ -29,7 +29,7 @@ enum Efl.Pointer.Flags
    triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
 }
 
-enum Efl.Input.Flags
+enum @beta Efl.Input.Flags
 {
    [[Special flags set during an input event propagation.
 
@@ -48,7 +48,7 @@ enum Efl.Input.Flags
                            actually perform anything.]]
 }
 
-enum Efl.Input.Object_Pointer_Mode {
+enum @beta Efl.Input.Object_Pointer_Mode {
    [[How the mouse pointer should be handled by EFL.
 
      In the mode $autograb, when a mouse button is pressed down over an
@@ -74,7 +74,7 @@ enum Efl.Input.Object_Pointer_Mode {
                             ]]
 }
 
-enum Efl.Input.Value {
+enum @beta Efl.Input.Value {
    [[Keys for the generic values of all events.
 
      @since 1.19

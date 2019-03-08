@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Gfx.Colorspace {
+enum @beta Efl.Gfx.Colorspace {
   [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]
   ycbcr422p601_pl,      [[YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows.]]
@@ -23,14 +23,14 @@ enum Efl.Gfx.Colorspace {
   rgba_s3tc_dxt5 = 18   [[OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11.]]
 }
 
-enum Efl.Gfx.Render_Op {
+enum @beta Efl.Gfx.Render_Op {
   [[Graphics render operation mode]]
   blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s.]]
   copy  = 1, [[Copy source to destination; d = s.]]
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Path_Command_Type {
+enum @beta Efl.Gfx.Path_Command_Type {
   [[These values determine how the points are interpreted in a stream of points.
     @since 1.14
   ]]
@@ -42,7 +42,7 @@ enum Efl.Gfx.Path_Command_Type {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Cap {
+enum @beta Efl.Gfx.Cap {
   [[These values determine how the end of opened sub-paths are rendered in a
     stroke.
     @Efl.Gfx.Shape.stroke_cap.set
@@ -54,7 +54,7 @@ enum Efl.Gfx.Cap {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Join
+enum @beta Efl.Gfx.Join
 {
   [[These values determine how two joining lines are rendered in a stroker.
     @Efl.Gfx.Shape.stroke_join.set
@@ -66,7 +66,7 @@ enum Efl.Gfx.Join
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Gradient_Spread
+enum @beta Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
     @Efl.Gfx.Gradient.spread.set
@@ -78,7 +78,7 @@ enum Efl.Gfx.Gradient_Spread
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Fill_Rule
+enum @beta Efl.Gfx.Fill_Rule
 {
   [[Type defining how an image content get filled.
     @since 1.14
@@ -87,7 +87,7 @@ enum Efl.Gfx.Fill_Rule
   odd_even = 1,  [[Draw a horizontal line from the point to a location outside the shape, and count the number of intersections. If the number of intersections is an odd number, the point is inside the shape.]]
 }
 
-struct Efl.Gfx.Dash {
+struct @beta Efl.Gfx.Dash {
   [[Type describing dash.
     @Efl.Gfx.Shape.stroke_dash.set
     @since 1.14
@@ -96,7 +96,7 @@ struct Efl.Gfx.Dash {
   gap: double;     [[Distance between two dashes.]]
 }
 
-struct Efl.Gfx.Gradient_Stop
+struct @beta Efl.Gfx.Gradient_Stop
 {
   [[Type defining gradient stops.
     Describes the location and color of a transition point in a gradient.
@@ -109,7 +109,7 @@ struct Efl.Gfx.Gradient_Stop
   a: int; [[The component A color of the gradient stop]]
 }
 
-struct Efl.Gfx.Stroke_Color
+struct @beta Efl.Gfx.Stroke_Color
 {
   [[Internal structure for @Efl.Gfx.Stroke.]]
   r: int; [[The component R color of the stroke]]
@@ -118,7 +118,7 @@ struct Efl.Gfx.Stroke_Color
   a: int; [[The component A color of the stroke]]
 }
 
-struct Efl.Gfx.Stroke
+struct @beta Efl.Gfx.Stroke
 {
   [[Type defining stroke information.
     Describes the properties to define the path stroke.
@@ -134,13 +134,13 @@ struct Efl.Gfx.Stroke
   join: Efl.Gfx.Join; [[Stroke join]]
 }
 
-struct Efl.Gfx.Shape_Public
+struct @beta Efl.Gfx.Shape_Public
 {
    [[Public shape]]
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
-enum Efl.Gfx.Border_Fill_Mode
+enum @beta Efl.Gfx.Border_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]
    none = 0, [[Image's center region is $not to be rendered]]
@@ -148,7 +148,7 @@ enum Efl.Gfx.Border_Fill_Mode
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
 }
 
-enum Efl.Gfx.Change_Flag
+enum @beta Efl.Gfx.Change_Flag
 {
    [[What property got changed for this object @since 1.18]]
    none    = 0x0, [[No change]]
@@ -188,14 +188,14 @@ enum Efl.Gfx.Hint_Aspect
               aspect.]]
 }
 
-enum Efl.Gfx.Color_Class_Layer {
+enum @beta Efl.Gfx.Color_Class_Layer {
    [[Efl Gfx Color Class layer enum]]
    normal = 0, [[Default color]]
    outline, [[Outline color]]
    shadow [[Shadow color]]
 }
 
-type Efl.Font.Size: int; [[Efl font size type]]
+type @beta Efl.Font.Size: int; [[Efl font size type]]
 
 var Efl.Gfx.Image.Load_Error.NONE: Eina.Error; [[No error on load]]
 var Efl.Gfx.Image.Load_Error.GENERIC: Eina.Error; [[A non-specific error occurred]]

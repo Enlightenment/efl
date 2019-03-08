@@ -1,4 +1,4 @@
-enum Efl.Canvas.Vg.Fill_Mode
+enum @beta Efl.Canvas.Vg.Fill_Mode
 {
    [[Enumeration that defines how viewbox will be filled int the vg canvs's viewport.
      default Fill_Mode is $none]]

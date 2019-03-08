@@ -1,4 +1,4 @@
-enum Efl.Loop_Handler_Flags {
+enum @beta Efl.Loop_Handler_Flags {
    [[ A set of flags that can be OR'd together to indicate which are
    desired ]]
    none = 0, [[ No I/O is desired (generally useless) ]]

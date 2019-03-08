@@ -1,4 +1,4 @@
-enum Efl.Ui.Text_Scroller_Mode
+enum @beta Efl.Ui.Text_Scroller_Mode
 {
    default = 0,
    singleline = 0,

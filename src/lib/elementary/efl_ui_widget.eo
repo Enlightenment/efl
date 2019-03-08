@@ -1,4 +1,4 @@
-function Efl.Ui.Scrollable_On_Show_Region {
+function @beta Efl.Ui.Scrollable_On_Show_Region {
    [[Function pointer for on show region hook]]
    params {
       @in obj: Efl.Canvas.Object; [[Canvas object]]

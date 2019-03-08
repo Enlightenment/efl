@@ -1,4 +1,4 @@
-enum Efl.Ui.Win_Type
+enum @beta Efl.Ui.Win_Type
 {
    [[Defines the types of window that can be created
 
@@ -46,7 +46,7 @@ enum Efl.Ui.Win_Type
                         ]]
 }
 
-enum Efl.Ui.Win_Keyboard_Mode
+enum @beta Efl.Ui.Win_Keyboard_Mode
 {
    [[The different layouts that can be requested for the virtual keyboard.
 
@@ -87,7 +87,7 @@ enum Efl.Ui.Win_Indicator_Mode
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
-enum Efl.Ui.Win_Modal_Mode
+enum @beta Efl.Ui.Win_Modal_Mode
 {
    [[Defines the mode of a modal window]]
 
@@ -95,7 +95,7 @@ enum Efl.Ui.Win_Modal_Mode
    modal [[The window is modal window.]]
 }
 
-enum Efl.Ui.Win_Urgent_Mode
+enum @beta Efl.Ui.Win_Urgent_Mode
 {
    [[Defines the mode of a urgent window.]]
 

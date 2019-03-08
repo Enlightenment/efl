@@ -1,6 +1,6 @@
 import eina_types;
 
-struct Efl.Net.Ip_Address_Resolve_Results {
+struct @beta Efl.Net.Ip_Address_Resolve_Results {
     [[The results of @Efl.Net.Ip_Address.resolve call.
 
       This structure is created by @Efl.Net.Ip_Address.resolve.

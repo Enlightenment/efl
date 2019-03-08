@@ -1,4 +1,4 @@
-enum Efl.Net.Control.Technology_Type {
+enum @beta Efl.Net.Control.Technology_Type {
     [[Technology types
 
       @since 1.19

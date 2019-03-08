@@ -1,4 +1,4 @@
-enum Efl.Net.Control.Access_Point_State {
+enum @beta Efl.Net.Control.Access_Point_State {
     [[Provides the access point state.
 
       @since 1.19
@@ -12,7 +12,7 @@ enum Efl.Net.Control.Access_Point_State {
     failure, [[The connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
 }
 
-enum Efl.Net.Control.Access_Point_Error {
+enum @beta Efl.Net.Control.Access_Point_Error {
     [[The reason for the connection error.
 
       @since 1.19
@@ -25,7 +25,7 @@ enum Efl.Net.Control.Access_Point_Error {
     login_failed, [[Login or authentication information was incorrect, agent_request_input event may be emitted.]]
 }
 
-enum Efl.Net.Control.Access_Point_Security {
+enum @beta Efl.Net.Control.Access_Point_Security {
     [[Bitwise-able securities supported by an access point.
 
       @since 1.19
@@ -37,7 +37,7 @@ enum Efl.Net.Control.Access_Point_Security {
     ieee802_1x = (1 << 3), [[IEEE 802.1X]]
 }
 
-enum Efl.Net.Control.Access_Point_Ipv4_Method {
+enum @beta Efl.Net.Control.Access_Point_Ipv4_Method {
     [[The method used to configure IPv4
 
       @since 1.19
@@ -48,7 +48,7 @@ enum Efl.Net.Control.Access_Point_Ipv4_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv4]]
 }
 
-enum Efl.Net.Control.Access_Point_Ipv6_Method {
+enum @beta Efl.Net.Control.Access_Point_Ipv6_Method {
     [[The method used to configure IPv6
 
       @since 1.19
@@ -63,7 +63,7 @@ enum Efl.Net.Control.Access_Point_Ipv6_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv6]]
 }
 
-enum Efl.Net.Control.Access_Point_Proxy_Method {
+enum @beta Efl.Net.Control.Access_Point_Proxy_Method {
     [[The method used to configure Proxies.
 
       @since 1.19

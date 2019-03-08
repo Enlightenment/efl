@@ -1,4 +1,4 @@
-enum Efl.Ui.Pager_Loop
+enum @beta Efl.Ui.Pager_Loop
 {
    [[Efl ui pager loop mode]]
    disabled,

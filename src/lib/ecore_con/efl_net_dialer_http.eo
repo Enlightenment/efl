@@ -1,6 +1,6 @@
 import efl_net_http_types;
 
-enum Efl.Net.Dialer_Http_Primary_Mode {
+enum @beta Efl.Net.Dialer_Http_Primary_Mode {
     [[Primary HTTP mode]]
     auto, [[HTTP auto mode]]
     download, [[HTTP download mode]]

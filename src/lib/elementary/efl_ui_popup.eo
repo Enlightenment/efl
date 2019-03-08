@@ -1,4 +1,4 @@
-enum Efl.Ui.Popup_Align {
+enum @beta Efl.Ui.Popup_Align {
     [[Popup alignment type]]
     none = 0, [[Popup not aligned]]
     center,   [[Popup aligned to center]]

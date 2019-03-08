@@ -1,4 +1,4 @@
-enum Efl.Net.Session_State {
+enum @beta Efl.Net.Session_State {
     [[Provides the session connectivity state.
 
       @since 1.19
@@ -9,7 +9,7 @@ enum Efl.Net.Session_State {
 }
 
 /* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
-enum Efl.Net.Session_Technology {
+enum @beta Efl.Net.Session_Technology {
     [[Bitwise-able technologies to allow for a network session.
 
       @since 1.9
