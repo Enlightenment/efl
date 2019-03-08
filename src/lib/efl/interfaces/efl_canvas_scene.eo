@@ -224,8 +224,8 @@ interface @beta Efl.Canvas.Scene
       }
    }
    events {
-      focus,in: Efl.Input.Focus; [[Called when canvas got focus]]
-      focus,out: Efl.Input.Focus; [[Called when canvas lost focus]]
+      scene,focus,in: Efl.Input.Focus; [[Called when scene got focus]]
+      scene,focus,out: Efl.Input.Focus; [[Called when scene lost focus]]
       object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
       object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
       render,pre: void; [[Called when pre render happens]]

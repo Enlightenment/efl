@@ -2889,9 +2889,9 @@ _edje_entry_init(Edje *ed)
                                   _edje_key_down_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -2910,9 +2910,9 @@ _edje_entry_shutdown(Edje *ed)
                                   _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
