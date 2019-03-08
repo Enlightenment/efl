@@ -508,7 +508,7 @@ _ecore_con_url_dialer_headers_done(void *data, const Efl_Event *event EINA_UNUSE
 EFL_CALLBACKS_ARRAY_DEFINE(ecore_con_url_dialer_cbs,
                            { EFL_IO_READER_EVENT_CAN_READ_CHANGED, _ecore_con_url_dialer_can_read_changed },
                            { EFL_IO_READER_EVENT_EOS, _ecore_con_url_dialer_eos },
-                           { EFL_NET_DIALER_EVENT_ERROR, _ecore_con_url_dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _ecore_con_url_dialer_error },
                            { EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, _ecore_con_url_dialer_headers_done });
 
 static Eina_Bool

@@ -95,7 +95,7 @@ _efl_net_dialer_udp_resolver_timeout(Eo *o, void *data EINA_UNUSED, const Eina_V
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
    efl_unref(o);
    return v;
 }
@@ -184,7 +184,7 @@ _efl_net_dialer_udp_resolved_bind(Eo *o, Efl_Net_Dialer_Udp_Data *pd EINA_UNUSED
    if (remote_address)
      {
         efl_net_socket_udp_init(o, remote_address);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
         efl_del(remote_address);
      }
    efl_net_dialer_connected_set(o, EINA_TRUE);
@@ -230,12 +230,12 @@ _efl_net_dialer_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
              if (efl_net_ip_port_fmt(buf, sizeof(buf), result->ai_addr))
                {
                   efl_net_socket_address_remote_set(o, buf);
-                  efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+                  efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
                }
           }
 
         efl_io_reader_eos_set(o, EINA_TRUE);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
      }
    freeaddrinfo(result);
 
@@ -319,7 +319,7 @@ _efl_net_dialer_udp_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Udp_Data 
    if (pd->resolver.timeout) eina_future_cancel(pd->resolver.timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool

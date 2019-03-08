@@ -26,7 +26,7 @@ interface @beta Efl.Net.Server {
                                    excess, see @.clients_limit.
                                  ]]
 
-        error: Eina.Error; [[An error has occurred and the server needs
+        server,error: Eina.Error; [[An error has occurred and the server needs
                              to be stopped.
                            ]]
         serving: void; [[Notifies the server is ready to accept clients.

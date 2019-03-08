@@ -81,7 +81,7 @@ _efl_net_server_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
    Eina_Error err = EBADF;
 
    efl_net_server_serving_set(o, EINA_FALSE);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
 }
 
 EOLIAN static Efl_Object *
@@ -474,7 +474,7 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
      {
         Eina_Error err = efl_net_socket_error_get();
         ERR("accept(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
-        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
         return;
      }
 

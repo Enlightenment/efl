@@ -77,9 +77,9 @@ _dialer_connected(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _dialer_resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _dialer_error },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _dialer_resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _dialer_connected });
 
 static void
 _http_headers_done(void *data EINA_UNUSED, const Efl_Event *event)

@@ -33,14 +33,14 @@ static void
 _efl_net_dialer_simple_inner_io_resolved(void *data, const Efl_Event *event)
 {
    Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, event->info);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, event->info);
 }
 
 static void
 _efl_net_dialer_simple_inner_io_error(void *data, const Efl_Event *event)
 {
    Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, event->info);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, event->info);
 }
 
 static void
@@ -48,13 +48,13 @@ _efl_net_dialer_simple_inner_io_connected(void *data, const Efl_Event *event)
 {
    Eo *o = data;
 
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, event->info);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, event->info);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_dialer_simple_inner_io_cbs,
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _efl_net_dialer_simple_inner_io_resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _efl_net_dialer_simple_inner_io_error },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _efl_net_dialer_simple_inner_io_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _efl_net_dialer_simple_inner_io_resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _efl_net_dialer_simple_inner_io_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _efl_net_dialer_simple_inner_io_connected });
 
 EOLIAN static Efl_Object *
 _efl_net_dialer_simple_efl_object_finalize(Eo *o, Efl_Net_Dialer_Simple_Data *pd)

@@ -318,7 +318,7 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         efl_ref(dialer);
         pd = efl_data_scope_get(dialer, MY_CLASS);
         if (pd->error)
-          efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &pd->error);
+          efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_DIALER_ERROR, &pd->error);
         if (pd->recv.used > 0) pd->pending_eos = EINA_TRUE;
         else
           {
@@ -1460,7 +1460,7 @@ _efl_net_dialer_http_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Http_Dat
     * allow_redirects will trigger more than once
     */
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1524,7 +1524,7 @@ EOLIAN static void
 _efl_net_dialer_http_efl_net_socket_address_remote_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
 {
    if (eina_stringshare_replace(&pd->address_remote, address))
-     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
 }
 
 EOLIAN static const char *

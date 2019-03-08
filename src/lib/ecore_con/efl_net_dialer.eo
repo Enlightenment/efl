@@ -112,7 +112,7 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
 
     events {
         /* FIXME: Might be NULL, but @nullable does not work on event types */
-        resolved: string; [[Notifies @.address_dial was resolved to
+        dialer,resolved: string; [[Notifies @.address_dial was resolved to
                             @Efl.Net.Socket.address_remote.
 
                             This is emitted before "connected" and may
@@ -124,9 +124,9 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
                             may be emitted multiple times, such as
                             HTTP.
                           ]]
-        error: Eina.Error; [[Some error happened and the socket
+        dialer,error: Eina.Error; [[Some error happened and the socket
                              stopped working.
                            ]]
-        connected: void; [[Notifies the socket is connected to the remote peer.]]
+        dialer,connected: void; [[Notifies the socket is connected to the remote peer.]]
     }
 }

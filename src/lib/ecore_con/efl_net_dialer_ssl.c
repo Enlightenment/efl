@@ -50,7 +50,7 @@ _efl_net_dialer_ssl_error(void *data EINA_UNUSED, const Efl_Event *event)
 {
    Eo *o = event->object;
    Eina_Error *perr = event->info;
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, perr);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, perr);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_dialer_ssl_cbs,
@@ -134,7 +134,7 @@ _efl_net_dialer_ssl_connect_timeout(Eo *o, void *data EINA_UNUSED, const Eina_Va
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
    efl_unref(o);
    return v;
 }
@@ -205,7 +205,7 @@ _efl_net_dialer_ssl_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Ssl_Data 
      eina_future_cancel(pd->connect_timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool
