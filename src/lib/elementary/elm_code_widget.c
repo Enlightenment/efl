@@ -2429,8 +2429,8 @@ _elm_code_widget_efl_canvas_group_group_add(Eo *obj, Elm_Code_Widget_Data *pd)
 
    efl_event_callback_add(obj, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_widget_line_cb, obj);
    efl_event_callback_add(obj, &ELM_CODE_EVENT_FILE_LOAD_DONE, _elm_code_widget_file_cb, obj);
-   efl_event_callback_add(obj, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj);
-   efl_event_callback_add(obj, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_CODE_WIDGET_EVENT_CODE_SELECTION_CHANGED, _elm_code_widget_selection_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_CODE_WIDGET_EVENT_CODE_SELECTION_CLEARED, _elm_code_widget_selection_clear_cb, obj);
 }
 
 /* Internal EO APIs and hidden overrides */
