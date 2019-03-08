@@ -213,9 +213,9 @@ interface @beta Efl.Gfx.Image
       }
    }
    events {
-      preload: void; [[Image data has been preloaded.]]
-      resize: void;  [[Image was resized (its pixel data).]]
-      unload: void;  [[Image data has been unloaded (by some mechanism in
+      image,preload: void; [[Image data has been preloaded.]]
+      image,resize: void;  [[Image was resized (its pixel data).]]
+      image,unload: void;  [[Image data has been unloaded (by some mechanism in
                        EFL that threw out the original image data).]]
    }
 }
