@@ -1,24 +1,6 @@
 class @beta Efl.Ui.Box_Flow extends Efl.Ui.Box
 {
    [[A custom layout engine for @Efl.Ui.Box.]]
-   methods {
-      @property box_flow_homogenous {
-          [[Box flow homogenous property]]
-         set {}
-         get {}
-         values {
-            val: bool; [[$true if the box flow layout is homogenous, $false otherwise]]
-         }
-      }
-      @property box_flow_max_size {
-          [[Box flow maximum size property]]
-         set {}
-         get {}
-         values {
-            val: bool; [[$true if the box flow layout has the maximal size, $false otherwise]]
-         }
-      }
-   }
    implements {
       Efl.Pack_Layout.layout_update;
    }

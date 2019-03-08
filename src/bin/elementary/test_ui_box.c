@@ -179,15 +179,7 @@ homo_check_cb(void *data, const Efl_Event *event)
 {
    Eina_Bool chk = elm_check_selected_get(event->object);
    Eo *box = efl_key_wref_get(data, "box");
-   efl_ui_box_flow_homogenous_set(box, chk);
-}
-
-static void
-max_size_check_cb(void *data, const Efl_Event *event)
-{
-   Eina_Bool chk = elm_check_selected_get(event->object);
-   Eo *box = efl_key_wref_get(data, "box");
-   efl_ui_box_flow_max_size_set(box, chk);
+   efl_ui_box_homogeneous_set(box, chk);
 }
 
 static void
@@ -354,14 +346,6 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous");
    efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, homo_check_cb, win);
-   efl_gfx_hint_align_set(o, 0, 0);
-   efl_pack(bx, o);
-   efl_gfx_entity_visible_set(o, 1);
-
-   o = elm_check_add(win);
-   elm_check_selected_set(o, 0);
-   elm_object_text_set(o, "Homogenous + Max");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, max_size_check_cb, win);
    efl_gfx_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);

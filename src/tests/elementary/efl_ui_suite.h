@@ -20,6 +20,7 @@
   }
 
 void efl_ui_test_box(TCase *tc);
+void efl_ui_test_box_flow(TCase *tc);
 void efl_ui_test_table(TCase *tc);
 void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_relative_layout(TCase *tc);
