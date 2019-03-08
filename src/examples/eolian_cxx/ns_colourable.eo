@@ -5,7 +5,6 @@ class Ns.Colourable extends Efl.Object
     methods {
         rgb_24bits_constructor {
             [[RGB Constructor.]]
-            legacy: null;
             params {
                 @in rgb: int; [[24-bit RGB Component.]]
             }

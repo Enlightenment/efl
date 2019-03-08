@@ -25,8 +25,6 @@ database_function_del(Eolian_Function *fid)
    database_type_del(fid->set_ret_type);
    database_expr_del(fid->get_ret_val);
    database_expr_del(fid->set_ret_val);
-   if (fid->get_legacy) eina_stringshare_del(fid->get_legacy);
-   if (fid->set_legacy) eina_stringshare_del(fid->set_legacy);
    database_doc_del(fid->get_return_doc);
    database_doc_del(fid->set_return_doc);
    free(fid);

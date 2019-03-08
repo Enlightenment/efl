@@ -242,10 +242,6 @@ lib.eolian_class_type_get.restype = c_int
 lib.eolian_class_documentation_get.argtypes = (c_void_p,)
 lib.eolian_class_documentation_get.restype = c_void_p
 
-# EAPI Eina_Stringshare *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
-lib.eolian_class_legacy_prefix_get.argtypes = (c_void_p,)
-lib.eolian_class_legacy_prefix_get.restype = c_char_p
-
 # EAPI Eina_Stringshare *eolian_class_eo_prefix_get(const Eolian_Class *klass);
 lib.eolian_class_eo_prefix_get.argtypes = (c_void_p,)
 lib.eolian_class_eo_prefix_get.restype = c_char_p
@@ -324,21 +320,13 @@ lib.eolian_function_type_get.restype = c_int
 lib.eolian_function_scope_get.argtypes = (c_void_p, c_int)
 lib.eolian_function_scope_get.restype = c_int
 
-# EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
-lib.eolian_function_full_c_name_get.argtypes = (c_void_p, c_int, c_bool)
+# EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
+lib.eolian_function_full_c_name_get.argtypes = (c_void_p, c_int)
 lib.eolian_function_full_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
-
-# EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-lib.eolian_function_legacy_get.argtypes = (c_void_p, c_int)
-lib.eolian_function_legacy_get.restype = c_char_p
 
 # EAPI const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
 lib.eolian_function_implement_get.argtypes = (c_void_p,)
 lib.eolian_function_implement_get.restype = c_void_p
-
-# EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
-lib.eolian_function_is_legacy_only.argtypes = (c_void_p, c_int)
-lib.eolian_function_is_legacy_only.restype = c_bool
 
 # EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 lib.eolian_function_is_class.argtypes = (c_void_p,)

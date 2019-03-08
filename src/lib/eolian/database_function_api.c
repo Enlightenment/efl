@@ -38,12 +38,10 @@ eolian_function_type_get(const Eolian_Function *fid)
 }
 
 static const char *
-_get_eo_prefix(const Eolian_Function *foo_id, char *buf, Eina_Bool use_legacy)
+_get_eo_prefix(const Eolian_Function *foo_id, char *buf)
 {
     char *tmp = buf;
-    if (use_legacy)
-      return foo_id->klass->legacy_prefix;
-    else if (foo_id->klass->eo_prefix)
+    if (foo_id->klass->eo_prefix)
       return foo_id->klass->eo_prefix;
     strcpy(buf, foo_id->klass->base.name);
     eina_str_tolower(&buf);
@@ -86,36 +84,11 @@ _get_abbreviated_name(const char *prefix, const char *fname)
 
 EAPI Eina_Stringshare *
 eolian_function_full_c_name_get(const Eolian_Function *foo_id,
-                                Eolian_Function_Type ftype,
-                                Eina_Bool use_legacy)
+                                Eolian_Function_Type ftype)
 {
-   switch (ftype)
-     {
-      case EOLIAN_UNRESOLVED:
-      case EOLIAN_METHOD:
-      case EOLIAN_PROPERTY:
-      case EOLIAN_PROP_GET:
-      case EOLIAN_FUNCTION_POINTER:
-        if (foo_id->get_legacy && use_legacy)
-          {
-             if (!strcmp(foo_id->get_legacy, "null"))
-               return NULL;
-             return eina_stringshare_ref(foo_id->get_legacy);
-          }
-        break;
-      case EOLIAN_PROP_SET:
-        if (foo_id->set_legacy && use_legacy)
-          {
-             if (!strcmp(foo_id->set_legacy, "null"))
-               return NULL;
-             return eina_stringshare_ref(foo_id->set_legacy);
-          }
-        break;
-     }
-
    char tbuf[512];
    tbuf[0] = '\0';
-   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_eo_prefix(foo_id, tbuf, use_legacy): tbuf;
+   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_eo_prefix(foo_id, tbuf): tbuf;
 
    if (!prefix)
      return NULL;
@@ -123,22 +96,6 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
    const char  *funcn = eolian_function_name_get(foo_id);
    Eina_Strbuf *buf = eina_strbuf_new();
    Eina_Stringshare *ret;
-
-   if (use_legacy)
-     {
-        eina_strbuf_append(buf, prefix);
-        eina_strbuf_append_char(buf, '_');
-        eina_strbuf_append(buf, funcn);
-
-        if ((ftype == EOLIAN_PROP_GET) || (ftype == EOLIAN_PROPERTY))
-          eina_strbuf_append(buf, "_get");
-        else if (ftype == EOLIAN_PROP_SET)
-          eina_strbuf_append(buf, "_set");
-
-        ret = eina_stringshare_add(eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-        return ret;
-     }
 
    char *abbr = _get_abbreviated_name(prefix, funcn);
    eina_strbuf_append(buf, abbr);
@@ -154,61 +111,11 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
    return ret;
 }
 
-EAPI Eina_Stringshare *
-eolian_function_legacy_get(const Eolian_Function *fid, Eolian_Function_Type ftype)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, NULL);
-   switch (ftype)
-     {
-      case EOLIAN_METHOD:
-        if (fid->type != EOLIAN_METHOD)
-          return NULL;
-        return fid->get_legacy;
-      case EOLIAN_PROP_GET:
-        if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
-          return NULL;
-        return fid->get_legacy;
-      case EOLIAN_PROP_SET:
-        if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
-          return NULL;
-        return fid->set_legacy;
-      default:
-        return NULL;
-     }
-}
-
 EAPI const Eolian_Implement *
 eolian_function_implement_get(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
    return fid->impl;
-}
-
-EAPI Eina_Bool
-eolian_function_is_legacy_only(const Eolian_Function *fid, Eolian_Function_Type ftype)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_FALSE);
-   switch (ftype)
-     {
-      case EOLIAN_METHOD:
-        if (fid->type != EOLIAN_METHOD)
-          return EINA_FALSE;
-        return fid->get_only_legacy;
-      case EOLIAN_PROP_GET:
-        if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
-          return EINA_FALSE;
-        return fid->get_only_legacy;
-      case EOLIAN_PROP_SET:
-        if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
-          return EINA_FALSE;
-        return fid->set_only_legacy;
-      default:
-        return EINA_FALSE;
-     }
 }
 
 EAPI Eina_Bool

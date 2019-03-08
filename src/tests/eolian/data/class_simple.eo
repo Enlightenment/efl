@@ -8,7 +8,6 @@ var @extern Bah: double; // not generated
 
 class Class_Simple {
    [[Class Desc Simple]]
-   legacy_prefix: evas_object_simple;
    eo_prefix: efl_canvas_object_simple;
    data: Evas_Simple_Data;
    methods {
@@ -24,11 +23,6 @@ class Class_Simple {
             value: int (100); [[Value description]]
          }
       }
-      @property b {
-        set {
-           eo: null;
-        }
-      }
       foo @beta {
          [[comment foo]]
          params {
@@ -38,13 +32,6 @@ class Class_Simple {
             @in d: ptr(int);
          }
          return: ptr(char) (null); [[comment for method return]]
-      }
-      bar {
-         eo: null;
-         params {
-            x: int;
-         }
-         return: ptr(int);
       }
    }
 }

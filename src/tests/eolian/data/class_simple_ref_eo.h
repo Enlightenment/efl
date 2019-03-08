@@ -70,8 +70,6 @@ EOAPI Eina_Bool efl_canvas_object_simple_a_set(Eo *obj, int value);
 EOAPI int efl_canvas_object_simple_a_get(const Eo *obj);
 #endif /* EFL_BETA_API_SUPPORT */
 
-EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
-
 #ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief comment foo
@@ -88,7 +86,5 @@ EOAPI void efl_canvas_object_simple_b_set(Eo *obj);
  */
 EOAPI char *efl_canvas_object_simple_foo(Eo *obj, int a, char *b, double *c, int *d);
 #endif /* EFL_BETA_API_SUPPORT */
-
-EOAPI int *efl_canvas_object_simple_bar(Eo *obj, int x);
 
 #endif

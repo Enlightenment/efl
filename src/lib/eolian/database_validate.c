@@ -247,7 +247,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
         return EINA_FALSE;
      }
 
-   if (tp->is_ptr && !tp->legacy)
+   if (tp->is_ptr)
      {
         tp->is_ptr = EINA_FALSE;
         Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE);

@@ -631,19 +631,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
            check_match(ls, ')', '(', pline, pcol);
            return def;
         }
-      case KW_legacy:
-        {
-           int pline, pcol;
-           eo_lexer_get(ls);
-           pline = ls->line_number;
-           pcol = ls->column;
-           check_next(ls, '(');
-           def = parse_type_void(ls, allow_ptr);
-           FILL_BASE(def->base, ls, line, col, TYPE);
-           def->legacy = EINA_TRUE;
-           check_match(ls, ')', '(', pline, pcol);
-           return def;
-        }
       case KW_free:
         {
            int pline, pcolumn;
@@ -984,17 +971,6 @@ end:
 }
 
 static void
-parse_legacy(Eo_Lexer *ls, const char **out)
-{
-   eo_lexer_get(ls);
-   check_next(ls, ':');
-   check(ls, TOK_VALUE);
-   *out = eina_stringshare_ref(ls->t.value.s);
-   eo_lexer_get(ls);
-   check_next(ls, ';');
-}
-
-static void
 parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
              Eina_Bool is_vals)
 {
@@ -1018,7 +994,7 @@ static void
 parse_accessor(Eo_Lexer *ls, Eolian_Function *prop)
 {
    int line, col;
-   Eina_Bool has_return = EINA_FALSE, has_legacy = EINA_FALSE,
+   Eina_Bool has_return = EINA_FALSE,
              has_eo     = EINA_FALSE, has_keys   = EINA_FALSE,
              has_values = EINA_FALSE, has_protected = EINA_FALSE,
              has_virtp  = EINA_FALSE;
@@ -1112,24 +1088,6 @@ parse_accessor:
              prop->set_return_warn_unused = ret.warn_unused;
              prop->set_ret_type->owned = ret.owned;
           }
-        break;
-      case KW_legacy:
-        CASE_LOCK(ls, legacy, "legacy name")
-        if (is_get)
-          parse_legacy(ls, &prop->get_legacy);
-        else
-          parse_legacy(ls, &prop->set_legacy);
-        break;
-      case KW_eo:
-        CASE_LOCK(ls, eo, "eo name")
-        eo_lexer_get(ls);
-        check_next(ls, ':');
-        check_kw_next(ls, KW_null);
-        check_next(ls, ';');
-        if (is_get)
-          prop->get_only_legacy = EINA_TRUE;
-        else
-          prop->set_only_legacy = EINA_TRUE;
         break;
       case KW_keys:
         {
@@ -1352,7 +1310,7 @@ parse_method(Eo_Lexer *ls)
    Eolian_Function *meth = NULL;
    Eolian_Implement *impl = NULL;
    Eina_Bool has_const       = EINA_FALSE, has_params = EINA_FALSE,
-             has_return      = EINA_FALSE, has_legacy = EINA_FALSE,
+             has_return      = EINA_FALSE,
              has_protected   = EINA_FALSE, has_class  = EINA_FALSE,
              has_eo          = EINA_FALSE, has_beta   = EINA_FALSE,
              has_virtp       = EINA_FALSE;
@@ -1427,18 +1385,6 @@ body:
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_warn_unused = ret.warn_unused;
         meth->get_ret_type->owned = ret.owned;
-        break;
-      case KW_legacy:
-        CASE_LOCK(ls, legacy, "legacy name")
-        parse_legacy(ls, &meth->get_legacy);
-        break;
-      case KW_eo:
-        CASE_LOCK(ls, eo, "eo name")
-        eo_lexer_get(ls);
-        check_next(ls, ':');
-        check_kw_next(ls, KW_null);
-        check_next(ls, ';');
-        meth->get_only_legacy = EINA_TRUE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
@@ -1921,8 +1867,7 @@ error:
 static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
-   Eina_Bool has_legacy_prefix = EINA_FALSE,
-             has_eo_prefix     = EINA_FALSE,
+   Eina_Bool has_eo_prefix     = EINA_FALSE,
              has_event_prefix  = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
@@ -1938,15 +1883,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
      }
    for (;;) switch (ls->t.kw)
      {
-      case KW_legacy_prefix:
-        CASE_LOCK(ls, legacy_prefix, "legacy prefix definition")
-        eo_lexer_get(ls);
-        check_next(ls, ':');
-        _validate_pfx(ls);
-        ls->klass->legacy_prefix = eina_stringshare_ref(ls->t.value.s);
-        eo_lexer_get(ls);
-        check_next(ls, ';');
-        break;
       case KW_eo_prefix:
         CASE_LOCK(ls, eo_prefix, "eo prefix definition")
         eo_lexer_get(ls);
