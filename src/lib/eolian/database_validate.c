@@ -14,7 +14,6 @@ typedef struct _Validate_State
    Eina_Bool stable;
    Eina_Bool event_redef;
    Eina_Bool unimplemented;
-   Eina_Bool beta_types;
 } Validate_State;
 
 static Eina_Bool
@@ -166,7 +165,7 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
      return EINA_FALSE;
 
    /* for the time being assume all typedecls are beta unless overridden */
-   Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta && vals->beta_types);
+   Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta);
 
    switch (tp->type)
      {
@@ -327,7 +326,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 _eo_parser_log(&tp->base, "undefined type %s", tp->base.name);
                 return EINA_FALSE;
              }
-           else if (vals->stable && tp->tdecl->base.is_beta && vals->beta_types)
+           else if (vals->stable && tp->tdecl->base.is_beta)
              {
                 /* we should enable this by default, but can't for now */
                 _eo_parser_log(&tp->base, "beta type declaration '%s' used in stable context",
@@ -1363,7 +1362,6 @@ database_validate(const Eolian_Unit *src)
       EINA_TRUE,
       !!getenv("EOLIAN_EVENT_REDEF_WARN"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
-      !!getenv("EOLIAN_TYPEDECL_BETA_WARN")
    };
 
    /* do an initial pass to refill inherits */
