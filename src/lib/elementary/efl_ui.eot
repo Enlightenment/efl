@@ -25,7 +25,7 @@ enum Efl.Ui.Focus.Move_Policy
      @since 1.10]]
    click, [[Move focus by mouse click or touch. Elementary focus is set on mouse
             click and this is checked at mouse up time. (default)]]
-   in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
+   move_in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
          mouse pointer is moved into an object.]]
    key_only, [[Move focus by key. Elementary focus is set on key input like
                Left, Right, Up, Down, Tab, or Shift+Tab.]]

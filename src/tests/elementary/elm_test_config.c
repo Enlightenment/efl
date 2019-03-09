@@ -96,7 +96,7 @@ EFL_START_TEST(elm_config_eoapi)
    CONFIG_CHKB(focus_highlight_enabled, !old);
    CONFIG_CHKB(focus_highlight_animate, 0);
    CONFIG_CHKB(focus_highlight_clip_disabled, !old);
-   CONFIG_CHKE(focus_move_policy, EFL_UI_FOCUS_MOVE_POLICY_IN, "in");
+   CONFIG_CHKE(focus_move_policy, EFL_UI_FOCUS_MOVE_POLICY_MOVE_IN, "in");
    CONFIG_CHKB(item_select_on_focus_disabled, !old);
    CONFIG_CHKB(first_item_focus_on_first_focusin, 0);
    CONFIG_CHKB(mirrored, 0);

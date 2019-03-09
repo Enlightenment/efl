@@ -4897,7 +4897,7 @@ static const struct {
    const char               *str;
 } _enum_map_focus_move_policy[] = {
 { EFL_UI_FOCUS_MOVE_POLICY_CLICK, "click" },
-{ EFL_UI_FOCUS_MOVE_POLICY_IN, "in" },
+{ EFL_UI_FOCUS_MOVE_POLICY_MOVE_IN, "in" },
 { EFL_UI_FOCUS_MOVE_POLICY_KEY_ONLY, "key_only" }
 };
 
