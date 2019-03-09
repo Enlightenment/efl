@@ -1,7 +1,7 @@
 import efl_ui;
 import eina_types;
 
-struct @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
+struct @beta @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focusable objects.
 
       @since 1.20
@@ -139,7 +139,7 @@ interface @beta Efl.Ui.Focus.Manager {
               }
               return : Efl.Ui.Focus.Object; [[Child of passed parameter.]]
         }
-        fetch {
+        fetch @beta {
             [[This will fetch the data from a registered node.
 
               Be aware this function will trigger a computation of all dirty nodes.
