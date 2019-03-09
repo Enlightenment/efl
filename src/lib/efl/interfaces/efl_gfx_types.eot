@@ -23,7 +23,7 @@ enum @beta Efl.Gfx.Colorspace {
   rgba_s3tc_dxt5 = 18   [[OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11.]]
 }
 
-enum @beta Efl.Gfx.Render_Op {
+enum Efl.Gfx.Render_Op {
   [[Graphics render operation mode]]
   blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s.]]
   copy  = 1, [[Copy source to destination; d = s.]]
@@ -148,7 +148,7 @@ enum @beta Efl.Gfx.Border_Fill_Mode
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
 }
 
-enum @beta Efl.Gfx.Change_Flag
+enum Efl.Gfx.Change_Flag
 {
    [[What property got changed for this object @since 1.18]]
    none    = 0x0, [[No change]]
