@@ -7,7 +7,7 @@ function @beta Efl.Ui.Scrollable_On_Show_Region {
 };
 
 struct Efl.Ui.Widget_Focus_State {
-   [[All relevant fields needed for the current state of focus registeration]]
+   [[All relevant fields needed for the current state of focus registration]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
    parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
    logical : bool; [[$true if this is registered as logical currently]]

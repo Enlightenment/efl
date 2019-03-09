@@ -24,8 +24,8 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
 
       @since 1.21
     ]]
-    is_regular_end : bool; [[$true if logical end, $false otherwise]]
-    element : Efl.Ui.Focus.Object; [[Focus object element]]
+    is_regular_end : bool; [[$true if element is registered as regular element in the @Efl.Ui.Focus.Manager obejct, $false otherwise]]
+    element : Efl.Ui.Focus.Object; [[The last element of the logical chain in the @Efl.Ui.Focus.Manager]]
 }
 
 interface @beta Efl.Ui.Focus.Manager {
