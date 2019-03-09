@@ -1,4 +1,4 @@
-class @beta Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
+class Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
 {
    [[Represents a focus event. @since 1.19]]
    methods {

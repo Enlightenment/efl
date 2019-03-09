@@ -1,6 +1,6 @@
 import eina_types;
 
-mixin @beta Efl.Ui.Focus.Object
+mixin Efl.Ui.Focus.Object
 {
     [[Functions of focusable objects.
 

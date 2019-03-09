@@ -1,6 +1,6 @@
 import efl_ui;
 
-class @beta Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
+class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
    [[Elementary layout class]]
    data: null;

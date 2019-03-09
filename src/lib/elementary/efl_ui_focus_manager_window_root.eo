@@ -1,4 +1,4 @@
-interface @beta Efl.Ui.Focus.Manager_Window_Root {
+interface Efl.Ui.Focus.Manager_Window_Root {
   [[ A interface to indicate the end of a focus chain.
 
      Focusmanagers are ensuring that if they give focus to something, that they are registered in the upper focus manager.

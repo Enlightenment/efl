@@ -1,7 +1,7 @@
 const Efl.Gfx.Stack_Layer_Min: short = -32768; [[bottom-most layer number]]
 const Efl.Gfx.Stack_Layer_Max: short = 32767;  [[top-most layer number]]
 
-interface @beta Efl.Gfx.Stack
+interface Efl.Gfx.Stack
 {
    [[Efl graphics stack interface]]
    event_prefix: efl_gfx_entity;

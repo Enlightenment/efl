@@ -6,7 +6,7 @@ struct Efl.Event_Animator_Tick {
    update_area: Eina.Rect; [[Area of the canvas that will be pushed to screen.]]
 }
 
-abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
+abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
                             Efl.Input.Interface, Efl.Gfx.Hint,
                             Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
@@ -195,14 +195,16 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             focus: bool; [[$true if focused by at least one seat or $false otherwise.]]
          }
       }
-      seat_focus_check {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      seat_focus_check @beta {
          [[ Check if this object is focused by a given seat @since 1.19 ]]
          params {
             @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
          }
          return: bool; [[$true if focused or $false otherwise.]]
       }
-      seat_focus_add {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      seat_focus_add @beta  {
          [[ Add a seat to the focus list.
 
            Evas allows the Efl.Canvas.Object to be focused by multiple seats
@@ -218,7 +220,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          }
          return: bool; [[$true if the focus has been set or $false otherwise.]]
       }
-      seat_focus_del {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      seat_focus_del @beta {
          [[ Remove a seat from the focus list.
 
             @since 1.19
