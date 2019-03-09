@@ -30,7 +30,7 @@ enum Efl.Gfx.Render_Op {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum @beta Efl.Gfx.Path_Command_Type {
+enum Efl.Gfx.Path_Command_Type {
   [[These values determine how the points are interpreted in a stream of points.
     @since 1.14
   ]]
@@ -42,7 +42,7 @@ enum @beta Efl.Gfx.Path_Command_Type {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum @beta Efl.Gfx.Cap {
+enum Efl.Gfx.Cap {
   [[These values determine how the end of opened sub-paths are rendered in a
     stroke.
     @Efl.Gfx.Shape.stroke_cap.set
@@ -54,7 +54,7 @@ enum @beta Efl.Gfx.Cap {
   last       [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum @beta Efl.Gfx.Join
+enum Efl.Gfx.Join
 {
   [[These values determine how two joining lines are rendered in a stroker.
     @Efl.Gfx.Shape.stroke_join.set
@@ -66,7 +66,7 @@ enum @beta Efl.Gfx.Join
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum @beta Efl.Gfx.Gradient_Spread
+enum Efl.Gfx.Gradient_Spread
 {
   [[Specifies how the area outside the gradient area should be filled.
     @Efl.Gfx.Gradient.spread.set
@@ -87,7 +87,7 @@ enum @beta Efl.Gfx.Fill_Rule
   odd_even = 1,  [[Draw a horizontal line from the point to a location outside the shape, and count the number of intersections. If the number of intersections is an odd number, the point is inside the shape.]]
 }
 
-struct @beta Efl.Gfx.Dash {
+struct Efl.Gfx.Dash {
   [[Type describing dash.
     @Efl.Gfx.Shape.stroke_dash.set
     @since 1.14
@@ -96,7 +96,7 @@ struct @beta Efl.Gfx.Dash {
   gap: double;     [[Distance between two dashes.]]
 }
 
-struct @beta Efl.Gfx.Gradient_Stop
+struct Efl.Gfx.Gradient_Stop
 {
   [[Type defining gradient stops.
     Describes the location and color of a transition point in a gradient.

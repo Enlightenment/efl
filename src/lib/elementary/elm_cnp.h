@@ -57,41 +57,49 @@ EAPI extern int ELM_CNP_EVENT_SELECTION_CHANGED;
  * @see http://www.x.org/docs/X11/xlib.pdf
  * for more details.
  */
-typedef Efl_Ui_Selection_Type Elm_Sel_Type;
 
-#define ELM_SEL_TYPE_PRIMARY EFL_UI_SELECTION_TYPE_PRIMARY
-#define ELM_SEL_TYPE_SECONDARY EFL_UI_SELECTION_TYPE_SECONDARY
-#define ELM_SEL_TYPE_XDND EFL_UI_SELECTION_TYPE_DND
-#define ELM_SEL_TYPE_CLIPBOARD EFL_UI_SELECTION_TYPE_CLIPBOARD
+typedef enum
+{
+  ELM_SEL_TYPE_PRIMARY = 0, /**< Primary text selection (highlighted or
+                                      * selected text) */
+  ELM_SEL_TYPE_SECONDARY, /**< Used when primary selection is in use */
+  ELM_SEL_TYPE_XDND, /**< Drag and Drop */
+  ELM_SEL_TYPE_CLIPBOARD /**< Clipboard selection (ctrl+C) */
+} Elm_Sel_Type;
 
 /**
  * Defines the types of content.
  */
-typedef Efl_Ui_Selection_Format Elm_Sel_Format;
-
-#define ELM_SEL_FORMAT_TARGETS EFL_UI_SELECTION_FORMAT_TARGETS
-#define ELM_SEL_FORMAT_NONE EFL_UI_SELECTION_FORMAT_NONE
-#define ELM_SEL_FORMAT_TEXT EFL_UI_SELECTION_FORMAT_TEXT
-#define ELM_SEL_FORMAT_MARKUP EFL_UI_SELECTION_FORMAT_MARKUP
-#define ELM_SEL_FORMAT_IMAGE EFL_UI_SELECTION_FORMAT_IMAGE
-#define ELM_SEL_FORMAT_VCARD EFL_UI_SELECTION_FORMAT_VCARD
-#define ELM_SEL_FORMAT_HTML EFL_UI_SELECTION_FORMAT_HTML
+typedef enum
+{
+  ELM_SEL_FORMAT_TARGETS = -1 /* +1 */, /**< For matching every
+                                                  * possible atom */
+  ELM_SEL_FORMAT_NONE = 0, /**< Content is from outside of Elementary
+                                     */
+  ELM_SEL_FORMAT_TEXT = 1, /**< Plain unformatted text: Used for things
+                                     * that don't want rich markup */
+  ELM_SEL_FORMAT_MARKUP = 2, /**< Edje textblock markup, including
+                                       * inline images */
+  ELM_SEL_FORMAT_IMAGE = 4, /**< Images */
+  ELM_SEL_FORMAT_VCARD = 8, /**< Vcards */
+  ELM_SEL_FORMAT_HTML = 16 /**< Raw HTML-like data (eg. webkit) */
+} Elm_Sel_Format;
 
 /**
  * Defines the kind of action associated with the drop data if for XDND
  * @since 1.8
  */
-typedef Efl_Ui_Selection_Action Elm_Xdnd_Action;
-
-#define ELM_XDND_ACTION_UNKNOWN EFL_UI_SELECTION_ACTION_UNKNOWN
-#define ELM_XDND_ACTION_COPY EFL_UI_SELECTION_ACTION_COPY
-#define ELM_XDND_ACTION_MOVE EFL_UI_SELECTION_ACTION_MOVE
-#define ELM_XDND_ACTION_PRIVATE EFL_UI_SELECTION_ACTION_PRIVATE
-#define ELM_XDND_ACTION_ASK EFL_UI_SELECTION_ACTION_ASK
-#define ELM_XDND_ACTION_LIST EFL_UI_SELECTION_ACTION_LIST
-#define ELM_XDND_ACTION_LINK EFL_UI_SELECTION_ACTION_LINK
-#define ELM_XDND_ACTION_DESCRIPTION EFL_UI_SELECTION_ACTION_DESCRIPTION
-
+typedef enum
+{
+  ELM_XDND_ACTION_UNKNOWN = 0, /**< Action type is unknown */
+  ELM_XDND_ACTION_COPY, /**< Copy the data */
+  ELM_XDND_ACTION_MOVE, /**< Move the data */
+  ELM_XDND_ACTION_PRIVATE, /**< Private action type */
+  ELM_XDND_ACTION_ASK, /**< Ask the user what to do */
+  ELM_XDND_ACTION_LIST, /**< List the data */
+  ELM_XDND_ACTION_LINK, /**< Link the data */
+  ELM_XDND_ACTION_DESCRIPTION /**< Describe the data */
+} Elm_Xdnd_Action;
 /**
  * Structure holding the info about selected data.
  */

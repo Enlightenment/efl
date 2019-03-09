@@ -157,14 +157,11 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
         break;
      }
    eina_strbuf_append_char(buf, ';');
-#if 0
-   /* can't enable this yet, as this would trigger brokenness in our tree */
    if (eolian_typedecl_is_beta(tp))
      {
         eina_strbuf_prepend(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
         eina_strbuf_append(buf, "\n#endif /* EFL_BETA_API_SUPPORT */");
      }
-#endif
    return buf;
 }
 

@@ -1120,7 +1120,7 @@ _hoversel_item_paste_cb(void *data,
 }
 
 static void
-_selection_clear(void *data, Elm_Sel_Type selection)
+_selection_clear(void *data, Efl_Ui_Selection_Type selection)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
 
