@@ -284,3 +284,5 @@ EAPI void elm_progressbar_part_value_set(Evas_Object *obj, const char *part, dou
  * @ingroup Elm_Progressbar
  */
 EAPI double elm_progressbar_part_value_get(const Evas_Object *obj, const char *part);
+
+#include "efl_ui_progressbar.eo.legacy.h"

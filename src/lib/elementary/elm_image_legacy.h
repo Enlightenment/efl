@@ -553,3 +553,5 @@ EAPI Eina_Bool elm_image_aspect_fixed_get(const Evas_Object *obj);
  * @ingroup Elm_Image
  */
 EAPI void elm_image_async_open_set(Evas_Object *obj, Eina_Bool async);
+
+#include "efl_ui_image.eo.legacy.h"
