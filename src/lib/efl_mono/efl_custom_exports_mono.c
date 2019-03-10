@@ -321,6 +321,9 @@ EAPI const Eina_Value_Type *type_list() {
 EAPI const Eina_Value_Type *type_error() {
    return EINA_VALUE_TYPE_ERROR;
 }
+EAPI const Eina_Value_Type *type_object() {
+   return EINA_VALUE_TYPE_OBJECT;
+}
 
 EAPI const Eina_Value_Type *type_optional() {
    return EINA_VALUE_TYPE_OPTIONAL;

@@ -389,6 +389,10 @@ static internal class UnsafeNativeMethods {
     // Error
     [DllImport(efl.Libs.CustomExports)]
     internal static extern IntPtr type_error();
+
+    // Error
+    [DllImport(efl.Libs.CustomExports)]
+    internal static extern IntPtr type_object();
 }
 }
 
@@ -472,6 +476,7 @@ public enum ValueType {
     Optional,
     /// <summary>Error values.</summary>
     Error,
+    Object,
     /// <summary>Empty values.</summary>
     Empty,
 }
@@ -528,6 +533,11 @@ static class ValueTypeMethods {
     public static bool IsError(this ValueType val)
     {
         return val == ValueType.Error;
+    }
+
+    public static bool IsObject(this ValueType val)
+    {
+        return val == ValueType.Object;
     }
 
     /// <summary>Returns the Marshal.SizeOf for the given ValueType native structure.</summary>
@@ -620,6 +630,9 @@ static class ValueTypeBridge
         ManagedToNative.Add(ValueType.Error, type_error());
         NativeToManaged.Add(type_error(), ValueType.Error);
 
+        ManagedToNative.Add(ValueType.Object, type_object());
+        NativeToManaged.Add(type_object(), ValueType.Object);
+        
         ManagedToNative.Add(ValueType.Empty, IntPtr.Zero);
         NativeToManaged.Add(IntPtr.Zero, ValueType.Empty);
 
@@ -1869,6 +1882,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 return Convert.ToUInt32(data.ToInt32());
             case ValueType.String:
                 return StringConversion.NativeUtf8ToManagedString(data);
+            case ValueType.Object:
+                return new Efl.Object (data);
             default:
                 return null;
         }
