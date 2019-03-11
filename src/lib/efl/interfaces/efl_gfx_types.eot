@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Gfx.Colorspace {
+enum @beta Efl.Gfx.Colorspace {
   [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]
   ycbcr422p601_pl,      [[YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows.]]
@@ -78,7 +78,7 @@ enum Efl.Gfx.Gradient_Spread
   last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Efl.Gfx.Fill_Rule
+enum @beta Efl.Gfx.Fill_Rule
 {
   [[Type defining how an image content get filled.
     @since 1.14
@@ -109,7 +109,7 @@ struct Efl.Gfx.Gradient_Stop
   a: int; [[The component A color of the gradient stop]]
 }
 
-struct Efl.Gfx.Stroke_Color
+struct @beta Efl.Gfx.Stroke_Color
 {
   [[Internal structure for @Efl.Gfx.Stroke.]]
   r: int; [[The component R color of the stroke]]
@@ -118,7 +118,7 @@ struct Efl.Gfx.Stroke_Color
   a: int; [[The component A color of the stroke]]
 }
 
-struct Efl.Gfx.Stroke
+struct @beta Efl.Gfx.Stroke
 {
   [[Type defining stroke information.
     Describes the properties to define the path stroke.
@@ -134,13 +134,13 @@ struct Efl.Gfx.Stroke
   join: Efl.Gfx.Join; [[Stroke join]]
 }
 
-struct Efl.Gfx.Shape_Public
+struct @beta Efl.Gfx.Shape_Public
 {
    [[Public shape]]
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
-enum Efl.Gfx.Border_Fill_Mode
+enum @beta Efl.Gfx.Border_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]
    none = 0, [[Image's center region is $not to be rendered]]
@@ -188,14 +188,14 @@ enum Efl.Gfx.Hint_Aspect
               aspect.]]
 }
 
-enum Efl.Gfx.Color_Class_Layer {
+enum @beta Efl.Gfx.Color_Class_Layer {
    [[Efl Gfx Color Class layer enum]]
    normal = 0, [[Default color]]
    outline, [[Outline color]]
    shadow [[Shadow color]]
 }
 
-type Efl.Font.Size: int; [[Efl font size type]]
+type @beta Efl.Font.Size: int; [[Efl font size type]]
 
 var Efl.Gfx.Image.Load_Error.NONE: Eina.Error; [[No error on load]]
 var Efl.Gfx.Image.Load_Error.GENERIC: Eina.Error; [[A non-specific error occurred]]

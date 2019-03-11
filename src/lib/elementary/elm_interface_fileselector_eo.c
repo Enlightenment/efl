@@ -17,7 +17,7 @@ __eolian_elm_interface_fileselector_folder_only_set_reflect(Eo *obj, Eina_Value 
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_folder_only_set, EFL_FUNC_CALL(only), Eina_Bool only);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_folder_only_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_folder_only_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_interface_fileselector_folder_only_get(obj);
    return eina_value_bool_init(val);
@@ -45,7 +45,7 @@ __eolian_elm_interface_fileselector_hidden_visible_set_reflect(Eo *obj, Eina_Val
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_hidden_visible_set, EFL_FUNC_CALL(hidden), Eina_Bool hidden);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_hidden_visible_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_hidden_visible_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_interface_fileselector_hidden_visible_get(obj);
    return eina_value_bool_init(val);
@@ -73,7 +73,7 @@ __eolian_elm_interface_fileselector_multi_select_set_reflect(Eo *obj, Eina_Value
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_multi_select_set, EFL_FUNC_CALL(multi), Eina_Bool multi);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_multi_select_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_multi_select_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_interface_fileselector_multi_select_get(obj);
    return eina_value_bool_init(val);
@@ -99,7 +99,7 @@ __eolian_elm_interface_fileselector_expandable_set_reflect(Eo *obj, Eina_Value v
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_expandable_set, EFL_FUNC_CALL(expand), Eina_Bool expand);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_expandable_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_expandable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_interface_fileselector_expandable_get(obj);
    return eina_value_bool_init(val);
@@ -127,7 +127,7 @@ __eolian_elm_interface_fileselector_is_save_set_reflect(Eo *obj, Eina_Value val)
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_is_save_set, EFL_FUNC_CALL(is_save), Eina_Bool is_save);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_is_save_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_is_save_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_interface_fileselector_is_save_get(obj);
    return eina_value_bool_init(val);
@@ -154,7 +154,7 @@ __eolian_elm_interface_fileselector_current_name_set_reflect(Eo *obj, Eina_Value
 EOAPI EFL_VOID_FUNC_BODYV(elm_interface_fileselector_current_name_set, EFL_FUNC_CALL(name), const char *name);
 
 static Eina_Value
-__eolian_elm_interface_fileselector_current_name_get_reflect(Eo *obj)
+__eolian_elm_interface_fileselector_current_name_get_reflect(const Eo *obj)
 {
    const char *val = elm_interface_fileselector_current_name_get(obj);
    return eina_value_string_init(val);

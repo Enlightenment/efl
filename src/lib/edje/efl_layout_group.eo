@@ -1,6 +1,6 @@
 import eina_types;
 
-interface @beta Efl.Layout.Group
+interface Efl.Layout.Group
 {
    [[APIs representing static data from a group in an edje file.
 

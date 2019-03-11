@@ -23,7 +23,7 @@ Eina_Bool _elm_separator_horizontal_get(const Eo *obj, Elm_Separator_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_separator_horizontal_get_reflect(Eo *obj)
+__eolian_elm_separator_horizontal_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_separator_horizontal_get(obj);
    return eina_value_bool_init(val);

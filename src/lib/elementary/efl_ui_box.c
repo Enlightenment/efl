@@ -81,9 +81,13 @@ _evas_box_custom_layout(Evas_Object *evas_box EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_box_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, Eina_Bool homogeneous)
+_efl_ui_box_homogeneous_set(Eo *obj, Efl_Ui_Box_Data *pd, Eina_Bool homogeneous)
 {
+   if (pd->homogeneous == !!homogeneous)
+     return;
+
    pd->homogeneous = !!homogeneous;
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static Eina_Bool

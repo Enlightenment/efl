@@ -1,4 +1,4 @@
-enum Efl.Ui.Panel_Orient
+enum @beta Efl.Ui.Panel_Orient
 {
    [[Panel orientation mode]]
 
@@ -8,7 +8,7 @@ enum Efl.Ui.Panel_Orient
    right [[Panel (dis)appears from the right]]
 }
 
-struct Efl.Ui.Panel_Scroll_Info
+struct @beta Efl.Ui.Panel_Scroll_Info
 {
    [[Panel scroll information]]
    rel_x: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]

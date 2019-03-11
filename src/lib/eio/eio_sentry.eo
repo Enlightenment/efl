@@ -1,4 +1,4 @@
-struct Eio.Sentry.Event
+struct @beta Eio.Sentry.Event
 {
   [[Wraps the data about a monitor event on a file.]]
   trigger: string; [[The cause of the event.]]

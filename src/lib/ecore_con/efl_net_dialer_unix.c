@@ -84,7 +84,7 @@ _efl_net_dialer_unix_connect_timeout(Eo *o, void *data EINA_UNUSED, const Eina_V
 
    efl_ref(o);
    efl_io_reader_eos_set(o, EINA_TRUE);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
    efl_unref(o);
    return v;
 }
@@ -105,7 +105,7 @@ _efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_
    efl_loop_fd_set(o, sockfd);
    if (efl_net_socket_address_remote_get(o))
      {
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
         efl_net_dialer_connected_set(o, EINA_TRUE);
      }
    else
@@ -120,7 +120,7 @@ _efl_net_dialer_unix_connected(void *data, const struct sockaddr *addr, socklen_
    if (err)
      {
         efl_io_reader_eos_set(o, EINA_TRUE);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
      }
 
    efl_unref(o);
@@ -222,7 +222,7 @@ _efl_net_dialer_unix_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Unix_Dat
    if (pd->connect.timeout) eina_future_cancel(pd->connect.timeout);
    if (pd->connected == connected) return;
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool

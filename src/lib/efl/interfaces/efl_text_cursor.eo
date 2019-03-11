@@ -1,7 +1,7 @@
 import eina_types;
 import efl_text_types;
 
-enum Efl.Text_Cursor_Get_Type {
+enum @beta Efl.Text_Cursor_Get_Type {
    [[All available cursor states]]
    default = 0,     [[Main cursor state (alias to "main")]]
    main,            [[Main cursor state]]
@@ -13,7 +13,7 @@ enum Efl.Text_Cursor_Get_Type {
    user_extra       [[User extra cursor state]]
 }
 
-enum Efl.Text_Cursor_Type
+enum @beta Efl.Text_Cursor_Type
 {
    [[Text cursor types]]
    before, [[Cursor type before]]

@@ -1,4 +1,4 @@
-enum Efl.Ui.Scrollbar_Mode
+enum @beta Efl.Ui.Scrollbar_Mode
 {
    auto = 0, [[Visible if necessary]]
    on, [[Always visible]]
@@ -6,7 +6,7 @@ enum Efl.Ui.Scrollbar_Mode
    last [[For internal use only]]
 }
 
-enum Efl.Ui.Scrollbar_Direction
+enum @beta Efl.Ui.Scrollbar_Direction
 {
    horizontal = 0,
    vertical,

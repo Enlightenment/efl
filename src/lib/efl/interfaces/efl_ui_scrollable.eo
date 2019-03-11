@@ -1,4 +1,4 @@
-enum Efl.Ui.Scroll_Block
+enum @beta Efl.Ui.Scroll_Block
 {
    [[Direction in which a scroller should be blocked.
 

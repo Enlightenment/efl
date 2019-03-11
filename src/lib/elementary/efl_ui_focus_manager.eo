@@ -1,7 +1,7 @@
 import efl_ui;
 import eina_types;
 
-struct @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
+struct @beta @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focusable objects.
 
       @since 1.20
@@ -24,11 +24,11 @@ struct Efl.Ui.Focus.Manager_Logical_End_Detail {
 
       @since 1.21
     ]]
-    is_regular_end : bool; [[$true if logical end, $false otherwise]]
-    element : Efl.Ui.Focus.Object; [[Focus object element]]
+    is_regular_end : bool; [[$true if element is registered as regular element in the @Efl.Ui.Focus.Manager obejct, $false otherwise]]
+    element : Efl.Ui.Focus.Object; [[The last element of the logical chain in the @Efl.Ui.Focus.Manager]]
 }
 
-interface @beta Efl.Ui.Focus.Manager {
+interface Efl.Ui.Focus.Manager {
     [[Interface for managing focus objects
 
       This interface is built in order to support movement of the focus property in a set of widgets.
@@ -139,7 +139,7 @@ interface @beta Efl.Ui.Focus.Manager {
               }
               return : Efl.Ui.Focus.Object; [[Child of passed parameter.]]
         }
-        fetch {
+        fetch @beta {
             [[This will fetch the data from a registered node.
 
               Be aware this function will trigger a computation of all dirty nodes.

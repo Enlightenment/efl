@@ -3630,7 +3630,10 @@ _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
 
    for (; *klass_iter; klass_iter++)
      {
-        return _efl_class_reflection_find(*klass_iter, property_name);
+        const Efl_Object_Property_Reflection *ref;
+
+        ref = _efl_class_reflection_find(*klass_iter, property_name);
+        if (ref) return ref;
      }
 
    return NULL;
@@ -3658,7 +3661,7 @@ efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value va
 }
 
 EAPI Eina_Value
-efl_property_reflection_get(Eo *obj_id, const char *property_name)
+efl_property_reflection_get(const Eo *obj_id, const char *property_name)
 {
    Eina_Value r = eina_value_error_init(EINA_ERROR_NOT_IMPLEMENTED);
 

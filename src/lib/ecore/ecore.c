@@ -321,7 +321,7 @@ ecore_init(void)
            efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                    efl_loop_timer_interval_set(efl_added, sec / 2),
                    efl_event_callback_add(efl_added,
-                                          EFL_LOOP_TIMER_EVENT_TICK,
+                                          EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                           _systemd_watchdog_cb, NULL));
         unsetenv("WATCHDOG_USEC");
 

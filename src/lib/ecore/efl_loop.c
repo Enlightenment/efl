@@ -192,7 +192,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_high = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_HIGH),
                      efl_loop_timer_interval_set(efl_added, 1.0 / 60.0));
@@ -206,7 +206,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_medium = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_MEDIUM),
                      efl_loop_timer_interval_set(efl_added, 6));
@@ -220,7 +220,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_low = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_LOW),
                      efl_loop_timer_interval_set(efl_added, 66));
@@ -493,7 +493,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
    d->timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
                       efl_loop_timer_interval_set(efl_added, tim),
                       efl_event_callback_add(efl_added,
-                                             EFL_LOOP_TIMER_EVENT_TICK,
+                                             EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                              _efl_loop_timeout_done, d),
                       efl_event_callback_add(efl_added,
                                              EFL_EVENT_DEL,

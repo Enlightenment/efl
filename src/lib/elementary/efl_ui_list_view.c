@@ -58,7 +58,7 @@ _efl_ui_list_view_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Li
    psd->gmt.x = pos.x;
    psd->gmt.y = pos.y;
 
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
    evas_object_smart_changed(psd->wobj);
 }
 
@@ -865,7 +865,7 @@ _efl_ui_list_view_efl_ui_list_view_model_min_size_set(Eo *obj, Efl_Ui_List_View_
    pd->min.h = min.h;
 
    evas_object_size_hint_min_set(wd->resize_obj, pd->min.w, pd->min.h);
-   efl_event_callback_call(pd->pan_obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(pd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
 }
 
 EOLIAN static void

@@ -1151,10 +1151,6 @@ elm_widget_focus_region_show(Eo *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_widget_widget_parent_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED, Evas_Object *parent EINA_UNUSED)
-{
-}
 
 EAPI Eina_Bool
 elm_widget_api_check(int ver)
@@ -1378,74 +1374,27 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
    return elm_widget_sub_object_add(parent, sobj);
 }
 
-/*
- * @internal
- *
- * Add sobj to obj's sub object.
- *
- * What does elementary sub object mean? This is unique in elementary, it
- * handles overall elementary policies between parent and sub objects.
- *   focus, access, deletion, theme, scale, mirror, scrollable child get,
- *   translate, name find, display mode set, orientation set, tree dump
- *   AUTOMATICALLY.
- *
- * @see elm_widget_sub_object_parent_add()
- */
-EOLIAN static Eina_Bool
-_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+EOLIAN static void
+_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widget *parent)
 {
    Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(obj);
-   Elm_Widget_Smart_Data *sdc = NULL;
-
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
-
-   if (_elm_widget_is(sobj))
-     sdc = efl_data_scope_get(sobj, MY_CLASS);
-
-   if (sobj == sd->parent_obj)
+   Efl_Ui_Widget *old_parent;
+   //check if we are in the subobject list of parents
+   if (parent)
      {
-        /* in this case, sobj must be an elm widget, or something
-         * very wrong is happening */
-        if (!sdc) return EINA_FALSE;
-
-        if (!elm_widget_sub_object_del(sobj, obj)) return EINA_FALSE;
-        WRN("You passed a parent object of obj = %p as the sub object = %p!",
-            obj, sobj);
+        ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
+        EINA_SAFETY_ON_FALSE_RETURN(eina_list_data_find(ppd->subobjs, obj));
      }
 
-   if (sdc)
-     {
-        if (sdc->parent_obj == obj) goto end;
-        if (sdc->parent_obj)
-          {
-             if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
-               return EINA_FALSE;
-          }
-        sdc->parent_obj = obj;
+   old_parent = pd->parent_obj;
+   pd->parent_obj = parent;
 
-        _full_eval(sobj, sdc);
-        efl_ui_widget_disabled_set(sobj, efl_ui_widget_disabled_get(obj));
+   // now lets sync up all states
 
-        _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
-     }
-   else
-     {
-        void *data = evas_object_data_get(sobj, "elm-parent");
-
-        if (data)
-          {
-             if (data == obj) goto end;
-             if (!elm_widget_sub_object_del(data, sobj)) return EINA_FALSE;
-          }
-     }
-   sd->subobjs = eina_list_append(sd->subobjs, sobj);
-   evas_object_data_set(sobj, "elm-parent", obj);
-
-   _callbacks_add(sobj, obj);
-   if (sdc)
+   if (pd->parent_obj)
      {
         /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
-         * Due to elementary's scale policy, scale and pscale can be different in
+        * Due to elementary's scale policy, scale and pscale can be different in
          * some cases. This happens when sobj's previous parent and new parent have
          * different scale value.
          * For example, if sobj's previous parent's scale is 5 and new parent's scale
@@ -1453,33 +1402,85 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
          * need to reset sobj's scale to 5.
          * Note that each widget's scale is 0 by default.
          */
-        double scale, pscale = efl_gfx_entity_scale_get(sobj);
-        Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
+        double scale, pscale = efl_gfx_entity_scale_get(obj);
+        Elm_Theme *th, *pth = elm_widget_theme_get(obj);
 
-        scale = efl_gfx_entity_scale_get(sobj);
-        th = elm_widget_theme_get(sobj);
-        mirrored = efl_ui_mirrored_get(sobj);
+        scale = efl_gfx_entity_scale_get(obj);
+        th = elm_widget_theme_get(obj);
+        mirrored = efl_ui_mirrored_get(obj);
 
-        if (!sdc->on_create)
+        if (!pd->on_create)
           {
              if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
-               elm_widget_theme(sobj);
+               elm_widget_theme(obj);
           }
-
-        if (_is_focused(sobj)) _parents_focus(obj);
-
-        elm_widget_display_mode_set(sobj,
-              evas_object_size_hint_display_mode_get(obj));
-        if (_elm_config->atspi_mode && !sd->on_create)
-          {
-             Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
-             if (aparent)
-                efl_access_children_changed_added_signal_emit(aparent, sobj);
-          }
+        if (_is_focused(obj)) _parents_focus(parent);
+        elm_widget_display_mode_set(obj, evas_object_size_hint_display_mode_get(parent));
+        elm_widget_disabled_set(obj, efl_ui_widget_disabled_get(parent));
+        _elm_widget_top_win_focused_set(obj, _elm_widget_top_win_focused_get(parent));
      }
 
-end:
+   _full_eval(obj, pd);
+
+   if (old_parent && _elm_config->atspi_mode)
+     {
+        Efl_Access_Object *aparent;
+        aparent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+        if (aparent)
+           efl_access_children_changed_del_signal_emit(aparent, obj);
+     }
+
+   if (pd->parent_obj && _elm_config->atspi_mode && efl_finalized_get(parent))
+     {
+        Efl_Access_Object *aparent;
+        aparent = efl_provider_find(efl_parent_get(obj), EFL_ACCESS_OBJECT_MIXIN);
+        if (aparent)
+           efl_access_children_changed_added_signal_emit(aparent, obj);
+     }
+}
+
+static void
+_widget_add_sub(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+{
+   sd->subobjs = eina_list_append(sd->subobjs, sobj);
+   evas_object_data_set(sobj, "elm-parent", obj);
+   _callbacks_add(sobj, obj);
+}
+
+static void
+_widget_del_sub(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+{
+   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+   evas_object_data_del(sobj, "elm-parent");
+   _callbacks_del(sobj, obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Object *sobj)
+{
+   Efl_Ui_Widget *parent;
+
+   //first make sure that we unregister the sobj from the parent
+   if (elm_widget_is(sobj))
+     parent = efl_ui_widget_parent_get(sobj);
+   else
+     parent = evas_object_data_get(sobj, "elm-parent");
+   if (parent == obj) return EINA_TRUE;
+   if (parent)
+     {
+        if (!efl_ui_widget_sub_object_del(parent, sobj))
+          return EINA_FALSE;
+     }
+
+   //sobj does not have a parent here
+   //first add it to our own children list
+   _widget_add_sub(obj, sd, sobj);
+
+   //and if it is a widget, please set the correct parent on the widget itself
+   //the parent set method will take care of the property syncing etc.
+   if (elm_widget_is(sobj))
+     efl_ui_widget_parent_set(sobj, obj);
+
    return EINA_TRUE;
 }
 
@@ -1519,25 +1520,13 @@ _efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
              elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
              elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
           }
-        if (_elm_config->atspi_mode && !sd->on_destroy)
-          {
-             Efl_Access_Object *aparent;
-             aparent = efl_provider_find(efl_parent_get(sobj), EFL_ACCESS_OBJECT_MIXIN);
-             if (aparent)
-                efl_access_children_changed_del_signal_emit(aparent, sobj);
-          }
 
-        ELM_WIDGET_DATA_GET(sobj, sdc);
-        sdc->parent_obj = NULL;
-
-        _full_eval(sobj, sdc);
+        efl_ui_widget_parent_set(sobj, NULL);
      }
 
    if (sd->resize_obj == sobj) sd->resize_obj = NULL;
 
-   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-
-   _callbacks_del(sobj, obj);
+   _widget_del_sub(obj, sd, sobj);
 
    return EINA_TRUE;
 }
@@ -5023,16 +5012,17 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   Eo *parent = NULL;
-
    sd->on_create = EINA_TRUE;
    _efl_ui_focus_event_redirector(obj, obj);
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   parent = efl_parent_get(obj);
-   efl_ui_widget_parent_set(obj, parent);
+   if (!efl_isa(obj, EFL_UI_WIN_CLASS))
+     {
+        efl_ui_widget_sub_object_add(efl_parent_get(obj), obj);
+     }
+
    sd->on_create = EINA_FALSE;
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
@@ -5938,6 +5928,189 @@ _efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
    return efl_gfx_image_scale_type_get(bg_obj);
+}
+
+typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
+struct _Efl_Ui_Property_Bound
+{
+   Eina_Stringshare *key; // Local object property
+   Eina_Stringshare *property; // Model property
+   Eina_Future *f;
+};
+
+static void
+_efl_ui_property_bind_free(void *data)
+{
+   Efl_Ui_Property_Bound *prop = data;
+
+   eina_stringshare_del(prop->key);
+   eina_stringshare_del(prop->property);
+   free(prop);
+}
+
+static void
+_efl_ui_property_bind_clean(Eo *obj EINA_UNUSED,
+                            void *data,
+                            const Eina_Future *f EINA_UNUSED)
+{
+   Efl_Ui_Property_Bound *prop = data;
+
+   prop->f = NULL;
+}
+
+static void
+_efl_ui_property_bind_get(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
+{
+   Eina_Value *value = efl_model_property_get(pd->properties.model, prop->property);
+   Eina_Future *f;
+   Eina_Error err;
+
+   err = efl_property_reflection_set(pd->obj, prop->key, eina_value_reference_copy(value));
+   eina_value_free(value);
+
+   if (!err) return ;
+
+   // Report back the error to the model
+   if (prop->f) eina_future_cancel(prop->f);
+   f = efl_model_property_set(pd->properties.model, prop->property,
+                              eina_value_error_new(err));
+   prop->f = efl_future_then(pd->obj, f, .free = _efl_ui_property_bind_clean, .data = prop);
+}
+
+static void
+_efl_ui_property_bind_set(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
+{
+   Eina_Value value = efl_property_reflection_get(pd->obj, prop->key);
+   Eina_Future *f;
+
+   if (prop->f) eina_future_cancel(prop->f);
+   f = efl_model_property_set(pd->properties.model, prop->property, eina_value_dup(&value));
+   prop->f = efl_future_then(pd->obj, f, .free = _efl_ui_property_bind_clean, .data = prop);
+   eina_value_flush(&value);
+}
+
+static void
+_efl_ui_model_property_bind_changed(void *data, const Efl_Event *event)
+{
+   Efl_Model_Property_Event *evt = event->info;
+   Efl_Ui_Widget_Data *pd = data;
+   Eina_Array_Iterator it;
+   const char *prop;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        Efl_Ui_Property_Bound *lookup;
+
+        lookup = eina_hash_find(pd->properties.model_lookup, prop);
+        if (lookup) _efl_ui_property_bind_get(pd, lookup);
+     }
+}
+
+static void
+_efl_ui_view_property_bind_changed(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Property_Event *evt = event->info;
+   Efl_Ui_Widget_Data *pd = data;
+   Eina_Array_Iterator it;
+   Eina_Stringshare *prop;
+   unsigned int i;
+
+   EINA_ARRAY_ITER_NEXT(evt->changed_properties, i, prop, it)
+     {
+        Efl_Ui_Property_Bound *lookup;
+
+        lookup = eina_hash_find(pd->properties.view_lookup, prop);
+        if (lookup) _efl_ui_property_bind_set(pd, lookup);
+     }
+}
+
+static Eina_Error
+_efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
+                                                  const char *key, const char *property)
+{
+   Efl_Ui_Property_Bound *prop;
+
+   // Check if the property is available from the reflection table of the object.
+   if (!efl_property_reflection_exist(obj, key)) return EFL_PROPERTY_ERROR_INVALID_KEY;
+
+   if (!pd->properties.model_lookup)
+     {
+        pd->properties.model_lookup = eina_hash_stringshared_new(_efl_ui_property_bind_free);
+        pd->properties.view_lookup = eina_hash_stringshared_new(NULL);
+        if (pd->properties.model)
+          {
+             efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                                    _efl_ui_model_property_bind_changed, pd);
+             efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                                    _efl_ui_view_property_bind_changed, pd);
+          }
+     }
+
+   prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
+   if (!prop) return ENOMEM;
+   prop->key = eina_stringshare_add(key);
+   prop->property = eina_stringshare_add(property);
+
+   eina_hash_direct_add(pd->properties.model_lookup, prop->property, prop);
+   eina_hash_direct_add(pd->properties.view_lookup, prop->key, prop);
+
+   _efl_ui_property_bind_get(pd, prop);
+
+   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) prop->key);
+
+   return 0;
+}
+
+static void
+_efl_ui_widget_efl_ui_view_model_set(Eo *obj,
+                                     Efl_Ui_Widget_Data *pd,
+                                     Efl_Model *model)
+{
+   if (pd->properties.model)
+     {
+        // Remove any existing handler that might exist for any reason
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+     }
+
+   efl_replace(&pd->properties.model, model);
+
+   if (pd->properties.model && pd->properties.model_lookup)
+     {
+        // Set the properties handler just in case
+        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+     }
+}
+
+static Efl_Model *
+_efl_ui_widget_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Data *pd)
+{
+   return pd->properties.model;
+}
+
+static void
+_efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
+{
+   efl_invalidate(efl_super(obj, EFL_UI_WIDGET_CLASS));
+
+   if (pd->properties.model)
+     {
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+        efl_replace(&pd->properties.model, NULL);
+     }
+   if (pd->properties.view_lookup) eina_hash_free(pd->properties.view_lookup);
+   pd->properties.view_lookup = NULL;
+   if (pd->properties.model_lookup) eina_hash_free(pd->properties.model_lookup);
+   pd->properties.model_lookup = NULL;
 }
 
 #include "efl_ui_widget_part_bg.eo.c"

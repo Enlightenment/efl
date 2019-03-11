@@ -48,6 +48,6 @@ interface @beta Efl.Text_Interactive extends Efl.Text, Efl.Text_Font,
       }
    }
    events {
-      selection,changed: void; [[The selection on the object has changed. Query using @.selection_cursors]]
+      text,selection,changed: void; [[The selection on the object has changed. Query using @.selection_cursors]]
    }
 }

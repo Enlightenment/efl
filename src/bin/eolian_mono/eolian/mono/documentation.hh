@@ -50,7 +50,7 @@ struct documentation_generator
       {
          case ::EOLIAN_METHOD:
            if (blacklist::is_function_blacklisted(
-                 ::eolian_function_full_c_name_get(function, ftype, EINA_FALSE))) return "";
+                 ::eolian_function_full_c_name_get(function, ftype))) return "";
            name += ".";
            name += name_helpers::managed_method_name(
              ::eolian_object_short_name_get(klass), eo_name);

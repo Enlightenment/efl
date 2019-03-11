@@ -31,7 +31,7 @@ Eina_Bool _elm_index_autohide_disabled_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_autohide_disabled_get_reflect(Eo *obj)
+__eolian_elm_index_autohide_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_index_autohide_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -63,7 +63,7 @@ Eina_Bool _elm_index_omit_enabled_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_omit_enabled_get_reflect(Eo *obj)
+__eolian_elm_index_omit_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_index_omit_enabled_get(obj);
    return eina_value_bool_init(val);
@@ -95,7 +95,7 @@ int _elm_index_standard_priority_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_standard_priority_get_reflect(Eo *obj)
+__eolian_elm_index_standard_priority_get_reflect(const Eo *obj)
 {
    int val = elm_obj_index_standard_priority_get(obj);
    return eina_value_int_init(val);
@@ -127,7 +127,7 @@ double _elm_index_delay_change_time_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_delay_change_time_get_reflect(Eo *obj)
+__eolian_elm_index_delay_change_time_get_reflect(const Eo *obj)
 {
    double val = elm_obj_index_delay_change_time_get(obj);
    return eina_value_double_init(val);
@@ -159,7 +159,7 @@ Eina_Bool _elm_index_indicator_disabled_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_indicator_disabled_get_reflect(Eo *obj)
+__eolian_elm_index_indicator_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_index_indicator_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -191,7 +191,7 @@ int _elm_index_item_level_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_index_item_level_get_reflect(Eo *obj)
+__eolian_elm_index_item_level_get_reflect(const Eo *obj)
 {
    int val = elm_obj_index_item_level_get(obj);
    return eina_value_int_init(val);

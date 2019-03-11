@@ -19,6 +19,7 @@ endforeach
 
 elementary_suite_src = [
   'elm_suite.c',
+  'elm_suite_build.c',
   'suite_helpers.c',
   'elm_test_atspi.c',
   'elm_test_check.c',
@@ -114,6 +115,7 @@ elementary_suite = executable('elementary_suite',
 
 efl_ui_suite_src = [
   'efl_ui_suite.c',
+  'efl_ui_build.c',
   'suite_helpers.c',
   'suite_helpers.h',
   'elm_test_init.c',
@@ -123,6 +125,7 @@ efl_ui_suite_src = [
   'efl_ui_test_focus.c',
   'efl_ui_test_focus_sub.c',
   'efl_ui_test_box.c',
+  'efl_ui_test_box_flow.c',
   'efl_ui_test_table.c',
   'efl_ui_test_grid.c',
   'efl_ui_test_relative_layout.c',

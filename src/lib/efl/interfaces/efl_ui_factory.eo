@@ -1,4 +1,4 @@
-struct Efl.Ui.Factory_Item_Created_Event {
+struct @beta Efl.Ui.Factory_Item_Created_Event {
    [[EFL Ui Factory event structure provided when an item was just created.]]
    model: Efl.Model; [[The model already set on the new item.]]
    item: Efl.Gfx.Entity; [[The item that was just created.]]

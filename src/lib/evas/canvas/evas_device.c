@@ -50,7 +50,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) != old_class)
+        if ((Evas_Device_Class)efl_input_device_type_get(dev) != old_class)
           continue;
 
         def = dev;
@@ -400,7 +400,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    Evas_Public_Data *edata = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
 
-   if (d->klass == clas)
+   if ((Evas_Device_Class)d->klass == clas)
      return;
 
    if (_is_pointer(d->klass))

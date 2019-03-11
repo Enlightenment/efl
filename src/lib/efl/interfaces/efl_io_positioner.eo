@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Io.Positioner_Whence {
+enum @beta Efl.Io.Positioner_Whence {
     [[Seek position modes]]
     start, [[Seek from start of the stream/file]]
     current, [[Seek from current position]]

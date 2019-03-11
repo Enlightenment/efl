@@ -14,7 +14,7 @@ ecore_timer_interval_get(const Efl_Loop_Timer *obj)
 EAPI double
 ecore_timer_pending_get(const Efl_Loop_Timer *obj)
 {
-   return efl_loop_timer_pending_get(obj);
+   return efl_loop_timer_time_pending_get(obj);
 }
 
 EAPI void

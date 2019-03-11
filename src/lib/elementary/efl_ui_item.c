@@ -27,7 +27,7 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 
    pd->selected = EINA_TRUE;
    edje_object_signal_emit(wd->resize_obj, "efl,state,selected", "efl");
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_SELECTED, NULL);
 }
 
 static void
@@ -38,7 +38,7 @@ _item_unselect(Eo *obj, Efl_Ui_Item_Data *pd)
 
    pd->selected = EINA_FALSE;
    edje_object_signal_emit(wd->resize_obj, "efl,state,unselected", "efl");
-   efl_event_callback_call(obj, EFL_UI_EVENT_UNSELECTED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_UNSELECTED, NULL);
 }
 
 /* Mouse Controls */

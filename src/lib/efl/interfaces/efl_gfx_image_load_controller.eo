@@ -2,7 +2,7 @@ import eina_types;
 import efl_gfx_types;
 
 /*
-enum Efl.Gfx.Image_Load_Controller_State
+enum @beta Efl.Gfx.Image_Load_Controller_State
 {
    none = 0,      [[Not loading any image.]]
    loaded = 1,    [[Image data is loaded, nothing is pending.]]

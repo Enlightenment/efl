@@ -100,7 +100,7 @@ _efl_net_dialer_windows_efl_net_dialer_dial(Eo *o, Efl_Net_Dialer_Windows_Data *
 
    efl_net_socket_address_remote_set(o, sstr);
    efl_net_socket_address_local_set(o, cstr);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
    efl_net_dialer_connected_set(o, EINA_TRUE);
 
    return _efl_net_socket_windows_io_start(o);
@@ -125,7 +125,7 @@ _efl_net_dialer_windows_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Windo
 {
    if (pd->connected == connected) return;
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool

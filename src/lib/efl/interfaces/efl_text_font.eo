@@ -1,6 +1,6 @@
 // src/lib/efl/interfaces/efl_text_font.eo
 import efl_gfx_types;
-enum Efl.Text_Font_Weight {
+enum @beta Efl.Text_Font_Weight {
    [[Type of font weight]]
    normal, [[Normal font weight]]
    thin, [[Thin font weight]]
@@ -17,7 +17,7 @@ enum Efl.Text_Font_Weight {
    extrablack, [[Extrablack font weight]]
 }
 
-enum Efl.Text_Font_Width {
+enum @beta Efl.Text_Font_Width {
    [[Type of font width]]
    normal, [[Normal font width]]
    ultracondensed, [[Ultracondensed font width]]
@@ -30,7 +30,7 @@ enum Efl.Text_Font_Width {
    ultraexpanded, [[Ultraexpanded font width]]
 }
 
-enum Efl.Text_Font_Slant {
+enum @beta Efl.Text_Font_Slant {
     [[Type of font slant]]
     normal, [[Normal font slant]]
     oblique, [[Oblique font slant]]
@@ -40,7 +40,7 @@ enum Efl.Text_Font_Slant {
 /* FIXME: It needs to support "normal" option for non-color bitmap font.
    For supporting "normal" option, S/W glyph drawing engine should be updated.
  */
-enum Efl.Text_Font_Bitmap_Scalable {
+enum @beta Efl.Text_Font_Bitmap_Scalable {
    [[Scalable of bitmap fonts
 
      @since 1.21

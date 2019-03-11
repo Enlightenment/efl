@@ -904,9 +904,9 @@ evas_gl_common_image_surface_update(Evas_GL_Image *im)
    if (!im || !im->gc || !im->im || !im->im->image.data)
      goto fail;
 
-   if (im->im->cache_entry.space == EFL_GFX_COLORSPACE_ARGB8888)
+   if (im->im->cache_entry.space == (Evas_Colorspace)EFL_GFX_COLORSPACE_ARGB8888)
      alpha = EINA_FALSE;
-   else if (im->im->cache_entry.space == EFL_GFX_COLORSPACE_GRY8)
+   else if (im->im->cache_entry.space == (Evas_Colorspace)EFL_GFX_COLORSPACE_GRY8)
      alpha = EINA_TRUE;
    else goto fail;
 

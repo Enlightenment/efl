@@ -1,7 +1,7 @@
 import efl_input_device;
 import efl_gfx_types;
 
-interface @beta Efl.Canvas.Scene
+interface Efl.Canvas.Scene
 {
    [[Interface containing basic canvas-related methods and events.]]
    methods {
@@ -142,7 +142,8 @@ interface @beta Efl.Canvas.Scene
             ]]
          }
       }
-      seats {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      seats @beta {
          [[Iterate over the available input device seats for the canvas.
 
            A "seat" is the term used for a group of input devices, typically including
@@ -154,7 +155,8 @@ interface @beta Efl.Canvas.Scene
          return: iterator<Efl.Input.Device> @owned;
             [[An iterator over the attached seats.]]
       }
-      @property device {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property device @beta{
          [[An input device attached to this canvas, found by name.
 
            Note: This function is meant to find seats and not individual
@@ -172,7 +174,8 @@ interface @beta Efl.Canvas.Scene
             seat: Efl.Input.Device; [[The device or seat, $null if not found.]]
          }
       }
-      @property seat {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property seat @beta {
          [[Get a seat attached to this canvas using the seat's id property.
 
            Seats are associated with an arbitrary integer id. The id is not a
@@ -191,7 +194,8 @@ interface @beta Efl.Canvas.Scene
             seat: Efl.Input.Device; [[The seat or $null if not found.]]
          }
       }
-      @property seat_default {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property seat_default @beta {
          [[Get the default seat attached to this canvas.
 
            A canvas may have exactly one default seat.
@@ -206,7 +210,8 @@ interface @beta Efl.Canvas.Scene
             seat: Efl.Input.Device; [[The default seat or $null if one does not exist.]]
          }
       }
-      @property pointer_position {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property pointer_position @beta {
          get {
             [[This function returns the current known pointer coordinates
 
@@ -224,15 +229,15 @@ interface @beta Efl.Canvas.Scene
       }
    }
    events {
-      focus,in: Efl.Input.Focus; [[Called when canvas got focus]]
-      focus,out: Efl.Input.Focus; [[Called when canvas lost focus]]
+      scene,focus,in: Efl.Input.Focus; [[Called when scene got focus]]
+      scene,focus,out: Efl.Input.Focus; [[Called when scene lost focus]]
       object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
       object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
       render,pre: void; [[Called when pre render happens]]
       /* FIXME: event_info can be NULL, but @nullable tag does not work on events yet */
       render,post: Efl.Gfx.Event.Render_Post; [[Called when post render happens]]
-      device,changed: Efl.Input.Device; [[Called when input device changed]]
-      device,added: Efl.Input.Device; [[Called when input device was added]]
-      device,removed: Efl.Input.Device; [[Called when input device was removed]]
+      device,changed @beta : Efl.Input.Device; [[Called when input device changed]]
+      device,added @beta: Efl.Input.Device; [[Called when input device was added]]
+      device,removed @beta : Efl.Input.Device; [[Called when input device was removed]]
    }
 }

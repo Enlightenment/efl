@@ -383,6 +383,11 @@ typedef struct _Elm_Widget_Smart_Data
      Evas_Object *prev, *next, *up, *down, *right, *left;
      Elm_Object_Item *item_prev, *item_next, *item_up, *item_down, *item_right, *item_left;
    } legacy_focus;
+   struct {
+      Efl_Model *model;
+      Eina_Hash *model_lookup;
+      Eina_Hash *view_lookup;
+   } properties;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 

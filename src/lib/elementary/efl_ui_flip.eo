@@ -1,6 +1,6 @@
 import efl_ui_direction;
 
-enum Efl.Ui.Flip_Mode
+enum @beta Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
    rotate_y_center_axis, [[Rotate Y center axis flip mode]]
@@ -18,7 +18,7 @@ enum Efl.Ui.Flip_Mode
    cross_fade, [[Cross fade flip mode]]
 }
 
-enum Efl.Ui.Flip_Interaction
+enum @beta Efl.Ui.Flip_Interaction
 {
    [[Efl UI flip interaction]]
    none, [[No interaction]]

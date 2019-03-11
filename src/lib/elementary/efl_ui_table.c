@@ -123,10 +123,15 @@ _custom_table_calc(Eo *obj, Custom_Table_Data *pd)
 /* End of custom table class */
 
 EOLIAN static void
-_efl_ui_table_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Eina_Bool homogeneoush, Eina_Bool homogeneousv)
+_efl_ui_table_homogeneous_set(Eo *obj, Efl_Ui_Table_Data *pd, Eina_Bool homogeneoush, Eina_Bool homogeneousv)
 {
+   if ((pd->homogeneoush == !!homogeneoush) &&
+       (pd->homogeneousv == !!homogeneousv))
+     return;
+
    pd->homogeneoush = !!homogeneoush;
    pd->homogeneousv = !!homogeneousv;
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static void

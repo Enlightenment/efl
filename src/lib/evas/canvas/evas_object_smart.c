@@ -1798,16 +1798,16 @@ _efl_canvas_group_group_paragraph_direction_set_internal(Eo *eo_obj,
 
 EOLIAN static void
 _efl_canvas_group_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Smart_Data *o,
-                                                            Evas_BiDi_Direction dir)
+                                                            Efl_Text_Bidirectional_Type dir)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Smart_Data *parent;
 
-   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == dir)) ||
-       (o->inherit_paragraph_direction && (dir == EVAS_BIDI_DIRECTION_INHERIT)))
+   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == (Evas_BiDi_Direction)dir)) ||
+       (o->inherit_paragraph_direction && ((Evas_BiDi_Direction)dir == EVAS_BIDI_DIRECTION_INHERIT)))
      return;
 
-   if (dir == EVAS_BIDI_DIRECTION_INHERIT)
+   if (dir == (Efl_Text_Bidirectional_Type)EVAS_BIDI_DIRECTION_INHERIT)
      {
         o->inherit_paragraph_direction = EINA_TRUE;
         Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
@@ -1836,10 +1836,10 @@ _efl_canvas_group_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Sma
    _efl_canvas_group_group_paragraph_direction_set_internal(eo_obj, o->paragraph_direction);
 }
 
-EOLIAN static Evas_BiDi_Direction
+EOLIAN static Efl_Text_Bidirectional_Type
 _efl_canvas_group_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED, Evas_Smart_Data *o)
 {
-   return o->paragraph_direction;
+   return (Efl_Text_Bidirectional_Type)o->paragraph_direction;
 }
 
 EOLIAN static const Eo *

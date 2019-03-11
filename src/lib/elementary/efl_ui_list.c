@@ -657,7 +657,7 @@ _list_item_selected(void *data, const Efl_Event *event)
    pd->selected = eina_list_append(pd->selected, item);
    pd->last_selected = item;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_SELECTED, item);
 }
 
 static void
@@ -670,7 +670,7 @@ _list_item_unselected(void *data, const Efl_Event *event)
    pd->selected = eina_list_remove(pd->selected, item);
    if (pd->last_selected == item) pd->last_selected = NULL;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_UNSELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_UNSELECTED, item);
 }
 
 static Eina_Bool
@@ -689,8 +689,8 @@ _list_item_process(Eo *obj, Efl_Ui_List_Data *pd, EINA_UNUSED Efl_Ui_List_Item *
    efl_event_callback_add(it, EFL_UI_EVENT_PRESSED, _list_item_pressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_UNPRESSED, _list_item_unpressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_LONGPRESSED, _list_item_longpressed, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_SELECTED, _list_item_selected, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_UNSELECTED, _list_item_unselected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_SELECTABLE_SELECTED, _list_item_selected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_SELECTABLE_UNSELECTED, _list_item_unselected, obj);
 
    return EINA_TRUE;
 }
@@ -708,8 +708,8 @@ _list_item_clear(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_L
    efl_event_callback_del(it, EFL_UI_EVENT_PRESSED, _list_item_pressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_UNPRESSED, _list_item_unpressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_LONGPRESSED, _list_item_longpressed, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_SELECTED, _list_item_selected, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_UNSELECTED, _list_item_unselected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_SELECTABLE_SELECTED, _list_item_selected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_SELECTABLE_UNSELECTED, _list_item_unselected, obj);
 }
 
 /* Pack APIs */

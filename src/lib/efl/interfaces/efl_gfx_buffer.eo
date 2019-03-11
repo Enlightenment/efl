@@ -2,7 +2,7 @@ import efl_gfx_types;
 import eina_types;
 
 /* FIXME: this is very very low level. expose to apps? */
-enum Efl.Gfx.Buffer_Access_Mode {
+enum @beta Efl.Gfx.Buffer_Access_Mode {
    [[Graphics buffer access mode]]
    none      = 0x0, [[No buffer access]]
    read      = 0x1, [[Read access to buffer]]

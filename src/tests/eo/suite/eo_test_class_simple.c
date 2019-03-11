@@ -36,7 +36,7 @@ _a_set_reflect(Eo *obj, Eina_Value value)
 }
 
 static int
-_a_get(Eo *obj EINA_UNUSED, void *class_data)
+_a_get(const Eo *obj EINA_UNUSED, void *class_data)
 {
    Simple_Public_Data *pd = class_data;
 
@@ -44,7 +44,7 @@ _a_get(Eo *obj EINA_UNUSED, void *class_data)
 }
 
 static Eina_Value
-_a_get_reflect(Eo *obj)
+_a_get_reflect(const Eo *obj)
 {
    int a = simple_a_get(obj);
 
@@ -94,7 +94,7 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 }
 
 EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
-EFL_FUNC_BODY(simple_a_get, int, 0);
+EFL_FUNC_BODY_CONST(simple_a_get, int, 0);
 EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
 EFL_VOID_FUNC_BODY(simple_pure_virtual);
 EFL_VOID_FUNC_BODY(simple_no_implementation);

@@ -1,6 +1,6 @@
 import eina_types;
 
-interface @beta Efl.Screen
+interface Efl.Screen
 {
    [[Efl screen interface]]
    methods {

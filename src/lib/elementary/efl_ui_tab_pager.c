@@ -60,7 +60,7 @@ _efl_ui_tab_pager_tab_bar_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd, Efl_Canvas_Obj
 {
    if (sd->tab_bar != NULL)
      {
-        efl_event_callback_del(sd->tab_bar, EFL_UI_EVENT_SELECTED, _tab_select_cb, obj);
+        efl_event_callback_del(sd->tab_bar, EFL_UI_EVENT_SELECTABLE_SELECTED, _tab_select_cb, obj);
         efl_content_unset(efl_part(obj, "efl.tab_root"));
         efl_del(sd->tab_bar);
      }
@@ -68,7 +68,7 @@ _efl_ui_tab_pager_tab_bar_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd, Efl_Canvas_Obj
    sd->tab_bar = tab_bar;
    efl_content_set(efl_part(obj, "efl.tab_root"), sd->tab_bar);
 
-   efl_event_callback_add(sd->tab_bar, EFL_UI_EVENT_SELECTED, _tab_select_cb, obj);
+   efl_event_callback_add(sd->tab_bar, EFL_UI_EVENT_SELECTABLE_SELECTED, _tab_select_cb, obj);
 }
 
 EOLIAN static Efl_Canvas_Object *
@@ -87,7 +87,7 @@ EOLIAN static void
 _efl_ui_tab_pager_efl_object_destructor(Eo *obj, Efl_Ui_Tab_Pager_Data *sd)
 {
    if (sd->tab_bar != NULL)
-     efl_event_callback_del(sd->tab_bar, EFL_UI_EVENT_SELECTED, _tab_select_cb, obj);
+     efl_event_callback_del(sd->tab_bar, EFL_UI_EVENT_SELECTABLE_SELECTED, _tab_select_cb, obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }

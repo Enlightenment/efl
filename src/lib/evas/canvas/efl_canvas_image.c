@@ -598,7 +598,7 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
         ENFN->image_size_get(ENC, o->engine_data, &iw, &ih);
         ics = ENFN->image_colorspace_get(ENC, o->engine_data);
         alpha = ENFN->image_alpha_get(ENC, o->engine_data);
-        if ((w != iw) || (h != ih) || (ics != cspace) || (alpha != o->cur->has_alpha))
+        if ((w != iw) || (h != ih) || (ics != (Evas_Colorspace)cspace) || (alpha != o->cur->has_alpha))
           {
              ENFN->image_free(ENC, o->engine_data);
              o->engine_data = NULL;
@@ -639,7 +639,7 @@ _image_pixels_set(Evas_Object_Protected_Data *obj,
      ENFN->image_stride_get(ENC, o->engine_data, &int_stride);
 
    if (resized || o->cur->f || o->cur->key ||
-       (o->cur->image.stride != int_stride) || (cspace != o->cur->cspace))
+       (o->cur->image.stride != int_stride) || (cspace != (Efl_Gfx_Colorspace)o->cur->cspace))
      {
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, cur)
         {

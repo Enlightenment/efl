@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Clock_Type
+enum @beta Efl.Ui.Clock_Type
 {
    [[Identifies a clock field, The widget supports 6 fields : Year, month,
      Date, Hour, Minute, AM/PM

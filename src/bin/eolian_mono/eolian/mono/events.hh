@@ -51,6 +51,7 @@ struct unpack_event_args_visitor
            , {"int", [&arg] { return arg + ".ToInt32()"; }}
            , {"uint", [&arg] { return "(uint)" + arg + ".ToInt32()";}}
            , {"string", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
+           , {"stringshare", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
            , {"Eina.Error", [&arg] { return "(Eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(Eina.Error))"; }}
         };
 

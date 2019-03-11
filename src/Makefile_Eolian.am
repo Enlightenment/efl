@@ -159,13 +159,10 @@ tests/eolian/data/struct_ref.h \
 tests/eolian/data/struct_ref_stub.h \
 tests/eolian/data/owning.eo.c \
 tests/eolian/data/class_simple_ref.c \
-tests/eolian/data/class_simple_ref.legacy.c \
 tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \
-tests/eolian/data/class_simple_ref_legacy.h \
 tests/eolian/data/import_types_ref.h \
 tests/eolian/data/docs_ref.h \
-tests/eolian/data/docs_ref_legacy.h \
 tests/eolian/data/function_types_ref.h \
 tests/eolian/data/function_as_argument_impl_ref.c \
 tests/eolian/data/function_as_argument_ref.c \

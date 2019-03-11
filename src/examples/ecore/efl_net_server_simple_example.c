@@ -254,7 +254,7 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
                            { EFL_NET_SERVER_EVENT_CLIENT_ADD, _server_client_add },
                            { EFL_NET_SERVER_EVENT_CLIENT_REJECTED, _server_client_rejected },
-                           { EFL_NET_SERVER_EVENT_ERROR, _server_error },
+                           { EFL_NET_SERVER_EVENT_SERVER_ERROR, _server_error },
                            { EFL_NET_SERVER_EVENT_SERVING, _server_serving });
 
 static const char * protocols[] = {

@@ -1,4 +1,4 @@
-struct Efl.Ui.Spin_Special_Value
+struct @beta Efl.Ui.Spin_Special_Value
 {
    [[Special value]]
    value: double; [[Target value]]

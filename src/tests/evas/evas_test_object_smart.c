@@ -122,7 +122,7 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
    evas_textblock_cursor_geometry_get(cur, &x, &y, &w, &h, &dir,
                                       EVAS_TEXTBLOCK_CURSOR_UNDER);
    fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
-   fail_if(evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
 
    /* Change paragraph direction of smart parent object */
    evas_object_paragraph_direction_set(smart_obj, EVAS_BIDI_DIRECTION_RTL);
@@ -131,7 +131,7 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
                                       EVAS_TEXTBLOCK_CURSOR_UNDER);
    fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
    fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
 
    /* The paragraph direction of smart member object has to be reset
       if smart member object is removed from smart parent. */
@@ -142,7 +142,7 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
                                       EVAS_TEXTBLOCK_CURSOR_UNDER);
    fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
    fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
-   fail_if(evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
 
    /* The paragraph direction of smart member object has to be changed
       if smart member object is appended to smart parent. */
@@ -153,7 +153,7 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
                                       EVAS_TEXTBLOCK_CURSOR_UNDER);
    fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
    fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
 
    /* Ignore smart parent's paragraph direction */
    evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
@@ -163,7 +163,7 @@ EFL_START_TEST(evas_object_smart_paragraph_direction)
                                       EVAS_TEXTBLOCK_CURSOR_UNDER);
    fail_if(dir == EVAS_BIDI_DIRECTION_RTL);
    fail_if((x >= xx) || (y != yy) || (w != ww) || (h != hh));
-   fail_if(evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
 
    evas_object_smart_member_del(tb);
    evas_object_smart_member_del(to);

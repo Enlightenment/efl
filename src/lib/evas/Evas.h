@@ -168,10 +168,11 @@
 
 #include <Eina.h>
 
-/* This include has been added to support Eo in Evas */
 #include <Eo.h>
+#ifdef EFL_BETA_API_SUPPORT
+/* This include has been added to support Eo in Evas */
 #include <Efl.h>
-
+#endif
 
 #include <Evas_Loader.h>
 
@@ -205,11 +206,19 @@
 extern "C" {
 #endif
 
+#include <interfaces/efl_gfx_types.eot.h>
+#include <interfaces/efl_gfx_path.eo.h>
+#include <interfaces/efl_input_types.eot.h>
+#include <interfaces/efl_text_types.eot.h>
 #include <Evas_Common.h>
+
+
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include <Evas_Legacy.h>
 #endif
+#ifdef EFL_BETA_API_SUPPORT
 #include <Evas_Eo.h>
+#endif
 
 #ifdef __cplusplus
 }

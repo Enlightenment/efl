@@ -1,7 +1,7 @@
 type @extern Ecore.Audio.Vio: __undefined_type; [[Ecore audio vio type]] /* FIXME: Had function pointer members. */
 type @extern efl_key_data_free_func: __undefined_type; [[Efl key data free function type]] /* FIXME: Function pointers not allowed. */
 
-enum Ecore.Audio.Format {
+enum @beta Ecore.Audio.Format {
     [[Ecore audio format type]]
     auto, [[Automatically detect the format (for inputs)]]
     raw, [[RAW samples (float)]]

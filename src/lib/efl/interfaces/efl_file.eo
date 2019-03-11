@@ -1,7 +1,7 @@
 import eina_types;
 import efl_gfx_types;
 
-mixin @beta Efl.File requires Efl.Object {
+mixin Efl.File requires Efl.Object {
    [[Efl file interface]]
    methods {
       @property mmap {
@@ -62,7 +62,7 @@ mixin @beta Efl.File requires Efl.Object {
               You must not modify the strings on the returned pointers.]]
          }
          values {
-            key: string; [[The group that the image belongs to, in case 
+            key: string; [[The group that the image belongs to, in case
                                             it's an EET(including Edje case) file. This can be used
                                             as a key inside evas image cache if this is a normal image
                                             file not eet file.]]

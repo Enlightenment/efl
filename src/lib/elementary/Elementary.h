@@ -70,7 +70,6 @@
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
-#include <Efl.h>
 
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
@@ -148,6 +147,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+#include <Efl.h>
 /* FIXME: wtf? */
 #ifndef EFL_UI_RADIO_EVENT_CHANGED
 # define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED

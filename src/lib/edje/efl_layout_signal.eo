@@ -17,7 +17,7 @@ function EflLayoutSignalCb {
   }
 };
 
-interface @beta Efl.Layout.Signal
+interface Efl.Layout.Signal
 {
    [[Layouts asynchronous messaging and signaling interface.
 

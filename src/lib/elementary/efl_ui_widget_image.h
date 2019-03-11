@@ -80,7 +80,6 @@ struct _Efl_Ui_Image_Data
    const char           *stdicon;
 
    struct {
-      Efl_Model         *model;
       Eina_Stringshare  *file;
       Eina_Stringshare  *key;
 

@@ -1,8 +1,8 @@
 import efl_ui;
 import efl_orientation;
 
-abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
-                     Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind,
+abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
+                     Efl.Ui.Factory_Bind,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group
 {
@@ -85,9 +85,9 @@ abstract @beta Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container
       Efl.Container.content_count;
       Efl.Container.content_iterate;
       Efl.Part.part_get;
-      Efl.Ui.View.model { get; set; }
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Factory_Bind.factory_bind;
+      Efl.Ui.View.model { set; }
    }
    events {
       theme,changed: void; [[Called when theme changed]]

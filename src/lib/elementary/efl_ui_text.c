@@ -1120,7 +1120,7 @@ _hoversel_item_paste_cb(void *data,
 }
 
 static void
-_selection_clear(void *data, Elm_Sel_Type selection)
+_selection_clear(void *data, Efl_Ui_Selection_Type selection)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
 
@@ -1217,7 +1217,7 @@ _cut_cb(Eo *obj)
    Efl_Text_Cursor_Cursor *start, *end;
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CUT, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1246,7 +1246,7 @@ _copy_cb(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_COPY, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -2131,7 +2131,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);
-   efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED, obj);
+   efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, obj);
    sd->text_obj = text_obj;
    sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
@@ -2199,7 +2199,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
          _efl_ui_text_changed_user_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
-   efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_SELECTION_CHANGED,
+   efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
@@ -2437,7 +2437,7 @@ _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
         edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
      }
    if (sd->have_selection)
-     efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
+     efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
    _edje_signal_emit(sd, "selection,cleared", "efl.text");

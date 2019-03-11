@@ -31,7 +31,7 @@ unsigned int _elm_dayselector_weekend_length_get(const Eo *obj, Elm_Dayselector_
 
 
 static Eina_Value
-__eolian_elm_dayselector_weekend_length_get_reflect(Eo *obj)
+__eolian_elm_dayselector_weekend_length_get_reflect(const Eo *obj)
 {
    unsigned int val = elm_obj_dayselector_weekend_length_get(obj);
    return eina_value_uint_init(val);

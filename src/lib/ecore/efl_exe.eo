@@ -1,4 +1,4 @@
-enum Efl.Exe_Signal {
+enum @beta Efl.Exe_Signal {
    [[ ]]
    int,
    quit,
@@ -11,7 +11,7 @@ enum Efl.Exe_Signal {
    usr2
 }
 
-enum Efl.Exe_Flags {
+enum @beta Efl.Exe_Flags {
    [[ ]]
    none             = 0,
    group_leader     = 1,

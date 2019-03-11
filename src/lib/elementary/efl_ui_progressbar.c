@@ -702,7 +702,7 @@ _efl_ui_progressbar_efl_part_part_get(const Eo *obj, Efl_Ui_Progressbar_Data *sd
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    // Progress bars are dragable types
-   if (edje_object_part_drag_dir_get(wd->resize_obj, part) != EFL_UI_DRAG_DIR_NONE)
+   if (edje_object_part_drag_dir_get(wd->resize_obj, part) != (Edje_Drag_Dir)EFL_UI_DRAG_DIR_NONE)
      return ELM_PART_IMPLEMENT(EFL_UI_PROGRESSBAR_PART_CLASS, obj, part);
 
    return efl_part_get(efl_super(obj, MY_CLASS), part);

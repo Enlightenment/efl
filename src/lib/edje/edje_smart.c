@@ -454,7 +454,7 @@ edje_object_file_get(const Edje_Object *obj, const char **file, const char **gro
 }
 
 EOLIAN static void
-_efl_canvas_layout_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Evas_BiDi_Direction dir)
+_efl_canvas_layout_efl_canvas_object_paragraph_direction_set(Eo *obj, Edje *ed, Efl_Text_Bidirectional_Type dir)
 {
    efl_canvas_object_paragraph_direction_set(efl_super(obj, MY_CLASS), dir);
 

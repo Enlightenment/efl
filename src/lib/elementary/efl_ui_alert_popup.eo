@@ -1,11 +1,11 @@
-enum Efl.Ui.Alert_Popup_Button {
+enum @beta Efl.Ui.Alert_Popup_Button {
    [[Defines the type of the alert button.]]
    positive = 0, [[Button having positive meaning. e.g. "Yes"]]
    negative, [[Button having negative meaning. e.g. "No"]]
    user [[Button having user-defined meaning. e.g. "Cancel"]]
 }
 
-struct Efl.Ui.Alert_Popup_Button_Clicked_Event {
+struct @beta Efl.Ui.Alert_Popup_Button_Clicked_Event {
    [[Information of clicked event]]
    button_type: Efl.Ui.Alert_Popup_Button; [[Clicked button type]]
 }

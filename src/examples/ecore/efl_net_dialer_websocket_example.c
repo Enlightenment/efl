@@ -145,9 +145,9 @@ EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
                            { EFL_NET_DIALER_WEBSOCKET_EVENT_CLOSED_REASON, _ws_closed_reason },
                            { EFL_NET_DIALER_WEBSOCKET_EVENT_MESSAGE_TEXT, _ws_message_text },
                            { EFL_NET_DIALER_WEBSOCKET_EVENT_MESSAGE_BINARY, _ws_message_binary },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _connected },
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _connected },
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _error },
                            { EFL_IO_CLOSER_EVENT_CLOSED, _closed },
                            { EFL_IO_READER_EVENT_EOS, _eos });
 

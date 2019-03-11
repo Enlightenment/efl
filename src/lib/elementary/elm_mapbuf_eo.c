@@ -23,7 +23,7 @@ Eina_Bool _elm_mapbuf_auto_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_mapbuf_auto_get_reflect(Eo *obj)
+__eolian_elm_mapbuf_auto_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_private_mapbuf_auto_get(obj);
    return eina_value_bool_init(val);
@@ -55,7 +55,7 @@ Eina_Bool _elm_mapbuf_smooth_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_mapbuf_smooth_get_reflect(Eo *obj)
+__eolian_elm_mapbuf_smooth_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_private_mapbuf_smooth_get(obj);
    return eina_value_bool_init(val);
@@ -87,7 +87,7 @@ Eina_Bool _elm_mapbuf_alpha_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_mapbuf_alpha_get_reflect(Eo *obj)
+__eolian_elm_mapbuf_alpha_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_private_mapbuf_alpha_get(obj);
    return eina_value_bool_init(val);
@@ -119,7 +119,7 @@ Eina_Bool _elm_mapbuf_enabled_get(const Eo *obj, Elm_Mapbuf_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_mapbuf_enabled_get_reflect(Eo *obj)
+__eolian_elm_mapbuf_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_private_mapbuf_enabled_get(obj);
    return eina_value_bool_init(val);

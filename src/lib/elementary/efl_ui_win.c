@@ -2025,7 +2025,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_FOCUS_IN, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, NULL);
 }
 
 static void
@@ -2035,7 +2035,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT, NULL);
+   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, NULL);
 }
 
 static void
@@ -2170,13 +2170,13 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                        _elm_win_evas_render_pre, win);
           }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
           {
              if (!(sd->event_forward.focus_in++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
                                        _elm_win_evas_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
           {
              if (!(sd->event_forward.focus_out++))
                evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
@@ -2301,13 +2301,13 @@ _win_event_del_cb(void *data, const Efl_Event *ev)
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_RENDER_PRE,
                                             _elm_win_evas_render_pre, win);
           }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_IN)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
           {
              if (!(--sd->event_forward.focus_in))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_IN,
                                             _elm_win_evas_focus_in, win);
           }
-        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_FOCUS_OUT)
+        else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
           {
              if (!(--sd->event_forward.focus_out))
                evas_event_callback_del_full(sd->evas, EVAS_CALLBACK_FOCUS_OUT,

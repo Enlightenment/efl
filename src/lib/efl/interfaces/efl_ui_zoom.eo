@@ -1,4 +1,4 @@
-enum Efl.Ui.Zoom_Mode
+enum @beta Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
    manual = 0, [[Zoom controlled normally by efl_ui_zoom_set]]

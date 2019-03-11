@@ -164,7 +164,7 @@ static const Elm_Atspi_Bridge_Event_Handler event_handlers[] = {
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_MAXIMIZED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_MINIMIZED, _window_signal_send},
    { EFL_ACCESS_WINDOW_EVENT_WINDOW_RESTORED, _window_signal_send},
-   { EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, _selection_signal_send},
+   { EFL_ACCESS_SELECTION_EVENT_ACCESS_SELECTION_CHANGED, _selection_signal_send},
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_CARET_MOVED, _text_caret_moved_send },
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_INSERTED, _text_text_inserted_send },
    { EFL_ACCESS_TEXT_EVENT_ACCESS_TEXT_REMOVED, _text_text_removed_send },

@@ -53,11 +53,11 @@ _th_read_change(void *data EINA_UNUSED, const Efl_Event *ev)
                   if (!strcmp(s, "one"))
                     efl_add(EFL_LOOP_TIMER_CLASS, obj,
                             efl_loop_timer_interval_set(efl_added, 2.0),
-                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _th_timeout, obj));
+                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _th_timeout, obj));
                   else
                     efl_add(EFL_LOOP_TIMER_CLASS, obj,
                             efl_loop_timer_interval_set(efl_added, 1.0),
-                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _th_timeout, obj));
+                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _th_timeout, obj));
                   eina_accessor_free(args_access);
                }
           }

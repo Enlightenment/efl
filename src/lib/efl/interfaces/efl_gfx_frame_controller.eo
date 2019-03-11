@@ -1,7 +1,7 @@
 /* FIXME: invalid type from evas/emile! */
 /* type @extern Evas.Animated_Loop_Hint: int; */
 
-enum Efl.Gfx.Frame_Controller_Loop_Hint {
+enum @beta Efl.Gfx.Frame_Controller_Loop_Hint {
    [[Frame loop modes]]
    none = 0,       [[No looping order specified.]]
    loop = 1,       [[Standard loop: 1->2->3->1->2->3->1]]

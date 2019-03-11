@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Net.Http.Version {
+enum @beta Efl.Net.Http.Version {
     [[HTTP protocol versions]]
 
     v1_0 = 100, [[HTTP version 1.0]]
@@ -8,7 +8,7 @@ enum Efl.Net.Http.Version {
     v2_0 = 200, [[HTTP version 2.0]]
 }
 
-enum Efl.Net.Http.Authentication_Method {
+enum @beta Efl.Net.Http.Authentication_Method {
     [[HTTP authentication methods]]
 
     none = 0, [[HTTP authentication method none]]
@@ -21,7 +21,7 @@ enum Efl.Net.Http.Authentication_Method {
     any = Efl.Net.Http.Authentication_Method.any_safe | Efl.Net.Http.Authentication_Method.basic, [[HTTP authentication method any]]
 }
 
-enum Efl.Net.Http.Status {
+enum @beta Efl.Net.Http.Status {
     [[Common HTTP status codes. A more detailed description on the various HTTPS status codes can be
     found one Wikipedia: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes]]
 
@@ -109,7 +109,7 @@ enum Efl.Net.Http.Status {
     network_authentication_required = 511, [[HTTP status code: network authentication required]]
 }
 
-struct Efl.Net.Http.Header {
+struct @beta Efl.Net.Http.Header {
     [[An HTTP Header.
 
       Do not assume strings are Eina_Stringshare and they may be

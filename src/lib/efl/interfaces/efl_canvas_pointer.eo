@@ -1,10 +1,11 @@
 import efl_input_device;
 
-interface @beta Efl.Canvas.Pointer
+interface Efl.Canvas.Pointer
 {
    [[Efl Canvas Pointer interface]]
    methods {
-      @property pointer_inside {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property pointer_inside @beta {
          get {
             [[Returns whether the mouse pointer is logically inside the
               canvas.

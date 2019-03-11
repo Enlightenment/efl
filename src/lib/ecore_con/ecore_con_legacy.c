@@ -1420,9 +1420,9 @@ EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_server_dialer_cbs,
                            { EFL_IO_BUFFERED_STREAM_EVENT_READ_FINISHED, _ecore_con_server_dialer_read_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_FINISHED, _ecore_con_server_dialer_finished },
                            { EFL_IO_BUFFERED_STREAM_EVENT_ERROR, _ecore_con_server_dialer_error },
-                           { EFL_NET_DIALER_EVENT_ERROR, _ecore_con_server_dialer_error },
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _ecore_con_server_dialer_resolved },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _ecore_con_server_dialer_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _ecore_con_server_dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _ecore_con_server_dialer_resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _ecore_con_server_dialer_connected });
 
 static void
 _ecore_con_server_server_client_add(void *data, const Efl_Event *event)
@@ -1495,7 +1495,7 @@ _ecore_con_server_server_error(void *data, const Efl_Event *event)
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_con_server_server_cbs,
                            { EFL_NET_SERVER_EVENT_CLIENT_ADD, _ecore_con_server_server_client_add },
                            { EFL_NET_SERVER_EVENT_SERVING, _ecore_con_server_server_serving },
-                           { EFL_NET_SERVER_EVENT_ERROR, _ecore_con_server_server_error });
+                           { EFL_NET_SERVER_EVENT_SERVER_ERROR, _ecore_con_server_server_error });
 
 /**
  * @addtogroup Ecore_Con_Server_Group Ecore Connection Server Functions

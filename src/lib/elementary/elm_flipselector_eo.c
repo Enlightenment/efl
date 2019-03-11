@@ -43,7 +43,7 @@ double _elm_flipselector_first_interval_get(const Eo *obj, Elm_Flipselector_Data
 
 
 static Eina_Value
-__eolian_elm_flipselector_first_interval_get_reflect(Eo *obj)
+__eolian_elm_flipselector_first_interval_get_reflect(const Eo *obj)
 {
    double val = elm_obj_flipselector_first_interval_get(obj);
    return eina_value_double_init(val);

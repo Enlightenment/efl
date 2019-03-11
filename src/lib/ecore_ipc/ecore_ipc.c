@@ -607,8 +607,8 @@ _ecore_ipc_dialer_connected(void *data, const Efl_Event *event EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_ipc_dialer_cbs,
                            { EFL_IO_READER_EVENT_EOS, _ecore_ipc_dialer_eos },
-                           { EFL_NET_DIALER_EVENT_ERROR, _ecore_ipc_dialer_error },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _ecore_ipc_dialer_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _ecore_ipc_dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _ecore_ipc_dialer_connected });
 
 static Eina_Bool ecore_ipc_server_data_process(Ecore_Ipc_Server *svr, void *data, int size, Eina_Bool *stolen);
 

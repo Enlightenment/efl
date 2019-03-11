@@ -1822,6 +1822,7 @@ TESTS += tests/elementary/elm_suite tests/elementary/efl_ui_suite
 tests_elementary_elm_suite_SOURCES = \
 	tests/elementary/suite_helpers.c \
 	tests/elementary/elm_suite.c \
+	tests/elementary/elm_suite_build.c \
 	tests/elementary/elm_test_atspi.c \
 	tests/elementary/elm_test_check.c \
 	tests/elementary/elm_test_colorselector.c \
@@ -1922,6 +1923,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/suite_helpers.c \
 	tests/elementary/suite_helpers.h \
 	tests/elementary/efl_ui_suite.c \
+	tests/elementary/efl_ui_build.c \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
 	tests/elementary/efl_ui_test_focus_common.c \
@@ -1929,6 +1931,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus.c \
 	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_box.c \
+	tests/elementary/efl_ui_test_box_flow.c \
 	tests/elementary/efl_ui_test_table.c \
 	tests/elementary/efl_ui_test_relative_layout.c \
 	tests/elementary/efl_ui_test_grid.c \

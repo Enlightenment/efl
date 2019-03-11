@@ -43,7 +43,7 @@ Eina_Bool _elm_ctxpopup_horizontal_get(const Eo *obj, Elm_Ctxpopup_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_ctxpopup_horizontal_get_reflect(Eo *obj)
+__eolian_elm_ctxpopup_horizontal_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_ctxpopup_horizontal_get(obj);
    return eina_value_bool_init(val);
@@ -75,7 +75,7 @@ Eina_Bool _elm_ctxpopup_auto_hide_disabled_get(const Eo *obj, Elm_Ctxpopup_Data 
 
 
 static Eina_Value
-__eolian_elm_ctxpopup_auto_hide_disabled_get_reflect(Eo *obj)
+__eolian_elm_ctxpopup_auto_hide_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_ctxpopup_auto_hide_disabled_get(obj);
    return eina_value_bool_init(val);
@@ -128,9 +128,6 @@ Elm_Widget_Item *_elm_ctxpopup_item_prepend(Eo *obj, Elm_Ctxpopup_Data *pd, cons
 EOAPI EFL_FUNC_BODYV(elm_obj_ctxpopup_item_prepend, Elm_Widget_Item *, NULL, EFL_FUNC_CALL(label, icon, func, data), const char *label, Efl_Canvas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 Efl_Object *_elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *pd);
-
-
-void _elm_ctxpopup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *pd, Efl_Ui_Widget *parent);
 
 
 Eina_Bool _elm_ctxpopup_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *pd, Efl_Canvas_Object *sub_obj);
@@ -189,7 +186,6 @@ _elm_ctxpopup_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(elm_obj_ctxpopup_item_append, _elm_ctxpopup_item_append),
       EFL_OBJECT_OP_FUNC(elm_obj_ctxpopup_item_prepend, _elm_ctxpopup_item_prepend),
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_ctxpopup_efl_object_constructor),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_ctxpopup_efl_ui_widget_widget_parent_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_sub_object_add, _elm_ctxpopup_efl_ui_widget_widget_sub_object_add),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_ctxpopup_efl_ui_l10n_translation_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_ctxpopup_efl_ui_widget_theme_apply),

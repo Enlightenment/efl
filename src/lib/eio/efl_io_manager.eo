@@ -1,20 +1,20 @@
 import eina_types;
 
-struct Eio.Data
+struct @beta Eio.Data
 {
   [[A structure to handle arbitrary data to be sent over Promises.]]
   data: void_ptr; [[Private data pointer]]
   size: uint; [[Size of private data]]
 }
 
-function EflIoPath {
+function @beta EflIoPath {
   [[EflIoPath function]]
   params {
      @in paths: array<string>; [[Accessor to an array of path.]]
   }
 };
 
-function EflIoDirectInfo {
+function @beta EflIoDirectInfo {
   [[EflIoDirectInfo function]]
   params {
      @in entries: array<ptr(Eina.File_Direct_Info)>; [[Accessor to an array of info.]]

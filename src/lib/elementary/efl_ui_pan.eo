@@ -48,8 +48,8 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      content,changed: void; [[Called when pan content changed]]
-      viewport,changed: void; [[Called when pan viewport changed]]
-      position,changed: void; [[Called when pan position changed]]
+      pan,content,changed: void; [[Called when pan content changed]]
+      pan,viewport,changed: void; [[Called when pan viewport changed]]
+      pan,position,changed: void; [[Called when pan position changed]]
    }
 }

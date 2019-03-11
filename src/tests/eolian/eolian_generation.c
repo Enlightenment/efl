@@ -141,7 +141,6 @@ EFL_START_TEST(eolian_default_values_generation)
    _remove_ref(output_filepath, "eo.c");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gc", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.c", output_filepath, "eo.c"));
-   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref.legacy.c", output_filepath, "eo.legacy.c"));
 }
 EFL_END_TEST
 
@@ -164,9 +163,7 @@ EFL_START_TEST(eolian_functions_descriptions)
    _remove_ref(output_filepath, "eo.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_eo.h", output_filepath, "eo.h"));
-   _remove_ref(output_filepath, "eo.legacy.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gl", output_filepath));
-   fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
 EFL_END_TEST
 
@@ -189,9 +186,7 @@ EFL_START_TEST(eolian_docs)
    _remove_ref(output_filepath, "eo.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref.h", output_filepath, "eo.h"));
-   _remove_ref(output_filepath, "eo.legacy.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gl", output_filepath));
-   fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref_legacy.h", output_filepath, "eo.legacy.h"));
 }
 EFL_END_TEST
 

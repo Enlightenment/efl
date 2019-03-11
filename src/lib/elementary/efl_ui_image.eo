@@ -1,4 +1,4 @@
-struct Efl.Ui.Image_Progress
+struct @beta Efl.Ui.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -8,7 +8,7 @@ struct Efl.Ui.Image_Progress
    total: double; [[Total percentage]]
 }
 
-struct Efl.Ui.Image_Error
+struct @beta Efl.Ui.Image_Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
@@ -22,7 +22,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
                  Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation,
-                 Efl.Ui.View, Efl.Ui.Property_Bind, Efl.Layout.Calc,
+                 Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal
 {
    [[ Efl UI image class]]
@@ -119,7 +119,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Draggable.drag_target { get; set; }
       Efl.Ui.Property_Bind.property_bind;
-      Efl.Ui.View.model { get; set; }
+      Efl.Ui.View.model { set; }
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Component.extents { get; }

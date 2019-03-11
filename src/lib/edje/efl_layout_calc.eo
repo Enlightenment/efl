@@ -1,6 +1,6 @@
 import eina_types;
 
-interface @beta Efl.Layout.Calc
+interface Efl.Layout.Calc
 {
    [[This interface defines a common set of APIs used to trigger calculations
      with layout objects.

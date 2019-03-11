@@ -1,6 +1,6 @@
 import eina_types;
 
-function EflIoFilter {
+function @beta EflIoFilter {
   [[EflIoFilter function]]
   params {
     @in model: Efl.Io.Model;

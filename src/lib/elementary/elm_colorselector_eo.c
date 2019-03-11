@@ -39,7 +39,7 @@ const char *_elm_colorselector_palette_name_get(const Eo *obj, Elm_Colorselector
 
 
 static Eina_Value
-__eolian_elm_colorselector_palette_name_get_reflect(Eo *obj)
+__eolian_elm_colorselector_palette_name_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_colorselector_palette_name_get(obj);
    return eina_value_string_init(val);

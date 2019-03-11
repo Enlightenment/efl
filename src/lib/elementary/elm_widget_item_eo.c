@@ -23,7 +23,7 @@ Eina_Bool _elm_widget_item_tooltip_window_mode_get(const Eo *obj, Elm_Widget_Ite
 
 
 static Eina_Value
-__eolian_elm_widget_item_tooltip_window_mode_get_reflect(Eo *obj)
+__eolian_elm_widget_item_tooltip_window_mode_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_wdg_item_tooltip_window_mode_get(obj);
    return eina_value_bool_init(val);
@@ -55,7 +55,7 @@ const char *_elm_widget_item_tooltip_style_get(const Eo *obj, Elm_Widget_Item_Da
 
 
 static Eina_Value
-__eolian_elm_widget_item_tooltip_style_get_reflect(Eo *obj)
+__eolian_elm_widget_item_tooltip_style_get_reflect(const Eo *obj)
 {
    const char *val = elm_wdg_item_tooltip_style_get(obj);
    return eina_value_string_init(val);
@@ -87,7 +87,7 @@ const char *_elm_widget_item_cursor_get(const Eo *obj, Elm_Widget_Item_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_widget_item_cursor_get_reflect(Eo *obj)
+__eolian_elm_widget_item_cursor_get_reflect(const Eo *obj)
 {
    const char *val = elm_wdg_item_cursor_get(obj);
    return eina_value_string_init(val);
@@ -119,7 +119,7 @@ const char *_elm_widget_item_cursor_style_get(const Eo *obj, Elm_Widget_Item_Dat
 
 
 static Eina_Value
-__eolian_elm_widget_item_cursor_style_get_reflect(Eo *obj)
+__eolian_elm_widget_item_cursor_style_get_reflect(const Eo *obj)
 {
    const char *val = elm_wdg_item_cursor_style_get(obj);
    return eina_value_string_init(val);
@@ -151,7 +151,7 @@ Eina_Bool _elm_widget_item_cursor_engine_only_get(const Eo *obj, Elm_Widget_Item
 
 
 static Eina_Value
-__eolian_elm_widget_item_cursor_engine_only_get_reflect(Eo *obj)
+__eolian_elm_widget_item_cursor_engine_only_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_wdg_item_cursor_engine_only_get(obj);
    return eina_value_bool_init(val);
@@ -207,7 +207,7 @@ Eina_Bool _elm_widget_item_item_focus_get(const Eo *obj, Elm_Widget_Item_Data *p
 
 
 static Eina_Value
-__eolian_elm_widget_item_item_focus_get_reflect(Eo *obj)
+__eolian_elm_widget_item_item_focus_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_wdg_item_focus_get(obj);
    return eina_value_bool_init(val);
@@ -239,7 +239,7 @@ const char *_elm_widget_item_style_get(const Eo *obj, Elm_Widget_Item_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_widget_item_style_get_reflect(Eo *obj)
+__eolian_elm_widget_item_style_get_reflect(const Eo *obj)
 {
    const char *val = elm_wdg_item_style_get(obj);
    return eina_value_string_init(val);
@@ -271,7 +271,7 @@ Eina_Bool _elm_widget_item_disabled_get(const Eo *obj, Elm_Widget_Item_Data *pd)
 
 
 static Eina_Value
-__eolian_elm_widget_item_disabled_get_reflect(Eo *obj)
+__eolian_elm_widget_item_disabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_wdg_item_disabled_get(obj);
    return eina_value_bool_init(val);

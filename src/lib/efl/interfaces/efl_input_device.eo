@@ -1,4 +1,4 @@
-enum Efl.Input.Device_Type
+enum @beta Efl.Input.Device_Type
 {
    [[General type of input device.
 

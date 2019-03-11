@@ -176,7 +176,7 @@ _future_get(PromiseCtx *ctx, double timeout)
    f = eina_future_new(ctx->p);
    fail_if(!f);
    ctx->t = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
-               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _simple_timeout, ctx),
+               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _simple_timeout, ctx),
                efl_loop_timer_interval_set(efl_added, timeout));
    fail_if(!ctx->t);
    return f;

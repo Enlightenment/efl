@@ -151,7 +151,7 @@ _efl_net_server_windows_client_listen_failure(void *data, Eo *client EINA_UNUSED
      }
 
    if (err)
-     efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+     efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
 
    // TODO: create a new one on failure?
 

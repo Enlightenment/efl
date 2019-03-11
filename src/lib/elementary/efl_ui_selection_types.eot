@@ -1,4 +1,4 @@
-enum Efl.Ui.Selection_Type
+enum @beta Efl.Ui.Selection_Type
 {
    [[Selection type]]
    primary, [[Primary text selection (highlighted or selected text)]]
@@ -7,7 +7,7 @@ enum Efl.Ui.Selection_Type
    clipboard [[Clipboard selection (ctrl+C)]]
 }
 
-enum Efl.Ui.Selection_Format
+enum @beta Efl.Ui.Selection_Format
 {
    [[Selection format]]
    targets = -1, [[For matching every possible atom]]
@@ -19,7 +19,7 @@ enum Efl.Ui.Selection_Format
    html = 0x10 [[Raw HTML-like data (eg. webkit)]]
 }
 
-enum Efl.Ui.Selection_Action
+enum @beta Efl.Ui.Selection_Action
 {
    [[Defines the kind of action associated with the drop data]]
    unknown, [[Action type is unknown]]
@@ -32,7 +32,7 @@ enum Efl.Ui.Selection_Action
    description [[Describe the data]]
 }
 
-struct Efl.Ui.Selection_Data
+struct @beta Efl.Ui.Selection_Data
 {
    [[Structure holding the info about selected data]]
    pos: Eina.Position2D; [[Coordinates of the drop (DND operations only)]]
@@ -42,7 +42,7 @@ struct Efl.Ui.Selection_Data
    item: Efl.Object; [[Item under the drag position. It is only available for container]]
 }
 
-function Efl.Ui.Selection_Data_Ready {
+function @beta Efl.Ui.Selection_Data_Ready {
    [[Function pointer for getting selection]]
    params {
       @in obj: Efl.Object; [[Object which requested for the selection]]
@@ -50,7 +50,7 @@ function Efl.Ui.Selection_Data_Ready {
    }
 };
 
-struct Efl.Ui.Selection_Changed
+struct @beta Efl.Ui.Selection_Changed
 {
    type: Efl.Ui.Selection_Type; [[Selection type]]
    seat: int; [[The seat on which the selection changed, or NULL for "default"]]

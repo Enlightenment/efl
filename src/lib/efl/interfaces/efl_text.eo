@@ -1,4 +1,4 @@
-interface @beta Efl.Text
+interface Efl.Text
 {
    [[Efl text interface]]
    methods {

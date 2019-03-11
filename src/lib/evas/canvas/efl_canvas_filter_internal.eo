@@ -3,7 +3,7 @@
 /* Everything in this file is internal to Evas. It is not meant to be used
    from outside EFL itself! */
 
-struct Efl.Gfx.Color32
+struct @beta Efl.Gfx.Color32
 {
    [[32 bit color data structure]]
    r: uint8; [[Red component of the color]]
@@ -12,14 +12,14 @@ struct Efl.Gfx.Color32
    a: uint8; [[Translucent component of the color]]
 }
 
-struct Efl.Canvas.Filter.State_Name
+struct @beta Efl.Canvas.Filter.State_Name
 {
    [[Filter state name structure]]
    name: string; [[Filter state name]]
    value: double; [[Filter state value]]
 }
 
-struct Efl.Canvas.Filter.State_Text
+struct @beta Efl.Canvas.Filter.State_Text
 {
    [[Filter state text structure]]
    outline: Efl.Gfx.Color32; [[Text outline color]]
@@ -28,7 +28,7 @@ struct Efl.Canvas.Filter.State_Text
    glow2: Efl.Gfx.Color32; [[Text glow2 color]]
 }
 
-struct Efl.Canvas.Filter.State
+struct @beta Efl.Canvas.Filter.State
 {
    [[Internal structure representing the state of a Gfx Filter]]
    text: Efl.Canvas.Filter.State_Text; [[Text state]]

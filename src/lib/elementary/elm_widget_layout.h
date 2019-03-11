@@ -58,7 +58,6 @@ typedef struct _Elm_Layout_Smart_Data
       Eina_Hash         *properties; /**< The list of properties connected to layout parts. */
       Eina_Hash         *signals; /**< The list of signals connected. */
       Eina_Hash         *factories; /**< The hash with parts connected to factories. */
-      Efl_Model         *model; /**< The model */
 
       Eina_Bool          updating : 1;
    } connect;

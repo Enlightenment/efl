@@ -31,7 +31,7 @@ Eina_Bool _elm_hoversel_horizontal_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_hoversel_horizontal_get_reflect(Eo *obj)
+__eolian_elm_hoversel_horizontal_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_hoversel_horizontal_get(obj);
    return eina_value_bool_init(val);
@@ -79,7 +79,7 @@ Eina_Bool _elm_hoversel_auto_update_get(const Eo *obj, Elm_Hoversel_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_hoversel_auto_update_get_reflect(Eo *obj)
+__eolian_elm_hoversel_auto_update_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_hoversel_auto_update_get(obj);
    return eina_value_bool_init(val);
@@ -110,9 +110,6 @@ void _elm_hoversel_efl_object_destructor(Eo *obj, Elm_Hoversel_Data *pd);
 
 
 void _elm_hoversel_efl_gfx_entity_visible_set(Eo *obj, Elm_Hoversel_Data *pd, Eina_Bool v);
-
-
-void _elm_hoversel_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hoversel_Data *pd, Efl_Ui_Widget *parent);
 
 
 Eina_Error _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *pd);
@@ -160,7 +157,6 @@ _elm_hoversel_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_hoversel_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_destructor, _elm_hoversel_efl_object_destructor),
       EFL_OBJECT_OP_FUNC(efl_gfx_entity_visible_set, _elm_hoversel_efl_gfx_entity_visible_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_hoversel_efl_ui_widget_widget_parent_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_hoversel_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_hoversel_efl_ui_l10n_translation_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_hoversel_efl_ui_widget_widget_input_event_handler),

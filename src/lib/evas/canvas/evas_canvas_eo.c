@@ -23,7 +23,7 @@ int _evas_canvas_image_cache_get(const Eo *obj, Evas_Public_Data *pd);
 
 
 static Eina_Value
-__eolian_evas_canvas_image_cache_get_reflect(Eo *obj)
+__eolian_evas_canvas_image_cache_get_reflect(const Eo *obj)
 {
    int val = evas_canvas_image_cache_get(obj);
    return eina_value_int_init(val);
@@ -63,7 +63,7 @@ int _evas_canvas_font_cache_get(const Eo *obj, Evas_Public_Data *pd);
 
 
 static Eina_Value
-__eolian_evas_canvas_font_cache_get_reflect(Eo *obj)
+__eolian_evas_canvas_font_cache_get_reflect(const Eo *obj)
 {
    int val = evas_canvas_font_cache_get(obj);
    return eina_value_int_init(val);

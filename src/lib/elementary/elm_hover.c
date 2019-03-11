@@ -689,6 +689,29 @@ elm_hover_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
+static void
+_parent_setup(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
+{
+   _elm_hover_parent_detach(obj);
+
+   sd->parent = parent;
+   if (sd->parent)
+     {
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
+     }
+
+   elm_layout_sizing_eval(obj);
+}
+
 EOLIAN static Eo *
 _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
@@ -697,6 +720,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
    legacy_child_focus_handle(obj);
+   _parent_setup(obj, pd, efl_parent_get(obj));
 
    return obj;
 }
@@ -735,30 +759,9 @@ elm_hover_parent_set(Evas_Object *obj,
                      Evas_Object *parent)
 {
    ELM_HOVER_CHECK(obj);
-   efl_ui_widget_parent_set(obj, parent);
-}
-
-EOLIAN static void
-_elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
-{
-   _elm_hover_parent_detach(obj);
-
-   sd->parent = parent;
-   if (sd->parent)
-     {
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
-     }
-
-   elm_layout_sizing_eval(obj);
+   ELM_HOVER_DATA_GET(obj, sd);
+   efl_ui_widget_sub_object_add(parent, obj);
+   _parent_setup(obj, sd, parent);
 }
 
 EOLIAN static Evas_Object*
@@ -772,12 +775,6 @@ elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;
    return efl_ui_widget_parent_get((Eo *) obj);
-}
-
-EOLIAN static Evas_Object*
-_elm_hover_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
-{
-   return sd->parent;
 }
 
 EOLIAN static const char*

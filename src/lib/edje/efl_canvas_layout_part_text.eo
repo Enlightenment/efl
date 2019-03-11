@@ -1,4 +1,4 @@
-enum Efl.Canvas.Layout_Part_Text_Expand
+enum @beta Efl.Canvas.Layout_Part_Text_Expand
 {
    [[Text layout policy to enforce. If none is set, min/max descriptions
      are taken in considerations solely.

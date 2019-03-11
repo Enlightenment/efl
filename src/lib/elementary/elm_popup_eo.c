@@ -41,7 +41,7 @@ Eina_Bool _elm_popup_allow_events_get(const Eo *obj, Elm_Popup_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_popup_allow_events_get_reflect(Eo *obj)
+__eolian_elm_popup_allow_events_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_popup_allow_events_get(obj);
    return eina_value_bool_init(val);
@@ -89,7 +89,7 @@ double _elm_popup_timeout_get(const Eo *obj, Elm_Popup_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_popup_timeout_get_reflect(Eo *obj)
+__eolian_elm_popup_timeout_get_reflect(const Eo *obj)
 {
    double val = elm_obj_popup_timeout_get(obj);
    return eina_value_double_init(val);
@@ -121,7 +121,7 @@ Eina_Bool _elm_popup_scrollable_get(const Eo *obj, Elm_Popup_Data *pd);
 
 
 static Eina_Value
-__eolian_elm_popup_scrollable_get_reflect(Eo *obj)
+__eolian_elm_popup_scrollable_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_popup_scrollable_get(obj);
    return eina_value_bool_init(val);
@@ -144,9 +144,6 @@ Eina_Error _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *pd);
 
 
 void _elm_popup_efl_ui_widget_on_access_update(Eo *obj, Elm_Popup_Data *pd, Eina_Bool enable);
-
-
-void _elm_popup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *pd, Efl_Ui_Widget *parent);
 
 
 void _elm_popup_efl_ui_l10n_translation_update(Eo *obj, Elm_Popup_Data *pd);
@@ -202,7 +199,6 @@ _elm_popup_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_popup_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_popup_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_on_access_update, _elm_popup_efl_ui_widget_on_access_update),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_parent_set, _elm_popup_efl_ui_widget_widget_parent_set),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_popup_efl_ui_l10n_translation_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_sub_object_del, _elm_popup_efl_ui_widget_widget_sub_object_del),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_popup_efl_ui_widget_widget_input_event_handler),

@@ -1,4 +1,4 @@
-enum Efl.Access.Type
+enum @beta Efl.Access.Type
 {
    [[Type of accessibility object]]
    regular, [[default accessible object]]
@@ -6,7 +6,7 @@ enum Efl.Access.Type
    skipped [[skip object in accessibility hierarchy]]
 }
 
-enum Efl.Access.Role
+enum @beta Efl.Access.Role
 {
    [[Describes the role of an object visible to Accessibility Clients.]]
    invalid, [[Role: invalid]]
@@ -115,7 +115,7 @@ enum Efl.Access.Role
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.State_Type
+enum @beta Efl.Access.State_Type
 {
    [[Describes the possible states for an object visible to accessibility clients.]]
    invalid, [[State: invalid]]
@@ -162,7 +162,7 @@ enum Efl.Access.State_Type
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.Relation_Type
+enum @beta Efl.Access.Relation_Type
 {
    [[Describes the relationship between two objects.]]
    null, [[No relation]]
@@ -187,7 +187,7 @@ enum Efl.Access.Relation_Type
    last_defined, [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.Reading.Info.Type
+enum @beta Efl.Access.Reading.Info.Type
 {
    [[The accessible Reading information type that can be read.]]
    name = 1 << 0, [[Name should be read]]
@@ -196,18 +196,18 @@ enum Efl.Access.Reading.Info.Type
    state = 1 << 3, [[State should be read.]]
 }
 
-type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
+type @beta Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
-struct Efl.Access.Event.Handler; [[Accessibility event listener]]
+struct @beta Efl.Access.Event.Handler; [[Accessibility event listener]]
 
-struct Efl.Access.Event.State_Changed.Data
+struct @beta Efl.Access.Event.State_Changed.Data
 {
    [[Accessibility state changed event data]]
    type: Efl.Access.State_Type; [[Type of the state changed event]]
    new_value: bool; [[New value]]
 }
 
-struct Efl.Access.Event.Geometry_Changed.Data
+struct @beta Efl.Access.Event.Geometry_Changed.Data
 {
    [[Accessibility geometry changed event data]]
    x: int; [[X coordinate]]
@@ -216,7 +216,7 @@ struct Efl.Access.Event.Geometry_Changed.Data
    height: int; [[Height]]
 }
 
-struct Efl.Access.Event.Children_Changed.Data
+struct @beta Efl.Access.Event.Children_Changed.Data
 {
    [[Accessibility children changed event data]]
    is_added: bool; [[Child is added or not]]
@@ -230,7 +230,7 @@ struct @free(efl_access_attribute_free) Efl.Access.Attribute
    value: string; [[Attribute value]]
 }
 
-struct Efl.Access.Relation
+struct @beta Efl.Access.Relation
 {
    [[Accessibility Relation]]
    type: Efl.Access.Relation_Type; [[Relation type]]

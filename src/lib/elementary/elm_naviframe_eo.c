@@ -31,7 +31,7 @@ Eina_Bool _elm_naviframe_event_enabled_get(const Eo *obj, Elm_Naviframe_Data *pd
 
 
 static Eina_Value
-__eolian_elm_naviframe_event_enabled_get_reflect(Eo *obj)
+__eolian_elm_naviframe_event_enabled_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_naviframe_event_enabled_get(obj);
    return eina_value_bool_init(val);
@@ -63,7 +63,7 @@ Eina_Bool _elm_naviframe_content_preserve_on_pop_get(const Eo *obj, Elm_Navifram
 
 
 static Eina_Value
-__eolian_elm_naviframe_content_preserve_on_pop_get_reflect(Eo *obj)
+__eolian_elm_naviframe_content_preserve_on_pop_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_naviframe_content_preserve_on_pop_get(obj);
    return eina_value_bool_init(val);
@@ -95,7 +95,7 @@ Eina_Bool _elm_naviframe_prev_btn_auto_pushed_get(const Eo *obj, Elm_Naviframe_D
 
 
 static Eina_Value
-__eolian_elm_naviframe_prev_btn_auto_pushed_get_reflect(Eo *obj)
+__eolian_elm_naviframe_prev_btn_auto_pushed_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_naviframe_prev_btn_auto_pushed_get(obj);
    return eina_value_bool_init(val);

@@ -1,5 +1,5 @@
 /* FIXME: this widget should just implement a scroller */
-enum Elm.Code_Widget_Scroller_Policy
+enum @beta Elm.Code_Widget_Scroller_Policy
 {
    [[Type that controls when scrollbars should appear.
 
@@ -334,11 +334,11 @@ class Elm.Code_Widget extends Efl.Ui.Layout_Base
       changed,user: void; [[Called when object changed due to user interaction]]
       /* FIXME: All events below send the obj in the event_info, which is redundant */
       cursor,changed: Elm.Code_Widget; [[Called when cursor changed]]
-      selection,start: Elm.Code_Widget; [[Called when a selection is started]]
-      selection,changed: Elm.Code_Widget; [[Called when selection changed]]
-      selection,cleared: Elm.Code_Widget; [[Called when selection was cleared]]
-      selection,cut: Elm.Code_Widget; [[Called when a cut action is performed]]
-      selection,copy: Elm.Code_Widget; [[Called when a copy action is performed]]
-      selection,paste: Elm.Code_Widget; [[Called when a paste action is performed]]
+      code,selection,start: Elm.Code_Widget; [[Called when a selection is started]]
+      code,selection,changed: Elm.Code_Widget; [[Called when selection changed]]
+      code,selection,cleared: Elm.Code_Widget; [[Called when selection was cleared]]
+      code,selection,cut: Elm.Code_Widget; [[Called when a cut action is performed]]
+      code,selection,copy: Elm.Code_Widget; [[Called when a copy action is performed]]
+      code,selection,paste: Elm.Code_Widget; [[Called when a paste action is performed]]
    }
 }

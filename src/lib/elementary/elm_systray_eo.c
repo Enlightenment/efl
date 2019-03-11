@@ -23,7 +23,7 @@ const char *_elm_systray_id_get(const Eo *obj, void *pd);
 
 
 static Eina_Value
-__eolian_elm_systray_id_get_reflect(Eo *obj)
+__eolian_elm_systray_id_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_systray_id_get(obj);
    return eina_value_string_init(val);
@@ -63,7 +63,7 @@ const char *_elm_systray_icon_theme_path_get(const Eo *obj, void *pd);
 
 
 static Eina_Value
-__eolian_elm_systray_icon_theme_path_get_reflect(Eo *obj)
+__eolian_elm_systray_icon_theme_path_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_systray_icon_theme_path_get(obj);
    return eina_value_string_init(val);
@@ -103,7 +103,7 @@ const char *_elm_systray_att_icon_name_get(const Eo *obj, void *pd);
 
 
 static Eina_Value
-__eolian_elm_systray_att_icon_name_get_reflect(Eo *obj)
+__eolian_elm_systray_att_icon_name_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_systray_att_icon_name_get(obj);
    return eina_value_string_init(val);
@@ -143,7 +143,7 @@ const char *_elm_systray_icon_name_get(const Eo *obj, void *pd);
 
 
 static Eina_Value
-__eolian_elm_systray_icon_name_get_reflect(Eo *obj)
+__eolian_elm_systray_icon_name_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_systray_icon_name_get(obj);
    return eina_value_string_init(val);
@@ -175,7 +175,7 @@ const char *_elm_systray_title_get(const Eo *obj, void *pd);
 
 
 static Eina_Value
-__eolian_elm_systray_title_get_reflect(Eo *obj)
+__eolian_elm_systray_title_get_reflect(const Eo *obj)
 {
    const char *val = elm_obj_systray_title_get(obj);
    return eina_value_string_init(val);

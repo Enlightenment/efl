@@ -1,4 +1,4 @@
-enum Efl.Canvas.Gesture_Touch_State
+enum @beta Efl.Canvas.Gesture_Touch_State
 {
    [[ This enum type describes the state of a touch event. ]]
    legacy: efl_gesture_touch;
@@ -8,7 +8,7 @@ enum Efl.Canvas.Gesture_Touch_State
    end,         [[Last fingure touch up]]
 }
 
-enum Efl.Canvas.Gesture_State
+enum @beta Efl.Canvas.Gesture_State
 {
    [[ This enum type describes the state of a gesture. ]]
    legacy: efl_gesture;
@@ -19,7 +19,7 @@ enum Efl.Canvas.Gesture_State
    canceled,    [[A gesture was canceled.]]
 }
 
-enum Efl.Canvas.Gesture_Recognizer_Result
+enum @beta Efl.Canvas.Gesture_Recognizer_Result
 {
    [[ This enum type describes the state of a gesture recognizer. ]]
    legacy: efl_gesture;

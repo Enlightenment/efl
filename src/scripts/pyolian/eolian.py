@@ -622,6 +622,10 @@ class Object(EolianBaseObject):
     def column(self):
         return int(lib.eolian_object_column_get(self))
 
+    @cached_property
+    def is_beta(self):
+        return bool(lib.eolian_object_is_beta(self))
+
 
 class Class(Object):
     def __repr__(self):
@@ -655,10 +659,6 @@ class Class(Object):
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
-
-    @cached_property
-    def legacy_prefix(self):
-        return _str_to_py(lib.eolian_class_legacy_prefix_get(self))
 
     @cached_property
     def eo_prefix(self):
@@ -811,10 +811,6 @@ class Event(Object):
         return Eolian_Object_Scope(lib.eolian_event_scope_get(self))
 
     @cached_property
-    def is_beta(self):
-        return bool(lib.eolian_event_is_beta(self))
-
-    @cached_property
     def is_hot(self):
         return bool(lib.eolian_event_is_hot(self))
 
@@ -827,8 +823,8 @@ class Function(Object):
     def __repr__(self):
         return "<eolian.Function '{0.name}'>".format(self)
 
-    def full_c_name_get(self, ftype, use_legacy=False):
-        s = lib.eolian_function_full_c_name_get(self, ftype, use_legacy)
+    def full_c_name_get(self, ftype):
+        s = lib.eolian_function_full_c_name_get(self, ftype)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
@@ -844,18 +840,6 @@ class Function(Object):
     @cached_property
     def full_c_setter_name(self):
         return self.full_c_name_get(Eolian_Function_Type.PROP_SET)
-
-    @cached_property
-    def full_c_method_name_legacy(self):
-        return self.full_c_name_get(Eolian_Function_Type.METHOD, True)
-
-    @cached_property
-    def full_c_getter_name_legacy(self):
-        return self.full_c_name_get(Eolian_Function_Type.PROP_GET, True)
-    
-    @cached_property
-    def full_c_setter_name_legacy(self):
-        return self.full_c_name_get(Eolian_Function_Type.PROP_SET, True)
 
     @cached_property
     def type(self):
@@ -876,19 +860,9 @@ class Function(Object):
     def setter_scope(self):
         return self.scope_get(Eolian_Function_Type.PROP_SET)
 
-    def legacy_get(self, ftype):
-        return _str_to_py(lib.eolian_function_legacy_get(self, ftype))
-    
-    def is_legacy_only(self, ftype):
-        return bool(lib.eolian_function_is_legacy_only(self, ftype))
-
     @cached_property
     def is_class(self):
         return bool(lib.eolian_function_is_class(self))
-
-    @cached_property
-    def is_beta(self):
-        return bool(lib.eolian_function_is_beta(self))
 
     @cached_property
     def object_is_const(self):

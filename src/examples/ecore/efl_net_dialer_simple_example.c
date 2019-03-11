@@ -176,8 +176,8 @@ _done(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _connected }, /* optional */
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _resolved }, /* optional */
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _connected }, /* optional */
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _resolved }, /* optional */
                            { EFL_IO_READER_EVENT_CAN_READ_CHANGED, _can_read }, /* optional, can be used to read data, here just for monitoring */
                            { EFL_IO_READER_EVENT_EOS, _eos }, /* recommended, notifies no more incoming data */
                            { EFL_IO_BUFFERED_STREAM_EVENT_LINE, _line }, /* optional, could use 'slice,changed' or 'can_read,changed' instead */

@@ -57,14 +57,6 @@ _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
      CRI("Failed to set layout!");
 }
 
-EOLIAN static void
-_elm_inwin_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
-{
-   elm_win_resize_object_add(parent, obj);
-
-   elm_layout_sizing_eval(obj);
-}
-
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
@@ -86,6 +78,8 @@ _elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
      }
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   elm_win_resize_object_add(efl_parent_get(obj), obj);
+   elm_layout_sizing_eval(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
 

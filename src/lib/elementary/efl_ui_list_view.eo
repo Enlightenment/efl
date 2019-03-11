@@ -1,6 +1,6 @@
 import elm_general;
 
-struct Efl.Ui.List_View_Item_Event
+struct @beta Efl.Ui.List_View_Item_Event
 {
    layout: Efl.Ui.Layout;
    child: Efl.Model;

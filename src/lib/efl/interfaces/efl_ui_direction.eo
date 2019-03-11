@@ -3,7 +3,7 @@
 
 parse efl_orientation;
 
-enum Efl.Ui.Dir
+enum @beta Efl.Ui.Dir
 {
    [[Direction for UI objects and layouts.
 

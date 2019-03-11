@@ -92,7 +92,7 @@ _item_select(Elm_Diskselector_Item_Data *it)
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
    efl_event_callback_legacy_call
-     (WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
+     (WIDGET(it), EFL_UI_EVENT_SELECTABLE_SELECTED, eo_it);
 }
 
 static int

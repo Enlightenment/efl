@@ -4,7 +4,7 @@ import efl_gfx_types;
 const Efl.Gfx.Hint_Expand: double = 1.0;
    [[Use with @Efl.Gfx.Hint.hint_weight.]]
 
-interface @beta Efl.Gfx.Hint
+interface Efl.Gfx.Hint
 {
    [[Efl graphics hint interface]]
    event_prefix: efl_gfx_entity;
