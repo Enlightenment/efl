@@ -2341,7 +2341,6 @@ evas_vg_load_file_close_svg(Vg_File_Data *vfd)
 static Vg_File_Data*
 evas_vg_load_file_open_svg(Eina_File *file,
                            const char *key EINA_UNUSED,
-                           Eina_Bool mmap EINA_UNUSED,
                            int *error EINA_UNUSED)
 {
    Evas_SVG_Loader loader = {

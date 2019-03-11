@@ -262,8 +262,7 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
    old_entry = pd->vg_entry;
    pd->vg_entry = evas_cache_vg_entry_create(file, key,
                                              obj->cur->geometry.w,
-                                             obj->cur->geometry.h,
-                                             EINA_TRUE);
+                                             obj->cur->geometry.h);
    evas_object_change(eo_obj, obj);
    evas_cache_vg_entry_del(old_entry);
 

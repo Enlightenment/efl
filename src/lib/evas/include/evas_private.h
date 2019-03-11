@@ -1536,7 +1536,7 @@ struct _Vg_File_Data
 
 struct _Evas_Vg_Load_Func
 {
-   Vg_File_Data *(*file_open) (Eina_File *file, const char *key, Eina_Bool mmap, int *error);
+   Vg_File_Data *(*file_open) (Eina_File *file, const char *key, int *error);
    Eina_Bool (*file_close) (Vg_File_Data *vfd);
    Eina_Bool (*file_data) (Vg_File_Data *vfd);
 };
