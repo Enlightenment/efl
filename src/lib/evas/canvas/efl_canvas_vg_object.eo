@@ -74,7 +74,6 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       Efl.Object.destructor;
       Efl.File.load;
       Efl.File.unload;
-      Efl.File.loaded { get; }
       Efl.File_Save.save;
    }
 }

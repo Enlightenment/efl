@@ -244,12 +244,6 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_loaded_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd)
-{
-   return !!pd->vg_entry;
-}
-
 EOLIAN static Eina_Error
 _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
