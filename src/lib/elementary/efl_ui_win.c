@@ -2008,7 +2008,7 @@ _elm_win_evas_render_post(void *data,
    Efl_Gfx_Event_Render_Post *ev = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, ev);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, ev);
 }
 
 static void
@@ -2019,7 +2019,7 @@ _elm_win_evas_render_pre(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, NULL);
 }
 
 static void
@@ -2030,7 +2030,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, NULL);
 }
 
 static void
@@ -2040,7 +2040,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, NULL);
 }
 
 static void
@@ -2052,7 +2052,7 @@ _elm_win_evas_object_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
 }
 
 static void
@@ -2063,7 +2063,7 @@ _elm_win_evas_object_focus_out(void *data,
    Eo *object = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
 }
 
 static void
@@ -2074,7 +2074,7 @@ _elm_win_evas_device_changed(void *data,
    Eo *device = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, device);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, device);
 }
 
 static void
