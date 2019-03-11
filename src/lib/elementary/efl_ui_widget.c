@@ -1460,6 +1460,9 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 {
    Efl_Ui_Widget *parent;
 
+   if (!sobj) return EINA_FALSE;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
+
    //first make sure that we unregister the sobj from the parent
    if (elm_widget_is(sobj))
      parent = efl_ui_widget_parent_get(sobj);
