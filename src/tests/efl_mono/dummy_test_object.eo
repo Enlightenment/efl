@@ -1310,6 +1310,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
          }
       }
 
+      emit_event_with_under {
+      }
+
       append_to_strbuf {
          params {
             @in buf: strbuf;
@@ -1406,5 +1409,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
       evt,with,struct @hot: Dummy.StructSimple;
       evt,with,struct,complex @hot: Dummy.StructComplex;
       evt,with,list @hot: list<string>;
+      evt_with,under @hot: void;
    }
 }

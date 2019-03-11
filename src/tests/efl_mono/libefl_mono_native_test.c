@@ -3789,6 +3789,11 @@ void _dummy_test_object_emit_event_with_list(Eo *obj, EINA_UNUSED Dummy_Test_Obj
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_LIST, data);
 }
 
+void _dummy_test_object_emit_event_with_under(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_UNDER, NULL);
+}
+
 void _dummy_test_object_append_to_strbuf(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Strbuf *buf, const char *str)
 {
     eina_strbuf_append(buf, str);
