@@ -152,15 +152,15 @@ _added_transformation(Efl_VG *shape, Eina_Matrix3 *m)
    Eina_Matrix3 new_m;
    const Eina_Matrix3 *old_m;
 
-   old_m = efl_canvas_vg_node_transformation_get(shape);
+   old_m = evas_vg_node_transformation_get(shape);
    if (old_m)
      {
         eina_matrix3_compose(m, old_m, &new_m);
-        efl_canvas_vg_node_transformation_set(shape, &new_m);
+        evas_vg_node_transformation_set(shape, &new_m);
      }
    else
      {
-        efl_canvas_vg_node_transformation_set(shape, m);
+        evas_vg_node_transformation_set(shape, m);
      }
 }
 
@@ -317,7 +317,7 @@ _1_basic_shape_test()
   evas_vg_shape_append_line_to(shape, 100, 0);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
-  efl_canvas_vg_node_origin_set(shape, 50, 50);
+  evas_vg_node_origin_set(shape, 50, 50);
   evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
@@ -325,7 +325,7 @@ _1_basic_shape_test()
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 0, 100, 0, 100);
   evas_vg_shape_append_line_to(new_shape, 100, 50);
-  efl_canvas_vg_node_origin_set(new_shape, 200, 50);
+  evas_vg_node_origin_set(new_shape, 200, 50);
   evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_SQUARE);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
@@ -333,7 +333,7 @@ _1_basic_shape_test()
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 255, 255);
   evas_vg_shape_append_line_to(new_shape, 50, 50);
-  efl_canvas_vg_node_origin_set(new_shape, 350, 50);
+  evas_vg_node_origin_set(new_shape, 350, 50);
   evas_vg_shape_stroke_cap_set(new_shape, EFL_GFX_CAP_ROUND);
   evas_vg_shape_stroke_join_set(new_shape, EFL_GFX_JOIN_ROUND);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
@@ -343,21 +343,21 @@ _1_basic_shape_test()
   evas_vg_shape_append_rect(shape, 0, 0, 100 , 100, 10, 10);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
-  efl_canvas_vg_node_origin_set(shape, 50, 150);
+  evas_vg_node_origin_set(shape, 50, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
   evas_vg_node_color_set(new_shape, 0, 0, 100, 100);
-  efl_canvas_vg_node_origin_set(new_shape, 200, 150);
+  evas_vg_node_origin_set(new_shape, 200, 150);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 100, 0, 0, 100);
   evas_vg_node_color_set(new_shape, 0, 100, 100, 100);
-  efl_canvas_vg_node_origin_set(new_shape, 350, 150);
+  evas_vg_node_origin_set(new_shape, 350, 150);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   // Circle
@@ -365,21 +365,21 @@ _1_basic_shape_test()
   evas_vg_shape_append_circle(shape, 50, 50, 50);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
-  efl_canvas_vg_node_origin_set(shape, 50, 300);
+  evas_vg_node_origin_set(shape, 50, 300);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
   evas_vg_node_color_set(new_shape, 0, 0, 255, 255);
-  efl_canvas_vg_node_origin_set(new_shape, 200, 300);
+  evas_vg_node_origin_set(new_shape, 200, 300);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_dup(new_shape, shape);
   evas_vg_shape_stroke_color_set(new_shape, 150, 0, 0, 150);
   evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
-  efl_canvas_vg_node_origin_set(new_shape, 350, 300);
+  evas_vg_node_origin_set(new_shape, 350, 300);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   // Arc
@@ -389,14 +389,14 @@ _1_basic_shape_test()
   evas_vg_shape_stroke_cap_set(shape, EFL_GFX_CAP_ROUND);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
-  efl_canvas_vg_node_origin_set(shape, 50, 450);
+  evas_vg_node_origin_set(shape, 50, 450);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   new_shape = evas_vg_shape_add(container);
   evas_vg_shape_append_arc(new_shape, 0, 0, 100, 100, 90, 200);
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
   evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
-  efl_canvas_vg_node_origin_set(new_shape, 200, 450);
+  evas_vg_node_origin_set(new_shape, 200, 450);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   new_shape = evas_vg_shape_add(container);
@@ -404,7 +404,7 @@ _1_basic_shape_test()
   evas_vg_shape_append_line_to(new_shape, 50, 50);
   evas_vg_shape_stroke_color_set(new_shape, 0, 0, 0, 0);
   evas_vg_node_color_set(new_shape, 0, 0, 200, 200);
-  efl_canvas_vg_node_origin_set(new_shape, 350, 450);
+  evas_vg_node_origin_set(new_shape, 350, 450);
   d.shape_list = eina_list_append(d.shape_list, new_shape);
 
   evas_object_vg_root_node_set(d.vg, container);
@@ -480,18 +480,18 @@ _2_interpolation_test()
   evas_vg_shape_append_svg_path(shape, morph1[0]);
   evas_vg_shape_stroke_color_set(shape, 255, 0, 0, 255);
   evas_vg_shape_stroke_width_set(shape, 5);
-  efl_canvas_vg_node_origin_set(shape, 100, 100);
+  evas_vg_node_origin_set(shape, 100, 100);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   shape = evas_vg_shape_add(d.vg);
   evas_vg_shape_append_svg_path(shape, morph1[1]);
   evas_vg_shape_stroke_color_set(shape, 0, 0, 255, 255);
   evas_vg_shape_stroke_width_set(shape, 10);
-  efl_canvas_vg_node_origin_set(shape, 150, 150);
+  evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   shape = evas_vg_shape_add(d.vg);
-  efl_canvas_vg_node_origin_set(shape, 150, 150);
+  evas_vg_node_origin_set(shape, 150, 150);
   d.shape_list = eina_list_append(d.shape_list, shape);
 
   evas_object_vg_root_node_set(d.vg, shape);
@@ -522,7 +522,7 @@ _main_menu()
    shape = evas_vg_shape_add(d.vg);
    evas_vg_shape_append_svg_path(shape, batman);
    evas_vg_node_color_set(shape, 10, 0, 0, 10);
-   efl_canvas_vg_node_origin_set(shape, 0, 100);
+   evas_vg_node_origin_set(shape, 0, 100);
 
    evas_object_vg_root_node_set(d.vg, shape);
 

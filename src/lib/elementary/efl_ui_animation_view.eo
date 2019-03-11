@@ -13,7 +13,6 @@ enum Efl.Ui.Animation_View.State
 class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
 {
    [[Elementary Animation View class]]
-   legacy_prefix: elm_animation_view;
    event_prefix: efl_ui_animation_view;
    methods {
       @property auto_play {
@@ -166,7 +165,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
             [[Get current animation view state.
               see @.State
               @since 1.22]]
-            legacy: null;
          }
          values {
             state: Efl.Ui.Animation_View.State; [[Current animation view state]]

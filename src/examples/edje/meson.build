@@ -37,7 +37,7 @@ edc_files = [
   'signals-messages.edc',
   'signalsBubble.edc',
   'sigtest.edc',
-  'svg.edc',
+#'svg.edc',
   'swallow.edc',
   'table.edc',
   'text.edc',
@@ -123,7 +123,7 @@ edje_examples = [
   'edje_example',
   'signals2',
   'sigtest',
-  'svg-test'
+#'svg-test'
 ]
 
 foreach edje_example : edje_examples

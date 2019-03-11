@@ -46,8 +46,8 @@ examples = [
   'evas-textblock-obstacles',
   'evas-text',
   'evas-transparent',
-  'evas-vg-batman',
-  'evas-vg-simple',
+#  'evas-vg-batman',
+#  'evas-vg-simple',
 ]
 
 foreach example : examples

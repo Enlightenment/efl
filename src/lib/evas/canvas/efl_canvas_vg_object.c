@@ -244,6 +244,12 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_vg_object_efl_file_loaded_get(const Eo *eo_obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd)
+{
+   return !!pd->vg_entry;
+}
+
 EOLIAN static Eina_Error
 _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
@@ -411,9 +417,9 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
 
    //ector begin - end for drawing mask images.
-   ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
+   //ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, NULL, 0);
-   ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
+   //ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
 
    //Actual content drawing
    ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_TRUE, do_async);
