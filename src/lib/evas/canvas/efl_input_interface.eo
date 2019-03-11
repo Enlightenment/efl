@@ -24,7 +24,7 @@ interface @beta Efl.Input.Interface
    eo_prefix: efl_input;
    event_prefix: efl;
    methods {
-      @property seat_event_filter {
+      @property seat_event_filter @beta {
           set {
              [[Add or remove a given seat to the filter list. If the filter list is empty this object
                will report mouse, keyboard and focus events from any seat, otherwise those events will
