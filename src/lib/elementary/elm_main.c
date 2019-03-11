@@ -46,7 +46,7 @@ EAPI Elm_Version *elm_version = &_version;
 static void
 _focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eina_Rect rect = efl_gfx_entity_geometry_get(data);
+   Eina_Rect rect = efl_ui_focus_object_focus_geometry_get(data);
    efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, &rect);
 }
 

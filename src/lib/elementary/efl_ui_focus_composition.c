@@ -234,8 +234,7 @@ _canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _new_geom(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Efl_Ui_Focus_Composition_Adapter_Data *pd = efl_data_scope_get(data, EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS);
-   Eina_Rect rect = efl_gfx_entity_geometry_get(pd->object);
+   Eina_Rect rect = efl_ui_focus_object_focus_geometry_get(data);
    efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, &rect);
 }
 
