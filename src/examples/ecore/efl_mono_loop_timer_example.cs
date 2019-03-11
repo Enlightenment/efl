@@ -18,15 +18,15 @@ class TestMain
         Efl.All.Init();
 
         var loop = new Efl.Loop();
-        var timer = new Efl.LoopTimer(loop, interval:1.0);
+        var timer = new Efl.LoopTimer(loop, 1.0);
 
         TestMain listener = new TestMain(loop);
 
         Console.WriteLine("Starting MainLoop");
 
-        timer.TickEvt += listener.on_tick;
-        timer.TickEvt += listener.another_callback;
-        timer.TickEvt -= listener.another_callback;
+        timer.TimerTickEvt += listener.on_tick;
+        timer.TimerTickEvt += listener.another_callback;
+        timer.TimerTickEvt -= listener.another_callback;
 
         loop.Begin();
 
