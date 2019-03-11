@@ -1797,35 +1797,39 @@ _elm_win_state_change(Ecore_Evas *ee)
 #endif
    if (ch_fullscreen)
      {
+        Eina_Bool fullscreen;
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
+        fullscreen = sd->fullscreen;
         if (sd->fullscreen)
           {
-             efl_event_callback_legacy_call
-               (obj, EFL_UI_WIN_EVENT_FULLSCREEN, NULL);
+             evas_object_smart_callback_call(obj, "fullscreen", NULL);
           }
         else
           {
-             efl_event_callback_legacy_call
-               (obj, EFL_UI_WIN_EVENT_UNFULLSCREEN, NULL);
+             evas_object_smart_callback_call(obj, "unfullscreen", NULL);
           }
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_FULLSCREEN_CHANGED, (void*) (uintptr_t)fullscreen);
      }
    if (ch_maximized)
      {
+        Eina_Bool maximized;
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
+        maximized = sd->maximized;
         if (sd->maximized)
           {
-             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED, NULL);
+             evas_object_smart_callback_call(obj, "maximized", NULL);
              if (_elm_config->atspi_mode)
                efl_access_window_maximized_signal_emit(obj);
           }
         else
           {
-             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNMAXIMIZED, NULL);
+             evas_object_smart_callback_call(obj, "unmaximized", NULL);
              if (_elm_config->atspi_mode)
                efl_access_window_restored_signal_emit(obj);
           }
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED_CHANGED, (void*) (uintptr_t)maximized);
      }
    if (ch_profile)
      {
