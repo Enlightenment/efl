@@ -1340,7 +1340,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                     {
                        Evas_Object *win = elm_widget_top_get(seat_sel->drag_obj);
                        if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                                 _x11_win_rotation_changed_cb, seat_sel->drag_win);
                     }
                }
@@ -1496,7 +1496,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Manager_Da
         if (win && efl_isa(win, EFL_UI_WIN_CLASS))
           {
              elm_win_rotation_set(seat_sel->drag_win, elm_win_rotation_get(win));
-             efl_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+             efl_event_callback_add(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                     _x11_win_rotation_changed_cb, seat_sel->drag_win);
           }
      }
@@ -4927,7 +4927,7 @@ _efl_ui_selection_manager_drag_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Mana
                {
                   Evas_Object *win = elm_widget_top_get(seat_sel->drag_obj);
                   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                             _x11_win_rotation_changed_cb, seat_sel->drag_win);
                }
           }

@@ -1644,8 +1644,9 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    _elm_win_xwin_update(sd);
 #endif
    _elm_win_frame_obj_update(sd, 0);
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
+   efl_event_callback_call
+     (obj, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, (void*)(uintptr_t)rotation);
+   evas_object_smart_callback_call(obj, "rotation,changed", NULL);
    if (_elm_config->atspi_mode)
      {
         Evas_Coord x = 0, y = 0, width = 0, height = 0;

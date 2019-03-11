@@ -880,7 +880,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       maximized: void; [[Called when window is set to maximized]]
       unmaximized: void; [[Called when window is no longer set to maximized]]
       indicator,prop,changed @beta: void; [[Called when indicator is property changed]]
-      rotation,changed: void; [[Called when window rotation is changed]]
+      win_rotation,changed: int; [[Called when window rotation is changed, sends current rotation in degrees]]
       profile,changed @beta: void; [[Called when profile is changed]]
       wm,rotation,changed @beta: void; [[Called when window manager rotation is changed]]
       theme,changed: void; [[Called when theme is changed]]
