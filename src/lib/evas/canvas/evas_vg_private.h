@@ -51,8 +51,6 @@ struct _Efl_Canvas_Vg_Object_Data
    double                     align_x, align_y;
    Efl_Canvas_Vg_Fill_Mode    fill_mode;
    int                        frame_idx;
-   Eina_File                 *file;
-   Eina_Stringshare          *key;
    int                        cached_frame_idx;
 
    Eina_Bool                  changed : 1;

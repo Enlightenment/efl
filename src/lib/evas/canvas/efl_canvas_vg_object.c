@@ -277,7 +277,6 @@ _efl_canvas_vg_object_efl_file_unload(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_cache_vg_entry_del(pd->vg_entry);
    evas_object_change(eo_obj, obj);
-   eina_stringshare_del(pd->key);
    pd->vg_entry = NULL;
 }
 

@@ -1428,9 +1428,6 @@ data_write_vectors(Eet_File *ef, int *vector_num)
           {
              eina_strbuf_reset(buf);
              eina_strbuf_append_printf(buf, "%s" EINA_PATH_SEP_S "%s", s, vector->entry);
-             f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
-             if (!f) continue;
-             eina_file_close(f);
 
              if (vector->type == EDJE_VECTOR_FILE_TYPE_JSON)
                {
@@ -1456,6 +1453,10 @@ data_write_vectors(Eet_File *ef, int *vector_num)
                }
              else
                {
+                  f = eina_file_open(eina_strbuf_string_get(buf), EINA_FALSE);
+                  if (!f) continue;
+                  eina_file_close(f);
+
                   if (efl_file_set(vg, eina_strbuf_string_get(buf)))
                     error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
                   if (efl_file_load(vg))
