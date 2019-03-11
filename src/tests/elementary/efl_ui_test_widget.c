@@ -188,37 +188,6 @@ EFL_START_TEST(efl_ui_test_widget_sub_object_add_del)
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_ui_test_widget_sub_object_theme_sync)
-{
-   State s;
-   Efl_Canvas_Layout *edje;
-
-   _small_ui(&s);
-   edje = elm_widget_resize_object_get(s.btn1);
-
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn1), 1.0);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(edje), 1.0);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn2), 1.0);
-
-   efl_gfx_entity_scale_set(s.win, 0.123);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn1), 0.123);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(edje), 0.123);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn2), 0.123);
-
-   efl_ui_widget_sub_object_del(s.box, s.btn1);
-   efl_gfx_entity_scale_set(s.win, 0.456);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn1), 1.0);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(edje), 0.123);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn2), 0.456);
-
-   efl_gfx_entity_scale_set(s.win, 0.789);
-   efl_ui_widget_sub_object_add(s.box, s.btn1);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn1), 0.789);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(edje), 0.789);
-   ck_assert_double_eq(efl_gfx_entity_scale_get(s.btn2), 0.789);
-}
-EFL_END_TEST
-
 void efl_ui_test_widget(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
@@ -227,5 +196,4 @@ void efl_ui_test_widget(TCase *tc)
    tcase_add_test(tc, efl_ui_test_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_sub_iterator);
    tcase_add_test(tc, efl_ui_test_widget_sub_object_add_del);
-   tcase_add_test(tc, efl_ui_test_widget_sub_object_theme_sync);
 }
