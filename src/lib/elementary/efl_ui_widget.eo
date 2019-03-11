@@ -395,10 +395,10 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          return: bool; [[Returns $true if the widget is registered in the focus manager, $false if not.]]
       }
    }
-   parts {
-      shadow: Efl.Ui.Widget_Part_Shadow;
-      background: Efl.Ui.Widget_Part_Bg;
-   }
+//   parts {
+//      shadow: Efl.Ui.Widget_Part_Shadow;
+//      background: Efl.Ui.Widget_Part_Bg;
+//   }
    implements {
       class.constructor;
       Efl.Object.constructor;
