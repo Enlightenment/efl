@@ -1,14 +1,14 @@
 
 EAPI Eina_Bool
-evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Efl_Input_Object_Pointer_Mode pointer_mode)
+evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Evas_Object_Pointer_Mode pointer_mode)
 {
-   return efl_canvas_object_pointer_mode_set(obj, pointer_mode);
+   return efl_canvas_object_pointer_mode_set(obj, (Efl_Input_Object_Pointer_Mode)pointer_mode);
 }
 
-EAPI Efl_Input_Object_Pointer_Mode
+EAPI Evas_Object_Pointer_Mode
 evas_object_pointer_mode_get(const Efl_Canvas_Object *obj)
 {
-   return efl_canvas_object_pointer_mode_get(obj);
+   return (Evas_Object_Pointer_Mode)efl_canvas_object_pointer_mode_get(obj);
 }
 
 EAPI void

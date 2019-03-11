@@ -38,15 +38,15 @@ typedef struct _Efl_Event_Animator_Tick
  * This function has a direct effect on event callbacks related to pointers
  * (mouse, ...).
  *
- * If the value is @ref EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB (default), then
+ * If the value is @ref EVAS_OBJECT_POINTER_MODE_AUTO_GRAB (default), then
  * when mouse is pressed down over this object, events will be restricted to it
  * as source, mouse moves, for example, will be emitted even when the pointer
  * goes outside this objects geometry.
  *
- * If the value is @ref EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB, then events will
+ * If the value is @ref EVAS_OBJECT_POINTER_MODE_NO_GRAB, then events will
  * be emitted just when inside this object area.
  *
- * The default value is @ref EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB. See also:
+ * The default value is @ref EVAS_OBJECT_POINTER_MODE_AUTO_GRAB. See also:
  * @ref Efl.Canvas.Object.pointer_mode_by_device.get and
  * @ref Efl.Canvas.Object.pointer_mode_by_device.set Note: This function will
  * only set/get the mode for the default pointer.
@@ -58,7 +58,7 @@ typedef struct _Efl_Event_Animator_Tick
  *
  * @ingroup Evas_Object_Group
  */
-EAPI Eina_Bool evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Efl_Input_Object_Pointer_Mode pointer_mode);
+EAPI Eina_Bool evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Evas_Object_Pointer_Mode pointer_mode);
 
 /**
  * @brief Low-level pointer behaviour.
@@ -66,15 +66,15 @@ EAPI Eina_Bool evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Efl_Input_Ob
  * This function has a direct effect on event callbacks related to pointers
  * (mouse, ...).
  *
- * If the value is @ref EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB (default), then
+ * If the value is @ref EVAS_OBJECT_POINTER_MODE_AUTO_GRAB (default), then
  * when mouse is pressed down over this object, events will be restricted to it
  * as source, mouse moves, for example, will be emitted even when the pointer
  * goes outside this objects geometry.
  *
- * If the value is @ref EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB, then events will
+ * If the value is @ref EVAS_OBJECT_POINTER_MODE_NO_GRAB, then events will
  * be emitted just when inside this object area.
  *
- * The default value is @ref EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB. See also:
+ * The default value is @ref EVAS_OBJECT_POINTER_MODE_AUTO_GRAB. See also:
  * @ref Efl.Canvas.Object.pointer_mode_by_device.get and
  * @ref Efl.Canvas.Object.pointer_mode_by_device.set Note: This function will
  * only set/get the mode for the default pointer.
@@ -85,7 +85,7 @@ EAPI Eina_Bool evas_object_pointer_mode_set(Efl_Canvas_Object *obj, Efl_Input_Ob
  *
  * @ingroup Evas_Object_Group
  */
-EAPI Efl_Input_Object_Pointer_Mode evas_object_pointer_mode_get(const Efl_Canvas_Object *obj);
+EAPI Evas_Object_Pointer_Mode evas_object_pointer_mode_get(const Efl_Canvas_Object *obj);
 
 
 

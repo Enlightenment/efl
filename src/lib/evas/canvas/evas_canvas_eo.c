@@ -31,13 +31,13 @@ __eolian_evas_canvas_image_cache_get_reflect(const Eo *obj)
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_image_cache_get, int, 0);
 
-void _evas_canvas_event_default_flags_set(Eo *obj, Evas_Public_Data *pd, Efl_Input_Flags flags);
+void _evas_canvas_event_default_flags_set(Eo *obj, Evas_Public_Data *pd, Evas_Event_Flags flags);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_event_default_flags_set, EFL_FUNC_CALL(flags), Efl_Input_Flags flags);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_event_default_flags_set, EFL_FUNC_CALL(flags), Evas_Event_Flags flags);
 
-Efl_Input_Flags _evas_canvas_event_default_flags_get(const Eo *obj, Evas_Public_Data *pd);
+Evas_Event_Flags _evas_canvas_event_default_flags_get(const Eo *obj, Evas_Public_Data *pd);
 
-EOAPI EFL_FUNC_BODY_CONST(evas_canvas_event_default_flags_get, Efl_Input_Flags, 0);
+EOAPI EFL_FUNC_BODY_CONST(evas_canvas_event_default_flags_get, Evas_Event_Flags, 0);
 
 void _evas_canvas_font_cache_set(Eo *obj, Evas_Public_Data *pd, int size);
 
@@ -83,17 +83,17 @@ Efl_Canvas_Object *_evas_canvas_focus_get(const Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_focus_get, Efl_Canvas_Object *, NULL);
 
-Efl_Canvas_Object *_evas_canvas_seat_focus_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat);
+Efl_Canvas_Object *_evas_canvas_seat_focus_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(seat), Efl_Input_Device *seat);
+EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_get, Efl_Canvas_Object *, NULL, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 Efl_Canvas_Object *_evas_canvas_object_top_get(const Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_object_top_get, Efl_Canvas_Object *, NULL);
 
-void _evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *dev, int *x, int *y);
+void _evas_canvas_pointer_canvas_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Efl_Input_Device *dev, int *x, int *y);
+EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_canvas_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
 
 void _evas_canvas_pointer_canvas_xy_get(const Eo *obj, Evas_Public_Data *pd, int *x, int *y);
 
@@ -111,17 +111,17 @@ Eina_Bool _evas_canvas_focus_state_get(const Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_focus_state_get, Eina_Bool, 0);
 
-Eina_Bool _evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat);
+Eina_Bool _evas_canvas_seat_focus_state_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_state_get, Eina_Bool, 0, EFL_FUNC_CALL(seat), Efl_Input_Device *seat);
+EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_seat_focus_state_get, Eina_Bool, 0, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 Eina_Bool _evas_canvas_changed_get(const Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_changed_get, Eina_Bool, 0);
 
-void _evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *dev, int *x, int *y);
+void _evas_canvas_pointer_output_xy_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev, int *x, int *y);
 
-EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Efl_Input_Device *dev, int *x, int *y);
+EOAPI EFL_VOID_FUNC_BODYV_CONST(evas_canvas_pointer_output_xy_by_device_get, EFL_FUNC_CALL(dev, x, y), Evas_Device *dev, int *x, int *y);
 
 void _evas_canvas_pointer_output_xy_get(const Eo *obj, Evas_Public_Data *pd, int *x, int *y);
 
@@ -131,9 +131,9 @@ Efl_Canvas_Object *_evas_canvas_object_bottom_get(const Eo *obj, Evas_Public_Dat
 
 EOAPI EFL_FUNC_BODY_CONST(evas_canvas_object_bottom_get, Efl_Canvas_Object *, NULL);
 
-unsigned int _evas_canvas_pointer_button_down_mask_by_device_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *dev);
+unsigned int _evas_canvas_pointer_button_down_mask_by_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *dev);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_pointer_button_down_mask_by_device_get, unsigned int, 0, EFL_FUNC_CALL(dev), Efl_Input_Device *dev);
+EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_pointer_button_down_mask_by_device_get, unsigned int, 0, EFL_FUNC_CALL(dev), Evas_Device *dev);
 
 unsigned int _evas_canvas_pointer_button_down_mask_get(const Eo *obj, Evas_Public_Data *pd);
 
@@ -147,13 +147,13 @@ void _evas_canvas_key_lock_on(Eo *obj, Evas_Public_Data *pd, const char *keyname
 
 EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_lock_on, EFL_FUNC_CALL(keyname), const char *keyname);
 
-void _evas_canvas_seat_key_lock_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Efl_Input_Device *seat);
+void _evas_canvas_seat_key_lock_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
-void _evas_canvas_seat_key_lock_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Efl_Input_Device *seat);
+void _evas_canvas_seat_key_lock_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_lock_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 void _evas_canvas_key_modifier_add(Eo *obj, Evas_Public_Data *pd, const char *keyname);
 
@@ -195,13 +195,13 @@ void _evas_canvas_key_modifier_on(Eo *obj, Evas_Public_Data *pd, const char *key
 
 EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_key_modifier_on, EFL_FUNC_CALL(keyname), const char *keyname);
 
-void _evas_canvas_seat_key_modifier_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Efl_Input_Device *seat);
+void _evas_canvas_seat_key_modifier_on(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_on, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
-void _evas_canvas_seat_key_modifier_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Efl_Input_Device *seat);
+void _evas_canvas_seat_key_modifier_off(Eo *obj, Evas_Public_Data *pd, const char *keyname, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_key_modifier_off, EFL_FUNC_CALL(keyname, seat), const char *keyname, Evas_Device *seat);
 
 Eina_List *_evas_canvas_font_available_list(const Eo *obj, Evas_Public_Data *pd);
 
@@ -267,13 +267,13 @@ void _evas_canvas_focus_in(Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_VOID_FUNC_BODY(evas_canvas_focus_in);
 
-void _evas_canvas_seat_focus_in(Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat);
+void _evas_canvas_seat_focus_in(Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_in, EFL_FUNC_CALL(seat), Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_in, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
-void _evas_canvas_seat_focus_out(Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat);
+void _evas_canvas_seat_focus_out(Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
-EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_out, EFL_FUNC_CALL(seat), Efl_Input_Device *seat);
+EOAPI EFL_VOID_FUNC_BODYV(evas_canvas_seat_focus_out, EFL_FUNC_CALL(seat), Evas_Device *seat);
 
 void _evas_canvas_obscured_rectangle_add(Eo *obj, Evas_Public_Data *pd, int x, int y, int w, int h);
 
@@ -307,9 +307,9 @@ void _evas_canvas_render_idle_flush(Eo *obj, Evas_Public_Data *pd);
 
 EOAPI EFL_VOID_FUNC_BODY(evas_canvas_render_idle_flush);
 
-Efl_Input_Device *_evas_canvas_default_device_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device_Type type);
+Evas_Device *_evas_canvas_default_device_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device_Class type);
 
-EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_default_device_get, Efl_Input_Device *, NULL, EFL_FUNC_CALL(type), Efl_Input_Device_Type type);
+EOAPI EFL_FUNC_BODYV_CONST(evas_canvas_default_device_get, Evas_Device *, NULL, EFL_FUNC_CALL(type), Evas_Device_Class type);
 
 int _evas_canvas_coord_world_y_to_screen(const Eo *obj, Evas_Public_Data *pd, int y);
 
@@ -336,19 +336,19 @@ Efl_Object *_evas_canvas_efl_object_provider_find(const Eo *obj, Evas_Public_Dat
 Efl_Loop *_evas_canvas_efl_loop_consumer_loop_get(const Eo *obj, Evas_Public_Data *pd);
 
 
-Eina_Bool _evas_canvas_efl_canvas_pointer_pointer_inside_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat);
+Eina_Bool _evas_canvas_efl_canvas_pointer_pointer_inside_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat);
 
 
-Efl_Input_Device *_evas_canvas_efl_canvas_scene_device_get(const Eo *obj, Evas_Public_Data *pd, const char *name);
+Evas_Device *_evas_canvas_efl_canvas_scene_device_get(const Eo *obj, Evas_Public_Data *pd, const char *name);
 
 
-Efl_Input_Device *_evas_canvas_efl_canvas_scene_seat_get(const Eo *obj, Evas_Public_Data *pd, int id);
+Evas_Device *_evas_canvas_efl_canvas_scene_seat_get(const Eo *obj, Evas_Public_Data *pd, int id);
 
 
-Efl_Input_Device *_evas_canvas_efl_canvas_scene_seat_default_get(const Eo *obj, Evas_Public_Data *pd);
+Evas_Device *_evas_canvas_efl_canvas_scene_seat_default_get(const Eo *obj, Evas_Public_Data *pd);
 
 
-Eina_Bool _evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *obj, Evas_Public_Data *pd, Efl_Input_Device *seat, Eina_Position2D *pos);
+Eina_Bool _evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *obj, Evas_Public_Data *pd, Evas_Device *seat, Eina_Position2D *pos);
 
 
 Eina_Bool _evas_canvas_efl_canvas_scene_image_max_size_get(const Eo *obj, Evas_Public_Data *pd, Eina_Size2D *max);
