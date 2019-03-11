@@ -1,4 +1,4 @@
-class Elm_Actionslider.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm_Actionslider.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary Actionslider internal part class]]
    data: null;

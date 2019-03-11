@@ -1,4 +1,4 @@
-class Elm.Panel.Part extends Efl.Ui.Widget_Part implements Efl.Content
+class @beta Elm.Panel.Part extends Efl.Ui.Widget_Part implements Efl.Content
 {
    [[Elementary panel internal part class]]
    data: null;

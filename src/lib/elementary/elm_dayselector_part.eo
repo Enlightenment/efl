@@ -1,4 +1,4 @@
-class Elm.Dayselector.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm.Dayselector.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary dayselector internal part class]]
    data: null;

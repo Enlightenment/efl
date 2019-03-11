@@ -1,4 +1,4 @@
-class Evas.Ector.Software.Buffer extends Ector.Software.Buffer implements Evas.Ector.Buffer
+class @beta Evas.Ector.Software.Buffer extends Ector.Software.Buffer implements Evas.Ector.Buffer
 {
    [[A buffer object wrapping an existing Evas Image_Entry.]]
    implements {

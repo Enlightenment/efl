@@ -1,4 +1,4 @@
-class Elm.Flip.Part extends Efl.Object implements Efl.Content
+class @beta Elm.Flip.Part extends Efl.Object implements Efl.Content
 {
    [[Elementary flip internal part class]]
    data: null;
