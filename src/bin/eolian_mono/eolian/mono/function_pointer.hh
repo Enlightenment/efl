@@ -9,15 +9,17 @@
 #include "function_helpers.hh"
 #include "documentation.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
-static bool is_function_ptr_blacklisted(attributes::function_def const& func)
+template <typename Context>
+static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context context)
 {
   std::string name = name_helpers::function_ptr_full_eolian_name(func);
 
-  return false;
+  return blacklist::is_function_blacklisted(func, context);
 }
 
 struct function_pointer {
@@ -28,12 +30,12 @@ struct function_pointer {
       // FIXME export Typedecl in eolian_cxx API
       auto funcptr_ctx = context_add_tag(class_context{class_context::function_ptr}, context);
 
+      if (is_function_ptr_blacklisted(f, context))
+        return true;
+
       std::string return_type;
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
         return false;
-
-      if (is_function_ptr_blacklisted(f))
-        return true;
 
       if (!name_helpers::open_namespaces(sink, f.namespaces, funcptr_ctx))
         return false;

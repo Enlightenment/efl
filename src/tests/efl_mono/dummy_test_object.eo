@@ -101,12 +101,7 @@ function Dummy.FormatCb {
    }
 };
 
-class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface, Dummy.Another_Iface {
-
-   parts {
-      part_one: Dummy.Test_Object; [[ Part number one. ]]
-      part_two: Dummy.Test_Object; [[ Part number two. ]]
-   }
+class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.Another_Iface {
    methods {
       return_object {
          return: Dummy.Test_Object;
@@ -1395,7 +1390,6 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
-      Efl.Part.part_get;
       Efl.Object.provider_find;
       Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;

@@ -95,16 +95,16 @@ class TestEo
 }
 
 
-class MyLoop : Efl.Loop
+class MyObject : Efl.Object
 {
-    public MyLoop() : base(null) { }
+    public MyObject() : base(null) { }
 }
 
 class TestEoInherit
 {
     public static void instantiate_inherited()
     {
-        Efl.Loop loop = new MyLoop();
+        Efl.Object loop = new MyObject();
         Test.Assert(loop.NativeHandle != System.IntPtr.Zero);
     }
 }

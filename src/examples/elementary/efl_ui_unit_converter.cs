@@ -2,7 +2,7 @@ using System;
 
 public class Example
 {
-
+#if EFL_BETA
     private static double KMS_PER_MILE = 1.609344;
 
     private static double KmsToMiles(double kms)
@@ -146,5 +146,10 @@ public class Example
 
         Efl.All.Shutdown();
     }
+#else
+    public static void Main()
+    {
+    }
+#endif
 
 }

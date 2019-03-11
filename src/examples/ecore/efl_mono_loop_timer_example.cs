@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 
 class TestMain
 {
+#if EFL_BETA
     private Efl.Loop loop;
     private int count;
 
@@ -48,6 +49,11 @@ class TestMain
     {
         Console.WriteLine("Ooops. Should not have been called...");
     }
+#else
+    public static void Main()
+    {
+    }
+#endif
 }
 
 

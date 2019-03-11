@@ -196,6 +196,7 @@ struct to_internal_field_convert_generator
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
       auto field_name = name_helpers::to_field_name(field.name);
+      // FIXME Replace need_struct_conversion(regular) with need_struct_conversion(type)
       auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
       auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
       auto complex = efl::eina::get<attributes::complex_type_def>(&field.type.original_type);
@@ -496,9 +497,8 @@ struct struct_entities_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
-     if (blacklist::is_struct_blacklisted(struct_))
+     if (blacklist::is_struct_blacklisted(struct_, context))
        return true;
-
 
      if (!name_helpers::open_namespaces(sink, struct_.namespaces, context))
        return false;

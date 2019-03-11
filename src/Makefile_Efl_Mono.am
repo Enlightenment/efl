@@ -67,6 +67,7 @@ efl_mono_test_files = \
 	tests/efl_mono/dummy_test_iface.eo \
 	tests/efl_mono/dummy_another_iface.eo \
 	tests/efl_mono/dummy_child.eo \
+	tests/efl_mono/dummy_part_holder.eo \
 	tests/efl_mono/dummy_numberwrapper.eo \
 	tests/efl_mono/mono_test_driver.sh
 
@@ -177,6 +178,10 @@ lib/elementary/elm_genlist_eo.cs \
 lib/elementary/elm_view_list_eo.cs \
 lib/elementary/elm_genlist_item_eo.cs \
 lib/elementary/elm_gengrid_eo.cs \
+lib/elementary/elm_code_widget.eo.cs \
+lib/elementary/elm_multibuttonentry_part.eo.cs \
+lib/elementary/elm_atspi_bridge.eo.cs \
+lib/elementary/elm_atspi_app_object.eo.cs \
 lib/elementary/elm_glview_eo.cs
 
 efl_mono_blacklisted_files = \
@@ -406,6 +411,8 @@ tests/efl_mono/libefl_mono_native_test.c: \
 	tests/efl_mono/dummy_another_iface.eo.c \
 	tests/efl_mono/dummy_child.eo.h \
 	tests/efl_mono/dummy_child.eo.c \
+	tests/efl_mono/dummy_part_holder.eo.h \
+	tests/efl_mono/dummy_part_holder.eo.c \
 	tests/efl_mono/dummy_numberwrapper.eo.h \
 	tests/efl_mono/dummy_numberwrapper.eo.c \
 	tests/efl_mono/dummy_inherit_iface.eo.h \
@@ -418,6 +425,7 @@ efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
 tests/efl_mono/dummy_another_iface.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
+tests/efl_mono/dummy_part_holder.eo.cs \
 tests/efl_mono/dummy_numberwrapper.eo.cs \
 tests/efl_mono/dummy_inherit_iface.eo.cs \
 tests/efl_mono/dummy_inherit_helper.eo.cs
@@ -493,7 +501,7 @@ tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport "@DLIB_PREFIX_MONO@efl_mono_native_test@DLIB_SUFFIX_MONO@" -o $@ $(ALL_EO_REFS) $<
 
-CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/dummy_test_object.eo.cs tests/efl_mono/dummy_child.eo.cs tests/efl_mono/dummy_numberwrapper.eo.cs tests/efl_mono/dummy_test_object.eo.c tests/efl_mono/dummy_child.eo.c tests/efl_mono/dummy_numberwrapper.eo.c tests/efl_mono/dummy_test_object.eo.h tests/efl_mono/dummy_child.eo.h tests/efl_mono/dummy_numberwrapper.eo.h tests/efl_mono/efl_mono.config
+CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/dummy_test_object.eo.cs tests/efl_mono/dummy_child.eo.cs tests/efl_mono/dummy_numberwrapper.eo.cs tests/efl_mono/dummy_test_object.eo.c tests/efl_mono/dummy_child.eo.c tests/efl_mono/dummy_numberwrapper.eo.c tests/efl_mono/dummy_test_object.eo.h tests/efl_mono/dummy_child.eo.h tests/efl_mono/dummy_part_holder.eo.cs tests/efl_mono/dummy_part_holder.eo.c tests/efl_mono/dummy_part_holder.eo.h tests/efl_mono/dummy_numberwrapper.eo.h tests/efl_mono/efl_mono.config
 
 endif
 

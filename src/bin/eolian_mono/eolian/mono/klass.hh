@@ -95,6 +95,13 @@ struct klass
    bool generate(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "klass_generator: " << cls.eolian_name << std::endl;
+
+     if (blacklist::is_class_blacklisted(cls, context))
+       {
+          EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "class " << cls.eolian_name << " is blacklisted. Skipping." << std::endl;
+          return true;
+       }
+
      std::string suffix, class_type;
      switch(cls.type)
        {
@@ -183,7 +190,7 @@ struct klass
        return false;
 
      bool root = !helpers::has_regular_ancestor(cls);
-     std::set<attributes::klass_name, attributes::compare_klass_name_by_name> inherit_interfaces = helpers::non_implemented_interfaces(cls);
+     std::set<attributes::klass_name, attributes::compare_klass_name_by_name> inherit_interfaces = helpers::non_implemented_interfaces(cls, context);
      std::vector<attributes::klass_name> inherit_classes;
      std::copy_if(cls.immediate_inherits.begin(), cls.immediate_inherits.end()
                   , std::back_inserter(inherit_classes)
@@ -268,7 +275,7 @@ struct klass
          if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, concrete_cxt))
            return false;
 
-         for (auto&& klass : helpers::non_implemented_interfaces(cls))
+         for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
               if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, concrete_cxt))
@@ -340,7 +347,7 @@ struct klass
          if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, inherit_cxt))
            return false;
 
-         for (auto&& klass : helpers::non_implemented_interfaces(cls))
+         for (auto&& klass : helpers::non_implemented_interfaces(cls, inherit_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
               if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, inherit_cxt))
@@ -644,7 +651,7 @@ struct klass
      if (!as_generator(*(event_registration(cls, cls))).generate(sink, cls.events, context))
        return false;
 
-     for (auto&& c : helpers::non_implemented_interfaces(cls))
+     for (auto&& c : helpers::non_implemented_interfaces(cls, context))
        {
           // Only non-regular types (which declare events through interfaces) need to register them.
           if (c.type == attributes::class_type::regular)
@@ -742,7 +749,7 @@ struct klass
      // Inherited events
 
      // For now, as mixins can inherit from regular classes, we can't filter out inherited events.
-     auto inherits = helpers::non_implemented_interfaces(cls);
+     auto inherits = helpers::non_implemented_interfaces(cls, context);
      for (auto&& c : inherits)
        {
           attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
