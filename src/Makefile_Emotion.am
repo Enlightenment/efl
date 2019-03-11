@@ -15,6 +15,7 @@ emotioneolianfiles_DATA = \
                           $(emotion_eolian_files)
 
 EXTRA_DIST2 += \
+lib/emotion/efl_canvas_video_eo.legacy.c \
               ${emotioneolianfiles_DATA}
 
 lib_LTLIBRARIES += \
