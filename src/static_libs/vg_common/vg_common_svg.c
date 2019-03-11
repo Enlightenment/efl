@@ -566,9 +566,9 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
 
    if (g->type == SVG_LINEAR_GRADIENT)
      {
-        grad_obj = evas_vg_gradient_linear_add(parent);
-        evas_vg_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
-        evas_vg_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
+        grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
+        efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
+        efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
@@ -583,10 +583,10 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              int min = (r.h > r.w) ? r.w : r.h;
              radius = sqrt(pow(min, 2) + pow(min, 2)) / sqrt(2.0);
           }
-        grad_obj = evas_vg_gradient_radial_add(parent);
-        evas_vg_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
-        evas_vg_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
-        evas_vg_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
+        grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
+        efl_gfx_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
+        efl_gfx_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
+        efl_gfx_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
 
         /* in case of objectBoundingBox it need proper scaling */
         if (!g->user_space)
@@ -635,7 +635,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
         return NULL;
      }
    // apply common prperty
-   evas_vg_gradient_spread_set(grad_obj, g->spread);
+   efl_gfx_gradient_spread_set(grad_obj, g->spread);
    // update the stops
    stop_count = eina_list_count(g->stops);
    if (stop_count)
@@ -651,7 +651,7 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              stops[i].offset = stop->offset;
              i++;
           }
-        evas_vg_gradient_stop_set(grad_obj, stops, stop_count);
+        efl_gfx_gradient_stop_set(grad_obj, stops, stop_count);
         free(stops);
      }
    return grad_obj;
@@ -669,7 +669,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
 
    // apply the transformation
    if (node->transform)
-     evas_vg_node_transformation_set(vg, node->transform);
+     efl_canvas_vg_node_transformation_set(vg, node->transform);
 
    if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
 
@@ -683,25 +683,25 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->fill.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data));
+        efl_canvas_vg_shape_fill_set(vg, _apply_gradient_property(style->fill.paint.gradient, vg, parent, vg_data));
      }
    else if (style->fill.paint.cur_color)
      {
         // apply the current style color
-        evas_vg_node_color_set(vg, style->r, style->g,
-                               style->b, style->fill.opacity);
+        efl_gfx_color_set(vg, style->r, style->g,
+                          style->b, style->fill.opacity);
      }
    else
      {
         // apply the fill color
-        evas_vg_node_color_set(vg, style->fill.paint.r, style->fill.paint.g,
-                               style->fill.paint.b, style->fill.opacity);
+        efl_gfx_color_set(vg, style->fill.paint.r, style->fill.paint.g,
+                          style->fill.paint.b, style->fill.opacity);
      }
 
-   evas_vg_shape_stroke_width_set(vg, style->stroke.width);
-   evas_vg_shape_stroke_cap_set(vg, style->stroke.cap);
-   evas_vg_shape_stroke_join_set(vg, style->stroke.join);
-   evas_vg_shape_stroke_scale_set(vg, style->stroke.scale);
+   efl_gfx_shape_stroke_width_set(vg, style->stroke.width);
+   efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
+   efl_gfx_shape_stroke_join_set(vg, style->stroke.join);
+   efl_gfx_shape_stroke_scale_set(vg, style->stroke.scale);
    // if stroke property is NULL then do nothing
    if (style->stroke.paint.none)
      {
@@ -710,7 +710,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->stroke.paint.gradient)
      {
         // if the fill has gradient then apply.
-        evas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data));
+        efl_canvas_vg_shape_stroke_fill_set(vg, _apply_gradient_property(style->stroke.paint.gradient, vg, parent, vg_data));
      }
    else if (style->stroke.paint.url)
      {
@@ -720,13 +720,13 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->stroke.paint.cur_color)
      {
         // apply the current style color
-        evas_vg_shape_stroke_color_set(vg, style->r, style->g,
+        efl_gfx_shape_stroke_color_set(vg, style->r, style->g,
                                        style->b, style->stroke.opacity);
      }
    else
      {
         // apply the stroke color
-        evas_vg_shape_stroke_color_set(vg, style->stroke.paint.r, style->stroke.paint.g,
+        efl_gfx_shape_stroke_color_set(vg, style->stroke.paint.r, style->stroke.paint.g,
                                        style->stroke.paint.b, style->stroke.opacity);
      }
 }
@@ -738,12 +738,12 @@ _add_polyline(Efl_VG *vg, double *array, int size, Eina_Bool polygon)
 
    if (size < 2) return;
 
-   evas_vg_shape_append_move_to(vg, array[0], array[1]);
+   efl_gfx_path_append_move_to(vg, array[0], array[1]);
    for (i=2; i < size; i+=2)
-     evas_vg_shape_append_line_to(vg, array[i], array[i+1]);
+     efl_gfx_path_append_line_to(vg, array[i], array[i+1]);
 
    if (polygon)
-     evas_vg_shape_append_close(vg);
+     efl_gfx_path_append_close(vg);
 }
 
 static Efl_VG *
@@ -764,48 +764,46 @@ vg_common_create_vg_node_helper(Svg_Node *node, Efl_VG *parent, Vg_File_Data *vg
                 vg = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, parent);
               _apply_vg_property(node, vg, parent, vg_data);
               EINA_LIST_FOREACH(node->child, l, child)
-                {
-                   vg_common_create_vg_node_helper(child, vg, vg_data);
-                }
+                 vg_common_create_vg_node_helper(child, vg, vg_data);
               return vg;
            }
            break;
         case SVG_NODE_PATH:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_append_svg_path(vg, node->node.path.path);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_append_svg_path(vg, node->node.path.path);
            break;
         case SVG_NODE_POLYGON:
-           vg = evas_vg_shape_add(parent);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
            _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_TRUE);
            break;
         case SVG_NODE_POLYLINE:
-           vg = evas_vg_shape_add(parent);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
            _add_polyline(vg, node->node.polygon.points, node->node.polygon.points_count, EINA_FALSE);
            break;
         case SVG_NODE_ELLIPSE:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_append_arc(vg, node->node.ellipse.cx - node->node.ellipse.rx,
-                                          node->node.ellipse.cy - node->node.ellipse.ry,
-                                          2*node->node.ellipse.rx, 2*node->node.ellipse.ry, 0, 360);
-           evas_vg_shape_append_close(vg);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_append_arc(vg, node->node.ellipse.cx - node->node.ellipse.rx,
+                                   node->node.ellipse.cy - node->node.ellipse.ry,
+                                   2*node->node.ellipse.rx, 2*node->node.ellipse.ry, 0, 360);
+           efl_gfx_path_append_close(vg);
            break;
         case SVG_NODE_CIRCLE:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_append_circle(vg, node->node.circle.cx, node->node.circle.cy, node->node.circle.r);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_append_circle(vg, node->node.circle.cx, node->node.circle.cy, node->node.circle.r);
            break;
         case SVG_NODE_RECT:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_append_rect(vg, node->node.rect.x, node->node.rect.y, node->node.rect.w, node->node.rect.h,
-                                           node->node.rect.rx, node->node.rect.ry);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_append_rect(vg, node->node.rect.x, node->node.rect.y, node->node.rect.w, node->node.rect.h,
+                                    node->node.rect.rx, node->node.rect.ry);
            break;
         case SVG_NODE_LINE:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_append_move_to(vg, node->node.line.x1, node->node.line.y1);
-           evas_vg_shape_append_line_to(vg, node->node.line.x2, node->node.line.y2);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_append_move_to(vg, node->node.line.x1, node->node.line.y1);
+           efl_gfx_path_append_line_to(vg, node->node.line.x2, node->node.line.y2);
            break;
         case SVG_NODE_CUSTOME_COMMAND:
-           vg = evas_vg_shape_add(parent);
-           evas_vg_shape_path_set(vg, node->node.command.commands, node->node.command.points);
+           vg = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+           efl_gfx_path_set(vg, node->node.command.commands, node->node.command.points);
            break;
        default:
            break;
@@ -895,8 +893,8 @@ _create_gradient_node(Efl_VG *vg)
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
    EINA_SAFETY_ON_NULL_RETURN_VAL(grad, NULL);
 
-   grad->spread = evas_vg_gradient_spread_get(vg);
-   evas_vg_gradient_stop_get(vg, &stops, &count);
+   grad->spread = efl_gfx_gradient_spread_get(vg);
+   efl_gfx_gradient_stop_get(vg, &stops, &count);
    for (i = 0; i < count; i++)
      {
         new_stop = calloc(1, sizeof(Efl_Gfx_Gradient_Stop));
@@ -910,17 +908,17 @@ _create_gradient_node(Efl_VG *vg)
         grad->type = SVG_LINEAR_GRADIENT;
         grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
         if (!grad->linear) goto oom_error;
-        evas_vg_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
-        evas_vg_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
+        efl_gfx_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
+        efl_gfx_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
      }
    else
      {
         grad->type = SVG_RADIAL_GRADIENT;
         grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
         if (!grad->radial) goto oom_error;
-        evas_vg_gradient_radial_center_get(vg, &grad->radial->cx, &grad->radial->cy);
-        evas_vg_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
-        grad->radial->r = evas_vg_gradient_radial_radius_get(vg);
+        efl_gfx_gradient_radial_center_get(vg, &grad->radial->cx, &grad->radial->cy);
+        efl_gfx_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
+        grad->radial->r = efl_gfx_gradient_radial_radius_get(vg);
      }
 
    return grad;
@@ -939,7 +937,7 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
    Svg_Style_Property *style = node->style;
 
    // transformation
-   if ((matrix = evas_vg_node_transformation_get(vg)))
+   if ((matrix = efl_canvas_vg_node_transformation_get(vg)))
      {
         node->transform = calloc(1, sizeof(Eina_Matrix3));
         eina_matrix3_copy(node->transform, matrix);
@@ -956,36 +954,36 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
    // apply the fill style property
    style->fill.fill_rule = efl_gfx_shape_fill_rule_get(vg);
    style->fill.paint.none = EINA_FALSE;
-   if (evas_vg_shape_fill_get(vg))
+   if (efl_canvas_vg_shape_fill_get(vg))
      {
         // if the fill has gradient then apply.
-        style->fill.paint.gradient = _create_gradient_node(evas_vg_shape_fill_get(vg));
+        style->fill.paint.gradient = _create_gradient_node(efl_canvas_vg_shape_fill_get(vg));
      }
    else
      {
-        evas_vg_node_color_get(vg, &style->fill.paint.r, &style->fill.paint.g,
-                               &style->fill.paint.b, &style->fill.opacity);
+        efl_gfx_color_get(vg, &style->fill.paint.r, &style->fill.paint.g,
+                          &style->fill.paint.b, &style->fill.opacity);
      }
 
    // apply stroke style property
    style->stroke.paint.none = EINA_FALSE;
 
-   if (evas_vg_shape_stroke_fill_get(vg))
+   if (efl_canvas_vg_shape_stroke_fill_get(vg))
      {
         // if the stroke has gradient then apply.
-        style->stroke.paint.gradient = _create_gradient_node(evas_vg_shape_stroke_fill_get(vg));
+        style->stroke.paint.gradient = _create_gradient_node(efl_canvas_vg_shape_stroke_fill_get(vg));
      }
    else
      {
         // apply the stroke color
-        evas_vg_shape_stroke_color_get(vg, &style->stroke.paint.r, &style->stroke.paint.g,
+        efl_gfx_shape_stroke_color_get(vg, &style->stroke.paint.r, &style->stroke.paint.g,
                                        &style->stroke.paint.b, &style->stroke.opacity);
      }
 
-   style->stroke.width = (evas_vg_shape_stroke_width_get(vg));
-   style->stroke.cap = evas_vg_shape_stroke_cap_get(vg);
-   style->stroke.join = evas_vg_shape_stroke_join_get(vg);
-   style->stroke.scale = evas_vg_shape_stroke_scale_get(vg);
+   style->stroke.width = efl_gfx_shape_stroke_width_get(vg);
+   style->stroke.cap = efl_gfx_shape_stroke_cap_get(vg);
+   style->stroke.join = efl_gfx_shape_stroke_join_get(vg);
+   style->stroke.scale = efl_gfx_shape_stroke_scale_get(vg);
 
 
 }
@@ -1014,8 +1012,8 @@ vg_common_create_svg_node_helper(Efl_VG *vg, Svg_Node *parent)
    else if (efl_isa(vg, EFL_CANVAS_VG_SHAPE_CLASS))
      {
         svg_node = _create_node(parent, SVG_NODE_CUSTOME_COMMAND);
-        evas_vg_shape_path_get(vg, &commands, &points);
-        evas_vg_shape_path_length_get(vg, &commands_count, &points_count);
+        efl_gfx_path_get(vg, &commands, &points);
+        efl_gfx_path_length_get(vg, &commands_count, &points_count);
         svg_node->node.command.commands_count = commands_count;
         svg_node->node.command.points_count = points_count;
         svg_node->node.command.points = calloc(points_count, sizeof(double));
