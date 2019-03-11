@@ -1,4 +1,4 @@
-class Efl.App.Test.CML extends Efl.Object implements Efl.Core.Command_Line
+class @beta Efl.App.Test.CML extends Efl.Object implements Efl.Core.Command_Line
 {
 
 }

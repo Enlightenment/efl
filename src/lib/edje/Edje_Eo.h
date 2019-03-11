@@ -4,7 +4,7 @@
 #include "efl_layout_signal.eo.h"
 #include "efl_layout_group.eo.h"
 #include "efl_canvas_layout.eo.h"
-#include "edje_edit.eo.h"
+#include "edje_edit_eo.h"
 
 #include "efl_canvas_layout_part.eo.h"
 #include "efl_canvas_layout_part_box.eo.h"

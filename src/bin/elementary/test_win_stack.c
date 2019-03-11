@@ -4,6 +4,7 @@
 
 // Stack API is still beta (and EO only)
 #define EFL_UI_WIN_BETA
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static int level = 0;
@@ -20,13 +21,13 @@ _win_new(Evas_Object *stack_top, const char *title)
    if (level >= 3)
      win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                    efl_ui_win_name_set(efl_added, "window-stack"),
-                   efl_ui_win_type_set(efl_added, ELM_WIN_NAVIFRAME_BASIC),
+                   efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_NAVIFRAME_BASIC),
                    efl_text_set(efl_added, title),
                    efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    else
      win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
                    efl_ui_win_name_set(efl_added, "window-stack"),
-                   efl_ui_win_type_set(efl_added, ELM_WIN_DIALOG_BASIC),
+                   efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                    efl_text_set(efl_added, title),
                    efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

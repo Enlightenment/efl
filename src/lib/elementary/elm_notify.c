@@ -20,7 +20,7 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
-static Efl_Ui_Theme_Apply_Result
+static Eina_Error
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
@@ -139,12 +139,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_geometry_set(obj, x, y, w, h);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -374,6 +374,7 @@ _elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Obj
           _changed_size_hints_cb, obj);
         edje_object_part_swallow(sd->notify, "elm.swallow.content", content);
      }
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
 
    _calc(obj);
 
@@ -399,6 +400,7 @@ _elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
    content = sd->content;
    _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    edje_object_part_unswallow(sd->notify, content);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 
    return content;
 }
@@ -733,4 +735,4 @@ _elm_notify_part_efl_ui_l10n_l10n_text_set(Eo *obj, void *_pd EINA_UNUSED, const
    ELM_PART_CONTENT_DEFAULT_OPS(elm_notify), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_notify)
 
-#include "elm_notify.eo.c"
+#include "elm_notify_eo.c"

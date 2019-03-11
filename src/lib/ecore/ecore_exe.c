@@ -414,4 +414,4 @@ _ecore_exe_event_add_free(void *data EINA_UNUSED,
    free(e);
 }
 
-#include "ecore_exe.eo.c"
+#include "ecore_exe_eo.c"

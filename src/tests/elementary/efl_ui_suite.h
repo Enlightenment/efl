@@ -20,6 +20,7 @@
   }
 
 void efl_ui_test_box(TCase *tc);
+void efl_ui_test_table(TCase *tc);
 void efl_ui_test_grid(TCase *tc);
 void efl_ui_test_relative_layout(TCase *tc);
 void efl_ui_test_atspi(TCase *tc);
@@ -31,6 +32,7 @@ void efl_ui_test_focus(TCase *tc);
 void efl_ui_test_focus_sub(TCase *tc);
 
 void efl_ui_model(TCase *tc);
+void efl_ui_test_widget(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 

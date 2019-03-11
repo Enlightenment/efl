@@ -476,7 +476,7 @@ _elm_ews_wm_init(void)
    o = edje_object_add(e);
    if (!o) return EINA_FALSE;
 
-   if (!_elm_theme_set(NULL, o, "ews", "background", "default", EINA_TRUE))
+   if (_elm_theme_set(NULL, o, "ews", "background", "default", EINA_TRUE) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         ERR("Could not set background theme, fallback to rectangle");
         evas_object_del(o);

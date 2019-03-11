@@ -9,7 +9,6 @@ class @beta Efl.Loop_Timer extends Efl.Loop_Consumer
 
      The @Efl.Object.event_freeze and @Efl.Object.event_thaw calls are used to pause and unpause the timer.
    ]]
-   legacy_prefix: ecore_timer;
    methods {
       @property interval {
          [[Interval the timer ticks on.]]

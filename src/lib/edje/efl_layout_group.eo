@@ -89,7 +89,6 @@ interface @beta Efl.Layout.Group
               Warning: Do not confuse this call with edje_file_data_get(), which
               queries for a global EDC data field on an EDC declaration file.
             ]]
-            legacy: edje_object_data_get;
          }
          keys {
             key: string; [[The data field's key string]]

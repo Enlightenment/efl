@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include <stdint.h>
 #include "elm_priv.h"
-#include "elm_icon.eo.h"
+#include "elm_icon_eo.h"
 #include "elm_widget_menu.h"
 #include "elm_widget_icon.h"
 

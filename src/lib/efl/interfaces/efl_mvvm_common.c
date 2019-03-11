@@ -15,6 +15,7 @@ EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
 
 EAPI Eina_Error EFL_FACTORY_ERROR_NOT_SUPPORTED = 0;
+EAPI Eina_Error EFL_PROPERTY_ERROR_INVALID_KEY = 0;
 
 static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
 static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
@@ -26,6 +27,9 @@ static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
 static const char EFL_MODEL_ERROR_INVALID_OBJECT_STR[]    = "Object is invalid";
 
 static const char EFL_FACTORY_ERROR_NOT_SUPPORTED_STR[]   = "Operation not supported";
+
+static const char EFL_PROPERTY_ERROR_INVALID_KEY_STR[]    = "Incorrect key provided";
+
 
 EAPI int
 efl_model_init(void)
@@ -43,6 +47,10 @@ efl_model_init(void)
 #undef _ERROR
 #define _ERROR(Name) EFL_FACTORY_ERROR_##Name = eina_error_msg_static_register(EFL_FACTORY_ERROR_##Name##_STR);
    _ERROR(NOT_SUPPORTED);
+
+#undef _ERROR
+#define _ERROR(Name) EFL_PROPERTY_ERROR_##Name = eina_error_msg_static_register(EFL_PROPERTY_ERROR_##Name##_STR);
+   _ERROR(INVALID_KEY);
 
    return EINA_TRUE;
 }

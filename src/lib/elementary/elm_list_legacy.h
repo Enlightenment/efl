@@ -11,5 +11,5 @@
  */
 EAPI Evas_Object                 *elm_list_add(Evas_Object *parent);
 
-#include "elm_list_item.eo.legacy.h"
-#include "elm_list.eo.legacy.h"
+#include "elm_list_item_eo.legacy.h"
+#include "elm_list_eo.legacy.h"

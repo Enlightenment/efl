@@ -102,7 +102,7 @@ EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
 EAPI Eina_Bool evas_image_max_size_get(Eo *eo_e, int *w, int *h);
 
 
-#include "canvas/evas_canvas.eo.legacy.h"
+#include "canvas/evas_canvas_eo.legacy.h"
 
 /**
  * @}
@@ -2130,6 +2130,19 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Test if any object is clipped by @c obj.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if any object is clipped by @c obj, @c false otherwise
+ *
+ * @since 1.8
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
 /** How the object should be rendered to output.
  *
  * @ingroup Evas
@@ -2282,7 +2295,7 @@ EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_
 
 EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y) EINA_WARN_UNUSED_RESULT;
 
-#include "canvas/efl_canvas_object.eo.legacy.h"
+#include "canvas/efl_canvas_object_eo.legacy.h"
 
 /**
  * @brief Get the Evas to which this object belongs to
@@ -3701,6 +3714,7 @@ EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONN
 #include "canvas/efl_canvas_vg_node.eo.legacy.h"
 #include "canvas/efl_canvas_vg_object.eo.legacy.h"
 #include "canvas/efl_canvas_vg_container.eo.legacy.h"
+
 /**
  * Creates a new vector shape object.
  *
@@ -3893,7 +3907,7 @@ EAPI void evas_vg_node_raise(Eo *obj);
  */
 EAPI void evas_vg_node_lower(Eo *obj);
 
-#include "canvas/efl_canvas_vg_node.eo.legacy.h"
+#include "canvas/efl_canvas_vg_node_eo.legacy.h"
 
 /**
  *
@@ -4336,7 +4350,7 @@ EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
  */
 EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
 
-#include "canvas/efl_canvas_vg_shape.eo.legacy.h"
+#include "canvas/efl_canvas_vg_shape_eo.legacy.h"
 
 /**
  *
@@ -6021,7 +6035,7 @@ EAPI void evas_object_image_reload(Evas_Object *obj) EINA_DEPRECATED;
  */
 EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
 
-#include "canvas/evas_image.eo.legacy.h"
+#include "canvas/evas_image_eo.legacy.h"
 
 /**
  * @}
@@ -6105,7 +6119,7 @@ typedef enum
    EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT = 112 /* 7 >> 4 */ /**< shadow growing to the right */
 } Evas_Text_Style_Type;
 
-#include "canvas/evas_text.eo.legacy.h"
+#include "canvas/evas_text_eo.legacy.h"
 
 /**
  *
@@ -6191,7 +6205,7 @@ EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_
  */
 EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
 
-#include "canvas/evas_textgrid.eo.legacy.h"
+#include "canvas/evas_textgrid_eo.legacy.h"
 
 /**
  *
@@ -6295,7 +6309,7 @@ EAPI void evas_object_textgrid_font_get(const Eo *obj, const char **font_name, E
  */
 EAPI Evas_Object *evas_object_line_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_line.eo.legacy.h"
+#include "canvas/evas_line_eo.legacy.h"
 
 /**
  * @}
@@ -6737,7 +6751,7 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  * This function will return @c null when a non-smart object is passed.
  *
  * See also @ref Efl.Canvas.Group.group_member_add,
- * @ref Efl.Canvas.Group.group_member_del and @ref evas_object_smart_iterator_new.
+ * @ref Efl.Canvas.Group.group_member_remove and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *
@@ -6794,7 +6808,7 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
  * object.
  *
  * See also @ref Efl.Canvas.Group.group_member_add and
- * @ref Efl.Canvas.Group.group_member_del
+ * @ref Efl.Canvas.Group.group_member_remove
  *
  * @return Returns the iterator of the member objects of @c obj.
  *
@@ -6851,7 +6865,7 @@ EAPI void evas_object_smart_changed(Evas_Object *obj);
  */
 EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
-#include "canvas/efl_canvas_group.eo.legacy.h"
+#include "canvas/efl_canvas_group_eo.legacy.h"
 
 /**
  * @}
@@ -6987,7 +7001,7 @@ EAPI Eina_Bool                  evas_object_box_option_property_get(const Evas_O
  */
 EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_box.eo.legacy.h"
+#include "canvas/evas_box_eo.legacy.h"
 
 /**
  * @}
@@ -7034,7 +7048,7 @@ EAPI void evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored);
  */
 EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
 
-#include "canvas/evas_table.eo.legacy.h"
+#include "canvas/evas_table_eo.legacy.h"
 
 /**
  * @}
@@ -7084,7 +7098,7 @@ EAPI void evas_object_grid_mirrored_set(Eo *obj, Eina_Bool mirrored);
  */
 EAPI Eina_Bool evas_object_grid_mirrored_get(const Eo *obj);
 
-#include "canvas/evas_grid.eo.legacy.h"
+#include "canvas/evas_grid_eo.legacy.h"
 
 /**
  * @}
@@ -8177,7 +8191,83 @@ EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name,
  * @since 1.20
  */
 EAPI Evas_Object *evas_object_event_grabber_add(Evas *e);
-#include "canvas/efl_canvas_event_grabber.eo.legacy.h"
+
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ * @param[in] is_frame @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI void evas_object_is_frame_object_set(Efl_Canvas_Object *obj, Eina_Bool is_frame);
+
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI Eina_Bool evas_object_is_frame_object_get(const Efl_Canvas_Object *obj);
+
+/**
+ * @brief Set whether an Evas object is to freeze (discard) events.
+ *
+ * If @c freeze is @c true, it will force events on @c obj to be discarded.
+ * Unlike @ref evas_object_pass_events_set, events will not be passed to next
+ * lower object. This API can be used for blocking events while @c obj is in
+ * transition.
+ *
+ * If @c freeze is @c false, events will be processed on that object as normal.
+ *
+ * @warning If you block only key/mouse up events with this API, you can't be
+ * sure of the state of any objects that have only key/mouse down events.
+ *
+ * @param[in] obj The object.
+ * @param[in] freeze Pass when @c obj is to freeze events ($true) or not
+ * ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI void evas_object_freeze_events_set(Efl_Canvas_Object *obj, Eina_Bool freeze);
+
+/**
+ * @brief Determine whether an object is set to freeze (discard) events.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Pass when @c obj is to freeze events ($true) or not ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI Eina_Bool evas_object_freeze_events_get(const Efl_Canvas_Object *obj);
+
+#include "canvas/efl_canvas_event_grabber_eo.legacy.h"
 
 #include "canvas/efl_canvas_animation_alpha.eo.legacy.h"
 #include "canvas/efl_canvas_animation.eo.legacy.h"

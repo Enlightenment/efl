@@ -193,11 +193,17 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public int Push(T val)
     {
-        IntPtr ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_push(Handle, ele);
+        IntPtr ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_push(Handle, ind);
         if (r == -1)
             NativeFreeInplace<T>(ele);
         ResidueFreeInplace<T>(ele);
+        gch.Free();
         return r;
     }
 
@@ -230,8 +236,13 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public bool InsertAt(uint idx, T val)
     {
-        IntPtr ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_insert_at(Handle, idx, ele);
+        IntPtr ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_insert_at(Handle, idx, ind);
         if (!r)
             NativeFreeInplace<T>(ele);
         ResidueFreeInplace<T>(ele);
@@ -245,8 +256,13 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             return false;
         if (OwnContent)
             NativeFreeInplace<T>(old);
-        var ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_replace_at(Handle, idx, ele);
+        var ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_replace_at(Handle, idx, ind);
         ResidueFreeInplace<T>(ele);
         return r;
     }

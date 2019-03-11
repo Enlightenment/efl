@@ -1,7 +1,6 @@
 class Elm.Atspi.App.Object extends Efl.Object implements Efl.Access.Object
 {
    [[AT-SPI application object class]]
-   legacy_prefix: elm_atspi_app_object;
    data: Elm_Atspi_App_Object_Data;
    implements {
       Efl.Object.destructor;

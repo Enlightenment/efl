@@ -8,7 +8,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "efl_ui_win_socket_legacy.eo.h"
+#include "efl_ui_win_socket_legacy_eo.h"
 
 #define MY_CLASS EFL_UI_WIN_SOCKET_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Win_Socket"
@@ -21,7 +21,7 @@ typedef struct
 EOLIAN static Efl_Object *
 _efl_ui_win_socket_efl_object_finalize(Eo *obj, Efl_Ui_Win_Socket_Data *pd EINA_UNUSED)
 {
-   efl_ui_win_type_set(obj, ELM_WIN_SOCKET_IMAGE);
+   efl_ui_win_type_set(obj, EFL_UI_WIN_TYPE_SOCKET_IMAGE);
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    return obj;
@@ -52,4 +52,4 @@ _efl_ui_win_socket_legacy_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
    return obj;
 }
 
-#include "efl_ui_win_socket_legacy.eo.c"
+#include "efl_ui_win_socket_legacy_eo.c"

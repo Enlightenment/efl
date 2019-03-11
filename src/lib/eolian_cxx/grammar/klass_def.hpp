@@ -16,6 +16,8 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include <iosfwd>
+#include <string>
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -73,6 +75,26 @@ enum class typedecl_type
   function_ptr,
 };
 
+inline std::ostream& operator<<(std::ostream& s, typedecl_type dec)
+{
+  switch(dec)
+  {
+  case typedecl_type::unknown:
+    return s << "unknown";
+  case typedecl_type::struct_:
+    return s << "struct_";
+  case typedecl_type::struct_opaque:
+    return s << "struct_opaque";
+  case typedecl_type::enum_:
+    return s << "enum_";
+  case typedecl_type::alias:
+    return s << "alias";
+  case typedecl_type::function_ptr:
+    return s << "function_ptr";
+  };
+  return s;
+}
+
 inline typedecl_type typedecl_type_get(Eolian_Typedecl const* decl)
 {
   if (!decl)
@@ -91,6 +113,14 @@ inline typedecl_type typedecl_type_get(Eolian_Typedecl const* decl)
   }
 }
 
+enum class variable_type
+{
+  unknown,
+  constant,
+  global
+};
+
+
 struct type_def;
 bool operator==(type_def const& rhs, type_def const& lhs);
 bool operator!=(type_def const& rhs, type_def const& lhs);
@@ -100,6 +130,22 @@ enum class class_type
   regular, abstract_, mixin, interface_
 };
 
+inline std::ostream& operator<<(std::ostream& s, class_type t)
+{
+  switch(t)
+  {
+  case class_type::regular:
+    return s << "regular";
+  case class_type::abstract_:
+    return s << "abstract_";
+  case class_type::mixin:
+    return s << "mixin";
+  case class_type::interface_:
+    return s << "interface_";
+  };
+  return s;
+}
+
 struct klass_name
 {
    std::vector<std::string> namespaces;
@@ -107,6 +153,14 @@ struct klass_name
    qualifier_def base_qualifier;
    class_type type;
    std::string klass_get_name;
+
+   friend inline std::ostream& operator<<(std::ostream& s, klass_name const& name)
+   {
+     s << "[ namespaces: {";
+     std::copy(name.namespaces.begin(), name.namespaces.end(), std::ostream_iterator<std::string>(s, ","));
+     return s << "}, eolian_name: " << name.eolian_name << " base_qualifier: " << name.base_qualifier
+              << " type: " << name.type << " klass_get_name: " << name.klass_get_name << "]";
+   }
 
    klass_name() {
    }
@@ -264,6 +318,14 @@ struct regular_type_def
    bool is_alias() const { return is_type(typedecl_type::alias); }
    bool is_function_ptr() const { return is_type(typedecl_type::function_ptr); }
 
+   friend inline std::ostream& operator<<(std::ostream& s, regular_type_def const& def)
+   {
+     s << "[ base_type: " << def.base_type << " base_qualifier: " << def.base_qualifier
+       << " namespaces: ";
+     std::copy(def.namespaces.begin(), def.namespaces.end(), std::ostream_iterator<std::string>(s, ", "));
+     return s << " type_type: " << def.type_type << " is_undefined " << def.is_undefined << "]";
+   }
+
    std::string base_type;
    qualifier_def base_qualifier;
    std::vector<std::string> namespaces;
@@ -284,6 +346,13 @@ struct complex_type_def
 {
    regular_type_def outer;
    std::vector<type_def> subtypes;
+
+   friend inline std::ostream& operator<<(std::ostream& s, complex_type_def const& def)
+   {
+     s << "[ outer " << def.outer << " subtypes: {";
+     std::copy(def.subtypes.begin(), def.subtypes.end(), std::ostream_iterator<type_def>(s, ", "));
+     return s << "}]";
+   }
 };
 
 inline bool operator==(complex_type_def const& lhs, complex_type_def const& rhs)
@@ -317,6 +386,12 @@ struct type_def
    friend inline bool operator<(type_def const& lhs, type_def const& rhs)
    {
       return lhs.c_type < rhs.c_type;
+   }
+   friend inline std::ostream& operator<<(std::ostream& s, type_def const& rhs)
+   {
+      return s << "[ original: " << rhs.original_type << " c_type "
+               << rhs.c_type << " has_own " << rhs.has_own << " is_ptr "
+               << rhs.is_ptr << "]";
    }
 };
 
@@ -854,6 +929,62 @@ struct property_def
          if (documentation.summary.empty())
            documentation = eolian_implement_documentation_get(implement, EOLIAN_PROP_SET);
       }
+  }
+};
+
+struct variable_def
+{
+  std::string name;
+  std::string full_name;
+  type_def base_type;
+  documentation_def documentation;
+  variable_type type;
+  std::vector<std::string> namespaces;
+  Eolian_Value expression_value;
+  bool is_extern : 1;
+
+  friend inline bool operator==(variable_def const& lhs, variable_def const& rhs)
+  {
+    return lhs.name == rhs.name
+      && lhs.full_name == rhs.full_name
+      && lhs.base_type == rhs.base_type
+      && lhs.documentation == rhs.documentation
+      && lhs.type == rhs.type
+      && lhs.namespaces == rhs.namespaces
+      && lhs.expression_value.type == rhs.expression_value.type
+      && lhs.expression_value.value.ll == rhs.expression_value.value.ll
+      && lhs.is_extern == rhs.is_extern;
+  }
+
+  friend inline bool operator!=(variable_def const& lhs, variable_def const& rhs)
+  {
+    return !(lhs == rhs);
+  }
+
+  variable_def() = default;
+  variable_def(Eolian_Variable const* variable, Eolian_Unit const* unit)
+        : name(::eolian_variable_short_name_get(variable))
+        , full_name(::eolian_variable_name_get(variable))
+        , base_type(::eolian_variable_base_type_get(variable), unit, ::EOLIAN_C_TYPE_DEFAULT)
+        , documentation(::eolian_variable_documentation_get(variable))
+        , type(static_cast<variable_type>(::eolian_variable_type_get(variable)))
+        , expression_value()
+        , is_extern(::eolian_variable_is_extern(variable))
+  {
+     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_variable_namespaces_get(variable))
+          , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
+       {
+          this->namespaces.push_back((&*namespace_iterator));
+       }
+
+     if (this->type == variable_type::constant)
+       {
+          auto expr = ::eolian_variable_value_get(variable);
+          if (!expr)
+            throw std::runtime_error("Could not get constant variable value expression");
+
+          this->expression_value = ::eolian_expression_eval_type(expr, ::eolian_variable_base_type_get(variable));
+       }
   }
 };
 

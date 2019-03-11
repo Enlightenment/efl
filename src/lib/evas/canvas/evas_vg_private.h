@@ -128,8 +128,8 @@ Vg_Cache_Entry*             evas_cache_vg_entry_create(const Eina_File *file, co
 Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
 Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key, Eina_Bool mmap);
-Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
-Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);
+Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info);
+Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info);
 double                      evas_cache_vg_anim_duration_get(const Vg_Cache_Entry *vg_entry);
 unsigned int                evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry *vg_entry);
 Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry);

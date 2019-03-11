@@ -5,8 +5,8 @@
 #include <Elementary.h>
 
 // FIXME: elm_entry is not part of EO API, the below test cases may be useless
-#include "elm_entry.eo.h"
-#include "elm_popup.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_popup_eo.h"
 
 static void
 my_entry_bt_1(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)

@@ -1,3 +1,3 @@
-#include "ecore_con_eet_base.eo.h"
-#include "ecore_con_eet_server_obj.eo.h"
-#include "ecore_con_eet_client_obj.eo.h"
+#include "ecore_con_eet_base_eo.h"
+#include "ecore_con_eet_server_obj_eo.h"
+#include "ecore_con_eet_client_obj_eo.h"

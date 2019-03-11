@@ -165,5 +165,7 @@ class Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
       Efl.Object.constructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 }

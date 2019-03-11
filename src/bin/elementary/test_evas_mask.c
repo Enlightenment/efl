@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #include <Elementary.h>
+#include <Efl_Ui.h>
 
 
 static Evas_Object *
@@ -118,12 +119,13 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    // FIXME: No API to set background as "tile" :(
    snprintf(buf, sizeof(buf), "%s/images/pm_fill.png", elm_app_data_dir_get());
-   efl_file_set(efl_part(win, "background"), buf, NULL);
+   efl_file_simple_load(efl_part(win, "background"), buf, NULL);
 
    // FIXME: layout EO API
    snprintf(buf, sizeof(buf), "%s/objects/test_masking.edj", elm_app_data_dir_get());
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win,
-                efl_file_set(efl_added, buf, "masking"));
+                efl_file_set(efl_added, buf),
+                efl_file_key_set(efl_added, "masking"));
    efl_pack(box, ly);
 
    // FIXME: No genlist in EO API

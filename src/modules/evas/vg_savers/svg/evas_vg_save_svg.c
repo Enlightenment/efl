@@ -129,7 +129,7 @@ _svg_node_printf(Svg_Node *parent, Eina_Strbuf *buf)
      }
 }
 
-int
+Evas_Load_Error
 evas_vg_save_file_svg(Vg_File_Data *evg_data, const char *file, const char *key EINA_UNUSED, int compress EINA_UNUSED)
 {
    Eina_Strbuf *buf = NULL;
@@ -138,7 +138,7 @@ evas_vg_save_file_svg(Vg_File_Data *evg_data, const char *file, const char *key 
    if (!f)
      {
         ERR("Cannot open file '%s' for SVG save", file);
-        return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
+        return EVAS_LOAD_ERROR_GENERIC;
      }
 
    root = vg_common_svg_create_svg_node(evg_data);

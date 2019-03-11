@@ -11,8 +11,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_naviframe.eo.h"
-#include "elm_naviframe_item.eo.h"
+#include "elm_naviframe_eo.h"
+#include "elm_naviframe_item_eo.h"
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
@@ -366,7 +366,7 @@ _item_title_enabled_update(Elm_Naviframe_Item_Data *nit, Eina_Bool transition)
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
@@ -384,7 +384,7 @@ _elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
      }
 
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static char *
@@ -2052,5 +2052,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_naviframe), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_naviframe)
 
-#include "elm_naviframe_item.eo.c"
-#include "elm_naviframe.eo.c"
+#include "elm_naviframe_item_eo.c"
+#include "elm_naviframe_eo.c"

@@ -38,7 +38,7 @@ _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 static int
-_filter_cb(void *data EINA_UNUSED, Efl_Io_Model *model, Eina_File_Direct_Info *info)
+_filter_cb(void *data EINA_UNUSED, Efl_Io_Model *model EINA_UNUSED, Eina_File_Direct_Info *info)
 {
    if (info->type == EINA_FILE_DIR && info->path[info->name_start] != '.')  return 1;
 

@@ -269,7 +269,8 @@ gl_extn_veto(Render_Engine *re)
         if (!_ckext(str, "EGL_KHR_partial_update"))
           glsym_eglSetDamageRegionKHR = NULL;
 
-        if (!_ckext(str, "EGL_EXT_swap_buffers_with_damage"))
+        if ((!_ckext(str, "EGL_EXT_swap_buffers_with_damage")) &&
+            (!_ckext(str, "EGL_KHR_swap_buffers_with_damage")))
           glsym_eglSwapBuffersWithDamage = NULL;
         if (_ckext(str, "EGL_EXT_image_dma_buf_import"))
           dmabuf_present = EINA_TRUE;

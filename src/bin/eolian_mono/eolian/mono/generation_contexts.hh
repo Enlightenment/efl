@@ -14,6 +14,7 @@ struct class_context
         enums,
         function_ptr,
         alias,
+        variables,
     };
     wrapper_kind current_wrapper_kind;
 };

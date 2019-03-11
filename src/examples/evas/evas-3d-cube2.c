@@ -168,7 +168,7 @@ _mesh_setup(Scene_Data *data)
 
    evas_canvas3d_texture_data_set(data->texture0, EVAS_COLORSPACE_ARGB8888, 4, 4, &pixels0[0]);
    evas_canvas3d_texture_data_set(data->texture1, EVAS_COLORSPACE_ARGB8888, 4, 4, &pixels1[0]);
-   efl_file_set(data->texture_normal, normal_map_path, NULL);
+   efl_file_simple_load(data->texture_normal, normal_map_path, NULL);
 
    evas_canvas3d_material_texture_set(data->material0, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->texture0);
    evas_canvas3d_material_texture_set(data->material1, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->texture1);

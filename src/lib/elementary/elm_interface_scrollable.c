@@ -8,6 +8,7 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define MY_PAN_CLASS ELM_PAN_CLASS
 
@@ -4972,4 +4973,4 @@ _elm_interface_scrollable_item_loop_enabled_get(const Eo *obj EINA_UNUSED, Elm_S
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_interface_scrollable)
 
 #include "elm_interface_scrollable.eo.c"
-#include "elm_pan.eo.c"
+#include "elm_pan_eo.c"

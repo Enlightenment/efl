@@ -11,4 +11,4 @@
  */
 EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
 
-#include "elm_mapbuf.eo.legacy.h"
+#include "elm_mapbuf_eo.legacy.h"

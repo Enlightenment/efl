@@ -178,7 +178,8 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
 
         /* Set mp1, mp2 position according to difference between
          * previous points and next points.
-         * It improves smoothness of curve's slope changing. */
+         * It improves smoothness of curve's slope changing.
+         * But, it can cause huge differeces from actual positions. */
         mp0_x = *last_x1;
         mp0_y = *last_y1;
         mp1_x = *last_x1 + (int) round(vec1.x - vec0.x);
@@ -187,6 +188,12 @@ _segment_draw(Efl_Ui_Textpath_Data *pd, int slice_no, double dt, double dist,
         mp2_y = *last_y2 + (int) round(vec2.y - vec3.y);
         mp3_x = *last_x2;
         mp3_y = *last_y2;
+
+        /* It reduces differences between actual position and modified position. */
+        mp1_x += (int)round(((double)vec1.x - mp1_x) / 2);
+        mp1_y += (int)round(((double)vec1.y - mp1_y) / 2);
+        mp2_x += (int)round(((double)vec2.x - mp2_x) / 2);
+        mp2_y += (int)round(((double)vec2.y - mp2_y) / 2);
 
         evas_map_point_coord_set(map, cmp + i * 4, mp0_x, mp0_y, 0);
         evas_map_point_coord_set(map, cmp + i * 4 + 1, mp1_x, mp1_y, 0);
@@ -646,13 +653,13 @@ _efl_ui_textpath_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Da
    return edje_object_part_text_get(pd->text_obj, "efl.text");
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   Efl_Ui_Theme_Apply_Result ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",
                                elm_widget_style_get(obj));
@@ -750,8 +757,9 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Dat
       EFL_CANVAS_GROUP_ADD_OPS(efl_ui_textpath)
 
 #include "efl_ui_textpath.eo.c"
+#include "efl_ui_textpath_eo.legacy.c"
 
-#include "efl_ui_textpath_legacy.eo.h"
+#include "efl_ui_textpath_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_textpath"
 /* Legacy APIs */
@@ -777,5 +785,5 @@ elm_textpath_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_TEXTPATH_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_textpath_legacy.eo.c"
+#include "efl_ui_textpath_legacy_eo.c"
 

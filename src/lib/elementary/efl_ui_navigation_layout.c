@@ -15,7 +15,7 @@
 EOLIAN static void
 _efl_ui_navigation_layout_bar_set(Eo *obj, Efl_Ui_Navigation_Layout_Data *pd, Efl_Ui_Layout *bar)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(bar, EFL_UI_LAYOUT_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(bar, EFL_UI_LAYOUT_BASE_CLASS));
 
    efl_content_set(efl_part(obj, "efl.bar"), bar);
    pd->bar = bar;
@@ -40,10 +40,10 @@ _efl_ui_navigation_layout_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Layo
    elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    return obj;

@@ -42,4 +42,4 @@ EAPI void      elm_table_pack_set(Evas_Object *subobj, int col, int row, int col
  */
 EAPI void      elm_table_pack_get(Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan);
 
-#include "elm_table.eo.legacy.h"
+#include "elm_table_eo.legacy.h"

@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static const struct {
@@ -142,7 +143,7 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         if (eina_list_count(grps) > 0)
           {
              const char *grp = eina_list_nth(grps, 0);
-             efl_file_set(ph, file, grp);
+             efl_file_simple_load(ph, file, grp);
              printf("Successfully set the edje file: %s, group: %s\n", file, grp);
           }
         else printf("Failed to set edje file\n");
@@ -805,7 +806,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    char buf[PATH_MAX];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Image_Zoomable animation"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -823,7 +824,8 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", elm_app_data_dir_get());
    zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win,
-                      efl_file_set(efl_added, buf, NULL),
+                      efl_file_set(efl_added, buf),
+                      efl_file_load(efl_added),
                       efl_pack(bx, efl_added),
                       efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );

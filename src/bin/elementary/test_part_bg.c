@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define MAX_NUM_OF_CONTENT 18
@@ -18,7 +19,7 @@ _reset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    target = evas_object_data_get(radio, "data");
 
    efl_gfx_color_set(efl_part(target, "background"), 0, 0, 0, 0);
-   efl_file_set(efl_part(target, "background"), NULL, NULL);
+   efl_file_simple_load(efl_part(target, "background"), NULL, NULL);
 }
 
 static void
@@ -46,7 +47,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    target = evas_object_data_get(radio, "data");
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
-   efl_file_set(efl_part(target, "background"), buf, NULL);
+   efl_file_simple_load(efl_part(target, "background"), buf, NULL);
    type = efl_gfx_image_scale_type_get(efl_part(target, "background"));
    type = (type + 1) % 5;
    efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
@@ -103,7 +104,7 @@ _create_box_contents(Evas_Object *box)
         if (efl_isa(content, EFL_UI_IMAGE_CLASS))
           {
              snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
-             efl_file_set(content, buf, NULL);
+             efl_file_simple_load(content, buf, NULL);
           }
 
         evas_object_data_set(radio, "data", content);

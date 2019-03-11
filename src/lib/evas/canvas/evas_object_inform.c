@@ -3,14 +3,10 @@
 #include "evas_private.h"
 
 /* BEGIN: events to maintain compatibility with legacy */
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_MOVE =
-   EFL_EVENT_DESCRIPTION("move");
-EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_RESIZE =
-   EFL_EVENT_DESCRIPTION("resize");
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_MOVE;
-#define EFL_GFX_ENTITY_EVENT_MOVE (&(_EFL_GFX_ENTITY_EVENT_MOVE))
-EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_RESIZE;
-#define EFL_GFX_ENTITY_EVENT_RESIZE (&(_EFL_GFX_ENTITY_EVENT_RESIZE))
+EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW =
+   EFL_EVENT_DESCRIPTION("show");
+EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE =
+   EFL_EVENT_DESCRIPTION("hide");
 /* END: events to maintain compatibility with legacy */
 
 /* local calls */
@@ -20,7 +16,7 @@ evas_object_inform_call_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 {
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, NULL, event_id, EFL_GFX_ENTITY_EVENT_SHOW);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, (void*)1, event_id, EFL_GFX_ENTITY_EVENT_SHOW);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 

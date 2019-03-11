@@ -8,13 +8,6 @@ interface @beta Efl.Container
    eo_prefix: efl_content;
    event_prefix: efl_container;
    methods {
-      content_remove {
-         [[Unswallow an object from this container.]]
-         params {
-            @in content: Efl.Gfx.Entity; [[To be removed content]]
-         }
-         return: bool; [[$false if $content was not a child or can not be removed.]]
-      }
       content_iterate {
          [[Begin iterating over this object's contents.]]
          return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to object content]]

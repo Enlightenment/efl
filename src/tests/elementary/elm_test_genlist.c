@@ -119,6 +119,56 @@ EFL_START_TEST(elm_genlist_test_item_iteration)
 }
 EFL_END_TEST
 
+static void
+_genlist_item_content_test_realize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+static Evas_Object *
+_item_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
+{
+   Evas_Object *ic = elm_button_add(obj);
+   return ic;
+}
+
+EFL_START_TEST(elm_genlist_test_item_content)
+{
+   Elm_Genlist_Item_Class *gtc;
+   Evas_Object *content, *parent;
+   Elm_Object_Item *it;
+
+   gtc = elm_genlist_item_class_new();
+   gtc->item_style = "default";
+   gtc->func.content_get = _item_content_get;
+   gtc->func.state_get = NULL;
+   gtc->func.del = NULL;
+
+   win = win_add(NULL, "genlist", ELM_WIN_BASIC);
+
+   genlist = elm_genlist_add(win);
+   evas_object_smart_callback_add(genlist, "realized", _genlist_item_content_test_realize, NULL);
+
+   it = elm_genlist_item_append(genlist, gtc, NULL, NULL,
+                                ELM_GENLIST_ITEM_NONE, NULL, NULL);
+
+   evas_object_resize(genlist, 100, 100);
+   evas_object_resize(win, 150, 150);
+   evas_object_show(genlist);
+   evas_object_show(win);
+
+   ecore_main_loop_begin();
+
+   content = elm_object_item_part_content_get(it, "elm.swallow.end");
+   parent = elm_object_parent_widget_get(content);
+   ck_assert_ptr_eq(parent, genlist);
+
+   elm_genlist_item_all_contents_unset(it, NULL);
+   parent = elm_object_parent_widget_get(content);
+   ck_assert_ptr_eq(parent, win);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_genlist_test_legacy_type_check)
 {
    const char *type;
@@ -520,6 +570,7 @@ void elm_test_genlist(TCase *tc)
    tcase_add_test(tc, elm_genlist_test_legacy_type_check);
    tcase_add_test(tc, elm_genlist_test_item_destroy);
    tcase_add_test(tc, elm_genlist_test_item_iteration);
+   tcase_add_test(tc, elm_genlist_test_item_content);
    tcase_add_test(tc, elm_genlist_test_atspi_role_get);
    tcase_add_test(tc, elm_genlist_test_atspi_children_get1);
    tcase_add_test(tc, elm_genlist_test_atspi_children_get2);

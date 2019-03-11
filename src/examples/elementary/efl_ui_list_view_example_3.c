@@ -10,6 +10,7 @@
 #define ELM_INTERFACE_ATSPI_SELECTION_PROTECTED
 
 #include <Eo.h>
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>

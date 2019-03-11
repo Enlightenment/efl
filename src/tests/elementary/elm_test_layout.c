@@ -70,9 +70,22 @@ EFL_START_TEST(elm_layout_test_swallows)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_layout_test_text_set)
+{
+   Evas_Object *win, *layout;
+
+   win = win_add(NULL, "layout", ELM_WIN_BASIC);
+
+   layout = elm_layout_add(win);
+   ck_assert(!elm_layout_text_set(layout, "blahblah", "test"));
+}
+EFL_END_TEST
+
+
 void elm_test_layout(TCase *tc)
 {
    tcase_add_test(tc, elm_layout_test_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_layout_test_swallows);
+   tcase_add_test(tc, elm_layout_test_text_set);
 }

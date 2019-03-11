@@ -11,9 +11,9 @@
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_plug.h"
-#include "elm_scroller.eo.h"
-#include "elm_genlist.eo.h"
-#include "elm_conformant.eo.h"
+#include "elm_scroller_eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_conformant_eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
 #define MY_CLASS_PFX elm_conformant
@@ -573,13 +573,13 @@ _on_rotation_changed(void *data, const Efl_Event *event EINA_UNUSED)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_conformant_efl_ui_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _conformant_parts_swallow(obj);
 
@@ -1034,4 +1034,4 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_conformant)
 
-#include "elm_conformant.eo.c"
+#include "elm_conformant_eo.c"

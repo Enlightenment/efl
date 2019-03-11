@@ -15,7 +15,7 @@ struct Efl.Ui.Panel_Scroll_Info
    rel_y: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
 }
 
-class @beta Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content,
+class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content,
                     Efl.Access.Widget.Action
 {
    [[Elementary panel class]]
@@ -80,9 +80,9 @@ class @beta Efl.Ui.Panel extends Efl.Ui.Layout implements Efl.Ui.Focus.Layer, El
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.disabled {set;}
       Efl.Ui.Widget.on_access_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.interest_region { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.I18n.mirrored { set; }

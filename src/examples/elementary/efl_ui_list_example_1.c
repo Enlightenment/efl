@@ -8,6 +8,7 @@
 # define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>
@@ -24,7 +25,7 @@ List_Scroll_Data priv_d;
 
 
 static void
-_list_selected(void *data, const Efl_Event *ev)
+_list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *list = ev->object;
   Eo *item = ev->info, *tmp;
@@ -39,28 +40,28 @@ _list_selected(void *data, const Efl_Event *ev)
 }
 
 static void
-_list_unselected(void *data, const Efl_Event *ev)
+_list_unselected(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_item_selected_get(item)? "selected" : "unselected"));
 }
 
 static void
-_list_pressed(void *data, const Efl_Event *ev)
+_list_pressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is pressed\n", item, efl_ui_item_index_get(item));
 }
 
 static void
-_list_unpressed(void *data, const Efl_Event *ev)
+_list_unpressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is unpressed\n", item, efl_ui_item_index_get(item));
 }
 
 static void
-_list_longpressed(void *data, const Efl_Event *ev)
+_list_longpressed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   Eo *item = ev->info;
   printf("list item [%p : %d] is longpressed\n", item, efl_ui_item_index_get(item));
@@ -74,13 +75,13 @@ _select_radio_changed(void *data, const Efl_Event *ev)
 }
 
 static void
-_anim_radio_changed(void *data, const Efl_Event *ev)
+_anim_radio_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
   priv_d.anim = efl_ui_radio_state_value_get(ev->object);
 }
 
 static void
-_scrl_btn_clicked(void *data, const Efl_Event *ev)
+_scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
   Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
@@ -88,7 +89,7 @@ _scrl_btn_clicked(void *data, const Efl_Event *ev)
 }
 
 static void
-_scrl_align_btn_clicked(void *data, const Efl_Event *ev)
+_scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
   Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
@@ -97,7 +98,7 @@ _scrl_align_btn_clicked(void *data, const Efl_Event *ev)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv)
 {
    Eo *win, *list;
    Eo *wbox, *ibox, *bbox, *rbox;
@@ -197,13 +198,13 @@ elm_main(int argc, char **argv)
              break;
 
            case 40:
-             efl_file_set(efl_part(item, "background"), "./sky_01.jpg", NULL);
+             efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
              efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
              efl_pack_at(list, item, 39);
              break;
 
            case 50:
-             efl_file_set(efl_part(item, "background"), "./sky_01.jpg", NULL);
+             efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
              efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_TILE);
              efl_pack(list, item);
              break;
@@ -235,24 +236,24 @@ elm_main(int argc, char **argv)
 
    select_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_SINGLE);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE_ALWAYS");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_SINGLE_ALWAYS);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "MULTI");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MULTI);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_MULTI);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "NONE");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_NONE);
+   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_NONE);
    efl_ui_radio_group_add(radio, select_radio);
    efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);

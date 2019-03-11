@@ -175,14 +175,14 @@ public class Object : System.IDisposable
     {
         CheckHandle();
         var ptr = eldbus_object_bus_name_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetPath()
     {
         CheckHandle();
         var ptr = eldbus_object_path_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public void Ref()

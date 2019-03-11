@@ -7,8 +7,8 @@
 #define MY_CLASS ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS
 
 #include <Elementary.h>
-#include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_gengrid_eo.h"
 #include "elm_priv.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
 
@@ -183,4 +183,4 @@ _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Sta
 }
 
 
-#include "elm_widget_item_static_focus.eo.c"
+#include "elm_widget_item_static_focus_eo.c"

@@ -289,8 +289,8 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
    edje_object_freeze(cur->obj);
    edje_object_update_hints_set(cur->obj, 1);
 
-   if (!elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                             cur->style ? cur->style : "default"))
+   if (elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                             cur->style ? cur->style : "default") == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         ELM_SAFE_FREE(cur->obj, evas_object_del);
         return EINA_FALSE;
@@ -779,8 +779,8 @@ elm_object_sub_cursor_style_set(Evas_Object *obj, const char *style)
      }
    else
      {
-        if (!elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                                   style))
+        if (elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                                   style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
           {
              ERR("Could not apply the theme to the cursor style=%s", style);
              return EINA_FALSE;
@@ -820,8 +820,8 @@ void
 elm_cursor_theme(Elm_Cursor *cur)
 {
    if ((!cur) || (!cur->obj)) return;
-   if (!elm_widget_theme_object_set(cur->owner, cur->obj, "cursor",
-                              cur->cursor_name, cur->style))
+   if (elm_widget_theme_object_set(cur->owner, cur->obj, "cursor",
+                              cur->cursor_name, cur->style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
      _elm_cursor_set_hot_spots(cur);

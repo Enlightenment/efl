@@ -4,6 +4,7 @@
 #endif
 
 #define EFL_PACK_LAYOUT_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <assert.h>
 

@@ -48,7 +48,6 @@ class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implem
       // Efl.Canvas.Layout_Part_Box
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

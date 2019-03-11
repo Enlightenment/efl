@@ -12,7 +12,7 @@
 
 #include "elm_priv.h"
 #include "elm_widget_spinner.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #include "Eo.h"
 
@@ -744,7 +744,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_elm_spinner_efl_ui_widget_widget_event(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_elm_spinner_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Spinner_Data *sd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -1299,15 +1299,15 @@ _elm_spinner_efl_canvas_group_group_del(Eo *obj, Elm_Spinner_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
-   if (!efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)))
+   if (efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         CRI("Failed to set layout!");
-        return EFL_UI_THEME_APPLY_RESULT_FAIL;
+        return EFL_UI_THEME_APPLY_ERROR_GENERIC;
      }
 
    if (edje_object_part_exists(wd->resize_obj, "elm.swallow.dec_button"))
@@ -1351,7 +1351,7 @@ _elm_spinner_efl_ui_widget_theme_apply(Eo *obj, Elm_Spinner_Data *sd)
      _access_spinner_register(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static Eina_Bool _elm_spinner_smart_focus_next_enable = EINA_FALSE;
@@ -1722,4 +1722,4 @@ _elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_spinner), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
 
-#include "elm_spinner.eo.c"
+#include "elm_spinner_eo.c"

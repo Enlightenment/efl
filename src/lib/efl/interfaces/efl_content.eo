@@ -21,4 +21,7 @@ interface @beta Efl.Content
          return: Efl.Gfx.Entity; [[Unswallowed object]]
       }
    }
+   events {
+      content,changed: Efl.Gfx.Entity;    [[Sent after the content is set or unset using the current content object.]]
+   }
 }

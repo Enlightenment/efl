@@ -11,5 +11,5 @@
  */
 EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent);
 
-#include "elm_slideshow_item.eo.legacy.h"
-#include "elm_slideshow.eo.legacy.h"
+#include "elm_slideshow_item_eo.legacy.h"
+#include "elm_slideshow_eo.legacy.h"

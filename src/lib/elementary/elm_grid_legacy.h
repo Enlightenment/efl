@@ -34,4 +34,4 @@ EAPI void         elm_grid_pack_set(Evas_Object *subobj, Evas_Coord x, Evas_Coor
  */
 EAPI void         elm_grid_pack_get(Evas_Object *subobj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
-#include "elm_grid.eo.legacy.h"
+#include "elm_grid_eo.legacy.h"

@@ -15,6 +15,7 @@
 #include "elm_priv.h"
 #include "elm_widget_toolbar.h"
 #include "els_box.h"
+#include "elm_pan_eo.h"
 
 #define MY_CLASS ELM_TOOLBAR_CLASS
 
@@ -179,7 +180,7 @@ _item_unselect(Elm_Toolbar_Item_Data *item)
      elm_widget_signal_emit(item->icon, "elm,state,unselected", "elm");
    efl_event_callback_legacy_call(WIDGET(item), EFL_UI_EVENT_UNSELECTED, EO_OBJ(item));
    if (_elm_config->atspi_mode)
-    efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+    efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -621,6 +622,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
 {
    ELM_TOOLBAR_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_TOOLBAR_DATA_GET(obj, sd);
    const char *focus_raise;
 
@@ -643,7 +645,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
          break;
      }
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_win_focus_highlight_enabled_get(win))
      {
         elm_layout_signal_emit
            (VIEW(it), "elm,state,focused", "elm");
@@ -656,7 +658,7 @@ _elm_toolbar_item_focused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_FOCUSED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -664,6 +666,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
 {
    ELM_TOOLBAR_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    if ((!sd) || !sd->focused_item ||
@@ -671,7 +674,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
      return;
    if (sd->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      return;
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_win_focus_highlight_enabled_get(win))
      {
         ELM_TOOLBAR_ITEM_DATA_GET(sd->focused_item, focus_it);
         elm_layout_signal_emit
@@ -683,7 +686,7 @@ _elm_toolbar_item_unfocused(Elm_Object_Item *eo_it)
    efl_event_callback_legacy_call
      (obj, ELM_TOOLBAR_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 /*
@@ -1093,7 +1096,7 @@ _item_select(Elm_Toolbar_Item_Data *it)
      }
    efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-    efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+    efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
 }
 
 /* Send order signals when item is added/deleted.
@@ -1478,18 +1481,18 @@ _elm_toolbar_highlight_in_theme(Evas_Object *obj)
      elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_toolbar_efl_ui_widget_theme_apply(Eo *obj, Elm_Toolbar_Data *sd)
 {
    Elm_Toolbar_Item_Data *it;
    double scale = 0;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
-   if (sd->delete_me) return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   if (sd->delete_me) return EFL_UI_THEME_APPLY_ERROR_NONE;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    elm_widget_theme_object_set
      (obj, wd->resize_obj, "toolbar", "base",
@@ -3862,16 +3865,16 @@ _elm_toolbar_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Toolbar_I
 
    sel = elm_toolbar_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }
 
 EOLIAN static Elm_Object_Item *
-_elm_toolbar_efl_ui_widget_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
+_elm_toolbar_elm_widget_item_container_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Toolbar_Data *sd)
 {
    return sd->focused_item;
 }
@@ -4085,5 +4088,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_toolbar, Elm_Toolbar_Data)
 #define ELM_TOOLBAR_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_toolbar)
 
-#include "elm_toolbar.eo.c"
-#include "elm_toolbar_item.eo.c"
+#include "elm_toolbar_eo.c"
+#include "elm_toolbar_item_eo.c"

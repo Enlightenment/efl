@@ -112,7 +112,7 @@ static void
 bg_setup(void)
 {
    o_bg = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
-   efl_file_set(o_bg, theme_file, "background");
+   efl_file_simple_load(o_bg, theme_file, "background");
    efl_gfx_entity_position_set(o_bg, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(o_bg, EINA_SIZE2D(startw,  starth));
    efl_gfx_stack_layer_set(o_bg, -999);
@@ -624,7 +624,7 @@ init_video_object(const char *module_filename, const char *filename)
    oe = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    efl_event_callback_add(oe, EFL_EVENT_DEL, _oe_free_cb, fd);
    efl_key_data_set(oe, "frame_data", fd);
-   efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
+   efl_file_simple_load(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
    edje_object_part_swallow(oe, "video_swallow", o);
 
    offset = 20 * (eina_list_count(video_objs) - 1);

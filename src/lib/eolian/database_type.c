@@ -46,8 +46,9 @@ void
 database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
-   eina_hash_set(unit->state->staging.structs_f, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(unit->state->staging.structs_f, tp->base.file), tp));
+   Eina_Hash *sh = unit->state->staging.structs_f;
+   eina_hash_set(sh, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(sh, tp->base.file), tp));
    database_object_add(unit, &tp->base);
 }
 

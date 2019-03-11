@@ -6,6 +6,7 @@
 #define EFL_EO_API_SUPPORT 1
 
 #define EFL_UI_WIDGET_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define EXAMPLE_EDJ_FILE_PATH "./efl_ui_theme_example.edj"
@@ -52,7 +53,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_ui_theme_overlay_add(default_theme, EXAMPLE_EDJ_FILE_PATH);
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Theme example"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );

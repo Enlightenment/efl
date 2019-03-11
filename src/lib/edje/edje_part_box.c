@@ -3,7 +3,7 @@
 #include "efl_canvas_layout_part_box.eo.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_PART_BOX_CLASS
 
-#include "../evas/canvas/evas_box.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
 
 PROXY_IMPLEMENTATION(box, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
@@ -97,12 +97,6 @@ _efl_canvas_layout_part_box_efl_pack_linear_pack_content_get(Eo *obj, void *_pd 
    PROXY_DATA_GET(obj, pd);
    if (index < 0) index += efl_content_count(obj);
    return _edje_part_box_content_at(pd->ed, pd->part, index);
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_part_box_efl_container_content_remove(Eo *obj, void *_pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
-{
-   return efl_pack_unpack(obj, subobj);
 }
 
 EOLIAN static int

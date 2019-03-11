@@ -1,7 +1,6 @@
 enum Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
-   legacy: efl_ui_zoom_mode;
    manual = 0, [[Zoom controlled normally by efl_ui_zoom_set]]
    auto_fit, [[Zoom until photo fits in zoomable object]]
    auto_fill, [[Zoom until photo fills zoomable object]]

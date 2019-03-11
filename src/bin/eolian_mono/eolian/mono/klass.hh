@@ -347,6 +347,15 @@ struct klass
                 return false;
            }
 
+         // Copied from nativeinherit class, used when setting up providers.
+         if(!as_generator(
+              scope_tab << "private static IntPtr GetEflClassStatic()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, inherit_cxt))
+           return false;
+
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
        }
 
@@ -365,9 +374,10 @@ struct klass
 
          if(!as_generator
             (
-             "public class " << native_inherit_name << " " << (root ? ": Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
-             // << scope_tab << (root ? "protected IntPtr EoKlass { get; set; }\n" : "\n")
-             << scope_tab << "public " << /*(root ? "" : "new ")*/ "override " << "System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
+             "public class " << native_inherit_name << " " << (root ? " : Efl.Eo.NativeClass" : (": " + base_name)) <<"{\n"
+             << scope_tab << "public " << (root ? "" : "new ") << " static Efl.Eo.NativeModule _Module = new Efl.Eo.NativeModule("
+             << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n"
+             << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )
@@ -454,7 +464,7 @@ struct klass
                 << scope_tab << scope_tab << scope_tab << "if (((object)this).GetType() == typeof (" << inherit_name << "))\n"
                 << scope_tab << scope_tab << scope_tab << scope_tab << "return " << native_inherit_full_name << ".GetEflClassStatic();\n"
                 << scope_tab << scope_tab << scope_tab << "else\n"
-                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
+                << scope_tab << scope_tab << scope_tab << scope_tab << "return Efl.Eo.ClassRegister.klassFromType[((object)this).GetType()];\n"
                 << scope_tab << scope_tab << "}\n"
                 << scope_tab << "}\n"
             ).generate(sink, attributes::unused, context))
@@ -471,16 +481,13 @@ struct klass
      if (is_inherit)
       {
          if (!as_generator(
-                scope_tab << "private static readonly object klassAllocLock = new object();\n"
-                << scope_tab << "protected bool inherited;\n"
+                scope_tab << "protected bool inherited;\n"
                 ).generate(sink, attributes::unused, context))
            return false;
       }
 
      return as_generator(
                 scope_tab << visibility << " System.IntPtr handle;\n"
-                << scope_tab << "public Dictionary<String, IntPtr> cached_strings = new Dictionary<String, IntPtr>();" << "\n"
-                << scope_tab << "public Dictionary<String, IntPtr> cached_stringshares = new Dictionary<String, IntPtr>();" << "\n"
                 << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
                 << scope_tab << "public System.IntPtr NativeHandle {\n"
                 << scope_tab << scope_tab << "get { return handle; }\n"
@@ -502,7 +509,12 @@ struct klass
             ).generate(sink, attributes::unused, context))
        return false;
 
-     auto constructors = helpers::reorder_constructors(cls.get_all_constructors());
+     auto all_constructors = helpers::reorder_constructors(cls.get_all_constructors());
+     decltype (all_constructors) constructors;
+
+     std::copy_if(all_constructors.cbegin(), all_constructors.cend(), std::back_inserter(constructors), [&context](attributes::constructor_def const& ctor) {
+        return !blacklist::is_function_blacklisted(ctor.function, context);
+     });
 
      // Public (API) constructors
      if (!as_generator(
@@ -512,7 +524,7 @@ struct klass
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
                      << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
                      << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") :\n"
-                     << scope_tab << scope_tab << (root ? "this" : "base")  << "(\"" << inherit_name << "\", " << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                     << scope_tab << scope_tab << (root ? "this" : "base")  << "(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
                      << scope_tab << "{\n"
                      << *(scope_tab << scope_tab << constructor_invocation << "\n" )
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -531,7 +543,7 @@ struct klass
      {
          return as_generator(
                      scope_tab << "///<summary>Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
-                     << scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(klass_name, base_klass, managed_type, parent) {}\n"
+                     << scope_tab << "protected " << inherit_name << "(IntPtr base_klass, System.Type managed_type, Efl.Object parent) : base(base_klass, managed_type, parent) {}\n"
                   ).generate(sink, attributes::unused, context);
 
      }
@@ -539,22 +551,12 @@ struct klass
      // Detailed constructors go only in root classes.
      return as_generator(
              /// Actual root costructor that creates class and instantiates 
-             scope_tab << "protected " << inherit_name << "(String klass_name, IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
+             scope_tab << "protected " << inherit_name << "(IntPtr base_klass, System.Type managed_type, Efl.Object parent)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "inherited = ((object)this).GetType() != managed_type;\n"
              << scope_tab << scope_tab << "IntPtr actual_klass = base_klass;\n"
              << scope_tab << scope_tab << "if (inherited) {\n"
-             << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.klasses.ContainsKey(((object)this).GetType())) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "lock (klassAllocLock) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.register_class(klass_name, base_klass, ((object)this).GetType());\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (actual_klass == System.IntPtr.Zero) {\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "throw new System.InvalidOperationException(\"Failed to initialize class '" << inherit_name << "'\");\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.klasses[((object)this).GetType()] = actual_klass;\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "else\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.Globals.klasses[((object)this).GetType()];\n"
+             << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(base_klass, ((object)this).GetType());\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << scope_tab << "register_event_proxies();\n"
@@ -604,8 +606,6 @@ struct klass
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
-             << scope_tab << "Efl.Eo.Globals.free_dict_values(cached_strings);" << "\n"
-             << scope_tab << "Efl.Eo.Globals.free_stringshare_values(cached_stringshares);" << "\n"
              << scope_tab << scope_tab << "Dispose(true);\n"
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
              << scope_tab << "}\n"
@@ -682,13 +682,13 @@ struct klass
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << visibility << "bool add_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
+            scope_tab << visibility << "bool add_cpp_event_handler(string lib, string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 0) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
@@ -710,7 +710,8 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
             << scope_tab << scope_tab << "if (event_count == 1) {\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(key);\n"
+            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative("
+            << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ", key);\n"
             << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"

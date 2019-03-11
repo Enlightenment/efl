@@ -16,11 +16,12 @@
 #include "elm_priv.h"
 #include "elm_widget_genlist.h"
 #include "elm_interface_scrollable.h"
-#include "efl_ui_focus_parent_provider_gen.eo.h"
+#include "elm_pan_eo.h"
+#include "efl_ui_focus_parent_provider_gen_eo.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
-#include "elm_genlist_item.eo.h"
-#include "elm_genlist_pan.eo.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_item_eo.h"
+#include "elm_genlist_pan_eo.h"
+#include "elm_genlist_eo.h"
 
 #define MY_PAN_CLASS ELM_GENLIST_PAN_CLASS
 
@@ -456,7 +457,7 @@ _item_content_realize(Elm_Gen_Item *it,
                   ELM_WIDGET_DATA_GET_OR_RETURN(content, wd);
 
                   // FIXME : Layout need sizing eval before group calculate
-                  if (efl_class_get(content) == EFL_UI_LAYOUT_CLASS)
+                  if (efl_class_get(content) == EFL_UI_LAYOUT_BASE_CLASS)
                     elm_layout_sizing_eval(content);
 
                   _widget_calculate_recursive(content);
@@ -566,10 +567,10 @@ _view_style_update(Elm_Gen_Item *it, Evas_Object *view, const char *style)
                     "",style ? : "default");
      }
 
-   Efl_Ui_Theme_Apply_Result th_ret =
+   Eina_Error th_ret =
       elm_widget_theme_object_set(WIDGET(it), view, "genlist", buf,
                                   elm_widget_style_get(WIDGET(it)));
-   if (th_ret == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (th_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         ERR("%s is not a valid genlist item style. "
             "Automatically falls back into default style.",
@@ -1598,6 +1599,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    Item_Cache *itc = NULL;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
+   Evas_Object *win = elm_widget_top_get(obj);
    Evas *e = evas_object_evas_get(obj);
 
    evas_event_freeze(e);
@@ -1629,7 +1631,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    if (elm_wdg_item_disabled_get(EO_OBJ(it)))
      edje_object_signal_emit(itc->base_view, SIGNAL_ENABLED, "elm");
    if ((EO_OBJ(it) == sd->focused_item) &&
-       (elm_widget_focus_highlight_enabled_get(obj) || _elm_config->win_auto_focus_enable))
+       (elm_win_focus_highlight_enabled_get(win) || _elm_config->win_auto_focus_enable))
      edje_object_signal_emit(itc->base_view, SIGNAL_UNFOCUSED, "elm");
 
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
@@ -1807,9 +1809,10 @@ _elm_genlist_item_focus_update(Elm_Gen_Item *it)
 {
    const char *focus_raise;
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_GENLIST_DATA_GET(obj, sd);
 
-   if (elm_widget_focus_highlight_enabled_get(obj)
+   if (elm_win_focus_highlight_enabled_get(win)
        || _elm_config->win_auto_focus_enable)
      edje_object_signal_emit(VIEW(it), SIGNAL_FOCUSED, "elm");
 
@@ -2894,7 +2897,7 @@ _elm_genlist_item_focused(Elm_Object_Item *eo_it)
      _elm_genlist_item_focus_update(it);
    efl_event_callback_legacy_call(obj, ELM_GENLIST_EVENT_ITEM_FOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_TRUE);
 }
 
 static void
@@ -2904,6 +2907,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
 
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
+   Evas_Object *win = elm_widget_top_get(obj);
    ELM_GENLIST_DATA_GET(obj, sd);
 
    if (_is_no_select(it))
@@ -2913,7 +2917,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
        (eo_it != sd->focused_item))
      return;
 
-   if (elm_widget_focus_highlight_enabled_get(obj))
+   if (elm_win_focus_highlight_enabled_get(win))
      {
         ELM_GENLIST_ITEM_DATA_GET(sd->focused_item, focus_it);
         edje_object_signal_emit(VIEW(focus_it), SIGNAL_UNFOCUSED, "elm");
@@ -2922,7 +2926,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
    sd->focused_item = NULL;
    efl_event_callback_legacy_call(obj, ELM_GENLIST_EVENT_ITEM_UNFOCUSED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_FOCUSED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_FOCUSED, EINA_FALSE);
 }
 
 static Eina_Bool
@@ -3530,17 +3534,17 @@ _mirrored_set(Evas_Object *obj,
    efl_ui_mirrored_set(obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_genlist_efl_ui_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 {
    Item_Block *itb;
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_List *l;
    Elm_Gen_Item *it;
    Evas *e;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    e = evas_object_evas_get(obj);
    evas_event_freeze(e);
@@ -3930,7 +3934,7 @@ _item_unselect(Elm_Gen_Item *it)
    efl_event_callback_legacy_call
      (WIDGET(it), EFL_UI_EVENT_UNSELECTED, EO_OBJ(it));
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -4151,7 +4155,7 @@ _long_press_cb(void *data)
           {
              edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_ENABLED, "elm");
              if (_elm_config->atspi_mode)
-               efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_ANIMATED, EINA_TRUE);
+               efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_ANIMATED, EINA_TRUE);
           }
      }
 
@@ -5131,7 +5135,7 @@ _item_mouse_up_cb(void *data,
           }
         edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_DISABLED, "elm");
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_ANIMATED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_ANIMATED, EINA_FALSE);
         sd->reorder_it = sd->reorder_rel = NULL;
         elm_interface_scrollable_hold_set(sd->obj, EINA_FALSE);
         elm_interface_scrollable_bounce_allow_set
@@ -6114,7 +6118,7 @@ _item_select(Elm_Gen_Item *it)
    if ((it->base)->on_deletion) goto item_deleted;
    efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
    // delete item if it's requested deletion in the above callbacks.
    if ((it->base)->on_deletion)
      {
@@ -7200,7 +7204,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
               (WIDGET(it), ELM_GENLIST_EVENT_EXPANDED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_TRUE;
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_EXPANDED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_EXPANDED, EINA_TRUE);
      }
    else
      {
@@ -7210,7 +7214,7 @@ _elm_genlist_item_expanded_set(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it, Eina_B
               (WIDGET(it), ELM_GENLIST_EVENT_CONTRACTED, EO_OBJ(it));
         sd->auto_scroll_enabled = EINA_FALSE;
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_EXPANDED, EINA_FALSE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_EXPANDED, EINA_FALSE);
      }
 }
 
@@ -7644,7 +7648,7 @@ _elm_genlist_item_elm_widget_item_tooltip_window_mode_set(Eo *eo_it, Elm_Gen_Ite
         return ret;
      }
 
-   return EINA_TRUE;
+   return disable;
 }
 
 EAPI Eina_Bool
@@ -8528,16 +8532,16 @@ _elm_genlist_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_Gen_Item 
 
    sel = elm_obj_genlist_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sel)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    if (elm_genlist_item_type_get(eo_it) == ELM_GENLIST_ITEM_TREE)
      {
-        STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EXPANDABLE);
+        STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EXPANDABLE);
         if (elm_genlist_item_expanded_get(eo_it))
-           STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EXPANDED);
+           STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EXPANDED);
      }
 
    return ret;
@@ -8721,7 +8725,7 @@ _elm_genlist_search_by_text_item_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_genlist_efl_ui_widget_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
+_elm_genlist_elm_widget_item_container_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    return sd->focused_item;
 }
@@ -8790,13 +8794,13 @@ _elm_genlist_efl_access_object_state_set_get(const Eo *obj, Elm_Genlist_Data *sd
 
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_GENLIST_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MANAGES_DESCENDANTS);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MANAGES_DESCENDANTS);
 
    if (elm_genlist_multi_select_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MULTISELECTABLE);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MULTISELECTABLE);
 
    if (elm_genlist_reorder_mode_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_ANIMATED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_ANIMATED);
 
    return ret;
 }
@@ -8950,6 +8954,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_genlist, Elm_Genlist_Data)
 #define ELM_GENLIST_PAN_EXTRA_OPS \
    EFL_CANVAS_GROUP_DEL_OPS(elm_genlist_pan)
 
-#include "elm_genlist.eo.c"
-#include "elm_genlist_pan.eo.c"
-#include "elm_genlist_item.eo.c"
+#include "elm_genlist_eo.c"
+#include "elm_genlist_pan_eo.c"
+#include "elm_genlist_item_eo.c"

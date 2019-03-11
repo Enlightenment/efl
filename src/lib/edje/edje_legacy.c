@@ -5,10 +5,7 @@
 EAPI Edje_Load_Error
 edje_object_load_error_get(const Eo *obj)
 {
-   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(obj);
    Edje *ed;
-
-   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
 
    ed = _edje_fetch(obj);
    if (!ed) return EDJE_LOAD_ERROR_GENERIC;
@@ -431,7 +428,7 @@ EAPI void
 edje_object_part_text_cursor_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h)
 {
    efl_text_cursor_geometry_get(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          x, y, w, h, NULL, NULL, NULL, NULL
          );

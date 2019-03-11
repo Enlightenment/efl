@@ -10,10 +10,11 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_scroller.h"
 
-#include "elm_scroller.eo.h"
+#include "elm_scroller_eo.h"
 #include "elm_scroller_part.eo.h"
 #include "elm_part_helper.h"
 
@@ -398,12 +399,12 @@ _mirrored_set(Evas_Object *obj,
    efl_ui_mirrored_set(obj, mirrored);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_scroller_efl_ui_widget_theme_apply(Eo *obj, Elm_Scroller_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -690,6 +691,7 @@ _elm_scroller_content_set(Eo *obj, Elm_Scroller_Data *sd, const char *part, Evas
              sd->proxy_content[i] = NULL;
           }
      }
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
 
    elm_layout_sizing_eval(obj);
 
@@ -725,6 +727,7 @@ _elm_scroller_content_unset(Eo *obj, Elm_Scroller_Data *sd, const char *part)
      _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    elm_interface_scrollable_content_set(obj, NULL);
    sd->content = NULL;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 
    return ret;
 }
@@ -884,11 +887,6 @@ _focused_element(void *data, const Efl_Event *event)
    geom.y = geom.y + pan_y - pos.y;
 
    elm_interface_scrollable_region_bring_in(obj, geom.x, geom.y, geom.w, geom.h);
-
-   geom = efl_gfx_entity_geometry_get(obj);
-   geom.x = geom.y = 0;
-   elm_widget_show_region_set(obj, geom, EINA_TRUE);
-
 }
 
 EOLIAN static Eo *
@@ -1393,4 +1391,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 
-#include "elm_scroller.eo.c"
+#include "elm_scroller_eo.c"

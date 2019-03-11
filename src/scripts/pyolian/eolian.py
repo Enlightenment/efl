@@ -116,17 +116,18 @@ class Eolian_Type_Builtin_Type(IntEnum):
     DOUBLE = 29
 
     BOOL = 30
-    VOID = 31
 
-    ACCESSOR = 32
-    ARRAY = 33
-    ITERATOR = 34
-    HASH = 35
-    LIST = 36
-    INARRAY = 37
-    INLIST = 38
+    SLICE = 31
+    RW_SLICE = 32
 
-    FUTURE = 39
+    VOID = 33
+
+    ACCESSOR = 34
+    ARRAY = 35
+    FUTURE = 36
+    ITERATOR = 37
+    HASH = 38
+    LIST = 39
 
     ANY_VALUE = 40
     ANY_VALUE_PTR = 41
@@ -134,9 +135,10 @@ class Eolian_Type_Builtin_Type(IntEnum):
     MSTRING = 42
     STRING = 43
     STRINGSHARE = 44
+    STRBUF = 45
 
-    VOID_PTR = 45
-    FREE_CB = 46
+    VOID_PTR = 46
+    FREE_CB = 47
 
 class Eolian_C_Type_Type(IntEnum):
     DEFAULT = 0

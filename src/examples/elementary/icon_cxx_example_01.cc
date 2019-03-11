@@ -14,8 +14,8 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl::ui::Image icon(instantiate, win);
    icon.icon_set("home");
 
-   efl::eina::string_view path, group;
-   icon.file_get(path, group);
+   efl::eina::string_view path = icon.file_get();
+   efl::eina::string_view group = icon.key_get();
    std::cout << "path = " << path << ", group = "<< group;
 
    std::cout << ", name = " << icon.icon_get() << std::endl;

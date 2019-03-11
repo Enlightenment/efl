@@ -10,6 +10,13 @@ class TestEo
     {
     }
 
+    public static void return_null_object()
+    {
+        var testing = new Dummy.TestObject();
+        var o1 = testing.ReturnNullObject();
+        Test.Assert(o1 == null);
+    }
+
     //
     // Test cases:
     //
@@ -190,6 +197,24 @@ class TestTypedefs
     }
 }
 
+class TestVariables
+{
+    public static void test_constant_variables()
+    {
+        Test.AssertEquals(Dummy.Constants.ConstvarBool, true);
+        Test.AssertEquals(Dummy.Constants.ConstvarInt, -32766);
+        Test.AssertEquals(Dummy.Constants.ConstvarUInt, 65533U);
+        Test.AssertEquals(Dummy.Constants.ConstvarLong, -2147483644L);
+        Test.AssertEquals(Dummy.Constants.ConstvarULong, 4294967288UL);
+        Test.AssertEquals(Dummy.Constants.ConstvarLLong, -9223372036854775800);
+        Test.AssertEquals(Dummy.Constants.ConstvarULLong, 18446744073709551615);
+        Test.AssertEquals(Dummy.Constants.ConstvarFloat, 16777211.0f);
+        Test.AssertEquals(Dummy.Constants.ConstvarDouble, 9007199254740988.0);
+        Test.AssertEquals(Dummy.Constants.ConstvarChar, '!');
+        Test.AssertEquals(Dummy.Constants.ConstvarString, "test_str");
+    }
+}
+
 class TestEoAccessors
 {
     public static void basic_eo_accessors()
@@ -329,7 +354,11 @@ class TestEoGrandChildrenFinalize
     public sealed class GrandChild : Dummy.Child
     {
 
+#if EFL_BETA
+        public GrandChild() : base(null, "", 0.0, 0) { }
+#else
         public GrandChild() : base(null, "", 0.0) { }
+#endif
 
         public int receivedValue = 0;
         public override Efl.Object FinalizeAdd()
@@ -353,18 +382,43 @@ class TestConstructors
         int iface_prop = 42;
         string a = "LFE";
         double b = 3.14;
+#if EFL_BETA
+        int beta = 1337;
+#endif
+
+#if EFL_BETA
+        var obj = new Dummy.Child(null, a, b, beta, iface_prop, 0);
+#else
         var obj = new Dummy.Child(null, a, b, iface_prop);
+#endif
         Test.AssertEquals(iface_prop, obj.IfaceProp);
 
+#if EFL_BETA
+        obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b,
+                              obligatoryBetaCtor : beta,
+                              optionalBetaCtor : -beta);
+#else
         obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b);
+#endif
         Test.AssertEquals(iface_prop, obj.IfaceProp);
+
+#if EFL_BETA
+        Test.Assert(obj.ObligatoryBetaCtorWasCalled);
+        Test.Assert(obj.OptionalBetaCtorWasCalled);
+#endif
     }
 
     public static void test_optional_constructor()
     {
         string a = "LFE";
         double b = 3.14;
+#if EFL_BETA
+        int beta = 2241;
+        var obj = new Dummy.Child(null, a, b, obligatoryBetaCtor : beta);
+        Test.Assert(!obj.OptionalBetaCtorWasCalled);
+#else
         var obj = new Dummy.Child(null, a, b);
+#endif
         Test.Assert(!obj.GetIfaceWasSet());
     }
 }
@@ -379,6 +433,18 @@ class TestInterfaceConcrete
 
         iface.IfaceProp = 1970;
         Test.AssertEquals(iface.IfaceProp, 1970);
+    }
+}
+
+class TestProvider
+{
+    public static void test_find_provider()
+    {
+        // Tests only the direction C# -> C
+        var obj = new Dummy.TestObject();
+        Dummy.Numberwrapper provider = Dummy.Numberwrapper.static_cast(obj.FindProvider(typeof(Dummy.Numberwrapper)));
+        Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
+        Test.AssertEquals(provider.GetNumber(), 1999);
     }
 }
 

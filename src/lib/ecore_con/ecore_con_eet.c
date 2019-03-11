@@ -955,6 +955,6 @@ ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const 
    eina_binbuf_free(buf);
 }
 
-#include "ecore_con_eet_base.eo.c"
-#include "ecore_con_eet_server_obj.eo.c"
-#include "ecore_con_eet_client_obj.eo.c"
+#include "ecore_con_eet_base_eo.c"
+#include "ecore_con_eet_server_obj_eo.c"
+#include "ecore_con_eet_client_obj_eo.c"

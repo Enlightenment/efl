@@ -1,6 +1,6 @@
 #include "edje_private.h"
 
-#include "../evas/canvas/evas_box.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
 
 #include <Eo.h>
 

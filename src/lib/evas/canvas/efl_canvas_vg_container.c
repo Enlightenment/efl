@@ -408,3 +408,4 @@ evas_vg_container_add(Efl_VG *parent)
 }
 
 #include "efl_canvas_vg_container.eo.c"
+#include "efl_canvas_vg_container_eo.legacy.c"

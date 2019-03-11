@@ -3,7 +3,7 @@
 
 #include "Elementary.h"
 
-#include <elm_notify.eo.h>
+#include <elm_notify_eo.h>
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

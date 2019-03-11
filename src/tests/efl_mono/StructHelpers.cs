@@ -129,21 +129,10 @@ internal class StructHelpers
         complex.Farray.Push(0x2A);
         complex.Farray.Push(0x42);
 
-        complex.Finarray = new Eina.Inarray<int>();
-        complex.Finarray.Push(0x0);
-        complex.Finarray.Push(0x2A);
-        complex.Finarray.Push(0x42);
-
-
         complex.Flist = new Eina.List<string>();
         complex.Flist.Append("0x0");
         complex.Flist.Append("0x2A");
         complex.Flist.Append("0x42");
-
-        complex.Finlist = new Eina.Inlist<int>();
-        complex.Finlist.Append(0x0);
-        complex.Finlist.Append(0x2A);
-        complex.Finlist.Append(0x42);
 
         complex.Fhash = new Eina.Hash<string, string>();
         complex.Fhash["aa"] = "aaa";
@@ -175,11 +164,7 @@ internal class StructHelpers
     {
         Test.Assert(complex.Farray.ToArray().SequenceEqual(base_seq_int));
 
-        Test.Assert(complex.Finarray.ToArray().SequenceEqual(base_seq_int));
-
         Test.Assert(complex.Flist.ToArray().SequenceEqual(base_seq_str));
-
-        Test.Assert(complex.Finlist.ToArray().SequenceEqual(base_seq_int));
 
         Test.Assert(complex.Fhash["aa"] == "aaa");
         Test.Assert(complex.Fhash["bb"] == "bbb");
@@ -214,9 +199,7 @@ internal class StructHelpers
     internal static void checkZeroedStructComplex(Dummy.StructComplex complex)
     {
         Test.Assert(complex.Farray == null);
-        Test.Assert(complex.Finarray == null);
         Test.Assert(complex.Flist == null);
-        Test.Assert(complex.Finlist == null);
         Test.Assert(complex.Fhash == null);
         Test.Assert(complex.Fiterator == null);
         Test.Assert(complex.Fany_value == null);

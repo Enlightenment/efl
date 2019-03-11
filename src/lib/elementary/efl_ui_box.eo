@@ -30,7 +30,6 @@ class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pac
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Container.content_remove;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Ui.Direction.direction { get; set; }

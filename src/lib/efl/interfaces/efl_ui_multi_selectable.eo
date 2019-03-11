@@ -1,6 +1,5 @@
 enum Efl.Ui.Select_Mode {
    [[Type of multi selectable object.]]
-   legacy: efl_ui_select;
    single, [[Only single child is selected. if the child is selected,
              previous selected child will be unselected.]]
    single_always, [[Same as single select except, this will be selected

@@ -14,17 +14,17 @@
 #define EFL_PART_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
+#include "elm_priv.h"
 #include <Elementary.h>
 #include "Eio_Eo.h"
-#include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector.h"
-#include "elm_entry.eo.h"
-#include "elm_fileselector.eo.h"
-#include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_fileselector_eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_gengrid_eo.h"
 
 #include "elm_fileselector_part.eo.h"
 #include "elm_part_helper.h"
@@ -226,16 +226,16 @@ _model_str_property_set(Efl_Model *model, const char *property_name, const char 
    return efl_model_property_set(model, property_name, eina_value_string_new(property_value));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_fileselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 {
    const char *style;
    const char *data;
    char buf[1024];
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
@@ -3079,4 +3079,4 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_fileselector, ELM_FILESELECTOR, Elm_Fileselector_
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _elm_fileselector_efl_object_event_callback_legacy_call)
 
-#include "elm_fileselector.eo.c"
+#include "elm_fileselector_eo.c"

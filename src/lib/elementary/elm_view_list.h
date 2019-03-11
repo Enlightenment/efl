@@ -4,7 +4,7 @@
 #define ELM_VIEW_LIST_H
 
 #include <Efl.h>
-#include <elm_view_list.eo.h>
+#include <elm_view_list_eo.h>
 
 #endif
 #endif // ELM_VIEW_LIST_H

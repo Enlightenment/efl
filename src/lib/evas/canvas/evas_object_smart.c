@@ -307,7 +307,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
-        Eina_Bool had_clippees = efl_canvas_object_clipees_has(clipper);
+        Eina_Bool had_clippees = evas_object_clipees_has(clipper);
 
         if (EINA_UNLIKELY(!clipper && !o->constructed))
           {
@@ -318,7 +318,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
         if (clipper != eo_obj)
           {
              EINA_SAFETY_ON_NULL_RETURN(clipper);
-             efl_canvas_object_clip_set(eo_obj, clipper);
+             efl_canvas_object_clipper_set(eo_obj, clipper);
              if (!had_clippees && smart->cur->visible)
                efl_gfx_entity_visible_set(clipper, 1);
           }
@@ -329,6 +329,7 @@ _efl_canvas_group_group_member_add(Eo *smart_obj, Evas_Smart_Data *o, Evas_Objec
    if (smart->smart.smart && smart->smart.smart->smart_class->member_add)
      smart->smart.smart->smart_class->member_add(smart_obj, eo_obj);
    evas_object_update_bounding_box(eo_obj, obj, member_o);
+   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED, eo_obj);
 }
 
 EAPI void
@@ -341,11 +342,11 @@ evas_object_smart_member_del(Evas_Object *eo_obj)
    if (!obj) return;
    if (!obj->smart.parent) return;
    Evas_Object *smart_obj = obj->smart.parent;
-   efl_canvas_group_member_del(smart_obj, eo_obj);
+   efl_canvas_group_member_remove(smart_obj, eo_obj);
 }
 
 EOLIAN static void
-_efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
+_efl_canvas_group_group_member_remove(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUSED, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_safe_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Object_Protected_Data *smart;
@@ -354,6 +355,8 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
    if (!obj || !obj->smart.parent) return;
 
    evas_object_async_block(obj);
+
+   efl_event_callback_call(smart_obj, EFL_CANVAS_GROUP_EVENT_MEMBER_REMOVED, eo_obj);
 
    smart = efl_data_scope_get(smart_obj, EFL_CANVAS_OBJECT_CLASS);
    if (smart->smart.smart && smart->smart.smart->smart_class->member_del)
@@ -366,8 +369,8 @@ _efl_canvas_group_group_member_del(Eo *smart_obj, Evas_Smart_Data *_pd EINA_UNUS
         Evas_Object *clipper = _smart_clipper_get(o);
 
         EINA_SAFETY_ON_NULL_RETURN(clipper);
-        efl_canvas_object_clip_set(eo_obj, NULL);
-        if (!efl_canvas_object_clipees_has(clipper))
+        efl_canvas_object_clipper_set(eo_obj, NULL);
+        if (!evas_object_clipees_has(clipper))
           efl_gfx_entity_visible_set(clipper, 0);
      }
 
@@ -919,20 +922,20 @@ _efl_canvas_group_efl_gfx_entity_position_set(Eo *eo_obj, Evas_Smart_Data *o, Ei
 }
 
 EOLIAN static void
-_efl_canvas_group_efl_canvas_object_clip_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Object *clip)
+_efl_canvas_group_efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Smart_Data *o, Evas_Object *clip)
 {
    EINA_SAFETY_ON_FALSE_RETURN(!clip || efl_isa(clip, EFL_CANVAS_OBJECT_CLASS));
    if (_evas_object_intercept_call(eo_obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
-   efl_canvas_object_clip_set(efl_super(eo_obj, MY_CLASS), clip);
+   efl_canvas_object_clipper_set(efl_super(eo_obj, MY_CLASS), clip);
 
    if (o->clipped)
      {
         Evas_Object *clipper = _smart_clipper_get(o);
         EINA_SAFETY_ON_NULL_RETURN(clipper);
 
-        efl_canvas_object_clip_set(clipper, clip);
+        efl_canvas_object_clipper_set(clipper, clip);
      }
 }
 
@@ -1867,3 +1870,4 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_group_clipped_set, EFL_FUNC_CALL(enable), E
    EFL_OBJECT_OP_FUNC(efl_canvas_group_clipped_set, _efl_canvas_group_group_clipped_set)
 
 #include "canvas/efl_canvas_group.eo.c"
+#include "canvas/efl_canvas_group_eo.legacy.c"

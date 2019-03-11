@@ -115,17 +115,17 @@ _efl_ui_widget_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED,
    efl_del(ui_view);
 }
 
-static void
+static Eina_Error
 _efl_ui_widget_factory_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
                                                           const char *target, const char *property)
 {
    if (!strcmp(target, "style"))
      {
         eina_stringshare_replace(&pd->style, property);
-        return ;
+        return 0;
      }
 
-   efl_ui_property_bind(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS), target, property);
+   return efl_ui_property_bind(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS), target, property);
 }
 
 #include "efl_ui_widget_factory.eo.c"

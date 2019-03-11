@@ -1,8 +1,0 @@
-class @beta Efl.Ui.Layout_Legacy extends Efl.Ui.Layout implements Efl.Ui.Legacy
-{
-   [[Elementary layout class]]
-   data: null;
-   implements {
-      Efl.Object.constructor;
-   }
-}

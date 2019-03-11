@@ -1,7 +1,7 @@
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
 
-class @beta Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
+class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Selectable, Efl.Text_Interactive
 {
@@ -101,7 +101,6 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
          }
          get {
             [[This returns whether the entry's selection handlers are disabled.]]
-            legacy: null;
          }
          values {
             disabled: bool; [[If $true, the selection handlers are disabled.]]
@@ -334,7 +333,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.interest_region { get; }
-      Efl.Ui.Widget.on_disabled_update;
+      Efl.Ui.Widget.disabled {set;}
       //Efl.Ui.Widget.widget_sub_object_del;
       //Elm.Interface_Scrollable.policy { set; }
       //Elm.Interface_Scrollable.bounce_allow { set; }
@@ -362,7 +361,8 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout implements Efl.Ui.Clickable,
       Efl.Access.Editable.Text.cut;
       Efl.Access.Editable.Text.delete;
       Efl.Access.Editable.Text.paste;
-      Efl.File.file { get; set; }
+      Efl.File.file { set; }
+      Efl.File.load;
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;
    }

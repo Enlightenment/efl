@@ -298,12 +298,12 @@ _hov_show_do(Evas_Object *obj)
    }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
 
@@ -859,7 +859,7 @@ _elm_hover_efl_access_object_state_set_get(const Eo *obj, Elm_Hover_Data *pd EIN
    Efl_Access_State_Set states;
    states = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(states, EFL_ACCESS_STATE_TYPE_MODAL);
    return states;
 }
 
@@ -883,4 +883,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_hover), \
    _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
 
-#include "elm_hover.eo.c"
+#include "elm_hover_eo.c"

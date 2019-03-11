@@ -576,7 +576,7 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
    efl_ui_scroll_manager_pan_set(pd->smanager, pd->pan);
    edje_object_part_swallow(wd->resize_obj, "efl.content", pd->pan);
 
-   pd->select_mode = EFL_UI_SELECT_SINGLE;
+   pd->select_mode = EFL_UI_SELECT_MODE_SINGLE;
 
    if ((pd->item.size.w == 0) && (pd->item.size.h == 0))
      {
@@ -844,12 +844,12 @@ _efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Gr
 }
 
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_grid_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
 
@@ -891,7 +891,7 @@ _grid_item_selected(void *data, const Efl_Event *event)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    /* Single Select */
-   if (pd->select_mode != EFL_UI_SELECT_MULTI)
+   if (pd->select_mode != EFL_UI_SELECT_MODE_MULTI)
      {
         EINA_LIST_FREE(pd->selected, selected)
           {
@@ -1222,9 +1222,9 @@ _efl_ui_grid_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED,
 {
    Efl_Ui_Grid_Item *selected;
 
-   if ((pd->select_mode == EFL_UI_SELECT_MULTI &&
-        mode != EFL_UI_SELECT_MULTI) ||
-       mode == EFL_UI_SELECT_NONE)
+   if ((pd->select_mode == EFL_UI_SELECT_MODE_MULTI &&
+        mode != EFL_UI_SELECT_MODE_MULTI) ||
+       mode == EFL_UI_SELECT_MODE_NONE)
      {
         Eina_List *clone = eina_list_clone(pd->selected);
         EINA_LIST_FREE(clone, selected)

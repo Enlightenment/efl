@@ -496,23 +496,6 @@ _efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_clock_efl_ui_widget_on_disabled_update(Eo *obj, Efl_Ui_Clock_Data *sd, Eina_Bool disabled)
-{
-   Clock_Field *field;
-   unsigned int idx = 0;
-
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
-     {
-        field = sd->field_list + idx;
-        elm_object_disabled_set(field->item_obj, disabled);
-     }
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
@@ -531,10 +514,10 @@ _efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Clock_Field *field;
    char buf[BUFFER_SIZE];
@@ -544,7 +527,7 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    dt_mod = _dt_mod_init();
    if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
@@ -874,10 +857,10 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    // module - initialise module for clock

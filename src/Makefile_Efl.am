@@ -97,17 +97,16 @@ efl_eolian_type_files = \
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h) \
                      $(efl_eolian_type_files:%.eot=%.eot.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)
-efl_eolian_legacy_files_h = $(efl_eolian_legacy_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
                  $(efl_eolian_files_c) \
-                 $(efl_eolian_files_h) \
-                 $(efl_eolian_legacy_files_h)
+                 $(efl_eolian_files_h)
 
 EXTRA_DIST2 += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl_Config.h.in \
       lib/efl/Efl.h \
+      lib/efl/interfaces/efl_file.h \
       lib/efl/interfaces/efl_common_internal.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
@@ -152,7 +151,7 @@ dist_installed_eflheaders_DATA = \
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
-	$(efl_eolian_legacy_files_h)
+	lib/efl/interfaces/efl_file.h
 
 if HAVE_LUA_BINDINGS
 

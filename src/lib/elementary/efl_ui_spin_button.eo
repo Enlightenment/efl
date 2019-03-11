@@ -65,7 +65,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Range_Display.range_value { set; }
       Efl.Ui.Direction.direction { get; set; }

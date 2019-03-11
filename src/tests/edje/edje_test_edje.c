@@ -211,7 +211,8 @@ EFL_START_TEST(edje_test_part_caching)
    Evas_Object *ly, *o1, *global_p = NULL;
 
    ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas,
-    efl_file_set(efl_added, test_layout_get("test_swallows.edj"), "test_group")
+    efl_file_set(efl_added, test_layout_get("test_swallows.edj")),
+    efl_file_key_set(efl_added, "test_group")
    );
 
    for (int i = 0; i < 10; ++i)

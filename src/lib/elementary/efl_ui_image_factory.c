@@ -62,10 +62,11 @@ _efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *
                           .data = pd);
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_image_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, const char *key EINA_UNUSED, const char *property)
 {
-    eina_stringshare_replace(&pd->property, property);
+   eina_stringshare_replace(&pd->property, property);
+   return 0;
 }
 
 #include "efl_ui_image_factory.eo.c"

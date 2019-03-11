@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_tags_private.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #define MY_CLASS EFL_UI_TAGS_CLASS
 
@@ -403,7 +403,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
 
    layout = efl_add(EFL_UI_LAYOUT_CLASS, obj);
 
-   if (!elm_widget_element_update(obj, layout, PART_NAME_BUTTON))
+   if (elm_widget_element_update(obj, layout, PART_NAME_BUTTON) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    efl_text_set(efl_part(layout, "efl.btn.text"), str);
@@ -471,7 +471,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
 //FIXME: having an empty event handling function and reacting on Evas
 //events on specific objects is crazy, someone should fix that.
 EOLIAN static Eina_Bool
-_efl_ui_tags_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
+_efl_ui_tags_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
 {
    //lets stop eating all events
    return EINA_FALSE;
@@ -1011,10 +1011,10 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    elm_widget_sub_object_parent_add(obj);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    elm_widget_can_focus_set(obj, EINA_FALSE);

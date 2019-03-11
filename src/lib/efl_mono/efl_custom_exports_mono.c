@@ -349,6 +349,63 @@ EINA_SET_WRAPPER(double, double)
 EINA_SET_WRAPPER(string, const char *)
 EINA_SET_WRAPPER(ptr, void *)
 
+#define EINA_CONTAINER_SET_WRAPPER(N, T) EAPI Eina_Bool eina_value_container_set_wrapper_##N(Eina_Value *value, int i, T new_value) \
+{ \
+    const Eina_Value_Type *tp = eina_value_type_get(value); \
+    if (tp == EINA_VALUE_TYPE_ARRAY) \
+        return eina_value_array_set(value, i, new_value); \
+    else if (tp == EINA_VALUE_TYPE_LIST) \
+        return eina_value_list_set(value, i, new_value); \
+    else \
+        return EINA_FALSE; \
+}
+
+EINA_CONTAINER_SET_WRAPPER(char, char)
+EINA_CONTAINER_SET_WRAPPER(uchar, unsigned char)
+EINA_CONTAINER_SET_WRAPPER(short, short)
+EINA_CONTAINER_SET_WRAPPER(ushort, unsigned short)
+EINA_CONTAINER_SET_WRAPPER(int, int)
+EINA_CONTAINER_SET_WRAPPER(uint, unsigned int)
+EINA_CONTAINER_SET_WRAPPER(long, long)
+EINA_CONTAINER_SET_WRAPPER(ulong, unsigned long)
+EINA_CONTAINER_SET_WRAPPER(float, float)
+EINA_CONTAINER_SET_WRAPPER(double, double)
+EINA_CONTAINER_SET_WRAPPER(string, const char *)
+EINA_CONTAINER_SET_WRAPPER(ptr, void *)
+
+#define EINA_CONTAINER_APPEND_WRAPPER(N, T) EAPI Eina_Bool eina_value_container_append_wrapper_##N(Eina_Value *value, T new_value) \
+{ \
+    const Eina_Value_Type *tp = eina_value_type_get(value); \
+    if (tp == EINA_VALUE_TYPE_ARRAY) \
+        return eina_value_array_append(value, new_value); \
+    else if (tp == EINA_VALUE_TYPE_LIST) \
+        return eina_value_list_append(value, new_value); \
+    else \
+        return EINA_FALSE; \
+}
+
+EINA_CONTAINER_APPEND_WRAPPER(char, char)
+EINA_CONTAINER_APPEND_WRAPPER(uchar, unsigned char)
+EINA_CONTAINER_APPEND_WRAPPER(short, short)
+EINA_CONTAINER_APPEND_WRAPPER(ushort, unsigned short)
+EINA_CONTAINER_APPEND_WRAPPER(int, int)
+EINA_CONTAINER_APPEND_WRAPPER(uint, unsigned int)
+EINA_CONTAINER_APPEND_WRAPPER(long, long)
+EINA_CONTAINER_APPEND_WRAPPER(ulong, unsigned long)
+EINA_CONTAINER_APPEND_WRAPPER(float, float)
+EINA_CONTAINER_APPEND_WRAPPER(double, double)
+EINA_CONTAINER_APPEND_WRAPPER(string, const char *)
+EINA_CONTAINER_APPEND_WRAPPER(ptr, void *)
+
+EAPI void eina_value_container_get_wrapper(const Eina_Value *value, int i, void *output)
+{
+    const Eina_Value_Type *tp = eina_value_type_get(value);
+    if (tp == EINA_VALUE_TYPE_ARRAY)
+        eina_value_array_get(value, i, output);
+    else if (tp == EINA_VALUE_TYPE_LIST)
+        eina_value_list_get(value, i, output);
+}
+
 EAPI Eina_Bool eina_value_setup_wrapper(Eina_Value *value,
                                    const Eina_Value_Type *type)
 {

@@ -309,6 +309,9 @@ struct visitor_generate
    }
    bool operator()(attributes::klass_name klass) const
    {
+     // Efl.Class is manually handled in a custom marshall to be represented by a System.Type.
+     if (name_helpers::klass_full_concrete_name(klass) == "Efl.Class")
+       return as_generator(lit("Type")).generate(sink, attributes::unused, *context);
      if(klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
        return as_generator(string).generate(sink, name_helpers::klass_full_concrete_name(klass), *context);
      else
@@ -333,22 +336,10 @@ struct visitor_generate
            c.outer.base_type = "Eina.List";
            return c;
          }}
-        , {"inlist", nullptr, nullptr, [&]
-           {
-           complex_type_def c = complex;
-           c.outer.base_type = "Eina.Inlist";
-           return c;
-         }}
         , {"array", nullptr, nullptr, [&]
            {
            complex_type_def c = complex;
            c.outer.base_type = "Eina.Array";
-           return c;
-         }}
-        , {"inarray", nullptr, nullptr, [&]
-           {
-           complex_type_def c = complex;
-           c.outer.base_type = "Eina.Inarray";
            return c;
          }}
         , {"hash", nullptr, nullptr

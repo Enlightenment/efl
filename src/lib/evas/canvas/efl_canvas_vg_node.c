@@ -843,3 +843,4 @@ evas_vg_node_lower(Eo *obj)
 }
 
 #include "efl_canvas_vg_node.eo.c"
+#include "efl_canvas_vg_node_eo.legacy.c"

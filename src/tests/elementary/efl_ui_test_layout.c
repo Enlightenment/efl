@@ -28,11 +28,11 @@ EFL_START_TEST(efl_ui_layout_test_property_bind)
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_property_bind test";
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
-   efl_file_set(ly, buf, "layout");
+   efl_file_simple_load(ly, buf, "layout");
    efl_gfx_entity_visible_set(ly, EINA_TRUE);
 
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
@@ -58,7 +58,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_api_size_min)
    Evas_Object *win;
    Eina_Size2D res;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    res = efl_layout_calc_size_min(layout, EINA_SIZE2D(2, 2));
@@ -71,7 +71,7 @@ EFL_START_TEST(efl_ui_layout_test_layout_api_update_hints)
 {
    Evas_Object *win;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    efl_layout_calc_auto_update_hints_set(layout, EINA_TRUE);
@@ -83,10 +83,26 @@ EFL_START_TEST(efl_ui_layout_test_layout_force)
 {
    Evas_Object *win;
 
-   win = win_add(NULL, "layout", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
    /* this is just a test to not get segfaults in those calls */
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    efl_layout_calc_force(layout);
+}
+EFL_END_TEST
+
+EFL_START_TEST(efl_ui_layout_test_layout_theme)
+{
+   Evas_Object *win;
+   const char *klass, *group, *style;
+
+   win = win_add(NULL, "layout", EFL_UI_WIN_TYPE_BASIC);
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
+     efl_ui_layout_theme_set(efl_added, "win", "background", NULL)
+   );
+   efl_ui_layout_theme_get(layout, &klass, &group, &style);
+   ck_assert_str_eq(klass, "win");
+   ck_assert_str_eq(group, "background");
+   ck_assert(!style);
 }
 EFL_END_TEST
 
@@ -96,4 +112,5 @@ void efl_ui_test_layout(TCase *tc)
    tcase_add_test(tc, efl_ui_layout_test_layout_api_size_min);
    tcase_add_test(tc, efl_ui_layout_test_layout_api_update_hints);
    tcase_add_test(tc, efl_ui_layout_test_layout_force);
+   tcase_add_test(tc, efl_ui_layout_test_layout_theme);
 }

@@ -365,7 +365,7 @@ _populate_theme_scroll(Elm_Popup_Data *sd)
    sd->theme_scroll = EINA_FALSE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
@@ -439,7 +439,7 @@ _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    /* access */
    if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
 
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static void
@@ -503,14 +503,6 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         else
           evas_object_size_hint_min_set(sd->spacer, minw, minh);
 
-        if (sd->main_layout)
-          {
-             Evas *ev = evas_object_evas_get(sd->main_layout);
-             if (evas_smart_objects_calculating_get(ev))
-               evas_object_smart_calculate(sd->main_layout);
-             else
-               evas_object_smart_need_recalculate_set(sd->main_layout, EINA_TRUE);
-          }
        return;
      }
 
@@ -1824,7 +1816,7 @@ _elm_popup_efl_access_object_state_set_get(const Eo *obj, Elm_Popup_Data *sd EIN
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MODAL);
 
    return ret;
 }
@@ -1875,5 +1867,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
-#include "elm_popup.eo.c"
-#include "elm_popup_item.eo.c"
+#include "elm_popup_eo.c"
+#include "elm_popup_item_eo.c"

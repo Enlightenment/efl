@@ -87,7 +87,7 @@ int rr;
 
 #define MODEL_MESH_INIT(name, model, shade)                                              \
    data->mesh_##name = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);                          \
-   efl_file_set(data->mesh_##name, model, NULL); \
+   efl_file_simple_load(data->mesh_##name, model, NULL); \
    evas_canvas3d_mesh_vertex_assembly_set(data->mesh_##name, EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES); \
    evas_canvas3d_mesh_shader_mode_set(data->mesh_##name, EVAS_CANVAS3D_SHADER_MODE_##shade); \
    evas_canvas3d_mesh_frame_material_set(data->mesh_##name, 0, data->material);

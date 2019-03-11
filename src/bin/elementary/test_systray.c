@@ -6,7 +6,7 @@
 
 // FIXME: systray has no proper legacy API and clearly isn't ready for prime
 // time with EO either.
-#include "elm_systray.eo.h"
+#include "elm_systray_eo.h"
 
 #define WIDTH  320
 #define HEIGHT 160

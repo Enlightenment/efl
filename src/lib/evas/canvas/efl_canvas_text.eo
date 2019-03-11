@@ -8,7 +8,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Text_Annotate, Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Ui.I18n
 {
    [[Efl canvas text class]]
-   legacy_prefix: evas_object_textblock;
    methods {
       @property is_empty {
          [[Whether the object is empty (no text) or not
@@ -16,7 +15,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            @since 1.18
          ]]
          get {
-            legacy: null;
          }
          values {
             is_empty: bool; [[$true if empty, $false otherwise]]
@@ -91,10 +89,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            @since 1.18
          ]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          keys {
             key: string; [[The name to the style. $NULL is the default style]]
@@ -160,7 +156,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            @since 1.18
          ]]
-         legacy: null;
          return: mstring @owned; [[The text in the given range]]
          params {
             @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
@@ -175,7 +170,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            @since 1.19
          ]]
-         legacy: null;
          params {
              @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
              @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
@@ -193,7 +187,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            @since 1.19
          ]]
-         legacy: null;
          params {
              @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
              @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
@@ -207,7 +200,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            This removes all the text in given range [$start,$end].
          ]]
-         legacy: null;
          params {
             @in cur1: ptr(Efl.Text_Cursor_Cursor); [[Range start position]]
             @in cur2: ptr(Efl.Text_Cursor_Cursor); [[Range end position]]
@@ -262,7 +254,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            @since 1.21
          ]]
-         legacy: null;
          return: future<Eina.Rect> @owned; [[Future for layout result]]
       }
    }

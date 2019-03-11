@@ -37,7 +37,8 @@ struct function_registration_generator
     // auto index = index_generator();
 
     if(!as_generator(
-            scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
+               scope_tab << scope_tab << "if (" << f.c_name << "_static_delegate == null)\n"
+            << scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
                 escape_keyword(f.name) << ");\n"
         ).generate(sink, attributes::unused, context))
       return false;
@@ -47,9 +48,9 @@ struct function_registration_generator
 #ifdef _WIN32
         << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else
-        << "api_func = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, \"" << string << "\")"
+        << "api_func = Efl.Eo.FunctionInterop.LoadFunctionPointer(_Module.Module, \"" << string << "\")"
 #endif
-        ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
+        << ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
        )
        .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
       return false;

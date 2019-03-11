@@ -33,6 +33,7 @@
 #include <eolian/mono/marshall_annotation.hh>
 #include <eolian/mono/function_pointer.hh>
 #include <eolian/mono/alias_definition.hh>
+#include <eolian/mono/variable_definition.hh>
 
 namespace eolian_mono {
 
@@ -168,6 +169,20 @@ run(options_type const& opts)
            }
      }
 
+   // Constants
+   {
+      auto var_cxt = context_add_tag(class_context{class_context::variables}, context);
+      for (efl::eina::iterator<const Eolian_Variable> var_iterator( ::eolian_state_constants_by_file_get(opts.state, basename_input.c_str()))
+              , var_last; var_iterator != var_last; ++var_iterator)
+        {
+           efl::eolian::grammar::attributes::variable_def var(&*var_iterator, opts.unit);
+           if (!eolian_mono::constant_definition.generate(iterator, var, var_cxt))
+             {
+                throw std::runtime_error("Failed to generate enum");
+             }
+        }
+   }
+
    if (klass)
      {
        efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
@@ -294,7 +309,7 @@ _assert_not_dup(std::string option, std::string value)
 static eolian_mono::options_type
 opts_get(int argc, char **argv)
 {
-   eolian_mono::options_type opts;
+   eolian_mono::options_type opts{};
 
    const struct option long_options[] =
      {

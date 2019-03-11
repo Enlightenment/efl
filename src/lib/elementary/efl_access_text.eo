@@ -13,7 +13,6 @@ enum Efl.Access.Text_Granularity
 enum Efl.Access.Text_Clip_Type
 {
    [[Text clip type]]
-   legacy: elm_atspi_text_clip;
    none, [[No clip type]]
    min, [[Minimum clip type]]
    max, [[Maximum clip type]]

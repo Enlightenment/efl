@@ -10,7 +10,7 @@
  */
 EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
 
-#include "elm_box.eo.legacy.h"
+#include "elm_box_eo.legacy.h"
 
 /**
  * @brief Set the layout defining function to be used by the box

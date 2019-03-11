@@ -604,7 +604,74 @@ public static class TestEinaValue {
         }
     }
 
-    public static void TestValueArray() {
+    public static void TestValueArrayOfSByte()
+    {
+        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.SByte)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(array.Append(0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Append(1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Append(5));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Append(42));
+            Test.AssertEquals(4, array.Count());
+
+
+            Test.AssertEquals((sbyte)array[0], 0);
+            Test.AssertEquals((sbyte)array[1], 1);
+            Test.AssertEquals((sbyte)array[2], 5);
+            Test.AssertEquals((sbyte)array[3], 42);
+
+            array[0] = 120;
+            array[1] = -42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((sbyte)array[0], 120);
+            Test.AssertEquals((sbyte)array[1], -42);
+            Test.AssertEquals((sbyte)array[2], 5);
+            Test.AssertEquals((sbyte)array[3], 42);
+
+            Test.AssertEquals("[120, -42, 5, 42]", array.ToString());
+        }
+    }
+
+    public static void TestValueArrayOfByte()
+    {
+        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Byte)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(array.Append(0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Append(1));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Append(5));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Append(42));
+            Test.AssertEquals(4, array.Count());
+
+
+            Test.AssertEquals((byte)array[0], 0);
+            Test.AssertEquals((byte)array[1], 1);
+            Test.AssertEquals((byte)array[2], 5);
+            Test.AssertEquals((byte)array[3], 42);
+
+            array[0] = 155;
+            array[1] = 42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((byte)array[0], 155);
+            Test.AssertEquals((byte)array[1], 42);
+            Test.AssertEquals((byte)array[2], 5);
+            Test.AssertEquals((byte)array[3], 42);
+
+            Test.AssertEquals("[155, 42, 5, 42]", array.ToString());
+
+            Test.AssertRaises<OverflowException>(() => array[0] = 123214);
+        }
+    }
+
+    public static void TestValueArrayOfInts()
+    {
         using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
             Test.AssertEquals(0, array.Count());
             Test.Assert(array.Append(0));
@@ -633,12 +700,52 @@ public static class TestEinaValue {
 
             Test.AssertEquals("[1984, -42, 5, 42]", array.ToString());
         }
+    }
+
+    public static void TestValueArrayOfInt64s()
+    {
+        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int64)) {
+            Test.AssertEquals(0, array.Count());
+            Test.Assert(array.Append(0));
+            Test.AssertEquals(1, array.Count());
+            Test.Assert(array.Append(10000000000));
+            Test.AssertEquals(2, array.Count());
+            Test.Assert(array.Append(5));
+            Test.AssertEquals(3, array.Count());
+            Test.Assert(array.Append(42));
+            Test.AssertEquals(4, array.Count());
+
+
+            Test.AssertEquals((long)array[0], 0);
+            Test.AssertEquals((long)array[1], 10000000000);
+            Test.AssertEquals((long)array[2], 5);
+            Test.AssertEquals((long)array[3], 42);
+
+            array[0] = 1984;
+            array[1] = -42;
+            Test.AssertEquals(4, array.Count());
+
+            Test.AssertEquals((long)array[0], 1984);
+            Test.AssertEquals((long)array[1], -42);
+            Test.AssertEquals((long)array[2], 5);
+            Test.AssertEquals((long)array[3], 42);
+
+            Test.AssertEquals("[1984, -42, 5, 42]", array.ToString());
+        }
+    }
+
+    public static void TestValueArrayOfUInts()
+    {
 
         using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.UInt32)) {
             Test.Assert(array.Append(2));
             Test.AssertEquals((uint)array[0], (uint)2);
             Test.AssertRaises<OverflowException>(() => array[0] = -1);
         }
+    }
+
+    public static void TestValueArrayOfStrings()
+    {
 
         using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.String)) {
 

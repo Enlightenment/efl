@@ -4,7 +4,6 @@
 #include <Elementary.h>
 
 static void _print_items(void *data, Evas_Object *obj, void *event_info);
-static void _free(void *data, Evas_Object *obj, void *event_info);
 static void _add_item(void *data, Evas_Object *obj, void *event_info);
 
 static void
@@ -108,21 +107,12 @@ static void
 _add_item(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    static int num = 0;
-   char *str = malloc(sizeof(char) * 11);
-   Elm_Object_Item *hoversel_it;
+   Eina_Slstr *str;
 
    if(is_eng)
-     snprintf(str, 11, "item %d", ++num);
+     str = eina_slstr_printf("item %d", ++num);
    else
-     snprintf(str, 11, "بند %d", ++num);
+     str = eina_slstr_printf("بند %d", ++num);
 
-   hoversel_it = elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL,
-                                       str);
-   elm_object_item_del_cb_set(hoversel_it, _free);
-}
-
-static void
-_free(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   free(data);
+   elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL, str);
 }

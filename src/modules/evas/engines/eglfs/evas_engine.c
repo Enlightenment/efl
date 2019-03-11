@@ -233,7 +233,8 @@ gl_extn_veto(Render_Engine *re)
              glsym_eglSwapBuffersWithDamage = NULL;
           }
         if (!strstr(str, "EGL_EXT_buffer_age")) _extn_have_buffer_age = 0;
-        if (!strstr(str, "EGL_EXT_swap_buffers_with_damage"))
+        if ((!strstr(str, "EGL_EXT_swap_buffers_with_damage")) &&
+            (!strstr(str, "EGL_KHR_swap_buffers_with_damage")))
           glsym_eglSwapBuffersWithDamage = NULL;
      }
    else

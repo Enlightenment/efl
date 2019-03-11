@@ -4,8 +4,7 @@ emotion_eolian_files = \
 	lib/emotion/efl_canvas_video.eo
 
 emotion_eolian_c = $(emotion_eolian_files:%.eo=%.eo.c)
-emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h) \
-                   $(emotion_eolian_files:%.eo=%.eo.legacy.h)
+emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h)
 
 BUILT_SOURCES += \
                  $(emotion_eolian_c) \
@@ -23,6 +22,7 @@ lib/emotion/libemotion.la
 
 installed_emotionmainheadersdir = $(includedir)/emotion-@VMAJ@
 dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h \
+                                         lib/emotion/efl_canvas_video_eo.legacy.h \
                                          lib/emotion/Emotion_Legacy.h \
                                          lib/emotion/Emotion_Eo.h
 

@@ -48,13 +48,13 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENC  _evas_engine_context(obj->layer->evas)
 
-#include "canvas/evas_canvas.eo.h"
-#include "canvas/evas_text.eo.h"
-#include "canvas/evas_textgrid.eo.h"
-#include "canvas/evas_line.eo.h"
-#include "canvas/evas_box.eo.h"
-#include "canvas/evas_table.eo.h"
-#include "canvas/evas_grid.eo.h"
+#include "canvas/evas_canvas_eo.h"
+#include "canvas/evas_text_eo.h"
+#include "canvas/evas_textgrid_eo.h"
+#include "canvas/evas_line_eo.h"
+#include "canvas/evas_box_eo.h"
+#include "canvas/evas_table_eo.h"
+#include "canvas/evas_grid_eo.h"
 
 #define RENDER_METHOD_INVALID            0x00000000
 
@@ -1148,8 +1148,6 @@ struct _Evas_Object_Protected_Data
    unsigned char               no_change_render;
    unsigned char               delete_me;
 
-   Eina_Inlist                *event_anims; //List of Efl_Animation
-
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
 
@@ -1545,7 +1543,7 @@ struct _Evas_Vg_Load_Func
 
 struct _Evas_Vg_Save_Func
 {
-   int (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
+   Evas_Load_Error (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
 };
 
 #ifdef __cplusplus
@@ -1682,10 +1680,10 @@ void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
                                 int x, int y, int w, int h, int ow, int oh,
                                 Evas_Text_Props *intl_props, Eina_Bool do_async);
 
-void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
+void _efl_canvas_object_clipper_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
 
-Eina_Bool _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
-Eina_Bool _efl_canvas_object_clip_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
+Eina_Bool _efl_canvas_object_clipper_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
+Eina_Bool _efl_canvas_object_clipper_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
 Eina_Bool _efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
 
 void _evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev);
@@ -1933,6 +1931,9 @@ extern Eina_Cow *evas_object_image_state_cow;
 extern Eina_Cow *evas_object_mask_cow;
 extern Eina_Cow *evas_object_events_cow;
 
+Eina_Error _evas_load_error_to_efl_gfx_image_load_error(Evas_Load_Error err);
+Evas_Load_Error _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err);
+
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
                        Evas_Object_Protected_State, Write)
@@ -1942,6 +1943,13 @@ extern Eina_Cow *evas_object_events_cow;
 		  Write, EINA_FALSE);					\
    }									\
   while (0);
+
+/* BEGIN: events to maintain compatibility with legacy */
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW;
+#define EFL_GFX_ENTITY_EVENT_SHOW (&(_EFL_GFX_ENTITY_EVENT_SHOW))
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE;
+#define EFL_GFX_ENTITY_EVENT_HIDE (&(_EFL_GFX_ENTITY_EVENT_HIDE))
+/* END: events to maintain compatibility with legacy */
 
 /****************************************************************************/
 /*****************************************/

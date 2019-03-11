@@ -22,7 +22,7 @@ typedef Eo Elm_Object_Item;
 typedef void                  (*Elm_Object_Item_Signal_Cb)(void *data, Elm_Object_Item *it, const char *emission, const char *source);
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_widget_item.eo.legacy.h"
+#include "elm_widget_item_eo.legacy.h"
 #endif
 
 #define elm_object_item_content_set(it, content) elm_object_item_part_content_set((it), NULL, (content))

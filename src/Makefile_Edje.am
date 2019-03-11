@@ -11,8 +11,7 @@ edje_eolian_files = \
 	lib/edje/efl_canvas_layout_part_external.eo \
 	lib/edje/efl_canvas_layout_part_swallow.eo \
 	lib/edje/efl_canvas_layout_part_table.eo \
-	lib/edje/efl_canvas_layout_part_text.eo \
-	lib/edje/edje_edit.eo
+	lib/edje/efl_canvas_layout_part_text.eo
 
 edje_eolian_type_files = \
     lib/edje/edje_types.eot
@@ -66,7 +65,16 @@ lib/edje/Edje.h \
 lib/edje/Edje_Common.h \
 lib/edje/Edje_Eo.h \
 lib/edje/Edje_Legacy.h \
-lib/edje/Edje_Edit.h
+lib/edje/Edje_Edit.h \
+lib/edje/edje_edit_eo.h \
+lib/edje/edje_edit_eo.legacy.h \
+lib/edje/efl_canvas_layout_eo.legacy.h \
+lib/edje/efl_layout_group_eo.legacy.h
+
+EXTRA_DIST2 += \
+lib/edje/edje_edit_eo.c \
+lib/edje/efl_canvas_layout_eo.legacy.c \
+lib/edje/efl_layout_group_eo.legacy.c
 
 nodist_installed_edjemainheaders_DATA = \
                                         $(edje_eolian_h) \

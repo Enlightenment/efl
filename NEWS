@@ -1,6 +1,96 @@
 ==========
-EFL 1.21.0
+EFL 1.22.0
 ==========
+
+Changes since 1.21.0:
+---------------------
+
+Features:
+
+   * evas textblock: add/apply cursor cluster APIs based on grapheme cluster
+   * efl_ui_spin_button: Addded direction feature.
+   * scroller: refactory a momentum scroll animator
+   * elementary textpath: support legacy APIs
+   * elementary transit: add a convenient API.
+   * elementary transit: add a new api - elm_transit_progress_value_set()
+   * Text: add markup_range_get
+   * Canvas layout: support more Efl.Text.* with efl_part
+   * efl: Add support to elput for using elogind instead of systemd
+   * eina: add locale-independent eina_convert_strtod_c function
+   * elm perf tool - bring one back to efl
+   * eina: add locale-independent eina_convert_strtod_c function
+   * elm perf tool - bring one back to efl
+   * efl gfx_path: introduce efl_gfx_path_reserve()
+   * efl gfx_path: remove EFL_GFX_PATH_EVENT_CHANGED
+   * efl gfx_path: remove EFL_GFX_PATH_EVENT_CHANGED
+   * gfx: Add size hint fill (EO) (T3912)
+   * efl_app: add "standby" event (T5494)
+   * edje_cc: fail upon detecting invalid part description references in programs (T7016)
+   * elput: Add API to allow settings tap-to-click on pointer device
+   * ecore_drm2: Add API to allow settings tap-to-click on pointer device
+   * efl_ui_win: add 'exit_on_all_windows_closed' class property and unit test (T5494)
+   * efl_ui_win: add 'exit_on_close' property and unit test (T5494)
+   * eo: implement class overriding (+unit tests) (T7516)
+   * eolian gen: initial support for reflection api
+   * efl_ui_relative_layout: introduce new relative container (T5487)
+   * eolian: introduce typed slice types
+   * eolian: add support for inlist structs
+
+Fixes:
+
+   * ecore_wl2_dmabuf: Link with ecore_wl2 (T7327)
+   * ecore_wl2_dmabuf: Depend on ecore_wl2 (T7327)
+   * efl selection manager - avoid multiple selection get callbacks for req
+   * evas image: fix a bug in image preloading.
+   * evas canvas: fix null possibility of evas_object_above_get().
+   * edje: Remove hack code
+   * efl gfx_path: prevent buffer overflow.
+   * ecore_main: fix the invalid return value
+   * eina_vpath: fix the memory leak
+   * elementary: remove meaningless memory allocation and leaking
+   * elementary: fix memory leak from Efl.Ui.Layout.Object
+   * evas gl: fix invalid image size.
+   * elementary entry: apply scale to all edje objects
+   * eina debug: fix a double unlock issue
+   * elm_theme: fix return value when default style fallback is done
+   * evas vg: fix memory leak.
+   * devas vg: return default root node if possible.
+   * evas vg: fix memory leak at gradient.
+   * evas filter: remove critical messages from Evas Filter
+   * elementary transit: fix wrong pausing time calculation.
+   * Canvas text: fix line_jump_by logic
+   * cxx: explicitly require c++11 and fix tests to conform
+   * edje: fix an overflow issue for state values
+   * evas textblock: remove white space after line-break by a next item
+   * evas ector: fix memory leaks.
+   * evas vg: update render properly.
+   * ector software: make a pair of ref/unref.
+   * evas gl: recover current program state.
+   * ecore_evas - fix aninmator based frame render ticking to full framerate
+   * ecore evas - buffer - init ecore event evas as many times as shutdown
+   * eina: fix a build failure caused by missing 'locale_t' from OSX
+   * ecore_con: handle timeout of the attempt to connect.
+   * ecore_evas - fix aninmator based frame render ticking to full framerate
+   * ecore evas - buffer - init ecore event evas as many times as shutdown
+   * eina: fix a build failure caused by missing 'locale_t' from OSX
+   * ecore_con: handle timeout of the attempt to connect.
+   * evas gl - make GLintptr etc. also ndefed for GL_VERSION_1_5 fix typedef (T7502)
+   * ecore-drm2: Fix drmModeSetCrtc call during fb flip
+   * textblock: Fix crash with filters
+   * edje - stop trying to access ready deleted exrt/group swallow objects
+   * evas: remove memory leaks from deleted Textblock objects
+   * elm - dnd - restore to working as drop targets
+   * elm_config: Free data returned from eet_read
+   * ui/flip: fix efl_pack usage
+   * elm_entry: make file loading succeed on 0-sized files (T6562)
+   * theme: fix odd state setting on some items for list/genlist/gengrid
+   * theme: correct part name in program for elm/hover/base/main_menu_submenu/default (T6219)
+   * theme: remove a ton of invalid part description references in various programs (T6873)
+   * ecore-evas/extn: use evas from events when updating key masks (T5536)
+   * edje: apply maps to textblock cursors and backgrounds (T4977)
+   * ecore drm2 - work around kms/drm bug seemingly when no flip event comes
+   * elm textpath: reduces differences between actual pos and modified pos
+   * elm_map: Make more robust elm_map (T7443)
 
 Changes since 1.20.0:
 ---------------------

@@ -216,18 +216,18 @@ _scrollable_layout_theme_set(Eo *obj, Elm_Panel_Data *sd)
      _access_obj_process(obj, EINA_TRUE);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_panel_efl_ui_widget_theme_apply(Eo *obj, Elm_Panel_Data *sd)
 {
    const char *str;
    Evas_Coord minw = 0, minh = 0;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -726,10 +726,10 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(panel, Elm_Panel_Data)
 
 EOLIAN static Eina_Bool
-_elm_panel_efl_ui_widget_widget_event(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_panel_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Panel_Data *pd, const Efl_Event *eo_event, Evas_Object *src)
 {
    if (src != obj) return EINA_FALSE;
-   return _panel_efl_ui_widget_widget_event(obj, pd, eo_event, src);
+   return _panel_efl_ui_widget_widget_input_event_handler(obj, pd, eo_event, src);
 }
 
 static Eina_Bool
@@ -1242,15 +1242,14 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
      (obj, EFL_UI_EVENT_SCROLL, (void *) &event);
 }
 
-EOLIAN static Eina_Bool
-_elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
+EOLIAN static void
+_elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool disabled)
 {
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
 
    if (sd->scrollable)
      {
-        if (disabled && sd->callback_added)
+        if (efl_ui_widget_disabled_get(obj) && sd->callback_added)
           {
              evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down);
@@ -1263,7 +1262,7 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
 
              sd->callback_added = EINA_FALSE;
           }
-        else if (!disabled && !sd->callback_added)
+        else if (!efl_ui_widget_disabled_get(obj) && !sd->callback_added)
           {
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down, sd);
@@ -1277,8 +1276,6 @@ _elm_panel_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Panel_Data *sd, Eina_Bo
              sd->callback_added = EINA_TRUE;
           }
      }
-
-   return EINA_TRUE;
 }
 
 EOLIAN static double
@@ -1504,4 +1501,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_panel), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_panel)
 
-#include "elm_panel.eo.c"
+#include "elm_panel_eo.c"

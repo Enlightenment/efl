@@ -73,6 +73,7 @@ typedef struct Dummy_Test_Object_Data
   Eina_List *list_for_accessor;
   int setter_only;
   int iface_prop;
+  Eo *provider;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -86,6 +87,8 @@ typedef struct Dummy_Child_Data
   const char* a;
   double b;
   Eina_Bool iface_was_set;
+  Eina_Bool obligatory_beta_ctor_was_called;
+  Eina_Bool optional_beta_ctor_was_called;
 } Dummy_Child_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
@@ -150,12 +153,20 @@ _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
         pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
      }
 
+   pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
+   dummy_numberwrapper_number_set(pd->provider, 1999);
+
    return obj;
 }
 
 Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return obj;
+}
+
+Efl_Object *_dummy_test_object_return_null_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return NULL;
 }
 
 void _dummy_test_object_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x, int *y)
@@ -3332,18 +3343,9 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    eina_array_push(complex->farray, _new_int(0x2A));
    eina_array_push(complex->farray, _new_int(0x42));
 
-   complex->finarray = eina_inarray_new(sizeof(int), 0);
-   eina_inarray_push(complex->finarray, _int_ref(0x0));
-   eina_inarray_push(complex->finarray, _int_ref(0x2A));
-   eina_inarray_push(complex->finarray, _int_ref(0x42));
-
    complex->flist = eina_list_append(complex->flist, strdup("0x0"));
    complex->flist = eina_list_append(complex->flist, strdup("0x2A"));
    complex->flist = eina_list_append(complex->flist, strdup("0x42"));
-
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x0));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x2A));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x42));
 
    complex->fhash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(complex->fhash, "aa", strdup("aaa"));
@@ -3374,13 +3376,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
    if (!_array_int_equal(complex->farray, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
-   if (!_inarray_int_equal(complex->finarray, base_seq_int, base_seq_int_size))
-     return EINA_FALSE;
-
    if (!_list_str_equal(complex->flist, base_seq_str, base_seq_str_size))
-     return EINA_FALSE;
-
-   if (!_inlist_int_equal(complex->finlist, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
    if (!_hash_str_check(complex->fhash, "aa", "aaa")
@@ -3935,6 +3931,14 @@ int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj
     return pd->iface_prop;
 }
 
+Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const Efl_Class *klass)
+{
+    EINA_LOG_ERR("klass: %p, NUMBERWRAPPER: %p", klass, DUMMY_NUMBERWRAPPER_CLASS);
+    if (klass == DUMMY_NUMBERWRAPPER_CLASS)
+        return pd->provider;
+    return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
+}
+
 /// Dummy.Child
 
 static Efl_Object *
@@ -3944,6 +3948,8 @@ _dummy_child_efl_object_constructor(Eo *obj, Dummy_Child_Data *pd)
 
     pd->iface_prop = 1984;
     pd->iface_was_set = EINA_FALSE;
+    pd->obligatory_beta_ctor_was_called = EINA_FALSE;
+    pd->optional_beta_ctor_was_called = EINA_FALSE;
     return obj;
 }
 
@@ -3972,6 +3978,27 @@ Eina_Bool _dummy_child_iface_was_set_get(EINA_UNUSED const Eo* obj, Dummy_Child_
 {
     return pd->iface_was_set;
 }
+
+void _dummy_child_obligatory_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->obligatory_beta_ctor_was_called = EINA_TRUE;
+}
+
+void _dummy_child_optional_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->optional_beta_ctor_was_called = EINA_TRUE;
+}
+
+Eina_Bool _dummy_child_obligatory_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->obligatory_beta_ctor_was_called;
+}
+
+Eina_Bool _dummy_child_optional_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->optional_beta_ctor_was_called;
+}
+
 EOLIAN static void
 _dummy_child_class_constructor(Efl_Class *klass)
 {

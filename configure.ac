@@ -1,5 +1,5 @@
-EFL_VERSION([1], [21], [99], [dev])
-AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
+EFL_VERSION([1], [22], [0], [release])
+AC_INIT([efl], [efl_version-alpha1], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -804,7 +804,7 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lmsvcr100])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
 
 ### Checks for header files
 
@@ -1465,7 +1465,6 @@ if test "x${have_windows}" = "xyes"; then
 else
   EVIL_DL_MONO="dl"
 fi
-ECORE_EVAS_DL_MONO="${DLIB_PREFIX_MONO}ecore_evas${DLIB_SUFFIX_MONO}"
 EDJE_DL_MONO="${DLIB_PREFIX_MONO}edje${DLIB_SUFFIX_MONO}"
 ELEMENTARY_DL_MONO="${DLIB_PREFIX_MONO}elementary${DLIB_SUFFIX_MONO}"
 ELDBUS_DL_MONO="${DLIB_PREFIX_MONO}eldbus${DLIB_SUFFIX_MONO}"
@@ -1477,7 +1476,6 @@ AC_SUBST([EINA_DL_MONO])
 AC_SUBST([EO_DL_MONO])
 AC_SUBST([EVAS_DL_MONO])
 AC_SUBST([EVIL_DL_MONO])
-AC_SUBST([ECORE_EVAS_DL_MONO])
 AC_SUBST([EDJE_DL_MONO])
 AC_SUBST([ELEMENTARY_DL_MONO])
 AC_SUBST([ELDBUS_DL_MONO])

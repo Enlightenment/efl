@@ -1,6 +1,6 @@
 import efl_types;
 
-abstract @beta Efl.App extends Efl.Loop implements Efl.Core.Command_Line
+abstract Efl.App extends Efl.Loop implements Efl.Core.Command_Line
 {
    [[Object representing the application itself]]
    data: null;

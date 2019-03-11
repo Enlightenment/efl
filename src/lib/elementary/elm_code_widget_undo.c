@@ -90,7 +90,7 @@ _elm_code_widget_undo_change(Evas_Object *widget,
                   _elm_code_widget_text_at_cursor_insert_no_undo(widget,
                                                                  content,
                                                                  textlen);
-                  elm_obj_code_widget_cursor_position_get(widget, &row, &col);
+                  efl_ui_code_widget_cursor_position_get(widget, &row, &col);
                   position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
                   elm_code_line_split_at(line, position);
                   elm_code_widget_cursor_position_set(widget, newrow + 1, 1);
@@ -108,7 +108,7 @@ _elm_code_widget_undo_change(Evas_Object *widget,
                                             info->end_col + 1);
      }
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 static Eina_Bool

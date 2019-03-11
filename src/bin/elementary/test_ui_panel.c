@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 void
@@ -10,7 +11,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Eo *win, *table, *panel;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                      efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -19,7 +20,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, table,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
            efl_pack_table(table, efl_added, 0, 0, 4, 5));
@@ -103,7 +104,7 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Eo *win, *box, *check, *btn, *table, *list, *panel;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                      efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

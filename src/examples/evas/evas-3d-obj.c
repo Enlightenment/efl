@@ -47,7 +47,7 @@
 #define ADD_OBJ_MESH(path, Y, Z, num, shade_mode, name_of_material)               \
    mesh[num] = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);                                  \
    snprintf(full_file_path, sizeof(full_file_path), "%s.obj", path);                      \
-   efl_file_set(mesh[num], full_file_path, NULL); \
+   efl_file_simple_load(mesh[num], full_file_path, NULL); \
    evas_canvas3d_mesh_frame_material_set(mesh[num], 0, name_of_material); \
    evas_canvas3d_mesh_shader_mode_set(mesh[num], shade_mode);                                \
    mesh_node[num] = efl_add(EVAS_CANVAS3D_NODE_CLASS, evas, evas_canvas3d_node_type_set(efl_added, EVAS_CANVAS3D_NODE_TYPE_MESH));   \
@@ -65,7 +65,7 @@
 
 #define ADD_TEXTURE(name, path)                                       \
    name = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);                        \
-   efl_file_set(name, path, NULL); \
+   efl_file_simple_load(name, path, NULL); \
    evas_canvas3d_texture_filter_set(name, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, \
                                     EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST); \
    evas_canvas3d_texture_wrap_set(name, EVAS_CANVAS3D_WRAP_MODE_REPEAT, \

@@ -328,10 +328,10 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    elm_widget_sub_object_parent_add(obj);
@@ -366,7 +366,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
                           evas_object_evas_get(obj));
    efl_canvas_group_member_add(pd->page_root, pd->foreclip);
    evas_object_static_clip_set(pd->foreclip, EINA_TRUE);
-   efl_canvas_object_clip_set(pd->page_box, pd->foreclip);
+   efl_canvas_object_clipper_set(pd->page_box, pd->foreclip);
 
    pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                           evas_object_evas_get(obj));
@@ -402,7 +402,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
      {
         if (pd->cnt == 1)
           efl_pack(pd->page_box, subobj);
-        else efl_canvas_object_clip_set(subobj, pd->backclip);
+        else efl_canvas_object_clipper_set(subobj, pd->backclip);
      }
 
    if (pd->indicator)
@@ -429,7 +429,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
      {
         if (pd->cnt == 1)
           efl_pack(pd->page_box, subobj);
-        else efl_canvas_object_clip_set(subobj, pd->backclip);
+        else efl_canvas_object_clipper_set(subobj, pd->backclip);
      }
 
    if (pd->indicator)
@@ -456,7 +456,7 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
-   else efl_canvas_object_clip_set(subobj, pd->backclip);
+   else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
    if (pd->indicator)
      efl_page_indicator_pack(pd->indicator, index);
@@ -482,7 +482,7 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
 
    if (pd->transition)
      efl_page_transition_update(pd->transition, pd->curr.pos);
-   else efl_canvas_object_clip_set(subobj, pd->backclip);
+   else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
    if (pd->indicator)
      efl_page_indicator_pack(pd->indicator, (index + 1));
@@ -519,7 +519,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
 
         if (pd->transition)
           efl_page_transition_update(pd->transition, pd->curr.pos);
-        else efl_canvas_object_clip_set(subobj, pd->backclip);
+        else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
         if (pd->indicator)
 	  efl_page_indicator_pack(pd->indicator, index);
@@ -566,7 +566,7 @@ _efl_ui_pager_current_page_set(Eo *obj,
 
         curr = eina_list_nth(pd->content_list, pd->curr.page);
         efl_pack_unpack(pd->page_box, curr);
-        efl_canvas_object_clip_set(curr, pd->backclip);
+        efl_canvas_object_clipper_set(curr, pd->backclip);
 
         pd->curr.page = index;
         curr = eina_list_nth(pd->content_list, pd->curr.page);
@@ -611,7 +611,7 @@ _efl_ui_pager_transition_set(Eo *obj,
 
         curr = eina_list_nth(pd->content_list, pd->curr.page);
         efl_pack_unpack(pd->page_box, curr);
-        efl_canvas_object_clip_set(pd->page_box, pd->backclip);
+        efl_canvas_object_clipper_set(pd->page_box, pd->backclip);
      }
 
    pd->transition = transition;
@@ -628,11 +628,11 @@ _efl_ui_pager_transition_set(Eo *obj,
 
         _event_handler_del(obj, pd);
 
-        efl_canvas_object_clip_set(pd->page_box, pd->foreclip);
+        efl_canvas_object_clipper_set(pd->page_box, pd->foreclip);
 
         EINA_LIST_FOREACH(pd->content_list, list, curr)
           {
-             efl_canvas_object_clip_set(curr, pd->backclip);
+             efl_canvas_object_clipper_set(curr, pd->backclip);
           }
 
         curr = eina_list_nth(pd->content_list, pd->curr.page);

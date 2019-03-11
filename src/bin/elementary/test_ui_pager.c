@@ -4,6 +4,7 @@
 #define EO_BETA_API
 #define EFL_UI_WIDGET_PROTECTED
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 
@@ -78,7 +79,9 @@ static Eo *page_add(Page_Type p, Eo *parent)
          snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
                   elm_app_data_dir_get());
          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                        efl_file_set(efl_added, buf, "page"),
+                        efl_file_set(efl_added, buf),
+                        efl_file_key_set(efl_added, "page"),
+                        efl_file_load(efl_added),
                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
          efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
          break;
@@ -104,7 +107,9 @@ static Eo *page_add(Page_Type p, Eo *parent)
          snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
                   elm_app_data_dir_get());
          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                        efl_file_set(efl_added, buf, "page"),
+                        efl_file_set(efl_added, buf),
+                        efl_file_key_set(efl_added, "page"),
+                        efl_file_load(efl_added),
                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
          efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
          break;
@@ -674,7 +679,7 @@ void test_ui_pager(void *data EINA_UNUSED,
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Pager"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -696,7 +701,9 @@ void test_ui_pager(void *data EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
             elm_app_data_dir_get());
    layout = efl_add(EFL_UI_LAYOUT_CLASS, panes,
-                    efl_file_set(efl_added, buf, "pager"),
+                    efl_file_set(efl_added, buf),
+                    efl_file_key_set(efl_added, "pager"),
+                    efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
    pager = efl_add(EFL_UI_PAGER_CLASS, layout,

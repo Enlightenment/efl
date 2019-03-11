@@ -649,7 +649,7 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
 
    ERR("Could not find property '%s'.", property);
    // Unknow value request
-   return efl_model_property_get(efl_super(obj, EFL_IO_MODEL_CLASS), property);
+   return eina_value_error_new(EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 
 static Eina_Future *

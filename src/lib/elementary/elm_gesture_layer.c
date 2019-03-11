@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_gesture_layer.eo.h"
+#include "elm_gesture_layer_eo.h"
 
 #define MY_CLASS ELM_GESTURE_LAYER_CLASS
 
@@ -3733,15 +3733,15 @@ _rotate_test(Evas_Object *obj,
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_gesture_layer_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+EOLIAN static void
+_elm_gesture_layer_efl_ui_widget_disabled_set(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
-   if (disabled)
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
+
+   if (efl_ui_widget_disabled_get(obj))
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -4175,4 +4175,4 @@ _elm_gesture_layer_class_constructor(Efl_Class *klass)
 #define ELM_GESTURE_LAYER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gesture_layer)
 
-#include "elm_gesture_layer.eo.c"
+#include "elm_gesture_layer_eo.c"

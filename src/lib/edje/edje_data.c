@@ -299,6 +299,8 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_part_description_external);
    FREED(_edje_edd_edje_part_description_mesh_node);
    FREED(_edje_edd_edje_part_description_light);
+   FREED(_edje_edd_edje_part_description_vector);
+   FREED(_edje_edd_edje_part_description_vector_pointer);
    FREED(_edje_edd_edje_part_description_camera);
    FREED(_edje_edd_edje_part_description_3d_color);
    FREED(_edje_edd_edje_part_description_3d_offset);
@@ -327,6 +329,7 @@ _edje_edd_shutdown(void)
    FREED(_edje_edd_edje_physics_face);
    FREED(_edje_edd_edje_map_colors);
    FREED(_edje_edd_edje_map_colors_pointer);
+   FREED(_edje_edd_edje_color_tree_node);
 
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_part_collection);

@@ -244,154 +244,52 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
-static Eina_Bool
-_vg_file_mmap_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const Eina_File *file, const char *key, Eina_Bool mmap)
+EOLIAN static Eina_Error
+_efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
+   Eina_Error err;
+   if (efl_file_loaded_get(eo_obj)) return 0;
+
+   err = efl_file_load(efl_super(eo_obj, MY_CLASS));
+   if (err) return err;
+
+   const Eina_File *file = efl_file_mmap_get(eo_obj);
+   const char *key = efl_file_key_get(eo_obj);
    Vg_Cache_Entry *old_entry;
    Evas_Object_Protected_Data *obj;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-
    old_entry = pd->vg_entry;
-
-   if (file)
-     pd->vg_entry = evas_cache_vg_entry_create(file, key,
-                                               obj->cur->geometry.w,
-                                               obj->cur->geometry.h,
-                                               mmap);
-   else
-     pd->vg_entry = NULL;
-
+   pd->vg_entry = evas_cache_vg_entry_create(file, key,
+                                             obj->cur->geometry.w,
+                                             obj->cur->geometry.h,
+                                             EINA_TRUE);
    evas_object_change(eo_obj, obj);
    evas_cache_vg_entry_del(old_entry);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static void
-_efl_canvas_vg_object_efl_file_mmap_get(const Eo *eo_obj EINA_UNUSED,
-                                        Efl_Canvas_Vg_Object_Data *pd,
-                                        const Eina_File **file, const char **key)
+_efl_canvas_vg_object_efl_file_unload(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
-   if (file) *file = NULL;
-   if (key) *key = NULL;
-
-   if (pd->vg_entry)
-     {
-        if (file) *file = pd->vg_entry->file;
-        if (key) *key = pd->vg_entry->key;
-     }
+   Evas_Object_Protected_Data *obj;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_cache_vg_entry_del(pd->vg_entry);
+   evas_object_change(eo_obj, obj);
+   eina_stringshare_del(pd->key);
+   pd->vg_entry = NULL;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_mmap_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const Eina_File *file, const char *key)
-{
-   Eina_File *pf = pd->file;
-   Eina_Bool ret;
-
-   if (!file)
-     {
-        Evas_Object_Protected_Data *obj;
-        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        evas_cache_vg_entry_del(pd->vg_entry);
-        evas_object_change(eo_obj, obj);
-        eina_stringshare_del(pd->key);
-        pd->vg_entry = NULL;
-        pd->file = NULL;
-        pd->key = NULL;
-        return EINA_TRUE;
-     }
-   if (pd->file == file)
-     {
-        if (!pd->key && !key) return EINA_FALSE;
-        else if (pd->key && key)
-          {
-             if (!strcmp(pd->key, key)) return EINA_FALSE;
-          }
-        pf = NULL;
-     }
-   if (pd->file != file)
-     pd->file = eina_file_dup(file);
-   ret = _vg_file_mmap_set(eo_obj, pd, file, key, EINA_TRUE);
-
-   //Close previous file after deleting ex-cache entry.
-   if (pf) eina_file_close(pf);
-
-   return ret;
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
-{
-   Eina_File *pf = pd->file;
-   Eina_Bool ret;
-
-   if (!file)
-     {
-        Evas_Object_Protected_Data *obj;
-        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-        evas_cache_vg_entry_del(pd->vg_entry);
-        evas_object_change(eo_obj, obj);
-        eina_stringshare_del(pd->key);
-        pd->vg_entry = NULL;
-        pd->file = NULL;
-        pd->key = NULL;
-        return EINA_TRUE;
-     }
-   if (!pd->file)
-     {
-        pd->file = eina_file_open(file, EINA_FALSE);
-        if (!pd->file) return EINA_FALSE;
-     }
-   else
-     {
-        const char *filename = eina_file_filename_get(pd->file);
-        if (filename)
-          {
-             if (strcmp(filename, file))
-               pd->file = eina_file_open(file, EINA_FALSE);
-             else
-               {
-                  if (!pd->key && !key) return EINA_FALSE;
-                  else if (pd->key && key)
-                    {
-                       if (!strcmp(pd->key, key)) return EINA_FALSE;
-                    }
-                  pf = NULL;
-               }
-          }
-     }
-
-   ret = _vg_file_mmap_set(eo_obj, pd, pd->file, key, EINA_FALSE);
-
-   //Close previous file after deleting ex-cache entry.
-   if (pf) eina_file_close(pf);
-
-   return ret;
-}
-
-EOLIAN static void
-_efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
-{
-   if (file) *file = NULL;
-   if (key) *key = NULL;
-
-   if (pd->vg_entry)
-     {
-        if (file) *file = eina_file_filename_get(pd->vg_entry->file);
-        if (key) *key = pd->vg_entry->key;
-     }
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
+_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    if (pd->vg_entry)
-     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, flags);
+     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, info);
 
    Evas_Coord w, h;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   return evas_cache_vg_file_save(pd->root, w, h, file, key, flags);
+   return evas_cache_vg_file_save(pd->root, w, h, file, key, info);
 }
 
 static void
@@ -419,18 +317,6 @@ _efl_canvas_vg_object_efl_object_destructor(Eo *eo_obj, Efl_Canvas_Vg_Object_Dat
    if (pd->user_entry) free(pd->user_entry);
    pd->user_entry = NULL;
    evas_cache_vg_entry_del(pd->vg_entry);
-
-   //Close files after deleting entry.
-   if (pd->file)
-     {
-        eina_file_close(pd->file);
-        pd->file = NULL;
-     }
-   if (pd->key)
-     {
-        eina_stringshare_del(pd->key);
-        pd->key = NULL;
-     }
 
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -1029,13 +915,13 @@ evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index)
 EAPI Eina_Bool
 evas_object_vg_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key)
 {
-   return efl_file_mmap_set(obj, f, key);
+   return efl_file_simple_mmap_load(obj, f, key);
 }
 
 EAPI Eina_Bool
 evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
 {
-   return efl_file_set(obj, file, key);
+   return efl_file_simple_load(obj, file, key);
 }
 
 #include "efl_canvas_vg_object.eo.c"

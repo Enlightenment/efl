@@ -7,6 +7,7 @@
 #define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <stdio.h>
@@ -39,7 +40,7 @@ elm_main(int argc, char **argv)
    Grid_Event_Data *gd = calloc(sizeof(Grid_Event_Data *), 1);
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-      efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+      efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
       efl_text_set(efl_added, "Efl.Ui.Grid"),
       efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 

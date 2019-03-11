@@ -21,7 +21,10 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save, Efl.Gfx.Frame_Controller
+class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save,
+                           //TIZEN_ONLY(20180831): evas json: new feature for lottie - #4
+                            Efl.Gfx.Frame_Controller
+                           //
 {
    [[Efl vector graphics class]]
    legacy_prefix: evas_object_vg;
@@ -82,8 +85,8 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.File.mmap { get; set; }
-      Efl.File.file { get; set; }
+      Efl.File.load;
+      Efl.File.unload;
       Efl.File_Save.save;
       Efl.Gfx.Frame_Controller.animated { get; }
       Efl.Gfx.Frame_Controller.frame { get; set; }

@@ -133,7 +133,7 @@ main(void)
    for (i = 0; i < sizeof (batmans_path) / sizeof (batmans_path[0]); i++)
      {
        batmans_vg[i] = evas_vg_shape_add(vg);
-       evas_vg_node_origin_set(batmans_vg[i], 100, 150);
+       efl_canvas_vg_node_origin_set(batmans_vg[i], 100, 150);
 
        if(i % 2)
          {
@@ -162,7 +162,7 @@ main(void)
    Eina_Matrix3 matrix;
    eina_matrix3_identity(&matrix);
    eina_matrix3_scale(&matrix, 1.1, 1.1);
-   evas_vg_node_transformation_set(root, &matrix);
+   efl_canvas_vg_node_transformation_set(root, &matrix);
 
    circle = evas_vg_shape_add(root);
    evas_vg_shape_append_circle(circle, WIDTH / 2, HEIGHT / 2, 200);
@@ -172,7 +172,7 @@ main(void)
 
    batman = evas_vg_shape_add(root);
    evas_vg_node_color_set(batman, 0, 0, 0, 255);
-   evas_vg_node_origin_set(batman, 100, 150);
+   efl_canvas_vg_node_origin_set(batman, 100, 150);
    evas_vg_shape_append_move_to(batman, 256, 213);
    evas_vg_shape_dup(batman, batmans_vg[0]);
 

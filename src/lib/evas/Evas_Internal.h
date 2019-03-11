@@ -79,6 +79,44 @@ EOAPI Eo *efl_input_focus_instance_get(Efl_Object *owner, void **priv);
 EOAPI Eo *efl_input_hold_instance_get(Efl_Object *owner, void **priv);
 EOAPI Eo *efl_input_key_instance_get(Efl_Object *owner, void **priv);
 EOAPI Eo *efl_input_pointer_instance_get(Efl_Object *owner, void **priv);
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ * @param[in] is_frame @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Efl_Canvas_Object
+ */
+EOAPI void efl_canvas_object_is_frame_object_set(Eo *obj, Eina_Bool is_frame);
+
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Efl_Canvas_Object
+ */
+EOAPI Eina_Bool efl_canvas_object_is_frame_object_get(const Eo *obj);
 
 EWAPI extern const Efl_Event_Description _EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE;
 #define EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE))

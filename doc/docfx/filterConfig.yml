@@ -1,4 +1,6 @@
 apiRules:
+- exclude:
+    uidRegex: ^.*NativeInherit
 - include:
     uidRegex: ^Efl
 - include:

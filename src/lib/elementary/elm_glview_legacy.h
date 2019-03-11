@@ -89,4 +89,4 @@ EAPI void elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
  * @ingroup Elm_GLView
  */
 EAPI void elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
-#include "elm_glview.eo.legacy.h"
+#include "elm_glview_eo.legacy.h"

@@ -1,7 +1,6 @@
 class @beta Efl.Canvas.Vg.Shape extends Efl.Canvas.Vg.Node implements Efl.Gfx.Shape
 {
    [[Efl vector graphics shape class]]
-   legacy_prefix: evas_vg_shape;
    methods {
       @property fill {
          [[Fill of the shape object]]

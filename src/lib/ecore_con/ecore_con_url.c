@@ -1177,7 +1177,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 
    file = efl_add(EFL_IO_FILE_CLASS, efl_loop_get(url_con->dialer),
                   efl_name_set(efl_added, "upload-file"),
-                  efl_file_set(efl_added, filename, NULL),
+                  efl_file_set(efl_added, filename),
                   efl_io_file_flags_set(efl_added, O_RDONLY),
                   efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                   efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE));

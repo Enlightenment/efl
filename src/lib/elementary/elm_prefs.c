@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_prefs.eo.h"
+#include "elm_prefs_eo.h"
 #include "elm_widget_prefs.h"
 #include "elm_prefs_edd.x"
 
@@ -1860,4 +1860,4 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 #define ELM_PREFS_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_prefs)
 
-#include "elm_prefs.eo.c"
+#include "elm_prefs_eo.c"

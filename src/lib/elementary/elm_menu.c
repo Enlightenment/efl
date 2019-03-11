@@ -129,7 +129,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
         ELM_MENU_ITEM_DATA_GET(eo_item, item);
         elm_layout_sizing_eval(VIEW(item));
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_SHOWING, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_SHOWING, EINA_TRUE);
      }
 
 
@@ -231,10 +231,10 @@ _sizing_eval(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;
@@ -242,7 +242,7 @@ _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    char style[1024];
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (sd->menu_bar)
       snprintf(style, sizeof(style), "main_menu/%s", elm_widget_style_get(obj));
@@ -518,7 +518,7 @@ _menu_item_activate_cb(void *data,
           _menu_item_select_cb(item, NULL, NULL, NULL);
      }
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
 }
 
 static void
@@ -532,7 +532,7 @@ _menu_item_inactivate_cb(void *data,
    item->selected = 0;
    if (item->submenu.open) _submenu_hide(item);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -1359,10 +1359,10 @@ _elm_menu_item_efl_access_object_state_set_get(const Eo *obj EINA_UNUSED, Elm_Me
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sd->selected)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }
@@ -1461,5 +1461,5 @@ _elm_menu_efl_object_provider_find(const Eo *obj, Elm_Menu_Data *pd, const Efl_O
 #define ELM_MENU_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_menu)
 
-#include "elm_menu_item.eo.c"
-#include "elm_menu.eo.c"
+#include "elm_menu_item_eo.c"
+#include "elm_menu_eo.c"

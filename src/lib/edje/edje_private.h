@@ -155,7 +155,9 @@ EAPI extern int _edje_default_log_dom ;
 #define FROM_DOUBLE(a) eina_f32p32_double_from(a)
 #define FROM_INT(a) eina_f32p32_int_from(a)
 #define TO_INT(a) eina_f32p32_int_to(a)
-#define TO_INT_ROUND(a) eina_f32p32_int_to(ADD(a, FROM_DOUBLE(0.5)))
+#define TO_INT_ROUND(a) (((a) >= 0.0) \
+  ? eina_f32p32_int_to(ADD(a, FROM_DOUBLE(0.5)) \
+  : eina_f32p32_int_to(ADD(a, FROM_DOUBLE(-0.5))
 #define ZERO 0
 #define COS(a) eina_f32p32_cos(a)
 #define SIN(a) eina_f32p32_sin(a)
@@ -178,7 +180,7 @@ EAPI extern int _edje_default_log_dom ;
 #define FROM_DOUBLE(a) (a)
 #define FROM_INT(a) (double)(a)
 #define TO_INT(a) (int)(a)
-#define TO_INT_ROUND(a) (int)(a + 0.5)
+#define TO_INT_ROUND(a) (((a) >= 0.0) ? (int)(a + 0.5) : (int)(a - 0.5))
 #define ZERO 0.0
 #define COS(a) cos(a)
 #define SIN(a) sin(a)
@@ -2597,7 +2599,7 @@ Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 
-int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
+Eina_Error _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
 void  _edje_file_callbacks_del(Edje *ed, Evas *e);
 void  _edje_file_del(Edje *ed);

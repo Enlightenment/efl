@@ -12,7 +12,7 @@
 #include "elm_widget_actionslider.h"
 #include "elm_widget_layout.h"
 
-#include "elm_actionslider.eo.h"
+#include "elm_actionslider_eo.h"
 
 #include "elm_actionslider_part.eo.h"
 #include "elm_part_helper.h"
@@ -113,18 +113,18 @@ _mirroredness_change_eval(Evas_Object *obj)
      (wd->resize_obj, "elm.drag_button_base", 1.0 - pos, 0.5);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_actionslider_efl_ui_widget_theme_apply(Eo *obj, Elm_Actionslider_Data *sd EINA_UNUSED)
 {
    Eina_Bool mirrored;
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    mirrored = elm_object_mirrored_get(obj);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (elm_object_mirrored_get(obj) != mirrored)
      _mirroredness_change_eval(obj);
@@ -664,4 +664,4 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_actionslider), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_actionslider)
 
-#include "elm_actionslider.eo.c"
+#include "elm_actionslider_eo.c"

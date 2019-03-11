@@ -352,7 +352,7 @@ _mesh_setup_model(Scene_Data *data)
    data->material_model = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    data->texture_model = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
-   efl_file_set(data->texture_model, texture_path, NULL);
+   efl_file_simple_load(data->texture_model, texture_path, NULL);
    evas_canvas3d_texture_filter_set(data->texture_model, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(data->texture_model, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
 
@@ -367,7 +367,7 @@ _mesh_setup_model(Scene_Data *data)
    evas_canvas3d_material_texture_set(data->material_model, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, data->texture_model);
    evas_canvas3d_material_shininess_set(data->material_model, 100.0);
 
-   efl_file_set(data->mesh_model, mesh_path, NULL);
+   efl_file_simple_load(data->mesh_model, mesh_path, NULL);
    evas_canvas3d_mesh_frame_material_set(data->mesh_model, 0, data->material_model);
    evas_canvas3d_mesh_shader_mode_set(data->mesh_model, EVAS_CANVAS3D_SHADER_MODE_DIFFUSE);
 }

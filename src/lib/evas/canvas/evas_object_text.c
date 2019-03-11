@@ -2439,4 +2439,4 @@ _evas_text_efl_text_font_font_bitmap_scalable_get(const Eo *eo_obj EINA_UNUSED, 
 #define EVAS_TEXT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _evas_text_efl_object_dbg_info_get)
 
-#include "canvas/evas_text.eo.c"
+#include "canvas/evas_text_eo.c"

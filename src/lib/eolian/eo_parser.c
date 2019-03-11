@@ -684,7 +684,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
              def->btype = ls->t.kw - KW_byte + 1;
              def->base.name = eina_stringshare_ref(ls->t.value.s);
              eo_lexer_get(ls);
-             if ((tpid >= KW_accessor && tpid <= KW_inlist) ||
+             if ((tpid >= KW_accessor && tpid <= KW_list) ||
                  (tpid >= KW_slice && tpid <= KW_rw_slice))
                {
                   int bline = ls->line_number, bcol = ls->column;
@@ -2254,7 +2254,8 @@ postparams:
                 eo_lexer_context_restore(ls);
                 Eolian_Typedecl tdecl;
                 tdecl.base.type = EOLIAN_OBJECT_TYPEDECL;
-                tdecl.type = is_enum ? EOLIAN_TYPEDECL_ENUM : EOLIAN_TYPEDECL_STRUCT;
+                tdecl.type =
+                  (is_enum ? EOLIAN_TYPEDECL_ENUM : EOLIAN_TYPEDECL_STRUCT);
                 redef_error(ls, decl, &tdecl.base);
              }
            eo_lexer_context_pop(ls);

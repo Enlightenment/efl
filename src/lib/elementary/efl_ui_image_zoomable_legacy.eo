@@ -1,9 +1,0 @@
-class @beta Efl.Ui.Image_Zoomable_Legacy extends Efl.Ui.Image_Zoomable implements Efl.Ui.Legacy
-{
-   [[Elementary Image Zoomable class]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.constructor;
-   }
-}

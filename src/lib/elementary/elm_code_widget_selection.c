@@ -62,7 +62,7 @@ elm_code_widget_selection_start(Evas_Object *widget,
 
    pd->selection->start_line = line;
    pd->selection->start_col = col;
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_START, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_START, widget);
 }
 
 EAPI void
@@ -90,7 +90,7 @@ elm_code_widget_selection_end(Evas_Object *widget,
 
    pd->selection->end_line = line;
    pd->selection->end_col = col;
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
 EAPI void
@@ -110,7 +110,7 @@ elm_code_widget_selection_select_all(Evas_Object *widget)
 
    elm_code_widget_selection_end(widget, maxrow, last_col);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CHANGED, widget);
 }
 
 EAPI Elm_Code_Widget_Selection_Data *
@@ -166,7 +166,7 @@ elm_code_widget_selection_clear(Evas_Object *widget)
 
    free(pd->selection);
    pd->selection = NULL;
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
 }
 
 static void
@@ -292,7 +292,7 @@ _elm_code_widget_selection_delete_do(Evas_Object *widget, Eina_Bool undo)
    pd->selection = NULL;
    free(selection);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CLEARED, widget);
    elm_code_widget_cursor_position_set(widget, row, col);
 }
 
@@ -425,8 +425,8 @@ elm_code_widget_selection_cut(Evas_Object *widget)
 
    elm_code_widget_selection_delete(widget);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_CUT, widget);
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_CUT, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 }
 
 EAPI void
@@ -442,7 +442,7 @@ elm_code_widget_selection_copy(Evas_Object *widget)
    elm_cnp_selection_loss_callback_set(widget, ELM_SEL_TYPE_CLIPBOARD, _selection_loss_cb, widget);
    free(text);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_COPY, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_COPY, widget);
 }
 
 static Eina_Bool
@@ -454,7 +454,7 @@ _selection_paste_cb(void *data, Evas_Object *obj EINA_UNUSED, Elm_Selection_Data
 
    elm_code_widget_text_at_cursor_insert(widget, ev->data);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_SELECTION_PASTE, widget);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_SELECTION_PASTE, widget);
    return EINA_TRUE;
 }
 

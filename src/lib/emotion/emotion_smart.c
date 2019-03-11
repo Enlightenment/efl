@@ -18,7 +18,7 @@
 #include "Emotion.h"
 #include "emotion_private.h"
 
-#include "canvas/evas_canvas.eo.h"
+#include "canvas/evas_canvas_eo.h"
 
 #ifdef _WIN32
 # define FMT_UCHAR "%c"
@@ -119,6 +119,7 @@ struct _Efl_Canvas_Video_Data
    Eina_Bool remember_play : 1;
    Eina_Bool seek : 1;
    Eina_Bool seeking : 1;
+   Eina_Bool loaded : 1;
 };
 
 struct _Emotion_Xattr_Data
@@ -344,21 +345,34 @@ _efl_canvas_video_engine_set(Eo *obj, Efl_Canvas_Video_Data *pd, const char *eng
 EAPI Eina_Bool
 emotion_object_file_set(Evas_Object *obj, const char *file)
 {
-   return efl_file_set(obj, file, NULL);
+   return efl_file_simple_load(obj, file, NULL);
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char *file, const char *key EINA_UNUSED)
+EOLIAN static Eina_Error
+_efl_canvas_video_efl_file_file_set(Eo *obj, Efl_Canvas_Video_Data *sd, const char *file)
 {
    DBG("file=%s", file);
 
-   if (!eina_stringshare_replace(&sd->file, file)) return EINA_TRUE;
+   eina_stringshare_replace(&sd->file, file);
+   sd->loaded = 0;
+   return efl_file_set(efl_super(obj, MY_CLASS), file);
+}
 
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   return sd->open && sd->loaded;
+}
+
+EOLIAN static Eina_Error
+_efl_canvas_video_efl_file_load(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   const char *file = sd->file;
    if (!sd->engine_instance) _engine_init(obj, sd);
    if (!sd->engine_instance)
      {
         WRN("No engine chosen. Please set an engine.");
-        return EINA_FALSE;
+        return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 
    sd->video.w = 0;
@@ -367,7 +381,6 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
      {
         char *file2 = NULL;
 
-        eina_stringshare_replace(&sd->file, file);
         emotion_engine_instance_file_close(sd->engine_instance);
         evas_object_image_data_set(sd->obj, NULL);
         evas_object_image_size_set(sd->obj, 1, 1);
@@ -382,7 +395,7 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
         if (!emotion_engine_instance_file_open(sd->engine_instance, file2))
           {
              WRN("Couldn't open file=%s", sd->file);
-             return EINA_FALSE;
+             return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
           }
         free(file2);
         DBG("successfully opened file=%s", sd->file);
@@ -402,23 +415,15 @@ _efl_canvas_video_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *
    sd->anim = NULL;
 
    _xattr_data_cancel(sd->xattr);
+   sd->loaded = 1;
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EAPI const char *
 emotion_object_file_get(const Evas_Object *obj)
 {
-   const char *file = NULL;
-   efl_file_get(obj, &file, NULL);
-   return file;
-}
-
-EOLIAN static void
-_efl_canvas_video_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, const char **file, const char **key)
-{
-   if (file) *file = sd->file;
-   if (key) *key = NULL;
+   return efl_file_get(obj);
 }
 
 static void
@@ -1973,3 +1978,4 @@ _efl_canvas_video_efl_gfx_entity_size_set(Evas_Object *obj, Efl_Canvas_Video_Dat
 
 
 #include "efl_canvas_video.eo.c"
+#include "efl_canvas_video_eo.legacy.c"

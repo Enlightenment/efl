@@ -2,8 +2,9 @@
 # include "elementary_config.h"
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_colorselector.eo.h"
+#include "elm_colorselector_eo.h"
 
 static void
 _cb_size_radio_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
@@ -292,15 +293,15 @@ _file_cb(void *data, const Efl_Event *ev)
    const char *f, *k;
 
    // File API
-   efl_file_get(efl_part(win, "background"), &f, &k);
+   efl_file_simple_get(efl_part(win, "background"), &f, &k);
    if (f)
      {
-        efl_file_set(efl_part(win, "background"), NULL, NULL);
+        efl_file_simple_load(efl_part(win, "background"), NULL, NULL);
      }
    else
      {
-        efl_file_get(ev->object, &f, &k);
-        efl_file_set(efl_part(win, "background"), f, k);
+        efl_file_simple_get(ev->object, &f, &k);
+        efl_file_simple_load(efl_part(win, "background"), f, k);
      }
 }
 
@@ -315,10 +316,11 @@ _image_cb(void *data, const Efl_Event *ev)
      efl_content_set(efl_part(win, "background"), NULL);
    else
      {
-        efl_file_get(ev->object, &f, &k);
+        efl_file_simple_get(ev->object, &f, &k);
         o = efl_add(EFL_UI_IMAGE_CLASS, win,
                     efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
-                    efl_file_set(efl_added, f, k)
+                    efl_file_set(efl_added, f),
+                    efl_file_key_set(efl_added, k)
                     );
         efl_content_set(efl_part(win, "background"), o);
      }
@@ -353,7 +355,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(64, 64)),
            efl_gfx_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _file_cb, win),
@@ -361,7 +363,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, win,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(64, 64)),
            efl_gfx_hint_align_set(efl_added, 0.5, 0.5),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _image_cb, win),
@@ -420,7 +422,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
 
    o_bg = efl_add(EFL_UI_BG_CLASS, box,
-                  efl_file_set(efl_added, buf, NULL),
+                  efl_file_set(efl_added, buf),
                   efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
                   efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                   efl_pack(box, efl_added));

@@ -82,6 +82,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_config.eo.h"
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_duplicate.eo.h"
+#include "interfaces/efl_file.h"
 #include "interfaces/efl_file.eo.h"
 #include "interfaces/efl_file_save.eo.h"
 #include "interfaces/efl_gfx_image.eo.h"
@@ -226,11 +227,6 @@ EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory,
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
-#include "interfaces/efl_gfx_fill.eo.legacy.h"
-#include "interfaces/efl_gfx_entity.eo.legacy.h"
-#include "interfaces/efl_gfx_image.eo.legacy.h"
-#include "interfaces/efl_gfx_frame_controller.eo.legacy.h"
-#include "interfaces/efl_input_device.eo.legacy.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif
 

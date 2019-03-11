@@ -2,7 +2,7 @@
 #define ELM_WIDGET_PLUG_H
 
 #include "Elementary.h"
-#include "elm_plug.eo.h"
+#include "elm_plug_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

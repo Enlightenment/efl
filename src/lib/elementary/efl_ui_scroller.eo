@@ -1,6 +1,8 @@
-class @beta Efl.Ui.Scroller extends Efl.Ui.Layout implements
+class @beta Efl.Ui.Scroller extends Efl.Ui.Layout_Base implements
                        Efl.Ui.Scrollable_Interactive,
                        Efl.Ui.Scrollbar,
+                       Efl.Ui.Focus.Manager_Sub,
+                       Efl.Ui.Widget_Focus_Manager,
                        Efl.Content
 {
    [[Efl ui scroller class]]
@@ -11,6 +13,9 @@ class @beta Efl.Ui.Scroller extends Efl.Ui.Layout implements
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Widget.widget_input_event_handler;
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Scrollable_Interactive.match_content { set; }
    }
    composite {

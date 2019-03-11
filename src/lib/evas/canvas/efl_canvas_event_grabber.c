@@ -193,7 +193,7 @@ _efl_canvas_object_event_grabber_child_invalidate(void *data, const Efl_Event *e
 {
    Efl_Object_Event_Grabber_Data *pd = data;
 
-   efl_canvas_group_member_del(efl_parent_get(pd->rect), event->object);
+   efl_canvas_group_member_remove(efl_parent_get(pd->rect), event->object);
 }
 
 EOLIAN static void
@@ -250,7 +250,7 @@ _efl_canvas_event_grabber_efl_canvas_group_group_member_add(Eo *eo_obj, Efl_Obje
 }
 
 EOLIAN static void
-_efl_canvas_event_grabber_efl_canvas_group_group_member_del(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eo *member)
+_efl_canvas_event_grabber_efl_canvas_group_group_member_remove(Eo *eo_obj EINA_UNUSED, Efl_Object_Event_Grabber_Data *pd, Eo *member)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(member, EFL_CANVAS_OBJECT_CLASS);
 
@@ -366,7 +366,7 @@ _efl_canvas_event_grabber_efl_object_destructor(Eo *eo_obj, Efl_Object_Event_Gra
    Eina_List *l, *ln;
 
    EINA_LIST_FOREACH_SAFE(pd->contained, l, ln, obj)
-     efl_canvas_group_member_del(eo_obj, obj->object);
+     efl_canvas_group_member_remove(eo_obj, obj->object);
    efl_canvas_group_del(eo_obj);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
@@ -409,3 +409,4 @@ evas_object_event_grabber_add(Evas *eo_e)
 }
 
 #include "efl_canvas_event_grabber.eo.c"
+#include "efl_canvas_event_grabber_eo.legacy.c"

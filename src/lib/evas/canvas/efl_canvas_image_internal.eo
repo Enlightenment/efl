@@ -21,6 +21,7 @@ abstract @beta Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Ef
       Efl.Gfx.Image.scale_hint { get; set; }
       Efl.Gfx.Image.content_hint { get; set; }
       Efl.Gfx.Image.image_size { get; }
+      Efl.Gfx.Image.image_load_error { get; }
       Efl.Gfx.Buffer.alpha { get; set; }
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.colorspace { get; }

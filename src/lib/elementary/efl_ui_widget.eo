@@ -19,12 +19,11 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                         Efl.Ui.Selection, Efl.Ui.Dnd
 {
    [[Efl UI widget abstract class]]
-   legacy_prefix: elm_widget;
    //eo_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
-      @property cursor {
+      @property cursor @beta {
          [[The cursor to be shown when mouse is over the object
 
            This is the cursor that will be displayed when mouse is over the
@@ -52,7 +51,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                         by the display system or the theme.]]
          }
       }
-      @property cursor_style {
+      @property cursor_style @beta {
          [[A different style for the cursor.
 
            This only makes sense if theme cursors are used.
@@ -71,7 +70,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                              transparent, ....]]
          }
       }
-      @property cursor_theme_search_enabled {
+      @property cursor_theme_search_enabled @beta {
          [[Whether the cursor may be looked in the theme or not.
 
            If $false, the cursor may only come from the render engine,
@@ -105,6 +104,8 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       }
       @property disabled {
          [[Whether the widget is enabled (accepts and reacts to user inputs).
+
+           The property works counted, this means, whenever n-caller set the value to $true, n-caller have to set it to $false in order to get it out of the disabled state again.
 
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
@@ -142,9 +143,9 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          ]]
          set @protected {
             [[Can only be called during construction, before finalize.]]
-            return: Efl.Ui.Theme_Apply_Result(0);
+            return: Eina.Error;
                [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme_Apply_Result for more information.]]
+                 the values of Efl.Ui.Theme.Apply_Error for more information.]]
          }
          get {
             [[Returns the current style of a widget.]]
@@ -155,7 +156,7 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                  for the available style names, or to the themes in use.]]
          }
       }
-      widget_event @protected {
+      widget_input_event_handler @protected {
          [[Virtual function handling input events on the widget.
 
            This method should return $true if the event has been processed.
@@ -173,7 +174,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                [[Source object where the event originated. Often same as this.]]
          }
          return: bool; [[$true on success, $false otherwise]]
-         legacy: null;
       }
       // FIXME: focus_allow? can_focus? focusable?
       @property focus_allow {
@@ -191,10 +191,8 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            not focusable, but a button is).
          ]]
          set {
-            legacy: elm_widget_can_focus_set;
          }
          get {
-            legacy: elm_widget_can_focus_get;
          }
          values {
             can_focus: bool; [[Whether the object is focusable.]]
@@ -206,47 +204,18 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            @Efl.Ui.Widget objects have a parent hierarchy that may differ slightly
            from their @Efl.Object or @Efl.Canvas.Object hierarchy. This is
            meant for internal handling.
-
-           See also @.widget_top.
          ]]
          set {
-            legacy: elm_widget_parent_set; /* internal in legacy */
          }
          get {
-            legacy: elm_widget_parent_get; /* internal in legacy */
          }
          values {
             parent: Efl.Ui.Widget @nullable; [[Widget parent object]]
          }
       }
-      @property widget_top {
-         [[Root widget in the widget hierarchy.
-
-           This returns the top widget, in terms of widget hierarchy. This is
-           usually a window (@Efl.Ui.Win). This function walks the list of
-           @.widget_parent.
-
-           If this widget has no parent (in terms of widget hierarchy) this
-           will return $null.
-
-           Note: This may not be a display manager window in case of nested
-           canvases. If a "real" window is required, then you might want to
-           verify that the returned object is a @Efl.Ui.Win_Inlined, and then
-           get @Efl.Ui.Win_Inlined.inlined_parent to find an object in the
-           master window.
-
-           See also @.widget_parent.
-         ]]
-         get {
-            legacy: elm_widget_top_get; /* internal in legacy */
-         }
-         values {
-            top: Efl.Ui.Widget; [[Top widget, usually a window.]]
-         }
-      }
 
       /* Accessibility */
-      @property access_info {
+      @property access_info @beta {
          [[Accessibility information.
 
            This is a replacement string to be read by the accessibility
@@ -269,7 +238,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
             @in act: Efl.Ui.Activate; [[Type of activation.]]
          }
          return: bool; [[$true on success, $false otherwise]]
-         legacy: null; /* FIXME: legacy API does extra work */
       }
       on_access_update @protected @beta {
          [[Hook function called when accessibility is changed on the widget.
@@ -280,7 +248,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          params {
             @in enable: bool; [[$true if accessibility is enabled.]]
          }
-         legacy: null; /* FIXME: legacy API does extra work */
       }
 
       /* Internal hooks. */
@@ -296,7 +263,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                [[Sub object to be added. Not necessarily a widget itself.]]
          }
          return: bool; [[Indicates if the operation succeeded.]]
-         legacy: elm_widget_sub_object_add;
       }
       widget_sub_object_del @protected {
          [[Virtual function handling sub objects being removed.
@@ -308,60 +274,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          params {
             @in sub_obj: Efl.Canvas.Object;
                [[Sub object to be removed. Should be a child of this widget.]]
-         }
-         return: bool; [[Indicates if the operation succeeded.]]
-         legacy: elm_widget_sub_object_del;
-      }
-      @property orientation_mode {
-         [[Whether the widget's automatic orientation is enabled or not.
-
-           Orientation mode is used for widgets to change their style or send
-           signals based on the canvas rotation (i.e. the window orientation).
-           If the orientation mode is enabled, the widget will emit signals
-           such as "elm,state,orient,N" where $N is one of 0, 90, 180, 270,
-           depending on the window orientation. Such signals may be handled by
-           the theme in order to provide a different look for the widget based
-           on the canvas orientation.
-
-           By default orientation mode is enabled.
-
-           See also @.on_orientation_update.
-         ]]
-         values {
-            mode: Efl.Ui.Widget_Orientation_Mode(Efl.Ui.Widget_Orientation_Mode.default);
-               [[How window orientation should affect this widget.]]
-         }
-      }
-      on_orientation_update @protected {
-         [[Virtual function handling canvas orientation changes.
-
-           This method will be called recursively from the top widget (the
-           window) to all the children objects whenever the window rotation
-           is changed. The given $rotation will be one of 0, 90, 180, 270 or
-           the special value -1 if @.orientation_mode is $disabled.
-
-           If @.orientation_mode is $default, the widget implementation will
-           emit the signal "elm,state,orient,$R" will be emitted (where $R is
-           the rotation angle in degrees).
-
-           Note: This function may be called even if the orientation has not
-           actually changed, like when a widget needs to be reconfigured.
-
-           See also @.orientation_mode.
-         ]]
-         params {
-            rotation: int; [[Orientation in degrees: 0, 90, 180, 270 or -1 if
-               @.orientation_mode is $disabled.]]
-         }
-      }
-      on_disabled_update @protected {
-         [[Virtual function called when the widget becomes disabled.
-
-           This may be triggered even if this widget is not disabled, as the
-           parent widget could be disabled and propagate its state.
-         ]]
-         params {
-            disabled: bool; [[The new value of @.disabled.]]
          }
          return: bool; [[Indicates if the operation succeeded.]]
       }
@@ -376,59 +288,22 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            Note: even widgets not based on layouts may override this method
            to handle widget updates (scale, mirrored mode, etc...).
          ]]
-         return: Efl.Ui.Theme_Apply_Result; [[Indicates success, and if the current
+         return: Eina.Error; [[Indicates success, and if the current
                                        theme or default theme was used.]]
-      }
-
-      /* Scroll API. */
-      @property on_show_region_hook @protected {
-         [[Hook function called when the @.show_region is changed.
-
-           See also @.show_region.
-         ]]
-         set {}
-         values {
-            func: Efl.Ui.Scrollable_On_Show_Region @nullable; [[Region hook function]]
-         }
-      }
-      @property show_region @protected {
-         [[Region inside the widget to show.
-
-           See also @.on_show_region_hook.
-         ]]
-         set {
-            [[Request parent scrollers to pan around so that this region
-              of the widget becomes visible.
-
-              If $force is $true this will trigger scroller changes and
-              the @.on_show_region_hook to be called even if the region is
-              unchanged.
-            ]]
-            values {
-               region: Eina.Rect; [[The region to show.]]
-               force: bool; [[Set to $true to force show even if unchanged.]]
-            }
-         }
-         get {
-            [[Returns the current region to show.]]
-            values {
-               region: Eina.Rect; [[The region to show.]]
-            }
-         }
       }
 
       /* FIXME: Scroll API. Not sure how those APIs should be exposed with
        * the new scrollable API. */
-      scroll_hold_push {
+      scroll_hold_push @beta {
          [[Push scroll hold]]
       }
-      scroll_hold_pop {
+      scroll_hold_pop @beta {
          [[Pop scroller hold]]
       }
-      scroll_freeze_push {
+      scroll_freeze_push @beta {
          [[Push scroller freeze]]
       }
-      scroll_freeze_pop {
+      scroll_freeze_pop @beta {
          [[Pop scroller freeze]]
       }
 
@@ -448,11 +323,8 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
            i.e. X,Y start from 0,0 to indicate the top-left corner of the
            widget. W,H must be greater or equal to 1 for this region to be
            taken into account, otherwise it is ignored.
-
-           See also @.interest_region_mode
          ]]
          get {
-            legacy: elm_widget_focus_region_get;
          }
          values {
             region: Eina.Rect;
@@ -460,24 +332,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                  will be ignored, and no action will be taken.]]
          }
       }
-      @property interest_region_mode {
-         [[Defines how @.show_region should be calculated.
-
-           It is up to the implementation of @.show_region.get to take this
-           value into account (or ignore it).
-         ]]
-         get {
-            legacy: elm_widget_focus_region_show_mode_get;
-         }
-         set {
-            legacy: elm_widget_focus_region_show_mode_set;
-         }
-         values {
-            mode: Efl.Ui.Interest_Region_Mode;
-               [[Whether to show a specific item or the widget as a whole.]]
-         }
-      }
-
       /* Focus highlight (visual focus rectangle) properties */
       @property focus_highlight_geometry @protected {
          [[The rectangle region to be highlighted on focus.
@@ -490,82 +344,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
          }
          values {
             region: Eina.Rect; [[The rectangle area.]]
-         }
-      }
-      @property focus_highlight_enabled {
-         [[Whether focus highlight is enabled or not.
-
-           As of EFL 1.21 focus highlight properties apply to a single window,
-           not a single widget. As a consequence, calls to this function may
-           be forwarded to the parent window. Future versions of EFL may
-           implement widget-specific focus highlight properties.
-
-           See also @.widget_top.
-           See also @.focus_highlight_style.
-           See also @.focus_highlight_animate.
-         ]]
-         set {
-            [[Set the enabled status for the focus highlight in a window.
-
-              This function will enable or disable the focus highlight,
-              regardless of the global setting for it.
-            ]]
-         }
-         get {
-            [[Get the enabled value of the focus highlight for this window.]]
-         }
-         values {
-            enabled: bool; [[The enabled value for the highlight.]]
-         }
-      }
-      @property focus_highlight_style {
-         [[Control the widget focus highlight style.
-
-           If $style is $null, the default will be used.
-
-           As of EFL 1.21 focus highlight properties apply to a single window,
-           not a single widget. As a consequence, calls to this function may
-           be forwarded to the parent window. Future versions of EFL may
-           implement widget-specific focus highlight properties.
-
-           See also @.widget_top.
-           See also @.focus_highlight_enabled.
-           See also @.focus_highlight_animate.
-         ]]
-         set {
-            /* FIXME: This is async... success here means nothing. */
-            return: bool; [[$true on success, $false otherwise.]]
-         }
-         get {
-         }
-         values {
-            style: string @nullable; [[The name of the focus highlight style.]]
-         }
-      }
-      @property focus_highlight_animate {
-         [[Whether focus highlight should animate or not.
-
-           As of EFL 1.21 focus highlight properties apply to a single window,
-           not a single widget. As a consequence, calls to this function may
-           be forwarded to the parent window. Future versions of EFL may
-           implement widget-specific focus highlight properties.
-
-           See also @.widget_top.
-           See also @.focus_highlight_style.
-           See also @.focus_highlight_enabled.
-         ]]
-         set {
-            [[Set the animate status for the focus highlight for this window.
-
-              This function will enable or disable the animation of focus
-              highlight.
-            ]]
-         }
-         get {
-            [[Get the animate value of the focus highlight for this window.]]
-         }
-         values {
-            animate: bool; [[The enabled value for the highlight animation.]]
          }
       }
       @property focus_move_policy @beta {
@@ -583,39 +361,23 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
                                $false otherwise]]
          }
       }
-
-      /* FIXME: No more items in EO API */
-      @property focused_item @beta {
-         get {
-            [[Get the focused widget item.]]
-            return: Elm.Widget.Item; [[Focused item]]
-         }
-      }
-
-      /* Focus Manager API */
       focus_state_apply @protected {
-         [[Register focus with the given configuration.
+         [[Apply a new focus state on the widget.
 
-           The implementation can feel free to change the logical flag as it
-           wants, but other than that it should strictly keep the configuration.
+          This method is called internally by @Efl.Ui.Widget. Override it to change how a widget interacts with its focus manager.
+          If a widget desires to change the applied configuration, it has to modify $configured_state in addition to any internal changes.
 
-           The implementation in elm.widget updates the current state into what
-           is passed as configured state, respecting manager changes,
-           registeration and unregistration based on if it should be registered
-           or unregistered.
-
-           A manager field that is $null means that the widget should not or was
-           not registered.
+          The default implementation (when this method is not overridden) applies $configured_state using the $manager contained inside.
          ]]
          params {
             @in current_state : Efl.Ui.Widget_Focus_State;
-               [[The focus manager to register with.]]
+               [[The current focus configuration of the widget.]]
             @inout configured_state : Efl.Ui.Widget_Focus_State;
-               [[The evaluated Focus state that should be used.]]
+               [[The new configuration being set on the widget.]]
             @in redirect : Efl.Ui.Widget;
-               [[A redirect that will be set by the elm.widget implementation.]]
+               [[A redirect object if there is any]]
          }
-         return: bool; [[Returns whether the widget is registered or not.]]
+         return: bool; [[Returns $true if the widget is registered in the focus manager, $false if not.]]
       }
    }
    parts {
@@ -634,11 +396,10 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.Entity.scale { set; get; }
-      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
-      Efl.Canvas.Object.is_frame_object { set; }
       Efl.Canvas.Group.group_calculate;
-      Efl.Canvas.Group.group_member_del;
+      Efl.Canvas.Group.group_member_remove;
       Efl.Canvas.Group.group_member_add;
       Efl.Access.Object.i18n_name { get; }
       Efl.Access.Object.state_set { get; }
@@ -660,6 +421,6 @@ abstract @beta Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Obje
    }
    events {
       language,changed: void; [[Called when widget language changed]]
-      access,changed: void; [[Called when accessibility changed]]
+      access,changed @beta: void; [[Called when accessibility changed]]
    }
 }

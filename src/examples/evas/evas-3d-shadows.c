@@ -262,12 +262,12 @@ _fence_setup(Body_3D *fence)
 
    Eo *texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_atlas_enable_set(texture, EINA_FALSE);
-   efl_file_set(texture, PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid.png", NULL);
+   efl_file_simple_load(texture, PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid.png", NULL);
    evas_canvas3d_texture_filter_set(texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    Eo *texture1 = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    evas_canvas3d_texture_atlas_enable_set(texture1, EINA_FALSE);
-   efl_file_set(texture1, PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid_n.png", NULL);
+   efl_file_simple_load(texture1, PACKAGE_EXAMPLES_DIR EVAS_IMAGE_FOLDER "/grid_n.png", NULL);
    evas_canvas3d_texture_filter_set(texture1, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture1, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    fence->material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
@@ -344,7 +344,7 @@ static void
 _model_setup(Body_3D *model)
 {
    model->texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(model->texture, image_path, NULL);
+   efl_file_simple_load(model->texture, image_path, NULL);
    evas_canvas3d_texture_filter_set(model->texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(model->texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    model->material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
@@ -358,7 +358,7 @@ _model_setup(Body_3D *model)
 
 
    model->mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
-   efl_file_set(model->mesh, model_path, NULL);
+   efl_file_simple_load(model->mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(model->mesh, 0, model->material);
    evas_canvas3d_mesh_shader_mode_set(model->mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
@@ -373,7 +373,7 @@ static void
 _billboard_setup(Scene_Data *data)
 {
    data->billboard.texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(data->billboard.texture, b_image_path, NULL);
+   efl_file_simple_load(data->billboard.texture, b_image_path, NULL);
    evas_canvas3d_texture_filter_set(data->billboard.texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(data->billboard.texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
 

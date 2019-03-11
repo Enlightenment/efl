@@ -667,7 +667,7 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
 
    /* init counter */
    step = 0;
-   count = eina_list_count(rmrf->files) + eina_list_count(rmrf->dirs) + 1;
+   count = ((long long) eina_list_count(rmrf->files)) + ((long long) eina_list_count(rmrf->dirs)) + 1;
 
    EINA_LIST_FREE(rmrf->files, file)
      {

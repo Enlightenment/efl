@@ -74,7 +74,6 @@ EDJE_PART_INVALID_CONST(Eina_Bool, 0, efl_text_cursor_geometry_get, _efl_canvas_
 EDJE_PART_INVALID_VOID(efl_text_markup_interactive_cursor_markup_insert, _efl_canvas_layout_part_invalid_efl_text_markup_interactive_cursor_markup_insert, Efl_Text_Cursor_Cursor *cur, const char *markup)
 EDJE_PART_INVALID(Eina_Iterator *, 0, efl_content_iterate, _efl_canvas_layout_part_invalid_efl_container_content_iterate)
 EDJE_PART_INVALID(int, 0, efl_content_count, _efl_canvas_layout_part_invalid_efl_container_content_count)
-EDJE_PART_INVALID(Eina_Bool, 0, efl_content_remove, _efl_canvas_layout_part_invalid_efl_container_content_remove, Efl_Gfx_Entity *content)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_pack_clear, _efl_canvas_layout_part_invalid_efl_pack_pack_clear)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_pack_unpack_all, _efl_canvas_layout_part_invalid_efl_pack_unpack_all)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_pack_unpack, _efl_canvas_layout_part_invalid_efl_pack_unpack, Efl_Gfx_Entity *subobj)

@@ -1,5 +1,3 @@
-#include "interfaces/efl_ui_zoom.eo.legacy.h"
-
 typedef Eo Elm_Photocam;
 
 /**
@@ -180,13 +178,17 @@ EAPI void             elm_photocam_zoom_set(Evas_Object *obj, double zoom);
  */
 EAPI double           elm_photocam_zoom_get(const Evas_Object *obj);
 
-typedef Efl_Ui_Zoom_Mode Elm_Photocam_Zoom_Mode;
 
-#define ELM_PHOTOCAM_ZOOM_MODE_MANUAL           EFL_UI_ZOOM_MODE_MANUAL
-#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT         EFL_UI_ZOOM_MODE_AUTO_FIT
-#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL        EFL_UI_ZOOM_MODE_AUTO_FILL
-#define ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN      EFL_UI_ZOOM_MODE_AUTO_FIT_IN
-#define ELM_PHOTOCAM_ZOOM_MODE_LAST             EFL_UI_ZOOM_MODE_LAST
+typedef enum
+{
+  ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_photocam_zoom_set */
+  ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT, /**< Zoom until photo fits in zoomable object */
+  ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL, /**< Zoom until photo fills zoomable object */
+  ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN, /**< Zoom in until photo fits in zoomable object
+                                 */
+  ELM_PHOTOCAM_ZOOM_MODE_LAST /**< Sentinel value to indicate last enum field during
+                         * iteration */
+} Elm_Photocam_Zoom_Mode;
 
 /**
  * @brief Set the zoom mode
@@ -232,4 +234,4 @@ EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
  */
 EAPI void elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
-#include "efl_ui_image_zoomable.eo.legacy.h"
+#include "efl_ui_image_zoomable_eo.legacy.h"

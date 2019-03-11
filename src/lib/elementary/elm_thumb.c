@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_thumb.eo.h"
+#include "elm_thumb_eo.h"
 #include "elm_widget_thumb.h"
 
 #define MY_CLASS_NAME "Elm_Thumb"
@@ -582,6 +582,14 @@ elm_thumb_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
+_elm_thumb_efl_object_finalize(Eo *obj, Elm_Thumb_Data *sd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (sd->file) efl_file_load(obj);
+   return obj;
+}
+
+EOLIAN static Eo *
 _elm_thumb_efl_object_constructor(Eo *obj, Elm_Thumb_Data *sd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -594,53 +602,71 @@ _elm_thumb_efl_object_constructor(Eo *obj, Elm_Thumb_Data *sd)
    return obj;
 }
 
-EOLIAN static Eina_Bool
-_elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_elm_thumb_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *file)
 {
-   Eina_Bool file_replaced, key_replaced;
+   if (eina_stringshare_replace(&(sd->file), file))
+     sd->loaded = EINA_FALSE;
+   return 0;
+}
 
-   file_replaced = eina_stringshare_replace(&(sd->file), file);
-   key_replaced = eina_stringshare_replace(&(sd->key), key);
+EOLIAN static void
+_elm_thumb_efl_file_key_set(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char *key)
+{
+   if (eina_stringshare_replace(&(sd->key), key))
+     sd->loaded = EINA_FALSE;
+}
 
-   if (file_replaced)
+EOLIAN static const char *
+_elm_thumb_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+{
+   return sd->file;
+}
+
+EOLIAN static const char *
+_elm_thumb_efl_file_key_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+{
+   return sd->key;
+}
+
+EOLIAN static Eina_Bool
+_elm_thumb_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+{
+   return sd->loaded;
+}
+
+EOLIAN static Eina_Error
+_elm_thumb_efl_file_load(Eo *obj, Elm_Thumb_Data *sd)
+{
+   int prefix_size;
+   const char **ext, *ptr;
+   static const char *extensions[] =
+   {
+      ".avi", ".mp4", ".ogv", ".mov", ".mpg", ".wmv", NULL
+   };
+
+   if (efl_file_loaded_get(obj)) return 0;
+   prefix_size = eina_stringshare_strlen(sd->file) - 4;
+   if (prefix_size >= 0)
      {
-        int prefix_size;
-        const char **ext, *ptr;
-        static const char *extensions[] =
-        {
-           ".avi", ".mp4", ".ogv", ".mov", ".mpg", ".wmv", NULL
-        };
-
-        prefix_size = eina_stringshare_strlen(sd->file) - 4;
-        if (prefix_size >= 0)
-          {
-             ptr = sd->file + prefix_size;
-             sd->is_video = EINA_FALSE;
-             for (ext = extensions; *ext; ext++)
-               if (!strcasecmp(ptr, *ext))
-                 {
-                    sd->is_video = EINA_TRUE;
-                    break;
-                 }
-          }
+        ptr = sd->file + prefix_size;
+        sd->is_video = EINA_FALSE;
+        for (ext = extensions; *ext; ext++)
+          if (!strcasecmp(ptr, *ext))
+            {
+               sd->is_video = EINA_TRUE;
+               break;
+            }
      }
 
    eina_stringshare_replace(&(sd->thumb.file), NULL);
    eina_stringshare_replace(&(sd->thumb.key), NULL);
+   sd->loaded = EINA_TRUE;
 
-   if (((file_replaced) || (key_replaced)) && (evas_object_visible_get(obj)))
+   if (evas_object_visible_get(obj))
      _thumb_show(sd);
 
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_elm_thumb_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd, const char **file, const char **key)
-{
-   if (file)
-     *file = sd->file;
-   if (key)
-     *key = sd->key;
+   return 0;
 }
 
 EAPI void *
@@ -693,13 +719,13 @@ _elm_thumb_class_constructor(Efl_Class *klass)
 EAPI void
 elm_thumb_file_set(Eo *obj, const char *file, const char *key)
 {
-   efl_file_set((Eo *) obj, file, key);
+   efl_file_simple_load((Eo *) obj, file, key);
 }
 
 EAPI void
 elm_thumb_file_get(const Eo *obj, const char **file, const char **key)
 {
-   efl_file_get((Eo *) obj, file, key);
+   efl_file_simple_get((Eo *) obj, file, key);
 }
 
 /* Legacy deprecated functions */
@@ -910,4 +936,4 @@ elm_thumb_reload(Evas_Object *obj)
 #define ELM_THUMB_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_thumb)
 
-#include "elm_thumb.eo.c"
+#include "elm_thumb_eo.c"

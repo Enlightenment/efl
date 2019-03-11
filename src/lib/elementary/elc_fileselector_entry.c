@@ -9,12 +9,12 @@
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
-#include "elm_entry.eo.h"
-#include "elm_fileselector.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_fileselector_eo.h"
 
 #include "elm_fileselector_entry_part.eo.h"
 #include "elm_part_helper.h"
@@ -127,17 +127,17 @@ _elm_fileselector_entry_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Entry_D
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    const char *style;
    char buf[1024];
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    style = elm_widget_style_get(obj);
 
@@ -156,18 +156,6 @@ _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entr
    elm_layout_sizing_eval(obj);
 
    return int_ret;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Fileselector_Entry_Data *sd, Eina_Bool disabled)
-{
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   elm_widget_disabled_set(sd->button, disabled);
-   elm_widget_disabled_set(sd->entry, disabled);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -586,4 +574,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
-#include "elm_fileselector_entry.eo.c"
+#include "elm_fileselector_entry_eo.c"

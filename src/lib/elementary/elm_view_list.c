@@ -6,7 +6,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 
 #include <assert.h>
 
@@ -108,7 +108,8 @@ _item_content_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part)
    if (!idata->item) return NULL;
 
    prop = eina_hash_find(idata->priv->connect.properties, part);
-   if (!prop) prop = part;
+   // If no property are connected, let's not try to guess randomly.
+   if (!prop) return NULL;
 
    value = efl_model_property_get(idata->model, prop);
    if (value == NULL) return NULL;
@@ -432,4 +433,4 @@ _elm_view_list_model_get(const Eo *obj EINA_UNUSED, Elm_View_List_Data *priv)
 {
    return priv->connect.model;
 }
-#include "elm_view_list.eo.c"
+#include "elm_view_list_eo.c"

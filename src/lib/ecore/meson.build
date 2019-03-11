@@ -2,10 +2,8 @@ ecore_deps = [intl]
 ecore_pub_deps = [eina, eo, efl]
 
 pub_legacy_eo_files = [
-  'ecore_exe.eo',
   'ecore_event_message.eo',
   'ecore_event_message_handler.eo',
-  'efl_loop_timer.eo'
 ]
 
 pub_eo_file_target = []
@@ -21,16 +19,6 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
-  pub_eo_file_target += custom_target('eolian_gen_legacy_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.legacy.h'],
-    depfile : eo_file + '.legacy.d',
-    install : true,
-    install_dir : dir_package_include,
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.d'),
-                           '-gld', '@INPUT@'])
 endforeach
 
 pub_eo_files = [
@@ -70,7 +58,6 @@ pub_eo_files = [
   'efl_loop_model.eo',
   'efl_generic_model.eo',
   'efl_container_model.eo',
-  'efl_container_model_item.eo',
   'efl_boolean_model.eo',
   'efl_select_model.eo',
   'efl_composite_model.eo',
@@ -78,6 +65,7 @@ pub_eo_files = [
   'efl_core_env.eo',
   'efl_core_proc_env.eo',
   'efl_core_command_line.eo',
+  'efl_loop_timer.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -94,9 +82,6 @@ foreach eo_file : pub_eo_files
                            '-gchd', '@INPUT@'])
 endforeach
 
-# special handling, because this is already eo API and legacy API
-pub_eo_files += ['efl_loop_timer.eo']
-
 pub_eo_types_files = []
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
@@ -108,7 +93,10 @@ ecore_header_src = [
   'Ecore_Eo.h',
   'Efl_Core.h',
   'efl_general.h',
-  'Ecore_Getopt.h'
+  'Ecore_Getopt.h',
+  'ecore_exe_eo.h',
+  'ecore_exe_eo.legacy.h',
+  'efl_loop_timer_eo.legacy.h',
 ]
 
 ecore_src = [
@@ -150,8 +138,6 @@ ecore_src = [
   'efl_loop_model.c',
   'efl_generic_model.c',
   'efl_container_model.c',
-  'efl_container_model_item.c',
-  'efl_container_model_private.h',
   'efl_composite_model.c',
   'efl_boolean_model.c',
   'efl_select_model.c',

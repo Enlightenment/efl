@@ -1,4 +1,4 @@
-class Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout
+class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout
 {
    [[The relative layout class.
 

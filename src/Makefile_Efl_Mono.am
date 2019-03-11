@@ -4,7 +4,24 @@ efl_custom_exports_mono_files = \
 
 efl_eo_mono_files = \
 	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/FunctionWrapper.cs \
+	bindings/mono/eo_mono/NativeModule.cs \
 	bindings/mono/eo_mono/workaround.cs
+
+if HAVE_WIN32
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Windows.cs \
+	bindings/mono/eo_mono/NativeModule_Windows.cs
+
+else
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Unix.cs \
+	bindings/mono/eo_mono/NativeModule_Unix.cs
+
+endif
+
 
 efl_eina_mono_files = \
 	bindings/mono/eina_mono/eina_config.cs \
@@ -36,9 +53,6 @@ efl_eldbus_mono_files = \
 	bindings/mono/eldbus_mono/eldbus_proxy.cs \
 	bindings/mono/eldbus_mono/eldbus_service.cs
 
-efl_ecore_evas_mono_files = \
-	bindings/mono/ecore_evas_mono/ecore_evas.cs
-
 # Static C# source files don't go into a _SOURCES var as the dll target
 # is custom built instead of through _LTLIBRARIES/_LIBRARIES
 lib_efl_mono_libefl_mono_dll_sources = \
@@ -46,8 +60,7 @@ lib_efl_mono_libefl_mono_dll_sources = \
 	bindings/mono/efl_mono/efl_csharp_application.cs \
 	$(efl_eo_mono_files) \
 	$(efl_eina_mono_files) \
-	$(efl_eldbus_mono_files) \
-	$(efl_ecore_evas_mono_files)
+	$(efl_eldbus_mono_files)
 
 efl_mono_test_files = \
 	tests/efl_mono/dummy_test_object.eo \
@@ -86,6 +99,7 @@ bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian/mono/part_definition.hh \
 	bin/eolian_mono/eolian/mono/struct_fields.hh \
 	bin/eolian_mono/eolian/mono/parameter.hh \
+	bin/eolian_mono/eolian/mono/variable_definition.hh \
 	bin/eolian_mono/eolian/mono/utils.hh \
 	bin/eolian_mono/eolian/mono/using_decl.hh \
 	bin/eolian_mono/eolian/mono/marshall_type.hh \
@@ -155,15 +169,15 @@ eo_eolian_blacklisted_files = \
 lib/eo/efl_object_override.eo.cs
 
 elementary_eolian_blacklisted_files = \
-lib/elementary/elm_web.eo.cs \
-lib/elementary/elm_map.eo.cs \
+lib/elementary/elm_web_eo.cs \
+lib/elementary/elm_map_eo.cs \
 lib/elementary/elm_combobox.eo.cs \
-lib/elementary/elm_list.eo.cs \
-lib/elementary/elm_genlist.eo.cs \
-lib/elementary/elm_view_list.eo.cs \
-lib/elementary/elm_genlist_item.eo.cs \
-lib/elementary/elm_gengrid.eo.cs \
-lib/elementary/elm_glview.eo.cs
+lib/elementary/elm_list_eo.cs \
+lib/elementary/elm_genlist_eo.cs \
+lib/elementary/elm_view_list_eo.cs \
+lib/elementary/elm_genlist_item_eo.cs \
+lib/elementary/elm_gengrid_eo.cs \
+lib/elementary/elm_glview_eo.cs
 
 efl_mono_blacklisted_files = \
 $(evas_eolian_blacklisted_files) \
@@ -183,11 +197,7 @@ $(efl_eolian_type_files:%.eot=%.eot.cs) \
 $(edje_eolian_type_files:%.eot=%.eot.cs) \
 $(elm_eolian_type_files:%.eot=%.eot.cs) \
 $(filter-out $(evas_eolian_blacklisted_files),$(evas_canvas_eolian_pub_files:%.eo=%.eo.cs)) \
-lib/evas/canvas/evas_box.eo.cs \
-lib/evas/canvas/evas_image.eo.cs \
 lib/evas/canvas/efl_canvas_image.eo.cs \
-lib/evas/canvas/evas_table.eo.cs \
-lib/evas/canvas/evas_text.eo.cs \
 $(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
 lib/eo/eina_types.eot.cs \
 lib/ecore/efl_loop_timer.eo.cs
@@ -300,7 +310,7 @@ msbuildcsprojs: ../libefl_mono.csproj
 	done
 
 ### Some hard-coded runtime dependencies for tests and examples
-TEST_PATHS = $(abs_top_builddir)/src/lib/efl_mono:$(abs_top_builddir)/src/lib/efl_mono/.libs:$(abs_top_builddir)/src/lib/eina/.libs:$(abs_top_builddir)/src/lib/ecore/.libs:$(abs_top_builddir)/src/lib/ecore_evas/.libs:$(abs_top_builddir)/src/lib/eo/.libs:$(abs_top_builddir)/src/lib/evas/.libs:$(abs_top_builddir)/src/lib/emile/.libs:$(abs_top_builddir)/src/lib/eet/.libs:$(abs_top_builddir)/src/lib/efl/.libs:$(abs_top_builddir)/src/ecore-file/.libs:$(abs_top_builddir)/src/lib/efl-input/.libs:$(abs_top_builddir)/src/lib/edje/.libs:$(abs_top_builddir)/src/lib/ethumb/.libs:$(abs_top_builddir)/src/lib/ethumb-client/.libs:$(abs_top_builddir)/src/lib/emotion/.libs:$(abs_top_builddir)/src/lib/ecore-imf/.libs:$(abs_top_builddir)/src/lib/ecore-con/.libs:$(abs_top_builddir)/src/lib/eldbus/.libs:$(abs_top_builddir)/src/lib/efreet/.libs:$(abs_top_builddir)/src/lib/efreet-mime/.libs:$(abs_top_builddir)/src/lib/efreet-trash/.libs:$(abs_top_builddir)/src/lib/eio/.libs:$(abs_top_builddir)/src/lib/elocation/.libs:$(abs_top_builddir)/src/lib/elementary/.libs
+TEST_PATHS = $(abs_top_builddir)/src/lib/efl_mono:$(abs_top_builddir)/src/lib/efl_mono/.libs:$(abs_top_builddir)/src/lib/eina/.libs:$(abs_top_builddir)/src/lib/ecore/.libs:$(abs_top_builddir)/src/lib/ecore_evas/.libs:$(abs_top_builddir)/src/lib/eo/.libs:$(abs_top_builddir)/src/lib/evas/.libs:$(abs_top_builddir)/src/lib/emile/.libs:$(abs_top_builddir)/src/lib/eet/.libs:$(abs_top_builddir)/src/lib/efl/.libs:$(abs_top_builddir)/src/ecore-file/.libs:$(abs_top_builddir)/src/lib/efl-input/.libs:$(abs_top_builddir)/src/lib/edje/.libs:$(abs_top_builddir)/src/lib/ethumb/.libs:$(abs_top_builddir)/src/lib/ethumb-client/.libs:$(abs_top_builddir)/src/lib/emotion/.libs:$(abs_top_builddir)/src/lib/ecore-imf/.libs:$(abs_top_builddir)/src/lib/ecore-con/.libs:$(abs_top_builddir)/src/lib/eldbus/.libs:$(abs_top_builddir)/src/lib/efreet/.libs:$(abs_top_builddir)/src/lib/efreet-mime/.libs:$(abs_top_builddir)/src/lib/efreet-trash/.libs:$(abs_top_builddir)/src/lib/eio/.libs:$(abs_top_builddir)/src/lib/elocation/.libs:$(abs_top_builddir)/src/lib/elementary/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
 
 WIN_ADD_TEST_PATHS = $(abs_top_builddir)/src/lib/evil/.libs:$(abs_top_builddir)/src/lib/ecore_win32/.libs:$(abs_top_builddir)/src/lib/ector/.libs:$(abs_top_builddir)/src/lib/ecore_con/.libs:$(abs_top_builddir)/src/lib/ecore_imf/.libs:$(abs_top_builddir)/src/lib/ecore_file/.libs:$(abs_top_builddir)/src/lib/ecore_input/.libs:$(abs_top_builddir)/src/ethumb_client/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
 
@@ -460,7 +470,6 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Eo.cs \
      tests/efl_mono/EoPromises.cs \
      tests/efl_mono/Errors.cs \
-     tests/efl_mono/Evas.cs \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
      tests/efl_mono/FunctionPointerMarshalling.cs \

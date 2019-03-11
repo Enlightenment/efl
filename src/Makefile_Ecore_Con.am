@@ -28,10 +28,7 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_control_technology.eo \
         lib/ecore_con/efl_net_control_manager.eo \
         lib/ecore_con/efl_net_session.eo \
-        lib/ecore_con/efl_net_ip_address.eo \
-	lib/ecore_con/ecore_con_eet_base.eo \
-	lib/ecore_con/ecore_con_eet_server_obj.eo \
-	lib/ecore_con/ecore_con_eet_client_obj.eo
+        lib/ecore_con/efl_net_ip_address.eo
 
 if HAVE_WINDOWS
 ecore_con_eolian_files += \
@@ -53,8 +50,7 @@ ecore_con_eolian_type_files = \
 
 ecore_con_eolian_c = $(ecore_con_eolian_files:%.eo=%.eo.c)
 ecore_con_eolian_h = $(ecore_con_eolian_files:%.eo=%.eo.h) \
-                     $(ecore_con_eolian_type_files:%.eot=%.eot.h) \
-                     $(ecore_con_eolian_files:%.eo=%.eo.legacy.h)
+                     $(ecore_con_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
                  $(ecore_con_eolian_c) \
@@ -77,7 +73,14 @@ lib/ecore_con/Ecore_Con.h \
 lib/ecore_con/Efl_Net.h \
 lib/ecore_con/Ecore_Con_Eet.h \
 lib/ecore_con/Ecore_Con_Eet_Legacy.h \
-lib/ecore_con/Ecore_Con_Eet_Eo.h
+lib/ecore_con/Ecore_Con_Eet_Eo.h \
+lib/ecore_con/ecore_con_eet_base_eo.h \
+lib/ecore_con/ecore_con_eet_base_eo.legacy.h \
+lib/ecore_con/ecore_con_eet_client_obj_eo.h \
+lib/ecore_con/ecore_con_eet_client_obj_eo.legacy.h \
+lib/ecore_con/ecore_con_eet_server_obj_eo.h \
+lib/ecore_con/ecore_con_eet_server_obj_eo.legacy.h
+
 
 nodist_installed_ecoreconmainheaders_DATA = \
                                             $(ecore_con_eolian_h)
@@ -145,6 +148,10 @@ endif
 # object Private Data and allows functions to
 # be all static
 EXTRA_DIST2 += \
+lib/ecore_con/ecore_con_eet_base_eo.c \
+lib/ecore_con/ecore_con_eet_base_eo.legacy.c \
+lib/ecore_con/ecore_con_eet_client_obj_eo.c \
+lib/ecore_con/ecore_con_eet_server_obj_eo.c \
 lib/ecore_con/efl_net_ssl_conn-openssl.c \
 lib/ecore_con/efl_net_ssl_conn-gnutls.c \
 lib/ecore_con/efl_net_ssl_conn-none.c \

@@ -10,10 +10,10 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_hoversel.eo.h"
-#include "elm_hoversel_item.eo.h"
+#include "elm_hoversel_eo.h"
+#include "elm_hoversel_item_eo.h"
 #include "elm_widget_hoversel.h"
-#include "efl_ui_button_legacy.eo.h"
+#include "efl_ui_button_legacy_eo.h"
 
 #define MY_CLASS ELM_HOVERSEL_CLASS
 
@@ -42,7 +42,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_move(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_escape(Evas_Object *obj, const char *params);
-static Eina_Bool _hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
+static Eina_Bool _hoversel_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED);
 
 static const Elm_Action key_actions[] = {
    {"move", _key_action_move},
@@ -63,14 +63,14 @@ _elm_hoversel_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Hoversel_D
    efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_List *l;
    Elm_Object_Item *eo_item;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    char buf[4096];
    const char *style;
@@ -86,7 +86,7 @@ _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
    elm_widget_theme_style_set(obj, buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    elm_widget_theme_style_set(obj, style);
 
@@ -447,7 +447,7 @@ _hover_key_down(void *data, const Efl_Event *ev)
 {
    ELM_HOVERSEL_DATA_GET(ev->object, sd);
 
-   _hoversel_efl_ui_widget_widget_event(data, sd, ev, ev->object);
+   _hoversel_efl_ui_widget_widget_input_event_handler(data, sd, ev, ev->object);
 }
 
 static void
@@ -1016,12 +1016,12 @@ _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(hoversel, Elm_Hoversel_Data)
 
 EOLIAN static Eina_Bool
-_elm_hoversel_efl_ui_widget_widget_event(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_hoversel_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Hoversel_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
-   if (efl_ui_widget_event(efl_super(obj, MY_CLASS), eo_event, src))
+   if (efl_ui_widget_input_event_handler(efl_super(obj, MY_CLASS), eo_event, src))
      return EINA_TRUE; // note: this was FALSE but likely wrong
 
-   return _hoversel_efl_ui_widget_widget_event(obj, sd, eo_event, src);
+   return _hoversel_efl_ui_widget_widget_input_event_handler(obj, sd, eo_event, src);
 }
 
 static void
@@ -1068,5 +1068,5 @@ _elm_hoversel_auto_update_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 #define ELM_HOVERSEL_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hoversel)
 
-#include "elm_hoversel_item.eo.c"
-#include "elm_hoversel.eo.c"
+#include "elm_hoversel_item_eo.c"
+#include "elm_hoversel_eo.c"

@@ -148,7 +148,11 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
-
+/* FIXME: wtf? */
+#ifndef EFL_UI_RADIO_EVENT_CHANGED
+# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
+#endif
+# include <efl_ui.eot.h>
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
 #define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
@@ -167,7 +171,6 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_layer.eo.h>
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
-# include <elm_spinner.eo.h>
 #endif
 
 #include <elm_tooltip.h>

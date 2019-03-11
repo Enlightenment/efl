@@ -143,7 +143,7 @@ main(void)
    material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
    texture_diffuse = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(texture_diffuse, image_path, NULL);
+   efl_file_simple_load(texture_diffuse, image_path, NULL);
    evas_canvas3d_texture_filter_set(texture_diffuse, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR, EVAS_CANVAS3D_TEXTURE_FILTER_LINEAR);
    evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture_diffuse);
    evas_canvas3d_material_enable_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_AMBIENT, EINA_TRUE);

@@ -1,5 +1,5 @@
-#include "elm_multibuttonentry_item.eo.legacy.h"
-#include "elm_multibuttonentry.eo.legacy.h"
+#include "elm_multibuttonentry_item_eo.legacy.h"
+#include "elm_multibuttonentry_eo.legacy.h"
 
 /**
  * @brief Add a new multibuttonentry to the parent

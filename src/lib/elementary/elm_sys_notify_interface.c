@@ -5,5 +5,5 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_sys_notify_interface.eo.c"
+#include "elm_sys_notify_interface_eo.c"
 

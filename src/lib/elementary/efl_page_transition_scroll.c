@@ -116,10 +116,10 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
           {
              if (curr->visible)
                {
-                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->obj, pd->backclip);
 
                   efl_pack_unpack(curr->obj, curr->content);
-                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->content, pd->backclip);
 
                   curr->content_num = -1;
                   curr->content = NULL;
@@ -140,10 +140,10 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
                     {
                        tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
 
-                       efl_canvas_object_clip_set(curr->obj, pd->foreclip);
+                       efl_canvas_object_clipper_set(curr->obj, pd->foreclip);
 
                        efl_pack(curr->obj, tmp);
-                       efl_canvas_object_clip_set(tmp, pd->foreclip);
+                       efl_canvas_object_clipper_set(tmp, pd->foreclip);
 
                        curr->content_num = tmp_id;
                        curr->content = tmp;
@@ -152,10 +152,10 @@ _page_info_geometry_change(Efl_Page_Transition_Scroll_Data *pd,
                }
              else if (curr->content)
                {
-                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->obj, pd->backclip);
 
                   efl_pack_unpack(curr->obj, curr->content);
-                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->content, pd->backclip);
 
                   curr->content_num = -1;
                   curr->content = NULL;
@@ -249,7 +249,7 @@ _efl_page_transition_scroll_efl_page_transition_bind(Eo *obj,
         for (i = 0; i < cnt; i++)
           {
              item = efl_pack_content_get(spd->pager.obj, i);
-             efl_canvas_object_clip_set(item, pd->backclip);
+             efl_canvas_object_clipper_set(item, pd->backclip);
           }
         _page_info_allocate(pd, spd);
         _page_info_geometry_change(pd, spd);
@@ -314,9 +314,9 @@ _efl_page_transition_scroll_update(Eo *obj,
 
    if (dummy->visible)
      {
-        efl_canvas_object_clip_set(dummy->obj, pd->backclip);
+        efl_canvas_object_clipper_set(dummy->obj, pd->backclip);
         efl_pack_unpack(dummy->obj, dummy->content);
-        efl_canvas_object_clip_set(dummy->content, pd->backclip);
+        efl_canvas_object_clipper_set(dummy->content, pd->backclip);
 
         dummy->content_num = -1;
         dummy->content = NULL;
@@ -340,10 +340,10 @@ _efl_page_transition_scroll_update(Eo *obj,
           {
              if (curr->visible)
                {
-                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->obj, pd->backclip);
 
                   efl_pack_unpack(curr->obj, curr->content);
-                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->content, pd->backclip);
 
                   curr->content_num = -1;
                   curr->content = NULL;
@@ -367,13 +367,13 @@ _efl_page_transition_scroll_update(Eo *obj,
                        if (curr->content)
                          {
                             efl_pack_unpack(curr->obj, curr->content);
-                            efl_canvas_object_clip_set(curr->content, pd->backclip);
+                            efl_canvas_object_clipper_set(curr->content, pd->backclip);
                          }
 
-                       efl_canvas_object_clip_set(curr->obj, pd->foreclip);
+                       efl_canvas_object_clipper_set(curr->obj, pd->foreclip);
 
                        efl_pack(curr->obj, tmp);
-                       efl_canvas_object_clip_set(tmp, pd->foreclip);
+                       efl_canvas_object_clipper_set(tmp, pd->foreclip);
 
                        curr->content_num = tmp_id;
                        curr->content = tmp;
@@ -382,10 +382,10 @@ _efl_page_transition_scroll_update(Eo *obj,
                }
              else if (curr->content)
                {
-                  efl_canvas_object_clip_set(curr->obj, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->obj, pd->backclip);
 
                   efl_pack_unpack(curr->obj, curr->content);
-                  efl_canvas_object_clip_set(curr->content, pd->backclip);
+                  efl_canvas_object_clipper_set(curr->content, pd->backclip);
 
                   curr->content_num = -1;
                   curr->content = NULL;
@@ -480,7 +480,7 @@ _add_item(Efl_Page_Transition_Scroll_Data *pd, Efl_Page_Transition_Data *spd)
 static void
 _remove_item(Page_Info *pi, Efl_Page_Transition_Scroll_Data *pd)
 {
-   efl_canvas_object_clip_set(pi->content, pd->backclip);
+   efl_canvas_object_clipper_set(pi->content, pd->backclip);
    efl_pack_unpack(pi->obj, pi->content);
    efl_del(pi->obj);
    pi->prev->next = pi->next;
@@ -583,7 +583,7 @@ _efl_page_transition_scroll_loop_set(Eo *obj,
                    tmp = efl_pack_content_get(spd->pager.obj, tmp_id);
 
                    efl_pack(curr->obj, tmp);
-                   efl_canvas_object_clip_set(tmp, pd->foreclip);
+                   efl_canvas_object_clipper_set(tmp, pd->foreclip);
 
                    curr->content_num = tmp_id;
                    curr->content = tmp;
@@ -593,7 +593,7 @@ _efl_page_transition_scroll_loop_set(Eo *obj,
 
                 case EFL_UI_PAGER_LOOP_DISABLED:
                    efl_pack_unpack(curr->obj, curr->content);
-                   efl_canvas_object_clip_set(curr->content, pd->backclip);
+                   efl_canvas_object_clipper_set(curr->content, pd->backclip);
 
                    curr->content_num = -1;
                    curr->content = NULL;

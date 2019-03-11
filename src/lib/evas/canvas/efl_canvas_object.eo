@@ -11,10 +11,9 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                             Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
    [[Efl canvas object abstract class]]
-   legacy_prefix: evas_object;
    data: Evas_Object_Protected_Data;
    methods {
-      @property pointer_mode_by_device {
+      @property pointer_mode_by_device @beta {
          [[Low-level pointer behaviour by device.
            See @.pointer_mode.get and @.pointer_mode.set for more explanation.
            @since 1.19
@@ -27,13 +26,11 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          }
          set {
             return: bool; [[$true if pointer mode was set, $false otherwise]]
-            legacy: null;
          }
          get {
-            legacy: null;
          }
       }
-      @property pointer_mode {
+      @property pointer_mode @beta {
          [[Low-level pointer behaviour.
 
            This function has a direct effect on event callbacks related to
@@ -77,46 +74,14 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            transparent background inside a buffer canvas).
          ]]
          set {
-            legacy: null;
          }
          get {
-            legacy: null;
          }
          values {
             render_op: Efl.Gfx.Render_Op; [[Blend or copy.]]
          }
       }
-      @property freeze_events {
-         set {
-            [[Set whether an Evas object is to freeze (discard) events.
-
-              If $freeze is $true, it will force events on $obj to be
-              discarded. Unlike @.pass_events.set, events will not be
-              passed to next lower object. This API can be used for
-              blocking events while $obj is in transition.
-
-              If $freeze is $false, events will be processed on that
-              object as normal.
-
-              Warning: If you block only key/mouse up events with this API,
-              you can't be sure of the state of any objects that have only
-              key/mouse down events.
-
-              @since 1.1
-            ]]
-         }
-         get {
-            [[Determine whether an object is set to freeze (discard) events.
-
-              @since 1.1
-            ]]
-         }
-         values {
-            freeze: bool; [[Pass when $obj is to freeze events ($true)
-                            or not ($false).]]
-         }
-      }
-      @property clip {
+      @property clipper {
          set {
             [[Clip one object to another.
 
@@ -168,7 +133,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             ]]
          }
          values {
-            clip: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
+            clipper: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
          }
       }
       @property repeat_events {
@@ -212,10 +177,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            @.seat_focus_add, @.seat_focus_del.
          ]]
          set {
-            legacy: evas_object_focus_set;
          }
          get {
-            legacy: evas_object_focus_get;
          }
          values {
             focus: bool; [[$true when set as focused or $false otherwise.]]
@@ -227,7 +190,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             @since 1.19
          ]]
          get {
-            legacy: null;
          }
          values {
             focus: bool; [[$true if focused by at least one seat or $false otherwise.]]
@@ -238,7 +200,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if focused or $false otherwise.]]
       }
       seat_focus_add {
@@ -255,7 +216,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if the focus has been set or $false otherwise.]]
       }
       seat_focus_del {
@@ -266,24 +226,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
          params {
             @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
          }
-         legacy: null;
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
-      }
-      @property is_frame_object {
-         [[If $true the object belongs to the window border decorations.
-
-           This will be $false by default, and should be $false for all objects
-           created by the application, unless swallowed in some very specific
-           parts of the window.
-
-           It is very unlikely that an application needs to call this manually,
-           as the window will handle this feature automatically.
-
-           @since 1.2
-         ]]
-         values {
-            is_frame: bool; [[$true if the object is a frame, $false otherwise]]
-         }
       }
       @property precise_is_inside {
          set {
@@ -331,15 +274,13 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               be propagated on to the smart object of which $obj is a
               member. The default value is $true.
 
-              See also @.repeat_events.set, @.pass_events.set,
-              @.freeze_events.set.
+              See also @.repeat_events.set, @.pass_events.set.
             ]]
          }
          get {
             [[Retrieve whether an Evas object is set to propagate events.
 
-              See also @.repeat_events.get, @.pass_events.get,
-              @.freeze_events.get.
+              See also @.repeat_events.get, @.pass_events.get.
             ]]
          }
          values {
@@ -358,15 +299,13 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               If $pass is $false events will be processed on that object
               as normal.
 
-              See also @.repeat_events.set, @.propagate_events.set,
-              @.freeze_events.set.
+              See also @.repeat_events.set, @.propagate_events.set
             ]]
          }
          get {
             [[Determine whether an object is set to pass (ignore) events.
 
-              See also @.repeat_events.get, @.propagate_events.get,
-              @.freeze_events.get.
+              See also @.repeat_events.get, @.propagate_events.get.
             ]]
             /* FIXME-doc
             Example:
@@ -398,7 +337,7 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                                 $false otherwise.]]
          }
       }
-      @property clipees {
+      @property clipped_objects {
          get {
             [[Return a list of objects currently clipped by $obj.
 
@@ -413,9 +352,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
               anymore after that point. Any use of the list after this
               may have undefined results, possibly leading to crashes.
 
-              See also @.clip.
+              See also @.clipper.
             ]]
-            legacy: null;
             return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
                                              list of objects clipped by $obj.]]
          }
@@ -430,7 +368,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
            @since 1.18
          ]]
          get {
-            legacy: evas_object_smart_parent_get;
          }
          values {
             parent: Efl.Canvas.Object; [[The parent smart object of $obj or $null.]]
@@ -446,12 +383,10 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             dir: Efl.Text_Bidirectional_Type; [[Paragraph direction for the given object.]]
          }
       }
-      clipees_has @const {
-         [[Test if any object is clipped by $obj.
-
-           @since 1.8
+      clipped_objects_count @const {
+         [[Returns the number of objects clipped by $obj
          ]]
-         return: bool @warn_unused; [[$true if any object is clipped by $obj, $false otherwise]]
+         return: uint @warn_unused; [[The number of objects clipped by $obj]]
       }
       key_grab {
          /* FIXME: can't reference Eolian object, .eo file not being installed */
@@ -488,7 +423,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
             @in exclusive: bool; [[Request that the $obj is the only object
                                    receiving the $keyname events.]]
          }
-         legacy: null;
       }
       key_ungrab {
          [[Removes the grab on $keyname key events by $obj.
@@ -507,7 +441,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
                                                      not not be present to trigger
                                                      the event.]]
          }
-         legacy: null;
       }
       @property no_render {
          get {
@@ -519,7 +452,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
               @since 1.15
             ]]
-            legacy: null;
          }
          set {
             [[Disable all rendering on the canvas.
@@ -540,7 +472,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
               @since 1.15
             ]]
-            legacy: null;
          }
          values {
             enable: bool; [[Enable "no-render" mode.]]
@@ -561,27 +492,12 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
 
            If $e is not a valid object, the return value is undefined.
           ]]
-          legacy: null;
          }
          keys {
             pos: Eina.Position2D; [[The position in pixels.]]
          }
          values {
             return: bool; [[$true if the coords are inside the object, $false otherwise]]
-         }
-      }
-      @property event_animation {
-         [[Set the $animation which starts when the given $desc happens to the object.]]
-         get { legacy: null; }
-         set { legacy: null; }
-         keys {
-            @cref desc: Efl.Event_Description;
-               [[The event description for which the given $animation is set.]]
-         }
-         values {
-            animation: Efl.Canvas.Animation;
-               [[The animation which starts when the given $desc
-                 happens to the object.]]
          }
       }
    }
@@ -591,6 +507,8 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Object.provider_find;
+      Efl.Object.event_freeze;
+      Efl.Object.event_thaw;
       Efl.Object.debug_name_override;
       Efl.Gfx.Entity.visible { get; set; }
       Efl.Gfx.Color.color { get; set; }
@@ -619,9 +537,6 @@ abstract @beta Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.En
       Efl.Canvas.Pointer.pointer_inside { get; }
    }
    events {
-      anim_started: Efl.Canvas.Object_Animation_Event; [[Animation is started.]]
-      anim_running: Efl.Canvas.Object_Animation_Event; [[Animation is running.]]
-      anim_ended: Efl.Canvas.Object_Animation_Event; [[Animation is ended.]]
       animator,tick: Efl.Event_Animator_Tick; [[Animator tick synchronized with screen vsync if possible.]]
    }
 }

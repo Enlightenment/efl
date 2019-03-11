@@ -63,17 +63,6 @@ evas_gesture_eolian_pub_files = \
 	lib/evas/gesture/efl_canvas_gesture_manager.eo \
 	$(NULL)
 
-evas_eolian_legacy_files = \
-	lib/evas/canvas/evas_canvas.eo \
-	lib/evas/canvas/evas_line.eo \
-	lib/evas/canvas/evas_table.eo \
-	lib/evas/canvas/evas_grid.eo \
-	lib/evas/canvas/evas_box.eo\
-	lib/evas/canvas/evas_text.eo \
-	lib/evas/canvas/evas_textgrid.eo \
-	lib/evas/canvas/evas_image.eo \
-	$(NULL)
-
 evas_canvas_eolian_priv_files = \
 	lib/evas/include/evas_ector_buffer.eo
 
@@ -89,8 +78,7 @@ evas_gesture_eolian_type_files = \
     lib/evas/gesture/efl_canvas_gesture_types.eot
 
 evas_canvas_eolian_priv_c = $(evas_canvas_eolian_priv_files:%.eo=%.eo.c)
-evas_canvas_eolian_priv_h = $(evas_canvas_eolian_priv_files:%.eo=%.eo.h) \
-                            $(evas_eolian_legacy_files:%.eo=%.eo.h)
+evas_canvas_eolian_priv_h = $(evas_canvas_eolian_priv_files:%.eo=%.eo.h)
 
 evas_gesture_eolian_priv_c = $(evas_gesture_eolian_priv_files:%.eo=%.eo.c)
 evas_gesture_eolian_priv_h = $(evas_gesture_eolian_priv_files:%.eo=%.eo.h)
@@ -105,25 +93,19 @@ evas_gesture_eolian_pub_h = $(evas_gesture_eolian_pub_files:%.eo=%.eo.h) \
                             $(evas_gesture_eolian_pub_files:%.eo=%.eo.legacy.h) \
                             $(evas_gesture_eolian_type_files:%.eot=%.eot.h)
 
-evas_eolian_legacy_c = $(evas_eolian_legacy_files:%.eo=%.eo.c)
-evas_eolian_legacy_h = $(evas_eolian_legacy_files:%.eo=%.eo.legacy.h)
-
 evas_eolian_files = $(evas_canvas_eolian_pub_files) \
                     $(evas_canvas_eolian_type_files) \
                     $(evas_gesture_eolian_pub_files) \
                     $(evas_gesture_eolian_type_files)
 
 evas_eolian_internal_files = $(evas_canvas_eolian_priv_files) \
-                             $(evas_gesture_eolian_priv_files) \
-                             $(evas_eolian_legacy_files)
+                             $(evas_gesture_eolian_priv_files)
 
 evas_eolian_c = $(evas_canvas_eolian_pub_c) $(evas_canvas_eolian_priv_c) \
-                $(evas_gesture_eolian_pub_c) $(evas_gesture_eolian_priv_c) \
-                $(evas_eolian_legacy_c)
+                $(evas_gesture_eolian_pub_c) $(evas_gesture_eolian_priv_c)
 
 evas_eolian_h = $(evas_canvas_eolian_pub_h) $(evas_canvas_eolian_priv_h) \
-                $(evas_gesture_eolian_pub_h) $(evas_gesture_eolian_priv_h) \
-                $(evas_eolian_legacy_h)
+                $(evas_gesture_eolian_pub_h) $(evas_gesture_eolian_priv_h)
 
 BUILT_SOURCES += \
                  $(evas_eolian_c) \
@@ -132,9 +114,64 @@ BUILT_SOURCES += \
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = $(evas_eolian_files)
 
+
+evas_legacy_eo_h = \
+lib/evas/canvas/efl_canvas_event_grabber_eo.legacy.h \
+lib/evas/canvas/efl_canvas_group_eo.legacy.h \
+lib/evas/canvas/efl_canvas_object_eo.legacy.h \
+lib/evas/canvas/efl_canvas_text_eo.legacy.h \
+lib/evas/canvas/efl_canvas_vg_container_eo.legacy.h \
+lib/evas/canvas/efl_canvas_vg_node_eo.legacy.h \
+lib/evas/canvas/efl_canvas_vg_object_eo.legacy.h \
+lib/evas/canvas/efl_canvas_vg_shape_eo.legacy.h \
+lib/evas/canvas/evas_box_eo.legacy.h \
+lib/evas/canvas/evas_canvas_eo.legacy.h \
+lib/evas/canvas/evas_grid_eo.legacy.h \
+lib/evas/canvas/evas_image_eo.legacy.h \
+lib/evas/canvas/evas_line_eo.legacy.h \
+lib/evas/canvas/evas_table_eo.legacy.h \
+lib/evas/canvas/evas_text_eo.legacy.h \
+lib/evas/canvas/evas_textgrid_eo.legacy.h
+
+evas_legacy_eo_c = \
+lib/evas/canvas/efl_canvas_event_grabber_eo.legacy.c \
+lib/evas/canvas/efl_canvas_group_eo.legacy.c \
+lib/evas/canvas/efl_canvas_object_eo.legacy.c \
+lib/evas/canvas/efl_canvas_text_eo.legacy.c \
+lib/evas/canvas/efl_canvas_vg_container_eo.legacy.c \
+lib/evas/canvas/efl_canvas_vg_node_eo.legacy.c \
+lib/evas/canvas/efl_canvas_vg_object_eo.legacy.c \
+lib/evas/canvas/efl_canvas_vg_shape_eo.legacy.c \
+lib/evas/canvas/evas_box_eo.c \
+lib/evas/canvas/evas_box_eo.h \
+lib/evas/canvas/evas_box_eo.legacy.c \
+lib/evas/canvas/evas_canvas_eo.c \
+lib/evas/canvas/evas_canvas_eo.h \
+lib/evas/canvas/evas_canvas_eo.legacy.c \
+lib/evas/canvas/evas_grid_eo.c \
+lib/evas/canvas/evas_grid_eo.h \
+lib/evas/canvas/evas_grid_eo.legacy.c \
+lib/evas/canvas/evas_image_eo.c \
+lib/evas/canvas/evas_image_eo.h \
+lib/evas/canvas/evas_image_eo.legacy.c \
+lib/evas/canvas/evas_line_eo.c \
+lib/evas/canvas/evas_line_eo.h \
+lib/evas/canvas/evas_line_eo.legacy.c \
+lib/evas/canvas/evas_table_eo.c \
+lib/evas/canvas/evas_table_eo.h \
+lib/evas/canvas/evas_table_eo.legacy.c \
+lib/evas/canvas/evas_text_eo.c \
+lib/evas/canvas/evas_text_eo.h \
+lib/evas/canvas/evas_text_eo.legacy.c \
+lib/evas/canvas/evas_textgrid_eo.c \
+lib/evas/canvas/evas_textgrid_eo.h \
+lib/evas/canvas/evas_textgrid_eo.legacy.c
+
+
 EXTRA_DIST2 += \
         $(evaseolianfiles_DATA) \
-        $(evas_eolian_internal_files)
+        $(evas_eolian_internal_files) \
+        $(evas_legacy_eo_c)
 
 lib_LTLIBRARIES += lib/evas/libevas.la
 
@@ -148,9 +185,9 @@ lib/evas/Evas_GL.h \
 lib/evas/Evas_Loader.h
 
 installed_evascanvasheadersdir = $(includedir)/evas-@VMAJ@/canvas
-nodist_installed_evascanvasheaders_DATA = $(evas_canvas_eolian_pub_h) \
-                                          $(evas_eolian_legacy_h)
-dist_installed_evascanvasheaders_DATA = lib/evas/canvas/evas_textblock_legacy.h
+nodist_installed_evascanvasheaders_DATA = $(evas_canvas_eolian_pub_h)
+dist_installed_evascanvasheaders_DATA = lib/evas/canvas/evas_textblock_legacy.h \
+$(evas_legacy_eo_h)
 
 installed_evasgestureheadersdir = $(includedir)/evas-@VMAJ@/gesture
 nodist_installed_evasgestureheaders_DATA = $(evas_gesture_eolian_pub_h)
@@ -2355,10 +2392,8 @@ GENERATED_JS_BINDINGS += $(generated_evas_js_bindings)
 endif
 
 if HAVE_CXX
-evas_canvas_eolian_cxx_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.hh) \
-                            $(evas_eolian_legacy_files:%.eo=%.eo.hh)
-evas_canvas_eolian_cxx_impl_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.impl.hh) \
-                                 $(evas_eolian_legacy_files:%.eo=%.eo.impl.hh)
+evas_canvas_eolian_cxx_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.hh)
+evas_canvas_eolian_cxx_impl_hh = $(evas_canvas_eolian_pub_files:%.eo=%.eo.impl.hh)
 evas_gesture_eolian_cxx_hh = $(evas_gesture_eolian_pub_files:%.eo=%.eo.hh)
 evas_gesture_eolian_cxx_impl_hh = $(evas_gesture_eolian_pub_files:%.eo=%.eo.impl.hh)
 endif

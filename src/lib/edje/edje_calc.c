@@ -2,7 +2,7 @@
 
 #include "edje_private.h"
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 static void                          _edje_part_make_rtl(Edje_Part_Description_Common *desc);
 static Edje_Part_Description_Common *_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type);
@@ -2397,12 +2397,29 @@ _edje_filter_get(Edje *ed, Edje_Part_Description_Spec_Filter *filter)
 static void
 _edje_part_pixel_adjust(Edje *ed,
                         Edje_Real_Part *ep,
-                        Edje_Calc_Params *params)
+                        Edje_Calc_Params *params,
+                        Eina_Bool round)
 {
+   int xw, yh, fxw, fyh;
+
+   xw = ABS(params->final.x) + params->final.w;
+   yh = ABS(params->final.y) + params->final.h;
+
+   if (round)
+     {
+        fxw = TO_INT_ROUND(ADD(ABS(params->eval.x), params->eval.w));
+        fyh = TO_INT_ROUND(ADD(ABS(params->eval.y), params->eval.h));
+     }
+   else
+     {
+        fxw = TO_INT(ADD(ABS(params->eval.x), params->eval.w));
+        fyh = TO_INT(ADD(ABS(params->eval.y), params->eval.h));
+     }
+
    /* Adjust rounding to not loose one pixels compared to float
       information only when rendering to avoid infinite adjustement
       when doing min restricted calc */
-   if (ABS(params->final.x) + params->final.w < TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
+   if (xw < fxw)
      {
         if (!ed->calc_only)
           {
@@ -2413,7 +2430,7 @@ _edje_part_pixel_adjust(Edje *ed,
              ep->invalidate = EINA_TRUE;
           }
      }
-   else if (ABS(params->final.x) + params->final.w > TO_INT(ADD(ABS(params->eval.x), params->eval.w)))
+   else if (xw > fxw)
      {
         if (!ed->calc_only)
           {
@@ -2424,7 +2441,8 @@ _edje_part_pixel_adjust(Edje *ed,
              ep->invalidate = EINA_TRUE;
           }
      }
-   if (ABS(params->final.y) + params->final.h < TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+
+   if (yh < fyh)
      {
         if (!ed->calc_only)
           {
@@ -2435,7 +2453,7 @@ _edje_part_pixel_adjust(Edje *ed,
              ep->invalidate = EINA_TRUE;
           }
      }
-   else if (ABS(params->final.y) + params->final.h > TO_INT(ADD(ABS(params->eval.y), params->eval.h)))
+   else if (yh > fyh)
      {
         if (!ed->calc_only)
           {
@@ -2447,6 +2465,8 @@ _edje_part_pixel_adjust(Edje *ed,
           }
      }
 
+   if (params->final.w < 0 || params->final.h < 0)
+     ERR("The params final size became negative");
 }
 
 static void
@@ -2991,7 +3011,7 @@ _edje_part_recalc_single(Edje *ed,
    params->final.w = TO_INT(params->eval.w);
    params->final.h = TO_INT(params->eval.h);
 
-   _edje_part_pixel_adjust(ed, ep, params);
+   _edje_part_pixel_adjust(ed, ep, params, EINA_FALSE);
    /* fill */
    if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Image *)desc)->image.fill, params);
@@ -3242,7 +3262,7 @@ _edje_vector_load_json(Edje *ed, Edje_Real_Part *ep, const char *key)
         json_data = (char *)eet_read(ed->file->ef, key, &json_data_len);
         json_data[json_data_len] = '\0';
         file = eina_file_virtualize(NULL, json_data, json_data_len + 1, EINA_FALSE);
-        efl_file_mmap_set(ep->object, file, NULL);
+        efl_file_simple_mmap_load(ep->object, file, NULL);
 
         if (ep->typedata.vector->json_virtual_file)
           eina_file_close(ep->typedata.vector->json_virtual_file);
@@ -3303,17 +3323,17 @@ _edje_vector_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3 EIN
 
    if ((new_id < 0) || (new_type == EDJE_VECTOR_FILE_TYPE_JSON))
      {
-        efl_file_set(ep->object, ed->file->path, src_key);
+        efl_file_simple_load(ep->object, ed->file->path, src_key);
      }
    else
      {
         snprintf(dest_key, sizeof(dest_key), "edje/vectors/%i", new_id);
 
-        efl_file_set(ep->object, ed->file->path, src_key);
+        efl_file_simple_load(ep->object, ed->file->path, src_key);
         src_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(src_root);
 
-        efl_file_set(ep->object, ed->file->path, dest_key);
+        efl_file_simple_load(ep->object, ed->file->path, dest_key);
         dest_root = efl_canvas_vg_object_root_node_get(ep->object);
         efl_ref(dest_root);
 
@@ -3593,7 +3613,7 @@ _edje_physics_body_add(Edje *ed, Edje_Real_Part *rp, EPhysics_World *world)
    ? (_x1)                \
    : ADD(_x1, MUL(_p, SUB(_x2, _x1))));
 
-#define INTP(_x1, _x2, _p) TO_INT(FINTP(_x1, _x2, _p))
+#define INTP(_x1, _x2, _p) TO_INT_ROUND(FINTP(_x1, _x2, _p))
 
 static void
 _map_colors_free(Edje_Calc_Params *pf)
@@ -3780,7 +3800,7 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
 #define Rel2X 2
 #define Rel2Y 3
 static Eina_Bool
-_circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Eina_List **clist)
+_circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Eina_Array *arr)
 {
    Edje_Real_Part *rp = NULL;
 
@@ -3794,18 +3814,18 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
              if (cep->param1.description->rel1.id_x >= 0)
                {
                   rp = ed->table_parts[cep->param1.description->rel1.id_x];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
              if (cep->param1.description->rel2.id_x >= 0)
                {
                   rp = ed->table_parts[cep->param1.description->rel2.id_x];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3816,18 +3836,18 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
              if (cep->param2->description->rel1.id_x >= 0)
                {
                   rp = ed->table_parts[cep->param2->description->rel1.id_x];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
              if (cep->param2->description->rel2.id_x >= 0)
                {
                   rp = ed->table_parts[cep->param2->description->rel2.id_x];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3840,18 +3860,18 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
              if (cep->param1.description->rel1.id_y >= 0)
                {
                   rp = ed->table_parts[cep->param1.description->rel1.id_y];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
              if (cep->param1.description->rel2.id_y >= 0)
                {
                   rp = ed->table_parts[cep->param1.description->rel2.id_y];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3861,18 +3881,18 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
              if (cep->param2->description->rel1.id_y >= 0)
                {
                   rp = ed->table_parts[cep->param2->description->rel1.id_y];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
              if (cep->param2->description->rel2.id_y >= 0)
                {
                   rp = ed->table_parts[cep->param2->description->rel2.id_y];
-                  if (_circular_dependency_find(ed, ep, rp, clist))
+                  if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       *clist = eina_list_prepend(*clist, rp->part->name);
+                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -4032,26 +4052,29 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             axes, ep->calculating,
             faxes, flags);
 
-        Eina_List *clist = NULL;
-        Eina_List *l = NULL;
-        char *part_name;
-        char depends_path[PATH_MAX] = "";
+        Eina_Array *part_array = eina_array_new(10);;
 
-        if (_circular_dependency_find(ed, ep, NULL, &clist))
+        if (_circular_dependency_find(ed, ep, NULL, part_array))
           {
+             Eina_Array_Iterator it;
+             unsigned int i;
+             char *part_name;
+             char depends_path[PATH_MAX] = "";
+
+             efl_event_callback_legacy_call(ed->obj, EFL_LAYOUT_EVENT_CIRCULAR_DEPENDENCY, part_array);
              strncat(depends_path, ep->part->name,
                      sizeof(depends_path) - strlen(depends_path) - 1);
-             EINA_LIST_FOREACH(clist, l, part_name)
+             EINA_ARRAY_ITER_NEXT(part_array, i, part_name, it)
                {
                   strncat(depends_path, " -> ",
                           sizeof(depends_path) - strlen(depends_path) - 1);
                   strncat(depends_path, part_name,
                           sizeof(depends_path) - strlen(depends_path) - 1);
+                  eina_stringshare_del(part_name);
                }
-             efl_event_callback_legacy_call(ed->obj, EFL_LAYOUT_EVENT_CIRCULAR_DEPENDENCY, clist);
              ERR("Circular dependency in the group '%s' : %s",
                  ed->group, depends_path);
-             eina_list_free(clist);
+             eina_array_free(part_array);
           }
 #endif
         return;
@@ -4477,7 +4500,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         p3->req.w = INTP(p1->req.w, p2->req.w, pos);
         p3->req.h = INTP(p1->req.h, p2->req.h, pos);
 
-        _edje_part_pixel_adjust(ed, ep, p3);
+        _edje_part_pixel_adjust(ed, ep, p3, EINA_TRUE);
 
         if (ep->part->dragable.x)
           {
@@ -5067,7 +5090,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                           proxy = ed->file->image_dir->entries[pd_mesh_node->mesh_node.texture.id].entry;
                           if (proxy)
                             {
-                               efl_file_mmap_set(texture, ed->file->f, proxy);
+                               efl_file_simple_mmap_load(texture, ed->file->f, proxy);
                                evas_canvas3d_texture_filter_set(texture, pd_mesh_node->mesh_node.texture.filter1, pd_mesh_node->mesh_node.texture.filter2);
                                evas_canvas3d_texture_wrap_set(texture, pd_mesh_node->mesh_node.texture.wrap1, pd_mesh_node->mesh_node.texture.wrap2);
                             }

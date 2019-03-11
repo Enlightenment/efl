@@ -7,6 +7,7 @@
 # define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>
@@ -22,8 +23,23 @@ struct _Layout_Model_Data
    Evas_Object *entry;
    Evas_Object *img;
    Evas_Object *bt;
+   Evas_Object *bxr;
 };
 typedef struct _Layout_Model_Data Layout_Model_Data;
+
+static Eina_Value
+_wait_for_image(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
+{
+   Layout_Model_Data *priv = data;
+
+   priv->img = eina_value_object_get(&v);
+   elm_box_pack_end(priv->bxr, priv->img);
+   evas_object_size_hint_weight_set(priv->img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(priv->img, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(priv->img);
+
+   return v;
+}
 
 static void
 _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
@@ -45,7 +61,6 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
    efl_ui_view_model_set(priv->img, child);
    efl_ui_view_model_set(priv->bt, child);
 }
-
 
 static void
 _update_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev EINA_UNUSED)
@@ -77,7 +92,6 @@ _label_init(Evas_Object *win, Evas_Object *box, const char *text)
 
    return widget;
 }
-
 
 static void
 _signal_cb(void *data EINA_UNUSED,
@@ -111,10 +125,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    if (argv[1] != NULL) dirname = argv[1];
    else dirname = EFL_MODEL_TEST_FILENAME_PATH;
 
-   priv->model = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
+   priv->model = efl_add_ref(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
 
    genlist = elm_genlist_add(win);
-   priv->fileview = efl_add(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
+   priv->fileview = efl_add_ref(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_NONE, NULL));
    elm_view_list_property_connect(priv->fileview, "filename", "elm.text");
    elm_view_list_model_set(priv->fileview, priv->model);
    _widget_init(genlist);
@@ -123,6 +137,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_event_callback_add(priv->fileview, ELM_VIEW_LIST_EVENT_MODEL_SELECTED, _list_selected_cb, priv);
 
    bxr = elm_box_add(win);
+   priv->bxr = bxr;
    _widget_init(bxr);
    elm_object_part_content_set(panes, "right", bxr);
 
@@ -154,11 +169,9 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_property_bind(img_factory, "", "path"); //connect to "path" property
    efl_ui_factory_bind(priv->bt, "icon", img_factory);
 
-   priv->img = efl_ui_factory_create(img_factory, NULL, win);
-   elm_box_pack_end(bxr, priv->img);
-   evas_object_size_hint_weight_set(priv->img, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(priv->img, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(priv->img);
+   efl_future_then(win, efl_ui_factory_create(img_factory, NULL, win),
+                   .success = _wait_for_image,
+                   .data = priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
    //showall
@@ -167,8 +180,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_show(win);
 
    elm_run();
+
    elm_shutdown();
-   ecore_shutdown();
 
    return 0;
 }

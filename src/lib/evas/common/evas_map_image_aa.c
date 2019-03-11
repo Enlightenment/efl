@@ -12,14 +12,14 @@ calc_irregular_coverage(Line* spans, int eidx, int y, int diagonal,
                        int edge_dist, Eina_Bool reverse)
 {
    if (eidx == 1) reverse = !reverse;
-   int coverage = (256 / (diagonal + 2));
+   int coverage = (255 / (diagonal + 2));
    int tmp;
    for (int ry = 0; ry < (diagonal + 2); ry++)
      {
         tmp = y - ry - edge_dist;
         if (tmp < 0) return;
         spans[tmp].aa_len[eidx] = 1;
-        if (reverse) spans[tmp].aa_cov[eidx] = 256 - (coverage * ry);
+        if (reverse) spans[tmp].aa_cov[eidx] = 255 - (coverage * ry);
         else spans[tmp].aa_cov[eidx] = (coverage * ry);
      }
 }
@@ -28,14 +28,14 @@ static void
 calc_vert_coverage(Line *spans, int eidx, int y, int rewind, Eina_Bool reverse)
 {
    if (eidx == 1) reverse = !reverse;
-   int coverage = (256 / (rewind + 1));
+   int coverage = (255 / (rewind + 1));
    int tmp;
    for (int ry = 1; ry < (rewind + 1); ry++)
      {
         tmp = y - ry;
         if (tmp < 0 ) return;
         spans[tmp].aa_len[eidx] = 1;
-        if (reverse) spans[tmp].aa_cov[eidx] = (256 - (coverage * ry));
+        if (reverse) spans[tmp].aa_cov[eidx] = (255 - (coverage * ry));
         else spans[tmp].aa_cov[eidx] = (coverage * ry);
      }
 }
@@ -46,7 +46,7 @@ calc_horiz_coverage(Line *spans, int eidx, int y, int x, int x2)
    if (spans[y].aa_len[eidx] < abs(x - x2))
      {
         spans[y].aa_len[eidx] = abs(x - x2);
-        spans[y].aa_cov[eidx] = (256 / (spans[y].aa_len[eidx] + 1));
+        spans[y].aa_cov[eidx] = (255 / (spans[y].aa_len[eidx] + 1));
      }
 }
 
@@ -61,7 +61,7 @@ _aa_coverage_apply(Line *line, int ww, int w, DATA32 val, Eina_Bool src_alpha)
    //Right Edge Anti Aliasing
    if (line->aa_len[1] >= ww)
      {
-        return MUL_256(256 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
+        return MUL_256(255 - (line->aa_cov[1] * (line->aa_len[1] - ww + 1)),
                        val);
      }
    //Remove Transparency if src image alpha is off.
@@ -167,6 +167,11 @@ _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
                   Outside Vertical -> Outside Horizontal */
                if (prev_dir == DirOutVer)
                  calc_horiz_coverage(spans, eidx, p_edge.y, ptx[0], ptx[1]);
+
+               //Tricky case by fine tuning.
+               if (y == 1)
+                 calc_horiz_coverage(spans, eidx, p_edge.y, tx[0], tx[1]);
+
                PUSH_EDGE_POINT();
             }
           break;
@@ -229,8 +234,12 @@ _calc_aa_edges_internal(Line *spans, int eidx, int ystart, int yend)
         calc_horiz_coverage(spans, eidx, y, tx[0], tx[1]);
      }
    else
-     calc_vert_coverage(spans, eidx, (y + 1), (edge_diff.y + 2),
-                        (prev_dir & 0x00000001));
+     {
+        ++y;
+        if (y > yend) y = yend;
+        calc_vert_coverage(spans, eidx, y, (edge_diff.y + 2),
+                           (prev_dir & 0x00000001));
+     }
 }
 
 static void

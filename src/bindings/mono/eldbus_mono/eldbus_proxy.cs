@@ -141,7 +141,7 @@ public class Proxy : IDisposable
     {
         CheckHandle();
         var ptr = eldbus_proxy_interface_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     eldbus.Message NewMethodCall(string member)

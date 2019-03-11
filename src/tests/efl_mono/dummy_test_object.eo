@@ -2,6 +2,18 @@ import eina_types;
 
 type Dummy.MyInt: int;
 
+const Dummy.Constvar_Bool : bool = true;
+const Dummy.Constvar_Int : int = -32766;
+const Dummy.Constvar_UInt : uint = 65533U;
+const Dummy.Constvar_Long : long = -2147483644L;
+const Dummy.Constvar_ULong : ulong = 4294967288UL;
+const Dummy.Constvar_LLong : llong = -9223372036854775800LL;
+const Dummy.Constvar_ULLong : ullong = 18446744073709551615ULL;
+const Dummy.Constvar_Float : float = 16777211.0f;
+const Dummy.Constvar_Double : double = 9007199254740988.0;
+const Dummy.Constvar_Char : char = '!';
+const Dummy.Constvar_String : string = "test_str";
+
 enum Dummy.SampleEnum {
    v0,
    v1,
@@ -64,9 +76,7 @@ struct @free(free) Dummy.StructSimple
 
 struct @free(free) Dummy.StructComplex {
    farray: array<ptr(int)>;
-   finarray: inarray<int>;
    flist: list<string>;
-   finlist: inlist<ptr(int)>;
    fhash: hash<string, string>;
    fiterator: iterator<ptr(int)>;
    fany_value: any_value;
@@ -99,6 +109,10 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
    }
    methods {
       return_object {
+         return: Dummy.Test_Object;
+      }
+
+      return_null_object {
          return: Dummy.Test_Object;
       }
 
@@ -508,153 +522,6 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          return: array<Dummy.Numberwrapper>;
      }
 
-      /* Eina Inarray */
-
-      /* Integer */
-      eina_inarray_int_in {
-         params {
-            @in arr: inarray<ptr(int)>;
-         }
-         return: bool;
-      }
-
-      eina_inarray_int_in_own {
-         params {
-            @in arr: inarray<free(ptr(int),free) @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inarray_int_in_own {
-         return: bool;
-      }
-
-      eina_inarray_int_out {
-         params {
-            @out arr: inarray<ptr(int)>;
-         }
-         return: bool;
-      }
-      check_eina_inarray_int_out {
-         return: bool;
-      }
-
-      eina_inarray_int_out_own {
-         params {
-            @out arr: inarray<free(ptr(int),free) @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inarray_int_return {
-         return: inarray<int>;
-      }
-      check_eina_inarray_int_return {
-         return: bool;
-      }
-
-      eina_inarray_int_return_own {
-         return: inarray<free(ptr(int),free) @owned> @owned;
-      }
-
-      /* String */
-      eina_inarray_str_in {
-         params {
-            @in arr: inarray<string>;
-         }
-         return: bool;
-      }
-
-      eina_inarray_str_in_own {
-         params {
-            @in arr: inarray<mstring @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inarray_str_in_own {
-         return: bool;
-      }
-
-      eina_inarray_str_out {
-         params {
-            @out arr: inarray<string>;
-         }
-         return: bool;
-      }
-      check_eina_inarray_str_out {
-         return: bool;
-      }
-
-      eina_inarray_str_out_own {
-         params {
-            @out arr: inarray<mstring @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inarray_str_return {
-         return: inarray<string>;
-      }
-      check_eina_inarray_str_return {
-         return: bool;
-      }
-
-      eina_inarray_str_return_own {
-         return: inarray<mstring @owned> @owned;
-      }
-
-      /* Object */
-      eina_inarray_obj_in {
-         params {
-            @in arr: inarray<Dummy.Numberwrapper>;
-         }
-         return: bool;
-      }
-
-      eina_inarray_obj_in_own {
-         params {
-            @in arr: inarray<Dummy.Numberwrapper @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inarray_obj_in_own {
-         return: bool;
-      }
-
-      eina_inarray_obj_out {
-         params {
-            @out arr: inarray<Dummy.Numberwrapper>;
-         }
-         return: bool;
-      }
-      check_eina_inarray_obj_out {
-         return: bool;
-      }
-
-      eina_inarray_obj_out_own {
-         params {
-            @out arr: inarray<Dummy.Numberwrapper @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inarray_obj_return {
-         return: inarray<Dummy.Numberwrapper>;
-      }
-      check_eina_inarray_obj_return {
-         return: bool;
-      }
-
-      eina_inarray_obj_return_own {
-         return: inarray<Dummy.Numberwrapper @owned> @owned;
-      }
-
-      eina_inarray_obj_return_in {
-         params {
-            @in arr: inarray<Dummy.Numberwrapper>;
-         }
-         return: inarray<Dummy.Numberwrapper>;
-     }
-
       /* Eina List */
 
       /* Integer */
@@ -801,154 +668,6 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
          }
          return: list<Dummy.Numberwrapper>;
       }
-
-      /* Eina Inlist */
-
-      /* Integer */
-      eina_inlist_int_in {
-         params {
-            @in lst: inlist<int>;
-         }
-         return: bool;
-      }
-
-      eina_inlist_int_in_own {
-         params {
-            @in lst: inlist<free(ptr(int),free) @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inlist_int_in_own {
-         return: bool;
-      }
-
-      eina_inlist_int_out {
-         params {
-            @out lst: inlist<int>;
-         }
-         return: bool;
-      }
-      check_eina_inlist_int_out {
-         return: bool;
-      }
-
-      eina_inlist_int_out_own {
-         params {
-            @out lst: inlist<free(ptr(int),free) @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inlist_int_return {
-         return: inlist<int>;
-      }
-      check_eina_inlist_int_return {
-         return: bool;
-      }
-
-      eina_inlist_int_return_own {
-         return: inlist<free(ptr(int),free) @owned> @owned;
-      }
-
-      /* String */
-      eina_inlist_str_in {
-         params {
-            @in lst: inlist<string>;
-         }
-         return: bool;
-      }
-
-      eina_inlist_str_in_own {
-         params {
-            @in lst: inlist<mstring @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inlist_str_in_own {
-         return: bool;
-      }
-
-      eina_inlist_str_out {
-         params {
-            @out lst: inlist<string>;
-         }
-         return: bool;
-      }
-      check_eina_inlist_str_out {
-         return: bool;
-      }
-
-      eina_inlist_str_out_own {
-         params {
-            @out lst: inlist<mstring @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inlist_str_return {
-         return: inlist<string>;
-      }
-      check_eina_inlist_str_return {
-         return: bool;
-      }
-
-      eina_inlist_str_return_own {
-         return: inlist<mstring @owned> @owned;
-      }
-
-      /* Object */
-      eina_inlist_obj_in {
-         params {
-            @in lst: inlist<Dummy.Numberwrapper>;
-         }
-         return: bool;
-      }
-
-      eina_inlist_obj_in_own {
-         params {
-            @in lst: inlist<Dummy.Numberwrapper @owned> @owned;
-         }
-         return: bool;
-      }
-      check_eina_inlist_obj_in_own {
-         return: bool;
-      }
-
-      eina_inlist_obj_out {
-         params {
-            @out lst: inlist<Dummy.Numberwrapper>;
-         }
-         return: bool;
-      }
-      check_eina_inlist_obj_out {
-         return: bool;
-      }
-
-      eina_inlist_obj_out_own {
-         params {
-            @out lst: inlist<Dummy.Numberwrapper @owned> @owned;
-         }
-         return: bool;
-      }
-
-      eina_inlist_obj_return {
-         return: inlist<Dummy.Numberwrapper>;
-      }
-      check_eina_inlist_obj_return {
-         return: bool;
-      }
-
-      eina_inlist_obj_return_own {
-         return: inlist<Dummy.Numberwrapper @owned> @owned;
-      }
-
-      eina_inlist_obj_return_in {
-         params {
-            @in lst: inlist<Dummy.Numberwrapper>;
-         }
-         return: inlist<Dummy.Numberwrapper>;
-      }
-
 
       // Eina Hash //
 
@@ -1677,6 +1396,7 @@ class Dummy.Test_Object extends Efl.Object implements Efl.Part, Dummy.Test_Iface
       class.destructor;
       Efl.Object.constructor;
       Efl.Part.part_get;
+      Efl.Object.provider_find;
       Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }

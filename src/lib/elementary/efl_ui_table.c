@@ -1,6 +1,6 @@
 #include "efl_ui_table_private.h"
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 #define MY_CLASS EFL_UI_TABLE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Table"
@@ -28,12 +28,12 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_table_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_table_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -74,7 +74,16 @@ _table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
 {
    Efl_Ui_Table_Data *pd = efl_data_scope_get(data, MY_CLASS);
 
-   _sizing_eval(data, pd);
+   if (table == data)
+     efl_pack_layout_request(data);
+   else
+     _sizing_eval(data, pd);
+}
+
+static void
+_efl_ui_table_size_hints_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_pack_layout_request(ev->object);
 }
 
 /* Custom table class: overrides smart_calculate. */
@@ -114,12 +123,23 @@ _custom_table_calc(Eo *obj, Custom_Table_Data *pd)
 /* End of custom table class */
 
 EOLIAN static void
+_efl_ui_table_homogeneous_set(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Eina_Bool homogeneoush, Eina_Bool homogeneousv)
+{
+   pd->homogeneoush = !!homogeneoush;
+   pd->homogeneousv = !!homogeneousv;
+}
+
+EOLIAN static void
+_efl_ui_table_homogeneous_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Eina_Bool *homogeneoush, Eina_Bool *homogeneousv)
+{
+   if (homogeneoush) *homogeneoush = pd->homogeneoush;
+   if (homogeneousv) *homogeneousv = pd->homogeneousv;
+}
+
+EOLIAN static void
 _efl_ui_table_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Table_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   _sizing_eval(obj, pd);
-   efl_canvas_group_calculate(efl_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
+   _efl_ui_table_custom_layout(obj, pd);
 }
 
 EOLIAN void
@@ -148,6 +168,8 @@ _efl_ui_table_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Table_Data *pd)
 
    evas_object_event_callback_add
          (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _table_size_hints_changed, obj);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_table_size_hints_changed_cb, NULL);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
@@ -168,6 +190,8 @@ _efl_ui_table_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNU
    evas_object_event_callback_del_full
          (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _table_size_hints_changed, obj);
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_table_size_hints_changed_cb, NULL);
 
    /* let's make our table object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
@@ -197,6 +221,8 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
    pd->last_row = -1;
    pd->req_cols = 0;
    pd->req_rows = 0;
+   pd->align.h = 0.5;
+   pd->align.v = 0.5;
 
    return obj;
 }
@@ -230,6 +256,28 @@ _efl_ui_table_efl_pack_pack_padding_get(const Eo *obj, Efl_Ui_Table_Data *pd EIN
    if (scalable) *scalable = pd->pad.scalable;
    if (h) *h = pd->pad.h;
    if (v) *v = pd->pad.v;
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Table_Data *pd, double h, double v)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (h < 0) h = -1;
+   if (v < 0) v = -1;
+   if (h > 1) h = 1;
+   if (v > 1) v = 1;
+   pd->align.h = h;
+   pd->align.v = v;
+
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, double *h, double *v)
+{
+   if (h) *h = pd->align.h;
+   if (v) *v = pd->align.v;
 }
 
 static void
@@ -523,13 +571,6 @@ _efl_ui_table_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Table_Data
 {
    return pd->count;
 }
-
-EOLIAN static Eina_Bool
-_efl_ui_table_efl_container_content_remove(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   return efl_pack_unpack(obj, content);
-}
-
 
 EOLIAN static Eina_Iterator *
 _efl_ui_table_efl_pack_table_table_contents_get(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED,

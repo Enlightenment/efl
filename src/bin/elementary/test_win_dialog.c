@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void
@@ -29,7 +30,7 @@ _bt2_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    Eina_Size2D size = { 300, 150 };
 
    dia = efl_add(EFL_UI_WIN_CLASS, parent,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-2"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_text_set(efl_added, "A Fixed Size Dialog"));
@@ -76,7 +77,7 @@ _bt3_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    Efl_Canvas_Object *dia, *lb, *parent = data;
 
    dia = efl_add(EFL_UI_WIN_CLASS, parent,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-3"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_text_set(efl_added, "Min/Max Size Dialog"));
@@ -102,7 +103,7 @@ _bt4_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *even
    Efl_Canvas_Object *dia, *lb;
 
    dia = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_DIALOG_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_DIALOG_BASIC),
                  efl_ui_win_name_set(efl_added, "window-dia-4"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_text_set(efl_added, "Min/Max Size Dialog")

@@ -9,8 +9,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_slideshow.eo.h"
-#include "elm_slideshow_item.eo.h"
+#include "elm_slideshow_eo.h"
+#include "elm_slideshow_item_eo.h"
 #include "elm_widget_slideshow.h"
 
 #define MY_CLASS ELM_SLIDESHOW_CLASS
@@ -717,5 +717,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_slideshow, Elm_Slideshow_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_slideshow), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_slideshow)
 
-#include "elm_slideshow_item.eo.c"
-#include "elm_slideshow.eo.c"
+#include "elm_slideshow_item_eo.c"
+#include "elm_slideshow_eo.c"

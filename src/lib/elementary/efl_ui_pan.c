@@ -178,6 +178,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
    evas_object_smart_changed(obj);
 
 end:
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
    efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
    return EINA_TRUE;
 }
@@ -193,7 +194,7 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
 {
    Efl_Gfx_Stack *old_content = pd->content;
 
-   efl_canvas_group_member_del(obj, pd->content);
+   efl_canvas_group_member_remove(obj, pd->content);
    evas_object_event_callback_del_full
      (pd->content, EVAS_CALLBACK_DEL, _efl_ui_pan_content_del_cb, obj);
    evas_object_event_callback_del_full
@@ -201,6 +202,7 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
      obj);
    pd->content = NULL;
    pd->content_w = pd->content_h = pd->px = pd->py = 0;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    efl_event_callback_call(obj, EFL_UI_PAN_EVENT_CONTENT_CHANGED, NULL);
 
    return old_content;

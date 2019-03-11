@@ -1,7 +1,6 @@
-class @beta Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access.Widget.Action
+class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Player, Efl.Access.Widget.Action
 {
    [[Efl UI video class]]
-   legacy_prefix: elm_video;
    methods {
       @property remember_position {
          set {
@@ -42,8 +41,8 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout implements Efl.Player, Efl.Access
    }
    implements {
       Efl.Object.constructor;
-      Efl.File.file { get; set; }
-      Efl.Ui.Widget.widget_event;
+      Efl.File.load;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Player.start;
       Efl.Player.stop;

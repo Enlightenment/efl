@@ -3,10 +3,11 @@
 
 elm_public_eolian_files = \
 	lib/elementary/efl_ui_widget.eo \
+	lib/elementary/efl_ui_animation_view.eo \
 	lib/elementary/efl_ui_bg.eo \
 	lib/elementary/efl_ui_button.eo \
-	lib/elementary/efl_ui_calendar.eo \
-	lib/elementary/efl_ui_calendar_item.eo \
+ lib/elementary/efl_ui_calendar.eo \
+ lib/elementary/efl_ui_calendar_item.eo \
 	lib/elementary/efl_ui_check.eo \
 	lib/elementary/efl_ui_flip.eo \
 	lib/elementary/efl_ui_frame.eo \
@@ -14,6 +15,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_image.eo \
 	lib/elementary/efl_ui_image_zoomable.eo \
 	lib/elementary/efl_ui_layout.eo \
+	lib/elementary/efl_ui_layout_base.eo \
 	lib/elementary/efl_ui_nstate.eo \
 	lib/elementary/efl_ui_navigation_bar.eo \
 	lib/elementary/efl_ui_navigation_bar_part.eo \
@@ -56,7 +58,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_text_factory_emoticons.eo \
 	lib/elementary/efl_ui_text_factory_fallback.eo \
 	lib/elementary/efl_ui_textpath.eo \
-	lib/elementary/efl_ui_textpath_legacy.eo \
 	lib/elementary/efl_ui_l10n.eo \
 	lib/elementary/efl_ui_clock.eo \
 	lib/elementary/efl_ui_image_factory.eo \
@@ -94,8 +95,6 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
 	lib/elementary/efl_ui_progressbar_part.eo \
-	lib/elementary/elm_slider.eo \
-	lib/elementary/elm_slider_part_indicator.eo \
 	lib/elementary/efl_ui_textpath_part.eo \
 	lib/elementary/efl_ui_widget_part.eo \
 	lib/elementary/efl_ui_widget_part_bg.eo \
@@ -143,21 +142,11 @@ elm_public_eolian_files += \
 	lib/elementary/efl_ui_radio_legacy_part.eo \
 	lib/elementary/efl_ui_check_legacy_part.eo \
 	lib/elementary/efl_ui_progressbar_legacy_part.eo \
-	lib/elementary/elm_spinner.eo \
-	lib/elementary/elm_multibuttonentry.eo \
-	lib/elementary/elm_multibuttonentry_item.eo \
 	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_interface_scrollable.eo \
 	lib/elementary/elm_atspi_bridge.eo \
 	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/efl_ui_image_zoomable_pan.eo \
-	lib/elementary/elm_pan.eo \
-	lib/elementary/elm_toolbar.eo \
-	lib/elementary/elm_toolbar_item.eo \
-	lib/elementary/elm_view_list.eo \
-	lib/elementary/elm_view_form.eo \
-	lib/elementary/elm_web.eo \
-	lib/elementary/elm_widget_item.eo \
 	$(NULL)
 
 # Private classes (not exposed or shipped)
@@ -168,7 +157,6 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_win_part.eo \
 	lib/elementary/efl_ui_focus_parent_provider.eo \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
-	lib/elementary/efl_ui_focus_parent_provider_gen.eo \
 	lib/elementary/efl_ui_state_model.eo \
 	tests/elementary/focus_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
@@ -184,69 +172,7 @@ elm_private_eolian_files = \
 
 # Legacy classes - not part of public EO API
 elm_legacy_eolian_files = \
-	lib/elementary/efl_ui_button_legacy.eo \
-	lib/elementary/efl_ui_check_legacy.eo \
-	lib/elementary/efl_ui_radio_legacy.eo \
-	lib/elementary/efl_ui_bg_legacy.eo \
-	lib/elementary/efl_ui_video_legacy.eo \
-	lib/elementary/efl_ui_frame_legacy.eo \
-	lib/elementary/efl_ui_panes_legacy.eo \
-	lib/elementary/efl_ui_image_zoomable_legacy.eo \
-	lib/elementary/efl_ui_flip_legacy.eo \
-	lib/elementary/efl_ui_win_legacy.eo \
-	lib/elementary/efl_ui_image_legacy.eo \
-	lib/elementary/efl_ui_progressbar_legacy.eo \
 	lib/elementary/efl_ui_clock_legacy.eo \
-	lib/elementary/efl_ui_layout_legacy.eo \
-	lib/elementary/elm_code_widget_legacy.eo \
-	lib/elementary/efl_ui_win_socket_legacy.eo \
-	lib/elementary/efl_ui_win_inlined_legacy.eo \
-	lib/elementary/elm_interface_fileselector.eo \
-	lib/elementary/efl_ui_animation_view.eo \
-	lib/elementary/elm_calendar.eo \
-	lib/elementary/elm_calendar_item.eo \
-	lib/elementary/elm_clock.eo \
-	lib/elementary/elm_colorselector.eo \
-	lib/elementary/elm_conformant.eo \
-	lib/elementary/elm_ctxpopup.eo \
-	lib/elementary/elm_dayselector.eo \
-	lib/elementary/elm_entry.eo \
-	lib/elementary/elm_fileselector.eo \
-	lib/elementary/elm_gengrid.eo \
-	lib/elementary/elm_gengrid_pan.eo \
-	lib/elementary/elm_genlist.eo \
-	lib/elementary/elm_genlist_pan.eo \
-	lib/elementary/elm_gesture_layer.eo \
-	lib/elementary/elm_glview.eo \
-	lib/elementary/elm_hover.eo \
-	lib/elementary/elm_index.eo \
-	lib/elementary/elm_label.eo \
-	lib/elementary/elm_list.eo \
-	lib/elementary/elm_map.eo \
-	lib/elementary/elm_map_pan.eo \
-	lib/elementary/elm_menu.eo \
-	lib/elementary/elm_notify.eo \
-	lib/elementary/elm_panel.eo \
-	lib/elementary/elm_player.eo \
-	lib/elementary/elm_plug.eo \
-	lib/elementary/elm_popup.eo \
-	lib/elementary/elm_route.eo \
-	lib/elementary/elm_scroller.eo \
-	lib/elementary/elm_sys_notify_interface.eo \
-	lib/elementary/elm_sys_notify.eo \
-	lib/elementary/elm_sys_notify_dbus.eo \
-	lib/elementary/elm_systray.eo \
-	lib/elementary/elm_color_item.eo \
-	lib/elementary/elm_dayselector_item.eo \
-	lib/elementary/elm_flipselector_item.eo \
-	lib/elementary/elm_menu_item.eo \
-	lib/elementary/elm_ctxpopup_item.eo \
-	lib/elementary/elm_index_item.eo \
-	lib/elementary/elm_widget_item_static_focus.eo \
-	lib/elementary/elm_genlist_item.eo \
-	lib/elementary/elm_gengrid_item.eo \
-	lib/elementary/elm_list_item.eo \
-	lib/elementary/elm_popup_item.eo \
 	lib/elementary/elm_ctxpopup_part.eo \
 	lib/elementary/elm_dayselector_part.eo \
 	lib/elementary/elm_entry_part.eo \
@@ -264,32 +190,6 @@ elm_legacy_eolian_files = \
 	lib/elementary/elm_actionslider_part.eo \
 	lib/elementary/elm_bubble_part.eo \
 	lib/elementary/elm_fileselector_part.eo \
-	lib/elementary/elm_access.eo \
-	lib/elementary/elm_actionslider.eo \
-	lib/elementary/elm_box.eo \
-	lib/elementary/elm_bubble.eo \
-	lib/elementary/elm_diskselector.eo \
-	lib/elementary/elm_diskselector_item.eo \
-	lib/elementary/elm_fileselector_button.eo \
-	lib/elementary/elm_fileselector_entry.eo \
-	lib/elementary/elm_flipselector.eo \
-	lib/elementary/elm_grid.eo \
-	lib/elementary/elm_hoversel.eo \
-	lib/elementary/elm_hoversel_item.eo \
-	lib/elementary/elm_icon.eo \
-	lib/elementary/elm_inwin.eo \
-	lib/elementary/elm_mapbuf.eo \
-	lib/elementary/elm_naviframe.eo \
-	lib/elementary/elm_naviframe_item.eo \
-	lib/elementary/elm_photo.eo \
-	lib/elementary/elm_prefs.eo \
-	lib/elementary/elm_segment_control.eo \
-	lib/elementary/elm_segment_control_item.eo \
-	lib/elementary/elm_separator.eo \
-	lib/elementary/elm_slideshow.eo \
-	lib/elementary/elm_slideshow_item.eo \
-	lib/elementary/elm_table.eo \
-	lib/elementary/elm_thumb.eo \
 	$(NULL)
 
 elm_eolian_type_files = \
@@ -325,14 +225,411 @@ elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files)
+elm_legacy_eo_files = \
+lib/elementary/efl_ui_bg_legacy_eo.c \
+lib/elementary/efl_ui_button_legacy_eo.c \
+lib/elementary/efl_ui_check_legacy_eo.c \
+lib/elementary/efl_ui_flip_legacy_eo.c \
+lib/elementary/efl_ui_frame_legacy_eo.c \
+lib/elementary/efl_ui_image_legacy_eo.c \
+lib/elementary/efl_ui_image_zoomable_eo.legacy.c \
+lib/elementary/efl_ui_image_zoomable_legacy_eo.c \
+lib/elementary/efl_ui_layout_legacy_eo.c \
+lib/elementary/efl_ui_panes_eo.legacy.c \
+lib/elementary/efl_ui_panes_legacy_eo.c \
+lib/elementary/efl_ui_progressbar_legacy_eo.c \
+lib/elementary/efl_ui_radio_eo.legacy.c \
+lib/elementary/efl_ui_radio_legacy_eo.c \
+lib/elementary/efl_ui_textpath_eo.legacy.c \
+lib/elementary/efl_ui_textpath_legacy_eo.c \
+lib/elementary/efl_ui_video_eo.legacy.c \
+lib/elementary/efl_ui_video_legacy_eo.c \
+lib/elementary/efl_ui_widget_eo.legacy.c \
+lib/elementary/efl_ui_win_inlined_legacy_eo.c \
+lib/elementary/efl_ui_win_legacy_eo.c \
+lib/elementary/efl_ui_win_socket_legacy_eo.c \
+lib/elementary/elm_access_eo.c \
+lib/elementary/elm_access_eo.legacy.c \
+lib/elementary/elm_actionslider_eo.c \
+lib/elementary/elm_actionslider_eo.legacy.c \
+lib/elementary/elm_box_eo.c \
+lib/elementary/elm_box_eo.legacy.c \
+lib/elementary/elm_bubble_eo.c \
+lib/elementary/elm_bubble_eo.legacy.c \
+lib/elementary/elm_calendar_eo.c \
+lib/elementary/elm_calendar_eo.legacy.c \
+lib/elementary/elm_calendar_item_eo.c \
+lib/elementary/elm_clock_eo.c \
+lib/elementary/elm_clock_eo.legacy.c \
+lib/elementary/elm_code_widget_eo.legacy.c \
+lib/elementary/elm_code_widget_legacy_eo.c \
+lib/elementary/elm_color_item_eo.legacy.c \
+lib/elementary/elm_color_item_eo.c \
+lib/elementary/elm_colorselector_eo.legacy.c \
+lib/elementary/elm_colorselector_eo.c \
+lib/elementary/elm_conformant_eo.c \
+lib/elementary/elm_ctxpopup_eo.legacy.c \
+lib/elementary/elm_ctxpopup_eo.c \
+lib/elementary/elm_ctxpopup_item_eo.legacy.c \
+lib/elementary/elm_ctxpopup_item_eo.c \
+lib/elementary/elm_dayselector_eo.legacy.c \
+lib/elementary/elm_dayselector_eo.c \
+lib/elementary/elm_dayselector_item_eo.c \
+lib/elementary/elm_diskselector_eo.legacy.c \
+lib/elementary/elm_diskselector_eo.c \
+lib/elementary/elm_diskselector_item_eo.legacy.c \
+lib/elementary/elm_diskselector_item_eo.c \
+lib/elementary/elm_entry_eo.legacy.c \
+lib/elementary/elm_entry_eo.c \
+lib/elementary/elm_fileselector_button_eo.c \
+lib/elementary/elm_fileselector_entry_eo.c \
+lib/elementary/elm_fileselector_eo.legacy.c \
+lib/elementary/elm_fileselector_eo.c \
+lib/elementary/elm_flipselector_eo.legacy.c \
+lib/elementary/elm_flipselector_eo.c \
+lib/elementary/elm_flipselector_item_eo.legacy.c \
+lib/elementary/elm_flipselector_item_eo.c \
+lib/elementary/elm_gengrid_eo.legacy.c \
+lib/elementary/elm_gengrid_eo.c \
+lib/elementary/elm_gengrid_item_eo.legacy.c \
+lib/elementary/elm_gengrid_item_eo.c \
+lib/elementary/elm_gengrid_pan_eo.c \
+lib/elementary/elm_genlist_eo.legacy.c \
+lib/elementary/elm_genlist_eo.c \
+lib/elementary/elm_genlist_item_eo.legacy.c \
+lib/elementary/elm_genlist_item_eo.c \
+lib/elementary/elm_genlist_pan_eo.c \
+lib/elementary/elm_gesture_layer_eo.legacy.c \
+lib/elementary/elm_gesture_layer_eo.c \
+lib/elementary/elm_glview_eo.legacy.c \
+lib/elementary/elm_glview_eo.c \
+lib/elementary/elm_grid_eo.legacy.c \
+lib/elementary/elm_grid_eo.c \
+lib/elementary/elm_hover_eo.legacy.c \
+lib/elementary/elm_hover_eo.c \
+lib/elementary/elm_hoversel_eo.c \
+lib/elementary/elm_hoversel_item_eo.c \
+lib/elementary/elm_hoversel_item_eo.legacy.c \
+lib/elementary/elm_icon_eo.c \
+lib/elementary/elm_index_eo.c \
+lib/elementary/elm_index_eo.legacy.c \
+lib/elementary/elm_index_item_eo.c \
+lib/elementary/elm_index_item_eo.legacy.c \
+lib/elementary/elm_interface_fileselector_eo.c \
+lib/elementary/elm_inwin_eo.c \
+lib/elementary/elm_inwin_eo.legacy.c \
+lib/elementary/elm_label_eo.c \
+lib/elementary/elm_label_eo.legacy.c \
+lib/elementary/elm_list_eo.c \
+lib/elementary/elm_list_eo.legacy.c \
+lib/elementary/elm_list_item_eo.c \
+lib/elementary/elm_list_item_eo.legacy.c \
+lib/elementary/elm_mapbuf_eo.c \
+lib/elementary/elm_mapbuf_eo.legacy.c \
+lib/elementary/elm_map_eo.c \
+lib/elementary/elm_map_eo.legacy.c \
+lib/elementary/elm_map_pan_eo.c \
+lib/elementary/elm_menu_eo.c \
+lib/elementary/elm_menu_eo.legacy.c \
+lib/elementary/elm_menu_item_eo.c \
+lib/elementary/elm_menu_item_eo.legacy.c \
+lib/elementary/elm_multibuttonentry_eo.c \
+lib/elementary/elm_multibuttonentry_eo.legacy.c \
+lib/elementary/elm_multibuttonentry_item_eo.c \
+lib/elementary/elm_multibuttonentry_item_eo.legacy.c \
+lib/elementary/elm_naviframe_eo.c \
+lib/elementary/elm_naviframe_eo.legacy.c \
+lib/elementary/elm_naviframe_item_eo.c \
+lib/elementary/elm_naviframe_item_eo.legacy.c \
+lib/elementary/elm_notify_eo.c \
+lib/elementary/elm_notify_eo.legacy.c \
+lib/elementary/elm_panel_eo.c \
+lib/elementary/elm_panel_eo.legacy.c \
+lib/elementary/elm_pan_eo.c \
+lib/elementary/elm_pan_eo.legacy.c \
+lib/elementary/elm_photo_eo.c \
+lib/elementary/elm_player_eo.c \
+lib/elementary/elm_plug_eo.c \
+lib/elementary/elm_plug_eo.legacy.c \
+lib/elementary/elm_popup_eo.c \
+lib/elementary/elm_popup_eo.legacy.c \
+lib/elementary/elm_popup_item_eo.c \
+lib/elementary/elm_prefs_eo.c \
+lib/elementary/elm_prefs_eo.legacy.c \
+lib/elementary/elm_route_eo.c \
+lib/elementary/elm_route_eo.legacy.c \
+lib/elementary/elm_scroller_eo.c \
+lib/elementary/elm_scroller_eo.legacy.c \
+lib/elementary/elm_segment_control_eo.c \
+lib/elementary/elm_segment_control_eo.legacy.c \
+lib/elementary/elm_segment_control_item_eo.c \
+lib/elementary/elm_segment_control_item_eo.legacy.c \
+lib/elementary/elm_separator_eo.c \
+lib/elementary/elm_separator_eo.legacy.c \
+lib/elementary/elm_slider_eo.c \
+lib/elementary/elm_slider_part_indicator_eo.c \
+lib/elementary/elm_slideshow_eo.c \
+lib/elementary/elm_slideshow_eo.legacy.c \
+lib/elementary/elm_slideshow_item_eo.c \
+lib/elementary/elm_slideshow_item_eo.legacy.c \
+lib/elementary/elm_spinner_eo.c \
+lib/elementary/elm_spinner_eo.legacy.c \
+lib/elementary/elm_sys_notify_dbus_eo.c \
+lib/elementary/elm_sys_notify_eo.c \
+lib/elementary/elm_sys_notify_eo.legacy.c \
+lib/elementary/elm_sys_notify_interface_eo.c \
+lib/elementary/elm_sys_notify_interface_eo.legacy.c \
+lib/elementary/elm_systray_eo.c \
+lib/elementary/elm_systray_eo.legacy.c \
+lib/elementary/elm_table_eo.c \
+lib/elementary/elm_table_eo.legacy.c \
+lib/elementary/elm_thumb_eo.c \
+lib/elementary/elm_toolbar_eo.c \
+lib/elementary/elm_toolbar_eo.legacy.c \
+lib/elementary/elm_toolbar_item_eo.c \
+lib/elementary/elm_toolbar_item_eo.legacy.c \
+lib/elementary/elm_view_form_eo.c \
+lib/elementary/elm_view_list_eo.c \
+lib/elementary/elm_web_eo.c \
+lib/elementary/elm_web_eo.legacy.c \
+lib/elementary/elm_widget_item_container_eo.c \
+lib/elementary/elm_widget_item_eo.c \
+lib/elementary/elm_widget_item_eo.legacy.c \
+lib/elementary/elm_widget_item_static_focus_eo.c \
+lib/elementary/efl_ui_focus_parent_provider_gen_eo.c \
+$(NULL)
+
+elm_legacy_eo_headers_pub = \
+lib/elementary/efl_ui_bg_eo.legacy.h \
+lib/elementary/efl_ui_bg_legacy_eo.legacy.h \
+lib/elementary/efl_ui_button_eo.legacy.h \
+lib/elementary/efl_ui_button_legacy_eo.legacy.h \
+lib/elementary/efl_ui_check_eo.legacy.h \
+lib/elementary/efl_ui_check_legacy_eo.legacy.h \
+lib/elementary/efl_ui_flip_eo.legacy.h \
+lib/elementary/efl_ui_flip_legacy_eo.legacy.h \
+lib/elementary/efl_ui_frame_eo.legacy.h \
+lib/elementary/efl_ui_frame_legacy_eo.legacy.h \
+lib/elementary/efl_ui_image_legacy_eo.legacy.h \
+lib/elementary/efl_ui_image_zoomable_eo.legacy.h \
+lib/elementary/efl_ui_image_zoomable_legacy_eo.legacy.h \
+lib/elementary/efl_ui_layout_legacy_eo.legacy.h \
+lib/elementary/efl_ui_panes_eo.legacy.h \
+lib/elementary/efl_ui_panes_legacy_eo.legacy.h \
+lib/elementary/efl_ui_progressbar_legacy_eo.legacy.h \
+lib/elementary/efl_ui_radio_eo.legacy.h \
+lib/elementary/efl_ui_radio_legacy_eo.legacy.h \
+lib/elementary/efl_ui_textpath_eo.legacy.h \
+lib/elementary/efl_ui_textpath_legacy_eo.legacy.h \
+lib/elementary/efl_ui_video_eo.legacy.h \
+lib/elementary/efl_ui_video_legacy_eo.legacy.h \
+lib/elementary/efl_ui_widget_eo.legacy.h \
+lib/elementary/efl_ui_win_inlined_legacy_eo.legacy.h \
+lib/elementary/efl_ui_win_legacy_eo.legacy.h \
+lib/elementary/efl_ui_win_socket_legacy_eo.legacy.h \
+lib/elementary/elm_access_eo.legacy.h \
+lib/elementary/elm_actionslider_eo.legacy.h \
+lib/elementary/elm_box_eo.legacy.h \
+lib/elementary/elm_bubble_eo.legacy.h \
+lib/elementary/elm_calendar_eo.legacy.h \
+lib/elementary/elm_calendar_item_eo.legacy.h \
+lib/elementary/elm_clock_eo.legacy.h \
+lib/elementary/elm_code_widget_eo.legacy.h \
+lib/elementary/elm_code_widget_legacy_eo.legacy.h \
+lib/elementary/elm_color_item_eo.legacy.h \
+lib/elementary/elm_colorselector_eo.legacy.h \
+lib/elementary/elm_conformant_eo.legacy.h \
+lib/elementary/elm_ctxpopup_eo.legacy.h \
+lib/elementary/elm_ctxpopup_item_eo.legacy.h \
+lib/elementary/elm_dayselector_eo.legacy.h \
+lib/elementary/elm_dayselector_item_eo.legacy.h \
+lib/elementary/elm_diskselector_eo.legacy.h \
+lib/elementary/elm_diskselector_item_eo.legacy.h \
+lib/elementary/elm_entry_eo.legacy.h \
+lib/elementary/elm_fileselector_button_eo.legacy.h \
+lib/elementary/elm_fileselector_entry_eo.legacy.h \
+lib/elementary/elm_fileselector_eo.legacy.h \
+lib/elementary/elm_flipselector_eo.legacy.h \
+lib/elementary/elm_flipselector_item_eo.legacy.h \
+lib/elementary/elm_gengrid_eo.legacy.h \
+lib/elementary/elm_gengrid_item_eo.legacy.h \
+lib/elementary/elm_gengrid_pan_eo.legacy.h \
+lib/elementary/elm_genlist_eo.legacy.h \
+lib/elementary/elm_genlist_item_eo.legacy.h \
+lib/elementary/elm_genlist_pan_eo.legacy.h \
+lib/elementary/elm_gesture_layer_eo.legacy.h \
+lib/elementary/elm_glview_eo.legacy.h \
+lib/elementary/elm_grid_eo.legacy.h \
+lib/elementary/elm_hover_eo.legacy.h \
+lib/elementary/elm_hoversel_eo.legacy.h \
+lib/elementary/elm_hoversel_item_eo.legacy.h \
+lib/elementary/elm_icon_eo.legacy.h \
+lib/elementary/elm_index_eo.legacy.h \
+lib/elementary/elm_index_item_eo.legacy.h \
+lib/elementary/elm_interface_fileselector_eo.legacy.h \
+lib/elementary/elm_inwin_eo.legacy.h \
+lib/elementary/elm_label_eo.legacy.h \
+lib/elementary/elm_list_eo.legacy.h \
+lib/elementary/elm_list_item_eo.legacy.h \
+lib/elementary/elm_mapbuf_eo.legacy.h \
+lib/elementary/elm_map_eo.legacy.h \
+lib/elementary/elm_map_pan_eo.legacy.h \
+lib/elementary/elm_menu_eo.legacy.h \
+lib/elementary/elm_menu_item_eo.legacy.h \
+lib/elementary/elm_multibuttonentry_eo.legacy.h \
+lib/elementary/elm_multibuttonentry_item_eo.legacy.h \
+lib/elementary/elm_naviframe_eo.legacy.h \
+lib/elementary/elm_naviframe_item_eo.legacy.h \
+lib/elementary/elm_notify_eo.legacy.h \
+lib/elementary/elm_panel_eo.legacy.h \
+lib/elementary/elm_pan_eo.legacy.h \
+lib/elementary/elm_photo_eo.legacy.h \
+lib/elementary/elm_player_eo.legacy.h \
+lib/elementary/elm_plug_eo.legacy.h \
+lib/elementary/elm_popup_eo.legacy.h \
+lib/elementary/elm_popup_item_eo.legacy.h \
+lib/elementary/elm_prefs_eo.legacy.h \
+lib/elementary/elm_route_eo.legacy.h \
+lib/elementary/elm_scroller_eo.legacy.h \
+lib/elementary/elm_segment_control_eo.legacy.h \
+lib/elementary/elm_segment_control_item_eo.legacy.h \
+lib/elementary/elm_separator_eo.legacy.h \
+lib/elementary/elm_slider_eo.legacy.h \
+lib/elementary/elm_slider_part_indicator_eo.legacy.h \
+lib/elementary/elm_slideshow_eo.legacy.h \
+lib/elementary/elm_slideshow_item_eo.legacy.h \
+lib/elementary/elm_spinner_eo.legacy.h \
+lib/elementary/elm_sys_notify_dbus_eo.legacy.h \
+lib/elementary/elm_sys_notify_eo.legacy.h \
+lib/elementary/elm_sys_notify_interface_eo.legacy.h \
+lib/elementary/elm_systray_eo.legacy.h \
+lib/elementary/elm_table_eo.legacy.h \
+lib/elementary/elm_thumb_eo.legacy.h \
+lib/elementary/elm_toolbar_eo.legacy.h \
+lib/elementary/elm_toolbar_item_eo.legacy.h \
+lib/elementary/elm_view_form_eo.legacy.h \
+lib/elementary/elm_view_list_eo.legacy.h \
+lib/elementary/elm_view_form_eo.h \
+lib/elementary/elm_view_list_eo.h \
+lib/elementary/elm_web_eo.legacy.h \
+lib/elementary/elm_widget_item_container_eo.legacy.h \
+lib/elementary/elm_widget_item_eo.legacy.h \
+lib/elementary/elm_widget_item_static_focus_eo.legacy.h
+
+elm_legacy_eo_headers_priv = \
+lib/elementary/efl_ui_bg_legacy_eo.h \
+lib/elementary/efl_ui_button_legacy_eo.h \
+lib/elementary/efl_ui_check_legacy_eo.h \
+lib/elementary/efl_ui_flip_legacy_eo.h \
+lib/elementary/efl_ui_frame_legacy_eo.h \
+lib/elementary/efl_ui_image_legacy_eo.h \
+lib/elementary/efl_ui_image_zoomable_legacy_eo.h \
+lib/elementary/efl_ui_layout_legacy_eo.h \
+lib/elementary/efl_ui_panes_legacy_eo.h \
+lib/elementary/efl_ui_progressbar_legacy_eo.h \
+lib/elementary/efl_ui_radio_legacy_eo.h \
+lib/elementary/efl_ui_textpath_legacy_eo.h \
+lib/elementary/efl_ui_video_legacy_eo.h \
+lib/elementary/efl_ui_win_inlined_legacy_eo.h \
+lib/elementary/efl_ui_win_legacy_eo.h \
+lib/elementary/efl_ui_win_socket_legacy_eo.h \
+lib/elementary/elm_access_eo.h \
+lib/elementary/elm_actionslider_eo.h \
+lib/elementary/elm_box_eo.h \
+lib/elementary/elm_bubble_eo.h \
+lib/elementary/elm_calendar_eo.h \
+lib/elementary/elm_calendar_item_eo.h \
+lib/elementary/elm_clock_eo.h \
+lib/elementary/elm_code_widget_legacy_eo.h \
+lib/elementary/elm_color_item_eo.h \
+lib/elementary/elm_colorselector_eo.h \
+lib/elementary/elm_conformant_eo.h \
+lib/elementary/elm_ctxpopup_eo.h \
+lib/elementary/elm_ctxpopup_item_eo.h \
+lib/elementary/elm_dayselector_eo.h \
+lib/elementary/elm_dayselector_item_eo.h \
+lib/elementary/elm_diskselector_eo.h \
+lib/elementary/elm_diskselector_item_eo.h \
+lib/elementary/elm_entry_eo.h \
+lib/elementary/elm_fileselector_button_eo.h \
+lib/elementary/elm_fileselector_entry_eo.h \
+lib/elementary/elm_fileselector_eo.h \
+lib/elementary/elm_flipselector_eo.h \
+lib/elementary/elm_flipselector_item_eo.h \
+lib/elementary/elm_gengrid_eo.h \
+lib/elementary/elm_gengrid_item_eo.h \
+lib/elementary/elm_gengrid_pan_eo.h \
+lib/elementary/elm_gengrid_pan_eo.h \
+lib/elementary/elm_genlist_eo.h \
+lib/elementary/elm_genlist_item_eo.h \
+lib/elementary/elm_genlist_pan_eo.h \
+lib/elementary/elm_gesture_layer_eo.h \
+lib/elementary/elm_glview_eo.h \
+lib/elementary/elm_grid_eo.h \
+lib/elementary/elm_hover_eo.h \
+lib/elementary/elm_hoversel_eo.h \
+lib/elementary/elm_hoversel_item_eo.h \
+lib/elementary/elm_icon_eo.h \
+lib/elementary/elm_index_eo.h \
+lib/elementary/elm_index_item_eo.h \
+lib/elementary/elm_interface_fileselector_eo.h \
+lib/elementary/elm_inwin_eo.h \
+lib/elementary/elm_label_eo.h \
+lib/elementary/elm_list_eo.h \
+lib/elementary/elm_list_item_eo.h \
+lib/elementary/elm_mapbuf_eo.h \
+lib/elementary/elm_map_eo.h \
+lib/elementary/elm_map_pan_eo.h \
+lib/elementary/elm_menu_eo.h \
+lib/elementary/elm_menu_item_eo.h \
+lib/elementary/elm_multibuttonentry_eo.h \
+lib/elementary/elm_multibuttonentry_item_eo.h \
+lib/elementary/elm_naviframe_eo.h \
+lib/elementary/elm_naviframe_item_eo.h \
+lib/elementary/elm_notify_eo.h \
+lib/elementary/elm_panel_eo.h \
+lib/elementary/elm_pan_eo.h \
+lib/elementary/elm_photo_eo.h \
+lib/elementary/elm_player_eo.h \
+lib/elementary/elm_plug_eo.h \
+lib/elementary/elm_popup_eo.h \
+lib/elementary/elm_popup_item_eo.h \
+lib/elementary/elm_prefs_eo.h \
+lib/elementary/elm_route_eo.h \
+lib/elementary/elm_scroller_eo.h \
+lib/elementary/elm_segment_control_eo.h \
+lib/elementary/elm_segment_control_item_eo.h \
+lib/elementary/elm_separator_eo.h \
+lib/elementary/elm_slider_eo.h \
+lib/elementary/elm_slider_part_indicator_eo.h \
+lib/elementary/elm_slideshow_eo.h \
+lib/elementary/elm_slideshow_item_eo.h \
+lib/elementary/elm_spinner_eo.h \
+lib/elementary/elm_sys_notify_dbus_eo.h \
+lib/elementary/elm_sys_notify_eo.h \
+lib/elementary/elm_sys_notify_interface_eo.h \
+lib/elementary/elm_systray_eo.h \
+lib/elementary/elm_table_eo.h \
+lib/elementary/elm_thumb_eo.h \
+lib/elementary/elm_toolbar_eo.h \
+lib/elementary/elm_toolbar_item_eo.h \
+lib/elementary/elm_web_eo.h \
+lib/elementary/elm_widget_item_container_eo.h \
+lib/elementary/elm_widget_item_eo.h \
+lib/elementary/elm_widget_item_static_focus_eo.h \
+lib/elementary/efl_ui_focus_parent_provider_gen_eo.h \
+$(NULL)
+
+
+EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
 includes_HEADERS = \
 lib/elementary/Elementary.h \
 lib/elementary/Elementary_Options.h \
-lib/elementary/Elementary_Cursor.h
+lib/elementary/Elementary_Cursor.h \
+$(elm_legacy_eo_headers_pub)
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
@@ -347,6 +644,7 @@ includesunstable_HEADERS = \
 	lib/elementary/elm_interface_scrollable.h \
 	lib/elementary/elm_interfaces.h \
 	lib/elementary/elm_widget.h \
+	lib/elementary/efl_ui_widget_common.h \
 	lib/elementary/elm_widget_actionslider.h \
 	lib/elementary/elm_widget_box.h \
 	lib/elementary/elm_widget_bubble.h \
@@ -821,6 +1119,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_view_form.c \
 	lib/elementary/elm_web2.c \
 	lib/elementary/efl_ui_widget.c \
+	lib/elementary/efl_ui_widget_common.c \
 	lib/elementary/efl_ui_win.c \
 	lib/elementary/efl_ui_win_inlined.c \
 	lib/elementary/efl_ui_win_socket.c \
@@ -829,6 +1128,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/els_cursor.c \
 	lib/elementary/els_tooltip.c \
 	lib/elementary/elu_ews_wm.c \
+	lib/elementary/efl_ui_container_layout.c \
+	lib/elementary/efl_ui_container_layout.h \
 	lib/elementary/efl_ui_box.c \
 	lib/elementary/efl_ui_box_flow.c \
 	lib/elementary/efl_ui_box_stack.c \
@@ -841,6 +1142,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_anchor_popup.c \
 	lib/elementary/efl_ui_table.c \
 	lib/elementary/efl_ui_table_static.c \
+	lib/elementary/efl_ui_table_layout.c \
 	lib/elementary/efl_ui_table_private.h \
 	lib/elementary/efl_ui_text.c \
 	lib/elementary/efl_ui_text_factory_images.c \
@@ -1001,7 +1303,6 @@ bin/elementary/test_efl_anim_scale.c \
 bin/elementary/test_efl_anim_translate.c \
 bin/elementary/test_efl_anim_group_parallel.c \
 bin/elementary/test_efl_anim_group_sequential.c \
-bin/elementary/test_efl_anim_event_anim.c \
 bin/elementary/test_efl_anim_pause.c \
 bin/elementary/test_efl_anim_repeat.c \
 bin/elementary/test_efl_anim_start_delay.c \
@@ -1404,13 +1705,10 @@ moduleweb_nonepkg_LTLIBRARIES = modules/elementary/web/none/module.la
 install_moduleweb_nonepkgLTLIBRARIES = install-moduleweb_nonepkgLTLIBRARIES
 $(install_moduleweb_nonepkgLTLIBRARIES): install-libLTLIBRARIES
 
-elm_web_none_eolian_files = modules/elementary/web/none/elm_web_none.eo
 
-elm_web_none_eolian_c = $(elm_web_none_eolian_files:%.eo=%.eo.c)
-elm_web_none_eolian_h = $(elm_web_none_eolian_files:%.eo=%.eo.h)
-
-EXTRA_DIST2 += $(elm_web_none_eolian_files)
-BUILT_SOURCES += $(elm_web_none_eolian_c) $(elm_web_none_eolian_h)
+EXTRA_DIST2 += \
+modules/elementary/web/none/elm_web_none_eo.c \
+modules/elementary/web/none/elm_web_none_eo.h
 
 modules_elementary_web_none_module_la_SOURCES = \
 	modules/elementary/web/none/elm_web_none.c
@@ -1631,11 +1929,13 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus.c \
 	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_box.c \
+	tests/elementary/efl_ui_test_table.c \
 	tests/elementary/efl_ui_test_relative_layout.c \
 	tests/elementary/efl_ui_test_grid.c \
 	tests/elementary/efl_ui_test_image.c \
 	tests/elementary/efl_ui_test_image_zoomable.c \
 	tests/elementary/efl_ui_test_layout.c \
+	tests/elementary/efl_ui_test_widget.c \
 	tests/elementary/efl_ui_suite.h \
 	tests/elementary/efl_ui_model.c
 

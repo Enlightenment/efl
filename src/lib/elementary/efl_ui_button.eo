@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
+class @beta Efl.Ui.Button extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable, Efl.Ui.Autorepeat,
                      Efl.Text, Efl.Content,
                      Efl.Access.Widget.Action
 {
@@ -7,7 +7,6 @@ class @beta Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl
      Press it and run some function. It can contain a simple label and icon
      object and it also has an autorepeat feature.
    ]]
-   legacy_prefix: elm_button;
    implements {
       class.constructor;
       Efl.Object.constructor;
@@ -16,7 +15,7 @@ class @beta Efl.Ui.Button extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl
       Efl.Ui.Autorepeat.autorepeat_enabled { set; get; }
       Efl.Ui.Autorepeat.autorepeat_supported { get;}
       Efl.Ui.Widget.on_access_activate;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;

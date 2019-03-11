@@ -118,7 +118,6 @@ enum Efl.Access.Role
 enum Efl.Access.State_Type
 {
    [[Describes the possible states for an object visible to accessibility clients.]]
-   legacy: efl_access_state;
    invalid, [[State: invalid]]
    active, [[State: active]]
    armed, [[State: armed]]
@@ -134,7 +133,7 @@ enum Efl.Access.State_Type
    focused, [[State: focused]]
    has_tooltip, [[State: has a tooltip]]
    horizontal, [[State: horizontal]]
-   iconified, [[State: iconified]]
+   minimized, [[State: minimized]]
    modal, [[State: modal]]
    multi_line, [[State: multi line]]
    multiselectable, [[State: multiselectable]]
@@ -166,7 +165,6 @@ enum Efl.Access.State_Type
 enum Efl.Access.Relation_Type
 {
    [[Describes the relationship between two objects.]]
-   legacy: efl_access_relation;
    null, [[No relation]]
    label_for, [[Label for relation]]
    labelled_by, [[Labelled by relation]]
@@ -413,8 +411,8 @@ mixin @beta Efl.Access.Object requires Efl.Object
            provide customized feedback, improving overall user experience.
 
            Relationship_append API is asymmetric, which means that
-           appending, for example, relation EFL_ACCESS_RELATION_FLOWS_TO from object A to B,
-           do NOT append relation EFL_ACCESS_RELATION_FLOWS_FROM from object B to
+           appending, for example, relation EFL_ACCESS_RELATION_TYPE_FLOWS_TO from object A to B,
+           do NOT append relation EFL_ACCESS_RELATION_TYPE_FLOWS_FROM from object B to
            object A.]]
          return: bool; [[$true if relationship was successfully appended, $false otherwise]]
          params {

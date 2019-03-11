@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 typedef struct _pbdata
@@ -118,7 +119,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
    pd = (pbdata *)calloc(1, sizeof(pbdata));
 
    pd->win = win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                           efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                           efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                            efl_text_set(efl_added, "Efl.Ui.Progressbar"),
                            efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                            efl_event_callback_add(efl_added, EFL_UI_WIN_EVENT_DELETE_REQUEST,
@@ -138,7 +139,8 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, pd->pb1,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
+           efl_file_load(efl_added),
            efl_content_set(pd->pb1, efl_added)
           );
 

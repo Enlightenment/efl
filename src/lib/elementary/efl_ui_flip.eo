@@ -3,7 +3,6 @@ import efl_ui_direction;
 enum Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
-   legacy: efl_ui_flip;
    rotate_y_center_axis, [[Rotate Y center axis flip mode]]
    rotate_x_center_axis, [[Rotate X center axis flip mode]]
    rotate_xz_center_axis, [[Rotate XZ center axis flip mode]]
@@ -31,7 +30,6 @@ enum Efl.Ui.Flip_Interaction
 class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[Efl UI flip class]]
-   legacy_prefix: elm_flip;
    methods {
       @property interaction {
          set {
@@ -87,7 +85,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 
            See also @.interaction.set.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The hit area to set.]]
             @in hitsize: double; [[The amount of that dimension (0.0 to 1.0) to use.]]
@@ -96,7 +93,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_hitsize_get {
          [[Get the amount of the flip that is sensitive to interactive flip.]]
          return: double; [[The size set for that direction.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
@@ -113,7 +109,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            @.interaction_direction_hitsize_set. By default, a minimum
            hit area will be created on the opposite edge of the flip.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to change.]]
             @in enabled: bool; [[If that direction is enabled or not.]]
@@ -122,7 +117,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_enabled_get {
          [[Get the enabled state of that flip direction.]]
          return: bool; [[If that direction is enabled or not.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
@@ -235,7 +229,6 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Part.part_get;
       Efl.Pack.unpack;
       Efl.Pack.pack;

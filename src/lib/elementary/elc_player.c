@@ -185,12 +185,12 @@ _update_theme_slider(Evas_Object *obj, Evas_Object *sl, const char *name, const 
    elm_object_disabled_set(sl, elm_widget_disabled_get(obj));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _update_theme_button(obj, sd->forward, "forward");
    _update_theme_button(obj, sd->info, "info");
@@ -711,4 +711,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_player, "video")
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
-#include "elm_player.eo.c"
+#include "elm_player_eo.c"

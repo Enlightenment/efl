@@ -627,13 +627,13 @@ _time_update(Evas_Object *obj, Eina_Bool theme_update)
      sd->cur.ampm = -1;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_clock_efl_ui_widget_theme_apply(Eo *obj, Elm_Clock_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _time_update(obj, EINA_TRUE);
 
@@ -964,4 +964,4 @@ _elm_clock_class_constructor(Efl_Class *klass)
 #define ELM_CLOCK_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_clock)
 
-#include "elm_clock.eo.c"
+#include "elm_clock_eo.c"

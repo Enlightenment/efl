@@ -1,9 +1,0 @@
-class @beta Efl.Ui.Textpath_Legacy extends Efl.Ui.Textpath implements Efl.Ui.Legacy
-{
-   [[Textpath widget]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.constructor;
-   }
-}

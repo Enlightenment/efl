@@ -10,4 +10,4 @@ typedef Eo Elm_Frame;
  */
 EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 
-#include "efl_ui_frame.eo.legacy.h"
+#include "efl_ui_frame_eo.legacy.h"

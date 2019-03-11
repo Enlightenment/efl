@@ -6,10 +6,10 @@
 
 #include "elm_priv.h"
 
-#include "elm_sys_notify_interface.eo.h"
-#include "elm_sys_notify.eo.h"
-#include "elm_sys_notify_dbus.eo.h"
-#include "elm_sys_notify_dbus.eo.legacy.h"
+#include "elm_sys_notify_interface_eo.h"
+#include "elm_sys_notify_eo.h"
+#include "elm_sys_notify_dbus_eo.h"
+#include "elm_sys_notify_dbus_eo.legacy.h"
 
 #define MY_CLASS ELM_SYS_NOTIFY_DBUS_CLASS
 
@@ -396,5 +396,5 @@ _elm_sys_notify_dbus_efl_object_destructor(Eo   *obj,
 }
 
 
-#include "elm_sys_notify_dbus.eo.c"
+#include "elm_sys_notify_dbus_eo.c"
 

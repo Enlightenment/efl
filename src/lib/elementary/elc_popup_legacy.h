@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object *elm_popup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
-#include "elm_popup.eo.legacy.h"
+#include "elm_popup_eo.legacy.h"

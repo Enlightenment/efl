@@ -123,7 +123,7 @@ _efl_ui_layout_factory_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl
      }
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd,
                                                           const char *key, const char *property)
 {
@@ -134,7 +134,7 @@ _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, E
      {
         eina_hash_del(pd->bind.properties, ss_key, NULL);
         eina_stringshare_del(ss_key);
-        return;
+        return 0;
      }
 
    ss_prop = eina_stringshare_add(property);
@@ -145,6 +145,7 @@ _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, E
         eina_stringshare_del(ss_key);
      }
 
+   return 0;
 }
 
 EOLIAN static void

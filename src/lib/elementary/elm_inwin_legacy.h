@@ -63,4 +63,4 @@ EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
  */
 EAPI Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
 
-#include "elm_inwin.eo.legacy.h"
+#include "elm_inwin_eo.legacy.h"

@@ -12,7 +12,7 @@ static int _evas_vg_saver_eet_log_dom = -1;
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_vg_saver_eet_log_dom, __VA_ARGS__)
 
-int
+Evas_Load_Error
 evas_vg_save_file_eet(Vg_File_Data *evg_data, const char *file, const char *key, int compress)
 {
    Eet_Data_Descriptor *svg_node_eet;

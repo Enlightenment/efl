@@ -1,8 +1,7 @@
-class @beta Efl.Ui.Panes extends Efl.Ui.Layout implements Efl.Ui.Direction,
+class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
                     Efl.Ui.Clickable
 {
    [[Elementary panes class]]
-   legacy_prefix: elm_panes;
    event_prefix: elm_panes;
    methods {
       @property split_ratio {
@@ -20,10 +19,8 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout implements Efl.Ui.Direction,
 
            Note: This ratio will change when user drags the panes bar.]]
            set {
-             legacy: null;
            }
            get {
-             legacy: null;
            }
          values {
             ratio: double; [[Value between 0.0 and 1.0 representing split ratio between panes first and second parts.]]

@@ -13,12 +13,14 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_focus", efl_ui_test_focus},
   { "efl_ui_focus_sub", efl_ui_test_focus_sub},
   { "efl_ui_box", efl_ui_test_box},
+  { "efl_ui_table", efl_ui_test_table},
   { "efl_ui_grid", efl_ui_test_grid},
   { "efl_ui_relative_layout", efl_ui_test_relative_layout},
   { "efl_ui_image", efl_ui_test_image},
   { "efl_ui_image_zoomable", efl_ui_test_image_zoomable},
   { "efl_ui_layout", efl_ui_test_layout},
   { "Efl_Ui_Model", efl_ui_model },
+  { "efl_ui_widget", efl_ui_test_widget },
   { NULL, NULL }
 };
 

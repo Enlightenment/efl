@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void
@@ -28,7 +29,7 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    char buf[PATH_MAX];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Button"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );
@@ -55,7 +56,7 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_content_set(btn, efl_added)
           );
 
@@ -69,7 +70,7 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
-           efl_file_set(efl_added, buf, NULL),
+           efl_file_set(efl_added, buf),
            efl_content_set(btn, efl_added)
           );
 

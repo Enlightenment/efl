@@ -1317,7 +1317,7 @@ _color_bars_add(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd)
 {
    int i;
@@ -1328,11 +1328,11 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
    unsigned int h_pad = DEFAULT_HOR_PAD;
    unsigned int v_pad = DEFAULT_VER_PAD;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
        (sd->mode == ELM_COLORSELECTOR_ALL) ||
@@ -1739,7 +1739,7 @@ _item_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
-                                                              EFL_ACCESS_STATE_CHECKED,
+                                                              EFL_ACCESS_STATE_TYPE_CHECKED,
                                                               EINA_TRUE);
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
@@ -2633,7 +2633,7 @@ _elm_color_item_efl_access_object_state_set_get(const Eo *obj, Elm_Color_Item_Da
    sel = elm_obj_color_item_selected_get(obj);
 
    if (sel)
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }
@@ -2749,5 +2749,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_colorselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
 
-#include "elm_colorselector.eo.c"
-#include "elm_color_item.eo.c"
+#include "elm_colorselector_eo.c"
+#include "elm_color_item_eo.c"

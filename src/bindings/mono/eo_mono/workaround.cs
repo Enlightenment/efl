@@ -80,19 +80,19 @@ public struct EventDescription {
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
-    public EventDescription(string name)
+    public EventDescription(string module, string name)
     {
-        this.Name = GetNative(name);
+        this.Name = GetNative(module, name);
         this.Unfreezable = false;
         this.Legacy_is = false;
         this.Restart = false;
     }
 
-    public static IntPtr GetNative(string name)
+    public static IntPtr GetNative(string module, string name)
     {
         if (!descriptions.ContainsKey(name))
         {
-            IntPtr data = Efl.Eo.Globals.dlsym(Efl.Eo.Globals.RTLD_DEFAULT, name);
+            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(module, name);
 
             if (data == IntPtr.Zero) {
                 string error = Eina.StringConversion.NativeUtf8ToManagedString(Efl.Eo.Globals.dlerror());

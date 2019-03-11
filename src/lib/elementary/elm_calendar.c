@@ -10,8 +10,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_calendar.h"
-#include "elm_calendar.eo.h"
-#include "elm_calendar_item.eo.h"
+#include "elm_calendar_eo.h"
+#include "elm_calendar_item_eo.h"
 
 #define MY_CLASS ELM_CALENDAR_CLASS
 
@@ -842,13 +842,13 @@ _spinner_buttons_add(Evas_Object *obj, Elm_Calendar_Data *sd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_calendar_efl_ui_widget_theme_apply(Eo *obj, Elm_Calendar_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _spinner_buttons_add(obj, sd);
 
@@ -1929,7 +1929,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_calendar, Elm_Calendar_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_calendar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_calendar)
 
-#include "elm_calendar.eo.c"
+#include "elm_calendar_eo.c"
 
 typedef struct {
    int v;
@@ -1988,4 +1988,4 @@ _elm_calendar_item_efl_ui_focus_object_focus_parent_get(const Eo *obj, Elm_Calen
 }
 
 
-#include "elm_calendar_item.eo.c"
+#include "elm_calendar_item_eo.c"

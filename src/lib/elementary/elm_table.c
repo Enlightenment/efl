@@ -6,7 +6,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include <elm_table.eo.h>
+#include <elm_table_eo.h>
 #include "elm_priv.h"
 #include "elm_widget_table.h"
 
@@ -41,12 +41,12 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_table_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_table_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -346,4 +346,4 @@ _elm_table_efl_canvas_group_group_calculate(Eo *obj, void *pd EINA_UNUSED)
 #define ELM_TABLE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_table)
 
-#include "elm_table.eo.c"
+#include "elm_table_eo.c"

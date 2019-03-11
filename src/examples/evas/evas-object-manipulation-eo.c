@@ -122,15 +122,15 @@ _on_keydown(void        *data EINA_UNUSED,
         printf("Toggling clipping ");
 
         Evas_Object *clip = NULL;
-        clip = efl_canvas_object_clip_get(d.img);
+        clip = efl_canvas_object_clipper_get(d.img);
         if (clip == d.clipper)
           {
-             efl_canvas_object_clip_set(d.img, NULL);
+             efl_canvas_object_clipper_set(d.img, NULL);
              printf("off\n");
           }
         else
           {
-             efl_canvas_object_clip_set(d.img, d.clipper);
+             efl_canvas_object_clipper_set(d.img, d.clipper);
              printf("on\n");
           }
         return;
@@ -193,8 +193,9 @@ main(void)
     * So it's possible to decrement refcount, and 'image' object
     * will be deleted automatically by parent.*/
 
-   efl_file_set(d.img, img_path, NULL);
-   err = efl_file_load_error_get(d.img);
+   if (efl_file_set(d.img, img_path)) goto panic;
+   
+   err = efl_file_load(d.img);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -211,8 +212,8 @@ main(void)
 
    /* border on the image's clipper, here just to emphasize its position */
    d.clipper_border = efl_add(EFL_CANVAS_IMAGE_CLASS, d.canvas);
-   efl_file_set(d.clipper_border, border_img_path, NULL);
-   err = efl_file_load_error_get(d.clipper_border);
+   if (efl_file_set(d.clipper_border, border_img_path)) goto panic;
+   err = efl_file_load(d.clipper_border);
 
    if (err != EVAS_LOAD_ERROR_NONE)
      {
@@ -236,7 +237,7 @@ main(void)
    efl_gfx_entity_size_set(d.clipper, EINA_SIZE2D(WIDTH / 2,  HEIGHT / 2));
    efl_gfx_entity_visible_set(d.clipper, EINA_TRUE);
 
-   efl_canvas_object_clip_set(d.img, d.clipper);
+   efl_canvas_object_clipper_set(d.img, d.clipper);
 
    printf("%s", commands);
 

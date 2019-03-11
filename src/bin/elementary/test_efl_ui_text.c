@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 #define EO_BETA_API
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void
@@ -41,7 +42,7 @@ test_efl_ui_text_label(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    char *markup;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Canvas_Layout"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -145,7 +146,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    Eo *bt;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -204,7 +205,7 @@ test_efl_ui_text_inputfield(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
    Eo *win, *bx, *en;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text Input Field"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -251,7 +252,7 @@ _on_factory_bt_image_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 
    image_idx = (image_idx + 1) % IMAGES_SZ;
    efl_text_cursor_item_insert(en,
-         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          images[image_idx], "size=32x32");
    printf("Inserted image: key = %s\n", images[image_idx]);
 }
@@ -260,7 +261,7 @@ static void
 _on_factory_bt_emoticon_clicked(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *en = data;
-   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN),
+   efl_text_cursor_item_insert(en, efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          "emoticon/evil-laugh", "size=32x32");
 }
 
@@ -294,7 +295,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    Eina_File *f;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Ui Text Item Factory"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -353,7 +354,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    efl_text_font_set(en, "Sans", 14);
    efl_text_normal_color_set(en, 255, 255, 255, 255);
 
-   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_MAIN);
+   main_cur = efl_text_cursor_get(en, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    cur = efl_text_cursor_new(en);
 
    efl_text_cursor_position_set(en, cur, 2);

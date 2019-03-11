@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 // FIXME: use smart cb
-#include "elm_notify.eo.h"
+#include "elm_notify_eo.h"
 
 #define MAX_TRY 40
 

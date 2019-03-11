@@ -13,7 +13,7 @@ EFL_START_TEST(efl_ui_image_test_icon)
    Eina_Bool ok;
    const char *icon_name;
 
-   win = win_add(NULL, "image", EFL_UI_WIN_BASIC);
+   win = win_add(NULL, "image", EFL_UI_WIN_TYPE_BASIC);
 
    image = efl_add(EFL_UI_IMAGE_CLASS, win);
    efl_gfx_entity_visible_set(image, EINA_TRUE);

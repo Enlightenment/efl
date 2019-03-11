@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_suite.h"
 
@@ -187,6 +188,7 @@ static void
 btn_hint_set(Eo *btn, Hint *hint)
 {
    efl_gfx_entity_size_set(layout, hint->layout_size);
+   efl_gfx_hint_size_min_set(layout, hint->layout_size);
    efl_gfx_hint_size_max_set(btn, hint->max);
    efl_gfx_hint_size_min_set(btn, hint->min);
    efl_gfx_hint_weight_set(btn, hint->weightx, hint->weighty);
@@ -202,7 +204,7 @@ btn_geom_assert(Hint *hint, Eina_Rect btn_geom)
    Eina_Size2D layout_size, layout_min;
 
    layout_size = efl_gfx_entity_size_get(layout);
-   layout_min = efl_gfx_hint_size_min_get(layout);
+   layout_min = efl_gfx_hint_size_combined_min_get(layout);
    layout_size.w = layout_size.w > layout_min.w ? layout_size.w : layout_min.w;
    layout_size.h = layout_size.h > layout_min.h ? layout_size.h : layout_min.h;
 
@@ -343,10 +345,73 @@ EFL_START_TEST (efl_ui_box_layout_update_pack)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_box_size)
+{
+#define USERMIN_CHECK(a, b) \
+   efl_canvas_group_calculate(layout); \
+   user_min = efl_gfx_hint_size_min_get(layout); \
+   ck_assert_msg(COORD_EQ(user_min.w, (a)) && COORD_EQ(user_min.h, (b)), \
+                 "Case box_size failed... user_min: (%d, %d) expected user_min: (%d, %d)", \
+                 user_min.w, user_min.h, (a), (b));
+
+#define MIN_CHECK(a, b) \
+   efl_canvas_group_calculate(layout); \
+   min = efl_gfx_hint_size_combined_min_get(layout); \
+   ck_assert_msg(COORD_EQ(min.w, (a)) && COORD_EQ(min.h, (b)), \
+                 "Case box_size failed... min: (%d, %d) expected min: (%d, %d)", \
+                 min.w, min.h, (a), (b));
+
+   Eo *btn, *btn2, *btn3;
+   Eina_Size2D min, user_min;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
+                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 100)),
+                 efl_pack_end(layout, efl_added));
+
+   USERMIN_CHECK(0, 0);
+   MIN_CHECK(100, 100);
+
+   btn2 = efl_add(EFL_UI_BUTTON_CLASS, layout,
+                  efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 100)),
+                  efl_pack_end(layout, efl_added));
+   btn3 = efl_add(EFL_UI_BUTTON_CLASS, layout,
+                  efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 100)),
+                  efl_pack_end(layout, efl_added));
+   USERMIN_CHECK(0, 0);
+   MIN_CHECK(100, 300);
+
+   efl_pack_unpack(layout, btn2);
+   USERMIN_CHECK(0, 0);
+   MIN_CHECK(100, 200);
+
+   efl_pack_unpack(layout, btn3);
+   USERMIN_CHECK(0, 0);
+   MIN_CHECK(100, 100);
+
+   efl_pack_unpack(layout, btn);
+   USERMIN_CHECK(0, 0);
+   MIN_CHECK(0, 0);
+
+   efl_pack_end(layout, btn);
+   efl_gfx_hint_size_min_set(layout, EINA_SIZE2D(200, 200));
+   USERMIN_CHECK(200, 200);
+   MIN_CHECK(200, 200);
+
+   efl_pack_end(layout, btn2);
+   efl_pack_end(layout, btn3);
+   USERMIN_CHECK(200, 200);
+   MIN_CHECK(200, 300);
+
+#undef USERMIN_ASSERT
+#undef MIN_ASSERT
+}
+EFL_END_TEST
+
 void efl_ui_test_box(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
    tcase_add_test(tc, efl_ui_box_class_check);
    tcase_add_test(tc, efl_ui_box_layout_update);
    tcase_add_test(tc, efl_ui_box_layout_update_pack);
+   tcase_add_test(tc, efl_ui_box_size);
 }

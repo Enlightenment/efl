@@ -32,10 +32,10 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
    elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    if (elm_widget_is_legacy(obj))
@@ -210,48 +210,76 @@ _efl_ui_bg_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED
 EAPI Eina_Bool
 elm_bg_file_set(Eo *obj, const char *file, const char *group)
 {
-   return efl_file_set((Eo *) obj, file, group);
+   return efl_file_simple_load((Eo *) obj, file, group);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_bg_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_efl_ui_bg_efl_file_load(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
+{
+   return efl_file_load(sd->img);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_bg_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *file)
 {
    eina_stringshare_replace(&sd->file, file);
+
+   return efl_file_set(sd->img, file);
+}
+
+EOLIAN static void
+_efl_ui_bg_efl_file_key_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *key)
+{
    eina_stringshare_replace(&sd->key, key);
 
-   return efl_file_set(sd->img, file, key);
+   efl_file_key_set(sd->img, key);
 }
+
 EAPI void
 elm_bg_file_get(const Eo *obj, const char **file, const char **group)
 {
-   efl_file_get((Eo *) obj, file, group);
+   efl_file_simple_get((Eo *) obj, file, group);
 }
 
-EOLIAN static void
-_efl_ui_bg_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Data *sd, const char **file, const char **key)
+EOLIAN static const char *
+_efl_ui_bg_efl_file_file_get(const Eo *obj, Efl_Ui_Bg_Data *sd)
 {
    if (elm_widget_is_legacy(obj))
-     {
-        if (file) *file = sd->file;
-        if (key) *key = sd->key;
-        return;
-     }
+     return sd->file;
 
-   efl_file_get(sd->img, file, key);
+   return efl_file_get(sd->img);
 }
 
-EOLIAN static Eina_Bool
+EOLIAN static const char *
+_efl_ui_bg_efl_file_key_get(const Eo *obj, Efl_Ui_Bg_Data *sd)
+{
+   if (elm_widget_is_legacy(obj))
+     return sd->key;
+
+   return efl_file_key_get(sd->img);
+}
+
+EOLIAN static Eina_Error
 _efl_ui_bg_efl_file_mmap_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd,
-                             const Eina_File *file, const char *key)
+                             const Eina_File *file)
 {
-   return efl_file_mmap_set(sd->img, file, key);
+   return efl_file_mmap_set(sd->img, file);
 }
 
-EOLIAN static void
-_efl_ui_bg_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd,
-                             const Eina_File **file, const char **key)
+EOLIAN static const Eina_File *
+_efl_ui_bg_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
 {
-   efl_file_mmap_get(sd->img, file, key);
+   return efl_file_mmap_get(sd->img);
+}
+
+
+EOLIAN static Eo *
+_efl_ui_bg_efl_object_finalize(Eo *obj, Efl_Ui_Bg_Data *sd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!obj) return NULL;
+   if (efl_file_get(sd->img) || efl_file_mmap_get(sd->img)) efl_file_load(sd->img);
+   return obj;
 }
 
 /* Internal EO APIs and hidden overrides */
@@ -264,7 +292,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #include "efl_ui_bg.eo.c"
 
 
-#include "efl_ui_bg_legacy.eo.h"
+#include "efl_ui_bg_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_bg"
 
@@ -292,4 +320,4 @@ elm_bg_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_BG_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_bg_legacy.eo.c"
+#include "efl_ui_bg_legacy_eo.c"

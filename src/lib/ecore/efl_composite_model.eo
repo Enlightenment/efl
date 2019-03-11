@@ -21,6 +21,7 @@ class @beta Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
    }
    implements {
       Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Object.finalize;
       Efl.Ui.View.model { set; get; }
       Efl.Model.property { set; get; }

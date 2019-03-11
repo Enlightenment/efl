@@ -9,10 +9,11 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_diskselector.eo.h"
-#include "elm_diskselector_item.eo.h"
+#include "elm_diskselector_eo.h"
+#include "elm_diskselector_item_eo.h"
 #include "elm_widget_diskselector.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define DISPLAY_ITEM_NUM_MIN 3
 
@@ -811,18 +812,18 @@ _theme_data_get(Evas_Object *obj)
    else sd->minh = -1;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
 {
    Eina_List *l;
    Elm_Diskselector_Item_Data *it;
    Evas_Object *blank;
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Evas *evas;
    const char *style = elm_widget_style_get(obj);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
@@ -1789,5 +1790,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_diskselector, Elm_Diskselector_Data)
 #define ELM_DISKSELECTOR_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_diskselector)
 
-#include "elm_diskselector.eo.c"
-#include "elm_diskselector_item.eo.c"
+#include "elm_diskselector_eo.c"
+#include "elm_diskselector_item_eo.c"

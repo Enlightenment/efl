@@ -19,11 +19,9 @@ interface @beta Efl.Text_Annotate {
            @since 1.18
          ]]
          set {
-            legacy: null;
             return: bool; [[$true on success, $false otherwise.]]
          }
          get {
-            legacy: null;
          }
          keys {
             annotation: ptr(Efl.Text_Annotate_Annotation); [[Given annotation]]
@@ -37,7 +35,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.18
          ]]
-         legacy: null;
          params {
               @in start: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
               @in end:   ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
@@ -52,7 +49,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.18
          ]]
-         legacy: null;
          params {
               @in start: ptr(Efl.Text_Cursor_Cursor); [[Start of range]]
               @in end:   ptr(Efl.Text_Cursor_Cursor); [[End of range]]
@@ -68,7 +64,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.18
          ]]
-         legacy: null;
          params {
             @in annotation: ptr(Efl.Text_Annotate_Annotation); [[Annotation to be
                 removed]]
@@ -83,7 +78,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.18
          ]]
-         legacy: null;
          params {
              @in annotation: ptr(const(Efl.Text_Annotate_Annotation)); [[Annotation
                  handle to query]]
@@ -103,7 +97,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.21
          ]]
-         legacy: null;
          params {
             annotation: ptr(Efl.Text_Annotate_Annotation); [[Given annotation]]
          }
@@ -116,7 +109,6 @@ interface @beta Efl.Text_Annotate {
 
            @since 1.18
          ]]
-         legacy: null;
          params {
             @in an: ptr(const(Efl.Text_Annotate_Annotation)); [[Given annotation to query]]
             @out x: int; [[X coordinate of the annotation]]
@@ -130,7 +122,6 @@ interface @beta Efl.Text_Annotate {
       @property cursor_item_annotation {
          [[The object-item annotation at the cursor's position.]]
          get {
-            legacy: null;
          }
          values {
             annotation: ptr(Efl.Text_Annotate_Annotation); [[Annotation]]
@@ -146,7 +137,6 @@ interface @beta Efl.Text_Annotate {
            which in turn place graphics on top of it. It essentially places an
            OBJECT REPLACEMENT CHARACTER and set a special annotation to it.
          ]]
-         legacy: null;
          params {
             cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             @in item: string;   [[Item key to be used in higher-up

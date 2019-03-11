@@ -168,7 +168,7 @@ _efl_ui_spin_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_efl_ui_spin_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -245,10 +245,10 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    sd->step = 1.0;
    sd->special_values = eina_array_new(sizeof(Efl_Ui_Spin_Special_Value));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    _label_write(obj);

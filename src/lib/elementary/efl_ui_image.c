@@ -46,11 +46,12 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
-static Eina_Bool _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const Eina_File *f, const char *key);
+static Eina_Error _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd);
 static void _efl_ui_image_remote_copier_cancel(Eo *obj, Efl_Ui_Image_Data *sd);
 void _efl_ui_image_sizing_eval(Evas_Object *obj);
 static void _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event);
 static void _on_size_hints_changed(void *data, const Efl_Event *e);
+static Eina_Bool _efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -80,8 +81,8 @@ static void
 _recover_status(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    int r, g, b, a;
-   Evas_Object *pclip = efl_canvas_object_clip_get(obj);
-   if (pclip) efl_canvas_object_clip_set(sd->img, pclip);
+   Evas_Object *pclip = efl_canvas_object_clipper_get(obj);
+   if (pclip) efl_canvas_object_clipper_set(sd->img, pclip);
 
    efl_gfx_color_get(obj, &r, &g, &b, &a);
    efl_gfx_color_set(sd->img, r, g, b, a);
@@ -396,7 +397,7 @@ static void
 _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
 {
    Async_Open_Data *todo = data;
-   Eina_Stringshare *file, *key;
+   const char *key;
    Eina_Bool ok;
    Eina_File *f;
    void *map;
@@ -414,19 +415,21 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
                   map = todo->map;
                   f = todo->f_open;
                   ok = f && map;
-                  if (todo->file) file = todo->file;
-                  else file = f ? eina_file_filename_get(f) : NULL;
 
                   if (ok)
                     {
-                       if (sd->edje)
+                       efl_file_key_set(sd->self, key);
+                       ok = !efl_file_mmap_set(sd->self, f);
+                       if (ok)
                          {
-                            _prev_img_del(sd);
-                            ok = edje_object_mmap_set(sd->img, f, key);
+                            if (sd->edje)
+                              {
+                                 _prev_img_del(sd);
+                                 ok = edje_object_mmap_set(sd->img, f, key);
+                              }
+                            else
+                              ok = !_efl_ui_image_smart_internal_file_set(sd->self, sd);
                          }
-                       else
-                         ok = _efl_ui_image_smart_internal_file_set
-                           (sd->self, sd, file, f, key);
                     }
                   if (ok) evas_object_smart_callback_call(sd->self, SIG_LOAD_OPEN, NULL);
                   else evas_object_smart_callback_call(sd->self, SIG_LOAD_ERROR, NULL);
@@ -437,18 +440,20 @@ _efl_ui_image_async_open_done(void *data, Ecore_Thread *thread)
    _async_open_data_free(todo);
 }
 
-static Eina_Bool
-_efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file,
-                             const Eina_File *f, const char *key)
+static Eina_Error
+_efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
 {
    Async_Open_Data *todo;
+   const char *file = efl_file_get(obj);
+   const char *key = efl_file_key_get(obj);
+   const Eina_File *f = efl_file_mmap_get(obj);
 
    if (sd->async.th &&
        ((file == sd->async.file) ||
         (file && sd->async.file && !strcmp(file, sd->async.file))) &&
        ((key == sd->async.key) ||
         (key && sd->async.key && !strcmp(key, sd->async.key))))
-     return EINA_TRUE;
+     return 0;
 
    todo = calloc(1, sizeof(Async_Open_Data));
    if (!todo) return EINA_FALSE;
@@ -467,22 +472,28 @@ _efl_ui_image_async_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file,
    sd->async.th = ecore_thread_run(_efl_ui_image_async_open_do,
                                    _efl_ui_image_async_open_done,
                                    _efl_ui_image_async_open_cancel, todo);
-   if (sd->async.th) return EINA_TRUE;
+   if (sd->async.th) return 0;
 
    _async_open_data_free(todo);
    _async_clear(sd);
    DBG("Could not spawn an async thread!");
-   return EINA_FALSE;
+   return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 }
 
-static Eina_Bool
-_efl_ui_image_edje_file_set(Evas_Object *obj,
-                         const char *file,
-                         const Eina_File *f,
-                         const char *group)
+static Eina_Error
+_efl_ui_image_edje_file_set(Evas_Object *obj)
 {
+   Eina_Error err;
+   const Eina_File *f;
+   const char *key;
+
    EFL_UI_IMAGE_DATA_GET(obj, sd);
 
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+
+   f = efl_file_mmap_get(obj);
+   key = efl_file_key_get(obj);
    _prev_img_del(sd);
 
    if (!sd->edje)
@@ -500,32 +511,23 @@ _efl_ui_image_edje_file_set(Evas_Object *obj,
 
    if (!sd->async_enable)
      {
-        if (f)
+        efl_file_key_set(sd->img, key);
+        err = efl_file_mmap_set(sd->img, f);
+        if (!err) err = efl_file_load(sd->img);
+        if (err)
           {
-             if (!edje_object_mmap_set(sd->img, f, group))
-               {
-                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
-                      edje_load_error_str(edje_object_load_error_get(sd->img)));
-                  return EINA_FALSE;
-               }
-          }
-        else
-          {
-             if (!edje_object_file_set(sd->img, file, group))
-               {
-                  ERR("failed to set edje file '%s', group '%s': %s", file, group,
-                      edje_load_error_str(edje_object_load_error_get(sd->img)));
-                  return EINA_FALSE;
-               }
+             ERR("failed to set edje file '%s', group '%s': %s", eina_file_filename_get(f), key,
+                 edje_load_error_str(edje_object_load_error_get(sd->img)));
+             return err;
           }
      }
    else
-     return _efl_ui_image_async_file_set(obj, sd, file, f, group);
+     return _efl_ui_image_async_file_set(obj, sd);
 
    /* FIXME: do i want to update icon on file change ? */
    _efl_ui_image_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static void
@@ -547,7 +549,7 @@ _efl_ui_image_drag_n_drop_cb(void *elm_obj,
       Elm_Selection_Data *drop)
 {
    Eina_Bool ret = EINA_FALSE;
-   ret = efl_file_set(obj, drop->data, NULL);
+   ret = efl_file_simple_load(obj, drop->data, NULL);
    if (ret)
      {
         DBG("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
@@ -704,27 +706,27 @@ _efl_ui_image_efl_gfx_color_color_set(Eo *obj, Efl_Ui_Image_Data *sd, int r, int
 }
 
 EOLIAN static void
-_efl_ui_image_efl_canvas_object_clip_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
+_efl_ui_image_efl_canvas_object_clipper_set(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *clip)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_CLIP_SET, 0, clip))
      return;
 
-   efl_canvas_object_clip_set(efl_super(obj, MY_CLASS), clip);
+   efl_canvas_object_clipper_set(efl_super(obj, MY_CLASS), clip);
 
    if (sd->img) evas_object_clip_set(sd->img, clip);
    if (sd->prev_img) evas_object_clip_set(sd->prev_img, clip);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_image_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    if (sd->stdicon)
      _elm_theme_object_icon_set(obj, sd->stdicon, elm_widget_style_get(obj));
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _efl_ui_image_sizing_eval(obj);
 
@@ -864,12 +866,33 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    return obj;
 }
 
-EOLIAN Eina_Bool
-_efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
-                             const Eina_File *file, const char *key)
-{
-   Eina_Bool ret = EINA_FALSE;
+static const Eina_Slice remote_uri[] = {
+  EINA_SLICE_STR_LITERAL("http://"),
+  EINA_SLICE_STR_LITERAL("https://"),
+  EINA_SLICE_STR_LITERAL("ftp://"),
+  { }
+};
 
+static inline Eina_Bool
+_efl_ui_image_is_remote(const char *file)
+{
+   Eina_Slice s = EINA_SLICE_STR(file);
+   const Eina_Slice *itr;
+
+   for (itr = remote_uri; itr->mem; itr++)
+     if (eina_slice_startswith(s, *itr))
+       return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+EOLIAN Eina_Error
+_efl_ui_image_efl_file_load(Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   Eina_Error ret;
+   const char *file = efl_file_get(obj);
+
+   if (efl_file_loaded_get(obj)) return 0;
    _async_cancel(sd);
 
    /* stop preloading as it may hit to-be-freed memory */
@@ -879,48 +902,100 @@ _efl_ui_image_efl_file_mmap_set(Eo *obj, Efl_Ui_Image_Data *sd,
    if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
    if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
 
+   if (sd->anim)
+     {
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
+        sd->play = EINA_FALSE;
+        sd->anim = EINA_FALSE;
+     }
+
+   if (file && _efl_ui_image_is_remote(file))
+     {
+        evas_object_hide(sd->img);
+        if (_efl_ui_image_download(obj, sd, file))
+          {
+             evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
+             return 0;
+          }
+     }
+
    if (!sd->async_enable)
-     ret = _efl_ui_image_smart_internal_file_set(obj, sd, eina_file_filename_get(file), file, key);
+     ret = _efl_ui_image_smart_internal_file_set(obj, sd);
    else
-     ret = _efl_ui_image_async_file_set(obj, sd, eina_file_filename_get(file), file, key);
+     ret = _efl_ui_image_async_file_set(obj, sd);
 
    return ret;
 }
 
 EOLIAN void
-_efl_ui_image_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const Eina_File **file, const char **group)
+_efl_ui_image_efl_file_unload(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   if (sd->img) efl_file_mmap_get(sd->img, file, group);
+   _async_cancel(sd);
+
+   /* stop preloading as it may hit to-be-freed memory */
+   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
+     evas_object_image_preload(sd->img, EINA_TRUE);
+
+   if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
+   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
+
+   if (sd->anim)
+     {
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
+        sd->play = EINA_FALSE;
+        sd->anim = EINA_FALSE;
+     }
+
+   if (sd->prev_img)
+     _prev_img_del(sd);
+   _efl_ui_image_file_set_do(obj);
+   efl_file_unload(sd->img);
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
+     _prev_img_del(sd);
+   else
+     {
+        evas_object_hide(sd->img);
+        sd->preload_status = EFL_UI_IMAGE_PRELOADING;
+        evas_object_image_preload(sd->img, EINA_FALSE);
+     }
+
+   _efl_ui_image_sizing_eval(obj);
 }
 
-static Eina_Bool
-_efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
-                                   const char *file, const Eina_File *f, const char *key)
+static Eina_Error
+_efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   Evas_Load_Error err;
+   Eina_Error err;
+   const Eina_File *f;
+   const char *key;
+   const char *file = efl_file_get(obj);
 
    if (eina_str_has_extension(file, ".edj"))
-     return _efl_ui_image_edje_file_set(obj, file, f, key);
+     return _efl_ui_image_edje_file_set(obj);
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+
+   f = efl_file_mmap_get(obj);
+   key = efl_file_key_get(obj);
 
    _efl_ui_image_file_set_do(obj);
 
-   if (f)
-     evas_object_image_mmap_set(sd->img, f, key);
-   else
-     evas_object_image_file_set(sd->img, file, key);
+   evas_object_image_mmap_set(sd->img, f, key);
 
    err = evas_object_image_load_error_get(sd->img);
-   if (err != EVAS_LOAD_ERROR_NONE)
+   if (err)
      {
         if (file || f)
           {
              if (key)
                ERR("Failed to load image '%s' '%s': %s. (%p)",
-                   file ? file : eina_file_filename_get(f), key,
+                   eina_file_filename_get(f), key,
                    evas_load_error_str(err), obj);
              else
                 ERR("Failed to load image '%s': %s. (%p)",
-                    file ? file : eina_file_filename_get(f),
+                    eina_file_filename_get(f),
                     evas_load_error_str(err), obj);
           }
         else
@@ -928,7 +1003,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
              ERR("NULL image file passed! (%p)", obj);
           }
         _prev_img_del(sd);
-        return EINA_FALSE;
+        return err;
      }
 
    if (sd->preload_status == EFL_UI_IMAGE_PRELOAD_DISABLED)
@@ -942,7 +1017,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd,
 
    _efl_ui_image_sizing_eval(obj);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 static void
@@ -979,7 +1054,7 @@ _efl_ui_image_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
    Eina_File *f;
    Eo *dialer;
    const char *url;
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Error ret;
 
    /* we're called from _efl_ui_image_remote_copier_cancel() */
    if (!sd->remote.copier) return;
@@ -997,11 +1072,11 @@ _efl_ui_image_remote_copier_done(void *data, const Efl_Event *event EINA_UNUSED)
                             eina_binbuf_string_get(sd->remote.binbuf),
                             eina_binbuf_length_get(sd->remote.binbuf),
                             EINA_FALSE);
-
-   ret = _efl_ui_image_smart_internal_file_set(obj, sd, url, f, sd->remote.key);
+   efl_file_mmap_set(obj, f);
+   ret = _efl_ui_image_smart_internal_file_set(obj, sd);
    eina_file_close(f);
 
-   if (!ret)
+   if (ret)
      {
         Efl_Ui_Image_Error err = { 0, EINA_TRUE };
 
@@ -1057,11 +1132,12 @@ EFL_CALLBACKS_ARRAY_DEFINE(_efl_ui_image_remote_copier_cbs,
                            { EFL_IO_COPIER_EVENT_PROGRESS, _efl_ui_image_remote_copier_progress });
 
 static Eina_Bool
-_efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url, const char *key)
+_efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url)
 {
    Eo *dialer;
    Efl_Ui_Image_Error img_err = { ENOSYS, EINA_FALSE };
    Eina_Error err;
+   const char *key = efl_file_key_get(obj);
 
    dialer = efl_add(EFL_NET_DIALER_HTTP_CLASS, obj,
                     efl_net_dialer_http_allow_redirects_set(efl_added, EINA_TRUE));
@@ -1094,72 +1170,6 @@ _efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url, const ch
  error_dialer:
    evas_object_smart_callback_call(obj, SIG_DOWNLOAD_ERROR, &img_err);
    return EINA_FALSE;
-}
-
-static const Eina_Slice remote_uri[] = {
-  EINA_SLICE_STR_LITERAL("http://"),
-  EINA_SLICE_STR_LITERAL("https://"),
-  EINA_SLICE_STR_LITERAL("ftp://"),
-  { }
-};
-
-static inline Eina_Bool
-_efl_ui_image_is_remote(const char *file)
-{
-   Eina_Slice s = EINA_SLICE_STR(file);
-   const Eina_Slice *itr;
-
-   for (itr = remote_uri; itr->mem; itr++)
-     if (eina_slice_startswith(s, *itr))
-       return EINA_TRUE;
-
-   return EINA_FALSE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_image_efl_file_file_set(Eo *obj, Efl_Ui_Image_Data *sd, const char *file, const char *key)
-{
-   Eina_Bool ret = EINA_FALSE;
-
-   _async_cancel(sd);
-
-   /* stop preloading as it may hit to-be-freed memory */
-   if (sd->img && sd->preload_status == EFL_UI_IMAGE_PRELOADING)
-     evas_object_image_preload(sd->img, EINA_TRUE);
-
-   if (sd->remote.copier) _efl_ui_image_remote_copier_cancel(obj, sd);
-   if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
-
-   if (sd->anim)
-     {
-        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
-        sd->play = EINA_FALSE;
-        sd->anim = EINA_FALSE;
-     }
-
-   if (!file)
-     {
-        if (sd->prev_img)
-          _prev_img_del(sd);
-        return _efl_ui_image_smart_internal_file_set(obj, sd, file, NULL, key);;
-     }
-
-   if (_efl_ui_image_is_remote(file))
-     {
-        evas_object_hide(sd->img);
-        if (_efl_ui_image_download(obj, sd, file, key))
-          {
-             evas_object_smart_callback_call(obj, SIG_DOWNLOAD_START, NULL);
-             return EINA_TRUE;
-          }
-     }
-
-   if (!sd->async_enable)
-     ret = _efl_ui_image_smart_internal_file_set(obj, sd, file, NULL, key);
-   else
-     ret = _efl_ui_image_async_file_set(obj, sd, file, NULL, key);
-
-   return ret;
 }
 
 EOLIAN static const char*
@@ -1262,18 +1272,6 @@ _efl_ui_image_efl_layout_calc_calc_auto_update_hints_get(const Eo *obj EINA_UNUS
 {
    if (sd->edje) return efl_layout_calc_auto_update_hints_get(sd->img);
    return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_image_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, const char **file, const char **key)
-{
-   if (sd->async.th)
-     {
-        if (file) *file = sd->async.file;
-        if (key) *key = sd->async.key;
-        return;
-     }
-   efl_file_get(sd->img, file, key);
 }
 
 #if 0
@@ -1725,7 +1723,7 @@ _icon_freedesktop_set(Evas_Object *obj, const char *name, int size)
    if (sd->freedesktop.use)
      {
         sd->freedesktop.requested_size = size;
-        efl_file_set(obj, path, NULL);
+        efl_file_simple_load(obj, path, NULL);
         return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -1793,7 +1791,7 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
      {
         if (fdo)
           *fdo = EINA_FALSE;
-        return efl_file_set(obj, name, NULL);
+        return efl_file_simple_load(obj, name, NULL);
      }
 
    /* if that fails, see if icon name is in the format size/name. if so,
@@ -1875,13 +1873,13 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
           {
              eina_value_get(vfile, &f);
 
-             efl_file_mmap_set(obj, f, key);
+             efl_file_simple_mmap_load(obj, f, key);
           }
         else
           {
              file = eina_value_to_string(vfile);
 
-             efl_file_set(obj, file, key);
+             efl_file_simple_load(obj, file, key);
           }
      }
 
@@ -1951,7 +1949,7 @@ _efl_ui_image_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data
    return pd->property.model;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd, const char *key, const char *property)
 {
    if (strcmp(key, "filename") == 0)
@@ -1969,9 +1967,10 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
      {
         eina_stringshare_replace(&pd->property.key, property);
      }
-   else return;
+   else return EINA_FALSE;
 
    _update_viewmodel(obj, pd);
+   return 0;
 }
 
 EAPI void
@@ -2010,7 +2009,7 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
    Eina_Bool ret = EINA_FALSE;
 
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   ret = efl_file_set(obj, file, group);
+   ret = efl_file_simple_load(obj, file, group);
    _efl_ui_image_sizing_eval(obj);
    return ret;
 }
@@ -2018,14 +2017,14 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 EAPI void
 elm_image_file_get(const Eo *obj, const char **file, const char **group)
 {
-   efl_file_get((Eo *) obj, file, group);
+   efl_file_simple_get((Eo *) obj, file, group);
 }
 
 EAPI Eina_Bool
 elm_image_mmap_set(Evas_Object *obj, const Eina_File *file, const char *group)
 {
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
-   return efl_file_mmap_set(obj, file, group);
+   return efl_file_simple_mmap_load(obj, file, group);
 }
 
 EAPI Eina_Bool
@@ -2287,7 +2286,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image, Efl_Ui_Image_Data)
 
 #include "efl_ui_image.eo.c"
 
-#include "efl_ui_image_legacy.eo.h"
+#include "efl_ui_image_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_image"
 
@@ -2317,4 +2316,4 @@ elm_image_add(Evas_Object *parent)
    return obj;
 }
 
-#include "efl_ui_image_legacy.eo.c"
+#include "efl_ui_image_legacy_eo.c"

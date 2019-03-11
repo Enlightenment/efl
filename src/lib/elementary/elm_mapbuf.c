@@ -10,7 +10,7 @@
 #include "elm_priv.h"
 #include "elm_widget_mapbuf.h"
 #include "elm_widget_container.h"
-#include "elm_mapbuf.eo.h"
+#include "elm_mapbuf_eo.h"
 
 #include "elm_mapbuf_part.eo.h"
 #include "elm_part_helper.h"
@@ -36,12 +36,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_mapbuf_efl_ui_widget_theme_apply(Eo *obj, Elm_Mapbuf_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _sizing_eval(obj);
 
@@ -220,7 +220,7 @@ _elm_mapbuf_content_set(Eo *obj, Elm_Mapbuf_Data *sd, const char *part, Evas_Obj
      }
    else
      evas_object_color_set(wd->resize_obj, 0, 0, 0, 0);
-
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
    _sizing_eval(obj);
    _configure(obj);
 
@@ -244,6 +244,7 @@ _elm_mapbuf_content_unset(Eo *obj, Elm_Mapbuf_Data *sd, const char *part)
    content = sd->content;
    _elm_widget_sub_object_redirect_to_top(obj, content);
    _elm_mapbuf_content_unset_internal(sd, obj, content);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    return content;
 }
 
@@ -455,4 +456,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_mapbuf, "default")
    ELM_PART_CONTENT_DEFAULT_OPS(elm_mapbuf), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_mapbuf)
 
-#include "elm_mapbuf.eo.c"
+#include "elm_mapbuf_eo.c"

@@ -3,7 +3,6 @@ import efl_text_types;
 
 enum Efl.Text_Cursor_Get_Type {
    [[All available cursor states]]
-   legacy: efl_text_cursor_get;
    default = 0,     [[Main cursor state (alias to "main")]]
    main,            [[Main cursor state]]
    selection_begin, [[Selection begin cursor state]]
@@ -17,7 +16,6 @@ enum Efl.Text_Cursor_Get_Type {
 enum Efl.Text_Cursor_Type
 {
    [[Text cursor types]]
-   legacy: efl_text_cursor_type;
    before, [[Cursor type before]]
    under [[Cursor type under]]
 }
@@ -35,7 +33,6 @@ interface @beta Efl.Text_Cursor {
            @since 1.18
          ]]
          get {
-            legacy: null;
             return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor object]]
          }
          keys {
@@ -44,8 +41,8 @@ interface @beta Efl.Text_Cursor {
       }
       @property cursor_position {
          [[Cursor position]]
-         set { legacy: null; }
-         get { legacy: null; }
+         set {  }
+         get {  }
          values {
             position: int; [[Cursor position]]
          }
@@ -56,7 +53,6 @@ interface @beta Efl.Text_Cursor {
       @property cursor_content {
          [[The content of the cursor (the character under the cursor)]]
          get {
-            legacy: null;
          }
          values {
             content: Eina.Unicode; [[The unicode codepoint of the character]]
@@ -75,7 +71,6 @@ interface @beta Efl.Text_Cursor {
            In this case $true is returned and $cx2, $cy2, $cw2, $ch2 are set.
          ]]
          get {
-            legacy: null;
             return: bool; [[ $true if split cursor, $false otherwise.]]
          }
          keys {
@@ -95,19 +90,16 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_new {
          [[Create new cursor]]
-         legacy: null;
          return: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
       }
       cursor_free {
          [[Free existing cursor]]
-         legacy: null;
          params {
             cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_equal {
          [[Check if two cursors are equal]]
-         legacy: null;
          params {
             @cref cur1: Efl.Text_Cursor_Cursor; [[Cursor 1 object]]
             @cref cur2: Efl.Text_Cursor_Cursor; [[Cursor 2 object]]
@@ -116,7 +108,6 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_compare {
          [[Compare two cursors]]
-         legacy: null;
          params {
             @cref cur1: Efl.Text_Cursor_Cursor; [[Cursor 1 object]]
             @cref cur2: Efl.Text_Cursor_Cursor; [[Cursor 2 object]]
@@ -125,7 +116,6 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_copy {
          [[Copy existing cursor]]
-         legacy: null;
          params {
             /* @out */ dst: ptr(Efl.Text_Cursor_Cursor); [[Destination cursor]]
             @cref src: Efl.Text_Cursor_Cursor; [[Source cursor]]
@@ -133,105 +123,90 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_char_next {
          [[Advances to the next character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_char_prev {
          [[Advances to the previous character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_cluster_next {
          [[Advances to the next grapheme cluster]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_cluster_prev {
          [[Advances to the previous grapheme cluster]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_char_first {
          [[Advances to the first character in this paragraph]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_char_last {
          [[Advances to the last character in this paragraph]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_word_start {
          [[Advance to current word start]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_word_end {
          [[Advance to current word end]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_line_char_first {
          [[Advance to current line first character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_line_char_last {
           [[Advance to current line last character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_first {
          [[Advance to current paragraph first character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_last {
          [[Advance to current paragraph last character]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_next {
          [[Advances to the start of the next text node]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_paragraph_prev {
          [[Advances to the end of the previous text node]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }
       }
       cursor_line_jump_by {
          [[Jump the cursor by the given number of lines]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             by: int; [[Number of lines]]
@@ -239,7 +214,6 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_coord_set {
          [[Set cursor coordinates]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             @in x: int; [[X coord to set by.]]
@@ -250,7 +224,6 @@ interface @beta Efl.Text_Cursor {
          [[Set cursor coordinates according to grapheme clusters.
            It does not allow to put a cursor to the middle of a grapheme cluster.
 	 ]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             @in x: int; [[X coord to set by.]]
@@ -261,7 +234,6 @@ interface @beta Efl.Text_Cursor {
          [[Adds text to the current cursor position and set the cursor to
            *after* the start of the text just added.
          ]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
             @in text: string; [[Text to append (UTF-8 format).]]
@@ -270,7 +242,6 @@ interface @beta Efl.Text_Cursor {
       }
       cursor_char_delete {
          [[Deletes a single character from position pointed by given cursor.]]
-         legacy: null;
          params {
             /* @inout */ cur: ptr(Efl.Text_Cursor_Cursor); [[Cursor object]]
          }

@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 void
@@ -9,7 +10,7 @@ test_panes_minsize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    Eo *win, *panes, *panes_h;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Panes"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );

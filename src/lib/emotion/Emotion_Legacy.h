@@ -1,3 +1,3 @@
 
-#include "efl_canvas_video.eo.legacy.h"
+#include "efl_canvas_video_eo.legacy.h"
 

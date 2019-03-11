@@ -6,7 +6,7 @@
 #include <Elementary_Cursor.h>
 
 #include "elm_priv.h"
-#include "elm_genlist.eo.h"
+#include "elm_genlist_eo.h"
 
 typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
 typedef struct _Elm_Store_Item_Filesystem      Elm_Store_Item_Filesystem;

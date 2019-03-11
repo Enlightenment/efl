@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static void
@@ -61,7 +62,8 @@ test_evas_map(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", elm_app_data_dir_get());
    img = efl_add(EFL_UI_IMAGE_CLASS, win,
                  efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(64, 64)),
-                 efl_file_set(efl_added, buf, NULL));
+                 efl_file_set(efl_added, buf),
+                 efl_file_load(efl_added));
    efl_gfx_image_scale_type_set(img, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
    evas_object_event_callback_add(img, EVAS_CALLBACK_RESIZE,
                                   _image_resize_cb, NULL);

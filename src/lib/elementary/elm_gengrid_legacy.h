@@ -275,5 +275,5 @@ EAPI void elm_gengrid_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  */
 EAPI Eina_Bool elm_gengrid_wheel_disabled_get(const Evas_Object *obj);
 
-#include "elm_gengrid_item.eo.legacy.h"
-#include "elm_gengrid.eo.legacy.h"
+#include "elm_gengrid_item_eo.legacy.h"
+#include "elm_gengrid_eo.legacy.h"

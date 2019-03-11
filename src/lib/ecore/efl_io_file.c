@@ -29,7 +29,6 @@
 
 typedef struct _Efl_Io_File_Data
 {
-   const char *path;
    uint32_t flags;
    uint32_t mode;
    uint64_t last_position;
@@ -123,7 +122,7 @@ _efl_io_file_efl_object_constructor(Eo *o, Efl_Io_File_Data *pd)
 }
 
 EOLIAN static void
-_efl_io_file_efl_object_destructor(Eo *o, Efl_Io_File_Data *pd)
+_efl_io_file_efl_object_destructor(Eo *o, Efl_Io_File_Data *pd EINA_UNUSED)
 {
    if (efl_io_closer_close_on_invalidate_get(o) &&
        (!efl_io_closer_closed_get(o)))
@@ -134,8 +133,6 @@ _efl_io_file_efl_object_destructor(Eo *o, Efl_Io_File_Data *pd)
      }
 
    efl_destructor(efl_super(o, MY_CLASS));
-
-   eina_stringshare_del(pd->path);
 }
 
 EOLIAN static Efl_Object *
@@ -144,17 +141,18 @@ _efl_io_file_efl_object_finalize(Eo *o, Efl_Io_File_Data *pd)
    int fd = efl_loop_fd_file_get(o);
    if (fd < 0)
      {
-        EINA_SAFETY_ON_NULL_RETURN_VAL(pd->path, NULL);
+        const char *path = efl_file_get(o);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
         if (pd->mode)
-          fd = open(pd->path, pd->flags, pd->mode);
+          fd = open(path, pd->flags, pd->mode);
         else
-          fd = open(pd->path, pd->flags);
+          fd = open(path, pd->flags);
 
         if (fd < 0)
           {
              eina_error_set(errno);
-             ERR("Could not open file '%s': %s", pd->path, strerror(errno));
+             ERR("Could not open file '%s': %s", path, strerror(errno));
              return NULL;
           }
 
@@ -162,22 +160,6 @@ _efl_io_file_efl_object_finalize(Eo *o, Efl_Io_File_Data *pd)
      }
 
    return efl_finalize(efl_super(o, MY_CLASS));
-}
-
-EOLIAN static Eina_Bool
-_efl_io_file_efl_file_file_set(Eo *o, Efl_Io_File_Data *pd, const char *file, const char *key EINA_UNUSED)
-{
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(efl_finalized_get(o), EINA_FALSE);
-
-   eina_stringshare_replace(&pd->path, file);
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_io_file_efl_file_file_get(const Eo *o EINA_UNUSED, Efl_Io_File_Data *pd, const char **file, const char **key)
-{
-   if (file) *file = pd->path;
-   if (key) *key = NULL;
 }
 
 EOLIAN static Eina_Error

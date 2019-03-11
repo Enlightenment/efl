@@ -274,6 +274,19 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_match_content_set(Eo *obj E
    sd->match_content_h = !!h;
 }
 
+EOLIAN static void
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_step_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Position2D step)
+{
+   sd->step.x = step.x * elm_config_scale_get();
+   sd->step.y = step.y * elm_config_scale_get();
+}
+
+EOLIAN static Eina_Position2D
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_step_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+{
+   return EINA_POSITION2D(sd->step.x, sd->step.y);
+}
+
 static Evas_Coord
 _efl_ui_scroll_manager_x_mirrored_get(const Evas_Object *obj,
                            Evas_Coord x)
