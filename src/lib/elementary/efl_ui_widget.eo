@@ -253,7 +253,15 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
 
       /* Internal hooks. */
       widget_sub_object_add @protected {
-         [[Virtual function handling sub objects being added.
+         [[Virtual function customizing sub objects being added.
+
+           When a widget is added as a sub-object of another widget (like list
+           elements inside a list container, for example) some of its properties
+           are automatically adapted to the parent's current values (like focus,
+           access, theme, scale, mirror, scrollable child get, translate,
+           display mode set, tree dump).
+           Override this method if you want to customize differently sub-objects
+           being added to this object.
 
            Sub objects can be any canvas object, not necessarily widgets.
 
@@ -266,11 +274,17 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          return: bool; [[Indicates if the operation succeeded.]]
       }
       widget_sub_object_del @protected {
-         [[Virtual function handling sub objects being removed.
+         [[Virtual function customizing sub objects being removed.
+
+           When a widget is removed as a sub-object from another widget
+           (@Efl.Pack.unpack, @Efl.Content.content_unset, for example) some of
+           its properties are automatically adjusted.(like focus, access, tree dump)
+           Override this method if you want to customize differently sub-objects
+           being removed to this object.
 
            Sub objects can be any canvas object, not necessarily widgets.
 
-           See also @.widget_parent.
+           See also @.widget_parent and @.widget_sub_object_add.
          ]]
          params {
             @in sub_obj: Efl.Canvas.Object;
