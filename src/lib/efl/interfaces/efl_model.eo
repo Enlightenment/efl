@@ -125,7 +125,7 @@ interface @beta Efl.Model
                                ignored.]]
             }
             /* XXX: is this right? */
-            return: future<accessor<Efl.Object>>; [[Array of children]]
+            return: future<array<Efl.Object>>; [[Array of children]]
          }
          @property children_count {
 	    get {

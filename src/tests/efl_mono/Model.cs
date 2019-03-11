@@ -1,6 +1,7 @@
 #define CODE_ANALYSIS
 
 using System;
+using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TestSuite {
@@ -17,36 +18,50 @@ public static class TestModel {
     
     public static void reflection_test ()
     {
-        Efl.UserModel<VeggieViewModel> veggies = new Efl.UserModel<VeggieViewModel>();
+        Efl.Loop loop = Efl.App.AppMain;
+
+        Efl.UserModel<VeggieViewModel> veggies = new Efl.UserModel<VeggieViewModel>(loop);
         veggies.Add (new VeggieViewModel{ Name="Tomato", Type="Fruit", Image="tomato.png"});
         veggies.Add (new VeggieViewModel{ Name="Romaine Lettuce", Type="Vegetable", Image="lettuce.png"});
         veggies.Add (new VeggieViewModel{ Name="Zucchini", Type="Vegetable", Image="zucchini.png"});
-
-        
 
         Console.WriteLine ("end of test");
     }
 
-    public static void easy_model_extraction ()
+    internal static async Task EasyModelExtractionAsync (Efl.Loop loop)
     {
-        Efl.UserModel<VeggieViewModel> veggies = new Efl.UserModel<VeggieViewModel>();
+        Efl.UserModel<VeggieViewModel> veggies = new Efl.UserModel<VeggieViewModel>(loop);
         veggies.Add (new VeggieViewModel{ Name="Tomato", Type="Fruit", Image="tomato.png"});
         veggies.Add (new VeggieViewModel{ Name="Romaine Lettuce", Type="Vegetable", Image="lettuce.png"});
         veggies.Add (new VeggieViewModel{ Name="Zucchini", Type="Vegetable", Image="zucchini.png"});
 
-        var model = new Efl.GenericModel<VeggieViewModel>(veggies);
+        var model = new Efl.GenericModel<VeggieViewModel>(veggies, loop);
         Console.WriteLine ("size model {0}", model.GetChildrenCount());
 
-        
+        VeggieViewModel r = await model.GetAtAsync(0);
 
-        Console.WriteLine ("end of test");
+        Test.AssertEquals(r.Name, "Tomato");
+        VeggieViewModel r2 = await model.GetAtAsync(1);
+        Test.AssertEquals(r2.Name, "Romaine Lettuce");
+
+        Console.WriteLine ("end of test, Name of result is {0}", r.Name);
+        loop.End();
+    }
+
+    public static void easy_model_extraction ()
+    {
+        Efl.Loop loop = Efl.App.AppMain;
+        
+        Task task = EasyModelExtractionAsync(loop);
+
+        loop.Begin();
     }
 
     public static void factory_test ()
     {
         var factory = new Efl.Ui.ItemFactory<Efl.Object>();
         //factory.Foo();
-        factory.Name().Bind("name");
+        factory.Name().Bind("first name");
     }
 }
 

@@ -1,4 +1,4 @@
-class Efl.Mono_Model_Internal_Child extends Efl.Object implements Efl.Model
+class Efl.Mono_Model_Internal_Child extends Efl.Loop_Consumer implements Efl.Model
 {
   implements {
     Efl.Object.constructor;

@@ -1,4 +1,4 @@
-class Efl.Mono_Model_Internal extends Efl.Object implements Efl.Model
+class Efl.Mono_Model_Internal extends Efl.Loop_Consumer implements Efl.Model
 {
   methods {
     add_property {

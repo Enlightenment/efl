@@ -2348,6 +2348,7 @@ _eina_value_type_array_flush(const Eina_Value_Type *type EINA_UNUSED, void *mem)
    Eina_Value_Array *tmem = mem;
    Eina_Bool ret =_eina_value_type_array_flush_elements(tmem);
 
+   printf (__FILE__ ":%d\n", __LINE__); fflush(stdout);
    if (tmem->array) eina_inarray_free(tmem->array);
    tmem->array = NULL;
    tmem->subtype = NULL;
@@ -2363,6 +2364,7 @@ _eina_value_type_array_copy(const Eina_Value_Type *type EINA_UNUSED, const void 
    unsigned int i, count, sz;
    char *ptr, *ptr_end;
 
+   printf (__FILE__ ":%d\n", __LINE__); fflush(stdout);
    d->subtype = subtype = s->subtype;
    d->step = s->step;
 
@@ -2371,11 +2373,13 @@ _eina_value_type_array_copy(const Eina_Value_Type *type EINA_UNUSED, const void 
         d->array = NULL;
         return EINA_TRUE;
      }
+   printf (__FILE__ ":%d\n", __LINE__); fflush(stdout);
 
    if (!subtype->copy)
      {
         return EINA_FALSE;
      }
+   printf (__FILE__ ":%d\n", __LINE__); fflush(stdout);
 
    d->array = eina_inarray_new(subtype->value_size, s->step);
    if (!d->array)
@@ -2401,6 +2405,7 @@ _eina_value_type_array_copy(const Eina_Value_Type *type EINA_UNUSED, const void 
    return EINA_TRUE;
 
  error:
+   printf (__FILE__ ":%d error\n", __LINE__); fflush(stdout);
    _eina_value_type_array_flush_elements(d);
    eina_inarray_free(d->array);
    return EINA_FALSE;

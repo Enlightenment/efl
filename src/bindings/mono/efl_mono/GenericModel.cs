@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
+using Eina;
 
 namespace Efl {
 
@@ -52,6 +53,12 @@ public class GenericModel<T> : Efl.Object, Efl.Model, IDisposable
    {
        return model.GetChildrenSlice(start, count);
    }
+   public void Add(T o)
+   {
+      Efl.Object obj = this.AddChild();
+      Efl.Model child = Efl.ModelConcrete.static_cast(obj);
+      ModelHelper.SetProperties(o, child);
+   }
    public Efl.Object AddChild()
    {
        return model.AddChild();
@@ -59,6 +66,29 @@ public class GenericModel<T> : Efl.Object, Efl.Model, IDisposable
    public void DelChild( Efl.Object child)
    {
        model.DelChild(child);
+   }
+   async public System.Threading.Tasks.Task<T> GetAtAsync(uint index)
+   {
+       Console.WriteLine("awaiting getchildren");
+       using (Eina.Value v = await GetChildrenSliceAsync(index, 1))
+       {
+           Console.WriteLine("awaited getchildren");
+           if (v.GetValueType().IsContainer())
+           {
+               Console.WriteLine("awaited getchildren is container");
+               var o = (Efl.Object)v[0];
+               var child = Efl.ModelConcrete.static_cast(o);
+               T obj = (T)Activator.CreateInstance(typeof(T), new System.Object[] {});
+               ModelHelper.GetProperties(obj, child);
+               return obj;
+           }
+           else
+           {
+               Console.WriteLine("awaited getchildren NOT container");
+               // error
+               throw new System.Exception("");
+           }
+       }
    }
    public System.Threading.Tasks.Task<Eina.Value> SetPropertyAsync(  System.String property,  Eina.Value value, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {

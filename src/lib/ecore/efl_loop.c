@@ -690,7 +690,10 @@ efl_loop_future_scheduler_get(const Eo *obj)
 {
    Efl_Loop *loop;
 
+   printf ("efl_loop_future_scheduler_get\n"); fflush(stdout);
+   
    if (!obj) return NULL;
+   printf ("efl_loop_future_scheduler_get\n"); fflush(stdout);
 
    if (efl_isa(obj, EFL_LOOP_CLASS))
      {
@@ -711,9 +714,12 @@ efl_loop_future_scheduler_get(const Eo *obj)
      return efl_loop_future_scheduler_get(efl_loop_get(obj));
 
    loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   printf ("scheduler found %p\n", loop); fflush(stdout);
    if (loop)
      return efl_loop_future_scheduler_get(loop);
 
+   printf ("no scheduler found\n"); fflush(stdout);
+   
    return NULL;
 }
 

@@ -163,7 +163,7 @@ static unsigned int _log_domains_count = 0;
 static size_t _log_domains_allocated = 0;
 
 // Default function for printing on domains
-static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stderr;
+static Eina_Log_Print_Cb _print_cb = eina_log_print_cb_stdout;
 static void *_print_cb_data = NULL;
 
 #ifdef DEBUG

@@ -40,6 +40,7 @@ static Eina_Future *
 _efl_loop_consumer_future_resolved(const Eo *obj, Efl_Loop_Consumer_Data *pd EINA_UNUSED,
                                    Eina_Value result)
 {
+   printf("_efl_loop_consumer_future_resolved\n"); fflush(stdout);
    return eina_future_resolved(efl_loop_future_scheduler_get(obj), result);
 }
 

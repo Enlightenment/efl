@@ -197,10 +197,11 @@ public class Future
     /// </summary>
     public Future(IntPtr handle)
     {
-        Handle = ThenRaw(handle, (Eina.Value value) => {
-            Handle = IntPtr.Zero;
-            return value;
-        });
+        Handle = handle;
+        // Handle = ThenRaw(handle, (Eina.Value value) => {
+        //     Handle = IntPtr.Zero;
+        //     return value;
+        // });
     }
 
     /// <summary>
@@ -265,6 +266,7 @@ public class Future
     }
     private static Eina.ValueNative NativeResolvedCb(IntPtr data, Eina.ValueNative value, IntPtr dead_future)
     {
+        Console.WriteLine("Type is addr 0x{0:X}", value.Type.ToInt64());
         GCHandle handle = GCHandle.FromIntPtr(data);
         ResolvedCb cb = handle.Target as ResolvedCb;
         if (cb != null)

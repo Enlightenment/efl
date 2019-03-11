@@ -776,6 +776,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Constructor to build value from Values_Natives passed by value from C.</summary>
     public Value(ValueNative value)
     {
+        Console.WriteLine("Type is addr 0x{0:X}", value.Type.ToInt64());
+        var t = ValueTypeBridge.GetManaged(value.Type);
+        Console.WriteLine("Type is {0}", t);
+        
         IntPtr tmp = IntPtr.Zero;
         try {
             this.Handle = Alloc();

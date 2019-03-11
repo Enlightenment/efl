@@ -416,7 +416,7 @@ public class Globals {
       Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
       Console.WriteLine($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
       IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
-      if (pd != null)
+      if (pd != IntPtr.Zero)
       {
           GCHandle gch = GCHandle.Alloc(obj);
           EolianPD epd;
@@ -467,12 +467,17 @@ public class Globals {
         // Flag to be passed to the cancell callback
         bool fulfilled = false;
 
+        Console.WriteLine("1"); Console.Out.Flush();
+        
         future.Then((Eina.Value received) => {
+                Console.WriteLine("2"); Console.Out.Flush();
                 lock (future)
                 {
+                    Console.WriteLine("2"); Console.Out.Flush();
                     // Convert an failed Future to a failed Task.
                     if (received.GetValueType() == Eina.ValueType.Error)
                     {
+                        Console.WriteLine("Error"); Console.Out.Flush();
                         Eina.Error err;
                         received.Get(out err);
                         if (err == Eina.Error.ECANCELED)
@@ -482,6 +487,7 @@ public class Globals {
                     }
                     else
                     {
+                        Console.WriteLine("Succeeded"); Console.Out.Flush();
                         // Will mark the returned task below as completed.
                         tcs.SetResult(received);
                     }
@@ -489,8 +495,10 @@ public class Globals {
                     return received;
                 }
         });
+        Console.WriteLine("11"); Console.Out.Flush();
         // Callback to be called when the token is cancelled.
         token.Register(() => {
+                Console.WriteLine("4"); Console.Out.Flush();
                 lock (future)
                 {
                     // Will trigger the Then callback above with an Eina.Error
@@ -498,6 +506,7 @@ public class Globals {
                         future.Cancel();
                 }
         });
+        Console.WriteLine("3"); Console.Out.Flush();
 
         return tcs.Task;
     }

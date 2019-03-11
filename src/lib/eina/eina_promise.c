@@ -887,6 +887,8 @@ eina_future_resolved(Eina_Future_Scheduler *scheduler, Eina_Value value)
    Eina_Promise *p;
    Eina_Future *f;
 
+   printf ("eina_promise.c value with type %p\n", value.type); fflush(stdout);
+
    EINA_SAFETY_ON_NULL_GOTO(scheduler, error);
 
    p = eina_promise_new(scheduler, _dummy_cancel, NULL);
