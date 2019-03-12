@@ -139,8 +139,8 @@ _only_widget(const void *container EINA_UNUSED, void *data, void *fdata EINA_UNU
 EAPI Eina_Iterator*
 efl_ui_widget_tree_widget_iterator(Efl_Ui_Widget *obj)
 {
-   Eina_Iterator *tree_iterator = efl_ui_widget_tree_iterator(obj);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd, NULL);
+   Eina_Iterator *tree_iterator = efl_ui_widget_tree_iterator(obj);
 
    return eina_iterator_filter_new(tree_iterator, _only_widget, NULL, NULL);
 }
