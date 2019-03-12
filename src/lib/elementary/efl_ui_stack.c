@@ -124,6 +124,8 @@ _hide_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
    Efl_Ui_Stack_Data *pd = efl_data_scope_safe_get(data, EFL_UI_STACK_CLASS);
    Efl_Canvas_Object *content;
 
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
    content = _end_anim(pd->hide_td);
    pd->hide_td = NULL;
    efl_gfx_entity_visible_set(content, EINA_FALSE);
@@ -135,6 +137,8 @@ _show_anim_ended_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Ui_Stack_Data *pd = efl_data_scope_safe_get(data, EFL_UI_STACK_CLASS);
    Efl_Canvas_Object *content;
+
+   EINA_SAFETY_ON_NULL_RETURN(pd);
 
    content = _end_anim(pd->show_td);
    pd->show_td = NULL;
