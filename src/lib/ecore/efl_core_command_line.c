@@ -223,7 +223,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
               eina_stringshare_del(eina_array_pop(pd->command));
              eina_array_free(pd->command);
              pd->command = NULL;
-             for (;i < (array ? eina_array_count(array) : 0); ++i)
+             for (;i < eina_array_count(array); ++i)
                {
                   content = eina_array_data_get(array, i);
                   eina_stringshare_del(content);
