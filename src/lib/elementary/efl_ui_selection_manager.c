@@ -5179,7 +5179,11 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
      }
    if (init_x)
      {
-        ecore_x_init(NULL);
+        if (!ecore_x_init(NULL))
+          {
+             ERR("Could not initialize Ecore_X");
+             return NULL;
+          }
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
