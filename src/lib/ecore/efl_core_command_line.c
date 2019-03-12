@@ -229,6 +229,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
                   eina_stringshare_del(content);
                }
              eina_array_free(array);
+             eina_strbuf_free(command);
              return EINA_FALSE;
           }
 
