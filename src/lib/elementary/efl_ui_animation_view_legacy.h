@@ -73,4 +73,4 @@ EAPI Eina_Bool        elm_animation_view_file_set(Elm_Animation_View *obj, const
  */
 EAPI Elm_Animation_View_State elm_animation_view_state_get(Elm_Animation_View *obj);
 
-#include "efl_ui_animation_view.eo.legacy.h"
+#include "efl_ui_animation_view_eo.legacy.h"

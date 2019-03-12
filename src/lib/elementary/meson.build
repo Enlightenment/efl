@@ -599,6 +599,7 @@ elementary_pub_headers = [
   'elm_win_legacy.h',
   'elm_helper.h',
   'elm_part_helper.h',
+  'efl_ui_animation_view_eo.legacy.h',
   'efl_ui_bg_eo.legacy.h',
   'efl_ui_bg_legacy_eo.legacy.h',
   'efl_ui_button_eo.legacy.h',
