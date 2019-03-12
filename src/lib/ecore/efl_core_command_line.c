@@ -257,7 +257,9 @@ _efl_core_command_line_command_string_set(Eo *obj EINA_UNUSED, Efl_Core_Command_
    EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->filled, EINA_FALSE);
 
    pd->string_command = eina_strdup(str);
-   _remove_invalid_chars(pd->string_command);
+
+   if (pd->string_command)
+     _remove_invalid_chars(pd->string_command);
    pd->command = _unescape(str);
    if (!pd->command)
      {
