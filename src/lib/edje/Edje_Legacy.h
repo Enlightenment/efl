@@ -3166,26 +3166,56 @@ EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb 
  */
 EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
 
-typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
-#define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
-#define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE
-#define EDJE_PART_TYPE_TEXT        EFL_CANVAS_LAYOUT_PART_TYPE_TEXT
-#define EDJE_PART_TYPE_IMAGE       EFL_CANVAS_LAYOUT_PART_TYPE_IMAGE
-#define EDJE_PART_TYPE_SWALLOW     EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW
-#define EDJE_PART_TYPE_TEXTBLOCK   EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK
-#define EDJE_PART_TYPE_GRADIENT    EFL_CANVAS_LAYOUT_PART_TYPE_GRADIENT
-#define EDJE_PART_TYPE_GROUP       EFL_CANVAS_LAYOUT_PART_TYPE_GROUP
-#define EDJE_PART_TYPE_BOX         EFL_CANVAS_LAYOUT_PART_TYPE_BOX
-#define EDJE_PART_TYPE_TABLE       EFL_CANVAS_LAYOUT_PART_TYPE_TABLE
-#define EDJE_PART_TYPE_EXTERNAL    EFL_CANVAS_LAYOUT_PART_TYPE_EXTERNAL
-#define EDJE_PART_TYPE_PROXY       EFL_CANVAS_LAYOUT_PART_TYPE_PROXY
-#define EDJE_PART_TYPE_SPACER      EFL_CANVAS_LAYOUT_PART_TYPE_SPACER
-#define EDJE_PART_TYPE_MESH_NODE   EFL_CANVAS_LAYOUT_PART_TYPE_MESH_NODE
-#define EDJE_PART_TYPE_LIGHT       EFL_CANVAS_LAYOUT_PART_TYPE_LIGHT
-#define EDJE_PART_TYPE_CAMERA      EFL_CANVAS_LAYOUT_PART_TYPE_CAMERA
-#define EDJE_PART_TYPE_SNAPSHOT    EFL_CANVAS_LAYOUT_PART_TYPE_SNAPSHOT
-#define EDJE_PART_TYPE_VECTOR      EFL_CANVAS_LAYOUT_PART_TYPE_VECTOR
-#define EDJE_PART_TYPE_LAST        EFL_CANVAS_LAYOUT_PART_TYPE_LAST
+/**
+ * @defgroup Edje_Object_Part Edje Part
+ *
+ * @brief Functions that deal with layout components
+ *
+ * Parts are layout components, but as a layout, they are objects too.
+ *
+ * There are several types of parts, these types can be divided into two
+ * main categories, the first being containers. Containers are parts
+ * that are in effect a group of elements. The second group is that of
+ * the elements, these part types may not contain others.
+ *
+ * This section has some functions specific for some types and others that
+ * could be applied to any type.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
+ * @typedef Edje_Part_Type
+ *
+ * All possible "part" types in Edje
+ */
+typedef enum _Edje_Part_Type
+{
+   EDJE_PART_TYPE_NONE      = 0,  /**< None type value */
+   EDJE_PART_TYPE_RECTANGLE = 1,  /**< Rectangle type value */
+   EDJE_PART_TYPE_TEXT      = 2,  /**< Text type value */
+   EDJE_PART_TYPE_IMAGE     = 3,  /**< Image type value */
+   EDJE_PART_TYPE_SWALLOW   = 4,  /**< Swallow  type value */
+   EDJE_PART_TYPE_TEXTBLOCK = 5,  /**< Text block type value */
+   EDJE_PART_TYPE_GRADIENT  = 6,  /**< Gradient type value */
+   EDJE_PART_TYPE_GROUP     = 7,  /**< Group type value */
+   EDJE_PART_TYPE_BOX       = 8,  /**< Box type value */
+   EDJE_PART_TYPE_TABLE     = 9,  /**< Table type value */
+   EDJE_PART_TYPE_EXTERNAL  = 10, /**< External type value */
+   EDJE_PART_TYPE_PROXY     = 11, /**< Proxy type value */
+   EDJE_PART_TYPE_SPACER    = 12, /**< Spacer type value @since 1.7 */
+   EDJE_PART_TYPE_MESH_NODE = 13,
+   EDJE_PART_TYPE_LIGHT     = 14,
+   EDJE_PART_TYPE_CAMERA    = 15,
+   EDJE_PART_TYPE_SNAPSHOT  = 16, /**< Snapshot @since 1.16 */
+   EDJE_PART_TYPE_VECTOR    = 17, /**< Vector @since 1.18 */
+   EDJE_PART_TYPE_LAST      = 18  /**< Last type value */
+} Edje_Part_Type;
+/**
+ * @}
+ */
 
 /**
  * @}

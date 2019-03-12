@@ -1,4 +1,4 @@
-class Elm.Popup.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm.Popup.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary popup internal part class]]
    data: null;

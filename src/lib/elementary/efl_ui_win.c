@@ -1644,8 +1644,9 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    _elm_win_xwin_update(sd);
 #endif
    _elm_win_frame_obj_update(sd, 0);
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_WIN_EVENT_ROTATION_CHANGED, NULL);
+   efl_event_callback_call
+     (obj, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, (void*)(uintptr_t)rotation);
+   evas_object_smart_callback_call(obj, "rotation,changed", NULL);
    if (_elm_config->atspi_mode)
      {
         Evas_Coord x = 0, y = 0, width = 0, height = 0;
@@ -1796,35 +1797,39 @@ _elm_win_state_change(Ecore_Evas *ee)
 #endif
    if (ch_fullscreen)
      {
+        Eina_Bool fullscreen;
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
+        fullscreen = sd->fullscreen;
         if (sd->fullscreen)
           {
-             efl_event_callback_legacy_call
-               (obj, EFL_UI_WIN_EVENT_FULLSCREEN, NULL);
+             evas_object_smart_callback_call(obj, "fullscreen", NULL);
           }
         else
           {
-             efl_event_callback_legacy_call
-               (obj, EFL_UI_WIN_EVENT_UNFULLSCREEN, NULL);
+             evas_object_smart_callback_call(obj, "unfullscreen", NULL);
           }
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_FULLSCREEN_CHANGED, (void*) (uintptr_t)fullscreen);
      }
    if (ch_maximized)
      {
+        Eina_Bool maximized;
         ELM_WIN_DATA_ALIVE_CHECK(obj, sd);
         _elm_win_frame_style_update(sd, 0, 1);
+        maximized = sd->maximized;
         if (sd->maximized)
           {
-             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED, NULL);
+             evas_object_smart_callback_call(obj, "maximized", NULL);
              if (_elm_config->atspi_mode)
                efl_access_window_maximized_signal_emit(obj);
           }
         else
           {
-             efl_event_callback_legacy_call(obj, EFL_UI_WIN_EVENT_UNMAXIMIZED, NULL);
+             evas_object_smart_callback_call(obj, "unmaximized", NULL);
              if (_elm_config->atspi_mode)
                efl_access_window_restored_signal_emit(obj);
           }
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED_CHANGED, (void*) (uintptr_t)maximized);
      }
    if (ch_profile)
      {
@@ -2003,7 +2008,7 @@ _elm_win_evas_render_post(void *data,
    Efl_Gfx_Event_Render_Post *ev = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, ev);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_POST, ev);
 }
 
 static void
@@ -2014,7 +2019,7 @@ _elm_win_evas_render_pre(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, NULL);
 }
 
 static void
@@ -2025,7 +2030,7 @@ _elm_win_evas_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, NULL);
 }
 
 static void
@@ -2035,7 +2040,7 @@ _elm_win_evas_focus_out(void *data,
 {
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, NULL);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, NULL);
 }
 
 static void
@@ -2047,7 +2052,7 @@ _elm_win_evas_object_focus_in(void *data,
    Eo *win = data;
 
    _elm_win_throttle_ok = EINA_TRUE;
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN, object);
 }
 
 static void
@@ -2058,7 +2063,7 @@ _elm_win_evas_object_focus_out(void *data,
    Eo *object = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT, object);
 }
 
 static void
@@ -2069,7 +2074,7 @@ _elm_win_evas_device_changed(void *data,
    Eo *device = event_info;
    Eo *win = data;
 
-   efl_event_callback_legacy_call(win, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, device);
+   efl_event_callback_call(win, EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED, device);
 }
 
 static void

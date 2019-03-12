@@ -12,15 +12,15 @@ evas_image_cache_get(const Evas_Canvas *obj)
 }
 
 EAPI void
-evas_event_default_flags_set(Evas_Canvas *obj, Efl_Input_Flags flags)
+evas_event_default_flags_set(Evas_Canvas *obj, Evas_Event_Flags flags)
 {
-   evas_canvas_event_default_flags_set(obj, flags);
+   evas_canvas_event_default_flags_set(obj, (Efl_Input_Flags)flags);
 }
 
-EAPI Efl_Input_Flags
+EAPI Evas_Event_Flags
 evas_event_default_flags_get(const Evas_Canvas *obj)
 {
-   return evas_canvas_event_default_flags_get(obj);
+   return (Evas_Event_Flags)evas_canvas_event_default_flags_get(obj);
 }
 
 EAPI void
@@ -54,7 +54,7 @@ evas_focus_get(const Evas_Canvas *obj)
 }
 
 EAPI Efl_Canvas_Object *
-evas_seat_focus_get(const Evas_Canvas *obj, Efl_Input_Device *seat)
+evas_seat_focus_get(const Evas_Canvas *obj, Evas_Device *seat)
 {
    return evas_canvas_seat_focus_get(obj, seat);
 }
@@ -66,7 +66,7 @@ evas_object_top_get(const Evas_Canvas *obj)
 }
 
 EAPI void
-evas_pointer_canvas_xy_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev, int *x, int *y)
+evas_pointer_canvas_xy_by_device_get(const Evas_Canvas *obj, Evas_Device *dev, int *x, int *y)
 {
    evas_canvas_pointer_canvas_xy_by_device_get(obj, dev, x, y);
 }
@@ -96,7 +96,7 @@ evas_focus_state_get(const Evas_Canvas *obj)
 }
 
 EAPI Eina_Bool
-evas_seat_focus_state_get(const Evas_Canvas *obj, Efl_Input_Device *seat)
+evas_seat_focus_state_get(const Evas_Canvas *obj, Evas_Device *seat)
 {
    return evas_canvas_seat_focus_state_get(obj, seat);
 }
@@ -108,7 +108,7 @@ evas_changed_get(const Evas_Canvas *obj)
 }
 
 EAPI void
-evas_pointer_output_xy_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev, int *x, int *y)
+evas_pointer_output_xy_by_device_get(const Evas_Canvas *obj, Evas_Device *dev, int *x, int *y)
 {
    evas_canvas_pointer_output_xy_by_device_get(obj, dev, x, y);
 }
@@ -126,7 +126,7 @@ evas_object_bottom_get(const Evas_Canvas *obj)
 }
 
 EAPI unsigned int
-evas_pointer_button_down_mask_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev)
+evas_pointer_button_down_mask_by_device_get(const Evas_Canvas *obj, Evas_Device *dev)
 {
    return evas_canvas_pointer_button_down_mask_by_device_get(obj, dev);
 }
@@ -150,13 +150,13 @@ evas_key_lock_on(Evas_Canvas *obj, const char *keyname)
 }
 
 EAPI void
-evas_seat_key_lock_on(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat)
+evas_seat_key_lock_on(Evas_Canvas *obj, const char *keyname, Evas_Device *seat)
 {
    evas_canvas_seat_key_lock_on(obj, keyname, seat);
 }
 
 EAPI void
-evas_seat_key_lock_off(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat)
+evas_seat_key_lock_off(Evas_Canvas *obj, const char *keyname, Evas_Device *seat)
 {
    evas_canvas_seat_key_lock_off(obj, keyname, seat);
 }
@@ -222,13 +222,13 @@ evas_key_modifier_on(Evas_Canvas *obj, const char *keyname)
 }
 
 EAPI void
-evas_seat_key_modifier_on(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat)
+evas_seat_key_modifier_on(Evas_Canvas *obj, const char *keyname, Evas_Device *seat)
 {
    evas_canvas_seat_key_modifier_on(obj, keyname, seat);
 }
 
 EAPI void
-evas_seat_key_modifier_off(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat)
+evas_seat_key_modifier_off(Evas_Canvas *obj, const char *keyname, Evas_Device *seat)
 {
    evas_canvas_seat_key_modifier_off(obj, keyname, seat);
 }
@@ -371,8 +371,8 @@ evas_render_idle_flush(Evas_Canvas *obj)
    evas_canvas_render_idle_flush(obj);
 }
 
-EAPI Efl_Input_Device *
-evas_default_device_get(const Evas_Canvas *obj, Efl_Input_Device_Type type)
+EAPI Evas_Device *
+evas_default_device_get(const Evas_Canvas *obj, Evas_Device_Class type)
 {
    return evas_canvas_default_device_get(obj, type);
 }

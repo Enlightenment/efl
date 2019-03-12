@@ -232,9 +232,10 @@ _canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_new_geom(void *data, const Efl_Event *event)
+_new_geom(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, event->info);
+   Eina_Rect rect = efl_ui_focus_object_focus_geometry_get(data);
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, &rect);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,

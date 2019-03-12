@@ -52,6 +52,7 @@
 #include "dummy_another_iface.eo.h"
 #include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
+#include "dummy_part_holder.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 
@@ -67,8 +68,6 @@ typedef struct Dummy_Test_Object_Data
   Eina_Value *stored_value;
   Dummy_StructSimple stored_struct;
   int stored_int;
-  Eo *part_one;
-  Eo *part_two;
   Eina_Promise *promise;
   Eina_List *list_for_accessor;
   int setter_only;
@@ -90,6 +89,12 @@ typedef struct Dummy_Child_Data
   Eina_Bool obligatory_beta_ctor_was_called;
   Eina_Bool optional_beta_ctor_was_called;
 } Dummy_Child_Data;
+
+typedef struct Dummy_Part_Holder_Data
+{
+  Eo *part_one;
+  Eo *part_two;
+} Dummy_Part_Holder_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
 {
@@ -145,14 +150,6 @@ static Efl_Object*
 _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
 {
    efl_constructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
-
-   // To avoid an infinite loop calling the same constructor
-   if (!efl_parent_get(obj))
-     {
-        pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
-        pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
-     }
-
    pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
    dummy_numberwrapper_number_set(pd->provider, 1999);
 
@@ -3792,14 +3789,9 @@ void _dummy_test_object_emit_event_with_list(Eo *obj, EINA_UNUSED Dummy_Test_Obj
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_LIST, data);
 }
 
-Efl_Object *_dummy_test_object_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const char *name)
+void _dummy_test_object_emit_event_with_under(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-    if (!strcmp(name, "part_one"))
-      return pd->part_one;
-    else if (!strcmp(name, "part_two"))
-      return pd->part_two;
-    else
-      return NULL;
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_UNDER, NULL);
 }
 
 void _dummy_test_object_append_to_strbuf(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Strbuf *buf, const char *str)
@@ -4024,6 +4016,34 @@ const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Te
   return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
 }
 
+// Part holder
+static Efl_Object*
+_dummy_part_holder_efl_object_constructor(Eo *obj, Dummy_Part_Holder_Data *pd)
+{
+   efl_constructor(efl_super(obj, DUMMY_PART_HOLDER_CLASS));
+
+   // To avoid an infinite loop calling the same constructor
+   if (!efl_parent_get(obj))
+     {
+        pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
+        pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
+     }
+
+   return obj;
+}
+
+Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Part_Holder_Data *pd, const char *name)
+{
+    if (!strcmp(name, "part_one"))
+      return pd->part_one;
+    else if (!strcmp(name, "part_two"))
+      return pd->part_two;
+    else
+      return NULL;
+}
+
+
+
 #include "dummy_test_object.eo.c"
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
@@ -4031,4 +4051,5 @@ const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Te
 #include "dummy_another_iface.eo.c"
 #include "dummy_inherit_helper.eo.c"
 #include "dummy_inherit_iface.eo.c"
+#include "dummy_part_holder.eo.c"
 

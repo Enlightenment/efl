@@ -253,4 +253,25 @@ class TestInterfaceEvents
         Test.Assert(another_called);
     }
 }
+
+class TestEventNaming
+{
+    // For events named line focus_geometry,changed
+    public static void test_event_naming()
+    {
+        var obj = new Dummy.TestObject();
+        var test_called = false;
+
+        EventHandler cb = (object sender, EventArgs e) => {
+            test_called = true;
+        };
+
+        obj.EvtWithUnderEvt += cb;
+
+        obj.EmitEventWithUnder();
+
+        Test.Assert(test_called);
+
+    }
+}
 }

@@ -172,6 +172,22 @@ EFL_START_TEST(efl_ui_test_widget_sub_iterator)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_test_widget_sub_object_add_del)
+{
+   State s;
+
+   _small_ui(&s);
+   ck_assert(!efl_ui_widget_sub_object_add(s.btn1, s.btn1));
+   ck_assert(efl_ui_widget_sub_object_add(s.box, s.btn1));
+   ck_assert(!efl_ui_widget_sub_object_add(s.box, NULL));
+
+   ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.btn1));
+   ck_assert(!efl_ui_widget_sub_object_del(s.box, NULL));
+   ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.box));
+   ck_assert(efl_ui_widget_sub_object_del(s.box, s.btn1));
+}
+EFL_END_TEST
+
 void efl_ui_test_widget(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
@@ -179,4 +195,5 @@ void efl_ui_test_widget(TCase *tc)
    tcase_add_test(tc, efl_ui_test_widget_widget_sub_iterator);
    tcase_add_test(tc, efl_ui_test_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_sub_iterator);
+   tcase_add_test(tc, efl_ui_test_widget_sub_object_add_del);
 }

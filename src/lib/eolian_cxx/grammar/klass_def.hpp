@@ -153,6 +153,7 @@ struct klass_name
    qualifier_def base_qualifier;
    class_type type;
    std::string klass_get_name;
+   bool is_beta;
 
    friend inline std::ostream& operator<<(std::ostream& s, klass_name const& name)
    {
@@ -167,13 +168,14 @@ struct klass_name
 
    klass_name(std::vector<std::string> namespaces
               , std::string eolian_name, qualifier_def base_qualifier
-              , class_type type, std::string klass_get_name)
+              , class_type type, std::string klass_get_name, bool is_beta)
      : namespaces(namespaces), eolian_name(eolian_name), base_qualifier(base_qualifier)
-     , type(type), klass_get_name(klass_get_name) {}
+     , type(type), klass_get_name(klass_get_name), is_beta(is_beta) {}
    klass_name(Eolian_Class const* klass, qualifier_def base_qualifier)
      : eolian_name( ::eolian_class_short_name_get(klass))
               , base_qualifier(base_qualifier)
               , klass_get_name( ::eolian_class_c_get_function_name_get(klass))
+              , is_beta(::eolian_object_is_beta(EOLIAN_OBJECT(klass)))
    {
      for(efl::eina::iterator<const char> namespace_iterator ( ::eolian_class_namespaces_get(klass))
            , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
@@ -364,6 +366,8 @@ inline bool operator!=(complex_type_def const& lhs, complex_type_def const& rhs)
   return !(lhs == rhs);
 }
 
+// type_def represents a type where it is used, like a method parameter or a struc field, in contrast to more
+// specifict types like struct_def, class_def, function_def, which represents a declaration of a type.
 struct type_def
 {
    typedef eina::variant<klass_name, regular_type_def, complex_type_def> variant_type;
@@ -371,6 +375,7 @@ struct type_def
    std::string c_type;
    bool has_own;
    bool is_ptr;
+   bool is_beta;
 
    type_def() = default;
    type_def(variant_type original_type, std::string c_type, bool has_own)
@@ -427,6 +432,9 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
    Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
    has_own = !!::eolian_type_is_owned(eolian_type);
    is_ptr = !!::eolian_type_is_ptr(eolian_type);
+
+   Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
+   is_beta = decl && eolian_object_is_beta(EOLIAN_OBJECT(decl));
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
@@ -764,9 +772,11 @@ struct function_def
           filename = eolian_object_file_get((const Eolian_Object *)eolian_klass);
           klass = klass_name(eolian_klass,
               {attributes::qualifier_info::is_none, std::string()});
+          is_beta = eolian_function_is_beta(function) || klass.is_beta;
        }
      else
        {
+          is_beta = tp && eolian_object_is_beta(EOLIAN_OBJECT(tp));
           filename = "";
 
           if (tp)
@@ -777,7 +787,6 @@ struct function_def
                  namespaces.push_back(&*ns_iterator);
             }
        }
-     is_beta = eolian_function_is_beta(function);
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
      is_static = eolian_function_is_class(function);
 
@@ -1174,6 +1183,7 @@ struct klass_def
   eina::optional<klass_name> parent;
   std::set<klass_name, compare_klass_name_by_name> extensions;
   std::string klass_get_name;
+  bool is_beta;
 
   std::set<part_def> parts;
   Eolian_Unit const* unit;
@@ -1190,7 +1200,8 @@ struct klass_def
       && lhs.type == rhs.type
       && lhs.events == rhs.events
       && lhs.parts == rhs.parts
-      && lhs.klass_get_name == rhs.klass_get_name;
+      && lhs.klass_get_name == rhs.klass_get_name
+      && lhs.is_beta == rhs.is_beta;
   }
   friend inline bool operator!=(klass_def const& lhs, klass_def const& rhs)
   {
@@ -1212,13 +1223,15 @@ struct klass_def
             , std::set<klass_name, compare_klass_name_by_name> inherits
             , class_type type
             , std::set<klass_name, compare_klass_name_by_name> immediate_inherits
-            , std::string klass_get_name)
+            , std::string klass_get_name
+            , bool is_beta)
     : eolian_name(eolian_name), cxx_name(cxx_name), filename(filename)
     , documentation(documentation)
     , namespaces(namespaces)
     , functions(functions), properties(properties), inherits(inherits), type(type)
     , immediate_inherits(immediate_inherits)
     , klass_get_name(klass_get_name)
+    , is_beta(is_beta)
   {}
   klass_def(std::string _eolian_name, std::string _cxx_name
             , std::vector<std::string> _namespaces
@@ -1226,14 +1239,16 @@ struct klass_def
             , std::vector<property_def> _properties
             , std::set<klass_name, compare_klass_name_by_name> _inherits
             , class_type _type, Eolian_Unit const* unit
-            , std::string klass_get_name)
+            , std::string klass_get_name
+            , bool is_beta)
     : eolian_name(_eolian_name), cxx_name(_cxx_name)
     , namespaces(_namespaces)
     , functions(_functions), properties(_properties), inherits(_inherits), type(_type)
-    , klass_get_name(klass_get_name), unit(unit)
+    , klass_get_name(klass_get_name), is_beta(is_beta), unit(unit)
   {}
   klass_def(Eolian_Class const* klass, Eolian_Unit const* unit)
     : klass_get_name( ::eolian_class_c_get_function_name_get(klass))
+    , is_beta(::eolian_class_is_beta(klass))
     , unit(unit)
   {
      for(efl::eina::iterator<const char> namespace_iterator( ::eolian_class_namespaces_get(klass))
@@ -1519,6 +1534,7 @@ struct struct_def
   std::string cxx_name;
   std::vector<std::string> namespaces;
   std::vector<struct_field_def> fields;
+  bool is_beta;
   documentation_def documentation;
 
   struct_def(Eolian_Typedecl const* struct_obj, Eolian_Unit const* unit)
@@ -1537,13 +1553,15 @@ struct struct_def
           this->fields.push_back(field_def);
        }
 
+     is_beta = eolian_object_is_beta(EOLIAN_OBJECT(struct_obj));
+
      documentation = ::eolian_typedecl_documentation_get(struct_obj);
   }
 };
 
 inline klass_name get_klass_name(klass_def const& klass)
 {
-  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type, klass.klass_get_name};
+  return {klass.namespaces, klass.eolian_name, {qualifier_info::is_none, {}}, klass.type, klass.klass_get_name, klass.is_beta};
 }
 
 inline Eolian_Class const* get_klass(klass_name const& klass_name_, Eolian_Unit const* unit)

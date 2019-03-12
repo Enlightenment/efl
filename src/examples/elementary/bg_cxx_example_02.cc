@@ -6,6 +6,7 @@
  */
 
 #define EFL_CXXPERIMENTAL
+#define EFL_BETA_API_SUPPORT
 
 #include <Elementary.hh>
 

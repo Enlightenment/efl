@@ -350,6 +350,19 @@ EFL_START_TEST(eolian_cxx_test_constructors)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_cxx_test_beta)
+{
+    efl::eolian::eolian_init eolian_init;
+    efl::eolian::eolian_state eolian_state;
+
+    klass_def cls = init_test_data("generic.eo", "Generic", eolian_state);
+    klass_def beta_cls = init_test_data("beta_class.eo", "Beta_Class", eolian_state);
+
+    ck_assert(!cls.is_beta);
+    ck_assert(beta_cls.is_beta);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
@@ -364,4 +377,5 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_parent_extensions);
    tcase_add_test(tc, eolian_cxx_test_cls_get);
    tcase_add_test(tc, eolian_cxx_test_constructors);
+   tcase_add_test(tc, eolian_cxx_test_beta);
 }

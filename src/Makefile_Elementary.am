@@ -228,9 +228,12 @@ noinst_DATA += $(elm_legacy_eolian_eo_h)
 elm_legacy_eo_files = \
 lib/elementary/efl_ui_bg_legacy_eo.c \
 lib/elementary/efl_ui_button_legacy_eo.c \
+lib/elementary/efl_ui_check_eo.legacy.c \
 lib/elementary/efl_ui_check_legacy_eo.c \
 lib/elementary/efl_ui_flip_legacy_eo.c \
+lib/elementary/efl_ui_flip_eo.legacy.c \
 lib/elementary/efl_ui_frame_legacy_eo.c \
+lib/elementary/efl_ui_frame_eo.legacy.c \
 lib/elementary/efl_ui_image_legacy_eo.c \
 lib/elementary/efl_ui_image_zoomable_eo.legacy.c \
 lib/elementary/efl_ui_image_zoomable_legacy_eo.c \
@@ -308,6 +311,7 @@ lib/elementary/elm_grid_eo.c \
 lib/elementary/elm_hover_eo.legacy.c \
 lib/elementary/elm_hover_eo.c \
 lib/elementary/elm_hoversel_eo.c \
+lib/elementary/elm_hoversel_eo.legacy.c \
 lib/elementary/elm_hoversel_item_eo.c \
 lib/elementary/elm_hoversel_item_eo.legacy.c \
 lib/elementary/elm_icon_eo.c \
@@ -513,6 +517,7 @@ lib/elementary/elm_view_form_eo.h \
 lib/elementary/elm_view_list_eo.h \
 lib/elementary/elm_web_eo.legacy.h \
 lib/elementary/elm_widget_item_container_eo.legacy.h \
+lib/elementary/elm_widget_item_container_eo.h \
 lib/elementary/elm_widget_item_eo.legacy.h \
 lib/elementary/elm_widget_item_static_focus_eo.legacy.h
 
@@ -618,10 +623,13 @@ lib/elementary/elm_widget_item_container_eo.h \
 lib/elementary/elm_widget_item_eo.h \
 lib/elementary/elm_widget_item_static_focus_eo.h \
 lib/elementary/efl_ui_focus_parent_provider_gen_eo.h \
+lib/elementary/elm_removed.h \
+lib/elementary/elm_widget_bg.h \
+lib/elementary/elm_widget_clipper.h \
 $(NULL)
 
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files)
+EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files) $(elm_legacy_eo_headers_priv)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 

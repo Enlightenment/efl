@@ -402,7 +402,7 @@ inline std::string klass_get_full_name(T const& clsname)
 // Events
 inline std::string managed_event_name(std::string const& name)
 {
-   return utils::to_pascal_case(utils::split(name, ','), "") + "Evt";
+   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Evt";
 }
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)

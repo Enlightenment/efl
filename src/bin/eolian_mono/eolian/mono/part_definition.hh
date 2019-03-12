@@ -18,6 +18,9 @@ struct part_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::part_def const& part, Context const& context) const
   {
+     if (blacklist::is_class_blacklisted(part.klass, context))
+       return true;
+
      auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
      return as_generator(scope_tab << documentation
                        << scope_tab << "public " << part_klass_name << " " << name_helpers::managed_part_name(part) << "\n"

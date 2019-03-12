@@ -1,4 +1,4 @@
-class Eldbus.Model.Signal extends Eldbus.Model.Arguments {
+class @beta Eldbus.Model.Signal extends Eldbus.Model.Arguments {
     [[Eldbus model signal class]]
 
     methods {

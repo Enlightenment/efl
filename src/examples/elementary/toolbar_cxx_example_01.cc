@@ -7,7 +7,7 @@
 
 #warning This example requires yet unfinished EO APIs
 
-#include <Efl_Ui.h>
+#define EFL_BETA_API_SUPPORT
 #include <Elementary.hh>
 
 EAPI int

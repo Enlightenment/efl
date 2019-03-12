@@ -27,7 +27,7 @@ enum Elm.Scroller.Single_Direction
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
+mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
 {
    [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;

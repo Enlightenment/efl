@@ -93,6 +93,9 @@ struct event_argument_wrapper_generator
       if (!etype.is_engaged())
         return true;
 
+      if (blacklist::is_event_blacklisted(evt, context))
+        return true;
+
       std::string evt_name = name_helpers::managed_event_name(evt.name);
 
       return as_generator("///<summary>Event argument wrapper for event <see cref=\""
@@ -119,6 +122,9 @@ struct event_declaration_generator
       std::string wrapper_args_type;
       std::string evt_name = name_helpers::managed_event_name(evt.name);
 
+      if (blacklist::is_event_blacklisted(evt, context))
+        return true;
+
       if (evt.type.is_engaged())
         wrapper_args_type = "<" + name_helpers::managed_event_args_name(evt) + ">";
 
@@ -142,6 +148,9 @@ struct event_registration_generator
    bool generate(OutputIterator sink, attributes::event_def const& evt, Context const& context) const
    {
        std::string wrapper_event_name;
+
+      if (blacklist::is_event_blacklisted(evt, context))
+        return true;
 
        if (is_inherited_event && !helpers::is_unique_event(evt, leaf_klass))
             wrapper_event_name = name_helpers::translate_inherited_event_name(evt, klass);
@@ -172,6 +181,9 @@ struct event_definition_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::event_def const& evt, Context context) const
    {
+      if (blacklist::is_event_blacklisted(evt, context))
+        return true;
+
       std::string managed_evt_name = name_helpers::managed_event_name(evt.name);
 
       bool is_unique = helpers::is_unique_event(evt, leaf_klass);

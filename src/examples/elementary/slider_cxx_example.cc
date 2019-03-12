@@ -1,8 +1,7 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` slider_cxx_example.cc -o slider_cxx_example
 
 #define EFL_CXXPERIMENTAL
-
-#include <Efl_Ui.h>
+#define EFL_BETA_API_SUPPORT
 #include <Elementary.hh>
 
 using namespace std::placeholders;

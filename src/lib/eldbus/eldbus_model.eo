@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model extends Efl.Loop_Model {
+class @beta Eldbus.Model extends Efl.Loop_Model {
     methods {
         connect {
             [[Define connection parameters.

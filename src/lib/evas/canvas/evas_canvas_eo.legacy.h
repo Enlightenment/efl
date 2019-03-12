@@ -53,7 +53,7 @@ EAPI int evas_image_cache_get(const Evas_Canvas *obj);
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_event_default_flags_set(Evas_Canvas *obj, Efl_Input_Flags flags);
+EAPI void evas_event_default_flags_set(Evas_Canvas *obj, Evas_Event_Flags flags);
 
 /**
  * @brief Get the default set of flags an event begins with
@@ -68,7 +68,7 @@ EAPI void evas_event_default_flags_set(Evas_Canvas *obj, Efl_Input_Flags flags);
  *
  * @ingroup Evas_Group
  */
-EAPI Efl_Input_Flags evas_event_default_flags_get(const Evas_Canvas *obj);
+EAPI Evas_Event_Flags evas_event_default_flags_get(const Evas_Canvas *obj);
 
 /**
  * @brief Changes the size of font cache of the given evas.
@@ -154,7 +154,7 @@ EAPI Efl_Canvas_Object *evas_focus_get(const Evas_Canvas *obj) EINA_WARN_UNUSED_
  *
  * @ingroup Evas_Group
  */
-EAPI Efl_Canvas_Object *evas_seat_focus_get(const Evas_Canvas *obj, Efl_Input_Device *seat);
+EAPI Efl_Canvas_Object *evas_seat_focus_get(const Evas_Canvas *obj, Evas_Device *seat);
 
 /**
  * @brief Get the highest (stacked) Evas object on the canvas @c e.
@@ -188,7 +188,7 @@ EAPI Efl_Canvas_Object *evas_object_top_get(const Evas_Canvas *obj) EINA_WARN_UN
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_pointer_canvas_xy_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev, int *x, int *y);
+EAPI void evas_pointer_canvas_xy_by_device_get(const Evas_Canvas *obj, Evas_Device *dev, int *x, int *y);
 
 /**
  * @brief This function returns the current known default pointer coordinates
@@ -263,7 +263,7 @@ EAPI Eina_Bool evas_focus_state_get(const Evas_Canvas *obj);
  *
  * @ingroup Evas_Group
  */
-EAPI Eina_Bool evas_seat_focus_state_get(const Evas_Canvas *obj, Efl_Input_Device *seat);
+EAPI Eina_Bool evas_seat_focus_state_get(const Evas_Canvas *obj, Evas_Device *seat);
 
 /**
  * @brief Get the changed marker for the canvas.
@@ -290,7 +290,7 @@ EAPI Eina_Bool evas_changed_get(const Evas_Canvas *obj);
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_pointer_output_xy_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev, int *x, int *y);
+EAPI void evas_pointer_output_xy_by_device_get(const Evas_Canvas *obj, Evas_Device *dev, int *x, int *y);
 
 /**
  * @brief This function returns the current known default pointer coordinates.
@@ -338,7 +338,7 @@ EAPI Efl_Canvas_Object *evas_object_bottom_get(const Evas_Canvas *obj) EINA_WARN
  *
  * @ingroup Evas_Group
  */
-EAPI unsigned int evas_pointer_button_down_mask_by_device_get(const Evas_Canvas *obj, Efl_Input_Device *dev);
+EAPI unsigned int evas_pointer_button_down_mask_by_device_get(const Evas_Canvas *obj, Evas_Device *dev);
 
 /**
  * @brief Returns a bitmask with the default mouse buttons currently pressed,
@@ -424,7 +424,7 @@ EAPI void evas_key_lock_on(Evas_Canvas *obj, const char *keyname) EINA_ARG_NONNU
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_seat_key_lock_on(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat) EINA_ARG_NONNULL(2);
+EAPI void evas_seat_key_lock_on(Evas_Canvas *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Disables or turns off programmatically the lock key with name
@@ -445,7 +445,7 @@ EAPI void evas_seat_key_lock_on(Evas_Canvas *obj, const char *keyname, Efl_Input
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_seat_key_lock_off(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat) EINA_ARG_NONNULL(2);
+EAPI void evas_seat_key_lock_off(Evas_Canvas *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Adds the @c keyname key to the current list of modifier keys.
@@ -620,7 +620,7 @@ EAPI void evas_key_modifier_on(Evas_Canvas *obj, const char *keyname) EINA_ARG_N
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_seat_key_modifier_on(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat) EINA_ARG_NONNULL(2);
+EAPI void evas_seat_key_modifier_on(Evas_Canvas *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Disables or turns off programmatically the modifier key with name
@@ -640,7 +640,7 @@ EAPI void evas_seat_key_modifier_on(Evas_Canvas *obj, const char *keyname, Efl_I
  *
  * @ingroup Evas_Group
  */
-EAPI void evas_seat_key_modifier_off(Evas_Canvas *obj, const char *keyname, Efl_Input_Device *seat) EINA_ARG_NONNULL(2);
+EAPI void evas_seat_key_modifier_off(Evas_Canvas *obj, const char *keyname, Evas_Device *seat) EINA_ARG_NONNULL(2);
 
 /**
  * @brief List of available font descriptions known or found by this evas.
@@ -1001,7 +1001,7 @@ EAPI void evas_render_idle_flush(Evas_Canvas *obj);
  *
  * @ingroup Evas_Group
  */
-EAPI Efl_Input_Device *evas_default_device_get(const Evas_Canvas *obj, Efl_Input_Device_Type type);
+EAPI Evas_Device *evas_default_device_get(const Evas_Canvas *obj, Evas_Device_Class type);
 
 /**
  * @brief Convert/scale a canvas coordinate into output screen coordinates.

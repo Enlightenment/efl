@@ -106,7 +106,9 @@ namespace Efl {
         Efl.App app = Efl.App.AppMain;
         Eina.Array<String> command_line = new Eina.Array<String>();
         command_line.Append(Environment.GetCommandLineArgs());
+#if EFL_BETA
         app.SetCommandArray(command_line);
+#endif
         app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) => {
           if (evt.arg.Initialization) {
             OnInitialize(evt.arg.Argv);

@@ -230,7 +230,11 @@ TESTS += tests/eo/test_signals
 endif
 
 
-EXTRA_DIST2 += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
+EXTRA_DIST2 += \
+tests/eo/eunit_tests.h \
+tests/eo/suite/eo_test_reflection_complex_class_structure.c \
+tests/eo/suite/eo_test_reflection_complex_class_structure.h \
+lib/eo/eo_ptr_indirection.x
 
 if HAVE_JS
 

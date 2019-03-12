@@ -1,4 +1,4 @@
-class Evas.Ector.GL.Image.Buffer extends Ector.GL.Buffer implements Evas.Ector.Buffer
+class @beta Evas.Ector.GL.Image.Buffer extends Ector.GL.Buffer implements Evas.Ector.Buffer
 {
    [[An Ector GL buffer wrapping an existing Evas_GL_Image.]]
    implements {

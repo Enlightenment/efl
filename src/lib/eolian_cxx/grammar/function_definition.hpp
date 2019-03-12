@@ -50,8 +50,8 @@ struct function_definition_generator
         }
       
       if(f.is_beta &&
-         !as_generator("#ifdef " << *(string << "_") << string << "_BETA\n")
-         .generate(sink, std::make_tuple(_klass_name.namespaces, _klass_name.eolian_name), add_upper_case_context(ctx)))
+         !as_generator(lit("#ifdef EFL_BETA_API_SUPPORT\n"))
+         .generate(sink, attributes::unused, ctx))
         return false;
       if(f.is_protected &&
          !as_generator("#ifdef " << *(string << "_") << string << "_PROTECTED\n")

@@ -1,6 +1,6 @@
 import evas_canvas3d_types;
 
-class Evas.Canvas3D.Camera extends Evas.Canvas3D.Object
+class @beta Evas.Canvas3D.Camera extends Evas.Canvas3D.Object
 {
    [[Evas 3D canvas camera class]]
    data: Evas_Canvas3D_Camera_Data;

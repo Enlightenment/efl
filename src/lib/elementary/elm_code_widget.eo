@@ -15,7 +15,7 @@ enum @beta Elm.Code_Widget_Scroller_Policy
 struct @extern Elm.Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
 struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
 
-class Elm.Code_Widget extends Efl.Ui.Layout_Base
+class @beta Elm.Code_Widget extends Efl.Ui.Layout_Base
 {
    [[Elementary code widget]]
    eo_prefix: efl_ui_code_widget;
