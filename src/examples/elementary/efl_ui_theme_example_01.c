@@ -3,7 +3,6 @@
  * gcc -o efl_ui_theme_example_01 efl_ui_theme_example_01.c `pkg-config --cflags --libs elementary`
  */
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 
 #define EFL_UI_WIDGET_PROTECTED
 #include <Efl_Ui.h>

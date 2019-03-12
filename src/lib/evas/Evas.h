@@ -169,10 +169,8 @@
 #include <Eina.h>
 
 #include <Eo.h>
-#ifdef EFL_BETA_API_SUPPORT
 /* This include has been added to support Eo in Evas */
 #include <Efl.h>
-#endif
 
 #include <Evas_Loader.h>
 

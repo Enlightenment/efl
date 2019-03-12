@@ -2356,7 +2356,8 @@ EAPI void elm_config_drag_anim_duration_set(double set);
 
 /* new efl.config interface helpers in C */
 
-#ifdef EFL_EO_API_SUPPORT
+/* FIXME these depend on stuff from Efl.h but this is included before that */
+#ifdef EFL_BETA_API_SUPPORT
 
 static inline Eina_Bool
 efl_config_bool_set(Efl_Config *obj, const char * name, Eina_Bool val)

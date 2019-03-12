@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-#ifndef EFL_EO_API_SUPPORT
-# define EFL_EO_API_SUPPORT
-#endif
-
 /* FIXME: wtf? */
 #ifndef EFL_UI_RADIO_EVENT_CHANGED
 # define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED

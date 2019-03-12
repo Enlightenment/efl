@@ -253,9 +253,7 @@ extern "C" {
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Edje_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
 #include "Edje_Eo.h"
-#endif
 
 #ifdef __cplusplus
 }

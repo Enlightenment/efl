@@ -97,7 +97,6 @@ add_global_arguments(dev_cflags, language: 'cpp')
 foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
   add_global_arguments('-D_GNU_SOURCE=1', language: lang)
-  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
   add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
   add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
   add_global_arguments('-DEFL_BUILD=1', language: lang)
@@ -470,7 +469,6 @@ efl_config_h.set('EFL_VERSION_MICRO', version_micro)
 efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
 
 #FIXME placeholder
-efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
 efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
 
 configure_file(

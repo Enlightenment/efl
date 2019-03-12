@@ -2,13 +2,7 @@
 #define EFL_ACCESS_WINDOW_H
 
 #ifdef EFL_BETA_API_SUPPORT
-#ifdef EFL_EO_API_SUPPORT
-
 #include "efl_access_window.eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_window.eo.legacy.h"
-#endif
 
 /**
  * Emits 'Window:Activated' accessible signal.

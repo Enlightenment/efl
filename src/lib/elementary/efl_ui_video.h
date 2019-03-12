@@ -54,9 +54,7 @@
  * ELM_PLAYER_CLASS
  */
 
-#ifdef EFL_EO_API_SUPPORT
 #include "efl_ui_video_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "efl_ui_video_legacy.h"
 #endif

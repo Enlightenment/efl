@@ -11,7 +11,7 @@
 
 EAPI void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
 EAPI Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
-#if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Set the window's autodel state.
  *

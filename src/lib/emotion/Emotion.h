@@ -127,9 +127,7 @@ extern "C" {
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Emotion_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
 #include "Emotion_Eo.h"
-#endif
 
 /**
  * @file Emotion.h

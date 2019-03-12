@@ -28,7 +28,6 @@ CXXFLAGS="${CXXFLAGS} -Wno-shadow" # No shadow warnings
 #### Apply configuring with legacy api's only, eo api's or both.
 
 EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
 efl_api="both"
 
 #### For the moment the Eo EFL API is not ready you need to explicitly optin.
@@ -43,22 +42,15 @@ AC_ARG_WITH([api],
 case "$efl_api" in
     eo)
         EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         CFOPT_WARNING="xyes"
         ;;
-    legacy)
+    legacy|both)
         EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF=""
-        ;;
-    both)
-        EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         ;;
     *) AC_MSG_ERROR([Invalid api (${efl_api}): must be eo, legacy or both]) ;;
 esac
 
 AC_SUBST(EFL_API_LEGACY_DEF)
-AC_SUBST(EFL_API_EO_DEF)
 
 #### Additional options to configure
 
