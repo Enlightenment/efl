@@ -358,11 +358,6 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
-# include <efl_ui_navigation_bar.eo.h>
-# include <efl_ui_navigation_bar_part.eo.h>
-# include <efl_ui_navigation_bar_part_back_button.eo.h>
-# include <efl_ui_navigation_layout.eo.h>
-# include <efl_ui_stack.eo.h>
 # include <efl_ui_relative_layout.eo.h>
 
 # ifndef _EFL_UI_PAGER_EO_CLASS_TYPE

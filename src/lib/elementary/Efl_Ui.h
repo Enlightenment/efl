@@ -232,6 +232,12 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_panes_eo.h>
 # include <efl_ui_panes_part.eo.h>
 
+# include <efl_ui_navigation_bar.eo.h>
+# include <efl_ui_navigation_bar_part.eo.h>
+# include <efl_ui_navigation_bar_part_back_button.eo.h>
+# include <efl_ui_navigation_layout.eo.h>
+# include <efl_ui_stack.eo.h>
+
 /**
  * Initialize Elementary
  *
