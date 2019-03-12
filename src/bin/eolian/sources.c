@@ -1028,6 +1028,7 @@ _gen_initializer(const Eolian_Class *cl, Eina_Strbuf *buf, Eina_Hash *refh)
    eina_strbuf_append(buf, "   return efl_class_functions_set(klass, opsp, ropsp);\n");
 
    eina_strbuf_free(ops);
+   eina_strbuf_free(refls);
 
    eina_strbuf_append(buf, "}\n\n");
 
