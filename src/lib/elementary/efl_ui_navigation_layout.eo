@@ -16,7 +16,7 @@ class @beta Efl.Ui.Navigation_Layout extends Efl.Ui.Layout_Base implements Efl.C
          get {
          }
          values {
-            value: Efl.Ui.Layout;
+            value: Efl.Ui.Layout_Base;
                [[The bar object located at the top area of the Navigation Layout.
                ]]
          }
