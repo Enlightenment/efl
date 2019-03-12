@@ -35,9 +35,39 @@ Features:
    * efl_ui_relative_layout: introduce new relative container (T5487)
    * eolian: introduce typed slice types
    * eolian: add support for inlist structs
+   * eolian: remove support for inlist/inarray
 
 Fixes:
 
+   * ecore-con/proxy_helper: fix in-tree run path (T6713)
+   * efreet: simplify and fix efreetd launch (T6713)
+   * build: always check for fork() and clearenv()
+   * popup: fix popup sizing when scroll enabled. (T6886)
+   * evas gl-x11 engine - nvidia driver - fix performance drop
+   * canvas vg_loader: close opened file after using it.
+   * elm/win: correctly track and set x11 shaped state
+   * evas textblock: adds missing legacy types
+   * canvas render: stop render_pre/post cb if it didn't render.
+   * Evas text textblock: call evas_font_free even on null fonts
+   * emile image: close file properly.
+   * examples/evas: do not attempt to free animator on window delete (T7000)
+   * ecore_evas: when window resized in ecore_evas, check evas rotate state.
+   * elm_code: (cherry-pick) Fix cusor pos after newline when indenting with tabs
+   * ecore x - fix vsync to not block amdgpu drivers
+   * elm_code_widget: resize cursor at time of font change. (T6470)
+   * evas canvas: fix not to trigger unnecessary events.
+   * build: fix rpath for binaries which use ecore-x dependencies
+   * elm/genlist: remove conditional in _calc_job for verifying show_item code (T6368)
+   * elementary image: don't calc size using empty ones.
+   * evas image: fix screen flickering issue at partial + image preloading
+   * edje_cc: change .mo file write location to be relative to the .edj file
+   * theme: add programs for deferred naviframe push/pop signals
+   * edje: unset internal _need_imf flag on shutdown
+   * elm_panel: return instead of EINA_SAFETY_ON_FALSE_RETURN (T7265)
+   * build: fix evas static build of gl engines
+   * ecore/main: only update loop_time during loop iteration if the change is monotonic
+   * evas gl: fix missing map texture target.
+   * elm_code: fix crash on backspace and selection delete. (T7259)
    * ecore_wl2_dmabuf: Link with ecore_wl2 (T7327)
    * ecore_wl2_dmabuf: Depend on ecore_wl2 (T7327)
    * efl selection manager - avoid multiple selection get callbacks for req
@@ -91,6 +121,10 @@ Fixes:
    * ecore drm2 - work around kms/drm bug seemingly when no flip event comes
    * elm textpath: reduces differences between actual pos and modified pos
    * elm_map: Make more robust elm_map (T7443)
+   * Fix leak in elm atspi
+   * eina_file: set errno on open fail for win32 build
+   * evas-gl-drm: Fix issue of rotation not actually rotating (T7690)
+   * solve neon rotation issue by moving to the tiled rotator
 
 Changes since 1.20.0:
 ---------------------
