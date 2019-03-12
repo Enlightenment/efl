@@ -210,7 +210,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
    Eina_Strbuf *command = eina_strbuf_new();
    unsigned int i = 0;
 
-   pd->command = eina_array_new(eina_array_count(array));
+   pd->command = eina_array_new(array ? eina_array_count(array) : 0);
    for (i = 0; i < (array ? eina_array_count(array) : 0); ++i)
      {
         char *content = eina_array_data_get(array, i);
