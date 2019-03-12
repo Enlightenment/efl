@@ -533,7 +533,9 @@ _evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *eo_e, Evas_Public_D
    Eina_Iterator *it;
    Eo *child;
 
-   if (pos) *pos = EINA_POSITION2D(0, 0);
+   if (!pos) return EINA_FALSE;
+
+   *pos = EINA_POSITION2D(0, 0);
    if (!e->default_seat) return EINA_FALSE;
    if (!seat)
      {
@@ -548,6 +550,7 @@ _evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *eo_e, Evas_Public_D
        break;
    if (child)
      *pos = efl_input_pointer_position_get(child);
+
    eina_iterator_free(it);
    return !!child;
 }
