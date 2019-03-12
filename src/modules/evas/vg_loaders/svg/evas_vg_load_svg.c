@@ -2339,7 +2339,9 @@ evas_vg_load_file_close_svg(Vg_File_Data *vfd)
 }
 
 static Vg_File_Data*
-evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *error EINA_UNUSED)
+evas_vg_load_file_open_svg(Eina_File *file,
+                           const char *key EINA_UNUSED,
+                           int *error EINA_UNUSED)
 {
    Evas_SVG_Loader loader = {
      NULL, NULL, NULL, NULL, NULL, 0, EINA_FALSE
@@ -2347,18 +2349,10 @@ evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *e
    const char   *content;
    unsigned int  length;
    Svg_Node     *defs;
-   Eina_File    *f;
-
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f)
-     {
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        return NULL;
-     }
 
    loader.svg_parse = calloc(1, sizeof(Evas_SVG_Parser));
-   length = eina_file_size_get(f);
-   content = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   length = eina_file_size_get(file);
+   content = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
    if (content)
      {
        loader.stack = eina_array_new(8);
@@ -2366,7 +2360,7 @@ evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *e
                                  _evas_svg_loader_parser, &loader);
 
        eina_array_free(loader.stack);
-       eina_file_map_free(f, (void*) content);
+       eina_file_map_free(file, (void*) content);
      }
 
    if (loader.doc)
@@ -2383,7 +2377,7 @@ evas_vg_load_file_open_svg(const char *file, const char *key EINA_UNUSED, int *e
         *error = EVAS_LOAD_ERROR_GENERIC;
      }
    free(loader.svg_parse);
-   eina_file_close(f);
+
    return vg_common_svg_create_vg_node(loader.doc);
 }
 
