@@ -292,7 +292,7 @@ EOLIAN static Eina_Error
 _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 {
    Eina_Error err;
-   const Eina_File *file;
+   const char *file;
    const char *key;
 
    if (efl_file_loaded_get(obj)) return 0;
@@ -300,15 +300,15 @@ _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
    err = efl_file_load(efl_super(obj, MY_CLASS));
    if (err) return err;
 
-   file = efl_file_mmap_get(obj);
+   file = efl_file_get(obj);
    key = efl_file_key_get(obj);
-   efl_file_simple_mmap_load(pd->vg, file, key);
+   efl_file_simple_load(pd->vg, file, key);
 
    pd->progress = 0;
 
    _sizing_eval(pd);
 
-   if (!_ready_play(pd)) return EINA_TRUE;
+   if (!_ready_play(pd)) return 1;
 
    if (pd->auto_play)
      {
@@ -322,7 +322,7 @@ _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
              evas_object_smart_callback_call(pd->obj, SIG_PLAY_PAUSE, NULL);
           }
      }
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static void

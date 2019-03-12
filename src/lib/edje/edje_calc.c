@@ -3204,7 +3204,8 @@ _edje_vector_animation_running_cb(void *data EINA_UNUSED, const Efl_Event *event
    Edje_Real_Part *ep = (Edje_Real_Part *)data;
    int frame, frame_count;
 
-   frame_count = efl_gfx_frame_controller_frame_count_get(ep->object);
+   frame_count = efl_gfx_frame_controller_frame_count_get(ep->object) - 1;
+   if (frame_count < 0) frame_count = 0;
 
    if (ep->typedata.vector->backward)
      frame = ep->typedata.vector->start_frame - (int) (frame_count * pos);

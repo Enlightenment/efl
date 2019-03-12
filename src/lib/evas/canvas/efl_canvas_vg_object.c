@@ -878,8 +878,8 @@ _efl_canvas_vg_object_efl_gfx_frame_controller_frame_duration_get(const Eo *eo_o
 
 EOLIAN static Eina_Bool
 _efl_canvas_vg_object_efl_gfx_frame_controller_frame_set(Eo *eo_obj,
-                                                                            Efl_Canvas_Vg_Object_Data *pd,
-                                                                            int frame_index)
+                                                         Efl_Canvas_Vg_Object_Data *pd,
+                                                         int frame_index)
 {
    //TODO: Validate frame_index range
    if (pd->frame_idx == frame_index) return EINA_TRUE;
