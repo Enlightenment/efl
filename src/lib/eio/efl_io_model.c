@@ -605,6 +605,7 @@ _property_mime_type_cb(const Eo *obj, Efl_Io_Model_Data *pd)
 {
    if (pd->mime_type)
      return eina_value_string_new(pd->mime_type);
+   if (pd->error) return eina_value_error_new(pd->error);
 
    _eio_build_mime(obj, pd);
    return eina_value_error_new(EAGAIN);
@@ -640,7 +641,6 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
    unsigned int i;
 
    if (!property) return NULL;
-   if (pd->error) return eina_value_error_new(pd->error);
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
      if (property == properties[i].name ||
