@@ -124,16 +124,16 @@ _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
 }
 
 void
-_event_to_legacy_call(Eo *obj, const Efl_Event_Description *evt_desc, void *event_info)
+_event_to_legacy_call(Eo *obj, const char *legacy_evt, void *event_info)
 {
-   const Efl_Event_Description *legacy_desc = efl_object_legacy_only_event_description_get(evt_desc->name);
+   const Efl_Event_Description *legacy_desc = efl_object_legacy_only_event_description_get(legacy_evt);
    efl_event_callback_call(obj, legacy_desc, event_info);
 }
 
 void
-_model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, Efl_Model *model, const char *path)
+_model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, const char *legacy_evt, Efl_Model *model, const char *path)
 {
-   _event_to_legacy_call(obj, evt_desc, (void *)path);
+   _event_to_legacy_call(obj, legacy_evt, (void *)path);
    efl_event_callback_call(obj, evt_desc, model);
 }
 
@@ -665,8 +665,7 @@ _signal_first(Listing_Request *lreq)
         sd->multi_selection = eina_list_free(sd->multi_selection);
      }
 
-   _model_event_call
-     (lreq->obj, ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN, lreq->model, lreq->path);
+   _model_event_call(lreq->obj, ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN, ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN->name, lreq->model, lreq->path);
 
    if (!lreq->parent_it)
      {
@@ -1129,8 +1128,7 @@ _on_item_activated(void *data, const Efl_Event *event)
 
    if (!it_data->is_dir)
      {
-        _model_event_call
-          (data, ELM_FILESELECTOR_EVENT_ACTIVATED, it_data->model, it_data->path);
+        _model_event_call(data, ELM_FILESELECTOR_EVENT_ACTIVATED, ELM_FILESELECTOR_EVENT_ACTIVATED->name, it_data->model, it_data->path);
         return;
      }
 
@@ -1214,8 +1212,7 @@ _on_item_selected(void *data, const Efl_Event *event)
         else
           elm_object_text_set(sd->name_entry, it_data->filename);
 
-        _model_event_call
-          (data, EFL_UI_EVENT_ITEM_SELECTED, it_data->model, it_data->path);
+        _model_event_call(data, EFL_UI_EVENT_ITEM_SELECTED, "selected", it_data->model, it_data->path);
      }
    else if (sd->multi && it_data->is_dir && sd->double_tap_navigation)
      {
@@ -1368,7 +1365,7 @@ _ok(void *data, const Efl_Event *event)
 
    if (!sd->model || !sd->path)
      {
-        _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL, NULL);
+        _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, NULL, NULL);
         return;
      }
 
@@ -1386,8 +1383,7 @@ _ok(void *data, const Efl_Event *event)
                                      efl_event_callback_array_add(efl_added, noref_death(), NULL));
         _model_str_property_set(selected_model, "path", selection);
 
-        _model_event_call
-          (fs, ELM_FILESELECTOR_EVENT_DONE, selected_model, selection);
+        _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, selected_model, selection);
 
         efl_unref(selected_model);
         eina_stringshare_del(selection);
@@ -1397,13 +1393,11 @@ _ok(void *data, const Efl_Event *event)
         Elm_Fileselector_Item_Data *it_data = _selected_item_data_get(sd);
         if (it_data)
           {
-             _model_event_call
-               (fs, ELM_FILESELECTOR_EVENT_DONE, it_data->model, it_data->path);
+             _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, it_data->model, it_data->path);
           }
         else
           {
-             _model_event_call
-               (fs, ELM_FILESELECTOR_EVENT_DONE, sd->model, sd->path);
+             _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, sd->model, sd->path);
           }
      }
 }
@@ -1413,7 +1407,7 @@ _canc(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
-   _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, NULL, NULL);
+   _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, NULL, NULL);
 }
 
 static void
@@ -1441,7 +1435,7 @@ _on_text_activated_set_path_then(void *data, const Eina_Value v, const Eina_Futu
 
    if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
      {
-        _model_event_call(fs, ELM_FILESELECTOR_EVENT_SELECTED_INVALID, model, str);
+        _model_event_call(fs, ELM_FILESELECTOR_EVENT_SELECTED_INVALID, ELM_FILESELECTOR_EVENT_SELECTED_INVALID->name, model, str);
         goto selected;
      }
 
@@ -1467,7 +1461,7 @@ _on_text_activated_set_path_then(void *data, const Eina_Value v, const Eina_Futu
 
  selected:
    if (sd->only_folder)
-     _model_event_call(fs, EFL_UI_EVENT_ITEM_SELECTED, model, str);
+     _model_event_call(fs, EFL_UI_EVENT_ITEM_SELECTED, "selected", model, str);
 
  end:
    _text_activated_free_fs_data(fs);
@@ -1953,13 +1947,15 @@ static Eina_Bool
 _from_efl_event_call(Elm_Fileselector *fs, const Efl_Event_Description *evt_desc, Efl_Model *model)
 {
    Eina_Value *fetch;
+   const char *evt;
    char *path;
 
    // Call legacy smart callback with path
    fetch = efl_model_property_get(model, "path");
    path = eina_value_to_string(fetch);
 
-   _event_to_legacy_call(fs, evt_desc, path);
+   evt = evt_desc == EFL_UI_EVENT_ITEM_SELECTED ? "selected" : evt_desc->name;
+   _event_to_legacy_call(fs, evt, path);
 
    // Call Eo event with model
    return efl_event_callback_call(fs, evt_desc, model);
