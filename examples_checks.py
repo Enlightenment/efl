@@ -105,7 +105,14 @@ def simulate_example(example):
   args = []
   if os.path.basename(example) in example_preparation:
     args = example_preparation[os.path.basename(example)]()
-  run = subprocess.Popen([G.builddir + "/" + example] + args,
+
+  #meson changed behaviour from 0.49 to 0.50 so we need this:
+  if os.path.isabs(example):
+    example_dir = example
+  else:
+    example_dir = os.path.join(G.builddir, example)
+
+  run = subprocess.Popen([example_dir] + args,
       stdout = subprocess.PIPE,
       stderr = subprocess.PIPE,
   )
@@ -119,9 +126,17 @@ def simulate_example(example):
   else:
     return (example, True if b'ERR' in outs or b'ERR' in errs else False, run.poll())
 
+#meson changed behaviour from 0.49 to 0.50 so we need this:
+def meson_fetch_filename(filename_object):
+  if isinstance(filename_object, str):
+    return filename_object
+  else:
+    return filename_object[0]
+
 
 parser = argparse.ArgumentParser(description='Run the examples of efl')
 parser.add_argument('builddir', metavar='build', help='the path where to find the meson build directory')
+
 
 G = parser.parse_args()
 #Run meson to fetch all examples
@@ -131,7 +146,7 @@ meson_introspect = subprocess.Popen(["meson", "introspect", G.builddir, "--targe
 )
 meson_introspect.poll()
 build_targets = json.loads(meson_introspect.stdout.read())
-examples = [b["filename"] for b in build_targets if "examples" in b["filename"] and b["type"] == "executable"]
+examples = [meson_fetch_filename(b["filename"]) for b in build_targets if "examples" in meson_fetch_filename(b["filename"]) and b["type"] == "executable"]
 state = State(len(examples))
 #simulate all examples in parallel with up to 5 runners
 with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
