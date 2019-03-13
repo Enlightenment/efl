@@ -201,8 +201,7 @@ static void
 _elm_fileselector_smart_del_do(Elm_Fileselector *fs, Elm_Fileselector_Data *sd)
 {
    _elm_fileselector_replace_model(fs, sd, NULL, NULL);
-   if (sd->prev_model)
-     efl_unref(sd->prev_model);
+   efl_replace(&sd->prev_model, NULL);
    free(ecore_idler_del(sd->populate_idler));
    ecore_idler_del(sd->path_entry_idler);
 
@@ -842,8 +841,19 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
        !_fetch_int64_value(child, "size", &size) ||
        !_fetch_bool_value(child, "is_dir", &dir))
      {
+        Eina_Value *check_error = efl_model_property_get(child, "mtime");
+        Eina_Error err = EAGAIN;
+
+        if (eina_value_type_get(check_error) == EINA_VALUE_TYPE_ERROR)
+          {
+             // If the error is different from EAGAIN, we should definitively drop this one.
+             eina_value_error_get(check_error, &err);
+          }
         // SETUP listener to retry fetching all data when ready
-        efl_event_callback_array_add(efl_ref(child), child_model_callbacks(), sd);
+        if (err == EAGAIN)
+          {
+             efl_event_callback_array_add(efl_ref(child), child_model_callbacks(), sd);
+          }
         goto cleanup;
      }
 
@@ -1134,7 +1144,6 @@ _on_item_activated(void *data, const Efl_Event *event)
 
    if (!sd->double_tap_navigation) return;
 
-   efl_parent_set(it_data->model, data);
    _schedule_populate(data, sd, it_data->model, NULL);
 }
 
@@ -1253,8 +1262,6 @@ _on_item_selected(void *data, const Efl_Event *event)
 
    if (sd->double_tap_navigation) return;
 
-   // Take ownership of the model, to keep it alive
-   efl_parent_set(it_data->model, data);
    _schedule_populate(data, sd, it_data->model, NULL);
 }
 
@@ -1380,8 +1387,8 @@ _ok(void *data, const Efl_Event *event)
           selection = eina_stringshare_printf("%s/%s", sd->path, name);
 
         selected_model = efl_add_ref(efl_class_get(sd->model), event->object,
-                                     efl_event_callback_array_add(efl_added, noref_death(), NULL));
-        _model_str_property_set(selected_model, "path", selection);
+                                     efl_event_callback_array_add(efl_added, noref_death(), NULL),
+                                     efl_io_model_path_set(efl_added, selection));
 
         _model_event_call(fs, ELM_FILESELECTOR_EVENT_DONE, ELM_FILESELECTOR_EVENT_DONE->name, selected_model, selection);
 
@@ -1535,14 +1542,12 @@ _anchor_clicked(void *data, const Efl_Event *event)
 
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
-   if (!sd->model)
-     return;
+   if (!sd->model) return;
 
    model = efl_add_ref(efl_class_get(sd->model), event->object,
-                       efl_event_callback_array_add(efl_added, noref_death(), NULL));
-   if (!model)
-     return;
-   _model_str_property_set(model, "path", info->name);
+                       efl_event_callback_array_add(efl_added, noref_death(), NULL),
+                       efl_io_model_path_set(efl_added, info->name));
+   if (!model) return;
 
    _populate(fs, model, NULL, NULL);
    efl_unref(model);
@@ -1971,8 +1976,8 @@ _from_legacy_event_call(Elm_Fileselector *fs, Elm_Fileselector_Data *sd, const E
      model_cls = efl_class_get(sd->model);
 
    Efl_Model *model = efl_add_ref(model_cls, fs,
-                                  efl_event_callback_array_add(efl_added, noref_death(), NULL));
-   _model_str_property_set(model, "path", path);
+                                  efl_event_callback_array_add(efl_added, noref_death(), NULL),
+                                  efl_io_model_path_set(efl_added, path));
 
    // Call Eo event with model
    efl_event_callback_call(fs, evt_desc, model);
@@ -2180,15 +2185,15 @@ elm_fileselector_path_set(Evas_Object *obj,
 void
 _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 {
-   Efl_Io_Model *model = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, _path),
-                                     efl_event_callback_array_add(efl_added, noref_death(), NULL));
+   Efl_Io_Model *model = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
+                                     efl_io_model_path_set(efl_added, _path),
+                                     efl_loop_model_volatile_make(efl_added));
    if (!model)
      {
         ERR("Efl.Model allocation error");
         return;
      }
    efl_ui_view_model_set(obj, model);
-   efl_unref(model);
 }
 
 EOLIAN static void
