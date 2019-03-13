@@ -2764,7 +2764,6 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
 
-   if (!efl_layout_group_part_exist_get(obj, part)) return EINA_FALSE;
    efl_text_set(efl_part(obj, part), text);
    return EINA_TRUE;
 }
