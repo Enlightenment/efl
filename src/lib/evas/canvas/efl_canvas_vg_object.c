@@ -941,12 +941,6 @@ evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index)
 }
 
 EAPI Eina_Bool
-evas_object_vg_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key)
-{
-   return efl_file_simple_mmap_load(obj, f, key);
-}
-
-EAPI Eina_Bool
 evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    return efl_file_simple_load(obj, file, key);

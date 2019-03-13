@@ -3664,26 +3664,6 @@ NULL, otherwise.
 EAPI Eina_Bool evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key);
 
 /**
- *
- * Set the source mmaped file from where an vector object must fetch the real
- * vector data (it may be one of json, svg, eet files).
- *
- * If the file supports multiple data stored in it (as Eet files do),
- * you can specify the key to be used as the index of the vector in
- * this file.
- *
- * @since 1.22
- *
- * @param[in] f The mmaped file
- * @param[in] key The vector key in @p file (if its an Eet one), or @c
-NULL, otherwise.
- *
- * @return @c EINA_TRUE if it's succeed to read file, @c EINA_FALSE otherwise.
- *
- */
-EAPI Eina_Bool evas_object_vg_mmap_set(Evas_Object *obj, const Eina_File *f, const char *key);
-
-/**
  * Set current frame of animated vector object.
  *
  * @param[in] frame_index The index of current frame.
