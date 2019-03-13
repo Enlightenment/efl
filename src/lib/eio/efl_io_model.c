@@ -439,10 +439,9 @@ _eio_build_mime_clean(Efl_Io_Model_Data *pd)
 }
 
 static Eina_Value
-_eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_eio_build_mime_now(Eo *model, void *data, const Eina_Value v)
 {
-   Efl_Io_Model *model = data;
-   Efl_Io_Model_Data *pd = efl_data_scope_get(model, EFL_IO_MODEL_CLASS);
+   Efl_Io_Model_Data *pd = data;
 
    if (v.type == EINA_VALUE_TYPE_ERROR) goto on_error;
    if (!pd->loop) goto on_error;
@@ -450,8 +449,9 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
    // Make sure that we are not over consuming time in the main loop
    if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
      {
-        Eina_Future *f = eina_future_then(_build_delay(model),
-                                          _eio_build_mime_now, model, NULL);
+        Eina_Future *f = efl_future_then(model, _build_delay(model),
+                                         .success = _eio_build_mime_now,
+                                         .data = pd);
         return eina_future_as_value(efl_future_then(model, f));
      }
 
@@ -472,16 +472,14 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
 static void
 _eio_build_mime(const Efl_Object *model, Efl_Io_Model_Data *pd)
 {
-   Eina_Future *f;
-
    if (pd->mime_type) return ;
    if (pd->request.mime) return ;
 
    efl_wref_add(efl_loop_get(model), &pd->loop);
 
-   f = efl_loop_job(pd->loop);
-   f = eina_future_then(f, _eio_build_mime_now, model, NULL);
-   pd->request.mime = efl_future_then(model, f);
+   pd->request.mime = efl_future_then(model, efl_loop_job(pd->loop),
+                                      .success = _eio_build_mime_now,
+                                      .data = pd);
 }
 
 static Eina_Value *
