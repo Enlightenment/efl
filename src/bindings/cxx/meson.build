@@ -30,7 +30,7 @@ foreach lib : cxx_sublibs
     '-DNEED_RUN_IN_TREE=1'
   ]
 
-  dir_package_include = join_paths(dir_include, package_version_name)
+  dir_package_include = package_version_name
   dir_package_modules = join_paths(dir_lib, package_name, 'modules')
   cxx_generator_target = []
   cxx_header_src = []
