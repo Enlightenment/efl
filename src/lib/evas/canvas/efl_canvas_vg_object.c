@@ -952,4 +952,5 @@ evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
    return efl_file_simple_load(obj, file, key);
 }
 
+#include "efl_canvas_vg_object_eo.legacy.c"
 #include "efl_canvas_vg_object.eo.c"

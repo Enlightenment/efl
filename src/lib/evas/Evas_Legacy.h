@@ -3712,6 +3712,7 @@ EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONN
 
 
 #include "canvas/efl_canvas_vg_node.eo.legacy.h"
+#include "canvas/efl_canvas_vg_object_eo.legacy.h"
 #include "canvas/efl_canvas_vg_object.eo.legacy.h"
 #include "canvas/efl_canvas_vg_container.eo.legacy.h"
 
