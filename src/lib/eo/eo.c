@@ -384,6 +384,16 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass,
    return NULL;
 }
 
+static inline void
+_apply_auto_unref(_Eo_Object *obj, const Eo *eo_obj)
+{
+   if (EINA_UNLIKELY(obj && obj->auto_unref))
+     {
+        if (obj->finalized && !(--obj->auto_unref))
+          efl_unref(eo_obj);
+     }
+}
+
 /************************************ EO ************************************/
 
 static EFL_FUNC_TLS _Efl_Class *_super_klass = NULL;
@@ -576,11 +586,7 @@ err_func_src:
 err:
    if (is_obj)
      {
-        if (EINA_UNLIKELY(obj->auto_unref != 0))
-          {
-             if (obj->finalized && !(--obj->auto_unref))
-               efl_unref(eo_id);
-          }
+        _apply_auto_unref(obj, eo_id);
         _efl_unref(obj);
         _eo_obj_pointer_done((Eo_Id)eo_id);
      }
@@ -644,11 +650,7 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
 {
    if (EINA_LIKELY(!!call->obj))
      {
-        if (EINA_UNLIKELY(call->obj->auto_unref != 0))
-          {
-             if (call->obj->finalized && !(--call->obj->auto_unref))
-               efl_unref(call->eo_id);
-          }
+        _apply_auto_unref(call->obj, call->eo_id);
         _efl_unref(call->obj);
         _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
@@ -715,11 +717,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
                        file, api_func_name, line,
                        "Unable to resolve op for api func %p for obj=%p (%s)",
                        api_func, eo_obj, efl_class_name_get(eo_obj));
-        if (EINA_UNLIKELY(obj && obj->auto_unref))
-          {
-             if (obj->finalized && !(--obj->auto_unref))
-               efl_unref(eo_obj);
-          }
+        _apply_auto_unref(obj, eo_obj);
         return EFL_NOOP;
      }
 
