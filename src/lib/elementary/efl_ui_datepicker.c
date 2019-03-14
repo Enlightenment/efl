@@ -27,6 +27,7 @@
      t.tm_year = pd->cur_date[DATEPICKER_YEAR] - 1900;               \
      t.tm_mon = pd->cur_date[DATEPICKER_MONTH] - 1;                  \
      t.tm_mday = pd->cur_date[DATEPICKER_DAY];                       \
+     t.tm_sec = 0;                                                   \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
    } while (0)
 
