@@ -1993,6 +1993,9 @@ efl_unref(const Eo *obj_id)
           }
         _efl_unref(obj);
      }
+
+   _apply_auto_unref(obj, obj_id);
+
    _efl_unref(obj);
    EO_OBJ_DONE(obj_id);
 }
