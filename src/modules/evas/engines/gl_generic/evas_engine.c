@@ -627,6 +627,7 @@ eng_image_size_set(void *engine, void *image, int w, int h)
    Evas_GL_Image *im_old;
 
    if (!im) return NULL;
+   gl_context = gl_generic_context_find(engine, 1);
    if (im->native.data)
      {
         im->w = w;
@@ -634,7 +635,6 @@ eng_image_size_set(void *engine, void *image, int w, int h)
         evas_gl_common_image_native_enable(im);
         return image;
      }
-   gl_context = gl_generic_context_find(engine, 1);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
         evas_gl_common_texture_free(im->tex, EINA_TRUE);
