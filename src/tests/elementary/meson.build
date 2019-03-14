@@ -149,6 +149,11 @@ efl_ui_suite = executable('efl_ui_suite',
   ]
 )
 
+efl_ui_compile_test = executable('efl_ui_compile_test',
+  'efl_ui_compile_test.c',
+  dependencies: [elementary, eio],
+)
+
 test('elementary-suite', elementary_suite,
   env : test_env
 )
