@@ -1,11 +1,11 @@
-pub_legacy_eo_files = [
+pub_eo_file = [
    'efl_canvas_video.eo'
 ]
 
 pub_eo_file_target = []
 priv_eo_file_target = []
 
-foreach eo_file : pub_legacy_eo_files
+foreach eo_file : pub_eo_file
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
     input : eo_file,
     output : [eo_file + '.h'],
@@ -62,9 +62,11 @@ emotion = declare_dependency(
   dependencies: emotion_pub_deps,
 )
 
-install_data(pub_legacy_eo_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+if get_option('install-eo-files')
+  install_data(pub_eo_file,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(emotion_header_src,
   install_dir : dir_package_include,

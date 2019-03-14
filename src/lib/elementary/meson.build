@@ -1013,9 +1013,12 @@ elementary = declare_dependency(
   dependencies: elementary_pub_deps,
 )
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(elementary_header_src,
   install_dir : dir_package_include,
