@@ -455,18 +455,6 @@ struct klass
      std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
-     // The klass field is static but there is no problem if multiple C# classes inherit from this generated one
-     // as it is just a simple wrapper, forwarding the Eo calls either to the user API (where C#'s virtual method
-     // resolution kicks in) or to the base implementation (efl_super).
-     if (is_inherit)
-       {
-          if(!as_generator(
-             scope_tab << "public " << (root ? "" : "new ") <<  "static System.IntPtr klass = System.IntPtr.Zero;\n"
-             << scope_tab << "public " << (root ? "" : "new ") << "static " << native_inherit_full_name << " nativeInherit = new " << native_inherit_full_name << "();\n"
-             ).generate(sink, attributes::unused, context))
-            return false;
-       }
-
      std::string raw_klass_modifier;
      if (!root)
        raw_klass_modifier = "override ";
