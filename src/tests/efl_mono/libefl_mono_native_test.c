@@ -46,9 +46,9 @@
 #endif
 
 #include "dummy_numberwrapper.eo.h"
+#include "dummy_test_iface.eo.h"
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
-#include "dummy_test_iface.eo.h"
 #include "dummy_another_iface.eo.h"
 #include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
@@ -74,6 +74,7 @@ typedef struct Dummy_Test_Object_Data
   int iface_prop;
   Eo *provider;
   Eo *iface_provider;
+  Eina_Bool provider_callback_called;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -3938,6 +3939,36 @@ Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dumm
     else if (klass == DUMMY_TEST_IFACE_INTERFACE)
         return pd->iface_provider;
     return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
+}
+
+void _provider_callback_called_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+    Eo *obj = data;
+    dummy_test_object_provider_callback_called_set(obj, EINA_TRUE);
+}
+
+void _dummy_test_object_set_iface_provider(Eo *obj, Dummy_Test_Object_Data *pd, Eo *provider)
+{
+    if (pd->iface_provider)
+      {
+         efl_parent_set(pd->iface_provider, NULL);
+         efl_unref(pd->iface_provider);
+         pd->iface_provider = NULL;
+      }
+    pd->iface_provider = provider;
+    efl_parent_set(provider, obj);
+    dummy_test_object_provider_callback_called_set(obj, EINA_FALSE);
+    efl_event_callback_add(provider, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, _provider_callback_called_cb, obj);
+}
+
+void _dummy_test_object_provider_callback_called_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, Eina_Bool prop)
+{
+    pd->provider_callback_called = prop;
+}
+
+Eina_Bool _dummy_test_object_provider_callback_called_get(const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+    return pd->provider_callback_called;
 }
 
 /// Dummy.Child

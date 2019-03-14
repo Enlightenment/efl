@@ -274,4 +274,36 @@ class TestEventNaming
 
     }
 }
+
+class TestImplementedEvent
+{
+    private class IfaceImplement : Efl.Object, Dummy.TestIface
+    {
+        public IfaceImplement() : base(null) { }
+
+        // Methods from TestIface
+        public event EventHandler ConflictedEvt;
+        public event EventHandler NonconflictedEvt;
+
+        public void EmitTestConflicted() { }
+        public void EmitNonconflicted() { }
+
+        public int GetIfaceProp() { return 0; }
+        public void SetIfaceProp(int x) { }
+        public int IfaceProp {
+            get { return GetIfaceProp(); }
+            set { SetIfaceProp(value); }
+        }
+    }
+
+    public static void test_interface_events_implementation()
+    {
+        var obj = new Dummy.TestObject();
+        var provider = new IfaceImplement();
+        obj.SetIfaceProvider(provider);
+        provider.EmitNonconflicted();
+        Test.Assert(obj.GetProviderCallbackCalled());
+    }
+
+}
 }
