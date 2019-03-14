@@ -393,6 +393,25 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_text_set)
+{
+   Evas_Object *win, *entry;
+   const char *entry_text = "hello world";
+   const char *entry_text2 = "scrollable";
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+
+   ck_assert(elm_layout_text_set(entry, NULL, entry_text));
+   ck_assert_str_eq(elm_object_text_get(entry), entry_text);
+
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   ck_assert(elm_layout_text_set(entry, NULL, entry_text2));
+   ck_assert_str_eq(elm_object_text_get(entry), entry_text2);
+}
+EFL_END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_legacy_type_check);
@@ -407,4 +426,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_text_get);
    tcase_add_test(tc, elm_entry_atspi_text_selections);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_entry_text_set);
 }

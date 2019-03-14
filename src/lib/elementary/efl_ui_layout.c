@@ -2756,6 +2756,7 @@ elm_layout_table_clear(Eo *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_text_set(Eo *obj, const char *part, const char *text)
 {
+   Eo *part_obj;
    if (!part)
      {
         part = efl_ui_widget_default_text_part_get(obj);
@@ -2764,7 +2765,19 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
 
-   efl_text_set(efl_part(obj, part), text);
+   part_obj = efl_ref(efl_part(obj, part));
+
+   if (!efl_isa(part_obj, EFL_TEXT_INTERFACE) ||
+       !efl_isa(part_obj, EFL_UI_LAYOUT_PART_CLASS))
+     {
+        efl_unref(part_obj);
+        return EINA_FALSE;
+     }
+
+   efl_text_set(part_obj, text);
+
+   efl_unref(part_obj);
+
    return EINA_TRUE;
 }
 
