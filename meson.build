@@ -422,9 +422,12 @@ if get_option('eolian-bootstrap') == false
   subdir(join_paths('src', 'generic', 'emotion'))
 
   bindings = get_option('bindings')
+  bindings_order = ['luajit', 'cxx', 'mono']
 
-  foreach binding : bindings
-    subdir(join_paths('src', 'bindings', binding))
+  foreach binding : bindings_order
+    if bindings.contains(binding)
+      subdir(join_paths('src', 'bindings', binding))
+    endif
   endforeach
 
   subdir(join_paths('src', 'edje_external'))
