@@ -167,6 +167,7 @@ _reposition(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    EINA_LIST_FOREACH(pd->items, l, item)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
+        if (!id) continue;
 
         ipos.x = id->geo.x - pan.x;
         ipos.y = id->geo.y - pan.y;
