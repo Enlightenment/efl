@@ -274,7 +274,7 @@ struct event_definition_generator
             << scope_tab << "{\n"
             << scope_tab << scope_tab << event_args
             << scope_tab << scope_tab << "try {\n"
-            << scope_tab << scope_tab << scope_tab << "On_" << wrapper_evt_name << "(args);\n"
+            << scope_tab << scope_tab << scope_tab << "On" << wrapper_evt_name << "(args);\n"
             << scope_tab << scope_tab <<  "} catch (Exception e) {\n"
             << scope_tab << scope_tab << scope_tab << "Eina.Log.Error(e.ToString());\n"
             << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
@@ -293,10 +293,15 @@ struct event_definition_generator
                               , std::string const& event_template_args
                               , Context context) const
    {
+      std::string visibility = "protected ";
+
+      if (leaf_klass.type == attributes::class_type::interface_
+          || leaf_klass.type == attributes::class_type::mixin)
+        visibility = "internal ";
       auto delegate_type = "EventHandler" + event_template_args;
       if (!as_generator(
             scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
-            << scope_tab << "public void On_" << event_name << "(" << event_args_type << " e)\n"
+            << scope_tab << visibility << "void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << delegate_type << " evt;\n"
             << scope_tab << scope_tab << "lock (eventLock) {\n"
