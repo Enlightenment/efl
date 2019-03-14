@@ -56,13 +56,16 @@ BUILT_SOURCES += \
                  $(ecore_con_eolian_c) \
                  $(ecore_con_eolian_h)
 
+if INSTALL_EO_FILES
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
                            $(ecore_con_eolian_files) \
 			   $(ecore_con_eolian_type_files)
+endif
 
 EXTRA_DIST2 += \
-              ${ecoreconeolianfiles_DATA}
+              $(ecore_con_eolian_files) \
+			   $(ecore_con_eolian_type_files)
 
 
 lib_LTLIBRARIES += lib/ecore_con/libecore_con.la

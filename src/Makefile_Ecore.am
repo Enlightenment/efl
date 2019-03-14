@@ -74,8 +74,10 @@ BUILT_SOURCES += \
                  $(ecore_priv_c) \
                  $(ecore_priv_h)
 
+if INSTALL_EO_FILES
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
+endif
 
 ecore_legacy_eo_c = \
 lib/ecore/ecore_exe_eo.c \

@@ -111,9 +111,10 @@ BUILT_SOURCES += \
                  $(evas_eolian_c) \
                  $(evas_eolian_h)
 
+if INSTALL_EO_FILES
 evaseolianfilesdir = $(datadir)/eolian/include/evas-@VMAJ@
 evaseolianfiles_DATA = $(evas_eolian_files)
-
+endif
 
 evas_legacy_eo_h = \
 lib/evas/canvas/efl_canvas_event_grabber_eo.legacy.h \
@@ -169,7 +170,7 @@ lib/evas/canvas/evas_textgrid_eo.legacy.c
 
 
 EXTRA_DIST2 += \
-        $(evaseolianfiles_DATA) \
+        $(evas_eolian_files) \
         $(evas_eolian_internal_files) \
         $(evas_legacy_eo_c)
 

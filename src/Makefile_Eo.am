@@ -51,13 +51,15 @@ lib_eo_libeo_dbg_la_LDFLAGS = $(lib_eo_libeo_la_LDFLAGS)
 bin_SCRIPTS += scripts/eo/eo_debug
 
 ######
-
+if INSTALL_EO_FILES
 eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
 eoeolianfiles_DATA = \
 					 $(eo_eolian_files) \
 					 lib/eo/eina_types.eot # We don't generate .c/.h on purpose
-
-EXTRA_DIST2 += ${eoeolianfiles_DATA}
+endif
+EXTRA_DIST2 += \
+$(eo_eolian_files) \
+lib/eo/eina_types.eot
 
 ### Unit tests
 

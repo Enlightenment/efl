@@ -147,6 +147,20 @@ case "${build_tests}" in
      ;;
 esac
 
+install_eo_files="no"
+AC_ARG_ENABLE([install-eo-files],
+   [AS_HELP_STRING([--enable-install-eo-files],[Enable installing eo files. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_eo_files="yes"
+    else
+       install_eo_files="no"
+    fi
+   ],
+   [install_eo_files="no"])
+
+AM_CONDITIONAL([INSTALL_EO_FILES], [test "${install_eo_files}" = "yes"])
+
 AC_ARG_WITH([ecore-con-http-test-url],
    [AS_HELP_STRING([--with-ecore-con-http-test-url=http://username:password@example.com],[Url of http server for testing with username and password])],[ECORE_CON_HTTP_TEST_URL=${withval}][AC_DEFINE_UNQUOTED([ECORE_CON_HTTP_TEST_URL],["$withval"],[Http url for testing])])
 

@@ -11,11 +11,13 @@ eio_eolian_c =  $(eio_eolian_files:%.eo=%.eo.c)
 
 BUILT_SOURCES += $(eio_eolian_c) $(eio_eolian_h)
 
+if INSTALL_EO_FILES
 eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
 eioeolianfiles_DATA = $(eio_eolian_files)
+endif
 
 lib_LTLIBRARIES += lib/eio/libeio.la
-EXTRA_DIST2 += $(eioeolianfiles_DATA)
+EXTRA_DIST2 += $(eio_eolian_files)
 
 installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
 

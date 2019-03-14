@@ -219,8 +219,10 @@ BUILT_SOURCES += \
 	$(elm_legacy_eolian_eo_h) \
 	$(elm_legacy_eolian_legacy_h)
 
+if INSTALL_EO_FILES
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
+endif
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
@@ -628,7 +630,7 @@ lib/elementary/elm_widget_clipper.h \
 $(NULL)
 
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files) $(elm_legacy_eo_headers_priv)
+EXTRA_DIST2 += $(elm_public_eolian_files) $(elm_eolian_type_files) $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files) $(elm_legacy_eo_headers_priv)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 

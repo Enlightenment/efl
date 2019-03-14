@@ -9,14 +9,14 @@ emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h)
 BUILT_SOURCES += \
                  $(emotion_eolian_c) \
                  $(emotion_eolian_h)
-
+if INSTALL_EO_FILES
 emotioneolianfilesdir = $(datadir)/eolian/include/emotion-@VMAJ@
 emotioneolianfiles_DATA = \
                           $(emotion_eolian_files)
-
+endif
 EXTRA_DIST2 += \
 lib/emotion/efl_canvas_video_eo.legacy.c \
-              ${emotioneolianfiles_DATA}
+              ${emotion_eolian_files}
 
 lib_LTLIBRARIES += \
 lib/emotion/libemotion.la
