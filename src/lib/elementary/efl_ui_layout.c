@@ -2764,6 +2764,9 @@ EAPI Eina_Bool
 elm_layout_text_set(Eo *obj, const char *part, const char *text)
 {
    Eo *part_obj;
+
+   if (efl_invalidating_get(obj) || efl_invalidated_get(obj)) return EINA_FALSE;
+
    if (!part)
      {
         part = efl_ui_widget_default_text_part_get(obj);
