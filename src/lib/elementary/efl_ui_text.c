@@ -1164,9 +1164,6 @@ _selection_store(Efl_Ui_Selection_Type seltype,
    Selection_Loss_Data *ldata;
    Eina_Future *f;
 
-   ldata = calloc(1, sizeof(Selection_Loss_Data));
-   if (!ldata) return;
-
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
@@ -1176,7 +1173,6 @@ _selection_store(Efl_Ui_Selection_Type seltype,
 
    slice.len = strlen(sel);
    slice.mem = sel;
-
 
    switch (seltype)
      {
@@ -1202,12 +1198,16 @@ _selection_store(Efl_Ui_Selection_Type seltype,
          break;
      }
 
+   ldata = calloc(1, sizeof(Selection_Loss_Data));
+   if (!ldata) goto end;
+
    ldata->obj = obj;
    eina_future_then_easy(f, _selection_lost_cb, NULL, NULL, EINA_VALUE_TYPE_UINT, ldata);
 
    //if (seltype == EFL_UI_SELECTION_TYPE_CLIPBOARD)
    //  eina_stringshare_replace(&sd->cut_sel, sel);
 
+end:
    free(sel);
 }
 
