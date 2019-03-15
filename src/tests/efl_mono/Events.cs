@@ -254,6 +254,41 @@ class TestInterfaceEvents
     }
 }
 
+class TestEventTriggerFromCSharpChild
+{
+    private class Child : Dummy.TestObject
+    {
+        public Child() : base(null) { }
+
+        public void TriggerEvent(int value)
+        {
+            var args = new Dummy.TestObjectEvtWithIntEvt_Args();
+            args.arg = value;
+            OnEvtWithIntEvt(args);
+        }
+    }
+
+    public static void managed_event_callback()
+    {
+        var obj = new Child();
+        int received = -1;
+        int sent = 42;
+        obj.EvtWithIntEvt += (object sender, Dummy.TestObjectEvtWithIntEvt_Args e) => {
+            received = e.arg;
+        };
+
+        obj.TriggerEvent(sent);
+
+        Test.AssertEquals(received, sent);
+    }
+
+    public static void native_event_callback()
+    {
+        var obj = new Child();
+        //FIXME hook to native callback.
+    }
+}
+
 class TestEventNaming
 {
     // For events named line focus_geometry,changed
