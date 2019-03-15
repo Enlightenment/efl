@@ -9245,6 +9245,7 @@ EAPI Eina_Bool
 elm_win_noblank_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    return sd->noblank;
 }
 
