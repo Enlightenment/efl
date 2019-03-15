@@ -9236,6 +9236,7 @@ EAPI void
 elm_win_noblank_set(Evas_Object *obj, Eina_Bool noblank)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    noblank = !!noblank;
    if (sd->noblank == noblank) return;
    sd->noblank = noblank;
