@@ -761,7 +761,8 @@ static unsigned int
 _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
 {
    // If we have no information on the object, let's build it.
-   if (efl_invalidated_get(obj))
+   if (efl_invalidated_get(obj) ||
+       efl_invalidating_get(obj))
      {
         return 0;
      }
@@ -1005,7 +1006,6 @@ static void
 _efl_io_model_efl_object_destructor(Eo *obj , Efl_Io_Model_Data *priv)
 {
    Efl_Io_Model_Info *info;
-
 
    free(priv->st);
    priv->st = NULL;
