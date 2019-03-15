@@ -180,10 +180,6 @@ public class Globals {
               IntPtr desc,
               Efl.EventCb cb,
               System.IntPtr data);
-    public delegate  IntPtr
-        efl_object_legacy_only_event_description_get_delegate([MarshalAs(UnmanagedType.LPStr)] String name);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
-        efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
 
     public const int RTLD_NOW = 2;
 
