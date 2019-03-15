@@ -662,7 +662,9 @@ _eldbus_model_proxy_property_set_load_cb(void *data,
                                              signature, set_data->value,
                                              _eldbus_model_proxy_property_set_cb, set_data);
    pd->pendings = eina_list_append(pd->pendings, pending);
- end:
+
+end:
+   if (!properties) return;
    while ((sp = eina_array_pop(properties)))
      eina_stringshare_del(sp);
    eina_array_free(properties);
