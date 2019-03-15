@@ -1489,7 +1489,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      {
         //the correct one is focused
         if (node->redirect_manager == pd->redirect)
-          return;
+          goto end;
      }
 
    //make sure this manager is in the chain of redirects
@@ -1571,6 +1571,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    while (eina_array_count(old_chain) > 1)
      efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, (void*)EINA_FALSE);
 
+end:
    eina_array_free(old_chain);
    eina_array_free(chain);
 }
