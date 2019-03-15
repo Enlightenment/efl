@@ -15,6 +15,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include "elm_priv.h"
+#include "eo_internal.h"
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_fileselector_button_eo.h"
