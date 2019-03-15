@@ -4987,6 +4987,13 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
    return ret;
 }
 
+EOLIAN static void
+_elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *sd)
+{
+   elm_object_text_set(obj, "");
+   efl_file_unload(efl_super(obj, MY_CLASS));
+}
+
 EOLIAN static Eina_Error
 _elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd)
 {
