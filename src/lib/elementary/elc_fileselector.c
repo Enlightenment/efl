@@ -99,6 +99,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(monitoring_callbacks,
                           { EFL_MODEL_EVENT_CHILD_ADDED, _resource_created },
                           { EFL_MODEL_EVENT_CHILD_REMOVED, _resource_deleted });
 
+static void _properties_changed(void *data, const Efl_Event *ev);
 
 static void
 _focus_chain_update(Eo *obj, Elm_Fileselector_Data *pd)
@@ -200,6 +201,12 @@ _elm_fileselector_replace_model(Elm_Fileselector *fs, Elm_Fileselector_Data *sd,
 static void
 _elm_fileselector_smart_del_do(Elm_Fileselector *fs, Elm_Fileselector_Data *sd)
 {
+   Eo *child;
+   EINA_LIST_FREE(sd->children, child)
+     {
+        efl_event_callback_del(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_changed, sd);
+        efl_unref(child);
+     }
    _elm_fileselector_replace_model(fs, sd, NULL, NULL);
    efl_replace(&sd->prev_model, NULL);
    free(ecore_idler_del(sd->populate_idler));
@@ -809,13 +816,6 @@ _fetch_int64_value(Efl_Model *child, const char *name, int64_t *i)
    return r;
 }
 
-static void _invalidate(void *data, const Efl_Event *ev);
-static void _properties_changed(void *data, const Efl_Event *ev);
-
-EFL_CALLBACKS_ARRAY_DEFINE(child_model_callbacks,
-                           { EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_changed },
-                           { EFL_EVENT_INVALIDATE, _invalidate });
-
 static void
 _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
 {
@@ -852,7 +852,8 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
         // SETUP listener to retry fetching all data when ready
         if (err == EAGAIN)
           {
-             efl_event_callback_array_add(efl_ref(child), child_model_callbacks(), sd);
+             efl_event_callback_add(efl_ref(child), EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_changed, sd);
+             sd->children = eina_list_append(sd->children, child);
           }
         goto cleanup;
      }
@@ -929,18 +930,13 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
 }
 
 static void
-_invalidate(void *data EINA_UNUSED, const Efl_Event *ev)
-{
-   efl_unref(ev->object);
-}
-
-static void
 _properties_changed(void *data, const Efl_Event *ev)
 {
    Elm_Fileselector_Data *sd = data;
    Efl_Model *child = ev->object;
 
-   efl_event_callback_array_del(child, child_model_callbacks(), sd);
+   sd->children = eina_list_remove(sd->children, child);
+   efl_event_callback_del(child, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_changed, sd);
    _process_model(sd, child);
    efl_unref(child);
 }
