@@ -49,6 +49,102 @@ struct _Job_Closure
    Efl_Io_Manager_Direct_Ls_Func direct_func;  // Used when dispatching direct ls funcs.
 };
 
+/* Future have to be resolved right away in the thread context */
+typedef struct _Eio_Future_Entry Eio_Future_Entry;
+struct _Eio_Future_Entry
+{
+   Eina_Future_Schedule_Entry base;
+   Eina_Future_Scheduler_Cb cb;
+   Eina_Future *future;
+   Eina_Value value;
+};
+
+static Eina_Trash *eio_entry_trash = NULL;
+static unsigned int eio_entry_trash_count = 0;
+static Eina_List *entries = NULL;
+
+static Eina_Future_Schedule_Entry *
+eio_future_schedule(Eina_Future_Scheduler *sched,
+                    Eina_Future_Scheduler_Cb cb,
+                    Eina_Future *future,
+                    Eina_Value value)
+{
+   Eio_Future_Entry *ef = NULL;
+
+   if (!eio_entry_trash)
+     {
+        ef = calloc(1, sizeof (Eio_Future_Entry));
+        if (!ef) return NULL;
+     }
+   else
+     {
+        ef = eina_trash_pop(&eio_entry_trash);
+        eio_entry_trash_count--;
+     }
+   ef->base.scheduler = sched;
+   ef->cb = cb;
+   ef->future = future;
+   ef->value = value;
+
+   entries = eina_list_append(entries, ef);
+
+   return &ef->base;
+}
+
+static void
+eio_future_free(Eio_Future_Entry *ef)
+{
+   entries = eina_list_remove(entries, ef);
+
+   if (eio_entry_trash_count > 8)
+     {
+        free(ef);
+        return ;
+     }
+   eina_trash_push(&eio_entry_trash, ef);
+   eio_entry_trash_count++;
+}
+
+static void
+eio_future_recall(Eina_Future_Schedule_Entry *se)
+{
+   Eio_Future_Entry *ef = (Eio_Future_Entry *) se;
+
+   eina_value_flush(&ef->value);
+   eio_future_free(ef);
+}
+
+static Eina_Future_Scheduler eio_future_scheduler = {
+   .schedule = eio_future_schedule,
+   .recall = eio_future_recall,
+};
+
+static void
+eio_dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *p EINA_UNUSED)
+{
+}
+
+static void
+eio_process_entry(void)
+{
+   Eio_Future_Entry *ef;
+
+   while (entries)
+     {
+        ef = eina_list_data_get(entries);
+        ef->cb(ef->future, ef->value);
+        eio_future_free(ef);
+     }
+}
+
+static Eina_Promise *
+eio_promise_new(const Eo *obj)
+{
+   if (!efl_alive_get(obj)) return NULL;
+
+   return eina_promise_new(&eio_future_scheduler, eio_dummy_cancel, NULL);
+}
+
 /* Helper functions */
 static void
 _future_file_done_cb(void *data, Eio_File *handler)
@@ -56,6 +152,7 @@ _future_file_done_cb(void *data, Eio_File *handler)
    Eina_Promise *p = data;
 
    eina_promise_resolve(p, eina_value_uint64_init(handler->length));
+   eio_process_entry();
 }
 
 static void
@@ -67,6 +164,7 @@ _future_file_error_cb(void *data,
 
    // error == 0 -> promise was cancelled, no need to reject it anymore
    if (error != 0) eina_promise_reject(p, error);
+   eio_process_entry();
 }
 
 /* Basic listing callbacks */
@@ -119,7 +217,7 @@ _efl_io_manager_direct_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -161,7 +259,7 @@ _efl_io_manager_stat_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -202,7 +300,7 @@ _efl_io_manager_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -236,12 +334,14 @@ _file_stat_done_cb(void *data, Eio_File *handle EINA_UNUSED, const Eina_Stat *st
      goto on_error;
 
    eina_promise_resolve(p, r);
+   eio_process_entry();
 
    return ;
 
  on_error:
    eina_value_flush(&r);
    eina_promise_reject(p, eina_error_get());
+   eio_process_entry();
 }
 
 static Eina_Future *
@@ -253,7 +353,7 @@ _efl_io_manager_stat(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -281,7 +381,7 @@ _efl_io_manager_xattr_ls(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -317,6 +417,7 @@ _future_file_done_data_cb(void *data, Eio_File *handler EINA_UNUSED, const char 
    eina_value_setup(&v, EINA_VALUE_TYPE_BLOB);
    eina_value_set(&v, &blob);
    eina_promise_resolve(p, v);
+   eio_process_entry();
 }
 
 static Eina_Future *
@@ -331,7 +432,7 @@ _efl_io_manager_xattr_set(Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -360,7 +461,7 @@ _efl_io_manager_xattr_get(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -385,6 +486,7 @@ _future_file_open_cb(void *data, Eio_File *handler EINA_UNUSED, Eina_File *file)
    eina_value_setup(&v, EINA_VALUE_TYPE_FILE);
    eina_value_set(&v, file);
    eina_promise_resolve(p, v);
+   eio_process_entry();
 }
 
 static Eina_Future *
@@ -397,7 +499,7 @@ _efl_io_manager_open(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
@@ -422,7 +524,7 @@ _efl_io_manager_close(const Eo *obj,
    Eina_Future *future;
    Eio_File *h;
 
-   p = efl_loop_promise_new(obj);
+   p = eio_promise_new(obj);
    if (!p) return NULL;
    future = eina_future_new(p);
 
