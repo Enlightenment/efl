@@ -4707,6 +4707,8 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
      if (!eldbus_message_arguments_get(reply, "b", &ret))
        ERR("Invalid answer signature");
 
+   eldbus_message_unref(reply);
+
    if (ret)
      return EINA_FALSE;
 
