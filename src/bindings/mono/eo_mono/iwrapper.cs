@@ -609,19 +609,34 @@ public static class ClassRegister
     {
         for (System.Type t = objectType.BaseType; t != null; t = t.BaseType)
         {
-            var method = t.GetMethod("GetEflClassStatic",
-                                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-            if (method != null)
-                return (IntPtr) method.Invoke(null, null);
+            var ptr = GetNativeKlassPtr(t);
+            if (ptr != IntPtr.Zero)
+                return ptr;
         }
         throw new System.InvalidOperationException($"Class '{objectType.FullName}' is not an Efl object");
     }
 
     private static IntPtr GetNativeKlassPtr(System.Type objectType)
     {
+        if (objectType == null)
+            return IntPtr.Zero;
+
+        if (objectType.IsInterface)
+        {
+            // Try to get the *Concrete class
+            var assembly = objectType.Assembly;
+            objectType = assembly.GetType(objectType.FullName + "Concrete");
+
+            if (objectType == null)
+                return IntPtr.Zero;
+        }
+
         var method = objectType.GetMethod("GetEflClassStatic",
                                           System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-        return (IntPtr) method?.Invoke(null, null);
+
+        if (method == null)
+            return IntPtr.Zero;
+        return (IntPtr) (method.Invoke(null, null));
     }
 
     public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)

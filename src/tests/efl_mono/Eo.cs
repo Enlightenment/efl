@@ -446,6 +446,13 @@ class TestProvider
         Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
         Test.AssertEquals(provider.GetNumber(), 1999);
     }
+
+    public static void test_find_provider_iface()
+    {
+        var obj = new Dummy.TestObject();
+        Dummy.TestIface provider = Dummy.TestIfaceConcrete.static_cast(obj.FindProvider(typeof(Dummy.TestIface)));
+        Test.AssertEquals(provider.GetIfaceProp(), 1997);
+    }
 }
 
 }

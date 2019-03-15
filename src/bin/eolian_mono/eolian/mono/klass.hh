@@ -282,6 +282,15 @@ struct klass
                 return false;
            }
 
+         // Copied from nativeinherit class, used when setting up providers.
+         if(!as_generator(
+              scope_tab << "private static IntPtr GetEflClassStatic()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, concrete_cxt))
+           return false;
+
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
        }
