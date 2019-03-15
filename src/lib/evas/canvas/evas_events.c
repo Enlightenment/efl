@@ -3743,6 +3743,12 @@ _efl_canvas_object_efl_object_event_thaw(Eo *obj, Evas_Object_Protected_Data *pd
 EAPI void
 evas_object_freeze_events_set(Eo *eo_obj, Eina_Bool freeze)
 {
+   Evas_Object_Protected_Data *pd = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   freeze = !!freeze;
+   if (pd->freeze_events == freeze) return;
+
    if (freeze)
      efl_event_freeze(eo_obj);
    else

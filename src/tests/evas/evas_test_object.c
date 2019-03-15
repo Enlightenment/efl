@@ -30,7 +30,29 @@ EFL_START_TEST(evas_object_various)
 }
 EFL_END_TEST
 
+EFL_START_TEST(evas_object_freeze_events)
+{
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Evas_Object *obj = evas_object_rectangle_add(evas);
+
+   evas_object_freeze_events_set(obj, EINA_TRUE);
+   ck_assert_int_eq(evas_object_freeze_events_get(obj), EINA_TRUE);
+   evas_object_freeze_events_set(obj, EINA_FALSE);
+   ck_assert_int_eq(evas_object_freeze_events_get(obj), EINA_FALSE);
+
+   evas_object_freeze_events_set(obj, EINA_TRUE);
+   evas_object_freeze_events_set(obj, EINA_TRUE);
+   ck_assert_int_eq(evas_object_freeze_events_get(obj), EINA_TRUE);
+   evas_object_freeze_events_set(obj, EINA_FALSE);
+   ck_assert_int_eq(evas_object_freeze_events_get(obj), EINA_FALSE);
+   evas_object_freeze_events_set(obj, EINA_FALSE);
+   evas_object_freeze_events_set(obj, EINA_TRUE);
+   ck_assert_int_eq(evas_object_freeze_events_get(obj), EINA_TRUE);
+}
+EFL_END_TEST
+
 void evas_test_object(TCase *tc)
 {
    tcase_add_test(tc, evas_object_various);
+   tcase_add_test(tc, evas_object_freeze_events);
 }
