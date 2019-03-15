@@ -195,8 +195,25 @@ EFL_START_TEST(efl_io_model_test_test_file)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_io_model_test_del)
+{
+   Eo *model;
+   int i;
+
+   DISABLE_ABORT_ON_CRITICAL_START;
+   for (i = 0; i < 10; i++)
+     {
+        model = efl_add(EFL_IO_MODEL_CLASS, efl_main_loop_get(),
+                        efl_io_model_path_set(efl_added, EFL_MODEL_TEST_FILENAME_PATH));
+        efl_del(model);
+     }
+   DISABLE_ABORT_ON_CRITICAL_END;
+}
+EFL_END_TEST
+
 void
 efl_io_model_test_file(TCase *tc)
 {
     tcase_add_test(tc, efl_io_model_test_test_file);
+    tcase_add_test(tc, efl_io_model_test_del);
 }
