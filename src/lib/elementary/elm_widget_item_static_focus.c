@@ -54,10 +54,6 @@ _grid_realized_cb(void *data, const Efl_Event *ev)
 
    if (!elm_object_item_disabled_get(data) && !is_group)
      {
-        Elm_Widget_Item_Data *wpd = efl_data_scope_get(data, ELM_WIDGET_ITEM_CLASS);
-
-        //first prepare the container
-        efl_ui_focus_object_setup_order(wpd->widget);
         efl_ui_focus_object_setup_order(data);
      }
 }
