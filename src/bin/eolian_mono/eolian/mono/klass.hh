@@ -462,7 +462,7 @@ struct klass
        raw_klass_modifier = "virtual ";
 
      if(!as_generator(
-                scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
+                scope_tab << "///<summary>Pointer to the native class description. For internal usage only.</summary>\n"
                 << scope_tab << "public " << raw_klass_modifier << "System.IntPtr NativeClass {\n"
                 << scope_tab << scope_tab << "get {\n"
                 << scope_tab << scope_tab << scope_tab << "if (((object)this).GetType() == typeof (" << inherit_name << "))\n"
@@ -492,7 +492,7 @@ struct klass
 
      return as_generator(
                 scope_tab << visibility << " System.IntPtr handle;\n"
-                << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
+                << scope_tab << "///<summary>Pointer to the native instance. For internal usage only.</summary>\n"
                 << scope_tab << "public System.IntPtr NativeHandle {\n"
                 << scope_tab << scope_tab << "get { return handle; }\n"
                 << scope_tab << "}\n"
