@@ -8845,6 +8845,7 @@ elm_win_keygrab_set(Elm_Win *obj, const char *key,
    Eina_Bool ret = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
