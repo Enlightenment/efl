@@ -35,7 +35,6 @@ struct _Efl_Io_Model_Info
 
 struct _Efl_Io_Model_Data
 {
-   Efl_Loop *loop;
    Efl_Io_Model *self;
 
    Eina_Stringshare *path;
