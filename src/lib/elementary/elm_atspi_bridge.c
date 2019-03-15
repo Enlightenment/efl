@@ -4704,11 +4704,11 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      ERR("Error in call method " ATSPI_DBUS_INTERFACE_DEC "." "NotifyListenersSync" ": %s %s", errname, errmsg);
    else
-       if (!eldbus_message_arguments_get(reply, "b", &ret))
-          ERR("Invalid answer signature");
+     if (!eldbus_message_arguments_get(reply, "b", &ret))
+       ERR("Invalid answer signature");
 
    if (ret)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return EINA_FALSE;
 }
