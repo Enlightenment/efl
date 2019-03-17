@@ -237,7 +237,7 @@ struct klass
              << scope_tab << "public " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-             << scope_tab << scope_tab << "register_event_proxies();\n"
+             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << "}\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
@@ -537,7 +537,7 @@ struct klass
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-                     << scope_tab << scope_tab << "register_event_proxies();\n"
+                     << scope_tab << scope_tab << "RegisterEventProxies();\n"
                      << scope_tab << "}\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
@@ -563,7 +563,7 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(base_klass, ((object)this).GetType());\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
-             << scope_tab << scope_tab << "register_event_proxies();\n"
+             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << "}\n"
 
              << scope_tab << "protected void FinishInstantiation()\n"
@@ -632,7 +632,8 @@ struct klass
 
      // Event proxy registration
      if (!as_generator(
-            scope_tab << (is_inherit_context(context) || !root ? "protected " : "") << virtual_modifier << "void register_event_proxies()\n"
+            scope_tab << "///<summary>Register the Eo event wrappers making the bridge to C# events. Internal usage only.</summary>\n"
+            << scope_tab << (is_inherit_context(context) || !root ? "protected " : "") << virtual_modifier << "void RegisterEventProxies()\n"
             << scope_tab << "{\n"
          )
          .generate(sink, NULL, context))
@@ -641,7 +642,7 @@ struct klass
      // Generate event registrations here
 
      if (!root)
-       if (!as_generator(scope_tab << scope_tab << "base.register_event_proxies();\n").generate(sink, NULL, context))
+       if (!as_generator(scope_tab << scope_tab << "base.RegisterEventProxies();\n").generate(sink, NULL, context))
          return false;
 
      // Assigning the delegates

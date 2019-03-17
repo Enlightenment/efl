@@ -262,7 +262,7 @@ struct event_definition_generator
       if (!generate_event_trigger(sink, wrapper_evt_name, wrapper_args_type, wrapper_args_template, context))
         return false;
 
-      // Store the delegate for this event in this instance. This is initialized in register_event_proxies()
+      // Store the delegate for this event in this instance. This is initialized in RegisterEventProxies()
       // We can't initialize them directly here as they depend on the member methods being valid (i.e.
       // the constructor being called).
       if (!as_generator(scope_tab << "Efl.EventCb evt_" << wrapper_evt_name << "_delegate;\n").generate(sink, attributes::unused, context))
