@@ -2,8 +2,6 @@
 # error You shall not include this header directly
 #endif
 
-#ifdef EFL_EO_API_SUPPORT
-
 #ifndef _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
 #define _EFL_CANVAS_VG_NODE_EO_CLASS_TYPE
 
@@ -200,11 +198,6 @@ struct _Efl_Canvas_Object_Animation_Event
 #include "canvas/efl_canvas_animation_group_parallel.eo.h"
 #include "canvas/efl_canvas_animation_group_sequential.eo.h"
 #include "canvas/efl_canvas_animation_player.eo.h"
-
-#endif /* EFL_EO_API_SUPPORT */
-
-#if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
-
 #include "canvas/efl_canvas_event_grabber.eo.h"
 
  /**
@@ -418,17 +411,13 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/evas_canvas3d_scene.eo.h"
 
 #include "canvas/efl_canvas_scene3d.eo.h"
-#endif /* EFL_BETA_API_SUPPORT */
 
-#ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_canvas_image_internal.eo.h"
 #include "canvas/efl_canvas_image.eo.h"
 #include "canvas/efl_canvas_snapshot.eo.h"
 #include "canvas/efl_canvas_proxy.eo.h"
 #include "canvas/efl_gfx_mapping.eo.h"
-#endif /* EFL_EO_API_SUPPORT */
 
-#if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
 /**
  * @ingroup Evas_Object_VG
  *
@@ -445,9 +434,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_vg_gradient.eo.h"
 #include "canvas/efl_canvas_vg_gradient_linear.eo.h"
 #include "canvas/efl_canvas_vg_gradient_radial.eo.h"
-#endif /* EFL_BETA_API_SUPPORT */
 
-#ifdef EFL_EO_API_SUPPORT
 #include "canvas/efl_input_state.eo.h"
 #include "canvas/efl_input_event.eo.h"
 #include "canvas/efl_input_pointer.eo.h"
@@ -455,9 +442,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_input_hold.eo.h"
 #include "canvas/efl_input_interface.eo.h"
 #include "canvas/efl_input_focus.eo.h"
-#endif /* EFL_EO_API_SUPPORT */
 
-#ifdef EFL_EO_API_SUPPORT
 # include "gesture/efl_canvas_gesture_types.eot.h"
 # include "gesture/efl_canvas_gesture_touch.eo.h"
 # include "gesture/efl_canvas_gesture.eo.h"
@@ -465,4 +450,3 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 # include "gesture/efl_canvas_gesture_long_tap.eo.h"
 # include "gesture/efl_canvas_gesture_recognizer.eo.h"
 # include "gesture/efl_canvas_gesture_manager.eo.h"
-#endif /* EFL_EO_API_SUPPORT */

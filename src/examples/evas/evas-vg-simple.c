@@ -43,10 +43,6 @@
 #define EFL_BETA_API_SUPPORT
 #endif
 
-#ifndef EFL_EO_API_SUPPORT
-#define EFL_EO_API_SUPPORT
-#endif
-
 #include <Eo.h>
 #include <Efl.h>
 #include <Evas.h>

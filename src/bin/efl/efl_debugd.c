@@ -21,7 +21,6 @@
 #endif
 
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 
 #include <fcntl.h>
 #include "eina_debug_private.h"

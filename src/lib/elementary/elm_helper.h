@@ -77,7 +77,7 @@ elm_validator_regexp_free(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 EAPI Elm_Regexp_Status
 elm_validator_regexp_status_get(Elm_Validator_Regexp *validator) EINA_ARG_NONNULL(1);
 
-#if defined(EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
+#if defined(EFL_BETA_API_SUPPORT)
 /**
  * @brief The regex validator. Used as callback to validate event.
  *

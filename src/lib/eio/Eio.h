@@ -76,9 +76,7 @@ typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const E
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Eio_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
 #include "Eio_Eo.h"
-#endif
 
 /**
  * @brief get access time from a Eina_Stat

@@ -2,13 +2,7 @@
 #define ELM_INTERFACE_ATSPI_TEXT_H
 
 #ifdef EFL_BETA_API_SUPPORT
-
-#ifdef EFL_EO_API_SUPPORT
 #include "efl_access_text.eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_text.eo.legacy.h"
-#endif
 
 /**
  * @brief Free Efl_Access_Text_Attribute structure

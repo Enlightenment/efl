@@ -89,7 +89,7 @@ EAPI extern Evas_Version * evas_version;
  * @since 1.1
  */
 // Support not having eo available
-#if defined (EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
+#ifdef EFL_BETA_API_SUPPORT
 typedef Efl_Callback_Priority Evas_Callback_Priority;
 #else
 typedef short Evas_Callback_Priority;
@@ -3490,20 +3490,8 @@ typedef unsigned int Efl_Input_Device_Type;
 
 #endif
 
-#ifndef _EFL_H
-#define _EFL_H
-typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
-typedef struct tm Efl_Time;
-#endif
-
 #ifndef _EFL_TEXT_CURSOR_EO_H_
 #define _EFL_TEXT_CURSOR_EO_H_
-
-#ifndef _EFL_TEXT_CURSOR_EO_CLASS_TYPE
-#define _EFL_TEXT_CURSOR_EO_CLASS_TYPE
-#endif
-typedef Eo Efl_Text_Cursor;
-typedef Eo Efl_Text_Cursor_Cursor;
 
 #endif
 #ifndef _EFL_GFX_ENTITY_EO_H_
