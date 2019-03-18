@@ -57,6 +57,41 @@ def prep_eet_data_file_descriptor_02():
   f2.write(b"Simulation2")
   return [f1.name, f2.name, "union", "5", "Example-Simulation"]
 
+def prep_ecore_getopt_example():
+  return ["string-1", "120", "apple", "none-optional-arg"]
+
+def prep_eio_file_copy():
+  f1 = tempfile.NamedTemporaryFile(delete=False)
+  f1.write(b"Simulation")
+  return [f1.name, "/tmp/eio_dst_file"]
+
+def prep_eio_file_ls():
+  return ["/tmp/"]
+
+def prep_edje_color_class():
+  return ["beta", "red", "green", "blue"]
+
+def prep_ecore_con_url_headers_example():
+  return ["GET", "www.enlightenment.org"]
+
+def prep_ecore_con_url_download_example():
+  return ["www.enlightenment.org"]
+
+def prep_ecore_con_url_cookies_example():
+  return ["www.enlightenment.org"]
+
+def prep_ecore_con_client_example():
+  return ["enlightenment.org", "80"]
+
+def prep_ecore_con_lookup_example():
+  return ["enlightenment.org"]
+
+def prep_ecore_con_server_example():
+  return ["enlightenment.org", "1234"]
+
+def prep_ecore_con_client_simple_example():
+  return ["enlightenment.org", "80"]
+
 example_preparation = {
   "eina_file_02" : prep_eina_file_02,
   "eina_xattr_01" : prep_eina_xattr_01,
@@ -66,6 +101,17 @@ example_preparation = {
   "eet-data-simple" : prep_eet_data_simple,
   "eet-data-file_descriptor_01" : prep_eet_data_file_descriptor_01,
   "eet-data-file_descriptor_02" : prep_eet_data_file_descriptor_02,
+  "ecore_getopt_example" : prep_ecore_getopt_example,
+  "eio_file_copy" : prep_eio_file_copy,
+  "eio_file_ls" : prep_eio_file_ls,
+  "edje-color-class" : prep_edje_color_class,
+  "ecore_con_url_headers_example" : prep_ecore_con_url_headers_example,
+  "ecore_con_url_download_example" : prep_ecore_con_url_download_example,
+  "ecore_con_url_cookies_example" : prep_ecore_con_url_cookies_example,
+  "ecore_con_client_example" : prep_ecore_con_client_example,
+  "ecore_con_lookup_example" : prep_ecore_con_lookup_example,
+  "ecore_con_server_example" : prep_ecore_con_server_example,
+  "ecore_con_client_simple_example" : prep_ecore_con_client_simple_example,
 }
 
 #
