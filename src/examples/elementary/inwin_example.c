@@ -134,7 +134,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    evas_object_smart_callback_add(o, "clicked", _btn_click_cb, NULL);
 
-   if (!strncmp(elm_config_preferred_engine_get(), "shot", 4))
+   if (eina_streq(getenv("ELM_ENGINE"), "shot"))
      ecore_timer_add(0.1, _screenshot_hack_cb, o);
 
    evas_object_resize(win, 400, 400);
