@@ -673,6 +673,7 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
    if (!gld) return;
+   gld->glapi = elm_glview_gl_api_get(obj);
 
    gears_init(gld);
 }
@@ -892,7 +893,6 @@ test_glview_manygears(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
         // Add animator for rendering
         ani = ecore_animator_add(_anim, gl);
-        gld->glapi = elm_glview_gl_api_get(gl);
         evas_object_data_set(gl, "ani", ani);
         evas_object_data_set(gl, "gld", gld);
         evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);

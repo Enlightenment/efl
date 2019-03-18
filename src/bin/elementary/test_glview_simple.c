@@ -121,6 +121,7 @@ static void
 _init_gl(Evas_Object *obj)
 {
    GL_Data *gld = evas_object_data_get(obj, "gld");
+   gld->glapi = elm_glview_gl_api_get(obj);
    Evas_GL_API *gl = gld->glapi;
    GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f,
                            -0.5f, -0.5f, 0.0f,
@@ -259,7 +260,6 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
         elm_object_focus_set(gl, EINA_TRUE);
 
         ani = ecore_animator_add(_anim, gl);
-        gld->glapi = elm_glview_gl_api_get(gl);
         evas_object_data_set(gl, "gld", gld);
         evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _gl_del_cb, ani);
      }
