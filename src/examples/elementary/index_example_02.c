@@ -87,7 +87,7 @@ elm_main(int    argc EINA_UNUSED,
    Elm_Object_Item *gg_it;
    unsigned int i;
 
-   Elm_Gengrid_Item_Class gic;
+   Elm_Gengrid_Item_Class gic = { 0 };
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_app_info_set(elm_main, "elementary", "images");
