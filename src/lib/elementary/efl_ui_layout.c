@@ -2770,7 +2770,7 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    if (!efl_isa(part_obj, EFL_TEXT_INTERFACE) ||
        !efl_isa(part_obj, EFL_UI_LAYOUT_PART_CLASS))
      {
-        efl_unref(part_obj);
+        efl_del(part_obj);
         return EINA_FALSE;
      }
 
