@@ -19,6 +19,11 @@
 #define PACKAGE_DATA_DIR "."
 #endif
 
+#ifndef PACKAGE_SOURCE_DATA_DIR
+#define PACKAGE_SOURCE_DATA_DIR "."
+#endif
+
+
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -36,7 +41,7 @@ int
 main(int argc EINA_UNUSED, char *argv[] EINA_UNUSED)
 {
    const char  *edje_file = PACKAGE_DATA_DIR"/swallow.edj";
-   const char  *img_file = PACKAGE_DATA_DIR"/bubble.png";
+   const char  *img_file = PACKAGE_SOURCE_DATA_DIR"/bubble.png";
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
