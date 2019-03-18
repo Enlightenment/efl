@@ -245,7 +245,12 @@ elm_object_focus_next(Evas_Object        *obj,
                {
                   Evas_Object *parent = eina_array_data_get(old_chain, i);
                   if (!elm_widget_is(parent)) continue;
-                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
+                  ELM_WIDGET_DATA_GET(parent, ppd);
+                  if (!ppd)
+                    {
+                       ERR("Failed to get Elm widget data for parent");
+                       break;
+                    }
                   legacy_target = _get_legacy_target(parent, ppd, dir);
                   if (legacy_target) break;
                }
