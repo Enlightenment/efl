@@ -4962,28 +4962,38 @@ _elm_win_cb_show(void *data EINA_UNUSED,
    _elm_win_state_eval_queue();
 }
 
-static inline const char *
-_efl_ui_win_accel(Efl_Ui_Win_Data *sd)
+static inline Eina_Bool
+_efl_ui_win_accel(Efl_Ui_Win_Data *sd, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa)
 {
    const char *str = sd->accel_pref;
    const char *env;
+   const char *cfg = NULL;
+   Eina_Bool is_accel = EINA_FALSE;
 
-   /* current elm config */
-   if (!str)
+   /* current elm config OR global override */
+   if ((!str) || ((_elm_config->accel_override) && (_elm_config->accel)))
      {
-        if (_elm_config->accel) str = _elm_config->accel;
-        if (_elm_accel_preference) str = _elm_accel_preference;
+        if (_elm_config->accel) cfg = _elm_config->accel;
+        if (_elm_config->accel_override && _elm_accel_preference) cfg = _elm_accel_preference;
      }
-
-   /* global overrides */
-   if ((_elm_config->accel_override) && (_elm_config->accel))
-     str = _elm_config->accel;
 
    /* env var wins */
    env = getenv("ELM_ACCEL");
-   if (env) str = env;
 
-   return str;
+   if (env)
+     is_accel = _elm_config_accel_preference_parse(env, accel, gl_depth, gl_stencil, gl_msaa);
+   else if (cfg)
+     {
+        is_accel = !!cfg;
+        *accel = eina_stringshare_ref(cfg);
+        *gl_depth = _elm_config->gl_depth;
+        *gl_stencil = _elm_config->gl_stencil;
+        *gl_msaa = _elm_config->gl_msaa;
+     }
+   else
+     is_accel = _elm_config_accel_preference_parse(str, accel, gl_depth, gl_stencil, gl_msaa);
+
+   return is_accel;
 }
 
 static inline void
@@ -5145,8 +5155,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
 
-   is_gl_accel = _elm_config_accel_preference_parse
-         (_efl_ui_win_accel(sd), &accel, &gl_depth, &gl_stencil, &gl_msaa);
+   is_gl_accel = _efl_ui_win_accel(sd, &accel, &gl_depth, &gl_stencil, &gl_msaa);
 
    switch ((int) type)
      {
