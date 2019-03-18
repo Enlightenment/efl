@@ -42,7 +42,8 @@ edc_files = [
   'table.edc',
   'text.edc',
   'textblock-hyphen.edc',
-  'toggle_using_filter.edc'
+  'toggle_using_filter.edc',
+  'multisense.edc',
 ]
 
 if (get_option('physics'))
