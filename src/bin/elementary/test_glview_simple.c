@@ -233,9 +233,18 @@ test_glview_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    if (!(gld = calloc(1, sizeof(GL_Data)))) return;
 
+   // add a Z-depth buffer to the window and try to use GL
+   Eina_Stringshare *accel;
+   accel = eina_stringshare_add(elm_config_accel_preference_get());
+   elm_config_accel_preference_set("gl:depth");
+
    win = elm_win_util_standard_add("glview-simple", "GLView Simple");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _win_free_cb, gld);
+
+   // restore previous accel preference
+   elm_config_accel_preference_set(accel);
+   eina_stringshare_del(accel);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
