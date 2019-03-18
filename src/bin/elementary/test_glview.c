@@ -1,8 +1,6 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#include <Efl_Ui.h>
-#include <Elementary.h>
 
 #include <Efl_Ui.h>
 #include <Elementary.h>
@@ -632,7 +630,7 @@ _test_glview_do(Evas_GL_Context_Version version)
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
-#if 0
+#if 1
    // add a Z-depth buffer to the window and try to use GL
    Eina_Stringshare *accel;
    accel = eina_stringshare_add(elm_config_accel_preference_get());
@@ -731,6 +729,7 @@ _test_glview_do(Evas_GL_Context_Version version)
    evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
    evas_object_resize(win, 320, 480);
+   evas_object_show(win);
 }
 
 void
