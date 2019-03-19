@@ -721,8 +721,8 @@ _item_unselect(Elm_Gen_Item *it)
      {
         it->selected = EINA_FALSE;
         sd->selected = eina_list_remove(sd->selected, eo_it);
-        efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_EVENT_UNSELECTED, eo_it);
+        evas_object_smart_callback_call
+          (WIDGET(it), "unselected", eo_it);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
      }
@@ -3958,7 +3958,7 @@ _item_select(Elm_Gen_Item *it)
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), eo_it);
    if (it->generation == sd->generation)
      {
-        efl_event_callback_legacy_call(WIDGET(it), EFL_UI_EVENT_SELECTED, eo_it);
+        evas_object_smart_callback_call(WIDGET(it), "selected", eo_it);
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
      }

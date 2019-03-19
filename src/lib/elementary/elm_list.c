@@ -1448,7 +1448,7 @@ call:
    _elm_list_walk(obj, sd);
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SELECTED, eo_it);
+   evas_object_smart_callback_call(obj, "selected", eo_it);
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
    sd->last_selected_item = eo_it;
@@ -1523,8 +1523,8 @@ _item_unselect(Elm_List_Item_Data *it)
         sd->selected = eina_list_remove(sd->selected, EO_OBJ(it));
         if (!(it->base->disabled ||
               (sd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)))
-          efl_event_callback_legacy_call
-            (WIDGET(it), EFL_UI_EVENT_UNSELECTED, EO_OBJ(it));
+          evas_object_smart_callback_call
+                  (WIDGET(it), "unselected", EO_OBJ(it));
         if (_elm_config->atspi_mode)
           efl_access_state_changed_signal_emit(EO_OBJ(it), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
      }
