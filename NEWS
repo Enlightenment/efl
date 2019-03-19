@@ -39,23 +39,6 @@ Features:
 
 Fixes:
 
-   * ecore-con/proxy_helper: fix in-tree run path (T6713)
-   * efreet: simplify and fix efreetd launch (T6713)
-   * build: always check for fork() and clearenv()
-   * popup: fix popup sizing when scroll enabled. (T6886)
-   * evas gl-x11 engine - nvidia driver - fix performance drop
-   * canvas vg_loader: close opened file after using it.
-   * elm/win: correctly track and set x11 shaped state
-   * evas textblock: adds missing legacy types
-   * canvas render: stop render_pre/post cb if it didn't render.
-   * Evas text textblock: call evas_font_free even on null fonts
-   * emile image: close file properly.
-   * examples/evas: do not attempt to free animator on window delete (T7000)
-   * ecore_evas: when window resized in ecore_evas, check evas rotate state.
-   * elm_code: (cherry-pick) Fix cusor pos after newline when indenting with tabs
-   * ecore x - fix vsync to not block amdgpu drivers
-   * elm_code_widget: resize cursor at time of font change. (T6470)
-   * evas canvas: fix not to trigger unnecessary events.
    * build: fix rpath for binaries which use ecore-x dependencies
    * elm/genlist: remove conditional in _calc_job for verifying show_item code (T6368)
    * elementary image: don't calc size using empty ones.
@@ -125,6 +108,26 @@ Fixes:
    * eina_file: set errno on open fail for win32 build
    * evas-gl-drm: Fix issue of rotation not actually rotating (T7690)
    * solve neon rotation issue by moving to the tiled rotator
+   * eo: Fix missing varags cleanup (CID1399080)
+   * efl_core_command_line: Fix logically dead code (CID1399106)
+   * efl_ui_widget_common: Fix potential resource leak (CID1399088)
+   * efl_ui_selection_manager: Fix unchecked return value (CID1399092)
+   * evas_device: Fix dereferencing null pointer (CID1399091)
+   * efl_ui_stack: Fix dereference null return value (CID1399082)
+   * efl_ui_datepicker: Fix uninitialized scalar value (CID1397006)
+   * efl_ui_grid: Fix dereferencing null pointer (CID1397000)
+   * ecore_con: Fix dereferencing of null pointer (CID1396990)
+   * elm_atspi_bridge: Fix resource leak (CID1399429)
+   * efl_ui_win: Fix dereference null return value (CID1399428)
+   * efl_ui_win: Fix dereference null return (CID1399427)
+   * efl_ui_win: Fix dereference null return (CID1399426)
+   * efl_ui_win: Fix dereference null return value (CID1399425)
+   * efreet: Fix resource leak (CID1399090)
+   * efl_ui_text: Fix resource leak (CID1396998)
+   * eldbus: Fix dereference after null check (CID1399422)
+   * efl_ui_focus_manager_calc: Fix resource leaks (CID1396984, CID1396965)
+   * elm_focus_legacy: Fix resource leaks (CID1399096, CID1399095)
+   * eldbus: Fix resource leak (CID1399097)
 
 Changes since 1.20.0:
 ---------------------

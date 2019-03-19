@@ -1,5 +1,5 @@
 EFL_VERSION([1], [22], [0], [release])
-AC_INIT([efl], [efl_version-beta1], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([efl], [efl_version-beta2], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
