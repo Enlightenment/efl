@@ -903,7 +903,7 @@ _grid_item_selected(void *data, const Efl_Event *event)
    pd->selected = eina_list_append(pd->selected, item);
    pd->last_selected = item;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, item);
 }
 
 static void
@@ -916,7 +916,7 @@ _grid_item_unselected(void *data, const Efl_Event *event)
    pd->selected = eina_list_remove(pd->selected, item);
    if (pd->last_selected == item) pd->last_selected = NULL;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_UNSELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, item);
 }
 
 static void
@@ -945,8 +945,8 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    efl_event_callback_add(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_UNPRESSED, _grid_item_unpressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_add(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 
    return EINA_TRUE;
@@ -971,8 +971,8 @@ _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
    efl_event_callback_del(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_UNPRESSED, _grid_item_unpressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_del(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 }
 

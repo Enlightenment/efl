@@ -4,9 +4,9 @@ interface @beta Efl.Ui.Selectable
    event_prefix: efl_ui;
    events {
       /* FIXME: Called with multiple types of event_info! */
-      selected: void; [[Called when selected]]
+      item,selected: Efl.Object; [[Called when selected]]
       /* FIXME: Called with multiple types of event_info! */
-      unselected: void; [[Called when no longer selected]]
+      item,unselected: Efl.Object; [[Called when no longer selected]]
       selection,paste: void; [[Called when selection is pasted]]
       selection,copy: void; [[Called when selection is copied]]
       selection,cut: void; [[Called when selection is cut]]
