@@ -7636,10 +7636,10 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
 {
    const char *file, *key;
 
+   sd->legacy.forbidden = EINA_TRUE;
    if (efl_file_loaded_get(part_obj)) return 0;
    file = efl_file_get(part_obj);
    key = efl_file_key_get(part_obj);
-   sd->legacy.forbidden = EINA_TRUE;
    if (eina_streq(part, "background"))
      {
         Eina_Bool ok = EINA_TRUE;
