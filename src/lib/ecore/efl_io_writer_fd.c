@@ -83,7 +83,7 @@ _efl_io_writer_fd_efl_io_writer_can_write_set(Eo *o, Efl_Io_Writer_Fd_Data *pd, 
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_writer_fd_get(o) < 0 && can_write);
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, (void*) (uintptr_t) can_write);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 #include "efl_io_writer_fd.eo.c"
