@@ -125,8 +125,8 @@ elm_main(int argc EINA_UNUSED, char **argv)
    priv_d.list = list = efl_add(EFL_UI_LIST_CLASS, wbox);
    efl_gfx_hint_weight_set(list, EFL_GFX_HINT_EXPAND, 0.9);
 
-   efl_event_callback_add(list, EFL_UI_EVENT_SELECTABLE_SELECTED, _list_selected, NULL);
-   efl_event_callback_add(list, EFL_UI_EVENT_SELECTABLE_UNSELECTED, _list_unselected, NULL);
+   efl_event_callback_add(list, EFL_UI_EVENT_SELECTED, _list_selected, NULL);
+   efl_event_callback_add(list, EFL_UI_EVENT_UNSELECTED, _list_unselected, NULL);
    efl_event_callback_add(list, EFL_UI_EVENT_PRESSED, _list_pressed, NULL);
    efl_event_callback_add(list, EFL_UI_EVENT_UNPRESSED, _list_unpressed, NULL);
    efl_event_callback_add(list, EFL_UI_EVENT_LONGPRESSED, _list_longpressed, NULL);

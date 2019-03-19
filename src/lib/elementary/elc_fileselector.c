@@ -1215,7 +1215,7 @@ _on_item_selected(void *data, const Efl_Event *event)
           elm_object_text_set(sd->name_entry, it_data->filename);
 
         _model_event_call
-          (data, EFL_UI_EVENT_SELECTABLE_SELECTED, it_data->model, it_data->path);
+          (data, EFL_UI_EVENT_SELECTED, it_data->model, it_data->path);
      }
    else if (sd->multi && it_data->is_dir && sd->double_tap_navigation)
      {
@@ -1467,7 +1467,7 @@ _on_text_activated_set_path_then(void *data, const Eina_Value v, const Eina_Futu
 
  selected:
    if (sd->only_folder)
-     _model_event_call(fs, EFL_UI_EVENT_SELECTABLE_SELECTED, model, str);
+     _model_event_call(fs, EFL_UI_EVENT_SELECTED, model, str);
 
  end:
    _text_activated_free_fs_data(fs);
@@ -1607,9 +1607,9 @@ _files_list_add(Evas_Object *obj)
    efl_ui_mirrored_automatic_set(li, EINA_FALSE);
 
    efl_event_callback_add
-     (li, EFL_UI_EVENT_SELECTABLE_SELECTED, _on_item_selected, obj);
+     (li, EFL_UI_EVENT_SELECTED, _on_item_selected, obj);
    efl_event_callback_add
-     (li, EFL_UI_EVENT_SELECTABLE_UNSELECTED, _on_item_unselected, obj);
+     (li, EFL_UI_EVENT_UNSELECTED, _on_item_unselected, obj);
    efl_event_callback_add
      (li, ELM_GENLIST_EVENT_ACTIVATED, _on_item_activated, obj);
    efl_event_callback_add
@@ -1644,9 +1644,9 @@ _files_grid_add(Evas_Object *obj)
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
    efl_event_callback_add
-     (grid, EFL_UI_EVENT_SELECTABLE_SELECTED, _on_item_selected, obj);
+     (grid, EFL_UI_EVENT_SELECTED, _on_item_selected, obj);
    efl_event_callback_add
-     (grid, EFL_UI_EVENT_SELECTABLE_UNSELECTED, _on_item_unselected, obj);
+     (grid, EFL_UI_EVENT_UNSELECTED, _on_item_unselected, obj);
    efl_event_callback_add
      (grid, ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj);
    efl_event_callback_add
@@ -1995,7 +1995,7 @@ _elm_fileselector_efl_object_event_callback_legacy_call(Eo *obj, Elm_Fileselecto
      {
         const Efl_Event_Description *evt_desc = NULL;
         if (strcmp(desc->name, "selected") == 0)
-          evt_desc = EFL_UI_EVENT_SELECTABLE_SELECTED;
+          evt_desc = EFL_UI_EVENT_SELECTED;
         else if (strcmp(desc->name, "activated") == 0)
           evt_desc = ELM_FILESELECTOR_EVENT_ACTIVATED;
         else if (strcmp(desc->name, "directory,open") == 0)
@@ -2010,7 +2010,7 @@ _elm_fileselector_efl_object_event_callback_legacy_call(Eo *obj, Elm_Fileselecto
         return _from_legacy_event_call(obj, sd, desc, evt_desc, event_info);
      }
 
-   if (desc == EFL_UI_EVENT_SELECTABLE_SELECTED ||
+   if (desc == EFL_UI_EVENT_SELECTED ||
        desc == ELM_FILESELECTOR_EVENT_ACTIVATED ||
        desc == ELM_FILESELECTOR_EVENT_DIRECTORY_OPEN ||
        desc == ELM_FILESELECTOR_EVENT_DONE ||

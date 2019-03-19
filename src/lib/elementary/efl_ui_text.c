@@ -1217,7 +1217,7 @@ _cut_cb(Eo *obj)
    Efl_Text_Cursor_Cursor *start, *end;
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_CUT, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1246,7 +1246,7 @@ _copy_cb(Eo *obj)
 {
    EFL_UI_TEXT_DATA_GET(obj, sd);
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_COPY, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -2437,7 +2437,7 @@ _efl_ui_text_select_none(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd)
         edje_object_signal_emit(sd->entry_edje, "efl,state,select,off", "efl");
      }
    if (sd->have_selection)
-     efl_event_callback_call(obj, EFL_UI_EVENT_SELECTABLE_CLEARED, NULL);
+     efl_event_callback_call(obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
    _edje_signal_emit(sd, "selection,cleared", "efl.text");

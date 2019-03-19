@@ -187,7 +187,7 @@ _tab_select(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti)
 
         index = eina_list_data_idx(sd->tab_infos, ti);
 
-        efl_event_callback_call(tp, EFL_UI_EVENT_SELECTABLE_SELECTED, (void *)(intptr_t)index);
+        efl_event_callback_call(tp, EFL_UI_EVENT_SELECTED, (void *)(intptr_t)index);
 
         sd->cur = index;
      }
