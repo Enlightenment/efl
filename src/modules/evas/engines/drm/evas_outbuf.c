@@ -545,3 +545,30 @@ _outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage EINA_UNUSED, Tilebuf_Rect
 
    _outbuf_buffer_swap(ob);
 }
+
+void
+_outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
+{
+   Tilebuf_Rect *tr;
+   Eina_Rectangle *rects;
+   Ecore_Drm2_Fb *fb;
+   int count, i = 0;
+
+   if (!ob->priv.draw) return;
+
+   fb = ob->priv.draw->fb;
+
+   count = eina_inlist_count(EINA_INLIST_GET(damage));
+   rects = alloca(count * sizeof(Eina_Rectangle));
+
+   EINA_INLIST_FOREACH(damage, tr)
+     {
+        rects[i].x = tr->x;
+        rects[i].y = tr->y;
+        rects[i].w = tr->w;
+        rects[i].h = tr->h;
+        i++;
+     }
+
+   ecore_drm2_fb_dirty(fb, rects, count);
+}

@@ -38,7 +38,7 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
                                                  _outbuf_rotation_get,
                                                  _outbuf_reconfigure,
                                                  NULL,
-                                                 NULL,
+                                                 _outbuf_damage_region_set,
                                                  _outbuf_update_region_new,
                                                  _outbuf_update_region_push,
                                                  NULL,
