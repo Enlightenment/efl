@@ -687,7 +687,12 @@ struct klass
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << visibility << "bool add_cpp_event_handler(string lib, string key, Efl.EventCb evt_delegate) {\n"
+            scope_tab << "///<summary>Adds a new event handler, registering it to the native event. For internal use only.</summary>\n"
+            << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
+            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
+            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be called on event raising.</param>\n"
+            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
+            << scope_tab << visibility << "bool AddNativeEventHandler(string lib, string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
@@ -709,7 +714,11 @@ struct klass
             << scope_tab << scope_tab << "event_cb_count[key]++;\n"
             << scope_tab << scope_tab << "return true;\n"
             << scope_tab << "}\n"
-            << scope_tab << visibility << "bool remove_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
+            << scope_tab << "///<summary>Removes the given event handler for the given event. For internal use only.</summary>\n"
+            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
+            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be removed.</param>\n"
+            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
+            << scope_tab << visibility << "bool RemoveNativeEventHandler(string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
