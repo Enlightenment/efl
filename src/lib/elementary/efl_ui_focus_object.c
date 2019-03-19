@@ -24,7 +24,7 @@ _efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd, Eina_Bool 
    parent = efl_ui_focus_object_focus_parent_get(obj);
    if (parent)
      efl_ui_focus_object_child_focus_set(parent, focus);
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , (void*) (uintptr_t) focus);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , &focus);
 }
 
 EOLIAN static Eina_Bool
