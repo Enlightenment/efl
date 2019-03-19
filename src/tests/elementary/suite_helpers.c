@@ -161,7 +161,8 @@ _win_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
 static void
 _ui_win_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   if (ev->info)
+   Eina_Bool *visible = ev->info;
+   if (*visible)
      _win_show(NULL, NULL, ev->object, NULL);
    else
      {

@@ -265,9 +265,9 @@ static void
 _pop_content_hide_cb(void *data, const Efl_Event *event)
 {
    Content_Data *cd = data;
-
+   Eina_Bool *visible = event->info;
    /* object is being shown */
-   if (event->info) return;
+   if (*visible) return;
 
    cd->popped_hidden = EINA_TRUE;
 
