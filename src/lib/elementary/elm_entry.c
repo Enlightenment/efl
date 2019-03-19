@@ -4988,7 +4988,7 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 }
 
 EOLIAN static void
-_elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *sd EINA_UNUSED)
 {
    elm_object_text_set(obj, "");
    efl_file_unload(efl_super(obj, MY_CLASS));
