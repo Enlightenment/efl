@@ -30,9 +30,6 @@
 #define MY_CLASS_NAME "Efl_Ui_Widget"
 #define MY_CLASS_NAME_LEGACY "elm_widget"
 
-#define ELM_WIDGET_DATA_GET(o, wd)                             \
-  Elm_Widget_Smart_Data *wd = efl_data_scope_get(o, MY_CLASS)
-
 #define API_ENTRY                                    \
   Elm_Widget_Smart_Data *sd = NULL;                  \
   if (!_elm_widget_is(obj) ||                        \
