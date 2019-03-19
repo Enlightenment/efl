@@ -2030,10 +2030,7 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
    double tz;
    int w, h;
-   Eina_Error err;
-
-   err = efl_file_load(efl_super(obj, MY_CLASS));
-   if (err) return err;
+   Eina_Error err = 0;
 
    sd->zoom = 1.0;
    evas_object_image_smooth_scale_set(sd->img, (sd->no_smooth == 0));
@@ -2111,11 +2108,8 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_GFX_IMAGE_LOAD_ERROR_GENERIC);
    int w, h;
    double tz;
-   Eina_Error err;
+   Eina_Error err = 0;
    const char *file;
-
-   err = efl_file_load(efl_super(obj, MY_CLASS));
-   if (err) return err;
 
    file = efl_file_get(obj);
 
@@ -2337,8 +2331,9 @@ static const Eina_Slice remote_uri[] = {
 static inline Eina_Bool
 _efl_ui_image_zoomable_is_remote(const char *file)
 {
-   Eina_Slice s = EINA_SLICE_STR(file);
    const Eina_Slice *itr;
+   if (!file) return EINA_FALSE;
+   Eina_Slice s = EINA_SLICE_STR(file);;
 
    for (itr = remote_uri; itr->mem; itr++)
      if (eina_slice_startswith(s, *itr))
@@ -2407,10 +2402,10 @@ _efl_ui_image_zoomable_efl_file_load(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 }
 
 EOLIAN static Eina_Error
-_efl_ui_image_zoomable_efl_file_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
+_efl_ui_image_zoomable_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, const char *file)
 {
    eina_stringshare_replace(&sd->file, file);
-   return efl_file_set(efl_super(obj, MY_CLASS), file);
+   return 0;
 }
 
 EOLIAN static void
