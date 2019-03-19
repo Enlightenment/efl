@@ -1950,18 +1950,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_freeze(Eo *obj, Efl_
 {
   pd->freeze ++;
   if (pd->freeze == 1)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_TRUE);
-}
+    {
+       Eina_Bool event_info = EINA_TRUE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 
+}
 
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
   pd->freeze --;
   if (!pd->freeze)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_FALSE);
+    {
+       Eina_Bool event_info = EINA_FALSE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 }
-
 
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)

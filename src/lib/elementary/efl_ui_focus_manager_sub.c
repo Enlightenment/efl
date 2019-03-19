@@ -122,7 +122,8 @@ _redirect_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _freeze_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   if (ev->info)
+   Eina_Bool *val = ev->info;
+   if (*val)
      {
         efl_ui_focus_manager_dirty_logic_freeze(data);
      }
