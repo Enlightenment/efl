@@ -5861,7 +5861,8 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
    if (obj && (!elm_widget_is_legacy(obj)))
      {
         /* FIXME: if parts other than background are supported then this should change */
-        if (efl_file_get(efl_part(obj, "background")) || efl_file_mmap_get(efl_part(obj, "background")))
+        if (efl_file_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)) ||
+            efl_file_mmap_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)))
           efl_file_load(efl_part(obj, "background"));
      }
    return obj;
