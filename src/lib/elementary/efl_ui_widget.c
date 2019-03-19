@@ -480,12 +480,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
           {
              if (efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
                {
-                  ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
-                  if (!logical_wd)
-                    {
-                       ERR("Widget parent has the wrong type!");
-                       return NULL;
-                    }
+                  ELM_WIDGET_DATA_GET_OR_RETURN(pd->logical.parent, logical_wd, NULL);
                   logical_wd->logical.child_count --;
                }
              old = pd->logical.parent;
@@ -496,12 +491,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
           {
              if (efl_isa(parent, EFL_UI_WIDGET_CLASS))
                {
-                  ELM_WIDGET_DATA_GET(parent, parent_wd);
-                  if (!parent_wd)
-                    {
-                       ERR("Widget parent has the wrong type!");
-                       return NULL;
-                    }
+                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, parent_wd, NULL);
                   parent_wd->logical.child_count ++;
                }
              pd->logical.parent = parent;
