@@ -182,7 +182,16 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             return;
 
         if (Own)
-            eina_hash_free(h);
+        {
+            if (disposing)
+            {
+                eina_hash_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_hash_free, h);
+            }
+        }
     }
 
     public void Dispose()

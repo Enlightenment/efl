@@ -226,7 +226,16 @@ public class Message : IDisposable
             return;
 
         if (Own)
-            eldbus_message_unref(h);
+        {
+            if (disposing)
+            {
+                eldbus_message_unref(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eldbus_message_unref, h);
+            }
+        }
     }
 
     public void Dispose()

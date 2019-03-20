@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -36,30 +37,23 @@ public class Globals {
     public delegate void efl_object_shutdown_delegate();
     public static FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
     public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
-    // [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
-    public static FunctionWrapper<_efl_add_internal_start_delegate> _efl_add_internal_start_ptr = new FunctionWrapper<_efl_add_internal_start_delegate>(efl.Libs.EoModule, "_efl_add_internal_start");
-    public delegate  IntPtr
-        _efl_add_internal_start_delegate([MarshalAs(UnmanagedType.LPStr)] String file, int line,
-                                IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
+
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
-    public delegate  IntPtr
-        _efl_add_end_delegate(IntPtr eo, byte is_ref, byte is_fallback);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
-    public delegate  IntPtr
-        efl_ref_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_ref(IntPtr eo);
-    public delegate  void
-        efl_unref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.Eo)] public static extern void
         efl_unref(IntPtr eo);
-    public delegate  int
-        efl_ref_count_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern int
         efl_ref_count(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_efl_unref(IntPtr eo);
+
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_free_cb_exec(EinaFreeCb free_cb, IntPtr cb_data);
 
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_name_get(IntPtr eo);
@@ -389,14 +383,16 @@ public class Globals {
         case 48: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], il[46], il[47], nul);
         }
     }
-    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
+    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent,
+                                           [CallerFilePath] string file = null,
+                                           [CallerLineNumber] int line = 0)
     {
         Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
         if(parent != null)
             parent_ptr = parent.NativeHandle;
 
-        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start(file, line, klass, parent_ptr, 1, 0);
         if (eo == System.IntPtr.Zero)
         {
             throw new Exception("Instantiation failed");

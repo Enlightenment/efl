@@ -158,7 +158,16 @@ public class Connection : IDisposable
             return;
 
         if (Own)
-            eldbus_connection_unref(h);
+        {
+            if (disposing)
+            {
+                eldbus_connection_unref(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eldbus_connection_unref, h);
+            }
+        }
     }
 
     public void Dispose()

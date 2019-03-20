@@ -69,7 +69,16 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         }
 
         if (Own)
-            eina_iterator_free(h);
+        {
+            if (disposing)
+            {
+                eina_iterator_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_iterator_free, h);
+            }
+        }
     }
 
     public void Dispose()

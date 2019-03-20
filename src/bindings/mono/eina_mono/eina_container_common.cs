@@ -204,7 +204,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
     public void NativeFree(IntPtr nat)
     {
         if (nat != IntPtr.Zero)
-            Efl.Eo.Globals.efl_unref(nat);
+            Efl.Eo.Globals.efl_mono_thread_safe_efl_unref(nat);
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)

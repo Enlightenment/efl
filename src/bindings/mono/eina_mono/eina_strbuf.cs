@@ -90,7 +90,15 @@ public class Strbuf : IDisposable
         }
 
         if (!Disposed && (Handle != IntPtr.Zero)) {
-            eina_strbuf_free(Handle);
+            if (disposing)
+            {
+                eina_strbuf_free(Handle);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_strbuf_free, Handle);
+            }
+            Handle = IntPtr.Zero;
         }
         Disposed = true;
     }

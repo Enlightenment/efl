@@ -135,7 +135,16 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         }
 
         if (Own)
-            eina_inarray_free(h);
+        {
+            if (disposing)
+            {
+                eina_inarray_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_inarray_free, h);
+            }
+        }
     }
 
     public void Dispose()
