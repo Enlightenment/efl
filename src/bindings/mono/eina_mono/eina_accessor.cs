@@ -27,6 +27,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     private Ownership Ownership { get; set; }
 
     // FIXME Part of the implicit EFL Container interface. Need to make it explicit.
+    ///<summary>Whether this wrapper owns the native accessor.</summary>
     public bool Own
     {
         get
@@ -40,12 +41,18 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="owner">Whether this wrapper owns the native accessor.</param>
     public Accessor(IntPtr handle, Ownership owner=Ownership.Managed)
     {
         Handle = handle;
         Ownership = owner;
     }
 
+    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native accessor.</param>
+    /// <param name="ownContent">For compatibility with other EFL# containers. Ignored in acessors.</param>
     public Accessor(IntPtr handle, bool own, bool ownContent=false)
         : this(handle, own ? Ownership.Managed : Ownership.Unmanaged)
     {
@@ -57,6 +64,9 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         Dispose(true);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native accessor if owned.</summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (Ownership == Ownership.Managed && Handle != IntPtr.Zero)
@@ -66,17 +76,23 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>Finalizer to be called from the Garbage Collector.</summary>
     ~Accessor()
     {
         Dispose(false);
     }
 
-    public virtual T Convert(IntPtr data)
+    /// <summary>Convert the native data into managed. This is used when returning the data through a
+    /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
+    /// <param name="data">The data to be converted</param>
+    /// <returns>The managed data representing <c>data</c>.</returns>
+    protected virtual T Convert(IntPtr data)
     {
         return NativeToManaged<T>(data);
     }
 
     /// <summary>Returns an enumerator that iterates throught this accessor.</summary>
+    /// <returns>An enumerator to walk through the acessor items.</returns>
     public IEnumerator<T> GetEnumerator()
     {
         if (Handle == IntPtr.Zero)
@@ -105,19 +121,38 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     }
 }
 
+///<summary>Accessor for Inlists.</summary>
 public class AccessorInList<T> : Accessor<T>
 {
+
+    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native accessor.</param>
     public AccessorInList(IntPtr handle, Ownership own): base(handle, own) {}
-    public override T Convert(IntPtr data)
+
+    /// <summary>Convert the native data into managed. This is used when returning the data through a
+    /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
+    /// <param name="data">The data to be converted</param>
+    /// <returns>The managed data representing <c>data</c>.</returns>
+    protected override T Convert(IntPtr data)
     {
         return NativeToManagedInlistNode<T>(data);
     }
 }
 
+///<summary>Accessor for Inarrays.</summary>
 public class AccessorInArray<T> : Accessor<T>
 {
+    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native accessor.</param>
     public AccessorInArray(IntPtr handle, Ownership own): base(handle, own) {}
-    public override T Convert(IntPtr data)
+
+    /// <summary>Convert the native data into managed. This is used when returning the data through a
+    /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
+    /// <param name="data">The data to be converted</param>
+    /// <returns>The managed data representing <c>data</c>.</returns>
+    protected override T Convert(IntPtr data)
     {
         return NativeToManagedInplace<T>(data);
     }

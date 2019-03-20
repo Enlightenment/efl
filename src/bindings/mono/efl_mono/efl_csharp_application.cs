@@ -14,8 +14,11 @@ static class UnsafeNativeMethods {
 
 namespace Efl {
   namespace Csharp {
+    ///<summary>The components to be initialized.</summary>
     public enum Components {
+        ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.</summary>
         Basic,
+        ///<summary>The same components of <see cref="Efl.Csharp.Components.Basic"/> and the Elementary widget toolkit.</summary>
         Ui,
     }
     /// <summary>

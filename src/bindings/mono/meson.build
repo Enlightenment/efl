@@ -62,7 +62,6 @@ blacklisted_files = [
   'efl_vg_root_node.eo',
   'efl_vg_shape.eo.cs',
   'efl_io_buffer.eo',
-  'efl_io_positioner.eo',
   'efl_io_queue.eo',
   'efl_io_sizer.eo',
   'efl_io_closer_fd.eo',
