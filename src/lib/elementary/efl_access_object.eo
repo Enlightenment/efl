@@ -307,6 +307,13 @@ mixin @beta Efl.Access.Object requires Efl.Object
             @in value: string; [[The string value to give extra information]]
          }
       }
+      attribute_del {
+         [[delete key-value pair identifying object extra attributes when key is given
+         ]]
+         params {
+            @in key: string; [[The string key to identify the key-value pair]]
+         }
+      }
       attributes_clear {
          [[Removes all attributes in accessible object.]]
       }
