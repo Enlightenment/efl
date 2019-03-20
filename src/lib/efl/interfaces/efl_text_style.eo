@@ -59,8 +59,6 @@ interface @beta Efl.Text_Style {
    [[Style to apply to the text
 
      A style can be coloring, effects, underline, strikethrough etc.
-
-     @since 1.20
    ]]
    eo_prefix: efl_text;
    methods {

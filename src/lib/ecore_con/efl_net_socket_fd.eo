@@ -7,8 +7,6 @@ class @beta Efl.Net.Socket_Fd extends Efl.Loop_Fd implements Efl.Io.Reader_Fd, E
       @Efl.Io.Closer.close_on_exec and
       @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true.
-
-      @since 1.19
     ]]
 
     methods {

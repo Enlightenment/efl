@@ -28,8 +28,6 @@ interface @beta Efl.Model
                  listeners of any modifications in the properties.
 
                  See also @[Efl.Model.properties,changed].
-
-                 @since 1.14
                ]]
             }
             values {
@@ -52,8 +50,6 @@ interface @beta Efl.Model
                property in model
 
                See @.property.get, @[Efl.Model.properties,changed]
-
-               @since 1.14
               ]]
               return: future<any_value_ptr>; [[Return an error in case the property could not be set, the value that was set otherwise.]]
            }
@@ -65,8 +61,6 @@ interface @beta Efl.Model
                 notify listeners of the property/value.
 
                 See @.properties.get, @[Efl.Model.properties,changed]
-
-                @since 1.14
               ]]
            }
            keys {
@@ -120,8 +114,6 @@ interface @beta Efl.Model
                  Note: The returned children will live only as long as the future
                  itself. Once the future is done, if you want to keep the object
                  alive, you need to take a reference for yourself.
-
-                 @since 1.14
                ]]
             params {
                 @in start: uint; [[Range begin - start from here.]]
@@ -142,8 +134,6 @@ interface @beta Efl.Model
                   emitted when count is finished.
 
                   See also @.children_slice_get.
-
-                  @since 1.14
                ]]
             }
             values {
@@ -157,8 +147,6 @@ interface @beta Efl.Model
               of a internal keeping. When the child is effectively
               added the event @[Efl.Model.child,added] is then raised
               and the new child is kept along with other children.
-
-              @since 1.14
             ]]
             return: Efl.Object; [[Child object]]
          }
@@ -169,8 +157,6 @@ interface @beta Efl.Model
               removed the event @[Efl.Model.child,removed] is then
               raised to give a chance for listeners to perform any cleanup
               and/or update references.
-
-              @since 1.14
             ]]
             params {
                @in child: Efl.Object; [[Child to be removed]]

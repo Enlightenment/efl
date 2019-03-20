@@ -4,8 +4,6 @@ enum @beta Efl.Ui.Scroll_Block
 
      Note: These options may be effective only in case of thumbscroll (i.e.
      when scrolling by dragging).
-
-     @since 1.21
    ]]
    none = 0,      [[Don't block any movement.]]
    vertical = 1,  [[Block vertical movement.]]

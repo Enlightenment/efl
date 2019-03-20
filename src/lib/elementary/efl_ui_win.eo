@@ -42,7 +42,6 @@ enum @beta Efl.Ui.Win_Type
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.
-                          @since 1.19
                         ]]
 }
 
@@ -122,8 +121,6 @@ enum Efl.Ui.Win_Move_Resize_Mode
      7. top | right,
      8. bottom | left,
      9. bottom | right.
-
-     @since 1.19
    ]]
 
    move = 1,           [[Start moving window]]
@@ -150,8 +147,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            such circumstances. The default settings depends on the environment.
            For example, on phones, the default is to enable the indicator.
            The indicator is disabled on devices like televisions however.
-
-           @since 1.18
          ]]
          set {
          }
@@ -437,7 +432,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
             [[Name can only be set before finalize.]]
          }
          get {
-            [[ @since 1.18 ]]
          }
          values {
             name: string @nullable; [[Window name]]
@@ -505,8 +499,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
 
            Note that this option may be overriden by environment variables
            or the configuration option "accel_preference_override".
-
-           @since 1.18
          ]]
          values {
             accel: string; [[Acceleration]]

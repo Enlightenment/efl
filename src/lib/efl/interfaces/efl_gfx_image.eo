@@ -148,8 +148,6 @@ interface @beta Efl.Gfx.Image
            as stored in the original file.
 
            This is a read-only property, and may return 0x0.
-
-           @since 1.20
          ]]
          get {}
          values {

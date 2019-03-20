@@ -15,8 +15,6 @@ class @beta Efl.Canvas.Event_Grabber extends Efl.Canvas.Group
      No child objects should be stacked above the event
      grabber parent while the grabber is visible.
      A critical error will be raised if this is detected.
-
-     @since 1.20
    ]]
    data: Efl_Object_Event_Grabber_Data;
    methods {

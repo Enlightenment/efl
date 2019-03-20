@@ -9,8 +9,6 @@ class @beta Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
       Since for the server 'clients' there is no accepted connection
       it will reuse the same file decriptor. To avoid it being
       closed, another class Efl.Net.Server_Udp_Client is used instead.
-
-      @since 1.19
     ]]
 
     methods {

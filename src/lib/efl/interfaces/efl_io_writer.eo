@@ -11,8 +11,6 @@ interface Efl.Io.Writer {
       interface to specify. The user can check with event
       "can_write,changed" or property @.can_write to known whenever a write
       could push more data.
-
-      @since 1.19
     ]]
 
     methods {

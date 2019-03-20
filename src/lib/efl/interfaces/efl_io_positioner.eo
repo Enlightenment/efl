@@ -9,8 +9,6 @@ enum @beta Efl.Io.Positioner_Whence {
 
 mixin @beta Efl.Io.Positioner {
     [[Generic interface for objects that can change or report position.
-
-      @since 1.19
     ]]
 
     data: null;

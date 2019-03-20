@@ -7,8 +7,6 @@ interface @beta Efl.Canvas.Text_Factory
      decided by the inheriting class, whether it is by treating the $key as an
      image path, or a key associated with a real-path in a hashtable
      or something else entirely.
-
-     @since 1.21
    ]]
    methods {
       create {

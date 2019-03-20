@@ -6,8 +6,6 @@ class @beta Efl.Net.Dialer_Unix extends Efl.Net.Socket_Unix implements Efl.Net.D
 
       Note: Proxies are meaningless for AF_UNIX family, thus are not
       implemented.
-
-      @since 1.19
     ]]
 
     implements {

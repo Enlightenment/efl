@@ -1,7 +1,5 @@
 interface @beta Efl.Text_Markup_Interactive extends Efl.Text_Cursor {
    [[Markup data that populates the text object's style and format
-
-     @since 1.22
    ]]
    methods {
       @property markup_range {

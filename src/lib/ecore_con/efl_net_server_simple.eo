@@ -3,8 +3,6 @@ class @beta Efl.Net.Server_Simple extends Efl.Loop_Consumer implements Efl.Net.S
 
       This is just a wrapper server. It takes an actual server
       using @.inner_server or creates one using @.inner_class.
-
-      @since 1.19
     ]]
     methods {
         @property inner_class {

@@ -44,8 +44,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
               Edje naming follows a incrementional convention: first
               registered name is "seat1", second is "seat2", differently
               from Evas.
-
-              @since 1.19]]
+            ]]
 
             return: Efl.Input.Device; [[The seat device or $null if not found.]]
          }
@@ -61,9 +60,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
               Edje naming follows a incrementional convention: first
               registered name is "seat1", second is "seat2", differently
               from Evas.
-
-              @since 1.19]]
-
+            ]]
             return: stringshare; [[The name's character string or $null if not found.]]
          }
          keys {

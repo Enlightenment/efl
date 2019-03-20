@@ -24,8 +24,6 @@ class @beta Efl.Io.Model extends Efl.Loop_Model
             EINA_TRUE to keep it.
 
             See also @Efl.Model.children_slice_get.
-
-            @since 1.11
           ]]
           params {
              filter: EflIoFilter; [[Filter callback]]
@@ -33,8 +31,6 @@ class @beta Efl.Io.Model extends Efl.Loop_Model
        }
        @property path {
           [[ Define the root path of a model.
-
-            @since 1.11
           ]]
 	  set { [[ Only possible during construction. ]] }
 	  get { }

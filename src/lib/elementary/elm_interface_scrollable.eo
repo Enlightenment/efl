@@ -216,8 +216,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
 
            Note: If $obj is not set to have pages, nothing will happen after
            this call.
-
-           @since 1.8]]
+         ]]
          set {
          }
          get {
@@ -251,8 +250,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
            such as the movement angle. If the user scrolls roughly in one
            direction only, it will only move according to it while if the move
            was clearly wanted on both axes, it will happen on both of them.
-
-           @since 1.8]]
+         ]]
          set {
          }
          get {
@@ -274,8 +272,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
       }
       @property content_loop {
          [[Controls an infinite loop for a scroller.
-
-           @since 1.14]]
+         ]]
          set {
          }
          get {

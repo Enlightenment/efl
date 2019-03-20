@@ -18,8 +18,6 @@ interface @beta Efl.Input.Interface
      A "key" is a key press from a keyboard or equivalent type of input device.
      Long, repeated, key presses will always happen like this:
      down...up,down...up,down...up (not down...up or down...down...down...up).
-
-     @since 1.19
    ]]
    eo_prefix: efl_input;
    event_prefix: efl;

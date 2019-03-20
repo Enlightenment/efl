@@ -5,8 +5,6 @@ class @beta Efl.Net.Server_Windows extends Efl.Loop_Consumer implements Efl.Net.
       directly, so the path will be accessed and created in that
       method. If the created socket must be subject to some special
       mode or user, change before executing said method.
-
-      @since 1.19
     ]]
 
     methods {

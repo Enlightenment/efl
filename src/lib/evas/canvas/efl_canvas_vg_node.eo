@@ -9,13 +9,11 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, 
             [[Sets the transformation matrix to be used for this node object.
 
               Note: Pass $null to cancel the applied transformation.
-
-              @since 1.14]]
+            ]]
          }
          get {
             [[Gets the transformation matrix used for this node object.
-
-              @since 1.14]]
+            ]]
          }
          values {
             @cref m: Eina.Matrix3; [[Transformation matrix.]]
@@ -26,13 +24,11 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, 
             [[Sets the origin position of the node object.
 
               This origin position affects node transformation.
-
-              @since 1.14]]
+            ]]
          }
          get {
             [[Gets the origin position of the node object.
-
-              @since 1.14]]
+            ]]
          }
          values {
             x: double; [[$origin x position.]]

@@ -31,8 +31,6 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
       and can be retrieved with @.inner_io.get, which should be used
       with care -- calling @Efl.Io.Reader.read and
       @Efl.Io.Writer.write on it may produce unexpected results.
-
-      @since 1.19
     ]]
 
     methods {

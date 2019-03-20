@@ -7,8 +7,6 @@ class @beta Efl.Io.Queue extends Efl.Object implements Efl.Io.Reader, Efl.Io.Wri
 
       A fixed sized queue can be implemented by setting @.limit
       followed by @.preallocate
-
-      @since 1.19
     ]]
 
     methods {

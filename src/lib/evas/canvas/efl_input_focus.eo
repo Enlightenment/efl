@@ -1,6 +1,6 @@
 class Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
 {
-   [[Represents a focus event. @since 1.19]]
+   [[Represents a focus event. ]]
    methods {
       @property object {
          [[The focused object]]

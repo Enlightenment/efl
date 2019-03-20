@@ -1,7 +1,5 @@
 class @beta Efl.Net.Server_Tcp extends Efl.Net.Server_Ip {
     [[A TCP server.
-
-      @since 1.19
     ]]
 
     implements {

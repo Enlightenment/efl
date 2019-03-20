@@ -9,8 +9,6 @@ class @beta Efl.Net.Server_Udp_Client extends Efl.Object implements Efl.Net.Sock
       Given this limitation, some features such as 'cork' (used to
       coalesce multiple writes() into a single datagram) are not
       available since it could interfere with other clients.
-
-      @since 1.19
     ]]
 
     methods {

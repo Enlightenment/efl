@@ -3,8 +3,6 @@ import eina_types;
 mixin Efl.Ui.Focus.Object
 {
     [[Functions of focusable objects.
-
-      @since 1.20
     ]]
     methods {
         @property focus_geometry {

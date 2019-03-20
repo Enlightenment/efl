@@ -5,8 +5,6 @@ class @beta Efl.Ui.Text_Factory.Images extends Efl.Object implements Efl.Canvas.
      The key can be either a full image path, or associated with one. The
      factory will fallback if key was not matches with an image, and try
      to load it as a full path.
-
-     @since 1.21
    ]]
    methods {
       matches_add {

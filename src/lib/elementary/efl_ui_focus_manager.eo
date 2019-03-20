@@ -3,8 +3,6 @@ import eina_types;
 
 struct @beta @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focusable objects.
-
-      @since 1.20
     ]]
     right : list<Efl.Ui.Focus.Object> @owned; [[List of objects on the right side]]
     left : list<Efl.Ui.Focus.Object> @owned; [[[List of objects on the left side]]
@@ -21,8 +19,6 @@ struct @beta @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
 
 struct Efl.Ui.Focus.Manager_Logical_End_Detail {
     [[Structure holding the focus object with extra information on logical end
-
-      @since 1.21
     ]]
     is_regular_end : bool; [[$true if element is registered as regular element in the @Efl.Ui.Focus.Manager obejct, $false otherwise]]
     element : Efl.Ui.Focus.Object; [[The last element of the logical chain in the @Efl.Ui.Focus.Manager]]
@@ -36,8 +32,6 @@ interface Efl.Ui.Focus.Manager {
       The movement is also keeping track of the history of focused elements.
       The tree interpretation differentiates between logical and non-logical widgets,
       a logical widget cannot receive focus whereas a non-logical one can.
-
-      @since 1.20
     ]]
     methods {
         move {

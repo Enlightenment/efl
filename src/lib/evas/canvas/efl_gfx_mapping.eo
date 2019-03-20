@@ -13,8 +13,6 @@ mixin Efl.Gfx.Mapping requires Efl.Object
      these can do shading effects on the object, producing 3D effects.
 
      At the moment of writing, maps can only have 4 points (no more, no less).
-
-     @since 1.20
    ]]
    methods {
       mapping_has {

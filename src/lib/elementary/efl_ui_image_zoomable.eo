@@ -37,7 +37,6 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
             [[Set the viewed region of the image
 
               This shows the region of the image without using animation.
-              @since 1.20
             ]]
          }
          values {

@@ -16,7 +16,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       @property pointer_mode_by_device @beta {
          [[Low-level pointer behaviour by device.
            See @.pointer_mode.get and @.pointer_mode.set for more explanation.
-           @since 1.19
          ]]
          keys {
             dev: Efl.Input.Device; [[The pointer device to set/get the mode. Use $null for the default pointer.]]
@@ -187,7 +186,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       @property seat_focus {
          [[
             Check if this object is focused.
-            @since 1.19
          ]]
          get {
          }
@@ -197,7 +195,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       }
       /* FIXME Efl.Input.Device is not stable yet*/
       seat_focus_check @beta {
-         [[ Check if this object is focused by a given seat @since 1.19 ]]
+         [[ Check if this object is focused by a given seat ]]
          params {
             @in seat: Efl.Input.Device; [[The seat to check if the object is focused. Use $null for the default seat.]]
          }
@@ -212,8 +210,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            after the seat is added to the list this object will now be also focused by this new seat.
 
            Note: The old focus APIs still work, however they will only act on the default seat.
-
-           @since 1.19
          ]]
          params {
             @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
@@ -223,8 +219,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       /* FIXME Efl.Input.Device is not stable yet*/
       seat_focus_del @beta {
          [[ Remove a seat from the focus list.
-
-            @since 1.19
          ]]
          params {
             @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
@@ -367,8 +361,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            This can be different from @Efl.Object.parent because this one is
            used internally for rendering and the normal parent is what the
            user expects to be the parent.
-
-           @since 1.18
          ]]
          get {
          }
@@ -452,8 +444,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
 
               This flag can be used to avoid rendering visible clippers on
               the canvas, even if they currently don't clip any object.
-
-              @since 1.15
             ]]
          }
          set {
@@ -472,8 +462,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
               clippers. When hidden, all "no-render" objects will
               completely disappear from the canvas, and hide their
               clippees or be invisible when used as proxy sources.
-
-              @since 1.15
             ]]
          }
          values {

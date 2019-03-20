@@ -19,10 +19,6 @@ class @beta Efl.Net.Dialer_Udp extends Efl.Net.Socket_Udp implements Efl.Net.Dia
        - @Efl.Net.Socket_Udp.multicast_join: join other multicast groups.
        - @Efl.Net.Socket_Udp.multicast_loopback: if packets should be delivered locally or only to remote peers.
        - @Efl.Net.Socket_Udp.multicast_time_to_live: how far, in number of hops, the packet should go.
-
-      I
-
-      @since 1.19
     ]]
 
     implements {

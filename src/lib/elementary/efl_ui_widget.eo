@@ -369,8 +369,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       }
       @property focus_move_policy_automatic @beta {
          [[Control the widget's focus_move_policy mode setting.
-
-           @since 1.18]]
+         ]]
          values {
             automatic: bool; [[$true to follow system focus move policy change,
                                $false otherwise]]

@@ -7,8 +7,6 @@ interface Efl.Layout.Calc
 
      This defines all the APIs supported by legacy "Edje" object, known in EO
      API as Efl.Canvas.Layout.
-
-     @since 1.21
    ]]
    event_prefix: efl_layout;
    methods {

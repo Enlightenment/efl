@@ -55,8 +55,6 @@ abstract Efl.Object
      - Destruction: The object has no parent and it can be destroyed. The
        @.destructor method is called, use it to return any resources the object
        might have gathered during its life.
-
-       @since 1.22
      ]]
    eo_prefix: efl;
 

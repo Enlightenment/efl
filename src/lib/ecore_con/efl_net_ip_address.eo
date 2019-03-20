@@ -4,8 +4,6 @@ struct @beta Efl.Net.Ip_Address_Resolve_Results {
     [[The results of @Efl.Net.Ip_Address.resolve call.
 
       This structure is created by @Efl.Net.Ip_Address.resolve.
-
-      @since 1.19
     ]]
     request_address: string; [[The 'address' argument given to Efl.Net.Ip_Address.resolve]]
     canonical_name: string; [[The canonical name, if it was requested in flags]]
@@ -36,8 +34,6 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
 
       The result of @.string can be passed to @Efl.Net.Dialer.dial and
       @Efl.Net.Server.serve
-
-      @since 1.19
     ]]
 
     methods {

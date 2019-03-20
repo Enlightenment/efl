@@ -149,8 +149,6 @@ interface Efl.Canvas.Scene
            A "seat" is the term used for a group of input devices, typically including
            a pointer and a keyboard. A seat object is the parent of the individual input
            devices.
-
-           @since 1.20
          ]]
          return: iterator<Efl.Input.Device> @owned;
             [[An iterator over the attached seats.]]

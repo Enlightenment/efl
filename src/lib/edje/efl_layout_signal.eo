@@ -20,8 +20,6 @@ function EflLayoutSignalCb {
 interface Efl.Layout.Signal
 {
    [[Layouts asynchronous messaging and signaling interface.
-
-     @since 1.21
    ]]
    methods {
       // FIXME: There is no message_handler in EO!

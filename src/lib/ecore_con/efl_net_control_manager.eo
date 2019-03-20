@@ -7,8 +7,6 @@ enum @beta Efl.Net.Control.State {
 
       For more details, use @Efl.Net.Control.Manager access points and
       their property state.
-
-      @since 1.19
     ]]
     offline, [[No access point is connected.]]
     local, [[At least one access point is connected and the internet connection hasn't been verified.]]
@@ -17,8 +15,6 @@ enum @beta Efl.Net.Control.State {
 
 enum @beta Efl.Net.Control.Agent_Request_Input_Field {
     [[Bitwise-able fields requested to the agent.
-
-      @since 1.19
     ]]
     name = (1 << 0), [[Used for hidden WiFi access points. If SSID is present, this is an alternative to that.]]
     ssid = (1 << 1), [[Used for hidden WiFi access points. If name is present, this is an alternative to that.]]
@@ -29,8 +25,6 @@ enum @beta Efl.Net.Control.Agent_Request_Input_Field {
 
 struct @beta Efl.Net.Control.Agent_Request_Input_Information {
     [[Name-value information pair provided to the agent.
-
-      @since 1.19
     ]]
     name: string; [[The information name, such as PreviousPassphrase, Host, Name...]]
     value: string; [[The contents of the information]]
@@ -38,8 +32,6 @@ struct @beta Efl.Net.Control.Agent_Request_Input_Information {
 
 struct @beta Efl.Net.Control.Agent_Request_Input {
     [[Requests input to the agent.
-
-      @since 1.19
     ]]
     access_point: Efl.Net.Control.Access_Point; [[The access point which triggered this request.]]
     fields: Efl.Net.Control.Agent_Request_Input_Field; [[Bitwise OR of fields present in this request.]]
@@ -49,8 +41,6 @@ struct @beta Efl.Net.Control.Agent_Request_Input {
 
 struct @beta Efl.Net.Control.Agent_Error {
     [[Reports error to the agent.
-
-      @since 1.19
     ]]
     access_point: Efl.Net.Control.Access_Point; [[The access point that triggered this error.]]
     message: string; [[The error message.]]
@@ -58,8 +48,6 @@ struct @beta Efl.Net.Control.Agent_Error {
 
 struct @beta Efl.Net.Control.Agent_Browser_Url {
     [[Reports to agent that it should open a browser at a given URL.
-
-      @since 1.19
     ]]
     access_point: Efl.Net.Control.Access_Point; [[The access point that triggered this request.]]
     url: string; [[The URL to point the browser at.]]
@@ -103,9 +91,6 @@ class @beta Efl.Net.Control.Manager extends Efl.Loop_Consumer {
       (@Efl.Net.Control.State.online) and iterators for
       @.access_points and @.technologies will be empty (they will be
       returned but won't contain any items).
-
-
-      @since 1.19
     ]]
     events {
         access_point,add: Efl.Net.Control.Access_Point; [[The given access point has been added]]

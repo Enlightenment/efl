@@ -10,8 +10,6 @@ class @beta Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Wr
 
       A fixed sized buffer can be implemented by setting @.limit
       followed by @.preallocate
-
-      @since 1.19
     ]]
 
     methods {

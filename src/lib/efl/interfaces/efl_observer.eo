@@ -3,8 +3,7 @@ interface @beta Efl.Observer {
    methods {
       update {
          [[Update observer according to the changes of observable object.
-
-           @since 1.19]]
+         ]]
          params {
             /* FIXME: obs should be Efl.Observable, but cyclic dependency error occurs. */
             @in obs: Efl.Object; [[An observable object]]

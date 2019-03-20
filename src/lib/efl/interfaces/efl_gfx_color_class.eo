@@ -120,8 +120,7 @@ mixin @beta Efl.Gfx.Color_Class
            This function deletes any color classes defined in object level.
            Clearing color classes will revert the color of all edje parts to
            the values defined in global level or theme file.
-
-           @since 1.17.0]]
+         ]]
       }
    }
 }

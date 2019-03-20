@@ -20,8 +20,6 @@ interface @beta Efl.Text_Format {
 
      The text format can affect the geometry of the text object, as well as
      how characters are presented.
-
-     @since 1.20
    ]]
    eo_prefix: efl_text;
    methods {

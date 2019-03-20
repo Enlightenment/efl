@@ -1,7 +1,5 @@
 enum @beta Efl.Net.Control.Technology_Type {
     [[Technology types
-
-      @since 1.19
     ]]
     unknown, [[Type: unknown]]
     system, [[Type: system]]
@@ -24,8 +22,6 @@ class @beta Efl.Net.Control.Technology extends Efl.Loop_Consumer {
       When powered, the technology will dynamically create and remove
       access points in
       @Efl.Net.Control.Manager.access_points.
-
-      @since 1.19
     ]]
     events {
         changed: void; [[Called when some properties were changed.]]

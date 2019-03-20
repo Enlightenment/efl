@@ -12,8 +12,6 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
       operational parameters.
 
       Note: All setter methods must be called before @Efl.Object.finalize.
-
-      @since 1.19
     ]]
 
     methods {

@@ -20,8 +20,6 @@ class @beta Efl.Canvas.Layout_Part_External extends Efl.Canvas.Layout_Part imple
        efl_text_set(efl_part(layout, "title"), "hello");
      Or in pseudo-script:
        layout["title"].text = "hello";
-
-     @since 1.20
    ]]
    data: null;
    implements {

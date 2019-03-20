@@ -1,7 +1,5 @@
 class @beta Efl.Io.Stdin extends Efl.Loop_Fd implements Efl.Io.Reader_Fd {
     [[Application's standard input (stdin).
-
-      @since 1.19
     ]]
 
     data: null;

@@ -1,7 +1,5 @@
 abstract @beta Efl.Net.Server_Fd extends Efl.Loop_Fd implements Efl.Net.Server {
     [[A generic server based on file descriptors.
-
-      @since 1.19
     ]]
 
     methods {

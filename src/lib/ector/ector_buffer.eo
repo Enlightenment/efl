@@ -24,8 +24,6 @@ enum @beta Ector.Buffer.Access_Flag {
 mixin @beta Ector.Buffer
 {
    [[2D pixel buffer interface for Ector
-
-     @since 1.17
    ]]
    eo_prefix: ector_buffer;
    methods {

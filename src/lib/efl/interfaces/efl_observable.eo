@@ -15,8 +15,7 @@ class @beta Efl.Observable extends Efl.Object {
 
            Note: Observers that observe this observable are grouped by the $key
            and an observer can belong to multiple groups at the same time.
-
-           @since 1.19]]
+         ]]
          params {
             @in key: string; [[A key to classify observer groups]]
             @in obs: Efl.Observer; [[An observer object]]
@@ -26,8 +25,7 @@ class @beta Efl.Observable extends Efl.Object {
          [[Delete an observer from a group of observers.
 
            See also @.observer_add().
-
-           @since 1.19]]
+         ]]
          params {
             @in key: string; [[A key to classify observer groups]]
             @in obs: Efl.Observer; [[An observer object]]
@@ -35,16 +33,14 @@ class @beta Efl.Observable extends Efl.Object {
       }
       observer_clean {
          [[Clear an observer from all groups of observers.
-
-           @since 1.19]]
+         ]]
          params {
             @in obs: Efl.Observer; [[An observer object]]
          }
       }
       observers_iterator_new {
          [[Return a new iterator associated with a group of observers.
-
-           @since 1.19]]
+         ]]
          return: iterator<Efl.Observer> @owned; [[Iterator for observers group]]
          params {
             @in key: string; [[A key to classify observer groups]]
@@ -52,8 +48,7 @@ class @beta Efl.Observable extends Efl.Object {
       }
       observers_update {
          [[Update all observers in a group by calling their update() method.
-
-           @since 1.19]]
+         ]]
          params {
             @in key: string; [[A key to classify observer groups]]
             @in data: void_ptr; [[Required data to update observer]]
@@ -61,8 +56,7 @@ class @beta Efl.Observable extends Efl.Object {
       }
       iterator_tuple_new {
          [[Return a new iterator associated to this observable.
-
-           @since 1.19]]
+         ]]
          return: iterator<ptr(Efl.Observable_Tuple)> @owned; [[Iterator for observer]]
       }
    }
