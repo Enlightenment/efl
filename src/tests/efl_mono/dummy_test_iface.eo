@@ -1,8 +1,6 @@
 interface Dummy.Test_Iface
 {
    methods {
-      emit_test_conflicted {
-      }
       emit_nonconflicted {
       }
       @property iface_prop {
@@ -14,7 +12,6 @@ interface Dummy.Test_Iface
       }
    }
    events {
-      conflicted: void;
       nonconflicted: void;
    }
 }

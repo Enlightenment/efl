@@ -49,7 +49,6 @@
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
 #include "dummy_test_iface.eo.h"
-#include "dummy_another_iface.eo.h"
 #include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
 #include "dummy_part_holder.eo.h"
@@ -3895,19 +3894,9 @@ Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test
    return eina_list_accessor_new(pd->list_for_accessor);
 }
 
-void _dummy_test_object_dummy_test_iface_emit_test_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_CONFLICTED, NULL);
-}
-
 void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, NULL);
-}
-
-void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_ANOTHER_IFACE_EVENT_CONFLICTED, NULL);
 }
 
 void _dummy_test_object_setter_only_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
@@ -4057,7 +4046,6 @@ Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dumm
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
 #include "dummy_test_iface.eo.c"
-#include "dummy_another_iface.eo.c"
 #include "dummy_inherit_helper.eo.c"
 #include "dummy_inherit_iface.eo.c"
 #include "dummy_part_holder.eo.c"

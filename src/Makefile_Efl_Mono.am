@@ -65,7 +65,6 @@ lib_efl_mono_libefl_mono_dll_sources = \
 efl_mono_test_files = \
 	tests/efl_mono/dummy_test_object.eo \
 	tests/efl_mono/dummy_test_iface.eo \
-	tests/efl_mono/dummy_another_iface.eo \
 	tests/efl_mono/dummy_child.eo \
 	tests/efl_mono/dummy_part_holder.eo \
 	tests/efl_mono/dummy_numberwrapper.eo \
@@ -407,8 +406,6 @@ tests/efl_mono/libefl_mono_native_test.c: \
 	tests/efl_mono/dummy_test_object.eo.c \
 	tests/efl_mono/dummy_test_iface.eo.h \
 	tests/efl_mono/dummy_test_iface.eo.c \
-	tests/efl_mono/dummy_another_iface.eo.h \
-	tests/efl_mono/dummy_another_iface.eo.c \
 	tests/efl_mono/dummy_child.eo.h \
 	tests/efl_mono/dummy_child.eo.c \
 	tests/efl_mono/dummy_part_holder.eo.h \
@@ -423,7 +420,6 @@ tests/efl_mono/libefl_mono_native_test.c: \
 # Intermediate C Sharp test DLL
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
-tests/efl_mono/dummy_another_iface.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
 tests/efl_mono/dummy_part_holder.eo.cs \
 tests/efl_mono/dummy_numberwrapper.eo.cs \

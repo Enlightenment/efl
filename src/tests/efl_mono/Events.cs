@@ -225,33 +225,6 @@ class TestInterfaceEvents
         obj.EmitNonconflicted();
         Test.Assert(called);
     }
-
-    public static void test_conflicting_events()
-    {
-        var obj = new Dummy.TestObject();
-        var test_called = false;
-        var another_called = false;
-
-        EventHandler cb = (object sender, EventArgs e) => {
-            test_called = true;
-        };
-
-        EventHandler another_cb = (object sender, EventArgs e) => {
-            another_called = true;
-        };
-
-        ((Dummy.TestIface)obj).ConflictedEvt += cb;
-        ((Dummy.AnotherIface)obj).ConflictedEvt += another_cb;
-
-        obj.EmitTestConflicted();
-        Test.Assert(test_called);
-        Test.Assert(!another_called);
-        test_called = false;
-
-        obj.EmitAnotherConflicted();
-        Test.Assert(!test_called);
-        Test.Assert(another_called);
-    }
 }
 
 class TestEventNaming

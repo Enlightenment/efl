@@ -1,4 +1,4 @@
-eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_another_iface.eo', 'dummy_inherit_helper.eo', 'dummy_inherit_iface.eo', 'dummy_part_holder.eo']
+eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_inherit_helper.eo', 'dummy_inherit_iface.eo', 'dummy_part_holder.eo']
 
 eo_file_targets = []
 

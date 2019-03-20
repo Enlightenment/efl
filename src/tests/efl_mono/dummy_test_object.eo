@@ -101,7 +101,7 @@ function Dummy.FormatCb {
    }
 };
 
-class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.Another_Iface {
+class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
    methods {
       return_object {
          return: Dummy.Test_Object;
@@ -1394,10 +1394,8 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
       class.destructor;
       Efl.Object.constructor;
       Efl.Object.provider_find;
-      Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }
-      Dummy.Another_Iface.emit_another_conflicted;
    }
    events {
       evt,with,string @hot: string;
