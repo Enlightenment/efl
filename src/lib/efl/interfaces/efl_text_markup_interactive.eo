@@ -11,8 +11,8 @@ interface @beta Efl.Text_Markup_Interactive extends Efl.Text_Cursor {
             this text of a given range]]
          }
          keys {
-            start: ptr(Efl.Text_Cursor_Cursor);
-            end: ptr(Efl.Text_Cursor_Cursor);
+            start: ptr(Efl.Text_Cursor_Cursor); [[Start of the markup region]]
+            end: ptr(Efl.Text_Cursor_Cursor); [[End of markup region]]
          }
       }
       cursor_markup_insert {

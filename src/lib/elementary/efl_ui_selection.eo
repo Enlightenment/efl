@@ -9,7 +9,7 @@ mixin @beta Efl.Ui.Selection {
          params {
             @in type: Efl.Ui.Selection_Type; [[Selection Type]]
             @in format: Efl.Ui.Selection_Format; [[Selection Format]]
-            @in data: Eina.Slice;
+            @in data: Eina.Slice; [[Selection data]]
             @in seat: uint;[[Specified seat for multiple seats case.]]
          }
          return: future<void>; [[Future for tracking when the selection is lost]]

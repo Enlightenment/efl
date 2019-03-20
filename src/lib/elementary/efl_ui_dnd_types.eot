@@ -5,7 +5,7 @@ function @beta Efl.Dnd.Drag_Icon_Create {
    params {
       @in win: Efl.Canvas.Object; [[The window to create the objects relative to]]
       @in drag_obj: Efl.Canvas.Object; [[The drag object]]
-      @out off: Eina.Position2D;
+      @out off: Eina.Position2D; [[Offset from the icon position to the cursor]]
    }
    return: Efl.Canvas.Object; [[The drag icon object]]
 };
