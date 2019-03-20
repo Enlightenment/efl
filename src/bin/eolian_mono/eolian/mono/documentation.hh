@@ -355,7 +355,10 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context) const
    {
-      return generate_tag_summary(sink, doc.full_text, context);
+      std::string str = doc.full_text;
+      if (!doc.since.empty())
+        str += "\n(Since EFL " + doc.since + ")";
+      return generate_tag_summary(sink, str, context);
    }
 
    template<typename OutputIterator, typename Context>

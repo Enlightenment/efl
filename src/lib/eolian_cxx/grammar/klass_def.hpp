@@ -258,7 +258,6 @@ struct documentation_def
       str = eolian_documentation_since_get(eolian_doc);
       if (str) {
         since = str;
-        full_text += "\n" + since;
       }
 
       efl::eina::ptr_list<const char> l(eolian_documentation_string_split(description.c_str()));
