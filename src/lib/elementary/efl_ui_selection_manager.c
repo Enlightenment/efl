@@ -880,7 +880,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    _e->exists = e.exist;
 
    ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, NULL, NULL);
-   efl_event_callback_call(sel->owner, EFL_UI_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->owner, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -2650,7 +2650,7 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
    _e->exists = e.exist;
 
    ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, _wl_selection_changed_free, ev->display);
-   efl_event_callback_call(sel->request_obj, EFL_UI_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->request_obj, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
 }

@@ -40,6 +40,6 @@ mixin @beta Efl.Ui.Selection {
       }
    }
    events {
-      selection,changed: Efl.Ui.Selection_Changed; [[Called when display server's selection has changed]]
+      wm_selection,changed: Efl.Ui.Selection_Changed; [[Called when display server's selection has changed]]
    }
 }
