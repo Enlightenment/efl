@@ -38,7 +38,7 @@ struct function_registration_generator
 
     if(!as_generator(
                scope_tab << scope_tab << "if (" << f.c_name << "_static_delegate == null)\n"
-            << scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
+            << scope_tab << scope_tab << scope_tab << f.c_name << "_static_delegate = new " << f.c_name << "_delegate(" <<
                 escape_keyword(f.name) << ");\n"
         ).generate(sink, attributes::unused, context))
       return false;
