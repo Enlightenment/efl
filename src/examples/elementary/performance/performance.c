@@ -44,7 +44,6 @@
 
 #include "graphical_struct.h"
 
-#define CONVERT        20
 #define WIDTH          1000
 #define HEIGHT         600
 
@@ -52,13 +51,6 @@ Graphical globalGraphical;
 
 /*Variable for fps*/
 int fps_frames = 0;
-
-void _clear_buf(char *buf)
-{
-   int i;
-   for (i = 0; i < CONVERT; i++)
-     buf[i] = '\0';
-}
 
 Eina_Slstr * _value_int_to_char(int value, const char *description)
 {
