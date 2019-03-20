@@ -719,14 +719,7 @@ _efl_ui_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ta
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
-{
-   /* this is just an alias */
-   return efl_pack_end(obj, subobj);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
+_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
 

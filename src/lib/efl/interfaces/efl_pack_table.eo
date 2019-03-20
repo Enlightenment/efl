@@ -1,6 +1,6 @@
 import efl_ui_direction;
 
-interface @beta Efl.Pack_Table extends Efl.Pack_Linear
+interface @beta Efl.Pack_Table extends Efl.Pack
 {
    [[2D containers aligned on a table with rows and columns]]
    eo_prefix: efl_pack;
