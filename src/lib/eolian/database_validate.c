@@ -12,7 +12,6 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool stable;
-   Eina_Bool event_redef;
    Eina_Bool unimplemented;
 } Validate_State;
 
@@ -505,22 +504,18 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
 {
    const Eolian_Object *oobj = NULL;
 
-   if (vals->event_redef)
+   oobj = eina_hash_find(nhash, &event->base.name);
+   if (EINA_UNLIKELY(!!oobj))
      {
-        oobj = eina_hash_find(nhash, &event->base.name);
-        if (EINA_UNLIKELY(!!oobj))
-          {
-             _eo_parser_log(&event->base,
-                      "event '%s' conflicts with another event (at %s:%d:%d)",
-                      event->base.name, oobj->file, oobj->line, oobj->column);
-             vals->warned = EINA_TRUE;
-          }
+        _eo_parser_log(&event->base,
+                 "event '%s' conflicts with another event (at %s:%d:%d)",
+                 event->base.name, oobj->file, oobj->line, oobj->column);
+        vals->warned = EINA_TRUE;
      }
 
    if (event->base.validated)
      {
-        if (vals->event_redef && !oobj)
-          eina_hash_add(nhash, &event->base.name, &event->base);
+        eina_hash_set(nhash, &event->base.name, &event->base);
         return EINA_TRUE;
      }
 
@@ -532,8 +527,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
    if (!_validate_doc(event->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (vals->event_redef && !oobj)
-     eina_hash_add(nhash, &event->base.name, &event->base);
+   eina_hash_set(nhash, &event->base.name, &event->base);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&event->base);
@@ -1353,7 +1347,6 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       EINA_TRUE,
-      !!getenv("EOLIAN_EVENT_REDEF_WARN"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
    };
 
