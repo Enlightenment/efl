@@ -1403,6 +1403,7 @@ bin/elementary/test_tooltip.c \
 bin/elementary/test_transit.c \
 bin/elementary/test_transit_bezier.c \
 bin/elementary/test_ui_box.c \
+bin/elementary/test_ui_box_stack.c \
 bin/elementary/test_ui_clock.c \
 bin/elementary/test_ui_table.c \
 bin/elementary/test_ui_popup.c \
@@ -1935,6 +1936,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_box.c \
 	tests/elementary/efl_ui_test_box_flow.c \
+	tests/elementary/efl_ui_test_box_stack.c \
 	tests/elementary/efl_ui_test_table.c \
 	tests/elementary/efl_ui_test_relative_layout.c \
 	tests/elementary/efl_ui_test_grid.c \

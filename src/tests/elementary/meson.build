@@ -126,6 +126,7 @@ efl_ui_suite_src = [
   'efl_ui_test_focus_sub.c',
   'efl_ui_test_box.c',
   'efl_ui_test_box_flow.c',
+  'efl_ui_test_box_stack.c',
   'efl_ui_test_table.c',
   'efl_ui_test_grid.c',
   'efl_ui_test_relative_layout.c',

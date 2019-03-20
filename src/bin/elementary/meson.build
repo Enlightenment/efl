@@ -134,6 +134,7 @@ elementary_test_src = [
   'test_transit.c',
   'test_transit_bezier.c',
   'test_ui_box.c',
+  'test_ui_box_stack.c',
   'test_ui_clock.c',
   'test_ui_table.c',
   'test_ui_popup.c',

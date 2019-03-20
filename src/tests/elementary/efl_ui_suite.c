@@ -14,6 +14,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_focus_sub", efl_ui_test_focus_sub},
   { "efl_ui_box", efl_ui_test_box},
   { "efl_ui_box_flow", efl_ui_test_box_flow},
+  { "efl_ui_box_stack", efl_ui_test_box_stack},
   { "efl_ui_table", efl_ui_test_table},
   { "efl_ui_grid", efl_ui_test_grid},
   { "efl_ui_relative_layout", efl_ui_test_relative_layout},
