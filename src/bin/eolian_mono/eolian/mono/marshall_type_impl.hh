@@ -46,55 +46,55 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"string", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"mstring", true, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"mstring", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"stringshare", true, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"stringshare", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " Eina.Strbuf");
+                return replace_base_type(r, "Eina.Strbuf");
               }}
            , {"Binbuf", true, [&]
               {
                 regular_type_def r = regular;
-                r.base_type = " System.IntPtr";
+                r.base_type = "System.IntPtr";
                 r.namespaces.clear();
                 return r;
               }}
            , {"Binbuf", false, [&]
               {
                 regular_type_def r = regular;
-                r.base_type = " System.IntPtr";
+                r.base_type = "System.IntPtr";
                 r.namespaces.clear();
                 return r;
               }}
@@ -103,9 +103,9 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 if (is_ptr)
-                    r.base_type = " Eina.Value";
+                    r.base_type = "Eina.Value";
                 else
-                    r.base_type = " Eina.ValueNative";
+                    r.base_type = "Eina.ValueNative";
                 return r;
                }}
            , {"any_value", false, [&]
@@ -113,23 +113,23 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 if (is_ptr)
-                    r.base_type = " Eina.Value";
+                    r.base_type = "Eina.Value";
                 else
-                    r.base_type = " Eina.ValueNative";
+                    r.base_type = "Eina.ValueNative";
                 return r;
                }}
            , {"any_value_ptr", true, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
-                r.base_type = " Eina.Value";
+                r.base_type = "Eina.Value";
                 return r;
                }}
            , {"any_value_ptr", false, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
-                r.base_type = " Eina.Value";
+                r.base_type = "Eina.Value";
                 return r;
                }}
            , {"void", nullptr, [&]
@@ -137,9 +137,9 @@ struct marshall_type_visitor_generate
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 if (is_out) // @inout too
-                    r.base_type = " System.IntPtr";
+                    r.base_type = "System.IntPtr";
                 else
-                    r.base_type = " void";
+                    r.base_type = "void";
                 return r;
                }}
         };
@@ -147,7 +147,7 @@ struct marshall_type_visitor_generate
         if (regular.is_struct() && !blacklist::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))
           {
              if ((is_out || is_return) && is_ptr)
-                 return as_generator(" System.IntPtr").generate(sink, attributes::unused, *context);
+                 return as_generator("System.IntPtr").generate(sink, attributes::unused, *context);
              return as_generator(string << "_StructInternal")
                     .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
@@ -161,7 +161,7 @@ struct marshall_type_visitor_generate
           }
           , [&] (attributes::type_def::variant_type const& v)
           {
-            return v.visit(*this); // we want to keep is_out info
+            return v.visit(visitor_regular_type_def_printer<OutputIterator, Context>{sink, context}); // we want to keep is_out info
           }))
         {
            return *b;
@@ -169,7 +169,7 @@ struct marshall_type_visitor_generate
       else if (is_ptr && helpers::need_pointer_conversion(&regular))
         {
            regular_type_def r = regular;
-           r.base_type = " System.IntPtr";
+           r.base_type = "System.IntPtr";
            r.namespaces.clear();
            return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(r);
         }
@@ -196,27 +196,27 @@ struct marshall_type_visitor_generate
       {
         {"array", nullptr, nullptr, [&]
            {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+              return regular_type_def{"System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
         ,{"list", nullptr, nullptr, [&]
            {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+              return regular_type_def{"System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
         ,{"hash", nullptr, nullptr, [&]
            {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+              return regular_type_def{"System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
         ,{"iterator", nullptr, nullptr, [&]
            {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+              return regular_type_def{"System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
         ,{"accessor", nullptr, nullptr, [&]
            {
-              return regular_type_def{" System.IntPtr", complex.outer.base_qualifier, {}};
+              return regular_type_def{"System.IntPtr", complex.outer.base_qualifier, {}};
            }
         }
       };

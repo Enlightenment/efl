@@ -107,7 +107,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << scope_tab << scope_tab << scope_tab << "try {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "_ret_var = " : "")
+        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
         << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")wrapper).") << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
@@ -116,7 +116,7 @@ struct native_function_definition_generator
         << scope_tab << scope_tab << scope_tab << "}\n"
         << eolian_mono::native_function_definition_epilogue(*klass)
         << scope_tab << scope_tab << "} else {\n"
-        << scope_tab << scope_tab << scope_tab << (return_type != " void" ? "return " : "") << string
+        << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string
         << "_ptr.Value.Delegate(" << self << ((!f.is_static && f.parameters.size() > 0) ? ", " : "") << (argument % ", ") << ");\n"
         << scope_tab << scope_tab << "}\n"
         << scope_tab << "}\n"

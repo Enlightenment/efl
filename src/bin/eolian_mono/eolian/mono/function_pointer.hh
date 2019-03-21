@@ -89,7 +89,7 @@ struct function_pointer {
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
                   << native_function_definition_preamble
                   << scope_tab << scope_tab << "try {\n"
-                  << scope_tab << scope_tab << scope_tab <<  (return_type != " void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << scope_tab <<  (return_type != "void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
                   << scope_tab << scope_tab << "} catch (Exception e) {\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"

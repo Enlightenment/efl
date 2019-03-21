@@ -26,10 +26,10 @@ attributes::regular_type_def replace_base_integer(attributes::regular_type_def v
   bool s = std::is_signed<T>::value;
   switch (sizeof(T))
   {
-  case 1: return s ? replace_base_type(v, " sbyte") : replace_base_type(v, " byte");
-  case 2: return s ? replace_base_type(v, " short") : replace_base_type(v, " ushort");
-  case 4: return s ? replace_base_type(v, " int") : replace_base_type(v, " uint");
-  case 8: return s ? replace_base_type(v, " long") : replace_base_type(v, " ulong");
+  case 1: return s ? replace_base_type(v, "sbyte") : replace_base_type(v, "byte");
+  case 2: return s ? replace_base_type(v, "short") : replace_base_type(v, "ushort");
+  case 4: return s ? replace_base_type(v, "int") : replace_base_type(v, "uint");
+  case 8: return s ? replace_base_type(v, "long") : replace_base_type(v, "ulong");
   default: return v;
   }
 }
@@ -40,10 +40,10 @@ attributes::regular_type_def replace_base_opt_integer(attributes::regular_type_d
   bool s = std::is_signed<T>::value;
   switch (sizeof(T))
   {
-  case 1: return s ? replace_base_type(v, " sbyte?") : replace_base_type(v, " byte?");
-  case 2: return s ? replace_base_type(v, " short?") : replace_base_type(v, " ushort?");
-  case 4: return s ? replace_base_type(v, " int?") : replace_base_type(v, " uint?");
-  case 8: return s ? replace_base_type(v, " long?") : replace_base_type(v, " ulong?");
+  case 1: return s ? replace_base_type(v, "sbyte?") : replace_base_type(v, "byte?");
+  case 2: return s ? replace_base_type(v, "short?") : replace_base_type(v, "ushort?");
+  case 4: return s ? replace_base_type(v, "int?") : replace_base_type(v, "uint?");
+  case 8: return s ? replace_base_type(v, "long?") : replace_base_type(v, "ulong?");
   default: return v;
   }
 }
@@ -67,7 +67,29 @@ eina::optional<bool> call_match(Array const (&array)[N], F f, A a)
      }
    return {nullptr};
 }
-      
+
+template <typename OutputIterator, typename Context>
+struct visitor_regular_type_def_printer
+{
+   typedef visitor_regular_type_def_printer visitor_type;
+   typedef bool result_type;
+
+   mutable OutputIterator sink;
+   Context const* context;
+
+   bool operator()(grammar::attributes::regular_type_def const &regular) const
+   {
+     std::string full_type_name = name_helpers::type_full_eolian_name(regular);
+     return as_generator(string).generate(sink, name_helpers::type_full_managed_name(regular), *context);
+   }
+
+   template<typename T>
+   bool operator()(T const&) const
+   {
+     return true;
+   }
+};
+
 template <typename OutputIterator, typename Context>
 struct visitor_generate
 {
@@ -94,110 +116,110 @@ struct visitor_generate
       const optional_match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " sbyte?"); }}
-           , {"float", nullptr, [&] { return replace_base_type(regular, " float?"); }}
-           , {"double", nullptr, [&] { return replace_base_type(regular, " double?"); }}
-           , {"bool", nullptr, [&] { return replace_base_type(regular, " bool?"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, "sbyte?"); }}
+           , {"float", nullptr, [&] { return replace_base_type(regular, "float?"); }}
+           , {"double", nullptr, [&] { return replace_base_type(regular, "double?"); }}
+           , {"bool", nullptr, [&] { return replace_base_type(regular, "bool?"); }}
            , {"short", nullptr, [&] { return replace_base_opt_integer<short>(regular); }}
            , {"int", nullptr, [&] { return replace_base_opt_integer<int>(regular); }}
            , {"long", nullptr, [&] { return replace_base_opt_integer<long>(regular); }}
            , {"llong", nullptr, [&] { return replace_base_opt_integer<long long>(regular); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " sbyte?"); }}
-           , {"int16", nullptr, [&] { return replace_base_type(regular, " short?"); }}
-           , {"int32", nullptr, [&] { return replace_base_type(regular, " int?"); }}
-           , {"int64", nullptr, [&] { return replace_base_type(regular, " long?"); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, "sbyte?"); }}
+           , {"int16", nullptr, [&] { return replace_base_type(regular, "short?"); }}
+           , {"int32", nullptr, [&] { return replace_base_type(regular, "int?"); }}
+           , {"int64", nullptr, [&] { return replace_base_type(regular, "long?"); }}
            , {"ssize", nullptr, [&] { return replace_base_opt_integer<ssize_t>(regular); }}
            // unsigned primitives
-           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " byte?"); }}
+           , {"ubyte", nullptr, [&] { return replace_base_type(regular, "byte?"); }}
            , {"ushort", nullptr, [&] { return replace_base_opt_integer<unsigned short>(regular); }}
            , {"uint", nullptr, [&] { return replace_base_opt_integer<unsigned int>(regular); }}
            , {"ulong", nullptr, [&] { return replace_base_opt_integer<unsigned long>(regular); }}
            , {"ullong", nullptr, [&] { return replace_base_opt_integer<unsigned long long>(regular); }}
-           , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte?"); }}
-           , {"uint16", nullptr, [&] { return replace_base_type(regular, " ushort?"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint?"); }}
-           , {"uint64", nullptr, [&] { return replace_base_type(regular, " ulong?"); }}
+           , {"uint8", nullptr, [&] { return replace_base_type(regular, "byte?"); }}
+           , {"uint16", nullptr, [&] { return replace_base_type(regular, "ushort?"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, "uint?"); }}
+           , {"uint64", nullptr, [&] { return replace_base_type(regular, "ulong?"); }}
            , {"size", nullptr, [&] { return replace_base_opt_integer<size_t>(regular); }}
            
            , {"ptrdiff", nullptr, [&] { return replace_base_opt_integer<ptrdiff_t>(regular); }}
-           , {"intptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr?"); }}
-           , {"uintptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr?"); }}
-           , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr?"); }}
+           , {"intptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr?"); }}
+           , {"uintptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr?"); }}
+           , {"void_ptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr?"); }}
         };
       struct match
       const match_table[] =
         {
            // signed primitives
-             {"byte", nullptr, [&] { return replace_base_type(regular, " sbyte"); }}
+             {"byte", nullptr, [&] { return replace_base_type(regular, "sbyte"); }}
            , {"short", nullptr, [&] { return replace_base_integer<short>(regular); }}
            , {"int", nullptr, [&] { return replace_base_integer<int>(regular); }}
            , {"long", nullptr, [&] { return replace_base_integer<long>(regular); }}
            , {"llong", nullptr, [&] { return replace_base_integer<long long>(regular); }}
-           , {"int8", nullptr, [&] { return replace_base_type(regular, " sbyte"); }}
-           , {"int16", nullptr, [&] { return replace_base_type(regular, " short"); }}
-           , {"int32", nullptr, [&] { return replace_base_type(regular, " int"); }}
-           , {"int64", nullptr, [&] { return replace_base_type(regular, " long"); }}
+           , {"int8", nullptr, [&] { return replace_base_type(regular, "sbyte"); }}
+           , {"int16", nullptr, [&] { return replace_base_type(regular, "short"); }}
+           , {"int32", nullptr, [&] { return replace_base_type(regular, "int"); }}
+           , {"int64", nullptr, [&] { return replace_base_type(regular, "long"); }}
            , {"ssize", nullptr, [&] { return replace_base_integer<ssize_t>(regular); }}
            // unsigned primitives
-           , {"ubyte", nullptr, [&] { return replace_base_type(regular, " byte"); }}
+           , {"ubyte", nullptr, [&] { return replace_base_type(regular, "byte"); }}
            , {"ushort", nullptr, [&] { return replace_base_integer<unsigned short>(regular); }}
            , {"uint", nullptr, [&] { return replace_base_integer<unsigned int>(regular); }}
            , {"ulong", nullptr, [&] { return replace_base_integer<unsigned long>(regular); }}
            , {"ullong", nullptr, [&] { return replace_base_integer<unsigned long long>(regular); }}
-           , {"uint8", nullptr, [&] { return replace_base_type(regular, " byte"); }}
-           , {"uint16", nullptr, [&] { return replace_base_type(regular, " ushort"); }}
-           , {"uint32", nullptr, [&] { return replace_base_type(regular, " uint"); }}
-           , {"uint64", nullptr, [&] { return replace_base_type(regular, " ulong"); }}
+           , {"uint8", nullptr, [&] { return replace_base_type(regular, "byte"); }}
+           , {"uint16", nullptr, [&] { return replace_base_type(regular, "ushort"); }}
+           , {"uint32", nullptr, [&] { return replace_base_type(regular, "uint"); }}
+           , {"uint64", nullptr, [&] { return replace_base_type(regular, "ulong"); }}
            , {"size", nullptr, [&] { return replace_base_integer<size_t>(regular); }}
            
            , {"ptrdiff", nullptr, [&] { return replace_base_integer<ptrdiff_t>(regular); }}
-           , {"intptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
-           , {"uintptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
-           , {"void_ptr", nullptr, [&] { return replace_base_type(regular, " System.IntPtr"); }}
+           , {"intptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr"); }}
+           , {"uintptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr"); }}
+           , {"void_ptr", nullptr, [&] { return replace_base_type(regular, "System.IntPtr"); }}
            , {"void", nullptr, [&]
                {
                   regular_type_def r = regular;
                   r.namespaces.clear();
                   if (is_out) // @inout too
-                      r.base_type = " System.IntPtr";
+                      r.base_type = "System.IntPtr";
                   else
-                      r.base_type = " void";
+                      r.base_type = "void";
                   return r;
               }}
            , {"Eina.Error", nullptr, [&] // Eina.Error
               {
-                return regular_type_def{" Eina.Error", regular.base_qualifier, {}};
+                return regular_type_def{"Eina.Error", regular.base_qualifier, {}};
               }} // TODO
            , {"string", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"mstring", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"stringshare", nullptr, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
-                return replace_base_type(r, " System.String");
+                return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
               {
-                return regular_type_def{" Eina.Strbuf", regular.base_qualifier, {}};
+                return regular_type_def{"Eina.Strbuf", regular.base_qualifier, {}};
               }}
            , {"any_value", true, [&]
-              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }}
            , {"any_value", false, [&]
-              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }}
            , {"any_value_ptr", nullptr, [&] 
-              { return regular_type_def{" Eina.Value", regular.base_qualifier, {}};
+              { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }} // FIXME add proper support for any_value_ptr
         };
         std::string full_type_name = name_helpers::type_full_eolian_name(regular);
@@ -234,7 +256,7 @@ struct visitor_generate
           }
           , [&] (attributes::type_def::variant_type const& v)
           {
-            return v.visit(*this); // we want to keep is_out info
+            return v.visit(visitor_regular_type_def_printer<OutputIterator, Context>{sink, context}); // we want to keep is_out info
           }))
         {
            return *b;
