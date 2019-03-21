@@ -4801,4 +4801,4 @@ _elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
    efl_destructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
 
-#include "elm_atspi_bridge.eo.c"
+#include "elm_atspi_bridge_eo.c"
