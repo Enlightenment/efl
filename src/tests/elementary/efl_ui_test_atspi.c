@@ -565,6 +565,27 @@ EFL_START_TEST(test_efl_access_object_attributes_clear)
 }
 EFL_END_TEST
 
+EFL_START_TEST(test_efl_access_object_reading_info_type_set)
+{
+   Efl_Access_Reading_Info_Type reading_info;
+   generate_app();
+   efl_access_object_reading_info_type_set(g_btn, EFL_ACCESS_READING_INFO_TYPE_NAME|
+                                           EFL_ACCESS_READING_INFO_TYPE_ROLE);
+   reading_info = efl_access_object_reading_info_type_get(g_btn);
+   ck_assert(reading_info & EFL_ACCESS_READING_INFO_TYPE_NAME);
+   ck_assert(reading_info & EFL_ACCESS_READING_INFO_TYPE_ROLE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_reading_info_type_get)
+{
+   Efl_Access_Reading_Info_Type reading_info;
+   generate_app();
+   reading_info = efl_access_object_reading_info_type_get(g_btn);
+   ck_assert(reading_info == 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_atspi(TCase *tc)
 {
    tcase_add_test(tc, test_efl_access_app_obj_name_get);
@@ -587,4 +608,6 @@ void efl_ui_test_atspi(TCase *tc)
    tcase_add_test(tc, test_efl_access_object_attributes_get);
    tcase_add_test(tc, test_efl_access_object_attribute_del);
    tcase_add_test(tc, test_efl_access_object_attributes_clear);
+   tcase_add_test(tc, test_efl_access_object_reading_info_type_set);
+   tcase_add_test(tc, test_efl_access_object_reading_info_type_get);
 }
