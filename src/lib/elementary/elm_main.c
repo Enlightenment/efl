@@ -1950,8 +1950,7 @@ elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    else
      {
         //legacy behaviour
-        if (disabled)
-          efl_key_data_set(obj, "__orientation_mode_disabled", (void*) (intptr_t) EINA_TRUE);
+        efl_key_data_set(obj, "__orientation_mode_disabled", (void*) (intptr_t) disabled);
      }
 }
 
