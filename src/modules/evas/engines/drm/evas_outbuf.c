@@ -273,8 +273,6 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
        (ob->depth == depth) && (ob->format == format))
      return;
 
-   while (ecore_drm2_fb_release(ob->priv.output, EINA_TRUE));
-
    ob->w = w;
    ob->h = h;
    ob->depth = depth;
@@ -282,7 +280,7 @@ _outbuf_reconfigure(Outbuf *ob, int w, int h, int rotation, Outbuf_Depth depth)
    ob->rotation = rotation;
    ob->priv.unused_duration = 0;
 
-   /* TODO: idle flush */
+   _outbuf_idle_flush(ob);
 }
 
 Render_Output_Swap_Mode
@@ -571,4 +569,26 @@ _outbuf_damage_region_set(Outbuf *ob, Tilebuf_Rect *damage)
      }
 
    ecore_drm2_fb_dirty(fb, rects, count);
+}
+
+void
+_outbuf_idle_flush(Outbuf *ob)
+{
+   while (ob->priv.pending)
+     {
+        RGBA_Image *img;
+        Eina_Rectangle *rect;
+
+        img = ob->priv.pending->data;
+        ob->priv.pending =
+          eina_list_remove_list(ob->priv.pending, ob->priv.pending);
+
+        rect = img->extended_info;
+
+        evas_cache_image_drop(&img->cache_entry);
+
+        eina_rectangle_free(rect);
+     }
+
+   while (ecore_drm2_fb_release(ob->priv.output, EINA_TRUE));
 }
