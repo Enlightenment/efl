@@ -619,7 +619,7 @@ _state_report(Gesture_Info *gesture,
            flags |= cb_info->cb(cb_info->user_data, info);
      }
 
-   return EVAS_EVENT_FLAG_NONE;
+   return flags;
 }
 
 /**
