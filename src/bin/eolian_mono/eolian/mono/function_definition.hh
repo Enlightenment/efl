@@ -219,7 +219,7 @@ struct property_wrapper_definition_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
    {
-      if (blacklist::is_property_blacklisted(property, context))
+      if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;
 
       bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
@@ -281,7 +281,19 @@ struct property_wrapper_definition_generator
 
       return true;
    }
+   attributes::klass_def const* implementing_klass;
+};
+struct property_wrapper_definition_parameterized
+{
+  property_wrapper_definition_generator operator()(attributes::klass_def const& klass) const
+  {
+     return {&klass};
+  }
 } const property_wrapper_definition;
+property_wrapper_definition_generator as_generator(property_wrapper_definition_parameterized)
+{
+   return {};
+}
 
 }
 
@@ -294,6 +306,8 @@ struct is_eager_generator< ::eolian_mono::native_function_definition_generator> 
 template <>
 struct is_eager_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
 template <>
+struct is_eager_generator< ::eolian_mono::property_wrapper_definition_parameterized> : std::true_type {};
+template <>
 struct is_generator< ::eolian_mono::function_definition_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::native_function_definition_generator> : std::true_type {};
@@ -301,6 +315,8 @@ template <>
 struct is_generator< ::eolian_mono::function_definition_parameterized> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::property_wrapper_definition_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::property_wrapper_definition_parameterized> : std::true_type {};
 
 namespace type_traits {
 template <>
@@ -314,6 +330,8 @@ struct attributes_needed< ::eolian_mono::native_function_definition_generator> :
 
 template <>
 struct attributes_needed< ::eolian_mono::property_wrapper_definition_generator> : std::integral_constant<int, 1> {};
+template <>
+struct attributes_needed< ::eolian_mono::property_wrapper_definition_parameterized> : std::integral_constant<int, 1> {};
 }
       
 } } }

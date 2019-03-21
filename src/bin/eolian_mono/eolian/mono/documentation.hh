@@ -37,6 +37,24 @@ struct documentation_generator
       return n;
    }
 
+   // Gets the eolian ref for the given class, prepending I for interfaces.
+   static std::string object_ref_conversion(const Eolian_Object *cls)
+   {
+      auto klass_type = ::eolian_class_type_get((const Eolian_Class *)cls);
+      auto full_eolian_name = name_helpers::managed_namespace(::eolian_object_name_get(cls));
+      if (klass_type == EOLIAN_CLASS_MIXIN || klass_type == EOLIAN_CLASS_INTERFACE)
+        {
+           size_t pos = full_eolian_name.rfind(".");
+           if (pos == std::string::npos)
+             pos = 0;
+           else
+             pos++;
+           full_eolian_name.insert(pos, "I");
+        }
+      return full_eolian_name;
+   }
+
+
    // Turns a function name from EO convention to EFL# convention.
    // The name_tail parameter is the last 4 chars of the original string, which
    // could be ".set" or ".get" and in this case they are ignored by Eolian.
@@ -45,7 +63,7 @@ struct documentation_generator
    {
       ::Eolian_Function_Type ftype = ::eolian_function_type_get(function);
       const char* eo_name = ::eolian_function_name_get(function);
-      std::string name = name_helpers::managed_namespace(::eolian_object_name_get(klass));
+      std::string name = object_ref_conversion(klass);
       switch(ftype)
       {
          case ::EOLIAN_METHOD:
@@ -123,7 +141,7 @@ struct documentation_generator
            if (blacklist::is_struct_blacklisted(ref)) return "";
            break;
          case ::EOLIAN_OBJECT_EVENT:
-           ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           ref = object_ref_conversion(data);
            ref += ".";
            ref += name_helpers::managed_event_name(::eolian_object_name_get(data2));
            break;
@@ -150,6 +168,9 @@ struct documentation_generator
          case ::EOLIAN_OBJECT_UNKNOWN:
            // If the reference cannot be resolved, just return an empty string and
            // it won't be converted into a <see> tag.
+           break;
+         case ::EOLIAN_OBJECT_CLASS:
+           ref = object_ref_conversion(data);
            break;
          default:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));

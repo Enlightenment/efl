@@ -177,7 +177,7 @@ struct klass
             ).generate(sink, p, iface_cxt))
            return false;
 
-       if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, iface_cxt))
+       if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, iface_cxt))
          return false;
 
        // End of interface declaration
@@ -272,13 +272,13 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, concrete_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, concrete_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, concrete_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
 
@@ -353,13 +353,13 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, inherit_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, inherit_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, inherit_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, inherit_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, inherit_cxt))
                 return false;
            }
 

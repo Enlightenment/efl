@@ -1388,6 +1388,17 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       get_setter_only {
          return: int;
       }
+
+      call_find_provider {
+         params {
+            @in type: const(Efl.Class);
+         }
+         return: Efl.Object;
+      }
+
+      call_find_provider_for_iface {
+         return: Efl.Object;
+      }
    }
    implements {
       class.constructor;

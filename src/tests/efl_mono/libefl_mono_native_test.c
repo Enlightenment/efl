@@ -3929,6 +3929,18 @@ Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dumm
     return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
 }
 
+Efl_Object *_dummy_test_object_call_find_provider(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Efl_Class *type)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, type);
+}
+
+Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, DUMMY_TEST_IFACE_INTERFACE);
+}
+
 /// Dummy.Child
 
 static Efl_Object *

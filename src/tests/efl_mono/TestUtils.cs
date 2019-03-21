@@ -186,6 +186,16 @@ public static class Test
         if (reference != null)
             throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
+
+    /// <summary> Asserts if the given reference is not null.</summary>
+    public static void AssertNotNull(object reference, String msg = "Reference is null",
+                              [CallerLineNumber] int line = 0,
+                              [CallerFilePath] string file = null,
+                              [CallerMemberName] string member = null)
+    {
+        if (reference == null)
+            throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}");
+    }
 }
 
 
