@@ -1687,8 +1687,7 @@ parse_event(Eo_Lexer *ls)
    ev->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    eo_lexer_dtor_pop(ls);
    Eina_Bool has_scope = EINA_FALSE, has_beta = EINA_FALSE,
-             has_hot   = EINA_FALSE, has_restart = EINA_FALSE,
-             has_owned = EINA_FALSE;
+             has_hot   = EINA_FALSE, has_restart = EINA_FALSE;
    for (;;) switch (ls->t.kw)
      {
       case KW_at_private:
@@ -1714,17 +1713,12 @@ parse_event(Eo_Lexer *ls)
         ev->is_restart = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_owned:
-        CASE_LOCK(ls, owned, "owned qualifier");
-        eo_lexer_get(ls);
-        break;
       default:
         goto end;
      }
 end:
    check_next(ls, ':');
    ev->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
-   ev->type->owned = has_owned;
    check(ls, ';');
    eo_lexer_get(ls);
    FILL_DOC(ls, ev, doc);
