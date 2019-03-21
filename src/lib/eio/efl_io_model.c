@@ -388,16 +388,20 @@ _eio_build_st_then_clobber(const Efl_Io_Model *model, Efl_Io_Model_Data *pd)
 }
 
 static Eina_List *delayed_queue = NULL;
+static Eina_Bool delayed_one = EINA_FALSE;
 
 static void
 _delayed_flush(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Promise *p;
-
-   EINA_LIST_FREE(delayed_queue, p)
-     eina_promise_resolve(p, EINA_VALUE_EMPTY);
+   Eina_List *tmp = delayed_queue;
 
    efl_event_callback_del(ev->object, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+
+   delayed_one = EINA_FALSE;
+   delayed_queue = NULL;
+   EINA_LIST_FREE(tmp, p)
+     eina_promise_resolve(p, EINA_VALUE_EMPTY);
 }
 
 static Eina_Value
@@ -447,7 +451,8 @@ _eio_build_mime_now(Eo *model, void *data, const Eina_Value v)
    if (!pd->loop) goto on_error;
 
    // Make sure that we are not over consuming time in the main loop
-   if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
+   if (!delayed_one &&
+       (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004))
      {
         Eina_Future *f = efl_future_then(model, _build_delay(model),
                                          .success = _eio_build_mime_now,
@@ -460,6 +465,7 @@ _eio_build_mime_now(Eo *model, void *data, const Eina_Value v)
    _eio_build_mime_clean(pd);
 
    efl_model_properties_changed(model, "mime_type");
+   delayed_one = EINA_TRUE;
 
    return v;
 
