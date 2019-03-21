@@ -128,6 +128,12 @@ timer_add(double in, Ecore_Task_Cb cb, void *data)
    return ecore_timer_add(in * TIMER_SCALE, cb, data);
 }
 
+void *
+real_timer_add(double in, Ecore_Task_Cb cb, void *data)
+{
+   return ecore_timer_add(in, cb, data);
+}
+
 static void
 _win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
  {
