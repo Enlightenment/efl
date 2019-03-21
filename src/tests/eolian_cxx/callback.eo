@@ -11,7 +11,7 @@ class Callback extends Efl.Object
      prefix,event1: void;
      prefix,event2: Callback;
      prefix,event3: int;
-     prefix,event4: list<int*>;
+     prefix,event4: const(array<ptr(int)>);
      prefix,event5: Callback_Event;
    }
 }
