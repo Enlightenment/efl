@@ -7,6 +7,9 @@
 #include "eo_internal.h"
 #include "../efl_check.h"
 #include "elm_widget.h"
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
+
 
 static int main_pid = -1;
 static Eina_Bool did_shutdown;
@@ -132,6 +135,7 @@ _win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
 
    ecore_loop_time_set(t + LOOP_INCREMENT);
    ecore_animator_custom_tick();
+   ecore_evas_render_prepare(ecore_evas_ecore_evas_get(evas_object_evas_get(data)));
    evas_norender(evas_object_evas_get(data));
 }
 
