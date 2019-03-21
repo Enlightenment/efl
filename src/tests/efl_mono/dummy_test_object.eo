@@ -1304,9 +1304,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      emit_event_with_list {
+      emit_event_with_array {
          params {
-            @in data: list<string>;
+            @in data: array<string>;
          }
       }
 
@@ -1398,7 +1398,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       Dummy.Test_Iface.iface_prop { get; set; }
    }
    events {
-      evt,with,string @hot: string;
+      evt,with,string @hot: const(string);
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
@@ -1406,7 +1406,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
       evt,with,struct,complex @hot: Dummy.StructComplex;
-      evt,with,list @hot: list<string>;
+      evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
    }
 }

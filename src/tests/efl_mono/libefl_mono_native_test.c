@@ -167,7 +167,7 @@ Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Obj
   return obj;
 }
 
-Efl_Object *_dummy_test_object_return_null_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+Efl_Object *_dummy_test_object_return_null_object(Eo *obj EINA_UNUSED, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return NULL;
 }
@@ -3790,9 +3790,9 @@ void _dummy_test_object_emit_event_with_struct_complex(Eo *obj, EINA_UNUSED Dumm
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT_COMPLEX, &data);
 }
 
-void _dummy_test_object_emit_event_with_list(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List *data)
+void _dummy_test_object_emit_event_with_array(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array *data)
 {
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_LIST, data);
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_ARRAY, data);
 }
 
 void _dummy_test_object_emit_event_with_under(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)

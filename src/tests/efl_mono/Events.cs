@@ -165,21 +165,21 @@ class TestEoEvents
         Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
     }
 
-    public static void event_with_list_payload()
+    public static void event_with_array_payload()
     {
         var obj = new Dummy.TestObject();
-        Eina.List<string> received = null;
-        Eina.List<string> sent = new Eina.List<string>();
+        Eina.Array<string> received = null;
+        Eina.Array<string> sent = new Eina.Array<string>();
 
         sent.Append("Abc");
         sent.Append("Def");
         sent.Append("Ghi");
 
-        obj.EvtWithListEvt += (object sender, Dummy.TestObjectEvtWithListEvt_Args e) => {
+        obj.EvtWithArrayEvt += (object sender, Dummy.TestObjectEvtWithArrayEvt_Args e) => {
             received = e.arg;
         };
 
-        obj.EmitEventWithList(sent);
+        obj.EmitEventWithArray(sent);
 
         Test.AssertEquals(sent.Length, received.Length);
         var pairs = sent.Zip(received, (string sentItem, string receivedItem) => new { Sent = sentItem, Received = receivedItem } );
