@@ -120,6 +120,7 @@ foreach lang : ['c', 'objc', 'cpp']
     else
       error('Version of targetted Windows incorrect')
     endif
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO', language: lang)
   endif
 endforeach
 
