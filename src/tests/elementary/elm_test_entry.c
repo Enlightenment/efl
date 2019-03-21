@@ -393,6 +393,85 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+static Eina_Bool
+end_test()
+{
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+static void
+mag_job(void *e)
+{
+   evas_event_feed_mouse_out(e, 0, NULL);
+   evas_event_feed_mouse_in(e, 0, NULL);
+   evas_event_feed_mouse_move(e, 200, 100, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   real_timer_add(elm_config_longpress_timeout_get() + 0.1, end_test, NULL);
+}
+
+static void
+norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   ecore_job_add(mag_job, e);
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, norendered);
+}
+
+EFL_START_TEST(elm_entry_magnifier)
+{
+   Evas_Object *win, *entry;
+   char buf[4096];
+
+   win = win_add_focused(NULL, "entry", ELM_WIN_BASIC);
+   evas_object_size_hint_weight_set(win, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   entry = elm_entry_add(win);
+   elm_entry_line_wrap_set(entry, ELM_WRAP_NONE);
+   snprintf(buf, sizeof(buf),
+            "This is an entry widget in this window that<br/>"
+            "uses markup <b>like this</> for styling and<br/>"
+            "formatting <em>like this</>, as well as<br/>"
+            "<a href=X><link>links in the text</></a>, so enter text<br/>"
+            "in here to edit it. By the way, links are<br/>"
+            "called <a href=anc-02>Anchors</a> so you will need<br/>"
+            "to refer to them this way.<br/>"
+            "<br/>"
+
+            "Also you can stick in items with (relsize + ascent): "
+            "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
+            " (full) "
+            "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
+            " (to the left)<br/>"
+
+            "Also (size + ascent): "
+            "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
+            " (full) "
+            "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
+            " (before this)<br/>"
+
+            "And as well (absize + ascent): "
+            "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+            " (full) "
+            "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+            " or even paths to image files on disk too like: "
+            "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+            " ... end."
+            , elm_app_data_dir_get()
+            );
+   elm_object_text_set(entry, buf);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(entry);
+   elm_win_resize_object_add(win, entry);
+   evas_object_show(win);
+   evas_object_resize(entry, 600, 400);
+   evas_object_resize(win, 600, 400);
+   evas_smart_objects_calculate(evas_object_evas_get(win));
+   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_RENDER_POST, norendered, NULL);
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_entry_text_set)
 {
    Evas_Object *win, *entry;
@@ -427,4 +506,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_selections);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_entry_text_set);
+   tcase_add_test(tc, elm_entry_magnifier);
 }
