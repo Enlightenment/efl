@@ -1522,6 +1522,12 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
+#if 0
+   /* XXX: Disable hardware plane rotation for now as this has broken
+    * recently. The break happens because of an invalid argument,
+    * ie: the value being sent from pstate->rotation_map ends up being
+    * incorrect for some reason. I suspect the breakage to be from
+    * kernel drivers (linux 4.20.0) but have not confirmed that version */
    if (_ecore_drm2_use_atomic)
      {
         Eina_List *l;
@@ -1563,6 +1569,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 err:
         sym_drmModeAtomicFree(req);
      }
+#endif
 
    return ret;
 }
