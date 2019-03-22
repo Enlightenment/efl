@@ -900,7 +900,7 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    efl_key_data_set(child, ".item.data", item);
 
    // Is this item selected
-   if (sd->target)
+   if (sd->target && sd->target_ready)
      {
         const char *target_path = efl_io_model_path_get(sd->target);
 
@@ -2409,7 +2409,7 @@ _properties_ready(void *data, const Efl_Event *ev)
           efl_event_callback_del(ev->object, EFL_MODEL_EVENT_PROPERTIES_CHANGED, _properties_ready, obj);
 
           eina_value_bool_get(value, &is_dir);
-
+          pd->target_ready = EINA_TRUE;
           if (!is_dir)
             {
                Efl_Model *parent;
@@ -2453,6 +2453,7 @@ _elm_fileselector_selected_set_internal(Evas_Object *obj, const char *path)
 
    if (stat(path, &st)) return EINA_FALSE;
 
+   pd->target_ready = EINA_FALSE;
    pd->target = efl_add_ref(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, path),
                             efl_event_callback_array_add(efl_added, noref_death(), NULL));
    if (!pd->target)

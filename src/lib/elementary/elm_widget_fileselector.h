@@ -86,6 +86,7 @@ struct _Elm_Fileselector_Data
    Eina_Bool                dir_selected : 1;
 
    Eina_Bool                hidden_visible : 1;
+   Eina_Bool                target_ready : 1;
 };
 
 struct sel_data
