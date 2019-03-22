@@ -498,7 +498,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
 {
    if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
 
-   if (index > pd->cnt)
+   if ((index > pd->cnt) || (index < 0))
      {
         return EINA_FALSE;
      }
