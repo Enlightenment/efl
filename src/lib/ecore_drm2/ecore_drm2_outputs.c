@@ -1518,9 +1518,11 @@ ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 EAPI Eina_Bool
 ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret = EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+
+   output->rotation = rotation;
 
 #if 0
    /* XXX: Disable hardware plane rotation for now as this has broken
