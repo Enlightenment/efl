@@ -442,7 +442,7 @@ inline std::string translate_inherited_event_name(const attributes::event_def &e
 
 // Open/close namespaces
 template<typename OutputIterator, typename Context>
-bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context context)
+bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context const& context)
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
@@ -451,7 +451,7 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 }
 
 template<typename OutputIterator, typename Context>
-bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context context)
+bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
      auto close_namespace = *(lit("} ")) << "\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);

@@ -217,7 +217,7 @@ struct native_function_definition_parameterized
 struct property_wrapper_definition_generator
 {
    template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::property_def const& property, Context context) const
+   bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
    {
       if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;

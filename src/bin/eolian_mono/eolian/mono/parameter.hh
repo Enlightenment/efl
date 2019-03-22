@@ -1452,7 +1452,7 @@ struct constructor_parameter_name_parameterized
 struct constructor_param_generator
 {
   template<typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context context) const
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
   {
      auto params = ctor.function.parameters;
 
@@ -1471,7 +1471,7 @@ struct constructor_param_generator
 struct constructor_invocation_generator
 {
   template<typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context context) const
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
   {
      auto params = ctor.function.parameters;
      if (!as_generator(

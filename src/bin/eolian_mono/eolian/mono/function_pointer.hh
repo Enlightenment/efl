@@ -15,7 +15,7 @@ namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
 template <typename Context>
-static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context context)
+static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context const& context)
 {
   std::string name = name_helpers::function_ptr_full_eolian_name(func);
 

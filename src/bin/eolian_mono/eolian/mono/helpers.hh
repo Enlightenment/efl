@@ -103,7 +103,7 @@ std::set<attributes::klass_name, attributes::compare_klass_name_by_name> interfa
 // Returns the set of interfaces implemented by this type that haven't been implemented
 // by a regular parent class.
 template<typename Context>
-std::set<attributes::klass_name, attributes::compare_klass_name_by_name> non_implemented_interfaces(attributes::klass_def const& cls, Context context)
+std::set<attributes::klass_name, attributes::compare_klass_name_by_name> non_implemented_interfaces(attributes::klass_def const& cls, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
    std::set<attributes::klass_name, attributes::compare_klass_name_by_name> implemented_interfaces;

@@ -140,15 +140,16 @@ run(options_type const& opts)
         throw std::runtime_error("Failed to generate file preamble");
      }
 
-   auto lib_context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
-                                                                                     opts.v_major,
-                                                                                     opts.v_minor,
-                                                                                     opts.references_map},
-                                                        efl::eolian::grammar::context_null());
+   using efl::eolian::grammar::context_add_tag;
 
-   auto options_context = efl::eolian::grammar::context_add_tag(eolian_mono::options_context{opts.want_beta}, lib_context);
-
-   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, options_context);
+   auto context = context_add_tag(eolian_mono::indentation_context{0},
+                  context_add_tag(eolian_mono::eolian_state_context{opts.state},
+                  context_add_tag(eolian_mono::options_context{opts.want_beta},
+                  context_add_tag(eolian_mono::library_context{opts.dllimport,
+                                                               opts.v_major,
+                                                               opts.v_minor,
+                                                               opts.references_map},
+                                  efl::eolian::grammar::context_null()))));
 
    EINA_ITERATOR_FOREACH(aliases, tp)
      {

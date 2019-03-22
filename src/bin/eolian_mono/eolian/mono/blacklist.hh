@@ -52,7 +52,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
 }
 
 template<typename Context>
-inline bool is_function_blacklisted(attributes::function_def const& func, Context context)
+inline bool is_function_blacklisted(attributes::function_def const& func, Context const& context)
 {
   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
   auto c_name = func.c_name;
@@ -80,7 +80,7 @@ inline bool is_struct_blacklisted(std::string const& full_name)
 }
 
 template <typename Context>
-inline bool is_struct_blacklisted(attributes::struct_def const& struct_, Context context)
+inline bool is_struct_blacklisted(attributes::struct_def const& struct_, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
    if (struct_.is_beta && !options.want_beta)
@@ -91,7 +91,7 @@ inline bool is_struct_blacklisted(attributes::struct_def const& struct_, Context
 
 // Struct as type_def is for places where the struct is used as a struct field or parameter/return.
 template <typename Context>
-inline bool is_struct_blacklisted(attributes::type_def const& struct_, Context context)
+inline bool is_struct_blacklisted(attributes::type_def const& struct_, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
    if (struct_.is_beta && !options.want_beta)
@@ -119,7 +119,7 @@ inline bool is_property_blacklisted(std::string const& name)
 }
 
 template<typename Context>
-inline bool is_property_blacklisted(attributes::property_def const& property, Context context)
+inline bool is_property_blacklisted(attributes::property_def const& property, Context const& context)
 {
     auto name = name_helpers::klass_full_concrete_or_interface_name(property.klass) + "." + name_helpers::property_managed_name(property);
 
@@ -135,7 +135,7 @@ inline bool is_property_blacklisted(attributes::property_def const& property, Co
 template<typename Context>
 inline bool is_property_blacklisted(attributes::property_def const& property,
                                     attributes::klass_def const& implementing_class,
-                                    Context context)
+                                    Context const& context)
 {
    std::string property_name = name_helpers::property_managed_name(property);
    std::string klass_name = name_helpers::klass_concrete_or_interface_name(implementing_class);
@@ -149,7 +149,7 @@ inline bool is_property_blacklisted(attributes::property_def const& property,
 }
 
 template<typename Context>
-inline bool is_class_blacklisted(attributes::klass_def const& cls, Context context)
+inline bool is_class_blacklisted(attributes::klass_def const& cls, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
 
@@ -157,7 +157,7 @@ inline bool is_class_blacklisted(attributes::klass_def const& cls, Context conte
 }
 
 template<typename Context>
-inline bool is_class_blacklisted(attributes::klass_name const& cls, Context context)
+inline bool is_class_blacklisted(attributes::klass_name const& cls, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
 
@@ -166,7 +166,7 @@ inline bool is_class_blacklisted(attributes::klass_name const& cls, Context cont
 
 
 template<typename Context>
-inline bool is_event_blacklisted(attributes::event_def const& evt, Context context)
+inline bool is_event_blacklisted(attributes::event_def const& evt, Context const& context)
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
 

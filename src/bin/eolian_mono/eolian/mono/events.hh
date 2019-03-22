@@ -179,7 +179,7 @@ struct event_definition_generator
    bool is_inherited_event;
 
    template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::event_def const& evt, Context context) const
+   bool generate(OutputIterator sink, attributes::event_def const& evt, Context const& context) const
    {
       if (blacklist::is_event_blacklisted(evt, context))
         return true;
@@ -291,7 +291,7 @@ struct event_definition_generator
                               , std::string const& event_name
                               , std::string const& event_args_type
                               , std::string const& event_template_args
-                              , Context context) const
+                              , Context const& context) const
    {
       auto delegate_type = "EventHandler" + event_template_args;
       if (!as_generator(
@@ -311,7 +311,7 @@ struct event_definition_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate_event_add_remove(OutputIterator sink, attributes::event_def const &evt, const std::string& event_name, Context context) const
+   bool generate_event_add_remove(OutputIterator sink, attributes::event_def const &evt, const std::string& event_name, Context const& context) const
    {
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
