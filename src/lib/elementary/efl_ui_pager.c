@@ -397,7 +397,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
    pd->curr.page++;
 
    if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
+     efl_page_transition_pack(pd->transition, 0);
    else
      {
         if (pd->cnt == 1)
@@ -424,7 +424,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
    if (pd->curr.page == -1) pd->curr.page = 0;
 
    if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
+     efl_page_transition_pack(pd->transition, (pd->cnt - 1));
    else
      {
         if (pd->cnt == 1)
@@ -455,7 +455,7 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
    if (pd->curr.page >= index) pd->curr.page++;
 
    if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
+     efl_page_transition_pack(pd->transition, index);
    else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
    if (pd->indicator)
@@ -481,7 +481,7 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
    if (pd->curr.page > index) pd->curr.page++;
 
    if (pd->transition)
-     efl_page_transition_update(pd->transition, pd->curr.pos);
+     efl_page_transition_pack(pd->transition, (index + 1));
    else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
    if (pd->indicator)
@@ -518,7 +518,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
         if (pd->curr.page >= index) pd->curr.page++;
 
         if (pd->transition)
-          efl_page_transition_update(pd->transition, pd->curr.pos);
+          efl_page_transition_pack(pd->transition, index);
         else efl_canvas_object_clipper_set(subobj, pd->backclip);
 
         if (pd->indicator)
