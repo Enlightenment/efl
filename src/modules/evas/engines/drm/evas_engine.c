@@ -44,7 +44,7 @@ eng_output_setup(void *engine, void *einfo, unsigned int w, unsigned int h)
                                                  NULL,
                                                  NULL,
                                                  _outbuf_flush,
-                                                 _outbuf_redraws_clear,
+                                                 NULL,
                                                  _outbuf_free,
                                                  ob->w, ob->h))
      goto init_err;
@@ -70,32 +70,15 @@ eng_output_info_setup(void *info)
    einfo->render_mode = EVAS_RENDER_MODE_BLOCKING;
 }
 
-static void
-eng_output_resize(void *engine EINA_UNUSED, void *data, int w, int h)
+static int
+eng_output_update(void *engine EINA_UNUSED, void *data, void *einfo, unsigned int w, unsigned int h)
 {
    Render_Engine *re = data;
    Evas_Engine_Info_Drm *info;
 
-   info = re->generic.ob->info;
-   if (!info) return;
-
+   info = (Evas_Engine_Info_Drm *)einfo;
    _outbuf_reconfigure(re->generic.ob, w, h,
                        info->info.rotation, info->info.depth);
-
-   evas_common_tilebuf_free(re->generic.tb);
-   if ((re->generic.tb = evas_common_tilebuf_new(w, h)))
-     evas_common_tilebuf_set_tile_size(re->generic.tb, TILESIZE, TILESIZE);
-
-   re->generic.w = w;
-   re->generic.h = h;
-}
-
-static int
-eng_output_update(void *engine, void *data, void *einfo EINA_UNUSED, unsigned int w, unsigned int h)
-{
-   Render_Engine *re = data;
-
-   eng_output_resize(engine, data, w, h);
 
    evas_render_engine_software_generic_update(&re->generic,
                                               re->generic.ob, w, h);
@@ -251,7 +234,6 @@ module_open(Evas_Module *em)
    ORD(output_setup);
    ORD(output_update);
    ORD(output_free);
-   ORD(output_resize);
    ORD(image_plane_assign);
    ORD(image_plane_release);
 
