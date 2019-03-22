@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Linq;
 
-class TestMain
+class TestMain : Efl.Csharp.Application
 {
     static Type[] GetTestCases(String name="")
     {
@@ -13,9 +13,15 @@ class TestMain
                                                                 t.Name.Contains(name)).ToArray();
     }
 
+    // Empty as we do not actually depend on it to run the tests.
+    protected override void OnInitialize(Eina.Array<System.String> args)
+    {
+    }
+
     static int Main(string[] args)
     {
-        Efl.All.Init();
+        var app = new TestMain();
+        app.Setup();
 
         bool pass = true;
 
@@ -91,6 +97,8 @@ class TestMain
             }
         }
         Console.WriteLine("[   END SUITE ] " + ckRunSuite);
+
+        Efl.Csharp.Application.Shutdown();
 
         if (!pass)
           return -1;

@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Collections.Generic;
 
 using static Efl.UnsafeNativeMethods;
 using static Efl.Csharp.Ui.UnsafeNativeMethods;
@@ -34,6 +35,9 @@ namespace Efl {
     public abstract class Application {
       //the initializied components
       private static Components initComponent;
+      private static bool initialized;
+      private Efl.App app = null;
+      private static IntPtr[] argv = null; // Holding the Native strings
       //what follows are 3 private functions to boot up the internals of efl
       private static void Init(Efl.Csharp.Components component, string[] commandLineArguments) {
         Eina.Config.Init();
@@ -56,7 +60,15 @@ namespace Efl {
           }
           else
           {
-              elm_init(commandLineArguments.Length, commandLineArguments);
+              // Elementary expects the argument strings to outlive the call to eina_init.
+              // As C# assumes native strings are valid only during the call, we have to manage then explicitly.
+              List<IntPtr> argList = new List<IntPtr>();
+              foreach (var arg in commandLineArguments)
+              {
+                  argList.Add(Eina.StringConversion.ManagedStringToNativeUtf8Alloc(arg));
+              }
+              argv = argList.ToArray();
+              elm_init(commandLineArguments.Length, argv);
           }
 
           elm_policy_set((int)Elm.Policy.Quit, (int)Elm.PolicyQuit.LastWindowHidden);
@@ -69,8 +81,13 @@ namespace Efl {
         }
 
         initComponent = component;
+        initialized = true;
       }
-      private static void Shutdown() {
+
+      /// <summary>Finalizes the application by shutting down efl libraries.
+      ///
+      /// Usually called indirectly by the Launch method.</summary>
+      protected static void Shutdown() {
         // Try to cleanup everything before actually shutting down.
         System.GC.Collect();
         System.GC.WaitForPendingFinalizers();
@@ -82,6 +99,17 @@ namespace Efl {
         evas_shutdown();
         ecore_shutdown();
         Efl.Eo.Config.Shutdown();
+
+        if (argv != null)
+        {
+            foreach (var arg in argv)
+            {
+                Eina.MemoryNative.Free(arg);
+            }
+
+            argv = null;
+        }
+
         Eina.Config.Shutdown();
       }
       /// <summary>
@@ -108,14 +136,25 @@ namespace Efl {
       /// Called before starting the shutdown of the application.
       /// </summary>
       protected virtual void OnTerminate() { }
+
+      /// <summary>
+      /// </summary>
+      public void Setup(Efl.Csharp.Components components=Components.Ui) {
+        Eina.Log.Error($"Calling Init. With component {components}");
+        Init(components, Environment.GetCommandLineArgs());
+      }
+
       /// <summary>
       /// This function initializices everything in EFL and runs your application.
       /// This call will result in a call to OnInitialize(), which you application should override.
       /// </summary>
       public void Launch(Efl.Csharp.Components components=Components.Ui) {
-        Init(components, Environment.GetCommandLineArgs());
+        if (!initialized)
+        {
+            this.Setup(components);
+        }
 
-        Efl.App app = Efl.App.AppMain;
+        app = Efl.App.AppMain;
         app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) => {
           if (evt.arg.Initialization) {
             OnInitialize(evt.arg.Argv);

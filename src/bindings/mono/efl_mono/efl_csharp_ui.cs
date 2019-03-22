@@ -16,6 +16,7 @@ namespace Ui
 static class UnsafeNativeMethods
 {
     [DllImport(efl.Libs.Elementary)] internal static extern int elm_init(int argc, IntPtr argv);
+    [DllImport(efl.Libs.Elementary)] internal static extern int elm_init(int argc, [In] IntPtr[] argv);
     [DllImport(efl.Libs.Elementary)] internal static extern int elm_init(int argc, [In] string[] argv);
     [DllImport(efl.Libs.Elementary)] internal static extern void elm_policy_set(int policy, int policy_detail);
     [DllImport(efl.Libs.Elementary)] internal static extern void elm_shutdown();
