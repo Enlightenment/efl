@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading;
+
 using static Efl.UnsafeNativeMethods;
+using static Efl.Csharp.Ui.UnsafeNativeMethods;
 
 namespace Efl {
   namespace Csharp {
@@ -33,24 +35,39 @@ namespace Efl {
       //the initializied components
       private static Components initComponent;
       //what follows are 3 private functions to boot up the internals of efl
-      private static void Init(Efl.Csharp.Components component) {
+      private static void Init(Efl.Csharp.Components component, string[] commandLineArguments) {
         Eina.Config.Init();
         Efl.Eo.Config.Init();
         ecore_init();
         evas_init();
         eldbus.Config.Init();
 
-        if (component == Components.Ui) {
+        if (component == Components.Ui)
+        {
           // TODO Support elm command line arguments
 #if WIN32 // Not a native define, we define it in our build system
           // Ecore_Win32 uses OleInitialize, which requires single thread apartments
           if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
               throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
 #endif
-          elm_init(0, IntPtr.Zero);
+          if (commandLineArguments == null)
+          {
+              elm_init(0, IntPtr.Zero);
+          }
+          else
+          {
+              elm_init(commandLineArguments.Length, commandLineArguments);
+          }
 
           elm_policy_set((int)Elm.Policy.Quit, (int)Elm.PolicyQuit.LastWindowHidden);
         }
+        else
+        {
+          Eina.Array<String> commandLine = new Eina.Array<String>();
+          commandLine.Append(commandLineArguments);
+          Efl.App.AppMain.SetCommandArray(commandLine);
+        }
+
         initComponent = component;
       }
       private static void Shutdown() {
@@ -96,13 +113,9 @@ namespace Efl {
       /// This call will result in a call to OnInitialize(), which you application should override.
       /// </summary>
       public void Launch(Efl.Csharp.Components components=Components.Ui) {
-        Init(components);
+        Init(components, Environment.GetCommandLineArgs());
+
         Efl.App app = Efl.App.AppMain;
-        Eina.Array<String> command_line = new Eina.Array<String>();
-        command_line.Append(Environment.GetCommandLineArgs());
-#if EFL_BETA
-        app.SetCommandArray(command_line);
-#endif
         app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) => {
           if (evt.arg.Initialization) {
             OnInitialize(evt.arg.Argv);

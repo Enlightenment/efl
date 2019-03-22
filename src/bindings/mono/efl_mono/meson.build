@@ -1,5 +1,6 @@
 mono_files += files(
   'efl_all.cs',
+  'efl_csharp_ui.cs',
   'efl_csharp_application.cs'
   )
 
