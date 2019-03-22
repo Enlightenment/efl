@@ -6,7 +6,10 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group
 {
-   [[Elementary layout abstract]]
+   [[Elementary layout abstract
+
+     @since 1.22
+   ]]
    eo_prefix: efl_ui_layout;
    data: Efl_Ui_Layout_Data;
    methods {

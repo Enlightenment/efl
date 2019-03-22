@@ -4,6 +4,8 @@ interface Efl.Content
 
      This is used for the default content part of widgets, as well as for
      individual parts through @Efl.Part.
+
+     @since 1.22
    ]]
    methods {
       @property content {

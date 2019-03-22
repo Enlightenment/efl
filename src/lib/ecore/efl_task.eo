@@ -1,5 +1,7 @@
 enum Efl.Task_Priority {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    normal,
    background,
    low,
@@ -8,7 +10,9 @@ enum Efl.Task_Priority {
 }
 
 enum Efl.Task_Flags {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    none               = 0,
    use_stdin          = 1,
    use_stdout         = 2,
@@ -17,7 +21,9 @@ enum Efl.Task_Flags {
 
 abstract Efl.Task extends Efl.Loop_Consumer
 {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    methods {
       @property priority {
          [[ The priority of this task. ]]

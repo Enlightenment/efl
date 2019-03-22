@@ -10,7 +10,10 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
                             Efl.Input.Interface, Efl.Gfx.Hint,
                             Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
 {
-   [[Efl canvas object abstract class]]
+   [[Efl canvas object abstract class
+
+     @since 1.22
+   ]]
    data: Evas_Object_Protected_Data;
    methods {
       @property pointer_mode_by_device @beta {

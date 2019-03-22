@@ -1,7 +1,10 @@
 import eina_types;
 
 struct Efl.Event_Description {
-    [[This struct holds the description of a specific event.]]
+    [[This struct holds the description of a specific event.
+
+      @since 1.22
+    ]]
     name: string; [[name of the event.]]
     unfreezable: bool; [[$true if the event cannot be frozen.]]
     legacy_is: bool; [[Internal use: $true if a legacy event.]]
@@ -18,7 +21,9 @@ type Efl.Callback_Priority : short;
   specified @Efl.Callback_Priority_Default is to be assumed.
 
   See @Efl.Callback_Priority_Before @Efl.Callback_Priority_Default  @Efl.Callback_Priority_After
- ]]
+
+  @since 1.22
+]]
 
 const Efl.Callback_Priority_Before : Efl.Callback_Priority = -100;
 [[Slightly more prioritized than default.]]
@@ -55,7 +60,9 @@ abstract Efl.Object
      - Destruction: The object has no parent and it can be destroyed. The
        @.destructor method is called, use it to return any resources the object
        might have gathered during its life.
-     ]]
+
+     @since 1.22
+   ]]
    eo_prefix: efl;
 
    methods {

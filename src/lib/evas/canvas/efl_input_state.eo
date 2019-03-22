@@ -2,7 +2,10 @@ import efl_input_types;
 
 interface Efl.Input.State
 {
-   [[Efl input state interface]]
+   [[Efl input state interface.
+
+     @since 1.22
+   ]]
    eo_prefix: efl_input;
    methods {
       /* FIXME Efl.Input.Device is not stable yet*/

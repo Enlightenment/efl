@@ -2,7 +2,10 @@ import eina_types;
 
 interface Efl.Screen
 {
-   [[Efl screen interface]]
+   [[Efl screen interface
+
+     @since 1.22
+   ]]
    methods {
       @property screen_size_in_pixels {
          get {

@@ -3,7 +3,10 @@ import efl_gfx_types;
 
 interface Efl.Canvas.Scene
 {
-   [[Interface containing basic canvas-related methods and events.]]
+   [[Interface containing basic canvas-related methods and events.
+
+     @since 1.22
+   ]]
    methods {
       @property image_max_size {
          get {

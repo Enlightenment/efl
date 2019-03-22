@@ -8,6 +8,8 @@ class Efl.Loop_Timer extends Efl.Loop_Consumer
      "best effort" basis.
 
      The @Efl.Object.event_freeze and @Efl.Object.event_thaw calls are used to pause and unpause the timer.
+
+     @since 1.22
    ]]
    methods {
       @property timer_interval {

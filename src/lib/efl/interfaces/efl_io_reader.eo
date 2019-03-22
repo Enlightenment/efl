@@ -11,6 +11,8 @@ interface Efl.Io.Reader {
       and signal if the stream reached an end, with event
       "can_read,changed" or property @.can_read to known whenever a read
       would have data to return.
+
+      @since 1.22
     ]]
 
     methods {

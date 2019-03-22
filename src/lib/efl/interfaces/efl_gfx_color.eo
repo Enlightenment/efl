@@ -2,7 +2,10 @@ import efl_gfx_types;
 
 mixin Efl.Gfx.Color
 {
-   [[Efl Gfx Color mixin class]]
+   [[Efl Gfx Color mixin class
+
+     @since 1.22
+   ]]
    data: null;
    methods {
       @property color @pure_virtual {
