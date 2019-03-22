@@ -1131,6 +1131,7 @@ _on_item_activated(void *data, const Efl_Event *event)
 
    if (!sd->double_tap_navigation) return;
 
+   efl_parent_set(it_data->model, data);
    _schedule_populate(data, sd, it_data->model, NULL);
 }
 
@@ -1350,7 +1351,7 @@ _current_filter_changed(void *data,
 }
 
 static void
-_ok(void *data, const Efl_Event *event)
+_ok(void *data, const Efl_Event *event EINA_UNUSED)
 {
    const char *name;
    const char *selection = NULL;
@@ -1373,7 +1374,7 @@ _ok(void *data, const Efl_Event *event)
         else
           selection = eina_stringshare_printf("%s/%s", sd->path, name);
 
-        selected_model = efl_add_ref(efl_class_get(sd->model), event->object,
+        selected_model = efl_add_ref(efl_class_get(sd->model), fs,
                                      efl_event_callback_array_add(efl_added, noref_death(), NULL),
                                      efl_io_model_path_set(efl_added, selection));
 
@@ -1428,7 +1429,7 @@ _on_text_activated(void *data, const Efl_Event *event)
 
    if (!ecore_file_is_dir(path))
      {
-        model = efl_add_ref(efl_class_get(sd->model), event->object,
+        model = efl_add_ref(efl_class_get(sd->model), fs,
                             efl_io_model_path_set(efl_added, path),
                             efl_event_callback_array_add(efl_added, noref_death(), NULL));
 
@@ -1439,7 +1440,7 @@ _on_text_activated(void *data, const Efl_Event *event)
         dir = EINA_TRUE;
      }
 
-   parent = efl_add_ref(efl_class_get(sd->model), event->object,
+   parent = efl_add_ref(efl_class_get(sd->model), fs,
                         efl_io_model_path_set(efl_added, path),
                         efl_event_callback_array_add(efl_added, noref_death(), NULL));
    if (!parent) goto end;
@@ -1493,7 +1494,7 @@ _anchor_clicked(void *data, const Efl_Event *event)
 
    if (!sd->model) return;
 
-   model = efl_add_ref(efl_class_get(sd->model), event->object,
+   model = efl_add_ref(efl_class_get(sd->model), fs,
                        efl_event_callback_array_add(efl_added, noref_death(), NULL),
                        efl_io_model_path_set(efl_added, info->name));
    if (!model) return;
