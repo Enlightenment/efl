@@ -474,13 +474,20 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Eina_Error theme_apply_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error theme_apply_ret, theme_apply_internal_ret;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   theme_apply_ret &= _efl_ui_layout_theme_internal(obj, sd);
-   return theme_apply_ret;
+   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd);
+   if (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+     return EFL_UI_THEME_APPLY_ERROR_GENERIC;
+
+   if ((theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT) ||
+       (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
+     return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EOLIAN static Eina_Bool
