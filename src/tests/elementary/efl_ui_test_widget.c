@@ -285,6 +285,42 @@ EFL_START_TEST(efl_ui_test_widget_disabled_parent)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_ui_test_widget_disabled_behaviour)
+{
+   Efl_Ui_Win *win, *w1, *w2, *t;
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
+                 efl_text_set(efl_added, "Hello World"));
+   //first check the initial state
+   w1 = efl_add(efl_ui_widget_realized_class_get(), win);
+   efl_ui_widget_disabled_set(w1, EINA_TRUE);
+   w2 = efl_add(efl_ui_widget_realized_class_get(), win);
+   efl_ui_widget_disabled_set(w2, EINA_FALSE);
+
+
+   t = efl_add(efl_ui_widget_realized_class_get(), win);
+   efl_ui_widget_sub_object_add(w1, t);
+   //check that we never enable something under disabled parent
+   DISABLE_ABORT_ON_CRITICAL_START;
+   efl_ui_widget_disabled_set(t, EINA_FALSE);
+   DISABLE_ABORT_ON_CRITICAL_END;
+   ck_assert_int_eq(efl_ui_widget_disabled_get(t), EINA_TRUE);
+   efl_del(t);
+
+   t = efl_add(efl_ui_widget_realized_class_get(), win);
+   efl_ui_widget_sub_object_add(w1, t);
+   //check that we can disable something with a disabled tree
+   efl_ui_widget_disabled_set(t, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_widget_disabled_get(t), EINA_TRUE);
+   efl_ui_widget_sub_object_add(w2, t);
+   ck_assert_int_eq(efl_ui_widget_disabled_get(t), EINA_TRUE);
+   efl_del(t);
+
+   efl_del(win);
+}
+EFL_END_TEST
+
 static int tree_abort;
 static int tree_abort_level;
 
@@ -316,4 +352,5 @@ void efl_ui_test_widget(TCase *tc)
    tcase_add_test(tc, efl_ui_test_widget_sub_object_theme_sync);
    tcase_add_test(tc, efl_ui_test_widget_parent_relation);
    tcase_add_test(tc, efl_ui_test_widget_disabled_parent);
+   tcase_add_test(tc, efl_ui_test_widget_disabled_behaviour);
 }

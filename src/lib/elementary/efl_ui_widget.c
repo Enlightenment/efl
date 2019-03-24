@@ -1361,6 +1361,35 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
    return elm_widget_sub_object_add(parent, sobj);
 }
 
+static int
+_disabled_counter_get(Eo *widget)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(widget, pd, -1);
+
+   return pd->disabled;
+}
+
+static void
+_mirror_disabled_state(Eo *obj, Elm_Widget_Smart_Data *pd, int disabled_delta)
+{
+   pd->disabled = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0) + disabled_delta;
+
+   //we should not call disabled_set when things are invalidated
+   //otherwise we will unleashe an amount of errors in efl_ui_layout
+   if (efl_invalidated_get(obj)) return;
+
+   if (pd->disabled > 0)
+     {
+        pd->disabled --;
+        efl_ui_widget_disabled_set(obj, EINA_TRUE);
+     }
+   else
+     {
+        pd->disabled ++;
+        efl_ui_widget_disabled_set(obj, EINA_FALSE);
+     }
+}
+
 EOLIAN static void
 _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widget *parent)
 {
@@ -1384,6 +1413,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
    double scale, prev_scale = efl_gfx_entity_scale_get(obj);
    Elm_Theme *th, *prev_th = elm_widget_theme_get(obj);
    Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(parent);
+   int disabled_delta = pd->disabled - (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
 
    old_parent = pd->parent_obj;
    pd->parent_obj = parent;
@@ -1403,10 +1433,9 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
           }
         if (_is_focused(obj)) _parents_focus(parent);
         elm_widget_display_mode_set(obj, evas_object_size_hint_display_mode_get(parent));
-        elm_widget_disabled_set(obj, efl_ui_widget_disabled_get(parent));
         _elm_widget_top_win_focused_set(obj, _elm_widget_top_win_focused_get(parent));
      }
-
+   _mirror_disabled_state(obj, pd, disabled_delta);
    _full_eval(obj, pd);
 
    if (old_parent && _elm_config->atspi_mode)
@@ -2309,11 +2338,20 @@ _efl_ui_widget_disabled_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina
 {
    Efl_Ui_Widget *subs;
    Eina_List *n;
+   int distance, parent_counter = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
 
    if (disabled)
      pd->disabled ++;
    else
-     pd->disabled = MAX(pd->disabled - 1 ,0);
+     pd->disabled --;
+
+   distance = pd->disabled - parent_counter;
+
+   if ((distance < 0) || (distance > 1))
+     {
+        distance = MAX(MIN(disabled, 1), 0);
+        pd->disabled = parent_counter + distance;
+     }
 
    EINA_LIST_FOREACH(pd->subobjs, n, subs)
      {
