@@ -6,6 +6,9 @@
 #include "elm_widget.h"
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
+#include "eo_internal.h"
+
+EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS)
 
 typedef struct {
    Efl_Ui_Widget *btn1, *btn2;
@@ -177,13 +180,16 @@ EFL_START_TEST(efl_ui_test_widget_sub_object_add_del)
    State s;
 
    _small_ui(&s);
+   DISABLE_ABORT_ON_CRITICAL_START;
    ck_assert(!efl_ui_widget_sub_object_add(s.btn1, s.btn1));
+   DISABLE_ABORT_ON_CRITICAL_END;
    ck_assert(efl_ui_widget_sub_object_add(s.box, s.btn1));
+   DISABLE_ABORT_ON_CRITICAL_START;
    ck_assert(!efl_ui_widget_sub_object_add(s.box, NULL));
-
    ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.btn1));
    ck_assert(!efl_ui_widget_sub_object_del(s.box, NULL));
    ck_assert(!efl_ui_widget_sub_object_del(s.btn1, s.box));
+   DISABLE_ABORT_ON_CRITICAL_END;
    ck_assert(efl_ui_widget_sub_object_del(s.box, s.btn1));
 }
 EFL_END_TEST
@@ -219,8 +225,28 @@ EFL_START_TEST(efl_ui_test_widget_sub_object_theme_sync)
 }
 EFL_END_TEST
 
+static int tree_abort;
+static int tree_abort_level;
+
+static void
+_shutdown(void)
+{
+   eina_log_abort_on_critical_set(tree_abort);
+   eina_log_abort_on_critical_level_set(tree_abort_level);
+}
+
+static void
+_setup(void)
+{
+   tree_abort = eina_log_abort_on_critical_get();
+   tree_abort_level = eina_log_abort_on_critical_level_get();
+   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_set(1);
+}
+
 void efl_ui_test_widget(TCase *tc)
 {
+   tcase_add_checked_fixture(tc, _setup, _shutdown);
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_sub_iterator);
