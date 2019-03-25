@@ -319,10 +319,14 @@ mixin @beta Efl.Access.Object requires Efl.Object
       }
       @property reading_info_type @protected {
          get {
-            [[Gets reading information types of an accessible object.]]
+            [[Gets reading information types of an accessible object. if no reading information
+            is set, 0 is returned which means all four reading information types will be read on
+            object highlight]]
          }
          set {
-            [[Sets reading information of an accessible object.]]
+            [[Sets reading information of an accessible object. If set as 0, existing
+            reading info will be deleted and by default all four reading information types
+            like name, role, state and description will be read on object highlight]]
          }
          values {
             reading_info: Efl.Access.Reading.Info.Type; [[Reading information types]]

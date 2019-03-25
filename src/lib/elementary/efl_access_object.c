@@ -272,7 +272,14 @@ EOLIAN static void
 _efl_access_object_reading_info_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Reading_Info_Type reading_info)
 {
    Eina_Strbuf *buf = NULL;
+   if (reading_info == pd->reading_info)
+     return;
    pd->reading_info = reading_info;
+   if (!pd->reading_info)
+     {
+        efl_access_object_attribute_del(obj, "reading_info_type");
+        return;
+     }
    buf = eina_strbuf_new();
    eina_strbuf_reset(buf);
    if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_NAME))
