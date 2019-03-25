@@ -1891,9 +1891,8 @@ _magnifier_move(void *data)
    cx += ex;
    cy += ey;
 
-   //Move the Magnifier
+   // calculate the position of the magnifier
    edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
-   evas_object_move(sd->mgf_bg, cx - x - (w / 2), cy - y - h);
 
    mx = cx - x - (w / 2);
    my = cy - y - h;
@@ -1920,8 +1919,10 @@ _magnifier_move(void *data)
           my = 0;
         if (my + mh > wh)
           my = wh - mh;
-        evas_object_move(sd->mgf_bg, mx, my);
      }
+
+   // move the magnifier to the proper position
+   evas_object_move(sd->mgf_bg, mx, my);
 
    //Set the Proxy Render Area
    evas_object_geometry_get(data, &x, &y, &w, &h);
