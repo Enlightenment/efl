@@ -213,7 +213,6 @@ struct _Efl_Ui_Win_Data
    int          norender;
    int          modal_count;
    int          response;
-   int          rotation;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
 
@@ -1676,7 +1675,7 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotat
    it = efl_ui_widget_tree_widget_iterator(obj);
    EINA_ITERATOR_FOREACH(it, widget)
      {
-        if (!efl_isa(widget, EFL_UI_LAYOUT_CLASS)) continue;
+        if (!efl_isa(widget, EFL_UI_LAYOUT_BASE_CLASS)) continue;
 
         if (efl_ui_layout_automatic_theme_rotation_get(widget))
           efl_ui_layout_theme_rotation_apply(widget, rot);
@@ -1686,7 +1685,7 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotat
 EOLIAN static int
 _efl_ui_win_win_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
-   return pd->rotation;
+   return pd->rot;
 }
 
 EAPI void
