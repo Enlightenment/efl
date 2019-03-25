@@ -43,7 +43,6 @@ header_checks = [
   'sys/wait.h',
   'sys/resource.h',
   'sys/times.h',
-  'dirent.h',
   'longinfo.h',
   'exotic.h',
   'ieeefp.h',
