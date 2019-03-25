@@ -398,29 +398,15 @@ inline std::string klass_inherit_name(T const& klass)
 }
 
 template<typename T>
-inline std::string klass_native_inherit_name(T const& klass)
+inline std::string klass_native_inherit_name(EINA_UNUSED T const& klass)
 {
-  switch(klass.type)
-  {
-  case attributes::class_type::abstract_:
-  case attributes::class_type::regular:
-    return klass_concrete_name(klass) + "NativeInherit";
-  default:
-    return klass_interface_name(klass) + "NativeInherit";
-  }
+  return "NativeMethods";
 }
 
 template<typename T>
 inline std::string klass_full_native_inherit_name(T const& klass)
 {
-  switch(klass.type)
-  {
-  case attributes::class_type::abstract_:
-  case attributes::class_type::regular:
-    return klass_full_concrete_name(klass) + "NativeInherit";
-  default:
-    return klass_full_interface_name(klass) + "NativeInherit";
-  }
+  return klass_full_concrete_name(klass) + "." + klass_native_inherit_name(klass);
 }
 
 template<typename T>
