@@ -87,12 +87,12 @@ _efl_ui_container_layout_item_init(Eo* o, Efl_Ui_Container_Item_Hints *item)
    item[0].min = min.w;
    item[1].min = min.h;
 
-   if ((item[0].aspect <= 0) || (item[1].aspect_type <= 0))
+   if ((item[0].aspect <= 0) || (item[1].aspect <= 0))
      {
-        if ((item[0].aspect <= 0) ^ (item[1].aspect_type <= 0))
+        if ((item[0].aspect <= 0) ^ (item[1].aspect <= 0))
           {
              ERR("Invalid aspect parameter for obj(%p)", o);
-             item[0].aspect = item[1].aspect_type = 0;
+             item[0].aspect = item[1].aspect = 0;
              item[0].aspect_type = item[1].aspect_type = EFL_GFX_HINT_ASPECT_NONE;
           }
      }
