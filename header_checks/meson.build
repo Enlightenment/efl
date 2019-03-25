@@ -106,7 +106,6 @@ function_checks = [
 #FIXME strlcpy is detected by meson but drops at compilation time
 #  ['strlcpy', ['string.h']],
   ['siginfo_t', ['signal.h']],
-  ['strerror_r', ['string.h']],
   ['pthread_getcpuclockid', ['pthread.h', 'time.h']],
   ['timerfd_create', ['sys/timerfd.h']],
   ['kevent', ['sys/types.h', 'sys/event.h', 'sys/time.h']],
