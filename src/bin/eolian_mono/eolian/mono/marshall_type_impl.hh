@@ -148,7 +148,7 @@ struct marshall_type_visitor_generate
           {
              if ((is_out || is_return) && is_ptr)
                  return as_generator("System.IntPtr").generate(sink, attributes::unused, *context);
-             return as_generator(string << "_StructInternal")
+             return as_generator(string << ".NativeStruct")
                     .generate(sink, name_helpers::type_full_managed_name(regular), *context);
           }
         else if (eina::optional<bool> b = call_match

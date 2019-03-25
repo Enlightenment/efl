@@ -21,177 +21,15 @@ inline std::string binding_struct_name(attributes::struct_def const& struct_)
     return name_helpers::typedecl_managed_name(struct_);
 }
 
-inline std::string binding_struct_internal_name(attributes::struct_def const& struct_)
+inline std::string struct_internal_decl_name()
 {
-   return binding_struct_name(struct_) + "_StructInternal";
+   return  "NativeStruct";
 }
 
-struct struct_definition_generator
+inline std::string binding_struct_internal_name(attributes::struct_def const& struct_)
 {
-  template <typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
-  {
-     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
-     auto const& indent = current_indentation(context);
-     if(!as_generator(documentation).generate(sink, struct_, context))
-       return false;
-     if(!as_generator
-        (
-            indent << "[StructLayout(LayoutKind.Sequential)]\n"
-         << indent << "public struct " << string << "\n"
-         << indent << "{\n"
-         )
-        .generate(sink, binding_struct_name(struct_), context))
-       return false;
-
-     // iterate struct fields
-     for (auto const& field : struct_.fields)
-       {
-          auto field_name = field.name;
-          field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
-          if (!as_generator
-              (
-                  indent << scope_tab << documentation
-               << indent << scope_tab << "public " << type << " " << string << ";\n"
-              )
-              .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
-            return false;
-       }
-
-      auto struct_name = binding_struct_name(struct_);
-
-     // Check whether this is an extern struct without declared fields in .eo file and generate a
-     // placeholder field if positive.
-     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
-     // those 'mini-amd64.c condition fields not met' crashes.
-     if (struct_.fields.size() == 0)
-       {
-           if (!as_generator(indent << scope_tab << "///<summary>Placeholder field</summary>\n"
-                             << indent << scope_tab << "public IntPtr field;\n").generate(sink, nullptr, context))
-             return false;
-       }
-     else
-       {
-          // Constructor with default parameters for easy struct initialization
-          if(!as_generator(
-                      indent << scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
-                      << indent << scope_tab << "public " << string << "(\n"
-                      << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
-                      << indent << scope_tab << ")\n"
-                      << indent << scope_tab << "{\n"
-                      << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
-                      << indent << scope_tab << "}\n\n")
-             .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
-              return false;
-       }
-
-     if(!as_generator(
-            indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
-            << indent << scope_tab << "{\n"
-            << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << "_StructInternal)Marshal.PtrToStructure(ptr, typeof(" << struct_name << "_StructInternal));\n"
-            << indent << scope_tab << scope_tab << "return " << struct_name << "_StructConversion.ToManaged(tmp);\n"
-            << indent << scope_tab << "}\n\n"
-            ).generate(sink, attributes::unused, context))
-       return false;
-
-
-     if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
-
-     return true;
-  }
-} const struct_definition {};
-
-
-struct struct_internal_definition_generator
-{
-  template <typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
-  {
-     auto const& indent = current_indentation(context);
-     if (!as_generator
-         (
-          indent << "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
-          << indent << "[StructLayout(LayoutKind.Sequential)]\n"
-          << indent << "public struct " << string << "\n"
-          << indent << "{\n"
-         )
-         .generate(sink, std::make_tuple<>(binding_struct_name(struct_), binding_struct_internal_name(struct_)), context))
-       return false;
-
-     // iterate struct fields
-     for (auto const& field : struct_.fields)
-       {
-          auto field_name = name_helpers::to_field_name(field.name);
-          auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
-          auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
-
-          if (klass
-              || (regular && (regular->base_type == "string"
-                              || regular->base_type == "mstring"
-                              || regular->base_type == "stringshare"
-                              || regular->base_type == "any_value_ptr")))
-            {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")
-                   .generate(sink, nullptr, context))
-                 return false;
-            }
-          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
-                   && regular->base_type == "bool")
-            {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
-                   .generate(sink, nullptr, context))
-                 return false;
-            }
-          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
-                   && regular->base_type == "char")
-            {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
-                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
-                   .generate(sink, nullptr, context))
-                 return false;
-            }
-          else if (!as_generator(indent << scope_tab << eolian_mono::marshall_annotation(false) << "\n"
-                                 << indent << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
-                   .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
-            return false;
-       }
-
-     // Check whether this is an extern struct without declared fields in .eo file and generate a
-     // placeholder field if positive.
-     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
-     // those 'mini-amd64.c condition fields not met' crashes.
-     if (struct_.fields.size() == 0)
-       {
-           if (!as_generator(indent << scope_tab << "internal IntPtr field;\n").generate(sink, nullptr, context))
-             return false;
-       }
-
-     auto external_name = binding_struct_name(struct_);
-     auto internal_name = binding_struct_internal_name(struct_);
-
-     if(!as_generator(
-                 indent << scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
-                 << indent << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
-                 << indent << scope_tab << "{\n"
-                 << indent << scope_tab << scope_tab << "return " << string << "_StructConversion.ToManaged(struct_);\n"
-                 << indent << scope_tab << "}\n\n"
-                 << indent << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
-                 << indent << scope_tab << "public static implicit operator " << string << "(" << string << " struct_)\n"
-                 << indent << scope_tab << "{\n"
-                 << indent << scope_tab << scope_tab << "return " << string << "_StructConversion.ToInternal(struct_);\n"
-                 << indent << scope_tab << "}\n\n"
-                 ).generate(sink, std::make_tuple(external_name, internal_name, external_name,
-                                                  internal_name, external_name, external_name), context))
-         return false;
-
-     if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
-
-     return true;
-  }
-} const struct_internal_definition {};
-
+   return binding_struct_name(struct_) + "." + struct_internal_decl_name();
+}
 
 // Conversors generation //
 
@@ -236,8 +74,8 @@ struct to_internal_field_convert_generator
       else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = " << type << "_StructConversion.ToInternal(_external_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring"))
@@ -361,8 +199,8 @@ struct to_external_field_convert_generator
       else if (helpers::need_struct_conversion(regular))
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_external_struct." << string << " = " << type << "_StructConversion.ToManaged(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+                 indent << scope_tab << scope_tab << "_external_struct." << string << " = _internal_struct." << string << ";\n")
+               .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (regular && (regular->base_type == "string" || regular->base_type == "mstring" || regular->base_type == "stringshare"))
@@ -421,34 +259,84 @@ struct to_external_field_convert_generator
    }
 } const to_external_field_convert {};
 
-struct struct_binding_conversion_functions_generator
+// Internal Struct //
+
+struct struct_internal_definition_generator
 {
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
   {
      auto const& indent = current_indentation(context);
-
-     // Open conversion class
      if (!as_generator
          (
-          indent << "/// <summary>Conversion class for struct " << name_helpers::typedecl_managed_name(struct_) << "</summary>\n"
-          << indent << "public static class " << name_helpers::typedecl_managed_name(struct_) << "_StructConversion\n"
+          indent << "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
+          << indent << "[StructLayout(LayoutKind.Sequential)]\n"
+          << indent << "public struct " << string << "\n"
           << indent << "{\n"
          )
-         .generate(sink, nullptr, context))
+         .generate(sink, std::make_tuple<>(binding_struct_name(struct_), struct_internal_decl_name()), context))
        return false;
 
+     // iterate struct fields
+     for (auto const& field : struct_.fields)
+       {
+          auto field_name = name_helpers::to_field_name(field.name);
+          auto klass = efl::eina::get<attributes::klass_name>(&field.type.original_type);
+          auto regular = efl::eina::get<attributes::regular_type_def>(&field.type.original_type);
+
+          if (klass
+              || (regular && (regular->base_type == "string"
+                              || regular->base_type == "mstring"
+                              || regular->base_type == "stringshare"
+                              || regular->base_type == "any_value_ptr")))
+            {
+               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
+                 return false;
+            }
+          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
+                   && regular->base_type == "bool")
+            {
+               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
+                 return false;
+            }
+          else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
+                   && regular->base_type == "char")
+            {
+               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+                                 << indent << scope_tab << "public System.Byte " << field_name << ";\n")
+                   .generate(sink, nullptr, context))
+                 return false;
+            }
+          else if (!as_generator(indent << scope_tab << eolian_mono::marshall_annotation(false) << "\n"
+                                 << indent << scope_tab << "public " << eolian_mono::marshall_type(false) << " " << string << ";\n")
+                   .generate(sink, std::make_tuple(field.type, field.type, field_name), context))
+            return false;
+       }
+
+     // Check whether this is an extern struct without declared fields in .eo file and generate a
+     // placeholder field if positive.
+     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
+     // those 'mini-amd64.c condition fields not met' crashes.
+     if (struct_.fields.size() == 0)
+       {
+           if (!as_generator(indent << scope_tab << "internal IntPtr field;\n").generate(sink, nullptr, context))
+             return false;
+       }
+
+     auto external_name = binding_struct_name(struct_);
+     auto internal_name = binding_struct_internal_name(struct_);
+
      // to internal
-     if (!as_generator
-         (
-          indent << scope_tab << "internal static " << string << " ToInternal(" << string << " _external_struct)\n"
-          << indent << scope_tab << "{\n"
-          << indent << scope_tab << scope_tab << "var _internal_struct = new " << string << "();\n"
-         )
-         .generate(sink, std::make_tuple(binding_struct_internal_name(struct_)
-           , binding_struct_name(struct_)
-           , binding_struct_internal_name(struct_)
-           ), context))
+     if (!as_generator(
+           indent << scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
+           << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _external_struct)\n"
+           << indent << scope_tab << "{\n"
+           << indent << scope_tab << scope_tab << "var _internal_struct = new " << string << "();\n"
+           ).generate(sink, std::make_tuple(internal_name, external_name, internal_name), context))
        return false;
 
      for (auto const& field : struct_.fields)
@@ -457,25 +345,17 @@ struct struct_binding_conversion_functions_generator
             return false;
        }
 
-     if (!as_generator
-         (
-          indent << scope_tab << scope_tab << "return _internal_struct;\n"
-          << indent << scope_tab << "}\n\n"
-         )
-         .generate(sink, attributes::unused, context))
+     if (!as_generator(indent << scope_tab << scope_tab << "return _internal_struct;\n"
+                       << indent << scope_tab << "}\n\n").generate(sink, nullptr, context))
        return false;
 
-     // to external
-     if (!as_generator
-         (
-          indent << scope_tab << "internal static " << string << " ToManaged(" << string << " _internal_struct)\n"
-          << indent << scope_tab << "{\n"
-          << indent << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n"
-         )
-         .generate(sink, std::make_tuple(binding_struct_name(struct_)
-           , binding_struct_internal_name(struct_)
-           , binding_struct_name(struct_)
-           ), context))
+     // to managed
+     if (!as_generator(
+           indent << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
+           << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _internal_struct)\n"
+           << indent << scope_tab << "{\n"
+           << indent << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n"
+           ).generate(sink, std::make_tuple(external_name, internal_name, external_name), context))
        return false;
 
      for (auto const& field : struct_.fields)
@@ -484,21 +364,95 @@ struct struct_binding_conversion_functions_generator
             return false;
        }
 
-     if (!as_generator
-         (
-          indent << scope_tab << scope_tab << "return _external_struct;\n"
-          << indent << scope_tab << "}\n\n"
-         )
-         .generate(sink, attributes::unused, context))
+     if (!as_generator(indent << scope_tab << scope_tab << "return _external_struct;\n"
+                       << indent << scope_tab << "}\n\n").generate(sink, nullptr, context))
        return false;
 
-     // Close conversion class
-     if (!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context))
-       return false;
+     // close internal class
+     if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
 
      return true;
   }
-} const struct_binding_conversion_functions {};
+} const struct_internal_definition {};
+
+// Managed Struct //
+
+struct struct_definition_generator
+{
+  template <typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::struct_def const& struct_, Context const& context) const
+  {
+     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "struct_definition_generator: " << struct_.cxx_name << std::endl;
+     auto const& indent = current_indentation(context);
+     if(!as_generator(documentation).generate(sink, struct_, context))
+       return false;
+     if(!as_generator
+        (
+            indent << "[StructLayout(LayoutKind.Sequential)]\n"
+         << indent << "public struct " << string << "\n"
+         << indent << "{\n"
+         )
+        .generate(sink, binding_struct_name(struct_), context))
+       return false;
+
+     // iterate struct fields
+     for (auto const& field : struct_.fields)
+       {
+          auto field_name = field.name;
+          field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
+          if (!as_generator
+              (
+                  indent << scope_tab << documentation
+               << indent << scope_tab << "public " << type << " " << string << ";\n"
+              )
+              .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
+            return false;
+       }
+
+      auto struct_name = binding_struct_name(struct_);
+
+     // Check whether this is an extern struct without declared fields in .eo file and generate a
+     // placeholder field if positive.
+     // Mono's JIT is picky when generating function pointer for delegates with empty structs, leading to
+     // those 'mini-amd64.c condition fields not met' crashes.
+     if (struct_.fields.size() == 0)
+       {
+           if (!as_generator(indent << scope_tab << "///<summary>Placeholder field</summary>\n"
+                             << indent << scope_tab << "public IntPtr field;\n").generate(sink, nullptr, context))
+             return false;
+       }
+     else
+       {
+          // Constructor with default parameters for easy struct initialization
+          if(!as_generator(
+                      indent << scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
+                      << indent << scope_tab << "public " << string << "(\n"
+                      << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
+                      << indent << scope_tab << ")\n"
+                      << indent << scope_tab << "{\n"
+                      << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
+                      << indent << scope_tab << "}\n\n")
+             .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
+              return false;
+       }
+
+     if(!as_generator(
+            indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
+            << indent << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << ".NativeStruct)Marshal.PtrToStructure(ptr, typeof(" << struct_name << ".NativeStruct));\n"
+            << indent << scope_tab << scope_tab << "return tmp;\n"
+            << indent << scope_tab << "}\n\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!struct_internal_definition.generate(sink, struct_, change_indentation(indent.inc(), context)))
+       return false;
+
+     if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
+
+     return true;
+  }
+} const struct_definition {};
 
 struct struct_entities_generator
 {
@@ -512,12 +466,6 @@ struct struct_entities_generator
        return false;
 
      if (!struct_definition.generate(sink, struct_, context))
-       return false;
-
-     if (!struct_internal_definition.generate(sink, struct_, context))
-       return false;
-
-     if (!struct_binding_conversion_functions.generate(sink, struct_, context))
        return false;
 
      return name_helpers::close_namespaces(sink, struct_.namespaces, context);
@@ -550,11 +498,6 @@ template <>
 struct is_generator< ::eolian_mono::to_external_field_convert_generator> : std::true_type {};
 
 template <>
-struct is_eager_generator< ::eolian_mono::struct_binding_conversion_functions_generator> : std::true_type {};
-template <>
-struct is_generator< ::eolian_mono::struct_binding_conversion_functions_generator> : std::true_type {};
-
-template <>
 struct is_eager_generator< ::eolian_mono::struct_entities_generator> : std::true_type {};
 template <>
 struct is_generator< ::eolian_mono::struct_entities_generator> : std::true_type {};
@@ -571,9 +514,6 @@ struct attributes_needed< ::eolian_mono::to_internal_field_convert_generator> : 
 
 template <>
 struct attributes_needed< ::eolian_mono::to_external_field_convert_generator> : std::integral_constant<int, 1> {};
-
-template <>
-struct attributes_needed< ::eolian_mono::struct_binding_conversion_functions_generator> : std::integral_constant<int, 1> {};
 
 template <>
 struct attributes_needed< ::eolian_mono::struct_entities_generator> : std::integral_constant<int, 1> {};

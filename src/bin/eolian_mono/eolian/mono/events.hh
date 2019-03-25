@@ -270,7 +270,7 @@ struct event_definition_generator
 
       // Callback to be given to C's callback_priority_add
       if (!as_generator(
-            scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref Efl.Event_StructInternal evt)\n"
+            scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref Efl.Event.NativeStruct evt)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << event_args
             << scope_tab << scope_tab << "try {\n"
