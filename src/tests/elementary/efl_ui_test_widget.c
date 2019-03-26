@@ -340,6 +340,18 @@ _setup(void)
    eina_log_abort_on_critical_set(1);
 }
 
+EFL_START_TEST(efl_ui_test_widget_win_provider_find)
+{
+   State s;
+
+   _small_ui(&s);
+   ck_assert_ptr_eq(efl_provider_find(s.btn1, EFL_UI_WIN_CLASS), s.win);
+   efl_ui_widget_sub_object_del(s.box, s.btn1);
+   ck_assert_ptr_eq(efl_ui_widget_parent_get(s.btn1), NULL);
+   ck_assert_ptr_eq(efl_provider_find(s.btn1, EFL_UI_WIN_CLASS), s.win);
+}
+EFL_END_TEST
+
 void efl_ui_test_widget(TCase *tc)
 {
    tcase_add_checked_fixture(tc, _setup, _shutdown);
@@ -353,4 +365,5 @@ void efl_ui_test_widget(TCase *tc)
    tcase_add_test(tc, efl_ui_test_widget_parent_relation);
    tcase_add_test(tc, efl_ui_test_widget_disabled_parent);
    tcase_add_test(tc, efl_ui_test_widget_disabled_behaviour);
+   tcase_add_test(tc, efl_ui_test_widget_win_provider_find);
 }

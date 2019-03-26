@@ -328,6 +328,7 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
    Evas_Object                  *bg;
+   Evas_Object                  *window;
    Eina_List                    *tooltips, *cursors;
 
    /* "show region" coordinates. all widgets got those because this

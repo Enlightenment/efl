@@ -5041,6 +5041,7 @@ EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    sd->on_create = EINA_TRUE;
+   sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    _efl_ui_focus_event_redirector(obj, obj);
    efl_canvas_group_clipped_set(obj, EINA_FALSE);
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -5328,6 +5329,13 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
 
    if ((klass == EFL_CONFIG_INTERFACE) || (klass == EFL_CONFIG_GLOBAL_CLASS))
      return _efl_config_obj;
+
+   if (klass == EFL_UI_WIN_CLASS)
+     {
+        if (pd->window)
+          return pd->window;
+        //let the parent_obj lookup handle this
+     }
 
    if (klass == EFL_ACCESS_OBJECT_MIXIN)
      {
