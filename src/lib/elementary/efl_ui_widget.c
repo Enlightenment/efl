@@ -248,20 +248,21 @@ _elm_widget_item_highlight_in_theme(Evas_Object *obj, Elm_Object_Item *eo_it)
 void
 _elm_widget_focus_highlight_start(const Evas_Object *obj)
 {
-   Evas_Object *top = elm_widget_top_get(obj);
+   Evas_Object *top = efl_provider_find(obj, EFL_UI_WIN_CLASS);
 
-   if (top && efl_isa(top, EFL_UI_WIN_CLASS))
-     _elm_win_focus_highlight_start(top);
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(top, EFL_UI_WIN_CLASS));
+
+   _elm_win_focus_highlight_start(top);
 }
 
 Evas_Object *
 _efl_ui_widget_focus_highlight_object_get(const Evas_Object *obj)
 {
-   Evas_Object *top = elm_widget_top_get(obj);
+   Evas_Object *top = efl_provider_find(obj, EFL_UI_WIN_CLASS);
 
-   if (top && efl_isa(top, EFL_UI_WIN_CLASS))
-     return _elm_win_focus_highlight_object_get(top);
-   return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(top, EFL_UI_WIN_CLASS), NULL);
+
+   return _elm_win_focus_highlight_object_get(top);
 }
 
 static Eina_Bool
