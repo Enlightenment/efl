@@ -465,14 +465,14 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
-  auto open_namespace = *("namespace " << string << " { ") << "\n";
+  auto open_namespace = *("namespace " << string << " {\n\n");
   return as_generator(open_namespace).generate(sink, namespaces, context);
 }
 
 template<typename OutputIterator, typename Context>
 bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
-     auto close_namespace = *(lit("} ")) << "\n";
+     auto close_namespace = (lit("}") % "\n\n" ) << "\n\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);
 }
 

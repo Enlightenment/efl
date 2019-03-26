@@ -285,6 +285,9 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
    {
+      if (text == "")
+        return true;
+
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
       if (!generate_opening_tag(sink, tag, context, tag_params)) return false;
       if (!generate_escaped_content(sink, text, context)) return false;
@@ -485,7 +488,7 @@ struct documentation_generator
       for (auto &&param : ctor.function.parameters)
         {
           if (!as_generator(
-                      scope_tab << "///<param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See <see cref=\"" << function_conversion(func) << "\"/></param>\n"
+                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See <see cref=\"" << function_conversion(func) << "\"/></param>\n"
                       ).generate(sink, param, context))
             return false;
         }
