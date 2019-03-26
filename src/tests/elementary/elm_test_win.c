@@ -459,6 +459,7 @@ EFL_START_TEST(elm_win_test_rotation)
    ck_assert_int_eq(elm_win_rotation_get(win), 90);
    elm_win_rotation_with_resize_set(win, 180);
    ck_assert_int_eq(elm_win_rotation_get(win), 180);
+   ck_assert_int_eq(elm_win_rotation_get(NULL), -1);
 }
 EFL_END_TEST
 

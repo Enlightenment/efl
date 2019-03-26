@@ -1697,6 +1697,7 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
 EAPI int
 elm_win_rotation_get(const Evas_Object *obj)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, -1);
    return efl_ui_win_rotation_get(obj);
 }
 
