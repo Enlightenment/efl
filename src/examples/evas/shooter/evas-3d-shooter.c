@@ -19,6 +19,11 @@
 #define LOCAL_IMAGE_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_IMAGE_FOLDER
 #define LOCAL_MODEL_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_MODEL_FOLDER
 
+
+Evas             *evas              = NULL;
+Eo               *background        = NULL;
+Eo               *image             = NULL;
+
 static const char *gray_brick_n_path = LOCAL_IMAGE_FOLDER "/brick-stone_n.jpg";
 static const char *gray_brick_path = LOCAL_IMAGE_FOLDER "/brick-stone.jpg";
 static const char *red_brick_n_path = LOCAL_IMAGE_FOLDER "/bricks_n.jpg";

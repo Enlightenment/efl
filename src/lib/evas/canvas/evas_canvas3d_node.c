@@ -1048,6 +1048,7 @@ _evas_canvas3d_node_efl_object_finalize(Eo *obj, Evas_Canvas3D_Node_Data *pd)
 EOLIAN static Efl_Object *
 _evas_canvas3d_node_efl_object_constructor(Eo *obj, Evas_Canvas3D_Node_Data *pd)
 {
+   efl_constructor(efl_super(obj, MY_CLASS));
    evas_canvas3d_object_type_set(obj, EVAS_CANVAS3D_OBJECT_TYPE_NODE);
 
    eina_vector3_set(&pd->position, 0.0, 0.0, 0.0);
