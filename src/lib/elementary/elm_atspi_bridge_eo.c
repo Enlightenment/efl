@@ -7,7 +7,7 @@ Eina_Bool _elm_atspi_bridge_connected_get(const Eo *obj, Elm_Atspi_Bridge_Data *
 
 
 static Eina_Value
-__eolian_elm_atspi_bridge_connected_get_reflect(Eo *obj)
+__eolian_elm_atspi_bridge_connected_get_reflect(const Eo *obj)
 {
    Eina_Bool val = elm_obj_atspi_bridge_connected_get(obj);
    return eina_value_bool_init(val);
