@@ -41,8 +41,25 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_photocam_file)
+{
+   Evas_Object *win, *photocam;
+   const char *buf = ELM_IMAGE_DATA_DIR "/images/logo_small.png";
+
+   win = win_add(NULL, "photocam", ELM_WIN_BASIC);
+   photocam = elm_photocam_add(win);
+
+   ck_assert_int_eq(elm_photocam_file_set(photocam, buf), EVAS_LOAD_ERROR_NONE);
+   ck_assert_str_eq(elm_photocam_file_get(photocam), buf);
+
+   ck_assert_int_eq(elm_photocam_file_set(photocam, "non_existing.png"), EVAS_LOAD_ERROR_DOES_NOT_EXIST);
+   ck_assert_str_eq(elm_photocam_file_get(photocam), "non_existing.png");
+}
+EFL_END_TEST
+
 void elm_test_photocam(TCase *tc)
 {
    tcase_add_test(tc, elm_photocam_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_photocam_file);
 }
