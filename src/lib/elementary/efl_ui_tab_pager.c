@@ -26,7 +26,7 @@ _select(Eo *obj, int index)
 static void
 _tab_select_cb(void *data, const Efl_Event *event)
 {
-   int index = (intptr_t)event->info;
+   int index = efl_ui_tab_bar_current_tab_get(event->object);
    _select(data, index);
 }
 

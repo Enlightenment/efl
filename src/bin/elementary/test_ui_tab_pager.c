@@ -89,6 +89,7 @@ content_add(Eo *parent, char *text)
    page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
                   efl_file_set(efl_added, buf),
                   efl_file_key_set(efl_added, "page_layout"),
+                  efl_file_load(efl_added),
                   efl_text_set(efl_part(efl_added, "text"), text),
                   efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                   efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE));
@@ -398,6 +399,7 @@ _unpack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    int index = efl_ui_pager_current_page_get(tab_pager);
    Eo *tab_page = efl_pack_content_get(tab_pager, index);
    efl_pack_unpack(tab_pager, tab_page);
+   efl_del(tab_page);
 }
 
 static void
@@ -446,6 +448,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Clear"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clear_btn_cb, tab_pager),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    /* Unpack */
@@ -458,6 +461,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack All"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
@@ -478,6 +482,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_text_set(efl_added, "Unpack At"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _unpack_at_btn_del_cb, tsd),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(in_box, efl_added));
 }
 
