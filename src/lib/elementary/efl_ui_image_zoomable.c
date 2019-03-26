@@ -3359,8 +3359,8 @@ elm_photocam_zoom_mode_get(const Evas_Object *obj)
 EAPI Evas_Load_Error
 elm_photocam_file_set(Evas_Object *obj, const char *file)
 {
-   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_NONE;
-   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_NONE);
+   ELM_PHOTOCAM_CHECK(obj) EVAS_LOAD_ERROR_GENERIC;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, EVAS_LOAD_ERROR_GENERIC);
    if (efl_file_simple_load(obj, file, NULL)) return EVAS_LOAD_ERROR_NONE;
 
    Eina_Error err = eina_error_get();
