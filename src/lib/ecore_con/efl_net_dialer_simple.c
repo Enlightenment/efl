@@ -29,33 +29,6 @@ typedef struct
 
 #define MY_CLASS EFL_NET_DIALER_SIMPLE_CLASS
 
-static void
-_efl_net_dialer_simple_inner_io_resolved(void *data, const Efl_Event *event)
-{
-   Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, event->info);
-}
-
-static void
-_efl_net_dialer_simple_inner_io_error(void *data, const Efl_Event *event)
-{
-   Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, event->info);
-}
-
-static void
-_efl_net_dialer_simple_inner_io_connected(void *data, const Efl_Event *event)
-{
-   Eo *o = data;
-
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, event->info);
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_dialer_simple_inner_io_cbs,
-                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _efl_net_dialer_simple_inner_io_resolved },
-                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _efl_net_dialer_simple_inner_io_error },
-                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _efl_net_dialer_simple_inner_io_connected });
-
 EOLIAN static Efl_Object *
 _efl_net_dialer_simple_efl_object_finalize(Eo *o, Efl_Net_Dialer_Simple_Data *pd)
 {
@@ -94,7 +67,9 @@ _efl_net_dialer_simple_efl_object_invalidate(Eo *o, Efl_Net_Dialer_Simple_Data *
    inner_io = efl_io_buffered_stream_inner_io_get(o);
    if (inner_io)
      {
-        efl_event_callback_array_del(inner_io, _efl_net_dialer_simple_inner_io_cbs(), o);
+        efl_event_callback_forwarder_del(inner_io, EFL_NET_DIALER_EVENT_DIALER_ERROR, o);
+        efl_event_callback_forwarder_del(inner_io, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, o);
+        efl_event_callback_forwarder_del(inner_io, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, o);
         if (efl_parent_get(inner_io) == o)
           efl_parent_set(inner_io, NULL);
      }
@@ -122,8 +97,9 @@ _efl_net_dialer_simple_efl_io_buffered_stream_inner_io_set(Eo *o, Efl_Net_Dialer
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(io, EFL_NET_DIALER_INTERFACE));
    efl_io_buffered_stream_inner_io_set(efl_super(o, MY_CLASS), io);
-   efl_event_callback_array_add(io, _efl_net_dialer_simple_inner_io_cbs(), o);
-
+   efl_event_callback_forwarder_add(io, EFL_NET_DIALER_EVENT_DIALER_ERROR, o);
+   efl_event_callback_forwarder_add(io, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, o);
+   efl_event_callback_forwarder_add(io, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, o);
    /* apply pending dialer values */
    if (pd->pending.proxy_url)
      {

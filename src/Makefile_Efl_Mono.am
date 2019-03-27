@@ -65,7 +65,8 @@ lib_efl_mono_libefl_mono_dll_sources = \
 efl_mono_test_files = \
 	tests/efl_mono/dummy_test_object.eo \
 	tests/efl_mono/dummy_test_iface.eo \
-	tests/efl_mono/dummy_another_iface.eo \
+	tests/efl_mono/dummy_inherit_iface.eo \
+	tests/efl_mono/dummy_inherit_helper.eo \
 	tests/efl_mono/dummy_child.eo \
 	tests/efl_mono/dummy_part_holder.eo \
 	tests/efl_mono/dummy_numberwrapper.eo \
@@ -83,31 +84,34 @@ bin_PROGRAMS += bin/eolian_mono/eolian_mono
 
 bin_eolian_mono_eolian_mono_SOURCES = \
 	bin/eolian_mono/eolian_mono.cc \
-	bin/eolian_mono/eolian/mono/documentation.hh \
-	bin/eolian_mono/eolian/mono/type.hh \
-	bin/eolian_mono/eolian/mono/marshall_annotation.hh \
+	bin/eolian_mono/eolian/mono/alias_definition.hh \
 	bin/eolian_mono/eolian/mono/async_function_definition.hh \
-	bin/eolian_mono/eolian/mono/function_pointer.hh \
-	bin/eolian_mono/eolian/mono/function_definition.hh \
-	bin/eolian_mono/eolian/mono/name_helpers.hh \
-	bin/eolian_mono/eolian/mono/function_declaration.hh \
-	bin/eolian_mono/eolian/mono/helpers.hh \
-	bin/eolian_mono/eolian/mono/function_helpers.hh \
-	bin/eolian_mono/eolian/mono/marshall_type_impl.hh \
-	bin/eolian_mono/eolian/mono/function_registration.hh \
+	bin/eolian_mono/eolian/mono/blacklist.hh \
+	bin/eolian_mono/eolian/mono/documentation.hh \
 	bin/eolian_mono/eolian/mono/enum_definition.hh \
-	bin/eolian_mono/eolian/mono/struct_definition.hh \
-	bin/eolian_mono/eolian/mono/part_definition.hh \
-	bin/eolian_mono/eolian/mono/struct_fields.hh \
-	bin/eolian_mono/eolian/mono/parameter.hh \
-	bin/eolian_mono/eolian/mono/variable_definition.hh \
-	bin/eolian_mono/eolian/mono/utils.hh \
-	bin/eolian_mono/eolian/mono/using_decl.hh \
-	bin/eolian_mono/eolian/mono/marshall_type.hh \
-	bin/eolian_mono/eolian/mono/klass.hh \
-	bin/eolian_mono/eolian/mono/type_impl.hh \
 	bin/eolian_mono/eolian/mono/events.hh \
-	bin/eolian_mono/eolian/mono/generation_contexts.hh
+	bin/eolian_mono/eolian/mono/function_declaration.hh \
+	bin/eolian_mono/eolian/mono/function_definition.hh \
+	bin/eolian_mono/eolian/mono/function_helpers.hh \
+	bin/eolian_mono/eolian/mono/function_pointer.hh \
+	bin/eolian_mono/eolian/mono/function_registration.hh \
+	bin/eolian_mono/eolian/mono/generation_contexts.hh \
+	bin/eolian_mono/eolian/mono/helpers.hh \
+	bin/eolian_mono/eolian/mono/klass.hh \
+	bin/eolian_mono/eolian/mono/logging.hh \
+	bin/eolian_mono/eolian/mono/marshall_annotation.hh \
+	bin/eolian_mono/eolian/mono/marshall_type.hh \
+	bin/eolian_mono/eolian/mono/marshall_type_impl.hh \
+	bin/eolian_mono/eolian/mono/name_helpers.hh \
+	bin/eolian_mono/eolian/mono/parameter.hh \
+	bin/eolian_mono/eolian/mono/part_definition.hh \
+	bin/eolian_mono/eolian/mono/struct_definition.hh \
+	bin/eolian_mono/eolian/mono/struct_fields.hh \
+	bin/eolian_mono/eolian/mono/type.hh \
+	bin/eolian_mono/eolian/mono/type_impl.hh \
+	bin/eolian_mono/eolian/mono/using_decl.hh \
+	bin/eolian_mono/eolian/mono/utils.hh \
+	bin/eolian_mono/eolian/mono/variable_definition.hh
 
 bin_eolian_mono_eolian_mono_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/eolian_cxx/ \
@@ -407,8 +411,6 @@ tests/efl_mono/libefl_mono_native_test.c: \
 	tests/efl_mono/dummy_test_object.eo.c \
 	tests/efl_mono/dummy_test_iface.eo.h \
 	tests/efl_mono/dummy_test_iface.eo.c \
-	tests/efl_mono/dummy_another_iface.eo.h \
-	tests/efl_mono/dummy_another_iface.eo.c \
 	tests/efl_mono/dummy_child.eo.h \
 	tests/efl_mono/dummy_child.eo.c \
 	tests/efl_mono/dummy_part_holder.eo.h \
@@ -423,7 +425,6 @@ tests/efl_mono/libefl_mono_native_test.c: \
 # Intermediate C Sharp test DLL
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
-tests/efl_mono/dummy_another_iface.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
 tests/efl_mono/dummy_part_holder.eo.cs \
 tests/efl_mono/dummy_numberwrapper.eo.cs \
@@ -481,6 +482,7 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
      tests/efl_mono/FunctionPointerMarshalling.cs \
+     tests/efl_mono/Inheritance.cs \
      tests/efl_mono/Parts.cs \
      tests/efl_mono/Promises.cs \
      tests/efl_mono/Strbuf.cs \

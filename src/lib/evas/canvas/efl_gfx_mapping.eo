@@ -14,7 +14,7 @@ mixin Efl.Gfx.Mapping requires Efl.Object
 
      At the moment of writing, maps can only have 4 points (no more, no less).
 
-     @since 1.20
+     @since 1.22
    ]]
    methods {
       mapping_has {

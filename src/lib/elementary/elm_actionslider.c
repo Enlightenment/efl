@@ -239,16 +239,13 @@ _button_animator(void *data)
 
         if ((!EINA_DBL_EQ(sd->final_position, 0)) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)left);
+          evas_object_smart_callback_call(obj, "selected",(char *)left);
         else if ((EINA_DBL_EQ(sd->final_position, 0.5)) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)center);
+          evas_object_smart_callback_call(obj, "selected", (char *)center);
         else if ((EINA_DBL_EQ(sd->final_position, 1)) &&
                  (sd->enabled_position & ELM_ACTIONSLIDER_RIGHT))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)right);
+          evas_object_smart_callback_call(obj, "selected", (char *)right);
 
         sd->button_animator = NULL;
 
@@ -285,8 +282,7 @@ _drag_button_up_cb(void *data,
         (efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 1.0))))
      {
         sd->final_position = 0;
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)left);
+        evas_object_smart_callback_call(obj, "selected", (char *)left);
 
         return;
      }
@@ -295,8 +291,7 @@ _drag_button_up_cb(void *data,
        (sd->enabled_position & ELM_ACTIONSLIDER_CENTER))
      {
         sd->final_position = 0.5;
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)center);
+        evas_object_smart_callback_call(obj, "selected", (char *)center);
 
         ecore_animator_del(sd->button_animator);
         sd->button_animator = ecore_evas_animator_add(obj, _button_animator, obj);
@@ -309,8 +304,7 @@ _drag_button_up_cb(void *data,
         (efl_ui_mirrored_get(obj) && EINA_DBL_EQ(position, 0))))
      {
         sd->final_position = 1;
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_SELECTABLE_SELECTED, (char *)right);
+        evas_object_smart_callback_call(obj, "selected", (char *)right);
         return;
      }
 

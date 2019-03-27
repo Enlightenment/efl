@@ -172,8 +172,6 @@ pub_eo_files = [
   'efl_ui_progressbar_legacy_part.eo',
   'elm_multibuttonentry_part.eo',
   'elm_interface_scrollable.eo',
-  'elm_atspi_bridge.eo',
-  'elm_atspi_app_object.eo',
   'efl_ui_image_zoomable_pan.eo',
   'efl_ui_text_part.eo',
   'efl_ui_caching_factory.eo',
@@ -262,7 +260,6 @@ eolian_include_directories += ['-I', meson.current_source_dir()]
 
 elementary_headers_unstable = [
   'elm_gen_common.h',
-  'elm_atspi_bridge.h',
   'efl_access_object.h',
   'efl_access_text.h',
   'efl_access_widget_action.h',
@@ -417,6 +414,9 @@ elementary_pub_headers = [
   'elm_actionslider_legacy.h',
   'elm_app.h',
   'elm_atspi_app_object.h',
+  'elm_atspi_app_object_eo.legacy.h',
+  'elm_atspi_bridge.h',
+  'elm_atspi_bridge_eo.legacy.h',
   'elm_authors.h',
   'elm_bg.h',
   'elm_bg_legacy.h',
@@ -1019,9 +1019,12 @@ elementary = declare_dependency(
   dependencies: elementary_pub_deps,
 )
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(elementary_header_src,
   install_dir : dir_package_include,

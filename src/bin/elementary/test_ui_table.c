@@ -545,7 +545,7 @@ append_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_gfx_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
    efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
    elm_object_tooltip_text_set(o, "Click to unpack");
-   efl_pack_end(table, o);
+   efl_pack(table, o);
    efl_gfx_entity_visible_set(o, 1);
 }
 

@@ -386,7 +386,7 @@ Eina_Bool _elm_gengrid_efl_access_selection_all_children_select(Eo *obj, Elm_Gen
 Eina_Bool _elm_gengrid_efl_access_selection_access_selection_clear(Eo *obj, Elm_Gengrid_Data *pd);
 
 
-void _elm_gengrid_efl_ui_focus_composition_prepare(Eo *obj, Elm_Gengrid_Data *pd);
+void _elm_gengrid_efl_ui_focus_object_setup_order(Eo *obj, Elm_Gengrid_Data *pd);
 
 
 Eina_Bool _elm_gengrid_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Gengrid_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect);
@@ -478,7 +478,7 @@ _elm_gengrid_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_access_selection_is_child_selected, _elm_gengrid_efl_access_selection_is_child_selected),
       EFL_OBJECT_OP_FUNC(efl_access_selection_all_children_select, _elm_gengrid_efl_access_selection_all_children_select),
       EFL_OBJECT_OP_FUNC(efl_access_selection_clear, _elm_gengrid_efl_access_selection_access_selection_clear),
-      EFL_OBJECT_OP_FUNC(efl_ui_focus_composition_prepare, _elm_gengrid_efl_ui_focus_composition_prepare),
+      EFL_OBJECT_OP_FUNC(efl_ui_focus_object_setup_order, _elm_gengrid_efl_ui_focus_object_setup_order),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_focus_state_apply, _elm_gengrid_efl_ui_widget_focus_state_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_setup_on_first_touch, _elm_gengrid_efl_ui_focus_manager_setup_on_first_touch),
       EFL_OBJECT_OP_FUNC(efl_ui_focus_manager_focus_get, _elm_gengrid_efl_ui_focus_manager_manager_focus_get),
@@ -512,6 +512,6 @@ static const Efl_Class_Description _elm_gengrid_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_gengrid_class_get, &_elm_gengrid_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, ELM_INTERFACE_SCROLLABLE_MIXIN, EFL_UI_CLICKABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_ACCESS_SELECTION_INTERFACE, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_gengrid_class_get, &_elm_gengrid_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_INTERFACE_SCROLLABLE_MIXIN, EFL_UI_CLICKABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_ACCESS_SELECTION_INTERFACE, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
 
 #include "elm_gengrid_eo.legacy.c"

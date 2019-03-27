@@ -213,7 +213,6 @@ struct _Efl_Ui_Win_Data
    int          norender;
    int          modal_count;
    int          response;
-   int          rotation;
    Eina_Bool    req_wh : 1;
    Eina_Bool    req_xy : 1;
 
@@ -1645,7 +1644,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
 #endif
    _elm_win_frame_obj_update(sd, 0);
    efl_event_callback_call
-     (obj, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, (void*)(uintptr_t)rotation);
+     (obj, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, &rotation);
    evas_object_smart_callback_call(obj, "rotation,changed", NULL);
    if (_elm_config->atspi_mode)
      {
@@ -1676,7 +1675,7 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotat
    it = efl_ui_widget_tree_widget_iterator(obj);
    EINA_ITERATOR_FOREACH(it, widget)
      {
-        if (!efl_isa(widget, EFL_UI_LAYOUT_CLASS)) continue;
+        if (!efl_isa(widget, EFL_UI_LAYOUT_BASE_CLASS)) continue;
 
         if (efl_ui_layout_automatic_theme_rotation_get(widget))
           efl_ui_layout_theme_rotation_apply(widget, rot);
@@ -1686,7 +1685,7 @@ _efl_ui_win_win_rotation_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd, int rotat
 EOLIAN static int
 _efl_ui_win_win_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *pd)
 {
-   return pd->rotation;
+   return pd->rot;
 }
 
 EAPI void
@@ -1698,6 +1697,7 @@ elm_win_rotation_set(Evas_Object *obj, int rotation)
 EAPI int
 elm_win_rotation_get(const Evas_Object *obj)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, -1);
    return efl_ui_win_rotation_get(obj);
 }
 
@@ -1809,7 +1809,7 @@ _elm_win_state_change(Ecore_Evas *ee)
           {
              evas_object_smart_callback_call(obj, "unfullscreen", NULL);
           }
-        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_FULLSCREEN_CHANGED, (void*) (uintptr_t)fullscreen);
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_FULLSCREEN_CHANGED, &fullscreen);
      }
    if (ch_maximized)
      {
@@ -1829,7 +1829,7 @@ _elm_win_state_change(Ecore_Evas *ee)
              if (_elm_config->atspi_mode)
                efl_access_window_restored_signal_emit(obj);
           }
-        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED_CHANGED, (void*) (uintptr_t)maximized);
+        efl_event_callback_call(obj, EFL_UI_WIN_EVENT_MAXIMIZED_CHANGED, &maximized);
      }
    if (ch_profile)
      {
@@ -4962,28 +4962,38 @@ _elm_win_cb_show(void *data EINA_UNUSED,
    _elm_win_state_eval_queue();
 }
 
-static inline const char *
-_efl_ui_win_accel(Efl_Ui_Win_Data *sd)
+static inline Eina_Bool
+_efl_ui_win_accel(Efl_Ui_Win_Data *sd, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa)
 {
    const char *str = sd->accel_pref;
    const char *env;
+   const char *cfg = NULL;
+   Eina_Bool is_accel = EINA_FALSE;
 
-   /* current elm config */
-   if (!str)
+   /* current elm config OR global override */
+   if ((!str) || ((_elm_config->accel_override) && (_elm_config->accel)))
      {
-        if (_elm_config->accel) str = _elm_config->accel;
-        if (_elm_accel_preference) str = _elm_accel_preference;
+        if (_elm_config->accel) cfg = _elm_config->accel;
+        if (_elm_config->accel_override && _elm_accel_preference) cfg = _elm_accel_preference;
      }
-
-   /* global overrides */
-   if ((_elm_config->accel_override) && (_elm_config->accel))
-     str = _elm_config->accel;
 
    /* env var wins */
    env = getenv("ELM_ACCEL");
-   if (env) str = env;
 
-   return str;
+   if (env)
+     is_accel = _elm_config_accel_preference_parse(env, accel, gl_depth, gl_stencil, gl_msaa);
+   else if (cfg)
+     {
+        is_accel = !!cfg;
+        *accel = eina_stringshare_ref(cfg);
+        *gl_depth = _elm_config->gl_depth;
+        *gl_stencil = _elm_config->gl_stencil;
+        *gl_msaa = _elm_config->gl_msaa;
+     }
+   else
+     is_accel = _elm_config_accel_preference_parse(str, accel, gl_depth, gl_stencil, gl_msaa);
+
+   return is_accel;
 }
 
 static inline void
@@ -5145,8 +5155,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Efl_Ui_Win_Data));
 
-   is_gl_accel = _elm_config_accel_preference_parse
-         (_efl_ui_win_accel(sd), &accel, &gl_depth, &gl_stencil, &gl_msaa);
+   is_gl_accel = _efl_ui_win_accel(sd, &accel, &gl_depth, &gl_stencil, &gl_msaa);
 
    switch ((int) type)
      {
@@ -5852,7 +5861,8 @@ _efl_ui_win_efl_object_finalize(Eo *obj, Efl_Ui_Win_Data *sd)
    if (obj && (!elm_widget_is_legacy(obj)))
      {
         /* FIXME: if parts other than background are supported then this should change */
-        if (efl_file_get(efl_part(obj, "background")) || efl_file_mmap_get(efl_part(obj, "background")))
+        if (efl_file_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)) ||
+            efl_file_mmap_get(efl_super(efl_part(obj, "background"), EFL_UI_WIN_PART_CLASS)))
           efl_file_load(efl_part(obj, "background"));
      }
    return obj;
@@ -7627,10 +7637,10 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
 {
    const char *file, *key;
 
+   sd->legacy.forbidden = EINA_TRUE;
    if (efl_file_loaded_get(part_obj)) return 0;
    file = efl_file_get(part_obj);
    key = efl_file_key_get(part_obj);
-   sd->legacy.forbidden = EINA_TRUE;
    if (eina_streq(part, "background"))
      {
         Eina_Bool ok = EINA_TRUE;
@@ -8845,6 +8855,7 @@ elm_win_keygrab_set(Elm_Win *obj, const char *key,
    Eina_Bool ret = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      {
@@ -8885,6 +8896,7 @@ elm_win_keygrab_unset(Elm_Win *obj, const char *key,
    Eina_Bool ret = EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_X
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    _internal_elm_win_xwindow_get(sd);
    if (sd->x.xwin)
      ret = ecore_x_window_keygrab_unset(sd->x.xwin, key, 0, 0);
@@ -9234,6 +9246,7 @@ EAPI void
 elm_win_noblank_set(Evas_Object *obj, Eina_Bool noblank)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    noblank = !!noblank;
    if (sd->noblank == noblank) return;
    sd->noblank = noblank;
@@ -9244,6 +9257,7 @@ EAPI Eina_Bool
 elm_win_noblank_get(const Evas_Object *obj)
 {
    Efl_Ui_Win_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
    return sd->noblank;
 }
 

@@ -17,8 +17,6 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
 
       Once the socket is closed, @Efl.Io.Closer.closed will be called
       and the "closed" event is dispatched.
-
-      @since 1.19
     ]]
     methods {
         dial {

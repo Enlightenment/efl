@@ -44,7 +44,8 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
 
     export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
     export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
-    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+    LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
+    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
     mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
   fi
 else
@@ -146,7 +147,8 @@ else
 
     export CFLAGS="-I/usr/local/opt/openssl/include -frewrite-includes $CFLAGS"
     export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
-    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig"
+    LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
+    export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
 
     # Normal build test of all targets
     rm -f ~/.ccache/ccache.conf

@@ -3,19 +3,13 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using static Efl.UnsafeNativeMethods;
 
-static class UnsafeNativeMethods {
-    [DllImport(efl.Libs.Ecore)] public static extern void ecore_init();
-    [DllImport(efl.Libs.Ecore)] public static extern void ecore_shutdown();
-    [DllImport(efl.Libs.Elementary)] public static extern int elm_init(int argc, IntPtr argv);
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_policy_set(int policy, int policy_detail);
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_shutdown();
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_exit();
-}
-
 namespace Efl {
   namespace Csharp {
+    ///<summary>The components to be initialized.</summary>
     public enum Components {
+        ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.</summary>
         Basic,
+        ///<summary>The same components of <see cref="Efl.Csharp.Components.Basic"/> and the Elementary widget toolkit.</summary>
         Ui,
     }
     /// <summary>

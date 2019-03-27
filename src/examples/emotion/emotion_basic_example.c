@@ -1,9 +1,6 @@
 //Compile with:
 // gcc -o emotion_basic_example emotion_basic_example.c `pkg-config --libs --cflags emotion evas ecore ecore-evas eo`
 
-#ifndef EFL_EO_API_SUPPORT
-# define EFL_EO_API_SUPPORT
-#endif
 #ifndef EFL_BETA_API_SUPPORT
 # define EFL_BETA_API_SUPPORT
 #endif

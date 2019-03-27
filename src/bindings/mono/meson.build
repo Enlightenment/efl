@@ -62,7 +62,6 @@ blacklisted_files = [
   'efl_vg_root_node.eo',
   'efl_vg_shape.eo.cs',
   'efl_io_buffer.eo',
-  'efl_io_positioner.eo',
   'efl_io_queue.eo',
   'efl_io_sizer.eo',
   'efl_io_closer_fd.eo',
@@ -156,12 +155,19 @@ if get_option('mono-beta')
   extra_cs_args += '-d:EFL_BETA'
 endif
 
+efl_mono_install_dir = join_paths(dir_lib, 'efl-mono-'+version_major)
+efl_mono_xml_doc = join_paths(meson.current_build_dir(), 'efl_mono.xml')
+
 efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    cs_args : extra_cs_args
+    install_dir : efl_mono_install_dir,
+    cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc]
 )
+
+meson.add_install_script(join_paths(meson.source_root(), 'meson', 'meson_csharp_docs.sh'),
+                         efl_mono_xml_doc,
+                         efl_mono_install_dir)
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 

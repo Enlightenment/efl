@@ -289,7 +289,8 @@ _efl_canvas_object_clipper_unset_common(Evas_Object_Protected_Data *obj, Eina_Bo
              if (((clip->cur) && (clip->cur->visible)) &&
                  (((clip->cur->color.r != 255) || (clip->cur->color.g != 255) ||
                    (clip->cur->color.b != 255) || (clip->cur->color.a != 255)) ||
-                  (clip->mask->is_mask)))
+                  (clip->mask->is_mask)) &&
+                  efl_alive_get(clip->object))
                {
                   if (clip->layer)
                     {

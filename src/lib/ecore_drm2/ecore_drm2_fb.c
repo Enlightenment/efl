@@ -413,6 +413,25 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
           sym_drmModeAtomicAddProperty(req, pstate->obj_id,
                                        pstate->ch.id, pstate->ch.value);
         if (ret < 0) goto err;
+
+#if 0
+        /* XXX: Disable hardware plane rotation for now as this has broken
+         * recently. The break happens because of an invalid argument,
+         * ie: the value being sent from pstate->rotation_map ends up being
+         * incorrect for some reason. I suspect the breakage to be from
+         * kernel drivers (linux 4.20.0) but have not confirmed that version */
+        if ((pstate->rotation.id) &&
+            (pstate->type.value == DRM_PLANE_TYPE_PRIMARY))
+          {
+             DBG("Plane %d Atomic Rotation: %lu",
+                 pstate->obj_id, pstate->rotation.value);
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->rotation.id,
+                                            pstate->rotation_map[pstate->rotation.value]);
+             if (ret < 0) goto err;
+          }
+#endif
      }
 
    ret =

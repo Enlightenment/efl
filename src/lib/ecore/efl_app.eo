@@ -2,7 +2,10 @@ import efl_types;
 
 abstract Efl.App extends Efl.Loop implements Efl.Core.Command_Line
 {
-   [[Object representing the application itself]]
+   [[Object representing the application itself.
+
+     @since 1.22
+   ]]
    data: null;
    methods {
       @property app_main @class {

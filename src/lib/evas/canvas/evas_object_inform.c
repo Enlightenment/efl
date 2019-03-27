@@ -15,8 +15,9 @@ void
 evas_object_inform_call_show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    int event_id = _evas_object_event_new();
+   Eina_Bool vis = EINA_TRUE;
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, (void*)1, event_id, EFL_GFX_ENTITY_EVENT_SHOW);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_SHOW, &vis, event_id, EFL_GFX_ENTITY_EVENT_SHOW);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
@@ -24,8 +25,9 @@ void
 evas_object_inform_call_hide(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    int event_id = _evas_object_event_new();
+   Eina_Bool vis = EINA_FALSE;
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HIDE, NULL, event_id, EFL_GFX_ENTITY_EVENT_HIDE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_HIDE, &vis, event_id, EFL_GFX_ENTITY_EVENT_HIDE);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 

@@ -30,9 +30,6 @@
 #define MY_CLASS_NAME "Efl_Ui_Widget"
 #define MY_CLASS_NAME_LEGACY "elm_widget"
 
-#define ELM_WIDGET_DATA_GET(o, wd)                             \
-  Elm_Widget_Smart_Data *wd = efl_data_scope_get(o, MY_CLASS)
-
 #define API_ENTRY                                    \
   Elm_Widget_Smart_Data *sd = NULL;                  \
   if (!_elm_widget_is(obj) ||                        \
@@ -483,12 +480,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
           {
              if (efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
                {
-                  ELM_WIDGET_DATA_GET(pd->logical.parent, logical_wd);
-                  if (!logical_wd)
-                    {
-                       ERR("Widget parent has the wrong type!");
-                       return NULL;
-                    }
+                  ELM_WIDGET_DATA_GET_OR_RETURN(pd->logical.parent, logical_wd, NULL);
                   logical_wd->logical.child_count --;
                }
              old = pd->logical.parent;
@@ -499,12 +491,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
           {
              if (efl_isa(parent, EFL_UI_WIDGET_CLASS))
                {
-                  ELM_WIDGET_DATA_GET(parent, parent_wd);
-                  if (!parent_wd)
-                    {
-                       ERR("Widget parent has the wrong type!");
-                       return NULL;
-                    }
+                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, parent_wd, NULL);
                   parent_wd->logical.child_count ++;
                }
              pd->logical.parent = parent;
@@ -1377,7 +1364,6 @@ elm_widget_sub_object_parent_add(Evas_Object *sobj)
 EOLIAN static void
 _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widget *parent)
 {
-   Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(obj);
    Efl_Ui_Widget *old_parent;
    //check if we are in the subobject list of parents
    if (parent)
@@ -1386,32 +1372,33 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
         EINA_SAFETY_ON_FALSE_RETURN(eina_list_data_find(ppd->subobjs, obj));
      }
 
+   /* NOTE: In the following two lines, 'obj' is correct. Do not change it.
+    * Due to elementary's scale policy, scale and prev_scale can be different in
+    * some cases. This happens when obj's previous parent and new parent have
+    * different scale value.
+    * For example, if obj's previous parent's scale is 5 and new parent's scale
+    * is 2 while obj's scale is 0. Then 'prev_pscale' is 5 and 'scale' is 2. So
+    * we need to reset obj's scale to 5.
+    * Note that each widget's scale is 1.0 by default.
+    */
+   double scale, prev_scale = efl_gfx_entity_scale_get(obj);
+   Elm_Theme *th, *prev_th = elm_widget_theme_get(obj);
+   Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(parent);
+
    old_parent = pd->parent_obj;
    pd->parent_obj = parent;
 
    // now lets sync up all states
-
    if (pd->parent_obj)
      {
-        /* NOTE: In the following two lines, 'sobj' is correct. Do not change it.
-        * Due to elementary's scale policy, scale and pscale can be different in
-         * some cases. This happens when sobj's previous parent and new parent have
-         * different scale value.
-         * For example, if sobj's previous parent's scale is 5 and new parent's scale
-         * is 2 while sobj's scale is 0. Then 'pscale' is 5 and 'scale' is 2. So we
-         * need to reset sobj's scale to 5.
-         * Note that each widget's scale is 0 by default.
-         */
-        double scale, pscale = efl_gfx_entity_scale_get(obj);
-        Elm_Theme *th, *pth = elm_widget_theme_get(obj);
-
         scale = efl_gfx_entity_scale_get(obj);
         th = elm_widget_theme_get(obj);
         mirrored = efl_ui_mirrored_get(obj);
 
         if (!pd->on_create)
           {
-             if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
+             if ((scale != prev_scale) || (th != prev_th) ||
+                 (pmirrored != mirrored))
                elm_widget_theme(obj);
           }
         if (_is_focused(obj)) _parents_focus(parent);

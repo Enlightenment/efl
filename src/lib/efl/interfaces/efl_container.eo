@@ -4,6 +4,8 @@ interface Efl.Container
 
      APIs in this interface deal with containers of multiple sub objects, not
      with individual parts.
+
+     @since 1.22
    ]]
    eo_prefix: efl_content;
    event_prefix: efl_container;

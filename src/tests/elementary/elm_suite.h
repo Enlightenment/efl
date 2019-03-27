@@ -17,6 +17,7 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#include "suite_helpers.h"
 
 void elm_test_config(TCase *tc);
 void elm_test_check(TCase *tc);

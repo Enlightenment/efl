@@ -6,8 +6,6 @@ class @beta Efl.Net.Server_Unix extends Efl.Net.Server_Fd {
       created socket must be subject to some special mode or user,
       change before executing said method, for example by calling
       umask(2).
-
-      @since 1.19
     ]]
 
     methods {

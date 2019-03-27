@@ -91,8 +91,7 @@ _item_select(Elm_Diskselector_Item_Data *it)
    _selected_item_indicate(sd->selected_item);
 
    if (it->func) it->func((void *)WIDGET_ITEM_DATA_GET(eo_it), WIDGET(it), eo_it);
-   efl_event_callback_legacy_call
-     (WIDGET(it), EFL_UI_EVENT_SELECTABLE_SELECTED, eo_it);
+   evas_object_smart_callback_call(WIDGET(it), "selected", eo_it);
 }
 
 static int

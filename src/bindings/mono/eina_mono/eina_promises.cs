@@ -129,6 +129,9 @@ public class Promise : IDisposable
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, rejecting the native promise with <see cref="Eina.Error.ECANCELED"/></summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         if (Handle != IntPtr.Zero)
@@ -190,7 +193,7 @@ public class Future
     /// </summary>
     public delegate Eina.Value ResolvedCb(Eina.Value value);
 
-    public IntPtr Handle { get; internal set; }
+    internal IntPtr Handle;
 
     /// <summary>
     /// Creates a Future from a native pointer.
@@ -317,14 +320,23 @@ public class Future
     }
 }
 
+/// <summary>Custom marshaler to convert between managed and native <see cref="Eina.Future"/>.
+/// Internal usage in generated code.</summary>
 public class FutureMarshaler : ICustomMarshaler
 {
 
+    ///<summary>Wrap the native future with a managed wrapper.</summary>
+    ///<param name="pNativeData">Handle to the native future.</param>
+    ///<returns>An <see cref="Eina.Future"/> wrapping the native future.</returns>
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
         return new Future(pNativeData);
     }
 
+    ///<summary>Extracts the native future from a managed wrapper.</summary>
+    ///<param name="managedObj">The managed wrapper. If it is not an <see cref="Eina.Future"/>, the value returned
+    ///is <see cref="System.IntPtr.Zero"/>.</param>
+    ///<returns>A <see cref="System.IntPtr"/> pointing to the native future.</returns>
     public IntPtr MarshalManagedToNative(object managedObj)
     {
         Future f = managedObj as Future;
@@ -333,20 +345,27 @@ public class FutureMarshaler : ICustomMarshaler
         return f.Handle;
     }
 
+    ///<summary>Not implemented. The code receiving the native data is in charge of releasing it.</summary>
+    ///<param name="pNativeData">The native pointer to be released.</param>
     public void CleanUpNativeData(IntPtr pNativeData) { }
 
+    ///<summary>Not implemented. The runtime takes care of releasing it.</summary>
+    ///<param name="managedObj">The managed object to be cleaned.</param>
     public void CleanUpManagedData(object managedObj) { }
 
+    ///<summary>Size of the native data size returned</summary>
+    ///<returns>The size of the data.</returns>
     public int GetNativeDataSize()
     {
         return -1;
     }
 
+    ///<summary>Gets an instance of this marshaller.</summary>
+    ///<param name="cookie">A name that could be used to customize the returned marshaller. Currently not used.</param>
+    ///<returns>The <see cref="Eina.FutureMarshaler"/> instance that will marshall the data.</returns>
     public static ICustomMarshaler GetInstance(string cookie) {
         if (marshaler == null)
-        {
             marshaler = new FutureMarshaler();
-        }
         return marshaler;
     }
 

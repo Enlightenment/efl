@@ -3,7 +3,10 @@ const Efl.Gfx.Stack_Layer_Max: short = 32767;  [[top-most layer number]]
 
 interface Efl.Gfx.Stack
 {
-   [[Efl graphics stack interface]]
+   [[Efl graphics stack interface
+
+     @since 1.22
+   ]]
    event_prefix: efl_gfx_entity;
    methods {
       @property layer {

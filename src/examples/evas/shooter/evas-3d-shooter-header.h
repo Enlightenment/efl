@@ -5,7 +5,6 @@
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 #endif
 
 #include <stdio.h>
@@ -114,9 +113,9 @@ typedef struct _Scene_Data
    Eina_Bool   normal;
 } Scene_Data;
 
-static Evas             *evas              = NULL;
-static Eo               *background        = NULL;
-static Eo               *image             = NULL;
+extern Evas             *evas;
+extern Eo               *background;
+extern Eo               *image;
 
 static const vec2 tex_scale = {1, 1};
 

@@ -1626,7 +1626,7 @@ _efl_net_dialer_http_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Http_Data 
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, (void*) (uintptr_t) can_read);
+   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -1714,7 +1714,7 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, (void*) (uintptr_t) can_write);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 static Eina_Value _efl_net_dialer_http_pending_close(Eo *o, void *data, Eina_Value value);

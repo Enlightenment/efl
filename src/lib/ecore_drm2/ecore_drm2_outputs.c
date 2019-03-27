@@ -1518,10 +1518,18 @@ ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 EAPI Eina_Bool
 ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret = EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
+   output->rotation = rotation;
+
+#if 0
+   /* XXX: Disable hardware plane rotation for now as this has broken
+    * recently. The break happens because of an invalid argument,
+    * ie: the value being sent from pstate->rotation_map ends up being
+    * incorrect for some reason. I suspect the breakage to be from
+    * kernel drivers (linux 4.20.0) but have not confirmed that version */
    if (_ecore_drm2_use_atomic)
      {
         Eina_List *l;
@@ -1563,8 +1571,16 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 err:
         sym_drmModeAtomicFree(req);
      }
+#endif
 
    return ret;
+}
+
+EAPI int
+ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
+   return output->rotation;
 }
 
 EAPI unsigned int
@@ -1659,8 +1675,21 @@ ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, in
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->current_mode);
 
-   if (w) *w = output->current_mode->width;
-   if (h) *h = output->current_mode->height;
+   switch (output->rotation)
+     {
+      case ECORE_DRM2_ROTATION_90:
+      case ECORE_DRM2_ROTATION_270:
+        if (w) *w = output->current_mode->height;
+        if (h) *h = output->current_mode->width;
+        break;
+      case ECORE_DRM2_ROTATION_NORMAL:
+      case ECORE_DRM2_ROTATION_180:
+      default:
+        if (w) *w = output->current_mode->width;
+        if (h) *h = output->current_mode->height;
+        break;
+     }
+
    if (refresh) *refresh = output->current_mode->refresh;
    if (x) *x = output->x;
    if (y) *y = output->y;

@@ -373,7 +373,7 @@ EAPI Efl_Canvas_Object *evas_object_smart_parent_get(const Efl_Canvas_Object *ob
  *
  * @ingroup Evas_Object_Group
  */
-EAPI void evas_object_paragraph_direction_set(Efl_Canvas_Object *obj, Efl_Text_Bidirectional_Type dir);
+EAPI void evas_object_paragraph_direction_set(Efl_Canvas_Object *obj, Evas_BiDi_Direction dir);
 
 /**
  * @brief This handles text paragraph direction of the given object. Even if
@@ -387,7 +387,7 @@ EAPI void evas_object_paragraph_direction_set(Efl_Canvas_Object *obj, Efl_Text_B
  *
  * @ingroup Evas_Object_Group
  */
-EAPI Efl_Text_Bidirectional_Type evas_object_paragraph_direction_get(const Efl_Canvas_Object *obj);
+EAPI Evas_BiDi_Direction evas_object_paragraph_direction_get(const Efl_Canvas_Object *obj);
 
 /**
  * @brief Test if any object is clipped by @c obj.

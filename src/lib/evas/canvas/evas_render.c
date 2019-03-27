@@ -3600,6 +3600,7 @@ evas_render_updates_internal(Evas *eo_e,
                     if (out->output)
                       ENFN->output_flush(ENC, out->output, EVAS_RENDER_MODE_SYNC);
                   _cb_always_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+                  _deferred_callbacks_process(eo_e, evas);
                   eina_evlog("-render_output_flush", eo_e, 0.0, NULL);
                }
           }

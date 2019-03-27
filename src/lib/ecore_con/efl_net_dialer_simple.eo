@@ -40,8 +40,6 @@ class @beta Efl.Net.Dialer_Simple extends Efl.Net.Socket_Simple implements Efl.N
       to be set prior to @Efl.Object.finalize, then use
       @Efl.Io.Buffered_Stream.inner_io directly providing an already
       created dialer.
-
-      @since 1.19
     ]]
 
     methods {

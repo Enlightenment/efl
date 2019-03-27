@@ -4,7 +4,6 @@
 # include "config.h"
 #else
 # define EFL_BETA_API_SUPPORT 1
-# define EFL_EO_API_SUPPORT 1
 #endif
 
 #include <Elementary.h>

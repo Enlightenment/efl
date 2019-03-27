@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-#ifndef EFL_EO_API_SUPPORT
-# define EFL_EO_API_SUPPORT
-#endif
-
 /* FIXME: wtf? */
 #ifndef EFL_UI_RADIO_EVENT_CHANGED
 # define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
@@ -153,7 +149,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
+# ifdef EFL_BETA_API_SUPPORT
 EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
+# endif
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
@@ -231,6 +229,12 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_radio_eo.h>
 # include <efl_ui_panes_eo.h>
 # include <efl_ui_panes_part.eo.h>
+
+# include <efl_ui_navigation_bar.eo.h>
+# include <efl_ui_navigation_bar_part.eo.h>
+# include <efl_ui_navigation_bar_part_back_button.eo.h>
+# include <efl_ui_navigation_layout.eo.h>
+# include <efl_ui_stack.eo.h>
 
 /**
  * Initialize Elementary

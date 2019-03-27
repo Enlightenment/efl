@@ -366,3 +366,9 @@ option('eolian-bootstrap',
   value : false,
   description : 'Only build efl up to eolian_gen and install eina libeolian and eolian_gen, usefull for cross compiles'
 )
+
+option('install-eo-files',
+  type: 'boolean',
+  value: false,
+  description : 'Set this to false to not install any eo file'
+)

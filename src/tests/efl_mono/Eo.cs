@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TestSuite
 {
@@ -327,7 +328,7 @@ class TestCsharpProperties
     public static void test_iface_property()
     {
         int val = -33;
-        Dummy.TestIface iface = new Dummy.TestObject();
+        Dummy.ITestIface iface = new Dummy.TestObject();
         iface.IfaceProp = val;
         Test.AssertEquals(val, iface.IfaceProp);
     }
@@ -429,7 +430,7 @@ class TestInterfaceConcrete
     public static void test_iface_concrete_methods()
     {
         var obj = new Dummy.TestObject();
-        Dummy.TestIface iface = Dummy.TestIfaceConcrete.static_cast(obj);
+        Dummy.ITestIface iface = Dummy.ITestIfaceConcrete.static_cast(obj);
 
         iface.IfaceProp = 1970;
         Test.AssertEquals(iface.IfaceProp, 1970);
@@ -445,6 +446,51 @@ class TestProvider
         Dummy.Numberwrapper provider = Dummy.Numberwrapper.static_cast(obj.FindProvider(typeof(Dummy.Numberwrapper)));
         Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
         Test.AssertEquals(provider.GetNumber(), 1999);
+    }
+
+    private class ProviderHolder : Dummy.TestObject
+    {
+        private Dummy.TestObject provider;
+        public string ProviderName
+        {
+            get
+            {
+                return "MyProvider";
+            }
+        }
+
+        public ProviderHolder() : base(null)
+        {
+            this.provider = new Dummy.TestObject(this);
+            this.provider.Name = this.ProviderName;
+            this.provider.IfaceProp = 1997;
+        }
+
+        public override Efl.Object FindProvider(System.Type type)
+        {
+            Console.WriteLine("Called FindProvider");
+            if (type == typeof(Dummy.ITestIface))
+            {
+                return this.provider;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public static void test_find_provider_iface()
+    {
+        var obj = new ProviderHolder();
+
+        var provider = obj.CallFindProvider(typeof(Efl.Object));
+        Test.AssertNull(provider, msg : "Unkonw provider must be null");
+
+        provider = obj.CallFindProviderForIface();
+        Test.AssertNotNull(provider, msg : "Provider of ITestIFace must not be null");
+        Test.AssertEquals(provider.Name, obj.ProviderName, "Provider name does not match expected");
+
     }
 }
 

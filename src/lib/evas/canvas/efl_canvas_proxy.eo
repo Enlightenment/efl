@@ -40,8 +40,6 @@ class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
            and apply some sort of transformation on it.
 
            $true means both objects will share the same clip.
-
-           @since 1.8
          ]]
          set {}
          get {}
@@ -60,8 +58,6 @@ class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
 
            If $source is $false, events occurring on $obj will be
            processed only on it.
-
-           @since 1.8
          ]]
          set {}
          get {}

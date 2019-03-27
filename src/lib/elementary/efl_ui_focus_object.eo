@@ -4,7 +4,7 @@ mixin Efl.Ui.Focus.Object
 {
     [[Functions of focusable objects.
 
-      @since 1.20
+      @since 1.22
     ]]
     methods {
         @property focus_geometry {

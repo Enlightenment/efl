@@ -2,7 +2,10 @@ import eina_types;
 
 interface Efl.Screen
 {
-   [[Efl screen interface]]
+   [[Efl screen interface
+
+     @since 1.22
+   ]]
    methods {
       @property screen_size_in_pixels {
          get {
@@ -47,7 +50,6 @@ interface Efl.Screen
             [[Get the rotation of the screen.
 
               Most engines only return multiples of 90.
-              @since 1.19
             ]]
          }
          values {
@@ -57,8 +59,6 @@ interface Efl.Screen
       @property screen_dpi {
          get {
             [[Get the pixel density in DPI (Dots Per Inch) for the screen that a window is on.
-
-              @since 1.7
             ]]
          }
          values {

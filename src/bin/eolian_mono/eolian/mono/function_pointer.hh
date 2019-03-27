@@ -15,7 +15,7 @@ namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
 template <typename Context>
-static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context context)
+static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context const& context)
 {
   std::string name = name_helpers::function_ptr_full_eolian_name(func);
 
@@ -89,7 +89,7 @@ struct function_pointer {
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
                   << native_function_definition_preamble
                   << scope_tab << scope_tab << "try {\n"
-                  << scope_tab << scope_tab << scope_tab <<  (return_type != " void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << scope_tab <<  (return_type != "void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
                   << scope_tab << scope_tab << "} catch (Exception e) {\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"

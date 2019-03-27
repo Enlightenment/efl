@@ -1,7 +1,5 @@
 enum @beta Efl.Net.Session_State {
     [[Provides the session connectivity state.
-
-      @since 1.19
     ]]
     offline, [[No access point is connected.]]
     local, [[At least one access point has connected and the internet connection hasn't been verified.]]
@@ -11,8 +9,6 @@ enum @beta Efl.Net.Session_State {
 /* keep in sync with efl_net_control_technology.eo, comment what doesn't make sense */
 enum @beta Efl.Net.Session_Technology {
     [[Bitwise-able technologies to allow for a network session.
-
-      @since 1.9
     ]]
     unknown = 0, [[Type: unknown]]
 /*    system = (1 << 0), [[Type: system]]*/
@@ -47,8 +43,6 @@ class @beta Efl.Net.Session extends Efl.Loop_Consumer {
       Note: the @.connect method is subject to backend policy. For
       instance, ConnMan uses
       https://github.com/aldebaran/connman/blob/master/doc/session-policy-format.txt
-
-      @since 1.19
     ]]
     events {
         changed: void; [[Called when some properties were changed.]]

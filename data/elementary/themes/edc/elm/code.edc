@@ -1,5 +1,6 @@
 /* simple layout to pack our scrolling content into an elm_layout */
 group { name: "elm/code/layout/default";
+   alias: "efl/code/layout";
    data {
       item: "font.name" "Mono";
       item: "font.size" "10";

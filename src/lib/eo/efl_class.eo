@@ -1,5 +1,8 @@
 abstract Efl.Class
 {
-    [[Abstract Efl class]]
+    [[Abstract Efl class
+
+      @since 1.22
+    ]]
     data: null;
 }

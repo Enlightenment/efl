@@ -200,9 +200,11 @@ ecore_con = declare_dependency(
   dependencies: ecore_con_pub_deps,
 )
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: eolian_ecore_dir
-)
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: eolian_ecore_dir
+  )
+endif
 
 install_headers(ecore_con_header_src,
   install_dir : dir_package_include,

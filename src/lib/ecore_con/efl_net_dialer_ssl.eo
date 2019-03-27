@@ -21,8 +21,6 @@ class @beta Efl.Net.Dialer_Ssl extends Efl.Net.Socket_Ssl implements Efl.Net.Dia
        - socks5://proxyserver (default port 1080)
        - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
        - socks4://proxyserver:port (SOCKSv4)
-
-      @since 1.19
     ]]
 
     methods {

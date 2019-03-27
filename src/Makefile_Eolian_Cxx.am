@@ -99,6 +99,7 @@ tests/eolian_cxx/eolian_cxx_test_documentation.cc \
 tests/eolian_cxx/eolian_cxx_test_cyclic.cc \
 tests/eolian_cxx/complex.c \
 tests/eolian_cxx/complex_cxx.cc \
+tests/eolian_cxx/beta_class.eo \
 tests/eolian_cxx/eolian_cxx_suite.h
 
 if HAVE_AM_16

@@ -13,12 +13,7 @@ struct _Efl_Access_Action_Data
 
 typedef struct _Efl_Access_Action_Data Efl_Access_Action_Data;
 
-#ifdef EFL_EO_API_SUPPORT
 #include "efl_access_widget_action.eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_widget_action.eo.legacy.h"
-#endif
 
 #endif
 #endif

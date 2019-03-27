@@ -144,7 +144,7 @@ _shrink_mode_set(Eo *obj,
           {
              sd->view_state = TAGS_VIEW_SHRINK;
              efl_event_callback_call
-               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, (void *)1);
+               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &shrink);
           }
 
         eina_value_flush(&val);
@@ -175,7 +175,7 @@ _shrink_mode_set(Eo *obj,
           {
              sd->view_state = TAGS_VIEW_NONE;
              efl_event_callback_call
-               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, (void *)(uintptr_t)sd->shrink);
+               (obj, EFL_UI_TAGS_EVENT_EXPAND_STATE_CHANGED, &shrink);
           }
      }
 

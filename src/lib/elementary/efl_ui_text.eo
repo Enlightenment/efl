@@ -29,14 +29,10 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
          set {
             [[Set the attribute to show the input panel in case of only a user's explicit Mouse Up event.
               It doesn't request to show the input panel even though it has focus.
-
-              @since 1.9
             ]]
          }
          get {
             [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-
-              @since 1.9
             ]]
          }
          values {
@@ -109,14 +105,10 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
       @property input_panel_layout_variation {
          set {
             [[Set the input panel layout variation of the entry
-
-              @since 1.8
             ]]
          }
          get {
             [[Get the input panel layout variation of the entry
-
-              @since 1.8
             ]]
          }
          values {

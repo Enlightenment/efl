@@ -2,7 +2,10 @@ import eina_types;
 import efl_gfx_types;
 
 mixin Efl.File requires Efl.Object {
-   [[Efl file interface]]
+   [[Efl file interface
+
+     @since 1.22
+   ]]
    methods {
       @property mmap {
          set {

@@ -8,8 +8,6 @@ class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Sock
       communication. One common use is to apply it to TCP sockets
       created with @Efl.Net.Dialer_Tcp or @Efl.Net.Server_Tcp created
       with "client,add" event.
-
-      @since 1.19
     ]]
 
     events {

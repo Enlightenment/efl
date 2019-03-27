@@ -352,6 +352,8 @@ EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *
  * as an item, set the mode ELM_FOCUS_REGION_SHOW_ITEM.
  * If then, it will be scrolled as an item.
  *
+ * This API is only implemented for Elm_Gengrid widgets. Every other widgets will always automatically show the widget.
+ *
  * @since 1.16
  *
  * @ingroup Elm_Focus

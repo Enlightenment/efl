@@ -35,9 +35,22 @@ Features:
    * efl_ui_relative_layout: introduce new relative container (T5487)
    * eolian: introduce typed slice types
    * eolian: add support for inlist structs
+   * eolian: remove support for inlist/inarray
 
 Fixes:
 
+   * build: fix rpath for binaries which use ecore-x dependencies
+   * elm/genlist: remove conditional in _calc_job for verifying show_item code (T6368)
+   * elementary image: don't calc size using empty ones.
+   * evas image: fix screen flickering issue at partial + image preloading
+   * edje_cc: change .mo file write location to be relative to the .edj file
+   * theme: add programs for deferred naviframe push/pop signals
+   * edje: unset internal _need_imf flag on shutdown
+   * elm_panel: return instead of EINA_SAFETY_ON_FALSE_RETURN (T7265)
+   * build: fix evas static build of gl engines
+   * ecore/main: only update loop_time during loop iteration if the change is monotonic
+   * evas gl: fix missing map texture target.
+   * elm_code: fix crash on backspace and selection delete. (T7259)
    * ecore_wl2_dmabuf: Link with ecore_wl2 (T7327)
    * ecore_wl2_dmabuf: Depend on ecore_wl2 (T7327)
    * efl selection manager - avoid multiple selection get callbacks for req
@@ -91,6 +104,30 @@ Fixes:
    * ecore drm2 - work around kms/drm bug seemingly when no flip event comes
    * elm textpath: reduces differences between actual pos and modified pos
    * elm_map: Make more robust elm_map (T7443)
+   * Fix leak in elm atspi
+   * eina_file: set errno on open fail for win32 build
+   * evas-gl-drm: Fix issue of rotation not actually rotating (T7690)
+   * solve neon rotation issue by moving to the tiled rotator
+   * eo: Fix missing varags cleanup (CID1399080)
+   * efl_core_command_line: Fix logically dead code (CID1399106)
+   * efl_ui_widget_common: Fix potential resource leak (CID1399088)
+   * efl_ui_selection_manager: Fix unchecked return value (CID1399092)
+   * evas_device: Fix dereferencing null pointer (CID1399091)
+   * efl_ui_stack: Fix dereference null return value (CID1399082)
+   * efl_ui_datepicker: Fix uninitialized scalar value (CID1397006)
+   * efl_ui_grid: Fix dereferencing null pointer (CID1397000)
+   * ecore_con: Fix dereferencing of null pointer (CID1396990)
+   * elm_atspi_bridge: Fix resource leak (CID1399429)
+   * efl_ui_win: Fix dereference null return value (CID1399428)
+   * efl_ui_win: Fix dereference null return (CID1399427)
+   * efl_ui_win: Fix dereference null return (CID1399426)
+   * efl_ui_win: Fix dereference null return value (CID1399425)
+   * efreet: Fix resource leak (CID1399090)
+   * efl_ui_text: Fix resource leak (CID1396998)
+   * eldbus: Fix dereference after null check (CID1399422)
+   * efl_ui_focus_manager_calc: Fix resource leaks (CID1396984, CID1396965)
+   * elm_focus_legacy: Fix resource leaks (CID1399096, CID1399095)
+   * eldbus: Fix resource leak (CID1399097)
 
 Changes since 1.20.0:
 ---------------------

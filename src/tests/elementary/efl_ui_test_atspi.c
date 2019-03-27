@@ -451,6 +451,141 @@ EFL_START_TEST(test_efl_access_object_relationships_clear)
 }
 EFL_END_TEST
 
+EFL_START_TEST(test_efl_access_object_attribute_append)
+{
+   Eina_List *attr_list = NULL, *l = NULL;
+   Efl_Access_Attribute *attr = NULL;
+   generate_app();
+   efl_access_object_attribute_append(g_btn, "color1", "red");
+   efl_access_object_attribute_append(g_btn, "color2", "blue");
+   efl_access_object_attribute_append(g_btn, "color3", "green");
+   attr_list = efl_access_object_attributes_get(g_btn);
+
+   ck_assert(attr_list != NULL);
+   EINA_LIST_FOREACH(attr_list, l, attr)
+     {
+        if (!strcmp(attr->key, "color1"))
+          ck_assert_str_eq(attr->value, "red");
+        else if (!strcmp(attr->key, "color2"))
+          ck_assert_str_eq(attr->value, "blue");
+        else if (!strcmp(attr->key, "color3"))
+          ck_assert_str_eq(attr->value, "green");
+     }
+   EINA_LIST_FREE(attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_attributes_get)
+{
+   Eina_List *attr_list = NULL, *l = NULL;
+   Efl_Access_Attribute *attr = NULL;
+   generate_app();
+   efl_access_object_attribute_append(g_btn, "color1", "red");
+   efl_access_object_attribute_append(g_btn, "color2", "blue");
+   efl_access_object_attribute_append(g_btn, "color3", "green");
+   attr_list = efl_access_object_attributes_get(g_btn);
+
+   ck_assert(attr_list != NULL);
+   EINA_LIST_FOREACH(attr_list, l, attr)
+     {
+        if (!strcmp(attr->key, "color1"))
+          ck_assert_str_eq(attr->value, "red");
+        else if (!strcmp(attr->key, "color2"))
+          ck_assert_str_eq(attr->value, "blue");
+        else if (!strcmp(attr->key, "color3"))
+          ck_assert_str_eq(attr->value, "green");
+     }
+   EINA_LIST_FREE(attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_attribute_del)
+{
+   Eina_List *attr_list = NULL;
+   Efl_Access_Attribute *attr = NULL;
+   int count1 = 0;
+   int count2 = 0;
+   generate_app();
+   efl_access_object_attribute_append(g_btn, "color1", "red");
+   efl_access_object_attribute_append(g_btn, "color2", "blue");
+   efl_access_object_attribute_append(g_btn, "color3", "green");
+   attr_list = efl_access_object_attributes_get(g_btn);//default attributes are added again
+   ck_assert(attr_list != NULL);
+   count1 = eina_list_count(attr_list);
+   EINA_LIST_FREE(attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+   attr_list = NULL;
+   efl_access_object_attribute_del(g_btn, "color4");//non existent key deletion
+   efl_access_object_attribute_del(g_btn, "color3");//existing key deletion
+   attr_list = efl_access_object_attributes_get(g_btn);
+   ck_assert(attr_list != NULL);
+   count2 = eina_list_count(attr_list);
+   ck_assert(count1 == (count2+1));
+   EINA_LIST_FREE(attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_attributes_clear)
+{
+   Eina_List *attr_list = NULL;
+   Efl_Access_Attribute *attr = NULL;
+   generate_app();
+   efl_access_object_attribute_append(g_btn, "color1", "red");
+   efl_access_object_attribute_append(g_btn, "color2", "blue");
+   efl_access_object_attribute_append(g_btn, "color3", "green");
+   efl_access_object_attributes_clear(g_btn);
+   attr_list = efl_access_object_attributes_get(g_btn);//default attributes are added again
+   ck_assert(attr_list != NULL);
+   ck_assert(eina_list_count(attr_list) <= 2);
+   EINA_LIST_FREE(attr_list, attr)
+     {
+        eina_stringshare_del(attr->key);
+        eina_stringshare_del(attr->value);
+        free(attr);
+     }
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_reading_info_type_set)
+{
+   Efl_Access_Reading_Info_Type reading_info;
+   generate_app();
+   efl_access_object_reading_info_type_set(g_btn, EFL_ACCESS_READING_INFO_TYPE_NAME|
+                                           EFL_ACCESS_READING_INFO_TYPE_ROLE);
+   reading_info = efl_access_object_reading_info_type_get(g_btn);
+   ck_assert(reading_info & EFL_ACCESS_READING_INFO_TYPE_NAME);
+   ck_assert(reading_info & EFL_ACCESS_READING_INFO_TYPE_ROLE);
+}
+EFL_END_TEST
+
+EFL_START_TEST(test_efl_access_object_reading_info_type_get)
+{
+   Efl_Access_Reading_Info_Type reading_info;
+   generate_app();
+   reading_info = efl_access_object_reading_info_type_get(g_btn);
+   ck_assert(reading_info == 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_atspi(TCase *tc)
 {
    tcase_add_test(tc, test_efl_access_app_obj_name_get);
@@ -469,4 +604,10 @@ void efl_ui_test_atspi(TCase *tc)
    tcase_add_test(tc, test_efl_access_object_relationship_append);
    tcase_add_test(tc, test_efl_access_object_relationship_remove);
    tcase_add_test(tc, test_efl_access_object_relationships_clear);
+   tcase_add_test(tc, test_efl_access_object_attribute_append);
+   tcase_add_test(tc, test_efl_access_object_attributes_get);
+   tcase_add_test(tc, test_efl_access_object_attribute_del);
+   tcase_add_test(tc, test_efl_access_object_attributes_clear);
+   tcase_add_test(tc, test_efl_access_object_reading_info_type_set);
+   tcase_add_test(tc, test_efl_access_object_reading_info_type_get);
 }

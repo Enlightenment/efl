@@ -1547,6 +1547,7 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                        break;
                      default:
                        ERR("type cannot be INVALID");
+                       va_end(p_list);
                        return NULL;
                     }
                }

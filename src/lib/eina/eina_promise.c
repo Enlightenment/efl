@@ -1205,7 +1205,7 @@ _race_then_cb(void *data, const Eina_Value v,
    Eina_Promise *p = ctx->base.promise;
    Eina_Bool found, r;
    Eina_Value result;
-   unsigned int i;
+   unsigned int i = 0;
 
    //This is not allowed!
    assert(v.type != &EINA_VALUE_TYPE_PROMISE);

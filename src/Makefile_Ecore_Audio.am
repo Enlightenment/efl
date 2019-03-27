@@ -20,11 +20,13 @@ BUILT_SOURCES += \
                  $(ecore_audio_eolian_c) \
                  $(ecore_audio_eolian_h)
 
+if INSTALL_EO_FILES
 ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecore_audioeolianfiles_DATA = $(ecore_audio_eolian_files)
+endif
 
 EXTRA_DIST2 += \
-              ${ecore_audioeolianfiles_DATA}
+              $(ecore_audio_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
 

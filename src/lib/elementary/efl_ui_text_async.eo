@@ -1,8 +1,6 @@
 class @beta Efl.Ui.Text_Async extends Efl.Ui.Text
 {
    [[Efl UI text async class
-
-     @since 1.21
    ]]
    data: null;
    implements {

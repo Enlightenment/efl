@@ -2,7 +2,10 @@ abstract Efl.Loop_Consumer extends Efl.Object
 {
    [[An @Efl.Loop_Consumer is a class which requires one of the parents to provide
      an @Efl.Loop interface when performing @Efl.Object.provider_find. It will enforce this by
-     only allowing parents which provide such an interface or $NULL.]]
+     only allowing parents which provide such an interface or $NULL.
+
+     @since 1.22
+   ]]
    eo_prefix: efl_loop;
    methods {
       @property loop {

@@ -68,38 +68,6 @@ EAPI int unsetenv(const char *name);
  */
 
 /**
- * @brief Create a unique temporary file name.
- *
- * @param __template Template of the file to create.
- * @return A file descriptor on success, -1 otherwise.
- *
- * Take the given file name @p template and overwrite a portion of it
- * to create a file name. This file is guaranted not to exist at the
- * time invocation and is suitable for use by the function.
- *
- * The @p template parameter can be any file name with six X's at the end
- * for example @em baseXXXXXX, where @em base is the part of the new file
- * that you supply and each 'X' is a placeholder for a character supplied
- * by mkstemp(). The trailing 'Xs' are replaced with a six-digit value;
- * this value is a unique number. Each successful call to mkstemp()
- * modifies @p template.
- *
- * When mkstemp() succeeds, it creates and opens the temporary file for
- * reading and writing.
- *
- * On success, the function returns the file descriptor of the
- * temporary file. Otherwise, it returns -1 and errno is set to the
- * following values:
- * - EINVAL: @p template has an invalid format.
- * - EEXISTS: File name already exists.
- *
- * Conformity: Should follow BSD conformity.
- *
- * Supported OS: Windows XP.
- */
-EAPI int mkstemp(char *__template);
-
-/**
  * @brief create an unique temporary directory
  *
  * @since 1.8.0

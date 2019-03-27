@@ -22,15 +22,11 @@ enum @beta Efl.Text_Cursor_Type
 
 interface @beta Efl.Text_Cursor {
    [[Cursor API
-
-     @since 1.20
    ]]
    methods {
       // Cursor
       @property text_cursor {
          [[The object's main cursor.
-
-           @since 1.18
          ]]
          get {
             return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor object]]

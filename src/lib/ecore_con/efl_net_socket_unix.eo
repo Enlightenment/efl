@@ -3,8 +3,6 @@ class @beta Efl.Net.Socket_Unix extends Efl.Net.Socket_Fd {
 
       This is the common class and takes an existing FD, usually
       created by an dialer or server.
-
-      @since 1.19
     ]]
 
     implements {

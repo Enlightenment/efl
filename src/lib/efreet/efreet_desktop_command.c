@@ -464,6 +464,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
     }
     while ((l = eina_list_next(l)));
 
+    IF_FREE(exec);
     return execs;
 error:
     IF_FREE(exec);

@@ -42,8 +42,6 @@ enum @beta Efl.Text_Font_Slant {
  */
 enum @beta Efl.Text_Font_Bitmap_Scalable {
    [[Scalable of bitmap fonts
-
-     @since 1.21
    ]]
    none = 0,         [[Disable scalable feature for bitmap fonts.]]
    color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
@@ -51,8 +49,6 @@ enum @beta Efl.Text_Font_Bitmap_Scalable {
 
 interface @beta Efl.Text_Font {
    [[Font settings of the text
-
-     @since 1.20
    ]]
    eo_prefix: efl_text;
    methods {

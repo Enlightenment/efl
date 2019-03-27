@@ -3,14 +3,10 @@
 
 /* Add -DEFL_API_OVERRIDE ot your CFLAGS to override the default
  * installed api set and then fter that -DEFL_NOLEGACY_API_SUPPORT
- * and/or -DEFL_EO_API_SUPPORT as desired
+ * as desired
  */
 #ifndef EFL_API_OVERRIDE 
 @EFL_API_LEGACY_DEF@
-/* You can't disable Eo API anymore as EFL use it everywhere internally
-   and we don't want to expose it publicly just yet, so keep it hidden
-   and require an explicit request to get it. */
-/* @EFL_API_EO_DEF@ */
 #endif
 
 #define EFL_VERSION_MAJOR @EFL_VERSION_MAJOR@

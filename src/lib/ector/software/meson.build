@@ -45,6 +45,9 @@ if cpu_sse3 == true
   ector_opt_lib += [ ector_opt ]
 endif
 
-install_data(pub_eo_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif

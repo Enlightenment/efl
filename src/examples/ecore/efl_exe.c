@@ -1,5 +1,4 @@
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 
 #include <stdio.h>
 #include <string.h>

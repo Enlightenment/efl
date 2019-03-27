@@ -271,7 +271,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
                                            const char *property,
                                            Eina_Value *value)
 {
-   Eldbus_Model_Proxy_Property_Set_Data *data;
+   Eldbus_Model_Proxy_Property_Set_Data *data = NULL;
    const char *signature;
    Eldbus_Pending *pending;
    unsigned char access;
@@ -314,6 +314,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
                           .data = data, .free = _eldbus_model_proxy_cancel_cb);
 
  on_error:
+   free(data);
    return efl_loop_future_rejected(obj, err);
 }
 
@@ -662,7 +663,9 @@ _eldbus_model_proxy_property_set_load_cb(void *data,
                                              signature, set_data->value,
                                              _eldbus_model_proxy_property_set_cb, set_data);
    pd->pendings = eina_list_append(pd->pendings, pending);
- end:
+
+end:
+   if (!properties) return;
    while ((sp = eina_array_pop(properties)))
      eina_stringshare_del(sp);
    eina_array_free(properties);

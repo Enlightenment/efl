@@ -2,7 +2,10 @@ import efl_input_device;
 
 interface Efl.Canvas.Pointer
 {
-   [[Efl Canvas Pointer interface]]
+   [[Efl Canvas Pointer interface
+
+     @since 1.22
+   ]]
    methods {
       /* FIXME Efl.Input.Device is not stable yet*/
       @property pointer_inside @beta {

@@ -2,7 +2,6 @@ struct @beta Efl.Ui.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
-     @since 1.8
    ]]
    now:   double; [[Current percentage]]
    total: double; [[Total percentage]]
@@ -12,7 +11,6 @@ struct @beta Efl.Ui.Image_Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
-     @since 1.8
    ]]
    status:     int; [[Error status of the download]]
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
@@ -30,8 +28,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
    methods {
       @property scalable {
          [[Enable or disable scaling up or down the internal image.
-
-           @since 1.18]]
+         ]]
          values {
             scale_up: bool;   [[If $true, the internal image might be scaled up
                                 if necessary according to the scale type.
@@ -45,8 +42,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
       }
       @property align {
          [[Controls how the internal image is positioned inside an image object.
-
-           @since 1.18]]
+         ]]
          values {
             align_x: double; [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
             align_y: double; [[Alignment in the vertical axis (0 <= align_y <= 1).]]

@@ -7,7 +7,9 @@ function @beta Efl.Ui.Scrollable_On_Show_Region {
 };
 
 struct Efl.Ui.Widget_Focus_State {
-   [[All relevant fields needed for the current state of focus registration]]
+   [[All relevant fields needed for the current state of focus registration
+     @since 1.22
+   ]]
    manager : Efl.Ui.Focus.Manager; [[The manager where the widget is registered in]]
    parent : Efl.Ui.Focus.Object; [[The parent the widget is using as logical parent]]
    logical : bool; [[$true if this is registered as logical currently]]
@@ -19,7 +21,10 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Ui.Selection, Efl.Ui.Dnd,
                         Efl.Ui.Property_Bind, Efl.Ui.View
 {
-   [[Efl UI widget abstract class]]
+   [[Efl UI widget abstract class
+
+     @since 1.22
+   ]]
    //eo_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
@@ -369,8 +374,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       }
       @property focus_move_policy_automatic @beta {
          [[Control the widget's focus_move_policy mode setting.
-
-           @since 1.18]]
+         ]]
          values {
             automatic: bool; [[$true to follow system focus move policy change,
                                $false otherwise]]

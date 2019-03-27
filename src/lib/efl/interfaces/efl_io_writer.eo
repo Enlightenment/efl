@@ -12,7 +12,7 @@ interface Efl.Io.Writer {
       "can_write,changed" or property @.can_write to known whenever a write
       could push more data.
 
-      @since 1.19
+      @since 1.22
     ]]
 
     methods {

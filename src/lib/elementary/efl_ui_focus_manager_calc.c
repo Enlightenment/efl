@@ -1489,7 +1489,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      {
         //the correct one is focused
         if (node->redirect_manager == pd->redirect)
-          return;
+          goto end;
      }
 
    //make sure this manager is in the chain of redirects
@@ -1566,11 +1566,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      }
 
    while (eina_array_count(chain) > 1)
-     efl_event_callback_call(eina_array_pop(chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED , (void*)EINA_TRUE);
+     {
+        Eina_Bool child_focus_changed = EINA_TRUE;
+        efl_event_callback_call(eina_array_pop(chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED , &child_focus_changed);
+     }
 
    while (eina_array_count(old_chain) > 1)
-     efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, (void*)EINA_FALSE);
+     {
+        Eina_Bool child_focus_changed = EINA_FALSE;
+        efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, &child_focus_changed);
+     }
 
+end:
    eina_array_free(old_chain);
    eina_array_free(chain);
 }
@@ -1949,18 +1956,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_freeze(Eo *obj, Efl_
 {
   pd->freeze ++;
   if (pd->freeze == 1)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_TRUE);
-}
+    {
+       Eina_Bool event_info = EINA_TRUE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 
+}
 
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
   pd->freeze --;
   if (!pd->freeze)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_FALSE);
+    {
+       Eina_Bool event_info = EINA_FALSE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 }
-
 
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)

@@ -33,6 +33,8 @@ interface Efl.Part
        func2(part, args)
        func3(part, args)
        unref(part)
+
+     @since 1.22
    ]]
    methods {
       part_get @protected @const {

@@ -219,6 +219,7 @@ _load_do(Evas_Object *obj)
 
       default:
         text = NULL;
+        err = EINVAL;
         break;
      }
    if (fail)
@@ -1567,7 +1568,7 @@ _paste_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_PASTE, NULL);
+     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    sd->selection_asked = EINA_TRUE;
 
@@ -1622,7 +1623,7 @@ _cut_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_CUT, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CUT, NULL);
    /* Store it */
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
@@ -1646,7 +1647,7 @@ _copy_cb(void *data,
 
    if (!sd) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_COPY, NULL);
+     (data, EFL_UI_EVENT_SELECTION_COPY, NULL);
    sd->sel_mode = EINA_FALSE;
    if (!_elm_config->desktop_entry)
      {
@@ -1890,9 +1891,8 @@ _magnifier_move(void *data)
    cx += ex;
    cy += ey;
 
-   //Move the Magnifier
+   // calculate the position of the magnifier
    edje_object_parts_extends_calc(sd->mgf_bg, &x, &y, &w, &h);
-   evas_object_move(sd->mgf_bg, cx - x - (w / 2), cy - y - h);
 
    mx = cx - x - (w / 2);
    my = cy - y - h;
@@ -1919,8 +1919,10 @@ _magnifier_move(void *data)
           my = 0;
         if (my + mh > wh)
           my = wh - mh;
-        evas_object_move(sd->mgf_bg, mx, my);
      }
+
+   // move the magnifier to the proper position
+   evas_object_move(sd->mgf_bg, mx, my);
 
    //Set the Proxy Render Area
    evas_object_geometry_get(data, &x, &y, &w, &h);
@@ -2317,7 +2319,7 @@ _entry_selection_start_signal_cb(void *data,
         if (entry != data) elm_entry_select_none(entry);
      }
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_START, NULL);
+     (data, EFL_UI_EVENT_SELECTION_START, NULL);
 
    elm_object_focus_set(data, EINA_TRUE);
 }
@@ -2361,7 +2363,7 @@ _entry_selection_changed_signal_cb(void *data,
    if (!sd) return;
    sd->have_selection = EINA_TRUE;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_CHANGED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CHANGED, NULL);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2384,7 +2386,7 @@ _entry_selection_cleared_signal_cb(void *data,
 
    sd->have_selection = EINA_FALSE;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_CLEARED, NULL);
+     (data, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
    // XXX: still try primary selection even if on wl in case it's
    // supported
 //   if (!_entry_win_is_wl(data))
@@ -2425,7 +2427,7 @@ _entry_paste_request_signal_cb(void *data,
    // supported
 //   if ((type == ELM_SEL_TYPE_PRIMARY) && _entry_win_is_wl(data)) return;
    efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_SELECTABLE_PASTE, NULL);
+     (data, EFL_UI_EVENT_SELECTION_PASTE, NULL);
 
    top = _entry_win_get(data);
    if (top)
@@ -2870,7 +2872,7 @@ _entry_has_new_line(const char *text)
      {
         if (!strncmp(text, "<br", 3) || !strncmp(text, "<ps", 3))
           {
-             if (text[4] == '>' || ((text[4] == '/') && (text[5] == '>')))
+             if (text[3] == '>' || ((text[3] == '/') && (text[4] == '>')))
                {
                   return EINA_TRUE;
                }
@@ -4412,7 +4414,7 @@ _elm_entry_select_none(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
      }
    if (sd->have_selection)
      efl_event_callback_legacy_call
-       (obj, EFL_UI_EVENT_SELECTABLE_CLEARED, NULL);
+       (obj, EFL_UI_EVENT_SELECTION_CLEARED, NULL);
 
    sd->have_selection = EINA_FALSE;
    edje_object_part_text_select_none(sd->entry_edje, "elm.text");
@@ -4984,6 +4986,13 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
    elm_obj_entry_file_text_format_set(obj, format);
    ret = efl_file_simple_load(obj, file, NULL);
    return ret;
+}
+
+EOLIAN static void
+_elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *sd EINA_UNUSED)
+{
+   elm_object_text_set(obj, "");
+   efl_file_unload(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Error

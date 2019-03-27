@@ -101,14 +101,46 @@ evas_object_smart_parent_get(const Efl_Canvas_Object *obj)
    return efl_canvas_object_render_parent_get(obj);
 }
 
-EAPI void
-evas_object_paragraph_direction_set(Efl_Canvas_Object *obj, Efl_Text_Bidirectional_Type dir)
+static inline Efl_Text_Bidirectional_Type
+_evas_bidi_direction_type_to_efl_text_bidirectional_type(Evas_BiDi_Direction type)
 {
-   efl_canvas_object_paragraph_direction_set(obj, dir);
+   switch (type)
+     {
+#define CONVERT_TYPE(TYPE) case EVAS_BIDI_DIRECTION_##TYPE: return EFL_TEXT_BIDIRECTIONAL_TYPE_##TYPE
+      CONVERT_TYPE(NATURAL); //Neutral text type, same as natural
+      CONVERT_TYPE(LTR);
+      CONVERT_TYPE(RTL);
+      CONVERT_TYPE(INHERIT);
+      default: break;
+     }
+   return EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL;
+#undef CONVERT_TYPE
 }
 
-EAPI Efl_Text_Bidirectional_Type
+static inline Evas_BiDi_Direction
+_efl_text_bidirectional_type_to_evas_bidi_direction_type(Efl_Text_Bidirectional_Type type)
+{
+   switch (type)
+     {
+#define CONVERT_TYPE(TYPE) case EFL_TEXT_BIDIRECTIONAL_TYPE_##TYPE: return EVAS_BIDI_DIRECTION_##TYPE
+      CONVERT_TYPE(NATURAL); //Neutral text type, same as natural
+      CONVERT_TYPE(LTR);
+      CONVERT_TYPE(RTL);
+      CONVERT_TYPE(INHERIT);
+      default: break;
+     }
+   return EVAS_BIDI_DIRECTION_NATURAL;
+#undef CONVERT_TYPE
+}
+
+EAPI void
+evas_object_paragraph_direction_set(Efl_Canvas_Object *obj, Evas_BiDi_Direction dir)
+{
+   efl_canvas_object_paragraph_direction_set(obj, _evas_bidi_direction_type_to_efl_text_bidirectional_type(dir));
+}
+
+EAPI Evas_BiDi_Direction
 evas_object_paragraph_direction_get(const Efl_Canvas_Object *obj)
 {
-   return efl_canvas_object_paragraph_direction_get(obj);
+   return _efl_text_bidirectional_type_to_evas_bidi_direction_type(efl_canvas_object_paragraph_direction_get(obj));
 }

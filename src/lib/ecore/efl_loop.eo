@@ -1,5 +1,8 @@
 struct Efl.Loop_Arguments {
-   [[EFL loop arguments data structure]]
+   [[EFL loop arguments data structure
+
+     @since 1.22
+   ]]
    argv: const(array<const(stringshare)>); [[Array with loop arguments]]
    initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
 }
@@ -15,6 +18,8 @@ abstract Efl.Loop extends Efl.Task
    It serializes these and allows for
    greater responsiveness without the need for threads (or any other concurrency). However
    you can provide these if you need to.
+
+   @since 1.22
    ]]
    methods {
       iterate {

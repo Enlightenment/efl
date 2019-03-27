@@ -2,7 +2,6 @@
 //gcc -g efl_ui_scroller_example.c -o efl_ui_scroller_example `pkg-config --cflags --libs elementary`
 
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 
 #include <Efl_Ui.h>
 #include <Elementary.h>

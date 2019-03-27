@@ -111,8 +111,10 @@ EXTRA_DIST2 += \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
 
+if INSTALL_EO_FILES
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
 efleolianfiles_DATA = $(efl_eolian_files) $(efl_eolian_type_files)
+endif
 
 lib_LTLIBRARIES += lib/efl/libefl.la
 

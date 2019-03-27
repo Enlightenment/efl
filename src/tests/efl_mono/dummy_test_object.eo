@@ -101,7 +101,7 @@ function Dummy.FormatCb {
    }
 };
 
-class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.Another_Iface {
+class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
    methods {
       return_object {
          return: Dummy.Test_Object;
@@ -1304,9 +1304,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
          }
       }
 
-      emit_event_with_list {
+      emit_event_with_array {
          params {
-            @in data: list<string>;
+            @in data: array<string>;
          }
       }
 
@@ -1388,19 +1388,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
       get_setter_only {
          return: int;
       }
+
+      call_find_provider {
+         params {
+            @in type: const(Efl.Class);
+         }
+         return: Efl.Object;
+      }
+
+      call_find_provider_for_iface {
+         return: Efl.Object;
+      }
    }
    implements {
       class.constructor;
       class.destructor;
       Efl.Object.constructor;
       Efl.Object.provider_find;
-      Dummy.Test_Iface.emit_test_conflicted;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }
-      Dummy.Another_Iface.emit_another_conflicted;
    }
    events {
-      evt,with,string @hot: string;
+      evt,with,string @hot: const(string);
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
@@ -1408,7 +1417,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface, Dummy.An
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
       evt,with,struct,complex @hot: Dummy.StructComplex;
-      evt,with,list @hot: list<string>;
+      evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
    }
 }

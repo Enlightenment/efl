@@ -28,7 +28,7 @@ namespace eolian_mono {
 struct constant_definition_generator
 {
   template<typename OutputIterator, typename Context>
-  bool generate(OutputIterator sink, attributes::variable_def constant, Context context) const
+  bool generate(OutputIterator sink, attributes::variable_def constant, Context const& context) const
   {
     // Open partial class
     if (!name_helpers::open_namespaces(sink, constant.namespaces, context))

@@ -474,13 +474,20 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Eina_Error theme_apply_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error theme_apply_ret, theme_apply_internal_ret;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   theme_apply_ret &= _efl_ui_layout_theme_internal(obj, sd);
-   return theme_apply_ret;
+   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd);
+   if (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+     return EFL_UI_THEME_APPLY_ERROR_GENERIC;
+
+   if ((theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT) ||
+       (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
+     return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EOLIAN static Eina_Bool
@@ -2756,6 +2763,7 @@ elm_layout_table_clear(Eo *obj, const char *part, Eina_Bool clear)
 EAPI Eina_Bool
 elm_layout_text_set(Eo *obj, const char *part, const char *text)
 {
+   Eo *part_obj;
    if (!part)
      {
         part = efl_ui_widget_default_text_part_get(obj);
@@ -2764,8 +2772,19 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    else if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
      return EINA_FALSE;
 
-   if (!efl_layout_group_part_exist_get(obj, part)) return EINA_FALSE;
-   efl_text_set(efl_part(obj, part), text);
+   part_obj = efl_ref(efl_part(obj, part));
+
+   if (!efl_isa(part_obj, EFL_TEXT_INTERFACE) ||
+       !efl_isa(part_obj, EFL_UI_LAYOUT_PART_CLASS))
+     {
+        efl_del(part_obj);
+        return EINA_FALSE;
+     }
+
+   efl_text_set(part_obj, text);
+
+   efl_unref(part_obj);
+
    return EINA_TRUE;
 }
 

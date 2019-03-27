@@ -220,9 +220,11 @@ ecore = declare_dependency(
 
 eolian_ecore_dir = join_paths(eolian_include_dir, package_version_name)
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: eolian_ecore_dir
-)
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: eolian_ecore_dir
+  )
+endif
 
 install_headers(ecore_header_src,
   install_dir : dir_package_include,

@@ -177,7 +177,7 @@ struct klass
             ).generate(sink, p, iface_cxt))
            return false;
 
-       if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, iface_cxt))
+       if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, iface_cxt))
          return false;
 
        // End of interface declaration
@@ -237,7 +237,7 @@ struct klass
              << scope_tab << "public " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-             << scope_tab << scope_tab << "register_event_proxies();\n"
+             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << "}\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
@@ -272,15 +272,24 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, concrete_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, concrete_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, concrete_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, concrete_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
+
+         // Copied from nativeinherit class, used when setting up providers.
+         if(!as_generator(
+              scope_tab << "private static IntPtr GetEflClassStatic()\n"
+              << scope_tab << "{\n"
+              << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
+              << scope_tab << "}\n"
+           ).generate(sink, attributes::unused, concrete_cxt))
+           return false;
 
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
@@ -344,13 +353,13 @@ struct klass
            return false;
 
          // Property wrappers
-         if (!as_generator(*(property_wrapper_definition)).generate(sink, cls.properties, inherit_cxt))
+         if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, cls.properties, inherit_cxt))
            return false;
 
          for (auto&& klass : helpers::non_implemented_interfaces(cls, inherit_cxt))
            {
               attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
-              if (!as_generator(*(property_wrapper_definition)).generate(sink, c.properties, inherit_cxt))
+              if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, inherit_cxt))
                 return false;
            }
 
@@ -446,18 +455,6 @@ struct klass
      std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
-     // The klass field is static but there is no problem if multiple C# classes inherit from this generated one
-     // as it is just a simple wrapper, forwarding the Eo calls either to the user API (where C#'s virtual method
-     // resolution kicks in) or to the base implementation (efl_super).
-     if (is_inherit)
-       {
-          if(!as_generator(
-             scope_tab << "public " << (root ? "" : "new ") <<  "static System.IntPtr klass = System.IntPtr.Zero;\n"
-             << scope_tab << "public " << (root ? "" : "new ") << "static " << native_inherit_full_name << " nativeInherit = new " << native_inherit_full_name << "();\n"
-             ).generate(sink, attributes::unused, context))
-            return false;
-       }
-
      std::string raw_klass_modifier;
      if (!root)
        raw_klass_modifier = "override ";
@@ -540,7 +537,7 @@ struct klass
                      << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-                     << scope_tab << scope_tab << "register_event_proxies();\n"
+                     << scope_tab << scope_tab << "RegisterEventProxies();\n"
                      << scope_tab << "}\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
@@ -566,7 +563,7 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(base_klass, ((object)this).GetType());\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
-             << scope_tab << scope_tab << "register_event_proxies();\n"
+             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << "}\n"
 
              << scope_tab << "protected void FinishInstantiation()\n"
@@ -635,7 +632,8 @@ struct klass
 
      // Event proxy registration
      if (!as_generator(
-            scope_tab << (is_inherit_context(context) || !root ? "protected " : "") << virtual_modifier << "void register_event_proxies()\n"
+            scope_tab << "///<summary>Register the Eo event wrappers making the bridge to C# events. Internal usage only.</summary>\n"
+            << scope_tab << (is_inherit_context(context) || !root ? "protected " : "") << virtual_modifier << "void RegisterEventProxies()\n"
             << scope_tab << "{\n"
          )
          .generate(sink, NULL, context))
@@ -644,7 +642,7 @@ struct klass
      // Generate event registrations here
 
      if (!root)
-       if (!as_generator(scope_tab << scope_tab << "base.register_event_proxies();\n").generate(sink, NULL, context))
+       if (!as_generator(scope_tab << scope_tab << "base.RegisterEventProxies();\n").generate(sink, NULL, context))
          return false;
 
      // Assigning the delegates
@@ -689,7 +687,12 @@ struct klass
 
      // Callback registration functions
      if (!as_generator(
-            scope_tab << visibility << "bool add_cpp_event_handler(string lib, string key, Efl.EventCb evt_delegate) {\n"
+            scope_tab << "///<summary>Adds a new event handler, registering it to the native event. For internal use only.</summary>\n"
+            << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
+            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
+            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be called on event raising.</param>\n"
+            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
+            << scope_tab << visibility << "bool AddNativeEventHandler(string lib, string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
@@ -711,7 +714,11 @@ struct klass
             << scope_tab << scope_tab << "event_cb_count[key]++;\n"
             << scope_tab << scope_tab << "return true;\n"
             << scope_tab << "}\n"
-            << scope_tab << visibility << "bool remove_cpp_event_handler(string key, Efl.EventCb evt_delegate) {\n"
+            << scope_tab << "///<summary>Removes the given event handler for the given event. For internal use only.</summary>\n"
+            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
+            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be removed.</param>\n"
+            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
+            << scope_tab << visibility << "bool RemoveNativeEventHandler(string key, Efl.EventCb evt_delegate) {\n"
             << scope_tab << scope_tab << "int event_count = 0;\n"
             << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
             << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"

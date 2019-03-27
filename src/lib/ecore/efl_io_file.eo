@@ -4,8 +4,6 @@ class @beta Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_F
       @Efl.Io.Closer.close_on_exec and
       @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true. @Efl.Io.Closer.close_on_exec.set sets flag O_CLOEXEC.
-
-      @since 1.19
     ]]
 
     methods {

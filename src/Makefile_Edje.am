@@ -35,15 +35,19 @@ BUILT_SOURCES += \
                  $(edje_eolian_priv_c) \
                  $(edje_eolian_priv_h)
 
+if INSTALL_EO_FILES
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
-                       $(edje_eolian_files) \
-                       $(edje_eolian_type_files)
+$(edje_eolian_files) \
+$(edje_eolian_type_files)
+endif
 
 noinst_DATA += $(edje_eolian_priv_c) $(edje_eolian_priv_h)
 
-EXTRA_DIST2 += ${edjeeolianfiles_DATA} \
-              $(edje_eolian_priv_files)
+EXTRA_DIST2 += \
+$(edje_eolian_files) \
+$(edje_eolian_type_files) \
+$(edje_eolian_priv_files)
 
 lib_LTLIBRARIES += lib/edje/libedje.la
 

@@ -165,4 +165,20 @@ gl_generic_any_output_get(Render_Engine_GL_Generic *engine)
    return NULL;
 }
 
+static inline Render_Output_GL_Generic *
+gl_generic_output_find(Render_Engine_GL_Generic *engine)
+{
+   Render_Output_GL_Generic *output;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(engine->software.outputs, l, output)
+     {
+        if (!output->software.ob) continue;
+        return output;
+     }
+
+   return NULL;
+}
+
+
 #endif

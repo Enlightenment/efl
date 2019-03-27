@@ -179,7 +179,7 @@ struct event_definition_generator
    bool is_inherited_event;
 
    template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::event_def const& evt, Context context) const
+   bool generate(OutputIterator sink, attributes::event_def const& evt, Context const& context) const
    {
       if (blacklist::is_event_blacklisted(evt, context))
         return true;
@@ -262,7 +262,7 @@ struct event_definition_generator
       if (!generate_event_trigger(sink, wrapper_evt_name, wrapper_args_type, wrapper_args_template, context))
         return false;
 
-      // Store the delegate for this event in this instance. This is initialized in register_event_proxies()
+      // Store the delegate for this event in this instance. This is initialized in RegisterEventProxies()
       // We can't initialize them directly here as they depend on the member methods being valid (i.e.
       // the constructor being called).
       if (!as_generator(scope_tab << "Efl.EventCb evt_" << wrapper_evt_name << "_delegate;\n").generate(sink, attributes::unused, context))
@@ -270,7 +270,7 @@ struct event_definition_generator
 
       // Callback to be given to C's callback_priority_add
       if (!as_generator(
-            scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref Efl.Event_StructInternal evt)\n"
+            scope_tab << "private void on_" << wrapper_evt_name << "_NativeCallback(System.IntPtr data, ref Efl.Event.NativeStruct evt)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << event_args
             << scope_tab << scope_tab << "try {\n"
@@ -291,7 +291,7 @@ struct event_definition_generator
                               , std::string const& event_name
                               , std::string const& event_args_type
                               , std::string const& event_template_args
-                              , Context context) const
+                              , Context const& context) const
    {
       auto delegate_type = "EventHandler" + event_template_args;
       if (!as_generator(
@@ -311,7 +311,7 @@ struct event_definition_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate_event_add_remove(OutputIterator sink, attributes::event_def const &evt, const std::string& event_name, Context context) const
+   bool generate_event_add_remove(OutputIterator sink, attributes::event_def const &evt, const std::string& event_name, Context const& context) const
    {
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
@@ -322,7 +322,7 @@ struct event_definition_generator
            << scope_tab << scope_tab << "add {\n"
            << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "if (add_cpp_event_handler(" << library_name << ", key, this.evt_" << event_name << "_delegate)) {\n"
+           << scope_tab << scope_tab << scope_tab << scope_tab << "if (AddNativeEventHandler(" << library_name << ", key, this.evt_" << event_name << "_delegate)) {\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eventHandlers.AddHandler(" << event_name << "Key , value);\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "} else\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Error adding proxy for event {key}\");\n"
@@ -331,7 +331,7 @@ struct event_definition_generator
            << scope_tab << scope_tab << "remove {\n"
            << scope_tab << scope_tab << scope_tab << "lock (eventLock) {\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "string key = \"_" << upper_c_name << "\";\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "if (remove_cpp_event_handler(key, this.evt_" << event_name << "_delegate)) { \n"
+           << scope_tab << scope_tab << scope_tab << scope_tab << "if (RemoveNativeEventHandler(key, this.evt_" << event_name << "_delegate)) { \n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "eventHandlers.RemoveHandler(" << event_name << "Key , value);\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "} else\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Error removing proxy for event {key}\");\n"

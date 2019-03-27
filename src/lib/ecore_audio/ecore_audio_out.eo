@@ -7,8 +7,6 @@ abstract @beta Ecore.Audio.Out extends Ecore.Audio
    methods {
       input_attach {
          [[Attaches an input to an output
-
-           @since 1.8
          ]]
          return: bool; [[$true if the input was attached, $false otherwise]]
          params {
@@ -17,8 +15,6 @@ abstract @beta Ecore.Audio.Out extends Ecore.Audio
       }
       input_detach {
          [[Detaches an input from an output
-
-           @since 1.8
          ]]
          return: bool; [[$true if the input was detached, $false otherwise]]
          params {
@@ -27,8 +23,6 @@ abstract @beta Ecore.Audio.Out extends Ecore.Audio
       }
       inputs_get {
          [[Returns the list of all attached inputs
-
-           @since 1.8
          ]]
          return: list<Ecore.Audio.In>; [[A list of the inputs that are attached to the output]]
       }

@@ -12,6 +12,21 @@ using EoG = Efl.Eo.Globals;
 namespace Efl { namespace Eo {
 
 public class Globals {
+
+    /// <summary>Represents the type of the native Efl_Class.</summary>
+    public enum EflClassType {
+        /// <summary>Regular EFL classes.</summary>
+        Regular = 0,
+        /// <summary>Non-instantiable efl classes (i.e. Abstracts).</summary>
+        RegularNoInstant,
+        /// <summary>Interface types.</summary>
+        Interface,
+        /// <summary>Mixins types.</summary>
+        Mixin,
+        /// <summary>Invalid class type.</summary>
+        Invalid
+    }
+
     [return: MarshalAs(UnmanagedType.U1)]
     public delegate bool efl_object_init_delegate();
     public static FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
@@ -155,6 +170,7 @@ public class Globals {
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
     public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
+    [DllImport(efl.Libs.Eo)] public static extern EflClassType efl_class_type_get(IntPtr klass);
     public delegate  IntPtr dlerror_delegate();
     [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
 
@@ -180,10 +196,6 @@ public class Globals {
               IntPtr desc,
               Efl.EventCb cb,
               System.IntPtr data);
-    public delegate  IntPtr
-        efl_object_legacy_only_event_description_get_delegate([MarshalAs(UnmanagedType.LPStr)] String name);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
-        efl_object_legacy_only_event_description_get([MarshalAs(UnmanagedType.LPStr)] String name);
 
     public const int RTLD_NOW = 2;
 
@@ -546,6 +558,15 @@ public static class ClassRegister
         string name = Eina.StringConversion.NativeUtf8ToManagedString(namePtr)
                       .Replace("_", ""); // Convert Efl C name to C# name
 
+        var klass_type = Efl.Eo.Globals.efl_class_type_get(klass);
+
+        // When converting to managed, interfaces and mixins gets the 'I' prefix.
+        if (klass_type == Efl.Eo.Globals.EflClassType.Interface || klass_type == Efl.Eo.Globals.EflClassType.Mixin)
+        {
+            var pos = name.LastIndexOf(".");
+            name = name.Insert(pos + 1, "I"); // -1 if not found, inserts at 0 normally
+        }
+
         var curr_asm = typeof(IWrapper).Assembly;
         t = curr_asm.GetType(name);
         if (t == null)
@@ -613,19 +634,34 @@ public static class ClassRegister
     {
         for (System.Type t = objectType.BaseType; t != null; t = t.BaseType)
         {
-            var method = t.GetMethod("GetEflClassStatic",
-                                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-            if (method != null)
-                return (IntPtr) method.Invoke(null, null);
+            var ptr = GetNativeKlassPtr(t);
+            if (ptr != IntPtr.Zero)
+                return ptr;
         }
         throw new System.InvalidOperationException($"Class '{objectType.FullName}' is not an Efl object");
     }
 
     private static IntPtr GetNativeKlassPtr(System.Type objectType)
     {
+        if (objectType == null)
+            return IntPtr.Zero;
+
+        if (objectType.IsInterface)
+        {
+            // Try to get the *Concrete class
+            var assembly = objectType.Assembly;
+            objectType = assembly.GetType(objectType.FullName + "Concrete");
+
+            if (objectType == null)
+                return IntPtr.Zero;
+        }
+
         var method = objectType.GetMethod("GetEflClassStatic",
                                           System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-        return (IntPtr) method?.Invoke(null, null);
+
+        if (method == null)
+            return IntPtr.Zero;
+        return (IntPtr) (method.Invoke(null, null));
     }
 
     public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)

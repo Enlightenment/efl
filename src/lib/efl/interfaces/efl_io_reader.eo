@@ -12,7 +12,7 @@ interface Efl.Io.Reader {
       "can_read,changed" or property @.can_read to known whenever a read
       would have data to return.
 
-      @since 1.19
+      @since 1.22
     ]]
 
     methods {

@@ -12,8 +12,6 @@ class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Inter
 
      This is a widget which allows the user to increase or decrease numeric values
      using user interactions. It's a basic type of widget for choosing and displaying values.
-
-     @since 1.21
    ]]
    methods {
       @property special_value {

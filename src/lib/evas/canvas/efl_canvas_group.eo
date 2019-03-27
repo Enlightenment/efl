@@ -8,6 +8,8 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
      sense that a standard widget may not have any empty slots for content.
      However it's still a group of low-level canvas objects (clipper, raw objects,
      etc.).
+
+     @since 1.22
    ]]
    data: Evas_Smart_Data;
    methods {

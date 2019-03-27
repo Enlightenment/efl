@@ -97,7 +97,6 @@ add_global_arguments(dev_cflags, language: 'cpp')
 foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
   add_global_arguments('-D_GNU_SOURCE=1', language: lang)
-  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
   add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
   add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
   add_global_arguments('-DEFL_BUILD=1', language: lang)
@@ -121,6 +120,7 @@ foreach lang : ['c', 'objc', 'cpp']
     else
       error('Version of targetted Windows incorrect')
     endif
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO', language: lang)
   endif
 endforeach
 
@@ -422,9 +422,12 @@ if get_option('eolian-bootstrap') == false
   subdir(join_paths('src', 'generic', 'emotion'))
 
   bindings = get_option('bindings')
+  bindings_order = ['luajit', 'cxx', 'mono']
 
-  foreach binding : bindings
-    subdir(join_paths('src', 'bindings', binding))
+  foreach binding : bindings_order
+    if bindings.contains(binding)
+      subdir(join_paths('src', 'bindings', binding))
+    endif
   endforeach
 
   subdir(join_paths('src', 'edje_external'))
@@ -467,7 +470,6 @@ efl_config_h.set('EFL_VERSION_MICRO', version_micro)
 efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
 
 #FIXME placeholder
-efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
 efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
 
 configure_file(

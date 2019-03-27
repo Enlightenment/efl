@@ -7,6 +7,9 @@
 #include "eo_internal.h"
 #include "../efl_check.h"
 #include "elm_widget.h"
+#include "ecore_private.h"
+#include "ecore_evas_private.h"
+
 
 static int main_pid = -1;
 static Eina_Bool did_shutdown;
@@ -125,6 +128,12 @@ timer_add(double in, Ecore_Task_Cb cb, void *data)
    return ecore_timer_add(in * TIMER_SCALE, cb, data);
 }
 
+void *
+real_timer_add(double in, Ecore_Task_Cb cb, void *data)
+{
+   return ecore_timer_add(in, cb, data);
+}
+
 static void
 _win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
  {
@@ -132,6 +141,7 @@ _win_manual_render(void *data, const Efl_Event *event EINA_UNUSED)
 
    ecore_loop_time_set(t + LOOP_INCREMENT);
    ecore_animator_custom_tick();
+   ecore_evas_render_prepare(ecore_evas_ecore_evas_get(evas_object_evas_get(data)));
    evas_norender(evas_object_evas_get(data));
 }
 
@@ -161,7 +171,8 @@ _win_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *e
 static void
 _ui_win_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   if (ev->info)
+   Eina_Bool *visible = ev->info;
+   if (*visible)
      _win_show(NULL, NULL, ev->object, NULL);
    else
      {

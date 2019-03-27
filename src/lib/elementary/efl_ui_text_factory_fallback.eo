@@ -6,7 +6,6 @@ class @beta Efl.Ui.Text_Factory.Fallback extends Efl.Object implements Efl.Canva
        - Contains 2 factories: image and emoticon
        - Strips off "file://" prefix for image items, to be used with the image
          factory.
-     @since 1.21
    ]]
    implements {
       Efl.Object.constructor;

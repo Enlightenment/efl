@@ -144,8 +144,6 @@ elm_public_eolian_files += \
 	lib/elementary/efl_ui_progressbar_legacy_part.eo \
 	lib/elementary/elm_multibuttonentry_part.eo \
 	lib/elementary/elm_interface_scrollable.eo \
-	lib/elementary/elm_atspi_bridge.eo \
-	lib/elementary/elm_atspi_app_object.eo \
 	lib/elementary/efl_ui_image_zoomable_pan.eo \
 	$(NULL)
 
@@ -220,8 +218,10 @@ BUILT_SOURCES += \
 	$(elm_legacy_eolian_eo_h) \
 	$(elm_legacy_eolian_legacy_h)
 
+if INSTALL_EO_FILES
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
 elementaryeolianfiles_DATA = $(elm_public_eolian_files) $(elm_eolian_type_files)
+endif
 
 noinst_DATA += $(elm_legacy_eolian_eo_h)
 
@@ -255,6 +255,9 @@ lib/elementary/elm_access_eo.c \
 lib/elementary/elm_access_eo.legacy.c \
 lib/elementary/elm_actionslider_eo.c \
 lib/elementary/elm_actionslider_eo.legacy.c \
+lib/elementary/elm_atspi_app_object_eo.c \
+lib/elementary/elm_atspi_bridge_eo.c \
+lib/elementary/elm_atspi_bridge_eo.legacy.c \
 lib/elementary/elm_box_eo.c \
 lib/elementary/elm_box_eo.legacy.c \
 lib/elementary/elm_bubble_eo.c \
@@ -433,6 +436,8 @@ lib/elementary/efl_ui_win_legacy_eo.legacy.h \
 lib/elementary/efl_ui_win_socket_legacy_eo.legacy.h \
 lib/elementary/elm_access_eo.legacy.h \
 lib/elementary/elm_actionslider_eo.legacy.h \
+lib/elementary/elm_atspi_app_object_eo.legacy.h \
+lib/elementary/elm_atspi_bridge_eo.legacy.h \
 lib/elementary/elm_box_eo.legacy.h \
 lib/elementary/elm_bubble_eo.legacy.h \
 lib/elementary/elm_calendar_eo.legacy.h \
@@ -540,6 +545,8 @@ lib/elementary/efl_ui_win_legacy_eo.h \
 lib/elementary/efl_ui_win_socket_legacy_eo.h \
 lib/elementary/elm_access_eo.h \
 lib/elementary/elm_actionslider_eo.h \
+lib/elementary/elm_atspi_app_object_eo.h \
+lib/elementary/elm_atspi_bridge_eo.h \
 lib/elementary/elm_box_eo.h \
 lib/elementary/elm_bubble_eo.h \
 lib/elementary/elm_calendar_eo.h \
@@ -629,7 +636,7 @@ lib/elementary/elm_widget_clipper.h \
 $(NULL)
 
 
-EXTRA_DIST2 += ${elementaryeolianfiles_DATA} $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files) $(elm_legacy_eo_headers_priv)
+EXTRA_DIST2 += $(elm_public_eolian_files) $(elm_eolian_type_files) $(elm_legacy_eolian_files) $(elm_private_eolian_files) $(elm_legacy_eo_files) $(elm_legacy_eo_headers_priv)
 
 lib_LTLIBRARIES += lib/elementary/libelementary.la
 
@@ -643,7 +650,6 @@ includesdir = $(includedir)/elementary-@VMAJ@
 includesunstable_HEADERS = \
 	lib/elementary/efl_ui_animation_view_private.h \
 	lib/elementary/elm_gen_common.h \
-	lib/elementary/elm_atspi_bridge.h \
 	lib/elementary/efl_access_object.h \
 	lib/elementary/efl_access_text.h \
 	lib/elementary/efl_access_widget_action.h \
@@ -804,6 +810,7 @@ includesub_HEADERS = \
 	lib/elementary/efl_ui_animation_view.eo.legacy.h \
 	lib/elementary/elm_app.h \
 	lib/elementary/elm_atspi_app_object.h \
+	lib/elementary/elm_atspi_bridge.h \
 	lib/elementary/elm_authors.h \
 	lib/elementary/elm_bg.h \
 	lib/elementary/elm_bg_legacy.h \
@@ -1408,6 +1415,7 @@ bin/elementary/test_tooltip.c \
 bin/elementary/test_transit.c \
 bin/elementary/test_transit_bezier.c \
 bin/elementary/test_ui_box.c \
+bin/elementary/test_ui_box_stack.c \
 bin/elementary/test_ui_clock.c \
 bin/elementary/test_ui_table.c \
 bin/elementary/test_ui_popup.c \
@@ -1940,6 +1948,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_focus_sub.c \
 	tests/elementary/efl_ui_test_box.c \
 	tests/elementary/efl_ui_test_box_flow.c \
+	tests/elementary/efl_ui_test_box_stack.c \
 	tests/elementary/efl_ui_test_table.c \
 	tests/elementary/efl_ui_test_relative_layout.c \
 	tests/elementary/efl_ui_test_grid.c \

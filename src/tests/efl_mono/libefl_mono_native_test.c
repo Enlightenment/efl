@@ -49,7 +49,6 @@
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
 #include "dummy_test_iface.eo.h"
-#include "dummy_another_iface.eo.h"
 #include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
 #include "dummy_part_holder.eo.h"
@@ -73,6 +72,7 @@ typedef struct Dummy_Test_Object_Data
   int setter_only;
   int iface_prop;
   Eo *provider;
+  Eo *iface_provider;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -151,6 +151,12 @@ _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
 {
    efl_constructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
    pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
+
+   if (efl_parent_get(obj) == NULL) { // Avoid recursion
+       pd->iface_provider = efl_add(DUMMY_TEST_OBJECT_CLASS, obj);
+       dummy_test_iface_prop_set(pd->iface_provider, 1997);
+   } else
+       pd->iface_provider = NULL;
    dummy_numberwrapper_number_set(pd->provider, 1999);
 
    return obj;
@@ -161,7 +167,7 @@ Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Obj
   return obj;
 }
 
-Efl_Object *_dummy_test_object_return_null_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+Efl_Object *_dummy_test_object_return_null_object(Eo *obj EINA_UNUSED, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return NULL;
 }
@@ -3784,9 +3790,9 @@ void _dummy_test_object_emit_event_with_struct_complex(Eo *obj, EINA_UNUSED Dumm
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT_COMPLEX, &data);
 }
 
-void _dummy_test_object_emit_event_with_list(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List *data)
+void _dummy_test_object_emit_event_with_array(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array *data)
 {
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_LIST, data);
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_ARRAY, data);
 }
 
 void _dummy_test_object_emit_event_with_under(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
@@ -3888,19 +3894,9 @@ Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test
    return eina_list_accessor_new(pd->list_for_accessor);
 }
 
-void _dummy_test_object_dummy_test_iface_emit_test_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_CONFLICTED, NULL);
-}
-
 void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, NULL);
-}
-
-void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_ANOTHER_IFACE_EVENT_CONFLICTED, NULL);
 }
 
 void _dummy_test_object_setter_only_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
@@ -3928,7 +3924,21 @@ Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dumm
     EINA_LOG_ERR("klass: %p, NUMBERWRAPPER: %p", klass, DUMMY_NUMBERWRAPPER_CLASS);
     if (klass == DUMMY_NUMBERWRAPPER_CLASS)
         return pd->provider;
+    else if (klass == DUMMY_TEST_IFACE_INTERFACE)
+        return pd->iface_provider;
     return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
+}
+
+Efl_Object *_dummy_test_object_call_find_provider(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Efl_Class *type)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, type);
+}
+
+Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, DUMMY_TEST_IFACE_INTERFACE);
 }
 
 /// Dummy.Child
@@ -4048,7 +4058,6 @@ Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dumm
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
 #include "dummy_test_iface.eo.c"
-#include "dummy_another_iface.eo.c"
 #include "dummy_inherit_helper.eo.c"
 #include "dummy_inherit_iface.eo.c"
 #include "dummy_part_holder.eo.c"

@@ -449,6 +449,20 @@ EFL_START_TEST(efl_ui_win_multi_touch_inputs)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_win_test_rotation)
+{
+   Evas_Object *win;
+
+   win = win_add(NULL, "win", ELM_WIN_BASIC);
+
+   elm_win_rotation_set(win, 90);
+   ck_assert_int_eq(elm_win_rotation_get(win), 90);
+   elm_win_rotation_with_resize_set(win, 180);
+   ck_assert_int_eq(elm_win_rotation_get(win), 180);
+   ck_assert_int_eq(elm_win_rotation_get(NULL), -1);
+}
+EFL_END_TEST
+
 void elm_test_win(TCase *tc)
 {
    tcase_add_test(tc, elm_win_legacy_type_check);
@@ -458,6 +472,7 @@ void elm_test_win(TCase *tc)
    tcase_add_test(tc, elm_win_test_exit_on_close);
    tcase_add_test(tc, elm_win_test_app_exit_on_windows_close);
    tcase_add_test(tc, efl_ui_win_multi_touch_inputs);
+   tcase_add_test(tc, elm_win_test_rotation);
 #ifdef HAVE_ELEMENTARY_X
    tcase_add_test(tc, elm_win_autohide);
    tcase_add_test(tc, elm_win_autohide_and_policy_quit_last_window_hidden);

@@ -38,7 +38,6 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
       Efl.Pack_Table.table_columns { get; set; }
       Efl.Pack_Table.table_rows { get; set; }
       Efl.Pack_Table.table_direction { get; set; }
-      Efl.Pack_Linear.pack_end;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
    }

@@ -9,8 +9,6 @@ class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implem
      to be used for one and only one function call. In pseudo-code, the use
      of object of this type looks like the following:
        rect = layout.part("somepart").geometry_get();
-
-     @since 1.20
    ]]
    data: null;
    implements {

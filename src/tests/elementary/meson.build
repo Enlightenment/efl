@@ -126,6 +126,7 @@ efl_ui_suite_src = [
   'efl_ui_test_focus_sub.c',
   'efl_ui_test_box.c',
   'efl_ui_test_box_flow.c',
+  'efl_ui_test_box_stack.c',
   'efl_ui_test_table.c',
   'efl_ui_test_grid.c',
   'efl_ui_test_relative_layout.c',
@@ -147,6 +148,11 @@ efl_ui_suite = executable('efl_ui_suite',
   '-DELM_IMAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
   '-DELM_TEST_DATA_DIR="'+join_paths(meson.build_root(), 'data', 'elementary')+'"',
   ]
+)
+
+efl_ui_compile_test = executable('efl_ui_compile_test',
+  'efl_ui_compile_test.c',
+  dependencies: [elementary, eio],
 )
 
 test('elementary-suite', elementary_suite,

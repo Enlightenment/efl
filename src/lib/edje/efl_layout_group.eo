@@ -4,7 +4,7 @@ interface Efl.Layout.Group
 {
    [[APIs representing static data from a group in an edje file.
 
-     @since 1.21
+    @since 1.22
    ]]
    methods {
       @property group_size_min {

@@ -19,8 +19,6 @@ interface @beta Efl.Gfx.Frame_Controller
 
               This will be $true for animated object for instance but $false
               for a single frame object.
-
-              @since 1.1
             ]]
          }
          values {
@@ -34,8 +32,6 @@ interface @beta Efl.Gfx.Frame_Controller
          ]]
          set {
             [[Set the frame to current frame of an animated object.
-
-              @since 1.1
             ]]
             return: bool; [[Returns $true if the frame index is valid.]]
          }
@@ -49,8 +45,6 @@ interface @beta Efl.Gfx.Frame_Controller
             [[Get the total number of frames of the object, if animated.
 
               Returns -1 if not animated.
-
-              @since 1.1
             ]]
             return: int; [[The number of frames in the animated object.]]
          }
@@ -70,8 +64,6 @@ interface @beta Efl.Gfx.Frame_Controller
               1->2->3->2->1->2->3->1...
 
               The default type is @Efl.Gfx.Frame_Controller_Loop_Hint.loop.
-
-              @since 1.1
             ]]
             return: Efl.Gfx.Frame_Controller_Loop_Hint; [[Loop type of the animated object.]]
          }
@@ -86,8 +78,6 @@ interface @beta Efl.Gfx.Frame_Controller
 
               If 0 is returned, then looping should happen indefinitely
               (no limit to the number of times it loops).
-
-              @since 1.1
             ]]
             return: int; [[The number of loop of an animated object.]]
          }
@@ -102,8 +92,6 @@ interface @beta Efl.Gfx.Frame_Controller
               If $start_frame is 1 and $frame_num is 0, this returns the
               duration of frame 1. If $start_frame is 1 and $frame_num is 1,
               this returns the total duration of frame 1 + frame 2.
-
-              @since 1.1
             ]]
          }
          keys {

@@ -600,7 +600,6 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    if (elm_widget_is_legacy(obj))
      efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                             _on_size_hints_changed, sd);
-   ecore_job_del(sd->sizing_job);
    ecore_timer_del(sd->anim_timer);
    evas_object_del(sd->img);
    _prev_img_del(sd);
@@ -741,17 +740,14 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-static void
-_sizing_eval_cb(void *data)
+void
+_efl_ui_image_sizing_eval(Evas_Object *obj)
 {
-   Evas_Object *obj = data;
+   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
+
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Eina_Size2D sz;
    double ts;
-
-   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
-
-   sd->sizing_job = NULL;
 
    // TODO: remove this function after using the widget's scale value instead of image's scale value,
    if (sd->no_scale)
@@ -810,15 +806,6 @@ _sizing_eval_cb(void *data)
       _image_sizing_eval(sd, sd->img);
       if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
    }
-}
-
-void
-_efl_ui_image_sizing_eval(Evas_Object *obj)
-{
-   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
-
-   if (sd->sizing_job) ecore_job_del(sd->sizing_job);
-   sd->sizing_job = ecore_job_add(_sizing_eval_cb, obj);
 }
 
 static void

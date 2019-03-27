@@ -36,22 +36,17 @@ static class UnsafeNativeMethods {
     }
 }
 
-public enum Components {
-    Basic,
-    Ui
-}
-
 public static class All {
     private static bool InitializedUi = false;
 
-    public static void Init(Efl.Components components=Components.Basic) {
+    public static void Init(Efl.Csharp.Components components=Efl.Csharp.Components.Basic) {
         Eina.Config.Init();
         Efl.Eo.Config.Init();
         ecore_init();
         evas_init();
         eldbus.Config.Init();
 
-        if (components == Components.Ui) {
+        if (components == Efl.Csharp.Components.Ui) {
             Efl.Ui.Config.Init();
             InitializedUi = true;
         }

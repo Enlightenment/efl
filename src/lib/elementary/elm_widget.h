@@ -706,13 +706,20 @@ Efl_Canvas_Object *   _efl_ui_widget_bg_get(const Efl_Ui_Widget *obj);
 
 #define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr, ...)   \
   Elm_Widget_Smart_Data *ptr;                        \
-  ptr = efl_data_scope_get(o, EFL_UI_WIDGET_CLASS);  \
+  ptr = efl_data_scope_safe_get(o, EFL_UI_WIDGET_CLASS); \
   if (EINA_UNLIKELY(!ptr))                           \
     {                                                \
        ERR("No widget data for object %p (%s)",      \
            o, evas_object_type_get(o));              \
        return __VA_ARGS__;                           \
     }
+
+#define ELM_WIDGET_DATA_GET(o, ptr) \
+  Elm_Widget_Smart_Data *ptr;                        \
+  ptr = efl_data_scope_safe_get(o, EFL_UI_WIDGET_CLASS); \
+  if (EINA_UNLIKELY(!ptr))                           \
+       ERR("No widget data for object %p (%s)",      \
+           o, evas_object_type_get(o));
 
 #define ELM_WIDGET_CHECK(obj)                              \
   if (EINA_UNLIKELY(!efl_isa((obj), EFL_UI_WIDGET_CLASS))) \

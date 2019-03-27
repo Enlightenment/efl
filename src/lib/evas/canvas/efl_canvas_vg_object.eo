@@ -54,7 +54,7 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       @property root_node {
          get {
             [[Get the root node of the evas_object_vg.
-              @since 1.14]]
+            ]]
          }
          set {
             [[Set the root node of the evas_object_vg.

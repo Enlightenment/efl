@@ -1,6 +1,9 @@
 interface Efl.Text
 {
-   [[Efl text interface]]
+   [[Efl text interface
+
+     @since 1.22
+   ]]
    methods {
       @property text {
          set {

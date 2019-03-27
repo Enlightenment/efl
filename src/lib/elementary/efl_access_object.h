@@ -2,13 +2,7 @@
 #define EFL_ACCESS_H
 
 #ifdef EFL_BETA_API_SUPPORT
-
-#ifdef EFL_EO_API_SUPPORT
 #include "efl_access_object.eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "efl_access_object.eo.legacy.h"
-#endif
 
 /*
  * Sets a particilar state type for given state set.
@@ -35,8 +29,6 @@ EAPI void efl_access_attributes_list_free(Eina_List *list);
  */
 EAPI void
 efl_access_attribute_free(Efl_Access_Attribute *attr);
-
-#ifdef EFL_EO_API_SUPPORT
 
 /**
  * Emits Accessible 'StateChanged' signal.
@@ -129,8 +121,6 @@ efl_access_attribute_free(Efl_Access_Attribute *attr);
  */
 #define efl_access_removed(obj) \
    efl_access_object_event_emit(obj, EFL_ACCESS_OBJECT_EVENT_REMOVED, NULL);
-
-#endif
 
 #endif
 #endif

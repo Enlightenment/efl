@@ -210,7 +210,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
    Eina_Strbuf *command = eina_strbuf_new();
    unsigned int i = 0;
 
-   pd->command = eina_array_new(eina_array_count(array));
+   pd->command = eina_array_new(array ? eina_array_count(array) : 0);
    for (i = 0; i < (array ? eina_array_count(array) : 0); ++i)
      {
         char *content = eina_array_data_get(array, i);
@@ -223,12 +223,13 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
               eina_stringshare_del(eina_array_pop(pd->command));
              eina_array_free(pd->command);
              pd->command = NULL;
-             for (;i < (array ? eina_array_count(array) : 0); ++i)
+             for (;i < eina_array_count(array); ++i)
                {
                   content = eina_array_data_get(array, i);
                   eina_stringshare_del(content);
                }
              eina_array_free(array);
+             eina_strbuf_free(command);
              return EINA_FALSE;
           }
 
@@ -256,7 +257,9 @@ _efl_core_command_line_command_string_set(Eo *obj EINA_UNUSED, Efl_Core_Command_
    EINA_SAFETY_ON_TRUE_RETURN_VAL(pd->filled, EINA_FALSE);
 
    pd->string_command = eina_strdup(str);
-   _remove_invalid_chars(pd->string_command);
+
+   if (pd->string_command)
+     _remove_invalid_chars(pd->string_command);
    pd->command = _unescape(str);
    if (!pd->command)
      {

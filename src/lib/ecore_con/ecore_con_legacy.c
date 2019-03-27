@@ -293,7 +293,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
           efl_event_callback_array_del(inner_socket, _ecore_con_client_socket_ssl_cbs(), cl);
 
         parent = efl_parent_get(cl->socket);
-        if (parent && (parent != svr->server))
+        if (parent && svr && (parent != svr->server))
           efl_del(cl->socket); /* we own it */
         else
           efl_unref(cl->socket);

@@ -154,6 +154,7 @@ struct _Elm_Gengrid_Data
 
    Eina_Bool                          scr_minw;
    Eina_Bool                          scr_minh;
+   Eina_Bool                          order_dirty; /* boolean flag indicating if there needs to be an update to the focus_order of the widget.*/
 };
 
 struct Elm_Gen_Item_Type

@@ -11,8 +11,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
    methods {
       @property is_empty {
          [[Whether the object is empty (no text) or not
-
-           @since 1.18
          ]]
          get {
          }
@@ -26,8 +24,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            The given $start and $end cursor act like out-variables here,
            as they are set to the positions of the start and the end of the
            visible range in the text, respectively.
-
-           @since 1.18
          ]]
          return: bool; [[$true on success, $false otherwise]]
          params {
@@ -39,8 +35,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          [[Gets the left, right, top and bottom insets of the text.
 
            The inset is any applied padding on the text.
-
-           @since 1.18
          ]]
          get {}
          values {
@@ -55,8 +49,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            segments. This is useful, for example, in the recipient fields of
            e-mail clients where bidi oddities can occur when mixing RTL
            and LTR.
-
-           @since 1.18
          ]]
          set {}
          get {}
@@ -66,8 +58,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       }
       @property legacy_newline {
          [[When $true, newline character will behave as a paragraph separator.
-
-           @since 1.18
          ]]
          set {}
          get {}
@@ -85,8 +75,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            first.
 
            Set $style to $NULL to delete it.
-
-           @since 1.18
          ]]
          set {
          }
@@ -116,8 +104,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            "You shall not pass!" with no margins or padding and assuming
            a monospace font and a size of 7x10 char widths (for simplicity)
            has a native size of 19x1 and a formatted size of 5x4.
-
-           @since 1.18
          ]]
          get {}
          values {
@@ -142,8 +128,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            "You shall not pass!" with no margins or padding and assuming
            a monospace font and a size of 7x10 char widths (for simplicity)
            has a native size of 19x1 and a formatted size of 5x4.
-
-           @since 1.18
          ]]
          get {}
          values {
@@ -153,8 +137,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       }
       range_text_get @const {
          [[Returns the text in the range between $cur1 and $cur2.
-
-           @since 1.18
          ]]
          return: mstring @owned; [[The text in the given range]]
          params {
@@ -167,8 +149,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            The geometry is represented as rectangles for each of the line
            segments in the given range [$cur1, $cur2].
-
-           @since 1.19
          ]]
          params {
              @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
@@ -184,8 +164,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            The geometry is the geometry in which rectangles in middle lines of
            range are merged into one big rectangle. This is an optimized
            version of @.range_geometry_get.
-
-           @since 1.19
          ]]
          params {
              @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
@@ -212,8 +190,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            The textblock does the layout of the text according to the
            position of the obstacle.
-
-           @since 1.18
          ]]
          params {
             @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
@@ -222,8 +198,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
       }
       obstacle_del {
          [[Removes $eo_obs from observation during text layout.
-
-           @since 1.18
          ]]
          params {
             @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
@@ -242,8 +216,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            differrent coordinates relative to the textblock, you need to
            call this so it will consider this new state and will relayout
            the text.
-
-           @since 1.18
          ]]
       }
       async_layout {
@@ -251,8 +223,6 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
 
            Once layout is complete, the result is returned as @Eina.Rect,
            with w, h fields set.
-
-           @since 1.21
          ]]
          return: future<Eina.Rect> @owned; [[Future for layout result]]
       }

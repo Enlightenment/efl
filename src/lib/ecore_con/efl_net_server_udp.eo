@@ -1,7 +1,5 @@
 class @beta Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
     [[A UDP server.
-
-      @since 1.19
     ]]
 
     methods {

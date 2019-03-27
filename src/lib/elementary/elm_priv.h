@@ -67,6 +67,8 @@
 # include "elm_code_private.h"
 #include "elm_access_eo.h"
 #include "elm_actionslider_eo.h"
+#include "elm_atspi_app_object_eo.h"
+#include "elm_atspi_bridge_eo.h"
 #include "elm_box_eo.h"
 #include "elm_bubble_eo.h"
 #include "elm_calendar_eo.h"

@@ -51,8 +51,6 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scroll
       item,unfocused : Efl.Ui.List_View_Item_Event;
       item,highlighted : Efl.Ui.List_View_Item_Event;
       item,unhighlighted : Efl.Ui.List_View_Item_Event;
-      item,selected : Efl.Ui.List_View_Item_Event;
-      item,unselected : Efl.Ui.List_View_Item_Event;
    }
 
    implements {

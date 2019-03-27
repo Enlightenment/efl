@@ -278,7 +278,11 @@ struct klass_interface_name_generator
   template <typename T>
   std::string operator()(T const& klass) const
   {
-    return utils::remove_all(klass.eolian_name, '_');
+    std::string name = utils::remove_all(klass.eolian_name, '_');
+    if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
+      return "I" + name;
+    else
+      return name;
   }
 
   template <typename OutputIterator, typename Attr, typename Context>
@@ -306,10 +310,23 @@ struct klass_full_interface_name_generator
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  std::string name = utils::remove_all(klass.eolian_name, '_');
-  if (klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
-    return name;
-  return name + "Concrete";
+  if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
+    return klass_interface_name(klass) + "Concrete";
+
+  return utils::remove_all(klass.eolian_name, '_');
+}
+
+template<typename  T>
+inline std::string klass_concrete_or_interface_name(T const& klass)
+{
+    switch(klass.type)
+    {
+    case attributes::class_type::abstract_:
+    case attributes::class_type::regular:
+      return klass_concrete_name(klass);
+    default:
+      return klass_interface_name(klass);
+    }
 }
 
 struct klass_full_concrete_name_generator
@@ -408,7 +425,7 @@ inline std::string managed_event_name(std::string const& name)
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
    std::string ret;
-     ret = klass_interface_name(evt.klass);
+     ret = klass_concrete_or_interface_name(evt.klass);
    return ret + name_helpers::managed_event_name(evt.name) + "_Args";
 }
 
@@ -425,7 +442,7 @@ inline std::string translate_inherited_event_name(const attributes::event_def &e
 
 // Open/close namespaces
 template<typename OutputIterator, typename Context>
-bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context context)
+bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context const& context)
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
@@ -434,7 +451,7 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 }
 
 template<typename OutputIterator, typename Context>
-bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context context)
+bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
      auto close_namespace = *(lit("} ")) << "\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);

@@ -7,8 +7,6 @@ interface @beta Efl.Net.Socket extends Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Clos
         - @Efl.Io.Closer: to close the socket for further operations.
 
       As such it can be used with utilities like @Efl.Io.Copier.
-
-      @since 1.19
     ]]
     methods {
         @property address_local {

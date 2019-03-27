@@ -981,6 +981,8 @@ Eina_Error _elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *pd, const char 
 
 Eina_Error _elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *pd);
 
+void _elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *pd);
+
 
 Efl_Object *_elm_entry_efl_part_part_get(const Eo *obj, Elm_Entry_Data *pd, const char *name);
 
@@ -1142,6 +1144,7 @@ _elm_entry_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_entry_efl_access_widget_action_elm_actions_get),
       EFL_OBJECT_OP_FUNC(efl_file_set, _elm_entry_efl_file_file_set),
       EFL_OBJECT_OP_FUNC(efl_file_load, _elm_entry_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _elm_entry_efl_file_unload),
       EFL_OBJECT_OP_FUNC(efl_part_get, _elm_entry_efl_part_part_get),
       ELM_ENTRY_EXTRA_OPS
    );

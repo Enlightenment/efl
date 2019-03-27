@@ -2,7 +2,10 @@ import efl_ui;
 
 class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
-   [[Elementary layout class]]
+   [[Elementary layout class
+
+     @since 1.22
+   ]]
    data: null;
    implements {
       Efl.File.file { get; set; }

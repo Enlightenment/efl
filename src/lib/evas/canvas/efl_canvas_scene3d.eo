@@ -5,8 +5,6 @@ class @beta Efl.Canvas.Scene3d extends Efl.Canvas.Image_Internal
    methods {
       @property scene3d {
          [[The 3d scene to display in this view.
-
-           @since 1.10
          ]]
          set {}
          get {}

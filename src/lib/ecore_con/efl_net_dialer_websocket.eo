@@ -3,8 +3,6 @@ import efl_net_http_types;
 
 enum @beta Efl.Net.Dialer_Websocket_Streaming_Mode {
     [[How to map WebSocket to EFL I/O Interfaces.
-
-      @since 1.19
     ]]
     disabled, [[@Efl.Io.Writer.write and @Efl.Io.Reader.read will fail by returning ENOSTR]]
     binary, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer_Websocket.binary_send]]
@@ -18,8 +16,6 @@ enum @beta Efl.Net.Dialer_Websocket_Close_Reason {
       using "_start" and "end" suffixes.
 
       See https://tools.ietf.org/html/rfc6455#section-7.4.1
-
-      @since 1.19
     ]]
     normal = 1000, [[Indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.]]
     going_away = 1001, [[Indicates that an endpoint is "going away", such as a server going down or a browser having navigated away from a page.]]
@@ -40,8 +36,6 @@ enum @beta Efl.Net.Dialer_Websocket_Close_Reason {
 
 struct @beta Efl.Net.Dialer_Websocket_Closed_Reason {
     [[Close reason event payload.
-
-      @since 1.19
     ]]
     reason: Efl.Net.Dialer_Websocket_Close_Reason; [[Closing reason]]
     message: string; [[Textual closing reason message]]
@@ -74,8 +68,6 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
        - socks5://proxyserver (default port 1080)
        - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
        - socks4://proxyserver:port (SOCKSv4)
-
-      @since 1.19
     ]]
 
     methods {

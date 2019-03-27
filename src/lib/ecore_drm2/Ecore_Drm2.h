@@ -793,6 +793,18 @@ EAPI int ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output);
 EAPI Eina_Bool ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation);
 
 /**
+ * Get current output rotation
+ *
+ * @param output
+ *
+ * @return An integer representing the output current rotation
+ *
+ * @ingroup Ecore_Drm2_Output_Group
+ * @since 1.22
+ */
+EAPI int ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output);
+
+/**
  * Set the user data for the output's page flip handler
  *
  * @param output The output to update user data for

@@ -16,7 +16,6 @@
 #include "config.h"
 #else
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 #endif
 
 #include <Ecore.h>

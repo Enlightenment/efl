@@ -9,7 +9,7 @@ interface Efl.Io.Closer {
       Calls to @.close() may or may not block, that's not up to this
       interface to specify.
 
-      @since 1.19
+      @since 1.22
     ]]
 
     methods {

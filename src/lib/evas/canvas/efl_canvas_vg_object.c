@@ -257,7 +257,7 @@ _efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *p
         int pl = pname ? strlen(pname) : 0;
         int cl = file ? strlen(file) : 0;
 
-        if ((pl != cl) || strcmp(pname, file))
+        if ((pl != cl) || (pname && file && strcmp(pname, file)))
           {
              Evas_Object_Protected_Data *obj;
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

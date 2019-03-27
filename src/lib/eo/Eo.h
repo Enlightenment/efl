@@ -2083,14 +2083,6 @@ typedef void (*efl_key_data_free_func)(void *);
  */
 
 /**
- * Don't use this.
- * The values of the returned event structure are also internal, don't assume
- * anything about them.
- * @internal
- */
-EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(const char *_event_name);
-
-/**
  * Helper for sorting callbacks array. Automatically used by
  * @ref EFL_CALLBACKS_ARRAY_DEFINE
  */

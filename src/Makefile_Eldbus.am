@@ -21,12 +21,16 @@ BUILT_SOURCES += \
 	$(eldbus_eolian_c) \
 	$(eldbus_eolian_h)
 
+if INSTALL_EO_FILES
 eldbuseolianfilesdir = $(datadir)/eolian/include/eldbus-@VMAJ@
-eldbuseolianfiles_DATA = $(eldbus_eolian_files) \
-			 $(eldbus_eolian_type_files)
+eldbuseolianfiles_DATA = \
+$(eldbus_eolian_files) \
+$(eldbus_eolian_type_files)
+endif
 
 EXTRA_DIST2 += \
-	${eldbuseolianfiles_DATA}
+$(eldbus_eolian_files) \
+$(eldbus_eolian_type_files)
 
 lib_LTLIBRARIES += lib/eldbus/libeldbus.la
 

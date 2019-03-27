@@ -20,7 +20,7 @@ class TestInheritance
         }
     }
 
-    internal class Inherit2 : Dummy.TestObject, Dummy.InheritIface
+    internal class Inherit2 : Dummy.TestObject, Dummy.IInheritIface
     {
         override public void IntOut (int x, out int y)
         {

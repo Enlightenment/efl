@@ -208,6 +208,7 @@ struct _Ecore_Drm2_Output
    int fd;
    int pipe;
    int x, y, w, h, pw, ph;
+   int rotation;
 
    long fallback_sec, fallback_usec;
 

@@ -1,5 +1,5 @@
 EFL_VERSION([1], [22], [0], [release])
-AC_INIT([efl], [efl_version-alpha1], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([efl], [efl_version-beta2], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -28,7 +28,6 @@ CXXFLAGS="${CXXFLAGS} -Wno-shadow" # No shadow warnings
 #### Apply configuring with legacy api's only, eo api's or both.
 
 EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
 efl_api="both"
 
 #### For the moment the Eo EFL API is not ready you need to explicitly optin.
@@ -43,22 +42,15 @@ AC_ARG_WITH([api],
 case "$efl_api" in
     eo)
         EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         CFOPT_WARNING="xyes"
         ;;
-    legacy)
+    legacy|both)
         EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF=""
-        ;;
-    both)
-        EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         ;;
     *) AC_MSG_ERROR([Invalid api (${efl_api}): must be eo, legacy or both]) ;;
 esac
 
 AC_SUBST(EFL_API_LEGACY_DEF)
-AC_SUBST(EFL_API_EO_DEF)
 
 #### Additional options to configure
 
@@ -146,6 +138,20 @@ case "${build_tests}" in
      AC_MSG_ERROR([Unknown build tests option: --with-tests=${build_tests}])
      ;;
 esac
+
+install_eo_files="no"
+AC_ARG_ENABLE([install-eo-files],
+   [AS_HELP_STRING([--enable-install-eo-files],[Enable installing eo files. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_eo_files="yes"
+    else
+       install_eo_files="no"
+    fi
+   ],
+   [install_eo_files="no"])
+
+AM_CONDITIONAL([INSTALL_EO_FILES], [test "${install_eo_files}" = "yes"])
 
 AC_ARG_WITH([ecore-con-http-test-url],
    [AS_HELP_STRING([--with-ecore-con-http-test-url=http://username:password@example.com],[Url of http server for testing with username and password])],[ECORE_CON_HTTP_TEST_URL=${withval}][AC_DEFINE_UNQUOTED([ECORE_CON_HTTP_TEST_URL],["$withval"],[Http url for testing])])

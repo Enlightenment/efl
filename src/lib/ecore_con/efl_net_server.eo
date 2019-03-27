@@ -9,8 +9,6 @@ interface @beta Efl.Net.Server {
       interface. These implement the standard @Efl.Io.Reader,
       @Efl.Io.Writer and @Efl.Io.Closer interfaces, so can be used
       with utilities such as @Efl.Io.Copier.
-
-      @since 1.19
     ]]
 
     events {

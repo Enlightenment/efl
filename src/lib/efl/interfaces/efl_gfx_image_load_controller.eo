@@ -92,8 +92,6 @@ interface @beta Efl.Gfx.Image_Load_Controller
       @property load_region_support {
          [[Indicates whether the @.load_region property is supported for the
            current file.
-
-           @since 1.2
          ]]
          get {}
          values {
@@ -130,8 +128,6 @@ interface @beta Efl.Gfx.Image_Load_Controller
            JPEG image. If this flag is $false, then the orientation will be
            ignored at load time, otherwise the image will be loaded with the
            proper orientation.
-
-           @since 1.1
          ]]
          set {}
          get {}

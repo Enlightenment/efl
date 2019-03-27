@@ -104,7 +104,7 @@ public struct EventDescription {
     }
 };
 
-public delegate void EventCb(System.IntPtr data, ref Event_StructInternal evt);
+public delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
 
 [StructLayout(LayoutKind.Sequential)]
 public struct TextCursorCursor {

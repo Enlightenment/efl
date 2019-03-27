@@ -1,7 +1,5 @@
 mixin @beta Efl.Io.Sizer_Fd extends Efl.Io.Sizer {
     [[Resizes fd usign ftruncate(2).
-
-      @since 1.19
     ]]
 
     methods {

@@ -4704,11 +4704,13 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      ERR("Error in call method " ATSPI_DBUS_INTERFACE_DEC "." "NotifyListenersSync" ": %s %s", errname, errmsg);
    else
-       if (!eldbus_message_arguments_get(reply, "b", &ret))
-          ERR("Invalid answer signature");
+     if (!eldbus_message_arguments_get(reply, "b", &ret))
+       ERR("Invalid answer signature");
+
+   eldbus_message_unref(reply);
 
    if (ret)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return EINA_FALSE;
 }
@@ -4799,4 +4801,4 @@ _elm_atspi_bridge_efl_object_destructor(Eo *obj, Elm_Atspi_Bridge_Data *pd)
    efl_destructor(efl_super(obj, ELM_ATSPI_BRIDGE_CLASS));
 }
 
-#include "elm_atspi_bridge.eo.c"
+#include "elm_atspi_bridge_eo.c"

@@ -203,7 +203,7 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
                            event3 = true;
                            ck_assert(v == 42);
                          });
-  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_list<const int &> e)
+  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_array<const int &> e)
                          {
                            event4 = true;
                            ck_assert(e.size() == 1);

@@ -1,5 +1,5 @@
 
-#ifdef EFL_EO_API_SUPPORT
+#ifdef EFL_BETA_API_SUPPORT
 #ifndef ELM_VIEW_LIST_H
 #define ELM_VIEW_LIST_H
 

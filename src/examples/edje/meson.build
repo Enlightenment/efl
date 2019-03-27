@@ -42,7 +42,8 @@ edc_files = [
   'table.edc',
   'text.edc',
   'textblock-hyphen.edc',
-  'toggle_using_filter.edc'
+  'toggle_using_filter.edc',
+  'multisense.edc',
 ]
 
 if (get_option('physics'))
@@ -130,6 +131,7 @@ foreach edje_example : edje_examples
   executable(edje_example,
     [edje_example + '.c'] +  themes,
     dependencies: [edje, ecore_evas],
-    c_args: ['-DPACKAGE_DATA_DIR="'+ meson.current_build_dir()+'"',]
+    c_args: ['-DPACKAGE_DATA_DIR="'+ meson.current_build_dir()+'"',
+             '-DPACKAGE_SOURCE_DATA_DIR="'+ meson.current_source_dir()+'"',]
   )
 endforeach

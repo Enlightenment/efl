@@ -12,8 +12,6 @@ mixin @beta Efl.Ui.Focus.Manager_Sub requires Efl.Object extends Efl.Ui.Focus.Ma
 
       You can filter the border elements by overriding the property
       @Efl.Ui.Focus.Manager.border_elements.
-
-      @since 1.20
     ]]
     implements {
         Efl.Object.constructor;

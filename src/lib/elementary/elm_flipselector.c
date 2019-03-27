@@ -233,8 +233,7 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SELECTABLE_SELECTED, eo_item);
+   evas_object_smart_callback_call(sd->obj, "selected", eo_item);
 }
 
 static void

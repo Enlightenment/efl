@@ -12,7 +12,6 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool stable;
-   Eina_Bool event_redef;
    Eina_Bool unimplemented;
 } Validate_State;
 
@@ -505,22 +504,18 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
 {
    const Eolian_Object *oobj = NULL;
 
-   if (vals->event_redef)
+   oobj = eina_hash_find(nhash, &event->base.name);
+   if (EINA_UNLIKELY(!!oobj))
      {
-        oobj = eina_hash_find(nhash, &event->base.name);
-        if (EINA_UNLIKELY(!!oobj))
-          {
-             _eo_parser_log(&event->base,
-                      "event '%s' conflicts with another event (at %s:%d:%d)",
-                      event->base.name, oobj->file, oobj->line, oobj->column);
-             vals->warned = EINA_TRUE;
-          }
+        _eo_parser_log(&event->base,
+                 "event '%s' conflicts with another event (at %s:%d:%d)",
+                 event->base.name, oobj->file, oobj->line, oobj->column);
+        vals->warned = EINA_TRUE;
      }
 
    if (event->base.validated)
      {
-        if (vals->event_redef && !oobj)
-          eina_hash_add(nhash, &event->base.name, &event->base);
+        eina_hash_set(nhash, &event->base.name, &event->base);
         return EINA_TRUE;
      }
 
@@ -529,11 +524,70 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
    if (!_validate_type(vals, event->type))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
+   /* if this is an alias we need the lowest type in the stack, this is
+    * after validation so all the necessary fields are properly filled in
+    */
+   const Eolian_Type *tp = eolian_type_aliased_base_get(event->type);
+
+   /* event types are specially restricted
+    * but stuff like pointer-to-pointer is alrady handled by _validate_type
+    */
+   if (tp->type == EOLIAN_TYPE_REGULAR && vals->stable)
+     {
+        /* explicit pointers never allowed */
+        if (tp->is_ptr)
+          {
+             _eo_parser_log(&tp->base, "pointers not allowed in events");
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+          }
+        /* require containers to be const for now...
+         *
+         * this is FIXME, and decision wasn't reached before 1.22
+         * it is a simple search-replace anyway
+         */
+        if (database_type_is_ownable(tp->base.unit, tp, EINA_FALSE))
+          {
+             if (!tp->is_const)
+               {
+                  _eo_parser_log(&tp->base, "event container types must be const");
+                  return _reset_stable(vals, was_stable, EINA_FALSE);
+               }
+          }
+        else if (tp->is_const)
+          {
+             _eo_parser_log(&tp->base, "event value types cannot be const");
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+          }
+        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
+        /* containers are allowed but not iterators/lists */
+        if (kwid == KW_iterator || kwid == KW_list)
+          {
+             _eo_parser_log(&tp->base, "sequence containers not allowed in events");
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+          }
+        /* rw slices are not allowed as regular types are always immutable */
+        if (kwid == KW_rw_slice)
+          {
+             _eo_parser_log(&tp->base, "mutable slices not allowed in events");
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+          }
+        /* any type past builtin value types and containers is not allowed,
+         * any_value is allowed but passed as const reference, any_value_ptr
+         * is not; string is allowed, but mutable strings or stringshares are
+         * not and neither are string buffers, the type is never owned by the
+         * callee, so all strings passed in are unowned and read-only
+         */
+        if (kwid >= KW_any_value_ptr && kwid != KW_string)
+          {
+             _eo_parser_log(&tp->base, "forbidden event type");
+             return _reset_stable(vals, was_stable, EINA_FALSE);
+          }
+     }
+
    if (!_validate_doc(event->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (vals->event_redef && !oobj)
-     eina_hash_add(nhash, &event->base.name, &event->base);
+   eina_hash_set(nhash, &event->base.name, &event->base);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&event->base);
@@ -1353,7 +1407,6 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       EINA_TRUE,
-      !!getenv("EOLIAN_EVENT_REDEF_WARN"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
    };
 

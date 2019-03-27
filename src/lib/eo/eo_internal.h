@@ -29,6 +29,15 @@
 
 typedef unsigned char Eina_Bool;
 typedef struct _Eo_Opaque Eo;
+typedef struct _Efl_Event_Description Efl_Event_Description;
+
+/**
+ * Don't use this.
+ * The values of the returned event structure are also internal, don't assume
+ * anything about them.
+ * @internal
+ */
+EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(const char *_event_name);
 
 EAPI void ___efl_auto_unref_set(Eo *obj_id, Eina_Bool enable);
 
