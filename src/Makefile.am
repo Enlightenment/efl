@@ -2,6 +2,7 @@ AUTOMAKE_OPTIONS= -Wno-portability
 MAINTAINERCLEANFILES = Makefile.in
 CLEANFILES =
 BUILT_SOURCES =
+PHONIES =
 
 EOLIAN_FLAGS = -I$(srcdir)
 EOLIAN_GEN_FLAGS = -S
@@ -101,7 +102,7 @@ endif
 include Makefile_Eolian_Js.am
 include Makefile_Efl_Js.am
 
-.PHONY: benchmark examples
+.PHONY: benchmark examples $(PHONIES)
 
 BENCHMARK_SUBDIRS = \
 benchmarks/eina \

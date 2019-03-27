@@ -215,7 +215,8 @@ BUILT_SOURCES += \
 	$(elm_private_eolian_h) \
 	$(elm_legacy_eolian_c) \
 	$(elm_legacy_eolian_eo_h) \
-	$(elm_legacy_eolian_legacy_h)
+	$(elm_legacy_eolian_legacy_h) \
+ lib/elementary/elm_default_config.x
 
 if INSTALL_EO_FILES
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
@@ -2003,3 +2004,7 @@ lib/elementary/Elementary_Options.h.in \
 lib/elementary/elm_code_widget_text.c \
 lib/elementary/elm_code_widget_undo.c
 
+PHONIES += lib/elementary/elm_default_config.x
+
+lib/elementary/elm_default_config.x: $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $(abs_top_srcdir)/src/lib/elementary/config_embed
+	lib/elementary/config_embed $< $@
