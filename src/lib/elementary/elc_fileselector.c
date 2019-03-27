@@ -1164,10 +1164,10 @@ _clear_selections(Elm_Fileselector_Data *sd, Elm_Object_Item *last_selected)
 }
 
 static void
-_on_item_selected(void *data, const Efl_Event *event)
+_on_item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    //This event_info could be a list or gengrid item
-   Elm_Object_Item *it = event->info;
+   Elm_Object_Item *it = event_info;
    Elm_Fileselector_Item_Data *it_data = NULL;
 
    ELM_FILESELECTOR_DATA_GET(data, sd);
@@ -1254,12 +1254,12 @@ _on_item_selected(void *data, const Efl_Event *event)
 }
 
 static void
-_on_item_unselected(void *data, const Efl_Event *event)
+_on_item_unselected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Eina_List *li, *l;
    const Elm_Fileselector_Item_Data *it_data;
    Eina_Strbuf *buf;
-   Elm_Object_Item *it = event->info;
+   Elm_Object_Item *it = event_info;
    Elm_Object_Item *it2 = NULL;
    Eina_Bool first = EINA_TRUE;
 
@@ -1555,10 +1555,8 @@ _files_list_add(Evas_Object *obj)
    evas_object_data_set(li, "parent", obj);
    efl_ui_mirrored_automatic_set(li, EINA_FALSE);
 
-   efl_event_callback_add
-     (li, EFL_UI_EVENT_ITEM_SELECTED, _on_item_selected, obj);
-   efl_event_callback_add
-     (li, EFL_UI_EVENT_ITEM_UNSELECTED, _on_item_unselected, obj);
+   evas_object_smart_callback_add(li, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(li, "unselected", _on_item_unselected, obj);
    efl_event_callback_add
      (li, ELM_GENLIST_EVENT_ACTIVATED, _on_item_activated, obj);
    efl_event_callback_add
@@ -1592,10 +1590,8 @@ _files_grid_add(Evas_Object *obj)
 
    elm_gengrid_align_set(grid, 0.0, 0.0);
 
-   efl_event_callback_add
-     (grid, EFL_UI_EVENT_ITEM_SELECTED, _on_item_selected, obj);
-   efl_event_callback_add
-     (grid, EFL_UI_EVENT_ITEM_UNSELECTED, _on_item_unselected, obj);
+   evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
+   evas_object_smart_callback_add(grid, "unselected", _on_item_unselected, obj);
    efl_event_callback_add
      (grid, ELM_GENGRID_EVENT_ACTIVATED, _on_item_activated, obj);
    efl_event_callback_add
