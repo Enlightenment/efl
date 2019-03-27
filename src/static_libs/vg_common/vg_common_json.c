@@ -193,7 +193,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 }
 
 static void
-_construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer)
+_construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
    if (!parent) return;
 
@@ -267,13 +267,14 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
    Efl_Canvas_Vg_Container *ptree = NULL;
 
    //Note: We assume that if matte is valid, next layer must be a matte source.
-   LOTMatteType matte = MatteNone;
+   int matte_mode = 0;
 
    //Is this layer a container layer?
    for (unsigned int i = 0; i < layer->mLayerList.size; i++)
      {
         LOTLayerNode *clayer = layer->mLayerList.ptr[i];
 
+        //Source Layer
         char *key = _get_key_val(clayer);
         Efl_Canvas_Vg_Container *ctree = efl_key_data_get(root, key);
         if (!ctree)
@@ -283,70 +284,78 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
           }
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
-        printf("%s (%p) matte:%d => %p\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte, ptree);
+        printf("%s (%p) matte:%d => %p\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte_mode, ptree);
 #endif
         _update_vg_tree(ctree, clayer, depth+1);
 
-        //TODO: Only valid for MatteAlphaInverse?
-        //TODO: Set this blending option to efl_canvas_vg_node...
-        if (matte != MatteNone)
-           efl_canvas_vg_node_mask_set(ptree, ctree, matte);
+        if (matte_mode != 0)
+           efl_canvas_vg_node_mask_set(ptree, ctree, matte_mode);
 
-        matte = clayer->mMatte;
+        matte_mode = (int) clayer->mMatte;
         ptree = ctree;
 
-        //Debug Matte Info
-        switch (matte)
+        //Remap Matte Mode
+        switch (matte_mode)
           {
            case MatteNone:
-           case MatteAlphaInv:
+              matte_mode = 0;
+              break;
            case MatteAlpha:
+              matte_mode = 1;
+              break;
+           case MatteAlphaInv:
+              matte_mode = 2;
               break;
            case MatteLuma:
+              matte_mode = 0;
               ERR("TODO: MatteLuma");
               break;
            case MatteLumaInv:
+              matte_mode = 0;
               ERR("TODO: MatteLumaInv");
               break;
            default:
-              ERR("No reserved Matte type = %d", matte);
+              matte_mode = 0;
               break;
           }
 
-        //Make mask layer
+        //This layer has a mask
         if (clayer->mMaskList.size > 0)
           {
              key = _get_key_val(clayer->mMaskList.ptr);
-             Efl_Canvas_Vg_Container *mask_layer = efl_key_data_get(root, key);
-             if (!mask_layer)
+             Efl_Canvas_Vg_Container *mtree = efl_key_data_get(ctree, key);
+             if (!mtree)
                {
-                  mask_layer = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, root);
-                  efl_key_data_set(root, key, mask_layer);
+                  mtree = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, ctree);
+                  efl_key_data_set(ctree, key, mtree);
                }
-             _construct_mask_nodes(mask_layer, clayer);
+             _construct_mask_nodes(mtree, clayer, depth);
 
-             //TODO: 1 and 2 mode are temporary.
-             //      We need to implements modes and interface related to mask.
-             LOTMaskMode mask_mode = clayer->mMaskList.ptr->mMode;
-             switch (mask_mode)
+             int mask_mode = 0;
+
+             //Remap Mask Mode
+             switch (clayer->mMaskList.ptr->mMode)
                {
-                case MaskModeAdd:       //a
-                   //ERR("TODO: Mask Add");
-                case MaskModeIntersect: //i
-                   //ERR("TODO: Mask Intersect");
-                case MaskModeDifference: //f
-                   //ERR("TODO: Mask Difference");
-                   efl_canvas_vg_node_mask_set(ptree, mask_layer, 1 /*mask_mode*/);
+                case MaskAdd:
+                   mask_mode = 1;
                    break;
-                case MaskModeSubstract: //s
-                   //ERR("TODO: Mask Substract");
-                   efl_canvas_vg_node_mask_set(ptree, mask_layer, 2 /*mask_mode*/);
+                case MaskSubstract:
+                   mask_mode = 2;
+                   break;
+                case MaskIntersect:
+                   ERR("TODO: MaskIntersect");
+                   mask_mode = 3;
+                   break;
+                case MaskDifference:
+                   ERR("TODO: MaskDifference");
+                   mask_mode = 0;
                    break;
                 default:
+                   mask_mode = 0;
                    break;
                }
+             efl_canvas_vg_node_mask_set(ctree, mtree, mask_mode);
           }
-
      }
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
