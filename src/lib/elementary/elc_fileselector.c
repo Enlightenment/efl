@@ -206,7 +206,6 @@ _elm_fileselector_smart_del_do(Elm_Fileselector *fs, Elm_Fileselector_Data *sd)
      }
    _elm_fileselector_replace_model(fs, sd, NULL, NULL);
    efl_replace(&sd->prev_model, NULL);
-   free(ecore_idler_del(sd->populate_idler));
    ecore_idler_del(sd->path_entry_idler);
 
    efl_canvas_group_del(efl_super(sd->obj, MY_CLASS));
@@ -1069,48 +1068,6 @@ _on_list_contract_req(void *data EINA_UNUSED, const Efl_Event *event)
    elm_genlist_item_expanded_set(it, EINA_FALSE);
 }
 
-static Eina_Bool
-_populate_do(void *data)
-{
-   struct sel_data *sdata = data;
-   ELM_FILESELECTOR_DATA_GET(sdata->fs, sd);
-
-   _populate(sdata->fs, sdata->model, NULL, sdata->selected);
-   efl_replace(&sdata->model, NULL);
-   efl_replace(&sdata->selected, NULL);
-
-   sd->populate_idler = NULL;
-
-   free(sdata);
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_schedule_populate(Evas_Object *fs,
-                   Elm_Fileselector_Data *sd,
-                   Efl_Model *model,
-                   Efl_Model *selected)
-{
-   struct sel_data *sdata;
-
-   sdata = calloc(1, sizeof(*sdata));
-   if (!sdata) return;
-
-   sdata->fs = fs;
-   efl_replace(&sdata->model, model);
-   efl_replace(&sdata->selected, selected);
-
-   if (sd->populate_idler)
-     {
-        struct sel_data *old_sdata;
-        old_sdata = ecore_idler_del(sd->populate_idler);
-        efl_replace(&old_sdata->model, NULL);
-        efl_replace(&old_sdata->selected, NULL);
-        free(old_sdata);
-     }
-   sd->populate_idler = ecore_idler_add(_populate_do, sdata);
-}
-
 static void
 _on_item_activated(void *data, const Efl_Event *event)
 {
@@ -1132,7 +1089,7 @@ _on_item_activated(void *data, const Efl_Event *event)
    if (!sd->double_tap_navigation) return;
 
    efl_parent_set(it_data->model, data);
-   _schedule_populate(data, sd, it_data->model, NULL);
+   _populate(data, it_data->model, NULL, NULL);
 }
 
 static void
@@ -1250,7 +1207,7 @@ _on_item_selected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    if (sd->double_tap_navigation) return;
 
-   _schedule_populate(data, sd, it_data->model, NULL);
+   _populate(data, it_data->model, NULL, NULL);
 }
 
 static void
@@ -2017,7 +1974,7 @@ _elm_fileselector_elm_interface_fileselector_folder_only_set(Eo *obj, Elm_Filese
    sd->only_folder = !!only;
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2095,7 +2052,7 @@ _elm_fileselector_elm_interface_fileselector_expandable_set(Eo *obj, Elm_Filesel
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2143,9 +2100,9 @@ _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 }
 
 EOLIAN static void
-_elm_fileselector_efl_ui_view_model_set(Eo *obj, Elm_Fileselector_Data *sd, Efl_Model *model)
+_elm_fileselector_efl_ui_view_model_set(Eo *obj, Elm_Fileselector_Data *sd EINA_UNUSED, Efl_Model *model)
 {
-   _schedule_populate(obj, sd, model, NULL);
+   _populate(obj, model, NULL, NULL);
 }
 
 EAPI const char *
@@ -2218,7 +2175,7 @@ _elm_fileselector_elm_interface_fileselector_mode_set(Eo *obj, Elm_Fileselector_
    efl_ui_widget_theme_apply(obj);
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2424,14 +2381,14 @@ _properties_ready(void *data, const Efl_Event *ev)
                  }
                efl_model_children_count_get(parent);
 
-               _schedule_populate(obj, pd, parent, ev->object);
+               _populate(obj, parent, NULL, ev->object);
                efl_unref(parent);
                free(dir);
             }
           else
             {
                efl_model_children_count_get(ev->object);
-               _schedule_populate(obj, pd, ev->object, NULL);
+               _populate(obj, ev->object, NULL, NULL);
             }
           return ;
        }
@@ -2537,14 +2494,14 @@ _elm_fileselector_elm_interface_fileselector_selected_model_set(Eo *obj, Elm_Fil
            }
          efl_model_children_count_get(parent);
 
-         _schedule_populate(obj, pd, parent, pd->target);
+         _populate(obj, parent, NULL, pd->target);
          efl_unref(parent);
          free(d);
       }
     else
       {
          efl_model_children_count_get(pd->target);
-         _schedule_populate(obj, pd, pd->target, NULL);
+         _populate(obj, pd->target, NULL, NULL);
       }
 
    return EINA_TRUE;
@@ -2693,7 +2650,7 @@ _elm_fileselector_elm_interface_fileselector_mime_types_filter_append(Eo *obj, E
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 
    return EINA_TRUE;
@@ -2745,7 +2702,7 @@ _elm_fileselector_elm_interface_fileselector_custom_filter_append(Eo *obj, Elm_F
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 
    return EINA_TRUE;
@@ -2782,7 +2739,7 @@ _elm_fileselector_elm_interface_fileselector_filters_clear(Eo *obj, Elm_Filesele
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2804,7 +2761,7 @@ _elm_fileselector_elm_interface_fileselector_hidden_visible_set(Eo *obj EINA_UNU
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2846,7 +2803,7 @@ _elm_fileselector_elm_interface_fileselector_thumbnail_size_set(Eo *obj EINA_UNU
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 
@@ -2912,7 +2869,7 @@ _elm_fileselector_elm_interface_fileselector_sort_method_set(Eo *obj EINA_UNUSED
 
    if (sd->model)
      {
-        _schedule_populate(obj, sd, sd->model, NULL);
+        _populate(obj, sd->model, NULL, NULL);
      }
 }
 

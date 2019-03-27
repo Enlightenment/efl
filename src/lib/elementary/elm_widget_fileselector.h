@@ -55,7 +55,6 @@ struct _Elm_Fileselector_Data
    Efl_Model               *model;
    Efl_Model               *prev_model;
    Eina_List               *children;
-   Ecore_Idler             *populate_idler;
    Ecore_Idler             *path_entry_idler;
 
    Efl_Model               *target;
