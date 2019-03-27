@@ -424,5 +424,9 @@ struct Efl.Event {
     ]]
     object: Efl.Object; [[The object the callback was called on.]]
     desc: const(ptr(Efl.Event_Description)); [[The event description.]]
-    info: void_ptr; [[Extra event information passed by the event caller]]
+    info: void_ptr; [[Extra event information passed by the event caller.
+      Must be cast to the event type declared in the EO file. Keep in mind that:
+      1) Objects are passed as a normal Eo*. Event subscribers can call functions on these objects.
+      2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
+    ]]
 }
