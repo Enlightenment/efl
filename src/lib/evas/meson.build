@@ -129,7 +129,7 @@ if (get_option('pixman'))
    foreach support : pixman_support
      config_h.set(support, '1')
    endforeach
-   evas_deps += dependency('pixman')
+   evas_deps += dependency('pixman-1')
 endif
 
 if (get_option('hyphen'))
