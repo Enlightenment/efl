@@ -257,6 +257,14 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
+embed_script = find_program('config_embed')
+
+embed_config = custom_target('create_embedded_default_config',
+  input: join_paths(meson.source_root(), 'data', 'elementary', 'config', 'standard', 'base.src.in'),
+  output: 'elm_default_config.x',
+  command: [embed_script, '@INPUT@', '@OUTPUT@']
+)
+
 elementary_headers_unstable = [
   'elm_gen_common.h',
   'efl_access_object.h',
@@ -998,7 +1006,7 @@ c = configure_file(
 elm_package_c_args =  package_c_args + ['-DELEMENTARY_BUILD=1']
 
 elementary_lib = library('elementary',
-    elementary_src, pub_eo_file_target, priv_eo_file_target, c,
+    elementary_src, pub_eo_file_target, priv_eo_file_target, c, embed_config,
     dependencies: elementary_pub_deps + elementary_deps,
     include_directories : config_dir + [include_directories('.')] + [include_directories(join_paths('..', '..', '..'))] + [ecore_evas_wayland_engine_include_dir],
     install: true,
