@@ -116,6 +116,7 @@ struct _Elm_Entry_Data
    Eina_Bool                             changed : 1;
    Eina_Bool                             scroll : 1;
    Eina_Bool                             input_panel_show_on_demand : 1;
+   Eina_Bool                             file_setting : 1;
 };
 
 typedef struct _Elm_Entry_Item_Provider     Elm_Entry_Item_Provider;

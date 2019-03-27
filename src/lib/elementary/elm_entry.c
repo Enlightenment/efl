@@ -4987,7 +4987,9 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    elm_obj_entry_file_text_format_set(obj, format);
+   sd->file_setting = EINA_TRUE;
    ret = efl_file_simple_load(obj, file, NULL);
+   sd->file_setting = EINA_FALSE;
    return ret;
 }
 
@@ -4999,9 +5001,12 @@ _elm_entry_efl_file_unload(Eo *obj, Elm_Entry_Data *sd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Error
-_elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd EINA_UNUSED)
+_elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd)
 {
    Eina_Error err;
+
+   if (!sd->file_setting)
+     CRI("EO methods should not be used directly on legacy objects!");
 
    if (efl_file_loaded_get(obj)) return 0;
    err = efl_file_load(efl_super(obj, MY_CLASS));
@@ -5012,6 +5017,8 @@ _elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd EINA_UNUSED)
 EOLIAN static Eina_Error
 _elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file)
 {
+   if (!sd->file_setting)
+     CRI("EO methods should not be used directly on legacy objects!");
    eina_stringshare_replace(&sd->file, file);
    return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
