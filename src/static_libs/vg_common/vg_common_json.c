@@ -206,37 +206,37 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer
         if (!data) continue;
 
         char *key = _get_key_val(mask);
-        Efl_Canvas_Vg_Shape *mask_shape = efl_key_data_get(parent, key);
-        if (!mask_shape)
+        Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
+        if (!shape)
           {
-             mask_shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
-             efl_key_data_set(parent, key, mask_shape);
+             shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+             efl_key_data_set(parent, key, shape);
           }
         else
-          efl_gfx_path_reset(mask_shape);
+          efl_gfx_path_reset(shape);
 
-        efl_gfx_entity_visible_set(mask_shape, EINA_TRUE);
+        efl_gfx_entity_visible_set(shape, EINA_TRUE);
 
-        efl_gfx_path_reserve(mask_shape, mask->mPath.elmCount, mask->mPath.ptCount);
+        efl_gfx_path_reserve(shape, mask->mPath.elmCount, mask->mPath.ptCount);
 
         for (int i = 0; i < mask->mPath.elmCount; i++)
           {
              switch (mask->mPath.elmPtr[i])
                {
                 case 0:
-                   efl_gfx_path_append_move_to(mask_shape, data[0], data[1]);
+                   efl_gfx_path_append_move_to(shape, data[0], data[1]);
                    data += 2;
                    break;
                 case 1:
-                   efl_gfx_path_append_line_to(mask_shape, data[0], data[1]);
+                   efl_gfx_path_append_line_to(shape, data[0], data[1]);
                    data += 2;
                    break;
                 case 2:
-                   efl_gfx_path_append_cubic_to(mask_shape, data[0], data[1], data[2], data[3], data[4], data[5]);
+                   efl_gfx_path_append_cubic_to(shape, data[0], data[1], data[2], data[3], data[4], data[5]);
                    data += 6;
                    break;
                 case 3:
-                   efl_gfx_path_append_close(mask_shape);
+                   efl_gfx_path_append_close(shape);
                    break;
                 default:
                    ERR("No reserved path type = %d", mask->mPath.elmPtr[i]);
@@ -250,7 +250,7 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer
         int g = (int)(((float) 255) * pa);
         int b = (int)(((float) 255) * pa);
         int a = (int)(((float) 255) * pa);
-        efl_gfx_color_set(mask_shape, r, g, b, a);
+        efl_gfx_color_set(shape, r, g, b, a);
      }
 }
 
