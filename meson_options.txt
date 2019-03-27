@@ -277,7 +277,7 @@ option('libmount',
 option('vnc-server',
   type : 'boolean',
   value : false,
-  description : 'use libmount support or not'
+  description : 'enable building a vnc-server for multiseat testing'
 )
 
 option('v4l2',
