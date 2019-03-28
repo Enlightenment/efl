@@ -936,14 +936,11 @@ _properties_changed(void *data, const Efl_Event *ev)
 }
 
 static Eina_Value
-_process_children_cb(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_process_children_cb(Eo *model EINA_UNUSED, void *data, const Eina_Value v)
 {
    Listing_Request *lreq = data;
    Efl_Model *child = NULL;
    unsigned int i, len;
-
-   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
-     goto end;
 
    if (!lreq->valid) goto end;
 
@@ -958,6 +955,16 @@ _process_children_cb(void *data, const Eina_Value v, const Eina_Future *dead_fut
    _process_last(lreq);
 
    return v;
+}
+
+static Eina_Value
+_process_children_error(Eo *model EINA_UNUSED, void *data, Eina_Error error)
+{
+   Listing_Request *lreq = data;
+
+   _process_last(lreq);
+
+   return eina_value_error_init(error);
 }
 
 static void
@@ -1030,8 +1037,11 @@ _populate(Evas_Object *obj,
    if (efl_model_children_count_get(model))
      {
         future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-        future = eina_future_then(future, _process_children_cb, lreq, NULL);
-        efl_future_then(obj, future);
+        future = efl_future_then(obj, future);
+        efl_future_then(model, future,
+                        .success = _process_children_cb,
+                        .error = _process_children_error,
+                        .data = lreq);
      }
    else
      {
@@ -1562,21 +1572,19 @@ _files_grid_add(Evas_Object *obj)
 }
 
 static Eina_Value
-_resource_created_then(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_resource_created_then(Eo *model EINA_UNUSED, void *data, const Eina_Value v)
 {
    Evas_Object *fs = data;
    Efl_Model *child = NULL;
    unsigned int len, i;
 
-   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
-     goto end;
-
    ELM_FILESELECTOR_DATA_GET(fs, sd);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
-     _process_model(sd, child);
+     {
+        _process_model(sd, child);
+     }
 
- end:
    return v;
 }
 
@@ -1593,8 +1601,10 @@ _resource_created(void *data, const Efl_Event *event)
      return;
 
    f = efl_model_children_slice_get(sd->model, evt->index, 1);
-   f = eina_future_then(f, _resource_created_then, fs, NULL);
-   efl_future_then(fs, f);
+   f = efl_future_then(fs, f);
+   f = efl_future_then(sd->model, f,
+                       .success = _resource_created_then,
+                       .data = fs);
 }
 
 static void
