@@ -823,6 +823,10 @@ _process_model(Elm_Fileselector_Data *sd, Efl_Model *child)
    double mtime = 0;
    Eina_Bool dir = EINA_FALSE;
 
+   // In case we are shutting down, there might be an error being gnerated
+   if (!parent) return ;
+
+   // We should be good now
    if (!_fetch_string_value(parent, "path", &parent_path) ||
        !_fetch_string_value(child, "path", &path) ||
        !_fetch_string_value(child, "filename", &filename) ||
