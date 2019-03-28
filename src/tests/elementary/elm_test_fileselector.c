@@ -133,6 +133,7 @@ EFL_START_TEST(elm_fileselector_selected)
    evas_object_smart_callback_del(fileselector, "directory,open", _ready_cb);
    evas_object_smart_callback_add(fileselector, "selected", _ready_cb, &selected);
 
+   selected = EINA_FALSE;
    ck_assert(elm_fileselector_selected_set(fileselector, exist));
    ck_assert(fileselector_test_helper_wait_flag(10, &selected));
    ck_assert(selected == EINA_TRUE);
