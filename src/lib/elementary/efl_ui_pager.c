@@ -798,18 +798,12 @@ _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
    return EINA_FALSE;
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_pager_efl_pack_unpack(Eo *obj,
-                              Efl_Ui_Pager_Data *pd,
-                              Efl_Gfx_Entity *subobj)
+static void
+_unpack(Eo *obj,
+        Efl_Ui_Pager_Data *pd,
+        Efl_Gfx_Entity *subobj,
+        int index)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
-   if (!subobj) return EINA_FALSE;
-
-   int index = eina_list_data_idx(pd->content_list, subobj);
-   if (index == -1) return EINA_FALSE;
-
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->cnt--;
 
@@ -837,6 +831,21 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
 
    if (pd->indicator)
      efl_page_indicator_unpack(pd->indicator, index);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_unpack(Eo *obj,
+                              Efl_Ui_Pager_Data *pd,
+                              Efl_Gfx_Entity *subobj)
+{
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
+
+   if (!subobj) return EINA_FALSE;
+
+   int index = eina_list_data_idx(pd->content_list, subobj);
+   if (index == -1) return EINA_FALSE;
+
+   _unpack(obj, pd, subobj, index);
 
    return EINA_TRUE;
 }
