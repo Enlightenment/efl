@@ -2868,18 +2868,20 @@ _entry_has_new_line(const char *text)
 {
    if (!text) return EINA_FALSE;
 
-   while (*text)
-     {
-        if (!strncmp(text, "<br", 3) || !strncmp(text, "<ps", 3))
-          {
-             if (text[3] == '>' || ((text[3] == '/') && (text[4] == '>')))
-               {
-                  return EINA_TRUE;
-               }
-          }
-        text++;
-     }
+   const char * pTemp = text;
 
+   while ((pTemp = strchr(pTemp, '<')))
+   {
+      pTemp++;
+      if (!strncmp(pTemp, "br", 2) || !strncmp(pTemp, "ps", 2))
+      {
+         pTemp += 2;
+         if (pTemp[0] != '\0' && (pTemp[0] == '>' || (pTemp[0] == '/' && pTemp[1] == '>')))
+         {
+            return EINA_TRUE;
+         }
+      }
+   }
    return EINA_FALSE;
 }
 
