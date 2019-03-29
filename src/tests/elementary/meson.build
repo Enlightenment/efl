@@ -167,3 +167,4 @@ test('efl-ui-suite', efl_ui_suite,
 install_data(files(['testdiff.diff', 'testfile-windows.txt', 'testfile-withblanks.txt', 'testfile.txt']),
   install_dir : join_paths(dir_data, 'elementary')
 )
+subdir('spec')
