@@ -8,7 +8,8 @@
     ninja test
     sudo ninja install
 
-In autotools there have been a few flags that are used to disable loaders. In meson the following four disbler arrays are used:
+In autotools there have been a few flags that are used to disable loaders.
+In meson the following four disabler arrays are used:
 
    emotion-generic-loaders-disabler
 
@@ -48,4 +49,5 @@ The following options are merged into the pixman option
   --enable-pixman-image-scale-sample
 
 
---disable-valgrind Is dropped, and handled due to the build profile, this can be handled with --buildtype release or plain.
+--disable-valgrind Is dropped, and handled due to the build profile, this can
+be handled with --buildtype release or plain.
