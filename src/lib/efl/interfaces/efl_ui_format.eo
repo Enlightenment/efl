@@ -2,7 +2,7 @@ function @beta Efl.Ui.Format_Func_Cb {
    [[Function pointer for format function hook]]
    params {
       @in str: strbuf; [[the formated string to be appended by user.]]
-      @in value: const(any_value); [[The Eina.Value passed by $obj.]]
+      @in value: const(any_value); [[The @Eina.Value passed by $obj.]]
    }
 };
 
