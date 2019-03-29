@@ -399,6 +399,9 @@ static void
 _flush_mirrored_state(Eo *obj)
 {
    char prefix[4], state[10], signal[100];
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!wd->resize_obj) return;
 
    if (efl_ui_widget_disabled_get(obj))
      snprintf(state, sizeof(state), "disabled");
