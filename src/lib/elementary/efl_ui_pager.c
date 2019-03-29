@@ -169,6 +169,8 @@ _mouse_down_cb(void *data,
    if (efl_input_pointer_button_get(ev) != 1) return;
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
 
+   if (pd->cnt == 0) return;
+
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _mouse_up_animation, pd);
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, pd);
 
