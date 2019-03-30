@@ -216,7 +216,7 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Pack_Params *param = data;
    Eo *pager = param->pager;
-   Eo *page, *curr_page;
+   Eo *page = NULL, *curr_page;
    int index, cnt;
 
    if ((param->type != UNPACK_AT) && (param->type != CLEAR)) {
