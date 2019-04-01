@@ -1746,3 +1746,21 @@ ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output)
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
    return output->relative.to;
 }
+
+EAPI Eina_Bool
+ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, int r, int g, int b, int a)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->crtc_state, EINA_FALSE);
+
+   cstate = output->crtc_state;
+   if (cstate->background.id)
+     {
+        cstate->background.value = (a << 48 | b << 32 | g << 16 | r);
+        return _fb_atomic_flip_test(output);
+     }
+
+   return EINA_FALSE;
+}
