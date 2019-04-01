@@ -1303,6 +1303,20 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
         goto err;
      }
 
+   if (cstate->background.id)
+     {
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id,
+                                       cstate->background.id,
+                                       cstate->background.value);
+        if (ret < 0)
+          {
+             ERR("Could not add atomic property");
+             ret = EINA_FALSE;
+             goto err;
+          }
+     }
+
    ret = sym_drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
                                  output);
    if (ret < 0)
