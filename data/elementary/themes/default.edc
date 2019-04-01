@@ -157,6 +157,7 @@ collections {
 #include "edc/memusage.edc"
 #include "edc/cpumonitor.edc"
 #include "edc/netstatus.edc"
+#include "edc/tiling.edc"
 
 // icons
 #include "edc/icons.edc"

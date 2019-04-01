@@ -1,0 +1,72 @@
+group { "e/modules/tiling/indicator";
+   parts {
+      rect { "main";
+         desc { "default";
+            color: 100 100 100 100;
+         }
+      }
+      image { "background";
+         desc { "default";
+            color: 255 255 255 50;
+            image {
+               normal: "diagonal_stripes.png";
+            }
+            fill {
+               size {
+                  relative: 0.0 0.0;
+                  offset: 240 240;
+               }
+            }
+         }
+      }
+      swallow { "e.client.icon";
+         desc { "default";
+            min: 20 20;
+            rel1 {
+               relative: 0.5 0.5;
+            }
+            rel2 {
+               relative: 0.5 0.5;
+            }
+         }
+      }
+   }
+}
+
+group { name: "e/modules/tiling/main";
+   max: 160 160;
+   images.image: "tiling-horiz.png" COMP;
+   images.image: "tiling-vert.png" COMP;
+   images.image: "tiling-float.png" COMP;
+   parts {
+      part { name: "base";
+         description { state: "default" 0.0;
+            aspect: 1.0 1.0; aspect_preference: BOTH;
+            image.normal: "tiling-horiz.png";
+            color: 160 160 160 255;
+         }
+         description { state: "vertical" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "tiling-vert.png";
+         }
+         description { state: "floating" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "tiling-float.png";
+         }
+      }
+   }
+   programs {
+      program { signal: "tiling,mode,horizontal"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "base";
+      }
+      program { signal: "tiling,mode,vertical"; source: "e";
+         action: STATE_SET "vertical" 0.0;
+         target: "base";
+      }
+      program { signal: "tiling,mode,floating"; source: "e";
+         action: STATE_SET "floating" 0.0;
+         target: "base";
+      }
+   }
+}
