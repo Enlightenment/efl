@@ -93,8 +93,15 @@ EFL_START_TEST(efl_app_test_efl_loop_concentric)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_loop_test_realized_name)
+{
+   ck_assert_str_eq(efl_class_name_get(efl_loop_realized_class_get()), "Efl.Loop_Realized");
+}
+EFL_END_TEST
+
 void efl_app_test_efl_loop(TCase *tc)
 {
    tcase_add_test(tc, efl_app_test_efl_loop_register);
    tcase_add_test(tc, efl_app_test_efl_loop_concentric);
+   tcase_add_test(tc, efl_loop_test_realized_name);
 }
