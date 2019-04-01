@@ -1130,7 +1130,7 @@ EAPI Eina_Bool ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *f
  * @param fb The fb to register the callback on
  * @param handler The function to handle the callback
  * @param data The user data to pass to the callback
- * @ingroup Ecore_Drm2_Output_Group
+ * @ingroup Ecore_Drm2_Fb_Group
  * @since 1.20
  */
 EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Status_Handler handler, void *data);
@@ -1149,6 +1149,7 @@ EAPI void ecore_drm2_fb_status_handler_set(Ecore_Drm2_Fb *fb, Ecore_Drm2_Fb_Stat
  * @param sec
  * @param usec
  *
+ * @ingroup Ecore_Drm2_Output_Group
  * @since 1.20
  */
 EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *sec, long *usec);
@@ -1160,9 +1161,9 @@ EAPI Eina_Bool ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int se
  *
  * @param device
  *
+ * @ingroup Ecore_Drm2_Device_Group
  * @since 1.20
  */
-
 EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
 
 /**
@@ -1173,6 +1174,7 @@ EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
  *
  * @param output
  * @return Whether there's a flip in progress or not
+ * @ingroup Ecore_Drm2_Output_Group
  * @since 1.20
  */
 EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
