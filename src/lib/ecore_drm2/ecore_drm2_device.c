@@ -268,7 +268,11 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
              cstate->active.value = oprops->prop_values[i];
              DBG("\t\t\tValue: %d", cstate->active.value);
           }
-
+        else if (!strcmp(prop->name, "BACKGROUND_COLOR"))
+          {
+             cstate->background.id = prop->prop_id;
+             cstate->background.value = oprops->prop_values[i];
+          }
 cont:
         sym_drmModeFreeProperty(prop);
      }

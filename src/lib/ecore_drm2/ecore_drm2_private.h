@@ -91,6 +91,7 @@ typedef struct _Ecore_Drm2_Crtc_State
    uint32_t obj_id;
    int index;
    Ecore_Drm2_Atomic_Property active;
+   Ecore_Drm2_Atomic_Property background;
    Ecore_Drm2_Atomic_Blob mode;
 } Ecore_Drm2_Crtc_State;
 
