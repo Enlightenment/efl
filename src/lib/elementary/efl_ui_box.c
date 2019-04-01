@@ -47,7 +47,10 @@ static inline Eina_Bool
 _efl_ui_box_child_register(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj)
 {
    if (!subobj || (efl_canvas_object_render_parent_get(subobj) == obj))
-     return EINA_FALSE;
+     {
+        ERR("subobj %p %s is already added to this", subobj, efl_class_name_get(subobj) );
+        return EINA_FALSE;
+     }
 
    if (!efl_ui_widget_sub_object_add(obj, subobj))
      return EINA_FALSE;
@@ -66,6 +69,11 @@ _efl_ui_box_child_register(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj)
 static inline Eina_Bool
 _efl_ui_box_child_unregister(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
+   if (efl_canvas_object_render_parent_get(subobj) != obj)
+     {
+        ERR("subobj %p %s is not part of this widget", subobj, efl_class_name_get(subobj) );
+        return EINA_FALSE;
+     }
    if (!subobj || !_elm_widget_sub_object_redirect_to_top(obj, subobj))
      return EINA_FALSE;
 
