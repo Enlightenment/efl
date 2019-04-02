@@ -4,6 +4,18 @@
 #ifndef _ELM_WIDGET_ITEM_EO_CLASS_TYPE
 #define _ELM_WIDGET_ITEM_EO_CLASS_TYPE
 
+/**
+ * @typedef Elm_Widget_Item
+ * An Elementary widget item handle.
+ * This is a sub component of an Elementary widget and it is the same as
+ * Elementary object item, Elm_Object_Item.
+ * Common functions for Elementary widget item are provided on this page.
+ * Each Elementary widget also provides its own functions to use Elementary
+ * widget item.
+ * For more details about how Elementary widget item is used with Elementary
+ * widget, please refer each Elementary widget's documents.
+ * @ingroup Elm_General
+ */
 typedef Eo Elm_Widget_Item;
 
 #endif
@@ -26,7 +38,7 @@ typedef Eo Elm_Widget_Item;
  *
  * @return @c false on failure, @c true on success
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_object_item_tooltip_window_mode_set(Elm_Widget_Item *obj, Eina_Bool disable);
 
@@ -41,7 +53,7 @@ EAPI Eina_Bool elm_object_item_tooltip_window_mode_set(Elm_Widget_Item *obj, Ein
  *
  * @return If @c true, size restrictions are disabled
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_object_item_tooltip_window_mode_get(const Elm_Widget_Item *obj);
 
@@ -57,7 +69,7 @@ EAPI Eina_Bool elm_object_item_tooltip_window_mode_get(const Elm_Widget_Item *ob
  * @param[in] obj The object.
  * @param[in] style The theme style used/to use (default, transparent, ...)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_tooltip_style_set(Elm_Widget_Item *obj, const char *style);
 
@@ -74,7 +86,7 @@ EAPI void elm_object_item_tooltip_style_set(Elm_Widget_Item *obj, const char *st
  *
  * @return The theme style used/to use (default, transparent, ...)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_tooltip_style_get(const Elm_Widget_Item *obj);
 
@@ -94,7 +106,7 @@ EAPI const char *elm_object_item_tooltip_style_get(const Elm_Widget_Item *obj);
  * @param[in] obj The object.
  * @param[in] cursor The cursor type's name
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_cursor_set(Elm_Widget_Item *obj, const char *cursor);
 
@@ -115,7 +127,7 @@ EAPI void elm_object_item_cursor_set(Elm_Widget_Item *obj, const char *cursor);
  *
  * @return The cursor type's name
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_cursor_get(const Elm_Widget_Item *obj);
 
@@ -135,7 +147,7 @@ EAPI const char *elm_object_item_cursor_get(const Elm_Widget_Item *obj);
  * @param[in] style The theme style to use/in use (e.g. $"default",
  * $"transparent", etc)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_cursor_style_set(Elm_Widget_Item *obj, const char *style);
 
@@ -155,7 +167,7 @@ EAPI void elm_object_item_cursor_style_set(Elm_Widget_Item *obj, const char *sty
  *
  * @return The theme style to use/in use (e.g. $"default", $"transparent", etc)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_cursor_style_get(const Elm_Widget_Item *obj);
 
@@ -174,7 +186,7 @@ EAPI const char *elm_object_item_cursor_style_get(const Elm_Widget_Item *obj);
  * provided by the rendering engine, @c false to have them searched on the
  * widget's theme, as well.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_cursor_engine_only_set(Elm_Widget_Item *obj, Eina_Bool engine_only);
 
@@ -194,7 +206,7 @@ EAPI void elm_object_item_cursor_engine_only_set(Elm_Widget_Item *obj, Eina_Bool
  * rendering engine, @c false to have them searched on the widget's theme, as
  * well.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_object_item_cursor_engine_only_get(const Elm_Widget_Item *obj);
 
@@ -209,7 +221,7 @@ EAPI Eina_Bool elm_object_item_cursor_engine_only_get(const Elm_Widget_Item *obj
  * @param[in] part The content part name  (NULL for the default content)
  * @param[in] content The content of the object item
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_part_content_set(Elm_Widget_Item *obj, const char *part, Efl_Canvas_Object *content);
 
@@ -225,7 +237,7 @@ EAPI void elm_object_item_part_content_set(Elm_Widget_Item *obj, const char *par
  *
  * @return The content of the object item
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_part_content_get(const Elm_Widget_Item *obj, const char *part);
 
@@ -238,7 +250,7 @@ EAPI Efl_Canvas_Object *elm_object_item_part_content_get(const Elm_Widget_Item *
  * @param[in] part The text part name (NULL for the default label)
  * @param[in] label Text of the label
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_part_text_set(Elm_Widget_Item *obj, const char *part, const char *label);
 
@@ -252,7 +264,7 @@ EAPI void elm_object_item_part_text_set(Elm_Widget_Item *obj, const char *part, 
  *
  * @return Text of the label
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_part_text_get(const Elm_Widget_Item *obj, const char *part);
 
@@ -266,7 +278,7 @@ EAPI const char *elm_object_item_part_text_get(const Elm_Widget_Item *obj, const
  *
  * @since 1.10
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_focus_set(Elm_Widget_Item *obj, Eina_Bool focused);
 
@@ -279,7 +291,7 @@ EAPI void elm_object_item_focus_set(Elm_Widget_Item *obj, Eina_Bool focused);
  *
  * @since 1.10
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_object_item_focus_get(const Elm_Widget_Item *obj);
 
@@ -291,7 +303,7 @@ EAPI Eina_Bool elm_object_item_focus_get(const Elm_Widget_Item *obj);
  *
  * @since 1.9
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_style_set(Elm_Widget_Item *obj, const char *style);
 
@@ -304,7 +316,7 @@ EAPI void elm_object_item_style_set(Elm_Widget_Item *obj, const char *style);
  *
  * @since 1.9
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_style_get(const Elm_Widget_Item *obj);
 
@@ -323,7 +335,7 @@ EAPI const char *elm_object_item_style_get(const Elm_Widget_Item *obj);
  * @param[in] disable @c true, if the widget item is disabled, @c false if it's
  * enabled (or on errors)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_disabled_set(Elm_Widget_Item *obj, Eina_Bool disable);
 
@@ -343,7 +355,7 @@ EAPI void elm_object_item_disabled_set(Elm_Widget_Item *obj, Eina_Bool disable);
  * @return @c true, if the widget item is disabled, @c false if it's enabled
  * (or on errors)
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Eina_Bool elm_object_item_disabled_get(const Elm_Widget_Item *obj);
 
@@ -356,7 +368,7 @@ EAPI Eina_Bool elm_object_item_disabled_get(const Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const Eina_List *elm_object_item_access_order_get(Elm_Widget_Item *obj);
 
@@ -368,7 +380,7 @@ EAPI const Eina_List *elm_object_item_access_order_get(Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_access_order_set(Elm_Widget_Item *obj, Eina_List *objs);
 
@@ -382,7 +394,7 @@ EAPI void elm_object_item_access_order_set(Elm_Widget_Item *obj, Eina_List *objs
  *
  * @return The widget object
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_widget_get(const Elm_Widget_Item *obj);
 
@@ -399,7 +411,7 @@ EAPI Efl_Canvas_Object *elm_object_item_widget_get(const Elm_Widget_Item *obj);
  * @param[in] obj The object.
  * @param[in] text The text to set in the content.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_tooltip_text_set(Elm_Widget_Item *obj, const char *text);
 
@@ -415,7 +427,7 @@ EAPI void elm_object_item_tooltip_text_set(Elm_Widget_Item *obj, const char *tex
  * @ref elm_object_item_tooltip_content_cb_set
  * @param[in] obj The object.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_tooltip_unset(Elm_Widget_Item *obj);
 
@@ -430,7 +442,7 @@ EAPI void elm_object_item_tooltip_unset(Elm_Widget_Item *obj);
  * See: elm_object_cursor_unset() See: @ref elm_object_item_cursor_set
  * @param[in] obj The object.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_cursor_unset(Elm_Widget_Item *obj);
 
@@ -445,7 +457,7 @@ EAPI void elm_object_item_cursor_unset(Elm_Widget_Item *obj);
  *
  * @return Content object
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_part_content_unset(Elm_Widget_Item *obj, const char *part);
 
@@ -466,7 +478,7 @@ EAPI Efl_Canvas_Object *elm_object_item_part_content_unset(Elm_Widget_Item *obj,
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_signal_callback_add(Elm_Widget_Item *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func, void *data);
 
@@ -491,7 +503,7 @@ EAPI void elm_object_item_signal_callback_add(Elm_Widget_Item *obj, const char *
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void *elm_object_item_signal_callback_del(Elm_Widget_Item *obj, const char *emission, const char *source, Elm_Object_Item_Signal_Cb func);
 
@@ -507,7 +519,7 @@ EAPI void *elm_object_item_signal_callback_del(Elm_Widget_Item *obj, const char 
  * @param[in] emission The signal's name.
  * @param[in] source The signal's source.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_signal_emit(Elm_Widget_Item *obj, const char *emission, const char *source);
 
@@ -518,7 +530,7 @@ EAPI void elm_object_item_signal_emit(Elm_Widget_Item *obj, const char *emission
  * @param[in] txt The text that describes the widget to people with poor or no
  * vision
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_access_info_set(Elm_Widget_Item *obj, const char *txt);
 
@@ -531,7 +543,7 @@ EAPI void elm_object_item_access_info_set(Elm_Widget_Item *obj, const char *txt)
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_access_object_get(const Elm_Widget_Item *obj);
 
@@ -556,7 +568,7 @@ EAPI Efl_Canvas_Object *elm_object_item_access_object_get(const Elm_Widget_Item 
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_domain_translatable_part_text_set(Elm_Widget_Item *obj, const char *part, const char *domain, const char *label);
 
@@ -574,7 +586,7 @@ EAPI void elm_object_item_domain_translatable_part_text_set(Elm_Widget_Item *obj
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI const char *elm_object_item_translatable_part_text_get(const Elm_Widget_Item *obj, const char *part);
 
@@ -599,7 +611,7 @@ EAPI const char *elm_object_item_translatable_part_text_get(const Elm_Widget_Ite
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_domain_part_text_translatable_set(Elm_Widget_Item *obj, const char *part, const char *domain, Eina_Bool translatable);
 
@@ -631,7 +643,7 @@ EAPI void elm_object_item_domain_part_text_translatable_set(Elm_Widget_Item *obj
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_track(Elm_Widget_Item *obj);
 
@@ -647,7 +659,7 @@ EAPI Efl_Canvas_Object *elm_object_item_track(Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_untrack(Elm_Widget_Item *obj);
 
@@ -670,7 +682,7 @@ EAPI void elm_object_item_untrack(Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI int elm_object_item_track_get(const Elm_Widget_Item *obj);
 
@@ -683,7 +695,7 @@ EAPI int elm_object_item_track_get(const Elm_Widget_Item *obj);
  * @param[in] obj The object.
  * @param[in] del_cb The function called
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_del_cb_set(Elm_Widget_Item *obj, Evas_Smart_Cb del_cb);
 
@@ -707,7 +719,7 @@ EAPI void elm_object_item_del_cb_set(Elm_Widget_Item *obj, Evas_Smart_Cb del_cb)
  * receives as the first parameter the given @c data, and @c event_info is the
  * item.
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_tooltip_content_cb_set(Elm_Widget_Item *obj, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
@@ -720,7 +732,7 @@ EAPI void elm_object_item_tooltip_content_cb_set(Elm_Widget_Item *obj, Elm_Toolt
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_access_register(Elm_Widget_Item *obj);
 
@@ -728,7 +740,7 @@ EAPI Efl_Canvas_Object *elm_object_item_access_register(Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_access_unregister(Elm_Widget_Item *obj);
 
@@ -736,7 +748,7 @@ EAPI void elm_object_item_access_unregister(Elm_Widget_Item *obj);
  *
  * @since 1.8
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_access_order_unset(Elm_Widget_Item *obj);
 
@@ -752,7 +764,7 @@ EAPI void elm_object_item_access_order_unset(Elm_Widget_Item *obj);
  *
  * @since 1.16
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Efl_Canvas_Object *elm_object_item_focus_next_object_get(const Elm_Widget_Item *obj, Elm_Focus_Direction dir);
 
@@ -765,7 +777,7 @@ EAPI Efl_Canvas_Object *elm_object_item_focus_next_object_get(const Elm_Widget_I
  *
  * @since 1.16
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_focus_next_object_set(Elm_Widget_Item *obj, Efl_Canvas_Object *next, Elm_Focus_Direction dir);
 
@@ -779,7 +791,7 @@ EAPI void elm_object_item_focus_next_object_set(Elm_Widget_Item *obj, Efl_Canvas
  *
  * @since 1.16
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI Elm_Widget_Item *elm_object_item_focus_next_item_get(const Elm_Widget_Item *obj, Elm_Focus_Direction dir);
 
@@ -792,7 +804,7 @@ EAPI Elm_Widget_Item *elm_object_item_focus_next_item_get(const Elm_Widget_Item 
  *
  * @since 1.16
  *
- * @ingroup Elm_Object_Item_Group
+ * @ingroup Elm_General
  */
 EAPI void elm_object_item_focus_next_item_set(Elm_Widget_Item *obj, Elm_Widget_Item *next_item, Elm_Focus_Direction dir);
 
