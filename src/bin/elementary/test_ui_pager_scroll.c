@@ -36,8 +36,7 @@ typedef enum _Pack_Type {
    PACK_BEFORE,
    PACK_AFTER,
    PACK_AT,
-   UNPACK_AT,
-   CLEAR
+   UNPACK_AT
 } Pack_Type;
 
 typedef struct _Params {
@@ -241,7 +240,7 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *page = NULL, *curr_page;
    int index, cnt;
 
-   if ((param->type != UNPACK_AT) && (param->type != CLEAR)) {
+   if (param->type != UNPACK_AT) {
       index  = efl_content_count(pager);
 
       switch (index % 3) {
@@ -283,11 +282,9 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
          break;
       case UNPACK_AT:
          index = efl_ui_range_value_get(param->unpack_sp);
-         page = efl_pack_unpack_at(pager, index);
+         page = efl_pack_content_get(pager, index);
+         efl_pack_unpack(pager, page);
          efl_del(page);
-         break;
-      case CLEAR:
-         efl_pack_clear(pager);
          break;
    }
 
@@ -356,11 +353,13 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
    efl_ui_pager_scroll_block_set(pager, prev, next);
 }
 
-static void loop_radio_cb(void *data, const Efl_Event *ev)
+static void loop_check_cb(void *data, const Efl_Event *ev)
 {
    Eo *pager = data;
    int state = efl_ui_nstate_value_get(ev->object);
 
+   //FIXME use other widget (i.e. radio) than check
+   //      since loop might not be enabled according to the number of items
    efl_ui_pager_loop_mode_set(pager, state);
 }
 
@@ -702,24 +701,6 @@ static void pack_cb(void *data,
    efl_pack_end(box, in_box2);
    efl_pack_end(in_box2, btn);
    efl_pack_end(in_box2, sp2);
-
-   // Clear
-   pack_param = calloc(1, sizeof(Pack_Params));
-   if (!pack_param) return;
-
-   pack_param->pager = pager;
-   pack_param->pack_sp = sp1;
-   pack_param->unpack_sp = sp2;
-   pack_param->unpack_btn = btn;
-   pack_param->type = CLEAR;
-
-   efl_add(EFL_UI_BUTTON_CLASS, box,
-           efl_text_set(efl_added, "Clear"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
-                                  pack_btn_cb, pack_param),
-           efl_event_callback_add(efl_added, EFL_EVENT_DEL,
-                                  pack_btn_del_cb, pack_param),
-           efl_pack_end(box, efl_added));
 }
 
 static void current_page_cb(void *data,
@@ -817,8 +798,7 @@ static void loop_cb(void *data EINA_UNUSED,
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
    Eo *pager = params->pager;
-   Eo *btn, *box, *rd;
-   Efl_Ui_Pager_Loop loop;
+   Eo *btn, *box;
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
@@ -830,35 +810,13 @@ static void loop_cb(void *data EINA_UNUSED,
 		 elm_naviframe_item_push(navi, "Loop", btn, NULL,
                                          efl_added, NULL));
 
-   rd = efl_add(EFL_UI_RADIO_CLASS, box,
-                efl_ui_radio_state_value_set(efl_added, EFL_UI_PAGER_LOOP_DISABLED),
-                efl_text_set(efl_added, "Disabled"),
-                efl_gfx_hint_weight_set(efl_added, 1, 0),
-                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED,
-                                       loop_radio_cb, pager),
-                efl_pack(box, efl_added));
-
-   rd = efl_add(EFL_UI_RADIO_CLASS, box,
-                efl_ui_radio_state_value_set(efl_added, EFL_UI_PAGER_LOOP_ENABLED),
-                efl_ui_radio_group_add(efl_added, rd),
-                efl_text_set(efl_added, "Enabled"),
-                efl_gfx_hint_weight_set(efl_added, 1, 0),
-                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED,
-                                       loop_radio_cb, pager),
-                efl_pack(box, efl_added));
-
-   loop = efl_ui_pager_loop_mode_get(pager);
-
-   efl_ui_nstate_value_set(rd, loop);
-
-   if (loop == EFL_UI_PAGER_LOOP_DISABLED)
-     {
-        Eina_Bool ret = efl_ui_pager_loop_mode_set(pager, EFL_UI_PAGER_LOOP_ENABLED);
-        if (!ret)
-          elm_object_disabled_set(rd, EINA_TRUE);
-        else
-          efl_ui_pager_loop_mode_set(pager, EFL_UI_PAGER_LOOP_DISABLED);
-     }
+   efl_add(EFL_UI_CHECK_CLASS, box,
+           efl_ui_widget_style_set(efl_added, "toggle"),
+           efl_text_set(efl_added, "Loop"),
+           efl_ui_nstate_value_set(efl_added, efl_ui_pager_loop_mode_get(pager)),
+           efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED,
+                                  loop_check_cb, pager),
+           efl_pack_end(box, efl_added));
 }
 
 static void indicator_cb(void *data EINA_UNUSED,
