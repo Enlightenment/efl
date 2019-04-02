@@ -23,22 +23,19 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
            Widgets that inherit from this class will call this function
            automatically so it should not be called by applications, unless
            you are dealing directly with a @Efl.Ui.Layout object.
+
+           Note that $style will be the new style of this object, as retrieved by
+           @Efl.Ui.Widget.style. As a consequence this function can only be
+           called during construction of the object, before finalize.
+
+           If this returns $false the widget is very likely to become non-functioning.
          ]]
          set {
-            [[Sets the edje group from the elementary theme that will be used
-              as layout. Note that $style will be the new style of this object,
-              as in an @Efl.Ui.Widget.style. As a consequence this function can
-              only be called during construction of the object, before finalize.
-
-              If this returns $false the widget is very likely to become
-              non-functioning.
-            ]]
             return: Eina.Error;
                [[Whether the style was successfully applied or not, see
                  the values of Efl.Ui.Theme.Apply_Error for more information.]]
          }
          get {
-            [[Get information about the current theme in use.]]
          }
          values {
             klass: string; [[The class of the group, eg. "button".]]

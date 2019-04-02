@@ -97,10 +97,46 @@ _user_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_event_callback_call(popup_obj, EFL_UI_ALERT_POPUP_EVENT_BUTTON_CLICKED, &event);
 }
 
+static void
+_apply_button_style(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, int button_cnt)
+{
+   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER])
+     {
+        if (button_cnt > 1)
+          elm_widget_element_update(obj,
+                                    pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER],
+                                    "left_button");
+     }
+
+   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE])
+     {
+        if (button_cnt == 2)
+          {
+             if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER])
+               elm_widget_element_update(obj,
+                                         pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE],
+                                         "right_button");
+             else
+               elm_widget_element_update(obj,
+                                         pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE],
+                                         "left_button");
+          }
+     }
+
+   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE])
+     {
+        if (button_cnt > 1)
+          elm_widget_element_update(obj,
+                                    pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE],
+                                    "right_button");
+     }
+}
+
 EOLIAN static void
 _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Alert_Popup_Button type, const char *text, Eo *icon)
 {
    int i;
+   Eina_Bool is_btn_created = EINA_FALSE;
    Eo *cur_content;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -111,6 +147,7 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
      }
    if (!pd->button[type])
      {
+        is_btn_created = EINA_TRUE;
         pd->button[type] = efl_add(EFL_UI_BUTTON_CLASS, obj,
                                    elm_widget_element_update(obj, efl_added,
                                                              PART_NAME_BUTTON));
@@ -132,47 +169,65 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
               break;
           }
      }
+   else
+     {
+        const char *pre_text = efl_text_get(pd->button[type]);
+        if ((pre_text != NULL) && (text != NULL) &&
+            (!strcmp(pre_text, text)) &&
+            (efl_content_get(pd->button[type]) == icon))
+          return;
+     }
+
    efl_text_set(pd->button[type], text);
    efl_content_set(pd->button[type], icon);
 
-   cur_content = efl_content_get(efl_part(obj, "efl.buttons"));
-   if (cur_content)
+   if (is_btn_created)
      {
-        for (i = 0; i < EFL_UI_ALERT_POPUP_BUTTON_COUNT; i++)
-          efl_content_unset(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]));
-     }
-   else
-     {
-        cur_content = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                              efl_content_set(efl_part(obj, "efl.buttons"), efl_added));
+        int btn_count = !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE] +
+                        !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE] +
+                        !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER];
+
+        cur_content = efl_content_get(efl_part(obj, "efl.buttons"));
+        if (cur_content)
+          {
+             for (i = 0; i < EFL_UI_ALERT_POPUP_BUTTON_COUNT; i++)
+              efl_content_unset(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]));
+          }
+        else
+          {
+             cur_content = efl_add(EFL_UI_LAYOUT_CLASS, obj,
+                           efl_content_set(efl_part(obj, "efl.buttons"), efl_added));
+          }
+
+        elm_widget_element_update(obj, cur_content, PART_NAME_BUTTON_LAYOUT[btn_count - 1]);
+
+        _apply_button_style(obj, pd, btn_count);
+
+        i = 0;
+        if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER])
+          {
+             efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                             pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER]);
+             i++;
+          }
+
+        if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE])
+          {
+             efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                             pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE]);
+             i++;
+          }
+
+        if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE])
+          {
+             efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
+                             pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE]);
+          }
+
+        elm_layout_signal_emit(obj, "efl,buttons,show", "efl");
+        edje_object_message_signal_process(wd->resize_obj);
      }
 
-   int btn_count = !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE] +
-                   !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE] +
-                   !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER];
-   elm_widget_element_update(obj, cur_content, PART_NAME_BUTTON_LAYOUT[btn_count - 1]);
-
-   i = 0;
-   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER])
-     {
-        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
-                                 pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER]);
-        i++;
-     }
-   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE])
-     {
-        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
-                                 pd->button[EFL_UI_ALERT_POPUP_BUTTON_POSITIVE]);
-        i++;
-     }
-   if (pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE])
-     {
-        efl_content_set(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]),
-                                 pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE]);
-     }
-
-   elm_layout_signal_emit(obj, "efl,buttons,show", "efl");
-   edje_object_message_signal_process(wd->resize_obj);
    elm_layout_sizing_eval(obj);
 }
 

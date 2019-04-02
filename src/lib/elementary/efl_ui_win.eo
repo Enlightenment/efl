@@ -279,8 +279,11 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            When set, the window's loop object will exit using the passed exit code if the
            window is closed.
 
-           The Eina.Value passed should be $EMPTY to unset this state or an int value to be
+           The @Eina.Value passed should be $EMPTY to unset this state or an int value to be
            used as the exit code.
+
+           Note this is different from @.exit_on_all_windows_closed which exits when ALL
+           windows are closed.
          ]]
          values {
             exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
@@ -610,11 +613,13 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
 
            When set, the main loop will quit with the passed exit code once all windows have been closed.
 
-           The Eina.Value passed should be $EMPTY to unset this state or an int value to be
+           The @Eina.Value passed should be $EMPTY to unset this state or an int value to be
            used as the exit code.
+
+           Note this is different from @.exit_on_close which exits when a given window is closed.
          ]]
          values {
-            exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
+            exit_code: const(any_value_ptr); [[The exit code to use when exiting.]]
          }
       }
       activate {

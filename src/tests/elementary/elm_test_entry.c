@@ -491,6 +491,44 @@ EFL_START_TEST(elm_entry_text_set)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_entry_file_get_set)
+{
+   Evas_Object *win, *entry;
+   const char *file_path = NULL;
+   Elm_Text_Format format = ELM_TEXT_FORMAT_PLAIN_UTF8;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   entry = elm_entry_add(win);
+
+   ck_assert(elm_entry_file_set(entry, TESTS_SRC_DIR"/testfile_entry.txt", ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set1 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "hello world<br/>");
+   ck_assert_str_eq(file_path, TESTS_SRC_DIR"/testfile_entry.txt");
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   ck_assert(elm_entry_file_set(entry, TESTS_SRC_DIR"/testfile_entry2.txt", ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set2 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "hello elementary<br/>hello entry<br/>");
+   ck_assert_str_eq(file_path, TESTS_SRC_DIR"/testfile_entry2.txt");
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   ck_assert(elm_entry_file_set(entry, NULL, ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set3 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "");
+   ck_assert(file_path == NULL);
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   fprintf(stderr, "elm_entry_file_get_set4\n");
+
+}
+EFL_END_TEST
+
 void elm_test_entry(TCase *tc)
 {
    tcase_add_test(tc, elm_entry_legacy_type_check);
@@ -507,4 +545,5 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_entry_text_set);
    tcase_add_test(tc, elm_entry_magnifier);
+   tcase_add_test(tc, elm_entry_file_get_set);
 }

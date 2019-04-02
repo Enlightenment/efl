@@ -1659,6 +1659,8 @@ _config_user_load(void)
    return cfg;
 }
 
+#include "elm_default_config.x"
+
 static Elm_Config *
 _config_system_load(void)
 {
@@ -1681,6 +1683,20 @@ _config_system_load(void)
         cfg = eet_data_read(ef, _config_edd, "config");
         eet_close(ef);
      }
+
+   if (!cfg)
+     {
+        Eina_Tmpstr* tmp;
+        ERR("System loading config failed! Check your setup! Falling back to compile time defaults");
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_file_mkstemp("/tmp/elementary_configXXXXXX", &tmp), NULL);
+        ef = eet_open(tmp, EET_FILE_MODE_WRITE);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(eet_data_undump(ef, "config", embedded_config, strlen(embedded_config)-1, EINA_FALSE), NULL);
+        eet_close(ef);
+        ef = eet_open(tmp, EET_FILE_MODE_READ);
+        cfg = eet_data_read(ef, _config_edd, "config");
+        eet_close(ef);
+     }
+
    return cfg;
 }
 
@@ -1738,145 +1754,10 @@ _config_load(void)
         _env_get();
         return;
      }
-   /* FIXME: config load could have failed because of a non-existent
-    * profile. Fallback to default before moving on */
-
-   // config load fail - defaults
-   // why are these here? well if they are, it means you can make a gui
-   // config recovery app i guess...
-   _elm_config = ELM_NEW(Elm_Config);
-   if (!_elm_config) return;
-   _elm_config->config_version = ELM_CONFIG_VERSION;
-   _elm_config->engine = NULL;
-   _elm_config->accel = NULL;
-   _elm_config->accel_override = 0;
-   _elm_config->vsync = 0;
-   _elm_config->thumbscroll_enable = EINA_TRUE;
-   _elm_config->thumbscroll_threshold = 24;
-   _elm_config->thumbscroll_hold_threshold = 24;
-   _elm_config->thumbscroll_momentum_threshold = 100.0;
-   _elm_config->thumbscroll_flick_distance_tolerance = 1000;
-   _elm_config->thumbscroll_momentum_distance_max = 1000;
-   _elm_config->thumbscroll_friction = 1.0;
-   _elm_config->thumbscroll_momentum_friction = 1.0;
-   _elm_config->thumbscroll_min_friction = 0.5;
-   _elm_config->thumbscroll_friction_standard = 1000.0;
-   _elm_config->thumbscroll_bounce_friction = 0.5;
-   _elm_config->thumbscroll_bounce_enable = EINA_TRUE;
-   _elm_config->thumbscroll_acceleration_threshold = 500.0;
-   _elm_config->thumbscroll_acceleration_time_limit = 0.7;
-   _elm_config->thumbscroll_acceleration_weight = 1.5;
-   _elm_config->thumbscroll_momentum_animation_duration_min_limit = 0.3;
-   _elm_config->thumbscroll_momentum_animation_duration_max_limit = 1.5;
-   _elm_config->page_scroll_friction = 0.5;
-   _elm_config->bring_in_scroll_friction = 0.5;
-   _elm_config->zoom_friction = 0.5;
-   _elm_config->thumbscroll_border_friction = 0.5;
-   _elm_config->thumbscroll_sensitivity_friction = 0.25; // magic number! just trial and error shows this makes it behave "nicer" and not run off at high speed all the time
-   _elm_config->scroll_smooth_start_enable = EINA_TRUE;
-   _elm_config->scroll_animation_disable = EINA_FALSE;
-   _elm_config->scroll_accel_factor = 7.0;
-//   _elm_config->scroll_smooth_time_interval = 0.008; // not used anymore
-   _elm_config->scroll_smooth_amount = 1.0;
-//   _elm_config->scroll_smooth_history_weight = 0.3; // not used anymore
-//   _elm_config->scroll_smooth_future_time = 0.0; // not used anymore
-   _elm_config->scroll_smooth_time_window = 0.15;
-   _elm_config->scale = 1.0;
-   _elm_config->bgpixmap = 0;
-   _elm_config->compositing = 1;
-   _elm_config->font_hinting = 2;
-   _elm_config->cache_flush_poll_interval = 512;
-   _elm_config->cache_flush_enable = EINA_TRUE;
-   _elm_config->font_dirs = NULL;
-   _elm_config->image_cache = 4096;
-   _elm_config->font_cache = 512;
-   _elm_config->edje_cache = 32;
-   _elm_config->edje_collection_cache = 64;
-   _elm_config->finger_size = 10;
-   _elm_config->fps = 60.0;
-   _elm_config->theme = eina_stringshare_add("default");
-   _elm_config->modules = NULL;
-   _elm_config->tooltip_delay = 1.0;
-   _elm_config->cursor_engine_only = EINA_TRUE;
-   _elm_config->focus_highlight_enable = EINA_FALSE;
-   _elm_config->focus_highlight_animate = EINA_TRUE;
-   _elm_config->focus_highlight_clip_disable = EINA_FALSE;
-   _elm_config->focus_move_policy = ELM_FOCUS_MOVE_POLICY_CLICK;
-   _elm_config->first_item_focus_on_first_focus_in = EINA_FALSE;
-   _elm_config->item_select_on_focus_disable = EINA_TRUE;
-   _elm_config->toolbar_shrink_mode = 2;
-   _elm_config->fileselector_expand_enable = EINA_FALSE;
-   _elm_config->fileselector_double_tap_navigation_enable = EINA_FALSE;
-   _elm_config->inwin_dialogs_enable = EINA_FALSE;
-   _elm_config->icon_size = 32;
-   _elm_config->longpress_timeout = 1.0;
-   _elm_config->effect_enable = EINA_TRUE;
-   _elm_config->desktop_entry = EINA_FALSE;
-   _elm_config->context_menu_disabled = EINA_FALSE;
-   _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
-   _elm_config->password_show_last = EINA_FALSE;
-   _elm_config->password_show_last_timeout = 2.0;
-   _elm_config->glayer_zoom_finger_enable = EINA_TRUE;
-   _elm_config->glayer_zoom_finger_factor = 1.0;
-   _elm_config->glayer_zoom_wheel_factor = 0.05;
-   _elm_config->glayer_zoom_distance_tolerance = 1.0; /* 1 times elm_config_finger_size_get() */
-   _elm_config->glayer_rotate_finger_enable = EINA_TRUE;
-   _elm_config->glayer_rotate_angular_tolerance = 2.0; /* 2 DEG */
-   _elm_config->glayer_line_min_length = 1.0;         /* 1 times elm_config_finger_size_get() */
-   _elm_config->glayer_line_distance_tolerance = 3.0; /* 3 times elm_config_finger_size_get() */
-   _elm_config->glayer_line_angular_tolerance = 20.0; /* 20 DEG */
-   _elm_config->glayer_flick_time_limit_ms = 120;              /* ms to finish flick */
-   _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
-   _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
-   _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
-   _elm_config->glayer_tap_finger_size = 10;
-   _elm_config->access_mode = ELM_ACCESS_MODE_OFF;
-   _elm_config->selection_clear_enable = EINA_FALSE;
-   _elm_config->week_start = 1; /* monday */
-   _elm_config->weekend_start = 6; /* saturday */
-   _elm_config->weekend_len = 2;
-   _elm_config->year_min = 70;
-   _elm_config->year_max = 137;
-   _elm_config->softcursor_mode = 0; /* 0 = auto, 1 = on, 2 = off */
-   _elm_config->color_palette = NULL;
-   _elm_config->auto_norender_withdrawn = 0;
-   _elm_config->auto_norender_iconified_same_as_withdrawn = 1;
-   _elm_config->auto_flush_withdrawn = 0;
-   _elm_config->auto_dump_withdrawn = 0;
-   _elm_config->auto_throttle = 0;
-   _elm_config->auto_throttle_amount = 0.1;
-   _elm_config->indicator_service_0 = eina_stringshare_add("elm_indicator_portrait");
-   _elm_config->indicator_service_90 = eina_stringshare_add("elm_indicator_landscape");
-   _elm_config->indicator_service_180 = eina_stringshare_add("elm_indicator_portrait");
-   _elm_config->indicator_service_270 = eina_stringshare_add("elm_indicator_landscape");
-   _elm_config->disable_external_menu = EINA_FALSE;
-   _elm_config->magnifier_enable = EINA_TRUE;
-   _elm_config->spinner_min_max_filter_enable = EINA_FALSE;
-   _elm_config->magnifier_scale = 1.5;
-   _elm_config->audio_mute_effect = 0;
-   _elm_config->audio_mute_background = 0;
-   _elm_config->audio_mute_music = 0;
-   _elm_config->audio_mute_foreground = 0;
-   _elm_config->audio_mute_interface = 0;
-   _elm_config->audio_mute_input = 0;
-   _elm_config->audio_mute_alert = 0;
-   _elm_config->audio_mute_all = 0;
-   _elm_config->win_auto_focus_enable = 1;
-   _elm_config->win_auto_focus_animate = 1;
-   _elm_config->atspi_mode = ELM_ATSPI_MODE_OFF;
-   _elm_config->gl_depth = 0;
-   _elm_config->gl_msaa = 0;
-   _elm_config->gl_stencil = 0;
-   _elm_config->transition_duration_factor = 1.0;
-   _elm_config->naviframe_prev_btn_auto_pushed = EINA_TRUE;
-   _elm_config->popup_horizontal_align = 0.5;
-   _elm_config->popup_vertical_align = 0.5;
-   _elm_config->icon_theme = eina_stringshare_add(ELM_CONFIG_ICON_THEME_ELEMENTARY);
-   _elm_config->popup_scrollable = EINA_FALSE;
-   _elm_config->entry_select_allow = EINA_TRUE;
-   _elm_config->drag_anim_duration = 0.0;
-   _elm_config->win_no_border = EINA_FALSE;
-   _env_get();
+   else
+     {
+        ERR("Everything failed, no config found or created. This will not work");
+     }
 }
 
 static void

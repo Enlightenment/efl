@@ -311,7 +311,10 @@ EOAPI Eina_Bool efl_event_callback_array_del(Eo *obj, const Efl_Callback_Array_I
  * @brief Call the callbacks for an event of an object.
  *
  * @param[in] desc The description of the event to call.
- * @param[in] event_info Extra event info to pass to the callbacks.
+ * @param[in] event_info Extra event info to pass to the callbacks. Please provide objects of the same type as
+ *    advertised in the EO file, as this is what listeners of this event will be expecting. Keep in mind that:
+ *    1) Objects must be passed as a normal Eo*. Event subscribers can call functions on these objects.
+ *    2) Structs, built-in types and containers must be passed as const pointers, with one level of indirection.
  *
  * @return @c false If one of the callbacks aborted the call, @c true otherwise
  */

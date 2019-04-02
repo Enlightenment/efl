@@ -1599,7 +1599,7 @@ _item_cache_add(Elm_Gen_Item *it, Eina_List *contents)
    Item_Cache *itc = NULL;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas_Object *obj = sd->obj;
-   Evas_Object *win = elm_widget_top_get(obj);
+   Evas_Object *win = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    Evas *e = evas_object_evas_get(obj);
 
    evas_event_freeze(e);
@@ -1809,7 +1809,7 @@ _elm_genlist_item_focus_update(Elm_Gen_Item *it)
 {
    const char *focus_raise;
    Evas_Object *obj = WIDGET(it);
-   Evas_Object *win = elm_widget_top_get(obj);
+   Evas_Object *win = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    ELM_GENLIST_DATA_GET(obj, sd);
 
    if (elm_win_focus_highlight_enabled_get(win)
@@ -2907,7 +2907,7 @@ _elm_genlist_item_unfocused(Elm_Object_Item *eo_it)
 
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
    Evas_Object *obj = WIDGET(it);
-   Evas_Object *win = elm_widget_top_get(obj);
+   Evas_Object *win = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    ELM_GENLIST_DATA_GET(obj, sd);
 
    if (_is_no_select(it))

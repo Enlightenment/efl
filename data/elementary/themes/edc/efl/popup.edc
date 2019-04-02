@@ -244,6 +244,18 @@ group { "efl/alert_popup/button_layout3";
    }
 }
 
+group { "efl/alert_popup/left_button";
+   inherit: "efl/button";
+   alias: "efl/scroll_alert_popup/left_button";
+   alias: "efl/text_alert_popup/left_button";
+}
+
+group { "efl/alert_popup/right_button";
+   inherit: "efl/button";
+   alias: "efl/scroll_alert_popup/right_button";
+   alias: "efl/text_alert_popup/right_button";
+}
+
 group { "efl/alert_popup/button";
    inherit: "efl/button";
    alias: "efl/scroll_alert_popup/button";

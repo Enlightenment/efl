@@ -460,7 +460,7 @@ _ecore_hash_bucket_destroy(Ecore_Hash_Node *list,
 static int
 _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 {
-   unsigned long hash_val;
+   size_t hash_val;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
    CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
@@ -471,7 +471,7 @@ _ecore_hash_node_add(Ecore_Hash *hash, Ecore_Hash_Node *node)
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-      hash_val = (unsigned long)node->key % ecore_prime_table[hash->size];
+      hash_val = (size_t)node->key % ecore_prime_table[hash->size];
    else
       hash_val = ECORE_COMPUTE_HASH(hash, node->key);
 
@@ -522,14 +522,14 @@ ecore_hash_remove(Ecore_Hash *hash, const void *key)
 {
    Ecore_Hash_Node *node = NULL;
    Ecore_Hash_Node *list;
-   unsigned long hash_val;
+   size_t hash_val;
    void *ret = NULL;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-      hash_val = (unsigned long )key % ecore_prime_table[hash->size];
+      hash_val = (size_t)key % ecore_prime_table[hash->size];
    else
       hash_val = ECORE_COMPUTE_HASH(hash, key);
 
@@ -626,7 +626,7 @@ ecore_hash_find(Ecore_Hash *hash, Ecore_Compare_Cb compare, const void *value)
 static Ecore_Hash_Node *
 _ecore_hash_node_get(Ecore_Hash *hash, const void *key)
 {
-   unsigned long hash_val;
+   size_t hash_val;
    Ecore_Hash_Node *node = NULL;
 
    CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
@@ -636,7 +636,7 @@ _ecore_hash_node_get(Ecore_Hash *hash, const void *key)
 
    /* Compute the position in the table */
    if (!hash->hash_func)
-      hash_val = (unsigned long)key % ecore_prime_table[hash->size];
+      hash_val = (size_t)key % ecore_prime_table[hash->size];
    else
       hash_val = ECORE_COMPUTE_HASH(hash, key);
 

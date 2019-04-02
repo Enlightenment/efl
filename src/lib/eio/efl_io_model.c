@@ -388,16 +388,20 @@ _eio_build_st_then_clobber(const Efl_Io_Model *model, Efl_Io_Model_Data *pd)
 }
 
 static Eina_List *delayed_queue = NULL;
+static Eina_Bool delayed_one = EINA_FALSE;
 
 static void
 _delayed_flush(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Promise *p;
-
-   EINA_LIST_FREE(delayed_queue, p)
-     eina_promise_resolve(p, EINA_VALUE_EMPTY);
+   Eina_List *tmp = delayed_queue;
 
    efl_event_callback_del(ev->object, EFL_LOOP_EVENT_IDLE, _delayed_flush, NULL);
+
+   delayed_one = EINA_FALSE;
+   delayed_queue = NULL;
+   EINA_LIST_FREE(tmp, p)
+     eina_promise_resolve(p, EINA_VALUE_EMPTY);
 }
 
 static Eina_Value
@@ -430,41 +434,25 @@ _build_delay(Efl_Io_Model *model)
                           .data = eina_list_last(delayed_queue));
 }
 
-static void
-_eio_build_mime_clean(Efl_Io_Model_Data *pd)
-{
-   efl_wref_del(pd->loop, &pd->loop);
-   pd->loop = NULL;
-   pd->request.mime = NULL;
-}
-
 static Eina_Value
-_eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+_eio_build_mime_now(Eo *model, void *data, const Eina_Value v)
 {
-   Efl_Io_Model *model = data;
-   Efl_Io_Model_Data *pd = efl_data_scope_get(model, EFL_IO_MODEL_CLASS);
-
-   if (v.type == EINA_VALUE_TYPE_ERROR) goto on_error;
-   if (!pd->loop) goto on_error;
+   Efl_Io_Model_Data *pd = data;
 
    // Make sure that we are not over consuming time in the main loop
-   if (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004)
+   if (!delayed_one &&
+       (delayed_queue || ecore_time_get() - ecore_loop_time_get() > 0.004))
      {
-        Eina_Future *f = eina_future_then(_build_delay(model),
-                                          _eio_build_mime_now, model, NULL);
+        Eina_Future *f = efl_future_then(model, _build_delay(model),
+                                         .success = _eio_build_mime_now,
+                                         .data = pd);
         return eina_future_as_value(efl_future_then(model, f));
      }
 
    pd->mime_type = efreet_mime_type_get(pd->path);
 
-   _eio_build_mime_clean(pd);
-
    efl_model_properties_changed(model, "mime_type");
-
-   return v;
-
- on_error:
-   _eio_build_mime_clean(pd);
+   delayed_one = EINA_TRUE;
 
    return v;
 }
@@ -472,16 +460,12 @@ _eio_build_mime_now(void *data, const Eina_Value v, const Eina_Future *dead_futu
 static void
 _eio_build_mime(const Efl_Object *model, Efl_Io_Model_Data *pd)
 {
-   Eina_Future *f;
-
    if (pd->mime_type) return ;
    if (pd->request.mime) return ;
 
-   efl_wref_add(efl_loop_get(model), &pd->loop);
-
-   f = efl_loop_job(pd->loop);
-   f = eina_future_then(f, _eio_build_mime_now, model, NULL);
-   pd->request.mime = efl_future_then(model, f);
+   pd->request.mime = efl_future_then(model, efl_loop_job(efl_loop_get(model)),
+                                      .success = _eio_build_mime_now,
+                                      .data = pd);
 }
 
 static Eina_Value *
@@ -605,6 +589,7 @@ _property_mime_type_cb(const Eo *obj, Efl_Io_Model_Data *pd)
 {
    if (pd->mime_type)
      return eina_value_string_new(pd->mime_type);
+   if (pd->error) return eina_value_error_new(pd->error);
 
    _eio_build_mime(obj, pd);
    return eina_value_error_new(EAGAIN);
@@ -640,7 +625,6 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
    unsigned int i;
 
    if (!property) return NULL;
-   if (pd->error) return eina_value_error_new(pd->error);
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
      if (property == properties[i].name ||
@@ -777,7 +761,8 @@ static unsigned int
 _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
 {
    // If we have no information on the object, let's build it.
-   if (efl_invalidated_get(obj))
+   if (efl_invalidated_get(obj) ||
+       efl_invalidating_get(obj))
      {
         return 0;
      }
@@ -1021,7 +1006,6 @@ static void
 _efl_io_model_efl_object_destructor(Eo *obj , Efl_Io_Model_Data *priv)
 {
    Efl_Io_Model_Info *info;
-
 
    free(priv->st);
    priv->st = NULL;

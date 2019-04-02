@@ -997,6 +997,8 @@ includesub_HEADERS = \
 
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
+lib/elementary/elm_config.c: lib/elementary/elm_default_config.x
+
 lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_priv.h \
 	static_libs/atspi/atspi-constants.h \
@@ -1605,7 +1607,7 @@ EXTRA_DIST2 += modules/elementary/prefs/elm_prefs_swallow.edc
 
 prefs_filesdir = $(libdir)/elementary/modules/prefs/$(MODULE_ARCH)
 prefs_files_DATA = modules/elementary/prefs/elm_prefs_swallow.edj
-CLEANFILES += $(prefs_files_DATA)
+CLEANFILES += $(prefs_files_DATA) lib/elementary/elm_default_config.x
 
 modules/elementary/prefs/elm_prefs_swallow.edj: modules/elementary/prefs/elm_prefs_swallow.edc bin/edje/edje_cc${EXEEXT}
 	$(AM_V_EDJ) \
@@ -2008,5 +2010,8 @@ EXTRA_DIST2 += \
 tests/elementary/elm_suite.h \
 lib/elementary/Elementary_Options.h.in \
 lib/elementary/elm_code_widget_text.c \
-lib/elementary/elm_code_widget_undo.c
+lib/elementary/elm_code_widget_undo.c \
+lib/elementary/config_embed
 
+lib/elementary/elm_default_config.x:
+	lib/elementary/config_embed $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $@

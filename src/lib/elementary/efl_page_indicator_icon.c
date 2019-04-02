@@ -110,6 +110,22 @@ _efl_page_indicator_icon_unpack(Eo *obj,
 }
 
 EOLIAN static void
+_efl_page_indicator_icon_unpack_all(Eo *obj,
+                                    Efl_Page_Indicator_Icon_Data *pd)
+{
+   Eo *item;
+
+   EINA_LIST_FREE(pd->items, item)
+     {
+        efl_del(item);
+     }
+
+   pd->curr = NULL;
+
+   efl_page_indicator_unpack_all(efl_super(obj, MY_CLASS));
+}
+
+EOLIAN static void
 _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
                                                  Efl_Page_Indicator_Icon_Data *pd,
                                                  Eo *pager,
@@ -168,6 +184,8 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
    EFL_OBJECT_OP_FUNC(efl_page_indicator_pack, \
                       _efl_page_indicator_icon_pack), \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack, \
-                      _efl_page_indicator_icon_unpack)
+                      _efl_page_indicator_icon_unpack), \
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack_all, \
+                      _efl_page_indicator_icon_unpack_all)
 
 #include "efl_page_indicator_icon.eo.c"

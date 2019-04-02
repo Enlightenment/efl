@@ -513,7 +513,7 @@ static internal class UnsafeNativeMethods {
 public struct ValueNative
 {
     public IntPtr Type;
-    public IntPtr Value; // Atually an Eina_Value_Union, but it is padded to 8 bytes.
+    public IntPtr Value; // Actually an Eina_Value_Union, but it is padded to 8 bytes.
 
     public override string ToString()
     {
@@ -743,14 +743,14 @@ static class ValueTypeBridge
     }
 }
 
-/// <summary>Wrapper around Eina_Value generic storage.
+/// <summary>Wrapper around Eina.Value generic storage.
 ///
-/// <para>Eina_Value is EFL's main workhorse to deal with storing generic data in
-/// an uniform way.</para>
+/// <para>Eina.Value is EFL's main workhorse to deal with storing generic data in
+/// a uniform way.</para>
 ///
-/// <para>It comes with predefined types for numbers, strings, array, list, hash,
-/// blob and structs. It is able to convert between data types, including
-/// to string.</para>
+/// <para>It comes with predefined types for numbers, strings, arrays, lists, hashes,
+/// blobs and structs. It is able to convert between data types, including
+/// to and from strings.</para>
 /// </summary>
 public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 {

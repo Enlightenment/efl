@@ -4089,7 +4089,6 @@ if test "x${want_sndfile}" = "xyes" ; then
 fi
 if test "x${want_wasapiaudio}" = "xyes" ; then
   EFL_ADD_LIBS([ECORE_AUDIO], [-luuid -lwinmm -lksuser])
-  AC_DEFINE([HAVE_WASAPI], [1], [Wasapiaudio support])
 fi
 
 dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_ALSA], [${want_alsa}], [ALSA], [alsa])

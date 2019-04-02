@@ -83,7 +83,7 @@ _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
    file = eina_value_to_string(path);
 
    _model_event_call
-     (fs, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, model, file);
+     (fs, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN->name, model, file);
 
    eina_value_free(path);
    free(file);

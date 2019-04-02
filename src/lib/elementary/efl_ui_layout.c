@@ -399,6 +399,9 @@ static void
 _flush_mirrored_state(Eo *obj)
 {
    char prefix[4], state[10], signal[100];
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (!wd->resize_obj) return;
 
    if (efl_ui_widget_disabled_get(obj))
      snprintf(state, sizeof(state), "disabled");
@@ -2764,6 +2767,9 @@ EAPI Eina_Bool
 elm_layout_text_set(Eo *obj, const char *part, const char *text)
 {
    Eo *part_obj;
+
+   if (efl_invalidating_get(obj) || efl_invalidated_get(obj)) return EINA_FALSE;
+
    if (!part)
      {
         part = efl_ui_widget_default_text_part_get(obj);
@@ -2777,7 +2783,7 @@ elm_layout_text_set(Eo *obj, const char *part, const char *text)
    if (!efl_isa(part_obj, EFL_TEXT_INTERFACE) ||
        !efl_isa(part_obj, EFL_UI_LAYOUT_PART_CLASS))
      {
-        efl_del(part_obj);
+        efl_unref(part_obj);
         return EINA_FALSE;
      }
 

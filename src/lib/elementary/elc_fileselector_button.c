@@ -87,7 +87,7 @@ _selection_done(void *data, const Efl_Event *event EINA_UNUSED)
         efl_event_callback_call
           (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, model);
         _event_to_legacy_call
-          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, file);
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, file);
 
         eina_value_free(path);
         free(file);
@@ -95,7 +95,7 @@ _selection_done(void *data, const Efl_Event *event EINA_UNUSED)
    else
      {
         _model_event_call
-          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, NULL, NULL);
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, NULL, NULL);
      }
    eina_stringshare_replace(&sd->fsd.current_name, elm_interface_fileselector_current_name_get(sd->fs));
    del = sd->fsw;
@@ -366,7 +366,7 @@ _elm_fileselector_button_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Filesele
    eina_stringshare_replace(&sd->fsd.path, file);
 
    _event_to_legacy_call
-     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, file);
+     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, file);
 
    free(file);
 

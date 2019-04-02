@@ -36,7 +36,8 @@ typedef enum _Pack_Type {
    PACK_BEFORE,
    PACK_AFTER,
    PACK_AT,
-   UNPACK_AT
+   UNPACK_AT,
+   CLEAR
 } Pack_Type;
 
 typedef struct _Params {
@@ -215,10 +216,10 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Pack_Params *param = data;
    Eo *pager = param->pager;
-   Eo *page, *curr_page;
+   Eo *page = NULL, *curr_page;
    int index, cnt;
 
-   if (param->type != UNPACK_AT) {
+   if ((param->type != UNPACK_AT) && (param->type != CLEAR)) {
       index  = efl_content_count(pager);
 
       switch (index % 3) {
@@ -260,9 +261,11 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
          break;
       case UNPACK_AT:
          index = efl_ui_range_value_get(param->unpack_sp);
-         page = efl_pack_content_get(pager, index);
-         efl_pack_unpack(pager, page);
+         page = efl_pack_unpack_at(pager, index);
          efl_del(page);
+         break;
+      case CLEAR:
+         efl_pack_clear(pager);
          break;
    }
 
@@ -587,6 +590,25 @@ static void pack_cb(void *data,
    efl_pack_end(box, in_box2);
    efl_pack_end(in_box2, btn);
    efl_pack_end(in_box2, sp2);
+
+   // Clear
+   pack_param = calloc(1, sizeof(Pack_Params));
+   if (!pack_param) return;
+
+   pack_param->pager = pager;
+   pack_param->pack_sp = sp1;
+   pack_param->unpack_sp = sp2;
+   pack_param->unpack_btn = btn;
+   pack_param->type = CLEAR;
+
+   efl_add(EFL_UI_BUTTON_CLASS, box,
+           efl_text_set(efl_added, "Clear"),
+           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                                  pack_btn_cb, pack_param),
+           efl_event_callback_add(efl_added, EFL_EVENT_DEL,
+                                  pack_btn_del_cb, pack_param),
+           efl_pack_end(box, efl_added));
+
 }
 
 static void current_page_cb(void *data,

@@ -595,6 +595,24 @@ _spacer_up_cb(void *data,
      }
 }
 
+static void
+_mouse_in_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj,
+              void *event_info EINA_UNUSED)
+{
+   efl_ui_widget_scroll_hold_push(obj);
+}
+
+static void
+_mouse_out_cb(void *data EINA_UNUSED,
+              Evas *e EINA_UNUSED,
+              Evas_Object *obj,
+              void *event_info EINA_UNUSED)
+{
+   efl_ui_widget_scroll_hold_pop(obj);
+}
+
 static char *
 _access_info_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
@@ -673,6 +691,11 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
      (priv->spacer, EVAS_CALLBACK_MOUSE_MOVE, _spacer_move_cb, obj);
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_UP, _spacer_up_cb, obj);
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_MOUSE_IN, _mouse_in_cb, obj);
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_MOUSE_OUT, _mouse_out_cb, obj);
+
 
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 

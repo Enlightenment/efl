@@ -516,7 +516,7 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
    tree_abort = eina_log_abort_on_critical_get();
    tree_abort_level = eina_log_abort_on_critical_level_get();
    /* this should never trigger errors */
-   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_level_set(1);
    eina_log_abort_on_critical_set(1);
    ecore_main_loop_begin();
 }

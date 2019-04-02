@@ -284,7 +284,7 @@ _save_do(Evas_Object *obj)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
-   if (!sd->file) return;
+   if (!efl_file_loaded_get(obj)) return;
    switch (sd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
@@ -2868,18 +2868,20 @@ _entry_has_new_line(const char *text)
 {
    if (!text) return EINA_FALSE;
 
-   while (*text)
-     {
-        if (!strncmp(text, "<br", 3) || !strncmp(text, "<ps", 3))
-          {
-             if (text[3] == '>' || ((text[3] == '/') && (text[4] == '>')))
-               {
-                  return EINA_TRUE;
-               }
-          }
-        text++;
-     }
+   const char * pTemp = text;
 
+   while ((pTemp = strchr(pTemp, '<')))
+   {
+      pTemp++;
+      if (!strncmp(pTemp, "br", 2) || !strncmp(pTemp, "ps", 2))
+      {
+         pTemp += 2;
+         if (pTemp[0] != '\0' && (pTemp[0] == '>' || (pTemp[0] == '/' && pTemp[1] == '>')))
+         {
+            return EINA_TRUE;
+         }
+      }
+   }
    return EINA_FALSE;
 }
 
@@ -4983,8 +4985,13 @@ EAPI Eina_Bool
 elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
    Eina_Bool ret;
+   ELM_ENTRY_DATA_GET(obj, sd);
+   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
+   if (sd->auto_save) _save_do(obj);
    elm_obj_entry_file_text_format_set(obj, format);
+   sd->file_setting = EINA_TRUE;
    ret = efl_file_simple_load(obj, file, NULL);
+   sd->file_setting = EINA_FALSE;
    return ret;
 }
 
@@ -5000,17 +5007,20 @@ _elm_entry_efl_file_load(Eo *obj, Elm_Entry_Data *sd)
 {
    Eina_Error err;
 
+   if (!sd->file_setting)
+     CRI("EO methods should not be used directly on legacy objects!");
+
    if (efl_file_loaded_get(obj)) return 0;
    err = efl_file_load(efl_super(obj, MY_CLASS));
    if (err) return err;
-   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
-   if (sd->auto_save) _save_do(obj);
    return _load_do(obj);
 }
 
 EOLIAN static Eina_Error
 _elm_entry_efl_file_file_set(Eo *obj, Elm_Entry_Data *sd, const char *file)
 {
+   if (!sd->file_setting)
+     CRI("EO methods should not be used directly on legacy objects!");
    eina_stringshare_replace(&sd->file, file);
    return efl_file_set(efl_super(obj, MY_CLASS), file);
 }

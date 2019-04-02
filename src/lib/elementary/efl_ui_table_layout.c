@@ -224,7 +224,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    Table_Item *ti;
    Item_Calc *items, *item;
    Efl_Ui_Container_Item_Hints *hints;
-   int i = 0, rows, cols;
+   int id = 0, i = 0, rows, cols;
    int (*_efl_ui_table_item_pos_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
    int (*_efl_ui_table_item_size_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
 
@@ -266,7 +266,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
              continue;
           }
 
-        item = &items[i++];
+        item = &items[id++];
         item->obj = ti->object;
         hints = item->hints;
 
@@ -287,24 +287,33 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
         item->cell_span[0] = ti->col_span;
         item->cell_span[1] = ti->row_span;
 
-        if (ti->col_span == 1)
-          {
-             table_calc.cell_calc[0][ti->col].occupied = EINA_TRUE;
+        int end;
+        double ispace, iweight;
 
-             if (table_calc.cell_calc[0][ti->col].space < hints[0].space)
-               table_calc.cell_calc[0][ti->col].space = hints[0].space;
-             if (table_calc.cell_calc[0][ti->col].weight < hints[0].weight)
-               table_calc.cell_calc[0][ti->col].weight = hints[0].weight;
+        end = ti->col + ti->col_span;
+        ispace = hints[0].space / ti->col_span;
+        iweight = hints[0].weight / ti->col_span;
+        for (i = ti->col; i < end; i++)
+          {
+             table_calc.cell_calc[0][i].occupied = EINA_TRUE;
+
+             if (table_calc.cell_calc[0][i].space < ispace)
+               table_calc.cell_calc[0][i].space = ispace;
+             if (table_calc.cell_calc[0][i].weight < iweight)
+               table_calc.cell_calc[0][i].weight = iweight;
           }
 
-        if (ti->row_span == 1)
+        end = ti->row + ti->row_span;
+        ispace = hints[1].space / ti->row_span;
+        iweight = hints[1].weight / ti->row_span;
+        for (i = ti->row; i < end; i++)
           {
-             table_calc.cell_calc[1][ti->row].occupied = EINA_TRUE;
+             table_calc.cell_calc[1][i].occupied = EINA_TRUE;
 
-             if (table_calc.cell_calc[1][ti->row].space < hints[1].space)
-               table_calc.cell_calc[1][ti->row].space = hints[1].space;
-             if (table_calc.cell_calc[1][ti->row].weight < hints[1].weight)
-               table_calc.cell_calc[1][ti->row].weight = hints[1].weight;
+             if (table_calc.cell_calc[1][i].space < ispace)
+               table_calc.cell_calc[1][i].space = ispace;
+             if (table_calc.cell_calc[1][i].weight < iweight)
+               table_calc.cell_calc[1][i].weight = iweight;
           }
      }
 

@@ -1720,7 +1720,10 @@ eina_log_print_cb_set(Eina_Log_Print_Cb cb, void *data)
 {
 #ifdef EINA_ENABLE_LOG
    LOG_LOCK();
-   _print_cb = cb;
+   if (cb)
+     _print_cb = cb;
+   else
+     _print_cb = eina_log_print_cb_stderr;
    _print_cb_data = data;
    eina_log_print_prefix_update();
    LOG_UNLOCK();
