@@ -4,6 +4,10 @@ class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
    [[Elementary layout class
 
+     When loading layouts from a file, use the @Efl.File.key property to specify
+     the group that the data belongs to, in case it's an EET file
+     (including Edje files).
+
      @since 1.22
    ]]
    data: null;

@@ -1,5 +1,4 @@
 import eina_types;
-import efl_gfx_types;
 
 mixin Efl.File requires Efl.Object {
    [[Efl file interface
@@ -10,23 +9,21 @@ mixin Efl.File requires Efl.Object {
       @property mmap {
          set {
             [[Set the mmaped file from where an object will fetch the real
-              data (it must be an Eina_File).
+              data (it must be an @Eina.File).
 
               If mmap is set during object construction, the object will automatically
               call @.load during the finalize phase of construction.
-
-              ]]
+            ]]
 
             return: Eina.Error; [[0 on success, error code otherwise]]
          }
          get {
             [[Get the mmaped file from where an object will fetch the real
-              data (it must be an Eina_File).
-
-              ]]
+              data (it must be an @Eina.File).
+            ]]
          }
          values {
-            f: ptr(const(Eina.File)); [[The handle to an Eina_File that will be used]]
+            f: ptr(const(Eina.File)); [[The handle to the @Eina.File that will be used]]
          }
       }
       @property file {
@@ -42,7 +39,8 @@ mixin Efl.File requires Efl.Object {
          get {
             [[Retrieve the file path from where an object is to fetch the data.
 
-              You must not modify the strings on the returned pointers.]]
+              You must not modify the strings on the returned pointers.
+            ]]
          }
          values {
             file: string; [[The file path.]]
@@ -60,15 +58,16 @@ mixin Efl.File requires Efl.Object {
             [[Get the previously-set key which corresponds to the target data within a file.
 
               Some filetypes can contain multiple data streams which are indexed by
-              a key. Use this property for such cases.
+              a key. Use this property for such cases (See for example @Efl.Ui.Image or
+              @Efl.Ui.Layout).
 
-              You must not modify the strings on the returned pointers.]]
+              You must not modify the strings on the returned pointers.
+            ]]
          }
          values {
-            key: string; [[The group that the image belongs to, in case
-                                            it's an EET(including Edje case) file. This can be used
-                                            as a key inside evas image cache if this is a normal image
-                                            file not eet file.]]
+            key: string; [[The group that the data belongs to. See the class documentation
+                           for particular implementations of this interface to see how this
+                           property is used.]]
          }
       }
       @property loaded {
@@ -77,7 +76,7 @@ mixin Efl.File requires Efl.Object {
             ]]
          }
          values {
-            loaded: bool; [[True if the object is loaded, otherwise false.]]
+            loaded: bool; [[$true if the object is loaded, $false otherwise.]]
          }
       }
 
@@ -89,9 +88,10 @@ mixin Efl.File requires Efl.Object {
            open the file and call @.mmap.set on the object using the opened file handle.
 
            Calling @.load on an object which has already performed file operations based on
-           the currently set properties will have no effect.]]
+           the currently set properties will have no effect.
+         ]]
 
-           return: Eina.Error; [[0 on success, error code otherwise]]
+         return: Eina.Error; [[0 on success, error code otherwise]]
       }
 
       unload {
