@@ -426,7 +426,7 @@ EAPI int edje_object_freeze(Evas_Object *obj);
  *
  * This function thaws the given Edje object.
  *
- * @note If sucessive freezes were done, an equal number of thaws will be
+ * @note If successive freezes were done, an equal number of thaws will be
  * required.
  *
  * See also @ref edje_object_freeze()

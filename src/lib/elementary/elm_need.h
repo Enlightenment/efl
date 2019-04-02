@@ -58,7 +58,7 @@ EAPI Eina_Bool elm_need_e_dbus(void) EINA_DEPRECATED;
 /**
  * Request that your elementary application needs eldbus
  *
- * This initializes the eldbus (aka v2) library when called and if
+ * This initializes the eldbus (a.k.a. v2) library when called and if
  * support exists it returns @c EINA_TRUE, otherwise returns
  * @c EINA_FALSE. This must be called before any eldbus calls.
  *

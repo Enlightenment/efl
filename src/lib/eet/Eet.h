@@ -1467,7 +1467,7 @@ eet_data_image_header_read_cipher(Eet_File *ef,
 
 /**
  * @ingroup Eet_File_Image_Group
- * @brief Gets the colorspace Eet can decode into of a given eet image ressource.
+ * @brief Gets the colorspace Eet can decode into of a given eet image resource.
  *
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".

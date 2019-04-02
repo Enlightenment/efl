@@ -47,7 +47,7 @@ typedef struct _Ecore_Cocoa_Screen Ecore_Cocoa_Screen;
 
 /**
  * @typedef Ecore_Cocoa_Object
- * Opaque handler to refer to an objective-c object (aka id)
+ * Opaque handler to refer to an objective-c object (a.k.a. id)
  * @since 1.18
  */
 typedef void Ecore_Cocoa_Object;

@@ -6,7 +6,7 @@
  *
  * This iterator contains also the canvas objects which are part of the widgets,
  * be aware that the construction of this tree is internal and might change heavily
- * inbetween versions.
+ * between versions.
  *
  * @param obj The widget which is the root of the subtree.
  *

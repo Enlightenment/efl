@@ -78,7 +78,7 @@ EWAPI const Efl_Class *elm_sys_notify_class_get(void);
 /**
  * @brief Set the notifications server to be used.
  *
- * @note This is an advanced function that should be used only to fullfill very
+ * @note This is an advanced function that should be used only to fulfill very
  * specific purposes. Use elm_need_sys_notify() which activates the default
  * available notification servers.
  *

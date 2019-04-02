@@ -1032,7 +1032,7 @@ EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
  * @param e The canvas to find the device on
  * @param name The name of the device.
  *
- * Gets the first ocurrence of a device named as @p name
+ * Gets the first occurrence of a device named as @p name
  * on Evas @p e list of devices.
  *
  * @return the device or NULL if an error occurred, no name was provided,

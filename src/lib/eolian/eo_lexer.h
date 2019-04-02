@@ -212,7 +212,7 @@ int         eo_lexer_get            (Eo_Lexer *ls);
 int         eo_lexer_lookahead      (Eo_Lexer *ls);
 /* "throws" an error, with a custom message and custom token */
 void        eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
-/* like above, but uses the lexstate->t.token, aka current token */
+/* like above, but uses the lexstate->t.token, a.k.a. current token */
 void        eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
 /* turns the token into a string, writes into the given buffer */
 void        eo_lexer_token_to_str   (int token, char *buf);

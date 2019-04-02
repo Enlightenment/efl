@@ -100,7 +100,7 @@ typedef Eo Ector_Renderer;
 
 /**
  * @typedef Ector_Colorspace
- * The definiton of colorspace.
+ * The definition of colorspace.
  */
   // FIXME: Enable this when we have merged Emile
 /* typedef Evas_Colorspace Ector_Colorspace; */

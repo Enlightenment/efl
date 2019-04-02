@@ -5107,7 +5107,7 @@ EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
 EAPI void evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip);
 
 /**
- * @breif Get the load option to skip header loads before preload
+ * @brief Get the load option to skip header loads before preload
  * 
  * This gets the heade skip value set by evas_object_image_load_head_skip_set()
  * 

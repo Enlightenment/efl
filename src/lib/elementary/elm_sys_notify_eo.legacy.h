@@ -71,7 +71,7 @@ typedef struct _Elm_Sys_Notify_Action_Invoked
 /**
  * @brief Set the notifications server to be used.
  *
- * @note This is an advanced function that should be used only to fullfill very
+ * @note This is an advanced function that should be used only to fulfill very
  * specific purposes. Use elm_need_sys_notify() which activates the default
  * available notification servers.
  *
