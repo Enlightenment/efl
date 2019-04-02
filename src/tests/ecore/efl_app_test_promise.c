@@ -1131,6 +1131,7 @@ EFL_START_TEST(efl_test_promise_null)
    fail_unless(ctx.did);
 
    ecore_shutdown();
+   eina_log_print_cb_set(NULL, NULL);
 }
 EFL_END_TEST
 
@@ -1152,6 +1153,7 @@ EFL_START_TEST(efl_test_promise_reject_resolve_null)
    eina_promise_reject(NULL, DEFAULT_ERROR);
    fail_unless(ctx.did);
    ecore_shutdown();
+   eina_log_print_cb_set(NULL, NULL);
 }
 EFL_END_TEST
 
@@ -1236,6 +1238,7 @@ EFL_START_TEST(efl_test_future_null)
    ck_assert_ptr_eq(f, NULL);
    ck_assert_int_eq(easy_cb_calls, 2);
    ecore_shutdown();
+   eina_log_print_cb_set(NULL, NULL);
 }
 EFL_END_TEST
 
@@ -1280,6 +1283,7 @@ EFL_START_TEST(efl_test_future_all_null)
    ck_assert_ptr_eq(f, NULL);
    ecore_shutdown();
    ck_assert_int_eq(cb_called, len);
+   eina_log_print_cb_set(NULL, NULL);
 }
 EFL_END_TEST
 
@@ -1311,6 +1315,7 @@ EFL_START_TEST(efl_test_future_race_null)
    ck_assert_ptr_eq(f, NULL);
    ecore_shutdown();
    ck_assert_int_eq(cb_called, len);
+   eina_log_print_cb_set(NULL, NULL);
 }
 EFL_END_TEST
 
