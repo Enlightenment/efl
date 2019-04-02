@@ -151,7 +151,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             [[Can only be called during construction, before finalize.]]
             return: Eina.Error;
                [[Whether the style was successfully applied or not, see
-                 the values of Efl.Ui.Theme.Apply_Error for more information.]]
+                 the Efl.Ui.Theme.Apply_Error subset of @Eina.Error for more information.]]
          }
          get {
             [[Returns the current style of a widget.]]
