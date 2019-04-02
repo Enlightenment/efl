@@ -57,6 +57,21 @@ _eio_file_error_cb(void *data, Eio_File *handler, int error)
    pd->request.move = NULL;
 }
 
+
+static Eina_Bool
+_already_added(Efl_Io_Model_Data *pd, const char *path)
+{
+   Efl_Io_Model_Info *mi;
+   Eina_List *node;
+
+   EINA_LIST_FOREACH(pd->files, node, mi)
+     {
+        if (!strcmp(mi->path, path))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 /**
  *  Callbacks
  *  Ecore Events
@@ -77,6 +92,9 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
      return EINA_TRUE;
 
    if (ev->monitor != pd->monitor) return EINA_TRUE;
+
+   if (_already_added(pd, ev->filename))
+     return EINA_TRUE;
 
    obj = pd->self;
 
@@ -704,6 +722,8 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
      {
         Efl_Io_Model_Info *mi;
 
+        if (_already_added(pd, info->path)) continue;
+
         if (pd->filter.cb)
           {
              if (!pd->filter.cb(pd->filter.data, obj, info))
@@ -731,18 +751,6 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
      }
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
-}
-
-static Eina_Value
-_efl_io_model_children_list_on(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
-{
-   Efl_Io_Model_Data *pd = data;
-
-   // Now that we have listed the content of the directory,
-   // we can whatch over it
-   _efl_io_model_efl_model_monitor_add(pd);
-
-   return v;
 }
 
 static void
@@ -787,8 +795,10 @@ _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
         f = efl_io_manager_direct_ls(iom, pd->path, EINA_FALSE,
                                      (void*) obj, _efl_io_model_children_list, NULL);
 
+        //start monitoring before listing is done
+        //we will filter later on if we already published a file or not
+        _efl_io_model_efl_model_monitor_add(pd);
         pd->request.listing = efl_future_then(obj, f,
-                                              .success = _efl_io_model_children_list_on,
                                               .free = _efl_io_model_children_list_cleanup,
                                               .data = pd);
      }
