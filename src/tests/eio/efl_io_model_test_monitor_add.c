@@ -109,6 +109,15 @@ _children_get(void *data,
    Eo *child = NULL;
    unsigned int i, len;
 
+   if (eina_value_type_get(&v) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = 0;
+
+        fail_if(!eina_value_error_get(&v, &err));
+        fail_if(err != ECANCELED);
+        return v;
+     }
+
    fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
