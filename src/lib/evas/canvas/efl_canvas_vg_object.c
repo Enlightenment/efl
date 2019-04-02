@@ -610,7 +610,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
      {
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
-                                   w, h, user_entry, buffer,
+                                   w, h, user_entry->root, buffer,
                                    do_async, cacheable);
      }
    else
@@ -620,7 +620,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
           buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
                                      w, h,
-                                     user_entry,
+                                     user_entry->root,
                                      buffer,
                                      do_async, EINA_FALSE);
         //cache reference was increased when we get the cache.
