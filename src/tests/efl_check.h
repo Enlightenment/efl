@@ -53,6 +53,20 @@
       eina_log_abort_on_critical_set(___val); \
    } while (0)
 
+#define EXPECT_ERROR_START \
+  do { \
+      DISABLE_ABORT_ON_CRITICAL_START; \
+      Eina_Bool expect_error_start = EINA_FALSE; \
+      do { \
+        eina_log_print_cb_set(_efl_test_expect_error, &expect_error_start); \
+      } while(0)
+
+
+#define EXPECT_ERROR_END \
+    ck_assert_int_eq(expect_error_start, EINA_TRUE); \
+    DISABLE_ABORT_ON_CRITICAL_END; \
+  } while(0)
+
 typedef struct _Efl_Test_Case Efl_Test_Case;
 struct _Efl_Test_Case
 {
@@ -61,6 +75,15 @@ struct _Efl_Test_Case
 };
 
 static int timeout_pid = 0;
+
+EINA_UNUSED static void
+_efl_test_expect_error(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level, const char *file EINA_UNUSED, const char *fnc, int line EINA_UNUSED, const char *fmt EINA_UNUSED, void *data, va_list args EINA_UNUSED)
+{
+   Eina_Bool *error = (Eina_Bool*) data;
+   if (level == EINA_LOG_LEVEL_ERR) *error = EINA_TRUE;
+
+   printf("EXPECTED ERROR %s\n", fnc);
+}
 
 static void
 _efl_tests_list(const Efl_Test_Case *etc)
