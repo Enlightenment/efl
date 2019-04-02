@@ -430,10 +430,10 @@ _elm_fileselector_entry_path_get_internal(const Evas_Object *obj)
 }
 
 EOLIAN static Efl_Model *
-_elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd)
+_elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    Efl_Model *bmodel, *ret;
-   Eina_Value path;
+
    bmodel = efl_ui_view_model_get(sd->button);
    if (!bmodel)
      {
@@ -441,13 +441,16 @@ _elm_fileselector_entry_efl_ui_view_model_get(const Eo *obj EINA_UNUSED, Elm_Fil
         return NULL;
      }
 
-   ret = efl_add(efl_class_get(bmodel), NULL);
    free(sd->path);
    sd->path = elm_entry_markup_to_utf8(elm_object_text_get(sd->entry));
-   eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
-   eina_value_set(&path, sd->path);
-   efl_model_property_set(ret, "path", &path);
-   eina_value_flush(&path);
+
+   if (!strcmp(sd->path, efl_io_model_path_get(bmodel)))
+     return bmodel;
+
+   ret = efl_add_ref(efl_class_get(bmodel), (Eo*) obj,
+                     efl_io_model_path_set(efl_added, sd->path),
+                     efl_loop_model_volatile_make(efl_added));
+   eina_freeq_ptr_add(postponed_fq, ret, EINA_FREE_CB(efl_unref), sizeof (void*));
 
    return ret;
 }
