@@ -460,6 +460,12 @@ class TestEinaArray
         Test.Assert(a.Handle != IntPtr.Zero);
     }
 
+    public static void create_array_from_null()
+    {
+        Test.AssertRaises<ArgumentNullException>(() => new Eina.Array<int>(IntPtr.Zero, false));
+        Test.AssertRaises<ArgumentNullException>(() => new Eina.Array<int>(IntPtr.Zero, false, false));
+    }
+
     public static void push_int()
     {
         var a = new Eina.Array<int>();
