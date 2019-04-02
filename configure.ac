@@ -4116,7 +4116,6 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [wasapiaudio])
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_WASASPI], [test "x${want_wasapiaudio}" = "xyes"])
 
 #### End of Ecore_Audio
 
