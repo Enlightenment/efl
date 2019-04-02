@@ -414,8 +414,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 //renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                  void *engine, Efl_VG *root, int w, int h, void *key,
-                  void *buffer, Eina_Bool do_async, Eina_Bool cacheable)
+                  void *engine, Efl_VG *root, int w, int h, void *buffer,
+                  Eina_Bool do_async, Eina_Bool cacheable)
 {
    Ector_Surface *ector;
    RGBA_Draw_Context *context;
@@ -459,7 +459,8 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
 
    if (buffer_created && cacheable)
      {
-        ENFN->ector_surface_cache_set(engine, key, buffer);
+        //Use root as a cache key.
+        ENFN->ector_surface_cache_set(engine, root, buffer);
         pd->cached_frame_idx = pd->frame_idx;
      }
 
@@ -569,7 +570,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
      }
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL,
                                 do_async, cacheable);
    else
      //cache reference was increased when we get the cache.
@@ -610,8 +611,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
      {
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
-                                   w, h, user_entry->root, buffer,
-                                   do_async, cacheable);
+                                   w, h, buffer, do_async, cacheable);
      }
    else
      {
@@ -619,9 +619,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
         if (pd->changed)
           buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
-                                     w, h,
-                                     user_entry->root,
-                                     buffer,
+                                     w, h, buffer,
                                      do_async, EINA_FALSE);
         //cache reference was increased when we get the cache.
         ENFN->ector_surface_cache_drop(engine, user_entry->root);
