@@ -2,10 +2,7 @@ ecore_con_deps = []
 ecore_con_pub_deps = [eina, eo, efl, ecore]
 
 if sys_windows == true
-  ipv6 = cc.compiles('''
-    #include <ws2tcpip.h>
-    struct ipv6_mreq tmp;
-    ''')
+  ipv6 = true
 else
   ipv6 = cc.compiles('''
     #include <netinet/in.h>

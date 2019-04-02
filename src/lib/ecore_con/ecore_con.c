@@ -38,11 +38,8 @@
 # include <systemd/sd-daemon.h>
 #endif
 
-#ifdef HAVE_WS2TCPIP_H
-# include <ws2tcpip.h>
-#endif
-
 #ifdef _WIN32
+# include <ws2tcpip.h>
 # include <Evil.h>
 #endif
 
