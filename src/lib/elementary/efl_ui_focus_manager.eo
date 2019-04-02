@@ -205,6 +205,6 @@ interface Efl.Ui.Focus.Manager {
         flush,pre: void; [[After this event, the manager object will calculate relations in the graph. Can be used to add / remove children in a lazy fashion.]]
         coords,dirty: void; [[Cached relationship calculation results have been invalidated.]]
         manager_focus,changed : Efl.Ui.Focus.Object; [[The manager_focus property has changed. The previously focused object is passed as an event argument.]]
-        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or thawed, even_info beeing $true indicates that it is now frozen, $false indicates that it is thawed.]]
+        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or thawed, even_info being $true indicates that it is now frozen, $false indicates that it is thawed.]]
     }
 }

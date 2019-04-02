@@ -90,7 +90,7 @@ interface Efl.Layout.Calc
            This function thaws (in other words "unfreezes") the given layout
            object.
 
-           Note: If sucessive freezes were done, an equal number of thaws will
+           Note: If successive freezes were done, an equal number of thaws will
            be required.
 
            See also @.calc_freeze.
