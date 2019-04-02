@@ -94,7 +94,6 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
 {
    const char *file;
    Efl_Model *bmodel, *model;
-   Eina_Value path;
 
    ELM_FILESELECTOR_ENTRY_DATA_GET(data, sd);
 
@@ -103,12 +102,9 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
    bmodel = efl_ui_view_model_get(sd->button);
    if (bmodel)
      {
-         model = efl_add(efl_class_get(bmodel), NULL);
-         eina_value_setup(&path, EINA_VALUE_TYPE_STRING);
-         eina_value_set(&path, file);
-         efl_model_property_set(model, "path", &path);
-         eina_value_flush(&path);
-         efl_ui_view_model_set(sd->button, model);
+        model = efl_add(efl_class_get(bmodel), sd->button,
+                        efl_io_model_path_set(efl_added, file));
+        efl_ui_view_model_set(sd->button, model);
      }
 
    efl_event_callback_legacy_call
