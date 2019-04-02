@@ -2007,4 +2007,4 @@ lib/elementary/elm_code_widget_undo.c \
 lib/elementary/config_embed
 
 lib/elementary/elm_default_config.x:
-	lib/elementary/config_embed $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $@
+	$(top_srcdir)/src/lib/elementary/config_embed $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $@
